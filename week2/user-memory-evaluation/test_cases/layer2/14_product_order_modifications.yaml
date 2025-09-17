@@ -1,0 +1,494 @@
+test_id: layer2_14_product_order_modifications
+category: layer2
+title: Custom Furniture Order with Multiple Modifications
+description: Test agent's ability to track partial updates, substitutions, and modifications to a complex order where each change affects pricing, timeline, and specifications
+conversation_histories:
+  - conversation_id: initial_order_001
+    timestamp: "2024-08-20 11:00:00"
+    metadata:
+      business: "Craftsman Custom Furniture"
+      department: "Sales and Design"
+      call_duration: "54 minutes"
+    messages:
+      - role: user
+        content: "Hi, I want to order a custom dining set for my new home."
+      - role: assistant
+        content: "Hello! I'm Robert from Craftsman Custom Furniture. I'd love to help design your dining set. What size space are we working with?"
+      - role: user
+        content: "The dining room is 14 by 16 feet."
+      - role: assistant
+        content: "Nice size room. What style are you envisioning?"
+      - role: user
+        content: "Modern farmhouse, with a large wooden table and upholstered chairs."
+      - role: assistant
+        content: "Popular choice. How many people do you need to seat?"
+      - role: user
+        content: "Daily just 4, but up to 10 for holidays with leaves."
+      - role: assistant
+        content: "So an expandable table. I recommend our Hamilton design, 72 inches standard, extends to 108 inches."
+      - role: user
+        content: "That sounds perfect. What wood options do you have?"
+      - role: assistant
+        content: "For farmhouse style, white oak, walnut, or reclaimed pine work beautifully."
+      - role: user
+        content: "I love walnut but is it much more expensive?"
+      - role: assistant
+        content: "Walnut is premium. The Hamilton in white oak is $3,200, in walnut it's $4,100."
+      - role: user
+        content: "And reclaimed pine?"
+      - role: assistant
+        content: "That's $3,500. It has more character with natural distressing."
+      - role: user
+        content: "Let's go with walnut. It'll be an investment piece."
+      - role: assistant
+        content: "Excellent choice. Walnut ages beautifully. What finish?"
+      - role: user
+        content: "What do you recommend?"
+      - role: assistant
+        content: "Natural oil finish shows the grain best, or we can do a darker espresso stain."
+      - role: user
+        content: "Natural oil finish. Keep it light and natural."
+      - role: assistant
+        content: "Perfect. Now for chairs - upholstered or wood?"
+      - role: user
+        content: "Upholstered for comfort. What styles match the Hamilton?"
+      - role: assistant
+        content: "Our Madison chairs complement it perfectly. High back, nail head trim option."
+      - role: user
+        content: "Yes, with nail heads. What fabrics?"
+      - role: assistant
+        content: "Performance fabrics are popular - stain resistant. We have linen-look, velvet, or leather."
+      - role: user
+        content: "The linen-look in what colors?"
+      - role: assistant
+        content: "Natural, charcoal, navy, sage green, or cream."
+      - role: user
+        content: "Charcoal would be practical with kids."
+      - role: assistant
+        content: "Smart choice. Madison chairs in charcoal performance fabric are $425 each."
+      - role: user
+        content: "I need 10 chairs total?"
+      - role: assistant
+        content: "You could do 8 chairs plus a bench for flexibility."
+      - role: user
+        content: "Oh, I like that idea! Same fabric for the bench?"
+      - role: assistant
+        content: "Yes, matching Madison bench seats 2-3 people, $650 in the same fabric."
+      - role: user
+        content: "So 8 chairs and one bench. That's..."
+      - role: assistant
+        content: "8 chairs at $425 is $3,400, plus bench $650, total $4,050 for seating."
+      - role: user
+        content: "Plus the table at $4,100."
+      - role: assistant
+        content: "Correct, complete set is $8,150 before delivery."
+      - role: user
+        content: "What's delivery?"
+      - role: assistant
+        content: "White glove delivery and setup is $299 within 50 miles."
+      - role: user
+        content: "I'm in Folsom, about 25 miles from you."
+      - role: assistant
+        content: "Perfect, standard delivery applies. Total would be $8,449."
+      - role: user
+        content: "When would it be ready?"
+      - role: assistant
+        content: "Custom walnut pieces take 10-12 weeks currently."
+      - role: user
+        content: "So late October or early November?"
+      - role: assistant
+        content: "Yes, I'd estimate November 5th for completion."
+      - role: user
+        content: "That works. We're moving in October 1st."
+      - role: assistant
+        content: "Great timing. Should I add a leaf storage bag?"
+      - role: user
+        content: "How much are the leaves themselves?"
+      - role: assistant
+        content: "The Hamilton includes two 18-inch leaves in the price."
+      - role: user
+        content: "Oh good. Yes, add the storage bag."
+      - role: assistant
+        content: "That's $75. Protects the leaves when not in use."
+      - role: user
+        content: "Do the chairs need any protection plan?"
+      - role: assistant
+        content: "We offer 5-year protection for $400, covers all seating pieces."
+      - role: user
+        content: "What does it cover?"
+      - role: assistant
+        content: "Fabric stains, tears, frame damage, mechanism failures."
+      - role: user
+        content: "With three kids, probably smart. Add it."
+      - role: assistant
+        content: "New total is $8,924. Requires 50% deposit to begin production."
+      - role: user
+        content: "So $4,462 now?"
+      - role: assistant
+        content: "Correct, balance due on delivery."
+      - role: user
+        content: "Can I put the deposit on a credit card?"
+      - role: assistant
+        content: "Yes, we accept all major cards."
+      - role: user
+        content: "Let me use my Amex, get some points."
+      - role: assistant
+        content: "Smart! I'll email the detailed order for your review."
+      - role: user
+        content: "Perfect. Order number?"
+      - role: assistant
+        content: "Order #CF-2024-3847."
+      - role: user
+        content: "Great. So November 5th delivery?"
+      - role: assistant
+        content: "Targeting that date. We'll confirm two weeks prior."
+      - role: user
+        content: "Sounds good. Process my deposit!"
+      - role: assistant
+        content: "Processing... approved. You'll receive confirmation shortly."
+      - role: user
+        content: "Excellent. Thank you Robert!"
+      - role: assistant
+        content: "Thank you! We'll craft beautiful pieces for your home."
+  - conversation_id: design_changes_001
+    timestamp: "2024-09-05 14:00:00"
+    metadata:
+      business: "Craftsman Custom Furniture"
+      department: "Customer Service"
+      call_duration: "49 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to make some changes to order CF-2024-3847."
+      - role: assistant
+        content: "Hello! This is Monica from Craftsman Custom. Let me pull up your order... The walnut dining set?"
+      - role: user
+        content: "Yes. My designer says the charcoal chairs might be too dark."
+      - role: assistant
+        content: "Your order is 2 weeks into production. Some changes are still possible."
+      - role: user
+        content: "Can I change the fabric color?"
+      - role: assistant
+        content: "The frames are built but not yet upholstered. What color were you thinking?"
+      - role: user
+        content: "The sage green you mentioned originally."
+      - role: assistant
+        content: "Sage green is beautiful with walnut. No price change for color swap."
+      - role: user
+        content: "Oh good. Also, can I change two chairs to be armchairs?"
+      - role: assistant
+        content: "Captain's chairs? Those are $525 each versus $425 for standard."
+      - role: user
+        content: "So $200 more total?"
+      - role: assistant
+        content: "Correct. Two captains, six standard Madison chairs?"
+      - role: user
+        content: "Yes, for the head and foot of table."
+      - role: assistant
+        content: "Makes sense. The frames need modification but we can do it."
+      - role: user
+        content: "Will this delay delivery?"
+      - role: assistant
+        content: "Changing two frames adds about a week. New target November 12th."
+      - role: user
+        content: "That's still fine. Oh, another thing..."
+      - role: assistant
+        content: "Yes?"
+      - role: user
+        content: "My husband wants to know if we can make the table 6 inches longer?"
+      - role: assistant
+        content: "From 72 to 78 inches standard length?"
+      - role: user
+        content: "Yes, he's worried 72 is too small for daily use."
+      - role: assistant
+        content: "The table is already cut to 72 inches. Changing now means starting over."
+      - role: user
+        content: "Oh no! That would delay everything?"
+      - role: assistant
+        content: "It would push delivery to late December, and increase cost."
+      - role: user
+        content: "How much more?"
+      - role: assistant
+        content: "78-inch table is $4,400 versus $4,100. Plus we can't refund wood already cut."
+      - role: user
+        content: "So I'd lose money and time?"
+      - role: assistant
+        content: "Unfortunately yes. The cut wood can't be reused."
+      - role: user
+        content: "Forget that change. 72 is fine."
+      - role: assistant
+        content: "The leaves extend it to 108 inches when needed."
+      - role: user
+        content: "Right, that's plenty for holidays."
+      - role: assistant
+        content: "Anything else you want to modify?"
+      - role: user
+        content: "Actually, can we skip the bench and just do 10 chairs?"
+      - role: assistant
+        content: "Replacing the bench with 2 chairs changes seating dynamics."
+      - role: user
+        content: "How so?"
+      - role: assistant
+        content: "Bench allows flexible seating for kids. Individual chairs are more formal."
+      - role: user
+        content: "You're right. Keep the bench. But make it sage green too?"
+      - role: assistant
+        content: "Of course, all upholstery in sage green performance fabric."
+      - role: user
+        content: "Perfect. What's my new total?"
+      - role: assistant
+        content: "Adding $200 for two captain's chairs: $9,124 total."
+      - role: user
+        content: "Additional deposit needed?"
+      - role: assistant
+        content: "Just $100 more for the upgrade."
+      - role: user
+        content: "Same Amex card?"
+      - role: assistant
+        content: "I have it on file. Shall I process?"
+      - role: user
+        content: "Yes please."
+      - role: assistant
+        content: "Done. Updated order confirmation coming via email."
+      - role: user
+        content: "The protection plan still covers everything?"
+      - role: assistant
+        content: "Yes, covers all pieces regardless of changes."
+      - role: user
+        content: "Good. November 12th delivery then?"
+      - role: assistant
+        content: "Correct. We'll call November 1st to schedule specific time."
+      - role: user
+        content: "Can you note that we have stairs to the dining room?"
+      - role: assistant
+        content: "Interior stairs? How many?"
+      - role: user
+        content: "5 steps up from the entry to dining room level."
+      - role: assistant
+        content: "Noted. Our delivery team handles stairs no problem."
+      - role: user
+        content: "Great. I think that's all my changes."
+      - role: assistant
+        content: "Summary: Walnut Hamilton table unchanged, 2 captain and 6 standard Madison chairs plus bench, all in sage green."
+      - role: user
+        content: "Exactly right."
+      - role: assistant
+        content: "Perfect. Your dining set will be stunning."
+      - role: user
+        content: "Can't wait! Thanks for accommodating the changes."
+      - role: assistant
+        content: "Our pleasure! That's why custom is worth it."
+  - conversation_id: final_complications_001
+    timestamp: "2024-10-28 10:00:00"
+    metadata:
+      business: "Craftsman Custom Furniture"
+      department: "Production Update"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "I got a call about a problem with my dining set order?"
+      - role: assistant
+        content: "Hello Mrs. Thompson. This is David, production manager at Craftsman. Yes, we've encountered an issue."
+      - role: user
+        content: "Oh no, what happened? It's supposed to deliver in two weeks!"
+      - role: assistant
+        content: "The sage green fabric you selected has been discontinued by the manufacturer."
+      - role: user
+        content: "What? But we changed to that color specifically!"
+      - role: assistant
+        content: "I know, and I apologize. We just learned this yesterday."
+      - role: user
+        content: "So what are my options?"
+      - role: assistant
+        content: "We have similar alternatives in our performance fabric line."
+      - role: user
+        content: "How similar?"
+      - role: assistant
+        content: "There's moss green, slightly darker, or eucalyptus, slightly lighter."
+      - role: user
+        content: "I need to match my room design!"
+      - role: assistant
+        content: "I can overnight samples to you today."
+      - role: user
+        content: "This is frustrating. I changed FROM charcoal specifically."
+      - role: assistant
+        content: "Charcoal is still available if you want to revert."
+      - role: user
+        content: "No, I really don't want dark chairs."
+      - role: assistant
+        content: "Understood. There's another option..."
+      - role: user
+        content: "What's that?"
+      - role: assistant
+        content: "We can upgrade you to our premium Belgian linen at no extra charge."
+      - role: user
+        content: "Is it as stain-resistant?"
+      - role: assistant
+        content: "It has treatment but not quite as durable as performance fabric."
+      - role: user
+        content: "With three kids? That sounds risky."
+      - role: assistant
+        content: "Fair point. The moss might be your best bet."
+      - role: user
+        content: "Send me all the green samples you have."
+      - role: assistant
+        content: "I'll send moss, eucalyptus, forest, and olive."
+      - role: user
+        content: "Will this delay delivery?"
+      - role: assistant
+        content: "If you decide by Friday, we can maintain November 12th."
+      - role: user
+        content: "That's only four days!"
+      - role: assistant
+        content: "I know it's tight. We're prioritizing your order."
+      - role: user
+        content: "What if none of the samples work?"
+      - role: assistant
+        content: "We could do a fully custom dye lot, but that adds 3 weeks."
+      - role: user
+        content: "So December delivery?"
+      - role: assistant
+        content: "Early December, yes."
+      - role: user
+        content: "My family is coming for Thanksgiving!"
+      - role: assistant
+        content: "That's why we're trying to maintain November 12th."
+      - role: user
+        content: "Okay, send the samples. What else has gone wrong?"
+      - role: assistant
+        content: "Actually, there's good news too."
+      - role: user
+        content: "Oh?"
+      - role: assistant
+        content: "Your table finished beautifully. The walnut grain is exceptional."
+      - role: user
+        content: "At least something went right."
+      - role: assistant
+        content: "Also, we're upgrading your leaf storage to our deluxe version free."
+      - role: user
+        content: "Because of the fabric issue?"
+      - role: assistant
+        content: "Yes, it's a $150 value. Padded interior, wheels for easy moving."
+      - role: user
+        content: "That's something I guess."
+      - role: assistant
+        content: "We really apologize for the inconvenience."
+      - role: user
+        content: "It's not your fault the fabric was discontinued."
+      - role: assistant
+        content: "Still, we should have caught it sooner."
+      - role: user
+        content: "When will samples arrive?"
+      - role: assistant
+        content: "Tomorrow by 10 AM via FedEx."
+      - role: user
+        content: "I'll review them immediately."
+      - role: assistant
+        content: "If you choose Thursday, I can fast-track upholstery."
+      - role: user
+        content: "The chairs and bench frames are ready?"
+      - role: assistant
+        content: "Yes, including your two captain's chairs. Just waiting on fabric."
+      - role: user
+        content: "At least that modification worked out."
+      - role: assistant
+        content: "The frames look beautiful. Solid walnut to match the table."
+      - role: user
+        content: "Send photos with the samples?"
+      - role: assistant
+        content: "I'll include photos of your actual pieces."
+      - role: user
+        content: "That'll help visualize the colors."
+      - role: assistant
+        content: "Exactly. You'll see the wood tones for matching."
+      - role: user
+        content: "What if I decide I hate all the options?"
+      - role: assistant
+        content: "We could explore other fabric lines entirely."
+      - role: user
+        content: "Like what?"
+      - role: assistant
+        content: "Crypton, Sunbrella, or genuine leather."
+      - role: user
+        content: "Leather would be totally different."
+      - role: assistant
+        content: "But very durable and ages well."
+      - role: user
+        content: "How much more expensive?"
+      - role: assistant
+        content: "Normally $200 more per chair, but we'd honor your original price."
+      - role: user
+        content: "Interesting. What colors in leather?"
+      - role: assistant
+        content: "Cognac, chocolate, black, or olive green."
+      - role: user
+        content: "Olive green leather might work!"
+      - role: assistant
+        content: "It's beautiful with walnut. Want a sample?"
+      - role: user
+        content: "Yes, include that too."
+      - role: assistant
+        content: "Will do. Five fabric samples plus olive leather."
+      - role: user
+        content: "This might work out after all."
+      - role: assistant
+        content: "We'll make sure you love the final product."
+      - role: user
+        content: "I appreciate the effort to fix this."
+      - role: assistant
+        content: "It's our commitment to customer satisfaction."
+      - role: user
+        content: "I'll call Thursday with my decision."
+      - role: assistant
+        content: "Perfect. I'll be waiting for your call."
+user_question: "What's the current status of my dining set order including all modifications and the final specifications?"
+evaluation_criteria: |
+  The agent must track all modifications across three conversations to provide CURRENT status:
+  
+  **CURRENT ORDER STATUS (CF-2024-3847):**
+  
+  **Table (UNCHANGED from original):**
+  - Hamilton design in walnut
+  - 72 inches standard, extends to 108 with leaves
+  - Natural oil finish
+  - Includes two 18-inch leaves
+  - Status: COMPLETED successfully
+  
+  **Seating (MODIFIED, PENDING FABRIC):**
+  - 2 Captain's chairs ($525 each) - frames complete
+  - 6 Standard Madison chairs ($425 each) - frames complete  
+  - 1 Madison bench ($650) - frame complete
+  - Original: Charcoal fabric
+  - Changed to: Sage green (Sept 5)
+  - ISSUE: Sage green discontinued (Oct 28)
+  - PENDING: Customer choosing new fabric by Nov 1
+  - Options: Moss, eucalyptus, forest, olive fabrics or olive leather (at fabric price)
+  
+  **Additional Items:**
+  - Leaf storage: UPGRADED to deluxe version (free due to fabric issue)
+  - 5-year protection plan: $400 (covers all pieces)
+  
+  **Pricing:**
+  - Original: $8,924
+  - After captain's chairs: $9,124
+  - No additional cost for fabric change or leather option
+  
+  **Timeline:**
+  - Original delivery: November 5
+  - After modifications: November 12  
+  - Current target: November 12 IF fabric decided by November 1
+  - If custom dye: Early December
+  
+  **Delivery Details:**
+  - White glove delivery to Folsom
+  - Interior stairs noted (5 steps)
+  - Delivery fee: $299
+  
+  **Payment Status:**
+  - Deposit paid: $4,462 + $100 = $4,562
+  - Balance due on delivery: $4,562
+  
+  **Critical Decision Point:**
+  - Must select new fabric by November 1 to maintain November 12 delivery
+  - Samples arriving October 29 via FedEx
+  
+  The agent must recognize the current fabric situation as the key pending issue affecting final specifications.

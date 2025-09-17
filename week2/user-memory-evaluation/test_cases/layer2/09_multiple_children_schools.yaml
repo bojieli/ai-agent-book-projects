@@ -1,0 +1,521 @@
+test_id: layer2_09_multiple_children_schools
+category: layer2
+title: Multiple Children's Education - School Information Disambiguation
+description: Test agent's ability to distinguish between multiple children's school information and provide complete details when ambiguously requested
+conversation_histories:
+  - conversation_id: elementary_school_001
+    timestamp: "2024-08-25 09:00:00"
+    metadata:
+      business: "Riverside Elementary School"
+      department: "Main Office"
+      call_duration: "46 minutes"
+    messages:
+      - role: user
+        content: "Hi, this is Jennifer Martinez. I need to discuss my son Lucas's schedule."
+      - role: assistant
+        content: "Good morning Mrs. Martinez! This is Mrs. Thompson from Riverside Elementary. Lucas is in Mrs. Anderson's 3rd grade class, correct?"
+      - role: user
+        content: "Yes, that's right. I wanted to check his schedule for special classes."
+      - role: assistant
+        content: "Let me pull that up. Lucas has PE on Mondays and Wednesdays at 10:30 AM."
+      - role: user
+        content: "What about art and music?"
+      - role: assistant
+        content: "Art is Tuesdays at 1:30 PM with Mr. Rodriguez, Music is Thursdays at 2:00 PM with Ms. Chen."
+      - role: user
+        content: "And library?"
+      - role: assistant
+        content: "Library time is Friday mornings at 9:15 AM. They can check out two books."
+      - role: user
+        content: "Perfect. What time does school start and end?"
+      - role: assistant
+        content: "School day is 8:15 AM to 3:15 PM. Doors open at 8:00 AM."
+      - role: user
+        content: "Is there before-school care?"
+      - role: assistant
+        content: "Yes, Kids Club starts at 7:00 AM, costs $8 per day or $35 weekly."
+      - role: user
+        content: "What about after school?"
+      - role: assistant
+        content: "After-school care runs until 6:00 PM, $12 per day or $50 weekly."
+      - role: user
+        content: "Lucas is struggling with math. Are there tutoring options?"
+      - role: assistant
+        content: "We have free math tutoring Tuesdays and Thursdays 3:30-4:30 PM with Mrs. Park."
+      - role: user
+        content: "How do I sign him up?"
+      - role: assistant
+        content: "I'll send you the permission form. Return it and he can start next Tuesday."
+      - role: user
+        content: "Great. What about his reading level?"
+      - role: assistant
+        content: "Lucas tested at level M, which is on grade level for beginning 3rd grade."
+      - role: user
+        content: "Should he be higher?"
+      - role: assistant
+        content: "Level M-P is the range for 3rd grade. He'll be tested again in January."
+      - role: user
+        content: "What about homework expectations?"
+      - role: assistant
+        content: "Third grade typically has 30-40 minutes nightly - reading, math worksheet, and spelling."
+      - role: user
+        content: "He says he doesn't have spelling homework."
+      - role: assistant
+        content: "Spelling lists go home Mondays, test is Friday. Check his blue folder."
+      - role: user
+        content: "Ah, the blue folder. What about the red one?"
+      - role: assistant
+        content: "Red is for completed work coming home, blue is for homework and papers to sign."
+      - role: user
+        content: "That helps. When is the first field trip?"
+      - role: assistant
+        content: "October 15th to the Science Museum. Permission slip comes home next week."
+      - role: user
+        content: "Cost?"
+      - role: assistant
+        content: "$15 per student, includes bus and admission. Chaperones needed too."
+      - role: user
+        content: "I could chaperone. How do I sign up?"
+      - role: assistant
+        content: "You need to complete volunteer clearance first - background check and TB test."
+      - role: user
+        content: "How long does that take?"
+      - role: assistant
+        content: "About two weeks once we receive the forms. I'll send those too."
+      - role: user
+        content: "What about lunch? He says the food isn't good."
+      - role: assistant
+        content: "Hot lunch is $3.50, or he can bring lunch. Menu is on our website."
+      - role: user
+        content: "Can I add money to his account online?"
+      - role: assistant
+        content: "Yes, through MySchoolBucks. There's a $2.50 convenience fee."
+      - role: user
+        content: "What if he forgets lunch money?"
+      - role: assistant
+        content: "We never let kids go hungry. He'd get a cheese sandwich and we'd send a note."
+      - role: user
+        content: "Good to know. What about his behavior? Any issues?"
+      - role: assistant
+        content: "Mrs. Anderson says Lucas is doing well. Sometimes chatty but redirects easily."
+      - role: user
+        content: "He does like to talk. What's the discipline system?"
+      - role: assistant
+        content: "We use color cards. Green is good, yellow is warning, orange is consequence, red is office."
+      - role: user
+        content: "What are consequences?"
+      - role: assistant
+        content: "Yellow is verbal warning, orange loses 5 minutes recess, red is parent contact."
+      - role: user
+        content: "Has he had any cards changed?"
+      - role: assistant
+        content: "One yellow last week for talking during instruction. Pretty typical for age."
+      - role: user
+        content: "When are parent-teacher conferences?"
+      - role: assistant
+        content: "November 7-9. You'll get a sign-up link in October."
+      - role: user
+        content: "How long are the conferences?"
+      - role: assistant
+        content: "15-minute slots. If more time is needed, we schedule a separate meeting."
+      - role: user
+        content: "What about report cards?"
+      - role: assistant
+        content: "Quarterly - first one is November 15th. Standards-based grading, not letter grades."
+      - role: user
+        content: "What does that mean?"
+      - role: assistant
+        content: "4 is exceeding, 3 is meeting, 2 is approaching, 1 is below grade level."
+      - role: user
+        content: "Is there homework help available?"
+      - role: assistant
+        content: "Homework club meets in the library 3:30-4:30 PM Monday, Wednesday, Friday."
+      - role: user
+        content: "Free?"
+      - role: assistant
+        content: "Yes, it's free. Staffed by parent volunteers and high school students."
+      - role: user
+        content: "What about birthday celebrations?"
+      - role: assistant
+        content: "You can send cupcakes or treats. Must be store-bought, no homemade due to allergies."
+      - role: user
+        content: "When is Lucas's snack day?"
+      - role: assistant
+        content: "His assigned day is every other Thursday. Next one is September 5th."
+      - role: user
+        content: "How many kids in his class?"
+      - role: assistant
+        content: "22 students in Mrs. Anderson's class."
+      - role: user
+        content: "That's manageable. What about technology?"
+      - role: assistant
+        content: "Each student has a Chromebook. They learn typing and basic computer skills."
+      - role: user
+        content: "Do they bring them home?"
+      - role: assistant
+        content: "Not until 4th grade. Third graders use them only at school."
+      - role: user
+        content: "What about school supplies? Do you need anything?"
+      - role: assistant
+        content: "We can always use tissues, hand sanitizer, and dry erase markers."
+      - role: user
+        content: "I'll send some. Is there a school directory?"
+      - role: assistant
+        content: "PTA publishes one in October. You need to opt-in for inclusion."
+      - role: user
+        content: "How do I join PTA?"
+      - role: assistant
+        content: "It's $15 per family annually. Forms are on the website or in the office."
+      - role: user
+        content: "I'll do that. Thanks for all the information!"
+      - role: assistant
+        content: "You're welcome! Feel free to call anytime with questions about Lucas."
+  - conversation_id: middle_school_001
+    timestamp: "2024-09-10 14:00:00"
+    metadata:
+      business: "Jefferson Middle School"
+      department: "Counseling Office"
+      call_duration: "50 minutes"
+    messages:
+      - role: user
+        content: "Hi, this is Jennifer Martinez calling about my daughter Sofia's schedule."
+      - role: assistant
+        content: "Hello Mrs. Martinez! This is Mr. Davis, Sofia's counselor. She's in 7th grade, right?"
+      - role: user
+        content: "Yes. I want to make sure her schedule is correct for the semester."
+      - role: assistant
+        content: "Let me pull it up. Period 1 she has Pre-Algebra with Mr. Wilson."
+      - role: user
+        content: "What time is first period?"
+      - role: assistant
+        content: "First period is 7:45 to 8:35 AM."
+      - role: user
+        content: "That's early! What's next?"
+      - role: assistant
+        content: "Period 2 is English Language Arts with Mrs. Foster, 8:40 to 9:30."
+      - role: user
+        content: "She likes Mrs. Foster. Then what?"
+      - role: assistant
+        content: "Period 3 is Life Science with Dr. Kumar, 9:35 to 10:25."
+      - role: user
+        content: "Is that Biology?"
+      - role: assistant
+        content: "Yes, 7th grade Life Science covers biology concepts."
+      - role: user
+        content: "Good. What about PE?"
+      - role: assistant
+        content: "PE is Period 4, 10:30 to 11:20 with Coach Martinez."
+      - role: user
+        content: "Any relation?"
+      - role: assistant
+        content: "Ha! No relation we know of. Common name. Then lunch is 11:20 to 12:00."
+      - role: user
+        content: "40 minutes for lunch?"
+      - role: assistant
+        content: "Yes, they need time to get food and eat. Lines can be long."
+      - role: user
+        content: "What's after lunch?"
+      - role: assistant
+        content: "Period 5 is World History with Mr. Jackson, 12:05 to 12:55."
+      - role: user
+        content: "Then?"
+      - role: assistant
+        content: "Period 6 is Spanish 1 with Señora Rodriguez, 1:00 to 1:50."
+      - role: user
+        content: "And last period?"
+      - role: assistant
+        content: "Period 7 is her elective, Art with Ms. Thompson, 1:55 to 2:45."
+      - role: user
+        content: "So school ends at 2:45?"
+      - role: assistant
+        content: "Yes, dismissal is 2:45 PM."
+      - role: user
+        content: "She wants to change from Art to Band. Is that possible?"
+      - role: assistant
+        content: "We're past the deadline, but let me check Band availability. What instrument?"
+      - role: user
+        content: "Flute."
+      - role: assistant
+        content: "Beginning Band has space. She'd need to rent a flute."
+      - role: user
+        content: "How much is rental?"
+      - role: assistant
+        content: "About $35 per month through our music store partner."
+      - role: user
+        content: "That's reasonable. Can we make the switch?"
+      - role: assistant
+        content: "I can process it, but she's already missed three weeks. She'd need to catch up."
+      - role: user
+        content: "She had flute in elementary school."
+      - role: assistant
+        content: "That helps! I'll email you the change form. Return by Friday."
+      - role: user
+        content: "Great. How are her grades so far?"
+      - role: assistant
+        content: "Early in the year, but she has all A's and B's currently."
+      - role: user
+        content: "Which classes are B's?"
+      - role: assistant
+        content: "Pre-Algebra is a B+, and PE is a B."
+      - role: user
+        content: "PE? How do you get a B in PE?"
+      - role: assistant
+        content: "Usually from not dressing out or participation. I'll check with Coach Martinez."
+      - role: user
+        content: "She says she forgot her PE clothes twice."
+      - role: assistant
+        content: "That would do it. Three non-dress days drops a letter grade."
+      - role: user
+        content: "I'll make sure she has her clothes. What about lockers?"
+      - role: assistant
+        content: "She has locker 847 in B hall. Combination was given first day."
+      - role: user
+        content: "She forgot the combination."
+      - role: assistant
+        content: "Happens all the time. I'll email it to you confidentially."
+      - role: user
+        content: "Can she decorate her locker?"
+      - role: assistant
+        content: "Inside only, with magnets. No stickers or tape."
+      - role: user
+        content: "What about sports? She's interested in volleyball."
+      - role: assistant
+        content: "Volleyball tryouts are in January for spring season."
+      - role: user
+        content: "Does she need a physical?"
+      - role: assistant
+        content: "Yes, sports physical required. Forms are in the office."
+      - role: user
+        content: "What about academic support?"
+      - role: assistant
+        content: "We have after-school tutoring Monday through Thursday, 3:00 to 4:00 PM."
+      - role: user
+        content: "Is that free?"
+      - role: assistant
+        content: "Yes, free tutoring in all core subjects. Just show up."
+      - role: user
+        content: "What about clubs?"
+      - role: assistant
+        content: "We have Drama, Science Olympiad, Robotics, Art Club, and Student Council."
+      - role: user
+        content: "She might like Drama. When do they meet?"
+      - role: assistant
+        content: "Drama Club meets Wednesdays 3:00 to 4:30 PM in the auditorium."
+      - role: user
+        content: "Any cost?"
+      - role: assistant
+        content: "$25 activity fee per semester, plus costume costs for shows."
+      - role: user
+        content: "Reasonable. What about dances?"
+      - role: assistant
+        content: "First dance is October 18th, 6:00 to 8:30 PM. $10 admission."
+      - role: user
+        content: "Dress code for dances?"
+      - role: assistant
+        content: "School appropriate - no strapless, no short skirts, no inappropriate graphics."
+      - role: user
+        content: "Regular school dress code?"
+      - role: assistant
+        content: "No tank tops, shorts must be fingertip length, no offensive images or words."
+      - role: user
+        content: "She got a dress code warning last week."
+      - role: assistant
+        content: "I see that - shorts too short. First warning is just educational."
+      - role: user
+        content: "What happens with more violations?"
+      - role: assistant
+        content: "Second is parent contact, third is detention, fourth is parent conference."
+      - role: user
+        content: "We'll watch the shorts length. What about cell phones?"
+      - role: assistant
+        content: "Phones must be off and in lockers during class. Can use at lunch."
+      - role: user
+        content: "She says everyone has phones out."
+      - role: assistant
+        content: "We're cracking down. Phones out in class get confiscated."
+      - role: user
+        content: "For how long?"
+      - role: assistant
+        content: "First offense, end of day. Second, parent pickup. Third, week-long hold."
+      - role: user
+        content: "Strict but fair. Thanks for all the information!"
+      - role: assistant
+        content: "Anytime! Sofia's doing well overall. Let me know if you need anything."
+  - conversation_id: high_school_001
+    timestamp: "2024-10-05 11:30:00"
+    metadata:
+      business: "Washington High School"
+      department: "Guidance Office"
+      call_duration: "55 minutes"
+    messages:
+      - role: user
+        content: "Hello, this is Jennifer Martinez. I need to discuss my son Diego's college prep schedule."
+      - role: assistant
+        content: "Hi Mrs. Martinez! This is Mrs. Williams, Diego's guidance counselor. He's a junior, correct?"
+      - role: user
+        content: "Yes, and I want to make sure he's on track for college."
+      - role: assistant
+        content: "Let's review his schedule. Period 1 he has AP US History with Mr. Brown."
+      - role: user
+        content: "How's he doing in that class?"
+      - role: assistant
+        content: "Currently has a B+. It's a challenging course."
+      - role: user
+        content: "What's his full schedule?"
+      - role: assistant
+        content: "Period 2 is Pre-Calculus Honors with Ms. Lee, Period 3 is AP English Language with Mr. Thompson."
+      - role: user
+        content: "Two APs junior year - is that enough?"
+      - role: assistant
+        content: "Two APs junior year is solid. Many students take 2-3. What matters is doing well."
+      - role: user
+        content: "What are his other classes?"
+      - role: assistant
+        content: "Period 4 is Chemistry Honors with Dr. Patel, Period 5 is Spanish 3 with Señora Garcia."
+      - role: user
+        content: "And after lunch?"
+      - role: assistant
+        content: "Period 6 is Digital Media Arts, Period 7 is PE/Health on alternating days."
+      - role: user
+        content: "He wants to drop Spanish for another AP."
+      - role: assistant
+        content: "I'd advise against it. Colleges want to see 3-4 years of language."
+      - role: user
+        content: "Even for engineering programs?"
+      - role: assistant
+        content: "Especially competitive programs. They want well-rounded students."
+      - role: user
+        content: "Fine, he'll stay in Spanish. What about SAT prep?"
+      - role: assistant
+        content: "Has he taken the PSAT?"
+      - role: user
+        content: "Yes, in October. Score was 1280."
+      - role: assistant
+        content: "That's good! Predicts around 1350-1400 SAT. When will he take the SAT?"
+      - role: user
+        content: "We're thinking March."
+      - role: assistant
+        content: "Good timing. Takes pressure off senior year. Is he doing test prep?"
+      - role: user
+        content: "We bought a book but he hasn't used it much."
+      - role: assistant
+        content: "School offers free SAT prep Saturdays 9:00-12:00 starting in January."
+      - role: user
+        content: "Sign him up! What about his GPA?"
+      - role: assistant
+        content: "Current weighted GPA is 4.2, unweighted is 3.7."
+      - role: user
+        content: "Is that competitive?"
+      - role: assistant
+        content: "Very solid. Top 15% of class. Good for UC schools and many privates."
+      - role: user
+        content: "He wants to apply to UCLA and Berkeley."
+      - role: assistant
+        content: "Those are reaches but possible. He needs to maintain grades and score well on SAT."
+      - role: user
+        content: "What about extracurriculars?"
+      - role: assistant
+        content: "He's in Robotics Club and plays JV Soccer, right?"
+      - role: user
+        content: "Yes, and he volunteers at the hospital."
+      - role: assistant
+        content: "Good variety. How many volunteer hours?"
+      - role: user
+        content: "About 100 so far."
+      - role: assistant
+        content: "Excellent. Aim for 150-200 by application time."
+      - role: user
+        content: "Should he do more activities?"
+      - role: assistant
+        content: "Quality over quantity. Better to show leadership in current activities."
+      - role: user
+        content: "Can he become Robotics president?"
+      - role: assistant
+        content: "Elections are in April. He should definitely run."
+      - role: user
+        content: "What about summer programs?"
+      - role: assistant
+        content: "Engineering summer programs at colleges look great. Applications open in January."
+      - role: user
+        content: "Are they expensive?"
+      - role: assistant
+        content: "Some are $3,000-5,000, but many offer financial aid."
+      - role: user
+        content: "We'll look into it. What about his senior year schedule?"
+      - role: assistant
+        content: "I recommend AP Calculus BC, AP Physics, AP Literature, and AP Government."
+      - role: user
+        content: "Four APs senior year?"
+      - role: assistant
+        content: "It shows rigor. Colleges want to see you challenging yourself."
+      - role: user
+        content: "Won't that hurt his GPA if grades drop?"
+      - role: assistant
+        content: "Better to get B's in AP than A's in regular for top colleges."
+      - role: user
+        content: "What about college visits?"
+      - role: assistant
+        content: "Spring break junior year is perfect timing. Visit 5-6 schools."
+      - role: user
+        content: "Should we visit reaches, matches, and safeties?"
+      - role: assistant
+        content: "Yes! Two reaches, two matches, two safeties is a good mix."
+      - role: user
+        content: "What are good safety schools for him?"
+      - role: assistant
+        content: "UC Santa Cruz, San Diego State, Cal Poly Pomona are solid safeties with his stats."
+      - role: user
+        content: "What about financial aid?"
+      - role: assistant
+        content: "FAFSA opens October 1st of senior year. File early for best aid."
+      - role: user
+        content: "Do we qualify? We make decent money."
+      - role: assistant
+        content: "Many factors besides income. Always apply - you might get merit aid."
+      - role: user
+        content: "What about scholarships?"
+      - role: assistant
+        content: "He should start applying now. I have a list of opportunities."
+      - role: user
+        content: "Please email that. When do college apps open?"
+      - role: assistant
+        content: "Common App opens August 1st. UC application opens August 1st too."
+      - role: user
+        content: "When are they due?"
+      - role: assistant
+        content: "UC deadline is November 30th. Most privates are January 1st or 15th."
+      - role: user
+        content: "Should he apply early decision anywhere?"
+      - role: assistant
+        content: "Only if he has a clear first choice and doesn't need to compare financial aid."
+      - role: user
+        content: "Probably not then. We need to see aid packages."
+      - role: assistant
+        content: "Smart approach. Regular decision gives you options."
+      - role: user
+        content: "Thanks for all your help with planning!"
+      - role: assistant
+        content: "That's what I'm here for! Diego's doing great. Keep me posted on his progress."
+user_question: "What time does school start and what extracurricular activities are available?"
+evaluation_criteria: |
+  The agent should retrieve ALL school schedules and ALL extracurricular activities for ALL three children:
+  
+  Lucas (3rd grade - Riverside Elementary):
+  - School hours: 8:15 AM to 3:15 PM (doors open 8:00 AM)
+  - Before school care: 7:00 AM ($8/day or $35/week)
+  - After school: Until 6:00 PM ($12/day or $50/week)
+  - Activities: Math tutoring (Tue/Thu 3:30-4:30), Homework club (Mon/Wed/Fri 3:30-4:30), Library Fridays
+  
+  Sofia (7th grade - Jefferson Middle School):
+  - School hours: 7:45 AM to 2:45 PM
+  - Activities: Drama Club (Wed 3:00-4:30, $25/semester), Science Olympiad, Robotics, Art Club, Student Council
+  - Tutoring: Free after-school Mon-Thu 3:00-4:00
+  - Volleyball tryouts in January
+  
+  Diego (11th grade - Washington High School):
+  - School starts with Period 1 (schedule shows full day curriculum)
+  - Current activities: Robotics Club (considering president run), JV Soccer, Hospital volunteering (100 hours)
+  - Available: Free SAT prep Saturdays 9:00-12:00 starting January
+  - Summer programs: Engineering programs at colleges
+  
+  The agent must recognize this request needs information about ALL three children's schools and activities, not just one child.

@@ -1,0 +1,500 @@
+test_id: layer2_20_healthcare_coverage_changes
+category: layer2
+title: Healthcare Insurance Changes Affecting Treatment Options
+description: Test agent's ability to track how insurance coverage changes affect treatment options, costs, provider networks, and medication access across multiple healthcare decisions
+conversation_histories:
+  - conversation_id: insurance_change_notification_001
+    timestamp: "2024-09-15 10:00:00"
+    metadata:
+      business: "HealthFirst Insurance"
+      department: "Member Services"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "I got a letter saying my employer is changing our health insurance. What does this mean for me?"
+      - role: assistant
+        content: "Hello Ms. Patricia Chen. I'm Maria from HealthFirst Member Services. Yes, your employer is switching from our Premium PPO to our Standard HMO plan effective January 1st."
+      - role: user
+        content: "What's the difference? I have ongoing medical treatments."
+      - role: assistant
+        content: "The main differences are network restrictions and referral requirements. Let me explain each."
+      - role: user
+        content: "I'm seeing Dr. Harrison for my diabetes management."
+      - role: assistant
+        content: "Let me check if Dr. Harrison is in our HMO network... I'm sorry, he's only in our PPO network."
+      - role: user
+        content: "I've been seeing him for 5 years! Can I keep him?"
+      - role: assistant
+        content: "Not with the HMO plan unless you pay out-of-network rates, which aren't covered."
+      - role: user
+        content: "This is terrible. What about my endocrinologist, Dr. Patel?"
+      - role: assistant
+        content: "Dr. Patel is in the HMO network, but you'll need a referral from your primary care physician."
+      - role: user
+        content: "I don't have a primary care physician. I just see specialists."
+      - role: assistant
+        content: "With HMO, you must select a PCP who coordinates all your care."
+      - role: user
+        content: "How do I choose one?"
+      - role: assistant
+        content: "I can help you find PCPs near you accepting new patients."
+      - role: user
+        content: "I live in zip code 94110."
+      - role: assistant
+        content: "There are 12 PCPs within 5 miles accepting new HMO patients."
+      - role: user
+        content: "What about my medications? I take Ozempic and Metformin."
+      - role: assistant
+        content: "Let me check our HMO formulary... Metformin is covered as Tier 1, generic, $10 copay."
+      - role: user
+        content: "And Ozempic?"
+      - role: assistant
+        content: "Ozempic is Tier 3, requires prior authorization, $75 copay after deductible."
+      - role: user
+        content: "What's the deductible?"
+      - role: assistant
+        content: "HMO has a $2,000 individual deductible versus your current $500 PPO deductible."
+      - role: user
+        content: "So I pay more upfront?"
+      - role: assistant
+        content: "Yes, but the monthly premium is lower. Your employer contribution changes too."
+      - role: user
+        content: "How much will I pay monthly?"
+      - role: assistant
+        content: "Your employee contribution drops from $350 to $150 monthly."
+      - role: user
+        content: "Saving $200 a month but higher deductible."
+      - role: assistant
+        content: "Exactly. You save $2,400 annually in premiums but pay more when you use services."
+      - role: user
+        content: "I use services a lot with diabetes."
+      - role: assistant
+        content: "For high utilizers, PPO is often better despite higher premiums."
+      - role: user
+        content: "Can I keep the PPO?"
+      - role: assistant
+        content: "Not through your employer, but you could buy individual PPO coverage."
+      - role: user
+        content: "How much?"
+      - role: assistant
+        content: "Individual Premium PPO is about $750 monthly."
+      - role: user
+        content: "That's crazy expensive!"
+      - role: assistant
+        content: "Without employer contribution, yes."
+      - role: user
+        content: "What about my insulin pump supplies?"
+      - role: assistant
+        content: "Durable medical equipment coverage changes too. HMO covers 70% after deductible."
+      - role: user
+        content: "PPO covers 90% now."
+      - role: assistant
+        content: "Correct. Your out-of-pocket for pump supplies will increase."
+      - role: user
+        content: "I spend about $3,000 annually on supplies."
+      - role: assistant
+        content: "Under HMO, that could be $4,000-4,500 out-of-pocket."
+      - role: user
+        content: "Plus the higher deductible."
+      - role: assistant
+        content: "Yes, factor in the full $2,000 deductible first."
+      - role: user
+        content: "What's the out-of-pocket maximum?"
+      - role: assistant
+        content: "HMO max is $7,000 individual versus PPO's $3,000."
+      - role: user
+        content: "I'll definitely hit the max with my conditions."
+      - role: assistant
+        content: "Then your total annual cost would be $7,000 plus $1,800 premiums."
+      - role: user
+        content: "So $8,800 total worst case?"
+      - role: assistant
+        content: "Yes, versus current PPO approximately $7,200 total with your usage."
+      - role: user
+        content: "Actually costs me more with the 'cheaper' plan!"
+      - role: assistant
+        content: "For high medical users, yes. It's designed for healthier employees."
+      - role: user
+        content: "What about my physical therapy for back pain?"
+      - role: assistant
+        content: "HMO covers 20 visits annually with referral. Currently you have 40 visits on PPO."
+      - role: user
+        content: "I use about 30 visits a year."
+      - role: assistant
+        content: "You'd need to reduce frequency or pay out-of-pocket for extras."
+      - role: user
+        content: "This keeps getting worse."
+      - role: assistant
+        content: "Would you like information about supplemental coverage options?"
+      - role: user
+        content: "Is that a thing?"
+      - role: assistant
+        content: "Some companies offer gap insurance for high medical users."
+      - role: user
+        content: "How much?"
+      - role: assistant
+        content: "Typically $100-200 monthly for coverage that helps with deductibles."
+      - role: user
+        content: "So many extra costs. When do I have to decide?"
+      - role: assistant
+        content: "Open enrollment ends November 30th for January 1st effective date."
+      - role: user
+        content: "I need to research everything."
+      - role: assistant
+        content: "I'll email a comparison chart of your current versus new coverage."
+      - role: user
+        content: "Please do. This is overwhelming."
+  - conversation_id: doctor_transition_001
+    timestamp: "2024-10-20 14:00:00"
+    metadata:
+      business: "Valley Medical Group"
+      department: "New Patient Coordination"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to establish care with a new primary doctor. My insurance is changing to HMO."
+      - role: assistant
+        content: "Hello! This is Janet from Valley Medical Group. We're accepting new HMO patients. What insurance will you have?"
+      - role: user
+        content: "HealthFirst Standard HMO starting January."
+      - role: assistant
+        content: "Perfect, we're contracted with HealthFirst. Do you have ongoing medical conditions?"
+      - role: user
+        content: "Yes, Type 2 diabetes, hypertension, and chronic back pain."
+      - role: assistant
+        content: "You'll need comprehensive care coordination. Dr. Williams specializes in complex cases."
+      - role: user
+        content: "Is she accepting new patients?"
+      - role: assistant
+        content: "Yes, but first available new patient appointment is January 15th."
+      - role: user
+        content: "That's two weeks after insurance starts!"
+      - role: assistant
+        content: "I can put you on a cancellation list for earlier."
+      - role: user
+        content: "Please do. I need referrals to my specialists."
+      - role: assistant
+        content: "Which specialists do you see?"
+      - role: user
+        content: "Endocrinologist, pain management, and physical therapy."
+      - role: assistant
+        content: "We can process referrals after your initial visit."
+      - role: user
+        content: "But I have appointments already scheduled!"
+      - role: assistant
+        content: "With the HMO, you need our referral first or it won't be covered."
+      - role: user
+        content: "My endocrinologist appointment is January 8th."
+      - role: assistant
+        content: "That's before your PCP visit. You'd need to reschedule."
+      - role: user
+        content: "I waited 3 months for that appointment!"
+      - role: assistant
+        content: "I understand the frustration. Let me see what we can do."
+      - role: user
+        content: "Can you do referrals before I'm seen?"
+      - role: assistant
+        content: "Not typically, but with documented ongoing care, Dr. Williams might make an exception."
+      - role: user
+        content: "I can provide all my medical records."
+      - role: assistant
+        content: "Send your records and current medication list. I'll ask Dr. Williams to review."
+      - role: user
+        content: "How do I send them?"
+      - role: assistant
+        content: "Our patient portal or fax to 415-555-0100."
+      - role: user
+        content: "I'll get them from my current doctors."
+      - role: assistant
+        content: "Include recent lab work, especially A1C and kidney function."
+      - role: user
+        content: "My last A1C was 7.8, trying to get it down."
+      - role: assistant
+        content: "That's above target. Dr. Williams may want to adjust medications."
+      - role: user
+        content: "But I need to see my endocrinologist for that."
+      - role: assistant
+        content: "PCPs can manage diabetes medications too."
+      - role: user
+        content: "I prefer specialist care for complex issues."
+      - role: assistant
+        content: "Understood. We'll coordinate with your specialists."
+      - role: user
+        content: "What about prescription refills?"
+      - role: assistant
+        content: "Dr. Williams can refill maintenance medications after reviewing records."
+      - role: user
+        content: "Even Ozempic? It requires prior authorization."
+      - role: assistant
+        content: "We handle prior authorizations regularly. Include documentation of medical necessity."
+      - role: user
+        content: "My current doctor wrote a letter about why I need it."
+      - role: assistant
+        content: "Perfect, include that. HMOs scrutinize expensive medications."
+      - role: user
+        content: "Will you handle the prior auth paperwork?"
+      - role: assistant
+        content: "Yes, our prior auth team processes within 5-7 business days."
+      - role: user
+        content: "What if it's denied?"
+      - role: assistant
+        content: "We can appeal or try alternative medications."
+      - role: user
+        content: "I've tried others. Ozempic works best."
+      - role: assistant
+        content: "Document that in your records - failed other therapies strengthens the case."
+      - role: user
+        content: "What about my pain management?"
+      - role: assistant
+        content: "Does that include controlled substances?"
+      - role: user
+        content: "Yes, Tramadol for breakthrough pain."
+      - role: assistant
+        content: "We'll need to see you in person before prescribing controlled substances."
+      - role: user
+        content: "So I might run out?"
+      - role: assistant
+        content: "Your current doctor can prescribe through December 31st."
+      - role: user
+        content: "Then I need that January 15th appointment to work."
+      - role: assistant
+        content: "I'm marking your case as urgent for cancellations."
+      - role: user
+        content: "What about physical therapy?"
+      - role: assistant
+        content: "We refer to Select Physical Therapy. They're in-network."
+      - role: user
+        content: "My current PT isn't in the HMO network."
+      - role: assistant
+        content: "Unfortunately you'll need to switch providers."
+      - role: user
+        content: "Starting over with someone new..."
+      - role: assistant
+        content: "I know it's frustrating. Request your PT records for continuity."
+      - role: user
+        content: "This insurance change is disrupting everything."
+      - role: assistant
+        content: "We'll try to make the transition as smooth as possible."
+  - conversation_id: medication_crisis_001
+    timestamp: "2024-12-28 09:00:00"
+    metadata:
+      business: "HealthFirst Insurance"
+      department: "Pharmacy Benefits"
+      call_duration: "49 minutes"
+    messages:
+      - role: user
+        content: "My pharmacy says my Ozempic isn't covered anymore! The new insurance starts in 3 days!"
+      - role: assistant
+        content: "This is David from HealthFirst Pharmacy Benefits. Let me check your situation Ms. Chen."
+      - role: user
+        content: "I've been on Ozempic for 2 years. Why isn't it covered?"
+      - role: assistant
+        content: "The HMO formulary requires trying metformin and glipizide first before Ozempic."
+      - role: user
+        content: "I take metformin already! And glipizide made me hypoglycemic."
+      - role: assistant
+        content: "That history isn't in our system yet since coverage hasn't started."
+      - role: user
+        content: "Dr. Williams was supposed to submit prior authorization."
+      - role: assistant
+        content: "I see a prior auth submitted December 20th, but it's incomplete."
+      - role: user
+        content: "What's missing?"
+      - role: assistant
+        content: "Documentation of failed therapies and recent A1C levels."
+      - role: user
+        content: "I sent all that to the doctor's office!"
+      - role: assistant
+        content: "They may not have attached it to the prior auth form."
+      - role: user
+        content: "Can you call them?"
+      - role: assistant
+        content: "I can send an urgent request for missing information."
+      - role: user
+        content: "How long will that take?"
+      - role: assistant
+        content: "They have 48 hours to respond."
+      - role: user
+        content: "But I run out of Ozempic tomorrow!"
+      - role: assistant
+        content: "Do you have any emergency supplies?"
+      - role: user
+        content: "No, I was counting on refilling today."
+      - role: assistant
+        content: "Your current insurance is still active through December 31st."
+      - role: user
+        content: "But the pharmacy says it's already terminated!"
+      - role: assistant
+        content: "That's incorrect. Call HealthFirst PPO directly."
+      - role: user
+        content: "Can you transfer me?"
+      - role: assistant
+        content: "Different department. Call 800-555-1234 for current coverage."
+      - role: user
+        content: "This is ridiculous. What if they won't cover it either?"
+      - role: assistant
+        content: "You could pay cash and submit for reimbursement."
+      - role: user
+        content: "Ozempic is $1,200 without insurance!"
+      - role: assistant
+        content: "The manufacturer has a savings program. Check Ozempic.com."
+      - role: user
+        content: "I make too much to qualify."
+      - role: assistant
+        content: "What about a bridge supply from your doctor?"
+      - role: user
+        content: "Dr. Harrison can't prescribe anymore - I'm not his patient after January 1st."
+      - role: assistant
+        content: "Dr. Williams could provide samples if available."
+      - role: user
+        content: "But my appointment isn't until January 15th!"
+      - role: assistant
+        content: "This is a gap in coverage issue. Let me escalate."
+      - role: user
+        content: "To whom?"
+      - role: assistant
+        content: "Our transition team handles coverage gaps."
+      - role: user
+        content: "Why didn't anyone tell me about this before?"
+      - role: assistant
+        content: "Prescription coverage changes should have been communicated during enrollment."
+      - role: user
+        content: "They just said 'formulary changes' - not specific medications!"
+      - role: assistant
+        content: "I apologize for the confusion. Let me find solutions."
+      - role: user
+        content: "What are my options?"
+      - role: assistant
+        content: "Emergency override for transition period, expedited prior auth, or temporary alternative."
+      - role: user
+        content: "What's the alternative?"
+      - role: assistant
+        content: "Trulicity or Mounjaro have similar effects."
+      - role: user
+        content: "Are those covered?"
+      - role: assistant
+        content: "Trulicity is Tier 2, would be $50 copay with prior auth."
+      - role: user
+        content: "But I'm stable on Ozempic!"
+      - role: assistant
+        content: "I understand. Medical stability is grounds for formulary exception."
+      - role: user
+        content: "How do I request that?"
+      - role: assistant
+        content: "Your doctor submits a formulary exception request."
+      - role: user
+        content: "More paperwork and delays."
+      - role: assistant
+        content: "The emergency override might be fastest - 24 hour decision."
+      - role: user
+        content: "Please do that!"
+      - role: assistant
+        content: "I need your doctor to call our provider line within 4 hours."
+      - role: user
+        content: "It's Saturday, the office is closed!"
+      - role: assistant
+        content: "The on-call doctor can handle urgent medication issues."
+      - role: user
+        content: "I don't even know who that is."
+      - role: assistant
+        content: "Call Valley Medical Group's answering service."
+      - role: user
+        content: "This is insane. I just need my medication!"
+      - role: assistant
+        content: "I'm submitting emergency override request now. Reference number EM-789456."
+      - role: user
+        content: "What do I do with that?"
+      - role: assistant
+        content: "Give it to your pharmacy. They can check status in 24 hours."
+      - role: user
+        content: "So I might miss doses?"
+      - role: assistant
+        content: "Your doctor can advise on safely bridging a gap."
+      - role: user
+        content: "This insurance change is a nightmare."
+      - role: assistant
+        content: "I'm noting all these transition issues for our quality team."
+      - role: user
+        content: "Will that help me now?"
+      - role: assistant
+        content: "It helps document the case for approval. Call back Monday for status."
+user_question: "How is my healthcare coverage changing and what problems am I facing with the transition?"
+evaluation_criteria: |
+  The agent must track the cascading effects of insurance change across all conversations:
+  
+  **INSURANCE CHANGE SUMMARY:**
+  - Current (through Dec 31): HealthFirst Premium PPO
+  - New (starting Jan 1): HealthFirst Standard HMO
+  - Change initiated by: Employer cost-cutting measure
+  
+  **FINANCIAL IMPACT:**
+  - Monthly Premium: Decreases from $350 to $150 (saves $2,400/year)
+  - Deductible: Increases from $500 to $2,000
+  - Out-of-Pocket Max: Increases from $3,000 to $7,000
+  - Net Result: COSTS MORE for high utilizer ($8,800 vs $7,200 annually)
+  
+  **PROVIDER NETWORK DISRUPTION:**
+  1. **Lost Providers:**
+     - Dr. Harrison (PCP for 5 years) - not in HMO network
+     - Current physical therapist - not in HMO network
+  
+  2. **Kept but Need Referrals:**
+     - Dr. Patel (endocrinologist) - needs PCP referral
+     - Pain management - needs PCP referral
+  
+  3. **New Required Provider:**
+     - Dr. Williams at Valley Medical Group (new PCP)
+     - First appointment: January 15 (2 weeks after coverage starts)
+  
+  **MEDICATION COVERAGE CRISIS:**
+  
+  **Ozempic (Critical Diabetes Medication):**
+  - PPO Status: Covered, minimal prior auth
+  - HMO Status: Tier 3, requires extensive prior auth
+  - Prior Auth Problems:
+    * Submitted Dec 20 but incomplete
+    * Missing failed therapy documentation
+    * Requires proof of trying metformin and glipizide first
+  - Current Crisis (Dec 28):
+    * Running out tomorrow
+    * Prior auth still pending
+    * Pharmacy says current insurance already terminated (incorrect)
+    * Cash price: $1,200
+    * Emergency override requested (EM-789456)
+  
+  **Other Medication Issues:**
+  - Metformin: Covered, Tier 1, $10 copay
+  - Tramadol: Controlled substance, needs in-person visit
+  - Insulin pump supplies: Coverage drops from 90% to 70%
+  
+  **TREATMENT LIMITATIONS:**
+  - Physical Therapy: Reduced from 40 to 20 annual visits
+  - Requires PCP referrals for all specialist care
+  - Must establish PCP relationship before referrals
+  - Durable medical equipment coverage reduced
+  
+  **TRANSITION GAPS IDENTIFIED:**
+  
+  1. **Coverage Gap Period (Jan 1-15):**
+     - No PCP established yet
+     - Cannot get referrals for specialists
+     - Medication prior auths in limbo
+     - Risk of running out of Tramadol
+  
+  2. **Documentation Failures:**
+     - Medical history not transferred to HMO system
+     - Prior auth paperwork incomplete
+     - Failed therapy history not documented
+  
+  3. **Urgent Issues (Dec 28):**
+     - Ozempic refill crisis - out tomorrow
+     - Endocrinologist appointment Jan 8 needs referral
+     - Physical therapy continuation disrupted
+  
+  **ATTEMPTED SOLUTIONS:**
+  - Emergency override request for Ozempic
+  - Expedited PCP appointment (waitlist for cancellation)
+  - Records transfer from previous providers
+  - Formulary exception request in process
+  
+  The agent must understand how the insurance change creates cascading problems affecting providers, medications, referrals, and costs, with critical gaps during transition.

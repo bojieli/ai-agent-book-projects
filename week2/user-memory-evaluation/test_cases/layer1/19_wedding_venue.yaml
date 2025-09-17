@@ -1,0 +1,206 @@
+test_id: layer1_19_wedding_venue
+category: layer1
+title: Wedding Venue Booking - Event Package Details and Pricing
+description: Test agent's ability to recall specific wedding package details, guest counts, menu selections, and payment terms from venue consultation
+conversation_histories:
+  - conversation_id: wedding_venue_001
+    timestamp: "2024-11-05 16:00:00"
+    metadata:
+      business: "Grand Oak Manor"
+      department: "Event Planning"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm calling about booking your venue for my wedding next year."
+      - role: assistant
+        content: "Hello! This is Amanda from Grand Oak Manor. Congratulations on your engagement! I'd love to help you plan your special day. What's your name?"
+      - role: user
+        content: "I'm Jennifer Park, and my fiancé is Daniel Kim."
+      - role: assistant
+        content: "Lovely to meet you, Jennifer. When are you planning to get married?"
+      - role: user
+        content: "We're looking at September 14th, 2025."
+      - role: assistant
+        content: "Let me check... Yes, September 14th is available! It's a Sunday. Is that okay?"
+      - role: user
+        content: "Perfect, we specifically wanted a Sunday for the lower rates."
+      - role: assistant
+        content: "Smart choice! Sunday rates are 20% less than Saturday. How many guests are you expecting?"
+      - role: user
+        content: "About 150 people."
+      - role: assistant
+        content: "Wonderful size for our Ballroom. That holds up to 200 guests comfortably."
+      - role: user
+        content: "What does the venue rental include?"
+      - role: assistant
+        content: "The Ballroom rental is $4,500 for Sunday, includes 6 hours, tables, chairs, white linens, and setup/breakdown."
+      - role: user
+        content: "What about ceremony space?"
+      - role: assistant
+        content: "Our Garden Terrace for ceremonies is an additional $1,500, weather permitting, with indoor backup in the Conservatory."
+      - role: user
+        content: "So $6,000 total for spaces?"
+      - role: assistant
+        content: "Correct. Now, do you want us to handle catering?"
+      - role: user
+        content: "Yes, we'd like to keep everything in one place."
+      - role: assistant
+        content: "Perfect. For 150 guests, our packages range from $95 to $165 per person."
+      - role: user
+        content: "What does the middle package include?"
+      - role: assistant
+        content: "Our Signature Package at $125 per person includes cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake."
+      - role: user
+        content: "What appetizer options?"
+      - role: assistant
+        content: "You choose 5 from our list: shrimp cocktail, bruschetta, stuffed mushrooms, cheese display, crudités, mini quiches, spring rolls, or meatballs."
+      - role: user
+        content: "And for the main dinner?"
+      - role: assistant
+        content: "Guests choose between two entrées you pre-select. Popular combinations are filet mignon with salmon, or chicken marsala with vegetarian lasagna."
+      - role: user
+        content: "Let's go with the filet and salmon option."
+      - role: assistant
+        content: "Excellent choices. The filet is 8oz with garlic mashed potatoes, the salmon is herb-crusted with rice pilaf. Both include seasonal vegetables."
+      - role: user
+        content: "What about bar service?"
+      - role: assistant
+        content: "Bar packages are separate. Premium open bar is $45 per person, beer and wine only is $28, or cash bar is free setup with guest purchases."
+      - role: user
+        content: "We'll do beer and wine. So that's $28 per person on top of the $125?"
+      - role: assistant
+        content: "Yes, total $153 per person for food and beverage, which is $22,950 for 150 guests."
+      - role: user
+        content: "Plus the $6,000 venue fee?"
+      - role: assistant
+        content: "Correct, running total of $28,950. There's also 8.5% sales tax and 22% service charge on food and beverage."
+      - role: user
+        content: "How much does that add?"
+      - role: assistant
+        content: "Tax is $1,951, service charge is $5,049, bringing your estimated total to $35,950."
+      - role: user
+        content: "That's higher than I expected. Any way to reduce it?"
+      - role: assistant
+        content: "You could do buffet instead of plated service, that's $108 per person, saves $17 per guest."
+      - role: user
+        content: "How much would that save total?"
+      - role: assistant
+        content: "That would save $2,550 on food, plus reduce tax and service charges. New total would be about $33,000."
+      - role: user
+        content: "Let's stick with plated service but maybe adjust appetizers?"
+      - role: assistant
+        content: "We could do 3 appetizers instead of 5, saves $8 per person, $1,200 total."
+      - role: user
+        content: "That helps. What about the cake?"
+      - role: assistant
+        content: "Included cake serves 150, three tiers, choice of vanilla, chocolate, or red velvet with buttercream."
+      - role: user
+        content: "Can we do different flavors per tier?"
+      - role: assistant
+        content: "Absolutely! Many couples do vanilla, chocolate, and red velvet, one per tier."
+      - role: user
+        content: "Perfect. What about decorations?"
+      - role: assistant
+        content: "Basic centerpieces are $35 each, premium are $75. You'd need 15 tables for 150 guests."
+      - role: user
+        content: "So $525 for basic centerpieces?"
+      - role: assistant
+        content: "Correct. Our florist can also do bridal bouquet for $250, bridesmaids for $75 each."
+      - role: user
+        content: "I have 5 bridesmaids, so that would be $625 total for bouquets?"
+      - role: assistant
+        content: "Yes, $250 for yours plus $375 for bridesmaids."
+      - role: user
+        content: "What about music and DJ?"
+      - role: assistant
+        content: "Our preferred DJ is $1,200 for ceremony and reception, includes all equipment and lighting."
+      - role: user
+        content: "And photography?"
+      - role: assistant
+        content: "We partner with several photographers. Packages range from $2,500 to $5,000 for 8 hours coverage."
+      - role: user
+        content: "Let's budget $3,500 for photography."
+      - role: assistant
+        content: "Good choice. That typically includes two photographers and edited digital images."
+      - role: user
+        content: "So with everything we've discussed?"
+      - role: assistant
+        content: "Venue $6,000, food/beverage for 150 at $145 per person ($125 food + $28 bar - $8 appetizer reduction) is $21,750..."
+      - role: user
+        content: "Wait, I want to keep the 5 appetizers. Let's not reduce those."
+      - role: assistant
+        content: "Okay, back to $153 per person, that's $22,950 for food and beverage."
+      - role: user
+        content: "Plus tax and service?"
+      - role: assistant
+        content: "Right, food/beverage $22,950, tax $1,951, service $5,049, venue $6,000, total $35,950."
+      - role: user
+        content: "Then add decorations, DJ, and photography?"
+      - role: assistant
+        content: "Centerpieces $525, bouquets $625, DJ $1,200, photography $3,500, adds $5,850."
+      - role: user
+        content: "So grand total around $41,800?"
+      - role: assistant
+        content: "Yes, $41,800 for everything we've discussed."
+      - role: user
+        content: "What's your payment schedule?"
+      - role: assistant
+        content: "$5,000 deposit to hold the date, 50% due 6 months before, final balance 2 weeks before."
+      - role: user
+        content: "So $5,000 now, how much in March 2025?"
+      - role: assistant
+        content: "50% of remaining balance after deposit. $41,800 minus $5,000 is $36,800, half is $18,400 due March 14th."
+      - role: user
+        content: "And the rest two weeks before?"
+      - role: assistant
+        content: "Yes, final $18,400 due August 31st, 2025."
+      - role: user
+        content: "Is the deposit refundable?"
+      - role: assistant
+        content: "Refundable if cancelled more than 12 months out. After that, it becomes non-refundable."
+      - role: user
+        content: "So I have until September 2024 to cancel with refund?"
+      - role: assistant
+        content: "Correct, until September 14th, 2024."
+      - role: user
+        content: "What about tastings?"
+      - role: assistant
+        content: "Complimentary tasting for up to 4 people included once you book, scheduled 3-4 months before your wedding."
+      - role: user
+        content: "When would we need to finalize menu choices?"
+      - role: assistant
+        content: "Menu selections due 60 days before, final headcount 14 days before."
+      - role: user
+        content: "Perfect. Can you email me this quote?"
+      - role: assistant
+        content: "Of course! What's your email?"
+      - role: user
+        content: "jpark.wedding@email.com"
+      - role: assistant
+        content: "I'll send a detailed proposal within 2 hours. It's valid for 14 days."
+      - role: user
+        content: "Wonderful. Thank you so much, Amanda!"
+      - role: assistant
+        content: "My pleasure, Jennifer! I hope we can be part of your special day. Feel free to call with any questions!"
+user_question: "What was the per-person cost breakdown and the three payment installments for my wedding?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Per-person cost ($153 total):
+  - Food (Signature Package): $125
+  - Beer and wine bar: $28
+  - Total: $153 per person
+  
+  For 150 guests: $22,950
+  
+  Payment schedule:
+  - Deposit (upon booking): $5,000
+  - 50% of remaining (March 14, 2025): $18,400
+  - Final balance (August 31, 2025): $18,400
+  - Total: $41,800
+  
+  Additional charges on food/beverage:
+  - Sales tax (8.5%): $1,951
+  - Service charge (22%): $5,049
+  
+  The response should include the per-person breakdown and all three payment amounts with dates.

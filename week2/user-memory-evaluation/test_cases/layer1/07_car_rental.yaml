@@ -1,0 +1,224 @@
+test_id: layer1_07_car_rental
+category: layer1
+title: Car Rental for Business Trip - Reservation Details
+description: Test agent's ability to recall car rental confirmation and vehicle details from comprehensive booking call
+conversation_histories:
+- conversation_id: car_rental_001
+  timestamp: '2024-11-14 10:15:00'
+  metadata:
+    business: Enterprise Rent-A-Car
+    department: Reservations
+    call_duration: 44 minutes
+  messages:
+  - role: user
+    content: Hello, I need to rent a car for a business trip to Phoenix next week.
+  - role: assistant
+    content: Good morning! Thank you for calling Enterprise. I'm Brian, and I'll help you with your rental today. When will
+      you need the vehicle?
+  - role: user
+    content: I'm flying in Tuesday morning, November 21st, and leaving Friday evening, November 24th.
+  - role: assistant
+    content: Perfect, so pickup on the 21st and return on the 24th. Will you be picking up at Phoenix Sky Harbor Airport?
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: And returning to the same location?
+  - role: user
+    content: Yes, same airport.
+  - role: assistant
+    content: What time does your flight arrive on Tuesday?
+  - role: user
+    content: I land at 9:45 AM.
+  - role: assistant
+    content: So you'll probably be at our counter around 10:30 AM after getting your luggage?
+  - role: user
+    content: Yes, that sounds about right.
+  - role: assistant
+    content: And your return flight on Friday?
+  - role: user
+    content: My flight is at 6:30 PM, so I'd like to return the car around 4:30 PM.
+  - role: assistant
+    content: That works perfectly. What size vehicle are you looking for?
+  - role: user
+    content: I'll be doing a lot of driving to client sites. Something comfortable, maybe midsize or full-size.
+  - role: assistant
+    content: I have several options. Our midsize category includes cars like the Toyota Camry or Nissan Altima at $52 per
+      day.
+  - role: user
+    content: What about full-size?
+  - role: assistant
+    content: Full-size would be something like a Chevrolet Malibu or Chrysler 300 at $58 per day.
+  - role: user
+    content: Not much difference in price. What about gas mileage?
+  - role: assistant
+    content: The midsize typically gets about 32 MPG combined, the full-size around 28 MPG.
+  - role: user
+    content: I'll probably drive 500 miles total. The midsize should be fine.
+  - role: assistant
+    content: Good choice. Now, are you an Enterprise Plus member?
+  - role: user
+    content: No, I don't think so.
+  - role: assistant
+    content: Would you like to join? It's free and you earn points toward free rental days.
+  - role: user
+    content: Sure, why not.
+  - role: assistant
+    content: Great! I'll need your full name as it appears on your driver's license.
+  - role: user
+    content: It's Gregory Alan Mitchell.
+  - role: assistant
+    content: Thank you, Mr. Mitchell. Date of birth?
+  - role: user
+    content: May 12th, 1981.
+  - role: assistant
+    content: Email address for your account?
+  - role: user
+    content: gmitchell81@businessmail.com
+  - role: assistant
+    content: Phone number?
+  - role: user
+    content: 602-555-7734.
+  - role: assistant
+    content: Current home address?
+  - role: user
+    content: 5521 North Central Avenue, Phoenix, Arizona, 85012.
+  - role: assistant
+    content: Oh, you're local to Phoenix?
+  - role: user
+    content: No, sorry, I'm getting confused. I live in Dallas. 7823 Preston Road, Dallas, Texas, 75252.
+  - role: assistant
+    content: No problem! Dallas address noted. Your Enterprise Plus number is EP-9982734. You'll earn about 400 points on
+      this rental.
+  - role: user
+    content: How many points do I need for a free day?
+  - role: assistant
+    content: You need 6,000 points for a free day, so this gets you started.
+  - role: user
+    content: Okay, good to know. Now, about insurance - what do you offer?
+  - role: assistant
+    content: We have several coverage options. The basic damage waiver is $29 per day and covers the vehicle if it's damaged
+      or stolen.
+  - role: user
+    content: My company credit card includes rental car insurance. I'll skip it.
+  - role: assistant
+    content: That's fine. Just make sure you're using that card for the rental. What about personal accident insurance?
+  - role: user
+    content: No, I have good health insurance.
+  - role: assistant
+    content: Understood. Would you like to add roadside assistance for $6.99 per day?
+  - role: user
+    content: Is that really necessary?
+  - role: assistant
+    content: It covers flat tires, lockouts, jump starts, and towing. In an unfamiliar city, some people find it worthwhile.
+  - role: user
+    content: You know what, add it. Better safe than sorry.
+  - role: assistant
+    content: Added. Now, would you like to prepay for gas? You can return it at any fuel level for $3.89 per gallon.
+  - role: user
+    content: What's gas running in Phoenix right now?
+  - role: assistant
+    content: Around $3.50 to $3.70 per gallon currently.
+  - role: user
+    content: So your prepay is actually more expensive. I'll just fill it up myself.
+  - role: assistant
+    content: That's usually the more economical choice. Would you like GPS navigation for $13.99 per day?
+  - role: user
+    content: No, I'll use my phone.
+  - role: assistant
+    content: Alright. Do you need any special equipment like a car seat or ski rack?
+  - role: user
+    content: No, nothing like that.
+  - role: assistant
+    content: Perfect. Let me calculate your total. Four days at $52 per day is $208, plus roadside assistance at $6.99 per
+      day is $27.96.
+  - role: user
+    content: So about $236 before taxes?
+  - role: assistant
+    content: Exactly $235.96 before taxes and fees. With Arizona taxes and airport fees, your estimated total is $287.42.
+  - role: user
+    content: That's within my company's daily allowance. Let's book it.
+  - role: assistant
+    content: Excellent. I'll need a credit card to hold the reservation.
+  - role: user
+    content: I'll use my corporate AmEx. It's 3782-445589-31004.
+  - role: assistant
+    content: And the expiration date?
+  - role: user
+    content: March 2026.
+  - role: assistant
+    content: Name on the card?
+  - role: user
+    content: It says Gregory Mitchell, TechCorp Inc.
+  - role: assistant
+    content: Perfect. Your reservation is confirmed. Your confirmation number is E7739482M.
+  - role: user
+    content: Let me write that down... E7739482M?
+  - role: assistant
+    content: That's correct. E as in Enterprise, 7739482M as in Mitchell.
+  - role: user
+    content: Got it. Where exactly do I go when I land?
+  - role: assistant
+    content: Follow signs to the Rental Car Center. You'll take the PHX Sky Train from your terminal - it's free and runs
+      every 3-5 minutes.
+  - role: user
+    content: How long does that take?
+  - role: assistant
+    content: About 5-7 minutes. The Rental Car Center is the last stop, you can't miss it.
+  - role: user
+    content: And Enterprise is in that building?
+  - role: assistant
+    content: Yes, we're on the first floor. With Enterprise Plus, you can skip the counter and go directly to the Plus aisle
+      to choose your car.
+  - role: user
+    content: Oh, that's convenient! Any car in that aisle?
+  - role: assistant
+    content: Any car in the Midsize section of the Plus aisle. Your name will be on the board with your aisle number.
+  - role: user
+    content: What if I want to upgrade when I'm there?
+  - role: assistant
+    content: You can choose from a higher category if available. You'd just pay the difference at the exit booth.
+  - role: user
+    content: Good to know. What documents do I need?
+  - role: assistant
+    content: Just your driver's license and the credit card you're using for payment.
+  - role: user
+    content: The same AmEx I just gave you?
+  - role: assistant
+    content: Yes, that's perfect. The card needs to match the driver's name.
+  - role: user
+    content: It does. Oh, one more thing - I might have a colleague join me. Can I add a second driver?
+  - role: assistant
+    content: Yes, additional drivers are $15 per day in Arizona. They'll need to show their license at pickup.
+  - role: user
+    content: Actually, she's also a TechCorp employee. Does that matter?
+  - role: assistant
+    content: Let me check if TechCorp has a corporate account with us... Yes! TechCorp employees get free additional drivers.
+      Just mention the corporate code TC-8847 at pickup.
+  - role: user
+    content: Oh excellent! I didn't know we had that.
+  - role: assistant
+    content: Yes, and actually that code also gives you a 10% discount. Let me apply that to your reservation... Your new
+      total is $258.68.
+  - role: user
+    content: Even better! This is great.
+  - role: assistant
+    content: I'm glad I could help save you some money. Is there anything else you need?
+  - role: user
+    content: Can I get a receipt emailed to me?
+  - role: assistant
+    content: Yes, we'll email your final receipt to gmitchell81@businessmail.com when you return the car.
+  - role: user
+    content: Perfect. I think that's everything.
+  - role: assistant
+    content: 'Wonderful! Just to confirm: Gregory Mitchell, Enterprise Plus member EP-9982734, picking up a midsize car at
+      Phoenix Sky Harbor on November 21st around 10:30 AM, returning November 24th at 4:30 PM. Confirmation E7739482M, total
+      $258.68 with corporate discount. You''re all set!'
+  - role: user
+    content: That's all correct. Thanks so much, Brian!
+  - role: assistant
+    content: You're very welcome, Mr. Mitchell. Have a great trip to Phoenix!
+user_question: What's my Enterprise confirmation number and what corporate discount code should I mention? I want to make
+  sure I get the discount.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide both the rental confirmation number E7739482M and the TechCorp corporate discount code TC-8847 from the car rental conversation. The response must include the exact confirmation number with all characters in the correct sequence, as well as the corporate code that provides the 10% discount. The agent should demonstrate clear recall of both pieces of information that are essential for the user to receive the negotiated discount rate. The agent may also mention that the corporate code is associated with TechCorp or reference the 10% discount it provides. The response must not confuse these codes with other identifiers mentioned such as the Enterprise Plus member number EP-9982734.
+expected_behavior: The agent should provide confirmation E7739482M and corporate code TC-8847 for the TechCorp discount

@@ -1,0 +1,254 @@
+test_id: layer1_04_airline_booking
+category: layer1
+title: Airline Reservation - Flight Details and Passenger Information
+description: Test agent's ability to recall specific flight booking details, seat assignments, and passenger preferences from
+  detailed reservation call
+conversation_histories:
+- conversation_id: airline_booking_001
+  timestamp: '2024-11-10 16:30:00'
+  metadata:
+    business: Pacific Airways
+    department: Reservations
+    call_duration: 48 minutes
+  messages:
+  - role: user
+    content: Hi, I need to book a round-trip flight from Seattle to Miami for a business conference.
+  - role: assistant
+    content: Good afternoon! Thank you for choosing Pacific Airways. I'm Marcus, and I'll help you with your reservation today.
+      When are you looking to travel?
+  - role: user
+    content: I need to fly out on December 5th and return on December 9th.
+  - role: assistant
+    content: Let me search for available flights. Do you have a preferred time of day for departure?
+  - role: user
+    content: I'd prefer a morning flight on the 5th, and afternoon or evening for the return.
+  - role: assistant
+    content: Perfect. And will this be for one passenger?
+  - role: user
+    content: Yes, just myself.
+  - role: assistant
+    content: May I have your full name as it appears on your ID?
+  - role: user
+    content: It's Rebecca Anne Sullivan.
+  - role: assistant
+    content: Thank you, Ms. Sullivan. I have several options for December 5th. We have flight PA 234 departing Seattle at
+      7:15 AM, arriving Miami at 3:45 PM with one stop in Dallas.
+  - role: user
+    content: How long is the layover in Dallas?
+  - role: assistant
+    content: It's a 1 hour and 30-minute layover.
+  - role: user
+    content: That's cutting it a bit close. What else do you have?
+  - role: assistant
+    content: There's PA 567 leaving at 9:30 AM, arriving at 6:20 PM with a stop in Phoenix. The layover is 2 hours and 15
+      minutes.
+  - role: user
+    content: That sounds better. What about non-stop flights?
+  - role: assistant
+    content: We have one non-stop, PA 890, departing at 10:45 AM and arriving at 7:10 PM. It's our premium route, so it's
+      about $200 more.
+  - role: user
+    content: What's the price difference exactly?
+  - role: assistant
+    content: The flight with the Phoenix connection is $487 in economy, and the non-stop is $685 in economy.
+  - role: user
+    content: And what about business class?
+  - role: assistant
+    content: For the non-stop, business class is $1,450. For the Phoenix connection, it's $980.
+  - role: user
+    content: Let's go with economy on the non-stop. I value my time more than the extra cost.
+  - role: assistant
+    content: Excellent choice. That's PA 890 on December 5th, departing Seattle at 10:45 AM. Now for your return on December
+      9th?
+  - role: user
+    content: What are the afternoon or evening options?
+  - role: assistant
+    content: I have PA 891, non-stop, departing Miami at 2:35 PM, arriving Seattle at 5:55 PM.
+  - role: user
+    content: That's perfect actually.
+  - role: assistant
+    content: Great! That's also $685 for economy. Would you like to select your seats now?
+  - role: user
+    content: Yes, please. I prefer an aisle seat.
+  - role: assistant
+    content: For the outbound flight, I have aisle seats available in rows 12, 18, 24, and 31. Do you have a preference?
+  - role: user
+    content: I'd like to be closer to the front. Row 12 sounds good.
+  - role: assistant
+    content: Row 12, seat C is available. It's an aisle seat on the right side of the aircraft. Would that work?
+  - role: user
+    content: Perfect.
+  - role: assistant
+    content: And for the return flight?
+  - role: user
+    content: Something similar if possible.
+  - role: assistant
+    content: I can put you in row 14, seat C, also an aisle on the right side.
+  - role: user
+    content: That works great.
+  - role: assistant
+    content: Wonderful. Now, are you a member of our Pacific Rewards program?
+  - role: user
+    content: No, I'm not.
+  - role: assistant
+    content: Would you like to join? It's free and you'll earn miles on this trip.
+  - role: user
+    content: Sure, why not.
+  - role: assistant
+    content: Excellent. I'll need your date of birth for the membership.
+  - role: user
+    content: January 18th, 1982.
+  - role: assistant
+    content: And your email address?
+  - role: user
+    content: rsullivan82@techmail.com
+  - role: assistant
+    content: Phone number?
+  - role: user
+    content: 206-555-4412.
+  - role: assistant
+    content: And your mailing address?
+  - role: user
+    content: 8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101.
+  - role: assistant
+    content: Perfect. Your Pacific Rewards number is PR-4478829. You'll earn about 5,400 miles from this round trip.
+  - role: user
+    content: Great. What about baggage? What's included?
+  - role: assistant
+    content: With your economy ticket, you get one personal item and one carry-on included. Checked bags are $35 for the first
+      bag, $45 for the second.
+  - role: user
+    content: I'll probably need to check one bag.
+  - role: assistant
+    content: Would you like to pre-pay for it now? It saves you $5 per bag.
+  - role: user
+    content: So it would be $30 instead of $35?
+  - role: assistant
+    content: Correct, $30 each way if you pre-pay now, so $60 total for round trip.
+  - role: user
+    content: Yes, let's do that.
+  - role: assistant
+    content: Added. Now, do you have any dietary restrictions for the in-flight meal service?
+  - role: user
+    content: I'm vegetarian.
+  - role: assistant
+    content: I've noted that. We'll have a vegetarian option available for you. Do you have TSA PreCheck or Global Entry?
+  - role: user
+    content: Yes, I have TSA PreCheck. The number is 842756931.
+  - role: assistant
+    content: I've added that to your reservation. It will appear on your boarding pass. Now, how would you like to pay for
+      this reservation?
+  - role: user
+    content: I'll use my Visa card.
+  - role: assistant
+    content: Ready when you are.
+  - role: user
+    content: The number is 4532-8876-9901-3345.
+  - role: assistant
+    content: And the expiration date?
+  - role: user
+    content: 10/26.
+  - role: assistant
+    content: The CVV code?
+  - role: user
+    content: '338.'
+  - role: assistant
+    content: And the billing zip code?
+  - role: user
+    content: 98101, same as my address.
+  - role: assistant
+    content: Is the name on the card Rebecca A Sullivan?
+  - role: user
+    content: Yes, that's correct.
+  - role: assistant
+    content: Perfect. Your total is $1,430 - that's two flights at $685 each plus $60 for checked baggage. Processing now...
+  - role: user
+    content: Sounds right.
+  - role: assistant
+    content: Your payment has been approved. Your confirmation number is PAC-778K4M.
+  - role: user
+    content: Let me get that... PAC-778K4M?
+  - role: assistant
+    content: That's correct. I'm emailing your itinerary to rsullivan82@techmail.com right now.
+  - role: user
+    content: Perfect. Oh, what about seat upgrades? Is there extra legroom available?
+  - role: assistant
+    content: Yes, we have Comfort Plus seats with 4 extra inches of legroom. Would you like to upgrade?
+  - role: user
+    content: How much is it?
+  - role: assistant
+    content: It's $89 per flight segment, so $178 for your round trip.
+  - role: user
+    content: I'll pass for now. Can I upgrade later if I change my mind?
+  - role: assistant
+    content: Absolutely. You can upgrade anytime before check-in through our website or mobile app.
+  - role: user
+    content: Good to know. What time should I arrive at the airport?
+  - role: assistant
+    content: For domestic flights, we recommend arriving 2 hours before departure. So by 8:45 AM for your December 5th flight.
+  - role: user
+    content: And I can check in online?
+  - role: assistant
+    content: Yes, online check-in opens 24 hours before departure. You can use our mobile app or website.
+  - role: user
+    content: Can I get my boarding pass on my phone?
+  - role: assistant
+    content: Yes, mobile boarding passes are available. You can also add them to your Apple Wallet or Google Pay.
+  - role: user
+    content: Perfect. What terminal does Pacific Airways use at SeaTac?
+  - role: assistant
+    content: We operate from Terminal B at Seattle-Tacoma International.
+  - role: user
+    content: And in Miami?
+  - role: assistant
+    content: We're in Terminal D at Miami International.
+  - role: user
+    content: What's your cancellation policy?
+  - role: assistant
+    content: Economy tickets are non-refundable, but you can change your flight for a $200 change fee plus any fare difference.
+  - role: user
+    content: What if I need to cancel for medical reasons?
+  - role: assistant
+    content: With a doctor's note, we can provide a credit for future travel valid for one year, minus a $100 processing fee.
+  - role: user
+    content: Hopefully I won't need that. What about travel insurance?
+  - role: assistant
+    content: We partner with TravelGuard. Would you like information about coverage?
+  - role: user
+    content: What does it cost?
+  - role: assistant
+    content: For your trip, comprehensive coverage would be $89. It covers trip cancellation, medical emergencies, lost baggage,
+      and delays.
+  - role: user
+    content: I'll think about it. Can I add it later?
+  - role: assistant
+    content: You have up to 14 days from today to add it and still get pre-existing condition coverage.
+  - role: user
+    content: Okay, I'll decide soon. Oh, one more thing - can I use the lounge in Seattle?
+  - role: assistant
+    content: Pacific Lounge access requires business class or Gold status in our rewards program. Day passes are available
+      for $59.
+  - role: user
+    content: Maybe on the way back. Is there anything else I should know?
+  - role: assistant
+    content: Just remember to check in 24 hours before each flight. Your record locator for all airport services is PAC-778K4M.
+      Both flights are on Boeing 737-900 aircraft with WiFi available for purchase.
+  - role: user
+    content: How much is the WiFi?
+  - role: assistant
+    content: It's $8 for one hour, $15 for the full flight on domestic routes.
+  - role: user
+    content: Good to know. I think that covers everything.
+  - role: assistant
+    content: 'Wonderful! To summarize: Rebecca Sullivan flying Pacific Airways on December 5th, PA 890 from Seattle at 10:45
+      AM to Miami, seat 12C. Returning December 9th, PA 891 at 2:35 PM, seat 14C. Confirmation PAC-778K4M. Total charged:
+      $1,430. You''re all set!'
+  - role: user
+    content: Perfect, thank you so much Marcus!
+  - role: assistant
+    content: My pleasure, Ms. Sullivan. Have a wonderful trip to Miami, and thank you for choosing Pacific Airways!
+user_question: Can you remind me of my flight confirmation number and what seats I selected? I need to add it to my calendar.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the confirmation number PAC-778K4M along with both seat assignments from the flight booking conversation - seat 12C for the outbound flight and seat 14C for the return flight. The response must demonstrate precise recall of both the confirmation code and the specific seats selected for each flight. The agent may also helpfully mention that both are aisle seats as discussed during booking, or reference the specific flight numbers (PA 890 outbound and PA 891 return). The agent must not confuse the confirmation number with other codes mentioned like the rewards number or mix up the seat assignments between the two flights.
+expected_behavior: The agent should provide confirmation number PAC-778K4M and specify seat 12C for the outbound flight and
+  seat 14C for the return flight

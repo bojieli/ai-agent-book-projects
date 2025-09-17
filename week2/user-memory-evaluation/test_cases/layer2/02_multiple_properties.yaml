@@ -1,0 +1,438 @@
+test_id: layer2_02_multiple_properties
+category: layer2
+title: Multiple Properties - Home and Rental Property Disambiguation
+description: Test agent's ability to disambiguate between multiple properties when user makes vague requests about "the house"
+  or "property insurance"
+conversation_histories:
+- conversation_id: primary_home_insurance_001
+  timestamp: '2024-09-12 11:00:00'
+  metadata:
+    business: Allstate Insurance
+    department: Homeowners Insurance
+    call_duration: 62 minutes
+  messages:
+  - role: user
+    content: Hi, I just bought a house and need to get homeowners insurance.
+  - role: assistant
+    content: Congratulations on your new home! I'm Tom from Allstate. I'll help you get the right coverage. What's the address
+      of your new home?
+  - role: user
+    content: It's 2847 Maple Drive in Naperville, Illinois, 60540.
+  - role: assistant
+    content: Beautiful area! Tell me about the house - when was it built?
+  - role: user
+    content: It was built in 1998. It's a two-story colonial.
+  - role: assistant
+    content: How many square feet?
+  - role: user
+    content: About 3,200 square feet, four bedrooms, three and a half baths.
+  - role: assistant
+    content: Sounds lovely. What did you pay for it, if you don't mind me asking?
+  - role: user
+    content: We paid $485,000.
+  - role: assistant
+    content: And when is your closing date?
+  - role: user
+    content: We close on September 20th, so next week.
+  - role: assistant
+    content: Perfect timing. Is this your primary residence?
+  - role: user
+    content: Yes, we're moving from our condo in Chicago.
+  - role: assistant
+    content: Great. Tell me about the roof - what type and how old?
+  - role: user
+    content: It's architectural shingles, replaced in 2019.
+  - role: assistant
+    content: That's good, relatively new. What about the heating and cooling systems?
+  - role: user
+    content: Forced air heating and central AC. The furnace is from 2018, AC from 2020.
+  - role: assistant
+    content: Excellent, updated systems. Any fireplace?
+  - role: user
+    content: Yes, a gas fireplace in the family room.
+  - role: assistant
+    content: Is there a basement?
+  - role: user
+    content: Yes, full finished basement with a rec room and office.
+  - role: assistant
+    content: Is it a walkout basement?
+  - role: user
+    content: No, just regular basement with small windows.
+  - role: assistant
+    content: Got it. Any pool or hot tub?
+  - role: user
+    content: No pool, but there's a hot tub on the back deck that we're keeping.
+  - role: assistant
+    content: We'll need to note that for liability. How old is the hot tub?
+  - role: user
+    content: The sellers said it's about 3 years old, a 6-person tub.
+  - role: assistant
+    content: Is the deck attached to the house?
+  - role: user
+    content: Yes, it's a large wood deck, probably 20 by 15 feet.
+  - role: assistant
+    content: Any other structures on the property? Shed, detached garage?
+  - role: user
+    content: There's a shed in the backyard, maybe 10 by 12.
+  - role: assistant
+    content: What about the attached garage?
+  - role: user
+    content: Oh yes, two-car attached garage.
+  - role: assistant
+    content: Now, let me ask about claims history. Any claims on this property that you know of?
+  - role: user
+    content: The seller disclosed one claim for wind damage to the roof in 2017, which is why they replaced it in 2019.
+  - role: assistant
+    content: Thanks for letting me know. Do you have any dogs?
+  - role: user
+    content: We have a golden retriever, very friendly.
+  - role: assistant
+    content: Golden retrievers are fine. No breed restrictions for them. Any trampolines?
+  - role: user
+    content: No, but we're thinking of getting a swing set for the kids.
+  - role: assistant
+    content: Swing sets are fine. Now, for coverage amounts. I'd recommend dwelling coverage of at least $380,000 for rebuild
+      cost.
+  - role: user
+    content: Why not the full $485,000?
+  - role: assistant
+    content: That's your purchase price including land. We insure the structure replacement cost. Land doesn't burn down.
+      $380,000 should fully rebuild your home.
+  - role: user
+    content: That makes sense.
+  - role: assistant
+    content: For personal property, I suggest $285,000, which is 75% of dwelling coverage.
+  - role: user
+    content: Is that enough? We have some nice furniture and electronics.
+  - role: assistant
+    content: It should be, but do you have any high-value items? Jewelry, art, collectibles?
+  - role: user
+    content: My wife has an engagement ring worth about $12,000.
+  - role: assistant
+    content: Standard policies limit jewelry to $2,500. You'd want a rider for the ring. It's about $120 per year for $12,000
+      coverage.
+  - role: user
+    content: Yes, let's add that.
+  - role: assistant
+    content: Good choice. For liability, I recommend $500,000, especially with the hot tub.
+  - role: user
+    content: What does that cover?
+  - role: assistant
+    content: If someone gets injured on your property and sues. Hot tubs increase risk.
+  - role: user
+    content: Makes sense. What about deductibles?
+  - role: assistant
+    content: Standard is $1,000, but you can go to $2,500 to save on premium.
+  - role: user
+    content: What's the savings?
+  - role: assistant
+    content: With $1,000 deductible, your annual premium is $1,847. With $2,500, it's $1,592.
+  - role: user
+    content: Let's do the $1,000 deductible. I don't want a big out-of-pocket if something happens.
+  - role: assistant
+    content: Understood. Do you want water backup coverage? It covers sewer or drain backups.
+  - role: user
+    content: Is that common in Naperville?
+  - role: assistant
+    content: We see claims occasionally, especially with older homes. It's $75 per year for $10,000 coverage.
+  - role: user
+    content: Yes, add it. Better safe than sorry.
+  - role: assistant
+    content: Smart. Your total annual premium is $2,042. Would you like to pay in full or monthly?
+  - role: user
+    content: What's the difference?
+  - role: assistant
+    content: Paid in full saves you $84. Monthly is $178 for 12 months.
+  - role: user
+    content: I'll pay in full.
+  - role: assistant
+    content: Excellent. Your policy number will be HO-558847291.
+  - role: user
+    content: And this starts September 20th?
+  - role: assistant
+    content: Yes, effective 12:01 AM on September 20th. I'll email the binder for your closing.
+  - role: user
+    content: Perfect, my email is danielpark85@email.com
+  - role: assistant
+    content: Got it. Oh, what's your full name for the policy?
+  - role: user
+    content: Daniel and Sarah Park.
+  - role: assistant
+    content: Thank you. I'm sending the insurance binder now. Your mortgage company will need this.
+  - role: user
+    content: It's First National Bank, should I have them contact you?
+  - role: assistant
+    content: I'll need their information to list them as mortgagee.
+  - role: user
+    content: I have it here... First National Bank, loan number 445872291.
+  - role: assistant
+    content: Perfect. They're listed on the policy. Now, let me ask about your current condo - do you have insurance on that?
+  - role: user
+    content: Yes, through State Farm, but we're canceling once we move.
+  - role: assistant
+    content: Make sure to time that cancellation right. You want overlap, not a gap.
+  - role: user
+    content: Good point. When should I cancel?
+  - role: assistant
+    content: Once you've completely moved out and handed over the keys. Maybe end of September?
+  - role: user
+    content: That sounds right. Oh, what about flood insurance?
+  - role: assistant
+    content: Your property is in Zone X - minimal flood risk. Not required by your lender.
+  - role: user
+    content: Should I get it anyway?
+  - role: assistant
+    content: For Zone X, it's about $450 per year. It's peace of mind, but statistically very low risk.
+  - role: user
+    content: I'll skip it for now. What about an umbrella policy?
+  - role: assistant
+    content: With your home value and hot tub, I'd recommend it. $1 million umbrella is about $200 per year.
+  - role: user
+    content: What does that cover?
+  - role: assistant
+    content: Liability beyond your home and auto limits. Protects your assets if you're sued.
+  - role: user
+    content: Let me think about that. Can I add it later?
+  - role: assistant
+    content: Absolutely. Just call us when you're ready.
+  - role: user
+    content: What about home warranty? The seller offered to pay for one year.
+  - role: assistant
+    content: That's different from insurance. Home warranty covers appliance and system repairs.
+  - role: user
+    content: Oh right, that's through American Home Shield.
+  - role: assistant
+    content: Good company. That covers what insurance doesn't - wear and tear issues.
+  - role: user
+    content: Speaking of wear and tear, what if my roof needs replacement in 10 years?
+  - role: assistant
+    content: Normal aging isn't covered. But if a storm damages it, we'd cover replacement minus depreciation.
+  - role: user
+    content: How does depreciation work?
+  - role: assistant
+    content: For roofs, we depreciate about 5% per year after 10 years old. Your roof is 5 years old, so full replacement
+      value now.
+- conversation_id: rental_property_insurance_002
+  timestamp: '2024-10-28 15:30:00'
+  metadata:
+    business: Allstate Insurance
+    department: Landlord Insurance
+    call_duration: 56 minutes
+  messages:
+  - role: user
+    content: Hi, I need to get insurance for a rental property I just bought.
+  - role: assistant
+    content: Good afternoon! I'm Michelle from Allstate. I can help you with landlord insurance. Is this your first rental
+      property?
+  - role: user
+    content: Yes, first time being a landlord.
+  - role: assistant
+    content: Congratulations on your investment! Where is the rental property located?
+  - role: user
+    content: It's at 1156 Oak Street, Chicago, Illinois, 60614.
+  - role: assistant
+    content: Lincoln Park area, nice location for rentals. Tell me about the property.
+  - role: user
+    content: It's a three-flat building. I'll live in one unit and rent the other two.
+  - role: assistant
+    content: Oh, owner-occupied multi-family. That actually gets you better rates. When was it built?
+  - role: user
+    content: 1925, but it's been renovated.
+  - role: assistant
+    content: What renovations were done?
+  - role: user
+    content: New electric in 2020, new plumbing in 2021, and I'm updating the kitchens now.
+  - role: assistant
+    content: Great updates. What about the roof?
+  - role: user
+    content: Flat rubber roof, replaced in 2018.
+  - role: assistant
+    content: Good. How many square feet total?
+  - role: user
+    content: Each unit is about 1,100 square feet, so 3,300 total.
+  - role: assistant
+    content: And purchase price?
+  - role: user
+    content: I paid $675,000.
+  - role: assistant
+    content: Which unit will you occupy?
+  - role: user
+    content: The first floor unit.
+  - role: assistant
+    content: Are the other units currently rented?
+  - role: user
+    content: The second floor is rented. Third floor is vacant, I'm renovating it.
+  - role: assistant
+    content: What's the rent for the second floor?
+  - role: user
+    content: They pay $1,850 per month.
+  - role: assistant
+    content: Good rental income. What will you charge for the third floor?
+  - role: user
+    content: Probably $2,000 after renovation.
+  - role: assistant
+    content: Do you have a lease with the current tenant?
+  - role: user
+    content: Yes, they have 8 months left on their lease.
+  - role: assistant
+    content: Good. For owner-occupied multi-family, we need different coverage. You need a homeowners policy for your unit
+      and landlord coverage for the rentals.
+  - role: user
+    content: That's confusing. I thought one policy would cover everything.
+  - role: assistant
+    content: It's actually one policy but with different coverage sections. Your unit gets full homeowners coverage, rental
+      units get dwelling and liability.
+  - role: user
+    content: Oh wait, I already have homeowners insurance on my house in Naperville.
+  - role: assistant
+    content: That's fine, this is separate. Are you Daniel Park?
+  - role: user
+    content: Yes! You helped me with my Naperville house last month!
+  - role: assistant
+    content: Oh, I thought the name sounded familiar! Policy HO-558847291, right?
+  - role: user
+    content: That's right.
+  - role: assistant
+    content: Great, we can bundle these for additional savings. So this Chicago property is an investment?
+  - role: user
+    content: Well, we're actually planning to move into it eventually.
+  - role: assistant
+    content: When are you planning to move?
+  - role: user
+    content: Maybe in a year or two. My wife wants to be back in the city.
+  - role: assistant
+    content: That changes things. Will you keep the Naperville house?
+  - role: user
+    content: We might rent it out then.
+  - role: assistant
+    content: Interesting flip! Well, for now, let's set up the Chicago property correctly.
+  - role: user
+    content: Yes, I need insurance ASAP. I close tomorrow.
+  - role: assistant
+    content: Tomorrow! We can do that. Let me get the details. Each unit has its own entrance?
+  - role: user
+    content: Yes, separate entrances and utilities.
+  - role: assistant
+    content: That's good for insurance. What about parking?
+  - role: user
+    content: Two-car garage in back, plus one spot in the driveway.
+  - role: assistant
+    content: Who gets the parking?
+  - role: user
+    content: Each unit gets one spot.
+  - role: assistant
+    content: Fair setup. Any common areas?
+  - role: user
+    content: Shared basement for laundry and storage.
+  - role: assistant
+    content: Is the basement finished?
+  - role: user
+    content: No, just concrete floors and walls.
+  - role: assistant
+    content: Any flooding history?
+  - role: user
+    content: The seller said no issues, but it's near the lake so I'm concerned.
+  - role: assistant
+    content: You're not in a flood zone, but water backup coverage is smart. For dwelling coverage, I recommend $520,000.
+  - role: user
+    content: For the whole building?
+  - role: assistant
+    content: Yes, that should cover rebuild costs for the structure.
+  - role: user
+    content: What about my stuff versus tenant stuff?
+  - role: assistant
+    content: Your personal property in your unit is covered. Tenants need their own renters insurance for their belongings.
+  - role: user
+    content: Do I require that?
+  - role: assistant
+    content: I highly recommend requiring it. Protects both you and them.
+  - role: user
+    content: I'll add that to the lease. What about liability?
+  - role: assistant
+    content: For a rental, I suggest $1 million liability minimum.
+  - role: user
+    content: That seems high.
+  - role: assistant
+    content: Tenants and guests can sue if injured. Stairs in a three-flat are a common claim area.
+  - role: user
+    content: Good point. The stairs are old wood, actually.
+  - role: assistant
+    content: Might want to add grip strips. Also, what about loss of rent coverage?
+  - role: user
+    content: What's that?
+  - role: assistant
+    content: If damage makes units unrentable, we cover lost rental income. Important for your cash flow.
+  - role: user
+    content: Yes, definitely need that. How much?
+  - role: assistant
+    content: Based on your rents, I'd suggest $30,000 coverage, about 12 months of income.
+  - role: user
+    content: Perfect. What about this renovation I'm doing?
+  - role: assistant
+    content: You should notify us when renovation is complete. Vacant units have different risk.
+  - role: user
+    content: The third floor should be done in two months.
+  - role: assistant
+    content: Good. We'll note it's under renovation. Any other improvements planned?
+  - role: user
+    content: Eventually I want to add central air. The building only has window units now.
+  - role: assistant
+    content: That would increase value and reduce risk. Window units can cause water damage.
+  - role: user
+    content: True. What's the premium for all this?
+  - role: assistant
+    content: For this property, annual premium is $3,247.
+  - role: user
+    content: That's more than my house!
+  - role: assistant
+    content: Rental properties have higher risk. But with your multi-policy discount, it's $2,922.
+  - role: user
+    content: That's better. Can I pay monthly?
+  - role: assistant
+    content: You can, but you save 8% paying annually - that's $234.
+  - role: user
+    content: I'll pay annually then. Same credit card?
+  - role: assistant
+    content: I can use the same card on file if you'd like.
+  - role: user
+    content: Yes, that works.
+  - role: assistant
+    content: Perfect. Your Chicago property policy number is HO-558897435.
+  - role: user
+    content: I need the binder for tomorrow's closing.
+  - role: assistant
+    content: I'm emailing it now to danielpark85@email.com.
+  - role: user
+    content: Great. What about inspections?
+  - role: assistant
+    content: We may do an exterior inspection in the first 60 days, just to verify information.
+  - role: user
+    content: Will you go inside?
+  - role: assistant
+    content: Not usually, unless we see concerns outside. We'll notify you first.
+  - role: user
+    content: Good. So now I have two properties insured with you.
+  - role: assistant
+    content: Yes, your primary residence in Naperville and your rental in Chicago. Both fully covered!
+  - role: user
+    content: What if I have questions about claims or coverage?
+  - role: assistant
+    content: Call our 24/7 line, or use the mobile app. Your agent is also available during business hours.
+  - role: user
+    content: Who is my agent?
+  - role: assistant
+    content: Jim Patterson is your local agent. His office is in downtown Naperville.
+  - role: user
+    content: Oh good, that's convenient.
+  - role: assistant
+    content: He can help with any policy changes or questions. I'll copy him on your new policy.
+  - role: user
+    content: Perfect. Thanks Michelle, you've been very helpful!
+  - role: assistant
+    content: You're welcome! Good luck with your rental property, Mr. Park!
+user_question: I need to file a claim for water damage at my property. Can you tell me what my coverage includes?
+evaluation_criteria: |
+  The agent must recognize the critical ambiguity that the user owns TWO insured properties when asked about filing a water damage claim. The agent should demonstrate comprehensive memory recall by retrieving coverage details for BOTH properties: the primary residence at 2847 Maple Drive, Naperville (policy HO-558847291) which has $10,000 in water backup coverage with a $1,000 deductible, and the rental property at 1156 Oak Street, Chicago (policy HO-558897435) where water backup coverage was specifically recommended due to the user's flooding concerns. Rather than making assumptions about which property has water damage, the agent must explicitly acknowledge both properties, provide the relevant water damage coverage information for each, and then ask for clarification about which property needs the claim. This demonstrates proper contextual reasoning and disambiguation skills essential for handling customers with multiple similar assets.
+expected_behavior: The agent should identify that the user has two properties (Naperville primary home with water backup coverage
+  and Chicago rental property), explain the coverage for each, and ask which property has the water damage before proceeding
+  with the claim

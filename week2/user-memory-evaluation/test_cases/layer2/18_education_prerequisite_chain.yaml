@@ -1,0 +1,474 @@
+test_id: layer2_18_education_prerequisite_chain
+category: layer2
+title: University Course Registration with Complex Prerequisites
+description: Test agent's ability to track prerequisite chains where course eligibility changes based on completed, in-progress, and planned coursework across multiple advising sessions
+conversation_histories:
+  - conversation_id: initial_planning_001
+    timestamp: "2024-03-15 10:00:00"
+    metadata:
+      business: "State University"
+      department: "Academic Advising"
+      call_duration: "53 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm a computer science major trying to plan my next two semesters to graduate on time."
+      - role: assistant
+        content: "Hello! I'm Dr. Peterson, academic advisor for Computer Science. Let me pull up your record. You're Michael Chen?"
+      - role: user
+        content: "Yes, currently a junior with 78 credits completed."
+      - role: assistant
+        content: "I see you need 42 more credits to reach 120 for graduation. What's your target graduation?"
+      - role: user
+        content: "Spring 2025, so two more semesters after this one."
+      - role: assistant
+        content: "Let's review your remaining requirements. You still need CS 420, CS 445, CS 461, and CS 490."
+      - role: user
+        content: "Those are the senior-level requirements?"
+      - role: assistant
+        content: "Yes, plus you need two CS electives and three general education courses."
+      - role: user
+        content: "What are the prerequisites for those senior courses?"
+      - role: assistant
+        content: "CS 420 Systems Programming requires CS 320 and CS 330, which you completed."
+      - role: user
+        content: "Good, I can take that next semester."
+      - role: assistant
+        content: "CS 445 Database Systems requires CS 345, which you're taking this semester."
+      - role: user
+        content: "So I can't take 445 until Fall?"
+      - role: assistant
+        content: "Correct, assuming you pass CS 345 this spring."
+      - role: user
+        content: "What about CS 461?"
+      - role: assistant
+        content: "CS 461 Artificial Intelligence requires CS 361 Algorithms and MATH 325 Linear Algebra."
+      - role: user
+        content: "I took Algorithms last fall, but not Linear Algebra."
+      - role: assistant
+        content: "You'll need MATH 325 before taking CS 461. It's offered every semester."
+      - role: user
+        content: "Can I take them concurrently?"
+      - role: assistant
+        content: "No, Linear Algebra must be completed first. It's a strict prerequisite."
+      - role: user
+        content: "So I should take MATH 325 this summer or fall?"
+      - role: assistant
+        content: "If you want CS 461 in Spring 2025, take MATH 325 in Fall 2024."
+      - role: user
+        content: "What about CS 490, the capstone?"
+      - role: assistant
+        content: "CS 490 requires senior standing and completion of at least three 400-level CS courses."
+      - role: user
+        content: "So I can't take it until my final semester?"
+      - role: assistant
+        content: "Exactly. It's designed as a culminating experience."
+      - role: user
+        content: "What CS electives are available?"
+      - role: assistant
+        content: "Depends on your interests. CS 425 Networks, CS 435 Security, CS 450 Graphics, CS 470 Web Development."
+      - role: user
+        content: "Do they have prerequisites?"
+      - role: assistant
+        content: "CS 425 requires CS 320, CS 435 requires CS 320 and CS 335, CS 450 requires CS 350 and MATH 325."
+      - role: user
+        content: "I haven't taken CS 335 or CS 350."
+      - role: assistant
+        content: "CS 335 Cryptography is offered fall only. CS 350 Graphics Programming is offered spring only."
+      - role: user
+        content: "So Security and Graphics are out unless I take more prerequisites."
+      - role: assistant
+        content: "Right. Networks and Web Development are more accessible for you."
+      - role: user
+        content: "What about CS 470 prerequisites?"
+      - role: assistant
+        content: "CS 370 Web Technologies, which you completed last year."
+      - role: user
+        content: "Perfect. So I could take CS 425 and CS 470 as electives."
+      - role: assistant
+        content: "Yes, both are offered every semester."
+      - role: user
+        content: "What general education requirements remain?"
+      - role: assistant
+        content: "You need one science with lab, one humanities, and one social science."
+      - role: user
+        content: "Can I take these anytime?"
+      - role: assistant
+        content: "Yes, but science with lab is 4 credits, others are 3 credits each."
+      - role: user
+        content: "So 10 credits of general education."
+      - role: assistant
+        content: "Correct. Let's map out a plan. This semester you're taking?"
+      - role: user
+        content: "CS 345 Databases, CS 380 Software Engineering, CS 315 Ethics, and PHYS 201."
+      - role: assistant
+        content: "That's 13 credits. For Fall 2024?"
+      - role: user
+        content: "Based on our discussion: CS 420, CS 445, MATH 325, and a humanities?"
+      - role: assistant
+        content: "That's 13 credits. Then Spring 2025?"
+      - role: user
+        content: "CS 461, CS 490, CS 425, CS 470, and social science?"
+      - role: assistant
+        content: "That's 16 credits - heavy but doable for your last semester."
+      - role: user
+        content: "This assumes I pass everything this semester."
+      - role: assistant
+        content: "Correct. CS 345 is especially critical since CS 445 depends on it."
+      - role: user
+        content: "What if I fail CS 345?"
+      - role: assistant
+        content: "You'd need to retake it in summer or fall, pushing CS 445 to spring."
+      - role: user
+        content: "That would mess up the whole plan."
+      - role: assistant
+        content: "Yes, it would cascade. We'd need to find alternative courses."
+      - role: user
+        content: "I better focus on CS 345 then."
+      - role: assistant
+        content: "Indeed. It's a bottleneck course for your plan."
+      - role: user
+        content: "Can you save this plan for me?"
+      - role: assistant
+        content: "I'll email you the course sequence. Check prerequisites again before registering."
+      - role: user
+        content: "When is registration for fall?"
+      - role: assistant
+        content: "April 15th for seniors and juniors with 75+ credits."
+      - role: user
+        content: "I'll have 91 credits after this semester."
+      - role: assistant
+        content: "Perfect, you'll have priority registration."
+      - role: user
+        content: "Thanks for mapping this out!"
+      - role: assistant
+        content: "Come back if you need adjustments. Plans often change."
+  - conversation_id: midterm_crisis_001
+    timestamp: "2024-04-10 14:00:00"
+    metadata:
+      business: "State University"
+      department: "Academic Advising"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "Dr. Peterson? I have a problem. I'm failing CS 345 and considering dropping it."
+      - role: assistant
+        content: "Michael, let's discuss this. What's your current grade?"
+      - role: user
+        content: "Got a 42 on the midterm. I'm at 58% overall."
+      - role: assistant
+        content: "There's still time to recover. What percentage is the final exam?"
+      - role: user
+        content: "40% of the grade. But I'd need like 95% on it to pass."
+      - role: assistant
+        content: "Actually, if you get 85% on the final, you'd end with a C."
+      - role: user
+        content: "That's still really difficult."
+      - role: assistant
+        content: "What specific topics are you struggling with?"
+      - role: user
+        content: "SQL joins and normalization. I get confused with complex queries."
+      - role: assistant
+        content: "The tutoring center has CS 345 specific help sessions."
+      - role: user
+        content: "When are those?"
+      - role: assistant
+        content: "Tuesday and Thursday evenings, 6-8 PM."
+      - role: user
+        content: "I have work then."
+      - role: assistant
+        content: "Let's consider your options. Today is April 10th, drop deadline is April 20th."
+      - role: user
+        content: "If I drop, when could I retake it?"
+      - role: assistant
+        content: "Summer session starts June 1st, or Fall 2024."
+      - role: user
+        content: "How does this affect my graduation plan?"
+      - role: assistant
+        content: "Remember CS 445 requires CS 345. Without it, you can't take 445 in fall."
+      - role: user
+        content: "So I'd have to take 445 in spring with my capstone?"
+      - role: assistant
+        content: "Yes, and that's risky. CS 445 is intensive."
+      - role: user
+        content: "What if I take CS 345 in summer?"
+      - role: assistant
+        content: "Summer is compressed - 8 weeks instead of 15. Might be harder."
+      - role: user
+        content: "But then I could still take CS 445 in fall?"
+      - role: assistant
+        content: "If you pass summer CS 345, yes."
+      - role: user
+        content: "What about taking different electives instead?"
+      - role: assistant
+        content: "We could swap CS 445 for another requirement, but it's core curriculum."
+      - role: user
+        content: "Can I graduate without it?"
+      - role: assistant
+        content: "No, CS 445 is required for all CS majors."
+      - role: user
+        content: "So I'm stuck."
+      - role: assistant
+        content: "Let's explore another option. Can you reduce work hours?"
+      - role: user
+        content: "Maybe. I work 20 hours a week for tuition money."
+      - role: assistant
+        content: "If you could attend tutoring, you might pass CS 345 this semester."
+      - role: user
+        content: "That's a big if."
+      - role: assistant
+        content: "Professor Kim oers office hours too. Have you gone?"
+      - role: user
+        content: "No, I've been embarrassed about my grades."
+      - role: assistant
+        content: "Professors want to help. Email her today."
+      - role: user
+        content: "What should I say?"
+      - role: assistant
+        content: "Be honest about struggling and ask for guidance."
+      - role: user
+        content: "If I stick with it and fail?"
+      - role: assistant
+        content: "You'd need to retake it, and the F affects your GPA."
+      - role: user
+        content: "My GPA is 3.2 now."
+      - role: assistant
+        content: "An F would drop it to about 2.95."
+      - role: user
+        content: "Below 3.0 looks bad for jobs."
+      - role: assistant
+        content: "But retaking and getting an A would bring it back up."
+      - role: user
+        content: "Do employers see I failed and retook?"
+      - role: assistant
+        content: "Transcripts show both grades, but improvement shows persistence."
+      - role: user
+        content: "This is stressing me out."
+      - role: assistant
+        content: "Let's make a decision tree. Option 1: Stay in, get help, try to pass."
+      - role: user
+        content: "Option 2: Drop now, retake in summer."
+      - role: assistant
+        content: "Option 3: Drop now, retake in fall, adjust other courses."
+      - role: user
+        content: "Which do you recommend?"
+      - role: assistant
+        content: "Try Option 1 for one more week. See the professor, attend one tutoring session."
+      - role: user
+        content: "And if I'm still lost?"
+      - role: assistant
+        content: "Drop before the deadline and take summer session."
+      - role: user
+        content: "Summer tuition is extra money though."
+      - role: assistant
+        content: "About $1,200 for a 3-credit summer course."
+      - role: user
+        content: "Ugh. But better than derailing graduation."
+      - role: assistant
+        content: "Exactly. Short-term cost, long-term benefit."
+      - role: user
+        content: "Okay, I'll try harder this week then decide."
+      - role: assistant
+        content: "Email me by April 18th with your decision."
+      - role: user
+        content: "Will do. Thanks for talking through options."
+      - role: assistant
+        content: "That's what I'm here for. Don't give up yet."
+  - conversation_id: fall_registration_001
+    timestamp: "2024-04-22 11:00:00"
+    metadata:
+      business: "State University"
+      department: "Academic Advising"
+      call_duration: "51 minutes"
+    messages:
+      - role: user
+        content: "Dr. Peterson, update - I dropped CS 345 and enrolled in summer session."
+      - role: assistant
+        content: "Michael, that was probably wise given the circumstances. How are you feeling about it?"
+      - role: user
+        content: "Relieved but worried about the new plan."
+      - role: assistant
+        content: "Let's revise your schedule. Summer CS 345, then fall semester?"
+      - role: user
+        content: "Right. But now I'm only taking 10 credits this spring instead of 13."
+      - role: assistant
+        content: "You'll need to make those up. Current spring courses?"
+      - role: user
+        content: "CS 380, CS 315, and PHYS 201."
+      - role: assistant
+        content: "Can you add a general ed course now?"
+      - role: user
+        content: "Registration is closed for most classes."
+      - role: assistant
+        content: "Check for late-start online courses. Some begin in May."
+      - role: user
+        content: "Found one! HIST 201 online, starts May 1st."
+      - role: assistant
+        content: "Perfect, that's your humanities requirement."
+      - role: user
+        content: "So 13 credits for spring again."
+      - role: assistant
+        content: "Good. Now let's plan fall carefully."
+      - role: user
+        content: "Assuming I pass summer CS 345..."
+      - role: assistant
+        content: "Yes. You can then take CS 445 in fall as planned."
+      - role: user
+        content: "Plus CS 420, MATH 325, and what else?"
+      - role: assistant
+        content: "You need 15-16 credits. Add a CS elective?"
+      - role: user
+        content: "CS 425 Networks was the plan."
+      - role: assistant
+        content: "That's 13 credits. Add the social science for 16."
+      - role: user
+        content: "Heavy load but necessary."
+      - role: assistant
+        content: "Actually, I just noticed something in your transcript."
+      - role: user
+        content: "What?"
+      - role: assistant
+        content: "You took MATH 225 Discrete Math II, which can substitute for MATH 325 for CS majors."
+      - role: user
+        content: "Really? So I don't need Linear Algebra?"
+      - role: assistant
+        content: "For CS 461, you can petition to use MATH 225 instead."
+      - role: user
+        content: "That frees up 3 credits in fall!"
+      - role: assistant
+        content: "Yes, so fall would be CS 420, CS 445, CS 425, and social science - 13 credits."
+      - role: user
+        content: "Much more manageable."
+      - role: assistant
+        content: "This actually helps with spring too."
+      - role: user
+        content: "How so?"
+      - role: assistant
+        content: "Spring 2025: CS 461, CS 490, CS 470, and one more course."
+      - role: user
+        content: "Could add another elective?"
+      - role: assistant
+        content: "Or take something interesting outside CS."
+      - role: user
+        content: "I've always wanted to take Photography."
+      - role: assistant
+        content: "ART 280 Photography would count as fine arts credit."
+      - role: user
+        content: "That would be a nice break from coding."
+      - role: assistant
+        content: "Diversifying your last semester is healthy."
+      - role: user
+        content: "So the summer CS 345 actually didn't mess everything up?"
+      - role: assistant
+        content: "No, and discovering the MATH substitution helps significantly."
+      - role: user
+        content: "I need to file that petition?"
+      - role: assistant
+        content: "Yes, I'll email you the form. Submit by May 1st."
+      - role: user
+        content: "What are the chances it's approved?"
+      - role: assistant
+        content: "Very high. We've approved this substitution before."
+      - role: user
+        content: "Great! What about summer financial aid?"
+      - role: assistant
+        content: "Limited availability. Apply by May 15th."
+      - role: user
+        content: "Will my regular aid cover it?"
+      - role: assistant
+        content: "Usually provides 25% of normal semester aid for summer."
+      - role: user
+        content: "So I'll need to pay the difference."
+      - role: assistant
+        content: "About $900 out of pocket probably."
+      - role: user
+        content: "Worth it to graduate on time."
+      - role: assistant
+        content: "Absolutely. Missing graduation would cost more in lost income."
+      - role: user
+        content: "Good point. I feel better about this plan."
+      - role: assistant
+        content: "Register for fall courses on your appointment day."
+      - role: user
+        content: "April 25th at 8 AM."
+      - role: assistant
+        content: "Set multiple alarms. Popular courses fill quickly."
+      - role: user
+        content: "CS 445 especially?"
+      - role: assistant
+        content: "Yes, only one section offered in fall."
+      - role: user
+        content: "I'll be ready at 7:59!"
+      - role: assistant
+        content: "Good strategy. Email if any registration issues arise."
+      - role: user
+        content: "Thanks for helping me salvage my graduation timeline."
+      - role: assistant
+        content: "You made smart adjustments. That's part of college success."
+user_question: "What's my current plan for completing my CS degree and what prerequisites are affecting my course sequence?"
+evaluation_criteria: |
+  The agent must track the evolving academic plan across all conversations, including changes and discoveries:
+  
+  **CURRENT GRADUATION PLAN (Revised After Dropping CS 345):**
+  
+  **Currently Completed:** 78 credits (as of start)
+  **Need for Graduation:** 120 credits total (42 more needed)
+  
+  **Spring 2024 (Current - REVISED):**
+  - CS 380 Software Engineering
+  - CS 315 Ethics
+  - PHYS 201 (science with lab)
+  - HIST 201 (online, late-start May 1) - humanities requirement
+  - DROPPED: CS 345 (will retake summer)
+  - Total: 13 credits
+  
+  **Summer 2024 (NEW):**
+  - CS 345 Database Fundamentals (retaking after drop)
+  - Cost: ~$1,200 ($900 out of pocket after aid)
+  - Critical for fall CS 445
+  
+  **Fall 2024 (REVISED):**
+  - CS 420 Systems Programming (prereq: CS 320, CS 330 ✓)
+  - CS 445 Database Systems (prereq: CS 345 from summer)
+  - CS 425 Networks (elective, prereq: CS 320 ✓)
+  - Social Science general ed
+  - Total: 13 credits
+  - NO LONGER NEEDED: MATH 325 (MATH 225 substitution discovered)
+  
+  **Spring 2025 (Final Semester):**
+  - CS 461 AI (prereq: CS 361 ✓, MATH 225 substitution for MATH 325)
+  - CS 490 Capstone (prereq: senior standing, 3+ CS 400-level courses)
+  - CS 470 Web Dev (elective, prereq: CS 370 ✓)
+  - ART 280 Photography (fine arts elective)
+  - Total: 13 credits
+  
+  **KEY PREREQUISITE CHAINS & CHANGES:**
+  
+  1. **Critical Bottleneck:** CS 345 → CS 445
+     - Originally planned: Spring 2024 → Fall 2024
+     - Revised: Summer 2024 → Fall 2024 (after dropping)
+  
+  2. **MATH Substitution Discovery:**
+     - Original: Need MATH 325 for CS 461
+     - Discovered: MATH 225 (already completed) can substitute
+     - Saves 3 credits in Fall 2024
+     - Petition due by May 1st
+  
+  3. **CS 490 Capstone Prerequisites:**
+     - Needs 3+ CS 400-level courses completed
+     - Will have: CS 420, CS 445, CS 425 by Spring 2025
+     - Must be taken in final semester
+  
+  4. **Unavailable Electives (due to prerequisites):**
+     - CS 435 Security (needs CS 335 not taken)
+     - CS 450 Graphics (needs CS 350 not taken)
+  
+  **Registration Dates:**
+  - Fall 2024 registration: April 25th at 8 AM
+  - Priority registration (91 credits after spring)
+  - CS 445 only has one section - critical to register early
+  
+  **Financial Impact:**
+  - Summer course: $1,200 additional cost
+  - Prevents delayed graduation (worth more in lost income)
+  
+  The agent must understand how dropping CS 345 cascaded through the plan but was salvaged through summer session and the MATH substitution discovery.

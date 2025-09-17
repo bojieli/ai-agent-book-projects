@@ -1,0 +1,247 @@
+test_id: layer1_15_college_enrollment
+category: layer1
+title: College Enrollment Assistance - Course Registration Details
+description: Test agent's ability to recall course selections, scheduling details, tuition costs, and financial aid information from enrollment call
+conversation_histories:
+  - conversation_id: college_enroll_001
+    timestamp: "2024-07-15 10:00:00"
+    metadata:
+      business: "State University Admissions"
+      department: "Enrollment Services"
+      call_duration: "61 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need help completing my enrollment for the fall semester."
+      - role: assistant
+        content: "Good morning! I'm Maria from State University Enrollment Services. I'll help you with your fall enrollment. May I have your student ID?"
+      - role: user
+        content: "It's SU-20240847."
+      - role: assistant
+        content: "Thank you. I see here... Ms. Ashley Rodriguez?"
+      - role: user
+        content: "Yes, that's me."
+      - role: assistant
+        content: "Welcome to State University, Ashley! I see you're an incoming freshman majoring in Computer Science."
+      - role: user
+        content: "That's right."
+      - role: assistant
+        content: "Have you completed your math placement exam?"
+      - role: user
+        content: "Yes, I took it last week."
+      - role: assistant
+        content: "Great! You scored 87, which places you directly into Calculus I. No remedial math needed."
+      - role: user
+        content: "Oh good! What about English placement?"
+      - role: assistant
+        content: "Your SAT scores exempt you from placement testing. You're cleared for English Composition 101."
+      - role: user
+        content: "Perfect. So what courses should I take first semester?"
+      - role: assistant
+        content: "For Computer Science majors, we recommend: Calculus I, Introduction to Computer Science, English Composition, and one general education course."
+      - role: user
+        content: "How many credits is that?"
+      - role: assistant
+        content: "Calculus I is 4 credits, Intro to CS is 4 credits, English is 3 credits. With a 3-credit gen ed, that's 14 credits."
+      - role: user
+        content: "Should I take more?"
+      - role: assistant
+        content: "First semester, we recommend 14-16 credits while you adjust to college. You could add another 3-credit course."
+      - role: user
+        content: "What gen ed options do I have?"
+      - role: assistant
+        content: "You need humanities, social sciences, and natural sciences. Any preference?"
+      - role: user
+        content: "I'm interested in psychology."
+      - role: assistant
+        content: "Perfect! Psychology 101 fulfills social sciences. Professor Williams teaches MWF at 10 AM or Professor Chen teaches Tuesday/Thursday at 2 PM."
+      - role: user
+        content: "I'm more of a morning person. Let's do MWF at 10."
+      - role: assistant
+        content: "Added Psychology 101 with Professor Williams, section 03, MWF 10:00-10:50 AM."
+      - role: user
+        content: "What about the Calc class?"
+      - role: assistant
+        content: "Calculus I has several options. Professor Johnson has MWF 8:00-9:15 AM, or Professor Kumar has MWF 1:00-2:15 PM."
+      - role: user
+        content: "8 AM is early but I'll take it. Better to get it done."
+      - role: assistant
+        content: "Registered for MAT-151 Calculus I, section 01, with Professor Johnson, MWF 8:00-9:15 AM, plus Thursday recitation."
+      - role: user
+        content: "Recitation?"
+      - role: assistant
+        content: "A smaller problem-solving session with a TA. Thursday sections are at 3:00 PM or 5:00 PM."
+      - role: user
+        content: "3 PM works better."
+      - role: assistant
+        content: "Added Thursday 3:00-3:50 PM recitation, section R04."
+      - role: user
+        content: "Now the Computer Science course?"
+      - role: assistant
+        content: "CS-101 Introduction to Computer Science. Professor Martinez teaches Tuesday/Thursday 9:30-10:45 AM with a 2-hour lab."
+      - role: user
+        content: "When are the labs?"
+      - role: assistant
+        content: "Lab options are Wednesday 2:00-4:00 PM or Friday 3:00-5:00 PM."
+      - role: user
+        content: "Wednesday at 2 PM is good."
+      - role: assistant
+        content: "Registered for CS-101, section 02, T/Th 9:30-10:45 AM, with Wednesday 2:00-4:00 PM lab, section L03."
+      - role: user
+        content: "And English?"
+      - role: assistant
+        content: "English 101 has many sections. There's T/Th 11:00 AM, MWF 2:00 PM, or T/Th 3:30 PM."
+      - role: user
+        content: "T/Th at 11 would work well after my CS class."
+      - role: assistant
+        content: "Perfect. ENG-101 with Professor Thompson, section 07, Tuesday/Thursday 11:00 AM-12:15 PM."
+      - role: user
+        content: "Should I add one more class to get to 15 or 16 credits?"
+      - role: assistant
+        content: "You could add a 1-credit freshman seminar or a 3-credit elective. What interests you?"
+      - role: user
+        content: "What's the freshman seminar about?"
+      - role: assistant
+        content: "FYE-100 'First Year Experience' - study skills, campus resources, career planning. Meets once weekly."
+      - role: user
+        content: "That sounds helpful. When does it meet?"
+      - role: assistant
+        content: "Mondays 3:00-3:50 PM or Wednesdays 12:00-12:50 PM."
+      - role: user
+        content: "Mondays at 3 PM works."
+      - role: assistant
+        content: "Added FYE-100, section 12, Mondays 3:00-3:50 PM with advisor Mr. Davis. That brings you to 15 credits."
+      - role: user
+        content: "Perfect. Now what about housing? I applied for campus dorms."
+      - role: assistant
+        content: "Let me check... You're assigned to Lincoln Hall, Room 347, with roommate Jennifer Kim."
+      - role: user
+        content: "Is that a double or triple?"
+      - role: assistant
+        content: "It's a double room. Lincoln Hall has suite-style rooms - two doubles sharing a bathroom."
+      - role: user
+        content: "So four people share one bathroom?"
+      - role: assistant
+        content: "Correct. Your suitemates in room 345 are Emma Wilson and Sarah Chen."
+      - role: user
+        content: "What floor is that?"
+      - role: assistant
+        content: "Third floor. Lincoln Hall has elevators and is co-ed by floor - third floor is all female."
+      - role: user
+        content: "Good. What about meal plans?"
+      - role: assistant
+        content: "Freshmen must choose from three plans: Unlimited at $2,850/semester, 14 meals/week at $2,450, or 10 meals/week at $2,150."
+      - role: user
+        content: "What's the difference?"
+      - role: assistant
+        content: "Unlimited includes all dining halls anytime. The others include that many meal swipes plus $200 dining dollars for cafés."
+      - role: user
+        content: "I'll probably eat breakfast in my room. Let's do 14 meals."
+      - role: assistant
+        content: "Good choice. That's lunch and dinner daily with flexibility. Selected 14-meal plan at $2,450."
+      - role: user
+        content: "Now about tuition - what do I owe?"
+      - role: assistant
+        content: "In-state tuition is $6,840 per semester for 12-18 credits. You're at 15 credits, so that's the flat rate."
+      - role: user
+        content: "Plus fees?"
+      - role: assistant
+        content: "Student fees are $782, technology fee $145, health services $210. Total fees: $1,137."
+      - role: user
+        content: "So tuition and fees together?"
+      - role: assistant
+        content: "$7,977 per semester."
+      - role: user
+        content: "Plus housing and meals?"
+      - role: assistant
+        content: "Lincoln Hall is $3,925 per semester. With the meal plan, housing and dining totals $6,375."
+      - role: user
+        content: "So my total semester bill is?"
+      - role: assistant
+        content: "$14,352 for fall semester."
+      - role: user
+        content: "I have financial aid. Can you see my package?"
+      - role: assistant
+        content: "Yes, you have: Federal Pell Grant $3,200, State Need Grant $2,500, and Merit Scholarship $4,000 per semester."
+      - role: user
+        content: "That's $9,700 in aid?"
+      - role: assistant
+        content: "Correct. That leaves $4,652 due for fall semester."
+      - role: user
+        content: "Can I do a payment plan?"
+      - role: assistant
+        content: "Yes, we offer a 5-month plan. August through December at $930.40 per month, no interest."
+      - role: user
+        content: "When's the first payment?"
+      - role: assistant
+        content: "August 15th, then the 15th of each month through December."
+      - role: user
+        content: "That's manageable. How do I set that up?"
+      - role: assistant
+        content: "I can enroll you now. There's a $35 enrollment fee for the payment plan."
+      - role: user
+        content: "That's fine. Use my checking account?"
+      - role: assistant
+        content: "Yes, we can do automatic bank drafts. I'll need your routing and account numbers."
+      - role: user
+        content: "Routing is 121000358, account is 5529847100."
+      - role: assistant
+        content: "Perfect. Payment plan established. You'll receive confirmation via email."
+      - role: user
+        content: "What about books?"
+      - role: assistant
+        content: "Average is $200-300 per class. For your five classes, budget about $1,200."
+      - role: user
+        content: "That's a lot! Any way to save?"
+      - role: assistant
+        content: "Check our bookstore's rental program, or buy used. Also, some professors use free online resources."
+      - role: user
+        content: "I'll look into rentals. When can I buy books?"
+      - role: assistant
+        content: "Book lists are posted August 1st. Classes start August 28th."
+      - role: user
+        content: "When do I move into the dorm?"
+      - role: assistant
+        content: "Freshman move-in is August 24th-25th. You're assigned August 24th, 10 AM - 12 PM time slot."
+      - role: user
+        content: "Is there orientation?"
+      - role: assistant
+        content: "Yes, mandatory orientation runs August 25th-27th. Includes campus tour, advisor meetings, and social events."
+      - role: user
+        content: "Do parents come to that?"
+      - role: assistant
+        content: "There's a separate parent orientation on August 25th from 2-5 PM."
+      - role: user
+        content: "Good, my mom wants to attend. What about parking?"
+      - role: assistant
+        content: "Freshmen can purchase parking permits for $450/semester for Lot G, about 10-minute walk to Lincoln Hall."
+      - role: user
+        content: "I won't have a car first semester."
+      - role: assistant
+        content: "That's common. We have good campus shuttle service and the city bus is free with student ID."
+      - role: user
+        content: "Perfect. I think that covers everything!"
+      - role: assistant
+        content: "Great! You're all set for fall. Your next steps are attending orientation and buying books. Any other questions?"
+      - role: user
+        content: "No, thank you so much for your help, Maria!"
+      - role: assistant
+        content: "You're welcome, Ashley! Have a wonderful freshman year at State University!"
+user_question: "What was my complete course schedule including days, times, and professors, and what was my total semester cost after financial aid?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Course Schedule:
+  1. MAT-151 Calculus I - Professor Johnson - MWF 8:00-9:15 AM, Thursday recitation 3:00-3:50 PM (4 credits)
+  2. CS-101 Intro to Computer Science - Professor Martinez - T/Th 9:30-10:45 AM, Wednesday lab 2:00-4:00 PM (4 credits)
+  3. PSY-101 Psychology - Professor Williams - MWF 10:00-10:50 AM (3 credits)
+  4. ENG-101 English Composition - Professor Thompson - T/Th 11:00 AM-12:15 PM (3 credits)
+  5. FYE-100 First Year Experience - Mr. Davis - Monday 3:00-3:50 PM (1 credit)
+  Total: 15 credits
+  
+  Financial Breakdown:
+  - Total semester cost: $14,352
+  - Financial aid: $9,700 (Pell Grant $3,200 + State Grant $2,500 + Merit Scholarship $4,000)
+  - Amount due: $4,652
+  - Payment plan: $930.40/month for 5 months
+  
+  The response should include all courses with specific meeting times and the complete financial calculation.

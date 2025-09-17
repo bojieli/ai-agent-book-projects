@@ -1,0 +1,469 @@
+test_id: layer2_15_employment_negotiation
+category: layer2
+title: Job Offer Negotiation with Evolving Terms
+description: Test agent's ability to track negotiation progress where terms change, counteroffers are made, and final agreement differs significantly from initial offer
+conversation_histories:
+  - conversation_id: initial_offer_001
+    timestamp: "2024-09-05 14:00:00"
+    metadata:
+      business: "TechVision Corp"
+      department: "Human Resources"
+      call_duration: "51 minutes"
+    messages:
+      - role: user
+        content: "Hi, I received your job offer letter and wanted to discuss the terms."
+      - role: assistant
+        content: "Hello Sarah! This is Jennifer from TechVision HR. Congratulations on the Senior Software Engineer offer! What would you like to discuss?"
+      - role: user
+        content: "Thank you! I'm excited about the opportunity but have some questions about the package."
+      - role: assistant
+        content: "Of course. Let me pull up your offer. Base salary $145,000, standard benefits, start date October 1st."
+      - role: user
+        content: "Right. The base salary is lower than I expected based on our interviews."
+      - role: assistant
+        content: "What range were you expecting?"
+      - role: user
+        content: "The hiring manager mentioned $150,000 to $165,000 for this level."
+      - role: assistant
+        content: "That range is for Senior II level. Your offer is for Senior I."
+      - role: user
+        content: "But I have 8 years experience. Doesn't that qualify for Senior II?"
+      - role: assistant
+        content: "Typically Senior II requires 10+ years or specific domain expertise."
+      - role: user
+        content: "I led the architecture team at my current company for 3 years."
+      - role: assistant
+        content: "That's valuable experience. Let me discuss with the hiring manager."
+      - role: user
+        content: "Also, what about signing bonus? There's none mentioned."
+      - role: assistant
+        content: "Signing bonuses aren't standard for this level, but we can explore it."
+      - role: user
+        content: "I'm walking away from a $15,000 year-end bonus at my current job."
+      - role: assistant
+        content: "That's significant. We might be able to offer something to offset that."
+      - role: user
+        content: "What about equity?"
+      - role: assistant
+        content: "The offer includes 5,000 stock options vesting over 4 years."
+      - role: user
+        content: "What's the strike price?"
+      - role: assistant
+        content: "Current fair market value is $22 per share, so that would be your strike price."
+      - role: user
+        content: "So potentially $110,000 value if the price stays flat?"
+      - role: assistant
+        content: "Correct, though we expect significant growth. We're pre-IPO."
+      - role: user
+        content: "When is IPO planned?"
+      - role: assistant
+        content: "Targeting 18-24 months, though not guaranteed."
+      - role: user
+        content: "What's the vesting schedule?"
+      - role: assistant
+        content: "Standard 1-year cliff, then monthly vesting over remaining 3 years."
+      - role: user
+        content: "Can we accelerate that?"
+      - role: assistant
+        content: "Vesting schedules are typically non-negotiable, but I can ask."
+      - role: user
+        content: "What about remote work? The posting said flexible."
+      - role: assistant
+        content: "We expect 3 days in office, 2 days remote weekly."
+      - role: user
+        content: "I was hoping for fully remote with quarterly office visits."
+      - role: assistant
+        content: "That's a significant deviation from our hybrid model."
+      - role: user
+        content: "I live 90 minutes from the office. Daily commuting isn't sustainable."
+      - role: assistant
+        content: "Would you consider relocating? We offer relocation assistance."
+      - role: user
+        content: "How much assistance?"
+      - role: assistant
+        content: "Up to $10,000 for moving expenses."
+      - role: user
+        content: "My kids are in school. Moving isn't ideal right now."
+      - role: assistant
+        content: "Understood. Maybe we can work out a modified schedule."
+      - role: user
+        content: "Like what?"
+      - role: assistant
+        content: "Perhaps 2 days in office with longer hours, 3 days remote?"
+      - role: user
+        content: "That could work. What about PTO?"
+      - role: assistant
+        content: "Standard is 15 days vacation, 5 sick days."
+      - role: user
+        content: "I currently have 20 days PTO plus unlimited sick."
+      - role: assistant
+        content: "We could potentially match your current PTO."
+      - role: user
+        content: "That would help. What about professional development?"
+      - role: assistant
+        content: "Annual $2,000 budget for conferences and training."
+      - role: user
+        content: "I typically attend 2-3 conferences yearly, costing about $5,000 total."
+      - role: assistant
+        content: "We might increase that for senior roles."
+      - role: user
+        content: "Also, the health insurance - what's the employee contribution?"
+      - role: assistant
+        content: "We cover 80% of premiums. Employee pays about $200 monthly for family plan."
+      - role: user
+        content: "My current employer covers 100%."
+      - role: assistant
+        content: "That's generous of them. We could explore a monthly stipend to offset."
+      - role: user
+        content: "How flexible is the October 1st start date?"
+      - role: assistant
+        content: "Do you need more time?"
+      - role: user
+        content: "I'd prefer October 15th to finish my current project."
+      - role: assistant
+        content: "That should be fine. Shows good professional ethics."
+      - role: user
+        content: "Can you put together a revised offer with these points?"
+      - role: assistant
+        content: "I'll discuss with leadership and get back to you within 48 hours."
+      - role: user
+        content: "Please emphasize the Senior II level consideration and salary adjustment."
+      - role: assistant
+        content: "Noted. To summarize your requests: Senior II level, $150-165k salary range, signing bonus, remote flexibility, 20 days PTO, higher professional development budget."
+      - role: user
+        content: "Exactly. And October 15th start date."
+      - role: assistant
+        content: "I'll advocate for these changes. What's your deadline for deciding?"
+      - role: user
+        content: "I have another offer to respond to by September 12th."
+      - role: assistant
+        content: "Good to know. We'll work quickly."
+      - role: user
+        content: "I really want to join TechVision, but need a competitive package."
+      - role: assistant
+        content: "Understood. We want you on the team too."
+      - role: user
+        content: "Thanks Jennifer. Looking forward to your response."
+      - role: assistant
+        content: "I'll call you by September 7th with updates."
+  - conversation_id: counter_offer_001
+    timestamp: "2024-09-07 15:30:00"
+    metadata:
+      business: "TechVision Corp"
+      department: "Human Resources"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "Hi Jennifer, calling about the revised offer?"
+      - role: assistant
+        content: "Hi Sarah! Yes, I have good news. Leadership approved several of your requests."
+      - role: user
+        content: "Great! What did they approve?"
+      - role: assistant
+        content: "First, we're offering Senior II level with adjusted compensation."
+      - role: user
+        content: "That's wonderful! What's the new salary?"
+      - role: assistant
+        content: "We can offer $155,000 base salary."
+      - role: user
+        content: "That's in the range but still on the lower end."
+      - role: assistant
+        content: "We're also adding a $10,000 signing bonus to help with your foregone bonus."
+      - role: user
+        content: "I appreciate that, though I'm walking away from $15,000."
+      - role: assistant
+        content: "We increased the equity grant to 7,500 options to make up the difference."
+      - role: user
+        content: "So 50% more equity? That helps long-term."
+      - role: assistant
+        content: "Exactly. At current valuation, that's $165,000 potential value."
+      - role: user
+        content: "What about the remote work arrangement?"
+      - role: assistant
+        content: "We can offer 2 days in office, 3 days remote."
+      - role: user
+        content: "Which days in office?"
+      - role: assistant
+        content: "Tuesday and Thursday are preferred for team meetings."
+      - role: user
+        content: "That works. What about the commute? Can I expense mileage?"
+      - role: assistant
+        content: "We don't typically cover commute costs."
+      - role: user
+        content: "But 180 miles round trip twice weekly adds up."
+      - role: assistant
+        content: "Let me propose a commute stipend of $500 monthly."
+      - role: user
+        content: "That would cover gas and wear. Thank you."
+      - role: assistant
+        content: "I'll need VP approval but I think it's reasonable."
+      - role: user
+        content: "What about PTO?"
+      - role: assistant
+        content: "We're approving 20 days vacation from day one."
+      - role: user
+        content: "No waiting period? That's great."
+      - role: assistant
+        content: "Correct, available immediately. Plus our standard holidays."
+      - role: user
+        content: "How many holidays?"
+      - role: assistant
+        content: "11 federal holidays plus we close December 24-31."
+      - role: user
+        content: "Oh wow, that's generous."
+      - role: assistant
+        content: "It's our way of ensuring work-life balance."
+      - role: user
+        content: "Professional development budget?"
+      - role: assistant
+        content: "Increased to $4,000 annually for Senior II level."
+      - role: user
+        content: "Almost there. Can we do $5,000?"
+      - role: assistant
+        content: "I'll need to check. Conferences are expensive these days."
+      - role: user
+        content: "Exactly. Registration, travel, hotels add up quickly."
+      - role: assistant
+        content: "Fair point. What about the October 15th start date?"
+      - role: user
+        content: "Yes, I need that to transition properly."
+      - role: assistant
+        content: "Already approved. October 15th is confirmed."
+      - role: user
+        content: "The health insurance contribution?"
+      - role: assistant
+        content: "We can't change the 80/20 split, but we're adding a $150 monthly wellness stipend."
+      - role: user
+        content: "So that essentially covers my portion?"
+      - role: assistant
+        content: "Almost entirely, yes."
+      - role: user
+        content: "That's creative. I like it."
+      - role: assistant
+        content: "We try to find solutions that work."
+      - role: user
+        content: "What about retirement matching?"
+      - role: assistant
+        content: "Standard 4% match, vested immediately."
+      - role: user
+        content: "My current is 6% match."
+      - role: assistant
+        content: "Our 4% is company policy, but the equity upside compensates."
+      - role: user
+        content: "True. Pre-IPO equity could be valuable."
+      - role: assistant
+        content: "Many employees have seen 10x returns post-IPO."
+      - role: user
+        content: "No guarantees though."
+      - role: assistant
+        content: "Of course not, but our growth trajectory is strong."
+      - role: user
+        content: "Can I get the revised offer in writing?"
+      - role: assistant
+        content: "I'll email it today, pending the commute stipend and $5k development budget approval."
+      - role: user
+        content: "When will you know about those?"
+      - role: assistant
+        content: "I'm meeting with the VP at 4 PM. Will know by end of day."
+      - role: user
+        content: "This is sounding much better overall."
+      - role: assistant
+        content: "We really want you to join the team."
+      - role: user
+        content: "One more thing - is there a performance review cycle?"
+      - role: assistant
+        content: "Annual reviews in March with merit increases."
+      - role: user
+        content: "Typical increase range?"
+      - role: assistant
+        content: "3-8% based on performance. High performers can get more."
+      - role: user
+        content: "Good to know. I think we're close to a deal."
+      - role: assistant
+        content: "Excellent! I'll confirm those final items and send the revised offer."
+      - role: user
+        content: "Looking forward to it."
+      - role: assistant
+        content: "Talk to you soon, Sarah!"
+  - conversation_id: final_agreement_001
+    timestamp: "2024-09-08 11:00:00"
+    metadata:
+      business: "TechVision Corp"
+      department: "Human Resources"
+      call_duration: "44 minutes"
+    messages:
+      - role: user
+        content: "Hi Jennifer, I reviewed the revised offer letter you sent."
+      - role: assistant
+        content: "Hi Sarah! Great. I have good news - both the commute stipend and $5,000 development budget were approved."
+      - role: user
+        content: "Fantastic! But I noticed something different in the written offer."
+      - role: assistant
+        content: "What did you notice?"
+      - role: user
+        content: "The equity vesting shows 10,000 options, not 7,500."
+      - role: assistant
+        content: "Oh! The CEO personally increased it after hearing about your architecture experience."
+      - role: user
+        content: "That's amazing! So $220,000 potential value?"
+      - role: assistant
+        content: "At current valuation, yes. He's excited about your joining."
+      - role: user
+        content: "That definitely sweetens the deal. But the title shows 'Senior Engineer II' not 'Senior Software Engineer II'."
+      - role: assistant
+        content: "That's our internal naming. 'Software' is implied in the engineering org."
+      - role: user
+        content: "Can we add 'Software' for clarity? It matters for future roles."
+      - role: assistant
+        content: "Absolutely, I'll update that. Good catch."
+      - role: user
+        content: "Also, the remote schedule says 'hybrid' but doesn't specify days."
+      - role: assistant
+        content: "I'll add 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'."
+      - role: user
+        content: "Perfect. And confirm the $500 monthly commute stipend is tax-free?"
+      - role: assistant
+        content: "It's structured as a transportation benefit, so yes, tax-free up to IRS limits."
+      - role: user
+        content: "Excellent. Now, about the signing bonus..."
+      - role: assistant
+        content: "The $10,000? Is there an issue?"
+      - role: user
+        content: "It says payable in first paycheck. Can I get half upfront?"
+      - role: assistant
+        content: "You mean before starting?"
+      - role: user
+        content: "Yes, I have moving expenses even though I'm not relocating."
+      - role: assistant
+        content: "What expenses?"
+      - role: user
+        content: "Setting up a proper home office for remote days, ergonomic chair, monitor, etc."
+      - role: assistant
+        content: "We provide a $1,500 home office stipend separately."
+      - role: user
+        content: "That wasn't mentioned before!"
+      - role: assistant
+        content: "It's automatic for hybrid employees. One-time setup plus $50 monthly for internet."
+      - role: user
+        content: "Even better. So the signing bonus timing?"
+      - role: assistant
+        content: "I can arrange $5,000 within a week of signing, $5,000 in first paycheck."
+      - role: user
+        content: "That works perfectly."
+      - role: assistant
+        content: "Any other concerns?"
+      - role: user
+        content: "The PTO accrual - does it start immediately?"
+      - role: assistant
+        content: "Your 20 days are available in full on day one, no accrual needed."
+      - role: user
+        content: "Great. And unused days?"
+      - role: assistant
+        content: "Roll over up to 5 days annually, or cash out at year-end."
+      - role: user
+        content: "Cash out at what rate?"
+      - role: assistant
+        content: "100% of daily rate based on salary."
+      - role: user
+        content: "Fair enough. Oh, the wellness stipend - what does it cover?"
+      - role: assistant
+        content: "Gym, fitness classes, sports equipment, even massage therapy."
+      - role: user
+        content: "Mental health services?"
+      - role: assistant
+        content: "Yes, therapy copays, meditation apps, wellness retreats."
+      - role: user
+        content: "Very comprehensive. Stock option details - when can I exercise?"
+      - role: assistant
+        content: "After the one-year cliff, you can exercise vested portions anytime."
+      - role: user
+        content: "Even if I leave the company?"
+      - role: assistant
+        content: "You have 90 days post-departure to exercise vested options."
+      - role: user
+        content: "Standard terms. What about anti-dilution provisions?"
+      - role: assistant
+        content: "Your percentage ownership is protected through Series B funding."
+      - role: user
+        content: "When was Series A?"
+      - role: assistant
+        content: "Last year at $500M valuation. We're growing fast."
+      - role: user
+        content: "Current valuation?"
+      - role: assistant
+        content: "Approaching $800M based on recent 409A."
+      - role: user
+        content: "So my options are already worth more potentially?"
+      - role: assistant
+        content: "The strike price is fixed at $22, so yes, upside is building."
+      - role: user
+        content: "This all sounds good. I'm ready to accept."
+      - role: assistant
+        content: "Wonderful! I'll send the final offer with corrections within an hour."
+      - role: user
+        content: "Once I sign, what's next?"
+      - role: assistant
+        content: "Background check, then onboarding paperwork. IT will ship your equipment."
+      - role: user
+        content: "What equipment exactly?"
+      - role: assistant
+        content: "MacBook Pro 16-inch, monitor, keyboard, mouse, headset. Your choice of specs."
+      - role: user
+        content: "Maxed out specs for development work?"
+      - role: assistant
+        content: "Of course. M3 Max, 64GB RAM, whatever you need."
+      - role: user
+        content: "Perfect. Send that final offer!"
+      - role: assistant
+        content: "Will do! Welcome to TechVision, Sarah!"
+      - role: user
+        content: "Thanks for working with me on everything, Jennifer."
+      - role: assistant
+        content: "My pleasure. Successful negotiations mean happy employees."
+user_question: "What are the final terms of my TechVision job offer after all negotiations?"
+evaluation_criteria: |
+  The agent must track the evolution across all negotiations to provide FINAL terms:
+  
+  **FINAL ACCEPTED OFFER TERMS:**
+  
+  **Position & Compensation:**
+  - Title: Senior Software Engineer II (not just Senior Engineer II)
+  - Base Salary: $155,000
+  - Signing Bonus: $10,000 ($5k on signing, $5k first paycheck)
+  - Equity: 10,000 stock options (increased from 5,000→7,500→10,000)
+  - Strike Price: $22/share
+  - Potential Value: $220,000 at current valuation
+  - Vesting: 1-year cliff, then monthly over 3 years
+  
+  **Work Arrangement:**
+  - Schedule: Hybrid - Tuesday/Thursday in office, M/W/F remote
+  - Commute Stipend: $500/month tax-free
+  - Start Date: October 15, 2024 (changed from October 1)
+  
+  **Benefits:**
+  - PTO: 20 days vacation immediately available (no waiting period)
+  - Holidays: 11 federal + December 24-31 closure
+  - Health: 80% company paid + $150/month wellness stipend
+  - Retirement: 4% match, immediately vested
+  - Professional Development: $5,000 annual budget
+  
+  **Additional Perks:**
+  - Home Office Setup: $1,500 one-time + $50/month internet
+  - Equipment: MacBook Pro 16" M3 Max, 64GB RAM, monitor, peripherals
+  - Wellness Stipend Uses: Gym, therapy, fitness, massage, wellness retreats
+  
+  **Key Negotiation Wins:**
+  - Promoted from Senior I to Senior II level
+  - Salary increased from $145k to $155k
+  - Equity doubled from 5,000 to 10,000 options
+  - Remote work increased from 2 to 3 days per week
+  - PTO increased from 15 to 20 days
+  - Added commute and wellness stipends
+  - Professional development budget increased from $2k to $5k
+  
+  **Company Info:**
+  - Current Valuation: ~$800M (up from $500M Series A)
+  - IPO Target: 18-24 months
+  - Anti-dilution protection through Series B
+  
+  The agent must recognize that the final offer supersedes all previous discussions and includes unexpected improvements like the CEO's equity increase.

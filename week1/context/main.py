@@ -692,18 +692,30 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
         provider: LLM provider to use
         model: Optional model override
     """
+    # Store current provider and model
+    current_provider = provider
+    current_model = model
+    current_api_key = api_key
+    
+    # Available providers
+    available_providers = ["siliconflow", "doubao", "kimi", "moonshot"]
+    
     print("\n" + "="*60)
     print("INTERACTIVE MODE - Context-Aware Agent")
-    print(f"Provider: {provider.upper()} | Model: {model or 'default'}")
+    print(f"Provider: {current_provider.upper()} | Model: {current_model or 'default'}")
     print("="*60)
     print("Available commands:")
     print("  - Type your task/question")
     print("  - 'samples' to see sample tasks")
     print("  - 'sample <number>' to run a sample task")
     print("  - 'create_pdfs' to create sample PDF files")
+    print("  - 'providers' to list available providers")
+    print("  - 'provider <name>' to switch provider")
     print("  - 'modes' to see available context modes")
     print("  - 'mode <mode_name>' to switch context mode")
     print("  - 'reset' to reset agent trajectory")
+    print("  - 'status' to show current configuration")
+    print("  - 'help' to show all commands")
     print("  - 'quit' to exit")
     print("-"*60)
     
@@ -723,15 +735,32 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     }
     
     current_mode = ContextMode.FULL
-    agent = ContextAwareAgent(api_key, current_mode, provider=provider, model=model)
+    agent = ContextAwareAgent(current_api_key, current_mode, provider=current_provider, model=current_model)
     
     while True:
         try:
-            user_input = input("\n> ").strip()
+            # Show current provider in prompt
+            prompt = f"\n[{current_provider.upper()}]> "
+            user_input = input(prompt).strip()
             
             if user_input.lower() == 'quit':
                 print("Goodbye!")
                 break
+            
+            elif user_input.lower() == 'help':
+                print("\n📚 Available Commands:")
+                print("  samples          - Display all available sample tasks")
+                print("  sample <n>       - Run sample task number n")
+                print("  providers        - List all available LLM providers")
+                print("  provider <name>  - Switch to a different provider")
+                print("  modes            - List available context modes")
+                print("  mode <name>      - Switch context mode")
+                print("  status           - Show current configuration")
+                print("  reset            - Reset agent trajectory")
+                print("  create_pdfs      - Generate sample PDF files")
+                print("  help             - Show this help message")
+                print("  quit             - Exit interactive mode")
+                print("\nOr type any task/question to execute it.")
             
             elif user_input.lower() == 'samples':
                 print("\n📋 Available sample tasks:")
@@ -784,6 +813,54 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 except Exception as e:
                     print(f"⚠️ Error creating PDFs: {str(e)}")
             
+            elif user_input.lower() == 'providers':
+                print("\n🔌 Available providers:")
+                for p in available_providers:
+                    status = " (current)" if p == current_provider else ""
+                    if p == "siliconflow":
+                        print(f"  - siliconflow: Qwen model{status}")
+                    elif p == "doubao":
+                        print(f"  - doubao: ByteDance model{status}")
+                    elif p in ["kimi", "moonshot"]:
+                        print(f"  - {p}: Moonshot Kimi K2 model{status}")
+            
+            elif user_input.lower().startswith('provider '):
+                new_provider = user_input[9:].strip().lower()
+                if new_provider in available_providers:
+                    # Get the appropriate API key for the new provider
+                    if new_provider == "siliconflow":
+                        new_api_key = os.getenv("SILICONFLOW_API_KEY")
+                        if not new_api_key:
+                            print("❌ SILICONFLOW_API_KEY not set in environment")
+                            continue
+                    elif new_provider == "doubao":
+                        new_api_key = os.getenv("ARK_API_KEY")
+                        if not new_api_key:
+                            print("❌ ARK_API_KEY not set in environment")
+                            continue
+                    elif new_provider in ["kimi", "moonshot"]:
+                        new_api_key = os.getenv("MOONSHOT_API_KEY")
+                        if not new_api_key:
+                            print("❌ MOONSHOT_API_KEY not set in environment")
+                            continue
+                    
+                    # Update current settings
+                    current_provider = new_provider
+                    current_api_key = new_api_key
+                    current_model = None  # Reset to use default model for new provider
+                    
+                    # Create new agent with new provider
+                    agent = ContextAwareAgent(current_api_key, current_mode, provider=current_provider, model=current_model)
+                    
+                    # Get default model name from config
+                    from config import Config
+                    default_model = Config.get_default_model(current_provider)
+                    
+                    print(f"✅ Switched to provider: {current_provider}")
+                    print(f"   Using model: {default_model}")
+                else:
+                    print(f"❌ Invalid provider. Available: {', '.join(available_providers)}")
+            
             elif user_input.lower() == 'modes':
                 print("\n🔧 Available context modes:")
                 for mode in mode_map.keys():
@@ -793,7 +870,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 new_mode = user_input[5:].strip()
                 if new_mode in mode_map:
                     current_mode = mode_map[new_mode]
-                    agent = ContextAwareAgent(api_key, current_mode, provider=provider, model=model)
+                    agent = ContextAwareAgent(current_api_key, current_mode, provider=current_provider, model=current_model)
                     print(f"✅ Switched to context mode: {current_mode.value}")
                     if current_mode != ContextMode.FULL:
                         print(f"⚠️ Warning: This mode intentionally disables certain features for testing")
@@ -802,7 +879,28 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
             
             elif user_input.lower() == 'reset':
                 agent.reset()
-                print("✅ Agent trajectory reset.")
+                print("✅ Agent trajectory and conversation history reset.")
+            
+            elif user_input.lower() == 'status':
+                from config import Config
+                model_name = current_model or Config.get_default_model(current_provider)
+                print("\n📊 Current Configuration:")
+                print(f"  Provider: {current_provider.upper()}")
+                print(f"  Model: {model_name}")
+                print(f"  Context Mode: {current_mode.value}")
+                print(f"  Conversation History: {len(agent.conversation_history)} messages")
+                print(f"  Tool Calls: {len(agent.trajectory.tool_calls)}")
+                
+                # Show API key status
+                if current_provider == "siliconflow":
+                    key_status = "✅ Set" if os.getenv("SILICONFLOW_API_KEY") else "❌ Not set"
+                    print(f"  API Key (SILICONFLOW_API_KEY): {key_status}")
+                elif current_provider == "doubao":
+                    key_status = "✅ Set" if os.getenv("ARK_API_KEY") else "❌ Not set"
+                    print(f"  API Key (ARK_API_KEY): {key_status}")
+                elif current_provider in ["kimi", "moonshot"]:
+                    key_status = "✅ Set" if os.getenv("MOONSHOT_API_KEY") else "❌ Not set"
+                    print(f"  API Key (MOONSHOT_API_KEY): {key_status}")
             
             elif user_input:
                 # Execute task
@@ -855,7 +953,7 @@ def main():
     )
     parser.add_argument(
         "--provider",
-        choices=["siliconflow", "doubao"],
+        choices=["siliconflow", "doubao", "kimi", "moonshot"],
         default="doubao",
         help="LLM provider to use (default: doubao)"
     )
@@ -867,7 +965,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        help="API key for the LLM provider (or set SILICONFLOW_API_KEY/ARK_API_KEY env var)"
+        help="API key for the LLM provider (or set SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY env var)"
     )
     
     args = parser.parse_args()
@@ -884,6 +982,11 @@ def main():
         api_key = os.getenv("SILICONFLOW_API_KEY")
         if not api_key:
             logger.error("Please provide API key via --api-key or SILICONFLOW_API_KEY environment variable")
+            sys.exit(1)
+    elif args.provider in ["kimi", "moonshot"]:
+        api_key = os.getenv("MOONSHOT_API_KEY")
+        if not api_key:
+            logger.error("Please provide API key via --api-key or MOONSHOT_API_KEY environment variable")
             sys.exit(1)
     else:
         logger.error(f"Unknown provider: {args.provider}")

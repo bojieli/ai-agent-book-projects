@@ -1,0 +1,8 @@
+pyyaml>=6.0
+openai>=1.0
+python-dotenv>=1.0
+pydantic>=2.0
+tenacity>=8.0
+rich>=13.0
+pandas>=2.0
+typing-extensions>=4.8

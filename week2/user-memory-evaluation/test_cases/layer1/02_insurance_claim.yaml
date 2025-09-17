@@ -1,0 +1,242 @@
+test_id: layer1_02_insurance_claim
+category: layer1
+title: Auto Insurance Claim - Policy and Incident Details
+description: Test agent's ability to recall specific claim details and policy information from an extensive insurance claim
+  call
+conversation_histories:
+- conversation_id: insurance_claim_001
+  timestamp: '2024-11-18 14:15:00'
+  metadata:
+    business: SafeGuard Auto Insurance
+    department: Claims Department
+    call_duration: 52 minutes
+  messages:
+  - role: user
+    content: Hi, I need to file a claim for an accident I was just in.
+  - role: assistant
+    content: I'm sorry to hear about your accident. I'm James from SafeGuard's claims department. First, are you safe and
+      have you received any necessary medical attention?
+  - role: user
+    content: Yes, I'm okay. Just shaken up. The paramedics checked me out at the scene and said I was fine.
+  - role: assistant
+    content: I'm glad you're alright. Let me pull up your account. Can you provide your policy number?
+  - role: user
+    content: It's SGA-8847291-04.
+  - role: assistant
+    content: Thank you. I see you're Jennifer Martinez with a 2019 Honda Accord, is that correct?
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: And can you verify your date of birth for security?
+  - role: user
+    content: July 22nd, 1988.
+  - role: assistant
+    content: Perfect, thank you. Now, can you tell me when and where this accident occurred?
+  - role: user
+    content: It happened about two hours ago, around 12:15 PM, at the intersection of Broadway and 45th Street in Sacramento.
+  - role: assistant
+    content: Were the police called to the scene?
+  - role: user
+    content: Yes, Officer Bradley took the report. The report number is SAC-2024-78432.
+  - role: assistant
+    content: Excellent, having that police report will help. Can you describe what happened?
+  - role: user
+    content: I was heading northbound on Broadway, and I had a green light at 45th Street. As I was going through the intersection,
+      another car ran the red light from 45th Street and hit my passenger side.
+  - role: assistant
+    content: That must have been frightening. Was anyone else in your vehicle?
+  - role: user
+    content: No, I was alone, thankfully.
+  - role: assistant
+    content: And the other vehicle - did you get their information?
+  - role: user
+    content: Yes, it was a blue 2021 Toyota Camry. The driver's name was Robert Chen.
+  - role: assistant
+    content: Did you get his insurance information?
+  - role: user
+    content: Yes, he has Nationwide insurance. His policy number is... let me see... NW-5543298.
+  - role: assistant
+    content: That's very helpful. Did Mr. Chen admit fault at the scene?
+  - role: user
+    content: Well, he didn't exactly admit fault, but he did say he didn't see the light change. The police officer said it
+      was pretty clear he ran the red light.
+  - role: assistant
+    content: I see. Were there any witnesses?
+  - role: user
+    content: Yes! A woman named Maria Thompson saw everything. She gave her statement to the police. Her number is 916-555-3847.
+  - role: assistant
+    content: That's excellent. Having a witness will certainly help your claim. Now, let's talk about the damage to your vehicle.
+      Can you describe it?
+  - role: user
+    content: The entire passenger side is damaged. Both doors are dented in, the mirror is gone, and there's damage to the
+      front and rear quarter panels on that side.
+  - role: assistant
+    content: Is the vehicle driveable?
+  - role: user
+    content: No, they had to tow it. It's at Jerry's Auto Body on Riverside Drive.
+  - role: assistant
+    content: Do you have the address for Jerry's Auto Body?
+  - role: user
+    content: It's 3421 Riverside Drive, Sacramento, 95822.
+  - role: assistant
+    content: Thank you. We'll send an adjuster there. Do you have their phone number?
+  - role: user
+    content: Yes, it's 916-555-7823.
+  - role: assistant
+    content: Perfect. Now, let me review your coverage. You have comprehensive and collision with a $500 deductible, correct?
+  - role: user
+    content: I think so. I also have rental car coverage, right?
+  - role: assistant
+    content: Yes, you have rental reimbursement up to $40 per day for up to 30 days. Would you like me to arrange a rental
+      car for you?
+  - role: user
+    content: Yes, please. I need something to get to work.
+  - role: assistant
+    content: Of course. We work with Enterprise Rent-A-Car. There's a location at 2100 Fulton Avenue. Would that work for
+      you?
+  - role: user
+    content: Actually, is there anything closer to downtown? That's where I work.
+  - role: assistant
+    content: Let me check... Yes, there's an Enterprise at 1800 L Street, which is right downtown. Would that be better?
+  - role: user
+    content: Much better, thank you.
+  - role: assistant
+    content: I'll set that up for you. They'll have a midsize sedan ready for you tomorrow morning at 9 AM. Will that work?
+  - role: user
+    content: Can I get something today? I have to pick up my kids from school.
+  - role: assistant
+    content: Let me call them now and see what's available... Okay, they can have a car ready for you by 4 PM today. Will
+      that work?
+  - role: user
+    content: Perfect, my sister can get the kids and I'll pick up the rental after.
+  - role: assistant
+    content: Great. Your rental confirmation number is ENT-7739482. Just bring your driver's license and our claim number,
+      which is CLM-2024-894327.
+  - role: user
+    content: Let me write that down... CLM-2024-894327?
+  - role: assistant
+    content: Correct. Now, did you have any personal belongings damaged in the accident?
+  - role: user
+    content: Oh yes! My laptop was in the passenger seat and it got damaged. It's completely broken.
+  - role: assistant
+    content: What kind of laptop was it?
+  - role: user
+    content: A MacBook Pro, 14-inch, I bought it last year for about $2,200.
+  - role: assistant
+    content: Do you have the receipt or proof of purchase?
+  - role: user
+    content: I should have the email receipt from Apple. I can find it.
+  - role: assistant
+    content: Perfect. Please email that to claims@safeguardauto.com with your claim number in the subject line. Your policy
+      includes personal property coverage up to $2,500.
+  - role: user
+    content: Oh good, that will cover it. What about my medical check-up? The paramedics said I should see my doctor just
+      to be safe.
+  - role: assistant
+    content: Yes, your policy includes medical payments coverage up to $5,000. Just submit any medical bills related to this
+      accident and we'll cover them.
+  - role: user
+    content: How do I submit those?
+  - role: assistant
+    content: You can upload them through our mobile app, email them to the same claims address, or mail them to our office
+      at P.O. Box 5000, Sacramento, CA 95814.
+  - role: user
+    content: I'll probably use the app. Oh, what about missing work? I'm pretty sore and might need to take tomorrow off.
+  - role: assistant
+    content: Unfortunately, lost wages aren't covered under your current policy unless there's a serious injury requiring
+      extended time off. But definitely prioritize your health.
+  - role: user
+    content: Okay, understood. So what happens next?
+  - role: assistant
+    content: Our adjuster, Patricia Wong, will inspect your vehicle at Jerry's Auto Body within 24-48 hours. She'll call you
+      at the number we have on file - is 916-555-2234 still correct?
+  - role: user
+    content: Actually, I have a new number. It's 916-555-8899.
+  - role: assistant
+    content: I've updated that. Patricia will call you at 916-555-8899. She'll assess the damage and determine if it's repairable
+      or if it's a total loss.
+  - role: user
+    content: What happens if it's totaled?
+  - role: assistant
+    content: If it's deemed a total loss, we'll pay you the actual cash value of your vehicle minus your deductible. Based
+      on your 2019 Honda Accord with 45,000 miles, the estimated value would be around $22,000-24,000.
+  - role: user
+    content: I still owe about $8,000 on my car loan.
+  - role: assistant
+    content: That would be paid directly to your lender, Honda Financial Services, correct?
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: We'd pay them first, and any remaining amount would come to you. You do have gap insurance on your policy, so
+      if there's any shortfall, that would be covered.
+  - role: user
+    content: Oh good, I forgot I had that.
+  - role: assistant
+    content: Now, since the other driver appears to be at fault based on the police report, we'll also pursue subrogation
+      against his insurance.
+  - role: user
+    content: What does that mean for me?
+  - role: assistant
+    content: It means we'll work to recover your deductible from his insurance company. If successful, you'll get your $500
+      deductible refunded.
+  - role: user
+    content: How long does that usually take?
+  - role: assistant
+    content: Subrogation can take 3-6 months typically, but we'll handle all of that for you. You don't need to do anything.
+  - role: user
+    content: Okay. Is there anything else I need to do right now?
+  - role: assistant
+    content: Just a few more things. First, don't discuss the accident with the other driver's insurance if they call. Refer
+      them to us.
+  - role: user
+    content: Got it. What if they've already called? Someone from Nationwide left a voicemail.
+  - role: assistant
+    content: Don't return their call. Let us handle all communication with them. Second, take photos of your injuries if you
+      have any bruising or cuts, even minor ones.
+  - role: user
+    content: I have some bruising on my shoulder from the seatbelt.
+  - role: assistant
+    content: Definitely photograph that, and date the photos. Email those to us as well. Also, keep all receipts for any expenses
+      related to this accident.
+  - role: user
+    content: Like what kind of expenses?
+  - role: assistant
+    content: Uber rides, medical co-pays, prescription medications, even mileage to and from medical appointments. We can
+      reimburse up to $500 in transportation expenses.
+  - role: user
+    content: I didn't know that. That's helpful.
+  - role: assistant
+    content: Is there anything else about the accident I should know? Any traffic cameras or business security cameras that
+      might have caught it?
+  - role: user
+    content: Actually, yes! There's a Wells Fargo on that corner that probably has cameras facing the intersection.
+  - role: assistant
+    content: Excellent. We'll request that footage. The police probably will too. Now, you should receive an email shortly
+      with all this information and your claim number.
+  - role: user
+    content: Perfect. Oh, one more thing - my registration and insurance cards were in the car. Can I get replacements?
+  - role: assistant
+    content: Of course. I'll email you temporary proof of insurance right now, and we'll mail new cards to your address at
+      892 Oak Lane, Sacramento, 95821. Is that address still correct?
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: Perfect. They'll arrive in 5-7 business days. For your registration, you'll need to contact the DMV, but we can
+      provide a letter confirming your coverage if needed.
+  - role: user
+    content: Okay, I'll deal with the DMV later.
+  - role: assistant
+    content: I know this is a stressful situation, Ms. Martinez. We'll do everything we can to resolve this quickly. You'll
+      receive a call from Patricia Wong within 48 hours, and your rental car is confirmed for 4 PM today at the downtown Enterprise
+      location.
+  - role: user
+    content: Thank you so much, James. You've been really helpful.
+  - role: assistant
+    content: You're very welcome. Your claim number again is CLM-2024-894327. If you have any questions, call our claims line
+      anytime at 1-800-555-SAFE. Take care of yourself, and don't hesitate to seek medical attention if you feel worse.
+user_question: I need to follow up on my accident claim. What was my claim number and when is the adjuster supposed to call
+  me?
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the claim number CLM-2024-894327 from the insurance claim conversation, along with the critical information that adjuster Patricia Wong will be calling within 24-48 hours. The agent should demonstrate clear recall of both the exact claim number and the specific timeframe for the adjuster's follow-up call. Ideally, the agent should also mention that Patricia Wong will be calling at the updated phone number 916-555-8899, showing attention to the detail that the phone number was changed during the conversation. The response should not confuse the claim number with other reference numbers mentioned in the conversation such as the police report number or the rental car confirmation number.
+expected_behavior: The agent should accurately provide the claim number CLM-2024-894327 and mention that adjuster Patricia
+  Wong will call within 24-48 hours at the updated phone number

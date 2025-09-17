@@ -1,0 +1,473 @@
+test_id: layer2_10_travel_rebooking_chain
+category: layer2
+title: Travel Plans with Multiple Changes - Complex Rebooking Chain
+description: Test agent's ability to track evolving travel plans across multiple rebookings where each conversation modifies and references previous arrangements
+conversation_histories:
+  - conversation_id: original_booking_001
+    timestamp: "2024-08-15 10:00:00"
+    metadata:
+      business: "Delta Airlines"
+      department: "Reservations"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to book a trip to Tokyo for a business conference in November."
+      - role: assistant
+        content: "Hello! I'm Sarah from Delta Reservations. I'd be happy to help you book your trip to Tokyo. What are your travel dates?"
+      - role: user
+        content: "I need to leave November 15th and return November 22nd."
+      - role: assistant
+        content: "Let me check availability. From which city will you be departing?"
+      - role: user
+        content: "San Francisco."
+      - role: assistant
+        content: "I have several options. There's a nonstop flight departing SFO at 1:30 PM, arriving Tokyo Haneda at 5:45 PM next day."
+      - role: user
+        content: "That works. What about the return?"
+      - role: assistant
+        content: "November 22nd, I have a nonstop departing Haneda at 3:20 PM, arriving SFO at 8:15 AM same day."
+      - role: user
+        content: "Perfect timing. What's the price?"
+      - role: assistant
+        content: "In Premium Select cabin, it's $3,847 round trip. Main Cabin is $1,456."
+      - role: user
+        content: "My company authorizes Premium Select for flights over 10 hours. Book that."
+      - role: assistant
+        content: "Excellent choice. May I have your full name as it appears on your passport?"
+      - role: user
+        content: "Michael James Patterson."
+      - role: assistant
+        content: "Date of birth?"
+      - role: user
+        content: "April 18, 1985."
+      - role: assistant
+        content: "SkyMiles number?"
+      - role: user
+        content: "Yes, it's 4478823901."
+      - role: assistant
+        content: "Thank you. You'll earn 38,470 miles for this trip. Known Traveler Number?"
+      - role: user
+        content: "My Global Entry is 988745632."
+      - role: assistant
+        content: "Perfect, you'll have TSA PreCheck. Seat preference?"
+      - role: user
+        content: "Aisle seat, preferably exit row if available in Premium Select."
+      - role: assistant
+        content: "Premium Select doesn't have exit rows, but I have aisle seat 21C available, extra legroom row."
+      - role: user
+        content: "That's fine for both flights?"
+      - role: assistant
+        content: "Yes, 21C outbound and 21D return - both aisle seats."
+      - role: user
+        content: "Great. What's my confirmation number?"
+      - role: assistant
+        content: "Your confirmation is KJMN89. Total charge is $3,847."
+      - role: user
+        content: "Can you send this to my assistant too? Her email is lisa.wong@techcorp.com"
+      - role: assistant
+        content: "I'll send confirmations to both you and lisa.wong@techcorp.com."
+      - role: user
+        content: "Also, I usually stay at the Hilton Tokyo. Is it close to Haneda?"
+      - role: assistant
+        content: "Hilton Tokyo is in Shinjuku, about 45 minutes from Haneda by train. Would you prefer something closer?"
+      - role: user
+        content: "No, Shinjuku is where my meetings are. 45 minutes is fine."
+      - role: assistant
+        content: "The Airport Limousine Bus also goes directly to Hilton Tokyo, about 60-75 minutes."
+      - role: user
+        content: "Good to know. What about my return flight - can I add an extra bag?"
+      - role: assistant
+        content: "Premium Select includes 2 free checked bags up to 70 pounds each."
+      - role: user
+        content: "Perfect, I'll be bringing product samples back."
+      - role: assistant
+        content: "Just ensure samples comply with customs regulations. Any hazardous materials?"
+      - role: user
+        content: "No, just electronics prototypes."
+      - role: assistant
+        content: "Should be fine. Declare them at customs. Need travel insurance?"
+      - role: user
+        content: "My company has that covered."
+      - role: assistant
+        content: "Understood. Your flights are confirmed. Check-in opens 24 hours before departure."
+      - role: user
+        content: "Can I use the Sky Club lounge?"
+      - role: assistant
+        content: "With Premium Select, lounge access isn't included, but you can purchase a day pass for $59."
+      - role: user
+        content: "I have the Reserve card, doesn't that give access?"
+      - role: assistant
+        content: "Yes! Delta SkyMiles Reserve cardholders get complimentary Sky Club access."
+      - role: user
+        content: "Perfect. Anything else I should know?"
+      - role: assistant
+        content: "Japan requires proof of onward travel and may ask about accommodation. Have your hotel confirmation ready."
+      - role: user
+        content: "I'll book the Hilton today."
+      - role: assistant
+        content: "Also, November is pleasant weather in Tokyo, around 55-65°F."
+      - role: user
+        content: "Good for business attire. Thanks for all your help!"
+      - role: assistant
+        content: "You're welcome, Mr. Patterson. Have a successful trip to Tokyo!"
+      - role: user
+        content: "One more thing - if my meetings get rescheduled, can I change these flights?"
+      - role: assistant
+        content: "Premium Select tickets allow changes with no change fee, you'd just pay any fare difference."
+      - role: user
+        content: "That's reassuring. The conference dates aren't 100% confirmed yet."
+      - role: assistant
+        content: "Just call us if you need to modify. Changes are easier before check-in opens."
+      - role: user
+        content: "Will do. Thanks again, Sarah."
+      - role: assistant
+        content: "My pleasure. Your confirmation KJMN89 is all set. Safe travels!"
+  - conversation_id: partial_change_001
+    timestamp: "2024-09-28 14:30:00"
+    metadata:
+      business: "Delta Airlines"
+      department: "Customer Service"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to modify my Tokyo trip. The conference dates changed."
+      - role: assistant
+        content: "Hello, I'm James from Delta Customer Service. I can help with that. What's your confirmation number?"
+      - role: user
+        content: "It's KJMN89."
+      - role: assistant
+        content: "I see your November 15-22 trip to Tokyo, Mr. Patterson. What needs to change?"
+      - role: user
+        content: "The conference moved earlier. I need to leave November 12th now, but still return November 22nd."
+      - role: assistant
+        content: "Let me check November 12th availability. Same flight time preference - afternoon departure?"
+      - role: user
+        content: "Actually, my assistant Lisa booked a client dinner on the 11th. I need to leave late on the 12th or early morning on the 13th."
+      - role: assistant
+        content: "There's a red-eye departing SFO at 11:55 PM on November 12th, arriving Haneda 5:15 AM on November 14th."
+      - role: user
+        content: "That arrives the 14th? I need to be there by the 13th evening."
+      - role: assistant
+        content: "With crossing the date line, you lose a day. The 11:55 PM on the 12th is actually your latest option."
+      - role: user
+        content: "Ugh, that's cutting it close. What about earlier on the 12th?"
+      - role: assistant
+        content: "There's a 1:30 PM departure on November 12th, arriving 5:45 PM on November 13th."
+      - role: user
+        content: "That's the same flight time as my original booking, just three days earlier?"
+      - role: assistant
+        content: "Exactly. Same flight number, DL577, just November 12th instead of 15th."
+      - role: user
+        content: "But I have that client dinner on the 11th that might run late."
+      - role: assistant
+        content: "Where's the dinner?"
+      - role: user
+        content: "Downtown San Francisco, probably ending around 10 PM."
+      - role: assistant
+        content: "The 11:55 PM flight gives you time, but arrives morning of the 14th. Your choice."
+      - role: user
+        content: "When does the conference actually start?"
+      - role: assistant
+        content: "You haven't mentioned the specific conference schedule."
+      - role: user
+        content: "Opening reception is November 13th at 7 PM. First session is November 14th at 9 AM."
+      - role: assistant
+        content: "Then the 1:30 PM flight on the 12th works perfectly. You'd arrive 5:45 PM on the 13th, make the reception."
+      - role: user
+        content: "You're right. Let's do that. Same Premium Select cabin?"
+      - role: assistant
+        content: "Checking... Premium Select is available but $400 more due to closer booking date."
+      - role: user
+        content: "So total would be $4,247?"
+      - role: assistant
+        content: "No, you'd pay the $400 difference. Original fare was $3,847."
+      - role: user
+        content: "Company will cover it. Book it."
+      - role: assistant
+        content: "Done. Now you're on DL577 November 12th. Your return November 22nd stays the same?"
+      - role: user
+        content: "Yes, keep the return as is."
+      - role: assistant
+        content: "Confirmed. Want the same seat, 21C?"
+      - role: user
+        content: "Is 21A available instead? I want to look out the window arriving in Japan."
+      - role: assistant
+        content: "21A is available. Window seat, extra legroom row."
+      - role: user
+        content: "Perfect. Switch me to that."
+      - role: assistant
+        content: "Changed to 21A. Your return flight still has you in 21D, aisle seat. Change that too?"
+      - role: user
+        content: "No, keep the aisle for the return. I'll probably want to sleep."
+      - role: assistant
+        content: "Understood. New confirmation is LMPQ72. Old one is cancelled."
+      - role: user
+        content: "Wait, I already gave the old confirmation to my hotel. Can you keep the same one?"
+      - role: assistant
+        content: "I'm sorry, system generates new confirmations for changes. You'll need to update the hotel."
+      - role: user
+        content: "Annoying but okay. Still goes to both email addresses?"
+      - role: assistant
+        content: "Yes, you and lisa.wong@techcorp.com will both receive the updated itinerary."
+      - role: user
+        content: "Good. Lisa handles my travel docs."
+      - role: assistant
+        content: "The $400 fare difference will be charged to your card on file."
+      - role: user
+        content: "Actually, use my corporate card now. It's a Visa ending in 8823."
+      - role: assistant
+        content: "I need the full number to process the change."
+      - role: user
+        content: "4532-7789-0234-8823."
+      - role: assistant
+        content: "Expiration and CVV?"
+      - role: user
+        content: "08/26, CVV 445."
+      - role: assistant
+        content: "Processed. $400 charged to your corporate Visa."
+      - role: user
+        content: "The original charge stays on my personal card?"
+      - role: assistant
+        content: "Correct. Original $3,847 remains on your original payment method."
+      - role: user
+        content: "Fine. My company reimburses everything anyway."
+      - role: assistant
+        content: "Anything else you need to modify?"
+      - role: user
+        content: "Actually yes - can I add a stopover in Seoul on the way back?"
+      - role: assistant
+        content: "That would require rebooking the return as a multi-city ticket. Significant fare increase."
+      - role: user
+        content: "How much more?"
+      - role: assistant
+        content: "Roughly $1,200 additional for a 2-day stopover in Seoul."
+      - role: user
+        content: "Let me check with my team if we have Korean clients to visit. I'll call back."
+      - role: assistant
+        content: "Sure. Your current booking LMPQ72 is confirmed as is."
+      - role: user
+        content: "Thanks James. I'll let you know about Seoul."
+      - role: assistant
+        content: "You're welcome, Mr. Patterson. Anything else for today?"
+      - role: user
+        content: "No, that's all. Thanks for your help."
+      - role: assistant
+        content: "Have a great trip to Tokyo! Remember check-in opens 24 hours before."
+  - conversation_id: complete_overhaul_001
+    timestamp: "2024-11-08 09:00:00"
+    metadata:
+      business: "Delta Airlines"
+      department: "Premium Services"
+      call_duration: "56 minutes"
+    messages:
+      - role: user
+        content: "Hi, I have a flight to Tokyo next week but everything has gone wrong. I need help."
+      - role: assistant
+        content: "I'm sorry to hear that. This is Monica from Delta Premium Services. What's your confirmation number?"
+      - role: user
+        content: "I think it's LMPQ72, but I might have changed it again. My name is Michael Patterson."
+      - role: assistant
+        content: "I see LMPQ72 for November 12th departure. You said everything's gone wrong?"
+      - role: user
+        content: "The conference was cancelled due to a typhoon warning. But I have a new opportunity in Singapore instead."
+      - role: assistant
+        content: "You want to change from Tokyo to Singapore?"
+      - role: user
+        content: "Yes, but here's the complicated part - I need to go to Singapore first, then Tokyo for client meetings, then home."
+      - role: assistant
+        content: "So a multi-city trip: San Francisco to Singapore to Tokyo to San Francisco?"
+      - role: user
+        content: "Exactly. And my colleague Jennifer needs to join me now."
+      - role: assistant
+        content: "Let's start with your dates. When do you need to be in Singapore?"
+      - role: user
+        content: "November 14th for a partners meeting."
+      - role: assistant
+        content: "Your current flight arrives Tokyo on November 13th. We need earlier departure."
+      - role: user
+        content: "Right. What's available for November 12th to Singapore?"
+      - role: assistant
+        content: "Same day you're currently scheduled. There's DL167 at 11:30 AM to Singapore."
+      - role: user
+        content: "That's earlier than my current 1:30 PM flight. Does it arrive on the 13th?"
+      - role: assistant
+        content: "Arrives Singapore 8:45 PM on November 13th."
+      - role: user
+        content: "Perfect for the meeting on the 14th. When would I go to Tokyo?"
+      - role: assistant
+        content: "How long do you need in Singapore?"
+      - role: user
+        content: "Two days. So leave for Tokyo on November 16th?"
+      - role: assistant
+        content: "Singapore to Tokyo on November 16th, I have flights at 9 AM or 11 PM."
+      - role: user
+        content: "9 AM works. When would I arrive?"
+      - role: assistant
+        content: "Tokyo Narita at 5:30 PM same day."
+      - role: user
+        content: "Wait, Narita? My original was Haneda. My hotel is near Haneda."
+      - role: assistant
+        content: "Singapore flights typically use Narita. Haneda requires different routing."
+      - role: user
+        content: "How far is Narita from the Hilton Tokyo?"
+      - role: assistant
+        content: "About 90 minutes by train or bus, versus 45 from Haneda."
+      - role: user
+        content: "That's inconvenient. Can we route through somewhere else to get Haneda?"
+      - role: assistant
+        content: "You could go Singapore to Seoul to Haneda, but adds 5 hours travel time."
+      - role: user
+        content: "Forget it, Narita is fine. Now what about Tokyo to San Francisco?"
+      - role: assistant
+        content: "Keep your original November 22nd return?"
+      - role: user
+        content: "Yes, but that was from Haneda. Do you have Narita to SFO?"
+      - role: assistant
+        content: "Yes, DL208 departs Narita 4:45 PM, arrives SFO 9:40 AM."
+      - role: user
+        content: "Similar timing to my original. Now what about Jennifer?"
+      - role: assistant
+        content: "I'll need to create a separate booking for her. Same entire itinerary?"
+      - role: user
+        content: "She's only joining for Singapore and Tokyo, not the Tokyo to home leg."
+      - role: assistant
+        content: "So she needs San Francisco to Singapore, Singapore to Tokyo, then Tokyo back to San Francisco on different dates?"
+      - role: user
+        content: "She's actually starting from Los Angeles, not San Francisco."
+      - role: assistant
+        content: "This is getting complex. Let me map it out: You go SFO-Singapore-Tokyo-SFO, she goes LAX-Singapore-Tokyo-LAX?"
+      - role: user
+        content: "Correct. Same dates for Singapore and Tokyo legs."
+      - role: assistant
+        content: "When does she return from Tokyo?"
+      - role: user
+        content: "She needs to be back by November 20th for another commitment."
+      - role: assistant
+        content: "So she leaves Tokyo two days before you."
+      - role: user
+        content: "Right. Is this all possible?"
+      - role: assistant
+        content: "Yes, but it's essentially four separate bookings. Yours is rebooking, hers is new."
+      - role: user
+        content: "What's the damage cost-wise?"
+      - role: assistant
+        content: "Your multi-city in Premium Select will be about $6,200 total."
+      - role: user
+        content: "Versus my current $4,247 total?"
+      - role: assistant
+        content: "You paid $3,847 originally plus $400 change fee. New total $6,200 means additional $1,953."
+      - role: user
+        content: "And Jennifer's flights?"
+      - role: assistant
+        content: "LAX-Singapore-Tokyo-LAX in Premium Select would be about $5,800."
+      - role: user
+        content: "Can she fly Main Cabin instead?"
+      - role: assistant
+        content: "Yes, that would be about $2,300 for her entire routing."
+      - role: user
+        content: "Let's do Premium Select for me, Main Cabin for her."
+      - role: assistant
+        content: "I'll need Jennifer's full information."
+      - role: user
+        content: "Jennifer Anne Walsh, DOB June 22, 1990."
+      - role: assistant
+        content: "SkyMiles number?"
+      - role: user
+        content: "She doesn't have one. Can you create it?"
+      - role: assistant
+        content: "I'll enroll her. Passport number?"
+      - role: user
+        content: "I don't have it. Can she add it later?"
+      - role: assistant
+        content: "She needs to add it before check-in. TSA PreCheck?"
+      - role: user
+        content: "No, she doesn't have that either."
+      - role: assistant
+        content: "She should arrive earlier for security then. Now, let me process your changes first."
+      - role: user
+        content: "Actually wait - I just realized I told the Hilton Tokyo my dates. If I'm arriving later now..."
+      - role: assistant
+        content: "You'd arrive Tokyo November 16th instead of 13th."
+      - role: user
+        content: "Three days later. And leaving the same day, November 22nd?"
+      - role: assistant
+        content: "Correct. So 6 nights in Tokyo instead of 9 originally."
+      - role: user
+        content: "That's actually fine, saves hotel costs. Proceed with the booking."
+      - role: assistant
+        content: "Processing your new itinerary... New confirmation is NPRS45."
+      - role: user
+        content: "Another new confirmation? I'll never remember these."
+      - role: assistant
+        content: "I'll email the complete itinerary. Total additional charge is $1,953."
+      - role: user
+        content: "Same corporate card ending in 8823?"
+      - role: assistant
+        content: "Yes, I have that on file from your last change."
+      - role: user
+        content: "Good. Now book Jennifer's flights."
+      - role: assistant
+        content: "Creating her booking... Her confirmation is QRTX67."
+      - role: user
+        content: "Send hers to jennifer.walsh@techcorp.com"
+      - role: assistant
+        content: "Done. Her total is $2,300."
+      - role: user
+        content: "Can you charge that to my corporate card too?"
+      - role: assistant
+        content: "Yes, charging $2,300 for Jennifer Walsh's flights to your corporate Visa."
+      - role: user
+        content: "Perfect. So I'm all set with NPRS45 and she's QRTX67?"
+      - role: assistant
+        content: "Correct. You both depart November 12th, you from SFO, she from LAX."
+      - role: user
+        content: "We should try to meet up in Singapore airport."
+      - role: assistant
+        content: "Your flights arrive within 90 minutes of each other. You arrive 8:45 PM, she arrives 10:15 PM."
+      - role: user
+        content: "I'll wait for her at the airport lounge."
+      - role: assistant
+        content: "Good plan. Anything else I can help you with today, Mr. Patterson?"
+      - role: user
+        content: "That's everything. Thanks for sorting out this mess, Monica."
+      - role: assistant
+        content: "My pleasure. Have a successful trip to Singapore and Tokyo!"
+user_question: "What's my current flight itinerary and total cost for my Asia trip?"
+evaluation_criteria: |
+  The agent must track the evolution of changes across all three conversations to provide the CURRENT itinerary:
+  
+  **FINAL ITINERARY (After all changes - Confirmation NPRS45):**
+  
+  Outbound:
+  - November 12: SFO to Singapore, DL167 at 11:30 AM (not 1:30 PM)
+  - Arrives Singapore November 13 at 8:45 PM
+  - Seat: Premium Select (seat selection not mentioned in final booking)
+  
+  Singapore to Tokyo:
+  - November 16: Singapore to Tokyo Narita, 9 AM flight
+  - Arrives Tokyo Narita at 5:30 PM (changed from Haneda)
+  
+  Return:
+  - November 22: Tokyo Narita to SFO, DL208 at 4:45 PM
+  - Arrives SFO at 9:40 AM same day
+  - Seat: Premium Select
+  
+  **COST BREAKDOWN:**
+  - Original booking: $3,847
+  - First change fee: $400  
+  - Second rebooking additional: $1,953
+  - Total paid: $6,200
+  
+  **COMPANION TRAVELER:**
+  - Jennifer Walsh (Confirmation QRTX67) joining for parts of trip
+  - Her flights: $2,300 (Main Cabin, also charged to user's corporate card)
+  - Combined total charged: $8,500
+  
+  **KEY CHANGES:**
+  - Originally: SFO-Tokyo round trip Nov 15-22
+  - First change: Moved to Nov 12-22 (same route)
+  - Final change: Multi-city SFO-Singapore-Tokyo-SFO Nov 12-22
+  - Conference cancelled, replaced with Singapore meeting
+  - Airport changed from Haneda to Narita for Tokyo
+  
+  The agent MUST recognize that previous itineraries are superseded and only the final booking (NPRS45) is current.

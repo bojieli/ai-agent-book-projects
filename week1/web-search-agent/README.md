@@ -53,6 +53,11 @@ MOONSHOT_API_KEY=your-api-key-here
 
 ### 3. 运行 Agent
 
+**快速体验**（引导式交互）：
+```bash
+python quickstart.py
+```
+
 **交互模式**（持续对话）：
 ```bash
 python main.py
@@ -61,6 +66,11 @@ python main.py
 **单次问答**：
 ```bash
 python main.py "2024年诺贝尔物理学奖获得者是谁？"
+```
+
+**高级示例**：
+```bash
+python examples.py
 ```
 
 ## 📖 使用示例
@@ -99,9 +109,11 @@ python examples.py
 
 ### `agent.py` - 核心 Agent 实现
 - `WebSearchAgent`: 主要的 Agent 类
-- `think()`: 分析用户问题，决定搜索策略
-- `search_and_answer()`: 执行搜索并生成答案
-- `_decompose_task()`: 任务分解，将复杂问题转化为搜索策略
+- `search_and_answer()`: 执行搜索并生成答案的主方法
+- `_chat()`: 与 Kimi API 进行对话交互
+- `_get_system_prompt()`: 获取系统提示，定义 Agent 行为
+- `_get_tools()`: 定义可用的工具（$web_search）
+- `search_impl()`: 搜索实现的抽象层，便于扩展
 
 ### `config.py` - 配置管理
 - API 配置
@@ -109,31 +121,45 @@ python examples.py
 - 搜索参数设置
 
 ### `main.py` - 主程序入口
-- 交互式对话模式
-- 单次问答模式
-- 命令行界面
+- `run_interactive_mode()`: 交互式对话模式
+- `run_single_question()`: 单次问答模式
+- 命令行参数处理
+- 会话管理
+
+### `quickstart.py` - 快速体验脚本
+- `demo_search()`: 演示搜索功能
+- `interactive_mode()`: 简化的交互模式
+- 彩色输出和用户引导
+- API Key 配置检查
 
 ### `examples.py` - 高级示例
-- `AdvancedWebSearchAgent`: 扩展功能的 Agent
-- 各种使用场景示例
+- `AdvancedWebSearchAgent`: 扩展功能的 Agent 类
+- `batch_search()`: 批量处理多个问题
+- `search_with_context()`: 带上下文的搜索
+- `comparative_search()`: 比较多个项目
+- `fact_check()`: 事实验证功能
+- `example_research_assistant()`: 深度研究示例
 
 ## 🔧 配置选项
 
 | 配置项 | 说明 | 默认值 |
 |--------|------|--------|
 | `MOONSHOT_API_KEY` | Moonshot AI API 密钥 | 必填 |
+| `KIMI_API_KEY` | 旧版 API 密钥变量名（向后兼容） | 可选 |
 | `KIMI_BASE_URL` | API 基础 URL | `https://api.moonshot.cn/v1` |
 | `DEFAULT_MODEL` | 默认模型 | `kimi-k2-0905-preview` |
-| `MAX_SEARCH_ITERATIONS` | 最大搜索迭代次数 | 3 |
+| `MAX_SEARCH_ITERATIONS` | 最大搜索迭代次数（Config 中设置） | 3 |
 | `SEARCH_TIMEOUT` | 搜索超时时间（秒） | 30 |
+| `temperature` | 控制生成内容的创造性 | 0.6 |
 
 ## 📊 技术特点
 
 ### 核心技术
-- **Kimi API**: 使用 Moonshot AI 的最新 K2 模型 API
+- **Kimi API**: 使用 Moonshot AI 的最新 K2 模型（kimi-k2-0905-preview）
 - **内置工具调用**: 利用 Kimi 的 `$web_search` 内置函数
-- **智能任务分解**: 自动将复杂问题分解为可执行的搜索任务
-- **上下文管理**: 维护对话历史，支持连续对话
+- **迭代式搜索**: 支持多轮搜索直到获得充分信息（最多5次迭代）
+- **上下文管理**: 维护完整对话历史，支持连续对话
+- **温度控制**: 支持调整生成内容的创造性（temperature 参数）
 
 ### 优势
 - ✅ **实时信息**: 获取最新的网络信息
@@ -143,12 +169,14 @@ python examples.py
 
 ## 📝 开发计划
 
-- [ ] 添加异步搜索支持
-- [ ] 实现搜索结果缓存
-- [ ] 添加更多搜索策略
+- [ ] 添加异步搜索支持（使用 aiohttp）
+- [ ] 实现搜索结果缓存机制
+- [ ] 支持更多搜索后端（通过 search_impl 扩展）
 - [ ] 支持多语言搜索
-- [ ] 添加搜索结果评分机制
+- [ ] 添加搜索结果质量评分
 - [ ] 实现搜索历史记录
+- [ ] 集成重试机制（使用 tenacity）
+- [ ] 优化长对话的上下文管理
 
 ## 📄 许可证
 

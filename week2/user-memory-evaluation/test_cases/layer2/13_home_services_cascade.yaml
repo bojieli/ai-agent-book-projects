@@ -1,0 +1,499 @@
+test_id: layer2_13_home_services_cascade
+category: layer2
+title: Home Services with Cascading Dependencies
+description: Test agent's ability to track causally related services where work from one contractor affects others, creating a chain of schedule changes and dependencies
+conversation_histories:
+  - conversation_id: plumbing_initial_001
+    timestamp: "2024-09-10 10:00:00"
+    metadata:
+      business: "Rapid Response Plumbing"
+      department: "Service Scheduling"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi, I have a major leak in my kitchen that needs immediate attention."
+      - role: assistant
+        content: "This is Tom from Rapid Response Plumbing. Where exactly is the leak?"
+      - role: user
+        content: "Under the kitchen sink. It's been getting worse over the past week."
+      - role: assistant
+        content: "Is it actively leaking now?"
+      - role: user
+        content: "Yes, I have towels down but they're soaking through every few hours."
+      - role: assistant
+        content: "We need to get someone out quickly. What's your address?"
+      - role: user
+        content: "4521 Elmwood Drive, Sacramento."
+      - role: assistant
+        content: "I can have someone there this afternoon between 2-4 PM."
+      - role: user
+        content: "That works. What's your service call fee?"
+      - role: assistant
+        content: "$125 for diagnosis, then we'll quote repairs."
+      - role: user
+        content: "Fine. Just get someone here."
+      - role: assistant
+        content: "Mark Rodriguez will be your technician. He'll call 30 minutes before arrival."
+      - role: user
+        content: "Should I turn off the water?"
+      - role: assistant
+        content: "If you can isolate just the kitchen sink, yes. Otherwise wait for Mark."
+      - role: user
+        content: "I don't know where that shutoff is."
+      - role: assistant
+        content: "Mark will handle it. Just keep containing the water."
+      - role: user
+        content: "The water has been dripping onto the cabinet floor. There's damage."
+      - role: assistant
+        content: "How extensive is the damage?"
+      - role: user
+        content: "The cabinet bottom is warped and soft in spots."
+      - role: assistant
+        content: "That'll need repair after we fix the leak. We don't do cabinetry."
+      - role: user
+        content: "Who do you recommend?"
+      - role: assistant
+        content: "Premier Cabinets does good restoration work. Want their number?"
+      - role: user
+        content: "Yes please."
+      - role: assistant
+        content: "916-555-8823. Ask for Tony, mention we referred you."
+      - role: user
+        content: "Will the cabinet work have to wait until plumbing is done?"
+      - role: assistant
+        content: "Yes, area needs to dry completely first. Usually 48-72 hours."
+      - role: user
+        content: "This is going to be a multi-day project then."
+      - role: assistant
+        content: "Afraid so. Water damage always complicates things."
+      - role: user
+        content: "What about the dishwasher next to the sink?"
+      - role: assistant
+        content: "Is it affected by the leak?"
+      - role: user
+        content: "Not directly, but it shares plumbing with the sink."
+      - role: assistant
+        content: "Mark will check all connected plumbing."
+      - role: user
+        content: "The dishwasher is also old, maybe 15 years."
+      - role: assistant
+        content: "Might be time to replace if we're doing major work anyway."
+      - role: user
+        content: "I was thinking the same. Can you install a new one?"
+      - role: assistant
+        content: "Yes, we do appliance installation. About $200 plus parts."
+      - role: user
+        content: "I'll think about it. Fix the leak first."
+      - role: assistant
+        content: "Of course. Mark will assess everything and provide options."
+      - role: user
+        content: "Is this going to require opening walls?"
+      - role: assistant
+        content: "Depends on the leak source. If it's the supply lines, possibly."
+      - role: user
+        content: "Great, then I'll need drywall repair too."
+      - role: assistant
+        content: "Let's see what Mark finds first. Might be simpler."
+      - role: user
+        content: "I have laminate flooring. Will you need to remove any?"
+      - role: assistant
+        content: "Only if water has seeped underneath."
+      - role: user
+        content: "I've noticed some buckling near the cabinet."
+      - role: assistant
+        content: "That suggests water got under. Flooring might need attention."
+      - role: user
+        content: "Another contractor to call?"
+      - role: assistant
+        content: "Afraid so. Flooring is specialty work."
+      - role: user
+        content: "This is snowballing into a kitchen renovation."
+      - role: assistant
+        content: "Water damage tends to do that. Better to fix everything properly."
+      - role: user
+        content: "What's your estimate for just the plumbing?"
+      - role: assistant
+        content: "Without seeing it, typically $400-1200 for under-sink repairs."
+      - role: user
+        content: "And if pipes in the wall need replacing?"
+      - role: assistant
+        content: "Could go up to $3,000 depending on extent."
+      - role: user
+        content: "I better check my homeowner's insurance."
+      - role: assistant
+        content: "Good idea. Sudden leaks are often covered."
+      - role: user
+        content: "Not sure this qualifies as sudden. Been getting worse for a week."
+      - role: assistant
+        content: "Insurance companies vary. Worth checking."
+      - role: user
+        content: "Will you provide documentation for insurance?"
+      - role: assistant
+        content: "Yes, we provide detailed reports with photos."
+      - role: user
+        content: "Perfect. See you this afternoon."
+      - role: assistant
+        content: "Mark will be there 2-4 PM. He'll call first."
+      - role: user
+        content: "Should I clear everything out from under the sink?"
+      - role: assistant
+        content: "Yes, gives Mark better access."
+      - role: user
+        content: "Will do. Thanks Tom."
+      - role: assistant
+        content: "You're welcome. We'll get this fixed."
+  - conversation_id: plumbing_discovery_001
+    timestamp: "2024-09-10 15:30:00"
+    metadata:
+      business: "Rapid Response Plumbing"
+      department: "Field Service Update"
+      call_duration: "45 minutes"
+    messages:
+      - role: user
+        content: "Hello? Mark just left and I have questions about what he found."
+      - role: assistant
+        content: "This is Tom again from Rapid Response. I have Mark's report here. The situation is more complex than expected."
+      - role: user
+        content: "He said something about galvanized pipes?"
+      - role: assistant
+        content: "Yes, your home has original 1960s galvanized pipes. They're corroding internally."
+      - role: user
+        content: "Is that what caused the leak?"
+      - role: assistant
+        content: "The immediate leak is from corroded connections, but the whole system is deteriorating."
+      - role: user
+        content: "Mark mentioned replacing all kitchen plumbing?"
+      - role: assistant
+        content: "He recommends replacing all galvanized pipes in the kitchen area with copper."
+      - role: user
+        content: "How extensive is that?"
+      - role: assistant
+        content: "It requires opening the wall behind the sink, about 4 feet wide by 3 feet high."
+      - role: user
+        content: "So definitely drywall work needed."
+      - role: assistant
+        content: "Yes, and the cabinet will need to be temporarily removed."
+      - role: user
+        content: "But the cabinet is already damaged!"
+      - role: assistant
+        content: "Right, so this timing might work out. Replace cabinet after pipe work."
+      - role: user
+        content: "How long will I be without a kitchen sink?"
+      - role: assistant
+        content: "The plumbing work takes two days. Days 1 for demo and rough plumbing, day 2 for connections."
+      - role: user
+        content: "When can you start?"
+      - role: assistant
+        content: "We have an opening September 16-17, next Monday and Tuesday."
+      - role: user
+        content: "That's almost a week away!"
+      - role: assistant
+        content: "Mark installed a temporary patch that should hold."
+      - role: user
+        content: "He said not to use the disposal or dishwasher."
+      - role: assistant
+        content: "Correct, minimal use only. Hand washing in bathroom if needed."
+      - role: user
+        content: "This is really inconvenient."
+      - role: assistant
+        content: "I understand. The alternative is risk of major flooding."
+      - role: user
+        content: "What's the cost for all this?"
+      - role: assistant
+        content: "Complete kitchen replumb is $4,200, including materials."
+      - role: user
+        content: "That's way more than you estimated!"
+      - role: assistant
+        content: "The galvanized pipe situation wasn't apparent until inspection."
+      - role: user
+        content: "Does this price include fixing the wall?"
+      - role: assistant
+        content: "No, just plumbing. Drywall repair would be additional."
+      - role: user
+        content: "Do you do that?"
+      - role: assistant
+        content: "We can rough patch, but you'll want a proper drywall contractor for finishing."
+      - role: user
+        content: "Another contractor to coordinate."
+      - role: assistant
+        content: "I can recommend Santos Drywall. They work with us often."
+      - role: user
+        content: "Can they come right after you're done?"
+      - role: assistant
+        content: "Usually they need to schedule a week out."
+      - role: user
+        content: "So no kitchen for over two weeks?"
+      - role: assistant
+        content: "You'll have water after we're done, just exposed walls temporarily."
+      - role: user
+        content: "And the cabinet people?"
+      - role: assistant
+        content: "They'll need to measure after drywall is complete."
+      - role: user
+        content: "This is becoming a three-week project minimum."
+      - role: assistant
+        content: "Realistically, yes. Water damage creates a domino effect."
+      - role: user
+        content: "Should I just renovate the whole kitchen?"
+      - role: assistant
+        content: "Some homeowners decide that when facing major repairs."
+      - role: user
+        content: "The appliances are all old anyway."
+      - role: assistant
+        content: "If you're opening walls, it's the ideal time for updates."
+      - role: user
+        content: "Can you run new lines for relocated appliances?"
+      - role: assistant
+        content: "Yes, if you decide on layout changes, tell us before we start."
+      - role: user
+        content: "I need to think about this."
+      - role: assistant
+        content: "Take your time. We need confirmation by Thursday for Monday start."
+      - role: user
+        content: "What about permits?"
+      - role: assistant
+        content: "We'll pull plumbing permits. Included in our price."
+      - role: user
+        content: "Will an inspector need to come?"
+      - role: assistant
+        content: "Yes, rough inspection after day 1, final after completion."
+      - role: user
+        content: "More scheduling to coordinate."
+      - role: assistant
+        content: "We handle permit scheduling. You don't need to be home."
+      - role: user
+        content: "Small blessing. Okay, pencil me in for September 16-17."
+      - role: assistant
+        content: "Noted. Call by Thursday to confirm."
+      - role: user
+        content: "Will do. Thanks for the detailed explanation."
+      - role: assistant
+        content: "Of course. We'll get your kitchen back in order."
+  - conversation_id: contractor_coordination_001
+    timestamp: "2024-09-12 14:00:00"
+    metadata:
+      business: "Home Renovation Coordinators"
+      department: "Project Management"
+      call_duration: "56 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need help coordinating multiple contractors for my kitchen repair that's turned into a renovation."
+      - role: assistant
+        content: "Hello! I'm Sandra from Home Renovation Coordinators. We specialize in multi-trade projects. Tell me what's happening."
+      - role: user
+        content: "Started with a leak, now I need plumbing, drywall, cabinets, flooring, maybe appliances."
+      - role: assistant
+        content: "Classic cascade situation. Who do you have scheduled so far?"
+      - role: user
+        content: "Rapid Response Plumbing for September 16-17."
+      - role: assistant
+        content: "Good outfit. What's their scope?"
+      - role: user
+        content: "Replacing all galvanized pipes in kitchen, opening walls."
+      - role: assistant
+        content: "So you'll need drywall immediately after. Who's doing that?"
+      - role: user
+        content: "They recommended Santos Drywall but I haven't called yet."
+      - role: assistant
+        content: "I work with Santos regularly. Want me to coordinate?"
+      - role: user
+        content: "That would be amazing. Can they start September 18?"
+      - role: assistant
+        content: "Let me check... Santos can't start until September 20th."
+      - role: user
+        content: "Three day gap with open walls?"
+      - role: assistant
+        content: "The plumber will plastic sheet it, but yes, it's not ideal."
+      - role: user
+        content: "What about electrical? If walls are open..."
+      - role: assistant
+        content: "Smart thinking! Perfect time to update outlets and add under-cabinet lighting."
+      - role: user
+        content: "I hadn't thought of that. Who do you recommend?"
+      - role: assistant
+        content: "Bright Future Electric can work September 18-19, between plumbing and drywall."
+      - role: user
+        content: "Perfect timing. What would that cost?"
+      - role: assistant
+        content: "New outlets and under-cabinet circuits, about $1,800."
+      - role: user
+        content: "This is getting expensive."
+      - role: assistant
+        content: "But you'll never have walls open again. Worth doing now."
+      - role: user
+        content: "True. What about the cabinets?"
+      - role: assistant
+        content: "Are you repairing water damage or full replacement?"
+      - role: user
+        content: "The bottom cabinet is destroyed. Others are dated but functional."
+      - role: assistant
+        content: "Could do just the sink base cabinet, but matching might be impossible."
+      - role: user
+        content: "The finish is from the 1990s, oak with honey stain."
+      - role: assistant
+        content: "Yeah, that's not made anymore. Recommend all new lowers at minimum."
+      - role: user
+        content: "Might as well do all then."
+      - role: assistant
+        content: "Cabinet installation needs to wait for drywall completion. September 25th earliest."
+      - role: user
+        content: "Another week delay."
+      - role: assistant
+        content: "Actually, you need paint first. Drywall, paint, then cabinets."
+      - role: user
+        content: "Oh god, I forgot about painting."
+      - role: assistant
+        content: "ColorPro Painters could do September 23-24."
+      - role: user
+        content: "So cabinets September 25th?"
+      - role: assistant
+        content: "Cabinet delivery is usually 2-3 weeks from order."
+      - role: user
+        content: "What?! So even longer?"
+      - role: assistant
+        content: "Unless you buy in-stock cabinets from Home Depot."
+      - role: user
+        content: "Are those any good?"
+      - role: assistant
+        content: "Mid-range quality, but available immediately."
+      - role: user
+        content: "Let's go with those. Who installs?"
+      - role: assistant
+        content: "Kitchen Pros does good installation, could do September 26-27."
+      - role: user
+        content: "What about countertops?"
+      - role: assistant
+        content: "Measured after cabinet install, then 2-week fabrication."
+      - role: user
+        content: "So no functional kitchen until mid-October?"
+      - role: assistant
+        content: "You could get a temporary plywood top for the interim."
+      - role: user
+        content: "That's an option?"
+      - role: assistant
+        content: "Yes, about $200, makes kitchen usable while waiting for granite or quartz."
+      - role: user
+        content: "Let's do that. Now what about flooring?"
+      - role: assistant
+        content: "Water damaged areas need replacement. How much is affected?"
+      - role: user
+        content: "About 6 square feet in front of sink."
+      - role: assistant
+        content: "With laminate, you might need to replace the whole room for matching."
+      - role: user
+        content: "The kitchen is 150 square feet."
+      - role: assistant
+        content: "New laminate installed, about $1,500."
+      - role: user
+        content: "When would that happen?"
+      - role: assistant
+        content: "Flooring goes in after cabinets, before countertops. September 28th?"
+      - role: user
+        content: "Can they do it in one day?"
+      - role: assistant
+        content: "Yes, laminate is quick. FastFloors could handle it."
+      - role: user
+        content: "And appliances?"
+      - role: assistant
+        content: "What needs replacing?"
+      - role: user
+        content: "Dishwasher definitely, maybe refrigerator and stove while we're at it."
+      - role: assistant
+        content: "Best Buy can deliver and install. Need to schedule after flooring."
+      - role: user
+        content: "September 30th?"
+      - role: assistant
+        content: "That works. Full kitchen appliance package, about $4,000 for mid-range."
+      - role: user
+        content: "So let me total this up..."
+      - role: assistant
+        content: "Plumbing $4,200, electrical $1,800, drywall $800, paint $600, cabinets $3,500, install $1,200, temp counter $200, flooring $1,500, appliances $4,000."
+      - role: user
+        content: "That's almost $18,000!"
+      - role: assistant
+        content: "Plus countertops later, another $3,000 probably."
+      - role: user
+        content: "Over $20,000 from a simple leak."
+      - role: assistant
+        content: "But you'll have a completely updated kitchen."
+      - role: user
+        content: "Can you manage all these contractors?"
+      - role: assistant
+        content: "Yes, our fee is 10% of project cost, so about $2,000."
+      - role: user
+        content: "That's worth it to not deal with scheduling chaos."
+      - role: assistant
+        content: "We handle all coordination, ensure handoffs, manage delays."
+      - role: user
+        content: "What if someone can't make their date?"
+      - role: assistant
+        content: "We have backup contractors and juggle schedules as needed."
+      - role: user
+        content: "Sign me up. This is too complex to manage myself."
+      - role: assistant
+        content: "I'll email a project timeline and contract today."
+      - role: user
+        content: "Perfect. Thank you for making sense of this mess."
+      - role: assistant
+        content: "That's what we do! Your kitchen will be beautiful when complete."
+user_question: "When is my kitchen going to be fully functional again and what's the sequence of contractors?"
+evaluation_criteria: |
+  The agent must track the cascade of dependencies across all three conversations to provide the complete timeline:
+  
+  **FINAL COORDINATED SCHEDULE:**
+  
+  September 16-17: Rapid Response Plumbing
+  - Replace galvanized pipes with copper
+  - Open wall 4x3 feet
+  - Remove damaged sink cabinet
+  - Kitchen sink unusable
+  
+  September 18-19: Bright Future Electric
+  - Add outlets while walls open
+  - Install under-cabinet lighting circuits
+  - Cost: $1,800
+  
+  September 20-22: Santos Drywall
+  - Repair opened walls
+  - Patch and prep for paint
+  - Cost: $800
+  
+  September 23-24: ColorPro Painters
+  - Prime and paint repaired walls
+  - Cost: $600
+  
+  September 25: Cabinet delivery (Home Depot in-stock)
+  
+  September 26-27: Kitchen Pros
+  - Install new cabinets
+  - Install temporary plywood counter ($200)
+  - Kitchen becomes semi-functional
+  
+  September 28: FastFloors
+  - Replace water-damaged laminate
+  - Full kitchen floor (150 sq ft)
+  - Cost: $1,500
+  
+  September 30: Best Buy
+  - Deliver and install new appliances
+  - Dishwasher, possibly refrigerator and stove
+  
+  October (2 weeks later): Countertop installation
+  - After measurement on Sept 27
+  - 2-week fabrication period
+  - Kitchen fully functional mid-October
+  
+  **CAUSUAL CHAIN:**
+  - Initial leak → Galvanized pipe discovery → Wall opening required
+  - Wall opening → Opportunity for electrical → Need for drywall
+  - Cabinet water damage + wall work → Full cabinet replacement
+  - Floor water damage + cabinet replacement → Full floor replacement
+  - Multiple contractors → Need for project coordinator
+  
+  **TOTAL TIMELINE:**
+  - Start: September 16
+  - Semi-functional: September 27 (temporary counter)
+  - Fully functional: Mid-October (final countertops)
+  - Total duration: Approximately 4 weeks
+  
+  The agent must understand how each service depends on and affects the others in sequence.

@@ -1,0 +1,219 @@
+test_id: layer1_20_daycare_enrollment
+category: layer1
+title: Daycare Enrollment Process - Childcare Schedule and Fee Structure
+description: Test agent's ability to recall child information, care schedule, tuition rates, and enrollment requirements from daycare registration call
+conversation_histories:
+  - conversation_id: daycare_enroll_001
+    timestamp: "2024-11-15 10:30:00"
+    metadata:
+      business: "Bright Beginnings Learning Center"
+      department: "Enrollment Services"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm looking for daycare for my twin daughters starting in January."
+      - role: assistant
+        content: "Good morning! I'm Sharon from Bright Beginnings Learning Center. I'd be happy to help you with enrollment. How old are your daughters?"
+      - role: user
+        content: "They just turned 3 in October."
+      - role: assistant
+        content: "Perfect age for our Preschool 1 program! What are their names?"
+      - role: user
+        content: "Emma and Olivia Mitchell."
+      - role: assistant
+        content: "Beautiful names! And what's your name?"
+      - role: user
+        content: "I'm Barbara Mitchell."
+      - role: assistant
+        content: "Thank you, Ms. Mitchell. When exactly would you need care to start?"
+      - role: user
+        content: "January 6th, 2025, when I return from maternity leave."
+      - role: assistant
+        content: "Congratulations on your new baby! What days and hours do you need?"
+      - role: user
+        content: "Monday through Friday, probably 7:30 AM to 5:30 PM."
+      - role: assistant
+        content: "That's our standard full-time schedule. Let me check availability... Yes, we have two spots in our Butterfly classroom for 3-year-olds."
+      - role: user
+        content: "They'd be in the same classroom?"
+      - role: assistant
+        content: "Yes, we keep twins together unless parents request otherwise. The Butterfly room has 12 children with 2 teachers."
+      - role: user
+        content: "What's the teacher-child ratio?"
+      - role: assistant
+        content: "For 3-year-olds, it's 1:6, so two teachers for twelve children."
+      - role: user
+        content: "That's good. What's the tuition?"
+      - role: assistant
+        content: "Full-time for 3-year-olds is $325 per week per child."
+      - role: user
+        content: "So $650 weekly for both?"
+      - role: assistant
+        content: "Actually, we offer a 10% sibling discount on the second child. So $325 for Emma and $292.50 for Olivia, total $617.50 weekly."
+      - role: user
+        content: "That helps. How do you bill?"
+      - role: assistant
+        content: "Weekly tuition is due Monday mornings. We offer automatic withdrawal from checking or credit card."
+      - role: user
+        content: "What about registration fees?"
+      - role: assistant
+        content: "There's a one-time registration fee of $150 per child, so $300 for both."
+      - role: user
+        content: "Is that due immediately?"
+      - role: assistant
+        content: "Yes, registration fees hold their spots. Plus first week's tuition is due two weeks before start date."
+      - role: user
+        content: "So I'd pay $300 registration now, and $617.50 on December 23rd?"
+      - role: assistant
+        content: "Exactly right."
+      - role: user
+        content: "What about supplies?"
+      - role: assistant
+        content: "Annual supply fee is $200 per child, covers art materials, educational supplies, and field trips."
+      - role: user
+        content: "When is that due?"
+      - role: assistant
+        content: "Supply fee is due with first tuition payment, so December 23rd. That's another $400 for both girls."
+      - role: user
+        content: "What's included in the tuition?"
+      - role: assistant
+        content: "Breakfast, lunch, afternoon snack, all activities, and basic field trips. Special trips might have small fees."
+      - role: user
+        content: "What time is breakfast?"
+      - role: assistant
+        content: "Breakfast is 8:00-8:30 AM. If they arrive after 8:30, they should eat at home."
+      - role: user
+        content: "They'll be there by 7:30, so that's perfect. What about naps?"
+      - role: assistant
+        content: "Nap time is 12:30-2:30 PM. Do they still nap?"
+      - role: user
+        content: "Emma does, but Olivia usually just rests quietly."
+      - role: assistant
+        content: "That's fine. Non-nappers have quiet activities like puzzles or books on their cots."
+      - role: user
+        content: "What do they need to bring?"
+      - role: assistant
+        content: "Complete change of clothes, nap blanket, and small pillow if desired. We provide cots."
+      - role: user
+        content: "Are they potty trained required?"
+      - role: assistant
+        content: "For the 3-year-old room, we expect them to be mostly trained but accidents are normal. Are they trained?"
+      - role: user
+        content: "Emma is fully trained, Olivia has occasional accidents."
+      - role: assistant
+        content: "Very normal at this age. Just send extra clothes. We help with bathroom reminders."
+      - role: user
+        content: "What's the daily schedule like?"
+      - role: assistant
+        content: "7:30-8:00 free play, 8:00-8:30 breakfast, 8:30-9:00 circle time, 9:00-10:00 learning centers, 10:00-10:30 snack and story, 10:30-11:30 outdoor play..."
+      - role: user
+        content: "And afternoons?"
+      - role: assistant
+        content: "11:30-12:00 lunch, 12:00-12:30 bathroom and prep for nap, 12:30-2:30 nap/rest, 2:30-3:00 snack, 3:00-4:00 art or music, 4:00-5:00 outdoor play, 5:00-5:30 quiet activities and pickup."
+      - role: user
+        content: "What curriculum do you follow?"
+      - role: assistant
+        content: "We use Creative Curriculum, focusing on social-emotional development, pre-math, pre-literacy, and science exploration."
+      - role: user
+        content: "Do they learn letters and numbers?"
+      - role: assistant
+        content: "Yes, through play-based learning. By 4, most know uppercase letters and numbers 1-10."
+      - role: user
+        content: "What about sick policies?"
+      - role: assistant
+        content: "Children must be fever-free for 24 hours without medication before returning. Same for vomiting or diarrhea."
+      - role: user
+        content: "What if I need to pick them up late?"
+      - role: assistant
+        content: "We're open until 6:00 PM. After 5:30 PM is $1 per minute per child late fee."
+      - role: user
+        content: "So if I'm 10 minutes late?"
+      - role: assistant
+        content: "That would be $20 total, $10 per child."
+      - role: user
+        content: "What about vacation credits?"
+      - role: assistant
+        content: "After 6 months enrollment, you get one week vacation credit per year at 50% tuition."
+      - role: user
+        content: "So I'd pay half tuition for vacation week?"
+      - role: assistant
+        content: "Correct, $308.75 instead of $617.50 for that week."
+      - role: user
+        content: "What about holidays?"
+      - role: assistant
+        content: "We're closed major holidays - New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving and day after, Christmas Eve and Christmas."
+      - role: user
+        content: "Do we still pay for those weeks?"
+      - role: assistant
+        content: "Yes, tuition remains the same for holiday weeks. It's calculated into the weekly rate."
+      - role: user
+        content: "What forms do I need for enrollment?"
+      - role: assistant
+        content: "Birth certificates, immunization records, emergency contacts, pediatrician info, and any allergy or medical information."
+      - role: user
+        content: "Emma has a peanut allergy."
+      - role: assistant
+        content: "We're a nut-free facility. You'll need an allergy action plan from your pediatrician and we'll keep Benadryl or EpiPen as prescribed."
+      - role: user
+        content: "That's reassuring. What about developmental concerns?"
+      - role: assistant
+        content: "Do either have any developmental delays or IEP services?"
+      - role: user
+        content: "Olivia has mild speech delay and gets speech therapy once a week."
+      - role: assistant
+        content: "We can accommodate therapy visits. The therapist can work with her here during the day."
+      - role: user
+        content: "That would be wonderful. Currently it's Wednesdays at 10 AM."
+      - role: assistant
+        content: "Perfect timing during learning centers. We have a quiet room they can use."
+      - role: user
+        content: "What about parent communication?"
+      - role: assistant
+        content: "Daily reports through our app - meals, naps, activities, mood. Plus monthly newsletters and parent-teacher conferences twice yearly."
+      - role: user
+        content: "When are conferences?"
+      - role: assistant
+        content: "October and March, but you can request meetings anytime."
+      - role: user
+        content: "Can I tour the facility?"
+      - role: assistant
+        content: "Absolutely! Can you come tomorrow at 10 AM or 4 PM?"
+      - role: user
+        content: "4 PM works better."
+      - role: assistant
+        content: "Great, I'll schedule you for tomorrow, November 16th at 4 PM. Bring the girls if you'd like."
+      - role: user
+        content: "I will. Should I bring the paperwork then?"
+      - role: assistant
+        content: "If you decide to enroll, yes. Or I can email the forms now to review."
+      - role: user
+        content: "Please email them to bmitchell@email.com"
+      - role: assistant
+        content: "I'll send those within the hour. To summarize: $300 registration to hold spots, then $1,017.50 due December 23rd for first week plus supplies."
+      - role: user
+        content: "And weekly tuition of $617.50 after that?"
+      - role: assistant
+        content: "Correct, starting January 13th for the second week."
+      - role: user
+        content: "Perfect. See you tomorrow at 4!"
+      - role: assistant
+        content: "Looking forward to meeting you and Emma and Olivia tomorrow, Ms. Mitchell!"
+user_question: "What was the complete weekly tuition cost for both twins and what initial payments are required before they start?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Weekly tuition:
+  - Emma: $325 per week (full price)
+  - Olivia: $292.50 per week (10% sibling discount)
+  - Total weekly: $617.50
+  
+  Initial payments required:
+  - Registration fee: $300 ($150 per child) - due upon enrollment
+  - First week's tuition: $617.50 - due December 23, 2024
+  - Supply fee: $400 ($200 per child) - due December 23, 2024
+  - Total due December 23: $1,017.50
+  
+  Start date: January 6, 2025
+  Schedule: Monday-Friday, 7:30 AM - 5:30 PM
+  
+  The response should include both the weekly tuition breakdown and all initial payment amounts with their due dates.

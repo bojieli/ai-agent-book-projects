@@ -1,0 +1,16 @@
+[
+  {
+    "filename": "trajectory_20250914_211312.json",
+    "id": "20250914_211312",
+    "timestamp": "2025-09-14 21:13:13",
+    "category": "ReAct",
+    "query": "What's the weather like in Vancouver right now?"
+  },
+  {
+    "filename": "trajectory_20250914_211442.json",
+    "id": "20250914_211442",
+    "timestamp": "2025-09-14 21:14:44",
+    "category": "ReAct",
+    "query": "Calculate the exact compound interest on $5,000 invested at 6% annual interest rate for 30 years, compounded monthly."
+  }
+]

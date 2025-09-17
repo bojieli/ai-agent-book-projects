@@ -1,0 +1,725 @@
+test_id: layer2_08_multiple_rental_properties
+category: layer2
+title: Multiple Rental Properties - Property Management Disambiguation
+description: Test agent's ability to distinguish between multiple rental properties and provide complete information when ambiguously requested
+conversation_histories:
+  - conversation_id: beach_condo_001
+    timestamp: "2024-09-15 10:30:00"
+    metadata:
+      business: "Coastal Property Management"
+      department: "Owner Services"
+      call_duration: "53 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm calling about my beach condo rental income for this quarter."
+      - role: assistant
+        content: "Good morning! This is Patricia from Coastal Property Management. Let me pull up your account. Property address?"
+      - role: user
+        content: "It's the one in Santa Monica, 1425 Ocean Avenue, Unit 304."
+      - role: assistant
+        content: "Perfect, I have your Santa Monica beach condo here. You're asking about Q3 2024 income?"
+      - role: user
+        content: "Yes, July through September."
+      - role: assistant
+        content: "Your gross rental income for Q3 was $18,750."
+      - role: user
+        content: "How many nights was it rented?"
+      - role: assistant
+        content: "63 nights out of 92 total, that's 68% occupancy."
+      - role: user
+        content: "What was the average nightly rate?"
+      - role: assistant
+        content: "$297 average. Peak summer rates in July were $350, September dropped to $250."
+      - role: user
+        content: "What about expenses?"
+      - role: assistant
+        content: "Management fee 25% is $4,687. Cleaning fees totaled $1,890."
+      - role: user
+        content: "Any maintenance issues?"
+      - role: assistant
+        content: "AC repair in August was $425. Balcony furniture replacement $1,200."
+      - role: user
+        content: "Why did we replace the furniture?"
+      - role: assistant
+        content: "Salt air corrosion and a guest complaint about unstable chairs. Safety issue."
+      - role: user
+        content: "Fair enough. What's my net income then?"
+      - role: assistant
+        content: "Gross $18,750 minus management $4,687, cleaning $1,890, maintenance $1,625 equals $10,548 net."
+      - role: user
+        content: "When do I receive payment?"
+      - role: assistant
+        content: "We distribute quarterly payments on the 15th. October 15th for Q3."
+      - role: user
+        content: "Direct deposit to my Chase account?"
+      - role: assistant
+        content: "Yes, account ending in 4782 as usual."
+      - role: user
+        content: "What about Q4 bookings?"
+      - role: assistant
+        content: "Currently 42 nights booked for Q4, expecting more holiday bookings."
+      - role: user
+        content: "What are the holiday rates?"
+      - role: assistant
+        content: "Thanksgiving week $400/night, Christmas/New Year $450/night."
+      - role: user
+        content: "Good. Any upcoming maintenance?"
+      - role: assistant
+        content: "Annual carpet cleaning scheduled November 5th, $350."
+      - role: user
+        content: "Is the HOA fee current?"
+      - role: assistant
+        content: "$450 monthly HOA is on autopay from your rental income."
+      - role: user
+        content: "Property taxes?"
+      - role: assistant
+        content: "Not handled by us. You pay those directly to LA County."
+      - role: user
+        content: "Right. What's the unit's current condition?"
+      - role: assistant
+        content: "Excellent. Recent inspection rated 4.8 out of 5."
+      - role: user
+        content: "What needs improvement?"
+      - role: assistant
+        content: "Inspector suggested updating bathroom fixtures and repainting next year."
+      - role: user
+        content: "Cost estimate?"
+      - role: assistant
+        content: "Bathroom fixtures about $2,000, full repaint $3,500."
+      - role: user
+        content: "Let's plan for spring. What's our average review score?"
+      - role: assistant
+        content: "4.7 stars on Airbnb, 4.6 on VRBO."
+      - role: user
+        content: "Any bad reviews?"
+      - role: assistant
+        content: "One 3-star in August about the AC before repair. Otherwise all 4s and 5s."
+      - role: user
+        content: "What did they complain about specifically?"
+      - role: assistant
+        content: "AC was blowing warm air their first night. We fixed it next morning and refunded that night."
+      - role: user
+        content: "Good response. Are we competitive with pricing?"
+      - role: assistant
+        content: "Your rates are mid-range for similar beach condos. Could increase 10% and stay competitive."
+      - role: user
+        content: "Let's do that for 2025."
+      - role: assistant
+        content: "I'll adjust rates starting January 1st. 10% increase across all seasons."
+      - role: user
+        content: "What insurance covers this property?"
+      - role: assistant
+        content: "You have dwelling, liability, and loss of rental income through State Farm."
+      - role: user
+        content: "Premium?"
+      - role: assistant
+        content: "Annual premium $2,847, you pay quarterly."
+      - role: user
+        content: "Deductible?"
+      - role: assistant
+        content: "$2,500 deductible for property damage claims."
+      - role: user
+        content: "Has anyone ever filed a claim?"
+      - role: assistant
+        content: "No claims in the three years we've managed it."
+      - role: user
+        content: "Excellent. What about utilities?"
+      - role: assistant
+        content: "Water, trash, gas included in HOA. Electric averages $125/month, guest pays."
+      - role: user
+        content: "Wait, I thought we pay electric?"
+      - role: assistant
+        content: "Sorry, I misspoke. You pay electric, it's included in the rental rate."
+      - role: user
+        content: "That's what I thought. Internet and cable?"
+      - role: assistant
+        content: "$89/month for Spectrum internet and basic cable."
+      - role: user
+        content: "Do guests complain about the internet speed?"
+      - role: assistant
+        content: "No complaints. You upgraded to 400 Mbps last year, works great."
+      - role: user
+        content: "Good. What supplies do we provide?"
+      - role: assistant
+        content: "Basic toiletries, paper products, kitchen basics, beach towels, and chairs."
+      - role: user
+        content: "Cost per month?"
+      - role: assistant
+        content: "Supplies run about $150/month average."
+      - role: user
+        content: "Who does the purchasing?"
+      - role: assistant
+        content: "Our cleaning crew restocks from your Amazon Business account."
+      - role: user
+        content: "Speaking of which, who's the cleaning crew?"
+      - role: assistant
+        content: "Marina's Cleaning Service, same team for two years now."
+      - role: user
+        content: "They're doing well?"
+      - role: assistant
+        content: "Excellent. Guests consistently mention how clean the unit is."
+      - role: user
+        content: "What's the cleaning fee per turnover?"
+      - role: assistant
+        content: "$150 for standard clean, $250 for deep clean monthly."
+      - role: user
+        content: "Reasonable. Any pest issues?"
+      - role: assistant
+        content: "Quarterly pest control prevents issues. $95 per treatment."
+      - role: user
+        content: "Good preventive measure. What about parking for guests?"
+      - role: assistant
+        content: "One assigned spot in the garage, number 304. Additional street parking available."
+      - role: user
+        content: "Do we provide a parking pass?"
+      - role: assistant
+        content: "Yes, hanging permit for the garage spot. Street parking is metered until 6 PM."
+      - role: user
+        content: "What's the maximum occupancy?"
+      - role: assistant
+        content: "Listed for 4 guests maximum. Two in master, two on pullout sofa."
+      - role: user
+        content: "Ever had issues with too many guests?"
+      - role: assistant
+        content: "Once in June. Neighbor reported a party. We issued warning and they complied."
+      - role: user
+        content: "Good they didn't cause damage. Speaking of neighbors..."
+      - role: assistant
+        content: "Relations are good. We gave adjacent units your contact info for emergencies."
+      - role: user
+        content: "Smart. Any noise complaints?"
+      - role: assistant
+        content: "Just that one party incident. We added quiet hours to the house rules."
+      - role: user
+        content: "What are the quiet hours?"
+      - role: assistant
+        content: "10 PM to 8 AM, per building rules. Listed prominently in check-in instructions."
+      - role: user
+        content: "Perfect. What about beach equipment?"
+      - role: assistant
+        content: "Four beach chairs, umbrella, cooler, and boogie boards in the storage closet."
+      - role: user
+        content: "Do they get stolen or broken?"
+      - role: assistant
+        content: "Replaced two chairs this summer. Normal wear and tear from sand and sun."
+      - role: user
+        content: "Cost?"
+      - role: assistant
+        content: "$80 for the two chairs. Good quality ones that should last."
+      - role: user
+        content: "Any issues with the keyless entry?"
+      - role: assistant
+        content: "System works great. Codes auto-generate for each guest and expire after checkout."
+      - role: user
+        content: "Battery backup?"
+      - role: assistant
+        content: "Yes, and physical key in lockbox for emergencies. Maintenance checks batteries quarterly."
+      - role: user
+        content: "Good redundancy. What's the checkout process?"
+      - role: assistant
+        content: "Guests leave by 11 AM, instructions to start dishwasher and take trash to chute."
+      - role: user
+        content: "Do most follow the instructions?"
+      - role: assistant
+        content: "About 80% do. We don't penalize if they don't, just note it for cleaning crew."
+      - role: user
+        content: "Fair approach. Any upcoming city regulations I should know about?"
+      - role: assistant
+        content: "City of Santa Monica is updating short-term rental regulations. May affect 2025 operations."
+      - role: user
+        content: "How so?"
+      - role: assistant
+        content: "Possibly limiting rentals to 120 days per year for non-primary residences."
+      - role: user
+        content: "That would hurt revenue significantly."
+      - role: assistant
+        content: "Yes, would cut potential income by about 65%. Public hearing is November 20th."
+      - role: user
+        content: "I should attend that. Can you send me the details?"
+      - role: assistant
+        content: "I'll email you the hearing information today with talking points other owners are using."
+      - role: user
+        content: "That's helpful. How many other units in the building are short-term rentals?"
+      - role: assistant
+        content: "About 15 out of 50 units. You could coordinate with other owners."
+      - role: user
+        content: "Good idea. Do you have their contacts?"
+      - role: assistant
+        content: "I can reach out to the ones we manage and see if they want to connect."
+      - role: user
+        content: "Please do. Anything else about the beach condo I should know?"
+      - role: assistant
+        content: "Just that it's performing very well. One of our top-rated properties. Keep doing what we're doing."
+  - conversation_id: mountain_cabin_001
+    timestamp: "2024-10-08 14:00:00"
+    metadata:
+      business: "Mountain Retreats Management"
+      department: "Property Services"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi, calling about my cabin rental in Big Bear."
+      - role: assistant
+        content: "Hello! This is Tom from Mountain Retreats Management. Which Big Bear property?"
+      - role: user
+        content: "The one on Pine Ridge Road, 42750 Pine Ridge."
+      - role: assistant
+        content: "Got it, your 3-bedroom cabin near Snow Summit. How can I help?"
+      - role: user
+        content: "I want to review the financials and upcoming winter bookings."
+      - role: assistant
+        content: "Sure. Year-to-date income is $67,400 through September."
+      - role: user
+        content: "How's that compared to last year?"
+      - role: assistant
+        content: "Up 12% from same period last year. Winter bookings were strong."
+      - role: user
+        content: "What's driving the increase?"
+      - role: assistant
+        content: "We increased rates 8% and occupancy is up 4% with better marketing."
+      - role: user
+        content: "What's the current winter rate?"
+      - role: assistant
+        content: "Peak winter weekends $550/night, weekdays $400, holidays $650."
+      - role: user
+        content: "How many nights are already booked for ski season?"
+      - role: assistant
+        content: "December has 22 nights booked, January 25 nights, February 20 nights."
+      - role: user
+        content: "That's good. Any maintenance needed before winter?"
+      - role: assistant
+        content: "Chimney cleaning scheduled November 10th, $275."
+      - role: user
+        content: "When was the last time the heating system was serviced?"
+      - role: assistant
+        content: "October last year. Due for annual service, $195."
+      - role: user
+        content: "Schedule that too. What about snow removal?"
+      - role: assistant
+        content: "Contract with Bear Valley Snow Removal, $300/month December through March."
+      - role: user
+        content: "Do they handle the deck and hot tub area?"
+      - role: assistant
+        content: "Driveway and walkways included. Deck and hot tub area extra $50 per clearing."
+      - role: user
+        content: "Add that. Guests expect hot tub access."
+      - role: assistant
+        content: "Will do. Speaking of hot tub, chemicals and maintenance run $125/month."
+      - role: user
+        content: "When was it last drained and cleaned?"
+      - role: assistant
+        content: "September 15th. Next scheduled for December 15th before holiday rush."
+      - role: user
+        content: "Good timing. What's our average guest stay length?"
+      - role: assistant
+        content: "Summer average 4 nights, winter 3 nights, typically Friday to Sunday."
+      - role: user
+        content: "Are we on all the platforms?"
+      - role: assistant
+        content: "Listed on Airbnb, VRBO, and Booking.com. Plus our direct booking site."
+      - role: user
+        content: "Which generates most bookings?"
+      - role: assistant
+        content: "Airbnb 45%, VRBO 30%, direct 20%, Booking.com 5%."
+      - role: user
+        content: "Why so low on Booking.com?"
+      - role: assistant
+        content: "They're more hotel-focused. Vacation rentals don't perform as well there."
+      - role: user
+        content: "Should we drop it?"
+      - role: assistant
+        content: "Keep it for now. Even 5% adds up, and no monthly fee."
+      - role: user
+        content: "Fair point. What about repeat guests?"
+      - role: assistant
+        content: "23% are repeat guests. We offer them 10% discount on direct bookings."
+      - role: user
+        content: "Smart. Any recent damage claims?"
+      - role: assistant
+        content: "Minor one in August. Broken coffee table, collected $200 from security deposit."
+      - role: user
+        content: "What's our security deposit?"
+      - role: assistant
+        content: "$500 hold on credit card, not charged unless damages."
+      - role: user
+        content: "Has anyone trashed the place?"
+      - role: assistant
+        content: "Not since we started requiring ID verification and positive reviews."
+      - role: user
+        content: "Good screening. What utilities am I paying?"
+      - role: assistant
+        content: "Electric averages $280/month, propane $150/month, water $65, internet $79."
+      - role: user
+        content: "Propane seems high for summer."
+      - role: assistant
+        content: "Hot tub heater uses propane year-round. Winter will be $300+ with house heating."
+      - role: user
+        content: "Makes sense. Any upgrades needed?"
+      - role: assistant
+        content: "Guests mention outdated kitchen appliances. Still functional but showing age."
+      - role: user
+        content: "What would new appliances cost?"
+      - role: assistant
+        content: "Full kitchen suite - refrigerator, stove, dishwasher, microwave - about $4,500."
+      - role: user
+        content: "Let's wait until something breaks."
+      - role: assistant
+        content: "Understood. The refrigerator is oldest at 12 years."
+      - role: user
+        content: "Keep an eye on it. What's the management fee?"
+      - role: assistant
+        content: "20% of gross rental income for full service."
+      - role: user
+        content: "Remind me what full service includes?"
+      - role: assistant
+        content: "Marketing, bookings, guest communication, cleaning coordination, maintenance, and emergency response."
+      - role: user
+        content: "Do you handle middle-of-the-night emergencies?"
+      - role: assistant
+        content: "24/7 hotline. We have local contractors on call."
+      - role: user
+        content: "Has anyone called with emergencies?"
+      - role: assistant
+        content: "Two this year. Toilet overflow in March, power outage in July."
+      - role: user
+        content: "How were those handled?"
+      - role: assistant
+        content: "Plumber on site within an hour for toilet. Power was area-wide, we brought a generator."
+      - role: user
+        content: "Excellent service. Property taxes current?"
+      - role: assistant
+        content: "You handle those directly. Annual amount is $4,847."
+      - role: user
+        content: "Insurance?"
+      - role: assistant
+        content: "Your Farmers policy is $3,200 annually for short-term rental coverage."
+      - role: user
+        content: "Does that cover guest injuries?"
+      - role: assistant
+        content: "$1 million liability included. We also require guests to have travel insurance."
+      - role: user
+        content: "Smart. Any citations from the city?"
+      - role: assistant
+        content: "None. Your short-term rental permit is current through June 2025."
+      - role: user
+        content: "Renewal fee?"
+      - role: assistant
+        content: "$450 annually, we handle the renewal paperwork."
+      - role: user
+        content: "Good. What about the fireplace?"
+      - role: assistant
+        content: "Wood-burning fireplace. We provide starter logs, guests can buy more."
+      - role: user
+        content: "Do they know how to use it safely?"
+      - role: assistant
+        content: "Detailed instructions posted next to fireplace. Also covered in digital house guide."
+      - role: user
+        content: "Ever had issues?"
+      - role: assistant
+        content: "One guest didn't open flue, smoked up the cabin. No damage, just needed airing out."
+      - role: user
+        content: "Scary. Should we convert to gas?"
+      - role: assistant
+        content: "Gas insert would be $3,000-4,000. Safer and cleaner, but loses rustic appeal."
+      - role: user
+        content: "Guests probably prefer real wood fires."
+      - role: assistant
+        content: "Reviews often mention loving the real fireplace. It's a selling point."
+      - role: user
+        content: "Keep it then. What about the deck?"
+      - role: assistant
+        content: "Deck was resealed last summer. Good for another 2-3 years."
+      - role: user
+        content: "Any rot or damage?"
+      - role: assistant
+        content: "Few boards showing wear near the hot tub. Not urgent but should plan replacement."
+      - role: user
+        content: "Cost?"
+      - role: assistant
+        content: "About $800 to replace affected boards and reinforce that section."
+      - role: user
+        content: "Add it to spring maintenance list."
+      - role: assistant
+        content: "Noted. Spring is ideal, after snow season but before summer rush."
+      - role: user
+        content: "What's the bedroom configuration again?"
+      - role: assistant
+        content: "Master with king bed, second bedroom with queen, third has two sets of bunks."
+      - role: user
+        content: "So sleeps how many?"
+      - role: assistant
+        content: "8 comfortably. 2 in master, 2 in queen room, 4 in bunk room."
+      - role: user
+        content: "Do large groups cause more wear and tear?"
+      - role: assistant
+        content: "Families with kids are actually easier than adult groups. Less partying."
+      - role: user
+        content: "Do we restrict group types?"
+      - role: assistant
+        content: "No bachelor/bachelorette parties. Must be family groups or couples."
+      - role: user
+        content: "Good policy. What about pets?"
+      - role: assistant
+        content: "Currently no pets allowed. Could change for additional fee."
+      - role: user
+        content: "I prefer no pets. Too much potential damage."
+      - role: assistant
+        content: "Agreed. We get requests but plenty of bookings without allowing pets."
+      - role: user
+        content: "What games and entertainment do we provide?"
+      - role: assistant
+        content: "Board games, playing cards, Xbox with games, smart TVs with streaming."
+      - role: user
+        content: "Wifi strong enough for streaming?"
+      - role: assistant
+        content: "Yes, 200 Mbps fiber. Handles multiple devices streaming simultaneously."
+      - role: user
+        content: "That's important for families. Anything else about the cabin?"
+      - role: assistant
+        content: "Just that it's a solid performer. Great reviews, steady bookings, minimal issues."
+  - conversation_id: downtown_apartment_001
+    timestamp: "2024-11-12 11:00:00"
+    metadata:
+      business: "Urban Living Property Management"
+      department: "Landlord Services"
+      call_duration: "44 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm calling about my downtown apartment rental."
+      - role: assistant
+        content: "Good morning! This is Sarah from Urban Living Property Management. Which property address?"
+      - role: user
+        content: "555 Market Street, Unit 1507."
+      - role: assistant
+        content: "Your one-bedroom in the Financial District. How can I help today?"
+      - role: user
+        content: "The current tenant's lease is ending soon, right?"
+      - role: assistant
+        content: "Yes, Mr. Davidson's lease expires December 31st."
+      - role: user
+        content: "Is he renewing?"
+      - role: assistant
+        content: "He requested a renewal. Currently paying $3,200/month."
+      - role: user
+        content: "What's market rate now?"
+      - role: assistant
+        content: "Similar units are renting for $3,400-3,500."
+      - role: user
+        content: "So we could increase rent?"
+      - role: assistant
+        content: "Yes, but Mr. Davidson has been excellent. Perfect payment history for 2 years."
+      - role: user
+        content: "What do you recommend?"
+      - role: assistant
+        content: "Offer renewal at $3,350. Keeps good tenant, still increases revenue."
+      - role: user
+        content: "That's reasonable. 5% increase."
+      - role: assistant
+        content: "Exactly. Shall I send the renewal offer?"
+      - role: user
+        content: "Yes. What if he declines?"
+      - role: assistant
+        content: "We'd list immediately. January is slower but downtown professionals always need housing."
+      - role: user
+        content: "How long to find new tenant typically?"
+      - role: assistant
+        content: "Usually 2-3 weeks for this building. Great amenities and location."
+      - role: user
+        content: "What are the building amenities again?"
+      - role: assistant
+        content: "Gym, rooftop deck, concierge, package room, and garage parking available."
+      - role: user
+        content: "Is parking included in rent?"
+      - role: assistant
+        content: "No, parking is separate $295/month. Mr. Davidson doesn't have a spot."
+      - role: user
+        content: "Should we include it to justify the increase?"
+      - role: assistant
+        content: "Could offer it as an option. Some tenants don't need parking downtown."
+      - role: user
+        content: "True. Keep it separate. Any maintenance issues?"
+      - role: assistant
+        content: "Minor disposal repair last month, $125. Otherwise no problems."
+      - role: user
+        content: "When was the unit last painted?"
+      - role: assistant
+        content: "Before Mr. Davidson moved in, December 2022."
+      - role: user
+        content: "So two years ago. Will need it if he moves."
+      - role: assistant
+        content: "Yes, standard refresh would be about $1,200."
+      - role: user
+        content: "What about the appliances?"
+      - role: assistant
+        content: "All updated in 2021. Stainless steel, good condition."
+      - role: user
+        content: "Flooring?"
+      - role: assistant
+        content: "Hardwood throughout, professionally cleaned annually."
+      - role: user
+        content: "When's the next cleaning?"
+      - role: assistant
+        content: "Scheduled for lease turnover if needed, or March if he renews."
+      - role: user
+        content: "Cost?"
+      - role: assistant
+        content: "$450 for professional hardwood cleaning and finishing."
+      - role: user
+        content: "What's the HOA fee for this unit?"
+      - role: assistant
+        content: "$587 monthly, covers building maintenance and amenities."
+      - role: user
+        content: "That seems high."
+      - role: assistant
+        content: "Downtown high-rise with full amenities. It's typical for the area."
+      - role: user
+        content: "Does it ever increase?"
+      - role: assistant
+        content: "Usually 2-3% annually. Last increase was January, next expected January 2025."
+      - role: user
+        content: "So maybe $600 next year?"
+      - role: assistant
+        content: "Likely $605-610 range."
+      - role: user
+        content: "Still profitable with the rental income."
+      - role: assistant
+        content: "Yes, even with HOA, your net is about $2,100/month after management."
+      - role: user
+        content: "What's your management percentage?"
+      - role: assistant
+        content: "8% for long-term rentals like this."
+      - role: user
+        content: "That's $268 at the new rate."
+      - role: assistant
+        content: "Correct. Your net would be $2,495 after management and HOA."
+      - role: user
+        content: "Property taxes?"
+      - role: assistant
+        content: "You pay those directly, about $9,200 annually."
+      - role: user
+        content: "So another $767 per month."
+      - role: assistant
+        content: "Yes, leaving roughly $1,728 monthly before insurance."
+      - role: user
+        content: "What's insurance running?"
+      - role: assistant
+        content: "Your landlord policy is $1,400 annually, so $117/month."
+      - role: user
+        content: "Net about $1,600 then."
+      - role: assistant
+        content: "That's right, good positive cash flow."
+      - role: user
+        content: "Any special assessments coming?"
+      - role: assistant
+        content: "Building is planning elevator modernization, possibly $5,000 per unit."
+      - role: user
+        content: "When?"
+      - role: assistant
+        content: "Vote is in January, work would be summer 2025 if approved."
+      - role: user
+        content: "Can that be paid in installments?"
+      - role: assistant
+        content: "Usually offer 12-month payment plan for large assessments."
+      - role: user
+        content: "That helps. What about the windows?"
+      - role: assistant
+        content: "Double-pane, energy efficient. Installed building-wide in 2019."
+      - role: user
+        content: "Good, those should last. Any issues with neighbors?"
+      - role: assistant
+        content: "None. Mr. Davidson is quiet. Unit 1508 next door is also a young professional."
+      - role: user
+        content: "What about the unit above?"
+      - role: assistant
+        content: "1607 has a couple with a baby. Occasionally hear footsteps but no complaints."
+      - role: user
+        content: "Babies can be noisy."
+      - role: assistant
+        content: "Building has good soundproofing. Mr. Davidson hasn't mentioned any issues."
+      - role: user
+        content: "That's good construction. What about the air conditioning?"
+      - role: assistant
+        content: "Central HVAC, building maintained. Filters changed quarterly."
+      - role: user
+        content: "So I don't pay for AC repairs?"
+      - role: assistant
+        content: "Correct, covered by HOA unless damage is tenant-caused."
+      - role: user
+        content: "Nice perk of a high-rise. What about the water heater?"
+      - role: assistant
+        content: "Also central building system. Hot water included in HOA."
+      - role: user
+        content: "Even better. What do I actually maintain?"
+      - role: assistant
+        content: "Interior only - appliances, fixtures, flooring, paint."
+      - role: user
+        content: "Simplifies things. Is Mr. Davidson a remote worker?"
+      - role: assistant
+        content: "Hybrid schedule. Office three days, home two days."
+      - role: user
+        content: "So he uses the apartment during work hours."
+      - role: assistant
+        content: "Yes, good for monitoring any issues. He reports things promptly."
+      - role: user
+        content: "Responsible tenant. Has he made any modification requests?"
+      - role: assistant
+        content: "Asked about mounting a TV on the wall. We approved with proper mounting."
+      - role: user
+        content: "That's fine. As long as holes are patched when he leaves."
+      - role: assistant
+        content: "Standard lease terms. Tenant responsible for restoration."
+      - role: user
+        content: "What about subletting? Has he ever asked?"
+      - role: assistant
+        content: "No subletting requests. Lease prohibits it without written approval."
+      - role: user
+        content: "Good. I don't want strangers in there."
+      - role: assistant
+        content: "Agreed. We screen all tenants carefully for a reason."
+      - role: user
+        content: "What was his credit score when he applied?"
+      - role: assistant
+        content: "760, excellent credit. Income was 4x rent requirement."
+      - role: user
+        content: "Solid financials. Where does he work?"
+      - role: assistant
+        content: "Tech company, senior software engineer. Very stable employment."
+      - role: user
+        content: "Perfect tenant profile. Let's definitely try to keep him."
+      - role: assistant
+        content: "I'll send the renewal offer today with the $3,350 rate."
+      - role: user
+        content: "Include a note thanking him for being a great tenant."
+      - role: assistant
+        content: "Will do. Personal touch helps with retention."
+      - role: user
+        content: "Anything else I should know about this property?"
+      - role: assistant
+        content: "Just that it's one of your best investments. Great location, minimal hassle, consistent income."
+user_question: "I need to do some maintenance on my rental. What properties need work and what are the costs?"
+evaluation_criteria: |
+  The agent should retrieve ALL maintenance needs across ALL three rental properties:
+  
+  Santa Monica Beach Condo (1425 Ocean Avenue, Unit 304):
+  - Annual carpet cleaning scheduled November 5th: $350
+  - Suggested bathroom fixture update: $2,000
+  - Full repaint recommended: $3,500
+  - Quarterly pest control: $95 per treatment
+  - Beach equipment replacement (chairs): $80 (already done)
+  
+  Big Bear Mountain Cabin (42750 Pine Ridge Road):
+  - Chimney cleaning scheduled November 10th: $275
+  - Heating system annual service due: $195
+  - Hot tub drain/clean December 15th: included in monthly $125 maintenance
+  - Kitchen appliances aging (especially 12-year-old refrigerator): $4,500 if replaced
+  - Snow removal contract: $300/month Dec-March plus $50 per clearing for deck/hot tub
+  - Deck board replacement needed near hot tub: $800 (planned for spring)
+  - Possible gas fireplace conversion: $3,000-4,000 (optional)
+  
+  Downtown Apartment (555 Market Street, Unit 1507):
+  - May need painting if tenant moves (December 31 lease end): $1,200
+  - Hardwood floor cleaning (March or at turnover): $450
+  - Potential building special assessment for elevators: $5,000 (vote in January)
+  - Recent disposal repair completed: $125 (already done)
+  
+  The agent should present ALL maintenance items from ALL properties, both scheduled and recommended, rather than asking which property or selecting just one.

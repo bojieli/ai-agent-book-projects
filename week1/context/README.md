@@ -1,6 +1,6 @@
 # Context-Aware AI Agent with Ablation Studies
 
-An advanced AI agent implementation supporting multiple LLM providers (SiliconFlow Qwen and ByteDance Doubao), designed to demonstrate the critical importance of context components through systematic ablation studies.
+An advanced AI agent implementation supporting multiple LLM providers (SiliconFlow Qwen, ByteDance Doubao, and Moonshot Kimi), designed to demonstrate the critical importance of context components through systematic ablation studies.
 
 ## 🎯 Overview
 
@@ -8,10 +8,11 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 
 ### Key Features
 
-- **Multi-provider Support**: Works with SiliconFlow (Qwen) and Doubao (ByteDance) LLMs
+- **Multi-provider Support**: Works with SiliconFlow (Qwen), Doubao (ByteDance), and Kimi (Moonshot) LLMs
 - **Multi-tool Agent**: PDF parsing, currency conversion, calculations, and Python code execution
 - **Context Modes**: Five different context configurations for ablation studies
 - **Interactive & Batch Modes**: Run single tasks or comprehensive test suites
+- **Conversation History**: Maintains context across multiple queries in a session
 - **Detailed Analytics**: Performance metrics, visualizations, and comprehensive reports
 
 ## 🤖 Supported LLM Providers
@@ -25,6 +26,12 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 - **Model**: Qwen/Qwen3-235B-A22B-Thinking-2507 (customizable)
 - **API**: OpenAI-compatible
 - **Best for**: Complex reasoning tasks, detailed analysis
+
+### Kimi (Moonshot AI)
+- **Model**: kimi-k2-0905-preview (K2 model)
+- **API**: OpenAI-compatible via Moonshot platform
+- **Best for**: Advanced reasoning, multi-turn conversations, both English and Chinese tasks
+- **Features**: Context caching for cost optimization
 
 ## 🏗️ Architecture
 
@@ -49,6 +56,7 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 - API key for one of the supported providers:
   - **SiliconFlow**: Get from [SiliconFlow](https://siliconflow.cn)
   - **Doubao (ByteDance)**: Get from [Volcano Engine](https://www.volcengine.com/)
+  - **Kimi (Moonshot)**: Get from [Moonshot Platform](https://platform.moonshot.cn/)
 
 ## 📝 Sample Tasks
 
@@ -89,11 +97,29 @@ python main.py  # Uses Doubao by default
 export SILICONFLOW_API_KEY=your_key_here
 python main.py --provider siliconflow
 
+# For Kimi (Moonshot)
+export MOONSHOT_API_KEY=your_key_here
+python main.py --provider kimi
+
 # Or specify a custom model
 python main.py --model doubao-seed-1-6-thinking-250715
 ```
 
-### 3. Run Interactive Mode (Recommended)
+### 3. Testing Kimi Integration
+
+```bash
+# Quick test of Kimi K2 model
+export MOONSHOT_API_KEY=your_key_here
+python test_kimi.py
+
+# Use Kimi in main script
+python main.py --provider kimi --mode interactive
+
+# Run ablation study with Kimi
+python main.py --provider kimi --mode ablation
+```
+
+### 4. Run Interactive Mode (Recommended)
 
 ```bash
 # Default (Doubao)
@@ -105,10 +131,13 @@ python main.py --mode interactive --provider siliconflow
 # In interactive mode, you can:
 # - Type 'samples' to see pre-defined tasks
 # - Type 'sample 3' to test PDF parsing
+# - Type 'providers' to list available providers
+# - Type 'provider kimi' to switch providers
+# - Type 'status' to see current configuration
 # - Type 'help' for all commands
 ```
 
-### 4. Run Sample Tasks
+### 5. Run Sample Tasks
 
 ```bash
 # Run without arguments to select from samples
@@ -124,7 +153,7 @@ python main.py --mode single \
   --provider siliconflow
 ```
 
-### 5. Run Ablation Study
+### 6. Run Ablation Study
 
 ```bash
 # With default provider
@@ -207,6 +236,46 @@ Strategic planning reduces iterations and tool calls, improving both speed and a
 Historical context prevents repeated operations and maintains task coherence across iterations.
 
 ## 🛠️ Advanced Usage
+
+### Interactive Mode Commands
+
+The interactive mode supports the following commands:
+
+| Command | Description |
+|---------|-------------|
+| `samples` | Display all available sample tasks |
+| `sample <n>` | Run sample task number n |
+| `providers` | List all available LLM providers |
+| `provider <name>` | Switch to a different provider (e.g., `provider kimi`) |
+| `modes` | List available context modes for ablation testing |
+| `mode <name>` | Switch context mode (e.g., `mode no_history`) |
+| `status` | Show current configuration (provider, model, mode, etc.) |
+| `reset` | Reset agent trajectory (clear history) |
+| `create_pdfs` | Generate sample PDF files for testing |
+| `quit` | Exit interactive mode |
+
+**Note:** The prompt shows the current provider in brackets, e.g., `[KIMI]>` or `[DOUBAO]>`
+
+### Conversation History
+
+The agent maintains conversation history throughout interactive sessions:
+
+- **Persistent Context**: The agent remembers previous queries and responses within a session
+- **Multi-turn Conversations**: You can reference information from earlier in the conversation
+- **Tool Call Memory**: Previous tool executions are remembered and can be referenced
+- **Reset on Demand**: Use the `reset` command to clear history and start fresh
+
+Example conversation flow:
+```
+[DOUBAO]> Remember that our budget is $10,000. Calculate 15% of it.
+# Agent calculates and remembers the budget
+
+[DOUBAO]> Now convert that 15% amount to EUR
+# Agent uses the previously calculated amount without re-asking
+
+[DOUBAO]> What was our original budget?
+# Agent recalls the $10,000 mentioned earlier
+```
 
 ### Custom Tasks
 

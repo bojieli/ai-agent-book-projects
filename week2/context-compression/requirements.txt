@@ -1,0 +1,8 @@
+openai>=1.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+html2text>=2020.1.16
+python-dotenv>=1.0.0
+lxml>=4.9.0
+colorama>=0.4.6
+tqdm>=4.66.0

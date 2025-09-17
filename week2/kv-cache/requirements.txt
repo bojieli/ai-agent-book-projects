@@ -1,0 +1,17 @@
+# KV Cache Demonstration Requirements
+# Core dependencies for ReAct agent with Kimi K2 model
+
+# OpenAI client for Kimi API compatibility
+openai>=1.35.0
+
+# Utilities
+python-dotenv>=1.0.0  # For environment variable management
+
+# Optional but recommended for better formatting
+rich>=13.7.0  # For better console output
+tabulate>=0.9.0  # For table formatting
+
+# Development dependencies (optional)
+# pytest>=7.4.0  # For testing
+# black>=23.0.0  # For code formatting
+# pylint>=3.0.0  # For code linting

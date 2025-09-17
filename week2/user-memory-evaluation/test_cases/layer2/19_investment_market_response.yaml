@@ -1,0 +1,510 @@
+test_id: layer2_19_investment_market_response
+category: layer2
+title: Investment Portfolio Rebalancing Through Market Volatility
+description: Test agent's ability to track portfolio changes where market events trigger rebalancing decisions, tax implications affect strategy, and each conversation modifies investment approach
+conversation_histories:
+  - conversation_id: initial_review_001
+    timestamp: "2024-08-01 10:00:00"
+    metadata:
+      business: "Wealth Advisors Group"
+      department: "Portfolio Management"
+      call_duration: "54 minutes"
+    messages:
+      - role: user
+        content: "Hi, I want to review my investment portfolio. The market's been volatile and I'm concerned."
+      - role: assistant
+        content: "Hello Mr. James Wilson. This is Robert from Wealth Advisors. Let me pull up your portfolio. Current total value is $485,000."
+      - role: user
+        content: "How's it allocated right now?"
+      - role: assistant
+        content: "You're at 75% stocks, 20% bonds, 5% cash. That's aggressive for age 52."
+      - role: user
+        content: "That's why I'm worried. Market dropped 8% last month."
+      - role: assistant
+        content: "Your portfolio declined 6.2%, so you outperformed slightly."
+      - role: user
+        content: "Still painful seeing $30,000 disappear."
+      - role: assistant
+        content: "Understandable. Let's review your holdings. Large-cap US stocks: $218,000."
+      - role: user
+        content: "Mostly S&P 500 index?"
+      - role: assistant
+        content: "Yes, VOO holds $155,000, individual stocks $63,000."
+      - role: user
+        content: "Which individual stocks?"
+      - role: assistant
+        content: "Apple $15,000, Microsoft $12,000, Amazon $10,000, Tesla $8,000, NVIDIA $18,000."
+      - role: user
+        content: "NVIDIA's been so volatile."
+      - role: assistant
+        content: "Up 180% since you bought, but down 25% from peak."
+      - role: user
+        content: "Should I take profits?"
+      - role: assistant
+        content: "You bought at $62, now at $174. Long-term capital gains apply."
+      - role: user
+        content: "What's my tax situation?"
+      - role: assistant
+        content: "At your income, 15% federal plus 5% state on gains."
+      - role: user
+        content: "So 20% tax on the NVIDIA profit?"
+      - role: assistant
+        content: "Correct. You'd pay about $3,200 tax on the $16,000 gain."
+      - role: user
+        content: "What about international stocks?"
+      - role: assistant
+        content: "You have $73,000 in VTIAX international index."
+      - role: user
+        content: "And small-cap?"
+      - role: assistant
+        content: "$73,000 in VB small-cap index."
+      - role: user
+        content: "So $364,000 total in stocks. What about bonds?"
+      - role: assistant
+        content: "$97,000 in aggregate bond index BND."
+      - role: user
+        content: "Yield?"
+      - role: assistant
+        content: "Currently 4.8% yield, but price down 3% year-to-date."
+      - role: user
+        content: "Rates rising hurt bond prices."
+      - role: assistant
+        content: "Yes, but you're collecting good income now."
+      - role: user
+        content: "The $24,000 cash is just sitting in money market?"
+      - role: assistant
+        content: "Earning 5.2% currently, not bad for cash."
+      - role: user
+        content: "When do I need this money?"
+      - role: assistant
+        content: "You mentioned retiring at 62, so 10 years."
+      - role: user
+        content: "But I might need some for kids' college."
+      - role: user
+        content: "Daughter starts college in 2 years."
+      - role: assistant
+        content: "How much do you need for that?"
+      - role: user
+        content: "About $30,000 per year for 4 years."
+      - role: assistant
+        content: "So $120,000 total. That changes our strategy."
+      - role: user
+        content: "Should I set that aside now?"
+      - role: assistant
+        content: "Consider moving 2-3 years of expenses to conservative investments."
+      - role: user
+        content: "$60,000-90,000 to bonds or cash?"
+      - role: assistant
+        content: "Yes, protect near-term needs from volatility."
+      - role: user
+        content: "What should I sell?"
+      - role: assistant
+        content: "Start with overweight positions. NVIDIA is 5% of portfolio."
+      - role: user
+        content: "Versus 0.5% of the S&P 500."
+      - role: assistant
+        content: "Exactly. You're 10x overweight NVIDIA."
+      - role: user
+        content: "So trim that first?"
+      - role: assistant
+        content: "Sell half, book some profits, reduce concentration risk."
+      - role: user
+        content: "That's $9,000 from NVIDIA. What else?"
+      - role: assistant
+        content: "Your large-cap allocation is heavy. Reduce VOO by $50,000?"
+      - role: user
+        content: "Total $59,000 to move to conservative?"
+      - role: assistant
+        content: "Yes. Add to bonds or a short-term treasury fund."
+      - role: user
+        content: "Treasury yields are good now."
+      - role: assistant
+        content: "2-year treasuries yielding 4.9%, very safe."
+      - role: user
+        content: "Let's do that. When should I execute?"
+      - role: assistant
+        content: "No rush. Maybe ladder the trades over a few weeks."
+      - role: user
+        content: "Good idea. Market might bounce."
+      - role: assistant
+        content: "Also consider tax-loss harvesting while rebalancing."
+      - role: user
+        content: "I have losses?"
+      - role: assistant
+        content: "Your small-cap fund is down 12% from purchase."
+      - role: user
+        content: "Could sell and rebuy something similar?"
+      - role: assistant
+        content: "Sell VB, buy IWM. Similar exposure, harvest the loss."
+      - role: user
+        content: "How much tax savings?"
+      - role: assistant
+        content: "About $8,000 loss offsets gains, saves $1,600 in taxes."
+      - role: user
+        content: "Smart. Let's plan that too."
+      - role: assistant
+        content: "I'll email a detailed rebalancing plan."
+  - conversation_id: market_crash_001
+    timestamp: "2024-09-15 14:00:00"
+    metadata:
+      business: "Wealth Advisors Group"
+      department: "Portfolio Management"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Robert? The market crashed 12% this week! Should I sell everything?"
+      - role: assistant
+        content: "Mr. Wilson, I understand your concern. Deep breath. Let's review rationally."
+      - role: user
+        content: "My portfolio must be down huge!"
+      - role: assistant
+        content: "You're down 8.5% this week, about $38,000 from last month's $450,000 value."
+      - role: user
+        content: "We just rebalanced last month!"
+      - role: assistant
+        content: "Actually, that helped. You moved $59,000 to treasuries, which held value."
+      - role: user
+        content: "So I'm at $412,000 total now?"
+      - role: assistant
+        content: "Approximately. Stocks are $315,000, bonds $97,000, treasuries $59,000, cash $24,000."
+      - role: user
+        content: "Stocks got crushed."
+      - role: assistant
+        content: "Yes, but you're now at 64% stocks versus 75% before."
+      - role: user
+        content: "Still too much?"
+      - role: assistant
+        content: "Depends. This could be a buying opportunity."
+      - role: user
+        content: "Buy more in a crash?"
+      - role: assistant
+        content: "Buy low, sell high. You have 10 years until retirement."
+      - role: user
+        content: "But what if it keeps falling?"
+      - role: assistant
+        content: "No one can time the bottom. But your asset allocation is off target now."
+      - role: user
+        content: "What do you mean?"
+      - role: assistant
+        content: "If your target was 65% stocks, you're there by accident via market decline."
+      - role: user
+        content: "So just hold?"
+      - role: assistant
+        content: "Or rebalance by adding to stocks while they're down."
+      - role: user
+        content: "With what money?"
+      - role: assistant
+        content: "You have $24,000 cash earning 5.2%."
+      - role: user
+        content: "That's my emergency fund."
+      - role: assistant
+        content: "How many months of expenses?"
+      - role: user
+        content: "About 4 months."
+      - role: assistant
+        content: "Generally recommended to have 6 months."
+      - role: user
+        content: "So I shouldn't touch it?"
+      - role: assistant
+        content: "Not all of it. But markets down 20% from peak is rare."
+      - role: user
+        content: "How rare?"
+      - role: assistant
+        content: "Happens about every 3-4 years on average."
+      - role: user
+        content: "And usually recovers?"
+      - role: assistant
+        content: "Historically within 12-18 months, but no guarantees."
+      - role: user
+        content: "What about my NVIDIA position?"
+      - role: assistant
+        content: "You sold half last month at $174. Good timing."
+      - role: user
+        content: "What's it at now?"
+      - role: assistant
+        content: "Down to $142. Your remaining position is worth $11,500."
+      - role: user
+        content: "Lost $6,500 in a month!"
+      - role: assistant
+        content: "But still up 129% from your $62 purchase price."
+      - role: user
+        content: "True. Should I sell the rest?"
+      - role: assistant
+        content: "At these levels? I'd hold unless you need the money."
+      - role: user
+        content: "What about that tax-loss harvesting?"
+      - role: assistant
+        content: "Did you execute the VB to IWM swap?"
+      - role: user
+        content: "Yes, saved the $1,600 in taxes."
+      - role: assistant
+        content: "Good. IWM is down another 8% since then though."
+      - role: user
+        content: "More losses to harvest?"
+      - role: assistant
+        content: "No, wash sale rule prevents repurchasing VB for 30 days."
+      - role: user
+        content: "What about my bonds?"
+      - role: assistant
+        content: "Actually up 2% as investors fled to safety."
+      - role: user
+        content: "So bonds helped cushion the fall?"
+      - role: assistant
+        content: "Exactly why we diversify."
+      - role: user
+        content: "Should I add more bonds now?"
+      - role: assistant
+        content: "After a flight to safety, bonds are expensive."
+      - role: user
+        content: "So add to stocks instead?"
+      - role: assistant
+        content: "Consider dollar-cost averaging. Invest $5,000 monthly for 6 months."
+      - role: user
+        content: "From the cash?"
+      - role: assistant
+        content: "And from income. You save $3,000 monthly, right?"
+      - role: user
+        content: "Yes, from my salary."
+      - role: assistant
+        content: "Add that to $2,000 from cash reserves."
+      - role: user
+        content: "So $5,000 monthly into stocks?"
+      - role: assistant
+        content: "Into broad index funds, not individual stocks."
+      - role: user
+        content: "VOO S&P 500?"
+      - role: assistant
+        content: "Yes, and maybe some international. It's down even more."
+      - role: user
+        content: "How much is international down?"
+      - role: assistant
+        content: "VTIAX down 18% from peak. Could be opportunity."
+      - role: user
+        content: "Okay, let's do $3,000 VOO, $2,000 VTIAX monthly."
+      - role: assistant
+        content: "Good plan. Systematic investing removes emotion."
+      - role: user
+        content: "I feel better having a plan."
+      - role: assistant
+        content: "That's why we plan before crises hit."
+  - conversation_id: recovery_adjustment_001
+    timestamp: "2024-11-01 11:00:00"
+    metadata:
+      business: "Wealth Advisors Group"
+      department: "Portfolio Management"
+      call_duration: "50 minutes"
+    messages:
+      - role: user
+        content: "Robert, the market recovered faster than expected! My portfolio is up huge!"
+      - role: assistant
+        content: "Mr. Wilson, excellent timing on your dollar-cost averaging. Portfolio is now $512,000."
+      - role: user
+        content: "That's higher than before the crash!"
+      - role: assistant
+        content: "Your systematic investing during the dip paid off."
+      - role: user
+        content: "How much did I invest during the downturn?"
+      - role: assistant
+        content: "You put in $15,000 over 3 months - September, October, November."
+      - role: user
+        content: "And that turned into how much gain?"
+      - role: assistant
+        content: "Those specific investments are up 18%, about $2,700 profit."
+      - role: user
+        content: "In just two months!"
+      - role: assistant
+        content: "Market recovered 22% from the September lows."
+      - role: user
+        content: "What's my allocation now?"
+      - role: assistant
+        content: "Back to 71% stocks, 21% bonds and treasuries, 8% cash."
+      - role: user
+        content: "Getting aggressive again."
+      - role: assistant
+        content: "Natural drift from stock outperformance."
+      - role: user
+        content: "Should I rebalance back?"
+      - role: assistant
+        content: "You're approaching needing college funds. When does daughter start?"
+      - role: user
+        content: "Fall 2025, less than a year now!"
+      - role: assistant
+        content: "Time to set aside year one funds definitively."
+      - role: user
+        content: "That's $30,000 needed by next August."
+      - role: assistant
+        content: "Move it to ultra-safe investments now."
+      - role: user
+        content: "From stocks while they're high?"
+      - role: assistant
+        content: "Perfect timing. Sell high for known needs."
+      - role: user
+        content: "What should I sell?"
+      - role: assistant
+        content: "Your NVIDIA position recovered to $15,500."
+      - role: user
+        content: "Almost back to where it was!"
+      - role: assistant
+        content: "Sell it all? You're still overweight tech."
+      - role: user
+        content: "But it might keep going up."
+      - role: assistant
+        content: "You need $30,000 in 10 months. Bird in hand."
+      - role: user
+        content: "True. Sell all NVIDIA?"
+      - role: assistant
+        content: "That's $15,500. Need another $14,500."
+      - role: user
+        content: "From VOO?"
+      - role: assistant
+        content: "Yes, your S&P 500 position is $180,000 now."
+      - role: user
+        content: "Sell $14,500 of VOO?"
+      - role: assistant
+        content: "Round to $15,000 for clean numbers."
+      - role: user
+        content: "So $30,500 total to safety?"
+      - role: assistant
+        content: "Put in 1-year treasury yielding 5.1%."
+      - role: user
+        content: "It'll actually grow to $32,000 by next August?"
+      - role: assistant
+        content: "Yes, covering books and supplies too."
+      - role: user
+        content: "What about year two of college?"
+      - role: assistant
+        content: "Start setting that aside in 6 months."
+      - role: user
+        content: "From what?"
+      - role: assistant
+        content: "Your monthly savings and maybe bonus?"
+      - role: user
+        content: "I get my bonus in December, usually $25,000."
+      - role: assistant
+        content: "Perfect for year two college funding."
+      - role: user
+        content: "After tax more like $17,000."
+      - role: assistant
+        content: "Still helpful. Add monthly savings to reach $30,000."
+      - role: user
+        content: "What about market conditions?"
+      - role: assistant
+        content: "Indicators suggest continued volatility ahead."
+      - role: user
+        content: "Should I get defensive?"
+      - role: assistant
+        content: "You're 52 with 10 years to retirement. Stay course."
+      - role: user
+        content: "But protect college funds?"
+      - role: assistant
+        content: "Exactly. Different time horizons, different strategies."
+      - role: user
+        content: "What about my wife's 401k?"
+      - role: assistant
+        content: "How's that allocated?"
+      - role: user
+        content: "She's 100% in target-date 2040 fund."
+      - role: assistant
+        content: "That's probably 60/40 stocks/bonds automatically."
+      - role: user
+        content: "Should we coordinate our accounts?"
+      - role: assistant
+        content: "Yes, household view is important."
+      - role: user
+        content: "Combined we have about $850,000?"
+      - role: assistant
+        content: "Correct. $512,000 yours, approximately $338,000 hers."
+      - role: user
+        content: "Feels better seeing total."
+      - role: assistant
+        content: "You're on track for retirement goals."
+      - role: user
+        content: "Even with college expenses?"
+      - role: assistant
+        content: "Yes, if you maintain savings discipline."
+      - role: user
+        content: "Should I stop the monthly investing?"
+      - role: assistant
+        content: "No, but redirect to balanced fund perhaps."
+      - role: user
+        content: "Which one?"
+      - role: assistant
+        content: "VBIAX, 60/40 balanced fund."
+      - role: user
+        content: "Instead of pure stocks?"
+      - role: assistant
+        content: "Reduces volatility while maintaining growth."
+      - role: user
+        content: "Okay, $3,000 monthly to VBIAX?"
+      - role: assistant
+        content: "Good adjustment given market recovery."
+      - role: user
+        content: "Thanks for keeping me disciplined through this rollercoaster!"
+      - role: assistant
+        content: "That's the value of having an advisor."
+user_question: "What's my current investment portfolio value and how has my strategy changed through the recent market volatility?"
+evaluation_criteria: |
+  The agent must track portfolio changes through market events across all conversations:
+  
+  **CURRENT PORTFOLIO STATUS (November 1, 2024):**
+  - Total Value: $512,000 (recovered and exceeded pre-crash high)
+  - Allocation: 71% stocks, 21% bonds/treasuries, 8% cash
+  - Pending Changes: Moving $30,500 to 1-year treasury for college
+  
+  **PORTFOLIO EVOLUTION:**
+  
+  **August 1 (Initial Review - $485,000):**
+  - 75% stocks ($364,000), 20% bonds ($97,000), 5% cash ($24,000)
+  - Identified issues: Too aggressive, overweight NVIDIA, college needs coming
+  - Actions taken:
+    * Sold 50% of NVIDIA ($9,000)
+    * Reduced VOO by $50,000
+    * Moved $59,000 to 2-year treasuries
+    * Tax-loss harvested VB→IWM ($8,000 loss)
+  
+  **September 15 (Market Crash - $412,000 portfolio):**
+  - Market down 12%, portfolio down 8.5% ($38,000)
+  - New allocation: 64% stocks (by accident via decline)
+  - Actions taken:
+    * Started dollar-cost averaging $5,000/month
+    * $3,000 to VOO, $2,000 to VTIAX monthly
+    * Invested $15,000 total during downturn
+  
+  **November 1 (Recovery - $512,000):**
+  - Market recovered 22% from lows
+  - Dollar-cost averaging investments up 18% ($2,700 profit)
+  - New actions:
+    * Selling NVIDIA position ($15,500)
+    * Selling VOO ($15,000)
+    * Moving $30,500 to 1-year treasury for college
+    * Redirecting future contributions to VBIAX balanced fund
+  
+  **KEY STRATEGIC CHANGES:**
+  
+  1. **Pre-crash Defensive Moves:**
+     - Reduced stock allocation from 75% to planned 65%
+     - Took profits on NVIDIA (sold at $174 before crash to $142)
+     - Tax-loss harvested for $1,600 tax savings
+  
+  2. **During Crash Opportunistic Buying:**
+     - Maintained discipline, didn't panic sell
+     - Systematically invested during downturn
+     - Added to international stocks (down 18%)
+  
+  3. **Post-Recovery Risk Management:**
+     - Taking profits for known needs (college)
+     - Selling entire NVIDIA position (still overweight tech)
+     - Shifting new contributions to balanced fund
+     - Coordinating with wife's 401k (combined $850,000)
+  
+  **COLLEGE FUNDING PLAN:**
+  - Year 1 (Fall 2025): $30,500 moving to treasuries now
+  - Year 2: December bonus ($17,000 after-tax) + savings
+  - Total need: $120,000 over 4 years
+  
+  **TAX IMPLICATIONS:**
+  - Harvested $8,000 loss to offset gains
+  - NVIDIA gains: Still 129% profit from $62 basis
+  - Using long-term capital gains rates (15% federal + 5% state)
+  
+  The agent must understand how market events drove strategy changes and current positioning reflects both recovery and future needs.

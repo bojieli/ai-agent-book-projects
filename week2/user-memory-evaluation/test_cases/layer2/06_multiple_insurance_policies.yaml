@@ -1,0 +1,465 @@
+test_id: layer2_06_multiple_insurance_policies
+category: layer2
+title: Multiple Insurance Policies - Coverage Disambiguation  
+description: Test agent's ability to distinguish between different insurance policies (auto, home, life) and provide comprehensive coverage information
+conversation_histories:
+  - conversation_id: auto_insurance_001
+    timestamp: "2024-09-10 11:00:00"
+    metadata:
+      business: "Progressive Insurance"
+      department: "Auto Insurance Service"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to review my auto insurance policy and maybe make some adjustments."
+      - role: assistant
+        content: "Hello! I'm Tom from Progressive Auto Insurance. I'll help you review your policy. May I have your policy number?"
+      - role: user
+        content: "It's PA-4478923-01."
+      - role: assistant
+        content: "Thank you, Mr. Richard Chen. I see you have coverage for two vehicles on this policy."
+      - role: user
+        content: "Yes, my Tesla Model Y and my wife's Honda CR-V."
+      - role: assistant
+        content: "The 2023 Tesla Model Y and 2021 Honda CR-V, correct?"
+      - role: user
+        content: "That's right. What coverage do I have?"
+      - role: assistant
+        content: "You have comprehensive and collision on both vehicles with $500 deductibles, 100/300/100 liability limits."
+      - role: user
+        content: "What does 100/300/100 mean again?"
+      - role: assistant
+        content: "$100,000 per person bodily injury, $300,000 per accident bodily injury, $100,000 property damage."
+      - role: user
+        content: "Is that enough coverage?"
+      - role: assistant
+        content: "It's above state minimums, but given your vehicle values, you might consider higher limits or umbrella coverage."
+      - role: user
+        content: "What's my current premium?"
+      - role: assistant
+        content: "Your 6-month premium is $1,847 total - $1,123 for the Tesla, $724 for the Honda."
+      - role: user
+        content: "Why is the Tesla so much more?"
+      - role: assistant
+        content: "Electric vehicles, especially Teslas, have higher repair costs and the Model Y is newer with higher value."
+      - role: user
+        content: "Makes sense. When does this policy renew?"
+      - role: assistant
+        content: "Your policy renews November 15th, 2024."
+      - role: user
+        content: "Do I have any discounts applied?"
+      - role: assistant
+        content: "Yes, you have multi-car, safe driver, automatic payment, and paperless discounts totaling $438 off."
+      - role: user
+        content: "What about accident forgiveness?"
+      - role: assistant
+        content: "You're enrolled in small accident forgiveness - first claim under $500 won't raise rates."
+      - role: user
+        content: "Can I upgrade to full accident forgiveness?"
+      - role: assistant
+        content: "Large accident forgiveness is available for $89 more per 6 months. It covers any first accident."
+      - role: user
+        content: "Let me think about it. Do I have roadside assistance?"
+      - role: assistant
+        content: "No, but we can add it for $16 per vehicle per 6 months."
+      - role: user
+        content: "The Tesla has its own roadside through the app."
+      - role: assistant
+        content: "Then you might just add it for the Honda - $16 for 6 months."
+      - role: user
+        content: "Sure, add that. What about rental coverage?"
+      - role: assistant
+        content: "You have rental reimbursement at $40/day, $1,200 maximum per claim."
+      - role: user
+        content: "Good. My son just turned 16 - what if I add him?"
+      - role: assistant
+        content: "Adding a 16-year-old male driver would increase your premium significantly, typically $800-1,200 per 6 months."
+      - role: user
+        content: "Yikes! What if he takes a defensive driving course?"
+      - role: assistant
+        content: "That could save 10-15%, so maybe $100-150 off that increase."
+      - role: user
+        content: "I'll wait until he actually gets his license. What about usage-based discounts?"
+      - role: assistant
+        content: "Our Snapshot program can save up to 30% based on your driving habits."
+      - role: user
+        content: "Does it track location?"
+      - role: assistant
+        content: "It tracks hard braking, acceleration, time of day, and mileage, but not specific locations."
+      - role: user
+        content: "Interesting. I work from home mostly now."
+      - role: assistant
+        content: "Have you updated your annual mileage? Lower mileage means lower premiums."
+      - role: user
+        content: "What do you have on file?"
+      - role: assistant
+        content: "12,000 miles annually for each vehicle."
+      - role: user
+        content: "The Tesla is probably only 7,000 now. Honda is still about 12,000."
+      - role: assistant
+        content: "Updating the Tesla to 7,000 miles saves about $95 per 6 months."
+      - role: user
+        content: "Great, make that change!"
+      - role: user
+        content: "Any other discounts I'm missing?"
+      - role: assistant
+        content: "You could add our Snapshot device for usage-based discounts up to 30%."
+      - role: user
+        content: "Does it track where I go?"
+      - role: assistant
+        content: "No location tracking, just driving behaviors like hard braking and time of day."
+      - role: user
+        content: "I drive pretty carefully."
+      - role: assistant
+        content: "Then you'd likely get a good discount. Most safe drivers save 10-15%."
+      - role: user
+        content: "Can it ever increase my rate?"
+      - role: assistant
+        content: "No, we guarantee it won't raise your rate, only potential discounts."
+      - role: user
+        content: "Maybe I'll try it. How long do I have to use it?"
+      - role: assistant
+        content: "Just 6 months, then the discount is permanent."
+      - role: user
+        content: "I'll think about it. What about glass coverage?"
+      - role: assistant
+        content: "You have comprehensive which covers glass with your $500 deductible."
+      - role: user
+        content: "Some companies waive deductible for windshield repairs."
+      - role: assistant
+        content: "We waive it for repairs, but replacement requires the deductible."
+      - role: user
+        content: "Fair enough. The Tesla's windshield is expensive to replace anyway."
+      - role: assistant
+        content: "Yes, Tesla windshields can be $1,500+ due to the sensors and cameras."
+      - role: user
+        content: "Exactly why I need good coverage. What about diminished value claims?"
+      - role: assistant
+        content: "If someone else is at fault, you can pursue diminished value from their insurance."
+      - role: user
+        content: "But not from you if it's my fault?"
+      - role: assistant
+        content: "Correct, first-party diminished value isn't covered."
+      - role: user
+        content: "Makes sense. Thanks for all the information Tom."
+      - role: assistant
+        content: "My pleasure! Your new 6-month premium is $1,768, effective at renewal November 15th."
+  - conversation_id: home_insurance_001
+    timestamp: "2024-10-05 14:30:00"
+    metadata:
+      business: "State Farm Insurance"
+      department: "Homeowners Insurance"
+      call_duration: "44 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to check on my homeowners insurance policy."
+      - role: assistant
+        content: "Hello! This is Sarah from State Farm Homeowners Insurance. I'd be happy to help. What's your policy number?"
+      - role: user
+        content: "SF-HO-8834521."
+      - role: assistant
+        content: "Thank you, Mr. Chen. I have your policy here for your home at 4421 Maple Street, Seattle."
+      - role: user
+        content: "That's right. I'm wondering if my coverage amounts are still appropriate."
+      - role: assistant
+        content: "Your dwelling coverage is set at $650,000. When did you last update this?"
+      - role: user
+        content: "I think when I bought the house in 2019."
+      - role: assistant
+        content: "With construction costs increasing, we should review this. What's your current home value estimate?"
+      - role: user
+        content: "Zillow says about $875,000."
+      - role: assistant
+        content: "Remember, dwelling coverage is for rebuild cost, not market value. But construction costs have increased about 30% since 2019."
+      - role: user
+        content: "So I should increase coverage?"
+      - role: assistant
+        content: "I'd recommend increasing dwelling coverage to $750,000-800,000 to ensure full rebuild coverage."
+      - role: user
+        content: "What would that cost?"
+      - role: assistant
+        content: "Going from $650,000 to $750,000 would increase your annual premium by about $280."
+      - role: user
+        content: "What's my current premium?"
+      - role: assistant
+        content: "$1,847 per year."
+      - role: user
+        content: "So it would go to about $2,127?"
+      - role: assistant
+        content: "Correct. That also automatically increases your personal property coverage to $562,500 - that's 75% of dwelling."
+      - role: user
+        content: "What's my deductible?"
+      - role: assistant
+        content: "You have a $1,000 deductible currently."
+      - role: user
+        content: "If I increase it to $2,500?"
+      - role: assistant
+        content: "That would save about $195 annually, offsetting most of the coverage increase."
+      - role: user
+        content: "That's smart. Let's do both changes."
+      - role: assistant
+        content: "Updating to $750,000 dwelling with $2,500 deductible. New annual premium will be $1,932."
+      - role: user
+        content: "Actually not much more than now. What about liability coverage?"
+      - role: assistant
+        content: "You have $300,000 liability coverage currently."
+      - role: user
+        content: "Is that enough?"
+      - role: assistant
+        content: "For your assets, I'd recommend $500,000 or consider an umbrella policy for broader protection."
+      - role: user
+        content: "What's an umbrella policy cost?"
+      - role: assistant
+        content: "$1 million umbrella is typically $200-300 annually if you have auto and home with us."
+      - role: user
+        content: "I have auto with Progressive though."
+      - role: assistant
+        content: "Then an umbrella might be $400-500 annually. You could save by bundling everything with one company."
+      - role: user
+        content: "I'll think about that. Do I have flood insurance?"
+      - role: assistant
+        content: "Flood is separate through NFIP. Your record doesn't show flood coverage."
+      - role: user
+        content: "Am I in a flood zone?"
+      - role: assistant
+        content: "Your address is in Zone X - minimal flood risk, so it's optional but relatively cheap."
+      - role: user
+        content: "How cheap?"
+      - role: assistant
+        content: "Probably $400-600 annually for $250,000 coverage in Zone X."
+      - role: user
+        content: "Maybe later. What about earthquake coverage?"
+      - role: assistant
+        content: "Being in Seattle, earthquake coverage is worth considering. It's about $800 annually with a 10% deductible."
+      - role: user
+        content: "10% of what?"
+      - role: assistant
+        content: "Of the dwelling coverage - so $75,000 deductible with your new $750,000 coverage."
+      - role: user
+        content: "That's a huge deductible!"
+      - role: assistant
+        content: "Yes, earthquake deductibles are high. It's really for catastrophic loss protection."
+      - role: user
+        content: "Should I get an umbrella policy?"
+      - role: assistant
+        content: "With your assets and property value, I'd strongly recommend it."
+      - role: user
+        content: "How much coverage?"
+      - role: assistant
+        content: "$1 million minimum, maybe $2 million given your home value."
+      - role: user
+        content: "What does it cost?"
+      - role: assistant
+        content: "About $200-300 per year per million in coverage."
+      - role: user
+        content: "That's actually pretty cheap for a million dollars."
+      - role: assistant
+        content: "It's great value. Covers you beyond home and auto policy limits."
+      - role: user
+        content: "Does it cover lawsuits?"
+      - role: assistant
+        content: "Yes, including legal defense costs which can be expensive."
+      - role: user
+        content: "I'll add it. $1 million for now."
+      - role: assistant
+        content: "Smart decision. That's $245 annually, added to your account."
+      - role: user
+        content: "What about valuable items coverage?"
+      - role: assistant
+        content: "You mentioned art and electronics. Want to schedule specific items?"
+      - role: user
+        content: "I have a painting worth about $15,000."
+      - role: assistant
+        content: "That exceeds standard coverage. You'll want a fine arts rider."
+      - role: user
+        content: "How much?"
+      - role: assistant
+        content: "About $150 per year for $15,000 coverage, no deductible."
+      - role: user
+        content: "Add that too. What about my wife's jewelry beyond the ring?"
+      - role: assistant
+        content: "What's the total value?"
+      - role: user
+        content: "Maybe another $8,000 in watches and earrings."
+      - role: assistant
+        content: "Add $80 per year to increase jewelry coverage to $20,000 total."
+      - role: user
+        content: "Yes, let's be fully covered."
+      - role: assistant
+        content: "Done. Your new annual premium is $2,307 with all additions."
+      - role: user
+        content: "Still reasonable for the coverage. When does this all take effect?"
+      - role: assistant
+        content: "The dwelling and deductible changes at renewal. Riders and umbrella start immediately."
+      - role: user
+        content: "Perfect. I feel much better protected now."
+      - role: assistant
+        content: "That's our goal! I've updated everything. New documents coming within 7-10 days."
+  - conversation_id: life_insurance_001
+    timestamp: "2024-11-02 16:00:00"
+    metadata:
+      business: "Northwestern Mutual"
+      department: "Life Insurance Service"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "Hi, I want to review my life insurance policies with Northwestern Mutual."
+      - role: assistant
+        content: "Hello! I'm David from Northwestern Mutual. I'll help you review your policies. May I have your policy number or Social Security?"
+      - role: user
+        content: "I have multiple policies. My Social is 445-67-8923."
+      - role: assistant
+        content: "Thank you, Mr. Richard Chen. I see you have a term life and a whole life policy with us."
+      - role: user
+        content: "Right. Can you remind me of the details?"
+      - role: assistant
+        content: "Your 20-year term policy is for $1 million, started in 2018. The whole life is $250,000, started in 2010."
+      - role: user
+        content: "What am I paying for each?"
+      - role: assistant
+        content: "Term life is $89 monthly, whole life is $287 monthly."
+      - role: user
+        content: "The whole life seems expensive for less coverage."
+      - role: assistant
+        content: "Whole life includes a cash value component that grows tax-deferred. Your cash value is currently $34,782."
+      - role: user
+        content: "Oh, I forgot about that. What's it earning?"
+      - role: assistant
+        content: "Guaranteed 4% annually, plus dividends. Last year's total return was 5.8%."
+      - role: user
+        content: "Not bad. Can I borrow against it?"
+      - role: assistant
+        content: "Yes, you can borrow up to 90% at 5% interest, so about $31,000 available."
+      - role: user
+        content: "Good to know for emergencies. What about the term policy?"
+      - role: user
+        content: "How many years left on my term?"
+      - role: assistant
+        content: "You're 6 years into the 20-year term, so 14 years remaining."
+      - role: user
+        content: "Will the premium increase?"
+      - role: assistant
+        content: "No, it's level premium for the full 20 years - stays at $89 monthly."
+      - role: user
+        content: "What happens after 20 years?"
+      - role: assistant
+        content: "You can convert to permanent insurance or renew annually at higher rates based on age."
+      - role: user
+        content: "I'll be 58 then. What would new term cost?"
+      - role: assistant
+        content: "A new 20-year term at 58 would be roughly $400-500 monthly for $1 million."
+      - role: user
+        content: "Wow, huge increase! Should I get more coverage now while younger?"
+      - role: assistant
+        content: "At 44, you could add another $1 million term for about $110 monthly."
+      - role: user
+        content: "So $2 million total term for $199 monthly?"
+      - role: assistant
+        content: "Correct, plus your $250,000 whole life gives you $2.25 million total coverage."
+      - role: user
+        content: "Who are my beneficiaries?"
+      - role: assistant
+        content: "Your wife Lisa Chen is primary beneficiary on both policies, your children Emma and James are contingent beneficiaries."
+      - role: user
+        content: "Split how?"
+      - role: assistant
+        content: "Lisa gets 100% if living, otherwise 50% each to Emma and James."
+      - role: user
+        content: "Perfect. Are there any riders on my policies?"
+      - role: assistant
+        content: "Your term has waiver of premium for disability. Whole life has waiver of premium and accelerated death benefit."
+      - role: user
+        content: "What's accelerated death benefit?"
+      - role: assistant
+        content: "You can access up to 50% of death benefit if terminally ill with less than 12 months to live."
+      - role: user
+        content: "Hopefully never needed. Should I add that to the term policy?"
+      - role: assistant
+        content: "It's $8 monthly to add accelerated death benefit rider to your term policy."
+      - role: user
+        content: "Yes, add it. Better to have it."
+      - role: user
+        content: "What about long-term care insurance?"
+      - role: assistant
+        content: "At 44, it's a good time to consider it. Premiums are lower when you're younger."
+      - role: user
+        content: "What does it cover?"
+      - role: assistant
+        content: "Nursing home, assisted living, home health care if you can't perform daily activities."
+      - role: user
+        content: "That's depressing to think about."
+      - role: assistant
+        content: "I know, but 70% of people need some long-term care after 65."
+      - role: user
+        content: "What does it cost?"
+      - role: assistant
+        content: "At your age, about $2,000-3,000 annually for good coverage."
+      - role: user
+        content: "That's a lot on top of everything else."
+      - role: assistant
+        content: "It is, but nursing homes cost $100,000+ per year."
+      - role: user
+        content: "Let me discuss with my wife first."
+      - role: assistant
+        content: "Wise to decide together. We can quote both of you for better rates."
+      - role: user
+        content: "Back to life insurance - what if I become disabled?"
+      - role: assistant
+        content: "Your waiver of premium means we'll pay your premiums if you're disabled."
+      - role: user
+        content: "How disabled?"
+      - role: assistant
+        content: "Unable to work in your occupation for 6 months."
+      - role: user
+        content: "That's good protection. What about my wife's coverage?"
+      - role: assistant
+        content: "Does she have life insurance?"
+      - role: user
+        content: "Just through her work, I think."
+      - role: assistant
+        content: "Work coverage usually ends if she leaves the job. Consider personal coverage."
+      - role: user
+        content: "How much should she have?"
+      - role: assistant
+        content: "Similar calculation - 10x income plus debts minus assets."
+      - role: user
+        content: "So maybe $800,000 for her?"
+      - role: assistant
+        content: "That sounds appropriate. Want a quote?"
+      - role: user
+        content: "Sure, she's 42 and healthy."
+      - role: assistant
+        content: "20-year term for $800,000 would be about $55 monthly for her."
+      - role: user
+        content: "That's less than mine."
+      - role: assistant
+        content: "Women typically get better life insurance rates."
+      - role: user
+        content: "I'll talk to her about it. Can we add her to my policy?"
+      - role: assistant
+        content: "She'd need her own policy, but we can coordinate beneficiaries and payments."
+      - role: user
+        content: "Makes sense. I think I'm all set for now."
+      - role: assistant
+        content: "Great! Your term premium is $97 monthly with the new rider. All changes confirmed."
+user_question: "I need to file a claim. What are my deductibles for all my insurance policies?"
+evaluation_criteria: |
+  The agent should retrieve ALL deductible information across all insurance types:
+  
+  Auto Insurance (Progressive):
+  - Comprehensive: $500 per vehicle
+  - Collision: $500 per vehicle  
+  - Vehicles: Tesla Model Y and Honda CR-V
+  - No deductible for liability claims
+  
+  Homeowners Insurance (State Farm):
+  - General deductible: Being changed from $1,000 to $2,500
+  - Property: 4421 Maple Street, Seattle
+  - Earthquake (if added): 10% of dwelling coverage ($75,000)
+  - Flood: Not currently covered
+  
+  Life Insurance (Northwestern Mutual):
+  - No deductibles (life insurance doesn't have deductibles)
+  - Note: Has $1M term and $250K whole life policies
+  
+  The agent must recognize this is asking about ALL insurance policies and clarify which type of claim the user needs to file, while providing all deductible information for reference.

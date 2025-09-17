@@ -1,0 +1,233 @@
+test_id: layer1_06_credit_card_app
+category: layer1
+title: Credit Card Application - Financial Information and Card Details
+description: Test agent's ability to recall credit card terms, application details, and financial information from detailed
+  application call
+conversation_histories:
+- conversation_id: credit_card_app_001
+  timestamp: '2024-11-06 13:20:00'
+  metadata:
+    business: Premier Bank Credit Services
+    department: Card Applications
+    call_duration: 41 minutes
+  messages:
+  - role: user
+    content: Hi, I received a pre-approved offer for your Rewards Plus credit card and I'd like to apply.
+  - role: assistant
+    content: Excellent! Thank you for your interest in the Premier Bank Rewards Plus card. I'm Sandra, and I'll help you with
+      your application today. May I have the invitation code from your offer?
+  - role: user
+    content: Yes, it's RWD-447829-Q3.
+  - role: assistant
+    content: Perfect! I see you're pre-approved for up to $15,000 credit limit. Let me verify some information. Is this Patricia
+      Chen?
+  - role: user
+    content: Yes, that's me.
+  - role: assistant
+    content: Wonderful, Ms. Chen. Can you confirm your date of birth?
+  - role: user
+    content: June 14th, 1990.
+  - role: assistant
+    content: Thank you. And your current address?
+  - role: user
+    content: 2156 Mission Street, Apartment 8C, San Francisco, California, 94110.
+  - role: assistant
+    content: How long have you been at this address?
+  - role: user
+    content: About three years now.
+  - role: assistant
+    content: Excellent. Now, let me tell you about the Rewards Plus card benefits. You'll earn 3% cash back on dining and
+      entertainment, 2% on groceries and gas, and 1% on everything else.
+  - role: user
+    content: Is there an annual fee?
+  - role: assistant
+    content: No annual fee at all. Plus, you get a $200 bonus after spending $1,000 in the first three months.
+  - role: user
+    content: That sounds great. What's the interest rate?
+  - role: assistant
+    content: Based on your pre-approval, you qualify for our best rate of 16.99% APR for purchases. Balance transfers are
+      at 14.99% for the first 12 months, then the regular rate.
+  - role: user
+    content: Do you offer a 0% introductory rate?
+  - role: assistant
+    content: Yes! You get 0% APR on purchases for the first 15 months, then it goes to the 16.99% rate.
+  - role: user
+    content: That's really good. What about balance transfer fees?
+  - role: assistant
+    content: Balance transfers have a 3% fee, with a minimum of $10. But with the lower rate for 12 months, it often saves
+      money overall.
+  - role: user
+    content: I have about $3,000 I'd like to transfer from another card.
+  - role: assistant
+    content: That's perfectly fine. We can set that up once your card is approved. Now, I need to verify your employment information.
+      Where do you work?
+  - role: user
+    content: I work at Bay Area Tech Solutions as a senior project manager.
+  - role: assistant
+    content: How long have you been with Bay Area Tech Solutions?
+  - role: user
+    content: Five and a half years.
+  - role: assistant
+    content: Excellent stability. What's your annual income?
+  - role: user
+    content: My base salary is $135,000, and I usually get about $20,000 in bonuses.
+  - role: assistant
+    content: So total annual income around $155,000?
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: Do you have any additional sources of income?
+  - role: user
+    content: I do some freelance consulting, maybe $10,000 a year.
+  - role: assistant
+    content: I'll note that as $165,000 total annual income. Now, do you rent or own your home?
+  - role: user
+    content: I rent.
+  - role: assistant
+    content: What's your monthly rent payment?
+  - role: user
+    content: $2,850 per month.
+  - role: assistant
+    content: Do you have any other credit cards currently?
+  - role: user
+    content: Yes, I have two - a Chase Sapphire and an American Express Blue.
+  - role: assistant
+    content: What are the credit limits on those?
+  - role: user
+    content: Chase is $12,000 and Amex is $8,000.
+  - role: assistant
+    content: And roughly what are your current balances?
+  - role: user
+    content: The Chase has about $3,000 which I want to transfer, and the Amex has maybe $500.
+  - role: assistant
+    content: Thank you. Any other loans - auto, student loans, personal loans?
+  - role: user
+    content: I have a car loan with about $15,000 remaining.
+  - role: assistant
+    content: What's your monthly payment on that?
+  - role: user
+    content: $425 per month.
+  - role: assistant
+    content: Perfect. Now, what's your mother's maiden name for security purposes?
+  - role: user
+    content: It's Williams.
+  - role: assistant
+    content: Thank you. Let me process your application now... Congratulations! You're approved for a $14,000 credit limit.
+  - role: user
+    content: That's fantastic! When will I receive the card?
+  - role: assistant
+    content: Your card will arrive in 7-10 business days via USPS to your Mission Street address.
+  - role: user
+    content: Can I expedite it?
+  - role: assistant
+    content: Absolutely! For $25, we can send it FedEx for delivery in 2-3 business days.
+  - role: user
+    content: Let's do that. I have some purchases coming up.
+  - role: assistant
+    content: Perfect. It will arrive by November 9th. Now, would you like to set up that balance transfer?
+  - role: user
+    content: Yes, the $3,000 from my Chase card.
+  - role: assistant
+    content: I'll need the account number for your Chase card.
+  - role: user
+    content: It's 4147-2298-8834-9002.
+  - role: assistant
+    content: And which bank issues that card?
+  - role: user
+    content: Chase Bank.
+  - role: assistant
+    content: Perfect. The $3,000 transfer will process within 7-14 days after you receive and activate your card. The 3% fee
+      of $90 will be added to your first statement.
+  - role: user
+    content: That works. Can I add an authorized user?
+  - role: assistant
+    content: Yes, you can add authorized users at no additional cost. Would you like to add someone now?
+  - role: user
+    content: Yes, my husband, James Chen.
+  - role: assistant
+    content: I'll need his date of birth.
+  - role: user
+    content: March 22nd, 1988.
+  - role: assistant
+    content: His card will arrive with yours. He'll earn rewards on his purchases that go into your account.
+  - role: user
+    content: Great. How do I track my rewards?
+  - role: assistant
+    content: You can see your cash back balance on your monthly statement, online account, or mobile app. Rewards post after
+      each statement closes.
+  - role: user
+    content: When can I redeem them?
+  - role: assistant
+    content: You can redeem anytime once you have at least $25 in rewards. Options include statement credit, direct deposit,
+      or check.
+  - role: user
+    content: Do the rewards expire?
+  - role: assistant
+    content: No, they never expire as long as your account remains open and in good standing.
+  - role: user
+    content: What about foreign transaction fees?
+  - role: assistant
+    content: The Rewards Plus card has no foreign transaction fees, making it perfect for international travel.
+  - role: user
+    content: That's great, I travel to Asia twice a year. What about rental car insurance?
+  - role: assistant
+    content: Yes, you get automatic collision damage waiver when you rent with your card. Plus extended warranty on purchases
+      and purchase protection.
+  - role: user
+    content: Is there fraud protection?
+  - role: assistant
+    content: Absolutely. Zero liability for unauthorized charges, and we monitor 24/7 for suspicious activity. You can also
+      set up instant alerts.
+  - role: user
+    content: How do I set up online access?
+  - role: assistant
+    content: Once you receive your card, go to premier-bank.com/activate. You'll create a username and password there.
+  - role: user
+    content: Can I choose my payment due date?
+  - role: assistant
+    content: Yes, after your first statement, you can call or go online to change your due date to any day of the month you
+      prefer.
+  - role: user
+    content: I'd like it around the 15th of each month.
+  - role: assistant
+    content: You can set that up after your first statement generates. Your temporary due date will be the 5th of each month.
+  - role: user
+    content: What's the minimum payment?
+  - role: assistant
+    content: The minimum is 2% of your balance or $25, whichever is greater.
+  - role: user
+    content: And the credit limit again was?
+  - role: assistant
+    content: You're approved for $14,000.
+  - role: user
+    content: Can I request an increase later?
+  - role: assistant
+    content: Yes, after six months of on-time payments, you can request an increase online or by phone.
+  - role: user
+    content: Is there a cash advance option?
+  - role: assistant
+    content: Yes, cash advances are available up to 30% of your credit limit, so up to $4,200 for you. The fee is 5% or $10
+      minimum, and the APR is 24.99%.
+  - role: user
+    content: I'll avoid that. What's the customer service number?
+  - role: assistant
+    content: It's 1-800-555-CARD, available 24/7. Your account number for reference is 5524-8897-2234-4001.
+  - role: user
+    content: Let me write that down... 5524-8897-2234-4001?
+  - role: assistant
+    content: That's correct. That's your new card number. You'll create a PIN when you activate the card.
+  - role: user
+    content: Perfect. Is there anything else I should know?
+  - role: assistant
+    content: Just remember to activate your card as soon as it arrives to enable your purchase protection benefits and to
+      start the balance transfer. You'll need the three-digit activation code that comes with the card.
+  - role: user
+    content: Sounds good. Thank you so much for your help!
+  - role: assistant
+    content: You're very welcome, Ms. Chen! Your Premier Bank Rewards Plus card with a $14,000 limit will arrive via FedEx
+      by November 9th. Remember, you have 0% APR for 15 months and will earn that $200 bonus after $1,000 in purchases. Thank
+      you for choosing Premier Bank!
+user_question: What's my new credit card number? I want to add it to my password manager for when I start online shopping.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the complete credit card number 5524-8897-2234-4001 that was assigned during the application process. The response must include all 16 digits in the correct sequence, maintaining the proper formatting either with dashes as shown or as a continuous string of numbers. The agent should demonstrate precise recall of this specific card number and may helpfully mention that this is for the Premier Bank Rewards Plus card with the $14,000 credit limit. The agent must not confuse this card number with other numbers mentioned in the conversation such as phone numbers, SSN, or the credit limit amount.
+expected_behavior: The agent should provide the credit card number 5524-8897-2234-4001 that was assigned during the application

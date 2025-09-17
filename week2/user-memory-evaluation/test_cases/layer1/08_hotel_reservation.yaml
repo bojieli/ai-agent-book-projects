@@ -1,0 +1,202 @@
+test_id: layer1_08_hotel_reservation
+category: layer1
+title: Hotel Booking for Anniversary - Reservation and Package Details
+description: Test agent's ability to recall hotel confirmation, room upgrade, and special package details
+conversation_histories:
+- conversation_id: hotel_booking_001
+  timestamp: '2024-11-09 19:30:00'
+  metadata:
+    business: Hilton Hotels
+    department: Reservations
+    call_duration: 46 minutes
+  messages:
+  - role: user
+    content: Hi, I want to book a special weekend for our 10th anniversary in San Diego.
+  - role: assistant
+    content: Good evening! Congratulations on your upcoming anniversary! I'm Maria from Hilton Reservations. I'd love to help
+      make it special. Which dates were you considering?
+  - role: user
+    content: We're looking at the weekend of December 8th and 9th.
+  - role: assistant
+    content: That's a Saturday and Sunday. Were you planning to check in Friday night or Saturday?
+  - role: user
+    content: Friday night, December 8th, and check out Sunday the 10th.
+  - role: assistant
+    content: Perfect, two nights. Which Hilton property in San Diego interests you? We have several options.
+  - role: user
+    content: We were thinking something on the water, maybe the Bayfront?
+  - role: assistant
+    content: Excellent choice! The Hilton San Diego Bayfront is our premier waterfront property. It's right on the bay with
+      beautiful views.
+  - role: user
+    content: That sounds perfect. What room options do you have?
+  - role: assistant
+    content: For your anniversary, might I suggest our bay view rooms or even a suite? We have standard bay view rooms starting
+      at $379 per night.
+  - role: user
+    content: What about suites?
+  - role: assistant
+    content: We have Junior Suites with bay views at $529 per night, or our Premium Suites at $729 per night with panoramic
+      views and a separate living area.
+  - role: user
+    content: The Junior Suite sounds nice. Tell me more about it.
+  - role: assistant
+    content: The Junior Suite is 650 square feet with a king bed, separate seating area, floor-to-ceiling windows overlooking
+      the bay, and a marble bathroom with soaking tub.
+  - role: user
+    content: That sounds romantic. Do you have any anniversary packages?
+  - role: assistant
+    content: Yes! Our Romance Package includes chocolate-covered strawberries, champagne on arrival, late checkout, and breakfast
+      in bed for $125 additional.
+  - role: user
+    content: Oh, that's nice. What time is the late checkout?
+  - role: assistant
+    content: With the package, you can check out as late as 2 PM instead of the standard 11 AM.
+  - role: user
+    content: Let's add that package. So that would be the Junior Suite with the Romance Package?
+  - role: assistant
+    content: Yes, exactly. Let me calculate that for you. Two nights in the Junior Suite at $529 per night is $1,058, plus
+      the $125 Romance Package.
+  - role: user
+    content: What about taxes?
+  - role: assistant
+    content: San Diego hotel tax is 12.7%, so that adds about $150 to your total.
+  - role: user
+    content: So roughly $1,330 total?
+  - role: assistant
+    content: Yes, $1,333 to be exact. Now, may I have your name to create the reservation?
+  - role: user
+    content: It's Richard and Susan Thompson.
+  - role: assistant
+    content: Thank you, Mr. Thompson. And a contact phone number?
+  - role: user
+    content: 619-555-9821.
+  - role: assistant
+    content: Email address for confirmation?
+  - role: user
+    content: rthompson@techcompany.com
+  - role: assistant
+    content: Perfect. Are you a Hilton Honors member?
+  - role: user
+    content: My wife is. Her number is... let me find it... HH294857301.
+  - role: assistant
+    content: Excellent! I'll attach this to her account so you'll earn points. That's about 13,000 points for this stay.
+  - role: user
+    content: Wow, that's a lot of points.
+  - role: assistant
+    content: Yes, and with her Silver status, she gets a 20% bonus, so actually about 15,600 points.
+  - role: user
+    content: She'll be happy about that. Can we request a specific floor?
+  - role: assistant
+    content: Of course! The Junior Suites are on floors 15 through 20. Do you have a preference?
+  - role: user
+    content: Higher is better for us. Maybe 18 or above?
+  - role: assistant
+    content: I'll note a request for floor 18 or higher. I actually have room 1912 available - 19th floor, corner unit with
+      exceptional views.
+  - role: user
+    content: Oh, a corner room? That sounds perfect!
+  - role: assistant
+    content: Yes, it's one of our best Junior Suites. Extra windows on two sides. Shall I reserve that specific room?
+  - role: user
+    content: Yes, please do that.
+  - role: assistant
+    content: Room 1912 is now reserved for you. Would you like to make any dinner reservations?
+  - role: user
+    content: Does the hotel have restaurants?
+  - role: assistant
+    content: Yes, we have three. Vela is our signature waterfront restaurant, Hudson & Nash is more casual, and SWIM is our
+      poolside bar and grill.
+  - role: user
+    content: Is Vela good for anniversary dinner?
+  - role: assistant
+    content: Absolutely! It's perfect for special occasions. They have a special anniversary dessert if you mention it's your
+      celebration.
+  - role: user
+    content: Can you make us a reservation for Saturday night?
+  - role: assistant
+    content: I'd be happy to. What time would you prefer?
+  - role: user
+    content: Maybe 7:30 PM?
+  - role: assistant
+    content: Let me check... Yes, I can confirm 7:30 PM on Saturday, December 9th for two at Vela. I'll note it's your anniversary.
+  - role: user
+    content: Wonderful. What about parking?
+  - role: assistant
+    content: Valet parking is $55 per night, or self-parking is $42 per night.
+  - role: user
+    content: We'll probably Uber mostly, but good to know.
+  - role: assistant
+    content: Smart choice. The hotel is walking distance to the Gaslamp Quarter and Seaport Village too.
+  - role: user
+    content: Oh that's great for exploring. Is there a spa?
+  - role: assistant
+    content: Yes, our spa offers couples massages which are very popular for anniversaries. Would you like information about
+      booking?
+  - role: user
+    content: How much are those?
+  - role: assistant
+    content: The 50-minute couples massage is $580, or the 80-minute is $750. They book up quickly for weekends.
+  - role: user
+    content: Maybe we'll book that when we arrive. What about the pool?
+  - role: assistant
+    content: We have four pools including an adults-only infinity pool on the fourth floor with bay views.
+  - role: user
+    content: That sounds nice. Is it heated?
+  - role: assistant
+    content: Yes, all our pools are heated year-round. The infinity pool is especially beautiful at sunset.
+  - role: user
+    content: Perfect. Now, for payment - what do you need?
+  - role: assistant
+    content: I'll need a credit card to guarantee the reservation. The full payment is due at check-in.
+  - role: user
+    content: I'll use my Visa. It's 4556-7890-1234-5678.
+  - role: assistant
+    content: And the expiration date?
+  - role: user
+    content: 07/26.
+  - role: assistant
+    content: The name on the card?
+  - role: user
+    content: Richard P Thompson.
+  - role: assistant
+    content: Thank you. Your reservation is confirmed! Your confirmation number is HSD-445782.
+  - role: user
+    content: Let me write that down... HSD-445782?
+  - role: assistant
+    content: That's correct. You'll receive an email confirmation shortly to rthompson@techcompany.com.
+  - role: user
+    content: What's your cancellation policy?
+  - role: assistant
+    content: You can cancel up to 48 hours before arrival without penalty. Within 48 hours, there's a one-night charge.
+  - role: user
+    content: Good to know, though we definitely won't be canceling!
+  - role: assistant
+    content: I'm sure you'll have a wonderful anniversary! Is there anything special you'd like in the room? Rose petals,
+      specific flowers?
+  - role: user
+    content: Could you arrange for roses?
+  - role: assistant
+    content: Of course! A dozen red roses will be in your room upon arrival, compliments of the hotel for your anniversary.
+  - role: user
+    content: That's so thoughtful, thank you!
+  - role: assistant
+    content: Our pleasure! I'll also notify the front desk that you're celebrating so they can ensure everything is perfect.
+  - role: user
+    content: I really appreciate all your help, Maria.
+  - role: assistant
+    content: 'It''s my pleasure, Mr. Thompson! To summarize: December 8-10, room 1912 Junior Suite with bay view on the 19th
+      floor, Romance Package included, dinner at Vela on Saturday at 7:30 PM, confirmation HSD-445782. Total is $1,333.'
+  - role: user
+    content: That's all perfect.
+  - role: assistant
+    content: Wonderful! Happy early anniversary to you and Susan. We look forward to making your celebration memorable!
+  - role: user
+    content: Thank you so much!
+  - role: assistant
+    content: You're very welcome! Have a lovely evening and we'll see you December 8th!
+user_question: Can you remind me of my Hilton confirmation number and what room number we reserved? My wife is asking about
+  our anniversary trip details.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide both the Hilton confirmation number HSD-445782 and the specific room number 1912 that was reserved for the anniversary trip. The response must include the exact confirmation code and the correct room number, demonstrating clear recall of these reservation details. The agent may also helpfully mention that room 1912 is a corner Junior Suite on the 19th floor with bay views, as these details were emphasized during the booking conversation. Since the user mentions this is for their anniversary trip, the agent might also recall the Romance Package or other anniversary-related arrangements. The response must not confuse these numbers with other numerical information mentioned in the conversation such as dates, prices, or rewards numbers.
+expected_behavior: The agent should provide confirmation HSD-445782 and specify room 1912 was reserved

@@ -1,0 +1,555 @@
+test_id: layer3_13_emergency_medical_cascade
+category: layer3
+title: Emergency Medical Crisis - Multi-System Coordination Response
+description: Test agent's ability to synthesize information from emergency response, insurance claims, and employer disability to identify critical action items and coverage gaps during medical crisis
+conversation_histories:
+  - conversation_id: emergency_room_001
+    timestamp: "2024-10-15 23:30:00"
+    metadata:
+      business: "St. Mary's Hospital"
+      department: "Emergency Department"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "My husband was just brought in by ambulance after collapsing at home. I need information!"
+      - role: assistant
+        content: "I'm Nurse Patricia in the ED. What's your husband's name?"
+      - role: user
+        content: "Robert Mitchell. He's 45. He just collapsed while watching TV."
+      - role: assistant
+        content: "He's with the doctors now. We're running tests. What happened exactly?"
+      - role: user
+        content: "He complained of chest pain, then just collapsed. I called 911."
+      - role: assistant
+        content: "You did the right thing. Did he have any warning signs earlier?"
+      - role: user
+        content: "He's been tired lately, some shortness of breath climbing stairs."
+      - role: assistant
+        content: "How long has that been going on?"
+      - role: user
+        content: "Maybe two weeks? He said it was work stress."
+      - role: assistant
+        content: "Does he have any medical conditions?"
+      - role: user
+        content: "High blood pressure, takes lisinopril. Cholesterol too, on statins."
+      - role: assistant
+        content: "Good to know. Any heart disease in the family?"
+      - role: user
+        content: "His father had a heart attack at 52."
+      - role: assistant
+        content: "I'll note that. Any allergies to medications?"
+      - role: user
+        content: "Penicillin gives him hives."
+      - role: assistant
+        content: "Noted. The cardiologist is with him now."
+      - role: user
+        content: "Cardiologist? Is it his heart?"
+      - role: assistant
+        content: "EKG showed irregularities. They're doing more tests."
+      - role: user
+        content: "Oh god. Is he conscious?"
+      - role: assistant
+        content: "He regained consciousness in the ambulance. He's stable but being monitored."
+      - role: user
+        content: "Can I see him?"
+      - role: assistant
+        content: "Once he's settled in the cardiac unit. Probably 30 minutes."
+      - role: user
+        content: "Cardiac unit? How serious is this?"
+      - role: assistant
+        content: "He needs monitoring. The doctor will explain everything."
+      - role: user
+        content: "What tests are they running?"
+      - role: assistant
+        content: "Blood work, chest X-ray, echocardiogram, possibly cardiac catheterization."
+      - role: user
+        content: "Catheterization? That's the one with the tube?"
+      - role: assistant
+        content: "Yes, to look at heart arteries. Only if needed."
+      - role: user
+        content: "Does insurance cover all this?"
+      - role: assistant
+        content: "Emergency care is covered. Our financial counselor can help with details."
+      - role: user
+        content: "We have Blue Cross through his work."
+      - role: assistant
+        content: "Good coverage generally. Focus on Robert now, billing later."
+      - role: user
+        content: "How long will he be here?"
+      - role: assistant
+        content: "Depends on findings. Minimum overnight observation."
+      - role: user
+        content: "I need to call his work."
+      - role: assistant
+        content: "They'll understand. Medical emergency."
+      - role: user
+        content: "He's supposed to present tomorrow to the board."
+      - role: assistant
+        content: "He won't make that. He needs rest and treatment."
+      - role: user
+        content: "Should I call his parents?"
+      - role: assistant
+        content: "Family support helps, but maybe wait for more information?"
+      - role: user
+        content: "They're in Florida, elderly. I don't want to panic them."
+      - role: assistant
+        content: "Understandable. Call when you know more."
+      - role: user
+        content: "What about our kids? They're with my sister."
+      - role: assistant
+        content: "How old?"
+      - role: user
+        content: "14 and 16. They know dad went to hospital."
+      - role: assistant
+        content: "Teenagers understand. Be honest but reassuring."
+      - role: user
+        content: "Dr. Johnson is coming out."
+      - role: assistant
+        content: "Good, he's the cardiologist. He'll have answers."
+      - role: user
+        content: "Thank you for keeping me calm."
+      - role: assistant
+        content: "That's what we're here for. Robert's in good hands."
+      - role: user
+        content: "One more thing - visiting hours?"
+      - role: assistant
+        content: "Cardiac unit allows 24/7 for spouses."
+      - role: user
+        content: "I'm not leaving."
+      - role: assistant
+        content: "We'll get you a chair that reclines."
+      - role: user
+        content: "What should I bring from home?"
+      - role: assistant
+        content: "His medications, insurance cards, comfortable clothes for later."
+      - role: user
+        content: "His CPAP machine?"
+      - role: assistant
+        content: "Yes, if he uses one. Sleep apnea affects heart."
+      - role: user
+        content: "He was just diagnosed last month."
+      - role: assistant
+        content: "Untreated sleep apnea strains the heart. Bring it."
+      - role: user
+        content: "Could that have caused this?"
+      - role: assistant
+        content: "The doctor will discuss contributing factors."
+      - role: user
+        content: "Here's Dr. Johnson now."
+      - role: assistant
+        content: "I'll give you privacy. Call if you need anything."
+  - conversation_id: insurance_claim_001
+    timestamp: "2024-10-18 09:00:00"
+    metadata:
+      business: "Blue Cross Blue Shield"
+      department: "Major Medical Claims"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "I need to understand coverage for my husband's heart attack and upcoming surgery."
+      - role: assistant
+        content: "I'm James from Blue Cross Major Medical. I see Robert Mitchell's recent admission. How is he?"
+      - role: user
+        content: "Stable, but needs triple bypass surgery next week."
+      - role: assistant
+        content: "I see the pre-authorization request. St. Mary's submitted it yesterday."
+      - role: user
+        content: "Is it approved?"
+      - role: assistant
+        content: "Yes, approved this morning. Surgery with Dr. Harrison, October 22nd."
+      - role: user
+        content: "What will this cost us?"
+      - role: assistant
+        content: "Let me review your plan. You have the Premier PPO?"
+      - role: user
+        content: "Yes, through TechCorp where Robert works."
+      - role: assistant
+        content: "Deductible is $1,500, you've met $800 this year."
+      - role: user
+        content: "So $700 more deductible?"
+      - role: assistant
+        content: "Yes, then 20% coinsurance up to out-of-pocket maximum."
+      - role: user
+        content: "What's our maximum?"
+      - role: assistant
+        content: "$6,000 per person, $12,000 family."
+      - role: user
+        content: "So worst case $6,000?"
+      - role: assistant
+        content: "For Robert's medical expenses, yes."
+      - role: user
+        content: "The hospital estimates $180,000 total charges."
+      - role: assistant
+        content: "That's before insurance discounts. Contracted rate is probably $60,000."
+      - role: user
+        content: "Still, 20% of that is $12,000."
+      - role: assistant
+        content: "But you're capped at $6,000 out-of-pocket maximum."
+      - role: user
+        content: "That includes the emergency room visit?"
+      - role: assistant
+        content: "Yes, all medical expenses count toward the maximum."
+      - role: user
+        content: "ER bill was $15,000 already."
+      - role: assistant
+        content: "You'll pay deductible plus coinsurance up to $6,000 total."
+      - role: user
+        content: "What about cardiac rehabilitation after?"
+      - role: assistant
+        content: "Covered at 80% after deductible, 36 sessions annually."
+      - role: user
+        content: "Is that enough?"
+      - role: assistant
+        content: "Typical cardiac rehab is 3 sessions weekly for 12 weeks."
+      - role: user
+        content: "So exactly 36 sessions."
+      - role: assistant
+        content: "Yes, fully covered program."
+      - role: user
+        content: "What about home health care?"
+      - role: assistant
+        content: "Covered if medically necessary, doctor ordered."
+      - role: user
+        content: "He'll need help initially."
+      - role: assistant
+        content: "Post-surgical home care is typically approved for 2 weeks."
+      - role: user
+        content: "The surgeon mentioned possible complications."
+      - role: assistant
+        content: "All complication treatment is covered under the same surgery authorization."
+      - role: user
+        content: "Even if he needs ICU longer?"
+      - role: assistant
+        content: "Yes, medically necessary care is covered."
+      - role: user
+        content: "What about prescriptions?"
+      - role: assistant
+        content: "Separate pharmacy benefit. Different deductible."
+      - role: user
+        content: "He'll need blood thinners, beta blockers, more."
+      - role: assistant
+        content: "Most cardiac meds are Tier 2, $30 copay after $200 pharmacy deductible."
+      - role: user
+        content: "Some might be expensive?"
+      - role: assistant
+        content: "Newer blood thinners can be Tier 3, $80 copay."
+      - role: user
+        content: "Monthly costs will add up."
+      - role: assistant
+        content: "Pharmacy out-of-pocket maximum is $3,000 annually."
+      - role: user
+        content: "So $9,000 total possible medical plus pharmacy?"
+      - role: assistant
+        content: "Correct, worst case for the year."
+      - role: user
+        content: "We have $5,000 in FSA."
+      - role: assistant
+        content: "That helps significantly with out-of-pocket costs."
+      - role: user
+        content: "Can I add more to FSA now?"
+      - role: assistant
+        content: "Only during open enrollment unless qualifying event."
+      - role: user
+        content: "Does heart attack qualify?"
+      - role: assistant
+        content: "Check with HR, but medical leave sometimes qualifies."
+      - role: user
+        content: "What if he can't return to work?"
+      - role: assistant
+        content: "COBRA continues coverage for 18 months."
+      - role: user
+        content: "How much is COBRA?"
+      - role: assistant
+        content: "Typically 102% of full premium, about $2,200 monthly for family."
+      - role: user
+        content: "That's huge without income!"
+      - role: assistant
+        content: "Why disability insurance is important."
+      - role: user
+        content: "He has that through work too."
+      - role: assistant
+        content: "Good. Coordinates with medical leave."
+      - role: user
+        content: "I need to call HR about everything."
+      - role: assistant
+        content: "Yes, they'll explain leave and disability process."
+      - role: user
+        content: "This is overwhelming."
+      - role: assistant
+        content: "Focus on Robert's recovery. Bills can be worked out."
+      - role: user
+        content: "Payment plans available?"
+      - role: assistant
+        content: "Most hospitals offer plans for large balances."
+      - role: user
+        content: "Thank you for explaining everything."
+      - role: assistant
+        content: "Call back with any questions. Best wishes for Robert's surgery."
+  - conversation_id: employer_benefits_001
+    timestamp: "2024-10-20 14:00:00"
+    metadata:
+      business: "TechCorp"
+      department: "Human Resources"
+      call_duration: "49 minutes"
+    messages:
+      - role: user
+        content: "This is Sarah Mitchell. I need to understand my husband Robert's benefits during his medical leave."
+      - role: assistant
+        content: "Sarah, I'm Linda from HR. We heard about Robert's heart attack. How is he?"
+      - role: user
+        content: "Surgery scheduled for Monday. Triple bypass."
+      - role: assistant
+        content: "We're all thinking of him. Let me explain his benefits."
+      - role: user
+        content: "He's worried about his job."
+      - role: assistant
+        content: "His position is protected under FMLA for 12 weeks."
+      - role: user
+        content: "What about pay?"
+      - role: assistant
+        content: "Short-term disability kicks in after 7-day waiting period."
+      - role: user
+        content: "He's been out since October 15th."
+      - role: assistant
+        content: "So disability starts October 22nd, coincidentally his surgery date."
+      - role: user
+        content: "How much does it pay?"
+      - role: assistant
+        content: "60% of base salary for up to 90 days."
+      - role: user
+        content: "He makes $95,000 annually."
+      - role: assistant
+        content: "So about $1,100 weekly disability payment."
+      - role: user
+        content: "That's $4,400 monthly versus normal $7,900."
+      - role: assistant
+        content: "Correct. But it's tax-free since he pays premiums with after-tax dollars."
+      - role: user
+        content: "So closer to $4,400 versus $5,500 take-home?"
+      - role: assistant
+        content: "Yes, less gap than appears."
+      - role: user
+        content: "What if he needs more than 90 days?"
+      - role: assistant
+        content: "Long-term disability starts after 90 days."
+      - role: user
+        content: "Same payment?"
+      - role: assistant
+        content: "Same 60% but can continue until age 65 if needed."
+      - role: user
+        content: "God, I hope not that long."
+      - role: assistant
+        content: "Most bypass patients return in 8-12 weeks."
+      - role: user
+        content: "What about his vacation time?"
+      - role: assistant
+        content: "He has 18 days accrued."
+      - role: user
+        content: "Can he use that for the waiting period?"
+      - role: assistant
+        content: "Yes! Use 5 vacation days for October 15-21."
+      - role: user
+        content: "So no pay gap?"
+      - role: assistant
+        content: "Correct, continuous income."
+      - role: user
+        content: "What about health insurance during leave?"
+      - role: assistant
+        content: "Continues normally. Company pays their portion."
+      - role: user
+        content: "Our premiums?"
+      - role: assistant
+        content: "Still deducted from disability payments."
+      - role: user
+        content: "That's $450 monthly."
+      - role: assistant
+        content: "Yes, leaving about $3,950 monthly income."
+      - role: user
+        content: "His 401k contributions?"
+      - role: assistant
+        content: "Suspended during disability. Can resume when he returns."
+      - role: user
+        content: "He was contributing 10%."
+      - role: assistant
+        content: "Company match also suspended, but vesting continues."
+      - role: user
+        content: "What about his stock options?"
+      - role: assistant
+        content: "Continue vesting during approved medical leave."
+      - role: user
+        content: "He has 5,000 options vesting in December."
+      - role: assistant
+        content: "Those will vest normally."
+      - role: user
+        content: "What paperwork do we need?"
+      - role: assistant
+        content: "FMLA forms, disability claim, doctor's certification."
+      - role: user
+        content: "The cardiologist can complete those?"
+      - role: assistant
+        content: "Yes, Dr. Harrison's office handles these regularly."
+      - role: user
+        content: "Return to work process?"
+      - role: assistant
+        content: "Doctor's release required, possible phased return."
+      - role: user
+        content: "Phased means?"
+      - role: assistant
+        content: "Part-time initially, building to full-time."
+      - role: user
+        content: "Still get disability during phase-in?"
+      - role: assistant
+        content: "Partial disability plus partial salary."
+      - role: user
+        content: "His job is stressful. That worries me."
+      - role: assistant
+        content: "We can discuss accommodations when he's ready."
+      - role: user
+        content: "Like what?"
+      - role: assistant
+        content: "Modified duties, work from home, flexible hours."
+      - role: user
+        content: "He manages a team of 20."
+      - role: assistant
+        content: "Temporary delegation possible, or co-management."
+      - role: user
+        content: "His annual review is December."
+      - role: assistant
+        content: "Reviews suspended during medical leave."
+      - role: user
+        content: "He was expecting promotion."
+      - role: assistant
+        content: "That conversation continues when he returns."
+      - role: user
+        content: "Fair enough."
+      - role: assistant
+        content: "His bonus?"
+      - role: user
+        content: "Usually $15,000 in March."
+      - role: assistant
+        content: "Prorated for time worked. If back by January, mostly preserved."
+      - role: user
+        content: "That helps with medical bills."
+      - role: assistant
+        content: "Also, company has hardship fund for medical situations."
+      - role: user
+        content: "Really?"
+      - role: assistant
+        content: "Up to $5,000 grant for employees with major medical expenses."
+      - role: user
+        content: "How do we apply?"
+      - role: assistant
+        content: "I'll email the application. Committee meets monthly."
+      - role: user
+        content: "That would really help."
+      - role: assistant
+        content: "We take care of our people."
+      - role: user
+        content: "Robert loves working here."
+      - role: assistant
+        content: "We want him back healthy. No rushing."
+      - role: user
+        content: "Thank you for everything."
+      - role: assistant
+        content: "Call me anytime. Sending positive thoughts."
+user_question: "What critical things do I need to handle for my husband's heart surgery and recovery, and are there any coverage gaps I should worry about?"
+evaluation_criteria: |
+  The agent must synthesize across emergency, insurance, and employer conversations to identify critical actions and potential gaps:
+  
+  **IMMEDIATE CRITICAL ACTIONS:**
+  
+  1. **Before Surgery (by Oct 22):**
+     - Bring CPAP machine to hospital (sleep apnea connection)
+     - Collect all medications for hospital review
+     - Use 5 vacation days for Oct 15-21 (covers disability waiting period)
+     - Submit FMLA paperwork to protect job
+     - Apply for $5,000 company hardship fund
+  
+  2. **Financial Preparation:**
+     - $6,000 medical out-of-pocket maximum will be hit
+     - $3,000 pharmacy maximum likely too
+     - Total: $9,000 medical costs for year
+     - Have $5,000 FSA to offset
+     - Need $4,000 additional funds
+  
+  3. **Documentation Needed:**
+     - FMLA certification from Dr. Harrison
+     - Short-term disability claim forms
+     - Doctor's orders for home health care
+     - Cardiac rehab prescription (36 sessions)
+  
+  **COVERAGE ANALYSIS:**
+  
+  **Well-Covered Areas:**
+  - Surgery fully pre-authorized
+  - Job protected for 12 weeks (FMLA)
+  - Income at 60% tax-free ($4,400/month)
+  - Health insurance continues
+  - Stock options keep vesting
+  - Cardiac rehab covered (36 sessions)
+  - 24/7 spouse visiting allowed
+  
+  **POTENTIAL GAPS IDENTIFIED:**
+  
+  1. **Income Gap:**
+     - Normal take-home: $5,500/month
+     - Disability payment: $3,950/month (after insurance premium)
+     - Shortfall: $1,550/month for 3+ months
+  
+  2. **Recovery Timeline Risk:**
+     - Short-term disability: 90 days
+     - If complications extend beyond: Need LTD documentation
+     - Typical recovery: 8-12 weeks (cutting it close)
+  
+  3. **Medication Costs:**
+     - New cardiac meds not yet priced
+     - Tier 3 blood thinners: $80/month each
+     - Multiple medications could be $300+/month
+  
+  4. **Return-to-Work Concerns:**
+     - High-stress job contributed to condition
+     - Needs accommodation plan
+     - Promotion discussion delayed
+     - Bonus will be prorated
+  
+  **DISCOVERED BENEFITS:**
+  
+  1. **Company Hardship Fund:**
+     - Up to $5,000 grant available
+     - Apply immediately for medical expenses
+  
+  2. **Phased Return Option:**
+     - Partial disability + partial salary
+     - Gradual stress re-introduction
+  
+  3. **Accommodation Possibilities:**
+     - Work from home option
+     - Modified duties
+     - Co-management arrangement
+  
+  **CRITICAL TIMELINE:**
+  
+  - Oct 15: Heart attack (vacation days start)
+  - Oct 22: Surgery (disability starts)
+  - Oct-Dec: Recovery and cardiac rehab
+  - Dec: Stock options vest (secured)
+  - Jan: Target return to work
+  - March: Prorated bonus
+  
+  **FAMILY CONSIDERATIONS:**
+  
+  - Kids (14, 16) need honest updates
+  - Elderly parents in Florida - wait to inform
+  - Sister helping with children
+  - Wife can stay 24/7 at hospital
+  
+  **PROACTIVE RECOMMENDATIONS:**
+  
+  1. Create written accommodation request for return
+  2. Document all symptoms/limitations for potential LTD
+  3. Track all medical expenses for FSA and taxes
+  4. Consider financial counselor at hospital
+  5. Start cardiac rehab immediately post-surgery
+  6. Address untreated sleep apnea as contributing factor
+  
+  The agent must recognize the interconnected nature of medical, financial, and employment factors while identifying both protective benefits and potential gaps.

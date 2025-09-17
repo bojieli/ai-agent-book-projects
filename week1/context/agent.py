@@ -309,17 +309,20 @@ class ContextAwareAgent:
     """
     
     def __init__(self, api_key: str, context_mode: ContextMode = ContextMode.FULL, 
-                 provider: str = "siliconflow", model: Optional[str] = None):
+                 provider: str = "siliconflow", model: Optional[str] = None, 
+                 verbose: bool = True):
         """
         Initialize the agent
         
         Args:
             api_key: API key for the LLM provider
             context_mode: Context mode for ablation studies
-            provider: LLM provider ('siliconflow' or 'doubao')
+            provider: LLM provider ('siliconflow', 'doubao', 'kimi', or 'moonshot')
             model: Optional model override
+            verbose: If True, log full HTTP requests and responses (default: True)
         """
         self.provider = provider.lower()
+        self.verbose = verbose
         
         # Configure client based on provider
         if self.provider == "siliconflow":
@@ -334,14 +337,37 @@ class ContextAwareAgent:
                 base_url="https://ark.cn-beijing.volces.com/api/v3"
             )
             self.model = model or "doubao-seed-1-6-thinking-250715"
+        elif self.provider == "kimi" or self.provider == "moonshot":
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url="https://api.moonshot.cn/v1"
+            )
+            self.model = model or "kimi-k2-0905-preview"
         else:
-            raise ValueError(f"Unsupported provider: {provider}. Use 'siliconflow' or 'doubao'")
+            raise ValueError(f"Unsupported provider: {provider}. Use 'siliconflow', 'doubao', 'kimi', or 'moonshot'")
         
         self.context_mode = context_mode
         self.trajectory = AgentTrajectory(context_mode=context_mode)
         self.tools = ToolRegistry()
         
-        logger.info(f"Agent initialized with provider: {self.provider}, model: {self.model}, context mode: {context_mode.value}")
+        # Initialize conversation history
+        self.conversation_history = []
+        self._init_system_prompt()
+        
+        logger.info(f"Agent initialized with provider: {self.provider}, model: {self.model}, context mode: {context_mode.value}, verbose: {self.verbose}")
+    
+    def _init_system_prompt(self):
+        """Initialize the system prompt for the conversation"""
+        self.conversation_history = [
+            {
+                "role": "system",
+                "content": """You are an intelligent assistant with access to tools. 
+
+Your task is to solve the given problems using the available tools. Think step by step and use tools as needed.
+
+Important: When you have gathered all necessary information and computed the final answer, clearly state "FINAL ANSWER:" followed by your answer."""
+            }
+        ]
     
     def _get_tools_description(self) -> List[Dict[str, Any]]:
         """Get tool descriptions for the model"""
@@ -424,6 +450,25 @@ class ContextAwareAgent:
             }
         ]
     
+    def _prepare_assistant_message(self, message) -> Dict[str, Any]:
+        """
+        Prepare assistant message for adding to messages list, 
+        filtering out reasoning_content if in NO_REASONING mode
+        
+        Args:
+            message: The assistant message object
+            
+        Returns:
+            Dictionary representation of the message
+        """
+        msg_dict = message.dict() if hasattr(message, 'dict') else message.model_dump()
+        
+        # Remove reasoning_content if in NO_REASONING mode
+        if self.context_mode == ContextMode.NO_REASONING and 'reasoning_content' in msg_dict:
+            msg_dict.pop('reasoning_content')
+            
+        return msg_dict
+    
     def _build_context(self) -> str:
         """
         Build context based on the current mode
@@ -451,6 +496,40 @@ class ContextAwareAgent:
             context_parts.append("")
         
         return "\n".join(context_parts) if context_parts else ""
+    
+    def _log_request_response(self, request_data: Dict[str, Any], response_data: Any, iteration: int):
+        """
+        Log full request and response when in verbose mode
+        
+        Args:
+            request_data: The request payload sent to the API
+            response_data: The response received from the API
+            iteration: Current iteration number
+        """
+        if not self.verbose:
+            return
+            
+        if request_data:
+            print("\n" + "="*80)
+            print(f"📤 ITERATION {iteration} - FULL REQUEST JSON:")
+            print("-"*80)
+            print(json.dumps(request_data, indent=2, ensure_ascii=False))
+        
+        if response_data:
+            print("\n" + "="*80)
+            print(f"📥 ITERATION {iteration} - FULL RESPONSE:")
+            print("-"*80)
+        
+            # Convert response to dict for display
+            if hasattr(response_data, 'model_dump'):
+                response_dict = response_data.model_dump()
+            elif hasattr(response_data, 'dict'):
+                response_dict = response_data.dict()
+            else:
+                response_dict = {"raw_response": str(response_data)}
+
+            print(json.dumps(response_dict, indent=2, ensure_ascii=False))
+            print("="*80 + "\n")
     
     def _execute_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
         """
@@ -486,22 +565,11 @@ class ContextAwareAgent:
         Returns:
             Task execution result
         """
-        # Build initial context
-        context = self._build_context()
+        # Add user message to conversation history
+        self.conversation_history.append({"role": "user", "content": task})
         
-        messages = [
-            {
-                "role": "system",
-                "content": f"""You are an intelligent assistant with access to tools. 
-                
-{context}
-
-Your task is to solve the given problem using the available tools. Think step by step and use tools as needed.
-
-Important: When you have gathered all necessary information and computed the final answer, clearly state "FINAL ANSWER:" followed by your answer."""
-            },
-            {"role": "user", "content": task}
-        ]
+        # Use conversation history directly (no copy needed)
+        messages = self.conversation_history
         
         iteration = 0
         final_answer = None
@@ -511,6 +579,20 @@ Important: When you have gathered all necessary information and computed the fin
             logger.info(f"Iteration {iteration}/{max_iterations}")
             
             try:
+                # Prepare request data for logging
+                request_data = {
+                    "model": self.model,
+                    "messages": messages,
+                    "temperature": 0.3,
+                    "max_tokens": 8192
+                }
+                
+                if self.context_mode != ContextMode.NO_TOOL_CALLS:
+                    request_data["tools"] = self._get_tools_description()
+                    request_data["tool_choice"] = "auto"
+                
+                logger.info(f"Sending request to {self.provider} API")
+
                 # Call the model with tools
                 response = self.client.chat.completions.create(
                     model=self.model,
@@ -522,20 +604,26 @@ Important: When you have gathered all necessary information and computed the fin
                     timeout=180  # Add 180 second timeout for main execution
                 )
                 
+                # Log response if verbose
+                if self.verbose:
+                    self._log_request_response(request_data, response, iteration)
+                
                 message = response.choices[0].message
                 
                 # Check for final answer
                 if message.content and "FINAL ANSWER:" in message.content:
                     final_answer = message.content.split("FINAL ANSWER:")[1].strip()
                     logger.info(f"Final answer found: {final_answer}")
-                    # Add the message before breaking
-                    messages.append(message.dict() if hasattr(message, 'dict') else message.model_dump())
+                    # Add the message to conversation history
+                    assistant_msg = self._prepare_assistant_message(message)
+                    messages.append(assistant_msg)
                     break
                 
                 # Handle tool calls
                 if hasattr(message, 'tool_calls') and message.tool_calls:
                     # Add the assistant message with tool calls
-                    messages.append(message.dict() if hasattr(message, 'dict') else message.model_dump())
+                    assistant_msg = self._prepare_assistant_message(message)
+                    messages.append(assistant_msg)
                     for tool_call in message.tool_calls:
                         function_name = tool_call.function.name
                         function_args = json.loads(tool_call.function.arguments)
@@ -555,26 +643,27 @@ Important: When you have gathered all necessary information and computed the fin
                         
                         # Add tool result to messages (if not disabled)
                         if self.context_mode != ContextMode.NO_TOOL_RESULTS:
-                            messages.append({
+                            tool_msg = {
                                 "role": "tool",
                                 "tool_call_id": tool_call.id,
                                 "content": json.dumps(result)
-                            })
+                            }
+                            messages.append(tool_msg)
                         else:
                             # Add a placeholder message if tool results are disabled
-                            messages.append({
+                            tool_msg = {
                                 "role": "tool",
                                 "tool_call_id": tool_call.id,
                                 "content": "[Tool result hidden due to context mode]"
-                            })
+                            }
+                            messages.append(tool_msg)
                 elif message.content:
                     # No tool calls, but there's content - add the message
-                    messages.append(message.dict() if hasattr(message, 'dict') else message.model_dump())
+                    assistant_msg = self._prepare_assistant_message(message)
+                    messages.append(assistant_msg)
                 
-                # Update context for next iteration
-                context = self._build_context()
-                if context and self.context_mode != ContextMode.NO_HISTORY:
-                    messages[0]["content"] = messages[0]["content"].split("\n\nYour task")[0] + f"\n\n{context}\n\nYour task" + messages[0]["content"].split("Your task")[1]
+                # Note: We do NOT modify the system prompt anymore.
+                # The context is already built into the conversation through tool history
                     
             except TimeoutError as e:
                 logger.error(f"Request timed out after 60 seconds")
@@ -606,6 +695,26 @@ Important: When you have gathered all necessary information and computed the fin
         }
     
     def reset(self):
-        """Reset the agent's trajectory"""
+        """Reset the agent's trajectory and conversation history"""
         self.trajectory = AgentTrajectory(context_mode=self.context_mode)
-        logger.info("Agent trajectory reset")
+        self._init_system_prompt()  # Reinitialize conversation with system prompt
+        logger.info("Agent trajectory and conversation history reset")
+    
+    def process(self, query: str, max_iterations: int = 10) -> str:
+        """
+        Process a query and return the final answer as a string
+        
+        Args:
+            query: The query to process
+            max_iterations: Maximum number of tool calls
+            
+        Returns:
+            The final answer as a string
+        """
+        result = self.execute_task(query, max_iterations)
+        if result.get('final_answer'):
+            return result['final_answer']
+        elif result.get('error'):
+            return f"Error: {result['error']}"
+        else:
+            return "No answer found"

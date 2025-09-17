@@ -2,3 +2,7 @@ __pycache__
 *.pyc
 node_modules
 results/
+.*
+*.log
+output/
+user-memory/data/

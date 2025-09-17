@@ -1,0 +1,466 @@
+test_id: layer2_12_contradictory_financial_instructions
+category: layer2
+title: Financial Account Changes with Contradictory Instructions
+description: Test agent's ability to resolve contradictory instructions given across multiple conversations where user changes mind, corrects mistakes, and provides conflicting information
+conversation_histories:
+  - conversation_id: initial_transfer_001
+    timestamp: "2024-09-15 10:00:00"
+    metadata:
+      business: "First National Bank"
+      department: "Wire Transfer Services"
+      call_duration: "51 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to set up a large wire transfer to my daughter for her house down payment."
+      - role: assistant
+        content: "Good morning! I'm Robert from First National Bank Wire Services. I can help with that. May I have your account number?"
+      - role: user
+        content: "It's 445789-2234."
+      - role: assistant
+        content: "Thank you, Mrs. Patricia Thompson. I see your checking account. How much are you transferring?"
+      - role: user
+        content: "$85,000 for her down payment."
+      - role: assistant
+        content: "That's a significant amount. Current balance shows $143,000, so funds are available."
+      - role: user
+        content: "Yes, we've been saving for this. She found the perfect house."
+      - role: assistant
+        content: "Wonderful! What's your daughter's name and bank information?"
+      - role: user
+        content: "Sarah Thompson-Miller. She banks with Chase."
+      - role: assistant
+        content: "I'll need her account and routing numbers."
+      - role: user
+        content: "Account is 7789-4456-901, routing is 021000021."
+      - role: assistant
+        content: "When does she need the funds?"
+      - role: user
+        content: "Her closing is October 15th, but she needs it by October 10th for final verification."
+      - role: assistant
+        content: "So we should send it by October 8th to ensure it clears?"
+      - role: user
+        content: "Actually, let's do it October 1st. I want to make sure there are no issues."
+      - role: assistant
+        content: "I can schedule it for October 1st. Wire fee is $35 for domestic transfers."
+      - role: user
+        content: "That's fine. Wait, should I split it into two transfers for safety?"
+      - role: assistant
+        content: "Some clients do that. You could send $45,000 first, then $40,000."
+      - role: user
+        content: "Let's do $50,000 on October 1st and $35,000 on October 5th."
+      - role: assistant
+        content: "I'll set up both transfers. Same recipient information for both?"
+      - role: user
+        content: "Yes, same Chase account."
+      - role: assistant
+        content: "Total fees will be $70 for two wires. Shall I proceed?"
+      - role: user
+        content: "Actually, I'm second-guessing the split. What if the first goes through but the second has issues?"
+      - role: assistant
+        content: "Valid concern. Single transfer might be simpler for the closing."
+      - role: user
+        content: "You're right. Let's go back to one transfer of $85,000."
+      - role: assistant
+        content: "Changed back to single transfer. Still October 1st?"
+      - role: user
+        content: "Yes. But I want to add my husband as a secondary recipient name."
+      - role: assistant
+        content: "The account must be in your daughter's name for the wire to process."
+      - role: user
+        content: "It's her account, but can we note it's from both parents?"
+      - role: assistant
+        content: "I can add a memo: 'Down payment gift from Patricia and James Thompson'."
+      - role: user
+        content: "Perfect. James will be so happy we're finally doing this."
+      - role: assistant
+        content: "It's a wonderful gift. Now, for security, I need to verify some information."
+      - role: user
+        content: "Of course."
+      - role: assistant
+        content: "What's your mother's maiden name?"
+      - role: user
+        content: "Anderson."
+      - role: assistant
+        content: "And the last four of your Social Security?"
+      - role: user
+        content: "8847."
+      - role: assistant
+        content: "Verified. The wire for $85,000 is scheduled for October 1st."
+      - role: user
+        content: "Will I get a confirmation?"
+      - role: assistant
+        content: "Yes, email confirmation immediately, and receipt after processing."
+      - role: user
+        content: "Send it to p.thompson@email.com"
+      - role: assistant
+        content: "Updated. You'll receive confirmation at that address."
+      - role: user
+        content: "What if I need to cancel?"
+      - role: assistant
+        content: "You can cancel up to one business day before the scheduled date."
+      - role: user
+        content: "So until September 30th?"
+      - role: assistant
+        content: "Correct, by 5 PM Eastern on September 30th."
+      - role: user
+        content: "Good to know. Oh, should we notify Chase that a large wire is coming?"
+      - role: assistant
+        content: "Your daughter should notify Chase. Large deposits sometimes trigger holds."
+      - role: user
+        content: "I'll tell her to call them."
+      - role: assistant
+        content: "Also, for tax purposes, file Form 709 for gifts over $17,000."
+      - role: user
+        content: "Even to my daughter?"
+      - role: assistant
+        content: "Yes, gifts over the annual exclusion require filing, though no tax is due until lifetime limit."
+      - role: user
+        content: "What's the lifetime limit?"
+      - role: assistant
+        content: "Currently $12.92 million per person for 2024."
+      - role: user
+        content: "We're nowhere near that!"
+      - role: assistant
+        content: "Most people aren't. It's just paperwork."
+      - role: user
+        content: "My accountant handles that stuff."
+      - role: assistant
+        content: "Good. Provide them the wire confirmation for their records."
+      - role: user
+        content: "Will do. Is the transfer insured?"
+      - role: assistant
+        content: "Wires aren't FDIC insured in transit, but bank liability insurance covers errors."
+      - role: user
+        content: "What if it goes to the wrong account?"
+      - role: assistant
+        content: "That's why we verify carefully. The routing and account you provided are correct?"
+      - role: user
+        content: "Let me double-check... Chase routing 021000021, account 7789-4456-901."
+      - role: assistant
+        content: "Confirmed. Those match what I entered."
+      - role: user
+        content: "Perfect. I think we're all set."
+      - role: assistant
+        content: "Transfer reference number is WT-89045. Keep this for your records."
+      - role: user
+        content: "Written down. Thank you so much, Robert."
+      - role: assistant
+        content: "You're welcome, Mrs. Thompson. Congratulations to your daughter on her new home!"
+  - conversation_id: husband_changes_001
+    timestamp: "2024-09-25 14:30:00"
+    metadata:
+      business: "First National Bank"
+      department: "Customer Service"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "This is James Thompson. My wife set up a wire transfer that I need to modify."
+      - role: assistant
+        content: "Hello Mr. Thompson. I'm Lisa from First National Bank. What's the wire reference number?"
+      - role: user
+        content: "WT-89045, scheduled for October 1st."
+      - role: assistant
+        content: "I see it - $85,000 to Sarah Thompson-Miller at Chase. What needs to change?"
+      - role: user
+        content: "We've decided to increase it to $100,000."
+      - role: assistant
+        content: "That's a significant increase. May I ask the reason?"
+      - role: user
+        content: "The house needed some repairs discovered during inspection. We want to help cover those too."
+      - role: assistant
+        content: "I understand. Are you listed on this account?"
+      - role: user
+        content: "Yes, it's our joint account. Patricia and James Thompson."
+      - role: assistant
+        content: "I see you're co-owner. I can process this change. Confirming $100,000 total?"
+      - role: user
+        content: "Yes, $100,000 instead of $85,000."
+      - role: assistant
+        content: "Let me update that... Current balance is $143,000, so funds are available."
+      - role: user
+        content: "Good. Also, can we move it earlier? Sarah's nervous about timing."
+      - role: assistant
+        content: "Currently scheduled for October 1st. When would you prefer?"
+      - role: user
+        content: "How about September 28th?"
+      - role: assistant
+        content: "That's this coming Saturday. We don't process wires on weekends."
+      - role: user
+        content: "Oh right. Then September 27th, Friday?"
+      - role: assistant
+        content: "I can schedule for September 27th. Same recipient details?"
+      - role: user
+        content: "Actually, Sarah mentioned she might open a new account at Wells Fargo instead."
+      - role: assistant
+        content: "Has she already opened it?"
+      - role: user
+        content: "She was going to decide by today."
+      - role: assistant
+        content: "We need confirmed account details before scheduling."
+      - role: user
+        content: "Can I call back with that information?"
+      - role: assistant
+        content: "Of course. The current wire is still scheduled with the Chase account."
+      - role: user
+        content: "Keep it as Chase for now. I'll confirm with Sarah."
+      - role: assistant
+        content: "So $100,000 on September 27th to the Chase account?"
+      - role: user
+        content: "Yes. Wait, Patricia mentioned something about tax forms?"
+      - role: assistant
+        content: "Gifts over $17,000 require Form 709 filing."
+      - role: user
+        content: "Per person or per couple?"
+      - role: assistant
+        content: "$17,000 per person. As a couple, you can gift $34,000 without forms."
+      - role: user
+        content: "So if we each gift $50,000, that's better?"
+      - role: assistant
+        content: "You'd still file Form 709, but you can elect to split gifts on the form."
+      - role: user
+        content: "This is getting complicated. Maybe we should keep it at $85,000."
+      - role: assistant
+        content: "What would you like to do? I haven't saved changes yet."
+      - role: user
+        content: "No, let's do the $100,000. Sarah needs it."
+      - role: assistant
+        content: "Confirming: $100,000 on September 27th to the Chase account."
+      - role: user
+        content: "Correct. Same reference number?"
+      - role: assistant
+        content: "System generates a new one for modifications. New reference is WT-89067."
+      - role: user
+        content: "Does Patricia get notified of this change?"
+      - role: assistant
+        content: "Email confirmations go to the address on file: p.thompson@email.com"
+      - role: user
+        content: "Oh boy, she'll see I increased it. Can you add my email too?"
+      - role: assistant
+        content: "I can add j.thompson@email.com as additional recipient."
+      - role: user
+        content: "Yes, do that. I should have told her first."
+      - role: assistant
+        content: "Both emails will receive confirmations now."
+      - role: user
+        content: "Actually, this might cause an argument. Can we cancel this change?"
+      - role: assistant
+        content: "I can revert to the original: $85,000 on October 1st."
+      - role: user
+        content: "No, I'm overthinking. Sarah needs the money. Keep the new amount."
+      - role: assistant
+        content: "Keeping $100,000 on September 27th. Anything else?"
+      - role: user
+        content: "The memo should still say it's from both of us, right?"
+      - role: assistant
+        content: "Yes, 'Down payment gift from Patricia and James Thompson' is still there."
+      - role: user
+        content: "Good. Oh, one more thing - Sarah's last name might be changing."
+      - role: assistant
+        content: "Is she getting divorced?"
+      - role: user
+        content: "No, she's been married two years but considering changing back to just Thompson professionally."
+      - role: assistant
+        content: "The receiving account name must match exactly."
+      - role: user
+        content: "The Chase account is under Thompson-Miller, so keep it that way."
+      - role: assistant
+        content: "Confirmed. The recipient remains Sarah Thompson-Miller."
+      - role: user
+        content: "Perfect. I think that's everything."
+      - role: assistant
+        content: "Wire for $100,000 scheduled for September 27th, reference WT-89067."
+      - role: user
+        content: "Thank you. Don't mention I called if Patricia calls about it."
+      - role: assistant
+        content: "All account changes are documented, but I understand your situation."
+      - role: user
+        content: "I'll tell her tonight. Thanks for your help, Lisa."
+      - role: assistant
+        content: "You're welcome, Mr. Thompson. The wire is all set."
+  - conversation_id: wife_reversal_001
+    timestamp: "2024-09-26 16:00:00"
+    metadata:
+      business: "First National Bank"
+      department: "Wire Transfer Services"
+      call_duration: "53 minutes"
+    messages:
+      - role: user
+        content: "This is Patricia Thompson. I just saw an email about changes to my wire transfer!"
+      - role: assistant
+        content: "Hello Mrs. Thompson. I'm Michael from Wire Services. I can explain the changes."
+      - role: user
+        content: "My husband increased it to $100,000? Without discussing it with me?"
+      - role: assistant
+        content: "The modification was processed yesterday by Mr. Thompson as joint account holder."
+      - role: user
+        content: "I specifically calculated $85,000 to leave us enough cushion. This is too much."
+      - role: assistant
+        content: "Would you like to modify the amount?"
+      - role: user
+        content: "Can I change it back to $85,000?"
+      - role: assistant
+        content: "Yes, as joint account holder, you can modify it."
+      - role: user
+        content: "But then James will get notified and change it again!"
+      - role: assistant
+        content: "Both account holders receive notifications of changes, yes."
+      - role: user
+        content: "This is ridiculous. Let me think... When is it scheduled now?"
+      - role: assistant
+        content: "September 27th, tomorrow."
+      - role: user
+        content: "Tomorrow?! He moved it up too?"
+      - role: assistant
+        content: "Yes, from October 1st to September 27th."
+      - role: user
+        content: "But I have a large check depositing on September 30th!"
+      - role: assistant
+        content: "What amount is that deposit?"
+      - role: user
+        content: "My quarterly bonus, about $25,000."
+      - role: assistant
+        content: "So you wanted that in the account before the wire?"
+      - role: user
+        content: "Exactly! That's why I scheduled it for October 1st originally."
+      - role: assistant
+        content: "I can move it back to October 1st."
+      - role: user
+        content: "But keep it at $100,000 or change back to $85,000?"
+      - role: assistant
+        content: "What would you prefer?"
+      - role: user
+        content: "Did James say why he increased it?"
+      - role: assistant
+        content: "He mentioned house repairs discovered during inspection."
+      - role: user
+        content: "Oh, Sarah told me about those. The foundation needs work."
+      - role: assistant
+        content: "That can be expensive."
+      - role: user
+        content: "Maybe $100,000 is right then. But definitely October 1st, not tomorrow."
+      - role: assistant
+        content: "I'll change the date back to October 1st, keep amount at $100,000?"
+      - role: user
+        content: "Yes. No wait, let me call Sarah first."
+      - role: assistant
+        content: "Would you like me to hold while you call?"
+      - role: user
+        content: "Can you wait? It'll just be five minutes."
+      - role: assistant
+        content: "I can wait."
+      - role: user
+        content: "...Okay, I'm back. Sarah says the foundation repair is $12,000."
+      - role: assistant
+        content: "So $85,000 plus $12,000 would be $97,000."
+      - role: user
+        content: "Let's just round to $95,000. That gives her extra for other expenses."
+      - role: assistant
+        content: "Changing to $95,000 on October 1st."
+      - role: user
+        content: "Perfect. And she's definitely keeping the Chase account?"
+      - role: assistant
+        content: "The recipient is still listed as Chase. Has that changed?"
+      - role: user
+        content: "James mentioned something about Wells Fargo."
+      - role: assistant
+        content: "Mr. Thompson said she was considering it but hadn't decided."
+      - role: user
+        content: "I just spoke to her. She's keeping Chase. The mortgage company prefers it."
+      - role: assistant
+        content: "Confirmed. Chase account ending in 901 remains correct?"
+      - role: user
+        content: "Yes, that's right."
+      - role: assistant
+        content: "Updated: $95,000 to Chase on October 1st."
+      - role: user
+        content: "What's the reference number now?"
+      - role: assistant
+        content: "New reference is WT-89089."
+      - role: user
+        content: "Three different reference numbers for one wire. This is confusing."
+      - role: assistant
+        content: "Each modification requires a new reference for audit purposes."
+      - role: user
+        content: "Can you cancel the old ones so they don't accidentally process?"
+      - role: assistant
+        content: "Previous references are automatically superseded. Only WT-89089 is active."
+      - role: user
+        content: "Good. James is going to be upset I changed his change."
+      - role: assistant
+        content: "It's important both account holders agree on large transfers."
+      - role: user
+        content: "We usually do. This house purchase has been stressful."
+      - role: assistant
+        content: "Understandable. It's a big financial decision."
+      - role: user
+        content: "Can you put a note that this is the final amount?"
+      - role: assistant
+        content: "I can add an internal note, but either account holder can still modify."
+      - role: user
+        content: "At least until tomorrow at 5 PM, right?"
+      - role: assistant
+        content: "Correct, September 30th at 5 PM Eastern is the cutoff."
+      - role: user
+        content: "Hopefully James doesn't call again."
+      - role: assistant
+        content: "Would you like to require dual authorization for future changes?"
+      - role: user
+        content: "Can we do that?"
+      - role: assistant
+        content: "Yes, but it requires both parties to agree and sign forms."
+      - role: user
+        content: "Maybe after this wire goes through."
+      - role: assistant
+        content: "I can mail you the forms if you'd like."
+      - role: user
+        content: "Sure, send them. We probably need better communication."
+      - role: assistant
+        content: "I'll send dual authorization forms to your address on file."
+      - role: user
+        content: "Thank you. So confirming one final time: $95,000 on October 1st?"
+      - role: assistant
+        content: "Correct. $95,000 to Sarah Thompson-Miller's Chase account on October 1st."
+      - role: user
+        content: "Perfect. Reference WT-89089."
+      - role: assistant
+        content: "Exactly. Both you and Mr. Thompson will receive email confirmation."
+      - role: user
+        content: "He's going to see I changed it immediately."
+      - role: assistant
+        content: "The confirmation was just sent."
+      - role: user
+        content: "I better go talk to him. Thank you, Michael."
+      - role: assistant
+        content: "You're welcome, Mrs. Thompson. Good luck with the conversation."
+user_question: "What's the current status of the wire transfer for my daughter's house?"
+evaluation_criteria: |
+  The agent must resolve the contradictory instructions across all three conversations to provide CURRENT status:
+  
+  **CURRENT WIRE TRANSFER STATUS (Final - Reference WT-89089):**
+  - Amount: $95,000 (changed from $85,000 to $100,000, then to $95,000)
+  - Date: October 1st, 2024 (changed from Oct 1 to Sept 27, then back to Oct 1)
+  - Recipient: Sarah Thompson-Miller
+  - Bank: Chase (confirmed staying, not Wells Fargo)
+  - Account: 7789-4456-901
+  - Routing: 021000021
+  - Memo: "Down payment gift from Patricia and James Thompson"
+  - Wire fee: $35
+  
+  **CHRONOLOGY OF CHANGES:**
+  1. Sept 15: Patricia set up $85,000 for Oct 1 (WT-89045)
+  2. Sept 25: James changed to $100,000 for Sept 27 (WT-89067)
+  3. Sept 26: Patricia changed to $95,000 for Oct 1 (WT-89089)
+  
+  **RATIONALE FOR FINAL AMOUNT:**
+  - Original $85,000 for down payment
+  - Additional $12,000 for foundation repairs discovered during inspection
+  - Reduced to $95,000 (instead of $97,000) as compromise
+  - Patricia's $25,000 bonus depositing Sept 30 influenced keeping Oct 1 date
+  
+  **KEY POINTS:**
+  - Only WT-89089 is active (previous references superseded)
+  - Can be modified until Sept 30 at 5 PM Eastern
+  - Both spouses receive email notifications of any changes
+  - Considering dual authorization for future transfers
+  
+  The agent must recognize that despite the conflicts, the FINAL status is Patricia's last modification on Sept 26.

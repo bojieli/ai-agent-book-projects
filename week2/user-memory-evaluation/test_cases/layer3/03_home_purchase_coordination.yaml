@@ -1,0 +1,634 @@
+test_id: layer3_03_home_purchase_coordination
+category: layer3
+title: Home Purchase Timeline - Loan, Insurance, and Moving Coordination
+description: Test agent's ability to identify critical timing conflicts and missing requirements across mortgage, insurance,
+  and moving service conversations spanning months
+conversation_histories:
+- conversation_id: mortgage_preapproval_001
+  timestamp: '2024-08-20 11:00:00'
+  metadata:
+    business: Wells Fargo Home Mortgage
+    department: Mortgage Lending
+    call_duration: 52 minutes
+  messages:
+  - role: user
+    content: Hi, I want to get pre-approved for a mortgage. We're starting to look at houses.
+  - role: assistant
+    content: Good morning! I'm Jennifer from Wells Fargo Home Mortgage. I'll help you with your pre-approval. First, are you
+      buying alone or with someone?
+  - role: user
+    content: With my wife. We're first-time homebuyers.
+  - role: assistant
+    content: Congratulations on taking this step! What price range are you considering?
+  - role: user
+    content: We're looking at homes around $400,000 to $450,000.
+  - role: assistant
+    content: Good range for first-time buyers. How much do you have for a down payment?
+  - role: user
+    content: We've saved about $50,000.
+  - role: assistant
+    content: That's about 11-12% down, which is good. You'll avoid PMI at 20% down. Are you planning to save more?
+  - role: user
+    content: We might get a gift from my parents, maybe another $30,000.
+  - role: assistant
+    content: That would get you to almost 20% on a $400,000 home. Gift funds are acceptable with a gift letter.
+  - role: user
+    content: Good to know. What do you need for pre-approval?
+  - role: assistant
+    content: I'll need income information, employment history, and credit authorization. Let's start with your name?
+  - role: user
+    content: Michael Chen.
+  - role: assistant
+    content: And your wife's name?
+  - role: user
+    content: Lisa Chen.
+  - role: assistant
+    content: Date of birth for you?
+  - role: user
+    content: March 15, 1990.
+  - role: assistant
+    content: And Lisa's?
+  - role: user
+    content: July 8, 1991.
+  - role: assistant
+    content: Current address?
+  - role: user
+    content: 2847 Riverside Apartments, Unit 4B, Portland, Oregon, 97210.
+  - role: assistant
+    content: How long have you lived there?
+  - role: user
+    content: Three years. Our lease is up in January.
+  - role: assistant
+    content: Good timing for buying. Now, employment information. Where do you work?
+  - role: user
+    content: I'm a software engineer at TechCorp Solutions.
+  - role: assistant
+    content: How long have you been there?
+  - role: user
+    content: Four years next month.
+  - role: assistant
+    content: Excellent stability. Annual salary?
+  - role: user
+    content: My base is $115,000 plus bonuses.
+  - role: assistant
+    content: What do bonuses typically run?
+  - role: user
+    content: About $15,000-20,000 per year.
+  - role: assistant
+    content: We can use a two-year average for bonuses. And Lisa's employment?
+  - role: user
+    content: She's a marketing manager at Portland Marketing Group.
+  - role: assistant
+    content: How long there?
+  - role: user
+    content: Just over two years.
+  - role: assistant
+    content: And her income?
+  - role: user
+    content: $85,000 annually.
+  - role: assistant
+    content: Combined income around $200,000 plus bonuses. That's strong. Any other debts?
+  - role: user
+    content: I have a car loan, about $15,000 left.
+  - role: assistant
+    content: Monthly payment?
+  - role: user
+    content: $450 per month.
+  - role: assistant
+    content: Any student loans?
+  - role: user
+    content: No, we paid those off last year.
+  - role: assistant
+    content: Excellent! Credit card debt?
+  - role: user
+    content: We pay them off monthly. Maybe $2,000 balance at any time.
+  - role: assistant
+    content: Good habits. Let me run your pre-approval... Can I have your Social Security numbers?
+  - role: user
+    content: Mine is 543-22-8871, Lisa's is 544-33-9982.
+  - role: assistant
+    content: Thank you. Running credit now... Your scores are excellent - you're at 762, Lisa is 758.
+  - role: user
+    content: Oh good! We've worked hard on those.
+  - role: assistant
+    content: It shows. With your income and credit, you're pre-approved for up to $480,000.
+  - role: user
+    content: More than we need, that's great.
+  - role: assistant
+    content: Always good to have cushion. Now, what type of loan are you considering?
+  - role: user
+    content: We were thinking 30-year fixed?
+  - role: assistant
+    content: Safe choice. Current rates are 6.875% for 30-year fixed with 20% down.
+  - role: user
+    content: What if we only put 15% down?
+  - role: assistant
+    content: Rate goes to 6.95% and you'd need PMI, about $150 monthly.
+  - role: user
+    content: We'll try for 20% then. How long is this pre-approval good for?
+  - role: assistant
+    content: 90 days, until November 20th, 2024. If you need an extension, just call us.
+  - role: user
+    content: What happens after we find a house?
+  - role: assistant
+    content: You make an offer with the pre-approval letter, then we do full underwriting.
+  - role: user
+    content: How long does that take?
+  - role: assistant
+    content: Typically 30-45 days from accepted offer to closing.
+  - role: user
+    content: So if we find something in October, we'd close in November or December?
+  - role: assistant
+    content: Exactly. Keep in mind holidays can slow things down in December.
+  - role: user
+    content: Good point. What else do we need?
+  - role: assistant
+    content: For final approval, we'll need pay stubs, tax returns, bank statements, and the purchase agreement.
+  - role: user
+    content: Should we gather those now?
+  - role: assistant
+    content: Get them ready. Two years tax returns, two months bank statements, recent pay stubs.
+  - role: user
+    content: Will do. Oh, what about homeowner's insurance?
+  - role: assistant
+    content: You'll need to have that in place before closing. Shop around when you're under contract.
+  - role: user
+    content: When should we start looking for insurance?
+  - role: assistant
+    content: As soon as your offer is accepted. You need proof of insurance at closing.
+  - role: user
+    content: And the insurance company needs to know the lender?
+  - role: assistant
+    content: Yes, Wells Fargo needs to be listed as mortgagee on the policy.
+  - role: user
+    content: Got it. What about the appraisal?
+  - role: assistant
+    content: We order that after your offer is accepted. Cost is about $500-600.
+  - role: user
+    content: Who pays for that?
+  - role: assistant
+    content: You do, usually at the time of the appraisal.
+  - role: user
+    content: What if it appraises for less than the purchase price?
+  - role: assistant
+    content: Then you'd need to negotiate with the seller or bring more cash to closing.
+  - role: user
+    content: That sounds risky.
+  - role: assistant
+    content: That's why appraisal contingencies are important in your offer.
+  - role: user
+    content: Our agent will help with that?
+  - role: assistant
+    content: Yes, they should include appropriate contingencies.
+  - role: user
+    content: What about the title search?
+  - role: assistant
+    content: Title company handles that. They'll find any liens or issues.
+  - role: user
+    content: Cost?
+  - role: assistant
+    content: Title insurance is about $1,500-2,000 on a $450,000 purchase.
+  - role: user
+    content: So many fees! What else?
+  - role: assistant
+    content: Origination fee is 1% of loan amount, plus recording fees, prepaid taxes.
+  - role: user
+    content: How much should we budget for closing costs?
+  - role: assistant
+    content: Typically 2-3% of purchase price, so $9,000-13,500 on a $450,000 home.
+  - role: user
+    content: Plus our down payment?
+  - role: assistant
+    content: Right. So with 20% down, you're looking at $90,000 down plus $10,000-13,000 closing.
+  - role: user
+    content: So we need about $100,000-103,000 total at closing?
+  - role: assistant
+    content: Yes, approximately. The exact amount comes three days before closing.
+  - role: user
+    content: That's a lot of money to move around.
+  - role: assistant
+    content: Wire transfer is safest. Never wire without calling us to verify instructions.
+  - role: user
+    content: I've heard about wire fraud.
+  - role: assistant
+    content: It's real. Always verify by phone before sending any money.
+  - role: user
+    content: Good advice. What's your pre-approval reference number?
+  - role: assistant
+    content: Your pre-approval reference is WF-PA-2024-778341.
+  - role: user
+    content: Perfect. And I can show this to sellers?
+  - role: assistant
+    content: Yes, your agent will include it with offers to show you're qualified.
+  - role: user
+    content: This is all very helpful, Jennifer. Thank you!
+  - role: assistant
+    content: You're welcome! Remember, this expires November 20th. Call me when you find a house or if you need an extension.
+      Good luck!
+- conversation_id: home_purchase_offer_002
+  timestamp: '2024-11-15 14:00:00'
+  metadata:
+    business: Keller Williams Realty
+    department: Real Estate Sales
+    call_duration: 45 minutes
+  messages:
+  - role: user
+    content: Hi, this is Michael Chen. My agent said I should call about the offer we're making.
+  - role: assistant
+    content: Hi Michael! This is Tom from Keller Williams. Yes, your agent Emma asked me to coordinate the paperwork. You're
+      offering on 5522 Oak Valley Drive?
+  - role: user
+    content: That's the one. We love that house!
+  - role: assistant
+    content: It's a beautiful property. Listed at $425,000. What's your offer?
+  - role: user
+    content: Emma suggested we offer $435,000 to be competitive.
+  - role: assistant
+    content: Smart in this market. There are already two other offers.
+  - role: user
+    content: Really? We just saw it yesterday!
+  - role: assistant
+    content: Houses move fast here. How much earnest money are you putting down?
+  - role: user
+    content: $10,000.
+  - role: assistant
+    content: Good, shows you're serious. What about contingencies?
+  - role: user
+    content: Emma said we need inspection and financing contingencies.
+  - role: assistant
+    content: Standard protections. How many days for inspection?
+  - role: user
+    content: Is 10 days normal?
+  - role: assistant
+    content: Yes, 10 days is typical. And your financing contingency?
+  - role: user
+    content: We have pre-approval from Wells Fargo.
+  - role: assistant
+    content: Good. We'll include 21 days for financing contingency. When do you want to close?
+  - role: user
+    content: What's typical?
+  - role: assistant
+    content: Usually 30-45 days. When does your lease end?
+  - role: user
+    content: End of January, but we can go month-to-month if needed.
+  - role: assistant
+    content: Let's put December 20th as closing date. That's 35 days.
+  - role: user
+    content: December 20th? Right before Christmas?
+  - role: assistant
+    content: I know it's not ideal timing, but it might make your offer stronger.
+  - role: user
+    content: If that's what it takes. We really want this house.
+  - role: assistant
+    content: The sellers are motivated. They're relocating for work.
+  - role: user
+    content: That's good for us, right?
+  - role: assistant
+    content: Yes, they need to sell quickly. Your flexible closing helps.
+  - role: user
+    content: What else makes our offer strong?
+  - role: assistant
+    content: The $10,000 over asking and your solid pre-approval.
+  - role: user
+    content: We're putting 20% down to avoid PMI.
+  - role: assistant
+    content: Excellent. So $87,000 down payment on $435,000?
+  - role: user
+    content: Yes. My parents are gifting us $30,000 to help.
+  - role: assistant
+    content: We'll note that. Gift funds are fine with proper documentation.
+  - role: user
+    content: Wells Fargo mentioned we need a gift letter.
+  - role: assistant
+    content: Correct. Your parents will need to sign stating it's a gift, not a loan.
+  - role: user
+    content: They're ready to do that.
+  - role: assistant
+    content: Good. When can you sign the offer?
+  - role: user
+    content: I can come by this afternoon. Lisa's at work.
+  - role: assistant
+    content: Both need to sign. Can she come by tonight?
+  - role: user
+    content: She gets off at 6. Can we come at 6:30?
+  - role: assistant
+    content: Perfect. Bring your pre-approval letter and earnest money check.
+  - role: user
+    content: Check made out to?
+  - role: assistant
+    content: Keller Williams Trust Account.
+  - role: user
+    content: Got it. When will we hear back?
+  - role: assistant
+    content: Sellers are reviewing offers tomorrow morning. You'll know by tomorrow afternoon.
+  - role: user
+    content: I'm nervous! This is our first home.
+  - role: assistant
+    content: That's natural. Your offer is strong.
+  - role: user
+    content: What if they counter?
+  - role: assistant
+    content: We'll advise you. Maybe they'll ask for fewer contingency days or quicker closing.
+  - role: user
+    content: We could be flexible on timing.
+  - role: assistant
+    content: Good attitude. Oh, have you started shopping for homeowner's insurance?
+  - role: user
+    content: Not yet. Should we?
+  - role: assistant
+    content: Wait until the offer's accepted, but then move quickly. You need it for closing.
+  - role: user
+    content: How much does it typically cost?
+  - role: assistant
+    content: For a $435,000 home, probably $1,200-1,800 annually.
+  - role: user
+    content: That's reasonable. What about the inspection?
+  - role: assistant
+    content: If accepted, schedule immediately. Good inspectors book up fast.
+  - role: user
+    content: Do you have recommendations?
+  - role: assistant
+    content: I'll give you three names tonight. They're all thorough.
+  - role: user
+    content: What do they check?
+  - role: assistant
+    content: Everything - roof, foundation, plumbing, electrical, HVAC, appliances.
+  - role: user
+    content: Cost?
+  - role: assistant
+    content: Usually $400-500 for a home this size.
+  - role: user
+    content: And if they find problems?
+  - role: assistant
+    content: You can negotiate repairs or credits with the seller.
+  - role: user
+    content: What if it's something major?
+  - role: assistant
+    content: That's why you have the inspection contingency. You can walk away if needed.
+  - role: user
+    content: Hopefully it won't come to that.
+  - role: assistant
+    content: The house is only 15 years old, should be in good shape.
+  - role: user
+    content: That's reassuring. What else should we be thinking about?
+  - role: assistant
+    content: Start thinking about movers if you're hiring them. December is busy season.
+  - role: user
+    content: Oh right, moving during the holidays will be chaos.
+  - role: assistant
+    content: Book movers as soon as your offer's accepted.
+  - role: user
+    content: Will do. Do we need to do a final walkthrough?
+  - role: assistant
+    content: Yes, usually the day before closing to make sure everything's as agreed.
+  - role: user
+    content: What are we checking for?
+  - role: assistant
+    content: That agreed repairs are done, nothing's damaged, and included items are there.
+  - role: user
+    content: What's included with this house?
+  - role: assistant
+    content: All appliances, the shed, and the sellers mentioned leaving the patio furniture.
+  - role: user
+    content: Oh nice! That saves us money.
+  - role: assistant
+    content: Definitely. Quality patio sets are expensive.
+  - role: user
+    content: Anything else we should know?
+  - role: assistant
+    content: Utilities transfer, mail forwarding, update your address everywhere.
+  - role: user
+    content: When do we do utilities?
+  - role: assistant
+    content: Call them a week before closing to schedule transfer for closing day.
+  - role: user
+    content: So much to remember!
+  - role: assistant
+    content: We'll give you a checklist. See you at 6:30?
+  - role: user
+    content: Wait, should we get pre-qualified with another lender as backup?
+  - role: assistant
+    content: Your Wells Fargo approval is solid. When does it expire?
+  - role: user
+    content: Jennifer said November 20th.
+  - role: assistant
+    content: That's only 5 days away! You'll need to extend it if we're closing December 20th.
+  - role: user
+    content: Oh wow, I didn't realize. I'll call them Monday.
+  - role: assistant
+    content: Do that first thing. You need valid pre-approval through closing.
+  - role: user
+    content: Definitely. See you tonight at 6:30!
+  - role: assistant
+    content: See you then. Bring the pre-approval letter and earnest money check. Good luck!
+- conversation_id: moving_company_quote_003
+  timestamp: '2024-11-18 10:00:00'
+  metadata:
+    business: Allied Van Lines
+    department: Moving Services
+    call_duration: 40 minutes
+  messages:
+  - role: user
+    content: Hi, I need to schedule a move. Our offer on a house was just accepted!
+  - role: assistant
+    content: Congratulations! This is Paul from Allied Van Lines. I'll help you schedule your move. When do you need to move?
+  - role: user
+    content: We close on December 20th, so probably that weekend?
+  - role: assistant
+    content: December 20th is a Friday. You want to move the 21st or 22nd?
+  - role: user
+    content: Is Saturday the 21st available?
+  - role: assistant
+    content: Let me check... We're pretty booked. December is always busy with holidays.
+  - role: user
+    content: Oh no, should I have called sooner?
+  - role: assistant
+    content: How long ago was your offer accepted?
+  - role: user
+    content: Just two days ago, on the 16th.
+  - role: assistant
+    content: You called quickly, that's good. I do have a crew available December 21st, but only starting at noon.
+  - role: user
+    content: Noon works. How long will it take?
+  - role: assistant
+    content: How big is your current place?
+  - role: user
+    content: Two-bedroom apartment, about 1,100 square feet.
+  - role: assistant
+    content: Third floor walk-up or elevator?
+  - role: user
+    content: Fourth floor, but there's an elevator.
+  - role: assistant
+    content: That helps. And the new house?
+  - role: user
+    content: Three bedrooms, two-story house with a garage.
+  - role: assistant
+    content: Distance between locations?
+  - role: user
+    content: About 12 miles, both in Portland.
+  - role: assistant
+    content: For a 2-bedroom apartment to house, 12 miles, probably 4-5 hours total.
+  - role: user
+    content: That's not bad. What's the cost?
+  - role: assistant
+    content: We charge $180 per hour for a 3-man crew and truck.
+  - role: user
+    content: So roughly $900?
+  - role: assistant
+    content: Plus materials - boxes, tape, bubble wrap if needed. Do you need packing services?
+  - role: user
+    content: We'll pack ourselves. But we might need some boxes.
+  - role: assistant
+    content: We sell moving kits. For a 2-bedroom, our kit is $149 - includes 30 boxes various sizes.
+  - role: user
+    content: That sounds good. So about $1,050 total?
+  - role: assistant
+    content: Approximately. Could be less if we're faster, more if it takes longer.
+  - role: user
+    content: What makes it take longer?
+  - role: assistant
+    content: Heavy items, lots of stairs, difficult parking, unorganized packing.
+  - role: user
+    content: We have one heavy item - a piano.
+  - role: assistant
+    content: Oh, that changes things. What kind of piano?
+  - role: user
+    content: An upright piano, pretty old and heavy.
+  - role: assistant
+    content: Pianos require special equipment and expertise. Add $200 for piano moving.
+  - role: user
+    content: So now we're at $1,250?
+  - role: assistant
+    content: Yes, approximately. Is it going upstairs in the new house?
+  - role: user
+    content: No, the living room on the main floor.
+  - role: assistant
+    content: Good, stairs would be extra. Any other specialty items?
+  - role: user
+    content: We have a 65-inch TV.
+  - role: assistant
+    content: We'll pack that specially, included in the hourly rate.
+  - role: user
+    content: Do you guys disassemble furniture?
+  - role: assistant
+    content: Yes, bed frames and such. Keep all hardware in labeled bags.
+  - role: user
+    content: Perfect. What about insurance?
+  - role: assistant
+    content: Basic coverage is 60 cents per pound. Additional coverage available.
+  - role: user
+    content: That doesn't sound like much.
+  - role: assistant
+    content: It's not. Your homeowner's or renter's insurance might cover moving.
+  - role: user
+    content: Oh, I should check that. Speaking of insurance, I need to get homeowner's insurance still.
+  - role: assistant
+    content: Definitely do that before closing. The bank will require it.
+  - role: user
+    content: Right. When do they need proof?
+  - role: assistant
+    content: Usually a week before closing, so by December 13th.
+  - role: user
+    content: That's less than a month away!
+  - role: assistant
+    content: Better start shopping. Get quotes from multiple companies.
+  - role: user
+    content: Any recommendations?
+  - role: assistant
+    content: State Farm, Allstate, Liberty Mutual are all good. Bundle with auto for discounts.
+  - role: user
+    content: We have our cars with Progressive.
+  - role: assistant
+    content: Check if they do homeowner's too. Bundling saves money.
+  - role: user
+    content: Good idea. Back to the move - what about boxes?
+  - role: assistant
+    content: We can deliver them November 25th, after Thanksgiving.
+  - role: user
+    content: That gives us almost a month to pack. Perfect.
+  - role: assistant
+    content: Good timing. Pack a little each day, less stressful.
+  - role: user
+    content: Any packing tips?
+  - role: assistant
+    content: Label everything with room and contents. Pack heavy items in small boxes.
+  - role: user
+    content: What about fragile items?
+  - role: assistant
+    content: Lots of padding. We sell bubble wrap, or use towels and linens.
+  - role: user
+    content: Smart. Now, let me get your information to book this.
+  - role: assistant
+    content: Sure. Your name?
+  - role: user
+    content: Michael Chen.
+  - role: assistant
+    content: Contact phone?
+  - role: user
+    content: 503-555-8823.
+  - role: assistant
+    content: Current address?
+  - role: user
+    content: 2847 Riverside Apartments, Unit 4B, Portland, 97210.
+  - role: assistant
+    content: And the new address?
+  - role: user
+    content: 5522 Oak Valley Drive, Portland, 97220.
+  - role: assistant
+    content: Nice area! Now, we require a $300 deposit to hold your date.
+  - role: user
+    content: When's the balance due?
+  - role: assistant
+    content: Day of the move, after completion.
+  - role: user
+    content: Can I pay with credit card?
+  - role: assistant
+    content: Yes, we accept all major cards.
+  - role: user
+    content: Great. Oh wait, what if our closing gets delayed?
+  - role: assistant
+    content: Call us immediately. December is so busy, rescheduling is tough.
+  - role: user
+    content: I really hope it doesn't delay.
+  - role: assistant
+    content: Closings can be unpredictable. When will you know for sure?
+  - role: user
+    content: The bank said December 20th, but things can change.
+  - role: assistant
+    content: We usually get 48-hour notice for weather delays. Less for closing delays.
+  - role: user
+    content: What if we need to postpone last minute?
+  - role: assistant
+    content: You'd lose the deposit unless it's weather-related.
+  - role: user
+    content: Fair enough. Let's hope everything goes smoothly.
+  - role: assistant
+    content: I'll note your move is contingent on closing. Your confirmation is ALV-122124.
+  - role: user
+    content: ALV-122124, got it.
+  - role: assistant
+    content: We'll call December 19th to confirm everything's on track.
+  - role: user
+    content: Perfect. What time exactly on the 21st?
+  - role: assistant
+    content: Crew arrives at noon. Should be done by 5 PM.
+  - role: user
+    content: Do we need to be at both locations?
+  - role: assistant
+    content: One of you at each location is ideal. One to supervise loading, one at new house.
+  - role: user
+    content: Makes sense. My wife can be at the apartment, I'll be at the house.
+  - role: assistant
+    content: Perfect. Make sure pathways are clear at both locations.
+  - role: user
+    content: Will do. Thanks for fitting us in, Paul!
+  - role: assistant
+    content: No problem! Congratulations on your new home. We'll take good care of your move.
+user_question: We're getting close to our house closing. Can you check if everything is on track for the move?
+evaluation_criteria: |
+  The agent must synthesize complex timeline and requirement information across three separate conversations to identify CRITICAL issues threatening the December 20th closing. The response must urgently flag multiple red flags: MOST CRITICALLY, the Wells Fargo mortgage pre-approval expired on November 20th and needs immediate renewal/extension or the entire purchase could fall through; homeowner's insurance has not been arranged despite being required before closing with proof needed by December 13th (only weeks away); the $30,000 gift from parents needs a formal gift letter for the lender; the inspection contingency period (10 days from November 15th offer) should have ended around November 25th and needs confirmation; the financing contingency expires around December 7th. The agent should also confirm the Allied moving service (confirmation ALV-122124) scheduled for December 21st at noon is contingent on successful closing, including the special piano moving arrangement ($200 extra), and note that packing boxes arrive November 25th. The response must convey appropriate urgency given the expired pre-approval and missing insurance could derail the entire transaction, demonstrating sophisticated understanding of real estate transaction dependencies and timelines.
+expected_behavior: The agent should urgently alert that the Wells Fargo pre-approval expired on November 20th and needs immediate
+  renewal/extension, homeowner's insurance must be obtained ASAP (proof needed by December 13th), confirm gift letter from
+  parents is prepared for the $30,000, verify inspection was completed within 10 days of offer acceptance, note financing
+  contingency deadline around December 7th, and confirm Allied moving (ALV-122124) for December 21st noon is contingent on
+  successful December 20th closing

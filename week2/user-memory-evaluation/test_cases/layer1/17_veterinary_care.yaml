@@ -1,0 +1,218 @@
+test_id: layer1_17_veterinary_care
+category: layer1
+title: Veterinary Care Plan - Pet Medical History and Treatment Details
+description: Test agent's ability to recall pet information, medical conditions, treatment plans, and medication schedules from detailed vet consultation
+conversation_histories:
+  - conversation_id: vet_consult_001
+    timestamp: "2024-11-08 15:30:00"
+    metadata:
+      business: "Companion Animal Hospital"
+      department: "Veterinary Services"
+      call_duration: "49 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to discuss my dog's recent health issues and treatment options."
+      - role: assistant
+        content: "Hello, this is Dr. Sarah Mitchell from Companion Animal Hospital. I'd be happy to discuss your pet's health. Can you provide your name and your pet's name?"
+      - role: user
+        content: "I'm Robert Thompson, and my dog is Max."
+      - role: assistant
+        content: "Thank you, Mr. Thompson. Let me pull up Max's file... I see Max is a 7-year-old Golden Retriever, 78 pounds, last seen October 15th?"
+      - role: user
+        content: "Yes, that's right. He's been having some issues since then."
+      - role: assistant
+        content: "What symptoms have you noticed?"
+      - role: user
+        content: "He's been limping on his right rear leg and seems less energetic."
+      - role: assistant
+        content: "How long has the limping been going on?"
+      - role: user
+        content: "About two weeks now. It started gradually."
+      - role: assistant
+        content: "Any specific incident that might have caused it? A fall, rough play?"
+      - role: user
+        content: "Not that I noticed. He just started favoring it after our regular walks."
+      - role: assistant
+        content: "I see in his history that Max has mild hip dysplasia. This could be related. When was his last X-ray?"
+      - role: user
+        content: "I think it was about 18 months ago when he was first diagnosed."
+      - role: assistant
+        content: "We should do new X-rays to check progression. Has he been taking any medications?"
+      - role: user
+        content: "He's been on glucosamine supplements, the ones you prescribed."
+      - role: assistant
+        content: "The Cosequin DS? What dosage?"
+      - role: user
+        content: "Two tablets daily with food."
+      - role: assistant
+        content: "Good. Has that been helping until recently?"
+      - role: user
+        content: "It seemed to, but not anymore."
+      - role: assistant
+        content: "We may need to add an anti-inflammatory. How's his appetite?"
+      - role: user
+        content: "Still good, eating his usual amount."
+      - role: assistant
+        content: "What food is he on?"
+      - role: user
+        content: "Hill's Science Diet Adult Large Breed, about 3.5 cups per day."
+      - role: assistant
+        content: "Split into how many meals?"
+      - role: user
+        content: "Two meals, morning and evening."
+      - role: assistant
+        content: "Perfect. Any vomiting or diarrhea?"
+      - role: user
+        content: "No, his digestion seems fine."
+      - role: assistant
+        content: "Good. Now, for the limping, I'd recommend starting with Rimadyl for pain and inflammation. Max weighs 78 pounds, so he'd need 75mg twice daily."
+      - role: user
+        content: "Are there side effects?"
+      - role: assistant
+        content: "Possible GI upset, decreased appetite, or lethargy. We'll do blood work first to check liver and kidney function."
+      - role: user
+        content: "When should we do that?"
+      - role: assistant
+        content: "Can you bring him in tomorrow morning? We do fasting blood work, so no food after 10 PM tonight."
+      - role: user
+        content: "Tomorrow's Saturday - are you open?"
+      - role: assistant
+        content: "Yes, we're open 8 AM to 2 PM Saturdays. How's 9 AM?"
+      - role: user
+        content: "That works. What tests will you run?"
+      - role: assistant
+        content: "Complete blood count, chemistry panel, and urinalysis. Total cost is $285."
+      - role: user
+        content: "And the X-rays?"
+      - role: assistant
+        content: "Hip and leg X-rays would be $420. We can do those same visit if blood work looks good."
+      - role: user
+        content: "So about $700 total for diagnostics?"
+      - role: assistant
+        content: "Yes, $705 plus the exam fee of $65, so $770 total for tomorrow."
+      - role: user
+        content: "Okay. What about long-term treatment?"
+      - role: assistant
+        content: "Depending on X-ray results, we might consider adequan injections for joint health."
+      - role: user
+        content: "What's that?"
+      - role: assistant
+        content: "It's a series of injections that help rebuild joint cartilage. Loading dose is twice weekly for 4 weeks, then monthly."
+      - role: user
+        content: "Cost?"
+      - role: assistant
+        content: "Each injection is $85. So $680 for the loading series, then $85 monthly maintenance."
+      - role: user
+        content: "That's expensive. Are there alternatives?"
+      - role: assistant
+        content: "We could try oral joint supplements first. Dasuquin Advanced is stronger than Cosequin, about $75 per month."
+      - role: user
+        content: "Let's see what the X-rays show first."
+      - role: assistant
+        content: "Absolutely. Now, is Max current on vaccinations?"
+      - role: user
+        content: "I think so. When were they due?"
+      - role: assistant
+        content: "His rabies is good until March 2025, but his DHPP is due now - expired October 30th."
+      - role: user
+        content: "Oh, I missed that. Can we do it tomorrow?"
+      - role: assistant
+        content: "Yes, DHPP vaccine is $42. Also, his heartworm test is due."
+      - role: user
+        content: "He's been on preventative, the Heartgard Plus."
+      - role: assistant
+        content: "Good, but we still need annual testing. That's $47."
+      - role: user
+        content: "So adding those to tomorrow's visit?"
+      - role: assistant
+        content: "Yes, new total would be $859 for everything tomorrow."
+      - role: user
+        content: "Fine. What about his weight? The vet mentioned he could lose a few pounds last time."
+      - role: assistant
+        content: "Yes, ideal weight for Max would be 72-73 pounds. He's about 5 pounds over."
+      - role: user
+        content: "How should I adjust his food?"
+      - role: assistant
+        content: "Reduce to 3 cups daily instead of 3.5, and limit treats to 10% of daily calories."
+      - role: user
+        content: "He loves his treats though."
+      - role: assistant
+        content: "Try baby carrots or green beans as low-calorie alternatives. Max likes vegetables?"
+      - role: user
+        content: "He'll eat anything!"
+      - role: assistant
+        content: "Perfect. The weight loss will also help his joints."
+      - role: user
+        content: "Should I change his exercise routine?"
+      - role: assistant
+        content: "With the limping, shorter more frequent walks are better than long ones. How long are your walks now?"
+      - role: user
+        content: "Usually 45 minutes twice a day."
+      - role: assistant
+        content: "Try 20 minutes three times daily instead. Less stress on joints."
+      - role: user
+        content: "What about swimming? He loves water."
+      - role: assistant
+        content: "Swimming is excellent for dogs with joint issues! Low impact but great exercise."
+      - role: user
+        content: "There's a dog pool nearby that's heated."
+      - role: assistant
+        content: "Perfect. Two or three swim sessions weekly would be ideal, 15-20 minutes each."
+      - role: user
+        content: "The pool charges $25 per session or $80 monthly unlimited."
+      - role: assistant
+        content: "The monthly unlimited would be cost-effective if you go twice weekly."
+      - role: user
+        content: "I'll look into that. What about supplements besides joint ones?"
+      - role: assistant
+        content: "Omega-3 fish oil helps with inflammation. 1000mg per 10 pounds body weight, so about 7000-8000mg daily for Max."
+      - role: user
+        content: "Any brand recommendations?"
+      - role: assistant
+        content: "Nordic Naturals or Grizzly Salmon Oil are good. About $30-40 per month."
+      - role: user
+        content: "Should I start that now?"
+      - role: assistant
+        content: "Yes, it's safe to start immediately. Give with food to avoid stomach upset."
+      - role: user
+        content: "What symptoms should I watch for that would need immediate attention?"
+      - role: assistant
+        content: "Sudden inability to walk, crying in pain, swelling of the leg, or loss of appetite with the medication."
+      - role: user
+        content: "And for tomorrow, just water is okay tonight?"
+      - role: assistant
+        content: "Yes, water is fine. Just no food after 10 PM for accurate blood work."
+      - role: user
+        content: "Should I bring anything?"
+      - role: assistant
+        content: "Just Max's leash and any current medications he's taking. We'll need about 2 hours for everything."
+      - role: user
+        content: "So I should plan to pick him up around 11?"
+      - role: assistant
+        content: "Yes, 11 AM pickup would be perfect. We'll call if we finish earlier."
+      - role: user
+        content: "Great. See you at 9 AM tomorrow."
+      - role: assistant
+        content: "Perfect. Max is in good hands, Mr. Thompson. We'll get to the bottom of his limping and get him comfortable again."
+      - role: user
+        content: "Thank you, Dr. Mitchell. I really appreciate the thorough explanation."
+      - role: assistant
+        content: "You're very welcome. Don't hesitate to call if you have any concerns before tomorrow."
+user_question: "What was Max's current weight versus ideal weight, and what was the complete cost breakdown for tomorrow's visit?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Weight information:
+  - Current weight: 78 pounds
+  - Ideal weight: 72-73 pounds
+  - Overweight by: approximately 5 pounds
+  
+  Tomorrow's visit costs:
+  - Blood work (CBC, chemistry, urinalysis): $285
+  - X-rays (hip and leg): $420
+  - Exam fee: $65
+  - DHPP vaccine: $42
+  - Heartworm test: $47
+  - Total: $859
+  
+  The response should include both the weight details and the complete itemized cost breakdown.

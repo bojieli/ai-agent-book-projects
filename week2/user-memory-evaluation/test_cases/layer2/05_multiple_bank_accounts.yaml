@@ -1,0 +1,476 @@
+test_id: layer2_05_multiple_bank_accounts
+category: layer2
+title: Multiple Bank Accounts - Financial Overview Disambiguation
+description: Test agent's ability to distinguish between multiple bank accounts at different institutions and provide complete
+  financial overview when requested
+conversation_histories:
+- conversation_id: chase_banking_001
+  timestamp: '2024-08-20 09:30:00'
+  metadata:
+    business: Chase Bank
+    department: Personal Banking
+    call_duration: 58 minutes
+  messages:
+  - role: user
+    content: Hi, I need to review my Chase accounts and maybe make some changes.
+  - role: assistant
+    content: Good morning! I'm Jennifer from Chase Personal Banking. I'd be happy to review your accounts. May I have your
+      account number or Social Security number?
+  - role: user
+    content: My social is 555-78-9234.
+  - role: assistant
+    content: Thank you, Ms. Sandra Williams. I see you have multiple accounts with us. Let me pull them all up.
+  - role: user
+    content: Yes, I think I have checking, savings, and a credit card?
+  - role: assistant
+    content: Correct. You have Chase Total Checking with a balance of $8,456.23, Chase Savings with $22,150.00, and a Sapphire
+      Preferred credit card.
+  - role: user
+    content: What's the minimum balance for the checking to avoid fees?
+  - role: assistant
+    content: Total Checking requires either a $1,500 minimum daily balance, direct deposit of $500+, or a combined $5,000
+      across linked Chase accounts.
+  - role: user
+    content: I have direct deposit from work, right?
+  - role: assistant
+    content: Yes, you have bi-weekly direct deposits of $3,847.52 from Morrison Technologies.
+  - role: user
+    content: Good. What interest rate am I earning on the savings?
+  - role: assistant
+    content: Currently 0.01% APY on the standard savings account.
+  - role: user
+    content: That's terrible! Are there better options?
+  - role: assistant
+    content: You could upgrade to Chase Premier Savings. With your balance, you'd earn 0.25% APY.
+  - role: user
+    content: Still not great. What's required for that?
+  - role: assistant
+    content: Premier Savings needs a $15,000 minimum balance and linking to a Chase checking account, which you already have.
+  - role: user
+    content: Let me think about it. What about my credit card - what's the balance?
+  - role: assistant
+    content: Current balance is $2,847.93 with a $15,000 credit limit. Your payment of $500 is due August 28th.
+  - role: user
+    content: What's the interest rate?
+  - role: assistant
+    content: Your APR is 19.99%. Are you planning to pay the full balance?
+  - role: user
+    content: I should. I hate paying interest. What rewards do I have accumulated?
+  - role: assistant
+    content: You have 48,592 Ultimate Rewards points, worth $485.92 as cash back or potentially more for travel.
+  - role: user
+    content: Nice! Can I use those against my balance?
+  - role: assistant
+    content: Yes, you can redeem for statement credit at 1 cent per point. Should I apply all points?
+  - role: user
+    content: Not yet, I might use them for travel. When's my checking account statement date?
+  - role: assistant
+    content: Statements generate on the 15th of each month.
+  - role: user
+    content: And I can access everything online?
+  - role: assistant
+    content: Yes, through chase.com or our mobile app. You're already enrolled in online banking.
+  - role: user
+    content: Perfect. Oh, I wanted to add my daughter as an authorized user on the credit card.
+  - role: assistant
+    content: I can help with that. She'd get her own card linked to your account. What's her name?
+  - role: user
+    content: Emily Williams. She's 19, in college.
+  - role: assistant
+    content: I'll need her date of birth and Social Security number.
+  - role: user
+    content: Born March 15, 2005. Social is 555-92-7831.
+  - role: assistant
+    content: Thank you. She'll receive her card in 7-10 business days. You can set a spending limit if you'd like.
+  - role: user
+    content: Can I set like $500 per month?
+  - role: assistant
+    content: Yes, I can set a $500 monthly limit for her card.
+  - role: user
+    content: Perfect, do that. One more thing - am I enrolled in overdraft protection?
+  - role: assistant
+    content: Yes, your savings is linked for overdraft protection. We transfer in $100 increments if your checking goes negative.
+  - role: user
+    content: What's the fee for that?
+  - role: assistant
+    content: It's $10 per transfer, much less than the $34 overdraft fee.
+  - role: user
+    content: Makes sense. Oh, I've been thinking about opening a CD.
+  - role: assistant
+    content: Great timing! Our 12-month CD is offering 4.75% APY right now.
+  - role: user
+    content: That's much better than savings! What's the minimum?
+  - role: assistant
+    content: Minimum is $1,000. With your savings balance, you could open a substantial CD.
+  - role: user
+    content: What if I put $10,000 in?
+  - role: assistant
+    content: You'd earn about $475 in interest over 12 months.
+  - role: user
+    content: Can I access it if I need it?
+  - role: assistant
+    content: There's an early withdrawal penalty of 3 months' interest.
+  - role: user
+    content: So I'd lose about $119 if I withdraw early?
+  - role: assistant
+    content: Correct. It's best to only use money you won't need for the full term.
+  - role: user
+    content: I'll think about it. What about wire transfers?
+  - role: assistant
+    content: Domestic wires are $25 online, $35 in branch. International wires are $40 online, $50 in branch.
+  - role: user
+    content: That's pricey. What about Zelle?
+  - role: assistant
+    content: Zelle is free and integrated into your Chase app. Daily limit is $2,000.
+  - role: user
+    content: I use that sometimes. Is there a monthly limit?
+  - role: assistant
+    content: Yes, $16,000 per month for Zelle transfers.
+  - role: user
+    content: More than enough. What about ATM fees?
+  - role: assistant
+    content: No fees at Chase ATMs. Non-Chase ATMs charge $3 per transaction.
+  - role: user
+    content: Do you reimburse other ATM fees?
+  - role: assistant
+    content: Not with Total Checking. Our Sapphire Checking reimburses other ATM fees.
+  - role: user
+    content: What's required for Sapphire Checking?
+  - role: assistant
+    content: $75,000 in combined Chase accounts or investments.
+  - role: user
+    content: I'm not there yet. Maybe someday.
+  - role: assistant
+    content: You're building nicely though. Your combined balance is over $30,000.
+  - role: user
+    content: True. Oh, can I set up alerts?
+  - role: assistant
+    content: Yes, for low balance, large transactions, deposits - what would you like?
+  - role: user
+    content: Low balance alert if checking goes below $1,000.
+  - role: assistant
+    content: Setting that up now. You'll get email and text alerts.
+  - role: user
+    content: Perfect. What about bill pay?
+  - role: assistant
+    content: Free online bill pay is available. You can schedule one-time or recurring payments.
+  - role: user
+    content: I should set that up for utilities.
+  - role: assistant
+    content: It's convenient and you can track everything in one place.
+  - role: user
+    content: Great idea. Thanks for all the help, Jennifer!
+  - role: assistant
+    content: My pleasure, Ms. Williams! Call anytime you need assistance.
+- conversation_id: wellsfargo_banking_001
+  timestamp: '2024-09-12 14:00:00'
+  metadata:
+    business: Wells Fargo
+    department: Customer Service
+    call_duration: 54 minutes
+  messages:
+  - role: user
+    content: Hi, I need to check on my Wells Fargo accounts.
+  - role: assistant
+    content: Hello! I'm Robert from Wells Fargo Customer Service. I can help you with that. May I have your account or Social
+      Security number?
+  - role: user
+    content: Social Security is 555-78-9234.
+  - role: assistant
+    content: Thank you Ms. Williams. I show you have a Way2Save Savings account and a mortgage with us.
+  - role: user
+    content: Right. What's the balance in the savings?
+  - role: assistant
+    content: Your Way2Save Savings has $45,680.00.
+  - role: user
+    content: That's my emergency fund. What interest am I earning?
+  - role: assistant
+    content: The Way2Save account earns 0.15% APY currently.
+  - role: user
+    content: Better than Chase at least. Are there automatic transfers set up?
+  - role: assistant
+    content: Yes, you have a $500 automatic transfer from your Chase checking on the 1st of each month.
+  - role: user
+    content: Good, I want to keep building that. What about my mortgage?
+  - role: assistant
+    content: Your mortgage balance is $287,543.21. Monthly payment is $2,156.78.
+  - role: user
+    content: What's my rate?
+  - role: assistant
+    content: You have a 30-year fixed at 3.25%, originated in March 2021.
+  - role: user
+    content: That's a great rate compared to today's rates, right?
+  - role: assistant
+    content: Absolutely. Current 30-year rates are around 7.5%, so you're saving significantly.
+  - role: user
+    content: Good to know. When's the payment due?
+  - role: assistant
+    content: Due on the 1st of each month. Your next payment is October 1st.
+  - role: user
+    content: Is it on autopay?
+  - role: assistant
+    content: Yes, autopay from your Chase checking account.
+  - role: user
+    content: Perfect. How much of my payment goes to principal versus interest?
+  - role: assistant
+    content: Your last payment was $780.43 to principal and $1,376.35 to interest.
+  - role: user
+    content: So mostly interest still. How many years left?
+  - role: assistant
+    content: You have 27 years and 5 months remaining on the original 30-year term.
+  - role: user
+    content: If I pay extra toward principal?
+  - role: assistant
+    content: Every extra dollar goes directly to principal, reducing interest over the loan's life.
+  - role: user
+    content: Can I make a one-time extra payment?
+  - role: assistant
+    content: Absolutely. You can make additional principal payments anytime without penalty.
+  - role: user
+    content: I might put $10,000 toward it. How much would that save?
+  - role: assistant
+    content: A $10,000 principal payment now would save approximately $19,847 in interest and shorten your loan by about 18
+      months.
+  - role: user
+    content: Wow, that's significant! I'll consider it. What's my escrow balance?
+  - role: assistant
+    content: Your escrow account has $4,231.56 for property taxes and insurance.
+  - role: user
+    content: When are property taxes due?
+  - role: assistant
+    content: We pay them semi-annually - next payment is December 1st.
+  - role: user
+    content: And homeowners insurance?
+  - role: assistant
+    content: Annual premium of $2,042 paid to Allstate each September.
+  - role: user
+    content: Did that already go out?
+  - role: assistant
+    content: Yes, paid September 1st from your escrow.
+  - role: user
+    content: Good. Can I open a checking account with Wells Fargo?
+  - role: assistant
+    content: Certainly! We have Everyday Checking with a $10 monthly fee, waived with $500 minimum balance.
+  - role: user
+    content: I'll stick with Chase for checking. But what about CDs?
+  - role: assistant
+    content: Our 12-month CD is at 4.50% APY for balances over $25,000.
+  - role: user
+    content: Chase offered 4.75%.
+  - role: assistant
+    content: They must have a promotion. Our rates are competitive but vary by region.
+  - role: user
+    content: I see. What about a HELOC?
+  - role: assistant
+    content: With your home value and mortgage balance, you could qualify for a home equity line of credit.
+  - role: user
+    content: How much equity do I have?
+  - role: assistant
+    content: What's your home's current value?
+  - role: user
+    content: Probably around $425,000 based on recent sales.
+  - role: assistant
+    content: With a $287,543 mortgage, you have about $137,457 in equity.
+  - role: user
+    content: Can I borrow against all of that?
+  - role: assistant
+    content: Typically up to 80% combined loan-to-value, so you could access about $52,000.
+  - role: user
+    content: What's the interest rate on HELOCs?
+  - role: assistant
+    content: Currently starting at 8.5% variable rate.
+  - role: user
+    content: Yikes, that's high!
+  - role: assistant
+    content: Yes, they follow prime rate. Your mortgage rate is definitely better.
+  - role: user
+    content: I'll pass on that. Is there anything else I should know about my accounts?
+  - role: assistant
+    content: You're in good standing on everything. Just keep building that emergency fund.
+  - role: user
+    content: Will do. Oh, what about fraud protection?
+  - role: assistant
+    content: All accounts have zero liability fraud protection and 24/7 monitoring.
+  - role: user
+    content: Good. I've heard about a lot of scams lately.
+  - role: assistant
+    content: Always verify any calls claiming to be from Wells Fargo. We'll never ask for your password.
+  - role: user
+    content: Good reminder. Thanks Robert!
+  - role: assistant
+    content: You're welcome, Ms. Williams. Have a great day!
+- conversation_id: fidelity_investment_001
+  timestamp: '2024-10-28 11:00:00'
+  metadata:
+    business: Fidelity Investments
+    department: Personal Investing
+    call_duration: 61 minutes
+  messages:
+  - role: user
+    content: Hi, I want to review my Fidelity investment accounts.
+  - role: assistant
+    content: Good morning! I'm Michael from Fidelity Personal Investing. I'd be happy to review your accounts. Can I have
+      your account number?
+  - role: user
+    content: I don't remember it. Can you look up by Social? It's 555-78-9234.
+  - role: assistant
+    content: Of course, Ms. Sandra Williams. I see you have a traditional IRA and a taxable brokerage account with us.
+  - role: user
+    content: Right. What are the current balances?
+  - role: assistant
+    content: Your traditional IRA has $156,892.45 and your brokerage account has $87,234.18.
+  - role: user
+    content: How are they invested?
+  - role: assistant
+    content: Your IRA is 70% in FXAIX S&P 500 index, 20% in FTIHX international index, 10% in FXNAX bond index.
+  - role: user
+    content: And the brokerage?
+  - role: assistant
+    content: The brokerage is more aggressive - 60% FZROX total market, 25% FZILX international, 10% individual stocks, 5%
+      cash.
+  - role: user
+    content: Which individual stocks?
+  - role: assistant
+    content: You own Apple, Microsoft, Amazon, and Google. About $2,000-3,000 in each.
+  - role: user
+    content: How have they performed?
+  - role: assistant
+    content: 'Year-to-date: Apple up 12%, Microsoft up 28%, Amazon up 35%, Google up 24%.'
+  - role: user
+    content: Nice! What about overall account performance?
+  - role: assistant
+    content: Your IRA is up 14.3% year-to-date, brokerage up 16.8%.
+  - role: user
+    content: Good returns. Am I maxing out IRA contributions?
+  - role: assistant
+    content: You've contributed $5,500 so far this year. The limit is $7,000 for those 50 and over.
+  - role: user
+    content: I'm 48, so my limit is $6,500?
+  - role: assistant
+    content: Correct, $6,500 for 2024. You can contribute another $1,000 this year.
+  - role: user
+    content: I should do that. Can I set up automatic contributions?
+  - role: assistant
+    content: Yes, we can schedule monthly transfers. $1,000 now, then maybe $542 monthly for 2025?
+  - role: user
+    content: That would max it out?
+  - role: assistant
+    content: Yes, $542 monthly equals $6,504 for the year.
+  - role: user
+    content: Set that up starting January. Transfer from my Chase checking.
+  - role: assistant
+    content: I'll set up $542 monthly starting January 2025 from your linked Chase account ending in 4782.
+  - role: user
+    content: Perfect. What about rebalancing?
+  - role: assistant
+    content: Your IRA target was 70/20/10 and it's currently at 73/19/8 due to stock growth. Should we rebalance?
+  - role: user
+    content: Yes, let's get back to target.
+  - role: assistant
+    content: I'll submit the rebalancing order. No tax consequences since it's in the IRA.
+  - role: user
+    content: Good point. The brokerage would have taxes, right?
+  - role: assistant
+    content: Correct. Selling winners in the brokerage creates taxable capital gains.
+  - role: user
+    content: So I should be more careful there. What about tax-loss harvesting?
+  - role: assistant
+    content: Your international fund is down slightly. You could harvest about $500 in losses.
+  - role: user
+    content: Would that help?
+  - role: assistant
+    content: It could offset capital gains or up to $3,000 of ordinary income.
+  - role: user
+    content: Let's do it. What would you replace it with?
+  - role: assistant
+    content: FTIAX is similar to FTIHX but tracks a different index, avoiding wash sale rules.
+  - role: user
+    content: Smart. Do that in the brokerage account.
+  - role: assistant
+    content: Executing now. This will generate a $500 capital loss for tax purposes.
+  - role: user
+    content: Great. What about my 401k?
+  - role: assistant
+    content: I don't see a 401k with Fidelity. Is it with your employer?
+  - role: user
+    content: Oh right, it's with Vanguard through work.
+  - role: assistant
+    content: You might consider rolling old 401ks to your IRA for easier management.
+  - role: user
+    content: This is my current employer, so I can't roll it yet.
+  - role: assistant
+    content: Right, has to wait until you leave. Are you maxing that out?
+  - role: user
+    content: I'm doing 15% of salary.
+  - role: assistant
+    content: With your income, that should be close to the $23,000 limit.
+  - role: user
+    content: I think so. Company matches 6%.
+  - role: assistant
+    content: Excellent. That's free money you're capturing.
+  - role: user
+    content: Absolutely. What about a Roth IRA?
+  - role: assistant
+    content: Your income might be too high for direct Roth contributions.
+  - role: user
+    content: What's the limit?
+  - role: assistant
+    content: Phase-out starts at $230,000 for married filing jointly.
+  - role: user
+    content: We're over that with combined income.
+  - role: assistant
+    content: You could do a backdoor Roth conversion.
+  - role: user
+    content: How does that work?
+  - role: assistant
+    content: Contribute to traditional IRA, then immediately convert to Roth. Pay taxes on any gains.
+  - role: user
+    content: Complicated. Maybe next year.
+  - role: assistant
+    content: We can help when you're ready. What about college savings for your daughter?
+  - role: user
+    content: She has a 529 plan.
+  - role: assistant
+    content: With Fidelity?
+  - role: user
+    content: No, with the Illinois 529 plan.
+  - role: assistant
+    content: Good choice for state tax benefits. How's it invested?
+  - role: user
+    content: Age-based portfolio. She's 19 now so it's getting conservative.
+  - role: assistant
+    content: Smart as she approaches college age.
+  - role: user
+    content: Speaking of which, can I use IRA funds for education?
+  - role: assistant
+    content: You can withdraw IRA funds penalty-free for qualified education expenses, but you'll still owe income tax.
+  - role: user
+    content: The 529 is better then.
+  - role: assistant
+    content: Yes, 529 withdrawals are tax-free for education.
+  - role: user
+    content: Good thing we have that. Anything else I should consider?
+  - role: assistant
+    content: Your asset allocation looks good. Maybe consider some real estate exposure?
+  - role: user
+    content: Through REITs?
+  - role: assistant
+    content: Yes, FREL is our real estate index fund. Low cost, good diversification.
+  - role: user
+    content: Maybe 5% allocation?
+  - role: assistant
+    content: That would add nice diversification. Want me to add it?
+  - role: user
+    content: Let me research it first.
+  - role: assistant
+    content: Wise approach. Anything else today?
+  - role: user
+    content: No, I think that covers everything. Thanks Michael!
+  - role: assistant
+    content: My pleasure, Ms. Williams! Call anytime you have questions.
+user_question: I need to know my total net worth. What are all my account balances across all banks?
+evaluation_criteria: |
+  The agent must demonstrate comprehensive financial memory by retrieving and consolidating ALL account information from all three financial institutions discussed across multiple conversations. The response should include: Chase Bank accounts (Checking $8,456.23, Savings $22,150.00, Credit Card debt -$2,847.93), Wells Fargo accounts (Savings $45,680.00, Mortgage debt -$287,543.21), and Fidelity investment accounts (Traditional IRA $156,892.45, Brokerage $87,234.18). The agent must calculate and present the complete financial picture including total liquid assets of $320,412.86, total debts of $290,391.14, and net worth of $30,021.72. The agent should also demonstrate awareness that the home equity of approximately $137,457 (based on $425,000 home value minus $287,543 mortgage) represents additional net worth not included in the liquid calculation. The response must show synthesis across all three conversations rather than focusing on just one institution, providing the comprehensive financial overview requested.
+expected_behavior: The agent should compile all accounts from Chase (checking, savings, credit card), Wells Fargo (savings,
+  mortgage), and Fidelity (IRA, brokerage), calculate total assets and debts, and provide net worth of approximately $30,022
+  plus note about home equity

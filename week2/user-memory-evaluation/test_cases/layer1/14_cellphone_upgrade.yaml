@@ -1,0 +1,228 @@
+test_id: layer1_14_cellphone_upgrade
+category: layer1
+title: Cell Phone Plan Upgrade - Device and Plan Details Retrieval
+description: Test agent's ability to recall specific phone models, plan features, pricing, and trade-in values from a detailed upgrade discussion
+conversation_histories:
+  - conversation_id: phone_upgrade_001
+    timestamp: "2024-11-25 13:45:00"
+    metadata:
+      business: "Verizon Wireless"
+      department: "Customer Upgrades"
+      call_duration: "56 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm interested in upgrading my phone and possibly changing my plan."
+      - role: assistant
+        content: "Hello! I'm Derek from Verizon Customer Upgrades. I'd be happy to help you explore your options. May I have your account number or phone number?"
+      - role: user
+        content: "My number is 415-555-7823."
+      - role: assistant
+        content: "Thank you. I see the account for... Mr. Jonathan Park?"
+      - role: user
+        content: "That's me."
+      - role: assistant
+        content: "Perfect. I see you've been with us since 2018. You currently have an iPhone 12 Pro on our Play More Unlimited plan at $90 per month."
+      - role: user
+        content: "Right. I'm thinking about getting the new iPhone 15 Pro Max."
+      - role: assistant
+        content: "Excellent choice. The 15 Pro Max comes in several storage options - 256GB at $1,199, 512GB at $1,399, or 1TB at $1,599."
+      - role: user
+        content: "What's my current phone's storage?"
+      - role: assistant
+        content: "Your iPhone 12 Pro is the 256GB model."
+      - role: user
+        content: "I'm always running out of space. What about the 512GB?"
+      - role: assistant
+        content: "The 512GB is $1,399 retail. With our device payment plan, that's $38.86 per month for 36 months."
+      - role: user
+        content: "Do you still do 24-month plans?"
+      - role: assistant
+        content: "Yes, 24 months would be $58.29 per month."
+      - role: user
+        content: "What about trade-in value for my current phone?"
+      - role: assistant
+        content: "Let me check... Is your iPhone 12 Pro in good condition? No cracks, water damage?"
+      - role: user
+        content: "It's in perfect condition. I've had it in a case with screen protector since day one."
+      - role: assistant
+        content: "Excellent. For a 256GB iPhone 12 Pro in good condition, we're offering $440 trade-in credit."
+      - role: user
+        content: "How does that apply?"
+      - role: assistant
+        content: "It's distributed as monthly credits over your payment term. For 36 months, that's $12.22 off per month, making your payment $26.64."
+      - role: user
+        content: "That's reasonable. What colors does the 15 Pro Max come in?"
+      - role: assistant
+        content: "Natural Titanium, Blue Titanium, White Titanium, and Black Titanium."
+      - role: user
+        content: "I like the Blue Titanium. Now what about plans? I feel like $90 is high."
+      - role: assistant
+        content: "Let me review our current plans. Your Play More includes unlimited premium data, 30GB mobile hotspot, and streaming perks."
+      - role: user
+        content: "What streaming perks do I have?"
+      - role: assistant
+        content: "Disney Bundle - Disney+, Hulu, and ESPN+, plus Apple Music."
+      - role: user
+        content: "I don't really use those. What are my other options?"
+      - role: assistant
+        content: "We have Start Unlimited at $70 per month - unlimited data but no hotspot or perks."
+      - role: user
+        content: "That might work. What about in between?"
+      - role: assistant
+        content: "Do More Unlimited is $80. It includes 50GB premium data and 25GB hotspot, but fewer entertainment perks."
+      - role: user
+        content: "What do you mean by premium data?"
+      - role: assistant
+        content: "After 50GB, your speeds may be temporarily slowed during network congestion. Start Unlimited doesn't have guaranteed premium data."
+      - role: user
+        content: "I use about 35GB per month usually."
+      - role: assistant
+        content: "Then Do More would ensure you never experience slowdowns. Start Unlimited might slow during busy times even under 35GB."
+      - role: user
+        content: "Let's go with Do More then. So $10 less per month."
+      - role: assistant
+        content: "Correct. From $90 to $80 monthly for the plan."
+      - role: user
+        content: "Any activation fees?"
+      - role: assistant
+        content: "There's a $35 upgrade fee, but I can offer you a $35 credit to offset that."
+      - role: user
+        content: "Great. What about insurance?"
+      - role: assistant
+        content: "Currently you have Total Mobile Protection at $15 per month. For the iPhone 15 Pro Max, it would be $17 per month."
+      - role: user
+        content: "What does that cover again?"
+      - role: assistant
+        content: "Unlimited cracked screen repairs for $29, device replacement for loss/theft/damage with $149 deductible for the 15 Pro Max."
+      - role: user
+        content: "I've never used it in three years."
+      - role: assistant
+        content: "You could switch to basic protection at $14 monthly - covers everything except loss and theft."
+      - role: user
+        content: "Actually, my credit card has phone protection. Can I cancel insurance?"
+      - role: assistant
+        content: "Absolutely. That saves you $17 per month. Just verify your card's coverage terms."
+      - role: user
+        content: "They cover up to $800 with a $50 deductible."
+      - role: assistant
+        content: "That's decent coverage. The 15 Pro Max is $1,399, so you'd have gap coverage risk of $599."
+      - role: user
+        content: "I'll take that risk. What about accessories?"
+      - role: assistant
+        content: "Any interest in cases, screen protectors, chargers?"
+      - role: user
+        content: "What's the best case for protection?"
+      - role: assistant
+        content: "The OtterBox Defender series at $64.99 or the Verizon exclusive Pelican Voyager at $59.99."
+      - role: user
+        content: "I'll take the Pelican. What about screen protectors?"
+      - role: assistant
+        content: "ZAGG Glass Elite is $44.99, or our Verizon tempered glass is $29.99."
+      - role: user
+        content: "The Verizon one is fine. Do I need a new charger?"
+      - role: assistant
+        content: "The phone comes with a USB-C cable but no power adapter. Do you have USB-C adapters?"
+      - role: user
+        content: "Just old USB-A ones."
+      - role: assistant
+        content: "The 20W Apple adapter is $29, or a third-party Anker 30W is $24.99."
+      - role: user
+        content: "Let's go with the Anker. Better value."
+      - role: assistant
+        content: "Smart choice. Anything else? Wireless charger, AirPods?"
+      - role: user
+        content: "No, I'm good. Can we review the total?"
+      - role: assistant
+        content: "iPhone 15 Pro Max 512GB Blue Titanium: $1,399, minus $440 trade-in = $959 financed."
+      - role: user
+        content: "Monthly payment?"
+      - role: assistant
+        content: "Over 36 months: $26.64 per month after trade-in credits."
+      - role: user
+        content: "And accessories?"
+      - role: assistant
+        content: "Pelican case $59.99, screen protector $29.99, Anker charger $24.99, total $114.97."
+      - role: user
+        content: "Can those be added to my monthly bill?"
+      - role: assistant
+        content: "Yes, accessories can be split over 6 months at $19.16 per month, no interest."
+      - role: user
+        content: "Perfect. And my plan change?"
+      - role: assistant
+        content: "Moving from Play More at $90 to Do More at $80, saving $10 monthly."
+      - role: user
+        content: "So my new monthly bill would be?"
+      - role: assistant
+        content: "$80 plan plus $26.64 phone payment, plus $19.16 for accessories for the first 6 months."
+      - role: user
+        content: "That's $125.80 for six months, then $106.64 after?"
+      - role: assistant
+        content: "Exactly right. Currently you're paying $90 for plan plus $15 insurance, so $105 total."
+      - role: user
+        content: "So basically the same after the accessories are paid off."
+      - role: assistant
+        content: "Yes, and you get a much better phone with double the storage."
+      - role: user
+        content: "When would the new phone arrive?"
+      - role: assistant
+        content: "The Blue Titanium 512GB is in stock. With free 2-day shipping, you'd have it by Wednesday."
+      - role: user
+        content: "Do I send my old phone back first?"
+      - role: assistant
+        content: "No, we include a prepaid trade-in kit. You have 30 days to send it after receiving the new phone."
+      - role: user
+        content: "What if I forget?"
+      - role: assistant
+        content: "You'd lose the trade-in credit and be charged the full $38.86 monthly instead of $26.64."
+      - role: user
+        content: "I'll set a reminder. Can I transfer my data at a store?"
+      - role: assistant
+        content: "Yes, any corporate store offers free data transfer. Or you can use iCloud backup yourself."
+      - role: user
+        content: "I'll do it myself. What about my current phone number?"
+      - role: assistant
+        content: "Your 415-555-7823 number stays the same. We'll include a SIM card, or you can use eSIM."
+      - role: user
+        content: "What's easier?"
+      - role: assistant
+        content: "eSIM - just scan a QR code we'll email you. No physical card needed."
+      - role: user
+        content: "Let's do eSIM then. Oh, what about international service?"
+      - role: assistant
+        content: "Do More includes Mexico and Canada. Other countries are $10 per day with TravelPass."
+      - role: user
+        content: "I'm going to Japan in March. How does that work?"
+      - role: assistant
+        content: "TravelPass charges $10 only on days you use your phone in Japan. Includes your plan's data and minutes."
+      - role: user
+        content: "Reasonable. Okay, let's proceed with the order."
+      - role: assistant
+        content: "Perfect! I'll process this now. You'll receive email confirmation within 10 minutes."
+      - role: user
+        content: "Great, thank you Derek!"
+      - role: assistant
+        content: "You're welcome! Your order number will be VZ-789456123. Is there anything else I can help with today?"
+      - role: user
+        content: "No, that covers everything. Thanks again!"
+      - role: assistant
+        content: "My pleasure, Mr. Park. Enjoy your new iPhone 15 Pro Max!"
+user_question: "What were the exact model, storage, and color of the phone I ordered, and what was my total monthly cost breakdown?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Phone ordered:
+  - Model: iPhone 15 Pro Max
+  - Storage: 512GB
+  - Color: Blue Titanium
+  - Retail price: $1,399
+  
+  Monthly cost breakdown:
+  - Plan (Do More Unlimited): $80
+  - Phone payment after trade-in: $26.64 (36 months)
+  - Accessories (first 6 months): $19.16
+  - Total for first 6 months: $125.80
+  - Total after 6 months: $106.64
+  
+  Trade-in credit: $440 for iPhone 12 Pro 256GB
+  
+  The response should include all these specific details about the order.

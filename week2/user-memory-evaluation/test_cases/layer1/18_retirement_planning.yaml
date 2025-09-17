@@ -1,0 +1,212 @@
+test_id: layer1_18_retirement_planning
+category: layer1
+title: Retirement Account Consultation - Investment Portfolio Details
+description: Test agent's ability to recall retirement account balances, investment allocations, contribution limits, and retirement projections
+conversation_histories:
+  - conversation_id: retirement_plan_001
+    timestamp: "2024-10-28 11:00:00"
+    metadata:
+      business: "Fidelity Investments"
+      department: "Retirement Planning"
+      call_duration: "57 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'd like to review my retirement accounts and maybe make some changes to my investments."
+      - role: assistant
+        content: "Good morning! I'm Michael from Fidelity Retirement Planning. I'll help you review your accounts. May I have your account number or Social Security number?"
+      - role: user
+        content: "My account number is FID-8827439."
+      - role: assistant
+        content: "Thank you. I have your account here... Ms. Catherine Lewis?"
+      - role: user
+        content: "Yes, that's me."
+      - role: assistant
+        content: "I see you have multiple accounts with us. A traditional IRA, a Roth IRA, and a rollover IRA from a previous 401k."
+      - role: user
+        content: "Right, plus my current 401k through work, though that's with Vanguard."
+      - role: assistant
+        content: "Let's review what you have with us first. Your traditional IRA has a current balance of $127,845."
+      - role: user
+        content: "How's that invested?"
+      - role: assistant
+        content: "60% in FXAIX - our S&P 500 index fund, 30% in FTIHX - international index, and 10% in FXNAX - bond index."
+      - role: user
+        content: "What about the Roth?"
+      - role: assistant
+        content: "Your Roth IRA balance is $73,420. It's invested more aggressively - 70% FZROX total market index, 20% FZILX international, 10% FNILX large cap."
+      - role: user
+        content: "And the rollover?"
+      - role: assistant
+        content: "The rollover IRA from your previous employer has $248,500. Currently in our Freedom 2045 target-date fund."
+      - role: user
+        content: "So my total with Fidelity is?"
+      - role: assistant
+        content: "Across all three accounts: $449,765."
+      - role: user
+        content: "How old am I in your records?"
+      - role: assistant
+        content: "You're 47, birth date showing May 15, 1977."
+      - role: user
+        content: "Right. So I have about 20 years until retirement."
+      - role: assistant
+        content: "If you retire at 67, yes. What's your target retirement age?"
+      - role: user
+        content: "I'd love to retire at 62 if possible."
+      - role: assistant
+        content: "That's 15 years. Let's look at projections. What's your current salary?"
+      - role: user
+        content: "$135,000 per year."
+      - role: assistant
+        content: "And how much are you contributing annually to retirement accounts?"
+      - role: user
+        content: "I max out my 401k at work, plus $7,000 to the Roth IRA."
+      - role: assistant
+        content: "So that's $23,000 to the 401k for 2024, plus $7,000 Roth, total $30,000 annually."
+      - role: user
+        content: "Right. My employer matches 6% too."
+      - role: assistant
+        content: "That's another $8,100 annually. Does your spouse have retirement accounts?"
+      - role: user
+        content: "Yes, my husband has his own 401k. He has about $380,000 saved."
+      - role: assistant
+        content: "Combined, you have approximately $830,000 currently. With continued contributions, let me calculate..."
+      - role: user
+        content: "What rate of return are you assuming?"
+      - role: assistant
+        content: "Let's use 7% average annual return, which is conservative but realistic."
+      - role: user
+        content: "Okay."
+      - role: assistant
+        content: "Contributing $38,100 annually, with 7% returns, you'd have approximately $2.4 million in 15 years."
+      - role: user
+        content: "Is that enough to retire at 62?"
+      - role: assistant
+        content: "Using the 4% rule, that would provide $96,000 annual income. What do you estimate needing in retirement?"
+      - role: user
+        content: "We'd like about $120,000 per year to maintain our lifestyle."
+      - role: assistant
+        content: "There's a gap of $24,000 annually. Will you have other income sources?"
+      - role: user
+        content: "Social Security eventually."
+      - role: assistant
+        content: "At 62, you can claim early but at reduced benefits. Full retirement age for you is 67."
+      - role: user
+        content: "What would I get at 62 versus 67?"
+      - role: assistant
+        content: "Based on your earnings, estimated $2,100 monthly at 62, or $2,950 at 67."
+      - role: user
+        content: "So $25,200 annually at 62."
+      - role: assistant
+        content: "Correct. That covers your gap. Your husband would have his Social Security too."
+      - role: user
+        content: "He's two years older, so he'd get his sooner."
+      - role: assistant
+        content: "Good point. Now, should we adjust your investment allocation?"
+      - role: user
+        content: "I'm wondering if I should be more conservative as I get closer to retirement."
+      - role: assistant
+        content: "Current overall allocation across your Fidelity accounts is roughly 65% stocks, 35% bonds. That's appropriate for your age."
+      - role: user
+        content: "Should I increase bonds?"
+      - role: assistant
+        content: "A common rule is 'age in bonds' - so 47% bonds for you. But with 15 years to retirement, you can stay aggressive."
+      - role: user
+        content: "What would you recommend?"
+      - role: assistant
+        content: "I'd suggest 60% stocks, 40% bonds now, gradually shifting to 40% stocks, 60% bonds by retirement."
+      - role: user
+        content: "How do I rebalance?"
+      - role: assistant
+        content: "We can set up automatic rebalancing quarterly. Or you can do it manually annually."
+      - role: user
+        content: "What's the cost difference?"
+      - role: assistant
+        content: "Automatic rebalancing is free. The index funds you own have expense ratios of 0.015% to 0.045%."
+      - role: user
+        content: "That's pretty low."
+      - role: assistant
+        content: "Yes, index funds keep costs minimal. Active funds would be 0.5% to 1% or higher."
+      - role: user
+        content: "Let's stick with index funds then. But maybe adjust the allocation?"
+      - role: assistant
+        content: "For the traditional IRA, I'd suggest: 50% FXAIX S&P 500, 20% FTIHX international, 30% FXNAX bonds."
+      - role: user
+        content: "And the Roth?"
+      - role: assistant
+        content: "Keep the Roth aggressive since it grows tax-free: 60% FZROX, 30% FZILX, 10% bonds."
+      - role: user
+        content: "What about the rollover in the target-date fund?"
+      - role: assistant
+        content: "The Freedom 2045 fund automatically adjusts allocation. Currently it's 58% stocks, 42% bonds."
+      - role: user
+        content: "Should I keep it there or pick individual funds?"
+      - role: assistant
+        content: "Target-date funds are convenient but slightly higher fees - 0.12% versus 0.015% for index funds."
+      - role: user
+        content: "That's not much difference."
+      - role: assistant
+        content: "On $248,500, it's about $250 per year extra in fees."
+      - role: user
+        content: "I'll leave it for convenience then."
+      - role: assistant
+        content: "Reasonable choice. Any questions about contribution limits for next year?"
+      - role: user
+        content: "What are the 2025 limits?"
+      - role: assistant
+        content: "401k limit increases to $23,500, IRA stays at $7,000. Catch-up contributions at age 50 add $7,500 and $1,000 respectively."
+      - role: user
+        content: "So when I turn 50, I can contribute how much total?"
+      - role: assistant
+        content: "$31,000 to 401k, $8,000 to IRA, total $39,000 personally."
+      - role: user
+        content: "That's a nice boost. Should I prioritize Roth or traditional?"
+      - role: assistant
+        content: "At your income level, traditional 401k gives you tax deductions now. Roth IRA for tax-free growth."
+      - role: user
+        content: "Can I do backdoor Roth conversions?"
+      - role: assistant
+        content: "Your income might be too high for direct Roth IRA contributions. What's your household AGI?"
+      - role: user
+        content: "About $245,000 combined."
+      - role: assistant
+        content: "You're over the $240,000 limit for married filing jointly. Backdoor Roth would work."
+      - role: user
+        content: "How does that work exactly?"
+      - role: assistant
+        content: "Contribute $7,000 to traditional IRA as non-deductible, then immediately convert to Roth."
+      - role: user
+        content: "Any tax implications?"
+      - role: assistant
+        content: "Only on any gains between contribution and conversion. If done quickly, minimal or zero tax."
+      - role: user
+        content: "I should do that going forward then."
+      - role: assistant
+        content: "Yes, it maintains your Roth contributions despite high income."
+      - role: user
+        content: "Perfect. Can you email me a summary of these recommendations?"
+      - role: assistant
+        content: "Absolutely. Email on file is clewis.finance@email.com?"
+      - role: user
+        content: "Yes, that's correct."
+      - role: assistant
+        content: "I'll send a detailed summary with allocation recommendations and projection charts within an hour."
+      - role: user
+        content: "Thank you, Michael. This was very helpful!"
+      - role: assistant
+        content: "You're welcome, Ms. Lewis. You're well on track for a comfortable retirement at 62!"
+user_question: "What were my three Fidelity account balances and their current investment allocations?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Account balances:
+  1. Traditional IRA: $127,845
+  2. Roth IRA: $73,420
+  3. Rollover IRA: $248,500
+  Total: $449,765
+  
+  Current allocations:
+  - Traditional IRA: 60% FXAIX (S&P 500), 30% FTIHX (international), 10% FXNAX (bonds)
+  - Roth IRA: 70% FZROX (total market), 20% FZILX (international), 10% FNILX (large cap)
+  - Rollover IRA: 100% in Freedom 2045 target-date fund (currently 58% stocks, 42% bonds)
+  
+  The response should include all three account balances and their specific fund allocations.

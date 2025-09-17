@@ -1,0 +1,530 @@
+test_id: layer2_16_family_event_conflicting_input
+category: layer2
+title: Wedding Planning with Conflicting Family Requirements
+description: Test agent's ability to reconcile conflicting information from different family members planning the same event, where each conversation modifies or contradicts previous arrangements
+conversation_histories:
+  - conversation_id: mother_planning_001
+    timestamp: "2024-08-15 10:00:00"
+    metadata:
+      business: "Elegant Events Planning"
+      department: "Wedding Coordination"
+      call_duration: "55 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm calling about planning my daughter Emma's wedding reception."
+      - role: assistant
+        content: "Hello! I'm Victoria from Elegant Events. How exciting! When is the wedding?"
+      - role: user
+        content: "June 15th, 2025. We need to start planning now."
+      - role: assistant
+        content: "Perfect timing. I'm Margaret Thompson, Emma's mother?"
+      - role: user
+        content: "Yes, that's right. Emma asked me to handle the reception details."
+      - role: assistant
+        content: "Wonderful. What venue are you considering?"
+      - role: user
+        content: "The Riverside Country Club. We're members there."
+      - role: assistant
+        content: "Beautiful venue. How many guests are you expecting?"
+      - role: user
+        content: "About 200. Our family is large and we have many friends."
+      - role: assistant
+        content: "The Riverside ballroom holds 250, so perfect fit. What's your vision?"
+      - role: user
+        content: "Classic, elegant. White and gold color scheme, lots of flowers."
+      - role: assistant
+        content: "Timeless choice. Budget range?"
+      - role: user
+        content: "We're thinking $50,000 for the reception."
+      - role: assistant
+        content: "That's workable for 200 guests at Riverside. About $250 per person."
+      - role: user
+        content: "What does that include?"
+      - role: assistant
+        content: "Venue, catering, basic bar, standard flowers, DJ, and coordination."
+      - role: user
+        content: "What about the menu?"
+      - role: assistant
+        content: "Riverside offers plated or buffet. Preference?"
+      - role: user
+        content: "Plated is more elegant. Three courses?"
+      - role: assistant
+        content: "Yes. Choice of two entrees - typically beef and fish or chicken."
+      - role: user
+        content: "Filet mignon and salmon would be perfect."
+      - role: assistant
+        content: "Excellent. That's their premium menu at $125 per person."
+      - role: user
+        content: "What about dietary restrictions?"
+      - role: assistant
+        content: "They always provide vegetarian and can accommodate allergies with notice."
+      - role: user
+        content: "Emma's future in-laws keep kosher. Can they accommodate?"
+      - role: assistant
+        content: "Riverside can provide kosher meals with advance notice, additional $20 per meal."
+      - role: user
+        content: "How many might need that?"
+      - role: assistant
+        content: "How large is the groom's family?"
+      - role: user
+        content: "About 30 people, but not all keep strictly kosher."
+      - role: assistant
+        content: "Plan for 15-20 kosher meals to be safe?"
+      - role: user
+        content: "Yes. Now, what about the bar?"
+      - role: assistant
+        content: "Standard includes beer, wine, basic cocktails for 4 hours."
+      - role: user
+        content: "We'd like premium liquor available."
+      - role: assistant
+        content: "Premium bar adds $15 per person."
+      - role: user
+        content: "That's fine. We want the best for Emma."
+      - role: assistant
+        content: "Of course. What about the ceremony?"
+      - role: user
+        content: "That's at our church, St. Mary's, at 2 PM."
+      - role: assistant
+        content: "So cocktail hour at Riverside would start around 4 PM?"
+      - role: user
+        content: "Yes, ceremony plus photos should be done by then."
+      - role: assistant
+        content: "Perfect timing. Reception 4-10 PM?"
+      - role: user
+        content: "Can we extend to 11 PM?"
+      - role: assistant
+        content: "Yes, additional hour is $500."
+      - role: user
+        content: "Let's do that. What about flowers?"
+      - role: assistant
+        content: "Basic package includes centerpieces and head table arrangement."
+      - role: user
+        content: "I want roses, peonies, and gardenias throughout."
+      - role: assistant
+        content: "Those are premium flowers. Upgrade would be about $3,000."
+      - role: user
+        content: "Emma loves peonies. It's worth it."
+      - role: assistant
+        content: "Absolutely. What about music?"
+      - role: user
+        content: "A DJ for dancing, but maybe live music for cocktail hour?"
+      - role: assistant
+        content: "String quartet for cocktails adds $1,200."
+      - role: user
+        content: "That would be lovely. Book it."
+      - role: assistant
+        content: "Will do. Transportation between venues?"
+      - role: user
+        content: "We'll arrange that separately."
+      - role: assistant
+        content: "Fine. What about cake?"
+      - role: user
+        content: "Emma wants a 5-tier classic white cake."
+      - role: assistant
+        content: "Riverside's pastry chef can create that, about $1,200."
+      - role: user
+        content: "With real flowers as decoration?"
+      - role: assistant
+        content: "Yes, coordinated with your florist."
+      - role: user
+        content: "Perfect. Can we taste test?"
+      - role: assistant
+        content: "Absolutely. Cake tasting can be scheduled anytime."
+      - role: user
+        content: "What about a rehearsal dinner?"
+      - role: assistant
+        content: "That's typically hosted by the groom's family."
+      - role: user
+        content: "Oh right. They mentioned doing it at their synagogue."
+      - role: assistant
+        content: "That works. Keeps the events separate."
+      - role: user
+        content: "Now, about decorations beyond flowers?"
+      - role: assistant
+        content: "Uplighting, draping, special linens?"
+      - role: user
+        content: "Gold uplighting would be beautiful."
+      - role: assistant
+        content: "Adds $800 for the ballroom."
+      - role: user
+        content: "Yes, add it. What's our running total?"
+      - role: assistant
+        content: "Let me calculate... About $47,500 so far."
+      - role: user
+        content: "Still under budget. What else should we consider?"
+      - role: assistant
+        content: "Photo booth? Favors? Welcome bags?"
+      - role: user
+        content: "Photo booth sounds fun for young people."
+      - role: assistant
+        content: "$800 for 4 hours with props and prints."
+      - role: user
+        content: "Add it. That brings us close to $50,000?"
+      - role: assistant
+        content: "Yes, about $48,300 total."
+      - role: user
+        content: "Perfect. Let's book it!"
+      - role: assistant
+        content: "I'll prepare the contract. 25% deposit required."
+      - role: user
+        content: "So $12,075 to hold everything?"
+      - role: assistant
+        content: "Correct. Due within two weeks."
+      - role: user
+        content: "I'll discuss with my husband and Emma tonight."
+      - role: assistant
+        content: "Of course. This is a big decision."
+  - conversation_id: bride_changes_001
+    timestamp: "2024-08-20 15:00:00"
+    metadata:
+      business: "Elegant Events Planning"
+      department: "Wedding Coordination"
+      call_duration: "48 minutes"
+    messages:
+      - role: user
+        content: "Hi Victoria, this is Emma Thompson, the bride. My mom gave me your contact."
+      - role: assistant
+        content: "Emma! Congratulations! Your mother and I had a wonderful planning session."
+      - role: user
+        content: "Yes, but I need to change several things she suggested."
+      - role: assistant
+        content: "Of course, it's your special day. What would you like to adjust?"
+      - role: user
+        content: "First, 200 guests is too many. We want intimate, maybe 120."
+      - role: assistant
+        content: "That's a significant reduction. Have you discussed with your mother?"
+      - role: user
+        content: "Not yet, but it's my wedding. David and I want smaller."
+      - role: assistant
+        content: "I understand. 120 guests changes the dynamics and budget considerably."
+      - role: user
+        content: "That's fine. Also, the country club feels stuffy."
+      - role: assistant
+        content: "What venue appeals to you?"
+      - role: user
+        content: "The Garden Estate downtown. It's more modern and artistic."
+      - role: assistant
+        content: "Beautiful choice! Very different aesthetic. They have availability June 15th?"
+      - role: user
+        content: "I already checked - they do. And it's less expensive."
+      - role: assistant
+        content: "Their packages run about $180 per person for similar services."
+      - role: user
+        content: "See? We'd save money. Also, I don't want white and gold."
+      - role: assistant
+        content: "What colors are you envisioning?"
+      - role: user
+        content: "Dusty blue, blush pink, and sage green. More organic."
+      - role: assistant
+        content: "Lovely palette. Much softer than your mother's vision."
+      - role: user
+        content: "She means well but has different taste. And about the food..."
+      - role: assistant
+        content: "Not filet and salmon?"
+      - role: user
+        content: "We want food stations, not plated. More casual and fun."
+      - role: assistant
+        content: "Stations encourage mingling. What types?"
+      - role: user
+        content: "Taco bar, sushi station, Mediterranean, and comfort food."
+      - role: assistant
+        content: "Very contemporary. Garden Estate does excellent stations."
+      - role: user
+        content: "And instead of a big cake, we want a dessert bar."
+      - role: assistant
+        content: "Cupcakes, cookies, candy?"
+      - role: user
+        content: "Yes! And donuts. David loves donuts."
+      - role: assistant
+        content: "Fun choice. What about the kosher requirements?"
+      - role: user
+        content: "David's parents aren't that strict. They just avoid pork and shellfish."
+      - role: assistant
+        content: "So no full kosher kitchen needed?"
+      - role: user
+        content: "No, just thoughtful menu options."
+      - role: assistant
+        content: "That simplifies things. Music preferences?"
+      - role: user
+        content: "We want a band, not a DJ. Live music all night."
+      - role: assistant
+        content: "Bands run $3,000-5,000 depending on size."
+      - role: user
+        content: "We budgeted for it. Oh, and no string quartet."
+      - role: assistant
+        content: "What for cocktail hour?"
+      - role: user
+        content: "The band can do acoustic sets."
+      - role: assistant
+        content: "Versatile. Flowers?"
+      - role: user
+        content: "Wildflowers and greenery. Nothing too formal."
+      - role: assistant
+        content: "More affordable and fits the Garden Estate aesthetic."
+      - role: user
+        content: "Exactly. Mom's peonies and roses are too traditional."
+      - role: assistant
+        content: "Your vision is quite different from what we planned."
+      - role: user
+        content: "I know. Can you handle telling her?"
+      - role: assistant
+        content: "This is really a family conversation, Emma."
+      - role: user
+        content: "You're right. But can you price out my vision?"
+      - role: assistant
+        content: "Of course. 120 guests at Garden Estate with stations, band, wildflowers..."
+      - role: user
+        content: "What's the estimate?"
+      - role: assistant
+        content: "Roughly $28,000-30,000 total."
+      - role: user
+        content: "Much less than Mom's $50,000 plan."
+      - role: assistant
+        content: "Yes, but very different event entirely."
+      - role: user
+        content: "It's more 'us'. Can you put this in writing?"
+      - role: assistant
+        content: "I'll create a comparison sheet of both visions."
+      - role: user
+        content: "That might help the conversation with Mom."
+      - role: assistant
+        content: "I recommend including both parents in the next meeting."
+      - role: user
+        content: "And David's parents too?"
+      - role: assistant
+        content: "If they're contributing, yes."
+      - role: user
+        content: "They offered $10,000 toward the reception."
+      - role: assistant
+        content: "That's generous. Your parents' contribution?"
+      - role: user
+        content: "Mom said they'd cover up to $40,000."
+      - role: assistant
+        content: "So $50,000 total budget available."
+      - role: user
+        content: "But we don't need it all. We'd rather save some."
+      - role: assistant
+        content: "Perhaps the savings could go toward honeymoon or house?"
+      - role: user
+        content: "Exactly our thinking!"
+      - role: assistant
+        content: "Smart planning. When can we all meet?"
+      - role: user
+        content: "How about this weekend?"
+      - role: assistant
+        content: "I have Saturday afternoon available."
+      - role: user
+        content: "Perfect. I'll coordinate with everyone."
+      - role: assistant
+        content: "I'll prepare both proposals for discussion."
+  - conversation_id: compromise_meeting_001
+    timestamp: "2024-08-24 14:00:00"
+    metadata:
+      business: "Elegant Events Planning"
+      department: "Wedding Coordination"
+      call_duration: "62 minutes"
+    messages:
+      - role: user
+        content: "Hi Victoria, this is Margaret Thompson. We just finished our family meeting about Emma's wedding."
+      - role: assistant
+        content: "Hello Margaret! How did it go? I know there were different visions."
+      - role: user
+        content: "It was... interesting. We've reached some compromises."
+      - role: assistant
+        content: "That's good! Family harmony is important."
+      - role: user
+        content: "We're going with Emma's venue choice - the Garden Estate."
+      - role: assistant
+        content: "It's beautiful there. And guest count?"
+      - role: user
+        content: "We settled on 150. Not my 200, not her 120."
+      - role: assistant
+        content: "A fair middle ground. That works well at Garden Estate."
+      - role: user
+        content: "But I got to keep the plated dinner, not stations."
+      - role: assistant
+        content: "Garden Estate does excellent plated service too."
+      - role: user
+        content: "Can we do a duo plate? Both beef and fish?"
+      - role: assistant
+        content: "Surf and turf style? That's about $95 per person there."
+      - role: user
+        content: "That works. Emma agreed if she gets her dessert bar."
+      - role: assistant
+        content: "So duo dinner plus dessert bar instead of cake?"
+      - role: user
+        content: "We'll have a small cutting cake for tradition, then the dessert bar."
+      - role: assistant
+        content: "Perfect compromise. What about colors?"
+      - role: user
+        content: "Emma's palette wins - dusty blue and blush."
+      - role: assistant
+        content: "But I get my peonies in those colors!"
+      - role: user
+        content: "Peonies work beautifully in blush. Win-win."
+      - role: assistant
+        content: "Music decision?"
+      - role: user
+        content: "Band for reception, but I got my string quartet for ceremony."
+      - role: assistant
+        content: "Not cocktail hour?"
+      - role: user
+        content: "The band will do cocktail hour acoustic."
+      - role: assistant
+        content: "That flows nicely. Bar service?"
+      - role: user
+        content: "Full premium bar, but Emma wants signature cocktails too."
+      - role: assistant
+        content: "How many signature drinks?"
+      - role: user
+        content: "Two - one representing bride, one groom."
+      - role: assistant
+        content: "That's trendy and personal. Additional cost is minimal."
+      - role: user
+        content: "David's parents had requests too."
+      - role: assistant
+        content: "The kosher considerations?"
+      - role: user
+        content: "They want kosher wine available and no shellfish in anything."
+      - role: assistant
+        content: "So beef instead of surf-and-turf?"
+      - role: user
+        content: "No, they said others can have shellfish, just clear labeling."
+      - role: assistant
+        content: "We can do place cards indicating menu choice."
+      - role: user
+        content: "Perfect. They also offered to pay for the band."
+      - role: assistant
+        content: "That's about $4,000 of the budget."
+      - role: user
+        content: "Yes, very generous. They want some Israeli music included."
+      - role: assistant
+        content: "Most bands can learn a few songs with notice."
+      - role: user
+        content: "Emma's fine with that for one set."
+      - role: assistant
+        content: "Cultural inclusion is beautiful at weddings."
+      - role: user
+        content: "Oh, transportation - we're doing a trolley!"
+      - role: assistant
+        content: "Between church and Garden Estate?"
+      - role: user
+        content: "Yes, holds 35 people for wedding party and immediate family."
+      - role: assistant
+        content: "About $800 for the afternoon."
+      - role: user
+        content: "Book it. Others will drive themselves."
+      - role: assistant
+        content: "What about photography?"
+      - role: user
+        content: "Emma found someone - modern style, $3,500 for full day."
+      - role: assistant
+        content: "Does that include second shooter?"
+      - role: user
+        content: "Yes, and all digital files."
+      - role: assistant
+        content: "Good value. Videography?"
+      - role: user
+        content: "Just ceremony and speeches, $1,500."
+      - role: assistant
+        content: "Reasonable. Let me calculate new total..."
+      - role: user
+        content: "We agreed on $45,000 maximum."
+      - role: assistant
+        content: "With 150 guests, duo plates, Garden Estate, band, dessert bar, flowers..."
+      - role: user
+        content: "Where are we?"
+      - role: assistant
+        content: "About $42,000 all in."
+      - role: user
+        content: "Perfect! Under budget with room for extras."
+      - role: assistant
+        content: "Should we add anything?"
+      - role: user
+        content: "Emma wants a photo booth."
+      - role: assistant
+        content: "$800 for the evening."
+      - role: user
+        content: "Fine. And I want welcome bags for out-of-town guests."
+      - role: assistant
+        content: "How many are traveling?"
+      - role: user
+        content: "About 50 people."
+      - role: assistant
+        content: "$20 per bag with local treats and information?"
+      - role: user
+        content: "Yes, $1,000 total. Still under $45,000?"
+      - role: assistant
+        content: "Yes, total is $43,800."
+      - role: user
+        content: "Excellent. Everyone's happy with this compromise."
+      - role: assistant
+        content: "Should I proceed with contracts?"
+      - role: user
+        content: "Yes, but put Emma as primary contact going forward."
+      - role: assistant
+        content: "Of course. It's her day."
+      - role: user
+        content: "I learned that this week!"
+      - role: assistant
+        content: "You're a wonderful mother for listening."
+      - role: user
+        content: "Send everything to Emma and she'll coordinate deposits."
+      - role: assistant
+        content: "Will do. This will be a beautiful wedding!"
+user_question: "What are the final confirmed details for Emma's wedding after all the family discussions?"
+evaluation_criteria: |
+  The agent must reconcile conflicting inputs across three conversations to provide FINAL arrangements:
+  
+  **FINAL WEDDING DETAILS (After Compromises):**
+  
+  **Venue & Schedule:**
+  - Ceremony: St. Mary's Church at 2 PM
+  - Reception: Garden Estate (Emma's choice, not Riverside Country Club)
+  - Date: June 15, 2025
+  - Cocktail hour: 4 PM
+  - Reception: 4-10 PM (not extended to 11)
+  
+  **Guest Count:**
+  - 150 guests (compromise between mother's 200 and Emma's 120)
+  
+  **Catering:**
+  - Plated dinner (mother's preference) not stations (Emma's preference)
+  - Duo plates: beef and fish ($95/person)
+  - Small cutting cake for tradition
+  - Dessert bar (Emma's preference - cupcakes, cookies, donuts)
+  - Full premium bar with 2 signature cocktails
+  - Kosher wine available, no shellfish for labels
+  
+  **Design & Ambiance:**
+  - Colors: Dusty blue, blush pink, sage green (Emma's choice)
+  - Flowers: Blush peonies and wildflowers (combining both preferences)
+  - Modern aesthetic (not traditional white/gold)
+  
+  **Entertainment:**
+  - String quartet for ceremony (mother's addition)
+  - Band for cocktail hour (acoustic) and reception (not DJ)
+  - Band cost covered by groom's parents ($4,000)
+  - Will include some Israeli music
+  
+  **Additional Elements:**
+  - Photography: $3,500 (Emma's choice)
+  - Videography: $1,500 (ceremony and speeches only)
+  - Trolley transportation: $800
+  - Photo booth: $800
+  - Welcome bags for 50 out-of-town guests: $1,000
+  
+  **Budget:**
+  - Total: $43,800 (under $45,000 agreed maximum)
+  - Parents contributing: $40,000
+  - Groom's parents: $10,000 (paying for band directly)
+  
+  **Key Compromises:**
+  - Venue: Emma won (Garden Estate)
+  - Guest count: Middle ground (150)
+  - Dinner style: Mother won (plated not stations)
+  - Dessert: Emma won (dessert bar)
+  - Colors: Emma won
+  - Flowers: Both (peonies in Emma's colors)
+  
+  The agent must recognize the final meeting supersedes individual preferences stated earlier.

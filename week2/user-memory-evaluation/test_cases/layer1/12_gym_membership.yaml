@@ -1,0 +1,227 @@
+test_id: layer1_12_gym_membership
+category: layer1
+title: Gym Membership Cancellation - Contract Details Retrieval
+description: Test agent's ability to recall membership terms, fees, and personal training package details from a lengthy gym membership discussion
+conversation_histories:
+  - conversation_id: gym_cancel_001
+    timestamp: "2024-11-18 16:30:00"
+    metadata:
+      business: "Lifetime Fitness"
+      department: "Member Services"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to discuss my membership and possibly make some changes."
+      - role: assistant
+        content: "Hello! This is Marcus from Lifetime Fitness Member Services. I'd be happy to help you with your membership. May I have your member ID or phone number?"
+      - role: user
+        content: "My member ID is LF-2021-78432."
+      - role: assistant
+        content: "Thank you. Let me pull up your account... I see here Ms. Rachel Chen?"
+      - role: user
+        content: "Yes, that's me."
+      - role: assistant
+        content: "Perfect. I see you've been a member since March 2021. You currently have our Diamond membership. What changes were you considering?"
+      - role: user
+        content: "Well, I'm thinking about canceling, but I want to understand my options first."
+      - role: assistant
+        content: "I understand. Let me review your current membership details. You're paying $189 per month for Diamond, which includes all club access, group classes, and pool/spa facilities."
+      - role: user
+        content: "Right. And I also have that personal training package."
+      - role: assistant
+        content: "Yes, I see you purchased a 24-session package with trainer James Morrison for $2,400 back in September."
+      - role: user
+        content: "How many sessions do I have left?"
+      - role: assistant
+        content: "Let me check... You've completed 8 sessions, so you have 16 remaining."
+      - role: user
+        content: "And those expire when?"
+      - role: assistant
+        content: "Personal training packages are valid for 12 months from purchase, so yours expire September 15th, 2025."
+      - role: user
+        content: "What if I want to cancel my membership but keep the training sessions?"
+      - role: assistant
+        content: "You can downgrade to our Training-Only membership at $49 per month, which gives you facility access only when you have scheduled training sessions."
+      - role: user
+        content: "Hmm. What about freezing my membership instead?"
+      - role: assistant
+        content: "We offer membership freezes for $15 per month, minimum one month, maximum six months per year."
+      - role: user
+        content: "Have I used any freeze time this year?"
+      - role: assistant
+        content: "Yes, you froze your membership for two months - June and July when you were traveling."
+      - role: user
+        content: "Oh right, I forgot about that. So I have four months remaining?"
+      - role: assistant
+        content: "Correct, you could freeze for up to four more months in 2024."
+      - role: user
+        content: "What's my contract situation? Am I month-to-month or annual?"
+      - role: assistant
+        content: "You signed a 24-month agreement that ended in March 2023, so you've been month-to-month since then."
+      - role: user
+        content: "So I can cancel anytime?"
+      - role: assistant
+        content: "Yes, with 30 days notice. If you cancel today, your last day would be December 18th."
+      - role: user
+        content: "Would I get a refund for the partial month?"
+      - role: assistant
+        content: "No, we bill on the 1st of each month and don't prorate cancellations. Your December payment would cover through December 31st."
+      - role: user
+        content: "I see. What about my locker rental?"
+      - role: assistant
+        content: "You have a full-size locker, number 342, at $25 per month. That's billed separately and can be canceled independently."
+      - role: user
+        content: "And my husband's add-on membership?"
+      - role: assistant
+        content: "Mr. Kevin Chen is on your account as a spouse add-on for $89 per month."
+      - role: user
+        content: "Would he have to cancel too if I cancel?"
+      - role: assistant
+        content: "He could convert to his own primary membership at $189 per month, or cancel with you."
+      - role: user
+        content: "What about the kids' club access we have?"
+      - role: assistant
+        content: "The Kids' Club for your daughter Emma is $30 per month. She's registered as age 6, correct?"
+      - role: user
+        content: "Yes. Actually she just turned 7 last month."
+      - role: assistant
+        content: "I'll update that. Kids' Club is available until age 12, so she has several years left if you continue."
+      - role: user
+        content: "Are there any cancellation fees I should know about?"
+      - role: assistant
+        content: "Since you're month-to-month, there's no cancellation fee. Just the 30-day notice requirement."
+      - role: user
+        content: "What about that enrollment fee I paid when I joined?"
+      - role: assistant
+        content: "The $299 enrollment fee from 2021 was a one-time fee. It's non-refundable."
+      - role: user
+        content: "If I cancel and rejoin later?"
+      - role: assistant
+        content: "If you return within 90 days, we waive the enrollment fee. After 90 days, you'd pay the current enrollment fee, which is now $349."
+      - role: user
+        content: "It went up?"
+      - role: assistant
+        content: "Yes, it increased in January 2024. Your monthly rate is also grandfathered - new Diamond members pay $209 per month."
+      - role: user
+        content: "So I'm saving $20 a month with my current rate?"
+      - role: assistant
+        content: "Exactly. If you cancel and return, you'd pay the current rates."
+      - role: user
+        content: "What about my remaining personal training sessions if I cancel everything?"
+      - role: assistant
+        content: "You have three options: use them before canceling, transfer them to another member, or request a prorated refund."
+      - role: user
+        content: "What would the refund be?"
+      - role: assistant
+        content: "With 16 sessions remaining out of 24, that's two-thirds of $2,400, so $1,600 minus a 20% administrative fee."
+      - role: user
+        content: "So I'd get back $1,280?"
+      - role: assistant
+        content: "Correct. $1,600 minus $320 administrative fee equals $1,280."
+      - role: user
+        content: "That's a hefty fee. What about transferring to someone else?"
+      - role: assistant
+        content: "Transfers are free to immediate family members. There's a $100 transfer fee for non-family."
+      - role: user
+        content: "Can my husband use them?"
+      - role: assistant
+        content: "Yes, as your spouse, he could use them with no transfer fee. He'd just need to coordinate with James or another trainer."
+      - role: user
+        content: "Speaking of which, didn't I have some guest passes?"
+      - role: assistant
+        content: "Diamond members get 5 guest passes per month. This month you've used 2, so you have 3 remaining."
+      - role: user
+        content: "Do those roll over?"
+      - role: assistant
+        content: "No, guest passes reset on the 1st of each month. Use them or lose them."
+      - role: user
+        content: "What about that rewards program? I had some points."
+      - role: assistant
+        content: "You have 4,500 LifeRewards points. Those can be redeemed for merchandise, services, or month credits."
+      - role: user
+        content: "How much is a month credit?"
+      - role: assistant
+        content: "A free month requires 10,000 points. You could get a $50 credit for 2,500 points."
+      - role: user
+        content: "How do I earn points again?"
+      - role: assistant
+        content: "100 points per month for membership, 50 points per personal training session, and 25 points per group class attended."
+      - role: user
+        content: "So I've been earning steadily. What happens to points if I cancel?"
+      - role: assistant
+        content: "Points expire 60 days after membership cancellation. You'd want to redeem them first."
+      - role: user
+        content: "Good to know. Oh, what about that nutrition consultation I booked?"
+      - role: assistant
+        content: "You have a consultation with our dietitian Sarah scheduled for December 3rd at 2 PM."
+      - role: user
+        content: "Is that included in my membership?"
+      - role: assistant
+        content: "The initial consultation is included with Diamond. Follow-ups are $75 per session."
+      - role: user
+        content: "Did I prepay for any follow-ups?"
+      - role: assistant
+        content: "No, you haven't purchased any additional nutrition sessions."
+      - role: user
+        content: "What about my body composition scans?"
+      - role: assistant
+        content: "Diamond members get monthly InBody scans free. You did your last one October 28th."
+      - role: user
+        content: "Right. And I'm due for another one soon."
+      - role: assistant
+        content: "Yes, you can schedule one anytime after November 28th."
+      - role: user
+        content: "If I freeze instead of cancel, do I keep accumulating rewards points?"
+      - role: assistant
+        content: "No, point earning is suspended during freeze periods. But existing points don't expire."
+      - role: user
+        content: "And I can't use the facilities during a freeze?"
+      - role: assistant
+        content: "Correct, access is suspended except for the pro shop and café. You can't attend classes or use equipment."
+      - role: user
+        content: "What about my parking? I have that monthly parking pass."
+      - role: assistant
+        content: "The garage parking is $40 per month, billed on the 15th. That's a separate agreement with the garage, not through us."
+      - role: user
+        content: "Oh right, I'd need to cancel that separately with them."
+      - role: assistant
+        content: "Yes, they require 15 days notice for parking cancellation."
+      - role: user
+        content: "This is a lot to consider. Can you email me a summary?"
+      - role: assistant
+        content: "Of course. What's your email address?"
+      - role: user
+        content: "rchen.fitness@email.com"
+      - role: assistant
+        content: "I'll send a detailed summary of your membership, remaining services, and cancellation options."
+      - role: user
+        content: "Great. Oh, one more thing - didn't I refer my friend Lisa last month?"
+      - role: assistant
+        content: "Yes! Lisa Wang joined October 22nd. You received a $50 credit on your November billing."
+      - role: user
+        content: "And she got a discount too?"
+      - role: assistant
+        content: "She got her enrollment fee waived, saving $349."
+      - role: user
+        content: "Nice. Does she know I referred her?"
+      - role: assistant
+        content: "Yes, we inform new members who referred them when they use a referral code."
+      - role: user
+        content: "Perfect. I think I need a few days to decide what to do."
+      - role: assistant
+        content: "Take your time. Remember, if you decide to cancel, you need to do it by December 1st to avoid January billing."
+      - role: user
+        content: "I'll let you know by the end of the week. Thanks for all the information, Marcus."
+      - role: assistant
+        content: "You're welcome, Ms. Chen. Feel free to call back with any questions. Have a great rest of your day!"
+user_question: "What was the exact cost breakdown for my personal training package including how much I'd get back if I requested a refund?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  - Original package: 24 sessions for $2,400
+  - Sessions used: 8
+  - Sessions remaining: 16
+  - Refund calculation: 16/24 * $2,400 = $1,600
+  - Administrative fee: 20% of $1,600 = $320
+  - Net refund: $1,280
+  
+  The response should include all these specific numbers and the calculation method.

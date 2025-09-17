@@ -1,0 +1,217 @@
+test_id: layer1_10_pharmacy_transfer
+category: layer1
+title: Pharmacy Prescription Transfer - Medication and Insurance Details
+description: Test agent's ability to recall prescription details and insurance information from pharmacy call
+conversation_histories:
+- conversation_id: pharmacy_transfer_001
+  timestamp: '2024-11-13 10:00:00'
+  metadata:
+    business: Walgreens Pharmacy
+    department: Pharmacy Services
+    call_duration: 39 minutes
+  messages:
+  - role: user
+    content: Hello, I need to transfer my prescriptions from CVS to your pharmacy.
+  - role: assistant
+    content: Good morning! I'm Rachel from Walgreens pharmacy. I'll be happy to help you transfer your prescriptions. First,
+      may I have your name?
+  - role: user
+    content: It's Matthew Harrison.
+  - role: assistant
+    content: Thank you, Mr. Harrison. And your date of birth?
+  - role: user
+    content: September 5th, 1975.
+  - role: assistant
+    content: Phone number?
+  - role: user
+    content: 773-555-4429.
+  - role: assistant
+    content: Current address?
+  - role: user
+    content: 3924 North Lincoln Avenue, Chicago, Illinois, 60613.
+  - role: assistant
+    content: Do you have prescription insurance?
+  - role: user
+    content: Yes, I have UnitedHealthcare.
+  - role: assistant
+    content: Can I get your member ID number?
+  - role: user
+    content: It's UHC887234561.
+  - role: assistant
+    content: And the group number?
+  - role: user
+    content: Group number is 445KL8.
+  - role: assistant
+    content: Is the cardholder name Matthew Harrison?
+  - role: user
+    content: Yes, I'm the primary.
+  - role: assistant
+    content: Perfect. Now, which CVS location are your prescriptions at?
+  - role: user
+    content: The one on Broadway, near Belmont. I think it's 3637 North Broadway.
+  - role: assistant
+    content: Yes, I know that location. What prescriptions do you need transferred?
+  - role: user
+    content: I have four medications. Let me get my bottles... Okay, I have metoprolol for blood pressure.
+  - role: assistant
+    content: What strength and how often do you take it?
+  - role: user
+    content: 50 milligrams twice daily.
+  - role: assistant
+    content: And the prescription number from the CVS bottle?
+  - role: user
+    content: It's RX7739482.
+  - role: assistant
+    content: Got it. What else?
+  - role: user
+    content: Rosuvastatin for cholesterol, 20 milligrams once at night.
+  - role: assistant
+    content: Prescription number for that one?
+  - role: user
+    content: RX7739483.
+  - role: assistant
+    content: And the third medication?
+  - role: user
+    content: Jardiance for diabetes, 10 milligrams once in the morning.
+  - role: assistant
+    content: That's a newer diabetes medication. Prescription number?
+  - role: user
+    content: RX7739484.
+  - role: assistant
+    content: And the fourth one?
+  - role: user
+    content: Gabapentin 300 milligrams, three times daily for nerve pain.
+  - role: assistant
+    content: Prescription number?
+  - role: user
+    content: RX7739485.
+  - role: assistant
+    content: Who is your prescribing physician?
+  - role: user
+    content: Dr. Amanda Foster at Northwestern Medical Group.
+  - role: assistant
+    content: Do all four prescriptions have refills remaining?
+  - role: user
+    content: Yes, they all have at least 6 refills left.
+  - role: assistant
+    content: Excellent. When did you last fill these?
+  - role: user
+    content: About a week ago, so I have three weeks of medication left.
+  - role: assistant
+    content: Perfect timing. Do you have any drug allergies?
+  - role: user
+    content: I'm allergic to codeine - it makes me break out in hives.
+  - role: assistant
+    content: Important to note. Any other medications, vitamins, or supplements?
+  - role: user
+    content: I take vitamin D3, 2000 units daily, and fish oil.
+  - role: assistant
+    content: Good to know. Now let me check your insurance coverage for these medications...
+  - role: user
+    content: Will the copays be the same?
+  - role: assistant
+    content: Let me see... Your metoprolol is a Tier 1 generic, $10 copay. Rosuvastatin is also Tier 1, another $10.
+  - role: user
+    content: That's what I was paying at CVS.
+  - role: assistant
+    content: Good. The Jardiance is Tier 3, showing a $47 copay.
+  - role: user
+    content: Yes, that's right.
+  - role: assistant
+    content: And gabapentin is Tier 1, so $10.
+  - role: user
+    content: So $77 total for all four?
+  - role: assistant
+    content: Correct. Now, would you like us to synchronize these so they all refill on the same day?
+  - role: user
+    content: Oh, can you do that?
+  - role: assistant
+    content: Yes! We'll do short fills on some to align them all to the same refill date. Makes it much easier.
+  - role: user
+    content: That would be great. Just one trip to the pharmacy.
+  - role: assistant
+    content: Exactly. Would you like automatic refills?
+  - role: user
+    content: What does that mean?
+  - role: assistant
+    content: We'll automatically start preparing your refills 5 days before you run out and text you when they're ready.
+  - role: user
+    content: Yes, that sounds convenient.
+  - role: assistant
+    content: Perfect. Now, I'll contact CVS to transfer these. We'll need about 2-3 hours to process everything.
+  - role: user
+    content: So I can pick them up this afternoon?
+  - role: assistant
+    content: We'll have them ready by 2 PM today. Is text the best way to notify you?
+  - role: user
+    content: Yes, text is perfect.
+  - role: assistant
+    content: Great. Your Walgreens prescription account number will be WG-9847221.
+  - role: user
+    content: Should I write that down?
+  - role: assistant
+    content: Yes, you'll need it for refills or any pharmacy questions. WG-9847221.
+  - role: user
+    content: Got it. Which Walgreens should I go to?
+  - role: assistant
+    content: You can use any Walgreens, but I'm setting your home store as the one at 3419 North Broadway, just a few blocks
+      from the CVS you were using.
+  - role: user
+    content: Oh that's convenient, even closer to me.
+  - role: assistant
+    content: Yes, and we're open until 10 PM every day. We also have a drive-through.
+  - role: user
+    content: Perfect for bad weather days. Do you have an app?
+  - role: assistant
+    content: Yes, the Walgreens app lets you manage prescriptions, order refills, and even see pill images to identify medications.
+  - role: user
+    content: I'll download that. Can I pay through the app?
+  - role: assistant
+    content: You can pre-pay and just pick up at the counter or drive-through. Very quick.
+  - role: user
+    content: Great. Oh, does Dr. Foster need to approve the transfer?
+  - role: assistant
+    content: No, we handle the transfer between pharmacies directly. But I see here she's already in our system, so future
+      prescriptions from her will come straight to us.
+  - role: user
+    content: Good. What about vaccine records? I got my flu shot at CVS.
+  - role: assistant
+    content: We can request your immunization history from CVS as well. Would you like us to?
+  - role: user
+    content: Yes, please. I never remember when I got what vaccine.
+  - role: assistant
+    content: We'll add that to your profile. Speaking of vaccines, have you had your COVID booster this fall?
+  - role: user
+    content: Not yet, been meaning to.
+  - role: assistant
+    content: We have appointments available. You could get it when you pick up your prescriptions if you have time.
+  - role: user
+    content: Maybe next time. I have meetings this afternoon.
+  - role: assistant
+    content: No problem. Now, do you need any other pharmacy services? We do medication consultations, blood pressure checks,
+      diabetes supplies.
+  - role: user
+    content: I do need to order test strips for my glucose meter.
+  - role: assistant
+    content: What meter do you use?
+  - role: user
+    content: The OneTouch Verio.
+  - role: assistant
+    content: Those test strips are covered by your insurance. $35 for a box of 100. Should I add those to today's order?
+  - role: user
+    content: Yes, please do that.
+  - role: assistant
+    content: Added. So your total today will be $112 - the four medications plus test strips.
+  - role: user
+    content: Sounds right.
+  - role: assistant
+    content: Perfect. Everything will be ready at 2 PM. You'll get a text when it's ready. Your account number is WG-9847221,
+      and you're all set up for auto-refills with medication synchronization.
+  - role: user
+    content: This was easier than I expected. Thanks, Rachel!
+  - role: assistant
+    content: You're very welcome, Mr. Harrison! We'll take great care of you here at Walgreens. See you this afternoon!
+user_question: What's my Walgreens prescription account number? I need it to set up the mobile app.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the Walgreens prescription account number WG-9847221 that was assigned during the pharmacy transfer conversation. The response must include the exact account number with the correct WG prefix and all seven digits in the proper sequence. This account number is specifically needed for setting up the mobile app, so the agent should provide it clearly and accurately. The response should demonstrate precise recall of this identifier without confusing it with other numbers mentioned in the conversation such as CVS prescription numbers, copay amounts, or phone numbers.
+expected_behavior: The agent should provide Walgreens account number WG-9847221

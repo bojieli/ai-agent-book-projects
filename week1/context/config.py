@@ -23,6 +23,9 @@ class Config:
     ARK_API_KEY: str = os.getenv("ARK_API_KEY", "")
     ARK_BASE_URL: str = "https://ark.cn-beijing.volces.com/api/v3"
     
+    MOONSHOT_API_KEY: str = os.getenv("MOONSHOT_API_KEY", "")
+    MOONSHOT_BASE_URL: str = "https://api.moonshot.cn/v1"
+    
     # Model Configuration (defaults based on provider)
     MODEL_NAME: str = os.getenv("MODEL_NAME", "")  # Will be set based on provider if not specified
     MODEL_TEMPERATURE: float = float(os.getenv("MODEL_TEMPERATURE", "0.3"))
@@ -79,6 +82,8 @@ class Config:
             return cls.SILICONFLOW_API_KEY
         elif provider == "doubao":
             return cls.ARK_API_KEY
+        elif provider == "kimi" or provider == "moonshot":
+            return cls.MOONSHOT_API_KEY
         else:
             return ""
     
@@ -103,6 +108,8 @@ class Config:
             return "Qwen/Qwen3-235B-A22B-Thinking-2507"
         elif provider == "doubao":
             return "doubao-seed-1-6-thinking-250715"
+        elif provider == "kimi" or provider == "moonshot":
+            return "kimi-k2-0905-preview"
         else:
             return ""
     
@@ -125,6 +132,8 @@ class Config:
                 print("ERROR: SILICONFLOW_API_KEY is not set")
             elif provider == "doubao":
                 print("ERROR: ARK_API_KEY is not set")
+            elif provider == "kimi" or provider == "moonshot":
+                print("ERROR: MOONSHOT_API_KEY is not set")
             else:
                 print(f"ERROR: No API key configured for provider: {provider}")
             

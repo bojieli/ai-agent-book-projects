@@ -1,0 +1,581 @@
+test_id: layer3_04_warranty_coordination
+category: layer3
+title: Product Warranty & Credit Card Protection Synthesis
+description: Test agent's ability to synthesize warranty information across multiple purchases and identify optimal claim strategies using various protection sources
+conversation_histories:
+  - conversation_id: laptop_purchase_001
+    timestamp: "2024-03-15 14:00:00"
+    metadata:
+      business: "Best Buy"
+      department: "Computer Sales"
+      call_duration: "47 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'm looking to buy a new laptop for work."
+      - role: assistant
+        content: "Welcome to Best Buy! I'm Kevin from Computer Sales. What kind of work will you be doing?"
+      - role: user
+        content: "Software development and some video editing."
+      - role: assistant
+        content: "You'll want something powerful. I'd recommend the MacBook Pro 16-inch or Dell XPS 17."
+      - role: user
+        content: "What's the price difference?"
+      - role: assistant
+        content: "MacBook Pro 16-inch with M3 Pro is $2,899. Dell XPS 17 with similar specs is $2,599."
+      - role: user
+        content: "I'll go with the MacBook Pro. What warranty comes with it?"
+      - role: assistant
+        content: "Apple provides 1-year limited warranty and 90 days phone support standard."
+      - role: user
+        content: "Can I extend that?"
+      - role: assistant
+        content: "Yes, AppleCare+ for Mac is $399 for 3 years, covers accidental damage with $99 deductible for screen, $299 for other damage."
+      - role: user
+        content: "That's expensive. What else is available?"
+      - role: assistant
+        content: "Best Buy Total Tech membership is $199/year, covers all your purchases with no deductibles."
+      - role: user
+        content: "Does that cover accidental damage?"
+      - role: assistant
+        content: "Yes, including drops and spills, plus free installation and extended warranties on everything."
+      - role: user
+        content: "I'll think about it. Let me just get the laptop today."
+      - role: assistant
+        content: "Sure. Will you be paying with cash or card?"
+      - role: user
+        content: "I'll use my Chase Sapphire Reserve card."
+      - role: assistant
+        content: "Good choice. Did you know that card extends manufacturer warranties?"
+      - role: user
+        content: "Really? By how much?"
+      - role: assistant
+        content: "Usually adds one year to warranties of 3 years or less. Check your benefits guide."
+      - role: user
+        content: "So I'd get 2 years total coverage?"
+      - role: assistant
+        content: "Correct, Apple's 1 year plus Chase's 1 year extension."
+      - role: user
+        content: "That's helpful. What's the exact model I'm buying?"
+      - role: assistant
+        content: "MacBook Pro 16-inch, M3 Pro chip, 18GB RAM, 512GB SSD, Space Black."
+      - role: user
+        content: "And the serial number?"
+      - role: assistant
+        content: "Serial number is C02DM4X7Q6. I'll email you the receipt with all details."
+      - role: user
+        content: "What about purchase protection?"
+      - role: assistant
+        content: "Your Chase card typically has 120 days purchase protection against damage or theft."
+      - role: user
+        content: "So if I drop it next month?"
+      - role: assistant
+        content: "You could file a claim with Chase. They usually cover up to $10,000 per claim."
+      - role: user
+        content: "That's reassuring. What accessories should I get?"
+      - role: assistant
+        content: "A good case is essential. This Incase hardshell is $79, protects against scratches."
+      - role: user
+        content: "I'll take it. What about adapters?"
+      - role: assistant
+        content: "The MacBook Pro has HDMI and SD card built in. You might want USB-A adapter."
+      - role: user
+        content: "Yes, I still have USB-A devices."
+      - role: assistant
+        content: "This Anker USB-C to USB-A hub is $39, has 4 USB-A ports."
+      - role: user
+        content: "Perfect, add that too."
+      - role: assistant
+        content: "Total so far is $3,017. Anything else?"
+      - role: user
+        content: "Do I need antivirus software?"
+      - role: assistant
+        content: "Macs have good built-in protection. But if you want extra, Norton 360 is $99/year."
+      - role: user
+        content: "I'll skip that for now."
+      - role: assistant
+        content: "Smart choice. What about Microsoft Office?"
+      - role: user
+        content: "My company provides that."
+      - role: assistant
+        content: "Perfect. Do you need a mouse?"
+      - role: user
+        content: "I have a Magic Mouse at home already."
+      - role: assistant
+        content: "Great. The trackpad on these is excellent too."
+      - role: user
+        content: "Yeah, I've heard. Is there any free software included?"
+      - role: assistant
+        content: "Apple includes iWork suite - Pages, Numbers, Keynote. Plus GarageBand, iMovie."
+      - role: user
+        content: "Nice for the video editing."
+      - role: assistant
+        content: "For professional editing, you might want Final Cut Pro later, it's $299."
+      - role: user
+        content: "I'll see if iMovie is enough first."
+      - role: assistant
+        content: "Good plan. Can I set up your Apple ID for you?"
+      - role: user
+        content: "No thanks, I'll do it at home."
+      - role: assistant
+        content: "Okay. Do you want to trade in any old devices?"
+      - role: user
+        content: "I have an old 2018 MacBook Pro."
+      - role: assistant
+        content: "What condition is it in?"
+      - role: user
+        content: "Works fine, just slow for my needs now."
+      - role: assistant
+        content: "We could give you about $350 credit for that model."
+      - role: user
+        content: "I'll keep it as a backup."
+      - role: assistant
+        content: "Smart to have a backup. Ready to check out?"
+      - role: user
+        content: "Yes, let's do it."
+      - role: assistant
+        content: "Total is $3,017. Insert your Chase card when ready."
+      - role: user
+        content: "Done. Do I need to sign?"
+      - role: assistant
+        content: "Yes, on the screen. Perfect. Your receipt is printing."
+      - role: user
+        content: "When does the warranty start?"
+      - role: assistant
+        content: "Today, March 15th, 2024. Apple warranty until March 15th, 2025."
+      - role: user
+        content: "And Chase extends it to March 2026?"
+      - role: assistant
+        content: "March 15th, 2026, correct. Keep your receipt for any claims."
+      - role: user
+        content: "I'll scan it when I get home."
+      - role: assistant
+        content: "Smart! Also register on Apple's website for easier service."
+      - role: user
+        content: "Will do. Thanks for all your help, Kevin!"
+      - role: assistant
+        content: "My pleasure! Enjoy your new MacBook Pro. Remember, we're here if you need anything!"
+  - conversation_id: appliance_purchase_001
+    timestamp: "2024-06-22 11:00:00"
+    metadata:
+      business: "Home Depot"
+      department: "Appliances"
+      call_duration: "52 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need a new refrigerator. My old one just died."
+      - role: assistant
+        content: "Hello! I'm Maria from Home Depot Appliances. Sorry to hear that. What size refrigerator do you need?"
+      - role: user
+        content: "Something around 25-27 cubic feet, French door style."
+      - role: assistant
+        content: "I have several options. The Samsung 26.5 cu ft French Door is popular at $2,299."
+      - role: user
+        content: "What warranty comes with it?"
+      - role: assistant
+        content: "Samsung provides 1-year parts and labor, 5-year sealed system, 10-year compressor."
+      - role: user
+        content: "Can I buy extended coverage?"
+      - role: assistant
+        content: "Yes, our Protection Plan is $299 for 3 years or $449 for 5 years."
+      - role: user
+        content: "What does that cover?"
+      - role: assistant
+        content: "Parts, labor, no lemon policy - if we can't fix it after 3 attempts, you get replacement or refund."
+      - role: user
+        content: "I'll take the 5-year plan. When can it be delivered?"
+      - role: assistant
+        content: "We have June 28th available, between 8 AM and noon."
+      - role: user
+        content: "Perfect. I'm paying with my American Express Platinum."
+      - role: assistant
+        content: "Excellent. That card might provide additional purchase protection too."
+      - role: user
+        content: "What kind of protection?"
+      - role: assistant
+        content: "Many Amex cards offer extended warranty and purchase protection against damage or theft."
+      - role: user
+        content: "Good to know. What's the model number?"
+      - role: assistant
+        content: "Samsung RF27CG5900SR, serial number RSA1K89043L."
+      - role: user
+        content: "Is installation included?"
+      - role: assistant
+        content: "Basic delivery and hookup included. Haul-away of old unit is $25 extra."
+      - role: user
+        content: "I need the haul-away."
+      - role: assistant
+        content: "Added. They'll take your old fridge when delivering the new one."
+      - role: user
+        content: "What if there's damage during delivery?"
+      - role: assistant
+        content: "Inspect before signing. Any damage, refuse delivery and we'll send another."
+      - role: user
+        content: "Good policy. What about the water filter?"
+      - role: assistant
+        content: "First filter included. Replacements are $49, need changing every 6 months."
+      - role: user
+        content: "Can I buy extras now?"
+      - role: assistant
+        content: "Sure, how many?"
+      - role: user
+        content: "Two extras should last a year."
+      - role: assistant
+        content: "That's $98 more. Smart to have on hand."
+      - role: user
+        content: "Add those. What about a surge protector?"
+      - role: assistant
+        content: "Good thinking! Appliance surge protector is $39."
+      - role: user
+        content: "Is it necessary?"
+      - role: assistant
+        content: "Protects the electronic controls. Power surges can damage modern fridges."
+      - role: user
+        content: "I'll take one."
+      - role: assistant
+        content: "Added. Your total is $2,910 including tax."
+      - role: user
+        content: "That's a lot but I need a working fridge."
+      - role: assistant
+        content: "This model is very reliable. The protection plan gives peace of mind."
+      - role: user
+        content: "True. How do I use the warranty if needed?"
+      - role: assistant
+        content: "Call 1-800-HOME-DEPOT, they schedule service within 48 hours usually."
+      - role: user
+        content: "Is it third-party service?"
+      - role: assistant
+        content: "We use certified local technicians. Same ones Samsung would send."
+      - role: user
+        content: "That's good. What voids the warranty?"
+      - role: assistant
+        content: "Commercial use, neglect, or unauthorized repairs."
+      - role: user
+        content: "Just normal home use for me."
+      - role: assistant
+        content: "Perfect. Can I get your delivery address?"
+      - role: user
+        content: "1847 Maple Street, Portland, Oregon, 97205."
+      - role: assistant
+        content: "Single family home?"
+      - role: user
+        content: "Yes, two-story house."
+      - role: assistant
+        content: "Kitchen on first floor?"
+      - role: user
+        content: "Yes, straight back from the front door."
+      - role: assistant
+        content: "Easy delivery then. Phone number for delivery day?"
+      - role: user
+        content: "503-555-0199."
+      - role: assistant
+        content: "They'll call 30 minutes before arrival."
+      - role: user
+        content: "Perfect. Do I need to prep anything?"
+      - role: assistant
+        content: "Clear path to kitchen, empty old fridge, have water line accessible."
+      - role: user
+        content: "The water line is already there from current fridge."
+      - role: assistant
+        content: "Great, they'll just swap connections. Anything else?"
+      - role: user
+        content: "What if it doesn't fit?"
+      - role: assistant
+        content: "Dimensions are 35.75\" wide, 70\" tall, 33.75\" deep. Measure your space."
+      - role: user
+        content: "I have 36\" width, 72\" height clearance."
+      - role: assistant
+        content: "Perfect fit. Needs 1\" clearance on sides for airflow."
+      - role: user
+        content: "Should work fine then."
+      - role: assistant
+        content: "Running your Amex now... Approved! Receipt printing."
+      - role: user
+        content: "Great! Email copy too?"
+      - role: assistant
+        content: "What's your email?"
+      - role: user
+        content: "danielpark85@email.com"
+      - role: assistant
+        content: "Sent! Delivery June 28th between 8 AM and noon. Protection plan activated today."
+      - role: user
+        content: "Thanks Maria, you've been very helpful!"
+      - role: assistant
+        content: "You're welcome! Enjoy your new refrigerator. Call if you need anything!"
+  - conversation_id: phone_damage_001
+    timestamp: "2024-10-30 15:00:00"
+    metadata:
+      business: "Verizon Wireless"
+      department: "Insurance Claims"
+      call_duration: "41 minutes"
+    messages:
+      - role: user
+        content: "Hi, I dropped my iPhone and the screen is completely shattered."
+      - role: assistant
+        content: "Oh no! I'm Jessica from Verizon Insurance Claims. Let me help you. What's your phone number?"
+      - role: user
+        content: "555-0147."
+      - role: assistant
+        content: "Account for Daniel Park?"
+      - role: user
+        content: "Yes, that's me."
+      - role: assistant
+        content: "I see you have an iPhone 14 Pro purchased February 2024. Do you have Verizon Mobile Protect?"
+      - role: user
+        content: "I don't think so. I declined insurance when I bought it."
+      - role: assistant
+        content: "You're right, no insurance on file. The phone would need out-of-warranty repair."
+      - role: user
+        content: "How much would that cost?"
+      - role: assistant
+        content: "Apple charges $379 for iPhone 14 Pro screen replacement without AppleCare+."
+      - role: user
+        content: "That's expensive! I bought it with my credit card though."
+      - role: assistant
+        content: "Which card did you use?"
+      - role: user
+        content: "My Chase Sapphire Reserve."
+      - role: assistant
+        content: "That card has excellent phone protection - up to $800 per claim with $50 deductible."
+      - role: user
+        content: "Really? How do I use that?"
+      - role: assistant
+        content: "You'll need to file a claim with Chase's benefits administrator. You bought the phone outright?"
+      - role: user
+        content: "No, it's on a payment plan through Verizon."
+      - role: assistant
+        content: "For the coverage to apply, you need to pay your monthly Verizon bill with that Chase card."
+      - role: user
+        content: "Yes, I do autopay with the Chase card."
+      - role: assistant
+        content: "Perfect! Then you're covered. You'll need the original receipt and damage documentation."
+      - role: user
+        content: "How do I document the damage?"
+      - role: assistant
+        content: "Take clear photos of the cracked screen. Get a repair estimate from Apple or authorized repair shop."
+      - role: user
+        content: "Should I go to Apple Store first?"
+      - role: assistant
+        content: "Yes, get a written estimate. Don't pay for repair yet - file claim with Chase first."
+      - role: user
+        content: "What's the claim process?"
+      - role: assistant
+        content: "Call Chase benefits at 1-800-553-4820. They'll email claim forms."
+      - role: user
+        content: "How long does it take?"
+      - role: assistant
+        content: "Usually 7-10 business days after submitting all documents."
+      - role: user
+        content: "Do they reimburse or pay directly?"
+      - role: assistant
+        content: "They reimburse you after you pay for repair."
+      - role: user
+        content: "So I pay $379 upfront?"
+      - role: assistant
+        content: "Yes, then Chase reimburses $329 - the $379 minus $50 deductible."
+      - role: user
+        content: "That's much better than full price."
+      - role: assistant
+        content: "Absolutely. Your card benefit saves you $329."
+      - role: user
+        content: "What if it happens again?"
+      - role: assistant
+        content: "You get 2 claims per 12-month period, up to $800 each."
+      - role: user
+        content: "Good to know. Should I get insurance now?"
+      - role: assistant
+        content: "You can add Mobile Protect for $17/month, but it won't cover existing damage."
+      - role: user
+        content: "After I fix it?"
+      - role: assistant
+        content: "Yes, you can add it then. $89 deductible for future screen repairs."
+      - role: user
+        content: "Chase seems better - $50 vs $89."
+      - role: assistant
+        content: "True, but Mobile Protect covers loss and theft too."
+      - role: user
+        content: "Good point. What else does Chase cover?"
+      - role: assistant
+        content: "Damage and theft, but not loss. Must file within 90 days of incident."
+      - role: user
+        content: "When did I drop it?"
+      - role: assistant
+        content: "Today is October 30th, when did the damage occur?"
+      - role: user
+        content: "Yesterday, October 29th."
+      - role: assistant
+        content: "Perfect, plenty of time. File this week to be safe."
+      - role: user
+        content: "Will do. What about my Apple warranty?"
+      - role: assistant
+        content: "Standard warranty doesn't cover accidental damage, only defects."
+      - role: user
+        content: "So that's useless here?"
+      - role: assistant
+        content: "For screen damage, yes. But still covers hardware defects until February 2025."
+      - role: user
+        content: "At least there's that. Any other options?"
+      - role: assistant
+        content: "Some homeowner's or renter's insurance covers phones, but usually high deductibles."
+      - role: user
+        content: "My deductible is $500, so Chase is better."
+      - role: assistant
+        content: "Definitely. Chase is your best option here."
+      - role: user
+        content: "Should I backup my phone before repair?"
+      - role: assistant
+        content: "Absolutely! Back up to iCloud or computer before taking to Apple."
+      - role: user
+        content: "They might wipe it?"
+      - role: assistant
+        content: "Sometimes they replace the whole unit instead of just screen."
+      - role: user
+        content: "Oh, I better backup tonight then."
+      - role: assistant
+        content: "Yes, and remove any case or screen protector before going to Apple."
+      - role: user
+        content: "Speaking of cases, I need a better one."
+      - role: assistant
+        content: "OtterBox Defender is excellent protection, about $60."
+      - role: user
+        content: "Worth it to prevent this happening again."
+      - role: assistant
+        content: "Absolutely. Much cheaper than repairs."
+      - role: user
+        content: "Thanks for all the help, Jessica!"
+      - role: assistant
+        content: "You're welcome! Good luck with your Chase claim. Should save you significant money!"
+  - conversation_id: tv_purchase_001
+    timestamp: "2024-11-20 10:00:00"
+    metadata:
+      business: "Costco"
+      department: "Electronics"
+      call_duration: "39 minutes"
+    messages:
+      - role: user
+        content: "I'm looking for a new TV for the living room, something around 65 inches."
+      - role: assistant
+        content: "Hi! I'm Robert from Costco Electronics. We have great options in 65-inch TVs. What's your budget?"
+      - role: user
+        content: "Under $1,500 ideally."
+      - role: assistant
+        content: "The LG C3 OLED 65-inch is on sale for $1,399, down from $1,799."
+      - role: user
+        content: "That's a good deal. What warranty does it come with?"
+      - role: assistant
+        content: "LG provides 1-year parts and labor. But here's the great thing about Costco..."
+      - role: user
+        content: "What's that?"
+      - role: assistant
+        content: "Costco extends manufacturer warranties - you get 2 years total on TVs automatically."
+      - role: user
+        content: "At no extra cost?"
+      - role: assistant
+        content: "Correct, it's a member benefit. Plus, we have a 90-day return policy on electronics."
+      - role: user
+        content: "Can I buy additional warranty?"
+      - role: assistant
+        content: "Allstate Protection Plan through Costco - 3 years for $99 or 5 years for $139."
+      - role: user
+        content: "So with the 5-year plan, I'd have 7 years total?"
+      - role: assistant
+        content: "No, it's 5 years total from purchase date, but covers everything including burn-in."
+      - role: user
+        content: "Burn-in is common with OLED?"
+      - role: assistant
+        content: "It's rare with modern OLEDs, but possible. The Allstate plan specifically covers it."
+      - role: user
+        content: "I'll take the 5-year plan. I'm paying with my Costco Citi card."
+      - role: assistant
+        content: "Perfect! That card adds another 2 years of extended warranty on top."
+      - role: user
+        content: "Wait, so how many years total?"
+      - role: assistant
+        content: "The Allstate plan covers years 1-5, then Citi adds years 6-7."
+      - role: user
+        content: "Seven years total coverage? That's amazing!"
+      - role: assistant
+        content: "It's one of the best coverage combinations available."
+      - role: user
+        content: "What's the model number?"
+      - role: assistant
+        content: "LG OLED65C3PUA. Serial number will be on the unit delivered."
+      - role: user
+        content: "When can it be delivered?"
+      - role: assistant
+        content: "We have November 25th available, Monday after Thanksgiving."
+      - role: user
+        content: "Perfect timing for holiday movies."
+      - role: assistant
+        content: "Delivery and basic setup included. Wall mounting is extra."
+      - role: user
+        content: "I'll put it on the TV stand."
+      - role: assistant
+        content: "Make sure your stand supports 65 inches and 50 pounds."
+      - role: user
+        content: "It does, I checked. What about calibration?"
+      - role: assistant
+        content: "The TV has great presets. Movie mode is very accurate out of box."
+      - role: user
+        content: "Good, I'm not tech savvy."
+      - role: assistant
+        content: "It's very user-friendly. WebOS interface is intuitive."
+      - role: user
+        content: "Does it have all the streaming apps?"
+      - role: assistant
+        content: "Yes - Netflix, Prime, Disney+, Apple TV, everything major."
+      - role: user
+        content: "What about gaming?"
+      - role: assistant
+        content: "Excellent for gaming - 120Hz, VRR, 4 HDMI 2.1 ports."
+      - role: user
+        content: "My son will love that with his PlayStation."
+      - role: assistant
+        content: "PS5 will look incredible on this OLED."
+      - role: user
+        content: "What about sound?"
+      - role: assistant
+        content: "Built-in speakers are decent, but soundbar recommended for best experience."
+      - role: user
+        content: "Any deals on soundbars?"
+      - role: assistant
+        content: "Samsung Q-series soundbar is $299, normally $399."
+      - role: user
+        content: "Maybe later. Let's just do the TV today."
+      - role: assistant
+        content: "Sure. Total with 5-year protection is $1,538 plus tax."
+      - role: user
+        content: "What's the return policy again?"
+      - role: assistant
+        content: "90 days for electronics. Keep the box just in case."
+      - role: user
+        content: "Will do. Can I pay now?"
+      - role: assistant
+        content: "Yes, at customer service. I'll write up the order."
+      - role: user
+        content: "Do I need to be home for delivery?"
+      - role: assistant
+        content: "Yes, someone 18+ needs to sign. They'll call day before with time window."
+      - role: user
+        content: "Perfect. What if there's shipping damage?"
+      - role: assistant
+        content: "Inspect before signing. Any damage, refuse delivery, we'll send another."
+      - role: user
+        content: "Good policy. How do warranty claims work?"
+      - role: assistant
+        content: "First 2 years through Costco Concierge. Years 3-5 through Allstate."
+      - role: user
+        content: "And years 6-7?"
+      - role: assistant
+        content: "Through Citi card benefits. Keep all receipts."
+      - role: user
+        content: "I'll scan everything when I get home."
+      - role: assistant
+        content: "Smart! Also register with LG for easier service if needed."
+      - role: user
+        content: "Will do. This has been very helpful, Robert."
+      - role: assistant
+        content: "My pleasure! Enjoy your new OLED TV. Picture quality will blow you away!"
+user_question: "My laptop screen just cracked. What are all my options for getting it repaired or replaced based on my coverage?"
+evaluation_criteria: |
+  The agent must synthesize warranty and purchase protection information across all three conversations to identify the best coverage options for the cracked laptop screen. The response should demonstrate comprehensive understanding that the MacBook Pro 16-inch (M3 Pro, 18GB RAM, 512GB SSD, serial C02DM4X7Q6) purchased from Best Buy on March 15, 2024 for $2,899 is currently in a critical warranty position: while Apple's standard 1-year warranty is still active until March 15, 2025, this likely won't cover accidental damage like a cracked screen, but more importantly, the Chase Sapphire Reserve extended warranty protection extends coverage for an additional year until March 15, 2026. The agent must identify Chase Extended Warranty as the PRIMARY solution, explaining that the user should file a claim with Chase for repair coverage (noting the purchase protection for accidental damage expired after 120 days on July 13, 2024, but extended warranty covers defects and failures). The response should also present alternative options in order of preference: checking if the crack might be considered a warranty defect rather than accidental damage (unlikely but worth trying with Apple), out-of-pocket Apple repair estimated at $600-800 for a 16-inch screen, and potentially filing under homeowner's insurance (which the user has, based on the house delivery mentioned in the refrigerator conversation). The agent should recognize the user's consistent pattern of declining retailer warranties but successfully relying on credit card benefits, as demonstrated across all purchases, showing sophisticated cross-conversation pattern recognition.
+expected_behavior: The agent should identify that the MacBook Pro purchased in March 2024 is covered by Chase Sapphire Reserve extended warranty until March 2026, recommend filing a claim with Chase as the primary option (no deductible for warranty claims), note that Apple's warranty expired but Chase extends it by one year, mention out-of-pocket repair costs of $600-800 as alternative, and potentially suggest checking homeowner's insurance as last resort

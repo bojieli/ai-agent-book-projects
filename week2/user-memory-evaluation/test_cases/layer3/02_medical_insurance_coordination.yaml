@@ -1,0 +1,576 @@
+test_id: layer3_02_medical_insurance_coordination
+category: layer3
+title: Medical Procedure and Insurance Coverage - Proactive Cost Warning
+description: Test agent's ability to synthesize information across medical appointments and insurance coverage to proactively
+  warn about potential uncovered expenses
+conversation_histories:
+- conversation_id: insurance_enrollment_001
+  timestamp: '2024-01-15 10:00:00'
+  metadata:
+    business: BlueCross BlueShield
+    department: Member Services
+    call_duration: 48 minutes
+  messages:
+  - role: user
+    content: Hi, I need to understand my new insurance plan from my employer.
+  - role: assistant
+    content: Good morning! I'm Sandra from BlueCross BlueShield Member Services. I'll help you understand your coverage. What's
+      your member ID?
+  - role: user
+    content: It's BCS8829447.
+  - role: assistant
+    content: Thank you, Mr... let me pull this up... Mr. Robert Thompson?
+  - role: user
+    content: Yes, that's me.
+  - role: assistant
+    content: I see you have our PPO Select plan through Morrison Industries. Is this your first time with BlueCross?
+  - role: user
+    content: No, but my previous employer had a different BlueCross plan.
+  - role: assistant
+    content: Good, so you're familiar with our network. This PPO Select plan has some great benefits. Your deductible is $1,500
+      individual, $3,000 family.
+  - role: user
+    content: Is that in-network?
+  - role: assistant
+    content: Yes, in-network. Out-of-network is $3,000 individual, $6,000 family.
+  - role: user
+    content: What about the out-of-pocket maximum?
+  - role: assistant
+    content: In-network maximum is $4,000 individual, $8,000 family. That includes your deductible.
+  - role: user
+    content: So once I pay $4,000, everything else is covered?
+  - role: assistant
+    content: For in-network covered services, yes, we pay 100% after that.
+  - role: user
+    content: What about preventive care?
+  - role: assistant
+    content: Preventive care is 100% covered, no deductible. Annual physicals, screenings, vaccinations.
+  - role: user
+    content: Good. What about specialist visits?
+  - role: assistant
+    content: After deductible, you pay 20% coinsurance for specialists in-network.
+  - role: user
+    content: Do I need referrals?
+  - role: assistant
+    content: No, with PPO you can see specialists directly.
+  - role: user
+    content: What about emergency room visits?
+  - role: assistant
+    content: $350 copay plus 20% after deductible.
+  - role: user
+    content: That seems high.
+  - role: assistant
+    content: ER is expensive. Urgent care is only $75 copay for non-emergency issues.
+  - role: user
+    content: Makes sense. What about prescriptions?
+  - role: assistant
+    content: Generic drugs are $10, preferred brand $35, non-preferred brand $70, specialty drugs 30% up to $250.
+  - role: user
+    content: My wife takes Synthroid for thyroid. Is that covered?
+  - role: assistant
+    content: Synthroid is a preferred brand, so $35 per month.
+  - role: user
+    content: What about surgery coverage?
+  - role: assistant
+    content: Inpatient surgery is 20% after deductible. Outpatient surgery is also 20% after deductible.
+  - role: user
+    content: So if I needed knee surgery?
+  - role: assistant
+    content: Depends if it's inpatient or outpatient. Most knee surgeries are outpatient now. You'd pay your deductible first,
+      then 20%.
+  - role: user
+    content: Actually, I've been having knee problems. My doctor mentioned I might need arthroscopy.
+  - role: assistant
+    content: Arthroscopy is typically outpatient. Do you know the estimated cost?
+  - role: user
+    content: No idea.
+  - role: assistant
+    content: Usually runs $15,000-25,000 total. With your plan, after $1,500 deductible, you'd pay 20% of the remainder.
+  - role: user
+    content: So potentially $3,000-4,000 out of pocket?
+  - role: assistant
+    content: With the $4,000 out-of-pocket max, you'd never pay more than that in a year.
+  - role: user
+    content: That's still a lot.
+  - role: assistant
+    content: You might want to check if your employer offers an FSA or HSA to save pre-tax.
+  - role: user
+    content: What's the difference?
+  - role: assistant
+    content: FSA is use-it-or-lose-it yearly. HSA rolls over but you need a high-deductible health plan.
+  - role: user
+    content: This isn't high-deductible?
+  - role: assistant
+    content: No, $1,500 is considered standard. High-deductible starts at $1,600 for 2024.
+  - role: user
+    content: So I could do FSA?
+  - role: assistant
+    content: Yes, check with your HR about FSA enrollment.
+  - role: user
+    content: Back to coverage - what about physical therapy?
+  - role: assistant
+    content: PT is covered, 30 visits per year. You pay 20% after deductible.
+  - role: user
+    content: That might be relevant if I need knee surgery.
+  - role: assistant
+    content: Exactly. Most knee procedures need 10-20 PT sessions.
+  - role: user
+    content: Is there prior authorization needed?
+  - role: assistant
+    content: For surgery, yes. Your doctor submits that. PT doesn't need prior auth for the first 10 visits.
+  - role: user
+    content: What about MRIs?
+  - role: assistant
+    content: MRIs need prior authorization and you pay 20% after deductible.
+  - role: user
+    content: My doctor already ordered an MRI for my knee.
+  - role: assistant
+    content: Make sure they get prior auth first. Otherwise, you might pay full price.
+  - role: user
+    content: How do I check that?
+  - role: assistant
+    content: Call the imaging center and confirm they've received authorization. I can also check if you have the facility
+      name.
+  - role: user
+    content: It's Premier Imaging on Riverside Drive.
+  - role: assistant
+    content: Let me check... I don't see a prior auth yet. When is your MRI scheduled?
+  - role: user
+    content: Next month, February 20th.
+  - role: assistant
+    content: Have your doctor submit the prior auth request soon. It takes 5-7 business days.
+  - role: user
+    content: I'll call them tomorrow. What else should I know?
+  - role: assistant
+    content: Keep all receipts for tax purposes. Medical expenses over 7.5% of income are deductible.
+  - role: user
+    content: Good tip. Is there anything this plan doesn't cover?
+  - role: assistant
+    content: Cosmetic procedures, weight loss surgery unless medically necessary, experimental treatments.
+  - role: user
+    content: What about mental health?
+  - role: assistant
+    content: Mental health is covered same as medical - 20% after deductible for therapy.
+  - role: user
+    content: And dental?
+  - role: assistant
+    content: Dental is separate. Do you have dental through your employer too?
+  - role: user
+    content: Yes, but I haven't looked at it yet.
+  - role: assistant
+    content: Check that separately. Medical doesn't cover dental except for accident-related injuries.
+  - role: user
+    content: Got it. What about vision?
+  - role: assistant
+    content: Vision is also separate. Medical covers eye injuries and diseases, not routine exams or glasses.
+  - role: user
+    content: My employer offers vision too. I should review that.
+  - role: assistant
+    content: Yes, especially if you wear glasses or contacts. Those benefits are usually worth it.
+  - role: user
+    content: Is there a nurse hotline or something if I have questions?
+  - role: assistant
+    content: Yes, 24/7 nurse line at 800-555-NURSE. Great for after-hours medical questions.
+  - role: user
+    content: That's helpful. And you mentioned an app?
+  - role: assistant
+    content: Yes, the BlueCross app. You can check claims, find providers, even video chat with doctors.
+  - role: user
+    content: Video visits are covered?
+  - role: assistant
+    content: Yes, $20 copay for video visits with our partner Teladoc. Great for minor issues.
+  - role: user
+    content: Much cheaper than urgent care.
+  - role: assistant
+    content: Exactly. Use it for colds, rashes, minor infections. They can even prescribe medications.
+  - role: user
+    content: This is all really helpful. Thanks Sandra!
+  - role: assistant
+    content: You're welcome Mr. Thompson. Don't forget to ask HR about that FSA option. And good luck with your knee!
+- conversation_id: orthopedic_consultation_002
+  timestamp: '2024-11-20 14:30:00'
+  metadata:
+    business: Advanced Orthopedic Center
+    department: Scheduling
+    call_duration: 42 minutes
+  messages:
+  - role: user
+    content: Hi, I need to schedule knee surgery with Dr. Martinez.
+  - role: assistant
+    content: Good afternoon! This is Lisa from Advanced Orthopedic Center. You're scheduling surgery with Dr. Martinez?
+  - role: user
+    content: Yes, I saw him last week and he said I need arthroscopic surgery for my torn meniscus.
+  - role: assistant
+    content: Let me pull up your chart. Your name?
+  - role: user
+    content: Robert Thompson.
+  - role: assistant
+    content: Date of birth?
+  - role: user
+    content: May 15, 1978.
+  - role: assistant
+    content: I see your appointment from November 13th. Dr. Martinez recommended arthroscopic partial meniscectomy.
+  - role: user
+    content: That's right. He said it's pretty routine.
+  - role: assistant
+    content: It is, Dr. Martinez does several each week. When would you like to schedule?
+  - role: user
+    content: As soon as possible. My knee is really bothering me.
+  - role: assistant
+    content: I have an opening December 5th at our surgery center.
+  - role: user
+    content: That works. What time?
+  - role: assistant
+    content: 7:30 AM arrival, surgery at 8:30 AM. You'll be done by 10 AM.
+  - role: user
+    content: Good, I can take the whole day off work.
+  - role: assistant
+    content: You'll want someone to drive you home after anesthesia.
+  - role: user
+    content: My wife can do that.
+  - role: assistant
+    content: Perfect. Now, which surgery center location - Riverside or Northside?
+  - role: user
+    content: Which is closer to downtown?
+  - role: assistant
+    content: Riverside is closer, about 10 minutes from downtown.
+  - role: user
+    content: Let's do Riverside then.
+  - role: assistant
+    content: Riverside Surgery Center, December 5th, 7:30 AM arrival. What insurance do you have?
+  - role: user
+    content: BlueCross BlueShield PPO.
+  - role: assistant
+    content: Good, we're in-network. Has Dr. Martinez's office started the prior authorization?
+  - role: user
+    content: He said they would handle it.
+  - role: assistant
+    content: Let me check... I don't see it yet. We need authorization before surgery.
+  - role: user
+    content: How long does that take?
+  - role: assistant
+    content: Usually 5-7 business days. I'll have our insurance coordinator expedite it.
+  - role: user
+    content: Please do. I don't want any delays.
+  - role: assistant
+    content: Of course. Now, the facility fee for the surgery center is $18,500.
+  - role: user
+    content: Eighteen thousand?! For outpatient surgery?
+  - role: assistant
+    content: That includes the OR, equipment, nursing staff, and recovery room.
+  - role: user
+    content: What about the surgeon's fee?
+  - role: assistant
+    content: Dr. Martinez's fee is separate, approximately $4,800.
+  - role: user
+    content: So over $23,000 total?
+  - role: assistant
+    content: Plus anesthesia, which is usually $1,500-2,000.
+  - role: user
+    content: This is getting expensive. What will I actually pay?
+  - role: assistant
+    content: That depends on your insurance benefits. Do you know your deductible?
+  - role: user
+    content: I think it's $1,500.
+  - role: assistant
+    content: And your coinsurance after deductible?
+  - role: user
+    content: Twenty percent I believe.
+  - role: assistant
+    content: So roughly $1,500 deductible plus 20% of the remaining $23,500, which is about $4,700.
+  - role: user
+    content: Wait, that math doesn't seem right.
+  - role: assistant
+    content: Let me recalculate. Total about $25,000 with anesthesia. Minus $1,500 deductible leaves $23,500. Twenty percent
+      of that is $4,700. Plus the $1,500 deductible equals $6,200.
+  - role: user
+    content: Six thousand dollars?!
+  - role: assistant
+    content: Do you have an out-of-pocket maximum?
+  - role: user
+    content: I think it's $4,000.
+  - role: assistant
+    content: Then you'd pay at most $4,000 for the year. Have you had any other medical expenses this year?
+  - role: user
+    content: Just my MRI and some doctor visits.
+  - role: assistant
+    content: Those count toward your deductible and maximum. Do you know how much you've paid so far?
+  - role: user
+    content: Maybe $800 total?
+  - role: assistant
+    content: So you'd likely pay another $3,200 to hit your maximum.
+  - role: user
+    content: That's still a lot. Can I make payments?
+  - role: assistant
+    content: Yes, we offer payment plans. We require 20% down, then 12 months interest-free.
+  - role: user
+    content: So $800 down if I owe $4,000?
+  - role: assistant
+    content: If you owe $3,200 after your previous payments, it would be $640 down.
+  - role: user
+    content: Then what monthly?
+  - role: assistant
+    content: The remaining $2,560 over 12 months is about $213 per month.
+  - role: user
+    content: That's manageable. What about the anesthesia bill?
+  - role: assistant
+    content: Anesthesia bills separately. They're with Riverside Anesthesia Group.
+  - role: user
+    content: Are they in-network?
+  - role: assistant
+    content: I need to verify that. Sometimes anesthesiologists are out-of-network even at in-network facilities.
+  - role: user
+    content: That doesn't seem fair.
+  - role: assistant
+    content: I agree. Let me check... Good news, Riverside Anesthesia Group is in-network with BlueCross.
+  - role: user
+    content: Relief! What do I need to do before surgery?
+  - role: assistant
+    content: Pre-op testing - blood work, EKG if you're over 40.
+  - role: user
+    content: I'm 46, so I'll need the EKG.
+  - role: assistant
+    content: Yes. You can do pre-op testing here November 28th at 2 PM.
+  - role: user
+    content: That works. No eating before surgery, right?
+  - role: assistant
+    content: Nothing after midnight the night before. Clear liquids until 4 AM.
+  - role: user
+    content: What about my medications?
+  - role: assistant
+    content: What do you take regularly?
+  - role: user
+    content: Just blood pressure medication - lisinopril.
+  - role: assistant
+    content: Take that with a small sip of water the morning of surgery.
+  - role: user
+    content: How long is recovery?
+  - role: assistant
+    content: You'll use crutches for a few days, then physical therapy starts week two.
+  - role: user
+    content: How many PT sessions?
+  - role: assistant
+    content: Typically 12-16 sessions over 6-8 weeks.
+  - role: user
+    content: Is PT covered by insurance?
+  - role: assistant
+    content: You'll want to verify your PT benefits. Most plans have visit limits.
+  - role: user
+    content: I think mine covers 30 visits per year.
+  - role: assistant
+    content: That should be plenty. We'll give you a PT prescription after surgery.
+  - role: user
+    content: Do you recommend any specific PT places?
+  - role: assistant
+    content: We work closely with Riverside Rehab and Downtown Physical Therapy. Both are excellent.
+  - role: user
+    content: Are they in-network?
+  - role: assistant
+    content: You'll need to check with your insurance, but they take most major plans.
+  - role: user
+    content: When can I return to work?
+  - role: assistant
+    content: Desk job?
+  - role: user
+    content: Yes, I'm in IT.
+  - role: assistant
+    content: You could work from home after 3-4 days, return to office after a week.
+  - role: user
+    content: That's not too bad. When can I drive?
+  - role: assistant
+    content: Once you're off narcotic pain meds, usually 3-5 days.
+  - role: user
+    content: And exercise? I usually run.
+  - role: assistant
+    content: No running for 6-8 weeks. Start with walking, then bike, then elliptical.
+  - role: user
+    content: That's a long time.
+  - role: assistant
+    content: Better to heal properly than re-injure it. Dr. Martinez will give you a specific timeline.
+  - role: user
+    content: Makes sense. So I'm all scheduled?
+  - role: assistant
+    content: Yes! December 5th surgery, November 28th pre-op. We'll call you December 4th with final instructions.
+  - role: user
+    content: Perfect. Thanks for all the information!
+  - role: assistant
+    content: You're welcome Mr. Thompson. See you November 28th for pre-op testing!
+- conversation_id: anesthesia_billing_003
+  timestamp: '2024-11-22 16:00:00'
+  metadata:
+    business: Riverside Anesthesia Group
+    department: Billing Inquiry
+    call_duration: 35 minutes
+  messages:
+  - role: user
+    content: Hi, I'm having surgery next month and want to understand your billing.
+  - role: assistant
+    content: Good afternoon, this is Mark from Riverside Anesthesia billing. I can help explain our charges. What type of
+      surgery?
+  - role: user
+    content: Knee arthroscopy on December 5th at Riverside Surgery Center.
+  - role: assistant
+    content: Okay, arthroscopy typically takes 30-45 minutes of anesthesia time.
+  - role: user
+    content: How do you calculate the charges?
+  - role: assistant
+    content: We bill by time units. Base units for knee arthroscopy plus time units.
+  - role: user
+    content: What does that mean in dollars?
+  - role: assistant
+    content: For a 45-minute procedure, typically $1,800-2,200 total charges.
+  - role: user
+    content: Someone told me you might not be in my insurance network?
+  - role: assistant
+    content: What insurance do you have?
+  - role: user
+    content: BlueCross BlueShield PPO.
+  - role: assistant
+    content: Good news - we're in-network with BlueCross PPO.
+  - role: user
+    content: Oh thank goodness! Someone scared me about surprise bills.
+  - role: assistant
+    content: That happens with out-of-network anesthesiologists. We've been with BlueCross for years.
+  - role: user
+    content: So same benefits as my surgery - deductible and coinsurance?
+  - role: assistant
+    content: Exactly. Your regular in-network benefits apply.
+  - role: user
+    content: The surgery center said I'd hit my out-of-pocket max.
+  - role: assistant
+    content: Then our services might be fully covered if you've already hit the max.
+  - role: user
+    content: How does that work?
+  - role: assistant
+    content: Once you've paid your maximum, insurance pays 100% of covered services.
+  - role: user
+    content: But I haven't had the surgery yet.
+  - role: assistant
+    content: Right, but if the facility and surgeon fees hit your max, anesthesia would be covered.
+  - role: user
+    content: The facility is charging $18,500 and surgeon $4,800.
+  - role: assistant
+    content: With a $4,000 out-of-pocket max, you'd hit it with just those charges.
+  - role: user
+    content: So I might not owe you anything?
+  - role: assistant
+    content: Potentially, yes. We bill in order received, so timing matters.
+  - role: user
+    content: What do you mean?
+  - role: assistant
+    content: If the facility bills first and uses up your maximum, we're covered. If we bill first, you'd owe part of ours.
+  - role: user
+    content: That seems arbitrary.
+  - role: assistant
+    content: It can be. Most facilities bill quickly though, so they usually process first.
+  - role: user
+    content: Should I do anything special?
+  - role: assistant
+    content: Make sure all providers have your correct insurance info.
+  - role: user
+    content: I gave it to the surgery center.
+  - role: assistant
+    content: We'll get it from them, but verify day of surgery too.
+  - role: user
+    content: Will do. Do you require payment upfront?
+  - role: assistant
+    content: No, we bill insurance first, then send you any balance.
+  - role: user
+    content: How long does that take?
+  - role: assistant
+    content: Usually 30-45 days after surgery for insurance to process.
+  - role: user
+    content: And if I owe something?
+  - role: assistant
+    content: We offer payment plans if the balance is over $500.
+  - role: user
+    content: Good to know. Oh, I take blood pressure medication. Is that an issue?
+  - role: assistant
+    content: What medication specifically?
+  - role: user
+    content: Lisinopril.
+  - role: assistant
+    content: That's fine. Take it the morning of surgery with minimal water.
+  - role: user
+    content: The surgery center said the same thing.
+  - role: assistant
+    content: Good, consistency is important. Any other medications?
+  - role: user
+    content: No, just vitamins.
+  - role: assistant
+    content: Stop vitamins a week before surgery. Some can affect bleeding.
+  - role: user
+    content: Oh, I didn't know that!
+  - role: assistant
+    content: Especially vitamin E, fish oil, and herbal supplements.
+  - role: user
+    content: I take fish oil for cholesterol.
+  - role: assistant
+    content: Definitely stop that now, two weeks before surgery is ideal.
+  - role: user
+    content: Two weeks? Surgery is December 5th, that's less than two weeks away!
+  - role: assistant
+    content: Stop it immediately then. The sooner the better.
+  - role: user
+    content: Will do today. Why does it matter?
+  - role: assistant
+    content: Fish oil can thin your blood and increase bleeding risk during surgery.
+  - role: user
+    content: That sounds serious.
+  - role: assistant
+    content: It's a precaution. Stopping now gives your body time to normalize.
+  - role: user
+    content: What about aspirin?
+  - role: assistant
+    content: Do you take aspirin regularly?
+  - role: user
+    content: No, just occasionally for headaches.
+  - role: assistant
+    content: Avoid it before surgery. Use Tylenol instead if needed.
+  - role: user
+    content: Good to know. Anything else I should know?
+  - role: assistant
+    content: Don't wear nail polish - we monitor oxygen through your fingernail.
+  - role: user
+    content: I'm a guy, so no problem there!
+  - role: assistant
+    content: Also, arrange your ride home. You can't drive for 24 hours after anesthesia.
+  - role: user
+    content: My wife is taking the day off.
+  - role: assistant
+    content: Perfect. Oh, one more thing - have you had anesthesia before?
+  - role: user
+    content: Yes, for my wisdom teeth about 10 years ago.
+  - role: assistant
+    content: Any problems with it?
+  - role: user
+    content: I was really nauseous afterward.
+  - role: assistant
+    content: Important to know. I'll note that in your chart.
+  - role: user
+    content: Can you prevent that?
+  - role: assistant
+    content: Yes, we can give anti-nausea medication preventively.
+  - role: user
+    content: That would be great. I don't want to feel sick.
+  - role: assistant
+    content: The anesthesiologist will discuss options with you morning of surgery.
+  - role: user
+    content: Do I meet them beforehand?
+  - role: assistant
+    content: Yes, they'll talk to you in pre-op before taking you to surgery.
+  - role: user
+    content: Good, I like to know who's putting me under.
+  - role: assistant
+    content: Absolutely. They'll review your history and answer any questions.
+  - role: user
+    content: Perfect. Thanks for all the information, Mark!
+  - role: assistant
+    content: You're welcome! Good luck with your surgery December 5th. Remember to stop that fish oil today!
+user_question: I'm getting ready for my knee surgery next month. Is there anything I should prepare or be concerned about?
+evaluation_criteria: |
+  The agent must synthesize critical medical and financial information across three conversations to identify urgent pre-surgery requirements and potential issues. The response must PRIORITIZE the immediate action needed: stopping fish oil supplements TODAY (surgery is December 5th, and two weeks are required, leaving only about 13 days). The agent should synthesize the complete financial picture: total surgery costs of approximately $25,000 ($18,500 facility + $4,800 surgeon + ~$2,000 anesthesia), with the user responsible for approximately $3,200 after insurance (having already paid $800 toward the $1,500 deductible), noting that while a payment plan is available ($640 down, $213/month), the user missed the opportunity to set up an FSA during open enrollment which could have saved significant tax money. The agent must also remind about critical upcoming dates: pre-op testing on November 28th at 2 PM (same day vitamins must be stopped), confirm that prior authorization is still pending and needs urgent follow-up to avoid surgery delays, and reassure that the anesthesiologist will provide preventive anti-nausea medication given the user's history. This demonstrates comprehensive cross-conversation synthesis and proactive care coordination.
+expected_behavior: The agent should urgently advise stopping fish oil immediately (surgery is December 5th, less than 2 weeks
+  away), confirm prior authorization status, prepare for $3,200 out-of-pocket payment with payment plan option ($640 down),
+  remind about November 28th pre-op at 2 PM, stop vitamins by November 28th, and note that anti-nausea medication will be
+  given due to history

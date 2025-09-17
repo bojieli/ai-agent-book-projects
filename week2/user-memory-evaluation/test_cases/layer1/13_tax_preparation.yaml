@@ -1,0 +1,337 @@
+test_id: layer1_13_tax_preparation
+category: layer1
+title: Tax Preparation Service - Deduction Details Retrieval
+description: Test agent's ability to recall specific tax deductions, income sources, and filing details from a comprehensive tax preparation call
+conversation_histories:
+  - conversation_id: tax_prep_001
+    timestamp: "2024-03-10 11:00:00"
+    metadata:
+      business: "H&R Block"
+      department: "Tax Services"
+      call_duration: "58 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need help preparing my 2023 tax return."
+      - role: assistant
+        content: "Good morning! I'm Jennifer from H&R Block Tax Services. I'll help you prepare your 2023 return. Let's start with your basic information. Full name?"
+      - role: user
+        content: "Patricia Anne Sullivan."
+      - role: assistant
+        content: "Thank you, Ms. Sullivan. Your Social Security number?"
+      - role: user
+        content: "459-67-3821."
+      - role: assistant
+        content: "And your date of birth?"
+      - role: user
+        content: "September 8th, 1979."
+      - role: assistant
+        content: "Current address?"
+      - role: user
+        content: "5832 Willowbrook Lane, Denver, Colorado 80231."
+      - role: assistant
+        content: "Filing status - are you single, married filing jointly, married filing separately, or head of household?"
+      - role: user
+        content: "Married filing jointly."
+      - role: assistant
+        content: "Spouse's full name?"
+      - role: user
+        content: "Thomas Robert Sullivan."
+      - role: assistant
+        content: "His Social Security number?"
+      - role: user
+        content: "502-48-9156."
+      - role: assistant
+        content: "His date of birth?"
+      - role: user
+        content: "November 14th, 1977."
+      - role: assistant
+        content: "Any dependents?"
+      - role: user
+        content: "Yes, we have two children."
+      - role: assistant
+        content: "Their names and ages?"
+      - role: user
+        content: "Emily Rose Sullivan, she's 14, born June 3rd, 2009. And Jacob Thomas Sullivan, he's 11, born August 17th, 2012."
+      - role: assistant
+        content: "Social Security numbers for the children?"
+      - role: user
+        content: "Emily's is 506-22-8745 and Jacob's is 506-33-9821."
+      - role: assistant
+        content: "Perfect. Now let's discuss income. Starting with wages - do you have W-2s?"
+      - role: user
+        content: "Yes, I have one W-2 from Denver Regional Hospital where I work as a nurse practitioner."
+      - role: assistant
+        content: "What's in Box 1 - Wages, tips, other compensation?"
+      - role: user
+        content: "$94,500."
+      - role: assistant
+        content: "Box 2 - Federal income tax withheld?"
+      - role: user
+        content: "$18,725."
+      - role: assistant
+        content: "Box 3 - Social Security wages?"
+      - role: user
+        content: "$94,500."
+      - role: assistant
+        content: "Box 4 - Social Security tax withheld?"
+      - role: user
+        content: "$5,859."
+      - role: assistant
+        content: "Box 5 - Medicare wages?"
+      - role: user
+        content: "$94,500."
+      - role: assistant
+        content: "Box 6 - Medicare tax withheld?"
+      - role: user
+        content: "$1,370."
+      - role: assistant
+        content: "Box 12 - Any codes?"
+      - role: user
+        content: "Yes, Code D with $19,500."
+      - role: assistant
+        content: "That's your 401k contribution. Great. Does your spouse have W-2s?"
+      - role: user
+        content: "Yes, he works for Morrison Engineering. His Box 1 shows $118,000."
+      - role: assistant
+        content: "Federal tax withheld?"
+      - role: user
+        content: "$24,380."
+      - role: assistant
+        content: "Social Security tax?"
+      - role: user
+        content: "$7,316."
+      - role: assistant
+        content: "Medicare tax?"
+      - role: user
+        content: "$1,711."
+      - role: assistant
+        content: "Any 401k contributions?"
+      - role: user
+        content: "Yes, Box 12 Code D shows $22,500."
+      - role: assistant
+        content: "Excellent. Any other income? Interest, dividends, self-employment?"
+      - role: user
+        content: "We have interest from savings accounts. First National Bank sent a 1099-INT showing $1,845 in interest."
+      - role: assistant
+        content: "Any other interest income?"
+      - role: user
+        content: "Credit union savings showed $423."
+      - role: assistant
+        content: "Dividend income?"
+      - role: user
+        content: "Yes, from our Vanguard investment account. Ordinary dividends were $3,267 and qualified dividends were $2,890."
+      - role: assistant
+        content: "Any capital gains or losses?"
+      - role: user
+        content: "We sold some Apple stock. The 1099-B shows proceeds of $15,000 with a cost basis of $11,200."
+      - role: assistant
+        content: "So that's a $3,800 long-term capital gain. When did you originally purchase the stock?"
+      - role: user
+        content: "March 2019."
+      - role: assistant
+        content: "Good, definitely long-term. Any other investment sales?"
+      - role: user
+        content: "No, just that one."
+      - role: assistant
+        content: "Any rental income?"
+      - role: user
+        content: "No."
+      - role: assistant
+        content: "Self-employment or side business income?"
+      - role: user
+        content: "I do some freelance medical consulting. I made $8,500 total."
+      - role: assistant
+        content: "Did you receive 1099-NEC forms?"
+      - role: user
+        content: "Yes, one for $5,000 from MedConsult LLC and one for $3,500 from HealthAdvisors Inc."
+      - role: assistant
+        content: "Any business expenses against that income?"
+      - role: user
+        content: "I have a home office, computer, supplies, and some travel."
+      - role: assistant
+        content: "Let's detail those. Home office - what percentage of your home?"
+      - role: user
+        content: "My office is 150 square feet, and our house is 2,400 square feet total."
+      - role: assistant
+        content: "So 6.25% for home office. Your annual mortgage interest?"
+      - role: user
+        content: "The 1098 shows $14,800 in mortgage interest."
+      - role: assistant
+        content: "Property taxes?"
+      - role: user
+        content: "$4,200."
+      - role: assistant
+        content: "Utilities for the year?"
+      - role: user
+        content: "About $3,600 total."
+      - role: assistant
+        content: "Homeowners insurance?"
+      - role: user
+        content: "$1,800."
+      - role: assistant
+        content: "So your home office deduction would be 6.25% of those expenses, roughly $1,525. Other business expenses?"
+      - role: user
+        content: "New laptop for $1,899, office supplies about $340, and professional liability insurance $1,200."
+      - role: assistant
+        content: "Business mileage?"
+      - role: user
+        content: "I drove 1,847 miles for business consultations."
+      - role: assistant
+        content: "At 65.5 cents per mile for 2023, that's $1,210. Any other business expenses?"
+      - role: user
+        content: "Professional journal subscriptions, $450."
+      - role: assistant
+        content: "Total business expenses around $6,724. Now, let's discuss deductions. Will you itemize or take standard?"
+      - role: user
+        content: "What's better?"
+      - role: assistant
+        content: "Standard deduction for married filing jointly is $27,700 for 2023. Let's see if itemizing exceeds that. You mentioned $14,800 mortgage interest and $4,200 property taxes."
+      - role: user
+        content: "Right."
+      - role: assistant
+        content: "State income taxes paid?"
+      - role: user
+        content: "We paid $8,950 in Colorado state taxes."
+      - role: assistant
+        content: "Note that state and local taxes are capped at $10,000 for deduction. Charitable contributions?"
+      - role: user
+        content: "We donated $3,500 to our church, $1,000 to United Way, and $500 to the food bank."
+      - role: assistant
+        content: "So $5,000 in charitable contributions. That gives us $14,800 mortgage interest plus $10,000 SALT cap plus $5,000 charity equals $29,800."
+      - role: user
+        content: "So we should itemize?"
+      - role: assistant
+        content: "Yes, you'd save about $2,100 by itemizing. Any medical expenses?"
+      - role: user
+        content: "We had some out-of-pocket medical, about $3,200."
+      - role: assistant
+        content: "Medical expenses must exceed 7.5% of AGI to be deductible, so likely won't help. Any other deductions?"
+      - role: user
+        content: "We both contributed to IRAs."
+      - role: assistant
+        content: "Traditional or Roth?"
+      - role: user
+        content: "Traditional. I put in $6,500 and Tom put in $6,500."
+      - role: assistant
+        content: "With your income levels, the IRA deduction might be limited due to workplace retirement plan coverage. Let me calculate... Your AGI is too high for deductible traditional IRA contributions since you both have workplace plans."
+      - role: user
+        content: "Oh, I didn't realize that."
+      - role: assistant
+        content: "The contributions still grow tax-deferred, but no current deduction. Any education expenses?"
+      - role: user
+        content: "Emily takes piano lessons and Jacob is in travel soccer."
+      - role: assistant
+        content: "Those aren't deductible. Any college tuition?"
+      - role: user
+        content: "No, not yet."
+      - role: assistant
+        content: "Child care expenses for Jacob?"
+      - role: user
+        content: "He goes to after-school care. We paid $3,800 for the year."
+      - role: assistant
+        content: "That may qualify for the child care credit. Provider's name and tax ID?"
+      - role: user
+        content: "Sunshine After School Academy, EIN 84-1234567."
+      - role: assistant
+        content: "Perfect. Any energy-efficient home improvements?"
+      - role: user
+        content: "We installed solar panels in June."
+      - role: assistant
+        content: "Cost?"
+      - role: user
+        content: "$22,000 total."
+      - role: assistant
+        content: "That qualifies for a 30% federal tax credit, so $6,600 credit."
+      - role: assistant
+        content: "Any electric vehicle purchases?"
+      - role: user
+        content: "No, not this year."
+      - role: assistant
+        content: "Health Savings Account contributions?"
+      - role: user
+        content: "Yes! I forgot. We contributed $7,750 to our family HSA."
+      - role: assistant
+        content: "Was that through payroll deduction?"
+      - role: user
+        content: "No, we made direct contributions."
+      - role: assistant
+        content: "Great, that's fully deductible. Any cryptocurrency transactions?"
+      - role: user
+        content: "No."
+      - role: assistant
+        content: "Gambling winnings or losses?"
+      - role: user
+        content: "We won $800 on a trip to Vegas but probably lost more than that overall."
+      - role: assistant
+        content: "Do you have documentation of losses?"
+      - role: user
+        content: "Not really, no receipts."
+      - role: assistant
+        content: "Then we'll just report the $800 winnings. Did they issue a W-2G?"
+      - role: user
+        content: "No, it was under the reporting threshold."
+      - role: assistant
+        content: "Still needs to be reported. Any state tax refund from 2022?"
+      - role: user
+        content: "Yes, we got $1,245 back from Colorado."
+      - role: assistant
+        content: "Since you itemized in 2022, that's taxable income for 2023. Any estimated tax payments for 2023?"
+      - role: user
+        content: "We made quarterly payments of $1,500 each for the consulting income."
+      - role: assistant
+        content: "So $6,000 total in estimated payments. Let me calculate your tax... With all income and deductions, your taxable income is approximately $179,000."
+      - role: user
+        content: "What's our tax on that?"
+      - role: assistant
+        content: "Federal tax would be about $31,400 before credits. With the solar credit and child tax credits, down to about $21,600."
+      - role: user
+        content: "And we already paid?"
+      - role: assistant
+        content: "Through withholding and estimated payments, you've paid $49,105."
+      - role: user
+        content: "So we're getting a refund?"
+      - role: assistant
+        content: "Yes, approximately $27,500 federal refund."
+      - role: user
+        content: "That's more than I expected!"
+      - role: assistant
+        content: "The solar panel credit really helped. Want direct deposit?"
+      - role: user
+        content: "Yes, to our First National Bank checking."
+      - role: assistant
+        content: "Routing number?"
+      - role: user
+        content: "102000076."
+      - role: assistant
+        content: "Account number?"
+      - role: user
+        content: "4438829100."
+      - role: assistant
+        content: "Perfect. I'll prepare everything for your review and signature. Any questions?"
+      - role: user
+        content: "When will we get our refund?"
+      - role: assistant
+        content: "E-filed returns with direct deposit typically get refunds within 21 days."
+      - role: user
+        content: "Great! Thank you for all your help, Jennifer."
+      - role: assistant
+        content: "You're welcome! I'll email you the completed return for review within 24 hours."
+user_question: "What was my total self-employment income and what were all the business expense categories I mentioned with their amounts?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Self-employment income:
+  - MedConsult LLC: $5,000
+  - HealthAdvisors Inc: $3,500
+  - Total: $8,500
+  
+  Business expenses:
+  - Home office deduction: $1,525 (6.25% of home expenses)
+  - Laptop: $1,899
+  - Office supplies: $340
+  - Professional liability insurance: $1,200
+  - Business mileage: $1,210 (1,847 miles at 65.5 cents)
+  - Professional journal subscriptions: $450
+  - Total expenses: $6,724
+  
+  The response should include all income sources and expense categories with specific amounts.

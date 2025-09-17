@@ -1,0 +1,301 @@
+test_id: layer1_11_mortgage_application
+category: layer1
+title: Mortgage Application - Financial Details Retrieval
+description: Test agent's ability to recall detailed financial information provided during a complex mortgage application call
+conversation_histories:
+  - conversation_id: mortgage_app_001
+    timestamp: "2024-11-20 09:15:00"
+    metadata:
+      business: "Wells Fargo Home Lending"
+      department: "Mortgage Applications"
+      call_duration: "63 minutes"
+    messages:
+      - role: user
+        content: "Hi, I'd like to apply for a home mortgage loan."
+      - role: assistant
+        content: "Good morning! I'm Robert from Wells Fargo Home Lending. I'll help you with your mortgage application today. Let's start with some basic information. What's your full legal name?"
+      - role: user
+        content: "David Alexander Thompson."
+      - role: assistant
+        content: "Thank you, Mr. Thompson. And your date of birth?"
+      - role: user
+        content: "July 22nd, 1982."
+      - role: assistant
+        content: "What's your Social Security number?"
+      - role: user
+        content: "652-41-8897."
+      - role: assistant
+        content: "And your current address?"
+      - role: user
+        content: "2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601."
+      - role: assistant
+        content: "How long have you lived at this address?"
+      - role: user
+        content: "About three years and four months."
+      - role: assistant
+        content: "Are you currently renting or do you own?"
+      - role: user
+        content: "I'm renting. The monthly rent is $2,450."
+      - role: assistant
+        content: "Who's your landlord or management company?"
+      - role: user
+        content: "Citywide Property Management LLC."
+      - role: assistant
+        content: "Thank you. Now, let's discuss your employment. Current employer?"
+      - role: user
+        content: "I work for McKenzie Financial Advisors."
+      - role: assistant
+        content: "Your position there?"
+      - role: user
+        content: "Senior Financial Analyst."
+      - role: assistant
+        content: "How long have you been with McKenzie Financial?"
+      - role: user
+        content: "Six years and two months."
+      - role: assistant
+        content: "And your annual salary?"
+      - role: user
+        content: "My base salary is $145,000 per year."
+      - role: assistant
+        content: "Do you receive any bonuses or additional compensation?"
+      - role: user
+        content: "Yes, I typically get an annual bonus. Last year it was $28,500."
+      - role: assistant
+        content: "Any other sources of income?"
+      - role: user
+        content: "I do some freelance consulting, averaging about $1,800 per month."
+      - role: assistant
+        content: "How long have you been doing the consulting work?"
+      - role: user
+        content: "For about two years now."
+      - role: assistant
+        content: "Do you have a business name or is it under your personal name?"
+      - role: user
+        content: "It's under Thompson Consulting LLC."
+      - role: assistant
+        content: "Great. Now let's talk about your assets. What's your total in checking accounts?"
+      - role: user
+        content: "I have about $18,500 in my Chase checking account."
+      - role: assistant
+        content: "Savings accounts?"
+      - role: user
+        content: "I have $67,000 in my Wells Fargo savings and another $45,000 in a Marcus by Goldman Sachs high-yield savings."
+      - role: assistant
+        content: "Any investment accounts?"
+      - role: user
+        content: "Yes, I have a Vanguard brokerage account with about $125,000 and a TD Ameritrade account with $38,000."
+      - role: assistant
+        content: "What about retirement accounts?"
+      - role: user
+        content: "My 401k with my employer has around $285,000, and I have a Roth IRA at Fidelity with $78,000."
+      - role: assistant
+        content: "Excellent. Now, any liabilities? Credit card debt?"
+      - role: user
+        content: "I have three credit cards. The Visa has a $2,300 balance, MasterCard is paid off, and my Amex has about $1,100."
+      - role: assistant
+        content: "What are the credit limits on those cards?"
+      - role: user
+        content: "The Visa is $15,000 limit, MasterCard is $12,000, and Amex is $25,000."
+      - role: assistant
+        content: "Any auto loans?"
+      - role: user
+        content: "Yes, I have a car loan with BMW Financial. The balance is $31,500."
+      - role: assistant
+        content: "Monthly payment?"
+      - role: user
+        content: "$685 per month."
+      - role: assistant
+        content: "Interest rate on that loan?"
+      - role: user
+        content: "It's 3.9%."
+      - role: assistant
+        content: "Any student loans?"
+      - role: user
+        content: "No, I paid those off two years ago."
+      - role: assistant
+        content: "Other debts or monthly obligations?"
+      - role: user
+        content: "No, that's everything."
+      - role: assistant
+        content: "Now, about the property you're looking to purchase. What's the address?"
+      - role: user
+        content: "It's 789 Oak Park Avenue, Evanston, Illinois 60201."
+      - role: assistant
+        content: "Purchase price?"
+      - role: user
+        content: "$625,000."
+      - role: assistant
+        content: "How much are you planning to put down?"
+      - role: user
+        content: "I'm planning to put down 20%, so $125,000."
+      - role: assistant
+        content: "So you're looking to borrow $500,000?"
+      - role: user
+        content: "Exactly."
+      - role: assistant
+        content: "Have you already made an offer?"
+      - role: user
+        content: "Yes, it was accepted. We're in attorney review until December 5th."
+      - role: assistant
+        content: "When's the planned closing date?"
+      - role: user
+        content: "January 15th, 2025."
+      - role: assistant
+        content: "Is this going to be your primary residence?"
+      - role: user
+        content: "Yes, absolutely."
+      - role: assistant
+        content: "Are you purchasing alone or with someone else?"
+      - role: user
+        content: "Just me, I'm buying it alone."
+      - role: assistant
+        content: "Are you a first-time homebuyer?"
+      - role: user
+        content: "No, I owned a condo about eight years ago but sold it when I relocated for work."
+      - role: assistant
+        content: "What did you sell that property for?"
+      - role: user
+        content: "I sold it for $285,000 back in 2016."
+      - role: assistant
+        content: "Did you have any gain or loss on that sale?"
+      - role: user
+        content: "I made about a $45,000 profit after all expenses."
+      - role: assistant
+        content: "Good. Now, do you have a preference for loan type? 30-year fixed, 15-year fixed, or adjustable rate?"
+      - role: user
+        content: "I'm interested in a 30-year fixed rate."
+      - role: assistant
+        content: "Based on your credit score range, which we'll verify, current rates are around 6.875% for a 30-year fixed with 20% down."
+      - role: user
+        content: "Speaking of credit score, what do you need?"
+      - role: assistant
+        content: "We'll pull your credit report. Do you know your approximate score?"
+      - role: user
+        content: "Last I checked it was 782."
+      - role: assistant
+        content: "Excellent score. That should qualify you for our best rates. Have you had any late payments in the last two years?"
+      - role: user
+        content: "No, no late payments at all."
+      - role: assistant
+        content: "Any bankruptcies or foreclosures?"
+      - role: user
+        content: "No, never."
+      - role: assistant
+        content: "Have you co-signed any loans for anyone?"
+      - role: user
+        content: "Actually yes, I co-signed my sister's student loan about five years ago."
+      - role: assistant
+        content: "What's the balance on that loan?"
+      - role: user
+        content: "It's down to about $18,000 now."
+      - role: assistant
+        content: "Is she current on payments?"
+      - role: user
+        content: "Yes, she's never missed a payment."
+      - role: assistant
+        content: "Good. Now, for the down payment, where will those funds come from?"
+      - role: user
+        content: "From my savings accounts - the Wells Fargo and Marcus accounts I mentioned."
+      - role: assistant
+        content: "Will any of the down payment be a gift from family?"
+      - role: user
+        content: "No, it's all my own savings."
+      - role: assistant
+        content: "Have you made any large deposits to your accounts in the last 60 days?"
+      - role: user
+        content: "Just my regular salary and the consulting income. Oh, and I got my annual bonus of $28,500 deposited about three weeks ago."
+      - role: assistant
+        content: "That's fine, we'll just need documentation for that. Now, regarding the property, what type of home is it?"
+      - role: user
+        content: "It's a single-family home, built in 1998."
+      - role: assistant
+        content: "How many bedrooms and bathrooms?"
+      - role: user
+        content: "Four bedrooms, three and a half bathrooms."
+      - role: assistant
+        content: "Square footage?"
+      - role: user
+        content: "About 3,200 square feet."
+      - role: assistant
+        content: "Is there a homeowners association?"
+      - role: user
+        content: "Yes, the HOA fee is $185 per month."
+      - role: assistant
+        content: "What does that cover?"
+      - role: user
+        content: "Landscaping of common areas, snow removal, and maintenance of the community park and pool."
+      - role: assistant
+        content: "Annual property taxes?"
+      - role: user
+        content: "They're about $14,800 per year."
+      - role: assistant
+        content: "Has a home inspection been done yet?"
+      - role: user
+        content: "Scheduled for next Tuesday, November 26th."
+      - role: assistant
+        content: "Good. Now, let me calculate your debt-to-income ratio. Your monthly gross income including the consulting would be about $14,267, correct?"
+      - role: user
+        content: "That sounds right."
+      - role: assistant
+        content: "With the mortgage payment, taxes, insurance, HOA, and your car payment, your total monthly housing and debt payments would be approximately $4,285. That gives you a debt-to-income ratio of about 30%, which is excellent."
+      - role: user
+        content: "That's good to hear."
+      - role: assistant
+        content: "For the loan application, I'll need several documents. Do you have your last two years of tax returns?"
+      - role: user
+        content: "Yes, I have 2022 and 2023 returns ready."
+      - role: assistant
+        content: "Last two months of pay stubs?"
+      - role: user
+        content: "I can download those from our HR portal."
+      - role: assistant
+        content: "Last two months of bank statements for all accounts?"
+      - role: user
+        content: "I'll need to gather those."
+      - role: assistant
+        content: "And we'll need the purchase agreement and your employer's contact information for verification."
+      - role: user
+        content: "The purchase agreement is with my attorney. My HR department number is 312-555-8900."
+      - role: assistant
+        content: "Perfect. Once we receive all documents, the underwriting process typically takes 3-4 weeks."
+      - role: user
+        content: "That should work with our January 15th closing."
+      - role: assistant
+        content: "Yes, we'll have plenty of time. I'll email you the full application and document checklist. What's your email address?"
+      - role: user
+        content: "It's dthompson82@email.com"
+      - role: assistant
+        content: "Great. I'll send that within the hour. Any questions about the mortgage process?"
+      - role: user
+        content: "What about mortgage insurance?"
+      - role: assistant
+        content: "With 20% down, you won't need PMI - private mortgage insurance."
+      - role: user
+        content: "Perfect. And when do I lock in the interest rate?"
+      - role: assistant
+        content: "You can lock anytime between now and closing. We offer 30, 45, or 60-day locks. Given your January 15th closing, I'd recommend a 60-day lock for safety."
+      - role: user
+        content: "What if rates drop after I lock?"
+      - role: assistant
+        content: "We have a one-time float-down option if rates drop by at least 0.25% from your locked rate."
+      - role: user
+        content: "That's good to know. I think I'll wait a week or two before locking."
+      - role: assistant
+        content: "That's fine. Just keep in mind rates can change daily. I'll monitor them and keep you informed."
+      - role: user
+        content: "Please do. I think that covers everything I needed to know today."
+      - role: assistant
+        content: "Excellent. I'll process your application and send you the document list. My direct line is 312-555-7600 if you have any questions."
+      - role: user
+        content: "Thank you, Robert. I'll gather those documents and send them over soon."
+      - role: assistant
+        content: "Perfect. Congratulations on your home purchase, Mr. Thompson. We'll make sure everything goes smoothly for your closing."
+user_question: "What was my total liquid assets amount that I mentioned for the mortgage application?"
+evaluation_criteria: |
+  The agent should correctly recall and calculate the total liquid assets mentioned:
+  - Chase checking: $18,500
+  - Wells Fargo savings: $67,000
+  - Marcus high-yield savings: $45,000
+  - Total liquid assets: $130,500
+  
+  The agent should provide this specific total, not including investment or retirement accounts which are not typically considered immediately liquid for mortgage purposes.

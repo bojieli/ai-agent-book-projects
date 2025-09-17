@@ -1,0 +1,217 @@
+test_id: layer1_01_bank_account
+category: layer1
+title: Bank Account Setup - Personal Details Retrieval
+description: Test agent's ability to recall customer's personal and financial information provided during a lengthy bank account
+  setup call
+conversation_histories:
+- conversation_id: bank_setup_001
+  timestamp: '2024-11-15 10:30:00'
+  metadata:
+    business: First National Bank
+    department: New Accounts
+    call_duration: 47 minutes
+  messages:
+  - role: user
+    content: Hi, I'd like to open a new checking account please.
+  - role: assistant
+    content: Good morning! I'd be happy to help you open a new checking account with First National Bank. My name is Sarah.
+      Before we begin, may I have your full legal name as it appears on your driver's license?
+  - role: user
+    content: Sure, it's Michael James Robertson.
+  - role: assistant
+    content: Thank you, Mr. Robertson. And could you please provide your date of birth?
+  - role: user
+    content: March 15th, 1985.
+  - role: assistant
+    content: Perfect. Now I'll need your current residential address.
+  - role: user
+    content: I live at 1847 Maple Street, Apartment 3B, Portland, Oregon, 97205.
+  - role: assistant
+    content: Thank you. How long have you been at this address?
+  - role: user
+    content: About two and a half years now.
+  - role: assistant
+    content: Great. And what's the best phone number to reach you?
+  - role: user
+    content: My cell is 503-555-8924.
+  - role: assistant
+    content: Excellent. Do you have an email address for account notifications?
+  - role: user
+    content: Yes, it's mrobertson85@email.com
+  - role: assistant
+    content: Thank you. Now, for our records, what's your current employment status?
+  - role: user
+    content: I'm employed full-time as a software engineer at TechCorp Industries.
+  - role: assistant
+    content: How long have you been with TechCorp Industries?
+  - role: user
+    content: Coming up on four years this December.
+  - role: assistant
+    content: That's wonderful. Could you provide your annual income range for our application?
+  - role: user
+    content: I make about $125,000 a year, before taxes.
+  - role: assistant
+    content: Thank you for that information. Now, I need to verify your identity. Could you provide your Social Security number?
+  - role: user
+    content: Sure, it's 547-82-9163.
+  - role: assistant
+    content: Thank you. And your driver's license number?
+  - role: user
+    content: It's Oregon license, number D758392.
+  - role: assistant
+    content: Perfect. Now, which type of checking account were you interested in? We have our Basic Checking with no minimum
+      balance, our Premium Checking with a $2,500 minimum, or our Elite Checking with a $10,000 minimum.
+  - role: user
+    content: What are the benefits of the Premium one?
+  - role: assistant
+    content: The Premium Checking includes no monthly fees if you maintain the minimum balance, free checks, free wire transfers
+      domestically, and you earn 0.5% APY on your balance.
+  - role: user
+    content: Hmm, actually let me think about it. What about the Elite?
+  - role: assistant
+    content: The Elite Checking offers everything in Premium plus 1.2% APY, free international wire transfers, a complimentary
+      safe deposit box, and access to our financial advisory services.
+  - role: user
+    content: You know what, let's go with the Premium. I can maintain that $2,500 minimum.
+  - role: assistant
+    content: Excellent choice. Now, would you like to order checks with your account?
+  - role: user
+    content: Yes, I'll need checks.
+  - role: assistant
+    content: Would you like the standard design or would you like to choose from our custom designs? Custom designs have a
+      $15 fee.
+  - role: user
+    content: Just the standard is fine.
+  - role: assistant
+    content: Perfect. We'll send those to your Maple Street address. Now, would you like to set up online banking?
+  - role: user
+    content: Absolutely, yes.
+  - role: assistant
+    content: Great. You'll need to create a username. What would you like to use?
+  - role: user
+    content: How about MRobertson503?
+  - role: assistant
+    content: Let me check... Yes, that username is available. You'll create your password when you first log in. Would you
+      also like to enroll in mobile banking?
+  - role: user
+    content: Yes, definitely.
+  - role: assistant
+    content: Excellent. Now, would you like to add a debit card to this account?
+  - role: user
+    content: Yes, I'll need a debit card.
+  - role: assistant
+    content: Would you like to set up a custom PIN now or when you receive the card?
+  - role: user
+    content: I'll set it up now. Can I use 4827?
+  - role: assistant
+    content: Yes, 4827 is set as your PIN. Please remember this number. Now, for overdraft protection, would you like to enroll?
+  - role: user
+    content: What are my options?
+  - role: assistant
+    content: We can link it to a savings account, a credit card, or you can opt for our standard overdraft coverage which
+      allows transactions to go through for a $35 fee.
+  - role: user
+    content: Actually, let me also open a savings account and link them.
+  - role: assistant
+    content: Perfect! Our basic savings requires a $100 minimum balance. Is that acceptable?
+  - role: user
+    content: Yes, that works.
+  - role: assistant
+    content: Great. I'll set that up for you. Now, for your initial deposit to open both accounts, what amount would you like
+      to deposit?
+  - role: user
+    content: I'll start with $5,000 in checking and $500 in savings.
+  - role: assistant
+    content: Excellent. How would you like to make this initial deposit?
+  - role: user
+    content: I can do an electronic transfer from my current bank, Wells Fargo.
+  - role: assistant
+    content: Perfect. I'll need your Wells Fargo account number and routing number.
+  - role: user
+    content: The account number is 8847293001 and the routing number is... let me check... 121000248.
+  - role: assistant
+    content: Thank you. I've initiated that transfer. It should complete within 2-3 business days. Now, would you like to
+      set up any automatic transfers between your checking and savings?
+  - role: user
+    content: Yes, can we do $200 monthly from checking to savings?
+  - role: assistant
+    content: Certainly. Which day of the month would you prefer?
+  - role: user
+    content: The 15th of each month would be good.
+  - role: assistant
+    content: Perfect, that's set up. Now, do you have any direct deposits you'd like to set up?
+  - role: user
+    content: Yes, my paycheck from TechCorp.
+  - role: assistant
+    content: I can provide you with our routing number and your new account number for that. Our routing number is 123006800,
+      and your new checking account number is 4429853327.
+  - role: user
+    content: Let me write that down... 4429853327, right?
+  - role: assistant
+    content: Correct. And your savings account number is 4429853328.
+  - role: user
+    content: Got it. Oh, I should mention, I travel internationally for work sometimes. Will my debit card work overseas?
+  - role: assistant
+    content: Yes, your debit card will work internationally. We charge a 3% foreign transaction fee. Would you like to add
+      travel notifications to your profile?
+  - role: user
+    content: Not right now, but good to know.
+  - role: assistant
+    content: Of course. You can always add them through online banking or by calling us. Now, for security questions for your
+      account, I need to set up three. First, what was the name of your first pet?
+  - role: user
+    content: Buddy. He was a golden retriever.
+  - role: assistant
+    content: 'Thank you. Second question: What city were you born in?'
+  - role: user
+    content: Denver, Colorado.
+  - role: assistant
+    content: 'And third: What was your mother''s maiden name?'
+  - role: user
+    content: Harrison.
+  - role: assistant
+    content: Perfect. Now, would you like to receive paper statements or electronic statements?
+  - role: user
+    content: Electronic is fine. Save some trees.
+  - role: assistant
+    content: Great choice! They'll be sent to mrobertson85@email.com. Is there anything else you'd like to add to your account?
+  - role: user
+    content: Actually, what about a credit card?
+  - role: assistant
+    content: We have several options. Our CashBack card gives 2% on all purchases, our Travel Rewards card gives 3x points
+      on travel and dining, and our Basic card has no annual fee.
+  - role: user
+    content: What's the annual fee on the CashBack card?
+  - role: assistant
+    content: The CashBack card has a $95 annual fee, but it's waived for the first year.
+  - role: user
+    content: You know what, I'll think about the credit card and maybe apply later.
+  - role: assistant
+    content: No problem at all. You can apply anytime through online banking or by calling us. Your debit card will arrive
+      in 7-10 business days at your Maple Street address.
+  - role: user
+    content: Perfect. Oh wait, I forgot to ask - are there any ATM fees?
+  - role: assistant
+    content: With your Premium Checking, you get unlimited free withdrawals at First National Bank ATMs, and we reimburse
+      up to $15 per month in other bank ATM fees.
+  - role: user
+    content: That's great. And how many First National ATMs are there in Portland?
+  - role: assistant
+    content: We have 47 ATMs throughout the Portland metro area, plus you can use any AllPoint ATM nationwide for free - that's
+      over 55,000 ATMs.
+  - role: user
+    content: Excellent. I think that covers everything I needed.
+  - role: assistant
+    content: 'Wonderful! Just to confirm everything: You''ve opened a Premium Checking with account number 4429853327 and
+      a Basic Savings with account number 4429853328. Your debit card with PIN 4827 will arrive in 7-10 business days. You''ve
+      set up a $200 monthly transfer on the 15th, and your online banking username is MRobertson503. Is everything correct?'
+  - role: user
+    content: Yes, that all sounds right. Thank you so much for your help, Sarah.
+  - role: assistant
+    content: You're very welcome, Mr. Robertson! If you have any questions, don't hesitate to call us at 1-800-555-BANK. Welcome
+      to First National Bank!
+user_question: What was my checking account number again? I need it to set up my direct deposit at work.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the specific checking account number 4429853327 that was mentioned during the account setup conversation. Since the user is asking about setting up direct deposit at work, the agent should ideally also mention the routing number 123006800 which was discussed in that context. The agent must correctly distinguish between the checking account (4429853327) and the savings account (4429853328) numbers, providing only the checking account number as requested. The response demonstrates proper memory recall if it provides the exact checking account number without confusing it with other numbers mentioned in the conversation such as the SSN, phone number, or savings account number.
+expected_behavior: The agent should directly retrieve and provide the checking account number 4429853327, possibly also mentioning
+  the routing number 123006800 since the user is asking for direct deposit setup purposes

@@ -1,0 +1,244 @@
+test_id: layer1_16_home_renovation
+category: layer1
+title: Home Renovation Quote - Detailed Cost Breakdown Retrieval
+description: Test agent's ability to recall specific renovation items, materials, labor costs, and timeline from contractor consultation
+conversation_histories:
+  - conversation_id: renovation_quote_001
+    timestamp: "2024-11-12 14:00:00"
+    metadata:
+      business: "Premier Home Renovations"
+      department: "Project Estimation"
+      call_duration: "54 minutes"
+    messages:
+      - role: user
+        content: "Hi, I got your number from a neighbor. I need a quote for renovating my kitchen and bathroom."
+      - role: assistant
+        content: "Good afternoon! I'm Tom from Premier Home Renovations. I'd be happy to provide you with a detailed quote. Let's start with your contact information."
+      - role: user
+        content: "I'm Linda Harrison. My address is 4521 Oakwood Drive, Seattle, Washington 98102."
+      - role: assistant
+        content: "Thank you, Ms. Harrison. And the best phone number to reach you?"
+      - role: user
+        content: "206-555-3847."
+      - role: assistant
+        content: "Perfect. Now, tell me about your kitchen. What's the current square footage?"
+      - role: user
+        content: "It's about 180 square feet."
+      - role: assistant
+        content: "And what type of renovation are you looking for? Full gut or cosmetic update?"
+      - role: user
+        content: "Full renovation. The kitchen is from the 1970s and needs everything replaced."
+      - role: assistant
+        content: "Understood. Let's go through each component. Starting with cabinets - what style interests you?"
+      - role: user
+        content: "I like shaker style cabinets in white."
+      - role: assistant
+        content: "Excellent choice. For 180 square feet, you'd need approximately 25 linear feet of cabinetry. Our mid-range shaker cabinets run $285 per linear foot."
+      - role: user
+        content: "So that would be?"
+      - role: assistant
+        content: "$7,125 for the cabinets. That includes soft-close hardware and crown molding."
+      - role: user
+        content: "What about installation?"
+      - role: assistant
+        content: "Cabinet installation is $125 per linear foot, so $3,125 for labor."
+      - role: user
+        content: "Okay. What about countertops?"
+      - role: assistant
+        content: "What material were you considering?"
+      - role: user
+        content: "I really want quartz."
+      - role: assistant
+        content: "Good choice. For your kitchen, you'd need about 45 square feet. Our quartz options range from $75 to $125 per square foot installed."
+      - role: user
+        content: "Let's go with something in the middle, around $95."
+      - role: assistant
+        content: "That would be $4,275 for quartz countertops, including fabrication and installation."
+      - role: user
+        content: "What about the backsplash?"
+      - role: assistant
+        content: "Subway tile is popular. Classic white 3x6 subway tile with installation runs about $18 per square foot."
+      - role: user
+        content: "How many square feet would I need?"
+      - role: assistant
+        content: "Typically 30 square feet for your kitchen size. That's $540 for backsplash."
+      - role: user
+        content: "Now appliances - I need all new ones."
+      - role: assistant
+        content: "Are you looking for standard or high-end appliances?"
+      - role: user
+        content: "Mid-range is fine. Stainless steel."
+      - role: assistant
+        content: "A good appliance package - refrigerator, range, dishwasher, and microwave - runs about $4,800."
+      - role: user
+        content: "Specific brands?"
+      - role: assistant
+        content: "We typically recommend Samsung or LG. Samsung package with French door fridge, gas range, dishwasher, and over-range microwave."
+      - role: user
+        content: "Sounds good. What about the sink?"
+      - role: assistant
+        content: "Undermount stainless steel sink, 33-inch double bowl, about $450. Faucet?"
+      - role: user
+        content: "Something with a pull-down sprayer."
+      - role: assistant
+        content: "Delta or Moen pull-down faucets run $325-400. Let's say $375."
+      - role: user
+        content: "What about flooring?"
+      - role: assistant
+        content: "What's there now?"
+      - role: user
+        content: "Old vinyl that needs to go."
+      - role: assistant
+        content: "Luxury vinyl plank is popular - waterproof and durable. About $4.50 per square foot installed."
+      - role: user
+        content: "For 180 square feet?"
+      - role: assistant
+        content: "That's $810 for flooring. Demo of old floor adds $360."
+      - role: user
+        content: "What about lighting?"
+      - role: assistant
+        content: "Recessed LED lights, about $185 per fixture installed. I'd recommend 6 for your space."
+      - role: user
+        content: "So $1,110 for lighting?"
+      - role: assistant
+        content: "Correct. Plus under-cabinet lighting for $450 if interested."
+      - role: user
+        content: "Yes, let's add that. Now what about electrical work?"
+      - role: assistant
+        content: "We'll need to add outlets for code compliance - probably 4 new outlets at $275 each."
+      - role: user
+        content: "That's $1,100 for electrical?"
+      - role: assistant
+        content: "Yes, plus moving any existing outlets for new appliance locations, about $400 more."
+      - role: user
+        content: "Okay. Let's talk about the bathroom now."
+      - role: assistant
+        content: "What size is the bathroom?"
+      - role: user
+        content: "It's a full bath, about 60 square feet."
+      - role: assistant
+        content: "And what needs updating?"
+      - role: user
+        content: "Everything - tub, toilet, vanity, flooring, the works."
+      - role: assistant
+        content: "Let's start with the tub. Standard tub/shower combo or something special?"
+      - role: user
+        content: "I'd like a walk-in shower, no tub."
+      - role: assistant
+        content: "A tiled walk-in shower with glass door runs about $4,500 complete."
+      - role: user
+        content: "That includes the tile?"
+      - role: assistant
+        content: "Yes, standard 12x12 porcelain tile. Fancier tile would be extra."
+      - role: user
+        content: "That's fine. What about the vanity?"
+      - role: assistant
+        content: "36-inch vanity with quartz top and undermount sink is about $1,450."
+      - role: user
+        content: "And installation?"
+      - role: assistant
+        content: "Installation adds $325, plus plumbing connections $275."
+      - role: user
+        content: "The toilet?"
+      - role: assistant
+        content: "Comfort height elongated toilet, about $385 for a Kohler, plus $200 installation."
+      - role: user
+        content: "Bathroom flooring?"
+      - role: assistant
+        content: "Porcelain tile, 12x24 planks are popular. $8 per square foot installed."
+      - role: user
+        content: "So 60 square feet would be?"
+      - role: assistant
+        content: "$480 for bathroom flooring."
+      - role: user
+        content: "What about bathroom lighting and fan?"
+      - role: assistant
+        content: "Vanity light fixture $225, exhaust fan with humidity sensor $285, both installed."
+      - role: user
+        content: "Medicine cabinet?"
+      - role: assistant
+        content: "Recessed medicine cabinet with mirror, about $420 installed."
+      - role: user
+        content: "Paint for both rooms?"
+      - role: assistant
+        content: "Kitchen and bathroom painting, about $780 total including ceiling."
+      - role: user
+        content: "What about permits?"
+      - role: assistant
+        content: "Permits for kitchen and bath renovation in Seattle run about $850."
+      - role: user
+        content: "Is there a design fee?"
+      - role: assistant
+        content: "Basic design is included. Custom design work is $1,500 but optional."
+      - role: user
+        content: "Let's skip custom design. What's the total so far?"
+      - role: assistant
+        content: "Let me calculate... Kitchen is $26,605 and bathroom is $8,795, plus permits $850. Total: $36,250."
+      - role: user
+        content: "That's higher than I expected. Any place to save?"
+      - role: assistant
+        content: "You could go with laminate countertops instead of quartz, saves about $2,500. Or standard cabinets instead of shaker, saves $1,800."
+      - role: user
+        content: "Let's keep the quartz but go with standard cabinets."
+      - role: assistant
+        content: "That brings cabinets from $7,125 to $5,325, total project to $34,450."
+      - role: user
+        content: "Better. What about timeline?"
+      - role: assistant
+        content: "Kitchen takes 3-4 weeks, bathroom 2 weeks. We can overlap some work, total about 5 weeks."
+      - role: user
+        content: "When could you start?"
+      - role: assistant
+        content: "We have an opening starting January 8th, 2025."
+      - role: user
+        content: "So we'd be done by mid-February?"
+      - role: assistant
+        content: "Yes, completed by February 12th, barring any unforeseen issues."
+      - role: user
+        content: "What's your payment schedule?"
+      - role: assistant
+        content: "30% deposit to schedule ($10,335), 40% at project midpoint ($13,780), 30% on completion ($10,335)."
+      - role: user
+        content: "Do you warranty your work?"
+      - role: assistant
+        content: "Yes, one-year warranty on labor, manufacturers' warranties on all materials and appliances."
+      - role: user
+        content: "What if we find problems when you open up the walls?"
+      - role: assistant
+        content: "We'd notify you immediately with photos and revised quote for any additional work needed."
+      - role: user
+        content: "Like what kinds of issues?"
+      - role: assistant
+        content: "Water damage, outdated wiring, plumbing problems. Change orders typically run $500-3,000 depending on the issue."
+      - role: user
+        content: "Good to know. Can you email me this quote?"
+      - role: assistant
+        content: "Of course. What's your email address?"
+      - role: user
+        content: "lharrison.home@email.com"
+      - role: assistant
+        content: "I'll send a detailed breakdown within 2 hours. The quote is valid for 30 days."
+      - role: user
+        content: "Perfect. Thank you for the thorough estimate, Tom."
+      - role: assistant
+        content: "You're welcome, Ms. Harrison. Feel free to call with any questions. We'd love to transform your kitchen and bathroom!"
+user_question: "What was the total renovation cost after adjustments, and what were the three payment installments?"
+evaluation_criteria: |
+  The agent should accurately recall:
+  
+  Cost adjustments:
+  - Original total: $36,250
+  - Adjustment: Standard cabinets instead of shaker (saved $1,800)
+  - Final total: $34,450
+  
+  Payment schedule (30%-40%-30%):
+  - Deposit (30%): $10,335
+  - Midpoint (40%): $13,780
+  - Completion (30%): $10,335
+  
+  Timeline:
+  - Start date: January 8, 2025
+  - Completion: February 12, 2025
+  - Duration: 5 weeks
+  
+  The response should include the final adjusted total and all three payment amounts.

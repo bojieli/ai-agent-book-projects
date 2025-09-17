@@ -1,0 +1,281 @@
+test_id: layer1_03_medical_appointment
+category: layer1
+title: Healthcare Provider - Medical History and Appointment Scheduling
+description: Test agent's ability to recall patient medical information and appointment details from comprehensive intake
+  call
+conversation_histories:
+- conversation_id: medical_intake_001
+  timestamp: '2024-11-12 09:00:00'
+  metadata:
+    business: Mountain View Medical Center
+    department: Patient Services
+    call_duration: 43 minutes
+  messages:
+  - role: user
+    content: Hi, I'm a new patient and need to schedule an appointment with a primary care doctor.
+  - role: assistant
+    content: Good morning! Welcome to Mountain View Medical Center. I'm Rachel from patient services. I'll help you get registered
+      and scheduled. First, may I have your full name?
+  - role: user
+    content: It's David Christopher Thompson.
+  - role: assistant
+    content: Thank you, Mr. Thompson. And your date of birth?
+  - role: user
+    content: August 9th, 1979.
+  - role: assistant
+    content: Perfect. What's your current address?
+  - role: user
+    content: 4521 Pine Valley Road, Denver, Colorado, 80203.
+  - role: assistant
+    content: And the best phone number to reach you?
+  - role: user
+    content: My cell is 303-555-7621.
+  - role: assistant
+    content: Do you have an email address for appointment reminders and patient portal access?
+  - role: user
+    content: Yes, it's dthompson79@email.com
+  - role: assistant
+    content: Excellent. Now, what type of insurance do you have?
+  - role: user
+    content: I have Blue Cross Blue Shield through my employer.
+  - role: assistant
+    content: Great. Can you provide your member ID number?
+  - role: user
+    content: It's BCB447829563.
+  - role: assistant
+    content: And the group number?
+  - role: user
+    content: Group number is 78845-001.
+  - role: assistant
+    content: Perfect. Who is your employer?
+  - role: user
+    content: I work for Meridian Software Solutions.
+  - role: assistant
+    content: Thank you. Now, are you the primary insurance holder?
+  - role: user
+    content: Yes, I am.
+  - role: assistant
+    content: Do you have any secondary insurance?
+  - role: user
+    content: No, just the one.
+  - role: assistant
+    content: Alright. Now I need to gather some medical history. Who was your previous primary care physician?
+  - role: user
+    content: Dr. Sarah Mitchell at Denver General. I've been seeing her for about five years but she's retiring.
+  - role: assistant
+    content: I see. We can request your records from Dr. Mitchell's office. Now, what brings you in for this appointment?
+      Any specific concerns?
+  - role: user
+    content: Well, I need a new primary doctor obviously, but I also have high blood pressure that needs monitoring, and I've
+      been having some back pain lately.
+  - role: assistant
+    content: I understand. How long have you had high blood pressure?
+  - role: user
+    content: It was diagnosed about three years ago. I'm on medication for it.
+  - role: assistant
+    content: What medication are you taking?
+  - role: user
+    content: Lisinopril, 10 milligrams once daily.
+  - role: assistant
+    content: Any other medications?
+  - role: user
+    content: I take atorvastatin for cholesterol, 20 milligrams at night, and I just started taking omeprazole for acid reflux
+      about a month ago.
+  - role: assistant
+    content: What dosage of omeprazole?
+  - role: user
+    content: 20 milligrams, once in the morning.
+  - role: assistant
+    content: Thank you. Do you take any vitamins or supplements?
+  - role: user
+    content: Just a daily multivitamin and vitamin D, 2000 units.
+  - role: assistant
+    content: Good. Any allergies to medications?
+  - role: user
+    content: Yes, I'm allergic to penicillin. I break out in hives.
+  - role: assistant
+    content: That's important to note. Any other allergies, including food or environmental?
+  - role: user
+    content: I have seasonal allergies, mainly tree pollen in the spring. And I'm lactose intolerant.
+  - role: assistant
+    content: Understood. Have you had any surgeries?
+  - role: user
+    content: I had my appendix removed in 2010 and knee surgery - ACL repair on my left knee in 2018.
+  - role: assistant
+    content: Any complications with those surgeries?
+  - role: user
+    content: No, both went smoothly.
+  - role: assistant
+    content: Good. Any hospitalizations besides those surgeries?
+  - role: user
+    content: I was hospitalized for pneumonia in 2021, just for two days.
+  - role: assistant
+    content: I see. Now, let me ask about family medical history. Are your parents living?
+  - role: user
+    content: My mother is, she's 72. My father passed away five years ago from a heart attack. He was 68.
+  - role: assistant
+    content: I'm sorry for your loss. Did your father have any other health conditions?
+  - role: user
+    content: He had diabetes and high blood pressure too.
+  - role: assistant
+    content: And your mother's health?
+  - role: user
+    content: She has arthritis and high cholesterol, but she's doing okay.
+  - role: assistant
+    content: Any siblings?
+  - role: user
+    content: One sister, she's 45 and healthy. Oh, but she was just diagnosed with thyroid issues.
+  - role: assistant
+    content: Any history of cancer in the family?
+  - role: user
+    content: My maternal grandmother had breast cancer, and my paternal grandfather had prostate cancer.
+  - role: assistant
+    content: Thank you for that information. Now, do you smoke or use tobacco products?
+  - role: user
+    content: No, never have.
+  - role: assistant
+    content: How about alcohol consumption?
+  - role: user
+    content: Maybe a glass of wine or two on weekends. Nothing excessive.
+  - role: assistant
+    content: Any recreational drug use?
+  - role: user
+    content: No, none.
+  - role: assistant
+    content: Good. How would you describe your exercise habits?
+  - role: user
+    content: I try to go to the gym three times a week, mostly cardio and some light weights. Though the back pain has limited
+      me lately.
+  - role: assistant
+    content: How long have you been experiencing the back pain?
+  - role: user
+    content: About six weeks now. It's lower back, gets worse when I sit for long periods.
+  - role: assistant
+    content: On a scale of 1 to 10, how would you rate the pain?
+  - role: user
+    content: Usually around a 4 or 5, but sometimes it spikes to a 7.
+  - role: assistant
+    content: Have you tried anything for the pain?
+  - role: user
+    content: Just ibuprofen and heating pads. They help a little.
+  - role: assistant
+    content: I see. Now, when was your last physical exam?
+  - role: user
+    content: About 14 months ago with Dr. Mitchell.
+  - role: assistant
+    content: And your last blood work?
+  - role: user
+    content: Same time, during that physical.
+  - role: assistant
+    content: When was your last eye exam?
+  - role: user
+    content: Oh, it's been a while. Maybe two years ago? My vision is fine though.
+  - role: assistant
+    content: And dental?
+  - role: user
+    content: I just went to the dentist last month actually.
+  - role: assistant
+    content: Good. Have you had any recent weight changes?
+  - role: user
+    content: I've gained about 10 pounds over the past year. I'm at 195 now.
+  - role: assistant
+    content: And your height?
+  - role: user
+    content: 5 feet 11 inches.
+  - role: assistant
+    content: Any issues with sleep?
+  - role: user
+    content: Sometimes I have trouble falling asleep, especially when my back is bothering me.
+  - role: assistant
+    content: Do you snore or has anyone told you that you stop breathing during sleep?
+  - role: user
+    content: My wife says I snore sometimes, but no breathing issues that she's noticed.
+  - role: assistant
+    content: Speaking of which, for emergency contact, would that be your wife?
+  - role: user
+    content: Yes, her name is Emily Thompson. Same address, and her cell is 303-555-7622.
+  - role: assistant
+    content: Perfect. Now, have you had your COVID vaccinations?
+  - role: user
+    content: Yes, fully vaccinated with two boosters. Last one was in September.
+  - role: assistant
+    content: Flu shot?
+  - role: user
+    content: Got that in October.
+  - role: assistant
+    content: Great. Any other immunizations we should know about?
+  - role: user
+    content: I got a tetanus booster about two years ago after I stepped on a nail.
+  - role: assistant
+    content: Good to know. Now, let's look at scheduling. We have Dr. Robert Chen or Dr. Lisa Wang available for primary care.
+      Do you have a preference for a male or female doctor?
+  - role: user
+    content: No preference really. Who has the earlier availability?
+  - role: assistant
+    content: Dr. Chen can see you next Thursday, November 21st at 2:30 PM, or Dr. Wang has an opening on Monday, November
+      25th at 10:00 AM.
+  - role: user
+    content: Thursday the 21st works better for me.
+  - role: assistant
+    content: Perfect. I'll schedule you with Dr. Chen for Thursday, November 21st at 2:30 PM. Since you're a new patient,
+      please arrive 15 minutes early to complete any remaining paperwork.
+  - role: user
+    content: Where exactly is the office?
+  - role: assistant
+    content: We're in the Medical Arts Building, 750 Broadway, Suite 200, Denver. There's a parking garage attached, and we
+      validate parking.
+  - role: user
+    content: Is that the building near the Denver Library?
+  - role: assistant
+    content: Yes, exactly! We're just two blocks south of the main library.
+  - role: user
+    content: Great, I know where that is. What should I bring?
+  - role: assistant
+    content: Please bring your insurance card, photo ID, a list of your current medications with dosages, and any medical
+      records you have from Dr. Mitchell.
+  - role: user
+    content: Should I fast for blood work?
+  - role: assistant
+    content: Since it's been over a year since your last labs, Dr. Chen will likely order blood work. It's best to fast for
+      12 hours just in case he wants a fasting glucose and lipid panel.
+  - role: user
+    content: Okay, so nothing after 2:30 AM that day?
+  - role: assistant
+    content: Correct, nothing except water after 2:30 AM. Also, take your morning medications as usual with water.
+  - role: user
+    content: Should I still take the blood pressure medication that morning?
+  - role: assistant
+    content: Yes, definitely continue your lisinopril. Never skip blood pressure medication.
+  - role: user
+    content: Got it. Will this be a full physical?
+  - role: assistant
+    content: Since you're a new patient and it's been over a year, Dr. Chen will likely do a comprehensive exam. Plan for
+      about 45 minutes.
+  - role: user
+    content: Perfect. Oh, do you have my prescription history? I'll need refills soon.
+  - role: assistant
+    content: Dr. Chen can handle refills during your visit. How many days of medication do you have left?
+  - role: user
+    content: About two weeks' worth for everything.
+  - role: assistant
+    content: That's perfect timing then. Dr. Chen will review everything and set up your refills. Your confirmation number
+      for this appointment is MV-789234.
+  - role: user
+    content: Let me write that down... MV-789234?
+  - role: assistant
+    content: Correct. You'll receive a reminder call the day before and a text message if you'd like.
+  - role: user
+    content: Text would be great.
+  - role: assistant
+    content: I've set that up for your cell phone. Is there anything else you need to know about your appointment?
+  - role: user
+    content: I think that covers everything. Thank you so much for being so thorough.
+  - role: assistant
+    content: You're very welcome, Mr. Thompson. We'll see you Thursday, November 21st at 2:30 PM with Dr. Chen. Remember to
+      fast 12 hours before and arrive 15 minutes early. Have a great day!
+user_question: I need to confirm my upcoming doctor's appointment. What day and time was it scheduled for, and which doctor
+  am I seeing?
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the appointment scheduled for Thursday, November 21st at 2:30 PM with Dr. Robert Chen. The response must include both the correct date and time as well as the physician's name, demonstrating clear recall from the medical intake conversation. The agent should ideally also mention the confirmation number MV-789234 to show thorough memory retention. Additional helpful details might include the reminder to arrive 15 minutes early as a new patient or the 12-hour fasting requirement for potential blood work. The agent must not confuse Dr. Chen with Dr. Wang who was also mentioned as an option but not selected.
+expected_behavior: The agent should clearly state the appointment is on Thursday, November 21st at 2:30 PM with Dr. Robert
+  Chen, possibly mentioning the confirmation number MV-789234

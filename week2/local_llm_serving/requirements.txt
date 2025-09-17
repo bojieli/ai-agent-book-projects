@@ -1,0 +1,20 @@
+# vLLM and dependencies
+vllm>=0.6.0
+torch>=2.0.0
+transformers>=4.36.0
+accelerate>=0.25.0
+openai>=1.0.0  # For OpenAI-compatible API client
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+requests>=2.31.0
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# For demo tools
+python-weather>=2.0.0
+
+# For Ollama support (Mac/local development)
+ollama>=0.1.0
+
+# For additional tools
+PyPDF2>=3.0.0

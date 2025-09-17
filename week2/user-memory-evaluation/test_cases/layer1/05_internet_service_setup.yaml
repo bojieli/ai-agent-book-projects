@@ -1,0 +1,235 @@
+test_id: layer1_05_internet_service
+category: layer1
+title: Internet and Cable Service Installation - Account Setup and Service Details
+description: Test agent's ability to recall service package details, installation appointment, and account information from
+  comprehensive service setup call
+conversation_histories:
+- conversation_id: internet_setup_001
+  timestamp: '2024-11-08 11:00:00'
+  metadata:
+    business: Velocity Communications
+    department: New Service Sales
+    call_duration: 45 minutes
+  messages:
+  - role: user
+    content: Hi, I just moved to a new house and need to set up internet and cable service.
+  - role: assistant
+    content: Welcome to Velocity Communications! I'm Derek, and I'll be happy to help you set up your services today. First,
+      let me get your service address.
+  - role: user
+    content: It's 7622 Willow Creek Drive, Austin, Texas, 78759.
+  - role: assistant
+    content: Great location! Let me check what services are available there... Excellent news! You qualify for our fiber optic
+      services with speeds up to 2 gigabits. May I have your name?
+  - role: user
+    content: I'm Kevin Zhang.
+  - role: assistant
+    content: Thank you, Mr. Zhang. Are you looking for internet only, or would you like to bundle with cable TV and phone?
+  - role: user
+    content: I definitely need internet. Tell me about the cable packages too.
+  - role: assistant
+    content: 'Sure! For internet, we have three tiers: Essential at 300 Mbps for $49.99, Performance at 1 Gig for $79.99,
+      and Ultimate at 2 Gigs for $119.99 per month.'
+  - role: user
+    content: I work from home and do a lot of video calls. What would you recommend?
+  - role: assistant
+    content: For working from home with video calls, I'd recommend at least the Performance 1 Gig plan. It provides excellent
+      upload and download speeds for smooth video conferencing.
+  - role: user
+    content: What about the cable packages?
+  - role: assistant
+    content: We have Select with 125+ channels for $64.99, Preferred with 200+ channels plus HBO and Showtime for $94.99,
+      and Premier with 300+ channels plus all premium channels for $134.99.
+  - role: user
+    content: Do you have sports channels in the Select package?
+  - role: assistant
+    content: Select includes ESPN, ESPN2, and Fox Sports regional networks. For NFL Network, NBA TV, and NFL RedZone, you'd
+      need Preferred or higher.
+  - role: user
+    content: I'm a big basketball fan, so I'd need NBA TV. What's the total for Performance internet and Preferred cable?
+  - role: assistant
+    content: Performance internet at $79.99 plus Preferred cable at $94.99 would be $174.98, but I can offer you a bundle
+      discount of $25 per month, bringing it to $149.98.
+  - role: user
+    content: That's not bad. What about equipment fees?
+  - role: assistant
+    content: The fiber modem/router combo is $12 per month. Each cable box is $7.99 for standard or $12.99 for DVR-enabled
+      boxes. How many TVs do you have?
+  - role: user
+    content: I have three TVs - living room, master bedroom, and my home office.
+  - role: assistant
+    content: I'd recommend a DVR box for your living room so you can record games and shows, and standard boxes for the other
+      two. That would be $12.99 plus two at $7.99 each.
+  - role: user
+    content: So that's about $29 in equipment fees?
+  - role: assistant
+    content: Actually, $28.97 for the cable boxes plus $12 for the modem/router, so $40.97 total in equipment fees.
+  - role: user
+    content: What would my total monthly bill be then?
+  - role: assistant
+    content: Your services at $149.98 plus equipment at $40.97 equals $190.95 per month, plus taxes and fees which are typically
+      around $12-15 in your area.
+  - role: user
+    content: Are there any promotions for new customers?
+  - role: assistant
+    content: Yes! New customers get the first three months at 50% off the service charges, and we waive the installation fee
+      which is normally $99.99.
+  - role: user
+    content: So I'd pay about $95 for the first three months?
+  - role: assistant
+    content: For the services portion, yes - $74.99 for the first three months, plus the $40.97 equipment fees, so roughly
+      $116 before taxes.
+  - role: user
+    content: Okay, let's do it. When can you install?
+  - role: assistant
+    content: Let me check our installation calendar... I have openings this Saturday November 11th in the afternoon, or next
+      Tuesday November 14th in the morning.
+  - role: user
+    content: What time on Tuesday?
+  - role: assistant
+    content: We have an 8 AM to 12 PM window or a 10 AM to 2 PM window available.
+  - role: user
+    content: I'll take the 10 AM to 2 PM on Tuesday the 14th.
+  - role: assistant
+    content: Perfect! I've scheduled your installation for Tuesday, November 14th between 10 AM and 2 PM. Our technician will
+      call 30 minutes before arrival.
+  - role: user
+    content: Do I need to be home?
+  - role: assistant
+    content: Yes, someone 18 or older needs to be present as the technician will need access inside to set up your equipment
+      and activate services.
+  - role: user
+    content: That's fine. Now what information do you need from me?
+  - role: assistant
+    content: I'll need your date of birth for the account setup.
+  - role: user
+    content: April 3rd, 1987.
+  - role: assistant
+    content: And your Social Security number for the credit check?
+  - role: user
+    content: It's 455-78-9234.
+  - role: assistant
+    content: Thank you. Running that now... You're approved with no deposit required! What's the best phone number to reach
+      you?
+  - role: user
+    content: My cell is 512-555-8823.
+  - role: assistant
+    content: Email address for your account and bills?
+  - role: user
+    content: kzhang87@email.com
+  - role: assistant
+    content: Perfect. Would you like paperless billing?
+  - role: user
+    content: Yes, definitely paperless.
+  - role: assistant
+    content: Great choice! You'll get a $5 monthly discount for paperless billing with autopay. Would you like to set up autopay?
+  - role: user
+    content: What are the autopay options?
+  - role: assistant
+    content: You can use a checking account, savings account, or credit/debit card. The payment processes on your due date
+      each month.
+  - role: user
+    content: I'll use my checking account. It's with Chase Bank.
+  - role: assistant
+    content: I'll need your routing number and account number.
+  - role: user
+    content: Routing is 111000614 and account is 8829447651.
+  - role: assistant
+    content: Thank you. Your autopay is set up and your adjusted monthly rate with the paperless discount is $185.95 plus
+      taxes and fees.
+  - role: user
+    content: When will my first bill be?
+  - role: assistant
+    content: Your first bill will generate about 10 days after installation, so around November 24th, due 20 days later on
+      December 14th.
+  - role: user
+    content: And that will be at the promotional rate?
+  - role: assistant
+    content: Yes, your first three bills will show the 50% discount on services. After that, it goes to regular pricing.
+  - role: user
+    content: What channels are included in HBO?
+  - role: assistant
+    content: You get HBO, HBO2, HBO Family, HBO Latino, HBO Signature, HBO Comedy, HBO Zone, plus HBO Max streaming access.
+  - role: user
+    content: Oh, streaming is included?
+  - role: assistant
+    content: Yes! With Preferred package, you get HBO Max and Showtime streaming apps included at no extra charge. You can
+      use them on any device.
+  - role: user
+    content: That's great. What about a streaming device for my TVs?
+  - role: assistant
+    content: Our cable boxes have built-in streaming apps, or you can use your own devices like Roku or Apple TV with your
+      login credentials.
+  - role: user
+    content: Do the cable boxes need to be connected to the internet?
+  - role: assistant
+    content: They work best when connected to your home network for on-demand content and streaming apps. The technician will
+      connect them during installation.
+  - role: user
+    content: How many devices can use the internet simultaneously?
+  - role: assistant
+    content: With the 1 Gig plan, you can easily support 25+ devices simultaneously. Our router supports up to 150 connected
+      devices.
+  - role: user
+    content: Is the WiFi dual-band?
+  - role: assistant
+    content: Yes, it's WiFi 6 with both 2.4GHz and 5GHz bands, plus it automatically optimizes which band each device uses.
+  - role: user
+    content: Can I use my own router?
+  - role: assistant
+    content: You can, but you'd still need our modem for the fiber connection. If you use your own router, we can reduce the
+      equipment fee to $7 for just the modem.
+  - role: user
+    content: I'll stick with yours for now. Is there a contract?
+  - role: assistant
+    content: No long-term contract required! It's month-to-month service. You can cancel anytime with 30 days notice.
+  - role: user
+    content: What if I want to upgrade or downgrade services?
+  - role: assistant
+    content: You can change your package anytime. Upgrades take effect immediately, downgrades at the start of your next billing
+      cycle.
+  - role: user
+    content: Good to know. What's my account number going to be?
+  - role: assistant
+    content: Your new account number is VEL-89923476. You'll use this for all service requests.
+  - role: user
+    content: VEL-89923476, got it. Do you have a mobile app?
+  - role: assistant
+    content: Yes! The Velocity app lets you manage your account, pay bills, troubleshoot issues, and even watch live TV on
+      your mobile devices.
+  - role: user
+    content: Can I set up parental controls?
+  - role: assistant
+    content: Absolutely. Both the internet router and cable boxes have comprehensive parental controls you can manage through
+      the app or web portal.
+  - role: user
+    content: Perfect. What if I have technical issues?
+  - role: assistant
+    content: We have 24/7 technical support at 1-800-VELOCITY. Most issues can be resolved remotely, but we offer free service
+      calls if needed.
+  - role: user
+    content: Is there anything I need to do before the installation?
+  - role: assistant
+    content: Just ensure clear access to where you want the equipment installed and have your TVs ready. The technician will
+      handle all the wiring and setup.
+  - role: user
+    content: How long does installation usually take?
+  - role: assistant
+    content: For three TVs and internet, typically 2-3 hours depending on your home's wiring situation.
+  - role: user
+    content: Sounds good. I think I'm all set.
+  - role: assistant
+    content: 'Perfect! Let me confirm everything: Kevin Zhang at 7622 Willow Creek Drive, Austin. Installation on Tuesday,
+      November 14th, 10 AM-2 PM. Performance 1 Gig internet and Preferred cable package with one DVR and two standard boxes.
+      Account number VEL-89923476. Monthly rate $185.95 after discounts, with first three months at 50% off services. Is everything
+      correct?'
+  - role: user
+    content: Yes, that's all correct. Thank you!
+  - role: assistant
+    content: You're welcome, Mr. Zhang! You'll receive a confirmation email at kzhang87@email.com shortly. Our technician
+      will see you on Tuesday. Thank you for choosing Velocity Communications!
+user_question: What's my Velocity account number? I need it to download the mobile app and set up my online account.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide the Velocity Communications account number VEL-89923476 that was assigned during the service setup call. The response must include the exact account number with the correct format including the VEL prefix and all eight digits. The agent should demonstrate clear recall of this specific identifier without confusing it with other numbers mentioned in the conversation such as the installation date, pricing, or address numbers. The response should be direct and precise since the user needs this information to set up their online account and mobile app access.
+expected_behavior: The agent should directly provide the account number VEL-89923476 that was assigned during the service
+  setup

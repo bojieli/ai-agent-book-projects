@@ -1,0 +1,468 @@
+test_id: layer2_04_multiple_subscriptions
+category: layer2
+title: Multiple Streaming Services - Subscription Management Disambiguation
+description: Test agent's ability to distinguish between multiple similar subscription services and retrieve all relevant
+  information when user makes ambiguous requests
+conversation_histories:
+- conversation_id: netflix_support_001
+  timestamp: '2024-09-15 14:00:00'
+  metadata:
+    business: Netflix Support
+    department: Account Management
+    call_duration: 55 minutes
+  messages:
+  - role: user
+    content: Hi, I need help with my Netflix account billing.
+  - role: assistant
+    content: Hello! I'm David from Netflix Support. I'll help you with your billing. May I have the email address on your
+      account?
+  - role: user
+    content: It's markjohnson88@email.com
+  - role: assistant
+    content: Thank you, Mr. Johnson. I see your account here. You're on our Premium plan at $22.99 per month.
+  - role: user
+    content: That seems high. What does Premium include again?
+  - role: assistant
+    content: Premium includes 4K Ultra HD streaming, ability to watch on 4 screens simultaneously, and downloads on up to
+      6 devices.
+  - role: user
+    content: I don't think I need all that. What are my other options?
+  - role: assistant
+    content: We have Standard at $15.49 - HD quality, 2 screens, 2 download devices. Or Basic with ads at $6.99 - HD quality,
+      2 screens, no downloads.
+  - role: user
+    content: What about the Standard without ads?
+  - role: assistant
+    content: Standard without ads is the $15.49 plan I mentioned. Only our Basic tier has an ad-supported option.
+  - role: user
+    content: I see. When did I sign up for Premium?
+  - role: assistant
+    content: You upgraded to Premium on March 3rd, 2024. Before that, you had Standard since 2019.
+  - role: user
+    content: Why did I upgrade?
+  - role: assistant
+    content: According to the notes, you called about getting 4K quality for your new TV.
+  - role: user
+    content: Oh right, the living room TV. But honestly, I can't tell much difference.
+  - role: assistant
+    content: That's not uncommon. Would you like to downgrade back to Standard?
+  - role: user
+    content: What's my billing date?
+  - role: assistant
+    content: Your account renews on the 18th of each month. Next billing is September 18th.
+  - role: user
+    content: If I downgrade now, when does it take effect?
+  - role: assistant
+    content: The change would take effect on your next billing cycle, September 18th. You'd keep Premium features until then.
+  - role: user
+    content: Let me think about it. What payment method do I have on file?
+  - role: assistant
+    content: You're using a Visa ending in 4782.
+  - role: user
+    content: That's my old card. I need to update it.
+  - role: assistant
+    content: I can help with that. What's the new card number?
+  - role: user
+    content: Actually, can I use PayPal instead?
+  - role: assistant
+    content: Yes, we accept PayPal. You can link it through your account settings online.
+  - role: user
+    content: I'll do that later. One more thing - my daughter is away at college. Can she use my account?
+  - role: assistant
+    content: Yes, with Premium you can have up to 4 simultaneous streams. Has she been having any issues?
+  - role: user
+    content: She said something about needing to verify the account.
+  - role: assistant
+    content: We now require account verification when streaming from a different household. She'll need to enter a code we
+      email to you.
+  - role: user
+    content: How often?
+  - role: assistant
+    content: Usually once a month when accessing from a different location consistently.
+  - role: user
+    content: That's annoying but manageable.
+  - role: assistant
+    content: You could also add her as an extra member for $7.99/month. She'd have her own profile and password.
+  - role: user
+    content: So that would be $22.99 plus $7.99?
+  - role: assistant
+    content: Correct, $30.98 total. Or if you downgrade to Standard, it would be $15.49 plus $7.99, so $23.48 total.
+  - role: user
+    content: That's actually barely more than Premium alone.
+  - role: assistant
+    content: True, and she'd have her own account without verification hassles.
+  - role: user
+    content: Let me discuss with her first. What shows are leaving Netflix soon?
+  - role: assistant
+    content: I don't have that information readily available, but you can check the 'Last Chance' section in the app.
+  - role: user
+    content: Oh, I've been watching The Office. Is that still on Netflix?
+  - role: assistant
+    content: The Office left Netflix in 2021. It's now on Peacock.
+  - role: user
+    content: Really? I could have sworn I watched it recently.
+  - role: assistant
+    content: You might be thinking of another platform, or perhaps you watched Parks and Recreation? That's still on Netflix.
+  - role: user
+    content: Maybe that's it. What about Friends?
+  - role: assistant
+    content: Friends is no longer on Netflix either. It moved to HBO Max, now just Max.
+  - role: user
+    content: Netflix is losing everything good!
+  - role: assistant
+    content: We've added a lot of original content though - Stranger Things, Wednesday, The Crown.
+  - role: user
+    content: True, my wife loves The Crown. Is there a new season coming?
+  - role: assistant
+    content: The Crown concluded with Season 6. But there are similar shows like The Empress you might enjoy.
+  - role: user
+    content: I'll check it out. Can I download shows to watch on planes?
+  - role: assistant
+    content: Yes, with Premium you can download on up to 6 devices.
+  - role: user
+    content: How long do downloads last?
+  - role: assistant
+    content: Most downloads expire after 7 days, or 48 hours after you start watching.
+  - role: user
+    content: That's pretty restrictive.
+  - role: assistant
+    content: It's due to licensing agreements. You can always re-download if you have internet.
+  - role: user
+    content: What about sharing my password with my parents?
+  - role: assistant
+    content: Password sharing outside your household isn't permitted. They'd need their own account or be added as extra members.
+  - role: user
+    content: Even my parents?
+  - role: assistant
+    content: If they don't live with you, yes. But the extra member option is just $7.99.
+  - role: user
+    content: So I'd be paying for three accounts essentially?
+  - role: assistant
+    content: You'd be the primary account holder, they'd be extra members on your account.
+  - role: user
+    content: This is getting complicated. Let me think about all this.
+  - role: assistant
+    content: Take your time. You can make changes anytime through your account settings.
+  - role: user
+    content: Actually, wait. I just remembered I get Netflix free through my T-Mobile plan.
+  - role: assistant
+    content: Oh! Are you using the T-Mobile billing?
+  - role: user
+    content: No, I'm paying you directly. How do I switch?
+  - role: assistant
+    content: You'd need to cancel with us and sign up through T-Mobile. But check which plan they cover first.
+  - role: user
+    content: What do you mean?
+  - role: assistant
+    content: T-Mobile usually covers Standard with ads, not Premium.
+  - role: user
+    content: Oh, so I'd lose 4K?
+  - role: assistant
+    content: Yes, and you'd have advertisements unless T-Mobile has updated their offering.
+  - role: user
+    content: Hmm, maybe I'll keep paying directly then.
+  - role: assistant
+    content: You could also downgrade to Standard and pay the difference if T-Mobile covers Basic.
+  - role: user
+    content: Too confusing. I'll just leave it as is for now.
+  - role: assistant
+    content: Understood. Is there anything else I can help you with today?
+  - role: user
+    content: No, I think that's everything. Thanks David!
+  - role: assistant
+    content: You're welcome, Mr. Johnson! Enjoy your Netflix viewing!
+- conversation_id: disney_support_001
+  timestamp: '2024-10-22 10:30:00'
+  metadata:
+    business: Disney+ Customer Service
+    department: Billing Support
+    call_duration: 52 minutes
+  messages:
+  - role: user
+    content: Hi, I want to check on my Disney+ subscription.
+  - role: assistant
+    content: Hello! This is Maria from Disney+ Customer Service. I'd be happy to help. Can I get the email on your account?
+  - role: user
+    content: It's the same as my other accounts, markjohnson88@email.com
+  - role: assistant
+    content: Perfect, I found your account Mr. Johnson. You have the Disney Bundle with Disney+, Hulu, and ESPN+.
+  - role: user
+    content: How much am I paying for that?
+  - role: assistant
+    content: You're on the Disney Bundle Trio Premium at $19.99 per month. That's the ad-free version of Disney+ and Hulu,
+      plus ESPN+ with ads.
+  - role: user
+    content: ESPN+ doesn't have an ad-free option?
+  - role: assistant
+    content: Correct, ESPN+ only comes with ads currently.
+  - role: user
+    content: I honestly never watch ESPN. Can I remove it?
+  - role: assistant
+    content: You could switch to the Disney+ and Hulu bundle only, which is $19.99 - the same price actually.
+  - role: user
+    content: Wait, it's the same price without ESPN?
+  - role: assistant
+    content: Yes, the bundle pricing makes the full trio the better value. Disney+ alone is $13.99 and Hulu alone is $17.99.
+  - role: user
+    content: So separately they'd be $31.98?
+  - role: assistant
+    content: Exactly. The bundle saves you about $12 per month.
+  - role: user
+    content: That's significant. When did I sign up for this?
+  - role: assistant
+    content: You started with just Disney+ in January 2024, then upgraded to the bundle in June 2024.
+  - role: user
+    content: What made me upgrade?
+  - role: assistant
+    content: The notes show you called about adding Hulu for The Bear season 3.
+  - role: user
+    content: Oh yeah, great show! What's my billing date?
+  - role: assistant
+    content: You're billed on the 5th of each month. Next payment is November 5th.
+  - role: user
+    content: And payment method?
+  - role: assistant
+    content: You have a Mastercard ending in 9023 on file.
+  - role: user
+    content: That's the right card. How many people can use my account?
+  - role: assistant
+    content: Disney+ allows 4 concurrent streams and up to 7 profiles. Hulu allows 2 concurrent streams.
+  - role: user
+    content: My kids each have their own profile, right?
+  - role: assistant
+    content: Yes, I see profiles for Kids, Teen, and one called Dad - that's yours?
+  - role: user
+    content: Yes, very creative naming! Can I download shows?
+  - role: assistant
+    content: Yes, Disney+ allows downloads on up to 10 devices. Hulu allows downloads on 5 devices with your plan.
+  - role: user
+    content: Good to know. What new Marvel shows are coming?
+  - role: assistant
+    content: 'Daredevil: Born Again is coming in 2025, and there''s Agatha All Along available now.'
+  - role: user
+    content: I haven't watched Agatha yet. Is it good?
+  - role: assistant
+    content: It's getting positive reviews. It's a WandaVision spinoff.
+  - role: user
+    content: Oh, I loved WandaVision! Speaking of which, are all Marvel movies on Disney+?
+  - role: assistant
+    content: Most are, but Spider-Man movies aren't due to Sony's rights.
+  - role: user
+    content: That's annoying. Where can I watch those?
+  - role: assistant
+    content: They rotate between different platforms. Currently some are on Netflix, others on digital rental.
+  - role: user
+    content: What about Star Wars content?
+  - role: assistant
+    content: All Star Wars content is exclusive to Disney+. Ahsoka, Mandalorian, Andor, all here.
+  - role: user
+    content: Good. My son loves Mandalorian. Is season 4 coming?
+  - role: assistant
+    content: Yes, The Mandalorian season 4 is in production, expected in 2025.
+  - role: user
+    content: What about parental controls?
+  - role: assistant
+    content: Each profile can have different maturity ratings set. Your Kids profile is already set to TV-PG.
+  - role: user
+    content: Perfect. Can I watch Hulu content through the Disney+ app?
+  - role: assistant
+    content: Not yet, but they're working on integrating everything into one app.
+  - role: user
+    content: That would be convenient. How's the 4K content?
+  - role: assistant
+    content: Most Disney+ originals and movies are in 4K. Hulu has select content in 4K.
+  - role: user
+    content: Do I need special equipment?
+  - role: assistant
+    content: You need a 4K TV and compatible streaming device, plus internet speed of at least 25 Mbps.
+  - role: user
+    content: I have all that. Oh, can I use this internationally?
+  - role: assistant
+    content: Disney+ works in many countries, but content varies by region. Hulu only works in the US.
+  - role: user
+    content: So Hulu won't work when I travel?
+  - role: assistant
+    content: Correct, unless you use a VPN, though that's against terms of service.
+  - role: user
+    content: Got it. Is there a discount for annual payment?
+  - role: assistant
+    content: Yes, if you pay annually, the bundle is $219.99, saving you about $20 per year.
+  - role: user
+    content: Not a huge saving.
+  - role: assistant
+    content: True, monthly gives more flexibility to change or cancel.
+  - role: user
+    content: I'll stick with monthly. Can I pause my subscription?
+  - role: assistant
+    content: We don't offer pause, but you can cancel and resubscribe anytime without losing your profiles.
+  - role: user
+    content: Good to know. Any price increases coming?
+  - role: assistant
+    content: Nothing announced currently. We typically give 30 days notice of any price changes.
+  - role: user
+    content: Fair enough. Thanks for all the info Maria!
+  - role: assistant
+    content: You're welcome! Enjoy your streaming, Mr. Johnson!
+- conversation_id: hbo_support_001
+  timestamp: '2024-11-10 16:15:00'
+  metadata:
+    business: Max Customer Support
+    department: Account Services
+    call_duration: 53 minutes
+  messages:
+  - role: user
+    content: Hi, I need to ask about my HBO Max, or I guess it's just Max now?
+  - role: assistant
+    content: Hello! Yes, we're now Max. I'm Kevin from Customer Support. How can I help you today?
+  - role: user
+    content: I'm confused about my subscription. Can you tell me what I have?
+  - role: assistant
+    content: Of course! Can I get your email address?
+  - role: user
+    content: markjohnson88@email.com
+  - role: assistant
+    content: Thank you Mr. Johnson. You have our Ultimate Ad-Free plan at $19.99 per month.
+  - role: user
+    content: Ultimate? What's the difference between the plans?
+  - role: assistant
+    content: Ultimate includes 4K streaming, 4 concurrent streams, and 100 downloads. Our Standard plan is $15.99 with HD
+      only, 2 streams, and 30 downloads.
+  - role: user
+    content: And there's one with ads too?
+  - role: assistant
+    content: Yes, our With Ads plan is $9.99, HD quality, 2 streams, but no downloads.
+  - role: user
+    content: I mainly got this for House of the Dragon. When's the new season?
+  - role: assistant
+    content: Season 3 is expected in summer 2026. Season 2 just finished in August.
+  - role: user
+    content: 2026? That's so far away!
+  - role: assistant
+    content: I know, the production is extensive. But we have other Game of Thrones content coming sooner.
+  - role: user
+    content: Like what?
+  - role: assistant
+    content: A Knight of the Seven Kingdoms is coming in 2025.
+  - role: user
+    content: Never heard of it.
+  - role: assistant
+    content: It's based on the Dunk and Egg novellas, set 90 years before Game of Thrones.
+  - role: user
+    content: Interesting. What else is good on Max right now?
+  - role: assistant
+    content: 'The Last of Us, True Detective: Night Country, The Penguin - all getting great reviews.'
+  - role: user
+    content: Oh yeah, I've been meaning to watch The Penguin. Is it connected to the Batman movie?
+  - role: assistant
+    content: Yes! It's set right after The Batman with Robert Pattinson, though Batman doesn't appear in the show.
+  - role: user
+    content: That movie is on Max too?
+  - role: assistant
+    content: Yes, all Warner Bros films come to Max, usually 45 days after theatrical release.
+  - role: user
+    content: That's pretty quick. What about the old HBO shows?
+  - role: assistant
+    content: All classic HBO content is here - The Sopranos, The Wire, Game of Thrones, everything.
+  - role: user
+    content: Good. I've been rewatching The Sopranos. When's my billing date?
+  - role: assistant
+    content: You're billed on the 12th of each month. Your next charge is November 12th.
+  - role: user
+    content: That's in two days! If I cancel now?
+  - role: assistant
+    content: You'd keep access through December 11th, the end of your current billing period.
+  - role: user
+    content: Oh, so I've already paid through December 11th?
+  - role: assistant
+    content: No, you'll be charged on November 12th for the period of November 12th through December 11th.
+  - role: user
+    content: So I should cancel before November 12th to avoid that charge?
+  - role: assistant
+    content: Correct. Cancel by November 11th to avoid the next charge.
+  - role: user
+    content: I'm not canceling, just wanted to understand. What payment method is on file?
+  - role: assistant
+    content: You have an American Express ending in 1005.
+  - role: user
+    content: That's right. How long have I been subscribed?
+  - role: assistant
+    content: You first subscribed in April 2023 when we were still HBO Max.
+  - role: user
+    content: Has the price changed since then?
+  - role: assistant
+    content: You were paying $15.99 for the old Ad-Free plan. When we became Max, you were upgraded to Ultimate at $19.99
+      to keep 4K access.
+  - role: user
+    content: So a $4 increase. Are there any bundles with other services?
+  - role: assistant
+    content: We partner with some providers. Do you have Verizon, AT&T, or Cricket?
+  - role: user
+    content: I have Verizon for my cell phone.
+  - role: assistant
+    content: Some Verizon unlimited plans include Max Standard. You might already be eligible for a discount.
+  - role: user
+    content: Really? How do I check?
+  - role: assistant
+    content: Log into your Verizon account and check your plan perks, or call Verizon to confirm.
+  - role: user
+    content: I'll look into that. Does Max have live sports?
+  - role: assistant
+    content: We have some sports through our Bleacher Report add-on, mainly soccer.
+  - role: user
+    content: Not really a soccer fan. What about news?
+  - role: assistant
+    content: CNN Max is included with your subscription for news content.
+  - role: user
+    content: Oh, I didn't know that. Is it live CNN?
+  - role: assistant
+    content: It's a curated selection of CNN content, not the full live channel.
+  - role: user
+    content: Still useful. Can I share my account?
+  - role: assistant
+    content: Your Ultimate plan allows 4 concurrent streams within your household.
+  - role: user
+    content: Just household? My daughter's at college.
+  - role: assistant
+    content: College is generally considered extended household. She should be fine.
+  - role: user
+    content: Good. What about downloads for flights?
+  - role: assistant
+    content: Ultimate allows 100 downloads across up to 5 devices.
+  - role: user
+    content: 100 seems like a lot.
+  - role: assistant
+    content: It is generous. Most people never hit that limit.
+  - role: user
+    content: How long do downloads last?
+  - role: assistant
+    content: 30 days, or 48 hours after you start watching.
+  - role: user
+    content: Better than Netflix's 7 days.
+  - role: assistant
+    content: Yes, we try to be more flexible with downloads.
+  - role: user
+    content: Any Max originals you'd recommend?
+  - role: assistant
+    content: Besides what I mentioned, Winning Time, Succession, and White Lotus are excellent.
+  - role: user
+    content: Oh, I heard White Lotus is great. Is season 3 coming?
+  - role: assistant
+    content: Yes, Season 3 is filming now in Thailand, expected in 2025.
+  - role: user
+    content: Thailand? Interesting location choice.
+  - role: assistant
+    content: Each season is in a different luxury resort location.
+  - role: user
+    content: Cool concept. Alright, I think I'll keep my subscription for now.
+  - role: assistant
+    content: Great choice! Anything else I can help with?
+  - role: user
+    content: No, that's everything. Thanks Kevin!
+  - role: assistant
+    content: You're welcome! Enjoy Max, Mr. Johnson!
+user_question: I want to reduce my streaming costs. What are all my current subscriptions and their prices?
+evaluation_criteria: |
+  The agent must retrieve and compile comprehensive streaming service information from multiple conversations to provide a complete financial overview. The agent should recall that the user has three active streaming subscriptions: Netflix Premium at $22.99/month (billing on the 18th, with option to downgrade to Standard for $15.49), Disney Bundle Trio Premium at $19.99/month including Disney+, Hulu, and ESPN+ (billing on the 5th), and Max Ultimate Ad-Free at $19.99/month (billing on the 12th). The response must calculate the total monthly streaming cost of $62.97 and should demonstrate awareness of the money-saving opportunities discussed, including the potential $7.50 monthly savings from downgrading Netflix to Standard, the possibility that T-Mobile might cover Netflix Standard through their customer benefits, and that Verizon might include Max Standard in their plan. The agent should present this information in a clear, organized manner showing both current expenses and potential optimization strategies.
+expected_behavior: The agent should list all three streaming services (Netflix Premium $22.99, Disney Bundle $19.99, Max Ultimate
+  $19.99), calculate total $62.97/month, and mention potential savings through Netflix downgrade, T-Mobile Netflix coverage,
+  and Verizon Max discount

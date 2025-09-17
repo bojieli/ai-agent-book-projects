@@ -1,0 +1,219 @@
+test_id: layer1_09_home_security
+category: layer1
+title: Home Security System Installation - Service Agreement Details
+description: Test agent's ability to recall security system package details and installation appointment
+conversation_histories:
+- conversation_id: security_install_001
+  timestamp: '2024-11-11 14:45:00'
+  metadata:
+    business: ADT Security Services
+    department: Sales and Installation
+    call_duration: 48 minutes
+  messages:
+  - role: user
+    content: Hi, I've been having some break-ins in my neighborhood and want to install a security system.
+  - role: assistant
+    content: I understand your concern, and you're making a smart decision. I'm Carlos from ADT Security Services. I'll help
+      you find the right protection for your home. First, may I have your name?
+  - role: user
+    content: I'm Nancy Rodriguez.
+  - role: assistant
+    content: Thank you, Ms. Rodriguez. What city are you in?
+  - role: user
+    content: I'm in Houston, Texas, in the Heights area.
+  - role: assistant
+    content: I know that area well. Tell me about your home - is it a single-family house, townhome, or apartment?
+  - role: user
+    content: It's a two-story house, about 2,400 square feet.
+  - role: assistant
+    content: How many entry doors do you have?
+  - role: user
+    content: Front door, back door, and a side door to the garage.
+  - role: assistant
+    content: So three entry points. How many windows on the ground floor?
+  - role: user
+    content: Let me think... six in the front, four on each side, and four in the back. So 18 total.
+  - role: assistant
+    content: That's quite a few windows to secure. Do you have a garage?
+  - role: user
+    content: Yes, a two-car attached garage.
+  - role: assistant
+    content: And do you have any sliding glass doors?
+  - role: user
+    content: Yes, one leading to the backyard from the living room.
+  - role: assistant
+    content: Good to know. Based on your home's layout, I'd recommend our Smart Home Security package. It includes door sensors
+      for all entry points, window sensors, motion detectors, and our smart hub.
+  - role: user
+    content: How many window sensors would I get?
+  - role: assistant
+    content: The package includes sensors for up to 15 windows. We'd prioritize the most vulnerable ones - typically windows
+      hidden from street view or near door locks.
+  - role: user
+    content: What about the other three windows?
+  - role: assistant
+    content: We can add additional sensors for $40 each, or use glass break detectors which cover multiple windows in a room
+      for $120 each.
+  - role: user
+    content: The glass break detectors sound more efficient.
+  - role: assistant
+    content: They are. One detector can cover a 25-foot radius. We'd probably need just one additional detector for full coverage.
+  - role: user
+    content: Okay, let's plan on that. What about cameras?
+  - role: assistant
+    content: Our package includes two outdoor cameras. Most people place them at the front door and back door. Would you like
+      additional cameras?
+  - role: user
+    content: I'd like one for the garage and maybe one for the side of the house.
+  - role: assistant
+    content: Smart thinking. Additional cameras are $199 each. So that would be two more cameras.
+  - role: user
+    content: Yes, let's do four cameras total. Do they record?
+  - role: assistant
+    content: Yes, they record to the cloud. The basic package includes 30 days of video storage. You can upgrade to 60 days
+      for $10 more per month.
+  - role: user
+    content: 30 days should be enough. What's the monthly monitoring fee?
+  - role: assistant
+    content: The Smart Home Security package with professional monitoring is $52.99 per month with a 36-month agreement.
+  - role: user
+    content: That's a three-year contract?
+  - role: assistant
+    content: Yes, but that locks in your rate. Without a contract, it's $62.99 monthly.
+  - role: user
+    content: I'll take the contract for the lower rate. What about installation?
+  - role: assistant
+    content: Professional installation is $299, but we're running a promotion this month where it's only $99.
+  - role: user
+    content: Oh, that's a good deal. When could you install?
+  - role: assistant
+    content: Let me check our Houston schedule... I have availability this Thursday, November 16th, or next Monday, November
+      20th.
+  - role: user
+    content: What time on Thursday?
+  - role: assistant
+    content: I have a morning slot from 8 AM to 12 PM, or afternoon from 1 PM to 5 PM.
+  - role: user
+    content: I'll take Thursday morning, 8 to noon.
+  - role: assistant
+    content: Perfect! I've scheduled you for Thursday, November 16th, between 8 AM and noon. The technician will call 30 minutes
+      before arrival.
+  - role: user
+    content: Do I need to be home?
+  - role: assistant
+    content: Yes, someone 18 or older needs to be present for the full installation, which typically takes 3-4 hours.
+  - role: user
+    content: That's fine, I'll work from home that day. Now, does the system work if the power goes out?
+  - role: assistant
+    content: Yes! The control panel has a backup battery that provides 24 hours of power. The cellular connection continues
+      working too.
+  - role: user
+    content: Good. How do I arm and disarm it?
+  - role: assistant
+    content: Multiple ways - a keypad by each door, a key fob remote, or our mobile app on your smartphone.
+  - role: user
+    content: How many key fobs do I get?
+  - role: assistant
+    content: The package includes two key fobs. Additional ones are $35 each.
+  - role: user
+    content: Two is enough. My husband and I will each have one. What about smoke detectors?
+  - role: user
+    content: Actually, wait - before smoke detectors, what's my account number going to be?
+  - role: assistant
+    content: Your ADT account number will be ADT-7789234. I'll also give you a service code for the installation.
+  - role: user
+    content: What's the service code?
+  - role: assistant
+    content: Your installation service code is SVC-44821. The technician will ask for this.
+  - role: user
+    content: Let me write both down... ADT-7789234 and SVC-44821?
+  - role: assistant
+    content: Exactly right. Now, you were asking about smoke detectors?
+  - role: user
+    content: Yes, are those included?
+  - role: assistant
+    content: The package includes one smoke detector. Additional monitored smoke detectors are $65 each. How many total would
+      you like?
+  - role: user
+    content: I should probably have one upstairs and one downstairs.
+  - role: assistant
+    content: That's wise. So one additional smoke detector for $65.
+  - role: user
+    content: Yes. Do you also monitor carbon monoxide?
+  - role: assistant
+    content: Yes, CO detectors are $100 each. With your gas appliances, I'd recommend at least one.
+  - role: user
+    content: Okay, add one of those too.
+  - role: assistant
+    content: Added. Let me calculate your total setup... Equipment package is $849, two additional cameras at $199 each, one
+      glass break detector at $120, one smoke detector at $65, one CO detector at $100, installation at $99.
+  - role: user
+    content: What's the total?
+  - role: assistant
+    content: Your one-time equipment and installation cost is $1,631, and monthly monitoring is $52.99.
+  - role: user
+    content: Can I finance the equipment?
+  - role: assistant
+    content: Yes! We can spread it over 12 months at 0% interest, which would be about $136 per month plus your monitoring.
+  - role: user
+    content: So about $190 total per month for the first year?
+  - role: assistant
+    content: Yes, $188.91 to be exact for the first 12 months, then just $52.99 after that.
+  - role: user
+    content: That's manageable. Let's do the financing.
+  - role: assistant
+    content: Excellent. I'll need some information for the financing approval. What's your social security number?
+  - role: user
+    content: 523-84-7791.
+  - role: assistant
+    content: Date of birth?
+  - role: user
+    content: October 15, 1978.
+  - role: assistant
+    content: Current address?
+  - role: user
+    content: 1847 Heights Boulevard, Houston, Texas, 77008.
+  - role: assistant
+    content: How long have you lived there?
+  - role: user
+    content: About six years.
+  - role: assistant
+    content: Employment status?
+  - role: user
+    content: I'm employed full-time as a marketing director.
+  - role: assistant
+    content: Excellent. Let me run this through... Congratulations! You're approved for the 0% financing.
+  - role: user
+    content: Great! What are the next steps?
+  - role: assistant
+    content: I'll email your contract to review and sign electronically. What's your email?
+  - role: user
+    content: nrodriguez78@email.com
+  - role: assistant
+    content: Perfect. You'll receive that within the hour. Once signed, we'll ship your equipment for the Thursday installation.
+  - role: user
+    content: Will the installer explain everything?
+  - role: assistant
+    content: Yes, they'll train you on the entire system, set up your app, and make sure you're comfortable before leaving.
+  - role: user
+    content: What if I have problems after installation?
+  - role: assistant
+    content: We have 24/7 customer support. Plus, your account includes two free service calls per year if needed.
+  - role: user
+    content: That's reassuring. Oh, does this integrate with smart home devices?
+  - role: assistant
+    content: Yes! It works with Alexa, Google Assistant, and most smart locks and lights.
+  - role: user
+    content: Perfect, I have Alexa. Anything else I should know?
+  - role: assistant
+    content: Just remember your account number ADT-7789234 for any future service needs, and have your service code SVC-44821
+      ready for the installer Thursday morning.
+  - role: user
+    content: Got it. Thank you so much, Carlos!
+  - role: assistant
+    content: You're welcome, Ms. Rodriguez! You're all set for Thursday, November 16th, 8 AM to noon. Your home will be much
+      more secure very soon!
+user_question: What's my ADT account number and installation service code? The technician just arrived and is asking for them.
+evaluation_criteria: |
+  The agent should accurately retrieve and provide both the ADT account number ADT-7789234 and the installation service code SVC-44821 from the home security setup conversation. Since the technician has just arrived and is asking for these codes, the response must include both pieces of information exactly as provided during the call. The agent should demonstrate clear recall of both the account number (which will be needed for future service) and the service code (specifically required for the installation). The response must maintain the correct format and sequence for both codes and not confuse them with each other or with other numbers mentioned in the conversation such as the address, phone numbers, or pricing information.
+expected_behavior: The agent should provide account number ADT-7789234 and service code SVC-44821

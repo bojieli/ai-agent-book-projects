@@ -1,0 +1,653 @@
+test_id: layer3_05_tax_preparation_synthesis
+category: layer3
+title: Tax Preparation - Multi-Source Financial Information Synthesis
+description: Test agent's ability to synthesize financial information from multiple sources across the year to proactively identify tax deductions and filing requirements
+conversation_histories:
+  - conversation_id: home_purchase_001
+    timestamp: "2024-02-15 10:00:00"
+    metadata:
+      business: "First National Bank"
+      department: "Mortgage Services"
+      call_duration: "58 minutes"
+    messages:
+      - role: user
+        content: "Hi, I just closed on my house purchase and wanted to confirm everything is set up correctly."
+      - role: assistant
+        content: "Congratulations on your new home! I'm Robert from First National Bank. What's your loan number?"
+      - role: user
+        content: "FNB-789456123."
+      - role: assistant
+        content: "Perfect, Mr. Brian Foster. Your loan for 487 Maple Drive closed February 12th."
+      - role: user
+        content: "Right. Purchase price was $625,000?"
+      - role: assistant
+        content: "Correct. You put down 20%, which is $125,000."
+      - role: user
+        content: "And my loan amount?"
+      - role: assistant
+        content: "Your mortgage is $500,000 at 6.75% for 30 years."
+      - role: user
+        content: "What's my monthly payment?"
+      - role: assistant
+        content: "Principal and interest is $3,243. With taxes and insurance, total is $4,285."
+      - role: user
+        content: "Break that down for me?"
+      - role: assistant
+        content: "P&I $3,243, property tax $708, homeowners insurance $234, PMI is zero since you put 20% down."
+      - role: user
+        content: "The property tax seems high."
+      - role: assistant
+        content: "Annual property tax is $8,500. That's about 1.36% of purchase price."
+      - role: user
+        content: "Is that all deductible?"
+      - role: assistant
+        content: "Yes, property tax is deductible up to $10,000 combined with state taxes."
+      - role: user
+        content: "What about the mortgage interest?"
+      - role: assistant
+        content: "Mortgage interest is fully deductible on loans up to $750,000."
+      - role: user
+        content: "How much interest will I pay this year?"
+      - role: assistant
+        content: "For 2024, approximately $31,000 since you're starting in February."
+      - role: user
+        content: "That's a lot of interest."
+      - role: assistant
+        content: "Yes, early years are mostly interest. First payment is $450 principal, $2,793 interest."
+      - role: user
+        content: "When's my first payment due?"
+      - role: assistant
+        content: "April 1st, 2024. We skip March since you closed mid-February."
+      - role: user
+        content: "Did I pay points on this loan?"
+      - role: assistant
+        content: "Yes, you paid 1.5 points to buy down the rate, that's $7,500."
+      - role: user
+        content: "Are points tax deductible?"
+      - role: assistant
+        content: "Yes, points paid on a purchase mortgage are fully deductible in the year paid."
+      - role: user
+        content: "Good. What about closing costs?"
+      - role: assistant
+        content: "Total closing costs were $14,750 including points."
+      - role: user
+        content: "What else was in there?"
+      - role: assistant
+        content: "Origination fee $5,000, title insurance $1,200, appraisal $650, attorney $1,400."
+      - role: user
+        content: "Can I deduct those?"
+      - role: assistant
+        content: "Only the points. Other closing costs are added to your home's cost basis."
+      - role: user
+        content: "Cost basis?"
+      - role: assistant
+        content: "For future sale calculations. Your basis is $625,000 purchase plus $7,250 non-deductible closing costs."
+      - role: user
+        content: "So $632,250 total basis?"
+      - role: assistant
+        content: "Correct. Important for capital gains when you eventually sell."
+      - role: user
+        content: "I plan to live here long-term."
+      - role: assistant
+        content: "Good! Primary residence gets $250,000 capital gains exclusion, $500,000 if married."
+      - role: user
+        content: "I'm married. Speaking of which, we're filing jointly."
+      - role: assistant
+        content: "Then you can deduct all the mortgage interest and property taxes on your joint return."
+      - role: user
+        content: "Will you send me the tax forms?"
+      - role: assistant
+        content: "Yes, Form 1098 by January 31st showing interest paid and points."
+      - role: user
+        content: "What if I make extra principal payments?"
+      - role: assistant
+        content: "No prepayment penalty. Extra payments reduce principal and lifetime interest."
+      - role: user
+        content: "I'm thinking of paying an extra $500 monthly."
+      - role: assistant
+        content: "That would save you $287,000 in interest and pay off the loan 9 years early."
+      - role: user
+        content: "Wow! Maybe I'll do that after settling in."
+      - role: assistant
+        content: "Smart thinking. Get comfortable with the payment first."
+      - role: user
+        content: "Is my escrow account set up?"
+      - role: assistant
+        content: "Yes, we collect for property tax and insurance monthly."
+      - role: user
+        content: "Initial escrow balance?"
+      - role: assistant
+        content: "You deposited $2,834 at closing for initial escrow cushion."
+      - role: user
+        content: "When do you pay the insurance?"
+      - role: assistant
+        content: "Annual premium due February 1st each year, we'll pay from escrow."
+      - role: user
+        content: "And property taxes?"
+      - role: assistant
+        content: "Due in two installments - April and November in your county."
+      - role: user
+        content: "You handle both?"
+      - role: assistant
+        content: "Yes, we pay from your escrow account. You'll get an annual escrow analysis."
+      - role: user
+        content: "What if there's a shortage?"
+      - role: assistant
+        content: "We'll adjust your monthly payment or you can pay the shortage lump sum."
+      - role: user
+        content: "Hopefully taxes don't go up too much."
+      - role: assistant
+        content: "There's usually a homestead exemption. Have you applied?"
+      - role: user
+        content: "Not yet. How do I do that?"
+      - role: assistant
+        content: "County assessor's office. Can save you $500-1000 annually on taxes."
+      - role: user
+        content: "I'll do that right away."
+      - role: assistant
+        content: "File by March 31st for this tax year."
+      - role: user
+        content: "Thanks for reminding me. Anything else I should know?"
+      - role: assistant
+        content: "Keep all documentation for taxes. Your CPA will need the closing statement."
+      - role: user
+        content: "I have everything in a folder."
+      - role: assistant
+        content: "Perfect. Congratulations again on your new home!"
+      - role: user
+        content: "Thanks for all your help!"
+      - role: assistant
+        content: "My pleasure. Call if you need anything, Mr. Foster."
+  - conversation_id: stock_sale_001
+    timestamp: "2024-06-20 14:00:00"
+    metadata:
+      business: "Charles Schwab"
+      department: "Investment Services"
+      call_duration: "45 minutes"
+    messages:
+      - role: user
+        content: "Hi, I need to sell some stock to pay for home improvements."
+      - role: assistant
+        content: "Hello! I'm Lisa from Charles Schwab. I can help with that. What's your account number?"
+      - role: user
+        content: "CS-445789632."
+      - role: assistant
+        content: "Thank you, Mr. Foster. I see your portfolio here. Which stocks are you considering selling?"
+      - role: user
+        content: "I'm thinking about the Apple shares."
+      - role: assistant
+        content: "You have 500 shares of Apple, currently at $185 per share, total value $92,500."
+      - role: user
+        content: "What did I pay for them?"
+      - role: assistant
+        content: "You have multiple purchase lots. 200 shares bought in 2018 at $45, 300 shares in 2020 at $75."
+      - role: user
+        content: "So if I sell all of them?"
+      - role: assistant
+        content: "Your cost basis is $31,500 total. Selling at $92,500 means $61,000 capital gain."
+      - role: user
+        content: "That's a big tax hit."
+      - role: assistant
+        content: "Yes, but it's all long-term capital gains since you've held over a year."
+      - role: user
+        content: "What's the tax rate on that?"
+      - role: assistant
+        content: "Depends on your income. Could be 0%, 15%, or 20% federal, plus state taxes."
+      - role: user
+        content: "I make about $125,000 a year."
+      - role: assistant
+        content: "Married filing jointly?"
+      - role: user
+        content: "Yes, my wife makes about $85,000."
+      - role: assistant
+        content: "So $210,000 combined. You'd likely pay 15% federal capital gains tax."
+      - role: user
+        content: "That's $9,150 on the gain?"
+      - role: assistant
+        content: "Correct, plus your state tax. What state are you in?"
+      - role: user
+        content: "California."
+      - role: assistant
+        content: "California taxes capital gains as ordinary income, so could be another 9.3%."
+      - role: user
+        content: "Ouch. Maybe I should sell less?"
+      - role: assistant
+        content: "How much do you need for the improvements?"
+      - role: user
+        content: "About $50,000."
+      - role: assistant
+        content: "You could sell just 300 shares for $55,500, keep taxes lower."
+      - role: user
+        content: "Which shares should I sell for best tax treatment?"
+      - role: assistant
+        content: "Specific lot identification. Sell the 300 shares from 2020 at $75 cost basis."
+      - role: user
+        content: "Why those?"
+      - role: assistant
+        content: "Higher cost basis means lower gain. $55,500 proceeds minus $22,500 basis equals $33,000 gain."
+      - role: user
+        content: "Much better than $61,000 gain."
+      - role: assistant
+        content: "Exactly. Federal tax about $4,950, California about $3,069."
+      - role: user
+        content: "So roughly $8,000 total tax?"
+      - role: assistant
+        content: "Yes, approximately. Versus $15,000+ if you sold everything."
+      - role: user
+        content: "Let's do that. Sell the 300 shares from 2020."
+      - role: assistant
+        content: "Market order or limit?"
+      - role: user
+        content: "What's it trading at now?"
+      - role: assistant
+        content: "$185.25 currently."
+      - role: user
+        content: "Market order is fine."
+      - role: assistant
+        content: "Executing now... Filled at $185.30. Proceeds $55,590."
+      - role: user
+        content: "Perfect. When will funds be available?"
+      - role: assistant
+        content: "Trade settles in 2 business days, so June 24th."
+      - role: user
+        content: "Can you transfer to my checking?"
+      - role: assistant
+        content: "Yes, Chase account ending in 4782?"
+      - role: user
+        content: "That's the one."
+      - role: assistant
+        content: "Transfer will complete June 25th."
+      - role: user
+        content: "What about estimated taxes?"
+      - role: assistant
+        content: "You should make an estimated tax payment for Q2 by June 15th."
+      - role: user
+        content: "I missed that deadline."
+      - role: assistant
+        content: "Pay as soon as possible. Q3 deadline is September 15th."
+      - role: user
+        content: "How much should I pay?"
+      - role: assistant
+        content: "Roughly $8,000 for federal and state on this gain."
+      - role: user
+        content: "I'll do that. Will I get a 1099?"
+      - role: assistant
+        content: "Yes, 1099-B in January showing proceeds and cost basis."
+      - role: user
+        content: "Good for tax prep. What about the remaining Apple shares?"
+      - role: assistant
+        content: "You still have 200 shares worth about $37,000."
+      - role: user
+        content: "I'll hold those for now."
+      - role: assistant
+        content: "Smart to keep some exposure to Apple. It's been a great performer."
+      - role: user
+        content: "Any other tax considerations?"
+      - role: assistant
+        content: "The home improvements might increase your home's cost basis."
+      - role: user
+        content: "Really? Which improvements qualify?"
+      - role: assistant
+        content: "Capital improvements like new kitchen, bathroom, additions. Not repairs or maintenance."
+      - role: user
+        content: "I'm doing a kitchen remodel and adding a deck."
+      - role: assistant
+        content: "Both should qualify. Keep receipts and documentation."
+      - role: user
+        content: "Will do. Thanks for the tax-efficient sale strategy!"
+      - role: assistant
+        content: "You're welcome! Saved you about $7,000 in taxes."
+  - conversation_id: charity_donation_001
+    timestamp: "2024-08-15 11:00:00"
+    metadata:
+      business: "United Way"
+      department: "Donor Services"
+      call_duration: "42 minutes"
+    messages:
+      - role: user
+        content: "Hi, I want to make a significant donation this year for tax purposes."
+      - role: assistant
+        content: "Hello! This is Michael from United Way Donor Services. We appreciate your generosity. How can I help?"
+      - role: user
+        content: "I'm looking to donate about $25,000. What's the best way tax-wise?"
+      - role: assistant
+        content: "That's wonderful! Are you looking to donate cash or potentially securities?"
+      - role: user
+        content: "I hadn't thought about securities. I have cash and stocks."
+      - role: assistant
+        content: "Donating appreciated stock can be very tax-efficient. You avoid capital gains tax."
+      - role: user
+        content: "I have some Microsoft stock that's way up."
+      - role: assistant
+        content: "Perfect! You can donate the stock directly, deduct full market value, and pay no capital gains."
+      - role: user
+        content: "How does that work exactly?"
+      - role: assistant
+        content: "You transfer shares to our brokerage account. We sell them and use the proceeds."
+      - role: user
+        content: "What if the stock is worth more than $25,000?"
+      - role: assistant
+        content: "You can donate a specific number of shares to reach your target amount."
+      - role: user
+        content: "I have 150 Microsoft shares. Current price is about $350."
+      - role: assistant
+        content: "That's $52,500 total. You could donate 72 shares for about $25,200."
+      - role: user
+        content: "What did I pay for these shares?"
+      - role: assistant
+        content: "You'd need to check your records, but let's say your basis is $100 per share."
+      - role: user
+        content: "That sounds about right. Bought them five years ago."
+      - role: assistant
+        content: "So 72 shares cost you $7,200, now worth $25,200. That's $18,000 unrealized gain."
+      - role: user
+        content: "Which I won't pay tax on if I donate?"
+      - role: assistant
+        content: "Exactly! You save capital gains tax on $18,000."
+      - role: user
+        content: "At 15% federal plus 9.3% California, that's..."
+      - role: assistant
+        content: "About $4,374 in capital gains tax avoided."
+      - role: user
+        content: "Plus I get the $25,200 charitable deduction?"
+      - role: assistant
+        content: "Yes, if you itemize deductions."
+      - role: user
+        content: "I definitely itemize with the new mortgage."
+      - role: assistant
+        content: "Perfect. At your tax bracket, the deduction saves you another $8,000+ in income tax."
+      - role: user
+        content: "So total tax benefit is over $12,000?"
+      - role: assistant
+        content: "Approximately, yes. Much better than donating cash."
+      - role: user
+        content: "Let's do it. How do I transfer the shares?"
+      - role: assistant
+        content: "I'll email you our DTC transfer instructions. What brokerage holds your shares?"
+      - role: user
+        content: "They're at Charles Schwab."
+      - role: assistant
+        content: "Great, they're very familiar with the process. Usually takes 3-5 business days."
+      - role: user
+        content: "Do I need to notify them?"
+      - role: assistant
+        content: "Yes, call Schwab and request a charitable transfer. Give them our instructions."
+      - role: user
+        content: "Will I get a receipt for taxes?"
+      - role: assistant
+        content: "Yes, we'll send an acknowledgment letter with date and number of shares received."
+      - role: user
+        content: "But not the value?"
+      - role: assistant
+        content: "Correct. For non-cash gifts over $5,000, you need your own appraisal or valuation."
+      - role: user
+        content: "How do I value publicly traded stock?"
+      - role: assistant
+        content: "Average of high and low price on the date of transfer."
+      - role: user
+        content: "That's straightforward."
+      - role: assistant
+        content: "Yes. Your tax preparer will need our letter and your valuation."
+      - role: user
+        content: "Do I need any special tax forms?"
+      - role: assistant
+        content: "Form 8283 for non-cash charitable contributions over $500."
+      - role: user
+        content: "My CPA handles that?"
+      - role: assistant
+        content: "Yes, they'll prepare it with your return."
+      - role: user
+        content: "What if I want to donate more?"
+      - role: assistant
+        content: "You can deduct up to 30% of AGI for appreciated asset donations."
+      - role: user
+        content: "Our income is about $210,000."
+      - role: assistant
+        content: "So you could deduct up to $63,000 in stock donations this year."
+      - role: user
+        content: "Good to know. Maybe I'll donate more."
+      - role: assistant
+        content: "We also have a donor-advised fund option if you want to donate now, distribute later."
+      - role: user
+        content: "What's that?"
+      - role: assistant
+        content: "You donate to the fund, get immediate deduction, then recommend grants over time."
+      - role: user
+        content: "Interesting, but I'll stick with the direct donation for now."
+      - role: assistant
+        content: "Perfect. Your $25,200 donation will make a real difference."
+      - role: user
+        content: "What programs will it support?"
+      - role: assistant
+        content: "Education, financial stability, and health initiatives in your local community."
+      - role: user
+        content: "Wonderful. I'll initiate the transfer today."
+      - role: assistant
+        content: "Thank you so much, Mr. Foster. We truly appreciate your generosity."
+  - conversation_id: side_business_001
+    timestamp: "2024-10-10 16:00:00"
+    metadata:
+      business: "Small Business Development Center"
+      department: "Consulting Services"
+      call_duration: "51 minutes"
+    messages:
+      - role: user
+        content: "Hi, I started doing freelance consulting and need help understanding the tax implications."
+      - role: assistant
+        content: "Hello! I'm Karen from the Small Business Development Center. Tell me about your consulting work."
+      - role: user
+        content: "I'm doing IT consulting on weekends, started in July."
+      - role: assistant
+        content: "Congratulations! Is this in addition to your regular job?"
+      - role: user
+        content: "Yes, I work full-time but have been getting consulting projects."
+      - role: assistant
+        content: "How much have you earned from consulting so far?"
+      - role: user
+        content: "About $18,000 since July."
+      - role: assistant
+        content: "That's substantial! Are you tracking expenses?"
+      - role: user
+        content: "Some, but I'm not sure what qualifies."
+      - role: assistant
+        content: "Let's review. Do you have a home office?"
+      - role: user
+        content: "Yes, I use my spare bedroom exclusively for the consulting work."
+      - role: assistant
+        content: "What's the square footage?"
+      - role: user
+        content: "The room is about 150 square feet, house is 2,500 total."
+      - role: assistant
+        content: "So 6% of your home. You can deduct 6% of home expenses."
+      - role: user
+        content: "Like what?"
+      - role: assistant
+        content: "Mortgage interest, property tax, utilities, insurance, maintenance."
+      - role: user
+        content: "My mortgage interest is about $31,000 this year."
+      - role: assistant
+        content: "You can deduct $1,860 as business expense, rest on Schedule A."
+      - role: user
+        content: "Property tax is $8,500."
+      - role: assistant
+        content: "$510 for business, rest as itemized deduction."
+      - role: user
+        content: "What about utilities?"
+      - role: assistant
+        content: "Total annual utilities?"
+      - role: user
+        content: "About $3,600 for electric, gas, water."
+      - role: assistant
+        content: "$216 business deduction."
+      - role: user
+        content: "And internet?"
+      - role: assistant
+        content: "If primarily for business, you can deduct a percentage. How much is it?"
+      - role: user
+        content: "$99 per month."
+      - role: assistant
+        content: "If 50% business use, that's $594 annual deduction."
+      - role: user
+        content: "I bought a new laptop for $2,500."
+      - role: assistant
+        content: "100% business use?"
+      - role: user
+        content: "About 80% business, 20% personal."
+      - role: assistant
+        content: "You can deduct $2,000 or depreciate over 5 years."
+      - role: user
+        content: "Which is better?"
+      - role: assistant
+        content: "With $18,000 income, I'd take the full deduction this year."
+      - role: user
+        content: "What about my car? I drive to client sites."
+      - role: assistant
+        content: "Track your business miles. Standard rate for 2024 is 67 cents per mile."
+      - role: user
+        content: "I've driven about 2,000 miles for consulting."
+      - role: assistant
+        content: "That's $1,340 deduction."
+      - role: user
+        content: "What about client meals?"
+      - role: assistant
+        content: "50% deductible if business-related. How much have you spent?"
+      - role: user
+        content: "Maybe $800 on client lunches."
+      - role: assistant
+        content: "$400 deduction."
+      - role: user
+        content: "Software subscriptions?"
+      - role: assistant
+        content: "Fully deductible if for business. What do you have?"
+      - role: user
+        content: "Adobe Creative Suite $55/month, Microsoft 365 $30/month."
+      - role: assistant
+        content: "If starting July, that's 6 months, $510 total deduction."
+      - role: user
+        content: "What about self-employment tax?"
+      - role: assistant
+        content: "You'll owe 15.3% on net profit for Social Security and Medicare."
+      - role: user
+        content: "On the full $18,000?"
+      - role: assistant
+        content: "On profit after expenses. Let's calculate roughly..."
+      - role: user
+        content: "Income $18,000 minus all these deductions?"
+      - role: assistant
+        content: "Rough estimate: $18,000 minus $7,000 expenses equals $11,000 net."
+      - role: user
+        content: "So self-employment tax is?"
+      - role: assistant
+        content: "About $1,683. Plus income tax on the $11,000."
+      - role: user
+        content: "Do I need to make quarterly payments?"
+      - role: assistant
+        content: "Yes, if you expect to owe $1,000 or more in tax."
+      - role: user
+        content: "I haven't made any yet."
+      - role: assistant
+        content: "Q3 was due September 15th, Q4 is due January 15th."
+      - role: user
+        content: "Can I catch up?"
+      - role: assistant
+        content: "Yes, pay as soon as possible to minimize penalties."
+      - role: user
+        content: "How much should I pay?"
+      - role: assistant
+        content: "Roughly 25-30% of net profit for federal and state combined."
+      - role: user
+        content: "So about $3,000 on $11,000 profit?"
+      - role: assistant
+        content: "Yes, plus the $1,683 self-employment tax. Total about $4,700."
+      - role: user
+        content: "Should I form an LLC?"
+      - role: assistant
+        content: "LLC provides liability protection but doesn't change taxes unless you elect S-corp."
+      - role: user
+        content: "What's the advantage of S-corp?"
+      - role: assistant
+        content: "Can save self-employment tax on distributions, but adds complexity."
+      - role: user
+        content: "Maybe next year if the business grows."
+      - role: assistant
+        content: "Good plan. For now, focus on good recordkeeping."
+      - role: user
+        content: "What records do I need?"
+      - role: assistant
+        content: "Income records, receipts for all expenses, mileage log, home office documentation."
+      - role: user
+        content: "I should probably get accounting software."
+      - role: assistant
+        content: "QuickBooks Self-Employed is about $15/month, good for freelancers."
+      - role: user
+        content: "That's deductible too?"
+      - role: assistant
+        content: "Yes, 100% deductible as a business expense."
+      - role: user
+        content: "This is more complex than I thought."
+      - role: assistant
+        content: "It gets easier. Consider hiring a tax professional for your first year."
+      - role: user
+        content: "Probably a good idea. Thanks for all the help!"
+      - role: assistant
+        content: "You're welcome! Good luck with your consulting business, Mr. Foster."
+user_question: "I'm preparing my taxes. Can you help me identify all my deductions and important tax items from this year?"
+evaluation_criteria: |
+  The agent should synthesize information across ALL conversations to provide comprehensive tax guidance:
+  
+  **HOME PURCHASE (February 2024)**
+  - Mortgage interest deduction: ~$31,000 for 2024
+  - Points paid: $7,500 (fully deductible year paid)
+  - Property tax: $8,500 (deductible up to $10,000 SALT cap)
+  - Closing costs: $14,750 (points deductible, others add to basis)
+  - Home basis: $632,250 for future capital gains
+  - First payment: April 1st
+  - Form 1098 will show interest and points
+  
+  **STOCK SALE (June 2024)**
+  - Apple stock sold: 300 shares for $55,590
+  - Cost basis: $22,500
+  - Long-term capital gain: $33,000
+  - Estimated tax: ~$8,000 (should pay quarterly)
+  - Form 1099-B will be issued
+  
+  **CHARITABLE DONATION (August 2024)**
+  - Microsoft stock donation: 72 shares worth $25,200
+  - Avoided capital gains on $18,000 appreciation
+  - Full $25,200 charitable deduction (itemized)
+  - Need Form 8283 for non-cash over $500
+  - Tax benefit: ~$12,000+ combined
+  
+  **CONSULTING BUSINESS (Started July 2024)**
+  - Income: $18,000
+  - Home office: 6% of home expenses (~$2,586)
+  - Laptop: $2,000 (80% business use)
+  - Mileage: 2,000 miles = $1,340
+  - Software: $510
+  - Client meals: $400 (50% of $800)
+  - Net profit: ~$11,000
+  - Self-employment tax: $1,683
+  - Need Schedule C and SE
+  
+  **HOME IMPROVEMENTS (June 2024)**
+  - Kitchen remodel and deck: $50,000
+  - Adds to home cost basis (now $682,250)
+  - Not currently deductible but reduces future capital gains
+  
+  **KEY TAX FORMS EXPECTED:**
+  - W-2s from employment
+  - Form 1098 (mortgage interest)
+  - Form 1099-B (stock sale)
+  - Form 8283 (non-cash charitable)
+  - Schedule C (business income)
+  - Schedule SE (self-employment tax)
+  - Charity acknowledgment letter
+  
+  **PROACTIVE INSIGHTS:**
+  1. Combined income (~$210,000 W-2 + $11,000 consulting) may trigger higher tax bracket
+  2. Should make Q4 estimated payment by January 15th
+  3. Homestead exemption can save $500-1,000 on property taxes (deadline March 31st)
+  4. Itemizing definitely beneficial with mortgage interest, property tax, and charity
+  5. Consider additional retirement contributions to reduce taxable income
+  
+  The agent should recognize this requires synthesizing financial information from the entire year and provide a complete tax picture with actionable items.

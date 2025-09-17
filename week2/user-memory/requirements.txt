@@ -1,0 +1,23 @@
+# User Memory System Requirements
+
+# Core dependencies
+openai>=1.35.0
+python-dotenv>=1.0.0
+
+# Logging and utilities
+colorama>=0.4.6
+rich>=13.0.0
+pyyaml>=6.0.0
+pydantic>=2.0.0
+
+# Optional: For Dify integration (vector search)
+requests>=2.31.0
+
+# Optional: For advanced embedding search (if not using Dify)
+# sentence-transformers>=2.2.2
+# numpy>=1.24.0
+# faiss-cpu>=1.7.4
+
+# Development dependencies
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
