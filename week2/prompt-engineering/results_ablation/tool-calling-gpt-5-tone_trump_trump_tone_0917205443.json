@@ -1,0 +1,52 @@
+[
+  {
+    "task_id": 0,
+    "reward": 0.0,
+    "info": {
+      "error": "unsupported format string passed to NoneType.__format__",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/run_ablation.py\", line 312, in _run\n    res = agent.solve(\n          ^^^^^^^^^^^^\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/ablation_agent.py\", line 170, in solve\n    print(f\"\\n\ud83d\udcb0 Cost: ${res._hidden_params.get('response_cost', 0):.4f}\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to NoneType.__format__\n"
+    },
+    "traj": [],
+    "trial": 0
+  },
+  {
+    "task_id": 1,
+    "reward": 0.0,
+    "info": {
+      "error": "unsupported format string passed to NoneType.__format__",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/run_ablation.py\", line 312, in _run\n    res = agent.solve(\n          ^^^^^^^^^^^^\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/ablation_agent.py\", line 170, in solve\n    print(f\"\\n\ud83d\udcb0 Cost: ${res._hidden_params.get('response_cost', 0):.4f}\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to NoneType.__format__\n"
+    },
+    "traj": [],
+    "trial": 0
+  },
+  {
+    "task_id": 2,
+    "reward": 0.0,
+    "info": {
+      "error": "unsupported format string passed to NoneType.__format__",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/run_ablation.py\", line 312, in _run\n    res = agent.solve(\n          ^^^^^^^^^^^^\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/ablation_agent.py\", line 170, in solve\n    print(f\"\\n\ud83d\udcb0 Cost: ${res._hidden_params.get('response_cost', 0):.4f}\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to NoneType.__format__\n"
+    },
+    "traj": [],
+    "trial": 0
+  },
+  {
+    "task_id": 3,
+    "reward": 0.0,
+    "info": {
+      "error": "unsupported format string passed to NoneType.__format__",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/run_ablation.py\", line 312, in _run\n    res = agent.solve(\n          ^^^^^^^^^^^^\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/ablation_agent.py\", line 170, in solve\n    print(f\"\\n\ud83d\udcb0 Cost: ${res._hidden_params.get('response_cost', 0):.4f}\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to NoneType.__format__\n"
+    },
+    "traj": [],
+    "trial": 0
+  },
+  {
+    "task_id": 4,
+    "reward": 0.0,
+    "info": {
+      "error": "unsupported format string passed to NoneType.__format__",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/run_ablation.py\", line 312, in _run\n    res = agent.solve(\n          ^^^^^^^^^^^^\n  File \"/Users/boj/ai-agent-book/projects/week2/prompt-engineering/ablation_agent.py\", line 170, in solve\n    cost = res._hidden_params.get('response_cost', 0) or 0\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to NoneType.__format__\n"
+    },
+    "traj": [],
+    "trial": 0
+  }
+]
