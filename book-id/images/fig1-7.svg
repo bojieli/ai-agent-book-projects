@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 320" width="820" height="320" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="105.0" y="147.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Code Commit</text>
+<text x="105.0" y="167.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pull Request</text>
+<text x="220" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Segmentation</text>
+<rect x="290" y="70" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="87.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Security Review</text>
+<text x="367.5" y="107.89999999999999" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM₁</text>
+<rect x="450" y="70" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="81.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">SQL Injection</text>
+<text x="515.0" y="97.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">XSS</text>
+<text x="515.0" y="113.10000000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Permission Leakage</text>
+<line x1="180" y1="157" x2="288" y2="98" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="155" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="172.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Style Review</text>
+<text x="367.5" y="192.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM₂</text>
+<rect x="450" y="155" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="167.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Naming Conventions</text>
+<text x="515.0" y="182.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Code Duplication</text>
+<text x="515.0" y="197.45000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Complexity</text>
+<line x1="180" y1="157" x2="288" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="240" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="257.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Logic Review</text>
+<text x="367.5" y="277.90000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM₃</text>
+<rect x="450" y="240" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="252.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Boundary Conditions</text>
+<text x="515.0" y="267.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Null Pointers</text>
+<text x="515.0" y="282.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Concurrency Issues</text>
+<line x1="180" y1="157" x2="288" y2="268" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="640" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="715.0" y="141.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Aggregate Results</text>
+<text x="715.0" y="157.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Comprehensive</text>
+<text x="715.0" y="173.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Review Report</text>
+<line x1="582" y1="98" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="183" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="268" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 800 340" width="800" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="50" width="720" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="60" y="75" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Score(Q,D) = Σ IDF(qi) × TF(qi,D)×(k1+1) / (TF + k1×(1-b+b×|D|/avgdl))</text>
+<rect x="40" y="120" width="220" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Term frequency saturation (TF)</text>
+<line x1="60" y1="163" x2="240" y2="163" stroke="#999999" stroke-width="2"/>
+<text x="150" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">k₁ controls saturation speed</text>
+<text x="150" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">TF ↑ but contribution diminishes</text>
+<text x="150" y="246" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Example: 5→10 occurrences</text>
+<text x="150" y="274" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Score increases only ~20%</text>
+<rect x="290" y="120" width="220" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="400" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Inverse document frequency (IDF)</text>
+<line x1="310" y1="163" x2="490" y2="163" stroke="#999999" stroke-width="2"/>
+<text x="400" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Measures word rarity</text>
+<text x="400" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;的&quot; → IDF ≈ 0</text>
+<text x="400" y="246" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;量刑&quot; → IDF ≈ 5.2</text>
+<text x="400" y="274" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Rare word weight &gt;&gt; common word</text>
+<rect x="540" y="120" width="220" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="650" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Length normalization (b)</text>
+<line x1="560" y1="163" x2="740" y2="163" stroke="#999999" stroke-width="2"/>
+<text x="650" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">b ∈ [0,1] normalization strength</text>
+<text x="650" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">b=0: ignore length</text>
+<text x="650" y="246" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">b=1: full normalization</text>
+<text x="650" y="274" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Avoid bias towards long documents</text>
+<line x1="150" y1="290" x2="150" y2="315" stroke="#999999" stroke-width="2"/>
+<line x1="400" y1="290" x2="400" y2="315" stroke="#999999" stroke-width="2"/>
+<line x1="650" y1="290" x2="650" y2="315" stroke="#999999" stroke-width="2"/>
+<rect x="40" y="315" width="720" height="48" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="400.0" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Final score = Σ (TF saturation × IDF weighting × length normalization)</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 750 390" width="750" height="390" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="50" y="275" width="300" height="110" rx="6" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="200" y="395" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Community: SSE instruction set</text>
+<circle cx="375" cy="100" r="42" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="375" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">Intel</text>
+<circle cx="150" cy="190" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">SSE</text>
+<circle cx="550" cy="190" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="550" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">AVX</text>
+<circle cx="100" cy="320" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="100" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">XMM reg</text>
+<circle cx="280" cy="340" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="280" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">ADDPS</text>
+<circle cx="520" cy="320" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="520" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">YMM reg</text>
+<circle cx="375" cy="250" r="42" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="375" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central">FP ops</text>
+<line x1="333.21854891016335" y1="116.71258043593467" x2="201.99469468957452" y2="169.2021221241702" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="267.60662179986895" y="132.95735128005242" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Development</text>
+<line x1="415.01795110431664" y1="120.58066056793426" x2="500.1998830701838" y2="164.38851129323737" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="457.60891708725023" y="132.4845859305858" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Development</text>
+<line x1="133.8459414311009" y1="232.00055227913768" x2="120.10282844129667" y2="267.73264605262864" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="126.97438493619879" y="239.86659916588314" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Usage</text>
+<line x1="193.48057228205607" y1="201.59481927521495" x2="320.8908433823302" y2="235.5708915686214" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="179.47187422880287" y1="224.0060087255418" x2="243.32388984860086" y2="297.6814113637702" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="211.39788203870188" y="250.843710044656" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Contains</text>
+<line x1="539.8813221985558" y1="233.8476038062579" x2="532.5921323751305" y2="265.4340930411013" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="536.2367272868432" y="239.64084842367959" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Usage</text>
+<line x1="507.43243243243245" y1="204.59459459459458" x2="427.97297297297297" y2="231.83783783783784" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="467.7027027027027" y="208.2162162162162" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Execute</text>
+<line x1="331.3906271734676" y1="261.10056762857187" x2="154.26944173968477" y2="306.18596028444387" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="415.52482363640604" y1="269.56370796240293" x2="469.5691083635836" y2="295.65405231345414" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="442.5469659999948" y="272.6088801379285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Operation</text>
+</svg>

@@ -1,0 +1,219 @@
+% ===== ElegantBook customizations for 《深入理解 AI Agent》 =====
+% Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
+
+% ── Text & math fonts: Palatino look, matching the author's papers ──
+% The papers' preprint style (arxiv.sty) uses mathpazo (Palatino body +
+% matching math) with helvet[scaled=.90] sans. These are the XeLaTeX-native
+% equivalents: TeX Gyre Pagella (Palatino) text + TeX Gyre Pagella Math,
+% and TeX Gyre Heros (Helvetica clone) sans. Must be set here rather than
+% relying on the class: pandoc's template resets the fonts to Latin Modern
+% after the class runs, so only preamble-level settings take effect.
+% Loaded by filename (like the class's own setup): macOS fontconfig doesn't
+% index texmf-dist, so family-name lookup would fail.
+\usepackage{unicode-math}
+\setmainfont{texgyrepagella}[
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Extension = .otf,
+  Scale = 1.0]
+\setsansfont{texgyreheros}[
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Extension = .otf,
+  Scale = 0.9]
+\setmathfont{texgyrepagella-math}[Extension = .otf]
+
+% ── Unicode glyph fallback (the text/mono fonts lack these) ──────
+\usepackage{newunicodechar}
+% macOS has Arial Unicode MS / Heiti SC; on Linux those Apple fonts are absent,
+% so fall back to broad-coverage libre fonts to keep the build working.
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\newfontfamily\fallbackfont{DejaVu Sans}}
+\IfFontExistsTF{Heiti SC}{\newunicodechar{★}{{\fontspec{Heiti SC}★}}}{\newunicodechar{★}{{\fontspec{Noto Sans CJK SC}★}}}
+\newunicodechar{✓}{{\fallbackfont ✓}}
+\newunicodechar{✗}{{\fallbackfont ✗}}
+\newunicodechar{₀}{{\fallbackfont ₀}}
+\newunicodechar{₁}{{\fallbackfont ₁}}
+\newunicodechar{₂}{{\fallbackfont ₂}}
+\newunicodechar{₃}{{\fallbackfont ₃}}
+\newunicodechar{₄}{{\fallbackfont ₄}}
+\newunicodechar{₅}{{\fallbackfont ₅}}
+\newunicodechar{₆}{{\fallbackfont ₆}}
+\newunicodechar{₇}{{\fallbackfont ₇}}
+\newunicodechar{₈}{{\fallbackfont ₈}}
+\newunicodechar{₉}{{\fallbackfont ₉}}
+\newunicodechar{ⓐ}{{\fallbackfont ⓐ}}
+\newunicodechar{ⓑ}{{\fallbackfont ⓑ}}
+\newunicodechar{ⓒ}{{\fallbackfont ⓒ}}
+\newunicodechar{ⓓ}{{\fallbackfont ⓓ}}
+\newunicodechar{ⓔ}{{\fallbackfont ⓔ}}
+% Math / symbols absent from the Latin text font
+\newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{♠}{{\fallbackfont ♠}}
+\newunicodechar{♣}{{\fallbackfont ♣}}
+\newunicodechar{♥}{{\fallbackfont ♥}}
+\newunicodechar{♦}{{\fallbackfont ♦}}
+% Greek letters used inline in body text (Latin Modern lacks them here)
+\newunicodechar{α}{{\fallbackfont α}}
+\newunicodechar{β}{{\fallbackfont β}}
+\newunicodechar{γ}{{\fallbackfont γ}}
+\newunicodechar{δ}{{\fallbackfont δ}}
+\newunicodechar{ε}{{\fallbackfont ε}}
+\newunicodechar{η}{{\fallbackfont η}}
+\newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{λ}{{\fallbackfont λ}}
+\newunicodechar{μ}{{\fallbackfont μ}}
+\newunicodechar{π}{{\fallbackfont π}}
+\newunicodechar{ρ}{{\fallbackfont ρ}}
+\newunicodechar{σ}{{\fallbackfont σ}}
+\newunicodechar{τ}{{\fallbackfont τ}}
+\newunicodechar{φ}{{\fallbackfont φ}}
+\newunicodechar{ω}{{\fallbackfont ω}}
+
+% ── Residual CJK glyphs ──────────────────────────────────────────
+% This is an English book, but a handful of Han characters still appear as
+% inline examples (Chinese tokenization / translation / speech-recognition
+% cases). Route just those code points to a CJK font so they render, without
+% pulling in the whole ctex/xeCJK Chinese-typesetting stack. macOS: Heiti SC;
+% Linux: Noto Sans CJK SC.
+\IfFontExistsTF{Heiti SC}{\newfontfamily\cjkfallback{Heiti SC}}{\newfontfamily\cjkfallback{Noto Sans CJK SC}}
+\newunicodechar{医}{{\cjkfallback 医}}
+\newunicodechar{图}{{\cjkfallback 图}}
+\newunicodechar{型}{{\cjkfallback 型}}
+\newunicodechar{模}{{\cjkfallback 模}}
+\newunicodechar{生}{{\cjkfallback 生}}
+\newunicodechar{解}{{\cjkfallback 解}}
+\newunicodechar{陈}{{\cjkfallback 陈}}
+\newunicodechar{两}{{\cjkfallback 两}}
+\newunicodechar{么}{{\cjkfallback 么}}
+\newunicodechar{了}{{\cjkfallback 了}}
+\newunicodechar{京}{{\cjkfallback 京}}
+\newunicodechar{代}{{\cjkfallback 代}}
+\newunicodechar{体}{{\cjkfallback 体}}
+\newunicodechar{北}{{\cjkfallback 北}}
+\newunicodechar{右}{{\cjkfallback 右}}
+\newunicodechar{大}{{\cjkfallback 大}}
+\newunicodechar{天}{{\cjkfallback 天}}
+\newunicodechar{左}{{\cjkfallback 左}}
+\newunicodechar{怎}{{\cjkfallback 怎}}
+\newunicodechar{思}{{\cjkfallback 思}}
+\newunicodechar{推}{{\cjkfallback 推}}
+\newunicodechar{智}{{\cjkfallback 智}}
+\newunicodechar{样}{{\cjkfallback 样}}
+\newunicodechar{概}{{\cjkfallback 概}}
+\newunicodechar{气}{{\cjkfallback 气}}
+\newunicodechar{点}{{\cjkfallback 点}}
+\newunicodechar{理}{{\cjkfallback 理}}
+\newunicodechar{的}{{\cjkfallback 的}}
+\newunicodechar{考}{{\cjkfallback 考}}
+\newunicodechar{能}{{\cjkfallback 能}}
+\newunicodechar{零}{{\cjkfallback 零}}
+
+% ── Code/monospace font (covers box-drawing glyphs used in code) ──
+% Menlo is a macOS font; fall back to DejaVu Sans Mono on Linux.
+\IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}
+
+% ── tcolorbox (ElegantBook already loads it; just add libraries) ──
+\tcbuselibrary{skins,breakable}
+
+% ── TikZ (for the full-bleed image cover in cover.tex) ───────────
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+% Vertical fade: invisible at the top, solid at the bottom — lets the cover
+% art melt smoothly into the navy title band.
+\tikzfading[name=titlefade, top color=transparent!100, bottom color=transparent!0]
+
+% Theme accent color: override ElegantBook's bright cyan with a deep navy
+% (classic, authoritative technical-book tone). Drives headings, rules, links,
+% code chrome and the cover. Tweak this one line to restyle the whole book.
+\definecolor{structurecolor}{RGB}{30,58,107}
+
+% Accent shade for code/figure chrome (follows the theme color above)
+\colorlet{accent}{structurecolor}
+
+% Internal cross-reference links (图N-M / 第N章) — clickable + subtle teal,
+% independent of the document class's global linkcolor. Used by crossref.lua.
+\newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Wrap long lines in code blocks ───────────────────────────────
+% pandoc emits fancyvrb's Verbatim (via `Highlighting` for ```lang blocks
+% and plain `verbatim` for un-tagged blocks); neither wraps by default, so
+% long lines overflow the page. fvextra adds breaklines; re-define both
+% environments to wrap, breaking mid-token when a chunk has no spaces (URLs,
+% long identifiers, CJK comments). A teal ↳ marks each continued line.
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+% ── Code blocks: subtle O'Reilly-style framed box ────────────────
+% One shared box style for ALL code blocks so highlighted (```lang → Shaded)
+% and plain (``` → verbatim) blocks look identical. The plain verbatim nests
+% a fvextra Verbatim inside the box; \VerbatimEnvironment makes it end at
+% \end{verbatim} (the outer env name) rather than \end{Verbatim}.
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm,
+  before skip=0.7em, after skip=0.7em
+}
+\renewenvironment{Shaded}{\begin{codebox}}{\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{Verbatim}}%
+  {\end{Verbatim}\end{codebox}}
+
+% ── Experiment & question callouts (used by experiment_box.lua) ───
+\newtcolorbox{experimentbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em
+}
+
+\newtcolorbox{questionbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em,
+  title={\sffamily\bfseries Deep Thinking},
+  fonttitle=\normalsize\color{white},
+  coltitle=white,
+  attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
+  boxed title style={colback=accent, colframe=accent, arc=0.8mm, outer arc=0.8mm}
+}
+
+% ── Figures: force [H] so they can sit inside callout/quote boxes ─
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Figure captions: manual numbering in text, so suppress label ──
+\usepackage{caption}
+% Sans, bold, centered. Figure numbers live in the caption text itself
+% (crossref.lua), so the automatic "Figure N:" label is suppressed.
+\captionsetup{font={normalsize,sf,bf}, labelformat=empty, skip=4pt, justification=centering}
+
+% ── Blockquotes: teal left bar (experiments render as quotes) ────
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[
+    blanker, breakable,
+    borderline west={2.5pt}{0pt}{accent},
+    colback=accent!4,
+    left=1em, right=0.6em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Inline code: keep it tight ───────────────────────────────────
+\setlength{\parindent}{2em}
