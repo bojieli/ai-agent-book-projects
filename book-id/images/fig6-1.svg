@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 260" width="820" height="260" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="44" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Layer 1: Evaluate the Environment</text>
+<text x="310.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">"Where to test" — Tool-calling / Human-computer interaction / Simulation environment</text>
+<line x1="310.0" y1="109" x2="310.0" y2="121" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="30" y="124" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="144.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Layer 2: Evaluation Methods</text>
+<text x="310.0" y="170.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">"How to judge" — Dataset design · LLM-as-a-Judge · Pairwise comparison and ranking</text>
+<line x1="310.0" y1="189" x2="310.0" y2="201" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="30" y="204" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="224.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Layer 3: Evaluation-Driven Decisions</text>
+<text x="310.0" y="250.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">"What to do after testing" — Model selection · Architecture optimization · Continuous iteration</text>
+<rect x="620" y="44" width="170" height="224" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text x="705" y="64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Engineering Themes Throughout the Chapter</text>
+<text x="705" y="102" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">• Observability</text>
+<text x="705" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">• Simulation environment</text>
+<text x="705" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">• Internal evaluation</text>
+</svg>

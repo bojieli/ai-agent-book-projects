@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 420" width="820" height="420" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#333333"/></marker>
+<marker id="ah-g" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999999"/></marker>
+</defs>
+
+
+
+<!-- Chapter 1: Intro -->
+<rect x="300" y="55" width="220" height="50" rx="8" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<text x="410" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 1: Agent Fundamentals</text>
+<text x="410" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle">Three Pillars of Agent · Design Patterns · ReAct</text>
+
+<!-- Down arrows from Ch1 -->
+<line x1="285" y1="80" x2="155" y2="138" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+<line x1="410" y1="105" x2="410" y2="138" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+<line x1="535" y1="80" x2="665" y2="138" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+
+<!-- Group labels -->
+<text x="155" y="152" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#555555" text-anchor="middle" font-weight="bold">Context (Core)</text>
+<text x="410" y="152" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#555555" text-anchor="middle" font-weight="bold">Tools</text>
+<text x="665" y="152" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#555555" text-anchor="middle" font-weight="bold">Model</text>
+
+<!-- Context group -->
+<rect x="30" y="165" width="248" height="55" rx="6" fill="#d8d8d8" stroke="#333333" stroke-width="2"/>
+<text x="154" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 2: Context Engineering</text>
+<text x="154" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle">Prompt Engineering · KV Cache · Compression · Skills · Status Bar</text>
+
+<rect x="30" y="230" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="154" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 3: User Memory and Knowledge Base</text>
+<text x="154" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle">User Memory · RAG · Structured Index · Agentic RAG</text>
+
+<!-- Tools group -->
+<rect x="286" y="165" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="410" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 4: Tools</text>
+<text x="410" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle">MCP · Tool Safety · Asynchronous Event Architecture</text>
+
+<rect x="286" y="230" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="410" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 5: Coding Agent and Code Generation</text>
+<text x="410" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle">Coding Agent · Code as Thinking · Agent Bootstrapping</text>
+
+<!-- Model group -->
+<rect x="542" y="165" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="666" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 6: Evaluation</text>
+<text x="666" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">Benchmark · LLM-as-Judge · Model Selection</text>
+
+<rect x="542" y="230" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="666" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 7: Model Post-Training</text>
+<text x="666" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle">SFT · Reinforcement Learning · LoRA · Tool Calling RL</text>
+
+<!-- Down arrows to bottom row -->
+<line x1="154" y1="285" x2="154" y2="340" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+<line x1="410" y1="285" x2="410" y2="340" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+<line x1="666" y1="285" x2="666" y2="340" stroke="#999999" stroke-width="1.5" marker-end="url(#ah-g)"/>
+
+<!-- Bottom label -->
+<text x="410" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#555555" text-anchor="middle" font-weight="bold">Advanced Topics and Applications</text>
+
+<!-- Ch8, Ch9, Ch10 in parallel -->
+<rect x="30" y="350" width="248" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="6,3"/>
+<text x="154" y="371" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 8: Agent Self-Evolution</text>
+<text x="154" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle">Learning Paradigms · Experience Learning · Tool Discovery and Creation</text>
+
+<rect x="286" y="350" width="248" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="6,3"/>
+<text x="410" y="371" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 9: Multimodal and Real-Time Interaction</text>
+<text x="410" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">Voice · Computer Use · VLA Robotics</text>
+
+<rect x="542" y="350" width="248" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="6,3"/>
+<text x="666" y="371" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="bold">Chapter 10: Multi-Agent Collaboration</text>
+<text x="666" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">Shared Context · Manager · Decentralization</text>
+
+</svg>

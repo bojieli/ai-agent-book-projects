@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 750 400" width="750" height="400" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="40" width="690" height="90" rx="6" fill="#ffffff" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="100" y="56" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Layer 2 (sparse · long-range connections)</text>
+<circle cx="222.5" cy="95" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="375.0" cy="95" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="527.5" cy="95" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<line x1="236.5" y1="95" x2="361.0" y2="95" stroke="#999999" stroke-width="2"/>
+<line x1="389.0" y1="95" x2="513.5" y2="95" stroke="#999999" stroke-width="2"/>
+<rect x="30" y="155" width="690" height="90" rx="6" fill="#ffffff" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="100" y="171" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Layer 1 (medium density)</text>
+<circle cx="157.14285714285714" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="244.28571428571428" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="331.42857142857144" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="418.57142857142856" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="505.71428571428567" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="592.8571428571429" cy="210" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<line x1="171.14285714285714" y1="210" x2="230.28571428571428" y2="210" stroke="#999999" stroke-width="2"/>
+<line x1="258.2857142857143" y1="210" x2="317.42857142857144" y2="210" stroke="#999999" stroke-width="2"/>
+<line x1="345.42857142857144" y1="210" x2="404.57142857142856" y2="210" stroke="#999999" stroke-width="2"/>
+<line x1="432.57142857142856" y1="210" x2="491.71428571428567" y2="210" stroke="#999999" stroke-width="2"/>
+<line x1="519.7142857142857" y1="210" x2="578.8571428571429" y2="210" stroke="#999999" stroke-width="2"/>
+<rect x="30" y="270" width="690" height="90" rx="6" fill="#ffffff" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="100" y="286" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Layer 0 (dense · all nodes)</text>
+<circle cx="125.45454545454545" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="180.9090909090909" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="236.36363636363637" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="291.8181818181818" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="347.27272727272725" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="402.72727272727275" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="458.1818181818182" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="513.6363636363636" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="569.090909090909" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<circle cx="624.5454545454545" cy="325" r="14" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<line x1="139.45454545454544" y1="325" x2="222.36363636363637" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="194.9090909090909" y1="325" x2="222.36363636363637" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="250.36363636363637" y1="325" x2="333.27272727272725" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="305.8181818181818" y1="325" x2="333.27272727272725" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="361.27272727272725" y1="325" x2="444.1818181818182" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="416.72727272727275" y1="325" x2="444.1818181818182" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="472.1818181818182" y1="325" x2="555.090909090909" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="527.6363636363636" y1="325" x2="555.090909090909" y2="325" stroke="#999999" stroke-width="2"/>
+<line x1="375.0" y1="130" x2="325.0" y2="165" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="455.0" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Search starts from the top level</text>
+<line x1="325.0" y1="245" x2="295.0" y2="280" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="435.0" y="263" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Refine layer by layer downward</text>
+<rect x="50" y="395" width="300" height="32" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="200" y="411" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Supports incremental updates · High recall</text>
+<rect x="400" y="395" width="300" height="32" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="550" y="411" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">O(log N) query complexity</text>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="10" y="120" width="260" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="140" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent (Explorer)</text>
+<text x="140" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Policy π: Observe state →</text>
+<text x="140" y="198" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Select action (move/pick up/attack)</text>
+<text x="140" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε-greedy: 90% optimal, 10% random</text>
+<rect x="510" y="120" width="260" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="640" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Environment (Maze World)</text>
+<text x="640" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">5 rooms · Key/Door/Guard</text>
+<text x="640" y="198" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Transition: P(Storage|Hall,East)=1.0</text>
+<text x="640" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">R(Defeat Guard)=+50, R(Move)=0</text>
+<line x1="272" y1="150" x2="508" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="390.0" y="136" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Action A(t) = "Move East"</text>
+<line x1="508" y1="235" x2="272" y2="235" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="390.0" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">State S(t+1) + Reward R(t+1)</text>
+<text x="390" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Trajectory: S(0), A(0), R(1), S(1), A(1), R(2), ...</text>
+<rect x="35.0" y="340" width="134.0" height="70" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="102.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(0): Entrance Hall</text>
+<text x="102.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(0): East</text>
+<text x="102.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(1): 0</text>
+<line x1="171.0" y1="373" x2="181.0" y2="373" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="179.0" y="340" width="134.0" height="70" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="246.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(1): Storage Room</text>
+<text x="246.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(1): Take Key</text>
+<text x="246.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(2): +5</text>
+<line x1="315.0" y1="373" x2="325.0" y2="373" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="323.0" y="340" width="134.0" height="70" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(2): Storage Room</text>
+<text x="390.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(2): North</text>
+<text x="390.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(3): 0</text>
+<line x1="459.0" y1="373" x2="469.0" y2="373" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="467.0" y="340" width="134.0" height="70" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="534.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(3): Guard Room</text>
+<text x="534.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(3): Craft Silver Sword</text>
+<text x="534.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(4): +10</text>
+<line x1="603.0" y1="373" x2="613.0" y2="373" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="611.0" y="340" width="134.0" height="70" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="678.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(4): Guard Room</text>
+<text x="678.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(4): Attack</text>
+<text x="678.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(5): +50</text>
+<text x="390" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Goal: Maximize cumulative reward G = R(1) + γR(2) + γ²R(3) + ... (γ=0.99)</text>
+</svg>
