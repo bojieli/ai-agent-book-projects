@@ -1,0 +1,331 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentbook"
+version = "0.1.0"
+description = "Shared packaging and plumbing for the ai-agent-book companion experiments"
+readme = "README.md"
+# 3.10 matches what the chapter READMEs document (chapter2/local_llm_serving,
+# chapter7/orpheus, chapter8/prompt-distillation all state Python 3.10+).
+# browser-use needs >=3.11, but that is scoped to the `browser` extra with an
+# environment marker rather than raised here, so chapters that do not need a
+# browser stay installable on 3.10.
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+
+# The core that nearly every experiment needs.
+# openai: 131 declarations across the repo; python-dotenv: 114; requests: 50.
+dependencies = [
+    # chapter 8 (self-evolution-eval, self-modifying-agent, trajectory-verifier,
+    # gaia-experience) calls client.responses.create, added in 1.68. A lower
+    # floor is satisfiable by an already-installed older SDK that then fails at
+    # runtime rather than at install time.
+    "openai>=1.68",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+]
+
+# ---------------------------------------------------------------------------
+# Capability groups.
+#
+# Install only what an experiment actually needs:
+#     uv sync --extra ch1          # chapter 1, no GPU stack (uses uv.lock)
+#     uv sync --extra ch7          # heavy fine-tuning deps, opt in explicitly
+#
+# pip works identically for readers without uv, but resolves fresh rather
+# than from the lockfile:
+#     pip install -e ".[ch1]"
+#
+# Groups are derived from an AST audit of the imports in every non-vendored
+# chapter module, cross-checked against the per-project requirements.txt files.
+# Vendored third-party trees (chapter8/gaia-experience/AWorld,
+# chapter8/browser-use-rpa/browser-use, chapter2/prompt-engineering/tau_bench)
+# are deliberately excluded -- they carry their own requirements.
+#
+# Platform-specific stacks are opt-in extras rather than chapter aggregates,
+# so a chapter install never fails on macOS or CPU-only machines:
+#     pip install -e ".[unsloth]"   # chapter 7 Unsloth fine-tuning (Linux/GPU)
+#     pip install -e ".[vllm]"      # chapter 2 local serving, chapter 8 data gen
+#
+# Test tooling lives in `dev` (`pip install -e ".[dev]"`), not in the chapter
+# aggregates, so running an experiment does not pull a test stack.
+# ---------------------------------------------------------------------------
+[project.optional-dependencies]
+
+# Plotting, tables and dataframes used by most analysis/eval experiments.
+viz = [
+    "colorama>=0.4.6",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.4",
+    "pandas>=2.2.0",
+    "rich>=13.7",
+    "seaborn>=0.13.0",
+    "tabulate>=0.9",
+    "tenacity>=9.0.0",
+    "tqdm>=4.66.1",
+]
+
+# Document parsing and generation (PDF/Office).
+# PyPDF2 is kept alongside pypdf because several experiments still
+# `import PyPDF2` directly (chapter1/context/agent.py,
+# chapter2/local_llm_serving/tools.py, chapter4/perception-tools/...).
+# Migrating those imports to pypdf is tracked separately.
+docs = [
+    "pypdf>=4.0",
+    "PyPDF2>=3.0",
+    "pdfplumber>=0.10.3",
+    "reportlab>=4.0",
+    "python-docx>=1.1",
+    "python-pptx>=0.6.23",
+    "openpyxl>=3.1",
+]
+
+# Image and video processing.
+media = [
+    "pillow>=10.2",
+    "opencv-python>=4.9",
+]
+
+# HTML fetching/parsing and browser automation.
+web = [
+    "aiohttp>=3.9.3",
+    "anyio>=4.5.0",
+    "beautifulsoup4>=4.12",
+    "httpx>=0.27",
+    "lxml>=5.1.0",
+    "html2text>=2020.1.16",
+    "playwright>=1.40",
+]
+
+# Browser-driving agents (chapter 4 collaboration tools, chapter 8 RPA).
+# browser-use declares requires-python >=3.11. The marker scopes that to the
+# interpreters that can actually install it, so `.[ch4]`/`.[ch8]`/`.[all]`
+# still resolve on 3.10 (without browser-use) instead of failing outright.
+browser = [
+    "agentbook[web]",
+    "browser-use>=0.1.40; python_version >= '3.11'",
+]
+
+# HTTP services used by the interactive/demo experiments.
+serve = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "python-multipart>=0.0.9",
+]
+
+# Token counting. Small and widely used, so it is its own group rather than
+# forcing a chapter that only counts tokens to pull the whole `rag` stack.
+tokens = [
+    "tiktoken>=0.7.0",
+]
+
+# Statistics, symbolic math and interactive plots for the
+# evaluation/benchmark experiments.
+analysis = [
+    "scikit-learn>=1.5.0",
+    "scipy>=1.11",
+    "plotly>=5.18",
+    "sympy>=1.12",
+    "numba>=0.59",
+]
+
+# Transformer runtime. Needed by experiments that load models locally for
+# inference (e.g. chapter 2's attention visualization) without the full
+# fine-tuning stack in `train`.
+torch = [
+    "torch>=2.2",
+    "transformers>=4.40",
+]
+
+# Retrieval / vector stores / embeddings.
+rag = [
+    "agentbook[tokens]",
+    "chromadb>=0.5.0",
+    "faiss-cpu>=1.7.4",
+    "sentence-transformers>=2.2.2",
+    "rank-bm25>=0.2.2",
+    "FlagEmbedding>=1.2.11",
+    "huggingface-hub>=0.34.0",
+    "annoy>=1.17.3",
+    "hnswlib>=0.8",
+    "jieba>=0.42.1",
+    "networkx>=3.2",
+    "umap-learn>=0.5.4",
+    "aiofiles>=24.1.0",
+    "colorlog>=6.8",
+    "loguru>=0.7.2",
+    "markdown>=3.5",
+    "PyYAML>=6.0",
+]
+
+# Third-party data-source and productivity integrations used by the
+# chapter 4 tool-building experiments.
+integrations = [
+    "arxiv>=2.1",
+    "wikipedia>=1.4",
+    "waybackpy>=3.0",
+    "yfinance>=0.2",
+    "youtube-transcript-api>=0.6",
+    "yt-dlp>=2024.4",
+    "python-chess>=1.10",
+    "notion-client>=2.2",
+    "sendgrid>=6.11",
+    "aiosmtplib>=3.0",
+    "PyGithub>=2.3",
+    "google-api-python-client>=2.126",
+    "google-auth>=2.29",
+    "google-auth-oauthlib>=1.2",
+    "psutil>=5.9.8",
+    "langchain-openai>=0.1",
+]
+
+# LangChain wrappers and workplace integrations used by the chapter 8
+# self-evolution / RPA experiments.
+orchestration = [
+    "langchain-core>=0.2",
+    "langchain-openai>=0.1",
+    "slack-sdk>=3.27",
+    "python-dateutil>=2.9",
+]
+
+# Constraint solving (chapter 5 code-for-logic).
+solvers = [
+    "python-constraint>=1.4",
+]
+
+# Long-term memory backends used by the chapter 3 memory experiments.
+# memobase declares requires-python >=3.11; the marker keeps `.[ch3]` and
+# `.[all]` resolvable on 3.10 without it, rather than failing the whole
+# aggregate.
+mem = [
+    "mem0ai>=0.1",
+    "memobase>=0.0.27; python_version >= '3.11'",
+]
+
+# Model Context Protocol servers and clients.
+mcp = [
+    "mcp[cli]>=1.0",
+    "fastmcp>=0.2",
+]
+
+# Alternative model providers beyond the OpenAI-compatible core.
+providers = [
+    "anthropic>=0.40.0",
+    "google-genai>=0.3",
+    "mistralai>=1.2.0",
+    "litellm>=1.41.0",
+    "ollama>=0.5.1",
+]
+
+# Local fine-tuning / training stack. Large downloads, GPU-oriented.
+# Intentionally NOT part of `all`.
+train = [
+    "agentbook[torch]",
+    "datasets>=3.4.1",
+    "accelerate>=0.30",
+    "peft>=0.17.0",
+    # chapter7/MultilingualReasoning uses SFTConfig(max_length=...) and
+    # SFTTrainer(processing_class=...), both of which need TRL 0.20+.
+    "trl>=0.22.2",
+    "sentencepiece>=0.2",
+    "wandb>=0.17",
+    # Experiment tracking backend requested by name at runtime
+    # (chapter7/MultilingualReasoning sets SFTConfig(report_to="trackio")),
+    # so it must be installed even though nothing imports it directly.
+    "trackio>=0.1",
+    # chapter7/MultilingualReasoning imports transformers.Mxfp4Config, added
+    # in 4.55. Without this floor the aggregate is satisfiable by an older
+    # transformers already present in the environment.
+    "transformers>=4.55",
+    # macOS wheels only exist from 0.45 onwards; the floor keeps `train`
+    # installable on Apple Silicon instead of resolving to a Linux-only build.
+    "bitsandbytes>=0.45",
+]
+
+# Unsloth-accelerated fine-tuning (chapter 7). Split from `train` because it
+# pins tightly against torch/transformers and is Linux/GPU oriented, so a
+# macOS or CPU-only reader can still install `train`.
+unsloth = [
+    "agentbook[train]",
+    "unsloth>=2024.8",
+    "unsloth_zoo>=2024.8",
+]
+
+# Local high-throughput inference server. Linux/GPU only -- vLLM publishes no
+# macOS wheels, so it is opt-in rather than part of any chapter aggregate.
+# Needed by chapter2/local_llm_serving and by the data-generation step of
+# chapter8/prompt-distillation (create_data.py imports it lazily).
+vllm = [
+    "agentbook[torch]",
+    "vllm>=0.6",
+]
+
+# Audio processing for the local speech/TTS training experiments (chapter 7).
+# Note: chapter 9 uses hosted speech APIs and needs only the core.
+audio = [
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "torchaudio>=2.2",
+    "snac>=1.2",
+]
+
+# Test and lint tooling.
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+]
+
+# ---------------------------------------------------------------------------
+# Chapter aggregates -- what a reader installs to run one chapter.
+# ---------------------------------------------------------------------------
+ch1  = ["agentbook[viz,docs]"]
+ch2  = ["agentbook[viz,docs,web,serve,providers,tokens,torch]"]
+ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch,providers]"]
+ch4  = ["agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis,integrations]"]
+ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis,solvers]"]
+ch6  = ["agentbook[viz,tokens,analysis,providers]"]
+# `train` floors transformers at >=4.55 for MultilingualReasoning's
+# Mxfp4Config. chapter7/sesame pins transformers==4.52.3, which no single
+# aggregate can satisfy alongside it -- run that one experiment from its own
+# requirements.txt in a separate venv. Add the `unsloth` extra for the
+# Unsloth-accelerated experiments.
+ch7  = ["agentbook[train,audio,viz]"]
+ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,train,orchestration]"]
+ch9  = []                                     # hosted speech APIs: core only
+ch10 = ["agentbook[tokens]"]                  # tiktoken only
+
+# Everything except the heavy local-training stack, so `all` stays CPU-friendly.
+all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
+
+[tool.uv]
+# Resolve the lockfile for every platform readers actually use, not just the
+# machine that generated it. Without this, `uv lock` would encode a single
+# platform's resolution and break everyone else.
+environments = [
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32'",
+]
+
+[project.urls]
+Homepage = "https://github.com/bojieli/ai-agent-book"
+Issues = "https://github.com/bojieli/ai-agent-book/issues"
+
+[tool.setuptools.packages.find]
+include = ["agentbook*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = [
+    "chapter8/gaia-experience/AWorld",
+    "chapter8/browser-use-rpa/browser-use",
+    "chapter2/prompt-engineering/tau_bench",
+    "_web",
+]
