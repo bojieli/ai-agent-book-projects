@@ -993,22 +993,19 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print(f"  Conversation History: {len(agent.conversation_history)} messages")
                 print(f"  Tool Calls: {len(agent.trajectory.tool_calls)}")
                 
-                # Show API key status
-                if current_provider == "siliconflow":
-                    key_status = "✅ Set" if os.getenv("SILICONFLOW_API_KEY") else "❌ Not set"
-                    print(f"  API Key (SILICONFLOW_API_KEY): {key_status}")
-                elif current_provider == "doubao":
-                    key_status = "✅ Set" if os.getenv("ARK_API_KEY") else "❌ Not set"
-                    print(f"  API Key (ARK_API_KEY): {key_status}")
-                elif current_provider in ["kimi", "moonshot"]:
-                    key_status = "✅ Set" if os.getenv("MOONSHOT_API_KEY") else "❌ Not set"
-                    print(f"  API Key (MOONSHOT_API_KEY): {key_status}")
-                elif current_provider == "deepseek":
-                    key_status = "✅ Set" if os.getenv("DEEPSEEK_API_KEY") else "❌ Not set"
-                    print(f"  API Key (DEEPSEEK_API_KEY): {key_status}")
-                elif current_provider == "zhipu":
-                    key_status = "✅ Set" if os.getenv("ZHIPU_API_KEY") else "❌  Not set"
-                    print(f"  API Key (ZHIPU_API_KEY): {key_status}")
+                # API key status, derived from the registry so every selectable
+                # provider reports something.
+                spec = PROVIDERS.get(canonical_provider(current_provider))
+                if spec is None:
+                    pass
+                elif not spec.requires_key:
+                    print("  API Key: not required (local runtime)")
+                else:
+                    names = " / ".join(spec.key_vars)
+                    key_status = "✅ Set" if spec.api_key() else "❌ Not set"
+                    print(f"  API Key ({names}): {key_status}")
+                    if not spec.api_key() and os.getenv("OPENROUTER_API_KEY"):
+                        print("  Fallback: ✅ OPENROUTER_API_KEY set (routing via OpenRouter)")
             
             elif user_input:
                 # Execute task

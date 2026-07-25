@@ -163,22 +163,13 @@ class Config:
             True if configuration is valid
         """
         provider = provider or cls.LLM_PROVIDER
-        api_key = cls.get_api_key(provider)
-        
-        if not api_key:
-            if provider == "siliconflow":
-                print("ERROR: SILICONFLOW_API_KEY is not set")
-            elif provider == "doubao":
-                print("ERROR: ARK_API_KEY is not set")
-            elif provider == "kimi" or provider == "moonshot":
-                print("ERROR: MOONSHOT_API_KEY is not set")
-            elif provider == "deepseek":
-                print("ERROR: DEEPSEEK_API_KEY is not set")
-            elif provider == "zhipu":
-                print("ERROR: ZHIPU_API_KEY is not set")
-            else:
-                print(f"ERROR: No API key configured for provider: {provider}")
-            
+        # resolve_backend already accounts for providers that need no key
+        # (ollama) and for the OpenRouter fallback, and its error names the
+        # exact variables to set -- so a missing key is not the only signal.
+        try:
+            resolve_backend(provider)
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
             print("Please set it in .env file or as environment variable")
             return False
         

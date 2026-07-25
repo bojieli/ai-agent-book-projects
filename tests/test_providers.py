@@ -236,3 +236,13 @@ def test_direct_openrouter_maps_bare_model_ids(monkeypatch, override, expected):
     override is mapped the same way as on the fallback path."""
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-direct")
     assert resolve_backend("openrouter", model=override).model == expected
+
+
+def test_keyless_provider_resolves_without_any_key():
+    """Config.validate and similar callers must not treat a keyless provider
+    as unconfigured -- ollama needs no key at all."""
+    backend = resolve_backend("ollama")
+    assert backend.provider == "ollama"
+    assert PROVIDERS["ollama"].requires_key is False
+    # No key set anywhere, yet resolution succeeds rather than raising.
+    assert PROVIDERS["ollama"].api_key() == ""
