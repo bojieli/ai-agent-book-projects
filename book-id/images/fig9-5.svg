@@ -8,10 +8,10 @@
 <rect x="220" y="55" width="250" height="130" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="232" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Pemikiran paralel</text>
 <rect x="235" y="80" width="220" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="345" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pemikiran cepat ~500ms (tanpa pemikiran)</text>
+<text x="345" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.4" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pemikiran cepat ~500ms (tanpa pemikiran)</text>
 <text x="345" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Harga bagus, rekomendasikan beli&quot;</text>
 <rect x="235" y="130" width="220" height="42" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="345" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pemikiran lambat ~8d (dengan pemikiran)</text>
+<text x="345" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.6" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pemikiran lambat ~8d (dengan pemikiran)</text>
 <text x="345" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Tidak ada roaming internasional, tidak cocok&quot;</text>
 <line x1="457" y1="95" x2="503" y2="95" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <line x1="457" y1="150" x2="503" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
@@ -20,7 +20,7 @@
 <text x="625" y="102" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.5d: &quot;Harga bagus, rekomendasikan beli&quot;</text>
 <text x="625" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">8.0d: &quot;Tidak ada roaming internasional, tidak cocok&quot;</text>
 <text x="625" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">→ Kontradiksi!</text>
-<text x="625" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Pengguna kehilangan kepercayaan</text>
+<text x="625" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Pengguna kehilangan kepercayaan</text>
 <rect x="30" y="210" width="720" height="90" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="390" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Dua masalah utama</text>
 <text x="200" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.2" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Masalah 1: Terlalu memikirkan masalah sederhana</text>

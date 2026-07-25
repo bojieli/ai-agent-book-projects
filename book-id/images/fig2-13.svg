@@ -16,7 +16,7 @@
 <line x1="525" y1="55" x2="525" y2="430" stroke="#dddddd" stroke-width="1"/>
 
 <!-- ===================================================== -->
-<!-- Helper: 11 rows of fixed labels positioned at y = 100 + i*24 -->
+<!-- Helper: 11 rows of tetap (tetap (fixed)) labels positioned at y = 100 + i*24 -->
 <!-- Row labels: -->
 <!--   0: system            (NEW T1, HIT T2, HIT T3) -->
 <!--   1: tools             (NEW T1, HIT T2, HIT T3) -->

@@ -3,7 +3,7 @@
 <rect x="20" y="55" width="840" height="200" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="60" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Mode tradisional: data melewati LLM (tidak efisien)</text>
 <rect x="770" y="65" width="80" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="810.0" y="77.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">✗ Tidak Efisien</text>
+<text x="810.0" y="77.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">✗ Tidak Efisien</text>
 <rect x="60" y="100" width="130" height="60" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="125" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pengguna</text>
 <text x="125" y="138" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Jumlah orang per departemen?&quot;</text>
@@ -24,7 +24,7 @@
 <line x1="655" y1="130" x2="675" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="680" y="100" width="130" height="60" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="745" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pengguna</text>
-<text x="745" y="138" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Deskripsi 
+<text x="745" y="138" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.2" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Deskripsi 
  teks</text>
 <rect x="60" y="175" width="760" height="30" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
 <text x="70" y="190" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Masalah: LLM menyalin data rentan salah · memakan banyak token · latensi tinggi</text>
@@ -44,7 +44,7 @@
 <text x="58" y="428" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">    GROUP BY dept&quot;)</text>
 <line x1="290" y1="380" x2="340" y2="380" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="340" y="315" width="250" height="120" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="465" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Frontend mengeksekusi langsung</text>
+<text x="465" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.3" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Frontend mengeksekusi langsung</text>
 <rect x="350" y="348" width="230" height="75" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
 <text x="358" y="360" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">┌────────┬──────┐</text>
 <text x="358" y="372" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">│ dept   │ cnt  │</text>
@@ -61,7 +61,7 @@
 <text x="658" y="394" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  type=&quot;chart&quot;,</text>
 <text x="658" y="408" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  code=&quot;bar(data)&quot;)</text>
 <rect x="180" y="450" width="520" height="45" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="440" y="465" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Aliran data: DB → Frontend → Visualisasi (sepenuhnya melewati LLM)</text>
-<text x="440" y="483" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM hanya bertanggung jawab menghasilkan kode, bukan untuk transfer data</text>
+<text x="440" y="465" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.9" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Aliran data: DB → Frontend → Visualisasi (sepenuhnya melewati LLM)</text>
+<text x="440" y="483" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.8" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM hanya bertanggung jawab menghasilkan kode, bukan untuk transfer data</text>
 <path d="M 465,435 Q 605.0,460.0 745,435" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
 </svg>

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 540" width="880" height="540" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 <rect x="20" y="50" width="560" height="118" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="36" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Awalan statis (tetap pada tingkat byte, Hit Cache KV persisten)</text>
+<text x="36" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.8" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Awalan statis (tetap pada tingkat byte, Hit Cache KV persisten)</text>
 <rect x="40" y="84" width="520" height="34" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="300.0" y="101" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Prompt Sistem</text>
 <rect x="40" y="124" width="520" height="34" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>

@@ -17,7 +17,7 @@
 <rect x="420.0" y="135" width="35.0" height="28" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
 <text x="437.5" y="149.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
 <rect x="469.0" y="175" width="371.0" height="28" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="654.5" y="189.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Penalaran LLM baru (termasuk peristiwa interupsi + bersihkan antrean)</text>
+<text x="654.5" y="189.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.4" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Penalaran LLM baru (termasuk peristiwa interupsi + bersihkan antrean)</text>
 <rect x="130" y="240" width="720" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="65.0" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Berbasis antrean</text>
 <text x="65.0" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">(Normal)</text>
@@ -26,7 +26,7 @@
 <rect x="266.0" y="255" width="294.0" height="28" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="413.0" y="269.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Eksekusi alat (search_web)</text>
 <rect x="581.0" y="255" width="189.0" height="28" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="675.5" y="269.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pemrosesan komprehensif LLM</text>
+<text x="675.5" y="269.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.8" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pemrosesan komprehensif LLM</text>
 <line x1="385.0" y1="286" x2="385.0" y2="370" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="385.0" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">pengguna: &quot;Hanya lihat 1 bulan terakhir&quot;</text>
 <rect x="350.0" y="305" width="150" height="24" rx="12" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>

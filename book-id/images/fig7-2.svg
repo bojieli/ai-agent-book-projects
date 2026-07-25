@@ -10,7 +10,7 @@
 <rect x="475" y="175" width="130" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="540.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ruang Penjaga</text>
 <rect x="635" y="175" width="130" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="700.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ruang Harta Karun</text>
+<text x="700.0" y="200.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.4" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ruang Harta Karun</text>
 <path d="M 183.13641498019763,189.6010610620851 Q 233.6463345290627,180.16485122599818 252.22120156537608,132.25589231968542" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <text x="225.66257140092478" y="160.54666395844174" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Timur/Ambil Kunci</text>
 <path d="M 183.13641498019763,210.3989389379149 Q 233.6463345290627,219.83514877400182 252.22120156537608,267.7441076803146" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>

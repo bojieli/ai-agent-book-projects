@@ -4,10 +4,10 @@
 <text x="220" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Mode Pembelajaran</text>
 <rect x="70" y="100" width="300" height="60" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="220.0" y="117.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Tugas GAIA</text>
-<text x="220.0" y="143.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">masalah multi-langkah kompleks</text>
+<text x="220.0" y="143.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.3" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">masalah multi-langkah kompleks</text>
 <rect x="70" y="175" width="300" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="220.0" y="193.625" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Eksekusi agen</text>
-<text x="220.0" y="216.375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">peramban + berkas + penerjemah kode</text>
+<text x="220.0" y="216.375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">peramban + berkas + penerjemah kode</text>
 <line x1="220" y1="162" x2="220" y2="173" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="70" y="250" width="300" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="220.0" y="267.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Tugas berhasil?</text>
@@ -19,7 +19,7 @@
 <line x1="220" y1="312" x2="220" y2="323" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="70" y="400" width="300" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="220.0" y="419.275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pengalaman → Vektorisasi</text>
-<text x="220.0" y="440.72499999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Simpan di Basis Pengetahuan Pengalaman</text>
+<text x="220.0" y="440.72499999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Simpan di Basis Pengetahuan Pengalaman</text>
 <line x1="220" y1="387" x2="220" y2="398" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="460" y="55" width="400" height="420" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
 <text x="660" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Mode Penerapan</text>
@@ -28,20 +28,20 @@
 <text x="660.0" y="143.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Terima Pertanyaan Baru</text>
 <rect x="510" y="175" width="300" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="660.0" y="194.275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pengambilan Semantik Pengalaman</text>
-<text x="660.0" y="215.725" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cari Tugas Serupa di Basis Pengalaman</text>
+<text x="660.0" y="215.725" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.1" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cari Tugas Serupa di Basis Pengalaman</text>
 <line x1="660" y1="162" x2="660" y2="173" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="510" y="250" width="300" height="60" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="660.0" y="268.95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Suntikkan ke Prompt Sistem</text>
-<text x="660.0" y="291.05" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Strategi Berhasil Historis sebagai Contoh</text>
+<text x="660.0" y="291.05" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Strategi Berhasil Historis sebagai Contoh</text>
 <line x1="660" y1="237" x2="660" y2="248" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="510" y="325" width="300" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="660.0" y="337.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Eksekusi agen</text>
-<text x="660.0" y="355.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Manfaatkan Pengalaman untuk Penyelesaian Masalah</text>
+<text x="660.0" y="355.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Manfaatkan Pengalaman untuk Penyelesaian Masalah</text>
 <text x="660.0" y="372.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Lebih Efisien</text>
 <line x1="660" y1="312" x2="660" y2="323" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="510" y="400" width="300" height="60" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
 <text x="660.0" y="419.925" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Tingkat Keberhasilan ↑ Efisiensi ↑</text>
-<text x="660.0" y="440.075" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Evolusi Diri: Menjadi Lebih Kuat Seiring Waktu</text>
+<text x="660.0" y="440.075" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.3" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Evolusi Diri: Menjadi Lebih Kuat Seiring Waktu</text>
 <line x1="660" y1="387" x2="660" y2="398" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="375" y="255.0" width="130" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
 <text x="440.0" y="272.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Basis Pengetahuan Pengalaman</text>
