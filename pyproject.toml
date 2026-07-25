@@ -25,15 +25,25 @@ dependencies = [
 #     pip install -e ".[ch1]"      # chapter 1, no GPU stack
 #     pip install -e ".[ch7]"      # heavy fine-tuning deps, opt in explicitly
 #
-# Groups are derived from an audit of the repo's per-project requirements.txt
-# files. Vendored third-party trees (chapter8/gaia-experience/AWorld,
+# Groups are derived from an AST audit of the imports in every non-vendored
+# chapter module, cross-checked against the per-project requirements.txt files.
+# Vendored third-party trees (chapter8/gaia-experience/AWorld,
 # chapter8/browser-use-rpa/browser-use, chapter2/prompt-engineering/tau_bench)
 # are deliberately excluded -- they carry their own requirements.
+#
+# Platform-specific stacks are opt-in extras rather than chapter aggregates,
+# so a chapter install never fails on macOS or CPU-only machines:
+#     pip install -e ".[unsloth]"   # chapter 7 Unsloth fine-tuning (Linux/GPU)
+#     pip install -e ".[vllm]"      # chapter 2 local serving, chapter 8 data gen
+#
+# Test tooling lives in `dev` (`pip install -e ".[dev]"`), not in the chapter
+# aggregates, so running an experiment does not pull a test stack.
 # ---------------------------------------------------------------------------
 [project.optional-dependencies]
 
 # Plotting, tables and dataframes used by most analysis/eval experiments.
 viz = [
+    "colorama>=0.4.6",
     "matplotlib>=3.7",
     "numpy>=1.24",
     "pandas>=2.0",
@@ -97,6 +107,7 @@ analysis = [
     "scipy>=1.11",
     "plotly>=5.18",
     "sympy>=1.12",
+    "numba>=0.59",
 ]
 
 # Transformer runtime. Needed by experiments that load models locally for
@@ -115,11 +126,50 @@ rag = [
     "sentence-transformers>=2.2",
     "rank-bm25>=0.2",
     "FlagEmbedding>=1.2",
+    "huggingface-hub>=0.23",
     "annoy>=1.17",
     "hnswlib>=0.8",
     "jieba>=0.42",
     "networkx>=3.2",
     "umap-learn>=0.5",
+    "aiofiles>=23.2",
+    "colorlog>=6.8",
+    "loguru>=0.7",
+    "markdown>=3.5",
+    "PyYAML>=6.0",
+]
+
+# Third-party data-source and productivity integrations used by the
+# chapter 4 tool-building experiments.
+integrations = [
+    "arxiv>=2.1",
+    "wikipedia>=1.4",
+    "waybackpy>=3.0",
+    "yfinance>=0.2",
+    "youtube-transcript-api>=0.6",
+    "yt-dlp>=2024.4",
+    "python-chess>=1.10",
+    "notion-client>=2.2",
+    "sendgrid>=6.11",
+    "aiosmtplib>=3.0",
+    "PyGithub>=2.3",
+    "google-api-python-client>=2.126",
+    "google-auth-oauthlib>=1.2",
+    "psutil>=5.9",
+    "langchain-openai>=0.1",
+]
+
+# LangChain wrappers and workplace integrations used by the chapter 8
+# self-evolution / RPA experiments.
+orchestration = [
+    "langchain-core>=0.2",
+    "langchain-openai>=0.1",
+    "slack-sdk>=3.27",
+]
+
+# Constraint solving (chapter 5 code-for-logic).
+solvers = [
+    "python-constraint>=1.4",
 ]
 
 # Long-term memory backends used by the chapter 3 memory experiments.
@@ -165,6 +215,15 @@ unsloth = [
     "unsloth_zoo>=2024.8",
 ]
 
+# Local high-throughput inference server. Linux/GPU only -- vLLM publishes no
+# macOS wheels, so it is opt-in rather than part of any chapter aggregate.
+# Needed by chapter2/local_llm_serving and by the data-generation step of
+# chapter8/prompt-distillation (create_data.py imports it lazily).
+vllm = [
+    "agentbook[torch]",
+    "vllm>=0.6",
+]
+
 # Audio processing for the local speech/TTS training experiments (chapter 7).
 # Note: chapter 9 uses hosted speech APIs and needs only the core.
 audio = [
@@ -189,16 +248,16 @@ dev = [
 ch1  = ["agentbook[viz,docs]"]
 ch2  = ["agentbook[viz,docs,web,serve,providers,tokens,torch]"]
 ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch]"]
-ch4  = ["agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis]"]
-ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis]"]
-ch6  = ["agentbook[viz,tokens,analysis]"]
+ch4  = ["agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis,integrations]"]
+ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis,solvers]"]
+ch6  = ["agentbook[viz,tokens,analysis,providers]"]
 ch7  = ["agentbook[train,audio,viz]"]         # add `unsloth` extra for Unsloth experiments
-ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,train]"]
+ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,train,orchestration]"]
 ch9  = []                                     # hosted speech APIs: core only
 ch10 = ["agentbook[tokens]"]                  # tiktoken only
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
-all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,dev]"]
+all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
 
 [project.urls]
 Homepage = "https://github.com/bojieli/ai-agent-book"
