@@ -36,14 +36,14 @@ def _pill(svg, x, y, w, h, label, fill='light', font_size=FS_SMALL, bold=False):
 # ──────────────────────── fig5-1 (NEW: OpenClaw arch) ──────
 
 def fig5_1():
-    """OpenClaw architecture: Coding Agent as core of general Agent"""
+    """Arsitektur OpenClaw: Coding Agent sebagai inti dari Agent umum"""
     w, h = 980, 600
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "OpenClaw architecture: Coding Agent as core of general Agent", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Arsitektur OpenClaw: Coding Agent sebagai inti dari Agent umum", size=FS_TITLE, bold=True)
 
     # Top: multi-platform messaging gateway
     gw_y, gw_h = 58, 66
-    svg.group_box(60, gw_y, w - 120, gw_h, "Multi-platform message gateway (user interaction layer)")
+    svg.group_box(60, gw_y, w - 120, gw_h, "Gateway pesan multi-platform (lapisan interaksi pengguna)")
     channels = ["WhatsApp", "Telegram", "iMessage", "Slack", "CLI"]
     pill_w, pill_h = 130, 32
     total_pw = len(channels) * pill_w + (len(channels) - 1) * 18
@@ -54,19 +54,19 @@ def fig5_1():
         svg.text(px + pill_w / 2, gw_y + 26 + pill_h / 2, ch, size=FS_SMALL)
 
     svg.arrow(w / 2, gw_y + gw_h + 2, w / 2, 158)
-    svg.text(w / 2 + 12, 134, "Natural language request", size=FS_LABEL, fill='text_light', anchor='start')
+    svg.text(w / 2 + 12, 134, "Permintaan bahasa alami", size=FS_LABEL, fill='text_light', anchor='start')
 
     # Center: Coding Agent runtime — widened to fit 4 tools comfortably
     ca_x, ca_y, ca_w, ca_h = 200, 160, 580, 210
     svg.rect(ca_x, ca_y, ca_w, ca_h, fill='light')
     svg.rect(ca_x, ca_y, ca_w, 40, fill='darker', rx=6)
     svg.text(ca_x + ca_w / 2, ca_y + 20,
-             "Coding Agent runtime (inference + execution core)", size=FS_BODY, bold=True, fill='white')
+             "Runtime Coding Agent (inti inferensi + eksekusi)", size=FS_BODY, bold=True, fill='white')
 
     tools = [
-        ("Code Interpreter", "Code execution"), ("Bash Shell", "System commands"),
-        ("Read File", "Read file"), ("Write File", "Write file"),
-        ("Edit File", "Edit file"), ("Glob", "File search"), ("Grep", "Content search"),
+        ("Code Interpreter", "Eksekusi kode"), ("Bash Shell", "Perintah sistem"),
+        ("Read File", "Membaca file"), ("Write File", "Menulis file"),
+        ("Edit File", "Mengedit file"), ("Glob", "Pencarian file"), ("Grep", "Pencarian konten"),
     ]
     tw, th, tgap = 132, 60, 12
     for ri, row in enumerate([tools[:4], tools[4:]]):
@@ -82,31 +82,31 @@ def fig5_1():
     # Left: Deep Research
     dr_x, dr_y, dr_w, dr_h = 22, 198, 158, 86
     svg.rect(dr_x, dr_y, dr_w, dr_h, fill='medium')
-    svg.text(dr_x + dr_w / 2, dr_y + 22, "Web search module", size=FS_SMALL, bold=True)
+    svg.text(dr_x + dr_w / 2, dr_y + 22, "Modul pencarian web", size=FS_SMALL, bold=True)
     svg.text(dr_x + dr_w / 2, dr_y + 44, "Deep Research", size=FS_TINY, fill='text_light')
-    svg.text(dr_x + dr_w / 2, dr_y + 66, "Web request · parsing", size=FS_TINY, fill='text_light')
+    svg.text(dr_x + dr_w / 2, dr_y + 66, "Permintaan web · parsing", size=FS_TINY, fill='text_light')
     svg.arrow(dr_x + dr_w + 2, dr_y + dr_h / 2, ca_x - 2, ca_y + ca_h / 2)
 
     # Right: Computer Use
     cu_x, cu_y, cu_w, cu_h = 800, 198, 158, 86
     svg.rect(cu_x, cu_y, cu_w, cu_h, fill='medium')
-    svg.text(cu_x + cu_w / 2, cu_y + 22, "Browser automation", size=FS_SMALL, bold=True)
+    svg.text(cu_x + cu_w / 2, cu_y + 22, "Otomatisasi browser", size=FS_SMALL, bold=True)
     svg.text(cu_x + cu_w / 2, cu_y + 44, "Computer Use", size=FS_TINY, fill='text_light')
-    svg.text(cu_x + cu_w / 2, cu_y + 66, "Playwright DOM", size=FS_TINY, fill='text_light')
+    svg.text(cu_x + cu_w / 2, cu_y + 66, "DOM Playwright", size=FS_TINY, fill='text_light')
     svg.arrow(ca_x + ca_w + 2, ca_y + ca_h / 2, cu_x - 2, cu_y + cu_h / 2)
 
     # Bottom: file system layer
     fs_y, fs_h = 410, 140
     svg.arrow(w / 2, ca_y + ca_h + 2, w / 2, fs_y - 2)
-    svg.text(w / 2 + 12, 390, "Read / Write file", size=FS_LABEL, fill='text_light', anchor='start')
-    svg.group_box(60, fs_y, w - 120, fs_h, "File system (memory · knowledge · capability hub)")
+    svg.text(w / 2 + 12, 390, "Membaca / Menulis file", size=FS_LABEL, fill='text_light', anchor='start')
+    svg.group_box(60, fs_y, w - 120, fs_h, "Sistem file (memori · pengetahuan · pusat kemampuan)")
 
     mem_items = [
-        ("MEMORY.md", "High-level facts / user preferences"),
-        ("daily/YYYY-MM-DD.md", "Daily archive / interaction logs"),
-        ("SOUL.md", "Agent identity and behavior rules"),
-        ("Knowledge base files", "Task experience / self-evolution"),
-        ("Git version control", "Memory rollback / history audit"),
+        ("MEMORY.md", "Fakta tingkat tinggi / preferensi pengguna"),
+        ("daily/YYYY-MM-DD.md", "Arsip harian / log interaksi"),
+        ("SOUL.md", "Identitas agen dan aturan perilaku"),
+        ("File basis pengetahuan", "Pengalaman tugas / evolusi mandiri"),
+        ("Git version control", "Rollback memori / audit riwayat"),
     ]
     item_w, item_h, item_gap = 162, 76, 16
     total_iw = len(mem_items) * item_w + (len(mem_items) - 1) * item_gap
@@ -122,7 +122,7 @@ def fig5_1():
     os_y = fs_y + fs_h + 16
     svg.rect(60, os_y, w - 120, 38, fill='darker', rx=6)
     svg.text(w / 2, os_y + 19,
-             "LLM = new operating system: shield intelligence complexity, provide unified abstraction", size=FS_SMALL, bold=True, fill='white')
+             "LLM = sistem operasi baru: menutupi kompleksitas kecerdasan, menyediakan abstraksi terpadu", size=FS_SMALL, bold=True, fill='white')
 
     svg.save(os.path.join(OUT, 'fig5-1.svg'))
 
@@ -133,32 +133,32 @@ def fig5_2():
     """Coding Agent multi-phase workflow (concrete tool calls)"""
     w, h = 880, 580
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Coding Agent layered workflow", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Alur kerja berlapis Coding Agent", size=FS_TITLE, bold=True)
 
     phases = [
-        ("① Project documentation", 'medium', [
+        ("① Dokumentasi proyek", 'medium', [
             ("read_file", "README.md, ARCHITECTURE.md"),
             ("glob", "**/*.py, **/*.ts"),
-            ("write_file", "→ Generate CLAUDE.md project guide"),
+            ("write_file", "→ Menghasilkan panduan proyek CLAUDE.md"),
         ]),
-        ("② Requirement understanding", 'light', [
-            ("ask_user", "\"Is the optimization goal latency or throughput?\""),
+        ("② Pemahaman kebutuhan", 'light', [
+            ("ask_user", "\"Apakah tujuan optimasi ini latensi atau throughput?\""),
             ("grep", "\"latency|throughput\" src/"),
-            ("read_file", "src/config.py (current parameters)"),
+            ("read_file", "src/config.py (parameter saat ini)"),
         ]),
-        ("③ Design Document", 'light', [
-            ("write_file", "design.md (Scheme Comparison)"),
-            ("ask_user", "Submit design → Wait for approval"),
-            ("—", "After human review → Continue"),
+        ("③ Dokumen Desain", 'light', [
+            ("write_file", "design.md (Perbandingan Skema)"),
+            ("ask_user", "Ajukan desain → Tunggu persetujuan"),
+            ("—", "Setelah peninjauan manusia → Lanjutkan"),
         ]),
-        ("④ Coding and Testing", 'medium', [
-            ("edit_file", "old_str→new_str modify code"),
+        ("④ Pengodean dan Pengujian", 'medium', [
+            ("edit_file", "old_str→new_str memodifikasi kode"),
             ("bash", "pytest tests/ -v"),
-            ("edit_file", "Fix failed tests → Rerun"),
+            ("edit_file", "Perbaiki pengujian yang gagal → Jalankan ulang"),
         ]),
-        ("⑤ Review and Delivery", 'light', [
+        ("⑤ Peninjauan dan Pengiriman", 'light', [
             ("bash", "ruff check src/ (lint)"),
-            ("read_file", "Self-review: readability/security/performance"),
+            ("read_file", "Peninjauan mandiri: keterbacaan/keamanan/performa"),
             ("edit_file", "Update ARCHITECTURE.md"),
         ]),
     ]
@@ -187,12 +187,12 @@ def fig5_2():
 
     # Bottom: feedback loops
     svg.line(30, 320, w - 30, 320, color='dark', dash=True)
-    svg.text(w / 2, 340, "Closed-loop feedback mechanism", size=FS_BODY, bold=True)
+    svg.text(w / 2, 340, "Mekanisme umpan balik loop tertutup", size=FS_BODY, bold=True)
 
     loops = [
-        ("Test failure → Modify code → Retest", "④ Inner loop: average 2-3 rounds to converge"),
-        ("Lint error → Fix immediately → Recheck", "⑤ Inner loop: automatically triggered after editing"),
-        ("Issues found in review → Go back to ④ to modify", "⑤→④ rollback: ensure delivery quality"),
+        ("Uji gagal → Modifikasi kode → Uji ulang", "④ Loop dalam: rata-rata 2-3 putaran untuk konvergen"),
+        ("Kesalahan lint → Perbaiki segera → Periksa ulang", "⑤ Loop dalam: dipicu otomatis setelah pengeditan"),
+        ("Masalah ditemukan dalam peninjauan → Kembali ke ④ untuk modifikasi", "Rollback ⑤→④: memastikan kualitas pengiriman"),
     ]
     ly = 365
     for label, note in loops:
@@ -203,16 +203,16 @@ def fig5_2():
 
     # Annotations on the right
     annots = [
-        "Agent status bar: cwd, git branch",
-        "Agent status bar: unstaged changes",
-        "Tool output: head/tail truncation",
-        "Persistent terminal session",
+        "Bilah status agen: cwd, branch git",
+        "Bilah status agen: perubahan unstaged",
+        "Output alat: pemotongan awal/akhir (head/tail)",
+        "Sesi terminal persisten",
     ]
     for i, ann in enumerate(annots):
         svg.rect(610, 365 + i * 50, 250, 38, fill='code_bg', stroke='dark', rx=4)
         svg.text(735, 384 + i * 50, ann, size=FS_TINY, fill='text_light')
 
-    svg.text(w / 2, 565, "Plan before action · Verification throughout · Documentation and code co-evolve", size=FS_BODY, bold=True, fill='darker')
+    svg.text(w / 2, 565, "Rencanakan sebelum bertindak · Verifikasi menyeluruh · Dokumentasi dan kode berevolusi bersama", size=FS_BODY, bold=True, fill='darker')
 
     svg.save(os.path.join(OUT, 'fig5-2.svg'))
 
@@ -223,34 +223,34 @@ def fig5_3():
     """Search tool comparison (four tools + actual query examples)"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Comparison of four search tools", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Perbandingan empat alat pencarian", size=FS_TITLE, bold=True)
 
     tools = [
-        ("Regex content match (grep)", 'medium',
+        ("Pencocokan konten regex (grep)", 'medium',
          "rg \"def handle_.*\" --type py",
          ["src/api.py:42:  def handle_request(..)",
           "src/api.py:89:  def handle_timeout(..)",
           "src/ws.py:15:   def handle_connect(..)"],
-         "Exact text → all occurrence positions"),
-        ("Filename match (glob)", 'light',
+         "Teks persis → semua posisi kemunculan"),
+        ("Pencocokan nama file (glob)", 'light',
          "glob: **/test_*.py",
          ["tests/test_api.py",
           "tests/test_auth.py",
           "tests/unit/test_parser.py"],
-         "Path pattern → does not read file content"),
-        ("Semantic Code Search", 'light',
+         "Pola jalur → tidak membaca isi file"),
+        ("Pencarian Kode Semantik", 'light',
          "\"Handle User Input Validation\"",
          ["[0.91] src/validators.py:validate_input()",
           "[0.87] src/forms.py:sanitize_fields()",
           "[0.82] src/api.py:check_params()"],
-         "Natural Language → Vector + BM25 Hybrid"),
-        ("Symbol Definition/Reference", 'medium',
+         "Bahasa Alami → Hibrida Vektor + BM25"),
+        ("Definisi/Referensi Simbol", 'medium',
          "find_references: UserService",
-         ["Definition: src/services/user.py:12",
-          "Reference: src/api/routes.py:34 (import)",
-          "Reference: src/api/routes.py:56 (call)",
-          "Reference: tests/test_user.py:8 (test)"],
-         "AST Level → Disambiguate Same Names"),
+         ["Definisi: src/services/user.py:12",
+          "Referensi: src/api/routes.py:34 (import)",
+          "Referensi: src/api/routes.py:56 (call)",
+          "Referensi: tests/test_user.py:8 (test)"],
+         "Tingkat AST → Menghilangkan Ambiguitas Nama Sama"),
     ]
 
     col_w = (w - 60) // 2
@@ -267,11 +267,11 @@ def fig5_3():
         tc = 'white' if fill in ('dark', 'darker') else 'text'
         svg.text(x + col_w / 2, y + 18, title, size=FS_SMALL, bold=True, fill=tc)
 
-        svg.text(x + 12, y + 54, "Query:", size=FS_TINY, bold=True, anchor='start', fill='text_light')
+        svg.text(x + 12, y + 54, "Kueri:", size=FS_TINY, bold=True, anchor='start', fill='text_light')
         svg.rect(x + 8, y + 64, col_w - 16, 24, fill='code_bg', stroke='dark', rx=3)
         svg.mono(x + 14, y + 76, query, size=11)
 
-        svg.text(x + 12, y + 102, "Result:", size=FS_TINY, bold=True, anchor='start', fill='text_light')
+        svg.text(x + 12, y + 102, "Hasil:", size=FS_TINY, bold=True, anchor='start', fill='text_light')
         rh = len(results) * 20 + 12
         svg.rect(x + 8, y + 112, col_w - 16, rh, fill='code_bg', stroke='dark', rx=3)
         for j, r in enumerate(results):
@@ -288,50 +288,50 @@ def fig5_4():
     """File Editing Scheme Comparison (Five Methods + Code Examples)"""
     w, h = 900, 700
     svg = SVG(w, h)
-    svg.text(w / 2, 28, "Comparison of Five File Editing Schemes", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 28, "Perbandingan Lima Skema Pengeditan File", size=FS_TITLE, bold=True)
 
     approaches = [
-        ("Diff + Apply Model", "dark",
-         ["LLM Output Diff Description:",
+        ("Model Diff + Apply", "dark",
+         ["Deskripsi Diff Output LLM:",
           "- def foo(x):",
           "    return x",
           "+ def foo(x, y=0):",
           "+   return x + y",
-          "→ Small Model Locates and Applies"],
-         "Advantage: Separation of Concerns",
-         "Disadvantage: Minor Deviation Causes Misalignment"),
-        ("Old String → New String", "medium",
+          "→ Model Kecil Menemukan dan Menerapkan"],
+         "Kelebihan: Pemisahan Kekhawatiran",
+         "Kekurangan: Sedikit Deviasi Menyebabkan Ketidaksesuaian"),
+        ("String Lama → String Baru", "medium",
          ['old: "def foo(x):\\n',
           '       return x"',
           'new: "def foo(x, y=0):\\n',
           '       return x + y"',
-          "→ Exact String Match Replacement"],
-         "Advantage: Predictable, Unambiguous",
-         "Disadvantage: Large Deletions Require Full Output"),
-        ("Line Number Positioning", "light",
-         ["Delete lines 42-43, insert:",
+          "→ Penggantian Kecocokan String Presisi"],
+         "Kelebihan: Dapat Diprediksi, Tidak Ambigu",
+         "Kekurangan: Penghapusan Besar Memerlukan Output Penuh"),
+        ("Penentuan Posisi Nomor Baris", "light",
+         ["Hapus baris 42-43, sisipkan:",
           "  def foo(x, y=0):",
           "    return x + y",
           "",
-          "→ Line Number Specifies Exact Range"],
-         "Advantage: Efficient for Large Operations",
-         "Disadvantage: Line Numbers Error-Prone in Long Files"),
-        ("Vim-like Commands", "light",
+          "→ Nomor Baris Menentukan Rentang Tepat"],
+         "Kelebihan: Efisien untuk Operasi Besar",
+         "Kekurangan: Nomor Baris Rentan Salah di File Panjang"),
+        ("Perintah ala Vim", "light",
          ["42G  (Jump to line 42)",
           "cw   (Replace word)",
           "dd   (Delete line)",
           "yy/p (Copy/Paste)",
-          "→ Rich editing semantics"],
-         "Advantage: Efficient move/reorganize",
-         "Disadvantage: Weak models produce more errors"),
-        ("Head-tail matching", "medium",
+          "→ Semantik pengeditan kaya"],
+         "Kelebihan: Pemindahan/reorganisasi efisien",
+         "Kekurangan: Model lemah menghasilkan lebih banyak kesalahan"),
+        ("Pencocokan Awal-Akhir (Head-tail)", "medium",
          ['start: "def foo(x):"',
           'end:   "    return x"',
           'new: "def foo(x, y=0):',
           '       return x + y"',
-          "→ Only need boundaries to locate"],
-         "Advantage: Large deletion without full output",
-         "Disadvantage: Boundary combination must be unique"),
+          "→ Hanya perlu batasan untuk menemukan"],
+         "Kelebihan: Penghapusan besar tanpa output penuh",
+         "Kekurangan: Kombinasi batasan harus unik"),
     ]
 
     col_w = 168
@@ -362,14 +362,14 @@ def fig5_4():
     # Adoption bar chart at bottom
     chart_y = py + box_h + 22
     svg.line(30, chart_y, w - 30, chart_y, color='dark', dash=True)
-    svg.text(w / 2, chart_y + 24, "Actual adoption", size=FS_BODY, bold=True)
+    svg.text(w / 2, chart_y + 24, "Adopsi Aktual", size=FS_BODY, bold=True)
 
     adoptions = [
         ("Old→New", "Claude Code", 0.85, 'dark'),
-        ("Line Number Positioning", "IDE deep integration scenarios", 0.50, 'medium'),
+        ("Penentuan Posisi Nomor Baris", "Skenario integrasi mendalam IDE", 0.50, 'medium'),
         ("Diff + Apply", "Cursor", 0.40, 'light'),
-        ("Head-tail matching", "Partial custom solutions", 0.30, 'light'),
-        ("Vim commands", "Experimental solutions", 0.15, 'code_bg'),
+        ("Pencocokan Awal-Akhir (Head-tail)", "Sebagian solusi kustom", 0.30, 'light'),
+        ("Vim commands", "Solusi eksperimental", 0.15, 'code_bg'),
     ]
     bar_x, bar_w_max = 250, 480
     by = chart_y + 48
@@ -390,17 +390,17 @@ def fig5_5():
     """PPT generation pipeline (Proposer-Reviewer collaboration + Slidev code)"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "PPT generation: Proposer-Reviewer collaboration mechanism", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Pembuatan PPT: Mekanisme kolaborasi Proposer-Reviewer", size=FS_TITLE, bold=True)
 
     # Proposer Agent (left)
     svg.rect(20, 60, 350, 280, fill='white', stroke='border', dash=True)
-    svg.text(195, 82, "Proposer Agent", size=FS_BODY, bold=True)
+    svg.text(195, 82, "Agen Proposer", size=FS_BODY, bold=True)
 
-    svg.text(40, 110, "Input: Paper/content", size=FS_SMALL, anchor='start', bold=True)
+    svg.text(40, 110, "Input: Makalah/konten", size=FS_SMALL, anchor='start', bold=True)
     svg.rect(30, 125, 330, 24, fill='code_bg', stroke='dark', rx=3)
-    svg.mono(38, 137, "paper.pdf → Extract sections/arguments/figures", size=11)
+    svg.mono(38, 137, "paper.pdf → Ekstrak bagian/argumen/gambar", size=11)
 
-    svg.text(40, 168, "Output: Slidev Markdown", size=FS_SMALL, anchor='start', bold=True)
+    svg.text(40, 168, "Output: Markdown Slidev", size=FS_SMALL, anchor='start', bold=True)
     code_lines = [
         "---",
         "layout: two-cols",
@@ -416,49 +416,49 @@ def fig5_5():
 
     # Reviewer Agent (right)
     svg.rect(510, 60, 350, 280, fill='white', stroke='border', dash=True)
-    svg.text(685, 82, "Reviewer Agent", size=FS_BODY, bold=True)
+    svg.text(685, 82, "Agen Reviewer", size=FS_BODY, bold=True)
 
-    svg.text(520, 110, "Step 1: Render screenshot", size=FS_SMALL, anchor='start', bold=True)
+    svg.text(520, 110, "Langkah 1: Render tangkapan layar", size=FS_SMALL, anchor='start', bold=True)
     svg.rect(520, 125, 330, 50, fill='light')
     svg.text(685, 142, "slidev export --per-slide", size=FS_TINY, fill='text_light')
     svg.text(685, 160, "→ slide-01.png, slide-02.png ...", size=FS_TINY, fill='text_light')
 
-    svg.text(520, 192, "Step 2: Vision LLM review", size=FS_SMALL, anchor='start', bold=True)
+    svg.text(520, 192, "Langkah 2: Tinjauan Vision LLM", size=FS_SMALL, anchor='start', bold=True)
     critique_lines = [
-        "Review dimensions:",
-        "  ✓ Text overflow boundary",
-        "  ✓ Layout too crowded",
-        "  ✓ Image size appropriate",
-        "  ✗ Slide 3: Text overflows right column",
-        "  ✗ Slide 7: Content too dense",
+        "Dimensi tinjauan:",
+        "  ✓ Batas luapan teks",
+        "  ✓ Tata letak terlalu padat",
+        "  ✓ Ukuran gambar sesuai",
+        "  ✗ Slide 3: Teks meluap ke kolom kanan",
+        "  ✗ Slide 7: Konten terlalu padat",
     ]
     svg.rect(520, 208, 330, len(critique_lines) * 16 + 12, fill='code_bg', stroke='dark', rx=3)
     for j, line in enumerate(critique_lines):
         svg.mono(528, 222 + j * 16, line, size=10)
 
     # Arrows: Proposer → Reviewer → Proposer (loop)
-    svg.arrow(370, 200, 508, 150, label="Slidev code")
-    svg.arrow(508, 300, 370, 260, label="Modification suggestions", dash=True)
+    svg.arrow(370, 200, 508, 150, label="Kode Slidev")
+    svg.arrow(508, 300, 370, 260, label="Saran modifikasi", dash=True)
 
     # Iteration badge
-    _pill(svg, 395, 220, 100, 24, "Iterate 2-3 rounds", fill='dark', font_size=11, bold=True)
+    _pill(svg, 395, 220, 100, 24, "Iterasi 2-3 putaran", fill='dark', font_size=11, bold=True)
 
     # Bottom: why separate agents
     svg.line(30, 365, w - 30, 365, color='dark', dash=True)
-    svg.text(w / 2, 388, "Why separate Proposer and Reviewer?", size=FS_BODY, bold=True)
+    svg.text(w / 2, 388, "Mengapa memisahkan Proposer dan Reviewer?", size=FS_BODY, bold=True)
 
     reasons = [
-        ("Single Agent Problem", [
-            "Tens of pages of rendered screenshots → context bloat",
-            "Code + screenshot mix → attention dispersion",
+        ("Masalah Agen Tunggal", [
+            "Puluhan halaman tangkapan layar → konteks membengkak",
+            "Campuran kode + tangkapan layar → dispersi perhatian",
         ]),
-        ("Advantages of Separation", [
-            "Reviewer independent context → only screenshots + code",
-            "Proposer focuses on code → only receives modification suggestions",
+        ("Kelebihan Pemisahan", [
+            "Konteks independen Reviewer → hanya tangkapan layar + kode",
+            "Proposer berfokus pada kode → hanya menerima saran modifikasi",
         ]),
-        ("Actual Effect", [
-            "Significantly reduces context usage",
-            "Fix accuracy improves significantly",
+        ("Efek Aktual", [
+            "Secara signifikan mengurangi penggunaan konteks",
+            "Akurasi perbaikan meningkat secara signifikan",
         ]),
     ]
     rx = 30
@@ -478,34 +478,34 @@ def fig5_6():
     """Experiment 5.6+5.7: Paper→PPT→Video end-to-end pipeline"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 5.6+5.7: Paper → PPT → Lecture video", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 5.6+5.7: Makalah → PPT → Video Kuliah", size=FS_TITLE, bold=True)
 
     # Top pipeline: paper → PPT
     stages_top = [
-        ("PDF Input", 'medium', [
+        ("Input PDF", 'medium', [
             "paper.pdf",
-            "Parse doc structure",
-            "Extract figure refs",
+            "Urai struktur dokumen",
+            "Ekstrak referensi gambar",
         ]),
-        ("Content Planning", 'light', [
-            "10-20 page structure",
-            "Extract core arguments",
-            "Assign figures to pages",
+        ("Perencanaan Konten", 'light', [
+            "Struktur 10-20 halaman",
+            "Ekstrak argumen inti",
+            "Alokasikan gambar ke halaman",
         ]),
-        ("Slidev Generation", 'light', [
-            "Generate page by page",
+        ("Pembuatan Slidev", 'light', [
+            "Hasilkan halaman per halaman",
             "layout: two-cols",
-            "Code + image layout",
+            "Tata letak kode + gambar",
         ]),
-        ("Rendering Check", 'medium', [
+        ("Pemeriksaan Render", 'medium', [
             "export --per-slide",
-            "Vision LLM review",
-            "Overflow detection",
+            "Tinjauan Vision LLM",
+            "Deteksi luapan",
         ]),
-        ("Iterative Fix", 'light', [
+        ("Perbaikan Iteratif", 'light', [
             "Reviewer→Proposer",
-            "Modify Slidev code",
-            "Re-render and verify",
+            "Modifikasi kode Slidev",
+            "Render ulang dan verifikasi",
         ]),
     ]
 
@@ -514,7 +514,7 @@ def fig5_6():
     total = len(stages_top) * sw + (len(stages_top) - 1) * sgap
     sx = (w - total) / 2
 
-    svg.text(w / 2, 60, "Phase 1: PPT Generation (Proposer-Reviewer)", size=FS_SMALL, bold=True, fill='text_light')
+    svg.text(w / 2, 60, "Fase 1: Pembuatan PPT (Proposer-Reviewer)", size=FS_SMALL, bold=True, fill='text_light')
     for i, (title, fill, details) in enumerate(stages_top):
         x = sx + i * (sw + sgap)
         svg.rect(x, 72, sw, 130, fill=fill)
@@ -527,36 +527,36 @@ def fig5_6():
 
     # Arrow down
     svg.arrow(w / 2, 202, w / 2, 240)
-    svg.text(w / 2 + 60, 222, "PPT completed", size=FS_SMALL, fill='text_light')
+    svg.text(w / 2 + 60, 222, "PPT Selesai", size=FS_SMALL, fill='text_light')
 
     # Bottom pipeline: PPT → Video
-    svg.text(w / 2, 255, "Phase 2: Video synthesis", size=FS_SMALL, bold=True, fill='text_light')
+    svg.text(w / 2, 255, "Fase 2: Sintesis Video", size=FS_SMALL, bold=True, fill='text_light')
 
     stages_bot = [
-        ("Screenshot per page", 'medium', [
+        ("Tangkapan layar per halaman", 'medium', [
             "slide-01.png",
             "slide-02.png",
             "...",
         ]),
-        ("Script generation", 'light', [
-            "LLM colloquial script",
-            "Narration per page",
-            "Guiding narrative",
+        ("Pembuatan naskah", 'light', [
+            "Naskah percakapan LLM",
+            "Narasi per halaman",
+            "Narasi panduan",
         ]),
-        ("TTS synthesis", 'light', [
-            "Text → speech",
+        ("Sintesis TTS", 'light', [
+            "Teks → ucapan",
             "speech-01.mp3",
             "speech-02.mp3",
         ]),
-        ("Audio-video sync", 'medium', [
-            "ffmpeg synthesis",
-            "Match audio duration",
-            "Transition effects",
+        ("Sinkronisasi audio-video", 'medium', [
+            "Sintesis ffmpeg",
+            "Sesuaikan durasi audio",
+            "Efek transisi",
         ]),
-        ("Final video", 'dark', [
+        ("Video Akhir", 'dark', [
             "output.mp4",
-            "5-15 minutes",
-            "Audio + visual output",
+            "5-15 menit",
+            "Output audio + visual",
         ]),
     ]
 
@@ -574,12 +574,12 @@ def fig5_6():
 
     # Bottom: key metrics
     svg.line(30, 420, w - 30, 420, color='dark', dash=True)
-    svg.text(w / 2, 440, "Acceptance criteria", size=FS_BODY, bold=True)
+    svg.text(w / 2, 440, "Kriteria Penerimaan", size=FS_BODY, bold=True)
 
     criteria = [
-        ("PPT", "10-20 pages · Cover main contributions · ≥3 original charts"),
-        ("Rendering", "Zero text overflow · Reasonable layout · Text-image match"),
-        ("Video", "5-15 minutes · Audio-video sync · Coherent narration"),
+        ("PPT", "10-20 halaman · Mencakup kontribusi utama · ≥3 diagram asli"),
+        ("Rendering", "Nol luapan teks · Tata letak wajar · Kecocokan teks-gambar"),
+        ("Video", "5-15 menit · Sinkronisasi audio-video · Narasi koheren"),
     ]
     cy = 462
     for label, desc in criteria:
@@ -596,27 +596,27 @@ def fig5_8():
     """Dynamic form generation flow (LLM→HTML→JSON→Continue)"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Dynamic form generation: Structured intent clarification", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Pembuatan formulir dinamis: Klarifikasi niat terstruktur", size=FS_TITLE, bold=True)
 
     # Step 1: User input
     svg.rect(20, 60, 200, 60, fill='medium')
-    svg.text(120, 82, "User input", size=FS_SMALL, bold=True)
-    svg.text(120, 100, "\"I want to book a flight to Beijing\"", size=FS_TINY, fill='text_light')
+    svg.text(120, 82, "Input Pengguna", size=FS_SMALL, bold=True)
+    svg.text(120, 100, "\"Saya ingin memesan penerbangan ke Beijing\"", size=FS_TINY, fill='text_light')
 
     svg.arrow(220, 90, 260, 90)
 
     # Step 2: LLM analyzes and generates form
     svg.rect(260, 55, 260, 140, fill='white', stroke='border', dash=True)
-    svg.text(390, 75, "LLM analysis → Generate form code", size=FS_SMALL, bold=True)
+    svg.text(390, 75, "Analisis LLM → Buat kode formulir", size=FS_SMALL, bold=True)
     form_code = [
         '<form id="clarify">',
         ' <input type="text"',
-        '  name="from" label="Departure city"/>',
+        '  name="from" label="Kota keberangkatan"/>',
         ' <input type="date"',
-        '  name="depart" label="Departure date"/>',
+        '  name="depart" label="Tanggal keberangkatan"/>',
         ' <select name="type">',
-        '  <option>One-way</option>',
-        '  <option>Round Trip</option>',
+        '  <option>Sekali jalan</option>',
+        '  <option>Pulang pergi</option>',
         ' </select>',
         '</form>',
     ]
@@ -628,25 +628,25 @@ def fig5_8():
 
     # Step 3: Rendered form (visual representation)
     svg.rect(560, 55, 300, 200, fill='white', stroke='border')
-    svg.text(710, 75, "Rendered form interface", size=FS_SMALL, bold=True)
+    svg.text(710, 75, "Antarmuka formulir yang dirender", size=FS_SMALL, bold=True)
 
     fields = [
-        ("Departure City", "Shanghai", 95),
-        ("Departure Date", "2025-08-15", 135),
-        ("Trip Type", "Round Trip ▾", 175),
-        ("Return Date", "2025-08-22", 215),
+        ("Kota Keberangkatan", "Shanghai", 95),
+        ("Tanggal Keberangkatan", "2025-08-15", 135),
+        ("Jenis Perjalanan", "Pulang pergi ▾", 175),
+        ("Tanggal Kembali", "2025-08-22", 215),
     ]
     for label, value, fy in fields:
         svg.text(580, fy, label, size=FS_TINY, anchor='start', bold=True)
         svg.rect(660, fy - 12, 180, 24, fill='code_bg', stroke='dark', rx=3)
         svg.mono(668, fy, value, size=11)
 
-    _pill(svg, 660, 238, 80, 26, "Submit", fill='dark', font_size=FS_SMALL, bold=True)
+    _pill(svg, 660, 238, 80, 26, "Kirim", fill='dark', font_size=FS_SMALL, bold=True)
 
     # Step 4: JSON result
     svg.arrow(710, 268, 710, 300)
     svg.rect(560, 300, 300, 110, fill='white', stroke='border', dash=True)
-    svg.text(710, 318, "Structured JSON Response", size=FS_SMALL, bold=True)
+    svg.text(710, 318, "Respons JSON Terstruktur", size=FS_SMALL, bold=True)
     json_lines = [
         '{"from": "Shanghai",',
         ' "depart": "2025-08-15",',
@@ -661,27 +661,27 @@ def fig5_8():
     svg.arrow(560, 390, 400, 440)
 
     svg.rect(100, 430, 500, 50, fill='medium')
-    svg.text(350, 448, "Agent continues execution with complete parameters", size=FS_BODY, bold=True)
+    svg.text(350, 448, "Agen melanjutkan eksekusi dengan parameter lengkap", size=FS_BODY, bold=True)
     svg.text(350, 468, "search_flights(from='Shanghai', to='Beijing', depart='2025-08-15', ...)", size=FS_TINY, fill='text_light')
 
     # Comparison: text vs form
     svg.rect(20, 280, 250, 140, fill='light')
-    svg.text(145, 300, "Comparison: Plain Text vs Form", size=FS_SMALL, bold=True)
+    svg.text(145, 300, "Perbandingan: Teks Biasa vs Formulir", size=FS_SMALL, bold=True)
     comp = [
-        "Text Q&A: 10 rounds of dialogue",
-        "  Q1: Departure city? A: Shanghai",
-        "  Q2: Date? A: August 15",
-        "  Q3: One-way or round trip? ...",
+        "Tanya Jawab Teks: 10 putaran dialog",
+        "  T1: Kota keberangkatan? J: Shanghai",
+        "  T2: Tanggal? J: 15 Agustus",
+        "  T3: Sekali jalan atau pulang pergi? ...",
         "",
-        "Dynamic Form: 1 submission",
-        "  All information collected at once",
-        "  Cascading logic handled automatically",
+        "Formulir Dinamis: 1 pengiriman",
+        "  Semua informasi dikumpulkan sekaligus",
+        "  Logika berjenjang (cascading) ditangani secara otomatis",
     ]
     for j, line in enumerate(comp):
         svg.mono(30, 318 + j * 13, line, size=10)
 
     # Bottom annotation
-    svg.text(w / 2, 510, "Form code dynamically generated by LLM → Cascading logic: automatically show return date when \"Round Trip\" is selected", size=FS_SMALL, fill='darker')
+    svg.text(w / 2, 510, "Kode formulir dibuat dinamis oleh LLM → Logika berjenjang: otomatis menampilkan tanggal kembali saat \"Pulang pergi\" dipilih", size=FS_SMALL, fill='darker')
 
     svg.save(os.path.join(OUT, 'fig5-8.svg'))
 
@@ -692,19 +692,19 @@ def fig5_9():
     """SQL Query Agent (artifact mode — data bypasses LLM)"""
     w, h = 880, 580
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "SQL Query Agent: Artifact Mode vs Traditional Mode", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Agen Kueri SQL: Mode Artifact vs Mode Tradisional", size=FS_TITLE, bold=True)
 
     # Top: Traditional mode (data through LLM)
     svg.rect(20, 55, w - 40, 200, fill='white', stroke='border', dash=True)
-    svg.text(60, 78, "Traditional mode: data passes through LLM (inefficient)", size=FS_BODY, bold=True, anchor='start')
-    _pill(svg, w - 110, 65, 80, 24, "✗ Inefficient", fill='dark', font_size=12, bold=True)
+    svg.text(60, 78, "Mode tradisional: data melewati LLM (tidak efisien)", size=FS_BODY, bold=True, anchor='start')
+    _pill(svg, w - 110, 65, 80, 24, "✗ Tidak Efisien", fill='dark', font_size=12, bold=True)
 
     trad_steps = [
-        ("User", 'medium', "\"Number of people per department?\""),
-        ("LLM", 'light', "Generate SQL"),
-        ("DB", 'medium', "Execute \\n query"),
-        ("LLM", 'light', "Read \\n 5000 lines"),
-        ("User", 'medium', "Text \\n description"),
+        ("User", 'medium', "\"Jumlah orang per departemen?\""),
+        ("LLM", 'light', "Hasilkan SQL"),
+        ("DB", 'medium', "Eksekusi \\n kueri"),
+        ("LLM", 'light', "Baca \\n 5000 baris"),
+        ("User", 'medium', "Deskripsi \\n teks"),
     ]
     tsx = 60
     for i, (name, fill, desc) in enumerate(trad_steps):
@@ -717,19 +717,19 @@ def fig5_9():
         tsx += 155
 
     svg.rect(60, 175, w - 120, 30, fill='code_bg', stroke='dark', rx=3)
-    svg.mono(70, 190, "Problem: LLM copying data is error-prone · consumes many tokens · high latency", size=12)
+    svg.mono(70, 190, "Masalah: LLM menyalin data rentan salah · memakan banyak token · latensi tinggi", size=12)
 
     # Separator
     svg.line(30, 265, w - 30, 265, color='dark', dash=True)
 
     # Bottom: Artifact mode (data bypasses LLM)
     svg.rect(20, 275, w - 40, 280, fill='white', stroke='border', dash=True)
-    svg.text(60, 298, "Artifact mode: data directly to frontend (efficient)", size=FS_BODY, bold=True, anchor='start')
-    _pill(svg, w - 110, 285, 80, 24, "✓ Efficient", fill='medium', font_size=12, bold=True)
+    svg.text(60, 298, "Mode Artifact: data langsung ke frontend (efisien)", size=FS_BODY, bold=True, anchor='start')
+    _pill(svg, w - 110, 285, 80, 24, "✓ Efisien", fill='medium', font_size=12, bold=True)
 
     # LLM generates code, not data
     svg.rect(40, 315, 250, 120, fill='light')
-    svg.text(165, 335, "LLM only generates code", size=FS_SMALL, bold=True)
+    svg.text(165, 335, "LLM hanya menghasilkan kode", size=FS_SMALL, bold=True)
     sql_code = [
         "build_artifact(",
         '  type="sql",',
@@ -746,7 +746,7 @@ def fig5_9():
 
     # Frontend executes directly
     svg.rect(340, 315, 250, 120, fill='medium')
-    svg.text(465, 335, "Frontend executes directly", size=FS_SMALL, bold=True)
+    svg.text(465, 335, "Frontend mengeksekusi langsung", size=FS_SMALL, bold=True)
     svg.rect(350, 348, 230, 75, fill='code_bg', stroke='dark', rx=3)
     table = [
         "┌────────┬──────┐",
@@ -763,8 +763,8 @@ def fig5_9():
 
     # Visualization artifact
     svg.rect(640, 315, 210, 120, fill='light')
-    svg.text(745, 335, "Visualization Artifact", size=FS_SMALL, bold=True)
-    svg.text(745, 355, "Second artifact:", size=FS_TINY, fill='text_light')
+    svg.text(745, 335, "Artifact Visualisasi", size=FS_SMALL, bold=True)
+    svg.text(745, 355, "Artifact kedua:", size=FS_TINY, fill='text_light')
     svg.rect(650, 365, 190, 60, fill='code_bg', stroke='dark', rx=3)
     svg.mono(658, 380, "build_artifact(", size=10)
     svg.mono(658, 394, '  type="chart",', size=10)
@@ -772,8 +772,8 @@ def fig5_9():
 
     # Data flow annotation
     svg.rect(180, 450, 520, 45, fill='dark')
-    svg.text(440, 465, "Data flow: DB → Frontend → Visualization (completely bypasses LLM)", size=FS_BODY, fill='white', bold=True)
-    svg.text(440, 483, "LLM is only responsible for generating code, not for data transfer", size=FS_TINY, fill='white')
+    svg.text(440, 465, "Aliran data: DB → Frontend → Visualisasi (sepenuhnya melewati LLM)", size=FS_BODY, fill='white', bold=True)
+    svg.text(440, 483, "LLM hanya bertanggung jawab menghasilkan kode, bukan untuk transfer data", size=FS_TINY, fill='white')
 
     # Data flow arrow (bypass)
     svg.arrow_curved(465, 435, 745, 435, curve=25, dash=True, color='dark')
@@ -787,20 +787,20 @@ def fig5_7():
     """Experiment 5.10: Production log intelligent diagnosis pipeline"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 5.10: Production log intelligent diagnosis", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 5.10: Diagnosis cerdas log produksi", size=FS_TITLE, bold=True)
 
     # Pipeline: left to right, then down
     # Row 1: ingestion → analysis
     svg.rect(20, 60, 250, 160, fill='white', stroke='border', dash=True)
-    svg.text(145, 82, "① Log collection", size=FS_BODY, bold=True)
+    svg.text(145, 82, "① Pengumpulan Log", size=FS_BODY, bold=True)
     log_lines = [
         "trajectory_001.json:",
         '  {"role":"user","content":',
-        '   "Cancel order #12345"}',
+        '   "Batalkan pesanan #12345"}',
         '  {"role":"assistant",',
         '   "tool_call":"cancel_order"}',
         '  {"role":"tool","result":',
-        '   "ERROR: no insurance"}',
+        '   "ERROR: tidak ada asuransi"}',
         '  → Agent did not inform user of the reason',
     ]
     svg.rect(30, 98, 230, len(log_lines) * 14 + 10, fill='code_bg', stroke='dark', rx=3)
@@ -810,17 +810,17 @@ def fig5_7():
     svg.arrow(270, 140, 310, 140)
 
     svg.rect(310, 60, 260, 160, fill='white', stroke='border', dash=True)
-    svg.text(440, 82, "② LLM analysis", size=FS_BODY, bold=True)
+    svg.text(440, 82, "② Analisis LLM", size=FS_BODY, bold=True)
     analysis = [
-        "Input: trace + architecture document + PRD",
+        "Input: trace + dokumen arsitektur + PRD",
         "",
-        "Analysis dimensions:",
-        "  - Whether the execution flow meets expectations",
-        "  - Whether tool calls are correct",
-        "  - Whether error handling is appropriate",
-        "  - Whether user experience is satisfactory",
+        "Dimensi analisis:",
+        "  - Apakah alur eksekusi memenuhi ekspektasi",
+        "  - Apakah pemanggilan alat sudah benar",
+        "  - Apakah penanganan kesalahan sudah tepat",
+        "  - Apakah pengalaman pengguna memuaskan",
         "",
-        "→ Locate the deviating step and module",
+        "→ Temukan langkah dan modul yang menyimpang",
     ]
     for j, line in enumerate(analysis):
         svg.mono(320, 100 + j * 14, line, size=10)
@@ -828,15 +828,15 @@ def fig5_7():
     svg.arrow(570, 140, 610, 140)
 
     svg.rect(610, 60, 250, 160, fill='white', stroke='border', dash=True)
-    svg.text(735, 82, "③ Structured report", size=FS_BODY, bold=True)
+    svg.text(735, 82, "③ Laporan Terstruktur", size=FS_BODY, bold=True)
     report = [
-        "Problem report:",
-        "  Priority: P1 (User Churn Risk)",
-        "  Module: cancellation_handler",
-        "  Description: After cancellation failure, no explanation of",
-        "    the reason and alternatives is provided to the user",
-        "  Suggestion: Add failure reason explanation",
-        "    and guidance to purchase insurance",
+        "Laporan masalah:",
+        "  Prioritas: P1 (Risiko Churn Pengguna)",
+        "  Modul: cancellation_handler",
+        "  Deskripsi: Setelah kegagalan pembatalan, tidak ada penjelasan tentang",
+        "    alasan dan alternatif yang diberikan kepada pengguna",
+        "  Saran: Tambahkan penjelasan alasan kegagalan",
+        "    dan panduan untuk membeli asuransi",
     ]
     svg.rect(620, 98, 230, len(report) * 14 + 10, fill='code_bg', stroke='dark', rx=3)
     for j, line in enumerate(report):
@@ -846,17 +846,17 @@ def fig5_7():
     svg.arrow(w / 2, 220, w / 2, 260)
 
     svg.rect(60, 260, 370, 160, fill='white', stroke='border', dash=True)
-    svg.text(245, 282, "④ Regression Test Case Generation", size=FS_BODY, bold=True)
+    svg.text(245, 282, "④ Pembuatan Kasus Uji Regresi", size=FS_BODY, bold=True)
     test_code = [
         "def test_cancel_no_insurance():",
-        '  """Trajectory #001, Round 3-5"""',
-        "  # Replay: User requests cancellation of economy class",
+        '  """Trajectory #001, Putaran 3-5"""',
+        "  # Replay: Pengguna meminta pembatalan kelas ekonomi",
         "  resp = agent.run(",
         '    "Cancel Order #12345")',
-        "  # Verify: Should explain the reason",
+        "  # Verifikasi: Harus menjelaskan alasannya",
         '  assert "insurance" in resp.text',
         '  assert "alternative" in resp.text',
-        "  # Verify: Should not directly return an error",
+        "  # Verifikasi: Tidak boleh langsung mengembalikan error",
         '  assert "ERROR" not in resp.text',
     ]
     svg.rect(70, 298, 350, len(test_code) * 14 + 10, fill='code_bg', stroke='dark', rx=3)
@@ -866,15 +866,15 @@ def fig5_7():
     svg.arrow(430, 340, 470, 340)
 
     svg.rect(470, 260, 380, 160, fill='white', stroke='border', dash=True)
-    svg.text(660, 282, "⑤ GitHub Issue Auto-creation", size=FS_BODY, bold=True)
+    svg.text(660, 282, "⑤ Pembuatan Otomatis Isu GitHub", size=FS_BODY, bold=True)
     issue = [
         "gh issue create \\",
-        '  --title "P1: Cancellation failure lacks',
-        '    user guidance" \\',
-        '  --body "**Problem**: Agent directly',
-        '    returns an error after cancel_order',
-        '    failure, without explaining the reason...',
-        '    **Trajectory**: #001 Round 3-5',
+        '  --title "P1: Kegagalan pembatalan kurang',
+        '    panduan pengguna" \\',
+        '  --body "**Masalah**: Agen langsung',
+        '    mengembalikan error setelah cancel_order',
+        '    gagal, tanpa menjelaskan alasannya...',
+        '    **Trajectory**: #001 Putaran 3-5',
         '    **Test**: test_cancel_..." \\',
         '  --assignee @backend-team',
     ]
@@ -884,10 +884,10 @@ def fig5_7():
 
     # Bottom: full pipeline summary
     svg.rect(100, 445, w - 200, 44, fill='dark')
-    svg.text(w / 2, 460, "End-to-End Automation: Log → Analysis → Report → Test → Issue", size=FS_BODY, fill='white', bold=True)
-    svg.text(w / 2, 480, "Integrate with GitHub via MCP · Test framework auto-replay verification", size=FS_TINY, fill='white')
+    svg.text(w / 2, 460, "Otomatisasi End-to-End: Log → Analisis → Laporan → Uji → Isu", size=FS_BODY, fill='white', bold=True)
+    svg.text(w / 2, 480, "Integrasi dengan GitHub via MCP · Verifikasi replay otomatis kerangka kerja uji", size=FS_TINY, fill='white')
 
-    svg.text(w / 2, 530, "Reduce manual diagnosis cost from hours to minutes", size=FS_SMALL, fill='darker', bold=True)
+    svg.text(w / 2, 530, "Mengurangi biaya diagnosis manual dari hitungan jam menjadi menit", size=FS_SMALL, fill='darker', bold=True)
 
     svg.save(os.path.join(OUT, 'fig5-7.svg'))
 
@@ -898,14 +898,14 @@ def fig5_10():
     """Agent Bootstrap Loop (Self-replication and Evolution)"""
     w, h = 880, 555
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Agent Bootstrap: From Code to Self-replication", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Bootstrap Agen: Dari Kode ke Replikasi Mandiri", size=FS_TITLE, bold=True)
 
     # Evolution timeline at top
     stages = [
-        ("Dust → Star", "Physical Laws"),
-        ("Star → Planet", "Gravitational aggregation"),
-        ("Planet → Life", "DNA self-replication"),
-        ("Life → Agent", "Code bootstrapping"),
+        ("Debu → Bintang", "Hukum Fisika"),
+        ("Bintang → Planet", "Agregasi gravitasi"),
+        ("Planet → Kehidupan", "Replikasi mandiri DNA"),
+        ("Kehidupan → Agen", "Bootstrapping kode"),
     ]
     sx = 60
     for i, (stage, mechanism) in enumerate(stages):
@@ -922,60 +922,60 @@ def fig5_10():
     svg.line(30, 120, w - 30, 120, color='dark', dash=True)
 
     svg.rect(30, 135, 400, 70, fill='light')
-    svg.text(230, 155, "DNA self-replication: random mutation + natural selection", size=FS_SMALL, bold=True)
-    svg.text(230, 177, "Does not understand itself · Cannot modify directionally · 3.7 billion years of blind trial and error", size=FS_TINY, fill='text_light')
+    svg.text(230, 155, "Replikasi mandiri DNA: mutasi acak + seleksi alam", size=FS_SMALL, bold=True)
+    svg.text(230, 177, "Tidak memahami dirinya sendiri · Tidak dapat memodifikasi secara terarah · 3,7 miliar tahun coba-coba buta", size=FS_TINY, fill='text_light')
 
     svg.rect(450, 135, 400, 70, fill='dark')
-    svg.text(650, 155, "Agent bootstrapping: understand code + directed design", size=FS_SMALL, bold=True, fill='white')
-    svg.text(650, 177, "Understands its own mechanisms · Creates purposefully · Inherits best practices", size=FS_TINY, fill='white')
+    svg.text(650, 155, "Bootstrapping agen: memahami kode + desain terarah", size=FS_SMALL, bold=True, fill='white')
+    svg.text(650, 177, "Memahami mekanismenya sendiri · Membuat dengan tujuan · Mewarisi praktik terbaik", size=FS_TINY, fill='white')
 
     # Bootstrap cycle (main diagram)
     svg.rect(20, 225, 390, 295, fill='white', stroke='border', dash=True)
-    svg.text(215, 248, "Original Agent (own code)", size=FS_BODY, bold=True)
+    svg.text(215, 248, "Agen Asli (kode sendiri)", size=FS_BODY, bold=True)
 
     svg.rect(30, 265, 175, 124, fill='light')
-    svg.text(118, 285, "System prompt", size=FS_SMALL, bold=True)
-    svg.text(40, 308, "You are an airline customer service agent", size=12, anchor='start')
-    svg.text(40, 326, "Cancellation rules: ...", size=12, anchor='start')
-    svg.text(40, 344, "Transfer rules: ...", size=12, anchor='start')
-    svg.text(40, 362, "Tool: cancel_order", size=12, anchor='start')
+    svg.text(118, 285, "Prompt sistem", size=FS_SMALL, bold=True)
+    svg.text(40, 308, "Anda adalah agen layanan pelanggan maskapai", size=12, anchor='start')
+    svg.text(40, 326, "Aturan pembatalan: ...", size=12, anchor='start')
+    svg.text(40, 344, "Aturan transfer: ...", size=12, anchor='start')
+    svg.text(40, 362, "Alat: cancel_order", size=12, anchor='start')
 
     svg.rect(215, 265, 185, 124, fill='light')
-    svg.text(308, 285, "Agent framework code", size=FS_SMALL, bold=True)
+    svg.text(308, 285, "Kode kerangka kerja agen", size=FS_SMALL, bold=True)
     svg.mono(225, 308, "loop:", size=12)
     svg.mono(225, 326, "  msg = llm(ctx)", size=12)
     svg.mono(225, 344, "  if tool_call:", size=12)
     svg.mono(225, 362, "    exec(tool)", size=12)
 
     svg.rect(30, 400, 370, 54, fill='code_bg', stroke='dark', rx=4)
-    svg.text(215, 419, "Tool definition + MCP integration + message format", size=FS_SMALL)
-    svg.text(215, 438, "Verified high-quality implementation", size=FS_TINY, fill='text_light')
+    svg.text(215, 419, "Definisi alat + integrasi MCP + format pesan", size=FS_SMALL)
+    svg.text(215, 438, "Implementasi berkualitas tinggi yang terverifikasi", size=FS_TINY, fill='text_light')
 
     # Arrow: self-replication — label placed above dashed box headers
-    svg.text(440, 215, "Copy + modify", size=FS_TINY, fill='text_light', bold=True)
+    svg.text(440, 215, "Salin + modifikasi", size=FS_TINY, fill='text_light', bold=True)
     svg.arrow(410, 375, 470, 375)
 
     # New Agent
     svg.rect(470, 225, 390, 295, fill='white', stroke='border', dash=True)
-    svg.text(665, 248, "New Agent (after directed modification)", size=FS_BODY, bold=True)
+    svg.text(665, 248, "Agen Baru (setelah modifikasi terarah)", size=FS_BODY, bold=True)
 
     svg.rect(480, 265, 180, 124, fill='medium')
-    svg.text(570, 285, "New system prompt", size=FS_SMALL, bold=True)
-    svg.text(490, 308, "You are an e-commerce customer service agent", size=12, anchor='start')
-    svg.text(490, 326, "Refund rules: ...", size=12, anchor='start')
-    svg.text(490, 344, "Logistics inquiry: ...", size=12, anchor='start')
-    svg.text(490, 362, "Tool: refund_order", size=12, anchor='start')
+    svg.text(570, 285, "Prompt sistem baru", size=FS_SMALL, bold=True)
+    svg.text(490, 308, "Anda adalah agen layanan pelanggan e-commerce", size=12, anchor='start')
+    svg.text(490, 326, "Aturan pengembalian dana: ...", size=12, anchor='start')
+    svg.text(490, 344, "Cek logistik: ...", size=12, anchor='start')
+    svg.text(490, 362, "Alat: refund_order", size=12, anchor='start')
 
     svg.rect(670, 265, 180, 124, fill='light')
-    svg.text(760, 285, "Inherited framework code", size=FS_SMALL, bold=True)
+    svg.text(760, 285, "Kode kerangka kerja yang diwariskan", size=FS_SMALL, bold=True)
     svg.mono(680, 308, "loop:", size=12)
     svg.mono(680, 326, "  msg = llm(ctx)", size=12)
     svg.mono(680, 344, "  if tool_call:", size=12)
     svg.mono(680, 362, "    exec(tool)", size=12)
 
     svg.rect(480, 400, 370, 54, fill='code_bg', stroke='dark', rx=4)
-    svg.text(665, 419, "New tools + new business logic", size=FS_SMALL)
-    svg.text(665, 438, "Architecture framework fully inherited → quality guaranteed", size=FS_TINY, fill='text_light')
+    svg.text(665, 419, "Alat baru + logika bisnis baru", size=FS_SMALL)
+    svg.text(665, 438, "Kerangka arsitektur sepenuhnya diwariskan → kualitas terjamin", size=FS_TINY, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig5-10.svg'))
 
@@ -986,12 +986,12 @@ def fig5_11():
     """Experiment 5.14: Meta-Agent pipeline for creating new Agents"""
     w, h = 880, 610
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 5.14: An Agent that can create Agents", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 5.14: Agen yang dapat membuat Agen", size=FS_TITLE, bold=True)
 
     # Input: user request
     svg.rect(30, 60, 280, 55, fill='medium')
-    svg.text(170, 80, "User requirements", size=FS_SMALL, bold=True)
-    svg.text(170, 98, "\"Create an e-commerce refund customer service Agent\"", size=FS_TINY, fill='text_light')
+    svg.text(170, 80, "Kebutuhan pengguna", size=FS_SMALL, bold=True)
+    svg.text(170, 98, "\"Buat Agen layanan pelanggan pengembalian dana e-commerce\"", size=FS_TINY, fill='text_light')
 
     svg.arrow(170, 115, 170, 145)
 
@@ -1001,60 +1001,60 @@ def fig5_11():
 
     # Step 1: Read reference
     svg.rect(35, 185, 190, 170, fill='light')
-    svg.text(130, 205, "① Read reference code", size=FS_SMALL, bold=True)
+    svg.text(130, 205, "① Baca kode referensi", size=FS_SMALL, bold=True)
     svg.mono(45, 228, "read_file:", size=12)
     svg.mono(45, 248, "  agent.py", size=12)
     svg.mono(45, 268, "  tools/*.py", size=12)
     svg.mono(45, 288, "  system_prompt.md", size=12)
     svg.mono(45, 308, "  config.yaml", size=12)
-    svg.text(45, 332, "→ Understand architecture patterns", size=12, anchor='start', fill='text_light')
+    svg.text(45, 332, "→ Memahami pola arsitektur", size=12, anchor='start', fill='text_light')
 
     svg.arrow(225, 270, 248, 270)
 
     # Step 2: Copy scaffold
     svg.rect(248, 185, 190, 170, fill='light')
-    svg.text(343, 205, "② Copy scaffold", size=FS_SMALL, bold=True)
+    svg.text(343, 205, "② Salin perancah (scaffold)", size=FS_SMALL, bold=True)
     svg.mono(258, 228, "cp -r reference/", size=12)
     svg.mono(258, 248, "  → new_agent/", size=12)
-    svg.text(258, 278, "Keep:", size=12, anchor='start', fill='text_light')
-    svg.text(258, 298, "  Agent loop framework", size=12, anchor='start', fill='text_light')
-    svg.text(258, 318, "  Message format / KV optimization", size=12, anchor='start', fill='text_light')
+    svg.text(258, 278, "Pertahankan:", size=12, anchor='start', fill='text_light')
+    svg.text(258, 298, "  Kerangka kerja loop Agen", size=12, anchor='start', fill='text_light')
+    svg.text(258, 318, "  Format pesan / optimasi KV", size=12, anchor='start', fill='text_light')
 
     svg.arrow(438, 270, 461, 270)
 
     # Step 3: Targeted modification
     svg.rect(461, 185, 190, 170, fill='medium')
-    svg.text(556, 205, "③ Targeted modifications", size=FS_SMALL, bold=True)
+    svg.text(556, 205, "③ Modifikasi terarah", size=FS_SMALL, bold=True)
     svg.mono(471, 228, "edit_file:", size=12)
     svg.mono(471, 248, "  system_prompt.md", size=12)
-    svg.text(471, 268, "  → E-commerce refund rules", size=12, anchor='start', fill='text_light')
+    svg.text(471, 268, "  → Aturan pengembalian dana e-commerce", size=12, anchor='start', fill='text_light')
     svg.mono(471, 290, "  tools/refund.py", size=12)
-    svg.text(471, 310, "  → Add refund tool", size=12, anchor='start', fill='text_light')
+    svg.text(471, 310, "  → Tambahkan alat pengembalian dana", size=12, anchor='start', fill='text_light')
     svg.mono(471, 332, "  config.yaml", size=12)
 
     svg.arrow(651, 270, 674, 270)
 
     # Step 4: Validate
     svg.rect(674, 185, 175, 170, fill='light')
-    svg.text(761, 205, "④ Verification testing", size=FS_SMALL, bold=True)
+    svg.text(761, 205, "④ Pengujian verifikasi", size=FS_SMALL, bold=True)
     svg.mono(684, 228, "bash:", size=12)
     svg.mono(684, 248, "  python agent.py", size=12)
-    svg.text(684, 270, "  → Start new Agent", size=12, anchor='start', fill='text_light')
-    svg.text(684, 290, "  → Send test messages", size=12, anchor='start', fill='text_light')
-    svg.text(684, 310, "  → Check tool calls", size=12, anchor='start', fill='text_light')
-    svg.text(684, 330, "  → Verify conversation flow", size=12, anchor='start', fill='text_light')
+    svg.text(684, 270, "  → Mulai Agen baru", size=12, anchor='start', fill='text_light')
+    svg.text(684, 290, "  → Kirim pesan uji", size=12, anchor='start', fill='text_light')
+    svg.text(684, 310, "  → Periksa pemanggilan alat", size=12, anchor='start', fill='text_light')
+    svg.text(684, 330, "  → Verifikasi alur percakapan", size=12, anchor='start', fill='text_light')
 
     # Output: new agent
     svg.arrow(w / 2, 375, w / 2, 410)
 
     svg.rect(115, 410, 700, 90, fill='white', stroke='border', dash=True)
-    svg.text(465, 432, "Generated new Agent", size=FS_BODY, bold=True)
+    svg.text(465, 432, "Agen baru yang dihasilkan", size=FS_BODY, bold=True)
 
     outputs = [
-        ("system_prompt.md", "E-commerce refund rules"),
-        ("tools/refund.py", "Refund / query tools"),
-        ("agent.py", "Inherited framework code"),
-        ("config.yaml", "Model / parameter configuration"),
+        ("system_prompt.md", "Aturan pengembalian dana e-commerce"),
+        ("tools/refund.py", "Alat pengembalian dana / kueri"),
+        ("agent.py", "Kode kerangka kerja yang diwariskan"),
+        ("config.yaml", "Konfigurasi model / parameter"),
     ]
     ox = 135
     for fname, desc in outputs:
@@ -1066,12 +1066,12 @@ def fig5_11():
     # Bottom: comparison
     svg.line(30, 515, w - 30, 515, color='dark', dash=True)
     svg.rect(60, 530, 350, 54, fill='light')
-    svg.text(235, 549, "Generated from scratch: lacks best practices", size=FS_SMALL, bold=True)
-    svg.text(235, 571, "Ad-hoc context management · Non-standard tool design · Outdated API", size=FS_TINY, fill='text_light')
+    svg.text(235, 549, "Dibuat dari awal: kurang praktik terbaik", size=FS_SMALL, bold=True)
+    svg.text(235, 571, "Manajemen konteks ad-hoc · Desain alat non-standar · API usang", size=FS_TINY, fill='text_light')
 
     svg.rect(470, 530, 350, 54, fill='dark')
-    svg.text(645, 549, "Modified from example: inherits best practices", size=FS_SMALL, bold=True, fill='white')
-    svg.text(645, 571, "Standard message format · Standard tool design · Modern API", size=FS_TINY, fill='white')
+    svg.text(645, 549, "Dimodifikasi dari contoh: mewarisi praktik terbaik", size=FS_SMALL, bold=True, fill='white')
+    svg.text(645, 571, "Format pesan standar · Desain alat standar · API modern", size=FS_TINY, fill='white')
 
     svg.save(os.path.join(OUT, 'fig5-11.svg'))
 
@@ -1086,7 +1086,10 @@ def main():
     ]
     for fn in figs:
         fn()
-        print(f"  ✓ {fn.__name__}: {fn.__doc__}")
+        try:
+            print(f"  ✓ {fn.__name__}: {fn.__doc__}")
+        except UnicodeEncodeError:
+            print(f"  [v] {fn.__name__}: {fn.__doc__}")
     print(f"\nGenerated {len(figs)} figures in {OUT}/")
 
 

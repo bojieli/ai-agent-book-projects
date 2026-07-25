@@ -47,18 +47,18 @@ def fig3_1():
     w, h = 860, 580
     svg = SVG(w, h)
 
-    svg.text(w / 2, 32, "Chapter 3: Knowledge Base & RAG — Knowledge Map", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 32, "Bab 3: Basis Pengetahuan & RAG — Peta Pengetahuan", size=FS_TITLE, bold=True)
 
     # --- Row 1: RAG foundations ---
     r1_y = 70
     svg.rect(30, r1_y, 800, 130, fill='white', stroke='border', dash=True)
-    svg.text(80, r1_y + 20, "RAG Basics", size=FS_BODY, bold=True, anchor='start')
+    svg.text(80, r1_y + 20, "Dasar-dasar RAG", size=FS_BODY, bold=True, anchor='start')
 
     boxes_r1 = [
-        ("Dense Embedding", 50, "Word2Vec → BGE-M3"),
-        ("Sparse Embedding", 230, "TF-IDF / BM25"),
-        ("Hybrid Retrieval + Reranking", 410, "Two-tower Retrieval + Cross-Encoder"),
-        ("Multimodal Extraction", 650, "Native / Text / Tool"),
+        ("Embedding Padat", 50, "Word2Vec → BGE-M3"),
+        ("Embedding Jarang", 230, "TF-IDF / BM25"),
+        ("Pengambilan Hibrida + Pemeringkatan Ulang", 410, "Pengambilan Dua Menara + Cross-Encoder"),
+        ("Ekstraksi Multimodal", 650, "Asli / Teks / Alat"),
     ]
     for label, bx, sub in boxes_r1:
         svg.box(bx, r1_y + 38, 160, 50, label, fill='light', bold=True, font_size=FS_SMALL)
@@ -70,13 +70,13 @@ def fig3_1():
     # --- Row 2: Advanced knowledge structuring ---
     r2_y = 230
     svg.rect(30, r2_y, 800, 100, fill='white', stroke='border', dash=True)
-    svg.text(80, r2_y + 20, "Learning from Existing Knowledge", size=FS_BODY, bold=True, anchor='start')
+    svg.text(80, r2_y + 20, "Belajar dari Pengetahuan yang Ada", size=FS_BODY, bold=True, anchor='start')
 
     boxes_r2 = [
-        ("RAPTOR\n Tree Hierarchical Index", 50),
-        ("GraphRAG\n Entity Relation Graph", 230),
-        ("Agentic RAG\n Retrieval as Tool", 410),
-        ("Context-Aware Retrieval\n Prefix Summary Enhancement", 590),
+        ("RAPTOR\n Indeks Hierarkis Pohon", 50),
+        ("GraphRAG\n Grafik Relasi Entitas", 230),
+        ("RAG Agentic\n Pengambilan sebagai Alat", 410),
+        ("Pengambilan Sadar Konteks\n Peningkatan Ringkasan Prefiks", 590),
     ]
     for label, bx in boxes_r2:
         svg.box(bx, r2_y + 35, 160, 55, label, fill='medium', font_size=FS_SMALL)
@@ -87,19 +87,19 @@ def fig3_1():
     # --- Row 3: Learning from experience ---
     r3_y = 360
     svg.rect(30, r3_y, 800, 100, fill='white', stroke='border', dash=True)
-    svg.text(80, r3_y + 20, "Learning from Autonomous Exploration", size=FS_BODY, bold=True, anchor='start')
+    svg.text(80, r3_y + 20, "Belajar dari Eksplorasi Otonom", size=FS_BODY, bold=True, anchor='start')
 
     boxes_r3 = [
-        ("Post-training\n RL → Muscle Memory", 100),
-        ("In-Context Learning\n Inference-time Soft Retrieval", 330),
-        ("Externalized Learning\n Knowledge Base + Tool Generation", 560),
+        ("Pasca-pelatihan\n RL → Memori Otot", 100),
+        ("Pembelajaran Dalam Konteks\n Pengambilan Halus Saat Inferensi", 330),
+        ("Pembelajaran Eksternal\n Basis Pengetahuan + Pembuatan Alat", 560),
     ]
     for label, bx in boxes_r3:
         svg.box(bx, r3_y + 35, 200, 55, label, fill='light', font_size=FS_SMALL)
 
     # --- Bottom: core insight ---
     svg.rect(180, 490, 500, 44, fill='dark')
-    svg.text(w / 2, 512, "Bitter Lesson: Search + Learning = General Method", size=FS_BODY, fill='white', bold=True)
+    svg.text(w / 2, 512, "Pelajaran Pahit: Pencarian + Pembelajaran = Metode Umum", size=FS_BODY, fill='white', bold=True)
     svg.arrow(w / 2, r3_y + 100, w / 2, 488)
 
     svg.save(os.path.join(OUT, 'fig3-1.svg'))
@@ -111,55 +111,55 @@ def fig3_2():
     """RAG End-to-End Pipeline (Concrete Example)"""
     w, h = 880, 440
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "RAG End-to-End Pipeline", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Alur Kerja RAG End-to-End", size=FS_TITLE, bold=True)
 
     # Step 1: User query
-    svg.box(20, 65, 180, 55, "① User Query", fill='medium', bold=True, font_size=FS_BODY)
-    q_lines = ['"How many years for intentional homicide?"']
+    svg.box(20, 65, 180, 55, "① Kueri Pengguna", fill='medium', bold=True, font_size=FS_BODY)
+    q_lines = ['"Berapa tahun hukuman untuk pembunuhan disengaja?"']
     svg.text(110, 145, q_lines[0], size=FS_SMALL, fill='text_light')
 
     svg.arrow(200, 92, 238, 92)
 
     # Step 2: Retrieval
-    svg.box(240, 65, 180, 55, "② Retrieval", fill='light', bold=True, font_size=FS_BODY)
-    svg.text(330, 140, "Dense Retrieval + BM25", size=FS_SMALL, fill='text_light')
-    svg.text(330, 160, "→ Top-K Text Chunks", size=FS_SMALL, fill='text_light')
+    svg.box(240, 65, 180, 55, "② Pengambilan", fill='light', bold=True, font_size=FS_BODY)
+    svg.text(330, 140, "Pengambilan Padat + BM25", size=FS_SMALL, fill='text_light')
+    svg.text(330, 160, "→ Kepingan Teks Top-K", size=FS_SMALL, fill='text_light')
 
     svg.arrow(420, 92, 458, 92)
 
     # Step 3: Augmentation
-    svg.box(460, 65, 180, 55, "③ Augment", fill='light', bold=True, font_size=FS_BODY)
-    svg.text(550, 140, "Query + Retrieved Results", size=FS_SMALL, fill='text_light')
-    svg.text(550, 160, "→ Construct Full Prompt", size=FS_SMALL, fill='text_light')
+    svg.box(460, 65, 180, 55, "③ Augmentasi", fill='light', bold=True, font_size=FS_BODY)
+    svg.text(550, 140, "Kueri + Hasil Pengambilan", size=FS_SMALL, fill='text_light')
+    svg.text(550, 160, "→ Bangun Prompt Penuh", size=FS_SMALL, fill='text_light')
 
     svg.arrow(640, 92, 678, 92)
 
     # Step 4: Generation
-    svg.box(680, 65, 180, 55, "④ Generate", fill='medium', bold=True, font_size=FS_BODY)
-    svg.text(770, 140, "LLM synthesizes context", size=FS_SMALL, fill='text_light')
-    svg.text(770, 160, "→ Generate response", size=FS_SMALL, fill='text_light')
+    svg.box(680, 65, 180, 55, "④ Pembangkitan", fill='medium', bold=True, font_size=FS_BODY)
+    svg.text(770, 140, "LLM mensintesis konteks", size=FS_SMALL, fill='text_light')
+    svg.text(770, 160, "→ Bangkitkan respons", size=FS_SMALL, fill='text_light')
 
     # Concrete data flow example
     svg.line(20, 195, 860, 195, color='dark', dash=True)
-    svg.text(w / 2, 215, "Example data flow", size=FS_BODY, bold=True)
+    svg.text(w / 2, 215, "Contoh aliran data", size=FS_BODY, bold=True)
 
     # Retrieved chunks
     svg.rect(20, 235, 400, 90, fill='code_bg', stroke='dark', rx=4)
-    svg.text(220, 253, "Retrieved text chunks", size=FS_SMALL, bold=True)
-    svg.mono(30, 278, "Article 232 of the Criminal Law: Whoever intentionally kills another shall be sentenced to death,", size=FS_TINY)
-    svg.mono(30, 298, "life imprisonment or fixed-term imprisonment of not less than ten years...", size=FS_TINY)
+    svg.text(220, 253, "Kepingan teks yang diambil", size=FS_SMALL, bold=True)
+    svg.mono(30, 278, "Pasal 232 KUHP: Barang siapa dengan sengaja menghilangkan nyawa orang lain, diancam pidana mati,", size=FS_TINY)
+    svg.mono(30, 298, "pidana penjara seumur hidup atau pidana penjara paling singkat sepuluh tahun...", size=FS_TINY)
 
     # Augmented prompt
     svg.rect(440, 235, 420, 90, fill='code_bg', stroke='dark', rx=4)
-    svg.text(650, 253, "Augmented Prompt", size=FS_SMALL, bold=True)
-    svg.mono(450, 278, "Answer the question based on the following legal provisions:", size=FS_TINY)
-    svg.mono(450, 298, "[Article 232 of the Criminal Law...] Q: What is the sentence for intentional homicide?", size=FS_TINY)
+    svg.text(650, 253, "Prompt Teriaugmentasi", size=FS_SMALL, bold=True)
+    svg.mono(450, 278, "Jawab pertanyaan berdasarkan ketentuan hukum berikut:", size=FS_TINY)
+    svg.mono(450, 298, "[Pasal 232 KUHP...] T: Apa hukuman untuk pembunuhan disengaja?", size=FS_TINY)
 
     # Generated answer
     svg.rect(20, 345, 840, 80, fill='light', stroke='border')
-    svg.text(w / 2, 363, "Generated response", size=FS_SMALL, bold=True)
-    svg.mono(30, 390, "According to Article 232 of the Criminal Law, the crime of intentional homicide is punishable by death, life imprisonment, or fixed-term imprisonment of not less than ten years;", size=FS_TINY)
-    svg.mono(30, 412, "if the circumstances are minor, the sentence is fixed-term imprisonment of not less than three years but not more than ten years.", size=FS_TINY)
+    svg.text(w / 2, 363, "Respons yang dibangkitkan", size=FS_SMALL, bold=True)
+    svg.mono(30, 390, "Menurut Pasal 232 KUHP, tindak pidana pembunuhan disengaja dapat dihukum mati, penjara seumur hidup, atau penjara paling singkat sepuluh tahun;", size=FS_TINY)
+    svg.mono(30, 412, "jika keadaannya ringan, hukumannya adalah penjara paling singkat tiga tahun dan paling lama sepuluh tahun.", size=FS_TINY)
 
     svg.save(os.path.join(OUT, 'fig3-2.svg'))
 
@@ -167,17 +167,17 @@ def fig3_2():
 # ──────────────────────── fig3-3 ────────────────────────
 
 def fig3_3():
-    """Evolution of dense embedding techniques"""
+    """Evolusi teknik embedding padat"""
     w, h = 860, 340
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Evolution of dense embedding techniques", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Evolusi teknik embedding padat", size=FS_TITLE, bold=True)
 
     items = [
-        ("Word2Vec", "2013", "300D\nStatic word vectors", "Co-occurrence\nPredictive training"),
-        ("GloVe", "2014", "300D\nGlobal statistics", "Matrix factorization\n+ Co-occurrence"),
-        ("BERT", "2018", "768D\nContext-aware", "Transformer\nMLM pre-training"),
-        ("Sentence-BERT", "2019", "768D\nSentence-level embeddings", "Siamese network\nContrastive learning"),
-        ("BGE-M3", "2024", "1024D\nMultilingual long texts", "Multi-stage\nHybrid training"),
+        ("Word2Vec", "2013", "300D\nVektor kata statis", "Kehadiran bersama\nPelatihan prediktif"),
+        ("GloVe", "2014", "300D\nStatistik global", "Faktorisasi matriks\n+ Kehadiran bersama"),
+        ("BERT", "2018", "768D\nSadar konteks", "Transformer\nPra-pelatihan MLM"),
+        ("Sentence-BERT", "2019", "768D\nEmbedding tingkat kalimat", "Jaringan Siamese\nPembelajaran kontrastif"),
+        ("BGE-M3", "2024", "1024D\nTeks panjang multibahasa", "Multi-tahap\nPelatihan hibrida"),
     ]
     n = len(items)
     pad_l, pad_r = 80, 80
@@ -207,9 +207,9 @@ def fig3_3():
 
     # Bottom labels
     svg.text(pad_l + gap * 0.5, h - 18,
-             "Static word vectors (one vector per word)", size=FS_SMALL, fill='text_light')
+             "Vektor kata statis (satu vektor per kata)", size=FS_SMALL, fill='text_light')
     svg.text(pad_l + gap * 3.5, h - 18,
-             "Context-aware embeddings (multiple vectors per word)", size=FS_SMALL, fill='text_light')
+             "Embedding sadar konteks (banyak vektor per kata)", size=FS_SMALL, fill='text_light')
 
     svg.line(pad_l + gap * 1.5, 75, pad_l + gap * 1.5, h - 35, color='dark', dash=True)
 
@@ -219,15 +219,15 @@ def fig3_3():
 # ──────────────────────── fig3-4 ────────────────────────
 
 def fig3_4():
-    """HNSW index structure"""
+    """Struktur indeks HNSW"""
     w, h = 750, 440
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "HNSW index structure", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Struktur indeks HNSW", size=FS_TITLE, bold=True)
 
     layers = [
-        ("Layer 2 (sparse · long-range connections)", 70, 3),
-        ("Layer 1 (medium density)", 185, 6),
-        ("Layer 0 (dense · all nodes)", 300, 10),
+        ("Lapisan 2 (jarang · koneksi jarak jauh)", 70, 3),
+        ("Lapisan 1 (kepadatan menengah)", 185, 6),
+        ("Lapisan 0 (padat · semua simpul)", 300, 10),
     ]
     for label, base_y, count in layers:
         svg.rect(30, base_y - 30, w - 60, 90, fill='white', stroke='dark', dash=True)
@@ -248,15 +248,15 @@ def fig3_4():
 
     # Search path arrows
     svg.arrow(w / 2, 130, w / 2 - 50, 165, color='border')
-    svg.text(w / 2 + 80, 148, "Search starts from the top level", size=FS_SMALL, fill='text_light')
+    svg.text(w / 2 + 80, 148, "Pencarian dimulai dari tingkat atas", size=FS_SMALL, fill='text_light')
     svg.arrow(w / 2 - 50, 245, w / 2 - 80, 280, color='border')
-    svg.text(w / 2 + 60, 263, "Refine layer by layer downward", size=FS_SMALL, fill='text_light')
+    svg.text(w / 2 + 60, 263, "Perhalus lapisan demi lapisan ke bawah", size=FS_SMALL, fill='text_light')
 
     # Key properties
     svg.rect(50, h - 45, 300, 32, fill='light')
-    svg.text(200, h - 29, "Supports incremental updates · High recall", size=FS_SMALL, bold=True)
+    svg.text(200, h - 29, "Mendukung pembaruan inkremental · Recall tinggi", size=FS_SMALL, bold=True)
     svg.rect(400, h - 45, 300, 32, fill='code_bg', stroke='dark', rx=4)
-    svg.text(550, h - 29, "O(log N) query complexity", size=FS_SMALL)
+    svg.text(550, h - 29, "Kompleksitas kueri O(log N)", size=FS_SMALL)
 
     svg.save(os.path.join(OUT, 'fig3-4.svg'))
 
@@ -264,36 +264,36 @@ def fig3_4():
 # ──────────────────────── fig3-5 ────────────────────────
 
 def fig3_5():
-    """BM25 scoring mechanism"""
+    """Mekanisme penilaian BM25"""
     w, h = 800, 380
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "BM25 scoring mechanism", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Mekanisme penilaian BM25", size=FS_TITLE, bold=True)
 
     # Formula
     svg.rect(40, 50, w - 80, 50, fill='code_bg', stroke='dark', rx=4)
     svg.mono(60, 75,
-             "Score(Q,D) = Σ IDF(qi) × TF(qi,D)×(k1+1) / (TF + k1×(1-b+b×|D|/avgdl))",
+             "Skor(Q,D) = Σ IDF(qi) × TF(qi,D)×(k1+1) / (TF + k1×(1-b+b×|D|/avgdl))",
              size=FS_SMALL)
 
     # Three components
     boxes = [
-        ("Term frequency saturation (TF)", 40, 'light', [
-            "k₁ controls saturation speed",
-            "TF ↑ but contribution diminishes",
-            "Example: 5→10 occurrences",
-            "Score increases only ~20%",
+        ("Saturasi frekuensi istilah (TF)", 40, 'light', [
+            "k₁ mengontrol kecepatan saturasi",
+            "TF ↑ tetapi kontribusi menurun",
+            "Contoh: kemunculan 5→10",
+            "Skor hanya meningkat ~20%",
         ]),
-        ("Inverse document frequency (IDF)", 290, 'light', [
-            "Measures word rarity",
-            "\"的\" → IDF ≈ 0",
-            "\"量刑\" → IDF ≈ 5.2",
-            "Rare word weight >> common word",
+        ("Frekuensi dokumen invers (IDF)", 290, 'light', [
+            "Mengukur kelangkaan kata",
+            "\"di\" → IDF ≈ 0",
+            "\"hukuman\" → IDF ≈ 5.2",
+            "Bobot kata langka >> kata umum",
         ]),
-        ("Length normalization (b)", 540, 'light', [
-            "b ∈ [0,1] normalization strength",
-            "b=0: ignore length",
-            "b=1: full normalization",
-            "Avoid bias towards long documents",
+        ("Normalisasi panjang (b)", 540, 'light', [
+            "Kekuatan normalisasi b ∈ [0,1]",
+            "b=0: abaikan panjang",
+            "b=1: normalisasi penuh",
+            "Hindari bias terhadap dokumen panjang",
         ]),
     ]
     for title, bx, fill, details in boxes:
@@ -307,7 +307,7 @@ def fig3_5():
     for bx in [150, 400, 650]:
         svg.line(bx, 290, bx, 315, color='dark')
     svg.rect(40, 315, w - 80, 48, fill='medium')
-    svg.text(w / 2, 339, "Final score = Σ (TF saturation × IDF weighting × length normalization)", size=FS_BODY, bold=True)
+    svg.text(w / 2, 339, "Skor akhir = Σ (Saturasi TF × pembobotan IDF × normalisasi panjang)", size=FS_BODY, bold=True)
 
     svg.save(os.path.join(OUT, 'fig3-5.svg'))
 
@@ -318,22 +318,22 @@ def fig3_6():
     """Hybrid retrieval and re-ranking pipeline (with score examples)"""
     w, h = 880, 480
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Hybrid retrieval and re-ranking pipeline", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Alur kerja pengambilan hibrida dan pemeringkatan ulang", size=FS_TITLE, bold=True)
 
     # Query
     svg.rect(30, 55, 160, 50, fill='medium')
-    svg.text(110, 73, "User query", size=FS_BODY, bold=True)
-    svg.mono(110, 93, '"kitty behavior"', size=FS_TINY, anchor='middle')
+    svg.text(110, 73, "Kueri pengguna", size=FS_BODY, bold=True)
+    svg.mono(110, 93, '"perilaku kitty"', size=FS_TINY, anchor='middle')
 
     # Dense retrieval
     svg.arrow(190, 68, 238, 68)
-    svg.box(240, 50, 180, 50, "Dense retrieval", fill='light', bold=True, font_size=FS_BODY)
-    svg.text(330, 118, "Semantic matching: kitty ≈ cat", size=FS_SMALL, fill='text_light')
+    svg.box(240, 50, 180, 50, "Pengambilan padat", fill='light', bold=True, font_size=FS_BODY)
+    svg.text(330, 118, "Pencocokan semantik: kitty ≈ cat", size=FS_SMALL, fill='text_light')
 
     dense_results = [
-        ("doc3: \"feline habits and cat play...\"", "cos=0.87"),
-        ("doc7: \"cat grooming patterns...\"", "cos=0.82"),
-        ("doc1: \"pet care basics...\"", "cos=0.71"),
+        ("dok3: \"kebiasaan felines dan permainan kucing...\"", "cos=0.87"),
+        ("dok7: \"pola dandan kucing...\"", "cos=0.82"),
+        ("dok1: \"dasar perawatan hewan peliharaan...\"", "cos=0.71"),
     ]
     for i, (doc, score) in enumerate(dense_results):
         y = 140 + i * 32
@@ -342,13 +342,13 @@ def fig3_6():
 
     # Sparse retrieval
     svg.arrow(190, 90, 238, 270)
-    svg.box(240, 250, 180, 50, "Sparse retrieval (BM25)", fill='light', bold=True, font_size=FS_BODY)
-    svg.text(330, 318, "Exact match: \"kitty\" keyword", size=FS_SMALL, fill='text_light')
+    svg.box(240, 250, 180, 50, "Pengambilan jarang (BM25)", fill='light', bold=True, font_size=FS_BODY)
+    svg.text(330, 318, "Pencocokan persis: kata kunci \"kitty\"", size=FS_SMALL, fill='text_light')
 
     sparse_results = [
-        ("doc5: \"kitty litter training...\"", "BM25=8.4"),
-        ("doc9: \"kitty adoption guide...\"", "BM25=6.1"),
-        ("doc2: \"kitten health tips...\"", "BM25=3.2"),
+        ("dok5: \"pelatihan kotak kotoran kitty...\"", "BM25=8.4"),
+        ("dok9: \"panduan adopsi kitty...\"", "BM25=6.1"),
+        ("dok2: \"tips kesehatan anak kucing...\"", "BM25=3.2"),
     ]
     for i, (doc, score) in enumerate(sparse_results):
         y = 340 + i * 32
@@ -360,8 +360,8 @@ def fig3_6():
     svg.arrow(770, 370, 808, 330)
 
     svg.rect(790, 215, 70, 120, fill='medium')
-    svg.text(825, 250, "Merge", size=FS_BODY, bold=True)
-    svg.text(825, 275, "Deduplicate", size=FS_BODY, bold=True)
+    svg.text(825, 250, "Gabung", size=FS_BODY, bold=True)
+    svg.text(825, 275, "Deduplikasi", size=FS_BODY, bold=True)
     svg.text(825, 300, "6→5", size=FS_SMALL, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-6.svg'))
@@ -373,26 +373,26 @@ def fig3_7():
     """RAPTOR tree structure"""
     w, h = 800, 440
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "RAPTOR tree hierarchical index", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Indeks hierarkis pohon RAPTOR", size=FS_TITLE, bold=True)
 
     # Root
-    svg.box(300, 55, 200, 50, "Global summary", fill='dark', bold=True, font_size=FS_BODY)
-    svg.text(300 + 200 + 15, 80, "← Root node", size=FS_SMALL, fill='text_light', anchor='start')
+    svg.box(300, 55, 200, 50, "Ringkasan global", fill='dark', bold=True, font_size=FS_BODY)
+    svg.text(300 + 200 + 15, 80, "← Simpul akar", size=FS_SMALL, fill='text_light', anchor='start')
 
     # Mid-level
-    mid_nodes = [("Cluster summary A", 80), ("Cluster summary B", 320), ("Cluster summary C", 560)]
+    mid_nodes = [("Ringkasan klaster A", 80), ("Ringkasan klaster B", 320), ("Ringkasan klaster C", 560)]
     for label, x in mid_nodes:
         svg.box(x, 150, 160, 48, label, fill='medium', font_size=FS_BODY)
     svg.line(400, 105, 160, 150, color='border')
     svg.line(400, 105, 400, 150, color='border')
     svg.line(400, 105, 640, 150, color='border')
-    svg.text(35, 230, "Middle layer ↑", size=FS_SMALL, fill='text_light', anchor='start')
+    svg.text(35, 230, "Lapisan tengah ↑", size=FS_SMALL, fill='text_light', anchor='start')
 
     # Leaf nodes — 7 boxes evenly distributed, narrower to avoid overlap
     chunks = [
-        [(40, "Text chunk 1"), (140, "Text chunk 2"), (240, "Text chunk 3")],   # Cluster A → cluster center ~160
-        [(360, "Text chunk 4"), (460, "Text chunk 5")],                    # Cluster B → cluster center ~410
-        [(560, "Text chunk 6"), (660, "Text chunk 7")],                    # Cluster C → cluster center ~640
+        [(40, "Kepingan teks 1"), (140, "Kepingan teks 2"), (240, "Kepingan teks 3")],   # Cluster A → cluster center ~160
+        [(360, "Kepingan teks 4"), (460, "Kepingan teks 5")],                    # Cluster B → cluster center ~410
+        [(560, "Kepingan teks 6"), (660, "Kepingan teks 7")],                    # Cluster C → cluster center ~640
     ]
     leaf_w = 88
     mid_cxs = [160, 400, 640]
@@ -400,16 +400,16 @@ def fig3_7():
         for cx, label in group:
             svg.box(cx, 250, leaf_w, 40, label, fill='light', font_size=FS_SMALL)
             svg.line(cx + leaf_w / 2, 250, mid_cxs[gi], 198, color='dark')
-    svg.text(35, 295, "Leaf layer ↑", size=FS_SMALL, fill='text_light', anchor='start')
+    svg.text(35, 295, "Lapisan daun ↑", size=FS_SMALL, fill='text_light', anchor='start')
 
     # Original document
     svg.rect(40, 320, 720, 55, fill='white', stroke='dark', dash=True)
-    svg.text(400, 340, "Original document", size=FS_BODY, fill='text_light')
+    svg.text(400, 340, "Dokumen asli", size=FS_BODY, fill='text_light')
     for bx in range(60, 720, 110):
         svg.rect(bx, 350, 90, 16, fill='light')
 
     # Bottom label
-    svg.text(w / 2, h - 20, "Bottom-up recursive abstraction: details → topics → global overview", size=FS_BODY, fill='text_light')
+    svg.text(w / 2, h - 20, "Abstraksi rekursif bottom-up: detail → topik → gambaran global", size=FS_BODY, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-7.svg'))
 
@@ -420,7 +420,7 @@ def fig3_8():
     """GraphRAG relational network"""
     w, h = 750, 430
     svg = SVG(w, h)
-    svg.text(w / 2, 28, "GraphRAG entity-relation knowledge graph", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 28, "Grafik pengetahuan relasi-entitas GraphRAG", size=FS_TITLE, bold=True)
 
     nodes = [
         ("Intel", 375, 100, 'medium'),
@@ -435,16 +435,16 @@ def fig3_8():
 
     # Community box (drawn first, as background layer, to avoid covering subsequent nodes and edges)
     svg.rect(50, 275, 300, 110, fill='none', stroke='border', dash=True)
-    svg.text(200, 395, "Community: SSE instruction set", size=FS_SMALL, fill='text_light')
+    svg.text(200, 395, "Komunitas: Set instruksi SSE", size=FS_SMALL, fill='text_light')
 
     for label, x, y, fill in nodes:
         svg.circle(x, y, node_r, fill=fill, label=label, font_size=FS_SMALL)
 
     edges = [
-        (0, 1, "Development"), (0, 2, "Development"),
-        (1, 3, "Usage"), (1, 6, ""), (1, 4, "Contains"),
-        (2, 5, "Usage"), (2, 6, "Execute"),
-        (6, 3, ""), (6, 5, "Operation"),
+        (0, 1, "Pengembangan"), (0, 2, "Pengembangan"),
+        (1, 3, "Penggunaan"), (1, 6, ""), (1, 4, "Berisi"),
+        (2, 5, "Penggunaan"), (2, 6, "Eksekusi"),
+        (6, 3, ""), (6, 5, "Operasi"),
     ]
     for i, j, elabel in edges:
         x1, y1 = nodes[i][1], nodes[i][2]
@@ -472,13 +472,13 @@ def fig3_9():
 
     # --- Left: Non-Agentic ---
     svg.rect(lx, 50, col_w, 45, fill='medium')
-    svg.text(lx + col_w / 2, 73, "Non-Agentic RAG", size=FS_BODY, bold=True)
+    svg.text(lx + col_w / 2, 73, "RAG Non-Agentic", size=FS_BODY, bold=True)
 
     steps_l = [
-        ("Query: \"How to sentence for causing serious injury by negligence while drunk \nand with a previous theft conviction?\"", 'light'),
-        ("Single retrieval:\n\"Sentencing for causing serious injury by negligence\"", 'light'),
-        ("Retrieval result: Only found basic provisions for negligent injury\n (incomplete context)", 'code_bg'),
-        ("Direct generation: Missing \"drunk\"\nand \"previous conviction\" influencing factors", 'light'),
+        ("Kueri: \"Bagaimana hukuman untuk menyebabkan cedera serius karena kelalaian saat mabuk \ndan dengan riwayat hukuman pencurian?\"", 'light'),
+        ("Pengambilan tunggal:\n\"Hukuman karena menyebabkan cedera serius oleh kelalaian\"", 'light'),
+        ("Hasil pengambilan: Hanya menemukan ketentuan dasar untuk cedera kelalaian\n (konteks tidak lengkap)", 'code_bg'),
+        ("Pembangkitan langsung: Hilang faktor pengaruh \"mabuk\"\ndan \"riwayat hukuman\"", 'light'),
     ]
     prev_y = 95
     for i, (s, fill) in enumerate(steps_l):
@@ -488,21 +488,21 @@ def fig3_9():
             svg.arrow(lx + 200, prev_y + 80 + 2, lx + 200, y - 2)
         prev_y = y
 
-    svg.text(lx + col_w / 2, h - 15, "Single pass · Incomplete information", size=FS_BODY, fill='text_light')
+    svg.text(lx + col_w / 2, h - 15, "Lewatan tunggal · Informasi tidak lengkap", size=FS_BODY, fill='text_light')
 
     # --- Separator ---
     svg.line(440, 50, 440, h - 5, color='dark', dash=True)
 
     # --- Right: Agentic ---
     svg.rect(rx, 50, col_w, 45, fill='medium')
-    svg.text(rx + col_w / 2, 73, "Agentic RAG (ReAct)", size=FS_BODY, bold=True)
+    svg.text(rx + col_w / 2, 73, "RAG Agentic (ReAct)", size=FS_BODY, bold=True)
 
     steps_r = [
-        ("Thought: Need to decompose into 3 sub-questions", 'light'),
-        ("Search ①: \"Sentencing for causing serious injury by negligence\"\nSearch ②: \"Criminal liability for drunkenness\"\nSearch ③: \"Impact of previous theft conviction\"", 'code_bg'),
-        ("Observation: Found basic provisions but\nmissing link between \"previous conviction\" and \"negligent injury\"", 'light'),
-        ("Search ④: \"Recidivism different crimes\njudicial interpretation\"", 'code_bg'),
-        ("Synthesis: Complete answer including all\nlegal provisions and sentencing analysis", 'medium'),
+        ("Pikiran: Perlu menguraikan menjadi 3 sub-pertanyaan", 'light'),
+        ("Pencarian ①: \"Hukuman untuk menyebabkan cedera serius oleh kelalaian\"\nPencarian ②: \"Kewajiban pidana untuk mabuk\"\nPencarian ③: \"Dampak riwayat hukuman pencurian\"", 'code_bg'),
+        ("Observasi: Menemukan ketentuan dasar tetapi\nhilang kaitan antara \"riwayat hukuman\" dan \"cedera kelalaian\"", 'light'),
+        ("Pencarian ④: \"Residivisme kejahatan berbeda\ninterpretasi yudisial\"", 'code_bg'),
+        ("Sintesis: Jawaban lengkap mencakup semua\nketentuan hukum dan analisis hukuman", 'medium'),
     ]
     ys = []
     for i, (s, fill) in enumerate(steps_r):
@@ -521,10 +521,10 @@ def fig3_9():
         f'fill="none" stroke="{COLORS["border"]}" stroke-width="{STROKE_W}" '
         f'stroke-dasharray="6,3" marker-end="url(#ah)"/>'
     )
-    svg.text(loop_x + 4, (ys[1] + ys[2]) / 2 + 34, "Iteration", size=FS_SMALL, fill='text_light',
+    svg.text(loop_x + 4, (ys[1] + ys[2]) / 2 + 34, "Iterasi", size=FS_SMALL, fill='text_light',
              anchor='start')
 
-    svg.text(rx + col_w / 2, h - 15, "Multi-round iteration · Complete information", size=FS_BODY, fill='text_light')
+    svg.text(rx + col_w / 2, h - 15, "Iterasi multi-putaran · Informasi lengkap", size=FS_BODY, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-9.svg'))
 
@@ -535,17 +535,17 @@ def fig3_10():
     """Agentic RAG System Architecture (Experiment 3.6)"""
     w, h = 880, 500
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 3.6: Agentic RAG System Architecture", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 3.6: Arsitektur Sistem RAG Agentic", size=FS_TITLE, bold=True)
 
     # Agent core
     svg.rect(220, 55, 440, 200, fill='white', stroke='border')
-    svg.text(440, 78, "Agent (ReAct Loop)", size=FS_BODY, bold=True)
+    svg.text(440, 78, "Agen (Putaran ReAct)", size=FS_BODY, bold=True)
 
     # ReAct steps inside agent
     react_items = [
-        ("① Thought", 240, 100, 180, 45, 'light'),
-        ("② Action", 460, 100, 180, 45, 'medium'),
-        ("③ Observation", 350, 180, 180, 45, 'light'),
+        ("① Pikiran", 240, 100, 180, 45, 'light'),
+        ("② Tindakan", 460, 100, 180, 45, 'medium'),
+        ("③ Observasi", 350, 180, 180, 45, 'light'),
     ]
     for label, bx, by, bw, bh, fill in react_items:
         svg.box(bx, by, bw, bh, label, fill=fill, font_size=FS_SMALL, bold=True)
@@ -555,19 +555,19 @@ def fig3_10():
     svg.arrow(350, 202, 280, 145, color='border')
 
     # Loop label
-    svg.text(360, 165, "Loop until information is sufficient", size=FS_TINY, fill='text_light')
+    svg.text(360, 165, "Ulangi hingga informasi cukup", size=FS_TINY, fill='text_light')
 
     # User
-    svg.box(20, 95, 160, 55, "User query", fill='medium', bold=True, font_size=FS_BODY)
+    svg.box(20, 95, 160, 55, "Kueri pengguna", fill='medium', bold=True, font_size=FS_BODY)
     svg.arrow(180, 122, 218, 122)
 
     # Final answer
-    svg.box(700, 95, 160, 55, "Final answer", fill='medium', bold=True, font_size=FS_BODY)
+    svg.box(700, 95, 160, 55, "Jawaban akhir", fill='medium', bold=True, font_size=FS_BODY)
     svg.arrow(660, 122, 698, 122)
 
     # Tool layer
     svg.rect(100, 290, 680, 85, fill='white', stroke='border', dash=True)
-    svg.text(440, 312, "Tool layer", size=FS_BODY, bold=True)
+    svg.text(440, 312, "Lapisan alat", size=FS_BODY, bold=True)
     tools = [
         ("knowledge_base_search", 120, 330, 220),
         ("web_search", 370, 330, 140),
@@ -582,11 +582,11 @@ def fig3_10():
 
     # Knowledge base backends
     svg.rect(100, 400, 680, 85, fill='white', stroke='dark', dash=True)
-    svg.text(440, 420, "Knowledge base backend (switchable)", size=FS_BODY, bold=True)
+    svg.text(440, 420, "Backend basis pengetahuan (dapat dialihkan)", size=FS_BODY, bold=True)
     backends = [
-        ("retrieval-pipeline\nHybrid retrieval", 120),
+        ("retrieval-pipeline\nPengambilan hibrida", 120),
         ("structured-index\nRAPTOR/GraphRAG", 340),
-        ("contextual-retrieval\nContext-aware", 560),
+        ("contextual-retrieval\nSadar konteks", 560),
     ]
     for label, bx in backends:
         svg.box(bx, 435, 180, 45, label, fill='light', font_size=FS_SMALL)
@@ -603,55 +603,55 @@ def fig3_11():
     """Context-aware retrieval (specific prefix example)"""
     w, h = 880, 430
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Context-aware retrieval", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Pengambilan sadar konteks", size=FS_TITLE, bold=True)
 
     # Left: Traditional chunking
     svg.rect(20, 55, 400, 170, fill='white', stroke='border')
-    svg.text(220, 78, "Traditional chunking (no context)", size=FS_BODY, bold=True)
+    svg.text(220, 78, "Pemotongan tradisional (tanpa konteks)", size=FS_BODY, bold=True)
 
     svg.rect(40, 95, 360, 50, fill='code_bg', stroke='dark', rx=4)
-    svg.mono(50, 112, "The company's second-quarter revenue grew by 3%,", size=FS_TINY)
-    svg.mono(50, 132, "mainly driven by new product lines.", size=FS_TINY)
+    svg.mono(50, 112, "Pendapatan perusahaan pada kuartal kedua tumbuh sebesar 3%,", size=FS_TINY)
+    svg.mono(50, 132, "terutama didorong oleh lini produk baru.", size=FS_TINY)
 
-    svg.text(220, 170, "Question: \"Who is \"the company\"? Which year?", size=FS_SMALL, fill='text_light')
-    svg.text(220, 195, "→ Retrieval matches revenue data of many irrelevant companies", size=FS_SMALL, fill='text_light')
+    svg.text(220, 170, "Pertanyaan: \"Siapa \"perusahaan\" tersebut? Tahun berapa?", size=FS_SMALL, fill='text_light')
+    svg.text(220, 195, "→ Pengambilan mencocokkan data pendapatan dari banyak perusahaan yang tidak relevan", size=FS_SMALL, fill='text_light')
 
     # Right: Contextual
     svg.rect(460, 55, 400, 170, fill='white', stroke='border')
-    svg.text(660, 78, "Context-aware chunking", size=FS_BODY, bold=True)
+    svg.text(660, 78, "Pemotongan sadar konteks", size=FS_BODY, bold=True)
 
     svg.rect(480, 95, 360, 35, fill='medium')
-    svg.mono(490, 113, "[ACME Company 2025 Q2 Earnings Report · Key Performance Indicators]", size=FS_TINY)
+    svg.mono(490, 113, "[Laporan Laba ACME Company 2025 Q2 · Indikator Kinerja Utama]", size=FS_TINY)
 
     svg.rect(480, 130, 360, 50, fill='code_bg', stroke='dark', rx=4)
-    svg.mono(490, 148, "The company's second-quarter revenue grew by 3%,", size=FS_TINY)
-    svg.mono(490, 168, "mainly driven by new product lines.", size=FS_TINY)
+    svg.mono(490, 148, "Pendapatan perusahaan pada kuartal kedua tumbuh sebesar 3%,", size=FS_TINY)
+    svg.mono(490, 168, "terutama didorong oleh lini produk baru.", size=FS_TINY)
 
-    svg.text(660, 200, "→ Exact match ACME + Q2 + revenue growth", size=FS_SMALL, fill='text_light')
+    svg.text(660, 200, "→ Pencocokan persis ACME + Q2 + pertumbuhan pendapatan", size=FS_SMALL, fill='text_light')
 
     # Arrow between
     svg.text(440, 140, "→", size=FS_TITLE, bold=True)
 
     # Process flow
     svg.line(20, 250, 860, 250, color='dark', dash=True)
-    svg.text(w / 2, 275, "Indexing stage: LLM generates context prefix", size=FS_BODY, bold=True)
+    svg.text(w / 2, 275, "Tahap pengindeksan: LLM menghasilkan prefiks konteks", size=FS_BODY, bold=True)
 
     flow_y = 300
-    svg.box(30, flow_y, 180, 55, "Original document", fill='light', bold=True, font_size=FS_BODY)
+    svg.box(30, flow_y, 180, 55, "Dokumen asli", fill='light', bold=True, font_size=FS_BODY)
     svg.arrow(210, flow_y + 27, 248, flow_y + 27)
 
-    svg.box(250, flow_y, 180, 55, "Chunking", fill='light', bold=True, font_size=FS_BODY)
+    svg.box(250, flow_y, 180, 55, "Pemotongan", fill='light', bold=True, font_size=FS_BODY)
     svg.arrow(430, flow_y + 27, 468, flow_y + 27)
 
-    svg.box(470, flow_y, 180, 55, "LLM generates prefix\n(prompt caching)", fill='medium',
+    svg.box(470, flow_y, 180, 55, "LLM menghasilkan prefiks\n(caching prompt)", fill='medium',
             font_size=FS_SMALL, bold=True)
     svg.arrow(650, flow_y + 27, 688, flow_y + 27)
 
-    svg.box(690, flow_y, 170, 55, "Prefix + original text\n→ Index", fill='light', font_size=FS_SMALL, bold=True)
+    svg.box(690, flow_y, 170, 55, "Prefiks + teks asli\n→ Indeks", fill='light', font_size=FS_SMALL, bold=True)
 
     # Stats
     svg.text(w / 2, h - 20,
-             "Effect: Retrieval failure rate ↓49% (+BM25), ↓67% (+reranking) — Anthropic data",
+             "Efek: Tingkat kegagalan pengambilan ↓49% (+BM25), ↓67% (+reranking) — data Anthropic",
              size=FS_SMALL, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-11.svg'))
@@ -663,69 +663,69 @@ def fig3_12():
     """Structured knowledge extraction pipeline (Experiment 3.10)"""
     w, h = 880, 510
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 3.10: Structured knowledge extraction (judicial precedents)", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 3.10: Ekstraksi pengetahuan terstruktur (preseden yudisial)", size=FS_TITLE, bold=True)
 
     # Phase 1 header
     svg.rect(20, 55, 840, 200, fill='white', stroke='border')
-    svg.text(440, 78, "Phase 1: Knowledge extraction and structuring", size=FS_BODY, bold=True)
+    svg.text(440, 78, "Fase 1: Ekstraksi dan penstrukturan pengetahuan", size=FS_BODY, bold=True)
 
     # Raw cases
     svg.rect(40, 95, 180, 65, fill='code_bg', stroke='dark', rx=4)
-    svg.text(130, 113, "Original judgment documents", size=FS_SMALL, bold=True)
-    svg.mono(50, 138, "CAIL2018 dataset", size=FS_TINY)
+    svg.text(130, 113, "Dokumen putusan asli", size=FS_SMALL, bold=True)
+    svg.mono(50, 138, "Dataset CAIL2018", size=FS_TINY)
 
     svg.arrow(220, 127, 258, 127)
 
     # LLM extraction
     svg.rect(260, 95, 180, 65, fill='medium')
-    svg.text(350, 113, "LLM factor discovery", size=FS_SMALL, bold=True)
-    svg.text(350, 138, "Bottom-up Schema", size=FS_SMALL, fill='text_light')
+    svg.text(350, 113, "Penemuan faktor LLM", size=FS_SMALL, bold=True)
+    svg.text(350, 138, "Skema Bottom-up", size=FS_SMALL, fill='text_light')
 
     svg.arrow(440, 127, 478, 127)
 
     # Structured JSON
     svg.rect(480, 95, 200, 65, fill='code_bg', stroke='dark', rx=4)
-    svg.text(580, 113, "Structured JSON", size=FS_SMALL, bold=True)
+    svg.text(580, 113, "JSON Terstruktur", size=FS_SMALL, bold=True)
     svg.mono(490, 138, "{voluntary_surrender:true, compensation:500000,", size=FS_TINY)
     svg.mono(490, 155, " injury_level:severe_second_degree}", size=FS_TINY)
 
     # Schema detail
     svg.rect(40, 170, 400, 70, fill='light')
-    svg.text(240, 188, "Modular data schema", size=FS_SMALL, bold=True)
-    svg.text(240, 212, "Core schema (voluntary surrender/compensation/criminal record) + charge extension schema", size=FS_SMALL, fill='text_light')
-    svg.text(240, 232, "(theft→amount involved, injury→injury level)", size=FS_SMALL, fill='text_light')
+    svg.text(240, 188, "Skema data modular", size=FS_SMALL, bold=True)
+    svg.text(240, 212, "Skema inti (menyerahkan diri/kompensasi/catatan kriminal) + skema ekstensi dakwaan", size=FS_SMALL, fill='text_light')
+    svg.text(240, 232, "(pencurian→jumlah yang terlibat, cedera→tingkat cedera)", size=FS_SMALL, fill='text_light')
 
     # Phase 2 header
     svg.rect(20, 270, 840, 200, fill='white', stroke='border')
-    svg.text(440, 293, "Phase 2: Factor analysis and knowledge modeling", size=FS_BODY, bold=True)
+    svg.text(440, 293, "Fase 2: Analisis faktor dan pemodelan pengetahuan", size=FS_BODY, bold=True)
 
     # Vectorization
     svg.rect(40, 310, 200, 65, fill='light')
-    svg.text(140, 328, "Feature vectorization", size=FS_SMALL, bold=True)
-    svg.text(140, 350, "One-hot encoding + multi-hot encoding", size=FS_SMALL, fill='text_light')
-    svg.text(140, 370, "+ log transformation + standardization", size=FS_SMALL, fill='text_light')
+    svg.text(140, 328, "Vektorisasi fitur", size=FS_SMALL, bold=True)
+    svg.text(140, 350, "Pengkodean one-hot + pengkodean multi-hot", size=FS_SMALL, fill='text_light')
+    svg.text(140, 370, "+ transformasi log + standardisasi", size=FS_SMALL, fill='text_light')
 
     svg.arrow(240, 342, 278, 342)
 
     # Clustering
     svg.rect(280, 310, 200, 65, fill='medium')
-    svg.text(380, 328, "HDBSCAN clustering", size=FS_SMALL, bold=True)
-    svg.text(380, 350, "discover \"case prototype\"", size=FS_SMALL, fill='text_light')
-    svg.text(380, 370, "e.g., minor quarrel → minor injury", size=FS_SMALL, fill='text_light')
+    svg.text(380, 328, "Pengklasteran HDBSCAN", size=FS_SMALL, bold=True)
+    svg.text(380, 350, "temukan \"prototipe kasus\"", size=FS_SMALL, fill='text_light')
+    svg.text(380, 370, "misal., pertengkaran kecil → cedera ringan", size=FS_SMALL, fill='text_light')
 
     svg.arrow(480, 342, 518, 342)
 
     # Factor importance
     svg.rect(520, 310, 200, 65, fill='light')
-    svg.text(620, 328, "factor importance model", size=FS_SMALL, bold=True)
-    svg.text(620, 350, "quantify the weight of each factor", size=FS_SMALL, fill='text_light')
-    svg.text(620, 370, "build sentencing decision logic", size=FS_SMALL, fill='text_light')
+    svg.text(620, 328, "model kepentingan faktor", size=FS_SMALL, bold=True)
+    svg.text(620, 350, "kuantifikasi bobot setiap faktor", size=FS_SMALL, fill='text_light')
+    svg.text(620, 370, "bangun logika keputusan hukuman", size=FS_SMALL, fill='text_light')
 
     # Application
     svg.arrow(620, 375, 620, 400)
     svg.rect(40, 400, 720, 60, fill='light')
-    svg.text(400, 420, "Application: conversational legal advice Agent", size=FS_BODY, bold=True)
-    svg.text(400, 445, "guide questions by factor importance → retrieve similar case prototypes → data-driven sentencing analysis",
+    svg.text(400, 420, "Aplikasi: Agen nasihat hukum percakapan", size=FS_BODY, bold=True)
+    svg.text(400, 445, "pandu pertanyaan dengan kepentingan faktor → ambil prototipe kasus serupa → analisis hukuman berbasis data",
              size=FS_SMALL, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-12.svg'))
@@ -737,7 +737,7 @@ def fig3_13():
     """Externalized learning loop (concrete example)"""
     w, h = 880, 490
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Externalized learning: a closed loop from experience to capability", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Pembelajaran eksternal: putaran tertutup dari pengalaman menuju kemampuan", size=FS_TITLE, bold=True)
 
     # Central Agent
     cx, cy = 440, 210
@@ -745,11 +745,11 @@ def fig3_13():
 
     # 5 steps around the loop
     steps = [
-        ("① Execute task", 120, 100, "process refund request\ncall customer service API"),
-        ("② Get feedback", 680, 100, "successfully refunded $45\nfound need to verify last four digits"),
-        ("③ Reflect and distill", 680, 310, "LLM summarizes experience:\n\"Company A refund requires verification\""),
-        ("④ Store in knowledge base", 340, 380, "experience → vectorized index\nprocess → generate tool code"),
-        ("⑤ Future retrieval and reuse", 120, 310, "similar task → retrieve experience\ndirectly reuse successful strategy"),
+        ("① Eksekusi tugas", 120, 100, "proses permintaan pengembalian dana\npanggil API layanan pelanggan"),
+        ("② Dapatkan umpan balik", 680, 100, "berhasil mengembalikan dana $45\nditemukan kebutuhan untuk verifikasi empat digit terakhir"),
+        ("③ Refleksikan dan saring", 680, 310, "LLM merangkum pengalaman:\n\"Pengembalian dana Perusahaan A memerlukan verifikasi\""),
+        ("④ Simpan dalam basis pengetahuan", 340, 380, "pengalaman → indeks tervektorisasi\nproses → bangkitkan kode alat"),
+        ("⑤ Pengambilan dan penggunaan kembali di masa depan", 120, 310, "tugas serupa → ambil pengalaman\ngunakan kembali strategi berhasil secara langsung"),
     ]
 
     positions = []
@@ -773,9 +773,9 @@ def fig3_13():
 
     # Two output types
     svg.rect(30, 395, 180, 28, fill='dark')
-    svg.text(120, 409, "Knowledge: summary/tree summary", size=FS_SMALL, fill='white')
+    svg.text(120, 409, "Pengetahuan: ringkasan/ringkasan pohon", size=FS_SMALL, fill='white')
     svg.rect(670, 395, 180, 28, fill='dark')
-    svg.text(760, 409, "Tool: process → code", size=FS_SMALL, fill='white')
+    svg.text(760, 409, "Alat: proses → kode", size=FS_SMALL, fill='white')
 
     svg.save(os.path.join(OUT, 'fig3-13.svg'))
 
@@ -786,7 +786,7 @@ def fig3_14():
     """GAIA experience learning system (Experiment 3.11)"""
     w, h = 880, 510
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 3.11: GAIA experience learning system", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Eksperimen 3.11: Sistem pembelajaran pengalaman GAIA", size=FS_TITLE, bold=True)
 
     box_h = 60
     step_gap = 75
@@ -795,14 +795,14 @@ def fig3_14():
     # --- Left: Learning Mode ---
     lx = 20
     svg.rect(lx, 55, 400, 420, fill='white', stroke='border')
-    svg.text(lx + 200, 80, "Learning Mode", size=FS_BODY, bold=True)
+    svg.text(lx + 200, 80, "Mode Pembelajaran", size=FS_BODY, bold=True)
 
     learn_steps = [
-        ("GAIA task", 'medium', "complex multi-step problem"),
-        ("Agent execution", 'light', "browser + file + code interpreter"),
-        ("Task successful?", 'light', "Auto Evaluation (AWorld)"),
-        ("LLM Reflection & Summary", 'medium', "Extract Strategy Summary"),
-        ("Experience → Vectorization", 'light', "Store in Experience Knowledge Base"),
+        ("Tugas GAIA", 'medium', "masalah multi-langkah kompleks"),
+        ("Eksekusi agen", 'light', "peramban + berkas + penerjemah kode"),
+        ("Tugas berhasil?", 'light', "Evaluasi Otomatis (AWorld)"),
+        ("Refleksi & Ringkasan LLM", 'medium', "Ekstrak Ringkasan Strategi"),
+        ("Pengalaman → Vektorisasi", 'light', "Simpan di Basis Pengetahuan Pengalaman"),
     ]
     for i, (label, fill, sub) in enumerate(learn_steps):
         y = base_y + i * step_gap
@@ -813,14 +813,14 @@ def fig3_14():
     # --- Right: Apply Mode ---
     rx = 460
     svg.rect(rx, 55, 400, 420, fill='white', stroke='border')
-    svg.text(rx + 200, 80, "Apply Mode", size=FS_BODY, bold=True)
+    svg.text(rx + 200, 80, "Mode Penerapan", size=FS_BODY, bold=True)
 
     apply_steps = [
-        ("New GAIA Task", 'medium', "Receive New Question"),
-        ("Semantic Retrieval of Experience", 'light', "Search for Similar Tasks in Experience Base"),
-        ("Inject into System Prompt", 'medium', "Historical Successful Strategies as Examples"),
-        ("Agent execution", 'light', "Leverage Experience for More Efficient Problem Solving"),
-        ("Success Rate ↑ Efficiency ↑", 'dark', "Self-Evolution: Getting Stronger Over Time"),
+        ("Tugas GAIA Baru", 'medium', "Terima Pertanyaan Baru"),
+        ("Pengambilan Semantik Pengalaman", 'light', "Cari Tugas Serupa di Basis Pengalaman"),
+        ("Suntikkan ke Prompt Sistem", 'medium', "Strategi Berhasil Historis sebagai Contoh"),
+        ("Eksekusi agen", 'light', "Manfaatkan Pengalaman untuk Penyelesaian Masalah Lebih Efisien"),
+        ("Tingkat Keberhasilan ↑ Efisiensi ↑", 'dark', "Evolusi Diri: Menjadi Lebih Kuat Seiring Waktu"),
     ]
     for i, (label, fill, sub) in enumerate(apply_steps):
         y = base_y + i * step_gap
@@ -832,8 +832,8 @@ def fig3_14():
     kb_cy = base_y + 2 * step_gap + box_h / 2  #Align with Step 3 Center
     kb_x1, kb_x2 = 375, 505
     svg.rect(kb_x1, kb_cy - 25, kb_x2 - kb_x1, 50, fill='dark')
-    svg.text((kb_x1 + kb_x2) / 2, kb_cy - 8, "Experience Knowledge Base", size=FS_SMALL, fill='white', bold=True)
-    svg.text((kb_x1 + kb_x2) / 2, kb_cy + 12, "(Vector Index)", size=FS_TINY, fill='white')
+    svg.text((kb_x1 + kb_x2) / 2, kb_cy - 8, "Basis Pengetahuan Pengalaman", size=FS_SMALL, fill='white', bold=True)
+    svg.text((kb_x1 + kb_x2) / 2, kb_cy + 12, "(Indeks Vektor)", size=FS_TINY, fill='white')
 
     # Last learn step right-middle → KB left
     last_y = base_y + 4 * step_gap + box_h / 2

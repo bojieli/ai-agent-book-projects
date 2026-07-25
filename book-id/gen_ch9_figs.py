@@ -53,32 +53,32 @@ def fig9_1():
     W, H = 780, 560
     s = SVG(W, H)
 
-    s.text(W // 2, 30, 'Shared context vs independent context', size=FS_TITLE, bold=True)
+    s.text(W // 2, 30, 'Konteks bersama vs konteks mandiri', size=FS_TITLE, bold=True)
 
     col_w = 350
     lx, rx = 20, W - col_w - 20
 
     # ── Left: shared context ──
-    s.group_box(lx, 55, col_w, 480, 'Shared context (single Agent, multiple phases)')
+    s.group_box(lx, 55, col_w, 480, 'Konteks bersama (Agen tunggal, beberapa fase)')
 
     ctx_x, ctx_w = lx + 15, col_w - 30
     phases = [
-        ('Phase 1: Requirements Analyst', 'medium', [
-            'sys: "Your responsibility is to fully understand the requirements..."',
+        ('Fase 1: Analis Persyaratan', 'medium', [
+            'sys: "Tanggung jawab Anda adalah memahami persyaratan sepenuhnya..."',
             'tools: [ask_question, save_req]',
-            'user: "Write a CSV analysis script"',
-            'agent: "What file types need to be processed?"',
+            'user: "Tulis skrip analisis CSV"',
+            'agent: "Jenis file apa yang perlu diproses?"',
         ]),
-        ('Phase 2: Software Engineer', 'light', [
-            'sys: "Write code based on confirmed requirements..."',
+        ('Fase 2: Rekayasa Perangkat Lunak', 'light', [
+            'sys: "Tulis kode berdasarkan persyaratan yang telah dikonfirmasi..."',
             'tools: [write_file, execute_code]',
             'agent: write_file("analyze.py", ...)',
             'agent: execute_code("python test.py")',
         ]),
-        ('Phase 3: Code Reviewer', 'light', [
-            'sys: "Review code quality and security..."',
+        ('Fase 3: Peninjau Kode', 'light', [
+            'sys: "Tinjau kualitas dan keamanan kode..."',
             'tools: [run_linter, run_tests]',
-            'agent: run_linter → 2 warnings',
+            'agent: run_linter → 2 peringatan',
             'agent: approve_code()',
         ]),
     ]
@@ -93,28 +93,28 @@ def fig9_1():
         cy += ph + 2
 
     s.rect(ctx_x, cy, ctx_w, 28, fill='code_bg', rx=3)
-    s.text(ctx_x + ctx_w // 2, cy + 14, '↑ All phases share the same conversation history', size=FS_TINY, bold=True)
+    s.text(ctx_x + ctx_w // 2, cy + 14, '↑ Semua fase berbagi riwayat percakapan yang sama', size=FS_TINY, bold=True)
     cy += 36
 
-    s.text(lx + col_w // 2, cy + 10, '✓ Complete execution trace', size=FS_SMALL, fill='text_light')
-    s.text(lx + col_w // 2, cy + 32, '✗ Context expands rapidly', size=FS_SMALL, fill='text_light')
+    s.text(lx + col_w // 2, cy + 10, '✓ Jejak eksekusi lengkap', size=FS_SMALL, fill='text_light')
+    s.text(lx + col_w // 2, cy + 32, '✗ Konteks meluas dengan cepat', size=FS_SMALL, fill='text_light')
 
     # ── Right: independent context ──
-    s.group_box(rx, 55, col_w, 480, 'Independent context (true multi-Agent)')
+    s.group_box(rx, 55, col_w, 480, 'Konteks mandiri (Multi-Agen sejati)')
 
     agents_data = [
-        ('Glossary Agent', [
-            'sys: "Identify terms and translate..."',
+        ('Agen Glosarium', [
+            'sys: "Identifikasi istilah dan terjemahkan..."',
             'tools: [search_dict, write_file]',
             '→ glossary.json',
         ]),
-        ('Translation Agent', [
-            'sys: "Translate this chapter..."',
+        ('Agen Penerjemahan', [
+            'sys: "Terjemahkan bab ini..."',
             'tools: [read_file, write_file]',
-            '→ chapter3_zh.md',
+            '→ chapter3_id.md',
         ]),
-        ('Proofreading Agent', [
-            'sys: "Check terminology consistency..."',
+        ('Agen Proofreading', [
+            'sys: "Periksa konsistensi terminologi..."',
             'tools: [read_file, write_file]',
             '→ review_report.md',
         ]),
@@ -131,13 +131,13 @@ def fig9_1():
 
     fs_y = ay + 5
     s.rect(rx + 15, fs_y, ctx_w, 65, fill='medium', rx=4)
-    s.text(rx + 15 + ctx_w // 2, fs_y + 16, 'Shared file system', size=FS_SMALL, bold=True)
-    files = ['glossary.json', 'chapter3_zh.md', 'review_report.md']
+    s.text(rx + 15 + ctx_w // 2, fs_y + 16, 'Sistem file bersama', size=FS_SMALL, bold=True)
+    files = ['glossary.json', 'chapter3_id.md', 'review_report.md']
     s.mono(rx + 27, fs_y + 38, '  '.join(files), size=11)
-    s.text(rx + 15 + ctx_w // 2, fs_y + 55, '+ Tool call parameters pass structured data', size=FS_TINY, fill='text_light')
+    s.text(rx + 15 + ctx_w // 2, fs_y + 55, '+ Parameter pemanggilan alat meneruskan data terstruktur', size=FS_TINY, fill='text_light')
 
-    s.text(rx + col_w // 2, fs_y + 82, '✓ Modular · Extensible · Parallel', size=FS_SMALL, fill='text_light')
-    s.text(rx + col_w // 2, fs_y + 104, '✗ Information synchronization complex', size=FS_SMALL, fill='text_light')
+    s.text(rx + col_w // 2, fs_y + 82, '✓ Modular · Dapat Diperluas · Paralel', size=FS_SMALL, fill='text_light')
+    s.text(rx + col_w // 2, fs_y + 104, '✗ Sinkronisasi informasi kompleks', size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-1.svg'))
 
@@ -150,25 +150,25 @@ def fig9_2():
     W, H = 780, 520
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Phase-based role switching: Coding Agent three phases', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Pergantian peran berbasis fase: Tiga fase Agen Pemrograman', size=FS_TITLE, bold=True)
 
     phases = [
-        ('Requirements Analyst', 'medium',
-         '"Your responsibility is to fully understand the requirements.\nDo not rush to implement; at this stage\nyour task is to ask questions and confirm."',
+        ('Analis Persyaratan', 'medium',
+         '"Tanggung jawab Anda adalah memahami persyaratan sepenuhnya.\nJangan terburu-buru mengimplementasikan; pada tahap ini\ntugas Anda adalah mengajukan pertanyaan dan mengonfirmasi."',
          ['ask_clarifying_question(q)', 'save_requirement(k, v)', 'complete_requirements_analysis()'],
          'complete_requirements_analysis()'),
-        ('Software Engineer', 'light',
-         '"Write high-quality Python code based on the confirmed requirements.\nFollow modular design and error handling best practices."',
+        ('Rekayasa Perangkat Lunak', 'light',
+         '"Tulis kode Python berkualitas tinggi berdasarkan persyaratan yang telah dikonfirmasi.\nIkuti praktik terbaik desain modular dan penanganan kesalahan."',
          ['write_file(path, content)', 'read_file(path)', 'execute_code(code)'],
          'submit_for_review()'),
-        ('Code Reviewer', '#e8e8e8',
-         '"Evaluate code quality from multiple dimensions: \nfunctional correctness, coding standards, \nand security. Adopt critical thinking."',
+        ('Peninjau Kode', '#e8e8e8',
+         '"Evaluasi kualitas kode dari berbagai dimensi: \nkebenaran fungsional, standar pengkodean, \ndan keamanan. Terapkan pemikiran kritis."',
          ['run_linter(file)', 'run_tests(file)', 'analyze_complexity(file)'],
          None),
     ]
 
     s.rect(30, 55, W - 60, 28, fill='code_bg', rx=3)
-    s.text(W // 2, 69, '▼ Continuous flow within the same context — conversation history fully preserved across stages ▼', size=FS_SMALL, bold=True)
+    s.text(W // 2, 69, '▼ Alur berkelanjutan dalam konteks yang sama — riwayat percakapan dipertahankan sepenuhnya antar tahap ▼', size=FS_SMALL, bold=True)
 
     pw = 225
     gap = 18
@@ -179,23 +179,23 @@ def fig9_2():
         x = px_start + i * (pw + gap)
 
         s.rect(x, py, pw, 380, fill=fill, rx=6)
-        s.text(x + pw // 2, py + 22, f'Stage {i + 1}', size=FS_TINY, fill='text_light')
+        s.text(x + pw // 2, py + 22, f'Tahap {i + 1}', size=FS_TINY, fill='text_light')
         s.text(x + pw // 2, py + 42, role, size=FS_BODY, bold=True)
 
         s.rect(x + 8, py + 60, pw - 16, 88, fill='code_bg', rx=3)
-        s.text(x + 14, py + 75, 'System Prompt', size=FS_TINY, fill='text_light', anchor='start')
+        s.text(x + 14, py + 75, 'Prompt Sistem', size=FS_TINY, fill='text_light', anchor='start')
         for j, ln in enumerate(prompt.split('\n')):
             s.text(x + 14, py + 92 + j * 16, ln, size=12, anchor='start', fill='text_light')
 
         s.rect(x + 8, py + 158, pw - 16, 18 + len(tools) * 20, fill='white', rx=3)
-        s.text(x + 14, py + 172, 'Tool Set', size=FS_TINY, fill='text_light', anchor='start')
+        s.text(x + 14, py + 172, 'Set Alat', size=FS_TINY, fill='text_light', anchor='start')
         for j, tool in enumerate(tools):
             s.mono(x + 14, py + 190 + j * 20, tool, size=11)
 
         if trigger:
             ty = py + 290
             s.rect(x + 8, ty, pw - 16, 48, fill='dark', rx=12)
-            s.text(x + pw // 2, ty + 16, 'Trigger Transition', size=FS_TINY, fill='white')
+            s.text(x + pw // 2, ty + 16, 'Pemicu Transisi', size=FS_TINY, fill='white')
             s.mono(x + pw // 2, ty + 34, trigger, size=10, anchor='middle', fill='white')
 
         if i < 2:
@@ -204,7 +204,7 @@ def fig9_2():
             ay = py + 310
             s.arrow(ax1, ay, ax2, ay)
 
-    s.text(W // 2, H - 10, 'Role Transition: Update system prompt + tool set, conversation history and state continuously preserved',
+    s.text(W // 2, H - 10, 'Transisi Peran: Perbarui prompt sistem + set alat, riwayat percakapan dan status terus dipertahankan',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-2.svg'))
@@ -218,65 +218,65 @@ def fig9_3():
     W, H = 780, 520
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Proposer-Reviewer Loop: Slidev PPT Generation', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Putaran Pengusul-Peninjau: Pembuatan PPT Slidev', size=FS_TITLE, bold=True)
 
     # Editor (Proposer)
     ex, ey, ew, eh = 30, 65, 300, 200
     s.rect(ex, ey, ew, eh, fill='light')
-    s.text(ex + ew // 2, ey + 22, 'Proposer Agent', size=FS_BODY, bold=True)
-    s.text(ex + 12, ey + 48, 'Input: Extended paper abstract (2000 characters)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(ex + ew // 2, ey + 22, 'Agen Pengusul', size=FS_BODY, bold=True)
+    s.text(ex + 12, ey + 48, 'Input: Abstrak makalah yang diperluas (2000 karakter)', size=FS_TINY, anchor='start', fill='text_light')
     editor_lines = [
         '---',
         'theme: academic',
         '---',
-        '# Transformer Attention Mechanism',
+        '# Mekanisme Perhatian Transformer',
         '',
-        '## Core Idea',
-        '- Self-attention computes Q·K^T/√d',
-        '- Multi-head attention processes in parallel',
+        '## Ide Inti',
+        '- Perhatian-diri menghitung Q·K^T/√d',
+        '- Perhatian multi-kepala memproses secara paralel',
     ]
     ch = s.code_block(ex + 10, ey + 62, ew - 20, editor_lines, font_size=11, line_h=14)
-    s.text(ex + ew // 2, ey + eh - 10, 'Understand content structure → Decompose into slides', size=FS_TINY, fill='text_light')
+    s.text(ex + ew // 2, ey + eh - 10, 'Memahami struktur konten → Mengurai menjadi slide', size=FS_TINY, fill='text_light')
 
     # Critic (Reviewer)
     cx, cy, cw, ch_h = 450, 65, 300, 200
     s.rect(cx, cy, cw, ch_h, fill='medium')
-    s.text(cx + cw // 2, cy + 22, 'Reviewer Agent', size=FS_BODY, bold=True)
+    s.text(cx + cw // 2, cy + 22, 'Agen Peninjau', size=FS_BODY, bold=True)
 
     s.rect(cx + 10, cy + 42, cw - 20, 38, fill='code_bg', rx=3)
-    s.text(cx + 18, cy + 55, '① Slidev rendering → PDF/PNG', size=FS_TINY, anchor='start')
-    s.text(cx + 18, cy + 70, '② Vision LLM multi-dimensional evaluation', size=FS_TINY, anchor='start')
+    s.text(cx + 18, cy + 55, '① Rendering Slidev → PDF/PNG', size=FS_TINY, anchor='start')
+    s.text(cx + 18, cy + 70, '② Evaluasi multi-dimensi Visi LLM', size=FS_TINY, anchor='start')
 
     feedback_items = [
-        'Page   Issue Type     Severity',
-        'P3    Content too dense    High',
-        'P7    Font too small    Medium',
-        'P11   Color mismatch   Low',
+        'Halaman  Jenis Masalah      Keparahan',
+        'P3     Konten terlalu padat Tinggi',
+        'P7     Font terlalu kecil   Sedang',
+        'P11    Warna tidak cocok    Rendah',
     ]
     s.rect(cx + 10, cy + 86, cw - 20, 75, fill='code_bg', rx=3)
-    s.text(cx + 18, cy + 100, 'Structured Feedback:', size=FS_TINY, anchor='start', bold=True)
+    s.text(cx + 18, cy + 100, 'Umpan Balik Terstruktur:', size=FS_TINY, anchor='start', bold=True)
     for i, fb in enumerate(feedback_items):
         s.mono(cx + 18, cy + 118 + i * 15, fb, size=11)
-    s.text(cx + cw // 2, cy + ch_h - 10, 'Rendering + visual analysis → actionable improvement suggestions', size=FS_TINY, fill='text_light')
+    s.text(cx + cw // 2, cy + ch_h - 10, 'Rendering + analisis visual → saran perbaikan yang dapat ditindaklanjuti', size=FS_TINY, fill='text_light')
 
     # Arrows between Editor and Critic
     mid_y1 = ey + 70
     mid_y2 = ey + eh - 50
     s.arrow(ex + ew + 2, mid_y1, cx - 2, mid_y1)
-    s.text((ex + ew + cx) / 2, mid_y1 - 12, 'Slidev Code', size=FS_SMALL, bold=True)
+    s.text((ex + ew + cx) / 2, mid_y1 - 12, 'Kode Slidev', size=FS_SMALL, bold=True)
 
     s.arrow(cx - 2, mid_y2, ex + ew + 2, mid_y2)
-    s.text((ex + ew + cx) / 2, mid_y2 + 16, 'Structured Feedback', size=FS_SMALL, bold=True)
+    s.text((ex + ew + cx) / 2, mid_y2 + 16, 'Umpan Balik Terstruktur', size=FS_SMALL, bold=True)
 
     # Iteration timeline
     iy = 290
     s.rect(30, iy, W - 60, 100, fill='code_bg', rx=4)
-    s.text(W // 2, iy + 18, 'Iterative Improvement Process', size=FS_BODY, bold=True)
+    s.text(W // 2, iy + 18, 'Proses Perbaikan Iteratif', size=FS_BODY, bold=True)
 
     rounds = [
-        ('Round 1', '12-page draft\n5 issues', 'light'),
-        ('Round 2', '14 pages (split dense pages)\n2 issues', 'light'),
-        ('Round 3', '14 pages (font corrected)\n0 issues ✓', 'medium'),
+        ('Putaran 1', 'Draf 12 halaman\n5 masalah', 'light'),
+        ('Putaran 2', '14 halaman (memisahkan halaman padat)\n2 masalah', 'light'),
+        ('Putaran 3', '14 halaman (font dikoreksi)\n0 masalah ✓', 'medium'),
     ]
     rw = 190
     rx_start = (W - 3 * rw - 2 * 30) // 2
@@ -293,14 +293,14 @@ def fig9_3():
     # Why not single agent
     wy = 405
     s.rect(30, wy, W - 60, 90, fill='light', rx=4)
-    s.text(W // 2, wy + 20, 'Why not use a single agent?', size=FS_BODY, bold=True)
+    s.text(W // 2, wy + 20, 'Mengapa tidak menggunakan agen tunggal?', size=FS_BODY, bold=True)
 
     single_x = 60
     dual_x = W // 2 + 20
-    s.text(single_x, wy + 45, 'Single Agent: Renderings × N rounds → context explosion', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(single_x, wy + 63, '(1080p screenshot = thousands of tokens × 14 pages × 5 rounds)', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(dual_x, wy + 45, 'Dual Agent: Critic only sees current version', size=FS_TINY, anchor='start')
-    s.text(dual_x, wy + 63, 'Editor only accumulates text feedback → clean context', size=FS_TINY, anchor='start')
+    s.text(single_x, wy + 45, 'Agen Tunggal: Rendering × N putaran → ledakan konteks', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(single_x, wy + 63, '(Tangkapan layar 1080p = ribuan token × 14 halaman × 5 putaran)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(dual_x, wy + 45, 'Agen Ganda: Peninjau hanya melihat versi saat ini', size=FS_TINY, anchor='start')
+    s.text(dual_x, wy + 63, 'Editor hanya mengakumulasi umpan balik teks → konteks bersih', size=FS_TINY, anchor='start')
 
     s.save(os.path.join(OUT, 'fig9-3.svg'))
 
@@ -313,21 +313,21 @@ def fig9_4():
     W, H = 780, 480
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Manager sequential coordination: Sub-Agent as tool', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Koordinasi berurutan Manajer: Sub-Agen sebagai alat', size=FS_TITLE, bold=True)
 
     # Manager
     mx, my, mw, mh = 240, 60, 300, 100
     s.rect(mx, my, mw, mh, fill='medium')
-    s.text(mx + mw // 2, my + 22, 'Manager Agent', size=FS_BODY, bold=True)
-    s.text(mx + mw // 2, my + 46, 'Task understanding → decomposition → scheduling → synthesis', size=FS_TINY, fill='text_light')
-    s.text(mx + mw // 2, my + 66, 'Tool set: [call_agent_A, call_agent_B,', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 22, 'Agen Manajer', size=FS_BODY, bold=True)
+    s.text(mx + mw // 2, my + 46, 'Pemahaman tugas → dekomposisi → penjadwalan → sintesis', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 66, 'Set alat: [call_agent_A, call_agent_B,', size=FS_TINY, fill='text_light')
     s.text(mx + mw // 2, my + 82, 'call_agent_C, search, write_file]', size=FS_TINY, fill='text_light')
 
     # Sub-agents in sequence
     agents = [
-        ('Sub-Agent A', 'Data collection', 'Search technical documentation\nExtract key information', 'light'),
-        ('Sub-Agent B', 'Analysis and processing', 'Compare and analyze data\nGenerate statistical report', 'light'),
-        ('Sub-Agent C', 'Report generation', 'Write final report\nFormat output', 'light'),
+        ('Sub-Agen A', 'Pengumpulan data', 'Cari dokumentasi teknis\nEkstrak informasi kunci', 'light'),
+        ('Sub-Agen B', 'Analisis dan pemrosesan', 'Bandingkan dan analisis data\nHasilkan laporan statistik', 'light'),
+        ('Sub-Agen C', 'Pembuatan laporan', 'Tulis laporan akhir\nFormat output', 'light'),
     ]
     aw = 210
     ax_start = (W - 3 * aw - 2 * 25) // 2
@@ -337,11 +337,11 @@ def fig9_4():
         x = ax_start + i * (aw + 25)
         s.rect(x, ay, aw, 120, fill=fill, rx=6)
         s.text(x + aw // 2, ay + 20, name, size=FS_SMALL, bold=True)
-        s.text(x + aw // 2, ay + 40, f'Roles: {role}', size=FS_TINY, fill='text_light')
+        s.text(x + aw // 2, ay + 40, f'Peran: {role}', size=FS_TINY, fill='text_light')
         for j, ln in enumerate(desc.split('\n')):
             s.text(x + aw // 2, ay + 62 + j * 18, ln, size=FS_TINY, fill='text_light')
 
-        badge_labels = [f'Step {i + 1}']
+        badge_labels = [f'Langkah {i + 1}']
         s.badge(x + aw - 55, ay + 95, 50, 20, badge_labels[0], fill='dark', font_size=FS_TINY)
 
         # Arrow from Manager to sub-agent
@@ -355,22 +355,22 @@ def fig9_4():
     # Data flow
     dy = 380
     s.rect(30, dy, W - 60, 80, fill='code_bg', rx=4)
-    s.text(W // 2, dy + 18, 'Sequential execution flow', size=FS_BODY, bold=True)
+    s.text(W // 2, dy + 18, 'Alur eksekusi berurutan', size=FS_BODY, bold=True)
 
     flow_items = [
-        'Manager calls Agent A',
-        '→ A returns data',
-        '→ Manager passes to B',
-        '→ B returns analysis',
-        '→ Manager passes to C',
-        '→ C returns report',
+        'Manajer memanggil Agen A',
+        '→ A mengembalikan data',
+        '→ Manajer meneruskan ke B',
+        '→ B mengembalikan analisis',
+        '→ Manajer meneruskan ke C',
+        '→ C mengembalikan laporan',
     ]
-    fx_start = 55
+    fx_start = 35
     for i, item in enumerate(flow_items):
-        s.text(fx_start + i * 118, dy + 42, item, size=FS_TINY, anchor='start',
-               fill='text' if 'Call' in item or 'Return' in item else 'text_light')
+        s.text(fx_start + i * 123, dy + 42, item, size=FS_TINY, anchor='start',
+               fill='text' if 'memanggil' in item or 'mengembalikan' in item else 'text_light')
 
-    s.text(W // 2, dy + 65, 'Manager perspective: calling Agent = calling tool (send request → receive response)',
+    s.text(W // 2, dy + 65, 'Perspektif Manajer: memanggil Agen = memanggil alat (kirim permintaan → terima respons)',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-4.svg'))
@@ -384,25 +384,25 @@ def fig9_5():
     W, H = 780, 540
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.4: Book translation Agent — Manager mode', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Eksperimen 9.4: Agen Penerjemah Buku — Mode Manajer', size=FS_TITLE, bold=True)
 
     # Manager at top
     mx, my, mw, mh = 240, 55, 300, 70
     s.rect(mx, my, mw, mh, fill='medium')
-    s.text(mx + mw // 2, my + 22, 'Manager Agent', size=FS_BODY, bold=True)
-    s.text(mx + mw // 2, my + 48, 'Task planning · Progress monitoring · Exception handling · Result synthesis', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 22, 'Agen Manajer', size=FS_BODY, bold=True)
+    s.text(mx + mw // 2, my + 48, 'Perencanaan tugas · Pemantauan kemajuan · Penanganan eksepsi · Sintesis hasil', size=FS_TINY, fill='text_light')
 
     # Three sub-agents
     sub_agents = [
-        (30, 'Glossary Agent', 'Glossary of terms',
-         ['Receive entire book → Identify specialized terms', 'Search specialized dictionaries + translation conventions', 'Output: glossary.json'],
-         ['{"attention": "attention",', ' "transformer": "Transformer",', ' "backprop": "backpropagation"}']),
-        (270, 'Translation Agent ×N', 'Chapter translation',
-         ['Input: chapter + glossary + guide', 'Strictly translate terms according to the glossary', 'Output: chapter{n}_zh.md'],
-         ['"...attention mechanism computes the similarity of', ' Query·Key^T ..."']),
-        (520, 'Proofreading Agent', 'Full-text review',
-         ['Scan and verify term consistency', 'Check fluency and readability', 'Output: review_report.md'],
-         ['P3: "attention"→"focus" inconsistency', 'P8: Long sentence suggested to split']),
+        (30, 'Agen Glosarium', 'Glosarium istilah',
+         ['Terima seluruh buku → Identifikasi istilah khusus', 'Cari kamus khusus + konvensi terjemahan', 'Output: glossary.json'],
+         ['{"attention": "perhatian",', ' "transformer": "Transformer",', ' "backprop": "perambatan balik"}']),
+        (270, 'Agen Penerjemah ×N', 'Terjemahan bab',
+         ['Input: bab + glosarium + panduan', 'Terjemahkan istilah dengan ketat sesuai glosarium', 'Output: chapter{n}_id.md'],
+         ['"...mekanisme perhatian menghitung kesamaan dari', ' Query·Key^T ..."']),
+        (520, 'Agen Proofreading', 'Tinjauan teks lengkap',
+         ['Pindai dan verifikasi konsistensi istilah', 'Periksa kelancaran dan keterbacaan', 'Output: review_report.md'],
+         ['P3: Inkonsistensi "attention"→"fokus"', 'P8: Kalimat panjang disarankan untuk dipisah']),
     ]
 
     aw = 230
@@ -424,18 +424,18 @@ def fig9_5():
         s.arrow(mx + mw // 2, my + mh + 2, x + aw // 2, ay - 2, color='dark')
 
     # Sequential arrows between sub-agents
-    s.arrow(30 + aw + 4, ay + 90, 270 - 4, ay + 90, label='Glossary')
-    s.arrow(270 + aw + 4, ay + 90, 520 - 4, ay + 90, label='Translation')
+    s.arrow(30 + aw + 4, ay + 90, 270 - 4, ay + 90, label='Glosarium')
+    s.arrow(270 + aw + 4, ay + 90, 520 - 4, ay + 90, label='Terjemahan')
 
     # Shared file system
     fy = 375
     s.rect(30, fy, W - 60, 70, fill='medium', rx=6)
-    s.text(W // 2, fy + 18, 'Shared file system', size=FS_BODY, bold=True)
+    s.text(W // 2, fy + 18, 'Sistem file bersama', size=FS_BODY, bold=True)
     files = [
-        ('glossary.json', 'Glossary of terms'),
-        ('chapter{1..10}_zh.md', 'Chapter translation'),
-        ('review_report.md', 'Review report'),
-        ('translation_guide.md', 'Translation guide'),
+        ('glossary.json', 'Glosarium istilah'),
+        ('chapter{1..10}_id.md', 'Terjemahan bab'),
+        ('review_report.md', 'Laporan tinjauan'),
+        ('translation_guide.md', 'Panduan terjemahan'),
     ]
     fw = (W - 80) // len(files)
     for i, (fname, desc) in enumerate(files):
@@ -446,9 +446,9 @@ def fig9_5():
     # Key insight
     ky = 460
     s.rect(30, ky, W - 60, 60, fill='code_bg', rx=4)
-    s.text(W // 2, ky + 18, 'Context isolation advantages', size=FS_BODY, bold=True)
+    s.text(W // 2, ky + 18, 'Keuntungan isolasi konteks', size=FS_BODY, bold=True)
     s.text(W // 2, ky + 42,
-           'Glossary: only view terms | Translation: only view current chapter + glossary | Manager: only maintain file index',
+           'Glosarium: hanya melihat istilah | Penerjemahan: hanya melihat bab saat ini + glosarium | Manajer: hanya mengelola indeks file',
            size=FS_TINY, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-5.svg'))
@@ -462,27 +462,27 @@ def fig9_6():
     W, H = 780, 500
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Manager parallel coordination: message bus architecture', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Koordinasi paralel Manajer: arsitektur bus pesan', size=FS_TITLE, bold=True)
 
     # Orchestration Agent
     ox, oy, ow, oh = 240, 55, 300, 70
     s.rect(ox, oy, ow, oh, fill='medium')
-    s.text(ox + ow // 2, oy + 22, 'Orchestration Agent', size=FS_BODY, bold=True)
-    s.text(ox + ow // 2, oy + 48, 'Parallel scheduling · Real-time monitoring · Result aggregation', size=FS_TINY, fill='text_light')
+    s.text(ox + ow // 2, oy + 22, 'Agen Orkestrasi', size=FS_BODY, bold=True)
+    s.text(ox + ow // 2, oy + 48, 'Penjadwalan paralel · Pemantauan real-time · Agregasi hasil', size=FS_TINY, fill='text_light')
 
     # Message bus
     bus_y = 155
     s.rect(50, bus_y, W - 100, 36, fill='dark', rx=4)
-    s.text(W // 2, bus_y + 18, 'Message Bus', size=FS_SMALL, fill='white', bold=True)
+    s.text(W // 2, bus_y + 18, 'Bus Pesan', size=FS_SMALL, fill='white', bold=True)
 
     s.arrow(ox + ow // 2, oy + oh + 2, ox + ow // 2, bus_y - 2)
 
     # Parallel agents
     agents = [
-        ('Agent 1', 'Data collection', 'Running ◎', 'light'),
-        ('Agent 2', 'Content analysis', 'Running ◎', 'light'),
-        ('Agent 3', 'Chart Generation', 'Completed ✓', 'medium'),
-        ('Agent 4', 'Format Validation', 'Waiting ○', 'code_bg'),
+        ('Agen 1', 'Pengumpulan data', 'Berjalan ◎', 'light'),
+        ('Agen 2', 'Analisis konten', 'Berjalan ◎', 'light'),
+        ('Agen 3', 'Pembuatan Grafik', 'Selesai ✓', 'medium'),
+        ('Agen 4', 'Validasi Format', 'Menunggu ○', 'code_bg'),
     ]
     aw = 160
     gap = 14
@@ -496,21 +496,21 @@ def fig9_6():
         s.text(x + aw // 2, ay + 20, name, size=FS_SMALL, bold=True)
         s.text(x + aw // 2, ay + 40, role, size=FS_TINY, fill='text_light')
         s.text(x + aw // 2, ay + 65, status, size=FS_TINY,
-               fill='text_light' if 'Waiting' in status else 'text')
-        s.text(x + aw // 2, ay + 82, 'Independent Context', size=FS_TINY, fill='text_light')
+               fill='text_light' if 'Menunggu' in status else 'text')
+        s.text(x + aw // 2, ay + 82, 'Konteks Mandiri', size=FS_TINY, fill='text_light')
 
         s.arrow(x + aw // 2, bus_y + 38, x + aw // 2, ay - 2, color='dark')
 
     # Message examples
     my = 350
     s.rect(30, my, W - 60, 125, fill='code_bg', rx=4)
-    s.text(W // 2, my + 18, 'Message Bus Communication Example', size=FS_BODY, bold=True)
+    s.text(W // 2, my + 18, 'Contoh Komunikasi Bus Pesan', size=FS_BODY, bold=True)
 
     messages = [
-        ('Orch → Agent 1', '{"type":"start","task":"Collect arxiv papers","params":{"query":"LLM agent"}}'),
-        ('Agent 3 → Orch', '{"type":"completed","agent_id":"3","result":"charts/fig1.svg generated"}'),
-        ('Agent 1 → Agent 2', '{"type":"data_ready","source":"agent_1","file":"raw_data.json"}'),
-        ('Orch → Agent 4', '{"type":"start","depends_on":["agent_2","agent_3"]}'),
+        ('Ork → Agen 1', '{"type":"start","task":"Kumpulkan makalah arxiv","params":{"query":"agen LLM"}}'),
+        ('Agen 3 → Ork', '{"type":"completed","agent_id":"3","result":"charts/fig1.svg dihasilkan"}'),
+        ('Agen 1 → Agen 2', '{"type":"data_ready","source":"agent_1","file":"raw_data.json"}'),
+        ('Ork → Agen 4', '{"type":"start","depends_on":["agent_2","agent_3"]}'),
     ]
     for i, (sender, msg) in enumerate(messages):
         y = my + 40 + i * 22
@@ -528,19 +528,19 @@ def fig9_7():
     W, H = 780, 560
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.5/9.6: Phone + Computer Dual Agent', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Eksperimen 9.5/9.6: Agen Ganda Telepon + Komputer', size=FS_TITLE, bold=True)
 
     # Phone Agent (left)
     px, py, pw, ph = 30, 65, 310, 240
     s.rect(px, py, pw, ph, fill='light', rx=6)
-    s.text(px + pw // 2, py + 22, 'Phone Agent', size=FS_BODY, bold=True)
-    s.text(px + pw // 2, py + 42, 'Node.js · Real-time Voice Call', size=FS_TINY, fill='text_light')
+    s.text(px + pw // 2, py + 22, 'Agen Telepon', size=FS_BODY, bold=True)
+    s.text(px + pw // 2, py + 42, 'Node.js · Panggilan Suara Real-time', size=FS_TINY, fill='text_light')
 
     phone_pipeline = [
-        ('User Voice', 'Microphone Input', 'medium'),
-        ('VAD + ASR', 'Silero VAD → STT Transcription', 'light'),
-        ('LLM Inference', 'Understand Intent + Extract Information', 'light'),
-        ('TTS Synthesis', 'Generate Voice Reply → Playback', 'medium'),
+        ('Suara Pengguna', 'Input Mikrofon', 'medium'),
+        ('VAD + ASR', 'Silero VAD → Transkripsi STT', 'light'),
+        ('Inferensi LLM', 'Pahami Niat + Ekstrak Informasi', 'light'),
+        ('Sintesis TTS', 'Hasilkan Balasan Suara → Pemutaran', 'medium'),
     ]
     for i, (label, desc, fill) in enumerate(phone_pipeline):
         y = py + 60 + i * 42
@@ -553,14 +553,14 @@ def fig9_7():
     # Computer Agent (right)
     cx, cy, cw, ch_h = 440, 65, 310, 240
     s.rect(cx, cy, cw, ch_h, fill='light', rx=6)
-    s.text(cx + cw // 2, cy + 22, 'Computer Agent', size=FS_BODY, bold=True)
-    s.text(cx + cw // 2, cy + 42, 'Python · Browser Automation', size=FS_TINY, fill='text_light')
+    s.text(cx + cw // 2, cy + 22, 'Agen Komputer', size=FS_BODY, bold=True)
+    s.text(cx + cw // 2, cy + 42, 'Python · Otomatisasi Browser', size=FS_TINY, fill='text_light')
 
     comp_pipeline = [
-        ('Screenshot', 'Current Browser Page', 'medium'),
-        ('Vision LLM', 'Understand Page Structure + Form Fields', 'light'),
-        ('Action Planning', 'Locate Fields → Plan Input Sequence', 'light'),
-        ('Execute Actions', 'Click / Input / Submit', 'medium'),
+        ('Tangkapan Layar', 'Halaman Browser Saat Ini', 'medium'),
+        ('Visi LLM', 'Pahami Struktur Halaman + Bidang Formulir', 'light'),
+        ('Perencanaan Tindakan', 'Temukan Bidang → Rencanakan Urutan Input', 'light'),
+        ('Eksekusi Tindakan', 'Klik / Input / Kirim', 'medium'),
     ]
     for i, (label, desc, fill) in enumerate(comp_pipeline):
         y = cy + 60 + i * 42
@@ -573,7 +573,7 @@ def fig9_7():
     # WebSocket connection between agents
     ws_y = py + ph + 15
     s.rect(30, ws_y, W - 60, 36, fill='dark', rx=4)
-    s.text(W // 2, ws_y + 18, 'WebSocket Bidirectional Communication (ws://localhost:8849)', size=FS_SMALL, fill='white', bold=True)
+    s.text(W // 2, ws_y + 18, 'Komunikasi Dua Arah WebSocket (ws://localhost:8849)', size=FS_SMALL, fill='white', bold=True)
 
     s.arrow(px + pw // 2, py + ph + 2, px + pw // 2, ws_y - 2, color='dark')
     s.arrow(cx + cw // 2, cy + ch_h + 2, cx + cw // 2, ws_y - 2, color='dark')
@@ -581,13 +581,13 @@ def fig9_7():
     # Message examples
     my = ws_y + 50
     s.rect(30, my, W - 60, 150, fill='code_bg', rx=4)
-    s.text(W // 2, my + 18, 'Real-time Bidirectional Message Stream (Use phone and computer simultaneously)', size=FS_BODY, bold=True)
+    s.text(W // 2, my + 18, 'Aliran Pesan Dua Arah Real-time (Gunakan telepon dan komputer bersamaan)', size=FS_BODY, bold=True)
 
     msgs = [
-        ('Phone → Computer', '[FROM_PHONE_AGENT] User says name is Zhang San', '→'),
-        ('Computer → Phone', '[FROM_COMPUTER_AGENT] Name filled in, ID number required', '←'),
-        ('Phone → Computer', '[FROM_PHONE_AGENT] ID number 310101199001011234', '→'),
-        ('Computer → Phone', '[FROM_COMPUTER_AGENT] Form submitted, registration successful', '←'),
+        ('Telepon → Komputer', '[FROM_PHONE_AGENT] Pengguna mengatakan namanya adalah Budi', '→'),
+        ('Komputer → Telepon', '[FROM_COMPUTER_AGENT] Nama terisi, nomor KTP diperlukan', '←'),
+        ('Telepon → Komputer', '[FROM_PHONE_AGENT] Nomor KTP 310101199001011234', '→'),
+        ('Komputer → Telepon', '[FROM_COMPUTER_AGENT] Formulir dikirim, pendaftaran berhasil', '←'),
     ]
     for i, (sender, content, direction) in enumerate(msgs):
         y = my + 42 + i * 26
@@ -597,7 +597,7 @@ def fig9_7():
 
     # Key point
     s.text(W // 2, my + 140,
-           'Key: Two agents run independent ReAct loops in parallel without blocking each other',
+           'Kunci: Dua agen menjalankan loop ReAct independen secara paralel tanpa memblokir satu sama lain',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-7.svg'))
@@ -611,21 +611,21 @@ def fig9_8():
     W, H = 780, 530
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.7: Parallel Web Scraping — Cascade Termination', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Eksperimen 9.7: Web Scraping Paralel — Penghentian Berjenjang', size=FS_TITLE, bold=True)
 
     # Orchestration Agent
     ox, oy, ow, oh = 230, 55, 320, 65
     s.rect(ox, oy, ow, oh, fill='medium')
-    s.text(ox + ow // 2, oy + 20, 'Orchestration Agent', size=FS_BODY, bold=True)
-    s.text(ox + ow // 2, oy + 44, 'Dynamic creation · Real-time monitoring · Cascade termination', size=FS_TINY, fill='text_light')
+    s.text(ox + ow // 2, oy + 20, 'Agen Orkestrasi', size=FS_BODY, bold=True)
+    s.text(ox + ow // 2, oy + 44, 'Pembuatan dinamis · Pemantauan real-time · Penghentian berjenjang', size=FS_TINY, fill='text_light')
 
     # Parallel Computer Use Agents
     agents = [
-        ('Agent 1', 'cs.edu.cn', 'Searching... ◎', 'light'),
-        ('Agent 2', 'math.edu.cn', 'Not found ✗', '#e8e8e8'),
-        ('Agent 3', 'phys.edu.cn', 'Found! ✓', 'medium'),
-        ('Agent 4', 'chem.edu.cn', 'Terminated ⊘', 'code_bg'),
-        ('Agent 5', 'bio.edu.cn', 'Terminated ⊘', 'code_bg'),
+        ('Agen 1', 'cs.edu.cn', 'Mencari... ◎', 'light'),
+        ('Agen 2', 'math.edu.cn', 'Tidak ditemukan ✗', '#e8e8e8'),
+        ('Agen 3', 'phys.edu.cn', 'Ditemukan! ✓', 'medium'),
+        ('Agen 4', 'chem.edu.cn', 'Dihentikan ⊘', 'code_bg'),
+        ('Agen 5', 'bio.edu.cn', 'Dihentikan ⊘', 'code_bg'),
     ]
     aw = 130
     gap = 12
@@ -638,23 +638,23 @@ def fig9_8():
         s.rect(x, ay, aw, 95, fill=fill, rx=4)
         s.text(x + aw // 2, ay + 16, name, size=FS_SMALL, bold=True)
         s.mono(x + aw // 2, ay + 35, url, size=10, anchor='middle')
-        s.text(x + aw // 2, ay + 55, 'Faculty Directory Search', size=FS_TINY, fill='text_light')
+        s.text(x + aw // 2, ay + 55, 'Pencarian Direktori Fakultas', size=FS_TINY, fill='text_light')
         s.text(x + aw // 2, ay + 75, status, size=FS_TINY,
-               bold=('Found' in status), fill='text' if 'Found' in status else 'text_light')
+               bold=('Ditemukan' in status), fill='text' if 'Ditemukan' in status else 'text_light')
 
         s.arrow(ox + ow // 2, oy + oh + 2, x + aw // 2, ay - 2, color='dark')
 
     # Cascade termination flow
     ty = 280
     s.rect(30, ty, W - 60, 120, fill='code_bg', rx=4)
-    s.text(W // 2, ty + 18, 'Cascade Termination Timeline', size=FS_BODY, bold=True)
+    s.text(W // 2, ty + 18, 'Garis Waktu Penghentian Berjenjang', size=FS_BODY, bold=True)
 
     timeline = [
-        ('t=0s', 'Start 5 agents\nparallel search for teacher "Zhang Wei"'),
-        ('t=12s', 'Agent 2 completed\nNot found → Normal exit'),
-        ('t=18s', 'Agent 3 found target!\nSend target_found'),
-        ('t=18.1s', 'Orch broadcasts terminate\nto Agents 1,4,5'),
-        ('t=19s', 'All confirm termination\nAggregate results and return'),
+        ('t=0d', 'Mulai 5 agen\npencarian paralel untuk guru "Zhang Wei"'),
+        ('t=12d', 'Agen 2 selesai\nTidak ditemukan → Keluar normal'),
+        ('t=18d', 'Agen 3 menemukan target!\nKirim target_found'),
+        ('t=18.1d', 'Ork menyiarkan hentikan\nke Agen 1,4,5'),
+        ('t=19d', 'Semua mengonfirmasi penghentian\nAgregasi hasil dan kembalikan'),
     ]
     tw = 130
     tx_start = (W - len(timeline) * tw) // 2
@@ -669,20 +669,20 @@ def fig9_8():
     # Result and comparison
     ry = 420
     s.rect(30, ry, 340, 85, fill='light', rx=4)
-    s.text(200, ry + 18, 'Result found', size=FS_BODY, bold=True)
+    s.text(200, ry + 18, 'Hasil ditemukan', size=FS_BODY, bold=True)
     result_lines = [
-        'Name: Zhang Wei   School: School of Physics',
-        'Position: Professor   Field: Quantum Computing',
+        'Nama: Zhang Wei   Sekolah: Fakultas Fisika',
+        'Jabatan: Profesor   Bidang: Komputasi Kuantum',
         'Email: zhangwei@phys.edu.cn',
     ]
     for i, ln in enumerate(result_lines):
         s.mono(50, ry + 40 + i * 16, ln, size=11)
 
     s.rect(400, ry, 350, 85, fill='medium', rx=4)
-    s.text(575, ry + 18, 'Performance Comparison', size=FS_BODY, bold=True)
-    s.text(420, ry + 42, 'Serial: 10 websites × 30s = ~5 minutes', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(420, ry + 60, 'Parallel: 18s to find + 1s to terminate = 19s', size=FS_TINY, anchor='start', bold=True)
-    s.text(420, ry + 78, 'Speedup: ~15× (with cascade termination optimization)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(575, ry + 18, 'Perbandingan Kinerja', size=FS_BODY, bold=True)
+    s.text(420, ry + 42, 'Serial: 10 situs web × 30d = ~5 menit', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(420, ry + 60, 'Paralel: 18d untuk menemukan + 1d untuk menghentikan = 19d', size=FS_TINY, anchor='start', bold=True)
+    s.text(420, ry + 78, 'Peningkatan: ~15× (dengan optimasi penghentian berjenjang)', size=FS_TINY, anchor='start', fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-8.svg'))
 
@@ -695,13 +695,13 @@ def fig9_9():
     W, H = 780, 440
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Handoff Chain Pattern: Peer-to-peer handoff + Contract-based collaboration', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Pola Rantai Serah Terima: Serah terima peer-to-peer + Kolaborasi berbasis kontrak', size=FS_TITLE, bold=True)
 
     nodes = [
-        ('Agent A', 'Requirements Analysis', 'Output: structured requirements document \nspec.json', 'medium'),
-        ('Agent B', 'Architecture Design', 'Output: technical design document \ndesign.md', 'light'),
-        ('Agent C', 'Code Implementation', 'Output: source code \nsrc/*.py', 'light'),
-        ('Agent D', 'Test Verification', 'Output: test report \ntest_report.md', 'medium'),
+        ('Agen A', 'Analisis Persyaratan', 'Output: dokumen persyaratan terstruktur \nspec.json', 'medium'),
+        ('Agen B', 'Desain Arsitektur', 'Output: dokumen desain teknis \ndesign.md', 'light'),
+        ('Agen C', 'Implementasi Kode', 'Output: kode sumber \nsrc/*.py', 'light'),
+        ('Agen D', 'Verifikasi Pengujian', 'Output: laporan pengujian \ntest_report.md', 'medium'),
     ]
 
     nw, nh = 160, 130
@@ -720,7 +720,7 @@ def fig9_9():
         for j, ln in enumerate(output.split('\n')):
             s.text(x + nw // 2, ny + 72 + j * 16, ln, size=FS_TINY, fill='text_light')
 
-        s.text(x + nw // 2, ny + nh - 8, 'Handoff after completion →', size=FS_TINY, fill='text_light')
+        s.text(x + nw // 2, ny + nh - 8, 'Serah terima setelah selesai →', size=FS_TINY, fill='text_light')
 
         if i < len(nodes) - 1:
             s.arrow(x + nw + 4, ny + nh // 2, x + nw + gap - 4, ny + nh // 2)
@@ -728,37 +728,37 @@ def fig9_9():
     # Handoff data detail
     hy = 215
     s.rect(30, hy, W - 60, 90, fill='code_bg', rx=4)
-    s.text(W // 2, hy + 18, 'Handoff Content (Agent A → Agent B Example)', size=FS_BODY, bold=True)
+    s.text(W // 2, hy + 18, 'Konten Serah Terima (Contoh Agen A → Agen B)', size=FS_BODY, bold=True)
 
     handoff_fields = [
-        ('Trigger Condition', 'A completes requirements document → is_complete=True'),
-        ('Target Agent', 'target="architect" (Agent B)'),
-        ('Handoff Content', 'files=["spec.json"] + summary="E-commerce system: 3 microservices, REST API"'),
-        ('Post-handoff Status', 'status="exit" (release resources, do not remain on standby)'),
+        ('Kondisi Pemicu', 'A menyelesaikan dokumen persyaratan → is_complete=True'),
+        ('Agen Target', 'target="architect" (Agen B)'),
+        ('Konten Serah Terima', 'files=["spec.json"] + summary="Sistem e-commerce: 3 layanan mikro, REST API"'),
+        ('Status Pasca-serah terima', 'status="exit" (bebaskan sumber daya, tidak tetap siaga)'),
     ]
     for i, (field, value) in enumerate(handoff_fields):
         y = hy + 38 + i * 16
         s.text(42, y, field + ':', size=FS_TINY, bold=True, anchor='start')
-        s.text(150, y, value, size=FS_TINY, anchor='start', fill='text_light')
+        s.text(200, y, value, size=FS_TINY, anchor='start', fill='text_light')
 
     # Comparison with Manager mode
     cy = 320
     s.rect(30, cy, 340, 100, fill='light', rx=4)
-    s.text(200, cy + 18, 'Decentralization Advantages', size=FS_SMALL, bold=True)
+    s.text(200, cy + 18, 'Keuntungan Desentralisasi', size=FS_SMALL, bold=True)
     advantages = [
-        '✓ No central Manager needed to understand all roles',
-        '✓ Clear responsibility boundaries, interface decoupling',
-        '✓ Engineer can have multiple parallel instances',
+        '✓ Tidak perlu Manajer pusat untuk memahami semua peran',
+        '✓ Batas tanggung jawab yang jelas, decoupling antarmuka',
+        '✓ Insinyur dapat memiliki beberapa instans paralel',
     ]
     for i, adv in enumerate(advantages):
         s.text(48, cy + 42 + i * 20, adv, size=FS_TINY, anchor='start', fill='text_light')
 
     s.rect(400, cy, 350, 100, fill='light', rx=4)
-    s.text(575, cy + 18, 'Decentralization Limitations', size=FS_SMALL, bold=True)
+    s.text(575, cy + 18, 'Keterbatasan Desentralisasi', size=FS_SMALL, bold=True)
     limits = [
-        '✗ Lack of global optimization perspective',
-        '✗ Difficult exception handling (no central coordination)',
-        '✗ Fixed process, hard to adjust dynamically',
+        '✗ Kurangnya perspektif optimasi global',
+        '✗ Penanganan eksepsi yang sulit (tanpa koordinasi pusat)',
+        '✗ Proses tetap, sulit untuk disesuaikan secara dinamis',
     ]
     for i, lim in enumerate(limits):
         s.text(418, cy + 42 + i * 20, lim, size=FS_TINY, anchor='start', fill='text_light')
@@ -774,24 +774,24 @@ def fig9_10():
     W, H = 780, 530
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'MetaGPT SOP Pipeline: Standardized Document-Driven', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Pipeline SOP MetaGPT: Berbasis Dokumen Terstandarisasi', size=FS_TITLE, bold=True)
 
     roles = [
-        ('Product Manager', 'medium',
-         'Input: User Requirement Description',
-         ['Feature List + Priority', 'User Stories (5 items)', 'Acceptance Criteria'],
+        ('Manajer Produk', 'medium',
+         'Input: Deskripsi Persyaratan Pengguna',
+         ['Daftar Fitur + Prioritas', 'Kisah Pengguna (5 item)', 'Kriteria Penerimaan'],
          'docs/PRD.md'),
-        ('Architect', 'light',
+        ('Arsitek', 'light',
          'Input: PRD.md',
-         ['Tech Stack: FastAPI+React', 'API Specification (OpenAPI)', 'Database Schema'],
+         ['Tumpukan Teknologi: FastAPI+React', 'Spesifikasi API (OpenAPI)', 'Skema Database'],
          'docs/design.md'),
-        ('Engineer ×3', 'light',
-         'Input: design.md + module specification',
-         ['Module A: User Service', 'Module B: Order Service', 'Module C: Payment Service'],
+        ('Insinyur ×3', 'light',
+         'Input: design.md + spesifikasi modul',
+         ['Modul A: Layanan Pengguna', 'Modul B: Layanan Pesanan', 'Modul C: Layanan Pembayaran'],
          'src/*.py'),
-        ('QA Engineer', 'medium',
+        ('Insinyur QA', 'medium',
          'Input: src/ + PRD.md',
-         ['Unit Tests (pytest)', 'Integration Tests (API)', 'Bug Report → Engineer'],
+         ['Pengujian Unit (pytest)', 'Pengujian Integrasi (API)', 'Laporan Bug → Insinyur'],
          'docs/test_report.md'),
     ]
 
@@ -825,30 +825,30 @@ def fig9_10():
     # QA → Engineer feedback loop
     qa_x = rx_start + 3 * (rw + gap) + rw // 2
     eng_x = rx_start + 2 * (rw + gap) + rw // 2
-    s.arrow_curved(qa_x, ry + 230 + 5, eng_x, ry + 230 + 5, curve=-30, label='Bug Fix', dash=True)
+    s.arrow_curved(qa_x, ry + 230 + 5, eng_x, ry + 230 + 5, curve=-30, label='Perbaikan Bug', dash=True)
 
     # Shared file system
     fy = 310
     s.rect(30, fy, W - 60, 50, fill='medium', rx=4)
-    s.text(W // 2, fy + 16, 'Shared Project Directory', size=FS_SMALL, bold=True)
+    s.text(W // 2, fy + 16, 'Direktori Proyek Bersama', size=FS_SMALL, bold=True)
     s.mono(W // 2, fy + 36, 'docs/PRD.md  docs/design.md  src/*.py  docs/test_report.md',
            size=11, anchor='middle')
 
     # Key insight
     ky = 375
     s.rect(30, ky, W - 60, 130, fill='code_bg', rx=4)
-    s.text(W // 2, ky + 18, 'MetaGPT Core Design', size=FS_BODY, bold=True)
+    s.text(W // 2, ky + 18, 'Desain Inti MetaGPT', size=FS_BODY, bold=True)
 
     insights = [
-        ('Standardized Documents', 'Each role outputs a clear format — downstream only needs to understand the format, not the upstream thought process'),
-        ('Interface Decoupling', 'Improve PM (switch to a stronger model) — as long as the output conforms to the PRD format, downstream requires zero modification'),
-        ('No Manager', 'Control flows naturally along the DAG: PM→Arch→Eng→QA, no central scheduling overhead'),
-        ('Exception Channel', 'QA test failure → Bug report routed by module back to Engineer → iterative fix'),
+        ('Dokumen Terstandarisasi', 'Setiap peran menghasilkan format yang jelas — hilir hanya perlu memahami format, bukan proses pemikiran hulu'),
+        ('Decoupling Antarmuka', 'Tingkatkan PM (beralih ke model yang lebih kuat) — selama output sesuai dengan format PRD, hilir tidak memerlukan modifikasi'),
+        ('Tanpa Manajer', 'Kontrol mengalir secara alami di sepanjang DAG: PM→Arch→Eng→QA, tanpa overhead penjadwalan pusat'),
+        ('Saluran Eksepsi', 'Kegagalan uji QA → Laporan bug dirutekan oleh modul kembali ke Insinyur → perbaikan iteratif'),
     ]
     for i, (title, desc) in enumerate(insights):
         y = ky + 42 + i * 24
         s.text(42, y, '▸ ' + title, size=FS_SMALL, bold=True, anchor='start')
-        s.text(180, y, desc, size=FS_TINY, anchor='start', fill='text_light')
+        s.text(200, y, desc, size=FS_TINY, anchor='start', fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-10.svg'))
 
@@ -864,8 +864,8 @@ def fig9_11():
     #  Common Input
     in_x, in_y, in_w, in_h = 230, 55, 440, 64
     s.rect(in_x, in_y, in_w, in_h, fill='medium', rx=6)
-    s.text(in_x + in_w / 2, in_y + 22, 'Common Input: camera image + language instruction', size=FS_SMALL, bold=True)
-    s.text(in_x + in_w / 2, in_y + 44, '"Put the red block into the blue box"', size=FS_TINY, fill='text_light')
+    s.text(in_x + in_w / 2, in_y + 22, 'Input Umum: gambar kamera + instruksi bahasa', size=FS_SMALL, bold=True)
+    s.text(in_x + in_w / 2, in_y + 44, '"Masukkan balok merah ke dalam kotak biru"', size=FS_TINY, fill='text_light')
 
     #  Arrows leading to three branches
     s.arrow(in_x + 70, in_y + in_h + 2, 145, 165)   # → OpenVLA
@@ -878,23 +878,23 @@ def fig9_11():
     sx0 = (W - cols_total) / 2  # = 30
 
     columns = [
-        ('OpenVLA', 'Open source · discrete action tokens', 'light', [
-            ('Vision encoder', 'DINOv2 + SigLIP', 'Extract pixel features'),
-            ('LLM backbone', 'Llama 2 (7B)', 'Understand instructions and scenes'),
-            ('Decoding method', 'Autoregressive · text tokens', 'Discretize actions into options'),
-            ('Action output', '"a=[3,−2,5,...]" tokens', 'Generate 7-DOF control values step by step'),
+        ('OpenVLA', 'Sumber terbuka · token tindakan diskrit', 'light', [
+            ('Enkoder Visi', 'DINOv2 + SigLIP', 'Ekstrak fitur piksel'),
+            ('Tulang punggung LLM', 'Llama 2 (7B)', 'Pahami instruksi dan adegan'),
+            ('Metode decoding', 'Autoregresif · token teks', 'Diskritisasi tindakan menjadi opsi'),
+            ('Output tindakan', 'Token "a=[3,−2,5,...]"', 'Hasilkan nilai kontrol 7-DOF langkah demi langkah'),
         ]),
-        ('π₀（Pi-Zero）', 'Diffusion policy · smooth trajectory', 'medium', [
-            ('Vision encoder', 'ViT multi-view fusion', 'Extract pixel features'),
-            ('Mixture-of-Transformers', 'Fast-slow separated backbone', 'Language slow thinking + control fast thinking'),
-            ('Decoding method', 'Diffusion denoising iteration', 'Coarse-to-fine refinement of entire trajectory'),
-            ('Action output', 'Continuous action sequence (50 steps/batch)', 'High-frequency smooth control signal'),
+        ('π₀（Pi-Zero）', 'Kebijakan difusi · lintasan halus', 'medium', [
+            ('Enkoder Visi', 'Fusi multi-tampilan ViT', 'Ekstrak fitur piksel'),
+            ('Campuran-Transformer', 'Tulang punggung terpisah cepat-lambat', 'Pemikiran lambat bahasa + pemikiran cepat kontrol'),
+            ('Metode decoding', 'Iterasi denoising difusi', 'Perbaikan lintasan dari kasar ke halus'),
+            ('Output tindakan', 'Urutan tindakan kontinu (50 langkah/batch)', 'Sinyal kontrol halus frekuensi tinggi'),
         ]),
-        ('RT-2', 'Language model as action model', 'light', [
-            ('Vision-language backbone', 'PaLI-X / PaLM-E', 'VLM end-to-end understanding'),
-            ('Action representation', 'Action → natural language tokens', '"move arm 5cm right"'),
-            ('Decoding method', 'Reuse VLM autoregression', 'Shared weights with text generation'),
-            ('Action output', 'Text description → controller parsing', 'Inherit VLM\'s semantic generalization'),
+        ('RT-2', 'Model bahasa sebagai model tindakan', 'light', [
+            ('Tulang punggung Visi-bahasa', 'PaLI-X / PaLM-E', 'Pemahaman end-to-end VLM'),
+            ('Representasi tindakan', 'Tindakan → token bahasa alami', '"gerakkan lengan 5cm ke kanan"'),
+            ('Metode decoding', 'Gunakan kembali autoregresi VLM', 'Bobot bersama dengan generasi teks'),
+            ('Output tindakan', 'Deskripsi teks → penguraian pengontrol', 'Mewarisi generalisasi semantik VLM'),
         ]),
     ]
 
@@ -923,10 +923,10 @@ def fig9_11():
     out_y = top_y + title_h + 4 * row_h + 14 + 24
     s.rect(30, out_y, W - 60, 50, fill='darker', rx=6)
     s.text(W / 2, out_y + 18,
-           'Robot control signals: 7-DOF joint angles / end-effector pose',
+           'Sinyal kontrol robot: Sudut sambungan 7-DOF / pose end-effector',
            size=FS_SMALL, bold=True, fill='white')
     s.text(W / 2, out_y + 36,
-           'The difference lies in "how to tell the robot what to do next," but both ultimately fall into a unified control interface',
+           'Perbedaannya terletak pada "bagaimana memberi tahu robot apa yang harus dilakukan selanjutnya," tetapi pada akhirnya bermuara pada antarmuka kontrol terpadu',
            size=FS_TINY, fill='white')
 
     s.save(os.path.join(OUT, 'fig9-11.svg'))
@@ -940,27 +940,27 @@ def fig9_12():
     W, H = 780, 550
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.9: Voice Werewolf — Information Permission Control', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Eksperimen 9.9: Werewolf Suara — Kontrol Izin Informasi', size=FS_TITLE, bold=True)
 
     # Judge (code-driven)
     jx, jy, jw, jh = 260, 55, 260, 75
     s.rect(jx, jy, jw, jh, fill='dark', rx=6)
-    s.text(jx + jw // 2, jy + 20, 'Judge (code-driven)', size=FS_BODY, bold=True, fill='white')
-    s.text(jx + jw // 2, jy + 42, 'Game state · Phase control · Information distribution', size=FS_TINY, fill='white')
-    s.text(jx + jw // 2, jy + 58, 'Night → Day → Vote → Settle', size=FS_TINY, fill='white')
+    s.text(jx + jw // 2, jy + 20, 'Hakim (berbasis kode)', size=FS_BODY, bold=True, fill='white')
+    s.text(jx + jw // 2, jy + 42, 'Status permainan · Kontrol fase · Distribusi informasi', size=FS_TINY, fill='white')
+    s.text(jx + jw // 2, jy + 58, 'Malam → Siang → Pemungutan Suara → Penyelesaian', size=FS_TINY, fill='white')
 
     # Role agents
     roles = [
         (40, 'Werewolf 1', '🐺', 'medium',
-         ['Visible: Teammate identities', 'Strategy: Disguise as villager', 'Night: Choose target']),
+         ['Terlihat: Identitas rekan', 'Strategi: Menyamar sebagai warga', 'Malam: Pilih target']),
         (185, 'Werewolf 2', '🐺', 'medium',
-         ['Visible: Teammate identities', 'Strategy: Follow votes to protect', 'Night: Negotiate target']),
-        (330, 'Seer', '🔮', 'light',
-         ['Visible: Investigation results', 'Strategy: Choose timing to reveal', 'Night: Check 1 person']),
-        (475, 'Witch', '🧪', 'light',
-         ['Visible: Death/healing', 'Strategy: Save potion/antidote', 'Night: Save/poison 1 person']),
-        (620, 'Villager ×2', '👤', '#e8e8e8',
-         ['Visible: Public information only', 'Strategy: Logical reasoning', 'Day: Analyze speech']),
+         ['Terlihat: Identitas rekan', 'Strategi: Ikuti suara warga', 'Malam: Negosiasi target']),
+        (330, 'Penerawang', '🔮', 'light',
+         ['Terlihat: Hasil investigasi', 'Strategi: Pilih waktu untuk ungkap', 'Malam: Periksa 1 orang']),
+        (475, 'Penyihir', '🧪', 'light',
+         ['Terlihat: Kematian/penyembuhan', 'Strategi: Simpan ramuan/racun', 'Malam: Selamatkan/racun 1 orang']),
+        (620, 'Warga ×2', '👤', '#e8e8e8',
+         ['Terlihat: Hanya info publik', 'Strategi: Penalaran logis', 'Siang: Analisis ucapan']),
     ]
 
     aw, ay = 135, 180
@@ -975,20 +975,20 @@ def fig9_12():
 
         # Permission badge
         if 'Werewolf' in name:
-            s.badge(x + aw - 45, ay + aw - 15, 40, 18, 'Mutual knowledge', fill='darker', font_size=11)
-        elif 'Seer' in name:
-            s.badge(x + aw - 55, ay + aw - 15, 50, 18, 'Investigation results', fill='darker', font_size=10)
+            s.badge(x + aw - 45, ay + aw - 15, 40, 18, 'Pengetahuan bersama', fill='darker', font_size=11)
+        elif 'Penerawang' in name:
+            s.badge(x + aw - 55, ay + aw - 15, 50, 18, 'Hasil investigasi', fill='darker', font_size=10)
 
     # Info permission control
     iy = 340
     s.rect(30, iy, W - 60, 90, fill='code_bg', rx=4)
-    s.text(W // 2, iy + 18, 'Information permission control: judge filters context by role', size=FS_BODY, bold=True)
+    s.text(W // 2, iy + 18, 'Kontrol izin informasi: hakim memfilter konteks berdasarkan peran', size=FS_BODY, bold=True)
 
     perms = [
-        ('Werewolf', 'All werewolf identities + night discussion + public speech'),
-        ('Seer', 'Investigation results (only self-investigated) + public speech'),
-        ('Witch', 'Deaths of the night + antidote/poison status + public speech'),
-        ('Villager', 'Public speech only + voting records (zero private information)'),
+        ('Werewolf', 'Semua identitas werewolf + diskusi malam + ucapan publik'),
+        ('Penerawang', 'Hasil investigasi (hanya milik sendiri) + ucapan publik'),
+        ('Penyihir', 'Kematian di malam hari + status penawar/racun + ucapan publik'),
+        ('Warga', 'Hanya ucapan publik + catatan pemungutan suara (tanpa informasi pribadi)'),
     ]
     pw = (W - 80) // 2
     for i, (role, perm) in enumerate(perms):
@@ -996,18 +996,18 @@ def fig9_12():
         x = 50 + col * pw
         y = iy + 40 + row * 22
         s.text(x, y, role + ':', size=FS_TINY, bold=True, anchor='start')
-        s.text(x + 55, y, perm, size=FS_TINY, anchor='start', fill='text_light')
+        s.text(x + 75, y, perm, size=FS_TINY, anchor='start', fill='text_light')
 
     # Voice interaction
     vy = 445
     s.rect(30, vy, W - 60, 85, fill='light', rx=4)
-    s.text(W // 2, vy + 18, 'Real-time voice interaction (ASR + LLM + TTS)', size=FS_BODY, bold=True)
+    s.text(W // 2, vy + 18, 'Interaksi suara real-time (ASR + LLM + TTS)', size=FS_BODY, bold=True)
 
     voice_flow = [
-        ('Day discussion', 'Judge manages speaking order\nspeaking in seat order'),
-        ('Voting phase', 'Collect all player votes\ntally votes and announce results'),
-        ('Night phase', 'Judge wakes roles in sequence\nprivate voice channel'),
-        ('Human player', 'Random role assignment\nvoice-based voting/speech'),
+        ('Diskusi siang', 'Hakim mengatur urutan bicara\nberbicara berdasarkan urutan kursi'),
+        ('Fase voting', 'Kumpulkan semua suara pemain\nhitung suara dan umumkan hasil'),
+        ('Fase malam', 'Hakim membangunkan peran secara berurutan\nsaluran suara pribadi'),
+        ('Pemain manusia', 'Penetapan peran acak\nvoting/bicara berbasis suara'),
     ]
     vw = (W - 80) // len(voice_flow)
     for i, (title, desc) in enumerate(voice_flow):
@@ -1045,7 +1045,7 @@ def main():
         func()
         print(f'  ✓ {name}')
 
-    print(f'\nGenerated {len(figs)} figures in {OUT}/')
+    print(f'\\nGenerated {len(figs)} figures in {OUT}/')
 
 
 if __name__ == '__main__':
