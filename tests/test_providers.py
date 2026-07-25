@@ -246,3 +246,27 @@ def test_keyless_provider_resolves_without_any_key():
     assert PROVIDERS["ollama"].requires_key is False
     # No key set anywhere, yet resolution succeeds rather than raising.
     assert PROVIDERS["ollama"].api_key() == ""
+
+
+def test_explicit_openrouter_key_wins_over_env_for_gpt5(monkeypatch):
+    """An explicit key for the openrouter provider is an OpenRouter credential,
+    so it must not be silently replaced by OPENROUTER_API_KEY."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-env")
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-explicit")
+    assert backend.using_openrouter is True
+    assert backend.api_key == "sk-explicit"
+
+
+def test_explicit_openrouter_key_works_without_env(monkeypatch):
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-only")
+    assert backend.api_key == "sk-only"
+    assert backend.model == "openai/gpt-5.6-luna"
+
+
+def test_other_providers_key_is_not_forwarded_to_openrouter(monkeypatch):
+    """A doubao key is not an OpenRouter credential; the gpt-5 reroute must use
+    the OpenRouter key, never the provider's own."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-env")
+    backend = resolve_backend("doubao", model="gpt-5.6-luna", api_key="sk-ark-explicit")
+    assert backend.using_openrouter is True
+    assert backend.api_key == "sk-or-env"

@@ -244,8 +244,12 @@ def resolve_backend(
     openrouter_url = os.getenv("OPENROUTER_BASE_URL", "").strip() or OPENROUTER_BASE_URL
 
     def via_openrouter() -> Backend:
+        # An explicit key for the openrouter provider is an OpenRouter
+        # credential, so it wins over the environment. For any other provider
+        # the explicit key belongs to that provider, not to OpenRouter, and must
+        # not be forwarded here.
         return Backend(
-            api_key=openrouter_key,
+            api_key=key if spec.name == "openrouter" and key else openrouter_key,
             base_url=openrouter_url,
             model=map_model_to_openrouter(resolved_model),
             provider=spec.name,
@@ -253,7 +257,11 @@ def resolve_backend(
         )
 
     # gpt-5.x needs OpenAI org verification on the direct API; prefer OpenRouter.
-    if openrouter_key and resolved_model.lower().startswith("gpt-5") and spec.name != "openai":
+    if (
+        (openrouter_key or (spec.name == "openrouter" and key))
+        and resolved_model.lower().startswith("gpt-5")
+        and spec.name != "openai"
+    ):
         return via_openrouter()
 
     if key or not spec.requires_key:
