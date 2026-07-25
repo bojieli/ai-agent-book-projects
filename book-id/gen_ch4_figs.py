@@ -728,7 +728,7 @@ def main():
     ]
     for fn in figs:
         fn()
-        print(f"  ✓ {fn.__name__}: {fn.__doc__}")
+        print(f"  ok {fn.__name__}")
     print(f"\nGenerated {len(figs)} figures in {OUT}/")
 
 

@@ -12,7 +12,7 @@
 <text x="395" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ruang Aksi</text>
 <rect x="20" y="163" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <rect x="490" y="163" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="30" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Zero prior, dari kebijakan acak</text>
+<text x="30" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Prior nol, dari kebijakan acak</text>
 <text x="500" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Pengetahuan terlatih (pretrained) + prior</text>
 <text x="395" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pengetahuan Prior</text>
 <rect x="20" y="211" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
@@ -22,7 +22,7 @@
 <text x="395" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Representasi State</text>
 <rect x="20" y="259" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <rect x="490" y="259" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="30" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Scalar reward: R ∈ {-1, 0, +5, +50}</text>
+<text x="30" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Reward skalar: R ∈ {-1, 0, +5, +50}</text>
 <text x="500" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Reward + umpan balik + refleksi diri</text>
 <text x="395" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Sinyal Pembelajaran</text>
 <rect x="20" y="307" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
@@ -32,7 +32,7 @@
 <text x="395" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Kemampuan Berpikir</text>
 <rect x="20" y="355" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <rect x="490" y="355" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="30" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">New rules → full retraining</text>
+<text x="30" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Aturan baru → pelatihan ulang penuh</text>
 <text x="500" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Transfer zero/few-shot lintas-tugas</text>
 <text x="395" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Kemampuan Generalisasi</text>
 <rect x="20" y="403" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>

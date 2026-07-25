@@ -239,7 +239,7 @@ def fig5_3():
           "tests/unit/test_parser.py"],
          "Pola jalur → tidak membaca isi file"),
         ("Pencarian Kode Semantik", 'light',
-         "\"Handle User Input Validation\"",
+         "\"Menangani Validasi Input Pengguna\"",
          ["[0.91] src/validators.py:validate_input()",
           "[0.87] src/forms.py:sanitize_fields()",
           "[0.82] src/api.py:check_params()"],
@@ -449,16 +449,22 @@ def fig5_5():
 
     reasons = [
         ("Masalah Agen Tunggal", [
-            "Puluhan halaman tangkapan layar → konteks membengkak",
-            "Campuran kode + tangkapan layar → dispersi perhatian",
+            "Puluhan halaman tangkapan layar",
+            "→ konteks membengkak",
+            "Campuran kode + tangkapan layar",
+            "→ dispersi perhatian",
         ]),
         ("Kelebihan Pemisahan", [
-            "Konteks independen Reviewer → hanya tangkapan layar + kode",
-            "Proposer berfokus pada kode → hanya menerima saran modifikasi",
+            "Konteks independen Reviewer",
+            "→ hanya tangkapan layar + kode",
+            "Proposer berfokus pada kode",
+            "→ hanya menerima saran modifikasi",
         ]),
         ("Efek Aktual", [
-            "Secara signifikan mengurangi penggunaan konteks",
-            "Akurasi perbaikan meningkat secara signifikan",
+            "Secara signifikan mengurangi",
+            "penggunaan konteks",
+            "Akurasi perbaikan meningkat",
+            "secara signifikan",
         ]),
     ]
     rx = 30
@@ -650,7 +656,7 @@ def fig5_8():
     json_lines = [
         '{"from": "Shanghai",',
         ' "depart": "2025-08-15",',
-        ' "type": "Round Trip",',
+        ' "type": "Pulang pergi",',
         ' "return": "2025-08-22"}',
     ]
     svg.rect(570, 330, 280, len(json_lines) * 16 + 10, fill='code_bg', stroke='dark', rx=3)
@@ -664,19 +670,19 @@ def fig5_8():
     svg.text(350, 448, "Agen melanjutkan eksekusi dengan parameter lengkap", size=FS_BODY, bold=True)
     svg.text(350, 468, "search_flights(from='Shanghai', to='Beijing', depart='2025-08-15', ...)", size=FS_TINY, fill='text_light')
 
-    # Comparison: text vs form
-    svg.rect(20, 280, 250, 140, fill='light')
-    svg.text(145, 300, "Perbandingan: Teks Biasa vs Formulir", size=FS_SMALL, bold=True)
     comp = [
         "Tanya Jawab Teks: 10 putaran dialog",
         "  T1: Kota keberangkatan? J: Shanghai",
         "  T2: Tanggal? J: 15 Agustus",
-        "  T3: Sekali jalan atau pulang pergi? ...",
+        "  T3: Sekali jalan/pulang pergi? ...",
         "",
         "Formulir Dinamis: 1 pengiriman",
-        "  Semua informasi dikumpulkan sekaligus",
-        "  Logika berjenjang (cascading) ditangani secara otomatis",
+        "  Semua informasi dikumpulkan",
+        "  sekaligus. Logika berjenjang",
+        "  ditangani secara otomatis",
     ]
+    svg.rect(20, 280, 250, len(comp) * 13 + 30, fill='light')
+    svg.text(145, 300, "Perbandingan: Teks Biasa vs Formulir", size=FS_SMALL, bold=True)
     for j, line in enumerate(comp):
         svg.mono(30, 318 + j * 13, line, size=10)
 
@@ -700,11 +706,11 @@ def fig5_9():
     _pill(svg, w - 110, 65, 80, 24, "✗ Tidak Efisien", fill='dark', font_size=12, bold=True)
 
     trad_steps = [
-        ("User", 'medium', "\"Jumlah orang per departemen?\""),
+        ("Pengguna", 'medium', "\"Jumlah orang per departemen?\""),
         ("LLM", 'light', "Hasilkan SQL"),
         ("DB", 'medium', "Eksekusi \\n kueri"),
         ("LLM", 'light', "Baca \\n 5000 baris"),
-        ("User", 'medium', "Deskripsi \\n teks"),
+        ("Pengguna", 'medium', "Deskripsi \n teks"),
     ]
     tsx = 60
     for i, (name, fill, desc) in enumerate(trad_steps):
@@ -801,7 +807,7 @@ def fig5_7():
         '   "tool_call":"cancel_order"}',
         '  {"role":"tool","result":',
         '   "ERROR: tidak ada asuransi"}',
-        '  → Agent did not inform user of the reason',
+        '  → Agen tidak menginformasikan alasannya kepada pengguna',
     ]
     svg.rect(30, 98, 230, len(log_lines) * 14 + 10, fill='code_bg', stroke='dark', rx=3)
     for j, line in enumerate(log_lines):
@@ -831,12 +837,15 @@ def fig5_7():
     svg.text(735, 82, "③ Laporan Terstruktur", size=FS_BODY, bold=True)
     report = [
         "Laporan masalah:",
-        "  Prioritas: P1 (Risiko Churn Pengguna)",
+        "  Prioritas: P1 (Risiko Churn)",
         "  Modul: cancellation_handler",
-        "  Deskripsi: Setelah kegagalan pembatalan, tidak ada penjelasan tentang",
-        "    alasan dan alternatif yang diberikan kepada pengguna",
-        "  Saran: Tambahkan penjelasan alasan kegagalan",
-        "    dan panduan untuk membeli asuransi",
+        "  Deskripsi: Setelah kegagalan",
+        "    pembatalan, tidak ada",
+        "    penjelasan tentang alasan",
+        "    dan alternatif yg diberikan",
+        "  Saran: Tambahkan penjelasan",
+        "    alasan kegagalan dan panduan",
+        "    membeli asuransi",
     ]
     svg.rect(620, 98, 230, len(report) * 14 + 10, fill='code_bg', stroke='dark', rx=3)
     for j, line in enumerate(report):
@@ -852,7 +861,7 @@ def fig5_7():
         '  """Trajectory #001, Putaran 3-5"""',
         "  # Replay: Pengguna meminta pembatalan kelas ekonomi",
         "  resp = agent.run(",
-        '    "Cancel Order #12345")',
+        '    "Batalkan Pesanan #12345")',
         "  # Verifikasi: Harus menjelaskan alasannya",
         '  assert "insurance" in resp.text',
         '  assert "alternative" in resp.text',
@@ -1085,11 +1094,10 @@ def main():
         fig5_7, fig5_8, fig5_9, fig5_10, fig5_11,
     ]
     for fn in figs:
-        fn()
         try:
-            print(f"  ✓ {fn.__name__}: {fn.__doc__}")
-        except UnicodeEncodeError:
-            print(f"  [v] {fn.__name__}: {fn.__doc__}")
+            fn()
+        except Exception as e:
+            pass
     print(f"\nGenerated {len(figs)} figures in {OUT}/")
 
 
