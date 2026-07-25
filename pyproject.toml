@@ -154,6 +154,7 @@ integrations = [
     "aiosmtplib>=3.0",
     "PyGithub>=2.3",
     "google-api-python-client>=2.126",
+    "google-auth>=2.29",
     "google-auth-oauthlib>=1.2",
     "psutil>=5.9",
     "langchain-openai>=0.1",
@@ -201,9 +202,11 @@ train = [
     "accelerate>=0.30",
     "peft>=0.10",
     "trl>=0.9",
-    "bitsandbytes>=0.43",
     "sentencepiece>=0.2",
     "wandb>=0.17",
+    # macOS wheels only exist from 0.45 onwards; the floor keeps `train`
+    # installable on Apple Silicon instead of resolving to a Linux-only build.
+    "bitsandbytes>=0.45",
 ]
 
 # Unsloth-accelerated fine-tuning (chapter 7). Split from `train` because it
@@ -247,7 +250,7 @@ dev = [
 # ---------------------------------------------------------------------------
 ch1  = ["agentbook[viz,docs]"]
 ch2  = ["agentbook[viz,docs,web,serve,providers,tokens,torch]"]
-ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch]"]
+ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch,providers]"]
 ch4  = ["agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis,integrations]"]
 ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis,solvers]"]
 ch6  = ["agentbook[viz,tokens,analysis,providers]"]
