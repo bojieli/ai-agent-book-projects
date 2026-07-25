@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 520" width="880" height="520" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="50" width="400" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Non-Agentic RAG</text>
+<rect x="50" y="110" width="340" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="129.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Query: &quot;How to sentence for causing serious</text>
+<text x="220.0" y="150.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">injury by negligence while drunk</text>
+<text x="220.0" y="170.79999999999998" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">and with a previous theft conviction?&quot;</text>
+<rect x="50" y="218" width="340" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="237.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Single retrieval:</text>
+<text x="220.0" y="258.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Sentencing for causing serious injury by</text>
+<text x="220.0" y="278.8" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">negligence&quot;</text>
+<line x1="220" y1="192" x2="220" y2="216" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="50" y="326" width="340" height="80" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="345.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Retrieval result: Only found basic provisions</text>
+<text x="220.0" y="366.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">for negligent injury</text>
+<text x="220.0" y="386.8" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"> (incomplete context)</text>
+<line x1="220" y1="300" x2="220" y2="324" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="50" y="434" width="340" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="463.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Direct generation: Missing &quot;drunk&quot;</text>
+<text x="220.0" y="484.40000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">and &quot;previous conviction&quot; influencing factors</text>
+<line x1="220" y1="408" x2="220" y2="432" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="220.0" y="545" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Single pass · Incomplete information</text>
+<line x1="440" y1="50" x2="440" y2="555" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="460" y="50" width="400" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agentic RAG (ReAct)</text>
+<rect x="490" y="105" width="340" height="68" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="128.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thought: Need to decompose into 3</text>
+<text x="660.0" y="149.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">sub-questions</text>
+<rect x="490" y="191" width="340" height="68" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="202.575" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Search ①: &quot;Sentencing for causing serious injury by</text>
+<text x="660.0" y="217.52499999999998" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">negligence&quot;</text>
+<text x="660.0" y="232.475" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Search ②: &quot;Criminal liability for drunkenness&quot;</text>
+<text x="660.0" y="247.42499999999998" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Search ③: &quot;Impact of previous theft conviction&quot;</text>
+<line x1="660" y1="175" x2="660" y2="189" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="490" y="277" width="340" height="68" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="290.85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Observation: Found basic provisions but</text>
+<text x="660.0" y="311.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">missing link between &quot;previous conviction&quot;</text>
+<text x="660.0" y="331.15000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">and &quot;negligent injury&quot;</text>
+<line x1="660" y1="261" x2="660" y2="275" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="490" y="363" width="340" height="68" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="386.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Search ④: &quot;Recidivism different crimes</text>
+<text x="660.0" y="407.40000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">judicial interpretation&quot;</text>
+<line x1="660" y1="347" x2="660" y2="361" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="490" y="449" width="340" height="68" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="660.0" y="472.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Synthesis: Complete answer including all</text>
+<text x="660.0" y="493.40000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">legal provisions and sentencing analysis</text>
+<line x1="660" y1="433" x2="660" y2="447" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 840,311 C 868,311 868,225 840,225" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#ah)"/>
+<text x="844" y="268.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Iteration</text>
+<text x="660.0" y="545" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Multi-round iteration · Complete information</text>
+</svg>

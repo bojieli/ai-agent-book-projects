@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 460" width="820" height="460" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+
+<!-- messages array label -->
+<text x="40" y="60" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">messages: [</text>
+
+<!-- Row 1: system -->
+<rect x="50" y="78" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="94" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "system", content: "You are a telecom customer service agent..." }</text>
+
+<!-- Row 2: tools -->
+<rect x="50" y="114" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="130" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [cancel_plan, query_records, ...]</text>
+
+<!-- Bracket for "fixed" -->
+<path d="M 540,78 C 555,78 555,114 560,123 C 555,132 555,146 540,146" fill="none" stroke="#999999" stroke-width="1.5"/>
+<text x="570" y="112" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">fixed</text>
+<text x="570" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">(KV Cache)</text>
+
+<!-- Row 3: user message -->
+<rect x="50" y="154" width="480" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="170" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "Help me cancel my plan" }</text>
+
+<!-- Row 4: assistant tool_calls -->
+<rect x="50" y="190" width="480" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="206" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", tool_calls: [cancel_plan(...)] }</text>
+
+<!-- Row 5: tool result -->
+<rect x="50" y="226" width="480" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="242" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "tool", content: "This plan has a contract period..." }</text>
+
+<!-- Row 6: assistant text -->
+<rect x="50" y="262" width="480" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="278" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", content: "Your plan is within the contract period..." }</text>
+
+<!-- Ellipsis row -->
+<text x="280" y="306" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">... more conversation turns ...</text>
+
+<!-- Row 7: user follow-up -->
+<rect x="50" y="322" width="480" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="338" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "Then help me check my call records" }</text>
+<text x="570" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central">user follow-up</text>
+
+<!-- Row 8: Agent status bar (highlighted) -->
+<rect x="50" y="362" width="480" height="48" rx="4" fill="#fff3cd" stroke="#e6a817" stroke-width="2.5"/>
+<text x="62" y="380" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "&lt;agent_status&gt;</text>
+<text x="62" y="398" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  Called 3/3 times · TODO: Cancel plan (in progress)&lt;/agent_status&gt;" }</text>
+
+<!-- Arrow pointing to system hint -->
+<line x1="570" y1="386" x2="538" y2="386" stroke="#e6a817" stroke-width="2" marker-end="url(#ah)"/>
+<text x="578" y="378" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold">Agent framework insertion</text>
+<text x="578" y="396" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold">agent status bar</text>
+
+<!-- Closing bracket -->
+<text x="40" y="428" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">]</text>
+
+<!-- Generation position arrow and label -->
+<line x1="50" y1="422" x2="50" y2="450" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="60" y="442" width="20" height="20" rx="2" fill="#d9f0d9" stroke="#999999" stroke-width="1"/>
+<text x="88" y="452" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">model starts generating from here</text>
+
+<!-- Bottom note -->
+<rect x="50" y="472" width="720" height="22" rx="4" fill="#f5f5f5" stroke="none"/>
+<text x="410" y="483" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central">← adjacent to model generation start, receives highest attention weight</text>
+</svg>

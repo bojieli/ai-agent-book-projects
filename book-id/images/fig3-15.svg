@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 490" width="880" height="490" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="20" y="55" width="840" height="200" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="440" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Phase 1: Knowledge Extraction and Structuring</text>
+<rect x="40" y="95" width="180" height="65" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="130" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Original Judgment Documents</text>
+<text x="50" y="138" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">CAIL2018 Dataset</text>
+<line x1="220" y1="127" x2="258" y2="127" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="260" y="95" width="180" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="350" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Factor Discovery</text>
+<text x="350" y="138" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Bottom-up Schema</text>
+<line x1="440" y1="127" x2="478" y2="127" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="480" y="95" width="200" height="65" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="580" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Structured JSON</text>
+<text x="490" y="138" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">{voluntary_surrender:true, compensation:500000,</text>
+<text x="490" y="155" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central"> injury_level:severe_injury_grade_2}</text>
+<rect x="40" y="170" width="400" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="240" y="188" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Modular Data Schema</text>
+<text x="240" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Core Schema (voluntary_surrender/compensation/prior_convictions) + Crime-specific Extension Schema</text>
+<text x="240" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">(theft→amount_involved, injury→injury_level)</text>
+<rect x="20" y="270" width="840" height="215" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="440" y="293" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Phase 2: Factor Analysis and Knowledge Modeling</text>
+<rect x="40" y="310" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="140" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Feature Vectorization</text>
+<text x="140" y="354" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">One-hot Encoding + Multi-hot Encoding</text>
+<text x="140" y="376" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">+ Log Transformation + Standardization</text>
+<line x1="240" y1="350" x2="278" y2="350" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="280" y="310" width="200" height="80" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="380" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">HDBSCAN Clustering</text>
+<text x="380" y="354" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Discover "Case Prototypes"</text>
+<text x="380" y="376" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">e.g., Minor Quarrel → Minor Injury</text>
+<line x1="480" y1="350" x2="518" y2="350" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="520" y="310" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="620" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Factor Importance Model</text>
+<text x="620" y="354" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Quantify Weights of Each Factor</text>
+<text x="620" y="376" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Construct Sentencing Decision Logic</text>
+<line x1="620" y1="390" x2="620" y2="415" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="40" y="418" width="720" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="400" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Application: Conversational Legal Advisory Agent</text>
+<text x="400" y="463" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Guide Questions by Factor Importance → Retrieve Similar Case Prototypes → Data-driven Sentencing Analysis</text>
+</svg>

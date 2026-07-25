@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 500" width="820" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="65" width="220" height="130" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="42" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Local Hardware</text>
+<rect x="50" y="100" width="180" height="35" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="140.0" y="117.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Apple M2 / 16GB</text>
+<rect x="50" y="145" width="180" height="35" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="140.0" y="162.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">MLX Inference Backend</text>
+<rect x="290" y="65" width="240" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="410" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Qwen3-0.6B</text>
+<text x="410" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.6B parameters · Q4 quantization</text>
+<text x="410" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&gt; 100 tokens/s</text>
+<text x="410" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">ReAct + Tool calling capability</text>
+<rect x="570" y="65" width="220" height="130" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="582" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Tool Registry</text>
+<rect x="590" y="100" width="180" height="35" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="680.0" y="117.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_current_time</text>
+<rect x="590" y="145" width="180" height="35" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="680.0" y="162.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_temperature</text>
+<line x1="252" y1="130" x2="288" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="532" y1="122" x2="568" y2="122" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="568" y1="138" x2="532" y2="138" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="50" y="220" width="720" height="290" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="62" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">ReAct Loop</text>
+<rect x="80" y="260" width="300" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="90" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">user: &quot;What's the time and weather in Vancouver?&quot;</text>
+<rect x="80" y="310" width="300" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="90" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">&lt;think&gt;</text>
+<text x="90" y="348" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Need to call get_current_time</text>
+<text x="90" y="363" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">and get_temperature tools</text>
+<line x1="230" y1="302" x2="230" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="375" width="300" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="90" y="393" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;tool_call&gt;</text>
+<text x="90" y="411" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;name&quot;:&quot;get_current_time&quot;,...}</text>
+<line x1="230" y1="367" x2="230" y2="373" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="435" width="300" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="90" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">&lt;tool_response&gt; {&quot;time&quot;:&quot;05:18&quot;,&quot;temp&quot;:&quot;13.2°C&quot;}</text>
+<line x1="230" y1="427" x2="230" y2="433" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 80,455 Q 40.0,367.5 80,280" fill="none" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="30" y="367" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Continue loop</text>
+<rect x="430" y="280" width="320" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="440" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Final output:</text>
+<text x="440" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">&quot;Vancouver: 05:18 AM, 13.2°C,</text>
+<text x="440" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">  clear sky, humidity 93%&quot;</text>
+<rect x="430" y="360" width="320" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="590" y="378" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Streaming key timings</text>
+<text x="440" y="400" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">&lt;think&gt;... → hidden, not shown to user</text>
+<text x="440" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">plain text → real-time streaming display</text>
+<text x="440" y="436" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">&lt;tool_call&gt; → parse and execute tool</text>
+</svg>

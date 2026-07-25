@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="60" width="740" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Original dialogue:</text>
+<text x="50" y="98" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;I am a senior engineer at TechCorp, leading a team of 5 to build a recommendation system, using ML for three years&quot;</text>
+<rect x="25.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="117.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Simple Notes</text>
+<text x="117.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Atomic facts</text>
+<line x1="117.5" y1="117" x2="117.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="25.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="33.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;User company: TechCorp&quot;</text>
+<text x="33.0" y="223" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;User Position: Senior Engineer&quot;</text>
+<text x="33.0" y="241" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;User Team: 5 people&quot;</text>
+<text x="33.0" y="259" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;User Expertise: Recommendation System&quot;</text>
+<text x="117.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pros: O(1) operation,</text>
+<text x="117.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">extremely low overhead</text>
+<text x="117.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cons: Complete loss of</text>
+<text x="117.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">relevance</text>
+<rect x="220.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="312.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Enhanced Notes</text>
+<text x="312.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Full Paragraph</text>
+<line x1="312.5" y1="117" x2="312.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="220.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="228.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Senior engineer at</text>
+<text x="228.0" y="223" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">TechCorp, leads a team</text>
+<text x="228.0" y="241" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">of 5 building a rec.</text>
+<text x="228.0" y="259" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">system, 3 yrs in ML.&quot;</text>
+<text x="312.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pros: Semantic</text>
+<text x="312.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">completeness</text>
+<text x="312.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cons: Redundancy +</text>
+<text x="312.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">complex updates</text>
+<rect x="415.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="507.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">JSON Cards</text>
+<text x="507.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hierarchical Structure</text>
+<line x1="507.5" y1="117" x2="507.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="415.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="423.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">work:</text>
+<text x="423.0" y="223" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  company: &quot;TechCorp&quot;</text>
+<text x="423.0" y="241" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  title: &quot;Senior Engineer&quot;</text>
+<text x="423.0" y="259" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  team_size: 5</text>
+<text x="507.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pros: Partial updates</text>
+<text x="507.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cons: Rigid classification</text>
+<rect x="610.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="702.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Adv. JSON Cards</text>
+<text x="702.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Contextualized Knowledge</text>
+<line x1="702.5" y1="117" x2="702.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="610.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="618.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">{category: &quot;work&quot;,</text>
+<text x="618.0" y="223" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> title: &quot;Senior Engineer&quot;,</text>
+<text x="618.0" y="241" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central"> backstory: &quot;Self-introduction&quot;,</text>
+<text x="618.0" y="259" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> ts: &quot;09-14&quot;}</text>
+<text x="702.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pros: Disambiguation +</text>
+<text x="702.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">traceability</text>
+<text x="702.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cons: High generation cost</text>
+<rect x="40" y="420" width="740" height="180" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Three-Level Evaluation Framework</text>
+<rect x="60" y="465" width="180" height="38" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="484" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Level 1: Basic Recall</text>
+<text x="252" y="477" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Store and retrieve direct information</text>
+<text x="252" y="494" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;My membership number is 12345&quot; → Exact return</text>
+<rect x="60" y="510" width="180" height="38" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="150" y="529" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Level 2: Multi-session Retrieval</text>
+<text x="252" y="522" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Cross-session associative reasoning</text>
+<text x="252" y="539" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Schedule maintenance for my car&quot; → Identify two cars</text>
+<rect x="60" y="555" width="180" height="38" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="574" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Level 3: Proactive Service</text>
+<text x="252" y="567" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Integrate multiple memories, anticipatory assistance</text>
+<text x="252" y="584" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Book international flight → Discover passport is about to expire</text>
+</svg>

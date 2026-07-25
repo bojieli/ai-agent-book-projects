@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 890 515" width="890" height="515" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="26" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="101" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Product Manager</text>
+<text x="34" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: User requirement description</text>
+<rect x="34" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="40" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output:</text>
+<text x="40" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Feature list + priority</text>
+<text x="40" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">User stories (5 items)</text>
+<text x="40" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Acceptance criteria</text>
+<rect x="34" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="101" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/PRD.md</text>
+<line x1="178" y1="170" x2="190" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="198" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="273" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Architect</text>
+<text x="206" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: PRD.md</text>
+<rect x="206" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="212" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output:</text>
+<text x="212" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Tech stack: FastAPI+React</text>
+<text x="212" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">API specification (OpenAPI)</text>
+<text x="212" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Database schema</text>
+<rect x="206" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="273" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/design.md</text>
+<line x1="350" y1="170" x2="362" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="370" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Project Manager</text>
+<text x="378" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: design.md</text>
+<rect x="378" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="384" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output:</text>
+<text x="384" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Task list + assignment</text>
+<text x="384" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">File-level allocation</text>
+<text x="384" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Module dependency order</text>
+<rect x="378" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="445" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/tasks.md</text>
+<line x1="522" y1="170" x2="534" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="542" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="617" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Engineer ×3</text>
+<text x="550" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: tasks.md + design.md</text>
+<rect x="550" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="556" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output:</text>
+<text x="556" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Module A: User service</text>
+<text x="556" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Module B: Order service</text>
+<text x="556" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Module C: Payment service</text>
+<rect x="550" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="617" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">src/*.py</text>
+<line x1="694" y1="170" x2="706" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="714" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="789" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">QA Engineer</text>
+<text x="722" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: src/ + PRD.md</text>
+<rect x="722" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="728" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output:</text>
+<text x="728" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Unit tests (pytest)</text>
+<text x="728" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Integration tests (API)</text>
+<text x="728" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bug report → Engineer</text>
+<rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
+<path d="M 789,293 Q 703,326 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="703" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Bug fix</text>
+
+<rect x="30" y="335" width="830" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="351" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Shared project directory</text>
+<text x="445" y="371" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">docs/PRD.md   docs/design.md   docs/tasks.md   src/*.py   docs/test_report.md</text>
+
+<rect x="30" y="400" width="830" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="445" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MetaGPT core design</text>
+<text x="42" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Standardized documents</text>
+<text x="270" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Each role emits a fixed format; downstream needs the format, not the reasoning</text>
+<text x="42" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Interface decoupling</text>
+<text x="270" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Swap in a stronger Product Mgr; if output keeps PRD format, downstream is unchanged</text>
+<text x="42" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ No Manager</text>
+<text x="270" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Control flows along the DAG: Product Mgr→Architect→Project Mgr→Engineer→QA</text>
+<text x="42" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Exception channel</text>
+<text x="270" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">QA failure → bug report routed back to Engineer by module → iterative fix</text>
+</svg>
