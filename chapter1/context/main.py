@@ -7,7 +7,7 @@ import sys
 import argparse
 import logging
 from agent import ContextAwareAgent, ContextMode
-from config import SUPPORTED_PROVIDERS
+from config import SUPPORTED_PROVIDERS, resolve_backend
 import json
 from pathlib import Path
 import subprocess
@@ -929,33 +929,17 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
             elif user_input.lower().startswith('provider '):
                 new_provider = user_input[9:].strip().lower()
                 if new_provider in available_providers:
-                    # Get the appropriate API key for the new provider
-                    if new_provider == "siliconflow":
-                        new_api_key = os.getenv("SILICONFLOW_API_KEY")
-                        if not new_api_key:
-                            print("❌ SILICONFLOW_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "doubao":
-                        new_api_key = os.getenv("ARK_API_KEY")
-                        if not new_api_key:
-                            print("❌ ARK_API_KEY not set in environment")
-                            continue
-                    elif new_provider in ["kimi", "moonshot"]:
-                        new_api_key = os.getenv("MOONSHOT_API_KEY")
-                        if not new_api_key:
-                            print("❌ MOONSHOT_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "deepseek":
-                        new_api_key = os.getenv("DEEPSEEK_API_KEY")
-                        if not new_api_key:
-                            print("❌ DEEPSEEK_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "zhipu":
-                        new_api_key = os.getenv("ZHIPU_API_KEY")
-                        if not new_api_key:
-                            print("❌ ZHIPU_API_KEY not set in environment")
-                            continue
-                    
+                    # Resolve through the registry: it knows each provider's key
+                    # variables, which providers need no key (ollama) and the
+                    # OpenRouter fallback, and it reports exactly which variable
+                    # to set when nothing is available.
+                    try:
+                        new_backend = resolve_backend(new_provider)
+                    except ValueError as exc:
+                        print(f"❌ {exc}")
+                        continue
+                    new_api_key = new_backend.api_key
+
                     # Update current settings
                     current_provider = new_provider
                     current_api_key = new_api_key
@@ -1120,41 +1104,25 @@ def main():
 
     args = parser.parse_args()
     
-    # Get API key based on provider (with universal OpenRouter fallback)
-    if args.api_key:
-        api_key = args.api_key
-    elif args.provider == "openrouter":
-        api_key = os.getenv("OPENROUTER_API_KEY")
-    elif args.provider == "doubao":
-        api_key = os.getenv("ARK_API_KEY")
-    elif args.provider == "siliconflow":
-        api_key = os.getenv("SILICONFLOW_API_KEY")
-    elif args.provider in ["kimi", "moonshot"]:
-        api_key = os.getenv("MOONSHOT_API_KEY")
-    elif args.provider == "deepseek":
-        api_key = os.getenv("DEEPSEEK_API_KEY")
-    elif args.provider == "zhipu":
-        api_key = os.getenv("ZHIPU_API_KEY")
-    else:
-        logger.error(f"Unknown provider: {args.provider}")
+    # The registry knows each provider's key variables, the OpenRouter fallback
+    # and which providers need no key at all, so resolve through it rather than
+    # maintaining a per-provider chain here. An explicit --api-key still wins.
+    try:
+        backend = resolve_backend(args.provider, model=args.model, api_key=args.api_key)
+    except ValueError as exc:
+        logger.error(str(exc))
         sys.exit(1)
 
-    # If the primary provider key is missing, fall back to OpenRouter when set.
-    # An empty api_key lets ContextAwareAgent.resolve_llm_backend route via OpenRouter.
-    if not api_key:
-        if os.getenv("OPENROUTER_API_KEY"):
-            logger.info(
-                f"{args.provider} API key not set; falling back to OpenRouter "
-                "(OPENROUTER_API_KEY). Set the provider key to use it directly."
-            )
-            api_key = ""
-        else:
-            logger.error(
-                "No API key found. Set the provider key "
-                "(ARK_API_KEY/SILICONFLOW_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY) or "
-                "OPENROUTER_API_KEY (universal fallback)."
-            )
-            sys.exit(1)
+    api_key = args.api_key or ""
+    if backend.using_openrouter and not args.api_key:
+        logger.info(
+            f"{args.provider} API key not set; falling back to OpenRouter "
+            "(OPENROUTER_API_KEY). Set the provider key to use it directly."
+        )
+    elif not args.api_key:
+        # Pass the resolved key through; ContextAwareAgent re-resolves and an
+        # empty value would send it down the fallback path instead.
+        api_key = backend.api_key
     
     # Log provider info
     logger.info(f"Using provider: {args.provider}, model: {args.model or 'default'}")

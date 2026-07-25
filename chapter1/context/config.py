@@ -23,7 +23,9 @@ def _reasoning_safe_temperature(model, requested=1.0):
 # experiment runnable from a checkout where agentbook is not installed.
 try:
     from agentbook.providers import (
+        PROVIDERS,
         SUPPORTED_PROVIDERS,
+        canonical_provider as _canonical_provider,
         map_model_to_openrouter,
         resolve_backend,
         resolve_llm_backend,
@@ -35,7 +37,9 @@ except ImportError:  # pragma: no cover - exercised only without the package
         0, str(__import__("pathlib").Path(__file__).resolve().parents[2])
     )
     from agentbook.providers import (
+        PROVIDERS,
         SUPPORTED_PROVIDERS,
+        canonical_provider as _canonical_provider,
         map_model_to_openrouter,
         resolve_backend,
         resolve_llm_backend,
@@ -116,19 +120,11 @@ class Config:
             API key for the provider
         """
         provider = provider or cls.LLM_PROVIDER
-        provider = provider.lower()
-        
-        if provider == "siliconflow":
-            return cls.SILICONFLOW_API_KEY
-        elif provider == "doubao":
-            return cls.ARK_API_KEY
-        elif provider == "kimi" or provider == "moonshot":
-            return cls.MOONSHOT_API_KEY
-        elif provider == "deepseek":
-            return cls.DEEPSEEK_API_KEY
-        elif provider == "zhipu":
-            return cls.ZHIPU_API_KEY
-        else:
+        # The shared registry knows every provider's key variables, so this
+        # stays correct as providers are added there.
+        try:
+            return PROVIDERS[_canonical_provider(provider)].api_key()
+        except KeyError:
             return ""
     
     @classmethod
@@ -147,20 +143,10 @@ class Config:
         
         if cls.MODEL_NAME:
             return cls.MODEL_NAME
-        
-        if provider == "siliconflow":
-            return "Qwen/Qwen3.5-397B-A17B"
-        elif provider == "doubao":
-            return "doubao-seed-1-6-thinking-250715"
-        elif provider == "kimi" or provider == "moonshot":
-            return "kimi-k3"
-        elif provider == "deepseek":
-            # V4 Flash: tool calling + thinking mode (legacy deepseek-chat /
-            # deepseek-reasoner aliases are deprecated 2026-07-24).
-            return "deepseek-v4-flash"
-        elif provider == "zhipu":
-            return "glm-5.2"
-        else:
+
+        try:
+            return PROVIDERS[_canonical_provider(provider)].default_model
+        except KeyError:
             return ""
     
     @classmethod

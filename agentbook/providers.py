@@ -37,6 +37,7 @@ __all__ = [
     "SUPPORTED_PROVIDERS",
     "Backend",
     "Provider",
+    "canonical_provider",
     "map_model_to_openrouter",
     "resolve_backend",
     "resolve_llm_backend",
@@ -157,9 +158,18 @@ _ALIASES = {"moonshot": "kimi", "ark": "doubao", "google": "gemini"}
 SUPPORTED_PROVIDERS: tuple[str, ...] = tuple(sorted(set(PROVIDERS) | set(_ALIASES)))
 
 
-def _lookup(provider: str) -> Provider:
+def canonical_provider(provider: str) -> str:
+    """Normalise a provider name, resolving aliases (``moonshot`` -> ``kimi``).
+
+    Returns the name unchanged when it is not a known alias, so callers can
+    still look it up and get a KeyError for genuinely unknown providers.
+    """
     key = (provider or "").strip().lower()
-    key = _ALIASES.get(key, key)
+    return _ALIASES.get(key, key)
+
+
+def _lookup(provider: str) -> Provider:
+    key = canonical_provider(provider)
     if key not in PROVIDERS:
         supported = ", ".join(sorted(PROVIDERS))
         raise ValueError(f"Unsupported provider: {provider!r}. Supported: {supported}")
