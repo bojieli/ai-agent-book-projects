@@ -45,6 +45,8 @@ def score_prediction(
     }
 
     actual_result = prediction.get("result", {})
+    if not isinstance(actual_result, dict):
+        actual_result = {}
     expected_result = expected["result"]
     actual_values = {key: value for key, value in actual_result.items() if key != "evidence"}
     expected_values = {key: value for key, value in expected_result.items() if key != "evidence"}

@@ -291,6 +291,13 @@ async def set_recurring_timer(
         Dictionary with recurring timer ID
     """
     try:
+        if interval_seconds is None or interval_seconds <= 0:
+            return {
+                "success": False,
+                "error": "interval_seconds must be positive",
+                "message": "Failed to set recurring timer"
+            }
+
         timer_id = str(uuid.uuid4())
         
         timer_data = {

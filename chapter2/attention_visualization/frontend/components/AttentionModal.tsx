@@ -300,14 +300,14 @@ export default function AttentionModal({ isOpen, onClose, tokens, attentionWeigh
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const container = containerRef.current;
-    
-    // Account for scroll position
-    const scrollLeft = container?.scrollLeft || 0;
-    const scrollTop = container?.scrollTop || 0;
-    
-    const x = e.clientX - rect.left + scrollLeft;
-    const y = e.clientY - rect.top + scrollTop;
+    // NOTE: getBoundingClientRect() already reflects the canvas' position
+    // *after* the container has scrolled, so (clientX - rect.left) already
+    // gives the correct canvas-internal coordinate. Do NOT add scrollLeft/
+    // scrollTop on top - that double-counts the scroll and pushes the
+    // computed row/col past the hovered cell once you scroll right/down,
+    // making the tooltip (hoveredCell) fall out of bounds and never show.
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
     const cellSize = 5 * zoomLevel;
     const margin = { top: 100, left: 100 };

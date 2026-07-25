@@ -221,6 +221,12 @@ def load_script_file(path: Path) -> list:
 # ---------------------------------------------------------------------------
 # 步骤 1：渲染幻灯片 PNG
 # ---------------------------------------------------------------------------
+def _slide_bullets(slide: dict) -> list[str]:
+    """Keep string bullets only; JSON null / non-str items are skipped."""
+    bullets = slide.get("bullets") or []
+    return [b for b in bullets if isinstance(b, str)]
+
+
 def render_slide(slide: dict, index: int, total: int) -> Path:
     """把一页幻灯片渲染为 1280x720 的 PNG。"""
     img = Image.new("RGB", (WIDTH, HEIGHT), color=(23, 32, 56))  # 深蓝底
@@ -246,7 +252,7 @@ def render_slide(slide: dict, index: int, total: int) -> Path:
     y += 70
 
     # 要点
-    for bullet in slide["bullets"]:
+    for bullet in _slide_bullets(slide):
         draw.ellipse([94, y + 14, 110, y + 30], fill=(88, 166, 255))
         for j, line in enumerate(textwrap.wrap(bullet, width=30)):
             draw.text((130, y), line, font=bullet_font, fill=(220, 226, 240))
@@ -267,7 +273,7 @@ def render_slide(slide: dict, index: int, total: int) -> Path:
 # ---------------------------------------------------------------------------
 def offline_narration(slide: dict) -> str:
     """离线占位讲解词：不调用 LLM，用副标题+要点拼出一段可读文本（供占位音轨估时）。"""
-    return f"{slide['subtitle']}。" + "；".join(slide["bullets"]) + "。"
+    return f"{slide['subtitle']}。" + "；".join(_slide_bullets(slide)) + "。"
 
 
 def generate_narration(client, cfg: Config, slide: dict, index: int, total: int) -> str:
@@ -282,7 +288,7 @@ def generate_narration(client, cfg: Config, slide: dict, index: int, total: int)
         f"当前是第 {index + 1}/{total} 页幻灯片。{position}。\n\n"
         f"幻灯片标题：{slide['title']}\n"
         f"副标题：{slide['subtitle']}\n"
-        f"要点：\n- " + "\n- ".join(slide["bullets"]) + "\n\n"
+        f"要点：\n- " + "\n- ".join(_slide_bullets(slide)) + "\n\n"
         "请生成这一页的口语化讲解词，要求：\n"
         "1) 是引导性的口语叙述，而不是逐条复述要点；\n"
         "2) 自然流畅、有过渡，像真人讲课；\n"

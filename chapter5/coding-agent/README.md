@@ -557,9 +557,10 @@ Check:
 
 Ensure:
 
-- Bash is available at `/bin/bash`
+- Bash is available on `PATH` on macOS/Linux
+- PowerShell is available on `PATH` on Windows (`cmd.exe` is used as a fallback)
 - Working directory exists
-- Commands are properly quoted
+- Commands use the native shell syntax and are properly quoted
 
 ### Testing
 

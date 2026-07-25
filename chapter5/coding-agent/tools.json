@@ -36,7 +36,7 @@
           "properties": {
             "command": {
               "type": "string",
-              "description": "The command to execute"
+              "description": "The command to execute. Use Bash syntax on macOS/Linux and PowerShell syntax on Windows (use ';' instead of '&&' for compatibility with Windows PowerShell 5.1)."
             },
             "timeout": {
               "type": "number",

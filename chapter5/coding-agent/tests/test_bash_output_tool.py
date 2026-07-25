@@ -95,3 +95,21 @@ class TestBashOutputTool:
         assert "output_size" in result.data
         assert result.data["output_size"] > 0
 
+    def test_background_job_inherits_persistent_environment(self, system_state):
+        """Background Bash jobs retain variables exported earlier in the session."""
+        bash_tool = BashTool(system_state)
+        output_tool = BashOutputTool(system_state)
+
+        bash_tool.execute({"command": "export BACKGROUND_TEST_VALUE=persisted"})
+        bash_result = bash_tool.execute({
+            "command": "echo $BACKGROUND_TEST_VALUE",
+            "run_in_background": True,
+        })
+        time.sleep(0.5)
+
+        result = output_tool.execute({
+            "bash_id": bash_result.data["background_job_id"],
+        })
+
+        assert result.success
+        assert "persisted" in result.data["output"]

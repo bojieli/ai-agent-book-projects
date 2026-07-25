@@ -24,7 +24,14 @@ def main():
         if len(messages) < 2:
             n_skipped_short += 1
             continue
-        assistant = messages[1]["content"]
+        assistant_msg = messages[1]
+        if not isinstance(assistant_msg, dict):
+            n_skipped_short += 1
+            continue
+        assistant = assistant_msg.get("content")
+        if not isinstance(assistant, str):
+            n_skipped_short += 1
+            continue
         m = re.search(r"<think>\n?(.*?)\n?</think>", assistant, re.DOTALL)
         think = m.group(1) if m else ""
         think_lens.append(len(think))

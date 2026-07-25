@@ -193,7 +193,7 @@ class LogSanitizationAgent:
             response_json = json.loads(full_response)
             
             # Extract PII values
-            pii_values = response_json.get('pii_values', [])
+            pii_values = response_json.get('pii_values') or []
             # Strip leading/trailing whitespace and special characters like '-' or empty
             cleaned_pii_values = []
             for pii in pii_values:

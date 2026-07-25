@@ -146,6 +146,13 @@ class FileTools:
                 "success": False,
                 "error": f"Failed to read file: {str(e)}"
             }
+
+        # Empty search matches everywhere; reject instead of inserting at start.
+        if search == "":
+            return {
+                "success": False,
+                "error": "Search text cannot be empty"
+            }
         
         # Check if search text exists
         if search not in current_content:

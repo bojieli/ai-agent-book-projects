@@ -180,3 +180,12 @@
 % ElegantBook には lang=jp が無いため lang=cn を用いる（CJK 組版に必要）。ただし
 % 目次ラベルだけは中国語「目录」ではなく日本語「目次」に上書きする。
 \AtBeginDocument{\renewcommand{\contentsname}{目次}}
+
+% ElegantBook empties the `plain` page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

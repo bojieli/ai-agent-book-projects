@@ -55,9 +55,13 @@ def save_text(name, text):
 
 
 def _review_issues(review: dict) -> list:
-    """JSON null issues must behave like omit ([])."""
+    """Return issue dicts; null/non-list → []; skip non-dict entries."""
     issues = review.get("issues")
-    return issues if issues is not None else []
+    if issues is None:
+        return []
+    if not isinstance(issues, list):
+        return []
+    return [i for i in issues if isinstance(i, dict)]
 
 
 def summarize_review(review: dict) -> str:
