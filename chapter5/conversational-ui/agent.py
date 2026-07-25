@@ -172,10 +172,15 @@ def customize(client, model, frontend_dir: Path, requirement: str) -> dict:
     msg = resp.choices[0].message
     if not msg.tool_calls:
         raise RuntimeError("模型没有返回 apply_edits 工具调用。")
-    args = json.loads(msg.tool_calls[0].function.arguments)
+    raw_args = msg.tool_calls[0].function.arguments or "{}"
+    try:
+        args = json.loads(raw_args)
+    except json.JSONDecodeError:
+        # Tolerate bad apply_edits JSON; degrade to empty edits.
+        args = {}
 
     # 安全校验：只允许改写白名单内的文件。
-    files = args.get("files") or []
+    files = [f for f in (args.get("files") or []) if isinstance(f, dict)]
     for f in files:
         path = f.get("path")
         if path not in EDITABLE_FILES:

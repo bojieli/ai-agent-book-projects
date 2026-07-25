@@ -884,7 +884,27 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                     
                     for tool_call in message.tool_calls:
                         function_name = tool_call.function.name
-                        function_args = json.loads(tool_call.function.arguments)
+                        raw_args = tool_call.function.arguments or "{}"
+                        try:
+                            function_args = json.loads(raw_args)
+                        except json.JSONDecodeError as exc:
+                            # Keep the turn alive on bad tool-arg JSON.
+                            err = (
+                                f"Invalid tool arguments (not valid JSON): {exc}. "
+                                f"Raw arguments: {raw_args[:500]}"
+                            )
+                            logger.warning(f"  ❌ {err}")
+                            self.tool_calls.append(ToolCall(
+                                tool_name=function_name,
+                                arguments={},
+                                error=err,
+                            ))
+                            self.conversation_history.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": json.dumps({"error": err}),
+                            })
+                            continue
                         
                         # Track tool call count
                         if self.config.enable_tool_counter:

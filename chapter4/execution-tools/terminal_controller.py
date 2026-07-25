@@ -490,7 +490,11 @@ class TerminalController:
         Returns:
             Dictionary with command history
         """
-        recent = self.command_history[-count:] if self.command_history else []
+        # count<=0 → []; history[-0:] would return the full list.
+        if count <= 0 or not self.command_history:
+            recent = []
+        else:
+            recent = self.command_history[-count:]
         
         return {
             "success": True,

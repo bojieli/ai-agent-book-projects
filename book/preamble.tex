@@ -168,3 +168,12 @@
   \setCJKsansfont[AutoFakeBold=2.5]{Noto Sans CJK SC}%
   \setCJKmonofont[AutoFakeBold=2.5]{Noto Sans CJK SC}%
 }
+
+% ElegantBook empties the `plain` page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

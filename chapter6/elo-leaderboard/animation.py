@@ -47,7 +47,7 @@ def prepare_animation_data(history_df: pd.DataFrame, top_n: int = 15) -> dict:
                 'name': row.model,
                 'rating': float(row.rating),
                 'matches': int(row.matches),
-                'wins': int(row.wins)
+                'wins': float(row.wins)
             })
         
         frames.append(frame)

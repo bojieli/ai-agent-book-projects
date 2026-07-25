@@ -92,6 +92,29 @@
   .md-sidebar--secondary { margin-right: auto; }
 }
 
+/* Material turns the chapter navigation into a drawer below 76.25rem and
+   already provides its own menu button there. On persistent-sidebar layouts,
+   expose the companion control added in the header override. Hiding the
+   primary sidebar removes it from the flex layout, so the article and its
+   outline automatically recenter in the newly available reading space. */
+.sidebar-toggle:not([hidden]) {
+  display: none;
+}
+@media screen and (min-width: 76.25em) {
+  .sidebar-toggle:not([hidden]) {
+    display: inline-flex;
+  }
+  .sidebar-toggle svg {
+    transition: transform 0.15s ease;
+  }
+  .sidebar-nav-collapsed .sidebar-toggle svg {
+    transform: scaleX(-1);
+  }
+  .sidebar-nav-collapsed .md-sidebar--primary {
+    display: none;
+  }
+}
+
 /* ── 2. 左侧栏(书的目录树):白底、单线分隔 ─────────────────────
    结构(navigation.sections + navigation.indexes):
      <li class="md-nav__item--section md-nav__item--nested">

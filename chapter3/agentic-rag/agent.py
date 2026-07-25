@@ -216,10 +216,12 @@ Remember: Your credibility depends on providing accurate, well-cited information
         
         # Add conversation history (limited)
         history_limit = self.config.agent.conversation_history_limit
-        if len(self.conversation_history) > history_limit:
-            messages.extend(self.conversation_history[-history_limit:])
-        else:
-            messages.extend(self.conversation_history)
+        # limit<=0 → no history; list[-0:] would include all turns.
+        if history_limit > 0:
+            if len(self.conversation_history) > history_limit:
+                messages.extend(self.conversation_history[-history_limit:])
+            else:
+                messages.extend(self.conversation_history)
         
         # Add current user query
         messages.append({"role": "user", "content": user_query})

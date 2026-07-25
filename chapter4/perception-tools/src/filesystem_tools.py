@@ -120,19 +120,38 @@ async def grep_search(
         logging.info(f"🔍 Searching for pattern '{pattern}' in {dir_path}")
         
         results = []
+        if max_results <= 0:
+            action_response = ActionResponse(
+                success=True,
+                message={
+                    "pattern": pattern,
+                    "results": results,
+                    "total_found": 0,
+                    "truncated": False,
+                },
+                metadata={
+                    "directory": str(dir_path),
+                    "file_pattern": file_pattern,
+                    "recursive": recursive,
+                },
+            )
+            return TextContent(
+                type="text",
+                text=json.dumps(action_response.model_dump()),
+            )
+
         flags = re.IGNORECASE if not case_sensitive else 0
         regex = re.compile(pattern, flags)
-        
-        # Determine which files to search
+
         if recursive:
             files = dir_path.rglob(file_pattern)
         else:
             files = dir_path.glob(file_pattern)
-        
+
         for file_path in files:
             if not file_path.is_file():
                 continue
-            
+
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     for line_num, line in enumerate(f, 1):
@@ -143,19 +162,19 @@ async def grep_search(
                                 "line": line.strip(),
                                 "absolute_path": str(file_path)
                             })
-                            
+
                             if len(results) >= max_results:
                                 break
-                
+
                 if len(results) >= max_results:
                     break
-                    
+
             except Exception as e:
                 logging.warning(f"Error reading {file_path}: {e}")
                 continue
-        
+
         logging.info(f"✅ Found {len(results)} matches")
-        
+
         action_response = ActionResponse(
             success=True,
             message={
@@ -164,6 +183,7 @@ async def grep_search(
                 "total_found": len(results),
                 "truncated": len(results) >= max_results
             },
+
             metadata={
                 "directory": str(dir_path),
                 "file_pattern": file_pattern,

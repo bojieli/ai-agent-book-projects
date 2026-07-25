@@ -2,13 +2,13 @@
 
 When building an Agent system, developers face numerous design choices that often lack obvious correct answers:
 
-- Which model to use?
+- Which model should be used?
 - What tools should the model be able to call?
 - What data should the knowledge base store, and how should it be structured?
 - How should user memory be implemented?
 - How should the model's prompts and Skills be organized?
 - What constraints need to be added to the Harness?
-- How should this Agent's self-evolution and self-iteration be carried out?
+- How should evaluation results be transformed into learning signals for the Agent's continuous evolution?
 
 Evaluation puts these decisions on a scientific footing. Through systematic comparative experiments (change one variable at a time and observe the effect) and ablation experiments (disable one component at a time and observe how overall performance changes), you can distinguish genuine capability gains from superficial fluctuations — and avoid being penny wise and pound foolish. Software engineering has a saying: you can't improve what you don't measure. Without a repeatable evaluation system, an Agent can only be iterated on intuition.
 
@@ -437,6 +437,8 @@ Around these two stages, the main throughput and latency metrics are as follows:
 
 **Rate Limits and Reliability**: RPM (Requests Per Minute) / TPM (Tokens Per Minute) limits affect concurrency capabilities, and some APIs dynamically adjust quotas during peak hours. In terms of robustness, pay attention to out-of-distribution data, adversarial inputs, and long-running stability (whether issues like mode collapse or attention drift occur).
 
+**Budget–capability curves**: A single score at a fixed budget is not enough to determine whether an Agent can handle long-horizon work. In addition to success rate, report how performance changes with wall-clock time, tokens, tool calls, or compute budget. RE-Bench makes the problem concrete: with a total budget of two hours per environment, the best Agent scored about four times as high as human experts; humans, however, benefited more from additional time, narrowly surpassed the best Agent at eight hours, and scored about twice as high when multiple attempts were given 32 total hours[^re-bench-2025]. Short-budget leadership therefore cannot be extrapolated directly to long-running capability. Model selection should compare several budget points close to the duration of the real workload.
+
 In practice you can mix models: lightweight models on simple requests to cut costs, powerful models on complex tasks to protect quality; or specialist models on particular sub-tasks (image understanding, code generation), collaborating through sub-agent mechanisms. Any such heterogeneous combination must itself be validated by evaluation, to confirm the overall benefit outweighs the added system complexity.
 
 ### Cost Analysis of Agent Systems
@@ -704,17 +706,19 @@ High-fidelity environments support better transfer to the real world but have hi
 
 With that, the evaluation environment completes its final evolution: from an exam hall that measures ability into a training ground that builds it. Chapter 7 will show how AWorld-train turns such simulation environments into trainable arenas, and the engineering challenges involved—the evaluation system and simulation environments established in this chapter are the two cornerstones of post-training.
 
+[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+
 ## Chapter Summary
 
-This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
+This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
 
 Core methodology: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, transforming Agent engineering from experience-driven "alchemy" to data-driven scientific engineering.
 
 The evaluation system introduced in this chapter forms a complete closed loop: **Evaluation Environment** provides automated testing infrastructure → **Evaluation Dataset** defines test cases → **Automated Evaluation Methods** (LLM-as-a-Judge and Rubric) score Agent performance → **Benchmark Analysis** reveals improvement directions → **System Improvements** fix issues → Update the evaluation environment and dataset, starting a new iteration cycle.
 
-From the perspective of the Harness engineering introduced in Chapter 1, the evaluation methodology in this chapter is the systematic implementation of the "validation" function within the Harness, and the "from Benchmark report to system improvement" closed loop is the core mechanism for the Harness's iterative optimization—evaluation not only measures the Agent's current capabilities but also guides the Harness's ongoing evolution.
+From the perspective of Harness engineering introduced in Chapter 1, the evaluation methodology in this chapter is the systematic implementation of the Harness's “validation” function, while the closed loop “from Benchmark report to system improvement” is the core mechanism for iterative Harness optimization. This chapter answers “how to measure reliably”; building on it, Chapter 8 answers “how to transform multidimensional trajectory evaluations into executable, reversible system updates.”
 
-The evaluation system built here does more than optimize the current system: it lays a critical foundation for the model post-training discussed in the next chapter—the evaluation environment and dataset are key inputs to post-training, and the simulation environment is its practice ground. The next chapter shifts from evaluation to model-level improvement, examining how SFT and RL write interaction strategies into model parameters.
+The evaluation system established here not only supports optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 7 turns evaluation environments and data into inputs for model post-training, using SFT and RL to write interaction policies into parameters. Chapter 8 transforms multidimensional evaluations of production trajectories into candidate updates to knowledge, instructions, programs, or parameters.
 
 ## Thought Questions
 

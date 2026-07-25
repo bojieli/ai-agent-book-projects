@@ -17,6 +17,29 @@
       {% set icon = config.theme.icon.menu or "material/menu" %}
       {% include ".icons/" ~ icon ~ ".svg" %}
     </label>
+    {# Apply a saved collapsed state before the sidebar is parsed, preventing
+       it from flashing open during a full page load. #}
+    <script>
+      try {
+        if (window.localStorage.getItem("ai-agent-book.primary-sidebar-collapsed") === "true") {
+          document.documentElement.classList.add("sidebar-nav-collapsed");
+        }
+      } catch (_) {}
+    </script>
+    {# Material's drawer button above is mobile-only. On persistent-sidebar
+       layouts, give readers an equivalent control that does not interfere
+       with the mobile drawer checkbox. JavaScript reveals and wires it only
+       when a navigation sidebar exists. #}
+    <button type="button"
+            class="md-header__button md-icon sidebar-toggle"
+            data-sidebar-toggle
+            aria-controls="primary-navigation"
+            aria-expanded="true"
+            aria-label="隐藏侧边栏"
+            title="隐藏侧边栏"
+            hidden>
+      {% include ".icons/material/menu-open.svg" %}
+    </button>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
