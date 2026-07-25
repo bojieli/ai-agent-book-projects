@@ -33,8 +33,12 @@ extras/agent-lab/demo.html
 book*/AI-Agents-in-Depth-*.pdf
 book*/深入理解-AI-Agent-*.pdf
 
-# Python packaging build artifacts (editable installs)
-*.egg-info/
-build/
-dist/
-.eggs/
+# Python packaging build artifacts (editable installs).
+# Anchored to the repository root: unanchored build/ and dist/ patterns would
+# also match vendored web bundles such as
+# chapter8/gaia-experience/AWorld/aworld/cmd/web/webui/dist/, whose assets are
+# tracked, and would silently drop newly generated files from commits.
+/agentbook.egg-info/
+/build/
+/dist/
+/.eggs/
