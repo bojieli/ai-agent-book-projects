@@ -36,29 +36,29 @@ def fig2_1():
     W, H = 820, 620
     s = SVG(W, H)
 
-    s.text(410, 30, 'Overview of context window composition', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Gambaran Umum Komposisi Jendela Konteks', size=FS_TITLE, bold=True)
 
     lx, lw = 40, 700
     layers = [
-        ('System Prompt', 'medium', [
-            '"You are a helpful assistant. You MUST answer concisely."',
-            '"Use tools when the user asks for real-time information."',
+        ('Prompt Sistem', 'medium', [
+            '"Anda adalah asisten yang membantu. Anda HARUS menjawab dengan ringkas."',
+            '"Gunakan alat saat pengguna meminta informasi waktu nyata."',
         ]),
-        ('Tool Definitions', 'light', [
-            '{"name": "web_search", "description": "Search the web",',
+        ('Definisi Alat', 'light', [
+            '{"name": "web_search", "description": "Cari di web",',
             ' "parameters": {"query": {"type": "string"}}}',
         ]),
-        ('Conversation History', 'light', [
-            'user: "What\'s the weather in Beijing today?"',
-            'assistant: [tool_call] → get_weather("Beijing")',
-            'tool: {"temp": "23°C", "conditions": "clear"}',
+        ('Riwayat Percakapan', 'light', [
+            'pengguna: "Bagaimana cuaca di Beijing hari ini?"',
+            'asisten: [tool_call] → get_weather("Beijing")',
+            'alat: {"temp": "23°C", "conditions": "cerah"}',
         ]),
-        ('Reasoning Trace', '#e8e8e8', [
-            '<think>The user asks about the weather. I already have the tool result,',
-            'so I can directly summarize and respond without calling the tool again.</think>',
+        ('Jejak Penalaran', '#e8e8e8', [
+            '<think>Pengguna menanyakan tentang cuaca. Saya sudah memiliki hasil alat,',
+            'jadi saya bisa langsung merangkum dan merespons tanpa memanggil alat lagi.</think>',
         ]),
-        ('Current generation position →', 'white', [
-            'assistant: "Beijing is clear today, temperature 23°C..."  ← LLM is generating',
+        ('Posisi generasi saat ini →', 'white', [
+            'asisten: "Beijing hari ini cerah, suhu 23°C..."  ← LLM sedang menghasilkan',
         ]),
     ]
 
@@ -75,13 +75,13 @@ def fig2_1():
     brace_top = 60
     brace_bot = y - 8
     s.brace_right(lx + lw + 8, brace_top, brace_bot)
-    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 - 12, 'Context', size=FS_BODY, bold=True, anchor='start')
-    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 + 12, 'Window', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 - 12, 'Jendela', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 + 12, 'Konteks', size=FS_BODY, bold=True, anchor='start')
 
     # Bottom annotation
     s.rect(100, y + 15, 620, 50, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, y + 32, 'Window size: Qwen3 = 32K tokens | Claude = 200K | Gemini = 2M', size=FS_SMALL)
-    s.text(410, y + 52, 'All content serialized into token stream → processed by Transformer attention mechanism', size=FS_SMALL, fill='text_light')
+    s.text(410, y + 32, 'Ukuran jendela: Qwen3 = 32K token | Claude = 200K | Gemini = 2M', size=FS_SMALL)
+    s.text(410, y + 52, 'Semua konten diserialisasi menjadi aliran token → diproses oleh mekanisme attention Transformer', size=FS_SMALL, fill='text_light')
 
     s.save(f'{OUT}/fig2-1.svg')
 
@@ -95,22 +95,22 @@ def fig2_2():
     W, H = 820, 540
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.1: Local LLM Tool Calling Architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Eksperimen 2.1: Arsitektur Pemanggilan Alat LLM Lokal', size=FS_TITLE, bold=True)
 
     # Hardware box (left)
-    s.group_box(30, 65, 220, 130, 'Local Hardware')
+    s.group_box(30, 65, 220, 130, 'Perangkat Keras Lokal')
     s.box(50, 100, 180, 35, 'Apple M2 / 16GB', fill='light', font_size=FS_SMALL)
-    s.box(50, 145, 180, 35, 'MLX Inference Backend', fill='light', font_size=FS_SMALL)
+    s.box(50, 145, 180, 35, 'Backend Inferensi MLX', fill='light', font_size=FS_SMALL)
 
     # Model box (center)
     s.rect(290, 65, 240, 130, fill='medium')
     s.text(410, 95, 'Qwen3-0.6B', size=FS_BODY, bold=True)
-    s.text(410, 120, '0.6B parameters · Q4 quantization', size=FS_SMALL, fill='text_light')
-    s.text(410, 145, '> 100 tokens/s', size=FS_SMALL, fill='text_light')
-    s.text(410, 170, 'ReAct + Tool calling capability', size=FS_SMALL)
+    s.text(410, 120, '0,6M parameter · Kuantisasi Q4', size=FS_SMALL, fill='text_light')
+    s.text(410, 145, '> 100 token/d', size=FS_SMALL, fill='text_light')
+    s.text(410, 170, 'ReAct + Kemampuan pemanggilan alat', size=FS_SMALL)
 
     # Tool registry (right)
-    s.group_box(570, 65, 220, 130, 'Tool Registry')
+    s.group_box(570, 65, 220, 130, 'Registri Alat')
     s.box(590, 100, 180, 35, 'get_current_time', fill='code_bg', font_size=FS_SMALL)
     s.box(590, 145, 180, 35, 'get_temperature', fill='code_bg', font_size=FS_SMALL)
 
@@ -120,17 +120,17 @@ def fig2_2():
     s.arrow(568, 138, 532, 138)
 
     # ReAct loop (below)
-    s.group_box(50, 220, 720, 290, 'ReAct Loop')
+    s.group_box(50, 220, 720, 290, 'Siklus ReAct')
 
     # Step 1: User query
     s.rect(80, 260, 300, 40, fill='light')
-    s.text(90, 280, 'user: "What\'s the time and weather in Vancouver?"', size=FS_TINY, anchor='start')
+    s.text(90, 280, 'pengguna: "Jam berapa dan bagaimana cuaca di Vancouver?"', size=FS_TINY, anchor='start')
 
     # Step 2: Think
     s.rect(80, 310, 300, 55, fill='#e8e8e8')
     s.text(90, 328, '<think>', size=FS_TINY, anchor='start', bold=True)
-    s.text(90, 348, 'Need to call get_current_time', size=FS_TINY, anchor='start')
-    s.text(90, 363, 'and get_temperature tools', size=FS_TINY, anchor='start')
+    s.text(90, 348, 'Perlu memanggil alat get_current_time', size=FS_TINY, anchor='start')
+    s.text(90, 363, 'dan get_temperature', size=FS_TINY, anchor='start')
     s.arrow(230, 302, 230, 308)
 
     # Step 3: Tool calls
@@ -147,20 +147,20 @@ def fig2_2():
     # Right side: loop arrow + final output
     # Loop arrow goes along the left outer edge to avoid blocking text inside the left column
     s.arrow_curved(80, 455, 80, 280, curve=-40, color='dark')
-    s.text(30, 367, 'Continue loop', size=FS_TINY, fill='text_light', bold=True)
+    s.text(30, 367, 'Lanjutkan siklus', size=FS_TINY, fill='text_light', bold=True)
 
     # Final output box
     s.rect(430, 280, 320, 55, fill='medium')
-    s.text(440, 298, 'Final output:', size=FS_SMALL, bold=True, anchor='start')
-    s.text(440, 318, '"Vancouver: 05:18 AM, 13.2°C,', size=FS_TINY, anchor='start')
-    s.text(440, 335, '  clear sky, humidity 93%"', size=FS_TINY, anchor='start')
+    s.text(440, 298, 'Keluaran akhir:', size=FS_SMALL, bold=True, anchor='start')
+    s.text(440, 318, '"Vancouver: 05:18, 13,2°C,', size=FS_TINY, anchor='start')
+    s.text(440, 335, '  langit cerah, kelembapan 93%"', size=FS_TINY, anchor='start')
 
     # Streaming annotation
     s.rect(430, 360, 320, 80, fill='code_bg', stroke='dark', rx=4)
-    s.text(590, 378, 'Streaming key timings', size=FS_SMALL, bold=True)
-    s.text(440, 400, '<think>... → hidden, not shown to user', size=FS_TINY, anchor='start')
-    s.text(440, 418, 'plain text → real-time streaming display', size=FS_TINY, anchor='start')
-    s.text(440, 436, '<tool_call> → parse and execute tool', size=FS_TINY, anchor='start')
+    s.text(590, 378, 'Pengaturan waktu kunci streaming', size=FS_SMALL, bold=True)
+    s.text(440, 400, '<think>... → tersembunyi, tidak ditampilkan ke pengguna', size=FS_TINY, anchor='start')
+    s.text(440, 418, 'teks biasa → tampilan streaming waktu nyata', size=FS_TINY, anchor='start')
+    s.text(440, 436, '<tool_call> → urai dan eksekusi alat', size=FS_TINY, anchor='start')
 
     s.save(f'{OUT}/fig2-2.svg')
 
@@ -174,7 +174,7 @@ def fig2_3():
     W, H = 920, 580
     s = SVG(W, H)
 
-    s.text(W / 2, 30, 'Token Structure of Chat Template', size=FS_TITLE, bold=True)
+    s.text(W / 2, 30, 'Struktur Token pada Templat Obrolan', size=FS_TITLE, bold=True)
 
     lx = 40
     rw = 800
@@ -182,27 +182,27 @@ def fig2_3():
     y = 65
     segments = [
         ('<|im_start|>system', 'darker', 'white', [
-            '# Tools',
-            'You may call one or more functions...',
+            '# Alat',
+            'Anda dapat memanggil satu atau lebih fungsi...',
             '<tools>{"name":"get_weather",...}</tools>',
             '<tool_call>{"name":..., "arguments":...}</tool_call>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>user', 'darker', 'white', [
-            '"What\'s the weather like in Beijing today?"',
+            '"Bagaimana cuaca di Beijing hari ini?"',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>assistant', 'darker', 'white', [
-            '<think>Need to query weather, call get_weather tool</think>',
+            '<think>Perlu menanyakan cuaca, panggil alat get_weather</think>',
             '<tool_call>{"name":"get_weather","args":{"city":"Beijing"}}</tool_call>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>user', 'darker', 'white', [
-            '<tool_response>{"temp":"23°C","sky":"clear"}</tool_response>',
+            '<tool_response>{"temp":"23°C","sky":"cerah"}</tool_response>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>assistant', 'darker', 'white', [
-            '← LLM starts generating new tokens from here',
+            '← LLM mulai menghasilkan token baru dari sini',
         ]),
     ]
 
@@ -220,8 +220,8 @@ def fig2_3():
             y += total_h + 4
 
     # Right annotation
-    s.text(lx + rw + 5, 80, 'special', size=FS_SMALL, anchor='start', bold=True)
-    s.text(lx + rw + 5, 100, 'tokens', size=FS_SMALL, anchor='start', bold=True)
+    s.text(lx + rw + 5, 80, 'token', size=FS_SMALL, anchor='start', bold=True)
+    s.text(lx + rw + 5, 100, 'khusus', size=FS_SMALL, anchor='start', bold=True)
 
     s.save(f'{OUT}/fig2-3.svg')
 
@@ -235,50 +235,50 @@ def fig2_4():
     W, H = 820, 480
     s = SVG(W, H)
 
-    s.text(410, 30, 'KV Cache Prefix Reuse Mechanism', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Mekanisme Penggunaan Kembali Awalan KV Cache', size=FS_TITLE, bold=True)
 
     lx = 40
     bw = 740
 
     # Request 1
-    s.text(lx, 70, 'Request 1', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx, 70, 'Permintaan 1', size=FS_BODY, bold=True, anchor='start')
     # System prompt portion (cached)
     s.rect(lx, 85, 380, 40, fill='medium')
-    s.text(lx + 190, 105, 'System Prompt + Tools (1200 tokens)', size=FS_SMALL)
+    s.text(lx + 190, 105, 'Prompt Sistem + Alat (1200 token)', size=FS_SMALL)
     # User message
     s.rect(lx + 385, 85, 180, 40, fill='light')
-    s.text(lx + 475, 105, 'user: "How\'s the weather?"', size=FS_SMALL)
+    s.text(lx + 475, 105, 'pengguna: "Bagaimana cuaca?"', size=FS_SMALL)
     # KV computed
     s.rect(lx + 570, 85, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 105, '→ generate response', size=FS_SMALL)
+    s.text(lx + 655, 105, '→ hasilkan respons', size=FS_SMALL)
 
     # Request 2 (cache hit)
-    s.text(lx, 155, 'Request 2', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx, 155, 'Permintaan 2', size=FS_BODY, bold=True, anchor='start')
     # Same prefix — cached
     s.rect(lx, 170, 380, 40, fill='medium')
-    s.text(lx + 190, 190, 'System Prompt + Tools (cache hit ✓)', size=FS_SMALL)
+    s.text(lx + 190, 190, 'Prompt Sistem + Alat (cache hit ✓)', size=FS_SMALL)
     # Different user msg
     s.rect(lx + 385, 170, 180, 40, fill='light')
-    s.text(lx + 475, 190, 'user: "What time is it?"', size=FS_SMALL)
+    s.text(lx + 475, 190, 'pengguna: "Jam berapa sekarang?"', size=FS_SMALL)
     s.rect(lx + 570, 170, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 190, '→ generate response', size=FS_SMALL)
+    s.text(lx + 655, 190, '→ hasilkan respons', size=FS_SMALL)
 
     # Cache reuse arrow
-    s.arrow(lx + 190, 127, lx + 190, 168, label='KV reuse', color='dark')
+    s.arrow(lx + 190, 127, lx + 190, 168, label='Penggunaan kembali KV', color='dark')
 
     # Request 3 (cache miss)
-    s.text(lx, 245, 'Request 3', size=FS_BODY, bold=True, anchor='start')
-    s.text(lx + 85, 245, '(system prompt changed)', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(lx, 245, 'Permintaan 3', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + 85, 245, '(prompt sistem diubah)', size=FS_SMALL, anchor='start', fill='text_light')
     s.rect(lx, 260, 400, 40, fill='white', dash=True)
-    s.text(lx + 200, 280, 'System + Tools + "Time: 10:30:45"', size=FS_SMALL)
+    s.text(lx + 200, 280, 'Sistem + Alat + "Waktu: 10:30:45"', size=FS_SMALL)
     s.rect(lx + 405, 260, 160, 40, fill='light')
-    s.text(lx + 485, 280, 'user: "How\'s the weather?"', size=FS_SMALL)
+    s.text(lx + 485, 280, 'pengguna: "Bagaimana cuaca?"', size=FS_SMALL)
     s.rect(lx + 570, 260, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 280, '→ full recomputation ✗', size=FS_SMALL)
+    s.text(lx + 655, 280, '→ komputasi ulang penuh ✗', size=FS_SMALL)
 
     # Performance comparison
     s.rect(80, 330, 660, 130, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, 355, 'Performance Comparison (3000 token context)', size=FS_BODY, bold=True)
+    s.text(410, 355, 'Perbandingan Kinerja (konteks 3000 token)', size=FS_BODY, bold=True)
 
     # Table header
     s.line(100, 370, 720, 370, color='dark')
@@ -288,12 +288,12 @@ def fig2_4():
 
     # Rows
     s.text(130, 425, 'TTFT', size=FS_SMALL, anchor='start')
-    s.text(230, 425, '~0.5 seconds', size=FS_SMALL)
-    s.text(490, 425, '3 - 5 seconds', size=FS_SMALL)
+    s.text(230, 425, '~0,5 detik', size=FS_SMALL)
+    s.text(490, 425, '3 - 5 detik', size=FS_SMALL)
 
-    s.text(130, 450, 'Cost', size=FS_SMALL, anchor='start')
-    s.text(230, 450, 'only new tokens billed', size=FS_SMALL)
-    s.text(490, 450, 'all tokens rebilled', size=FS_SMALL)
+    s.text(130, 450, 'Biaya', size=FS_SMALL, anchor='start')
+    s.text(230, 450, 'hanya token baru yang ditagih', size=FS_SMALL)
+    s.text(490, 450, 'semua token ditagih ulang', size=FS_SMALL)
 
     s.save(f'{OUT}/fig2-4.svg')
 
@@ -307,7 +307,7 @@ def fig2_5():
     W, H = 820, 580
     s = SVG(W, H)
 
-    s.text(410, 30, 'System prompt injection architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Arsitektur injeksi prompt sistem', size=FS_TITLE, bold=True)
 
     # Left: WITHOUT hints
     col_w = 350
@@ -315,23 +315,23 @@ def fig2_5():
     lx1 = 30
     lx2 = lx1 + col_w + col_gap
 
-    s.text(lx1 + col_w / 2, 65, 'No system prompt', size=FS_BODY, bold=True)
-    s.text(lx2 + col_w / 2, 65, 'With system prompt', size=FS_BODY, bold=True)
+    s.text(lx1 + col_w / 2, 65, 'Tanpa prompt sistem', size=FS_BODY, bold=True)
+    s.text(lx2 + col_w / 2, 65, 'Dengan prompt sistem', size=FS_BODY, bold=True)
 
     # Left column: raw trajectory
     y = 90
     left_items = [
-        ('system', 'System Prompt + Tools', 'medium', 35),
-        ('user', '"Help me contact Xfinity to negotiate"', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 1st attempt', '#e8e8e8', 35),
-        ('tool', 'Result: waited 45 minutes, not connected', 'light', 35),
-        ('assistant', 'web_search("Xfinity deals")', '#e8e8e8', 35),
-        ('tool', 'Result: [large amount of search content...]', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 2nd attempt', '#e8e8e8', 35),
-        ('tool', 'Result: connected, quoted $65/month', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 3rd attempt', '#e8e8e8', 35),
-        ('tool', 'Result: confirmed price reduction to $59/month', 'light', 35),
-        ('user', '"Can you call again to follow up?"', 'light', 35),
+        ('system', 'Prompt Sistem + Alat', 'medium', 35),
+        ('user', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → percobaan ke-1', '#e8e8e8', 35),
+        ('tool', 'Hasil: menunggu 45 menit, tidak terhubung', 'light', 35),
+        ('assistant', 'web_search("Promo Xfinity")', '#e8e8e8', 35),
+        ('tool', 'Hasil: [banyak konten pencarian...]', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → percobaan ke-2', '#e8e8e8', 35),
+        ('tool', 'Hasil: terhubung, ditawari $65/bulan', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → percobaan ke-3', '#e8e8e8', 35),
+        ('tool', 'Hasil: penurunan harga dikonfirmasi menjadi $59/bulan', 'light', 35),
+        ('user', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
     ]
 
     for role, content, fill, h in left_items:
@@ -340,16 +340,16 @@ def fig2_5():
         s.mono(lx1 + 65, y + h / 2, content, size=FS_TINY - 2)
         y += h + 3
 
-    s.text(lx1 + col_w / 2, y + 15, '→ Model needs to scan entire context to "count"', size=FS_SMALL, fill='text_light')
-    s.text(lx1 + col_w / 2, y + 35, 'number of calls made, prone to miscounting', size=FS_SMALL, fill='text_light')
+    s.text(lx1 + col_w / 2, y + 15, '→ Model perlu memindai seluruh konteks untuk "menghitung"', size=FS_SMALL, fill='text_light')
+    s.text(lx1 + col_w / 2, y + 35, 'jumlah panggilan yang dilakukan, rentan salah hitung', size=FS_SMALL, fill='text_light')
 
     # Right column: with system hints
     y = 90
     right_items = [
-        ('system', 'System Prompt + Tools', 'medium', 35),
-        ('user', '"Help me contact Xfinity to negotiate"', 'light', 35),
-        ('...', '[ Same trajectory content ]', '#e8e8e8', 90),
-        ('user', '"Can you call again to follow up?"', 'light', 35),
+        ('system', 'Prompt Sistem + Alat', 'medium', 35),
+        ('user', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
+        ('...', '[ Konten lintasan yang sama ]', '#e8e8e8', 90),
+        ('user', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
     ]
     for role, content, fill, h in right_items:
         s.rect(lx2, y, col_w, h, fill=fill, rx=4)
@@ -363,18 +363,18 @@ def fig2_5():
     s.rect(lx2, hint_y, col_w, hint_h, fill='medium', stroke='border', rx=4)
     s.text(lx2 + 10, hint_y + 18, '<agent_status>', size=FS_SMALL, bold=True, anchor='start')
     hints = [
-        'phone_call called 3 times (Xfinity: 3)',
-        'Constraint check: limit reached (3/3) ✗',
-        'TODO: [✓]Contact Xfinity [✓]Confirm price reduction',
-        'Current time: 2025-09-14 10:30',
-        'Current status: waiting for user confirmation',
+        'phone_call dipanggil 3 kali (Xfinity: 3)',
+        'Pengecekan batasan: batas tercapai (3/3) ✗',
+        'TODO: [✓]Hubungi Xfinity [✓]Konfirmasi penurunan harga',
+        'Waktu saat ini: 2025-09-14 10:30',
+        'Status saat ini: menunggu konfirmasi pengguna',
     ]
     for i, h in enumerate(hints):
         s.mono(lx2 + 15, hint_y + 40 + i * 20, h, size=FS_TINY - 2)
     s.text(lx2 + col_w - 10, hint_y + hint_h - 12, '</agent_status>', size=FS_SMALL, bold=True, anchor='end')
 
-    s.text(lx2 + col_w / 2, hint_y + hint_h + 18, '→ Model directly reads refined status', size=FS_SMALL, fill='text_light')
-    s.text(lx2 + col_w / 2, hint_y + hint_h + 38, 'Accurately follows constraints, no more calls', size=FS_SMALL, fill='text_light')
+    s.text(lx2 + col_w / 2, hint_y + hint_h + 18, '→ Model langsung membaca status yang disempurnakan', size=FS_SMALL, fill='text_light')
+    s.text(lx2 + col_w / 2, hint_y + hint_h + 38, 'Akurat mengikuti batasan, tidak ada panggilan lagi', size=FS_SMALL, fill='text_light')
 
     # VS divider
     s.text(lx1 + col_w + col_gap / 2, 300, 'VS', size=FS_BODY, bold=True)
@@ -391,7 +391,7 @@ def fig2_6():
     W, H = 820, 530
     s = SVG(W, H)
 
-    s.text(410, 30, 'Context compression strategy comparison (OpenAI founder tracking experiment)', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Perbandingan strategi kompresi konteks (Eksperimen pelacakan pendiri OpenAI)', size=FS_TITLE, bold=True)
 
     # Table layout
     tx = 30
@@ -401,12 +401,12 @@ def fig2_6():
     # so nothing overlaps in the narrow columns).
     header_y = 68
     headers = [
-        (tx + 72, 'Strategy'),
-        (tx + 195, 'Tokens'),
-        (tx + 282, 'Ratio'),
-        (tx + 352, 'Iters'),
-        (tx + 432, 'Result'),
-        (tx + 475 + 90, 'Token usage'),
+        (tx + 72, 'Strategi'),
+        (tx + 195, 'Token'),
+        (tx + 282, 'Rasio'),
+        (tx + 352, 'Iterasi'),
+        (tx + 432, 'Hasil'),
+        (tx + 475 + 90, 'Penggunaan token'),
     ]
     for cx, label in headers:
         s.text(cx, header_y, label, size=FS_SMALL, bold=True)
@@ -414,12 +414,12 @@ def fig2_6():
     s.line(tx, header_y + 12, tx + tw, header_y + 12)
 
     strategies = [
-        ('No compression', '> 110K', '100%', '5 (Failed)', False, 110000),
-        ('Individual summary', '123,205', '6.8%', '24', True, 123205),
-        ('Combined summary', '55,462', '2.1%', '21', True, 55462),
-        ('Context-aware', '25,198', '0.9%', '15', True, 25198),
-        ('Aware + citation', '45,544', '1.4%', '17', True, 45544),
-        ('Adaptive window', '181,372', '—', '8', True, 181372),
+        ('Tanpa kompresi', '> 110K', '100%', '5 (Gagal)', False, 110000),
+        ('Ringkasan individu', '123,205', '6.8%', '24', True, 123205),
+        ('Ringkasan gabungan', '55,462', '2.1%', '21', True, 55462),
+        ('Sadar konteks', '25,198', '0.9%', '15', True, 25198),
+        ('Sadar + kutipan', '45,544', '1.4%', '17', True, 45544),
+        ('Jendela adaptif', '181,372', '—', '8', True, 181372),
     ]
 
     max_tokens = 190000
@@ -431,7 +431,7 @@ def fig2_6():
 
         # Strategy name
         s.text(tx + 72, y + 15, name, size=FS_SMALL, anchor='middle',
-               bold=(name == 'Context-aware'))
+               bold=(name == 'Sadar konteks'))
 
         # Token count
         s.text(tx + 195, y + 15, tokens, size=FS_SMALL)
@@ -443,13 +443,13 @@ def fig2_6():
         s.text(tx + 352, y + 15, iters, size=FS_SMALL)
 
         # Result
-        result_text = '✓ Success' if success else '✗ Failure'
+        result_text = '✓ Sukses' if success else '✗ Gagal'
         result_color = 'text' if success else 'dark'
         s.text(tx + 432, y + 15, result_text, size=FS_SMALL, fill=result_color)
 
         # Bar
         bar_w = (token_val / max_tokens) * bar_max_w
-        bar_fill = '#e8e8e8' if name != 'Context-aware' else 'medium'
+        bar_fill = '#e8e8e8' if name != 'Sadar konteks' else 'medium'
         if not success:
             bar_fill = 'white'
         s.rect(bar_x, y, bar_w, 30, fill=bar_fill, stroke='border', rx=3)
@@ -460,8 +460,8 @@ def fig2_6():
 
     # Bottom insight
     s.rect(100, H - 60, 620, 45, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, H - 45, 'Context-aware compression: 77% token reduction, highest success rate, fewest iterations', size=FS_SMALL, bold=True)
-    s.text(410, H - 25, 'Key: incorporate query intent and existing information into compression decisions', size=FS_SMALL, fill='text_light')
+    s.text(410, H - 45, 'Kompresi sadar konteks: 77% pengurangan token, tingkat keberhasilan tertinggi, iterasi paling sedikit', size=FS_SMALL, bold=True)
+    s.text(410, H - 25, 'Kunci: menggabungkan niat kueri dan informasi yang ada ke dalam keputusan kompresi', size=FS_SMALL, fill='text_light')
 
     s.save(f'{OUT}/fig2-6.svg')
 
@@ -475,18 +475,18 @@ def fig2_7():
     W, H = 820, 600
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.7: Processing flow of six compression strategies', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Eksperimen 2.7: Alur pemrosesan dari enam strategi kompresi', size=FS_TITLE, bold=True)
 
     # Input annotation
-    s.text(410, 58, 'Each search returns ~70K characters → each strategy handles it differently', size=FS_SMALL, fill='text_light')
+    s.text(410, 58, 'Setiap pencarian mengembalikan ~70K karakter → setiap strategi menanganinya secara berbeda', size=FS_SMALL, fill='text_light')
 
     strategies = [
-        ('① No compression', 'Directly retain', 'Full original text into context', '> 110K tok → overflow', False),
-        ('② Individual summary', 'Independent summary', 'Each result independently generates 2-3 paragraph summary', '123K tok · 6.8%', True),
-        ('③ Combined summary', 'Merged summary', 'All results concatenated then unified summary', '55K tok · 2.1%', True),
-        ('④ Context-aware', 'Intelligent compression', 'Given query + context → targeted compression', '25K tok · 0.9%', True),
-        ('⑤ Aware + citation', 'Intelligent + traceability', 'Compressed content + retain URL citation markers', '45K tok · 1.4%', True),
-        ('⑥ Adaptive window', 'Delay Compression', '< 80% window retains original text, batch compression beyond', '181K tok · Maximum Fidelity', True),
+        ('① Tanpa kompresi', 'Pertahankan langsung', 'Teks asli penuh ke dalam konteks', '> 110K tok → meluap', False),
+        ('② Ringkasan individu', 'Ringkasan independen', 'Setiap hasil secara independen menghasilkan ringkasan 2-3 paragraf', '123K tok · 6.8%', True),
+        ('③ Ringkasan gabungan', 'Ringkasan digabungkan', 'Semua hasil digabungkan lalu dirangkum secara terpadu', '55K tok · 2.1%', True),
+        ('④ Sadar konteks', 'Kompresi cerdas', 'Mengingat kueri + konteks → kompresi yang ditargetkan', '25K tok · 0.9%', True),
+        ('⑤ Sadar + kutipan', 'Cerdas + keterlacakan', 'Konten dikompresi + pertahankan penanda kutipan URL', '45K tok · 1.4%', True),
+        ('⑥ Jendela adaptif', 'Tunda Kompresi', '< 80% jendela mempertahankan teks asli, kompresi batch setelahnya', '181K tok · Ketepatan Maksimum', True),
     ]
 
     lx = 30
@@ -531,48 +531,48 @@ def fig2_8():
     W, H = 820, 540
     s = SVG(W, H)
 
-    s.text(410, 30, 'Skills Progressive Disclosure Mechanism (PPTX Skill Example)', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Mekanisme Pengungkapan Keterampilan Progresif (Contoh Keterampilan PPTX)', size=FS_TITLE, bold=True)
 
     # Layer 1: Metadata (always loaded)
     y1 = 70
     s.rect(40, y1, 740, 90, fill='medium')
-    s.text(60, y1 + 20, 'Layer 1: Metadata (loaded at startup, ~200 tokens)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y1 + 20, 'Lapisan 1: Metadata (dimuat saat startup, ~200 token)', size=FS_BODY, bold=True, anchor='start')
     s.rect(60, y1 + 40, 700, 40, fill='code_bg', rx=4)
-    s.mono(70, y1 + 60, 'skills: [{name: "PPTX", desc: "Create PowerPoint presentations from content"}', size=FS_TINY)
-    s.mono(70, y1 + 75, '        {name: "PDF",  desc: "Extract and analyze PDF documents"}, ...]', size=FS_TINY - 2)
+    s.mono(70, y1 + 60, 'skills: [{name: "PPTX", desc: "Buat presentasi PowerPoint dari konten"}', size=FS_TINY)
+    s.mono(70, y1 + 75, '        {name: "PDF",  desc: "Ekstrak dan analisis dokumen PDF"}, ...]', size=FS_TINY - 2)
 
     # Trigger arrow
     s.arrow(410, y1 + 92, 410, y1 + 115)
-    s.text(430, y1 + 103, 'Task trigger: "Generate PPT from paper"', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(430, y1 + 103, 'Pemicu tugas: "Hasilkan PPT dari makalah"', size=FS_SMALL, anchor='start', fill='text_light')
 
     # Layer 2: Core SKILL.md
     y2 = y1 + 120
     s.rect(40, y2, 740, 130, fill='light')
-    s.text(60, y2 + 20, 'Layer 2: SKILL.md Core Flow (loaded on demand, ~2K tokens)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y2 + 20, 'Lapisan 2: Alur Inti SKILL.md (dimuat sesuai permintaan, ~2K token)', size=FS_BODY, bold=True, anchor='start')
     s.rect(60, y2 + 40, 700, 80, fill='code_bg', rx=4)
     lines2 = [
-        'PPTX Skill Core Flow:',
-        '1. markitdown extracts text → 2. Unzip PPTX to access XML',
-        '3. Modify slide{N}.xml content → 4. Repackage as .pptx',
-        'References: → html2pptx.md | → reference.md | → scripts/',
+        'Alur Inti Keterampilan PPTX:',
+        '1. markitdown mengekstrak teks → 2. Unzip PPTX untuk mengakses XML',
+        '3. Modifikasi konten slide{N}.xml → 4. Kemas ulang sebagai .pptx',
+        'Referensi: → html2pptx.md | → reference.md | → scripts/',
     ]
     for i, line in enumerate(lines2):
         s.mono(70, y2 + 56 + i * 19, line, size=FS_TINY)
 
     # Trigger arrow
     s.arrow(410, y2 + 132, 410, y2 + 155)
-    s.text(430, y2 + 143, 'Need detailed method: "Create PPT using HTML template"', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(430, y2 + 143, 'Butuh metode detail: "Buat PPT menggunakan templat HTML"', size=FS_SMALL, anchor='start', fill='text_light')
 
     # Layer 3: Sub-documents
     y3 = y2 + 160
     s.rect(40, y3, 740, 130, fill='white', dash=True)
-    s.text(60, y3 + 20, 'Layer 3: Sub-documents (selective deep dive, loaded on demand)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y3 + 20, 'Lapisan 3: Sub-dokumen (penyelaman dalam selektif, dimuat sesuai permintaan)', size=FS_BODY, bold=True, anchor='start')
 
     doc_w = 215
     docs = [
-        ('html2pptx.md', 'HTML template → PPT\n complete workflow'),
-        ('reference.md', 'XML format specification\n and technical details'),
-        ('scripts/*.py', 'Executable tools:\nthumbnail.py etc.'),
+        ('html2pptx.md', 'Templat HTML → PPT\n alur kerja lengkap'),
+        ('reference.md', 'Spesifikasi format XML\n dan detail teknis'),
+        ('scripts/*.py', 'Alat yang dapat dieksekusi:\nthumbnail.py dll.'),
     ]
     for i, (name, desc) in enumerate(docs):
         dx = 60 + i * (doc_w + 20)
@@ -584,7 +584,7 @@ def fig2_8():
 
     # Bottom: KV Cache note
     s.rect(100, y3 + 140, 620, 35, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, y3 + 158, 'Fixed metadata → KV Cache friendly | Dynamic content appended → Cache not broken', size=FS_SMALL)
+    s.text(410, y3 + 158, 'Metadata tetap → Ramah KV Cache | Konten dinamis ditambahkan → Cache tidak rusak', size=FS_SMALL)
 
     s.save(f'{OUT}/fig2-8.svg')
 
@@ -598,71 +598,71 @@ def fig2_9():
     W, H = 820, 530
     s = SVG(W, H)
 
-    s.text(410, 30, 'Mem0 Memory Management Architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Arsitektur Manajemen Memori Mem0', size=FS_TITLE, bold=True)
 
     # Input conversation
     s.rect(30, 70, 250, 80, fill='light')
-    s.text(40, 88, 'New conversation input:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(40, 110, 'user: "I moved to Shenzhen,', size=FS_TINY)
-    s.mono(40, 128, 'new address is Nanshan Science Park"', size=FS_TINY)
+    s.text(40, 88, 'Masukan percakapan baru:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(40, 110, 'pengguna: "Saya pindah ke Shenzhen,', size=FS_TINY)
+    s.mono(40, 128, 'alamat baru adalah Nanshan Science Park"', size=FS_TINY)
 
     # MemoryBase (center)
     s.rect(310, 65, 200, 100, fill='medium')
     s.text(410, 85, 'MemoryBase', size=FS_BODY, bold=True)
-    s.text(410, 108, 'Memory Lifecycle Management', size=FS_SMALL, fill='text_light')
-    s.text(410, 130, 'Analyze → Classify → Decide', size=FS_SMALL, fill='text_light')
+    s.text(410, 108, 'Manajemen Siklus Hidup Memori', size=FS_SMALL, fill='text_light')
+    s.text(410, 130, 'Analisis → Klasifikasi → Putuskan', size=FS_SMALL, fill='text_light')
     s.arrow(282, 110, 308, 110)
 
     # LLMBase (above MemoryBase)
     s.rect(330, 185, 160, 50, fill='#e8e8e8')
     s.text(410, 203, 'LLMBase', size=FS_SMALL, bold=True)
-    s.text(410, 222, 'Semantic analysis + Relationship judgment', size=FS_TINY)
+    s.text(410, 222, 'Analisis semantik + Penilaian hubungan', size=FS_TINY)
     s.arrow(410, 167, 410, 183, color='dark')
     s.arrow(410, 183, 410, 167, color='dark')
 
     # Decision output
     s.rect(310, 255, 200, 80, fill='code_bg', stroke='dark', rx=4)
-    s.text(320, 273, 'Decision result:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(320, 293, 'Old: "User lives in Beijing Haidian"', size=FS_TINY)
-    s.mono(320, 311, '→ UPDATE: "Lives in Shenzhen Nanshan"', size=FS_TINY)
-    s.mono(320, 329, '→ ADD: "Moved to Shenzhen"', size=FS_TINY - 2)
+    s.text(320, 273, 'Hasil keputusan:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(320, 293, 'Lama: "Pengguna tinggal di Beijing Haidian"', size=FS_TINY)
+    s.mono(320, 311, '→ PERBARUI: "Tinggal di Shenzhen Nanshan"', size=FS_TINY)
+    s.mono(320, 329, '→ TAMBAH: "Pindah ke Shenzhen"', size=FS_TINY - 2)
     s.arrow(410, 237, 410, 253, color='dark')
 
     # EmbeddingBase (right)
     s.rect(560, 70, 220, 70, fill='light')
     s.text(670, 90, 'EmbeddingBase', size=FS_SMALL, bold=True)
-    s.text(670, 112, 'Text → Vector (compute-intensive)', size=FS_TINY, fill='text_light')
+    s.text(670, 112, 'Teks → Vektor (padat komputasi)', size=FS_TINY, fill='text_light')
     s.arrow(512, 95, 558, 90)
 
     # VectorStoreBase (right, below)
     s.rect(560, 160, 220, 100, fill='light')
     s.text(670, 180, 'VectorStoreBase', size=FS_SMALL, bold=True)
-    s.text(670, 200, 'Persistence + Retrieval (I/O intensive)', size=FS_TINY, fill='text_light')
+    s.text(670, 200, 'Persistensi + Pengambilan (padat I/O)', size=FS_TINY, fill='text_light')
     s.text(670, 225, 'Chroma / Qdrant / Milvus', size=FS_TINY, fill='text_light')
-    s.text(670, 248, '(HNSW / LSH index)', size=FS_TINY, fill='text_light')
+    s.text(670, 248, '(Indeks HNSW / LSH)', size=FS_TINY, fill='text_light')
     s.arrow(670, 142, 670, 158)
 
     # Stored memories example
     s.rect(560, 290, 220, 120, fill='code_bg', stroke='dark', rx=4)
-    s.text(570, 310, 'Stored memory entries:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(570, 332, '"Lives in Shenzhen Nanshan Science Park"', size=FS_TINY)
+    s.text(570, 310, 'Entri memori yang disimpan:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(570, 332, '"Tinggal di Shenzhen Nanshan Science Park"', size=FS_TINY)
     s.mono(570, 352, '"Email: john@x.com"', size=FS_TINY)
-    s.mono(570, 372, '"Preference: Chinese communication"', size=FS_TINY)
-    s.mono(570, 392, '"Job: ML engineer"', size=FS_TINY)
+    s.mono(570, 372, '"Preferensi: Komunikasi bahasa Mandarin"', size=FS_TINY)
+    s.mono(570, 392, '"Pekerjaan: Insinyur ML"', size=FS_TINY)
     s.arrow(670, 262, 670, 288, color='dark')
 
     # Plugin mechanism note
     s.rect(30, 170, 250, 60, fill='code_bg', stroke='dark', rx=4)
-    s.text(155, 192, 'Plugin mechanism', size=FS_SMALL, bold=True)
-    s.text(155, 212, 'Replaceable LLM / embedding model / storage backend', size=FS_TINY, fill='text_light')
+    s.text(155, 192, 'Mekanisme plugin', size=FS_SMALL, bold=True)
+    s.text(155, 212, 'LLM yang dapat diganti / model embedding / backend penyimpanan', size=FS_TINY, fill='text_light')
 
     # Retrieval path
     s.rect(30, 390, 250, 80, fill='light')
-    s.text(40, 408, 'Memory retrieval:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(40, 430, 'query: "Where does the user live?"', size=FS_TINY)
-    s.mono(40, 450, '→ Vector similarity matching', size=FS_TINY)
-    s.mono(40, 468, '→ "Lives in Shenzhen Nanshan Science Park"', size=FS_TINY)
-    s.arrow_curved(282, 430, 558, 350, curve=-30, label='Retrieval', color='dark')
+    s.text(40, 408, 'Pengambilan memori:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(40, 430, 'kueri: "Di mana pengguna tinggal?"', size=FS_TINY)
+    s.mono(40, 450, '→ Pencocokan kesamaan vektor', size=FS_TINY)
+    s.mono(40, 468, '→ "Tinggal di Shenzhen Nanshan Science Park"', size=FS_TINY)
+    s.arrow_curved(282, 430, 558, 350, curve=-30, label='Pengambilan', color='dark')
 
     s.save(f'{OUT}/fig2-10.svg')
 
@@ -676,29 +676,29 @@ def fig2_11_memobase():
     W, H = 820, 560
     s = SVG(W, H)
 
-    s.text(410, 30, 'Memobase multi-type memory architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Arsitektur memori multi-tipe Memobase', size=FS_TITLE, bold=True)
 
     types = [
-        ('Episodic memory', 'Episodic', [
-            '2025-09-10 User booked Shanghai→Tokyo',
-            '2025-09-12 Flight rescheduled to 9/20',
-            '2025-09-13 Hotel changed to Shinjuku branch',
-        ], 'Timestamped event sequence'),
-        ('Semantic memory', 'Semantic', [
-            'User → is → ML engineer',
-            'User → is allergic to peanuts',
-            'User → prefers → window seat',
-        ], 'Entity-relationship network'),
-        ('Procedural memory', 'Procedural', [
-            'Travel planning pattern:',
-            '  Destination→Budget→Transport→Accommodation→Activities',
-            '(Automatically extracted from multiple interactions)',
-        ], 'Reusable strategy pattern'),
-        ('Working memory', 'Working', [
-            'Current task: Book a hotel in Tokyo',
-            'Completed: Flight booked (ANA NH919)',
-            'Pending: Choose hotel + arrange airport pickup',
-        ], 'Current task status'),
+        ('Memori episodik', 'Episodik', [
+            '2025-09-10 Pengguna memesan Shanghai→Tokyo',
+            '2025-09-12 Penerbangan dijadwal ulang ke 20/9',
+            '2025-09-13 Hotel diubah ke cabang Shinjuku',
+        ], 'Urutan kejadian dengan stempel waktu'),
+        ('Memori semantik', 'Semantik', [
+            'Pengguna → adalah → insinyur ML',
+            'Pengguna → alergi kacang',
+            'Pengguna → lebih suka → kursi dekat jendela',
+        ], 'Jaringan entitas-hubungan'),
+        ('Memori prosedural', 'Prosedural', [
+            'Pola perencanaan perjalanan:',
+            '  Destinasi→Anggaran→Transportasi→Akomodasi→Aktivitas',
+            '(Diekstrak otomatis dari berbagai interaksi)',
+        ], 'Pola strategi yang dapat digunakan kembali'),
+        ('Memori kerja', 'Kerja', [
+            'Tugas saat ini: Pesan hotel di Tokyo',
+            'Selesai: Penerbangan dipesan (ANA NH919)',
+            'Tertunda: Pilih hotel + atur penjemputan bandara',
+        ], 'Status tugas saat ini'),
     ]
 
     col_w = 185
@@ -731,17 +731,17 @@ def fig2_11_memobase():
         lt_x = start_x + i * (col_w + gap) + col_w / 2
         s.arrow_curved(wm_x - 20, arrow_y, lt_x + 20, arrow_y, curve=-30, dash=True, color='dark')
 
-    s.text(410, arrow_y - 10, 'Working memory ↔ Long-term memory dynamic interaction', size=FS_SMALL, fill='text_light')
+    s.text(410, arrow_y - 10, 'Interaksi dinamis memori kerja ↔ memori jangka panjang', size=FS_SMALL, fill='text_light')
 
     # Memory compression section (below)
     comp_y = 310
     s.rect(40, comp_y, 740, 110, fill='light')
-    s.text(60, comp_y + 22, 'Memory compression and organization', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, comp_y + 22, 'Kompresi dan organisasi memori', size=FS_BODY, bold=True, anchor='start')
 
     comp_stages = [
-        ('Importance scoring', ['Access frequency × Time decay', '× Emotional intensity × Uniqueness']),
-        ('Clustering compression', ['Group similar memories', '→ Generate representative summary']),
-        ('Abstraction and generalization', ['Episodic memory → Semantic memory', 'Specific events → General rules']),
+        ('Penilaian pentingnya', ['Frekuensi akses × Penurunan waktu', '× Intensitas emosional × Keunikan']),
+        ('Kompresi klasterisasi', ['Kelompokkan memori serupa', '→ Hasilkan ringkasan representatif']),
+        ('Abstraksi dan generalisasi', ['Memori episodik → Memori semantik', 'Kejadian spesifik → Aturan umum']),
     ]
 
     stage_w = 220
@@ -759,12 +759,12 @@ def fig2_11_memobase():
     # Privacy section
     priv_y = comp_y + 125
     s.rect(40, priv_y, 740, 90, fill='#e8e8e8')
-    s.text(60, priv_y + 20, 'Privacy protection: Hierarchical information storage', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, priv_y + 20, 'Perlindungan privasi: Penyimpanan informasi hierarkis', size=FS_BODY, bold=True, anchor='start')
 
     levels = [
-        ('L1 Public', 'Name, email', 'Plaintext'),
-        ('L2 Internal', 'Phone, address', 'Partial masking'),
-        ('L3 Confidential', 'ID number, password', 'Placeholder replacement'),
+        ('L1 Publik', 'Nama, email', 'Teks biasa'),
+        ('L2 Internal', 'Telepon, alamat', 'Penyembunyian sebagian'),
+        ('L3 Rahasia', 'Nomor KTP, kata sandi', 'Penggantian placeholder'),
     ]
 
     lev_w = 230
@@ -785,38 +785,38 @@ def fig2_9_memory_comparison():
     W, H = 820, 620
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.10: Comparison of four memory strategies', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Eksperimen 2.10: Perbandingan empat strategi memori', size=FS_TITLE, bold=True)
 
     # Input conversation example
     s.rect(40, 60, 740, 55, fill='light')
-    s.text(50, 78, 'Original dialogue:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(50, 98, '"I am a senior engineer at TechCorp, leading a team of 5 to build a recommendation system, using ML for three years"', size=FS_TINY)
+    s.text(50, 78, 'Dialog asli:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(50, 98, '"Saya seorang insinyur senior di TechCorp, memimpin tim 5 orang untuk membangun sistem rekomendasi, menggunakan ML selama tiga tahun"', size=FS_TINY)
 
     strategies = [
-        ('Simple Notes', 'Atomic facts', [
-            '"User company: TechCorp"',
-            '"User Position: Senior Engineer"',
-            '"User Team: 5 people"',
-            '"User Expertise: Recommendation System"',
-        ], 'Pros: O(1) operation, extremely low overhead\nCons: Complete loss of relevance'),
-        ('Enhanced Notes', 'Full Paragraph', [
-            '"Senior engineer at',
-            'TechCorp, leads a team',
-            'of 5 building a rec.',
-            'system, 3 yrs in ML."',
-        ], 'Pros: Semantic completeness\nCons: Redundancy + complex updates'),
-        ('JSON Cards', 'Hierarchical Structure', [
-            'work:',
-            '  company: "TechCorp"',
-            '  title: "Senior Engineer"',
-            '  team_size: 5',
-        ], 'Pros: Partial updates\nCons: Rigid classification'),
-        ('Adv. JSON Cards', 'Contextualized Knowledge', [
-            '{category: "work",',
-            ' title: "Senior Engineer",',
-            ' backstory: "Self-introduction",',
+        ('Catatan Sederhana', 'Fakta atomik', [
+            '"Perusahaan pengguna: TechCorp"',
+            '"Posisi pengguna: Insinyur Senior"',
+            '"Tim pengguna: 5 orang"',
+            '"Keahlian pengguna: Sistem Rekomendasi"',
+        ], 'Kelebihan: operasi O(1), overhead sangat rendah\nKekurangan: Kehilangan relevansi sepenuhnya'),
+        ('Catatan Ditingkatkan', 'Paragraf Penuh', [
+            '"Insinyur senior di',
+            'TechCorp, memimpin tim',
+            '5 orang membangun sistem',
+            'rekomendasi, 3 thn di ML."',
+        ], 'Kelebihan: Kelengkapan semantik\nKekurangan: Redundansi + pembaruan kompleks'),
+        ('Kartu JSON', 'Struktur Hierarkis', [
+            'pekerjaan:',
+            '  perusahaan: "TechCorp"',
+            '  jabatan: "Insinyur Senior"',
+            '  ukuran_tim: 5',
+        ], 'Kelebihan: Pembaruan parsial\nKekurangan: Klasifikasi kaku'),
+        ('Kartu JSON Lanjut', 'Pengetahuan Kontekstual', [
+            '{kategori: "pekerjaan",',
+            ' jabatan: "Insinyur Senior",',
+            ' latar_belakang: "Perkenalan diri",',
             ' ts: "09-14"}',
-        ], 'Pros: Disambiguation + traceability\nCons: High generation cost'),
+        ], 'Kelebihan: Disambiguasi + keterlacakan\nKekurangan: Biaya generasi tinggi'),
     ]
 
     col_w = 185
@@ -848,12 +848,12 @@ def fig2_9_memory_comparison():
     # Evaluation framework (bottom)
     eval_y = 420
     s.rect(40, eval_y, 740, 180, fill='light')
-    s.text(60, eval_y + 22, 'Three-Level Evaluation Framework', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, eval_y + 22, 'Kerangka Evaluasi Tiga Tingkat', size=FS_BODY, bold=True, anchor='start')
 
     eval_levels = [
-        ('Level 1: Basic Recall', 'Store and retrieve direct information', '"My membership number is 12345" → Exact return', 'light'),
-        ('Level 2: Multi-session Retrieval', 'Cross-session associative reasoning', '"Schedule maintenance for my car" → Identify two cars', '#e8e8e8'),
-        ('Level 3: Proactive Service', 'Integrate multiple memories, anticipatory assistance', 'Book international flight → Discover passport is about to expire', 'medium'),
+        ('Tingkat 1: Pengingatan Dasar', 'Simpan dan ambil informasi langsung', '"Nomor keanggotaan saya 12345" → Pengembalian eksak', 'light'),
+        ('Tingkat 2: Pengambilan Multi-sesi', 'Penalaran asosiatif lintas-sesi', '"Jadwalkan perawatan untuk mobil saya" → Identifikasi dua mobil', '#e8e8e8'),
+        ('Tingkat 3: Layanan Proaktif', 'Integrasikan berbagai memori, bantuan antisipatif', 'Pesan penerbangan internasional → Temukan paspor akan segera kedaluwarsa', 'medium'),
     ]
 
     for i, (level, desc, example, fill) in enumerate(eval_levels):

@@ -25,13 +25,13 @@ import os
 # arms ≈ one brain + many tools/hands (and even multi-agent). Swap the animal in
 # the prompt if you prefer another.
 PROMPT = (
-    "Vintage scientific engraving illustration of an octopus, in the classic style of "
-    "19th-century natural-history woodcuts and the O'Reilly animal book covers. Finely "
-    "detailed black pen-and-ink crosshatching and fine line work; pure black line art, "
-    "no color, no gray wash, no shading fills. The whole octopus rendered elegantly with "
-    "gracefully curling tentacles, anatomically believable, slightly stylized. Perfectly "
-    "clean pure white background, no scenery, no frame, no border, no text, no lettering, "
-    "no numbers. Centered composition, crisp, high detail."
+    "Ilustrasi ukiran ilmiah vintage seekor gurita, dalam gaya klasik "
+    "potongan kayu sejarah alam abad ke-19 dan sampul buku hewan O'Reilly. Arsiran silang "
+    "tinta dan pena hitam yang sangat mendetail serta pengerjaan garis yang halus; seni garis "
+    "hitam murni, tanpa warna, tanpa sapuan abu-abu, tanpa isian bayangan. Keseluruhan gurita "
+    "digambar dengan elegan dengan tentakel yang melengkung anggun, masuk akal secara anatomis, "
+    "sedikit digayakan. Latar belakang putih bersih sempurna, tanpa pemandangan, tanpa bingkai, "
+    "tanpa batas, tanpa teks, tanpa huruf, tanpa angka. Komposisi terpusat, tajam, detail tinggi."
 )
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "cover-image.png")
@@ -49,7 +49,7 @@ def generate_openai(prompt, out):
         data = base64.b64decode(r.data[0].b64_json)
         open(out, "wb").write(data)
     except Exception as e:
-        print(f"gpt-image-1 unavailable ({e}); falling back to dall-e-3 …")
+        print(f"gpt-image-1 tidak tersedia ({e}); beralih ke dall-e-3 …")
         r = client.images.generate(model="dall-e-3", prompt=prompt,
                                     size="1024x1792", quality="hd",
                                     style="natural", n=1)
@@ -78,7 +78,7 @@ def generate(prompt, out):
 
 if __name__ == "__main__":
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    print("Generating cover image …")
+    print("Menghasilkan gambar sampul …")
     generate(PROMPT, OUT)
-    print(f"Saved {OUT}")
-    print("Now rebuild:  bash build_pdf.sh   (cover.tex auto-detects the image)")
+    print(f"Tersimpan di {OUT}")
+    print("Sekarang bangun ulang:  bash build_pdf.sh   (cover.tex mendeteksi gambar secara otomatis)")

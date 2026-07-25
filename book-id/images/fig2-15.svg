@@ -7,7 +7,7 @@
 
 <!-- Row 1: system -->
 <rect x="50" y="78" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
-<text x="62" y="94" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "system", content: "You are a telecom customer service agent..." }</text>
+<text x="62" y="94" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "system", content: "You are a telecom customer service agent..." }</text>
 
 <!-- Row 2: tools -->
 <rect x="50" y="114" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
@@ -28,24 +28,24 @@
 
 <!-- Row 5: tool result -->
 <rect x="50" y="226" width="480" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
-<text x="62" y="242" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "tool", content: "This plan has a contract period..." }</text>
+<text x="62" y="242" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "tool", content: "This plan has a contract period..." }</text>
 
 <!-- Row 6: assistant text -->
 <rect x="50" y="262" width="480" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
-<text x="62" y="278" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", content: "Your plan is within the contract period..." }</text>
+<text x="62" y="278" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", content: "Your plan is within the contract period..." }</text>
 
 <!-- Ellipsis row -->
 <text x="280" y="306" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">... more conversation turns ...</text>
 
 <!-- Row 7: user follow-up -->
 <rect x="50" y="322" width="480" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
-<text x="62" y="338" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "Then help me check my call records" }</text>
+<text x="62" y="338" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "Then help me check my call records" }</text>
 <text x="570" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central">user follow-up</text>
 
 <!-- Row 8: Agent status bar (highlighted) -->
 <rect x="50" y="362" width="480" height="48" rx="4" fill="#fff3cd" stroke="#e6a817" stroke-width="2.5"/>
 <text x="62" y="380" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "&lt;agent_status&gt;</text>
-<text x="62" y="398" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  Called 3/3 times · TODO: Cancel plan (in progress)&lt;/agent_status&gt;" }</text>
+<text x="62" y="398" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  Called 3/3 times · TODO: Cancel plan (in progress)&lt;/agent_status&gt;" }</text>
 
 <!-- Arrow pointing to system hint -->
 <line x1="570" y1="386" x2="538" y2="386" stroke="#e6a817" stroke-width="2" marker-end="url(#ah)"/>
