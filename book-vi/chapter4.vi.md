@@ -20,8 +20,8 @@ Bảng 4-1 Hướng gọi và đối tượng của năm loại công cụ
 | Công cụ nhận thức | Cuộc gọi hoạt động Agent | Lấy thông tin |
 | Công cụ thực thi | Cuộc gọi hoạt động Agent | Thay đổi thế giới |
 | Công cụ cộng tác | Cuộc gọi hoạt động Agent | Lái Agent khác hoặc con người |
-| Công cụ kích hoạt sự kiện | Đăng ký Agent, kích hoạt bên ngoài | Lái Agent để bắt đầu thực thi |
 | Công cụ giao tiếp người dùng | Cuộc gọi hoạt động Agent | Cung cấp thông tin cho người dùng |
+| Công cụ kích hoạt sự kiện | Đăng ký Agent, kích hoạt bên ngoài | Lái Agent để bắt đầu thực thi |
 
 
 **Công cụ nhận thức** là cách Agent tích cực thu thập thông tin và nhận thức thế giới. Ví dụ: công cụ tìm kiếm web (web_search), công cụ truy xuất cơ sở kiến thức nội bộ (know_base_search), công cụ đọc trang web (fetch_url), công cụ tìm kiếm tên tệp (find_file), công cụ tìm kiếm nội dung tệp (grep_file) và công cụ đọc tệp (read_file). Chìa khóa để thiết kế các công cụ nhận thức nằm ở sự cân bằng giữa mức độ chi tiết và việc kiểm soát lượng thông tin đầu ra.
@@ -30,11 +30,11 @@ Bảng 4-1 Hướng gọi và đối tượng của năm loại công cụ
 
 **Công cụ cộng tác** là cách Agent cộng tác với các Agent khác và con người. Ví dụ: tạo Agent con (spawn_subagent), gửi tin nhắn đến Agent con (send_message_to_subagent), hủy Agent con (cancel_subagent) và khám phá các Agent khả dụng trong hệ thống (list_agents). Lý do đơn giản nhất khiến Agent cần cộng tác là để thực hiện song song nhiều nhiệm vụ không liên quan, chẳng hạn như nghiên cứu song song về nhiều người đồng sáng lập OpenAI; lý do phức tạp hơn là sử dụng các mô hình, công cụ, từ gợi ý và ngữ cảnh khác nhau để thực hiện các nhiệm vụ khác nhau nhằm đạt được kết quả tốt hơn. Chương 10 sẽ giải thích thêm về kiến trúc multi-Agent.
 
-**Trình kích hoạt sự kiện** là cách thế giới bên ngoài thúc đẩy hành động của Agent. Ví dụ: đặt bộ hẹn giờ (set_timer), giám sát các tác vụ dòng lệnh nền (monitor_shell) và kết nối với các nguồn sự kiện bên ngoài (connect_channel). Loại công cụ này bao gồm hai thời điểm: khi **đăng ký**, Agent chủ động gọi công cụ và khai báo những sự kiện mà nó quan tâm; khi **kích hoạt**, một cuộc gọi lại không đồng bộ được thực hiện bởi một sự kiện bên ngoài, đánh thức Agent để bắt đầu xử lý - đây là ý nghĩa của "đăng ký Agent, kích hoạt bên ngoài" trong Bảng 4-1. Nếu không có công cụ kích hoạt sự kiện, Agent chỉ có thể phản hồi một cách thụ động khi người dùng bắt đầu cuộc trò chuyện, không thể hành động tự chủ vào những thời điểm nhất định và không thể phản hồi với các sự kiện bên ngoài như email mới và cảnh báo hệ thống.
-
 **Công cụ giao tiếp người dùng** là cách để Agent chủ động cung cấp thông tin cho người dùng. Ví dụ: trả lời tin nhắn của người dùng (reply_to_user), gửi tin nhắn thẻ có cấu trúc (send_card_to_user) và gửi lời nhắc thông báo cho người dùng (send_user_notification). Khi giao tiếp của Agent với người dùng mở rộng từ câu hỏi và câu trả lời trong một phiên duy nhất sang tin nhắn không đồng bộ trên nhiều kênh, bản thân việc "nói" cũng cần phải trở thành một lệnh gọi công cụ rõ ràng.
 
-Ba loại công cụ đầu tiên được Agent chủ động gọi và thiết kế của chúng sẽ được mở rộng theo danh mục bên dưới; thiết kế của các công cụ kích hoạt sự kiện và công cụ giao tiếp người dùng không thể tách rời khỏi kiến trúc không đồng bộ hướng sự kiện, kiến trúc này sẽ được mở rộng trong phần "Agent không đồng bộ hướng sự kiện" ở nửa sau của chương này. Phần sau đây bắt đầu với các nguyên tắc thiết kế chung áp dụng cho tất cả các công cụ.
+**Trình kích hoạt sự kiện** là cách thế giới bên ngoài thúc đẩy hành động của Agent. Ví dụ: đặt bộ hẹn giờ (set_timer), giám sát các tác vụ dòng lệnh nền (monitor_shell) và kết nối với các nguồn sự kiện bên ngoài (connect_channel). Loại công cụ này bao gồm hai thời điểm: khi **đăng ký**, Agent chủ động gọi công cụ và khai báo những sự kiện mà nó quan tâm; khi **kích hoạt**, một cuộc gọi lại không đồng bộ được thực hiện bởi một sự kiện bên ngoài, đánh thức Agent để bắt đầu xử lý - đây là ý nghĩa của "đăng ký Agent, kích hoạt bên ngoài" trong Bảng 4-1. Nếu không có công cụ kích hoạt sự kiện, Agent chỉ có thể phản hồi một cách thụ động khi người dùng bắt đầu cuộc trò chuyện, không thể hành động tự chủ vào những thời điểm nhất định và không thể phản hồi với các sự kiện bên ngoài như email mới và cảnh báo hệ thống.
+
+Bốn loại công cụ đầu tiên được Agent chủ động gọi và thiết kế của chúng sẽ được mở rộng theo danh mục bên dưới; thiết kế của các công cụ kích hoạt sự kiện không thể tách rời khỏi kiến trúc không đồng bộ hướng sự kiện, kiến trúc này sẽ được mở rộng trong phần "Agent không đồng bộ hướng sự kiện" ở nửa sau của chương này. Phần sau đây bắt đầu với các nguyên tắc thiết kế chung áp dụng cho tất cả các công cụ.
 
 ## Nguyên tắc chung của thiết kế công cụ
 

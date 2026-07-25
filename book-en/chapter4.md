@@ -20,8 +20,8 @@ Table 4-1 Invocation Direction and Target of Action for the Five Tool Categories
 | Perception Tools | Agent actively invokes | Acquire information |
 | Execution Tools | Agent actively invokes | Change the world |
 | Collaboration Tools | Agent actively invokes | Drive other Agents or humans |
-| Event-Triggered Tools | Agent registers, external triggers | Drive the Agent to start execution |
 | User Communication Tools | Agent actively invokes | Convey information to the user |
+| Event-Triggered Tools | Agent registers, external triggers | Drive the Agent to start execution |
 
 **Perception Tools** are the means by which an Agent actively acquires information and perceives the world. Examples include web search tools (`web_search`), internal knowledge base retrieval tools (`knowledge_base_search`), webpage reading tools (`fetch_url`), file name search tools (`find_file`), file content search tools (`grep_file`), and file reading tools (`read_file`). The key design considerations for perception tools are granularity trade-offs and controlling the amount of output information.
 
@@ -29,11 +29,11 @@ Table 4-1 Invocation Direction and Target of Action for the Five Tool Categories
 
 **Collaboration Tools** are the means by which an Agent collaborates with other Agents and humans. Examples include spawning a sub-agent (`spawn_subagent`), sending a message to a sub-agent (`send_message_to_subagent`), canceling a sub-agent (`cancel_subagent`), and discovering the Agents available in the system (`list_agents`). The simplest reason an Agent needs collaboration is parallelism—researching several OpenAI co-founders at once, for example. The deeper reason is specialization: giving different tasks different models, tools, prompts, and contexts to get better results. Chapter 10 will further discuss multi-agent architectures.
 
-**Event-Triggered Tools** are the means by which the external world drives an Agent's actions. Examples include setting a timer (`set_timer`), monitoring background command-line tasks (`monitor_shell`), and connecting to external event sources (`connect_channel`). These tools involve two moments: **Registration**, where the Agent actively invokes the tool to declare which events it cares about; and **Triggering**, where an external event asynchronously calls back to wake the Agent so it can start processing—this is the meaning of "Agent registers, external triggers" in Table 4-1. Without event-triggered tools, an Agent can only passively respond when a user initiates a conversation, unable to act autonomously at a specified time or react to external events like new emails or system alerts.
-
 **User Communication Tools** are the means by which an Agent actively conveys information to the user. Examples include replying to a user message (`reply_to_user`), sending a structured card message (`send_card_to_user`), and sending a user notification alert (`send_user_notification`). When communication between an Agent and a user expands from a simple question-and-answer within a single session to multi-channel asynchronous messaging, "speaking" itself needs to become an explicit tool call.
 
-The first three categories of tools are actively invoked by the Agent, and their design will be discussed in detail below. The design of Event-Triggered Tools and User Communication Tools is inseparable from the event-driven asynchronous architecture, which will be covered in the "Event-Driven Asynchronous Agents" section later in this chapter. First, we introduce the universal design principles applicable to all tools.
+**Event-Triggered Tools** are the means by which the external world drives an Agent's actions. Examples include setting a timer (`set_timer`), monitoring background command-line tasks (`monitor_shell`), and connecting to external event sources (`connect_channel`). These tools involve two moments: **Registration**, where the Agent actively invokes the tool to declare which events it cares about; and **Triggering**, where an external event asynchronously calls back to wake the Agent so it can start processing—this is the meaning of "Agent registers, external triggers" in Table 4-1. Without event-triggered tools, an Agent can only passively respond when a user initiates a conversation, unable to act autonomously at a specified time or react to external events like new emails or system alerts.
+
+The first four categories of tools are actively invoked by the Agent, and their design will be discussed in detail below. The design of Event-Triggered Tools is inseparable from the event-driven asynchronous architecture, which will be covered in the "Event-Driven Asynchronous Agents" section later in this chapter. First, we introduce the universal design principles applicable to all tools.
 
 ## Universal Principles of Tool Design
 
