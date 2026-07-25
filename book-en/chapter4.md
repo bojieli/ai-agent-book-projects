@@ -49,8 +49,10 @@ For example, a Skill document for "deploying an application" might read: `1. Run
 Choosing between these forms depends on three dimensions.
 
 - **Parameter Complexity**: For operations involving nested objects, cross-field validation, or complex type constraints, the structured schema of a dedicated tool better guides the model to pass parameters correctly; for operations with simple parameters, passing them through CLI commands is equally reliable.
-- **Frequency of Change**: Frequently changing capabilities are far cheaper to maintain as Skills—editing a passage of text is much easier than changing code, testing it, and redeploying it. Stable low-level operations are better suited to dedicated tools.
+- **Frequency of Change**: Frequently changing capabilities are usually lighter to author and distribute as Skills, while stable low-level operations are better suited to dedicated tools. But easier text editing describes a lighter delivery format, not a lower-risk change.
 - **Model Capability**: State-of-the-art (SOTA) models can express more capabilities and reduce the number of tools through Skills + generic executors; weaker models require structured tool schemas to guide correct invocation. Chapter 8 discusses how an Agent makes the same choice when consolidating new capabilities during continuous evolution.
+
+**Treat Skill changes like code changes.** Although a Skill is a natural-language document, it can direct an Agent to run shell commands, deploy services, modify databases, or invoke privileged tools, so its operational impact can be identical to a program change. Skills should therefore be version-controlled, carry provenance, ownership, and applicable permissions, and undergo peer review plus automated lint/schema checks. Before merge, run representative tasks and regression tests in a sandbox; release through staged or canary rollout and retain an immediately usable rollback version. Changes involving production writes, money, credentials, or other consequential actions should receive additional approval. Code-grade governance preserves the speed of authoring and deploying Skills while giving that speed a controlled safety boundary.
 
 ### Trade-offs in Tool Granularity: Integration vs. Separation
 
@@ -645,7 +647,7 @@ The line of thought that has lately gained ground comes from the Skills mechanis
 
 The core conclusion of this chapter: the quality of tool design sets the ceiling on an Agent's capabilities, and the asynchronous architecture determines whether the Agent can run reliably in the real world.
 
-In tool design, ACI principles—granularity trade-offs, generality, description conventions—apply to every tool; the MCP protocol standardizes tool interoperability, while hierarchical organization, dynamic tool discovery, and Skills answer the challenge of tool overload. At the same time, every third-party MCP server introduces a new trust boundary—tool description poisoning, tool shadowing, and credential risks demand review before integration and defense at runtime. And one baseline runs through all tool design: fidelity of parameter passing—no systematic gap between the world the model perceives and the world the tool operates on.
+In tool design, ACI principles—granularity trade-offs, generality, description conventions—apply to every tool; the MCP protocol standardizes tool interoperability, while hierarchical organization, dynamic tool discovery, and Skills answer the challenge of tool overload. At the same time, every third-party MCP server introduces a new trust boundary—tool description poisoning, tool shadowing, and credential risks demand review before integration and defense at runtime. Skill changes that can direct real operations must likewise receive code-grade version control, review, testing, staged rollout, and rollback. And one baseline runs through all tool design: fidelity of parameter passing—no systematic gap between the world the model perceives and the world the tool operates on.
 
 The five categories of tools each have distinct design emphases:
 
