@@ -437,6 +437,8 @@ Xung quanh hai giai đoạn này, các chỉ số thông lượng và độ tr�
 
 **Giới hạn tốc độ và độ tin cậy**: Giới hạn RPM (yêu cầu mỗi phút) / TPM (mã thông báo mỗi phút) sẽ ảnh hưởng đến tính đồng thời và một số API sẽ tự động điều chỉnh giới hạn trong thời gian cao điểm. Về độ bền, cần chú ý đến dữ liệu ngoài phân phối, đầu vào đối nghịch và độ ổn định khi vận hành lâu dài (liệu có vấn đề như sập chế độ, mất tập trung, v.v.).
 
+**Đường cong ngân sách–năng lực**: Một điểm số đơn lẻ dưới ngân sách cố định không đủ để xác định Agent có thể đảm nhiệm nhiệm vụ dài hạn hay không. Ngoài tỷ lệ thành công, cần báo cáo hiệu năng thay đổi theo thời gian thực, số token, số lần gọi công cụ hoặc ngân sách tính toán. Đối chiếu người–máy trong RE-Bench cho thấy rõ điều này: với tổng ngân sách 2 giờ cho mỗi môi trường, Agent tốt nhất đạt điểm khoảng gấp 4 lần chuyên gia con người; nhưng con người hưởng lợi nhiều hơn khi tăng thời gian, nhỉnh hơn Agent tốt nhất ở mốc 8 giờ và đạt khoảng gấp đôi điểm số khi có tổng cộng 32 giờ qua nhiều lần thử[^re-bench-2025]. Vì vậy, ưu thế ở ngân sách ngắn không thể được ngoại suy trực tiếp thành năng lực vận hành dài; việc chọn mô hình phải so sánh nhiều mốc ngân sách gần với thời lượng nhiệm vụ thực tế.
+
 Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không.
 
 ### Phân tích chi phí của hệ thống Agent
@@ -704,9 +706,11 @@ Môi trường có độ chính xác cao có thể được chuyển sang thế 
 
 Tại thời điểm này, môi trường đánh giá đã hoàn thành quá trình phát triển cuối cùng của nó: từ phòng thi để đo lường khả năng thành nơi rèn luyện trau dồi khả năng. Chương 7 sẽ giới thiệu cách AWorld-train biến loại môi trường mô phỏng này thành địa điểm đào tạo, cũng như những thách thức kỹ thuật liên quan - hệ thống đánh giá và môi trường mô phỏng được thiết lập trong chương này là hai nền tảng của quá trình post-training.
 
+[^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
+
 ## Tóm tắt chương này
 
-Chương này tập trung vào một câu hỏi cốt lõi: Làm thế nào để đánh giá liệu Agent có thực sự được cải thiện hay không? Từ việc xây dựng môi trường thử nghiệm có thể tái tạo, đến thiết kế bộ dữ liệu có thể chống rò rỉ, đến việc để LLM đóng vai trò đánh giá và cuối cùng là sử dụng kết quả đánh giá để thúc đẩy việc lựa chọn và lặp lại mô hình - mọi liên kết trong liên kết này sẽ ảnh hưởng đến độ tin cậy của kết luận. Việc đánh giá Agent cấp sản xuất không phải là bài kiểm tra định kỳ mà là quá trình xác nhận liên tục được đưa vào mọi quyết định về sản phẩm.
+Chương này tập trung vào một câu hỏi cốt lõi: Làm thế nào để đánh giá liệu Agent có thực sự được cải thiện hay không? Từ việc xây dựng môi trường thử nghiệm có thể tái tạo, đến thiết kế bộ dữ liệu có thể chống rò rỉ, đến việc để LLM đóng vai trò đánh giá và cuối cùng là sử dụng kết quả đánh giá để thúc đẩy việc lựa chọn và lặp lại mô hình - mọi liên kết trong liên kết này sẽ ảnh hưởng đến độ tin cậy của kết luận. Việc chọn mô hình còn phải so sánh đường cong tăng trưởng năng lực dưới các ngân sách tài nguyên khác nhau, thay vì chỉ nhìn một điểm số. Việc đánh giá Agent cấp sản xuất không phải là bài kiểm tra định kỳ mà là quá trình xác nhận liên tục được đưa vào mọi quyết định về sản phẩm.
 
 Phương pháp cốt lõi: quan sát → giả thuyết → thử nghiệm → xác minh → hiểu biết mới → giả thuyết mới, khiến dự án Agent chuyển từ “giả kim thuật” dựa trên kinh nghiệm sang kỹ thuật khoa học dựa trên dữ liệu.
 
