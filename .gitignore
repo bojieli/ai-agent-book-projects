@@ -42,3 +42,9 @@ book*/深入理解-AI-Agent-*.pdf
 /build/
 /dist/
 /.eggs/
+
+# Experiment run outputs (chapter CLIs write these next to the script)
+task_result*.json
+ablation_results*.json
+ablation_study_report.md
+ablation_study_results.png

@@ -7,6 +7,7 @@ import sys
 import argparse
 import logging
 from agent import ContextAwareAgent, ContextMode
+from config import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider, resolve_backend
 import json
 from pathlib import Path
 import subprocess
@@ -795,7 +796,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     current_api_key = api_key
     
     # Available providers
-    available_providers = ["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu"]
+    available_providers = list(SUPPORTED_PROVIDERS)
     
     print("\n" + "="*60)
     print("INTERACTIVE MODE - Context-Aware Agent")
@@ -914,47 +915,37 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print("\n🔌 Available providers:")
                 for p in available_providers:
                     status = " (current)" if p == current_provider else ""
-                    if p == "siliconflow":
-                        print(f"  - siliconflow: Qwen model{status}")
-                    elif p == "doubao":
-                        print(f"  - doubao: ByteDance model{status}")
-                    elif p in ["kimi", "moonshot"]:
-                        print(f"  - {p}: Moonshot Kimi K3 model{status}")
-                    elif p == "deepseek":
-                        print(f"  - deepseek: DeepSeek V4 model{status}")
-                    elif p == "zhipu":
-                        print(f"  - zhipu: Zhipu GLM model{status}")
+                    spec = PROVIDERS.get(canonical_provider(p))
+                    if spec is None:
+                        print(f"  - {p}{status}")
+                        continue
+                    # Derived from the registry, so a new entry shows up here
+                    # without touching this command.
+                    if not spec.requires_key:
+                        keys = "no API key needed"
+                    else:
+                        keys = " / ".join(spec.key_vars)
+                        keys += " ✓" if spec.api_key() else " (not set)"
+                    print(f"  - {p}: {spec.default_model} [{keys}]{status}")
             
             elif user_input.lower().startswith('provider '):
                 new_provider = user_input[9:].strip().lower()
                 if new_provider in available_providers:
-                    # Get the appropriate API key for the new provider
-                    if new_provider == "siliconflow":
-                        new_api_key = os.getenv("SILICONFLOW_API_KEY")
-                        if not new_api_key:
-                            print("❌ SILICONFLOW_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "doubao":
-                        new_api_key = os.getenv("ARK_API_KEY")
-                        if not new_api_key:
-                            print("❌ ARK_API_KEY not set in environment")
-                            continue
-                    elif new_provider in ["kimi", "moonshot"]:
-                        new_api_key = os.getenv("MOONSHOT_API_KEY")
-                        if not new_api_key:
-                            print("❌ MOONSHOT_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "deepseek":
-                        new_api_key = os.getenv("DEEPSEEK_API_KEY")
-                        if not new_api_key:
-                            print("❌ DEEPSEEK_API_KEY not set in environment")
-                            continue
-                    elif new_provider == "zhipu":
-                        new_api_key = os.getenv("ZHIPU_API_KEY")
-                        if not new_api_key:
-                            print("❌ ZHIPU_API_KEY not set in environment")
-                            continue
-                    
+                    # Resolve through the registry: it knows each provider's key
+                    # variables, which providers need no key (ollama) and the
+                    # OpenRouter fallback, and it reports exactly which variable
+                    # to set when nothing is available.
+                    try:
+                        new_backend = resolve_backend(new_provider)
+                    except ValueError as exc:
+                        print(f"❌ {exc}")
+                        continue
+                    # ContextAwareAgent resolves again, so only hand it a key it
+                    # would treat as that provider's own. On the fallback path
+                    # new_backend.api_key is the OpenRouter key; passing it would
+                    # send an OpenRouter key to the provider's own endpoint.
+                    new_api_key = "" if new_backend.using_openrouter else new_backend.api_key
+
                     # Update current settings
                     current_provider = new_provider
                     current_api_key = new_api_key
@@ -1002,22 +993,19 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print(f"  Conversation History: {len(agent.conversation_history)} messages")
                 print(f"  Tool Calls: {len(agent.trajectory.tool_calls)}")
                 
-                # Show API key status
-                if current_provider == "siliconflow":
-                    key_status = "✅ Set" if os.getenv("SILICONFLOW_API_KEY") else "❌ Not set"
-                    print(f"  API Key (SILICONFLOW_API_KEY): {key_status}")
-                elif current_provider == "doubao":
-                    key_status = "✅ Set" if os.getenv("ARK_API_KEY") else "❌ Not set"
-                    print(f"  API Key (ARK_API_KEY): {key_status}")
-                elif current_provider in ["kimi", "moonshot"]:
-                    key_status = "✅ Set" if os.getenv("MOONSHOT_API_KEY") else "❌ Not set"
-                    print(f"  API Key (MOONSHOT_API_KEY): {key_status}")
-                elif current_provider == "deepseek":
-                    key_status = "✅ Set" if os.getenv("DEEPSEEK_API_KEY") else "❌ Not set"
-                    print(f"  API Key (DEEPSEEK_API_KEY): {key_status}")
-                elif current_provider == "zhipu":
-                    key_status = "✅ Set" if os.getenv("ZHIPU_API_KEY") else "❌  Not set"
-                    print(f"  API Key (ZHIPU_API_KEY): {key_status}")
+                # API key status, derived from the registry so every selectable
+                # provider reports something.
+                spec = PROVIDERS.get(canonical_provider(current_provider))
+                if spec is None:
+                    pass
+                elif not spec.requires_key:
+                    print("  API Key: not required (local runtime)")
+                else:
+                    names = " / ".join(spec.key_vars)
+                    key_status = "✅ Set" if spec.api_key() else "❌ Not set"
+                    print(f"  API Key ({names}): {key_status}")
+                    if not spec.api_key() and os.getenv("OPENROUTER_API_KEY"):
+                        print("  Fallback: ✅ OPENROUTER_API_KEY set (routing via OpenRouter)")
             
             elif user_input:
                 # Execute task
@@ -1097,9 +1085,9 @@ def main():
     )
     parser.add_argument(
         "--provider",
-        choices=["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu", "openrouter"],
+        choices=SUPPORTED_PROVIDERS,
         default="doubao",
-        help="LLM 提供商（默认：doubao；openrouter 或缺失主 key 时经 OpenRouter 兜底）"
+        help="LLM 提供商（默认：doubao；openrouter 或缺失主 key 时经 OpenRouter 兜底；ollama 为本地免费）"
     )
     parser.add_argument(
         "--model",
@@ -1119,41 +1107,25 @@ def main():
 
     args = parser.parse_args()
     
-    # Get API key based on provider (with universal OpenRouter fallback)
-    if args.api_key:
-        api_key = args.api_key
-    elif args.provider == "openrouter":
-        api_key = os.getenv("OPENROUTER_API_KEY")
-    elif args.provider == "doubao":
-        api_key = os.getenv("ARK_API_KEY")
-    elif args.provider == "siliconflow":
-        api_key = os.getenv("SILICONFLOW_API_KEY")
-    elif args.provider in ["kimi", "moonshot"]:
-        api_key = os.getenv("MOONSHOT_API_KEY")
-    elif args.provider == "deepseek":
-        api_key = os.getenv("DEEPSEEK_API_KEY")
-    elif args.provider == "zhipu":
-        api_key = os.getenv("ZHIPU_API_KEY")
-    else:
-        logger.error(f"Unknown provider: {args.provider}")
+    # The registry knows each provider's key variables, the OpenRouter fallback
+    # and which providers need no key at all, so resolve through it rather than
+    # maintaining a per-provider chain here. An explicit --api-key still wins.
+    try:
+        backend = resolve_backend(args.provider, model=args.model, api_key=args.api_key)
+    except ValueError as exc:
+        logger.error(str(exc))
         sys.exit(1)
 
-    # If the primary provider key is missing, fall back to OpenRouter when set.
-    # An empty api_key lets ContextAwareAgent.resolve_llm_backend route via OpenRouter.
-    if not api_key:
-        if os.getenv("OPENROUTER_API_KEY"):
-            logger.info(
-                f"{args.provider} API key not set; falling back to OpenRouter "
-                "(OPENROUTER_API_KEY). Set the provider key to use it directly."
-            )
-            api_key = ""
-        else:
-            logger.error(
-                "No API key found. Set the provider key "
-                "(ARK_API_KEY/SILICONFLOW_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY) or "
-                "OPENROUTER_API_KEY (universal fallback)."
-            )
-            sys.exit(1)
+    api_key = args.api_key or ""
+    if backend.using_openrouter and not args.api_key:
+        logger.info(
+            f"{args.provider} API key not set; falling back to OpenRouter "
+            "(OPENROUTER_API_KEY). Set the provider key to use it directly."
+        )
+    elif not args.api_key:
+        # Pass the resolved key through; ContextAwareAgent re-resolves and an
+        # empty value would send it down the fallback path instead.
+        api_key = backend.api_key
     
     # Log provider info
     logger.info(f"Using provider: {args.provider}, model: {args.model or 'default'}")
