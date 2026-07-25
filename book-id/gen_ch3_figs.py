@@ -57,12 +57,13 @@ def fig3_1():
     boxes_r1 = [
         ("Embedding Padat", 50, "Word2Vec → BGE-M3"),
         ("Embedding Jarang", 230, "TF-IDF / BM25"),
-        ("Pengambilan Hibrida + Pemeringkatan Ulang", 410, "Pengambilan Dua Menara + Cross-Encoder"),
+        ("Pengambilan Hibrida\n+ Pemeringkatan Ulang", 410, "Dua Menara\n+ Cross-Encoder"),
         ("Ekstraksi Multimodal", 650, "Asli / Teks / Alat"),
     ]
     for label, bx, sub in boxes_r1:
-        svg.box(bx, r1_y + 38, 160, 50, label, fill='light', bold=True, font_size=FS_SMALL)
-        svg.text(bx + 80, r1_y + 38 + 50 + 18, sub, size=FS_TINY, fill='text_light')
+        svg.box(bx, r1_y + 38, 160, 55, label, fill='light', bold=True, font_size=FS_SMALL)
+        for k, line in enumerate(sub.split('\n')):
+            svg.text(bx + 80, r1_y + 38 + 55 + 16 + k*14, line, size=FS_TINY, fill='text_light')
 
     # --- Arrow down ---
     svg.arrow(w / 2, r1_y + 130, w / 2, r1_y + 160)
@@ -176,8 +177,8 @@ def fig3_3():
         ("Word2Vec", "2013", "300D\nVektor kata statis", "Kehadiran bersama\nPelatihan prediktif"),
         ("GloVe", "2014", "300D\nStatistik global", "Faktorisasi matriks\n+ Kehadiran bersama"),
         ("BERT", "2018", "768D\nSadar konteks", "Transformer\nPra-pelatihan MLM"),
-        ("Sentence-BERT", "2019", "768D\nEmbedding tingkat kalimat", "Jaringan Siamese\nPembelajaran kontrastif"),
-        ("BGE-M3", "2024", "1024D\nTeks panjang multibahasa", "Multi-tahap\nPelatihan hibrida"),
+        ("Sentence-BERT", "2019", "768D\nEmbedding\ntingkat kalimat", "Jaringan Siamese\nPembelajaran kontrastif"),
+        ("BGE-M3", "2024", "1024D\nTeks panjang\nmultibahasa", "Multi-tahap\nPelatihan hibrida"),
     ]
     n = len(items)
     pad_l, pad_r = 80, 80
@@ -197,13 +198,13 @@ def fig3_3():
         svg.text(x, line_y - 30, name, size=FS_BODY, bold=True)
         svg.text(x, line_y + 28, year, size=FS_SMALL, fill='text_light')
 
-        svg.rect(x - 65, line_y + 50, 130, 55, fill='light')
+        svg.rect(x - 65, line_y + 45, 130, 65, fill='light')
         for j, dl in enumerate(dims.split('\n')):
-            svg.text(x, line_y + 68 + j * 22, dl, size=FS_SMALL)
+            svg.text(x, line_y + 60 + j * 16, dl, size=FS_SMALL)
 
         svg.rect(x - 65, line_y + 115, 130, 55, fill='code_bg', stroke='dark', rx=4)
         for j, tl in enumerate(training.split('\n')):
-            svg.text(x, line_y + 133 + j * 22, tl, size=FS_SMALL, fill='text_light')
+            svg.text(x, line_y + 133 + j * 18, tl, size=FS_SMALL, fill='text_light')
 
     # Bottom labels
     svg.text(pad_l + gap * 0.5, h - 18,
@@ -279,7 +280,7 @@ def fig3_5():
     boxes = [
         ("Saturasi frekuensi istilah (TF)", 40, 'light', [
             "k₁ mengontrol kecepatan saturasi",
-            "TF ↑ tetapi kontribusi menurun",
+            "TF ↑ kontribusi menurun",
             "Contoh: kemunculan 5→10",
             "Skor hanya meningkat ~20%",
         ]),
@@ -298,10 +299,10 @@ def fig3_5():
     ]
     for title, bx, fill, details in boxes:
         svg.rect(bx, 120, 220, 170, fill=fill)
-        svg.text(bx + 110, 148, title, size=FS_BODY, bold=True)
-        svg.line(bx + 20, 163, bx + 200, 163, color='dark')
+        svg.text(bx + 110, 142, title, size=FS_SMALL, bold=True)
+        svg.line(bx + 20, 155, bx + 200, 155, color='dark')
         for k, line in enumerate(details):
-            svg.text(bx + 110, 190 + k * 28, line, size=FS_SMALL, fill='text_light')
+            svg.text(bx + 110, 175 + k * 24, line, size=FS_SMALL, fill='text_light')
 
     # Result bar
     for bx in [150, 400, 650]:
@@ -322,12 +323,12 @@ def fig3_6():
 
     # Query
     svg.rect(30, 55, 160, 50, fill='medium')
-    svg.text(110, 73, "Kueri pengguna", size=FS_BODY, bold=True)
+    svg.text(110, 73, "Kueri pengguna", size=FS_SMALL, bold=True)
     svg.mono(110, 93, '"perilaku kitty"', size=FS_TINY, anchor='middle')
 
     # Dense retrieval
     svg.arrow(190, 68, 238, 68)
-    svg.box(240, 50, 180, 50, "Pengambilan padat", fill='light', bold=True, font_size=FS_BODY)
+    svg.box(240, 50, 180, 50, "Pengambilan padat", fill='light', bold=True, font_size=FS_SMALL)
     svg.text(330, 118, "Pencocokan semantik: kitty ≈ cat", size=FS_SMALL, fill='text_light')
 
     dense_results = [
@@ -342,7 +343,7 @@ def fig3_6():
 
     # Sparse retrieval
     svg.arrow(190, 90, 238, 270)
-    svg.box(240, 250, 180, 50, "Pengambilan jarang (BM25)", fill='light', bold=True, font_size=FS_BODY)
+    svg.box(240, 250, 180, 50, "Pengambilan jarang (BM25)", fill='light', bold=True, font_size=FS_SMALL)
     svg.text(330, 318, "Pencocokan persis: kata kunci \"kitty\"", size=FS_SMALL, fill='text_light')
 
     sparse_results = [
@@ -475,10 +476,10 @@ def fig3_9():
     svg.text(lx + col_w / 2, 73, "RAG Non-Agentic", size=FS_BODY, bold=True)
 
     steps_l = [
-        ("Kueri: \"Bagaimana hukuman untuk menyebabkan cedera serius karena kelalaian saat mabuk \ndan dengan riwayat hukuman pencurian?\"", 'light'),
+        ("Kueri: \"Bagaimana hukuman untuk menyebabkan cedera serius\nkarena kelalaian saat mabuk dan dengan\nriwayat hukuman pencurian?\"", 'light'),
         ("Pengambilan tunggal:\n\"Hukuman karena menyebabkan cedera serius oleh kelalaian\"", 'light'),
-        ("Hasil pengambilan: Hanya menemukan ketentuan dasar untuk cedera kelalaian\n (konteks tidak lengkap)", 'code_bg'),
-        ("Pembangkitan langsung: Hilang faktor pengaruh \"mabuk\"\ndan \"riwayat hukuman\"", 'light'),
+        ("Hasil pengambilan: Hanya menemukan ketentuan dasar\nuntuk cedera kelalaian (konteks tidak lengkap)", 'code_bg'),
+        ("Pembangkitan langsung: Hilang faktor pengaruh\n\"mabuk\" dan \"riwayat hukuman\"", 'light'),
     ]
     prev_y = 95
     for i, (s, fill) in enumerate(steps_l):
@@ -724,9 +725,9 @@ def fig3_12():
     # Application
     svg.arrow(620, 375, 620, 400)
     svg.rect(40, 400, 720, 60, fill='light')
-    svg.text(400, 420, "Aplikasi: Agen nasihat hukum percakapan", size=FS_BODY, bold=True)
+    svg.text(400, 420, "Aplikasi: Agen nasihat hukum percakapan", size=FS_SMALL, bold=True)
     svg.text(400, 445, "pandu pertanyaan dengan kepentingan faktor → ambil prototipe kasus serupa → analisis hukuman berbasis data",
-             size=FS_SMALL, fill='text_light')
+             size=FS_TINY, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig3-12.svg'))
 
@@ -741,7 +742,7 @@ def fig3_13():
 
     # Central Agent
     cx, cy = 440, 210
-    svg.circle(cx, cy, 55, fill='medium', label="Agent", font_size=FS_BODY)
+    svg.circle(cx, cy, 55, fill='medium', label="Agen", font_size=FS_BODY)
 
     # 5 steps around the loop
     steps = [
@@ -856,5 +857,5 @@ if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     for fn in ALL_FIGS:
         fn()
-        print(f"  ✓ {fn.__name__}: {fn.__doc__}")
+        print(f"  ok {fn.__name__}")
     print(f"\nDone — {len(ALL_FIGS)} SVGs saved to {OUT}/")

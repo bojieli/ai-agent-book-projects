@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 480" width="780" height="480" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
 <rect x="10" y="120" width="260" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="140" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agen (Penjelajah)</text>
-<text x="140" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Policy π: Observe state →</text>
+<text x="140" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Kebijakan π: Amati state →</text>
 <text x="140" y="198" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pilih aksi (pindah/ambil/serang)</text>
-<text x="140" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε-greedy: 90% optimal, 10% random</text>
+<text x="140" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ε-greedy: 90% optimal, 10% acak</text>
 <rect x="510" y="120" width="260" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="640" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Lingkungan (Dunia Labirin)</text>
-<text x="640" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">5 rooms · Key/Door/Guard</text>
+<text x="640" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">5 ruang · Kunci/Pintu/Penjaga</text>
 <text x="640" y="198" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Transisi: P(Penyimpanan|Aula,Timur)=1.0</text>
 <text x="640" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">R(Kalahkan Penjaga)=+50, R(Pindah)=0</text>
 <line x1="272" y1="150" x2="508" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
@@ -40,5 +40,5 @@
 <text x="678.0" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">S(4): Ruang Penjaga</text>
 <text x="678.0" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">A(4): Serang</text>
 <text x="678.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R(5): +50</text>
-<text x="390" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Goal: Maximize cumulative reward G = R(1) + γR(2) + γ²R(3) + ... (γ=0.99)</text>
+<text x="390" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tujuan: Maksimalkan reward kumulatif G = R(1) + γR(2) + γ²R(3) + ... (γ=0.99)</text>
 </svg>

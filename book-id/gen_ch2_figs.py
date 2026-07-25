@@ -321,17 +321,17 @@ def fig2_5():
     # Left column: raw trajectory
     y = 90
     left_items = [
-        ('system', 'Prompt Sistem + Alat', 'medium', 35),
-        ('user', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → percobaan ke-1', '#e8e8e8', 35),
-        ('tool', 'Hasil: menunggu 45 menit, tidak terhubung', 'light', 35),
-        ('assistant', 'web_search("Promo Xfinity")', '#e8e8e8', 35),
-        ('tool', 'Hasil: [banyak konten pencarian...]', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → percobaan ke-2', '#e8e8e8', 35),
-        ('tool', 'Hasil: terhubung, ditawari $65/bulan', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → percobaan ke-3', '#e8e8e8', 35),
-        ('tool', 'Hasil: penurunan harga dikonfirmasi menjadi $59/bulan', 'light', 35),
-        ('user', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
+        ('sistem', 'Prompt Sistem + Alat', 'medium', 35),
+        ('pengguna', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
+        ('asisten', 'phone_call(Xfinity) → percobaan ke-1', '#e8e8e8', 35),
+        ('alat', 'Hasil: menunggu 45 menit, tidak terhubung', 'light', 35),
+        ('asisten', 'web_search("Promo Xfinity")', '#e8e8e8', 35),
+        ('alat', 'Hasil: [banyak konten pencarian...]', 'light', 35),
+        ('asisten', 'phone_call(Xfinity) → percobaan ke-2', '#e8e8e8', 35),
+        ('alat', 'Hasil: terhubung, ditawari $65/bulan', 'light', 35),
+        ('asisten', 'phone_call(Xfinity) → percobaan ke-3', '#e8e8e8', 35),
+        ('alat', 'Hasil: penurunan harga dikonfirmasi menjadi $59/bulan', 'light', 35),
+        ('pengguna', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
     ]
 
     for role, content, fill, h in left_items:
@@ -346,10 +346,10 @@ def fig2_5():
     # Right column: with system hints
     y = 90
     right_items = [
-        ('system', 'Prompt Sistem + Alat', 'medium', 35),
-        ('user', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
+        ('sistem', 'Prompt Sistem + Alat', 'medium', 35),
+        ('pengguna', '"Bantu saya menghubungi Xfinity untuk bernegosiasi"', 'light', 35),
         ('...', '[ Konten lintasan yang sama ]', '#e8e8e8', 90),
-        ('user', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
+        ('pengguna', '"Bisakah Anda menelepon lagi untuk menindaklanjuti?"', 'light', 35),
     ]
     for role, content, fill, h in right_items:
         s.rect(lx2, y, col_w, h, fill=fill, rx=4)
@@ -880,5 +880,7 @@ if __name__ == '__main__':
     fig2_6()
     fig2_7()
     fig2_8()
+    fig2_9()
+    fig2_11_memobase()
     fig2_9_memory_comparison()
-    print("Chapter 2: 9 figures generated.")
+    print("Chapter 2: 11 figures generated.")

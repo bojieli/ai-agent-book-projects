@@ -11,18 +11,18 @@ def fig1_4():
     s = SVG(820, 520)
 
     # Title
-    s.text(410, 30, 'Arsitektur "Model as Agent": pemanggilan tool native', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Arsitektur "Model sebagai Agen": pemanggilan alat native', size=FS_TITLE, bold=True)
 
     # Central model box
     s.rect(260, 70, 300, 100, fill='medium')
     s.text(410, 100, 'LLM（Kimi K3 / GPT-5.6）', size=FS_BODY, bold=True)
-    s.text(410, 130, 'Kemampuan agent native setelah pelatihan RL', size=FS_SMALL, fill='text_light')
+    s.text(410, 130, 'Kemampuan agen native setelah pelatihan RL', size=FS_SMALL, fill='text_light')
 
     # Built-in tools on the right
-    s.group_box(620, 70, 180, 210, 'Tool native')
+    s.group_box(620, 70, 180, 210, 'Alat native')
     s.box(635, 105, 150, 50, '$web_search', fill='light', font_size=FS_SMALL)
     s.box(635, 170, 150, 50, 'code_interpreter', fill='light', font_size=FS_SMALL)
-    s.box(635, 235, 150, 50, 'Tool lainnya...', fill='white', font_size=FS_SMALL)
+    s.box(635, 235, 150, 50, 'Alat lainnya...', fill='white', font_size=FS_SMALL)
 
     s.arrow(560, 120, 633, 130)
     s.arrow(633, 195, 560, 145)
@@ -31,22 +31,22 @@ def fig1_4():
     s.group_box(100, 210, 460, 280, 'Siklus ReAct (eksekusi otonom di dalam model)')
 
     # Step 1: User input
-    s.box(120, 250, 200, 55, 'User: Cari tren Bitcoin bulan lalu\n', fill='light', font_size=FS_SMALL)
+    s.box(120, 250, 200, 55, 'Pengguna: Cari tren Bitcoin bulan lalu\n', fill='light', font_size=FS_SMALL)
 
     # Step 2: Think
-    s.box(120, 325, 200, 55, 'Thought: Perlu mencari data real-time\nlalu analisis dengan kode', fill='#e8e8e8', font_size=FS_SMALL)
+    s.box(120, 325, 200, 55, 'Pemikiran: Perlu mencari data real-time\nlalu analisis dengan kode', fill='#e8e8e8', font_size=FS_SMALL)
     s.arrow(220, 307, 220, 323)
 
     # Step 3: Tool call
-    s.box(340, 250, 200, 55, 'Call $web_search\n"Harga BTC bulan lalu"', fill='light', font_size=FS_SMALL)
+    s.box(340, 250, 200, 55, 'Panggil $web_search\n"Harga BTC bulan lalu"', fill='light', font_size=FS_SMALL)
     s.arrow(322, 277, 338, 277)
 
     # Step 4: Tool result
-    s.box(340, 325, 200, 55, 'Result: [data harga]\n$67,230 → $71,450', fill='#e8e8e8', font_size=FS_SMALL)
+    s.box(340, 325, 200, 55, 'Hasil: [data harga]\n$67,230 → $71,450', fill='#e8e8e8', font_size=FS_SMALL)
     s.arrow(440, 307, 440, 323)
 
     # Step 5: Code
-    s.box(120, 400, 200, 55, 'Call code_interpreter\nKode perhitungan RSI, MACD', fill='light', font_size=FS_SMALL)
+    s.box(120, 400, 200, 55, 'Panggil code_interpreter\nKode perhitungan RSI, MACD', fill='light', font_size=FS_SMALL)
     s.arrow(340, 377, 220, 398, color='dark')
 
     # Step 6: Final
@@ -70,7 +70,7 @@ def fig1_1():
     """Three learning paradigms — caption Figure 1-1."""
     s = SVG(820, 480)
 
-    s.text(410, 30, 'Tiga paradigma pembelajaran untuk agent', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Tiga paradigma pembelajaran untuk agen', size=FS_TITLE, bold=True)
 
     col_w = 240
     gap = 20
@@ -88,10 +88,10 @@ def fig1_1():
             'Dibatasi jendela konteks',
         ], 'contoh: belajar format dari 3 contoh'),
         ('Pembelajaran Eksternal', 'Waktu runtime', [
-            'Basis pengetahuan + tool hasil generate',
+            'Basis pengetahuan + alat hasil generate',
             'Persisten · dapat diperbarui',
             'Andal · dapat diverifikasi',
-        ], 'contoh: membekukan alur kerja jadi tool'),
+        ], 'contoh: membekukan alur kerja jadi alat'),
     ]):
         x = x_start + i * (col_w + gap)
 
@@ -129,8 +129,8 @@ def fig1_2():
     # Two-line column headers so each fits its column without overlap.
     components = [
         ('Prompt', 'sistem'),
-        ('Definisi', 'tool'),
-        ('Hasil', 'eksekusi tool'),
+        ('Definisi', 'alat'),
+        ('Hasil', 'eksekusi alat'),
         ('Proses', 'pemikiran'),
         ('Riwayat', 'pesan'),
     ]
@@ -151,8 +151,8 @@ def fig1_2():
     # Experiment rows (labels shortened to sit within the left margin)
     conditions = [
         ('Baseline penuh', [True, True, True, True, True], '✓ Berjalan normal'),
-        ('Tanpa def. tool', [True, False, True, True, True], '✗ Tidak bisa panggil tool'),
-        ('Tanpa hasil tool', [True, True, False, True, True], '✗ Siklus buta'),
+        ('Tanpa def. alat', [True, False, True, True, True], '✗ Tidak bisa panggil alat'),
+        ('Tanpa hasil alat', [True, True, False, True, True], '✗ Siklus buta'),
         ('Tanpa penalaran', [True, True, True, False, True], '△ Keputusan tidak konsisten'),
         ('Tanpa riwayat', [True, True, True, True, False], '△ Operasi berulang'),
     ]
@@ -184,7 +184,7 @@ def fig1_3():
     """Agent trajectory — caption Figure 1-3."""
     s = SVG(820, 680)
 
-    s.text(410, 30, 'Lintasan Agent: Siklus ReAct untuk tugas agregasi multi-mata uang', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Lintasan Agen: Siklus ReAct untuk tugas agregasi multi-mata uang', size=FS_TITLE, bold=True)
 
     lx = 40  # left margin
     rw = 480  # box width
@@ -262,7 +262,7 @@ def fig1_3():
     s.text(685, 445, 'Akumulasi konteks', size=FS_SMALL, bold=True)
     s.text(685, 470, 'Riwayat lengkap terlihat tiap ronde', size=FS_TINY, fill='text_light')
     s.text(685, 500, 'Lintasan terstruktur', size=FS_SMALL, bold=True)
-    s.text(685, 525, 'user / assistant / tool', size=FS_TINY, fill='text_light')
+    s.text(685, 525, 'pengguna / asisten / alat', size=FS_TINY, fill='text_light')
 
     s.save(f'{OUT}/fig1-3.svg')  # Agent trajectory → Figure 1-3
 
@@ -333,7 +333,7 @@ def fig1_wf_routing():
     # Branches
     branches = [
         (55, 'Permintaan Refund', 'Prompt Kebijakan Refund\n+ API Pesanan', 'light'),
-        (155, 'Dukungan Teknis', 'Prompt Diagnostik\n+ Tool Log', 'light'),
+        (155, 'Dukungan Teknis', 'Prompt Diagnostik\n+ Log Alat', 'light'),
         (255, 'FAQ', 'Prompt FAQ\n+ Basis Pengetahuan', 'light'),
         (355, 'Lainnya', 'Haiku (Biaya Rendah)\n+ Prompt Umum', 'white'),
     ]
@@ -400,9 +400,9 @@ def fig1_wf_orchestrator():
 
     # Workers
     workers = [
-        (40, 'Worker 1', 'Modifikasi auth.py\nTambah dukungan OAuth2', 'Tool Baca/Edit\nFile'),
-        (290, 'Worker 2', 'Modifikasi api.py\nTambah endpoint baru', 'Tool Baca/Edit\nFile'),
-        (540, 'Worker 3', 'Tulis test_auth.py\nKasus uji', 'Eksekusi tes\nTool'),
+        (40, 'Worker 1', 'Modifikasi auth.py\nTambah dukungan OAuth2', 'Alat Baca/Edit\nFile'),
+        (290, 'Worker 2', 'Modifikasi api.py\nTambah endpoint baru', 'Alat Baca/Edit\nFile'),
+        (540, 'Worker 3', 'Tulis test_auth.py\nKasus uji', 'Eksekusi tes\nAlat'),
     ]
 
     wy = 220
@@ -466,7 +466,7 @@ def fig1_5():
     """Autonomous Agent loop — caption Figure 1-5."""
     s = SVG(820, 500)
 
-    s.text(410, 28, 'Siklus eksekusi Autonomous Agent', size=FS_TITLE, bold=True)
+    s.text(410, 28, 'Siklus eksekusi Agen Otonom', size=FS_TITLE, bold=True)
 
     # While loop structure
     s.rect(80, 60, 500, 380, fill='white', stroke='border', rx=8, dash=True)
@@ -500,7 +500,7 @@ def fig1_5():
     exits = [
         '① Tugas selesai',
         '② Panggil final_answer',
-        '③ Tidak ada panggil tool',
+        '③ Tidak ada panggil alat',
         '④ Batas ronde tercapai',
         '⑤ Batas error terlampaui',
     ]
@@ -511,7 +511,7 @@ def fig1_5():
     s.rect(80, 360, 500, 70, fill='medium', rx=6)
     s.text(330, 380, 'Contoh eksekusi praktis: perbaikan kode SWE-bench', size=FS_SMALL, bold=True)
     s.text(330, 405, 'Cari kode → Temukan bug → Edit file → Jalankan tes → Tes gagal → Edit lagi → Tes sukses → Selesai', size=FS_TINY)
-    s.text(330, 425, '(5 ronde iterasi, 12 panggilan tool)', size=FS_TINY, fill='text_light')
+    s.text(330, 425, '(5 ronde iterasi, 12 panggilan alat)', size=FS_TINY, fill='text_light')
 
     # Done arrow
     s.arrow(330, 312, 330, 358, label='done = True')
