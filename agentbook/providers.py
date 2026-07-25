@@ -34,6 +34,7 @@ from dataclasses import dataclass
 
 __all__ = [
     "PROVIDERS",
+    "SUPPORTED_PROVIDERS",
     "Backend",
     "Provider",
     "map_model_to_openrouter",
@@ -150,6 +151,11 @@ PROVIDERS: dict[str, Provider] = {
 # Aliases for provider names used interchangeably in the chapters.
 _ALIASES = {"moonshot": "kimi", "ark": "doubao", "google": "gemini"}
 
+# Every accepted name, canonical plus aliases. Chapter CLIs use this for their
+# --provider choices so a new registry entry is immediately selectable instead
+# of being rejected by argparse.
+SUPPORTED_PROVIDERS: tuple[str, ...] = tuple(sorted(set(PROVIDERS) | set(_ALIASES)))
+
 
 def _lookup(provider: str) -> Provider:
     key = (provider or "").strip().lower()
@@ -241,11 +247,19 @@ def resolve_backend(
         return via_openrouter()
 
     if key or not spec.requires_key:
+        # Selecting OpenRouter directly still needs namespaced model ids, so a
+        # bare override like "gpt-4o" or "claude-sonnet-4" is mapped the same way
+        # as it would be on the fallback path.
+        direct_model = (
+            map_model_to_openrouter(resolved_model)
+            if spec.name == "openrouter"
+            else resolved_model
+        )
         return Backend(
             # Local runtimes still need a non-empty placeholder for the client.
             api_key=key or "ollama",
             base_url=spec.resolved_base_url(),
-            model=resolved_model,
+            model=direct_model,
             provider=spec.name,
             using_openrouter=spec.name == "openrouter",
         )

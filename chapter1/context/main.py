@@ -7,6 +7,7 @@ import sys
 import argparse
 import logging
 from agent import ContextAwareAgent, ContextMode
+from config import SUPPORTED_PROVIDERS
 import json
 from pathlib import Path
 import subprocess
@@ -795,7 +796,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     current_api_key = api_key
     
     # Available providers
-    available_providers = ["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu"]
+    available_providers = list(SUPPORTED_PROVIDERS)
     
     print("\n" + "="*60)
     print("INTERACTIVE MODE - Context-Aware Agent")
@@ -1097,9 +1098,9 @@ def main():
     )
     parser.add_argument(
         "--provider",
-        choices=["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu", "openrouter"],
+        choices=SUPPORTED_PROVIDERS,
         default="doubao",
-        help="LLM 提供商（默认：doubao；openrouter 或缺失主 key 时经 OpenRouter 兜底）"
+        help="LLM 提供商（默认：doubao；openrouter 或缺失主 key 时经 OpenRouter 兜底；ollama 为本地免费）"
     )
     parser.add_argument(
         "--model",

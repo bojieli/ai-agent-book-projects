@@ -8,6 +8,7 @@ import pytest
 
 from agentbook.providers import (
     PROVIDERS,
+    SUPPORTED_PROVIDERS,
     map_model_to_openrouter,
     resolve_backend,
     resolve_llm_backend,
@@ -186,3 +187,32 @@ def test_every_provider_has_key_vars_unless_local():
     for name, spec in PROVIDERS.items():
         if spec.requires_key:
             assert spec.key_vars, f"{name} requires a key but declares no env var"
+
+
+def test_supported_providers_covers_registry_and_aliases():
+    """Chapter CLIs build --provider choices from this, so a new registry entry
+    must be selectable without touching argparse."""
+    for name in PROVIDERS:
+        assert name in SUPPORTED_PROVIDERS
+    for alias in ("moonshot", "ark", "google"):
+        assert alias in SUPPORTED_PROVIDERS
+    assert "ollama" in SUPPORTED_PROVIDERS
+    assert "openai" in SUPPORTED_PROVIDERS
+    assert "gemini" in SUPPORTED_PROVIDERS
+
+
+@pytest.mark.parametrize(
+    "override,expected",
+    [
+        ("gpt-4o", "openai/gpt-4o"),
+        ("claude-sonnet-4", "anthropic/claude-sonnet-4.6"),
+        ("deepseek-v4-flash", "deepseek/deepseek-v4-flash"),
+        # Already namespaced ids pass through untouched.
+        ("google/gemma-4-26b-a4b-it:free", "google/gemma-4-26b-a4b-it:free"),
+    ],
+)
+def test_direct_openrouter_maps_bare_model_ids(monkeypatch, override, expected):
+    """Selecting openrouter directly still needs namespaced ids, so a bare
+    override is mapped the same way as on the fallback path."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-direct")
+    assert resolve_backend("openrouter", model=override).model == expected

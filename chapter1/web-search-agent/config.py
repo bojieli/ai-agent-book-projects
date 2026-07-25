@@ -5,19 +5,35 @@
 import os
 from typing import Optional
 
+from dotenv import load_dotenv
+
+# Read the nearest .env, searching upward from the working directory, so a
+# single file at the repository root serves every chapter.
+load_dotenv()
+
 
 # Provider resolution lives in the shared agentbook package so every chapter
 # stays consistent; see agentbook/providers.py. The fallback keeps this
 # experiment runnable from a checkout where agentbook is not installed.
 try:
-    from agentbook.providers import map_model_to_openrouter, resolve_llm_backend
+    from agentbook.providers import (
+        SUPPORTED_PROVIDERS,
+        map_model_to_openrouter,
+        resolve_backend,
+        resolve_llm_backend,
+    )
 except ImportError:  # pragma: no cover - exercised only without the package
     import sys as _sys
 
     _sys.path.insert(
         0, str(__import__("pathlib").Path(__file__).resolve().parents[2])
     )
-    from agentbook.providers import map_model_to_openrouter, resolve_llm_backend
+    from agentbook.providers import (
+        SUPPORTED_PROVIDERS,
+        map_model_to_openrouter,
+        resolve_backend,
+        resolve_llm_backend,
+    )
 
 
 class Config:
