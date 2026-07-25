@@ -28,8 +28,12 @@ dependencies = [
 # Capability groups.
 #
 # Install only what an experiment actually needs:
-#     pip install -e ".[ch1]"      # chapter 1, no GPU stack
-#     pip install -e ".[ch7]"      # heavy fine-tuning deps, opt in explicitly
+#     uv sync --extra ch1          # chapter 1, no GPU stack (uses uv.lock)
+#     uv sync --extra ch7          # heavy fine-tuning deps, opt in explicitly
+#
+# pip works identically for readers without uv, but resolves fresh rather
+# than from the lockfile:
+#     pip install -e ".[ch1]"
 #
 # Groups are derived from an AST audit of the imports in every non-vendored
 # chapter module, cross-checked against the per-project requirements.txt files.
@@ -292,6 +296,16 @@ ch10 = ["agentbook[tokens]"]                  # tiktoken only
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
 all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
+
+[tool.uv]
+# Resolve the lockfile for every platform readers actually use, not just the
+# machine that generated it. Without this, `uv lock` would encode a single
+# platform's resolution and break everyone else.
+environments = [
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32'",
+]
 
 [project.urls]
 Homepage = "https://github.com/bojieli/ai-agent-book"
