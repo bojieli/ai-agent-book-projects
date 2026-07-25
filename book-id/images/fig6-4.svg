@@ -12,7 +12,7 @@
 <text x="415" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Jawaban Kandidat</text>
 <line x1="300" y1="94" x2="530" y2="94" stroke="#999999" stroke-width="2"/>
 <text x="305" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Keluaran Agen:</text>
-<text x="305" y="137" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Refund processed, $150 will be credited within</text>
+<text x="305" y="137" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Pengembalian dana diproses, $150 akan dikreditkan dalam</text>
 <text x="305" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> 3-5 business days.&quot;</text>
 <text x="305" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
 <rect x="570" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
@@ -27,7 +27,7 @@
 <line x1="695" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="280" y="245" width="320" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
 <text x="440" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Model Juri (GPT-5 / Gemini 2.5)</text>
-<text x="440" y="282" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#cccccc" text-anchor="middle" dominant-baseline="central" font-weight="normal">Evaluasi heterogen multi-sumber untuk mencegah bias sumber yang sama</text>
+<text x="440" y="282" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.2" fill="#cccccc" text-anchor="middle" dominant-baseline="central" font-weight="normal">Evaluasi heterogen multi-sumber untuk mencegah bias sumber yang sama</text>
 <line x1="440" y1="295" x2="440" y2="325" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="60" y="328" width="760" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="440" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Keluaran evaluasi terstruktur</text>

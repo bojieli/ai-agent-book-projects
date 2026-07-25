@@ -13,9 +13,9 @@
 <rect x="50" y="114" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
 <text x="62" y="130" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">alat: [cancel_plan, query_records, ...]</text>
 
-<!-- Bracket for "fixed" -->
+<!-- Bracket for "tetap (tetap (fixed))" -->
 <path d="M 540,78 C 555,78 555,114 560,123 C 555,132 555,146 540,146" fill="none" stroke="#999999" stroke-width="1.5"/>
-<text x="570" y="112" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">fixed</text>
+<text x="570" y="112" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">tetap (tetap (fixed))</text>
 <text x="570" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">(KV Cache)</text>
 
 <!-- Row 3: user message -->
