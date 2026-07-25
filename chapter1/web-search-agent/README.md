@@ -20,6 +20,26 @@ This project implements an autonomous AI agent that uses Kimi (Moonshot AI) buil
 
 It demonstrates the “Model as Agent” idea and the ReAct loop (think → act → observe).
 
+### Kimi web-search service status
+
+This example depends on Kimi's hosted `$web_search` service. The repository only
+passes the built-in tool's arguments back to Kimi; it does not execute a search
+engine locally.
+
+Kimi's [official web-search documentation](https://platform.kimi.ai/docs/guide/use-web-search)
+currently says that the service is being updated, advises against using it in the
+near term, and asks developers to follow later documentation updates. Check that
+page for the latest status before troubleshooting this example.
+
+If a tool observation contains only a `search_id`, for example
+`{"search_result": {"search_id": "..."}}`, but no search-result content:
+
+1. Check Kimi's web-search documentation for the current service status.
+2. Retry later, or use `python main.py --provider offline-demo` to inspect the
+   ReAct flow without calling the hosted service.
+3. Treat the response as a possible external tool/API availability issue; by
+   itself, it does not show that the agent loop or local implementation is broken.
+
 ### Architecture
 
 ```mermaid
@@ -263,6 +283,23 @@ Includes:
 - **智能总结**：综合多源信息，生成准确、全面的答案
 
 对应书中**实验 1-2 ★：Kimi K3 原生 Agent 能力**，体现“模型即 Agent”与 ReAct（想 → 做 → 看）循环。
+
+### Kimi 联网搜索服务状态
+
+本示例依赖 Kimi 托管的 `$web_search` 服务。本仓库只会将内置工具返回的参数原样传回
+Kimi，并不会在本地执行搜索引擎。
+
+Kimi 的[联网搜索官方文档](https://platform.kimi.ai/docs/guide/use-web-search)
+目前注明：该服务正在更新，近期不建议使用，并请开发者关注后续文档更新。排查本示例前，
+请先查看该页面确认最新服务状态。
+
+如果工具观察结果只有 `search_id`，例如
+`{"search_result": {"search_id": "..."}}`，却没有实际搜索内容：
+
+1. 查看 Kimi 联网搜索文档，确认当前服务状态。
+2. 稍后重试；如果只需查看 ReAct 流程，可运行
+   `python main.py --provider offline-demo`，避免调用托管服务。
+3. 优先考虑外部工具/API 的可用性问题；仅凭这一响应，不能说明 Agent 循环或本地实现有误。
 
 ### 架构设计
 
