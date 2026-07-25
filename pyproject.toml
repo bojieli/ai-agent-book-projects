@@ -7,7 +7,10 @@ name = "agentbook"
 version = "0.1.0"
 description = "Shared packaging and plumbing for the ai-agent-book companion experiments"
 readme = "README.md"
-requires-python = ">=3.10"
+# 3.11 rather than 3.10: browser-use (pulled in by the `browser` extra, which
+# ch4, ch8 and `all` select) declares requires-python >=3.11, so a 3.10
+# interpreter cannot resolve those documented install paths.
+requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 
 # The core that nearly every experiment needs.
@@ -290,7 +293,7 @@ Issues = "https://github.com/bojieli/ai-agent-book/issues"
 include = ["agentbook*"]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 line-length = 100
 extend-exclude = [
     "chapter8/gaia-experience/AWorld",
