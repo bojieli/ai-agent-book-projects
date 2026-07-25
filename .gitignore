@@ -32,3 +32,9 @@ extras/agent-lab/demo.html
 # Book build outputs (download from the rolling latest release instead)
 book*/AI-Agents-in-Depth-*.pdf
 book*/深入理解-AI-Agent-*.pdf
+
+# Python packaging build artifacts (editable installs)
+*.egg-info/
+build/
+dist/
+.eggs/
