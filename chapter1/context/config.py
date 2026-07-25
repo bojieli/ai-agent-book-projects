@@ -25,6 +25,7 @@ try:
     from agentbook.providers import (
         PROVIDERS,
         SUPPORTED_PROVIDERS,
+        canonical_provider,
         canonical_provider as _canonical_provider,
         map_model_to_openrouter,
         resolve_backend,
@@ -39,6 +40,7 @@ except ImportError:  # pragma: no cover - exercised only without the package
     from agentbook.providers import (
         PROVIDERS,
         SUPPORTED_PROVIDERS,
+        canonical_provider,
         canonical_provider as _canonical_provider,
         map_model_to_openrouter,
         resolve_backend,

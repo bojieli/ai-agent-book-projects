@@ -201,6 +201,26 @@ def test_supported_providers_covers_registry_and_aliases():
     assert "gemini" in SUPPORTED_PROVIDERS
 
 
+def test_fallback_key_is_not_reusable_as_a_provider_key(monkeypatch):
+    """A resolved fallback backend carries the OpenRouter key, not the
+    provider's own. Callers that re-resolve must pass an empty key instead,
+    or an OpenRouter key gets sent to the provider's endpoint."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-fallback")
+    fallback = resolve_backend("gemini")
+    assert fallback.using_openrouter is True
+    assert fallback.api_key == "sk-or-fallback"
+
+    # Re-resolving with that key would wrongly treat it as Gemini's own.
+    wrong = resolve_backend("gemini", api_key=fallback.api_key)
+    assert wrong.using_openrouter is False
+    assert wrong.base_url.startswith("https://generativelanguage")
+
+    # Passing an empty key keeps the fallback intact.
+    right = resolve_backend("gemini", api_key="")
+    assert right.using_openrouter is True
+    assert right.base_url == "https://openrouter.ai/api/v1"
+
+
 @pytest.mark.parametrize(
     "override,expected",
     [

@@ -7,7 +7,7 @@ import sys
 import argparse
 import logging
 from agent import ContextAwareAgent, ContextMode
-from config import SUPPORTED_PROVIDERS, resolve_backend
+from config import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider, resolve_backend
 import json
 from pathlib import Path
 import subprocess
@@ -915,16 +915,18 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 print("\n🔌 Available providers:")
                 for p in available_providers:
                     status = " (current)" if p == current_provider else ""
-                    if p == "siliconflow":
-                        print(f"  - siliconflow: Qwen model{status}")
-                    elif p == "doubao":
-                        print(f"  - doubao: ByteDance model{status}")
-                    elif p in ["kimi", "moonshot"]:
-                        print(f"  - {p}: Moonshot Kimi K3 model{status}")
-                    elif p == "deepseek":
-                        print(f"  - deepseek: DeepSeek V4 model{status}")
-                    elif p == "zhipu":
-                        print(f"  - zhipu: Zhipu GLM model{status}")
+                    spec = PROVIDERS.get(canonical_provider(p))
+                    if spec is None:
+                        print(f"  - {p}{status}")
+                        continue
+                    # Derived from the registry, so a new entry shows up here
+                    # without touching this command.
+                    if not spec.requires_key:
+                        keys = "no API key needed"
+                    else:
+                        keys = " / ".join(spec.key_vars)
+                        keys += " ✓" if spec.api_key() else " (not set)"
+                    print(f"  - {p}: {spec.default_model} [{keys}]{status}")
             
             elif user_input.lower().startswith('provider '):
                 new_provider = user_input[9:].strip().lower()
@@ -938,7 +940,11 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                     except ValueError as exc:
                         print(f"❌ {exc}")
                         continue
-                    new_api_key = new_backend.api_key
+                    # ContextAwareAgent resolves again, so only hand it a key it
+                    # would treat as that provider's own. On the fallback path
+                    # new_backend.api_key is the OpenRouter key; passing it would
+                    # send an OpenRouter key to the provider's own endpoint.
+                    new_api_key = "" if new_backend.using_openrouter else new_backend.api_key
 
                     # Update current settings
                     current_provider = new_provider
