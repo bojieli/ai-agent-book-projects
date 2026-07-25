@@ -7,10 +7,12 @@ name = "agentbook"
 version = "0.1.0"
 description = "Shared packaging and plumbing for the ai-agent-book companion experiments"
 readme = "README.md"
-# 3.11 rather than 3.10: browser-use (pulled in by the `browser` extra, which
-# ch4, ch8 and `all` select) declares requires-python >=3.11, so a 3.10
-# interpreter cannot resolve those documented install paths.
-requires-python = ">=3.11"
+# 3.10 matches what the chapter READMEs document (chapter2/local_llm_serving,
+# chapter7/orpheus, chapter8/prompt-distillation all state Python 3.10+).
+# browser-use needs >=3.11, but that is scoped to the `browser` extra with an
+# environment marker rather than raised here, so chapters that do not need a
+# browser stay installable on 3.10.
+requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 
 # The core that nearly every experiment needs.
@@ -91,9 +93,12 @@ web = [
 ]
 
 # Browser-driving agents (chapter 4 collaboration tools, chapter 8 RPA).
+# browser-use declares requires-python >=3.11. The marker scopes that to the
+# interpreters that can actually install it, so `.[ch4]`/`.[ch8]`/`.[all]`
+# still resolve on 3.10 (without browser-use) instead of failing outright.
 browser = [
     "agentbook[web]",
-    "browser-use>=0.1.40",
+    "browser-use>=0.1.40; python_version >= '3.11'",
 ]
 
 # HTTP services used by the interactive/demo experiments.
@@ -184,9 +189,12 @@ solvers = [
 ]
 
 # Long-term memory backends used by the chapter 3 memory experiments.
+# memobase declares requires-python >=3.11; the marker keeps `.[ch3]` and
+# `.[all]` resolvable on 3.10 without it, rather than failing the whole
+# aggregate.
 mem = [
     "mem0ai>=0.1",
-    "memobase>=0.0.27",
+    "memobase>=0.0.27; python_version >= '3.11'",
 ]
 
 # Model Context Protocol servers and clients.
@@ -293,7 +301,7 @@ Issues = "https://github.com/bojieli/ai-agent-book/issues"
 include = ["agentbook*"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py310"
 line-length = 100
 extend-exclude = [
     "chapter8/gaia-experience/AWorld",
