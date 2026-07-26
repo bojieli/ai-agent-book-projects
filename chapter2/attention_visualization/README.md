@@ -187,13 +187,29 @@ result = agent.generate_with_attention(
 
 ### Requirements & installation
 
-**Python:** 3.10+, PyTorch, Transformers — see `requirements.txt`.  
+**Python:** 3.10+, PyTorch, Transformers — installed by the root `ch2` extra.
 **Frontend:** Node.js 14+, npm/yarn — see `frontend/package.json`.
 
 ```bash
+# From the repository root: use the shared Chapter 2 environment
+uv sync --locked --extra ch2
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+
+cd chapter2/attention_visualization
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # edit .env for model, device, visualization settings
-pip install -r requirements.txt
 cd frontend && npm install
 ```
 
@@ -400,13 +416,29 @@ result = agent.generate_with_attention(
 
 ### 依赖与安装
 
-**Python：** 3.10+、PyTorch、Transformers，见 `requirements.txt`。  
+**Python：** 3.10+、PyTorch、Transformers，由根目录 `ch2` extra 安装。
 **前端：** Node.js 14+、npm/yarn，见 `frontend/package.json`。
 
 ```bash
+# 在仓库根目录使用统一的第 2 章环境
+uv sync --locked --extra ch2
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+
+cd chapter2/attention_visualization
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # 编辑 .env 配置模型、设备与可视化选项
-pip install -r requirements.txt
 cd frontend && npm install
 ```
 

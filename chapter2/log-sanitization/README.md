@@ -84,7 +84,22 @@ ollama pull qwen3:0.6b
 
 #### 3. Python deps
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 2 environment
+uv sync --locked --extra ch2
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+
+cd chapter2/log-sanitization
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 ### Usage
@@ -258,7 +273,22 @@ ollama pull qwen3:0.6b
 
 #### 3. 安装 Python 依赖
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 2 章环境
+uv sync --locked --extra ch2
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+
+cd chapter2/log-sanitization
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 ### 用法

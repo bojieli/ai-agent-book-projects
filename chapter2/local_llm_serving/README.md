@@ -27,11 +27,27 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Wor
 ### Quick start
 
 ```bash
-# 1. Clone / enter project
+# 1. From the repository root, install the shared Chapter 2 environment
+uv sync --locked --extra ch2
+
+# Optional GPU/vLLM path on supported Linux/Windows NVIDIA setups:
+# uv sync --locked --extra ch2 --extra vllm
+
+# Activate before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+# GPU/vLLM pip fallback: python -m pip install -e ".[ch2,vllm]"
+
+# 2. Enter project
 cd chapter2/local_llm_serving
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # 3. Check system compatibility
 python check_compatibility.py
@@ -42,7 +58,9 @@ python main.py
 
 ### Prerequisites
 
-**All platforms:** Python 3.10+, `pip install -r requirements.txt`
+**All platforms:** Python 3.10+ and the root `ch2` extra (`uv sync --locked --extra ch2`).
+
+Use `--extra vllm` only for the GPU/vLLM path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack.
 
 #### macOS
 ```bash
@@ -288,15 +306,36 @@ Standard OpenAI-compatible:
 ### 快速开始
 
 ```bash
+# 在仓库根目录安装统一的第 2 章环境
+uv sync --locked --extra ch2
+
+# 支持的 Linux/Windows NVIDIA 环境如需 GPU/vLLM，可改用：
+# uv sync --locked --extra ch2 --extra vllm
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+# GPU/vLLM pip 兜底：python -m pip install -e ".[ch2,vllm]"
+
 cd chapter2/local_llm_serving
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 python check_compatibility.py
 python main.py
 ```
 
 ### 前置条件
 
-**全平台：** Python 3.10+，`pip install -r requirements.txt`
+**全平台：** Python 3.10+，并安装根目录 `ch2` extra（`uv sync --locked --extra ch2`）。
+
+只有走 GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。
 
 #### macOS
 ```bash
