@@ -315,8 +315,39 @@ def test_second_aggregator_namespaces_models(register_provider):
     )
     backend = resolve_backend("together", model="gpt-4o", api_key="sk-tog")
     assert backend.model == "openai/gpt-4o"
-    # The explicit key belongs to that aggregator, so it must be honoured.
+    # The explicit key belongs to that aggregator, so it must be honoured...
     assert backend.api_key == "sk-tog"
+    # ...and sent to that aggregator. Sharing OpenRouter's id format must not
+    # drag along OpenRouter's endpoint, or the credential goes to the wrong host.
+    assert backend.base_url == "https://api.together.xyz/v1"
+    assert backend.using_openrouter is False
+
+
+def test_other_aggregator_key_is_not_treated_as_an_openrouter_key(register_provider):
+    """A non-OpenRouter aggregator's key must not enable the gpt-5 reroute.
+
+    ``namespaces_models`` describes id formatting, not credential
+    compatibility: routing a Together key to OpenRouter fails authentication.
+    """
+    register_provider(
+        "together",
+        base_url="https://api.together.xyz/v1",
+        key_vars=("TOGETHER_API_KEY",),
+        namespaces_models=True,
+    )
+    backend = resolve_backend("together", model="gpt-5.6-luna", api_key="sk-tog")
+    assert backend.using_openrouter is False
+    assert backend.base_url == "https://api.together.xyz/v1"
+    assert backend.api_key == "sk-tog"
+
+
+def test_openrouter_still_routes_gpt5_with_an_explicit_key(monkeypatch):
+    """The real OpenRouter provider keeps its explicit-key gpt-5 behaviour."""
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-or")
+    assert backend.using_openrouter is True
+    assert backend.api_key == "sk-or"
+    assert backend.model == "openai/gpt-5.6-luna"
 
 
 def test_single_vendor_provider_does_not_namespace_models(register_provider):

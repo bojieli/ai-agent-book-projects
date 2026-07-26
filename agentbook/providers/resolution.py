@@ -29,6 +29,11 @@ __all__ = ["resolve_backend"]
 # or redact based on either.
 _PLACEHOLDER_KEY = "not-needed"
 
+# The universal fallback is one specific provider, not a category. Other
+# aggregators may share its model-id format (see Provider.namespaces_models)
+# but not its endpoint or its credentials.
+_OPENROUTER = "openrouter"
+
 
 def build_openrouter_backend(
     model: str,
@@ -130,10 +135,11 @@ def resolve_backend(
     resolved_model = model or spec.default_model
     key = (api_key or "").strip() or spec.api_key()
 
-    # An explicit key for an aggregator is that aggregator's credential, so it
-    # wins over the environment. For a single-vendor provider the explicit key
-    # belongs to that vendor and must not be forwarded to OpenRouter.
-    explicit_openrouter_key = key if spec.namespaces_models else ""
+    # Only OpenRouter's own credential can authenticate against OpenRouter. An
+    # explicit key given for the openrouter provider is such a credential and
+    # wins over the environment; any other provider's key -- including another
+    # aggregator's -- belongs to that provider and is never forwarded here.
+    explicit_openrouter_key = key if spec.name == _OPENROUTER else ""
     available_openrouter_key = explicit_openrouter_key or openrouter_key()
 
     # 1. gpt-5.x needs OpenAI org verification on the direct API.
@@ -142,16 +148,17 @@ def resolve_backend(
 
     # 2. The provider's own credential, or a provider that needs none.
     if key or not spec.requires_key:
-        # An aggregator still needs namespaced model ids, so a bare override
-        # like "gpt-4o" is mapped the same way as on the fallback path.
-        if spec.namespaces_models:
-            return build_openrouter_backend(resolved_model, key, spec.name)
         return Backend(
             api_key=key or _PLACEHOLDER_KEY,
             base_url=spec.resolved_base_url(),
-            model=resolved_model,
+            # An aggregator resells many vendors' models and so expects
+            # namespaced ids: a bare override like "gpt-4o" is mapped even when
+            # talking to the aggregator directly.
+            model=map_model_to_openrouter(resolved_model)
+            if spec.namespaces_models
+            else resolved_model,
             provider=spec.name,
-            using_openrouter=False,
+            using_openrouter=spec.name == _OPENROUTER,
         )
 
     # 3. Universal fallback.

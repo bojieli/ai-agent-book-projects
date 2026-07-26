@@ -32,6 +32,12 @@ class Provider:
             ids such as ``openai/gpt-4o`` rather than bare ones. True for
             aggregators that resell many vendors' models; a bare id given to
             one of these is mapped before the request goes out.
+
+            This describes *model-id formatting only*. It says nothing about
+            which endpoint to call or whose credentials are valid -- an
+            aggregator sharing OpenRouter's id format still has its own
+            ``base_url`` and its own key, and is never routed through
+            OpenRouter on that basis.
     """
 
     name: str
