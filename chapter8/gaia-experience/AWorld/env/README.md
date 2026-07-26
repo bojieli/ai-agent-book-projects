@@ -68,6 +68,26 @@ sh run-docker.sh
 
 Monitor the terminal output for any errors during startup.
 
+Generate a local bearer token and copy the printed value into `<local-debug-jwt>` below. If you changed `MCP_GATEWAY_TOKEN_SECRET` in `virtualpc-mcp/docker-compose.yaml`, export the same value before running this command.
+
+```bash
+python - <<'PY'
+import base64, hashlib, hmac, json, os, time
+
+def part(value):
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+signing_input = ".".join([
+    part({"alg": "HS256", "typ": "JWT"}),
+    part({"app": "local_debug", "version": 1, "time": time.time()}),
+])
+secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", "123321").encode()
+signature = hmac.new(secret, signing_input.encode(), hashlib.sha256).digest()
+print(f"{signing_input}.{base64.urlsafe_b64encode(signature).rstrip(b'=').decode()}")
+PY
+```
+
 **Step 3: Connect to VirtualPC MCP Server**
 
 Use the following configuration to connect to the VirtualPC MCP Server:
@@ -88,7 +108,7 @@ Use the following configuration to connect to the VirtualPC MCP Server:
 }
 ```
 
-**Note**: The Bearer token above is generated for local testing by `train_env.py`. The `MCP_SERVERS` header specifies the MCP server scope for your current connection, which should be a subset of server names defined in `gaia-mcp-server/mcp_servers/mcp_config.py`.
+**Note**: The Bearer token above is for local testing only. The `MCP_SERVERS` header specifies the MCP server scope for your current connection, which should be a subset of server names defined in `gaia-mcp-server/mcp_servers/mcp_config.py`.
 
 ### 2.2 Kubernetes Cluster Deployment
 

@@ -68,6 +68,26 @@ sh run-docker.sh
 
 监控终端输出，查看启动过程中是否有任何错误。
 
+生成本地 Bearer token，并将打印出的值复制到下面的 `<local-debug-jwt>`。如果你修改了 `virtualpc-mcp/docker-compose.yaml` 中的 `MCP_GATEWAY_TOKEN_SECRET`，请在运行此命令前导出相同的值。
+
+```bash
+python - <<'PY'
+import base64, hashlib, hmac, json, os, time
+
+def part(value):
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+signing_input = ".".join([
+    part({"alg": "HS256", "typ": "JWT"}),
+    part({"app": "local_debug", "version": 1, "time": time.time()}),
+])
+secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", "123321").encode()
+signature = hmac.new(secret, signing_input.encode(), hashlib.sha256).digest()
+print(f"{signing_input}.{base64.urlsafe_b64encode(signature).rstrip(b'=').decode()}")
+PY
+```
+
 **步骤 3：连接到 VirtualPC MCP Server**
 
 使用以下配置连接到 VirtualPC MCP Server：
@@ -88,7 +108,7 @@ sh run-docker.sh
 }
 ```
 
-**注意**：上述 Bearer token 由 `train_env.py` 为本地测试生成。`MCP_SERVERS` 头部指定了当前连接的 MCP 服务器范围，应该是 `gaia-mcp-server/mcp_servers/mcp_config.py` 中定义的服务器名称的子集。
+**注意**：上述 Bearer token 仅用于本地测试。`MCP_SERVERS` 头部指定了当前连接的 MCP 服务器范围，应该是 `gaia-mcp-server/mcp_servers/mcp_config.py` 中定义的服务器名称的子集。
 
 ### 2.2 Kubernetes 集群部署
 

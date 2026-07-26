@@ -1,5 +1,8 @@
 import argparse
 import asyncio
+import base64
+import hashlib
+import hmac
 import json
 import logging
 import os
@@ -9,7 +12,6 @@ import time
 import traceback
 from dotenv import dotenv_values, set_key
 import httpx
-import jwt
 from mcp import ClientSession
 from mcp.types import (
     LoggingMessageNotificationParams,
@@ -26,10 +28,23 @@ logger = logging.getLogger(__name__)
 LOCAL_MCP_TOKEN_SECRET = "123321"
 
 
+def _jwt_part(value: dict) -> str:
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
 def gen_local_mcp_token(app: str = "local_debug") -> str:
     secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", LOCAL_MCP_TOKEN_SECRET)
+    header = {"alg": "HS256", "typ": "JWT"}
     payload = {"app": app, "version": 1, "time": time.time()}
-    return jwt.encode(payload=payload, key=secret, algorithm="HS256")
+    signing_input = f"{_jwt_part(header)}.{_jwt_part(payload)}"
+    signature = hmac.new(
+        secret.encode(),
+        signing_input.encode(),
+        hashlib.sha256,
+    ).digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b"=").decode()
+    return f"{signing_input}.{encoded_signature}"
 
 
 class TranEnv:
