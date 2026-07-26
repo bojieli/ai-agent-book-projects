@@ -18,8 +18,8 @@
 | 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | ELO レーティングシステムに基づく Agent 性能リーダーボードを実装し、ペアワイズ比較を通じて異なる Agent の相対的な能力を評価する。 |
 | 6-7 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 典型的な複数ターンの Agent タスク（カスタマーサービスの返金）に対して全チェーンのコスト内訳を行う。カスタムの軽量トレーシングシステムを用いて各 LLM 呼び出しの入力/出力/キャッシュトークン、レイテンシ、コストを記録し、集計して「どのステップが最も高価か」を特定し、次に A/B テストを用いて KV Cache に優しい設計とコンテキスト圧縮による実際の節約を定量化する。 |
 | 6-8 | [model-benchmark](model-benchmark/) | ✅ | 複数の OpenAI 互換 LLM API プロバイダーの横断的なベンチマークを実施する。ストリーミングインターフェースを用いて Time to First Token（TTFT）を正確に測定し、並行実行下でのエンドツーエンドレイテンシのパーセンタイル（p50/p95）、スループット、成功率を算出する。単一のコマンドで多次元の比較表を生成し、モデル選定がリーダーボードを見るだけではなく多面的なトレードオフであることを示す。 |
-| 6-10 | [android-world](android-world/) | 📖 | AndroidWorld 上の T3A Agent 評価レポートと失敗分析ノート（実験 6-10 の起点、ベンチマーク本体ではない）。 |
-| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 風の集計データを使い、公衆衛生レポート Agent のツール呼び出し、計算精度、根拠引用、根拠のない主張を客観評価する。 |
+| 6-10 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-10 の起点。ベンチマークのソースコードではない） |
+| — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 スタイルの集計データに基づき、公衆衛生レポート Agent のツール呼び出し、計算精度、証拠引用、根拠のない主張を客観的に評価する。 |
 
 > バッククォート表記の外部ベンチマークは別途 clone が必要です。[`android-world/`](android-world/)（ハイフン区切り）は本リポジトリ内の **T3A 評価分析ノート**（同ディレクトリの [README](android-world/README.md) を参照）であり、外部の `android_world/` ベンチマークソースとは別パスです。
 

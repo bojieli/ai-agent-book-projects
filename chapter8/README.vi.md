@@ -8,12 +8,21 @@
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | ✅ | Chưng cất hiệu quả của prompt phức tạp vào tham số mô hình, giảm độ dài prompt khi suy luận và cố định kinh nghiệm trong ngữ cảnh thành tri thức tham số hóa. |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Dựa trên framework AWorld và benchmark GAIA, triển khai vòng kín “học - áp dụng” hoàn chỉnh. Agent tự động tóm tắt trajectory nhiệm vụ thành công thành kinh nghiệm có cấu trúc, sau đó truy xuất và áp dụng trong nhiệm vụ mới để hiện thực tự tiến hóa. |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Học system prompt tự động dựa trên phản hồi con người: lấy vấn đề “chuyển tiếp quá mức” trong chăm sóc khách hàng hàng không kiểu tau-bench làm ví dụ, cho một Coding Agent đọc file system prompt, định vị quy tắc có vấn đề, sinh chỉnh sửa chính xác và thật sự viết lại file prompt, sau đó đánh giá lại để xác minh, tạo thành vòng kín “phản hồi → viết lại → xác minh”. |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Triển khai hệ thống ghi workflow cho tự động hóa trình duyệt, tự động đóng gói chuỗi thao tác lặp lại thành công cụ tham số hóa. Bằng cách chuyển từ suy luận LLM đắt đỏ sang thực thi tự động hóa chính xác, tốc độ tăng 3–5 lần. |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | Bộ dữ liệu chuyên dụng và phương pháp xác minh được thiết kế để đánh giá năng lực “tự tiến hóa” của Agent (tự phát hiện, tạo và tái sử dụng công cụ): 20 nhiệm vụ xuyên miền (không ám chỉ tên công cụ) + harness xác minh phân tầng bốn lớp + Agent tham chiếu có kiểm soát, vượt ra ngoài việc “kết quả đúng hay sai” để khảo sát chất lượng phát hiện, tạo và tái sử dụng. |
-| — | [self-evolving-tools](self-evolving-tools/) | ✅ | Phong cách Alita “định nghĩa sẵn tối thiểu, tự tiến hóa tối đa”: Agent không cài sẵn công cụ miền nào, chỉ có năm meta-tool tổng quát; khi gặp nhiệm vụ chưa biết làm, nó tự lên mạng tìm thư viện/API mã nguồn mở, đọc tài liệu, kiểm thử trong sandbox, đóng gói phương án khả thi thành công cụ mới đưa vào thư viện công cụ và tái sử dụng, toàn quy trình nhấn mạnh kiểm soát hallucination. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Thí nghiệm 8-1: kết hợp kết quả môi trường, quy tắc quá trình và rubric ngôn ngữ thành chẩn đoán trajectory chăm sóc khách hàng có bằng chứng |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Thí nghiệm 8-2: so sánh trajectory thành công, thành công một phần và thất bại để sinh tài liệu kinh nghiệm Markdown xuyên trajectory |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 8-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 8-4: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 8-5: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
+| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-6: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
+
+Tất cả thí nghiệm trên đều có lối chạy offline và unit test không cần API Key; các hướng mở rộng cần model thật hoặc trình duyệt được ghi trong README của từng dự án.
+
+## Trường hợp bổ sung
+
+| Thí nghiệm | Project | Quan hệ |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Dự án xuyên chương về chưng cất prompt và học tham số hóa; phương pháp huấn luyện thuộc Chương 7 |
+| — | [self-evolving-tools](self-evolving-tools/) | Khám phá, đóng gói và tái sử dụng công cụ kiểu Alita — trường hợp bổ sung của “viết kinh nghiệm thành chương trình” |
 
 ## Phân loại dự án
 
