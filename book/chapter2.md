@@ -750,6 +750,8 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 
 因此，需要区分两个层次：**“Skill 元数据需要提前对模型可见”是较稳定的机制设计，而“使用 user role、system role，还是 `<system-reminder>` 等包装形式”属于具体版本的实现方式。** `<system-reminder>` 也不是 Agent Skills 专用的协议格式，而是 Claude Code Agent Harness 用于注入动态系统上下文的一种实现形式。
 
+值得注意的是，**这种“在会话过程中动态向模型补充系统上下文”的机制并非 Skills 独有**。除了可用 Skill 的元数据，Agent 还可能需要持续向模型提供当前任务状态、运行环境或其他动态信息。下一节的 **Agent 状态栏（Agent Status Bar）** 将进一步展开这一机制，Skill 元数据列表可以看作其中一个具体例子。
+
 为了直观感受这一设计的效果，下面两张图分别从两个视角追踪 Skills 在轨迹中的位置和 KV Cache 的演化。
 
 ![图2-12 启用 Skills 后 Agent Trajectory 的完整结构](images/fig2-12.svg){height=55%}
