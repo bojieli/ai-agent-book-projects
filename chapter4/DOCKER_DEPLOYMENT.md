@@ -30,7 +30,7 @@ cp .env.example .env
 Edit `.env` and add your API keys:
 
 ```env
-OPENAI_API_KEY=sk-your-actual-key-here
+OPENAI_API_KEY=your-openai-api-key
 GOOGLE_API_KEY=your-google-key
 # ... other keys
 ```

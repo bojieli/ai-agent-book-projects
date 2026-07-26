@@ -56,7 +56,7 @@ Code structure:
 pip install -r requirements.txt
 
 # Configure API key (choose one)
-export OPENAI_API_KEY=sk-...        # Direct export
+export OPENAI_API_KEY=your-openai-api-key        # Direct export
 # or: cp env.example .env and fill in
 
 python demo.py
@@ -228,7 +228,7 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
 pip install -r requirements.txt
 
 # 配置 key（二选一）
-export OPENAI_API_KEY=sk-...        # 直接 export
+export OPENAI_API_KEY=your-openai-api-key        # 直接 export
 # 或： cp env.example .env 后填写
 
 python demo.py

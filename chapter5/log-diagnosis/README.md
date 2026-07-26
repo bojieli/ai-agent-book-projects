@@ -119,7 +119,7 @@ Generated cases must use one of:
 
   ```bash
   export OPENAI_BASE_URL=https://api.moonshot.cn/v1
-  export OPENAI_API_KEY=sk-...
+  export OPENAI_API_KEY=your-openai-api-key
   export OPENAI_MODEL=kimi-k3
   python demo.py
   ```
@@ -257,7 +257,7 @@ Agent 生成的测试用例须使用以下断言之一，框架可自动求值�
 - **换供应商**：本项目用官方 `openai` SDK，只需再设 `OPENAI_BASE_URL` 指向兼容 OpenAI 接口的服务（如 Moonshot / 火山方舟 / 本地 vLLM），配合该供应商的 `OPENAI_API_KEY` 与 `OPENAI_MODEL` 即可，无需改代码。例如：
   ```bash
   export OPENAI_BASE_URL=https://api.moonshot.cn/v1
-  export OPENAI_API_KEY=sk-...          # 该供应商的 Key
+  export OPENAI_API_KEY=your-openai-api-key          # 该供应商的 Key
   export OPENAI_MODEL=kimi-k3
   python demo.py
   ```

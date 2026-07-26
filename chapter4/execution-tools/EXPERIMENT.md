@@ -77,7 +77,7 @@ KIMI_API_KEY=your-key
 GOOGLE_CALENDAR_CREDENTIALS_FILE=credentials.json
 
 # GitHub
-GITHUB_TOKEN=ghp_...
+GITHUB_TOKEN=your-github-token
 ```
 
 ### Safety Settings

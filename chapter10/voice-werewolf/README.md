@@ -57,7 +57,7 @@ Win condition: All werewolves eliminated → Good guys win; Werewolf count ≥ G
 
 ```bash
 pip install -r requirements.txt
-cp env.example .env        # Fill in OPENAI_API_KEY; or directly export OPENAI_API_KEY=sk-...
+cp env.example .env        # Fill in OPENAI_API_KEY; or directly export OPENAI_API_KEY=your-openai-api-key
 
 # Offline mode: No API Key required, rule-based decisions, zero cost, reproducible, best to run first to see the full picture
 python demo.py --offline
@@ -214,7 +214,7 @@ Comparison shows: Werewolf P1's context contains "Players in the werewolf factio
 
 ```bash
 pip install -r requirements.txt
-cp env.example .env        # 填入 OPENAI_API_KEY；或直接 export OPENAI_API_KEY=sk-...
+cp env.example .env        # 填入 OPENAI_API_KEY；或直接 export OPENAI_API_KEY=your-openai-api-key
 
 # 离线模式：无需 API Key，规则决策，零成本、可复现，最适合先跑通看全貌
 python demo.py --offline

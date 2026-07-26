@@ -15,7 +15,7 @@ Skills 同构的机制来演示，核心是「渐进式披露（Progressive Disc
 python-pptx 生成真实的 .pptx，并读回校验页数与每页标题。
 
 运行：
-    export OPENAI_API_KEY=sk-...
+    export OPENAI_API_KEY=your-openai-api-key
     python demo.py
 """
 
@@ -239,7 +239,7 @@ def run_agent(paper_path: Path, model: str, out_path: Path,
 
     if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENROUTER_API_KEY"):
         log("错误：未设置 OPENAI_API_KEY，也未设置 OPENROUTER_API_KEY（通用回退）。")
-        log("请 export OPENAI_API_KEY=sk-... 或 export OPENROUTER_API_KEY=sk-or-...")
+        log("请 export OPENAI_API_KEY=your-openai-api-key 或 export OPENROUTER_API_KEY=your-openrouter-api-key")
         log("（无 key 时可用 --offline 走内置大纲、确定性地复现三层渐进式披露并生成 pptx。）")
         sys.exit(1)
 

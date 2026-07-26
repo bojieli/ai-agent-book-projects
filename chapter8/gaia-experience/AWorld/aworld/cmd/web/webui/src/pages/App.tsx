@@ -533,7 +533,7 @@ const App: React.FC = () => {
   const [agent] = useXAgent<BubbleDataType>({
     baseURL: '/api/agent/chat/completions',
     model: selectedModel,
-    dangerouslyApiKey: 'Bearer sk-xxxxxxxxxxxxxxxxxxxx',
+    dangerouslyApiKey: 'Bearer local-debug-token',
   });
   const loading = agent.isRequesting();
 

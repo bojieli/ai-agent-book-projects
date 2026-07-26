@@ -272,7 +272,7 @@ Examples:
 def _run_single(args):
     """执行单次请求（single / dry-run 模式），打印可读轨迹并按需保存结果。"""
     # dry-run 只组装请求体、不联网，因此无需真实 API Key
-    api_key = Config.OPENROUTER_API_KEY or ("sk-or-DRYRUN-PLACEHOLDER" if args.dry_run else "")
+    api_key = Config.OPENROUTER_API_KEY or ("dry-run-placeholder-key" if args.dry_run else "")
 
     agent = GPT5NativeAgent(
         api_key=api_key,
@@ -409,7 +409,7 @@ def main():
         print("❌ 配置错误！")
         print("请创建 .env 文件并填入 OPENROUTER_API_KEY")
         print("\n示例 .env：")
-        print("OPENROUTER_API_KEY=sk-or-v1-your-key-here")
+        print("OPENROUTER_API_KEY=your-openrouter-api-key")
         sys.exit(1)
 
     if args.mode == "interactive":

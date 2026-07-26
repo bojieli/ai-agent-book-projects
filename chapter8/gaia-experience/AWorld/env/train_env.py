@@ -1,7 +1,11 @@
 import argparse
 import asyncio
+import base64
+import hashlib
+import hmac
 import json
 import logging
+import os
 from pathlib import Path
 import shutil
 import time
@@ -20,6 +24,27 @@ from mcp.shared.context import RequestContext
 from aworld.utils.common import get_local_ip
 
 logger = logging.getLogger(__name__)
+
+LOCAL_MCP_TOKEN_SECRET = "123321"
+
+
+def _jwt_part(value: dict) -> str:
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
+def gen_local_mcp_token(app: str = "local_debug") -> str:
+    secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", LOCAL_MCP_TOKEN_SECRET)
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {"app": app, "version": 1, "time": time.time()}
+    signing_input = f"{_jwt_part(header)}.{_jwt_part(payload)}"
+    signature = hmac.new(
+        secret.encode(),
+        signing_input.encode(),
+        hashlib.sha256,
+    ).digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b"=").decode()
+    return f"{signing_input}.{encoded_signature}"
 
 
 class TranEnv:
@@ -68,7 +93,7 @@ class TranEnv:
             self.mcp_variables = {
                 "ip": get_local_ip(),
                 "port": 8000,
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJsb2NhbF9kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYzOTUzNzIuMTg0MDc0NH0.SALKn1dxEzsdX82-e3jAJANAo_kE4NO4192Epw5rYmQ"
+                "token": gen_local_mcp_token(),
             }
 
             logger.info("✅ Service is ready!")

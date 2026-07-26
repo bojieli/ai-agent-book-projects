@@ -498,7 +498,7 @@ TOP_K_SERVERS = 5           # Search more servers
 cat .env
 
 # Should contain:
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 #### Import Errors
@@ -984,7 +984,7 @@ TOP_K_SERVERS = 5           # Search more servers
 cat .env
 
 # Should contain:
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 #### 导入错误

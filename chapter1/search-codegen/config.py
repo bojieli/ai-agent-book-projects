@@ -53,7 +53,7 @@ class Config:
             return False
         
         if not cls.OPENROUTER_API_KEY.startswith("sk-or-"):
-            print("Warning: OPENROUTER_API_KEY should start with 'sk-or-'")
+            print("Warning: OPENROUTER_API_KEY does not look like an OpenRouter key")
         
         return True
     

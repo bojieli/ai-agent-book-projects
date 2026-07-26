@@ -78,26 +78,26 @@ def test_unknown_model_falls_back_to_openrouter_model_env(monkeypatch):
 
 
 def test_direct_provider_key_is_used(monkeypatch):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "sk-moonshot")
+    monkeypatch.setenv("MOONSHOT_API_KEY", "test-moonshot-key")
     backend = resolve_backend("kimi")
-    assert backend.api_key == "sk-moonshot"
+    assert backend.api_key == "test-moonshot-key"
     assert backend.base_url == "https://api.moonshot.cn/v1"
     assert backend.model == "kimi-k3"
     assert backend.using_openrouter is False
 
 
 def test_legacy_kimi_key_still_accepted(monkeypatch):
-    monkeypatch.setenv("KIMI_API_KEY", "sk-legacy")
-    assert resolve_backend("kimi").api_key == "sk-legacy"
+    monkeypatch.setenv("KIMI_API_KEY", "test-legacy-key")
+    assert resolve_backend("kimi").api_key == "test-legacy-key"
 
 
 def test_moonshot_alias_resolves_to_kimi(monkeypatch):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "sk-x")
+    monkeypatch.setenv("MOONSHOT_API_KEY", "test-moonshot-key")
     assert resolve_backend("moonshot").provider == "kimi"
 
 
 def test_falls_back_to_openrouter_when_provider_key_missing(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-1")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-1")
     backend = resolve_backend("kimi")
     assert backend.using_openrouter is True
     assert backend.base_url == "https://openrouter.ai/api/v1"
@@ -106,16 +106,16 @@ def test_falls_back_to_openrouter_when_provider_key_missing(monkeypatch):
 
 def test_gpt5_prefers_openrouter_even_with_provider_key(monkeypatch):
     """gpt-5.x needs OpenAI org verification, so route it via OpenRouter."""
-    monkeypatch.setenv("ARK_API_KEY", "sk-ark")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-2")
+    monkeypatch.setenv("ARK_API_KEY", "test-ark-key")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-2")
     backend = resolve_backend("doubao", model="gpt-5.6-luna")
     assert backend.using_openrouter is True
     assert backend.model == "openai/gpt-5.6-luna"
 
 
 def test_explicit_openai_provider_is_not_hijacked_for_gpt5(monkeypatch):
-    monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-3")
+    monkeypatch.setenv("OPENAI_API_KEY", "test-openai-key")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-3")
     backend = resolve_backend("openai", model="gpt-5.6-luna")
     assert backend.using_openrouter is False
     assert backend.base_url == "https://api.openai.com/v1"
@@ -134,7 +134,7 @@ def test_base_url_override(monkeypatch):
 
 
 def test_explicit_model_overrides_default(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-4")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-4")
     backend = resolve_backend("openrouter", model="google/gemma-4-31b-it:free")
     assert backend.model == "google/gemma-4-31b-it:free"
 
@@ -155,9 +155,9 @@ def test_unknown_provider_lists_supported_ones():
 
 
 def test_backend_unpacks_like_the_old_tuple(monkeypatch):
-    monkeypatch.setenv("MOONSHOT_API_KEY", "sk-m")
+    monkeypatch.setenv("MOONSHOT_API_KEY", "test-moonshot-key")
     api_key, base_url, model, using_openrouter = resolve_backend("kimi")
-    assert (api_key, model, using_openrouter) == ("sk-m", "kimi-k3", False)
+    assert (api_key, model, using_openrouter) == ("test-moonshot-key", "kimi-k3", False)
     assert base_url.startswith("https://")
 
 
@@ -165,8 +165,8 @@ def test_backend_unpacks_like_the_old_tuple(monkeypatch):
 
 
 def test_shim_prefers_primary_key():
-    assert resolve_llm_backend("sk-primary", "https://example/v1", "kimi-k3") == (
-        "sk-primary",
+    assert resolve_llm_backend("test-primary-key", "https://example/v1", "kimi-k3") == (
+        "test-primary-key",
         "https://example/v1",
         "kimi-k3",
         False,
@@ -174,9 +174,9 @@ def test_shim_prefers_primary_key():
 
 
 def test_shim_falls_back_to_openrouter(monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-5")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-5")
     key, base_url, model, using = resolve_llm_backend("", "https://example/v1", "kimi-k3")
-    assert (key, using, model) == ("sk-or-5", True, "moonshotai/kimi-k2.6")
+    assert (key, using, model) == ("test-openrouter-key-5", True, "moonshotai/kimi-k2.6")
     assert base_url == "https://openrouter.ai/api/v1"
 
 
@@ -210,10 +210,10 @@ def test_fallback_key_is_not_reusable_as_a_provider_key(monkeypatch):
     """A resolved fallback backend carries the OpenRouter key, not the
     provider's own. Callers that re-resolve must pass an empty key instead,
     or an OpenRouter key gets sent to the provider's endpoint."""
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-fallback")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-fallback-key")
     fallback = resolve_backend("gemini")
     assert fallback.using_openrouter is True
-    assert fallback.api_key == "sk-or-fallback"
+    assert fallback.api_key == "test-openrouter-fallback-key"
 
     # Re-resolving with that key would wrongly treat it as Gemini's own.
     wrong = resolve_backend("gemini", api_key=fallback.api_key)
@@ -239,7 +239,7 @@ def test_fallback_key_is_not_reusable_as_a_provider_key(monkeypatch):
 def test_direct_openrouter_maps_bare_model_ids(monkeypatch, override, expected):
     """Selecting openrouter directly still needs namespaced ids, so a bare
     override is mapped the same way as on the fallback path."""
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-direct")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-direct-key")
     assert resolve_backend("openrouter", model=override).model == expected
 
 
@@ -256,25 +256,25 @@ def test_keyless_provider_resolves_without_any_key():
 def test_explicit_openrouter_key_wins_over_env_for_gpt5(monkeypatch):
     """An explicit key for the openrouter provider is an OpenRouter credential,
     so it must not be silently replaced by OPENROUTER_API_KEY."""
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-env")
-    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-explicit")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-env-key")
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="test-explicit-key")
     assert backend.using_openrouter is True
-    assert backend.api_key == "sk-explicit"
+    assert backend.api_key == "test-explicit-key"
 
 
 def test_explicit_openrouter_key_works_without_env(monkeypatch):
-    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-only")
-    assert backend.api_key == "sk-only"
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="test-only-key")
+    assert backend.api_key == "test-only-key"
     assert backend.model == "openai/gpt-5.6-luna"
 
 
 def test_other_providers_key_is_not_forwarded_to_openrouter(monkeypatch):
     """A doubao key is not an OpenRouter credential; the gpt-5 reroute must use
     the OpenRouter key, never the provider's own."""
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-env")
-    backend = resolve_backend("doubao", model="gpt-5.6-luna", api_key="sk-ark-explicit")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-env-key")
+    backend = resolve_backend("doubao", model="gpt-5.6-luna", api_key="test-ark-explicit-key")
     assert backend.using_openrouter is True
-    assert backend.api_key == "sk-or-env"
+    assert backend.api_key == "test-openrouter-env-key"
 
 
 # --- extensibility: a registry-only edit must be sufficient -----------------
@@ -314,10 +314,10 @@ def test_second_aggregator_namespaces_models(register_provider):
         key_vars=("TOGETHER_API_KEY",),
         namespaces_models=True,
     )
-    backend = resolve_backend("together", model="gpt-4o", api_key="sk-tog")
+    backend = resolve_backend("together", model="gpt-4o", api_key="test-together-key")
     assert backend.model == "openai/gpt-4o"
     # The explicit key belongs to that aggregator, so it must be honoured...
-    assert backend.api_key == "sk-tog"
+    assert backend.api_key == "test-together-key"
     # ...and sent to that aggregator. Sharing OpenRouter's id format must not
     # drag along OpenRouter's endpoint, or the credential goes to the wrong host.
     assert backend.base_url == "https://api.together.xyz/v1"
@@ -336,18 +336,18 @@ def test_other_aggregator_key_is_not_treated_as_an_openrouter_key(register_provi
         key_vars=("TOGETHER_API_KEY",),
         namespaces_models=True,
     )
-    backend = resolve_backend("together", model="gpt-5.6-luna", api_key="sk-tog")
+    backend = resolve_backend("together", model="gpt-5.6-luna", api_key="test-together-key")
     assert backend.using_openrouter is False
     assert backend.base_url == "https://api.together.xyz/v1"
-    assert backend.api_key == "sk-tog"
+    assert backend.api_key == "test-together-key"
 
 
 def test_openrouter_still_routes_gpt5_with_an_explicit_key(monkeypatch):
     """The real OpenRouter provider keeps its explicit-key gpt-5 behaviour."""
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-or")
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="test-openrouter-key")
     assert backend.using_openrouter is True
-    assert backend.api_key == "sk-or"
+    assert backend.api_key == "test-openrouter-key"
     assert backend.model == "openai/gpt-5.6-luna"
 
 
@@ -359,7 +359,7 @@ def test_single_vendor_provider_does_not_namespace_models(register_provider):
         key_vars=("VENDORX_API_KEY",),
         namespaces_models=False,
     )
-    backend = resolve_backend("vendorx", model="gpt-4o", api_key="sk-vx")
+    backend = resolve_backend("vendorx", model="gpt-4o", api_key="test-vendorx-key")
     assert backend.model == "gpt-4o"
 
 
@@ -382,7 +382,7 @@ def test_openrouter_backend_never_carries_an_empty_key():
     is reachable via a keyless provider that routes to OpenRouter.
     """
     assert build_openrouter_backend("gpt-4o", "").api_key
-    assert build_openrouter_backend("gpt-4o", "sk-real").api_key == "sk-real"
+    assert build_openrouter_backend("gpt-4o", "test-real-key").api_key == "test-real-key"
 
 
 def test_supported_providers_helper_sees_late_registrations(register_provider):

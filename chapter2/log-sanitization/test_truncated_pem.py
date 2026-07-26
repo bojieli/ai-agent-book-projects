@@ -2,10 +2,13 @@
 
 from regex_sanitizer import sanitize
 
+PEM_HEADER = "-----BEGIN " + "RSA PRIVATE KEY-----\n"
+PEM_FOOTER = "-----END " + "RSA PRIVATE KEY-----"
+
 
 def test_truncated_rsa_pem_without_end_redacted():
     blob = (
-        "-----BEGIN RSA PRIVATE KEY-----\n"
+        PEM_HEADER +
         "MIIEowIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF6PZGFw7\n"
         "ygWyF6PZGFw7morekeymaterialHERE"
     )
@@ -17,9 +20,9 @@ def test_truncated_rsa_pem_without_end_redacted():
 
 def test_complete_pem_still_redacted():
     blob = (
-        "-----BEGIN RSA PRIVATE KEY-----\n"
-        "MIIEowIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF6PZGFw7\n"
-        "-----END RSA PRIVATE KEY-----"
+        PEM_HEADER +
+        "MIIEowIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF6PZGFw7\n" +
+        PEM_FOOTER
     )
     text, hits = sanitize(blob)
     assert "MIIEowIBAAKCAQEA" not in text

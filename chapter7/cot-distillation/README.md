@@ -90,7 +90,7 @@ summarized thinking 和开源模型的原始思维链，作为 SFT 数据到底�
 
 ```bash
 pip install -r requirements.txt
-export OPENROUTER_API_KEY=sk-or-...
+export OPENROUTER_API_KEY=your-openrouter-api-key
 
 # 小规模冒烟（2 道题）
 python generate_data.py --max_problems 2 \

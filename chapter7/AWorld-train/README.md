@@ -424,7 +424,7 @@ Example `.env` file (partial fields):
 
 ```bash
 # OpenAI API (for intelligence-code-server, etc.)
-OPENAI_API_KEY=sk-your-openai-key
+OPENAI_API_KEY=your-openai-api-key
 
 # Google Search API (for googlesearch-server)
 GOOGLE_API_KEY=your-google-api-key
@@ -941,7 +941,7 @@ docker restart gaia-mcp-server-gaia-mcp-server-1
 #### 2. OpenAI API Key Error
 
 ```
-WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1***...', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}
+WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: [redacted-openrouter-key]', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}
 ```
 
 **Cause**: Tools like `intelligence-code-server` require an OpenAI API key to generate code.
@@ -951,12 +951,12 @@ WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API k
 ```bash
 # Method 1: Configure a real OpenAI API Key
 vim ~/AWorld/env/gaia-mcp-server/mcp_servers/.env
-# Add: OPENAI_API_KEY=sk-your-real-key
+# Add: OPENAI_API_KEY=your-openai-api-key
 
 # Method 2: Use a compatible service like OpenRouter
 # Configure in .env:
 LLM_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_API_KEY=sk-or-v1-your-openrouter-key
+OPENAI_API_KEY=your-openrouter-api-key
 
 # Restart the service
 cd ~/AWorld/env
@@ -1630,7 +1630,7 @@ vim .env
 
 ```bash
 # OpenAI API（用于 intelligence-code-server 等）
-OPENAI_API_KEY=sk-your-openai-key
+OPENAI_API_KEY=your-openai-api-key
 
 # Google Search API（用于 googlesearch-server）
 GOOGLE_API_KEY=your-google-api-key
@@ -2149,7 +2149,7 @@ docker restart gaia-mcp-server-gaia-mcp-server-1
 #### 2. OpenAI API 密钥错误
 
 ```
-WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1***...', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}
+WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: [redacted-openrouter-key]', 'type': 'invalid_request_error', 'code': 'invalid_api_key'}}
 ```
 
 **原因**：`intelligence-code-server` 等工具需要 OpenAI API 密钥生成代码。
@@ -2159,12 +2159,12 @@ WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API k
 ```bash
 # 方法 1：配置真实 OpenAI API Key
 vim ~/AWorld/env/gaia-mcp-server/mcp_servers/.env
-# 添加：OPENAI_API_KEY=sk-your-real-key
+# 添加：OPENAI_API_KEY=your-openai-api-key
 
 # 方法 2：使用 OpenRouter 等兼容服务
 # .env 中配置：
 LLM_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_API_KEY=sk-or-v1-your-openrouter-key
+OPENAI_API_KEY=your-openrouter-api-key
 
 # 重启服务
 cd ~/AWorld/env

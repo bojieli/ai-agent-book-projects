@@ -61,7 +61,7 @@ Fully offline and deterministic; demonstrates “puzzle → constraints → solv
 
 ```bash
 cp env.example .env        # then edit .env with OPENAI_API_KEY
-# or: export OPENAI_API_KEY=sk-...
+# or: export OPENAI_API_KEY=your-openai-api-key
 
 python demo.py             # default both: pure vs code, all 12
 python demo.py --mode pure # pure baseline only
@@ -234,7 +234,7 @@ python demo.py --mode solver --min-people 4   # 只跑 >=4 人的难题
 
 ```bash
 cp env.example .env        # 然后编辑 .env 填入 OPENAI_API_KEY
-# 或直接 export OPENAI_API_KEY=sk-...
+# 或直接 export OPENAI_API_KEY=your-openai-api-key
 
 python demo.py             # 默认 both：纯思考 vs 代码辅助，全部 12 题
 python demo.py --mode pure # 只跑纯思考基线

@@ -176,7 +176,7 @@ def model_factory(
         return VLLMChatModel(
             model=model_id,
             base_url=base_url,
-            api_key="sk-no-api-key-required" if api_key is None else api_key,
+            api_key="not-needed" if api_key is None else api_key,
             temperature=temperature,
         )
     else:

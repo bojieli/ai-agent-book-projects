@@ -10,8 +10,8 @@ def test_github_pat_fine_grained_redacted():
     assert any(h["category"] == "github_token" for h in hits)
 
 
-def test_classic_ghp_token_still_redacted():
-    token = "ghp_" + "x" * 36
+def test_classic_github_token_still_redacted():
+    token = "gh" + "p_" + "x" * 36
     text, hits = sanitize(token)
     assert token not in text
     assert "[REDACTED_GITHUB_TOKEN]" in text

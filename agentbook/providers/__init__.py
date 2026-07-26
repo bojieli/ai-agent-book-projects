@@ -22,7 +22,7 @@ Free / zero-cost options:
 * ``ollama``   -- runs models on your own machine, no API key, no cost.
 * ``openrouter`` with a ``:free`` model id, e.g.::
 
-      OPENROUTER_API_KEY=sk-or-v1-...
+      OPENROUTER_API_KEY=your-openrouter-api-key
       OPENROUTER_MODEL=google/gemma-4-31b-it:free
 
   The model runs on OpenRouter's servers, so a modest laptop is fine.

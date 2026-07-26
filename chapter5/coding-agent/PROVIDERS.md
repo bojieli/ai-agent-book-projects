@@ -9,7 +9,7 @@ The Coding Agent supports three providers: Anthropic, OpenAI, and OpenRouter. Ea
 ```bash
 # .env
 PROVIDER=anthropic
-ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 DEFAULT_MODEL=claude-sonnet-5
 ```
 
@@ -26,7 +26,7 @@ DEFAULT_MODEL=claude-sonnet-5
 ```bash
 # .env
 PROVIDER=openrouter
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 DEFAULT_MODEL=anthropic/claude-sonnet-4
 ```
 
@@ -50,7 +50,7 @@ DEFAULT_MODEL=anthropic/claude-sonnet-4
 ```bash
 # .env
 PROVIDER=openai
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 DEFAULT_MODEL=gpt-5.6-luna
 ```
 
@@ -116,7 +116,7 @@ Just change your `.env`:
 ```bash
 # From Anthropic to OpenRouter
 PROVIDER=openrouter  # Changed this line
-OPENROUTER_API_KEY=sk-or-v1-...  # Add this
+OPENROUTER_API_KEY=your-openrouter-api-key  # Add this
 DEFAULT_MODEL=anthropic/claude-sonnet-4  # Update model name
 ```
 
@@ -131,14 +131,14 @@ from agent import CodingAgent
 
 # Test Anthropic
 agent1 = CodingAgent(
-    api_key="sk-ant-...",
+    api_key="your-anthropic-api-key",
     model="claude-sonnet-5",
     provider="anthropic"
 )
 
 # Test OpenRouter
 agent2 = CodingAgent(
-    api_key="sk-or-...",
+    api_key="your-openrouter-api-key",
     model="anthropic/claude-sonnet-4",
     base_url="https://openrouter.ai/api/v1",
     provider="openrouter"
@@ -146,7 +146,7 @@ agent2 = CodingAgent(
 
 # Test OpenAI
 agent3 = CodingAgent(
-    api_key="sk-...",
+    api_key="your-openai-api-key",
     model="gpt-4-turbo",
     provider="openai"
 )
@@ -185,9 +185,9 @@ DEFAULT_MODEL=google/gemini-pro-1.5
 
 ### "Invalid API key" with OpenRouter
 
-Make sure your key starts with `sk-or-v1-`:
+Make sure you copied an OpenRouter API key from the OpenRouter dashboard:
 ```bash
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 ```
 
 ### "Model not found"
@@ -246,4 +246,3 @@ OpenRouter often has better pricing than direct API access:
 - Anthropic API Docs: https://docs.anthropic.com/
 - OpenAI API Docs: https://platform.openai.com/docs/
 - OpenRouter Docs: https://openrouter.ai/docs
-

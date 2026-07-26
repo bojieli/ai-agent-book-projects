@@ -148,11 +148,11 @@ Edit `.env` file:
 PROVIDER=anthropic
 
 # Add API key for your chosen provider
-ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 # or
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 
 # Select model appropriate for your provider
 DEFAULT_MODEL=claude-sonnet-5
@@ -791,11 +791,11 @@ cp .env.example .env
 PROVIDER=anthropic
 
 # Add API key for your chosen provider
-ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 # or
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 
 # Select model appropriate for your provider
 DEFAULT_MODEL=claude-sonnet-5
