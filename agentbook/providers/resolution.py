@@ -14,16 +14,20 @@ from __future__ import annotations
 
 from .models import Backend, Provider
 from .openrouter import (
+    ZERO_COST_HINT,
     map_model_to_openrouter,
     openrouter_base_url,
     openrouter_key,
 )
 from .registry import lookup
 
-__all__ = ["build_openrouter_backend", "resolve_backend"]
+__all__ = ["resolve_backend"]
 
 # Local runtimes ignore the key, but the OpenAI client rejects an empty one.
-_PLACEHOLDER_KEY = "ollama"
+# Deliberately not a provider name: this is a credential value, and reusing a
+# provider name here would make the two indistinguishable to callers that log
+# or redact based on either.
+_PLACEHOLDER_KEY = "not-needed"
 
 
 def build_openrouter_backend(
@@ -39,7 +43,8 @@ def build_openrouter_backend(
     Args:
         model: The requested model id; mapped to its OpenRouter equivalent.
         api_key: The OpenRouter credential to use. Must already be resolved --
-            this function does not fall back to the environment.
+            this function does not fall back to the environment. Empty values
+            become a placeholder, since the OpenAI client rejects an empty key.
         provider: The provider that was originally requested. Recorded on the
             backend so callers can report what the user asked for.
 
@@ -47,7 +52,7 @@ def build_openrouter_backend(
         A backend pointing at OpenRouter with ``using_openrouter`` set.
     """
     return Backend(
-        api_key=api_key,
+        api_key=api_key or _PLACEHOLDER_KEY,
         base_url=openrouter_base_url(),
         model=map_model_to_openrouter(model),
         provider=provider,
@@ -86,9 +91,7 @@ def _missing_key_error(spec: Provider) -> ValueError:
     wanted = " / ".join(spec.key_vars) or "(none)"
     return ValueError(
         f"No API key found for provider {spec.name!r}. Set {wanted}, "
-        "or OPENROUTER_API_KEY as a universal fallback. "
-        "For a zero-cost setup use provider 'ollama' (local, no key) or "
-        "OPENROUTER_MODEL with a ':free' model id."
+        "or OPENROUTER_API_KEY as a universal fallback. " + ZERO_COST_HINT
     )
 
 
@@ -127,10 +130,10 @@ def resolve_backend(
     resolved_model = model or spec.default_model
     key = (api_key or "").strip() or spec.api_key()
 
-    # An explicit key for the openrouter provider is an OpenRouter credential,
-    # so it wins over the environment. For any other provider the explicit key
-    # belongs to that provider and must not be forwarded to OpenRouter.
-    explicit_openrouter_key = key if spec.name == "openrouter" else ""
+    # An explicit key for an aggregator is that aggregator's credential, so it
+    # wins over the environment. For a single-vendor provider the explicit key
+    # belongs to that vendor and must not be forwarded to OpenRouter.
+    explicit_openrouter_key = key if spec.namespaces_models else ""
     available_openrouter_key = explicit_openrouter_key or openrouter_key()
 
     # 1. gpt-5.x needs OpenAI org verification on the direct API.
@@ -139,10 +142,9 @@ def resolve_backend(
 
     # 2. The provider's own credential, or a provider that needs none.
     if key or not spec.requires_key:
-        # Selecting OpenRouter directly still needs namespaced model ids, so a
-        # bare override like "gpt-4o" is mapped the same way as on the fallback
-        # path.
-        if spec.name == "openrouter":
+        # An aggregator still needs namespaced model ids, so a bare override
+        # like "gpt-4o" is mapped the same way as on the fallback path.
+        if spec.namespaces_models:
             return build_openrouter_backend(resolved_model, key, spec.name)
         return Backend(
             api_key=key or _PLACEHOLDER_KEY,

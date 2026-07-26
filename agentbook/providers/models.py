@@ -28,6 +28,10 @@ class Provider:
             self-hosted or regional deployments. ``None`` if not overridable.
         requires_key: Whether a missing key is an error. Local runtimes such as
             Ollama accept any placeholder, so they set this to ``False``.
+        namespaces_models: Whether this backend expects vendor-namespaced model
+            ids such as ``openai/gpt-4o`` rather than bare ones. True for
+            aggregators that resell many vendors' models; a bare id given to
+            one of these is mapped before the request goes out.
     """
 
     name: str
@@ -36,6 +40,7 @@ class Provider:
     key_vars: tuple[str, ...] = ()
     base_url_var: str | None = None
     requires_key: bool = True
+    namespaces_models: bool = False
 
     def api_key(self) -> str:
         """Read this provider's API key from the environment.
@@ -86,7 +91,8 @@ class Backend:
     def __iter__(self):
         """Unpack as the 4-tuple the pre-registry chapter helpers returned.
 
-        Yields:
-            ``api_key``, ``base_url``, ``model``, ``using_openrouter`` in order.
+        Returns:
+            An iterator over ``api_key``, ``base_url``, ``model`` and
+            ``using_openrouter``, in that order.
         """
         return iter((self.api_key, self.base_url, self.model, self.using_openrouter))

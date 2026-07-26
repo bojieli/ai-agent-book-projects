@@ -19,6 +19,7 @@ __all__ = [
     "SUPPORTED_PROVIDERS",
     "canonical_provider",
     "lookup",
+    "supported_providers",
 ]
 
 PROVIDERS: dict[str, Provider] = {
@@ -63,6 +64,8 @@ PROVIDERS: dict[str, Provider] = {
         default_model=OPENROUTER_DEFAULT_MODEL,
         key_vars=("OPENROUTER_API_KEY",),
         base_url_var="OPENROUTER_BASE_URL",
+        # Resells many vendors' models, so ids must be namespaced.
+        namespaces_models=True,
     ),
     "openai": Provider(
         name="openai",
@@ -96,7 +99,24 @@ _ALIASES = {"moonshot": "kimi", "ark": "doubao", "google": "gemini"}
 # Every accepted name, canonical plus aliases. Chapter CLIs use this for their
 # --provider choices so a new registry entry is immediately selectable instead
 # of being rejected by argparse.
+#
+# Computed once at import: PROVIDERS is a module-level table edited in source,
+# not registered at runtime. Anything mutating PROVIDERS after import (tests
+# do, to exercise hypothetical providers) must read supported_providers()
+# instead, which recomputes.
 SUPPORTED_PROVIDERS: tuple[str, ...] = tuple(sorted(set(PROVIDERS) | set(_ALIASES)))
+
+
+def supported_providers() -> tuple[str, ...]:
+    """Return every accepted provider name, canonical plus aliases.
+
+    Prefer the :data:`SUPPORTED_PROVIDERS` constant unless
+    :data:`PROVIDERS` may have been modified since import.
+
+    Returns:
+        Sorted provider names and aliases, recomputed from the live table.
+    """
+    return tuple(sorted(set(PROVIDERS) | set(_ALIASES)))
 
 
 def canonical_provider(provider: str) -> str:

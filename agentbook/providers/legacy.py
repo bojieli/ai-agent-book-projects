@@ -1,10 +1,16 @@
 """Backwards-compatible shim for the pre-registry chapter helper.
 
 Before the shared registry existed, three chapter experiments each carried
-their own copy of ``resolve_llm_backend``. Two call sites still use that
-signature -- ``chapter1/web-search-agent/agent.py`` and
-``chapter1/learning-from-experience/llm_agent.py`` -- so the function stays
-until they are migrated.
+their own copy of ``resolve_llm_backend``. It is still imported by three
+chapter modules and called by two of them, so it stays until all of them are
+migrated:
+
+* ``chapter1/web-search-agent/agent.py`` -- calls it
+* ``chapter1/learning-from-experience/llm_agent.py`` -- calls it
+* ``chapter1/context/config.py`` -- re-exports it for its own importers
+
+Deleting this function therefore breaks ``chapter1/context`` at import time
+even though that module never calls it.
 
 It cannot simply delegate to :func:`~agentbook.providers.resolution.resolve_backend`:
 callers pass a bare ``base_url`` with no provider name, which the registry has
@@ -14,7 +20,7 @@ two code paths cannot drift apart on the part that matters.
 
 from __future__ import annotations
 
-from .openrouter import openrouter_key
+from .openrouter import ZERO_COST_HINT, openrouter_key
 from .resolution import build_openrouter_backend
 
 __all__ = ["resolve_llm_backend"]
@@ -22,8 +28,7 @@ __all__ = ["resolve_llm_backend"]
 _NO_KEY_MESSAGE = (
     "No API key found. Set a provider key (SILICONFLOW_API_KEY / ARK_API_KEY / "
     "MOONSHOT_API_KEY / DEEPSEEK_API_KEY / ZHIPU_API_KEY / OPENAI_API_KEY / "
-    "GEMINI_API_KEY) or OPENROUTER_API_KEY (universal fallback). "
-    "For a zero-cost setup use provider 'ollama' or a ':free' OpenRouter model."
+    "GEMINI_API_KEY) or OPENROUTER_API_KEY (universal fallback). " + ZERO_COST_HINT
 )
 
 

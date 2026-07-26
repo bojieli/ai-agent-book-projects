@@ -16,6 +16,7 @@ import os
 __all__ = [
     "OPENROUTER_BASE_URL",
     "OPENROUTER_DEFAULT_MODEL",
+    "ZERO_COST_HINT",
     "map_model_to_openrouter",
     "openrouter_base_url",
     "openrouter_key",
@@ -23,6 +24,13 @@ __all__ = [
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 OPENROUTER_DEFAULT_MODEL = "openai/gpt-5.6-luna"
+
+# Appended to every "no key configured" error so the way out of the problem is
+# stated once rather than copied into each message.
+ZERO_COST_HINT = (
+    "For a zero-cost setup use provider 'ollama' (local, no key) or "
+    "OPENROUTER_MODEL with a ':free' model id."
+)
 
 
 def openrouter_key() -> str:
