@@ -76,7 +76,7 @@ uv sync --locked --extra ch1
 python -m pip install -e ".[ch1]"
 ```
 
-Trước khi chạy thí nghiệm có gọi mô hình, hãy sao chép `.env.example` thành `.env` và điền ít nhất một khóa provider. Người dùng Ollama cục bộ có thể khởi động Ollama rồi thêm `--provider ollama` vào lệnh.
+Trước khi chạy thí nghiệm có gọi mô hình, hãy cấu hình khóa theo README của thí nghiệm đó. Các thí nghiệm hỗ trợ cấu hình ở thư mục gốc có thể sao chép `.env.example` thành `.env` và điền ít nhất một khóa provider; một số thí nghiệm yêu cầu `.env` đặt cạnh mã hoặc biến môi trường được export. Chỉ dùng Ollama cục bộ với `--provider ollama` khi README hoặc CLI của thí nghiệm đó liệt kê rõ provider này.
 
 Sau khi cài, chạy thí nghiệm từ thư mục gốc, ví dụ:
 

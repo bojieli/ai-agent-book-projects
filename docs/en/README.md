@@ -75,7 +75,7 @@ uv sync --locked --extra ch1
 python -m pip install -e ".[ch1]"
 ```
 
-Before running an experiment that calls a model, copy `.env.example` to `.env` and fill in at least one provider key. Local Ollama users can start Ollama and add `--provider ollama` to the command.
+Before running an experiment that calls a model, follow that experiment's README for credentials. Experiments that support root-level configuration can use `.env.example` copied to `.env` with at least one provider key; some experiments instead require an adjacent `.env` or exported environment variables. Use local Ollama with `--provider ollama` only when that experiment's README or CLI lists it.
 
 Then run an experiment from the repository root, for example:
 

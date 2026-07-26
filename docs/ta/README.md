@@ -76,7 +76,7 @@ uv sync --locked --extra ch1
 python -m pip install -e ".[ch1]"
 ```
 
-மாதிரியை அழைக்கும் சோதனையை இயக்கும் முன், `.env.example`-ஐ `.env` ஆக copy செய்து குறைந்தது ஒரு provider key-ஐ நிரப்பவும். Local Ollama பயனர்கள் Ollama-வை start செய்து கட்டளையில் `--provider ollama` சேர்க்கலாம்.
+மாதிரியை அழைக்கும் சோதனையை இயக்கும் முன், அந்தச் சோதனையின் README-ஐப் பின்பற்றி credential-களை அமைக்கவும். Root-level configuration ஆதரிக்கும் சோதனைகள் `.env.example`-ஐ `.env` ஆக copy செய்து குறைந்தது ஒரு provider key-ஐ பயன்படுத்தலாம்; சில சோதனைகளுக்கு அருகிலுள்ள `.env` அல்லது exported environment variable-கள் தேவை. அந்தச் சோதனையின் README அல்லது CLI `ollama`-வை தெளிவாகப் பட்டியலிட்டால் மட்டுமே local Ollama-வை `--provider ollama` உடன் பயன்படுத்தவும்.
 
 நிறுவிய பிறகு களஞ்சியத்தின் மூல அடைவிலிருந்து சோதனையை இயக்கலாம்:
 

@@ -75,7 +75,7 @@ uv sync --locked --extra ch1
 python -m pip install -e ".[ch1]"
 ```
 
-运行会调用模型的实验前，先复制 `.env.example` 为 `.env` 并填入至少一个提供商 Key；本地 Ollama 用户可启动 Ollama 后在命令中添加 `--provider ollama`。
+运行会调用模型的实验前，请按该实验 README 配置凭据：支持根目录配置的实验可复制 `.env.example` 为 `.env` 并填入至少一个提供商 Key；有些实验要求在自身目录放 `.env` 或直接导出环境变量。只有在实验 README 或 CLI 明确列出 `ollama` 时，才可启动本地 Ollama 并添加 `--provider ollama`。
 
 安装后可从仓库根目录运行实验，例如：
 

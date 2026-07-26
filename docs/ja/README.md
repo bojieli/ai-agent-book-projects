@@ -70,7 +70,7 @@ uv sync --locked --extra ch1
 python -m pip install -e ".[ch1]"
 ```
 
-モデルを呼び出す実験を実行する前に、`.env.example` を `.env` にコピーし、少なくとも1つの provider key を入力してください。ローカル Ollama を使う場合は Ollama を起動し、コマンドに `--provider ollama` を追加します。
+モデルを呼び出す実験を実行する前に、その実験の README に従って認証情報を設定してください。ルート設定に対応する実験では `.env.example` を `.env` にコピーして少なくとも1つの provider key を入力できますが、一部の実験では実験ディレクトリ内の `.env` または環境変数の export が必要です。ローカル Ollama と `--provider ollama` は、その実験の README または CLI が明示している場合にのみ使用してください。
 
 インストール後はリポジトリのルートから実験を実行できます。
 
