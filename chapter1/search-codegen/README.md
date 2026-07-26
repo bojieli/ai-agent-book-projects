@@ -38,9 +38,10 @@ An advanced AI agent leveraging GPT-5's native `web_search` and `code_interprete
 ```bash
 # Recommended from the repository root: use the shared Chapter 1 environment
 uv sync --locked --extra ch1
+source .venv/bin/activate
 
-# pip fallback when uv is not installed
-python -m pip install -e ".[ch1]"
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch1]"
 
 # Enter this experiment directory for the commands below
 cd chapter1/search-codegen
@@ -352,9 +353,10 @@ Adjust `RATE_LIMIT_RPM` in `.env` if encountering rate limits.
 ```bash
 # 推荐在仓库根目录使用统一的第 1 章环境
 uv sync --locked --extra ch1
+source .venv/bin/activate
 
-# 未安装 uv 时可用 pip 兜底
-python -m pip install -e ".[ch1]"
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch1]"
 
 # 进入本实验目录，后续命令都在这里运行
 cd chapter1/search-codegen

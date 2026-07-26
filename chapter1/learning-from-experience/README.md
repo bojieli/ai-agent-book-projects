@@ -78,9 +78,10 @@ A text-based treasure hunt game where agents must:
 ```bash
 # Recommended from the repository root: use the shared Chapter 1 environment
 uv sync --locked --extra ch1
+source .venv/bin/activate
 
-# pip fallback when uv is not installed
-python -m pip install -e ".[ch1]"
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch1]"
 
 # Enter this experiment directory for the commands below
 cd chapter1/learning-from-experience
@@ -387,9 +388,10 @@ LLM DECISION PROCESS
 ```bash
 # 推荐在仓库根目录使用统一的第 1 章环境
 uv sync --locked --extra ch1
+source .venv/bin/activate
 
-# 未安装 uv 时可用 pip 兜底
-python -m pip install -e ".[ch1]"
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch1]"
 
 # 进入本实验目录，后续命令都在这里运行
 cd chapter1/learning-from-experience
