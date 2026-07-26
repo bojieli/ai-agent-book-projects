@@ -2,9 +2,12 @@ import asyncio
 import json
 import subprocess
 import logging
+import os
+import time
 from pathlib import Path
 from typing import Any, AsyncGenerator
 
+import jwt
 from mcp import ClientSession
 from mcp.types import (
     LoggingMessageNotificationParams,
@@ -21,10 +24,19 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+LOCAL_MCP_TOKEN_SECRET = "123321"
+
+
+def gen_local_mcp_token(app: str = "mcp-gateway-debug") -> str:
+    secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", LOCAL_MCP_TOKEN_SECRET)
+    payload = {"app": app, "version": 1, "time": time.time()}
+    return jwt.encode(payload=payload, key=secret, algorithm="HS256")
+
+
 if __name__ == "__main__":
     base_url, token = (
         "http://localhost:8000",
-        "local-debug-token",
+        gen_local_mcp_token(),
     )
 
     asyncio.run(McpClient.mcp_test_client(base_url, token))

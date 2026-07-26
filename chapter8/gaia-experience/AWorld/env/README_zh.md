@@ -78,7 +78,7 @@ sh run-docker.sh
         "type": "streamable-http",
         "url": "http://localhost:8000/mcp",
         "headers": {
-            "Authorization": "Bearer local-debug-token",
+            "Authorization": "Bearer <local-debug-jwt>",
             "MCP_SERVERS": "readweb-server,browser-server"
         },
         "timeout": 6000,
@@ -88,7 +88,7 @@ sh run-docker.sh
 }
 ```
 
-**注意**：上述 Bearer token 仅用于本地测试。`MCP_SERVERS` 头部指定了当前连接的 MCP 服务器范围，应该是 `gaia-mcp-server/mcp_servers/mcp_config.py` 中定义的服务器名称的子集。
+**注意**：上述 Bearer token 由 `train_env.py` 为本地测试生成。`MCP_SERVERS` 头部指定了当前连接的 MCP 服务器范围，应该是 `gaia-mcp-server/mcp_servers/mcp_config.py` 中定义的服务器名称的子集。
 
 ### 2.2 Kubernetes 集群部署
 

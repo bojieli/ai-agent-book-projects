@@ -2,12 +2,14 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 from pathlib import Path
 import shutil
 import time
 import traceback
 from dotenv import dotenv_values, set_key
 import httpx
+import jwt
 from mcp import ClientSession
 from mcp.types import (
     LoggingMessageNotificationParams,
@@ -20,6 +22,14 @@ from mcp.shared.context import RequestContext
 from aworld.utils.common import get_local_ip
 
 logger = logging.getLogger(__name__)
+
+LOCAL_MCP_TOKEN_SECRET = "123321"
+
+
+def gen_local_mcp_token(app: str = "local_debug") -> str:
+    secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", LOCAL_MCP_TOKEN_SECRET)
+    payload = {"app": app, "version": 1, "time": time.time()}
+    return jwt.encode(payload=payload, key=secret, algorithm="HS256")
 
 
 class TranEnv:
@@ -68,7 +78,7 @@ class TranEnv:
             self.mcp_variables = {
                 "ip": get_local_ip(),
                 "port": 8000,
-                "token": "local-debug-token"
+                "token": gen_local_mcp_token(),
             }
 
             logger.info("✅ Service is ready!")

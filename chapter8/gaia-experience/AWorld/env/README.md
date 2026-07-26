@@ -78,7 +78,7 @@ Use the following configuration to connect to the VirtualPC MCP Server:
         "type": "streamable-http",
         "url": "http://localhost:8000/mcp",
         "headers": {
-            "Authorization": "Bearer local-debug-token",
+            "Authorization": "Bearer <local-debug-jwt>",
             "MCP_SERVERS": "readweb-server,browser-server"
         },
         "timeout": 6000,
@@ -88,7 +88,7 @@ Use the following configuration to connect to the VirtualPC MCP Server:
 }
 ```
 
-**Note**: The Bearer token above is for local testing only. The `MCP_SERVERS` header specifies the MCP server scope for your current connection, which should be a subset of server names defined in `gaia-mcp-server/mcp_servers/mcp_config.py`.
+**Note**: The Bearer token above is generated for local testing by `train_env.py`. The `MCP_SERVERS` header specifies the MCP server scope for your current connection, which should be a subset of server names defined in `gaia-mcp-server/mcp_servers/mcp_config.py`.
 
 ### 2.2 Kubernetes Cluster Deployment
 
