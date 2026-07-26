@@ -76,11 +76,17 @@ A text-based treasure hunt game where agents must:
 #### Installation
 
 ```bash
-# Navigate to the project directory
+# Recommended from the repository root: use the shared Chapter 1 environment
+uv sync --locked --extra ch1
+
+# pip fallback when uv is not installed
+python -m pip install -e ".[ch1]"
+
+# Enter this experiment directory for the commands below
 cd chapter1/learning-from-experience
 
-# Install dependencies
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 - Q-learning runs fully offline with **no API key**.
@@ -379,11 +385,17 @@ LLM DECISION PROCESS
 #### 安装
 
 ```bash
-# Navigate to the project directory
+# 推荐在仓库根目录使用统一的第 1 章环境
+uv sync --locked --extra ch1
+
+# 未安装 uv 时可用 pip 兜底
+python -m pip install -e ".[ch1]"
+
+# 进入本实验目录，后续命令都在这里运行
 cd chapter1/learning-from-experience
 
-# Install dependencies
-pip install -r requirements.txt
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 - Q-learning 完全离线，**无需任何 API Key**。  

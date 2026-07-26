@@ -27,7 +27,7 @@ An advanced AI agent leveraging GPT-5's native `web_search` and `code_interprete
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - OpenRouter API key (get one at [https://openrouter.ai/keys](https://openrouter.ai/keys))
 - Internet connection for web search functionality
 
@@ -36,11 +36,17 @@ An advanced AI agent leveraging GPT-5's native `web_search` and `code_interprete
 #### 1. Installation
 
 ```bash
-# Clone or navigate to the project directory
+# Recommended from the repository root: use the shared Chapter 1 environment
+uv sync --locked --extra ch1
+
+# pip fallback when uv is not installed
+python -m pip install -e ".[ch1]"
+
+# Enter this experiment directory for the commands below
 cd chapter1/search-codegen
 
-# Install dependencies
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Copy environment template
 cp env.example .env
@@ -335,7 +341,7 @@ Adjust `RATE_LIMIT_RPM` in `.env` if encountering rate limits.
 
 ### 前置条件
 
-- Python 3.8 或更高  
+- Python 3.10 或更高
 - OpenRouter API Key（[https://openrouter.ai/keys](https://openrouter.ai/keys)）  
 - 需要联网才能使用搜索功能  
 
@@ -344,13 +350,19 @@ Adjust `RATE_LIMIT_RPM` in `.env` if encountering rate limits.
 #### 1. 安装
 
 ```bash
-# Clone or navigate to the project directory
+# 推荐在仓库根目录使用统一的第 1 章环境
+uv sync --locked --extra ch1
+
+# 未安装 uv 时可用 pip 兜底
+python -m pip install -e ".[ch1]"
+
+# 进入本实验目录，后续命令都在这里运行
 cd chapter1/search-codegen
 
-# Install dependencies
-pip install -r requirements.txt
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
-# Copy environment template
+# 复制环境变量模板
 cp env.example .env
 
 # Edit .env and add your OpenRouter API key
