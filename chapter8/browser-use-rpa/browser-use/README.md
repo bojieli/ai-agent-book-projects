@@ -99,7 +99,7 @@ This gives Claude Desktop access to browser automation tools for web scraping, f
       "command": "uvx",
       "args": ["browser-use[cli]", "--mcp"],
       "env": {
-        "OPENAI_API_KEY": "sk-..."
+        "OPENAI_API_KEY": "your-openai-api-key"
       }
     }
   }

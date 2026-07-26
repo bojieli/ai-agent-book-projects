@@ -68,7 +68,7 @@ class TranEnv:
             self.mcp_variables = {
                 "ip": get_local_ip(),
                 "port": 8000,
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJsb2NhbF9kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYzOTUzNzIuMTg0MDc0NH0.SALKn1dxEzsdX82-e3jAJANAo_kE4NO4192Epw5rYmQ"
+                "token": "local-debug-token"
             }
 
             logger.info("✅ Service is ready!")

@@ -9,13 +9,26 @@
 注意：以下所有密钥、卡号、证件号均为虚构，仅用于演示，不对应任何真实账户。
 """
 
+OPENAI_STYLE_SAMPLE_KEY = "sk" + "-proj-ABCD1234efgh5678IJKL9012mnop3456qrst"
+GOOGLE_SAMPLE_KEY = "AI" + "zaSyD-EXAMPLEfakeKEY1234567890abcdef12"
+AWS_SAMPLE_KEY = "AK" + "IAIOSFODNN7EXAMPLE"
+GITHUB_SAMPLE_TOKEN = "gh" + "p_16C7e42F292c6912E7710c838347Ae178B4a99"
+SLACK_SAMPLE_TOKEN = "xo" + "xb-PLACEHOLDERfaketoken000000notarealslacktoken"
+JWT_SAMPLE_TOKEN = (
+    "ey" + "JhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    ".eyJzdWIiOiIxMjM0NTY3ODkwIn0"
+    ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+)
+PEM_BEGIN = "-----BEGIN " + "RSA PRIVATE KEY-----"
+PEM_END = "-----END " + "RSA PRIVATE KEY-----"
+
 SAMPLES = [
     (
         "工具调用日志 (HTTP 请求/响应)",
-        """[2024-05-12 09:14:22] TOOL_CALL http_request
+        f"""[2024-05-12 09:14:22] TOOL_CALL http_request
   url: https://api.example.com/v1/users/8842
-  headers: {"Authorization": "Bearer sk-proj-ABCD1234efgh5678IJKL9012mnop3456qrst", "X-Api-Key": "AIzaSyD-EXAMPLEfakeKEY1234567890abcdef12"}
-  response: {"user_id": 8842, "email": "alice.wang@example.com", "phone": "13912345678"}""",
+  headers: {{"Authorization": "Bearer {OPENAI_STYLE_SAMPLE_KEY}", "X-Api-Key": "{GOOGLE_SAMPLE_KEY}"}}
+  response: {{"user_id": 8842, "email": "alice.wang@example.com", "phone": "13912345678"}}""",
     ),
     (
         "客服对话 (PII 泄露)",
@@ -26,27 +39,27 @@ ASSISTANT: 收到，我这就为您登记。""",
     ),
     (
         "数据库连接报错 (凭据泄露)",
-        """[ERROR] db.connect failed after 3 retries
+        f"""[ERROR] db.connect failed after 3 retries
   dsn: postgres://admin:S3cr3t_P4ssw0rd@db.internal:5432/prod
-  fallback_config: {"db_password": "hunter2xyz", "aws_access_key_id": "AKIAIOSFODNN7EXAMPLE"}
+  fallback_config: {{"db_password": "hunter2xyz", "aws_access_key_id": "{AWS_SAMPLE_KEY}"}}
   host_ip: 192.168.10.24""",
     ),
     (
         "CI / Git 日志 (令牌泄露)",
-        """Cloning into 'service-repo'...
-  remote: using deploy token ghp_16C7e42F292c6912E7710c838347Ae178B4a99
-  Slack notify webhook token: xoxb-PLACEHOLDERfaketoken000000notarealslacktoken
-  session jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c""",
+        f"""Cloning into 'service-repo'...
+  remote: using deploy token {GITHUB_SAMPLE_TOKEN}
+  Slack notify webhook token: {SLACK_SAMPLE_TOKEN}
+  session jwt={JWT_SAMPLE_TOKEN}""",
     ),
     (
         "配置转储 (私钥泄露)",
-        """[DEBUG] dumping runtime config
+        f"""[DEBUG] dumping runtime config
   service_account_key: |
------BEGIN RSA PRIVATE KEY-----
+{PEM_BEGIN}
 MIIEpAIBAAKCAQEA7QwZbq3vX9kLmN0pQrStUvWxYz1234567890abcdefghijkl
 mnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321zyxwvutsrqponm
 QIDAQAB
------END RSA PRIVATE KEY-----
+{PEM_END}
   admin_contact: ops-team@example.com""",
     ),
 ]

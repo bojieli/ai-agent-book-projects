@@ -56,7 +56,7 @@ CER-based objective metrics are computed with normalized transcript comparison.
 ```bash
 pip install -r requirements.txt
 brew install ffmpeg
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 
 python demo.py
 python demo.py --quick
@@ -168,7 +168,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 ```bash
 pip install -r requirements.txt          # 只需 openai
 brew install ffmpeg                        # 提供 ffprobe（时长探测）
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 
 python demo.py            # 默认：4 个 OpenAI 配置 × 4 条语料，Whisper 回译 + LLM Rubric
 python demo.py --quick   # 只用前 2 条语料，快速冒烟

@@ -88,7 +88,7 @@ python event_loop_demo.py --trigger timer --provider kimi
 ```
 
 > **Universal OpenRouter fallback**: if the chosen provider’s key is missing (default `kimi`) but `OPENROUTER_API_KEY` is set, `event_loop_demo.py` / `server.py` / `quickstart.py` switch to `openrouter` (set model with `LLM_MODEL=openai/gpt-5.6-luna`). Example:  
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 Full flags: `python event_loop_demo.py --help`.
 
@@ -597,7 +597,7 @@ python event_loop_demo.py --trigger timer --provider kimi
 > **OpenRouter 通用兜底**：若所选 provider（默认 `kimi`）的 Key 缺失，但设置了
 > `OPENROUTER_API_KEY`，`event_loop_demo.py` / `server.py` / `quickstart.py` 会自动
 > 改用 `openrouter` provider 继续运行（可用 `LLM_MODEL=openai/gpt-5.6-luna` 指定模型）。例如：
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 完整参数见 `python event_loop_demo.py --help`。
 

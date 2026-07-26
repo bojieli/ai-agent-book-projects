@@ -53,7 +53,7 @@ skills/
 ```bash
 pip install -r requirements.txt
 cp env.example .env        # or export directly
-export OPENAI_API_KEY=sk-...   # default model gpt-5.6-luna; override with OPENAI_MODEL
+export OPENAI_API_KEY=your-openai-api-key   # default model gpt-5.6-luna; override with OPENAI_MODEL
 python demo.py
 python demo.py --paper papers/your_paper.md    # different paper/outline
 python demo.py -o output/deck.pptx --model gpt-5.6-luna   # output path / model
@@ -174,7 +174,7 @@ skills/
 ```bash
 pip install -r requirements.txt
 cp env.example .env        # 或直接 export
-export OPENAI_API_KEY=sk-...   # 默认模型 gpt-5.6-luna，可用 OPENAI_MODEL 覆盖
+export OPENAI_API_KEY=your-openai-api-key   # 默认模型 gpt-5.6-luna，可用 OPENAI_MODEL 覆盖
 python demo.py
 python demo.py --paper papers/your_paper.md    # 换一篇论文/大纲
 python demo.py -o output/deck.pptx --model gpt-5.6-luna   # 指定输出路径 / 模型

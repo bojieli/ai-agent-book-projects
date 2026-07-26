@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     base_url, token = (
         "http://localhost:8000",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJtY3AtZ2F0ZXdheS1kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYyNzU5MDkuNDg2Mjg2Mn0.4HRsgsLsOMa77-DbsA67QPzF7lBaxgTylTYmBSZNoxg",
+        "local-debug-token",
     )
 
     asyncio.run(McpClient.mcp_test_client(base_url, token))

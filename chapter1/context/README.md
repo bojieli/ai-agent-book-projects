@@ -133,7 +133,7 @@ python main.py --model doubao-seed-1-6-thinking-250715
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
 # anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```
@@ -530,7 +530,7 @@ python main.py --model doubao-seed-1-6-thinking-250715
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
 # anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```

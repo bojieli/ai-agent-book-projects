@@ -104,11 +104,11 @@ python cli.py leaderboard --input battles.json --top-n 20
 python cli.py pipeline --source arena --arena-file arena_data.json --sample 50000 --method bradley-terry --bootstrap 100
 
 # LLM 评判对战（需要 API Key）——官方 Anthropic
-export ANTHROPIC_API_KEY=sk-...
+export ANTHROPIC_API_KEY=your-anthropic-api-key
 python cli.py battle --source llm --candidate-models claude-opus-4-8 claude-haiku-4-5
 
 # LLM 评判对战——通过 OpenRouter 兜底（直连 Anthropic key 缺失/失效时）
-export OPENROUTER_API_KEY=sk-or-...
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python cli.py battle --source llm --judge-backend openrouter \
   --judge-model claude-opus-4-8 \
   --candidate-models anthropic/claude-haiku-4.5 openai/gpt-5.6-luna

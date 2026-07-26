@@ -40,7 +40,7 @@ Key design points:
 pip install -r requirements.txt
 
 # Configuration (choose one)
-export OPENAI_API_KEY=sk-...           # Option A: direct export
+export OPENAI_API_KEY=your-openai-api-key           # Option A: direct export
 cp env.example .env && vi .env         # Option B: write to .env
 
 python demo.py
@@ -209,7 +209,7 @@ config.py              从环境变量读取 API Key / base_url / model
 pip install -r requirements.txt
 
 # 配置（二选一）
-export OPENAI_API_KEY=sk-...           # 方式 A：直接 export
+export OPENAI_API_KEY=your-openai-api-key           # 方式 A：直接 export
 cp env.example .env && vi .env         # 方式 B：写到 .env
 
 python demo.py

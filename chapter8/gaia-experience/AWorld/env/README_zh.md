@@ -78,7 +78,7 @@ sh run-docker.sh
         "type": "streamable-http",
         "url": "http://localhost:8000/mcp",
         "headers": {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJsb2NhbF9kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYzOTUzNzIuMTg0MDc0NH0.SALKn1dxEzsdX82-e3jAJANAo_kE4NO4192Epw5rYmQ",
+            "Authorization": "Bearer local-debug-token",
             "MCP_SERVERS": "readweb-server,browser-server"
         },
         "timeout": 6000,

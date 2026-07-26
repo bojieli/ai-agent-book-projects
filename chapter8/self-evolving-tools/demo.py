@@ -190,7 +190,7 @@ def run_online(tasks: list, allow_create: bool, model: str | None, output_path: 
         print(
             "请先配置对应供应商的 API Key（默认 OpenAI）：\n"
             "  cp env.example .env  然后在 .env 中填入 OPENAI_API_KEY；\n"
-            "  或直接 export OPENAI_API_KEY=sk-...\n"
+            "  或直接 export OPENAI_API_KEY=your-openai-api-key\n"
             "如需切换供应商：export LLM_PROVIDER=moonshot|ark 并配置对应的 "
             "MOONSHOT_API_KEY / ARK_API_KEY。\n"
             "（若只想验证机制而无 API key，可运行：python demo.py --offline）",

@@ -19,7 +19,7 @@
     python demo.py --mode solver
 
     # LLM 对照实验(需要 OPENAI_API_KEY)：
-    export OPENAI_API_KEY=sk-...
+    export OPENAI_API_KEY=your-openai-api-key
     python demo.py                       # 默认 both：跑 纯思考 vs 代码辅助 全部题目
     python demo.py --mode pure           # 只跑纯思考
     python demo.py --limit 4             # 只跑前 4 题(省钱冒烟测试)

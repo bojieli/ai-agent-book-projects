@@ -46,7 +46,7 @@ pip install -r requirements.txt
 cp env.example .env
 
 # Edit .env and add your OpenRouter API key
-# OPENROUTER_API_KEY=sk-or-v1-your-key-here
+# OPENROUTER_API_KEY=your-openrouter-api-key
 ```
 
 #### 2. Configuration
@@ -54,7 +54,7 @@ cp env.example .env
 Edit `.env` file with your settings:
 
 ```env
-OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
+OPENROUTER_API_KEY=your-openrouter-api-key
 MODEL_NAME=openai/gpt-5.6-sol
 DEFAULT_TEMPERATURE=0.3
 DEFAULT_MAX_TOKENS=4000
@@ -354,7 +354,7 @@ pip install -r requirements.txt
 cp env.example .env
 
 # Edit .env and add your OpenRouter API key
-# OPENROUTER_API_KEY=sk-or-v1-your-key-here
+# OPENROUTER_API_KEY=your-openrouter-api-key
 ```
 
 #### 2. 配置
@@ -362,7 +362,7 @@ cp env.example .env
 编辑 `.env`：
 
 ```env
-OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
+OPENROUTER_API_KEY=your-openrouter-api-key
 MODEL_NAME=openai/gpt-5.6-sol
 DEFAULT_TEMPERATURE=0.3
 DEFAULT_MAX_TOKENS=4000

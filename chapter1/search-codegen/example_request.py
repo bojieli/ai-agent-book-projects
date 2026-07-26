@@ -186,7 +186,7 @@ def main():
     
     if not api_key:
         print("\n❌ Error: OPENROUTER_API_KEY not found in environment")
-        print("Please set: export OPENROUTER_API_KEY=sk-or-v1-your-key-here")
+        print("Please set: export OPENROUTER_API_KEY=your-openrouter-api-key")
         return
     
     # Example prompts

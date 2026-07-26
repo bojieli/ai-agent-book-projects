@@ -182,7 +182,7 @@ print the difference (context tokens handed off, extra preparation cost, whether
 private data leaked, and each sub-agent's result). Requires `OPENAI_API_KEY`
 (default model `gpt-5.6-luna`, override with `OPENAI_MODEL`):
 ```bash
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 python subagent_comparison.py
 ```
 Typically `minimal` uses far fewer tokens and never leaks private fields, but the
@@ -539,7 +539,7 @@ python quickstart.py
 是否泄漏隐私字段、各子 Agent 结果）。需要 `OPENAI_API_KEY`
 （默认模型 `gpt-5.6-luna`，可用 `OPENAI_MODEL` 覆盖）：
 ```bash
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 python subagent_comparison.py
 ```
 通常 `minimal` token 更少且不泄漏隐私字段，但子 Agent 可能返回 `need_info`；

@@ -61,7 +61,7 @@ It runs the reference solutions from `problems.json` in the subprocess sandbox, 
 
 ```bash
 cp env.example .env   # or export OPENAI_API_KEY=...
-export OPENAI_API_KEY=sk-...      # also supports MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # also supports MOONSHOT_API_KEY / ARK_API_KEY
 
 python demo.py                    # full comparison (code vs cot)
 python demo.py --verbose          # also print generated code and sandbox results
@@ -201,7 +201,7 @@ python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按�
 
 ```bash
 cp env.example .env   # 或直接 export OPENAI_API_KEY=...
-export OPENAI_API_KEY=sk-...      # 也支持 MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # 也支持 MOONSHOT_API_KEY / ARK_API_KEY
 
 python demo.py                    # 跑完整对照实验（code 与 cot 两种模式）
 python demo.py --verbose          # 额外打印模型生成的代码与执行结果

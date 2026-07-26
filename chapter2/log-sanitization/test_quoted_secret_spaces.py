@@ -11,8 +11,8 @@ def test_double_quoted_password_with_spaces():
 
 
 def test_single_quoted_password_with_spaces():
-    text, hits = sanitize("api_key='sk-abc def ghi'")
-    assert "sk-abc" not in text
+    text, hits = sanitize("api_key='test-api-key with spaces'")
+    assert "test-api-key" not in text
     assert "ghi" not in text
     assert "[REDACTED_SECRET]" in text
 

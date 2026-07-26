@@ -44,7 +44,7 @@ The two levers are:
 ```bash
 pip install -r requirements.txt
 
-export OPENAI_API_KEY=sk-...   # or OPENROUTER_API_KEY=sk-or-...
+export OPENAI_API_KEY=your-openai-api-key   # or OPENROUTER_API_KEY=your-openrouter-api-key
 python demo.py
 python demo.py --offline --scenario all
 ```
@@ -124,7 +124,7 @@ Offline mode reads `sample_trace.json` and re-runs only cost arithmetic, enablin
 pip install -r requirements.txt
 
 # 在线（真实调用模型，需要 key）：默认跑 A(朴素)+B(优化) 两组
-export OPENAI_API_KEY=sk-...           # 或 export OPENROUTER_API_KEY=sk-or-...（自动回退）
+export OPENAI_API_KEY=your-openai-api-key           # 或 export OPENROUTER_API_KEY=your-openrouter-api-key（自动回退）
 python demo.py
 
 # 离线（无需 key）：用内置 canned trace 复算全部表格

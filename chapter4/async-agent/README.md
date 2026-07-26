@@ -115,7 +115,7 @@ LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 ```
 
 > **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset (and not moonshot/ark), with `OPENROUTER_API_KEY` set, `demo.py` routes via OpenRouter and maps model ids to `provider/model` (`gpt-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids with `/` pass through). Or set `LLM_PROVIDER=openrouter` explicitly. Example:  
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot defaults to **reasoning model `kimi-k3`** (older `kimi-k2-*-preview` / `moonshot-v1-*` are outdated/retired). Reasoning models need `temperature=1` and `max_tokens>=2048`; `demo.py` applies these automatically by model.
 
@@ -380,7 +380,7 @@ LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 > 只要设置了 `OPENROUTER_API_KEY`，`demo.py` 会自动改走 OpenRouter，并把模型名映射为
 > `provider/model` 形式（`gpt-*` → `openai/…`、`claude-*` → `anthropic/claude-opus-4.8`、
 > 含 `/` 的原样透传）。也可显式 `LLM_PROVIDER=openrouter`。例如：
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot 默认走**推理模型 `kimi-k3`**（旧的 `kimi-k2-*-preview` 与 `moonshot-v1-*` 已过时/停用）。
 > 推理模型要求 `temperature=1` 且 `max_tokens>=2048`，`demo.py` 会按模型自动套用这套采样参数，无需手动配置。
