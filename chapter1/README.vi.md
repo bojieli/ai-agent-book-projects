@@ -6,12 +6,12 @@
 
 ## Dự án đi kèm
 
-| Project | Type | Description |
-| --- | :--: | --- |
-| [learning-from-experience](learning-from-experience/) | ✅ | So sánh học tăng cường truyền thống (Q-learning) với học trong ngữ cảnh dựa trên LLM, tái hiện các insight then chốt trong bài viết “The Second Half” của Shunyu Yao. Thông qua trò chơi săn kho báu, dự án cho thấy LLM có thể vượt RL truyền thống về hiệu quả mẫu tới 250–400 lần. |
-| [web-search-agent](web-search-agent/) | ✅ | Triển khai Agent có khả năng tìm kiếm chuyên sâu cơ bản, có thể tìm kiếm nhiều vòng và tổng hợp thông tin. |
-| [search-codegen](search-codegen/) | ✅ | Xây dựng Agent có năng lực tìm kiếm chuyên sâu cơ bản và sandbox chạy mã, tổng hợp sử dụng tìm kiếm web, thực thi mã và các công cụ khác để phân tích phức tạp. |
-| [context](context/) | ✅ | Thông qua thí nghiệm ablation có hệ thống để cho thấy tầm quan trọng của từng thành phần trong ngữ cảnh Agent. Hỗ trợ nhiều nhà cung cấp LLM (SiliconFlow Qwen, ByteDance Doubao, Moonshot Kimi), cấu hình các chế độ ngữ cảnh khác nhau để quan sát thay đổi hành vi của Agent. |
+| Thí nghiệm | Project | Type | Description |
+| :--: | --- | :--: | --- |
+| 1-1 | [context](context/) | ✅ | Thông qua thí nghiệm ablation có hệ thống để cho thấy tầm quan trọng của từng thành phần trong ngữ cảnh Agent. Hỗ trợ nhiều nhà cung cấp LLM (SiliconFlow Qwen, ByteDance Doubao, Moonshot Kimi), cấu hình các chế độ ngữ cảnh khác nhau để quan sát thay đổi hành vi của Agent. |
+| 1-2 | [web-search-agent](web-search-agent/) | ✅ | Triển khai Agent có khả năng tìm kiếm chuyên sâu cơ bản, có thể tìm kiếm nhiều vòng và tổng hợp thông tin. |
+| 1-3 | [search-codegen](search-codegen/) | ✅ | Xây dựng Agent có năng lực tìm kiếm chuyên sâu cơ bản và sandbox chạy mã, tổng hợp sử dụng tìm kiếm web, thực thi mã và các công cụ khác để phân tích phức tạp. |
+| 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | So sánh học tăng cường truyền thống (Q-learning) với học trong ngữ cảnh dựa trên LLM, tái hiện các insight then chốt trong bài viết “The Second Half” của Shunyu Yao. Thông qua trò chơi săn kho báu, dự án cho thấy LLM có thể vượt RL truyền thống về hiệu quả mẫu tới 250–400 lần. |
 
 ## Phân loại dự án
 
