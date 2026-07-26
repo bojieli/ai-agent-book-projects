@@ -63,6 +63,32 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 >
 > 📚 How to read this book efficiently? See **[Learning Suggestions](LEARNING.md)** (core ideas, learning path, difficulty levels, practice tips).
 
+## 💻 Run the Companion Experiments
+
+The shared baseline is **Python 3.10+**. Install dependencies by chapter from the repository root; replace `ch1` with `ch2` through `ch10` for another chapter:
+
+```bash
+# Recommended: use the committed uv.lock for a reproducible chapter environment
+uv sync --locked --extra ch1
+
+# Without uv: resolve from pyproject.toml with pip
+python -m pip install -e ".[ch1]"
+```
+
+Before running an experiment that calls a model, copy `.env.example` to `.env` and fill in at least one provider key. Local Ollama users can start Ollama and add `--provider ollama` to the command.
+
+Then run an experiment from the repository root, for example:
+
+```bash
+uv run python chapter1/context/main.py
+# After a pip install, you can also run: python chapter1/context/main.py
+```
+
+- See the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/). `pip` remains supported but resolves fresh instead of using the lockfile.
+- Existing experiment-level `requirements.txt` files remain supported during migration, especially for isolated projects or special version constraints.
+- `all` is broad and CPU-friendly, not literally every experiment. `uv sync` exactly syncs the current selection each time, so combine special extras in one command, such as `uv sync --locked --extra ch2 --extra vllm` or `uv sync --locked --extra ch7 --extra unsloth`; the pip equivalent is `python -m pip install -e ".[ch2,vllm]"`.
+- Follow each experiment's README for system dependencies such as browsers, CUDA, FFmpeg, Ollama, Playwright browsers, and external repositories. Some browser and memory experiments require Python 3.11+, while some vendored Chapter 8 components require Python 3.12+.
+
 ## 🔑 API Keys
 
 It is recommended to apply for API keys from several platforms for convenient learning. See [this guide](https://01.me/2025/07/llm-api-setup/) for model selection.

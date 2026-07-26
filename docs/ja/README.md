@@ -58,6 +58,32 @@
 >
 > 📚 本書を効率的に読むには？ **[学習のヒント](LEARNING.md)**（中核となる考え方、学習パス、難易度レベル、実践のヒント）を参照してください。
 
+## 💻 付属実験を実行する
+
+共通の動作環境は **Python 3.10 以上**です。リポジトリのルートで章ごとに依存関係をインストールします。別の章では `ch1` を `ch2` ～ `ch10` に置き換えてください。
+
+```bash
+# 推奨：コミット済みの uv.lock を使用し、再現可能な章別環境を構築
+uv sync --locked --extra ch1
+
+# uv を使わない場合：pip で pyproject.toml から再解決
+python -m pip install -e ".[ch1]"
+```
+
+モデルを呼び出す実験を実行する前に、`.env.example` を `.env` にコピーし、少なくとも1つの provider key を入力してください。ローカル Ollama を使う場合は Ollama を起動し、コマンドに `--provider ollama` を追加します。
+
+インストール後はリポジトリのルートから実験を実行できます。
+
+```bash
+uv run python chapter1/context/main.py
+# pip でインストールした場合：python chapter1/context/main.py
+```
+
+- `uv` の導入方法は[公式ガイド](https://docs.astral.sh/uv/getting-started/installation/)を参照してください。`pip` も引き続き利用できますが、ロックファイルは使用しません。
+- 移行期間中は各実験の `requirements.txt` も引き続きサポートします。単独プロジェクトや特殊なバージョン制約に適しています。
+- `all` は CPU 向けの広範な構成であり、すべての実験を含むわけではありません。`uv sync` は毎回現在の選択に正確に同期するため、特殊な extra は同じコマンドにまとめてください。例: `uv sync --locked --extra ch2 --extra vllm` または `uv sync --locked --extra ch7 --extra unsloth`。pip では `python -m pip install -e ".[ch2,vllm]"` です。
+- ブラウザ、CUDA、FFmpeg、Ollama、Playwright ブラウザ、外部リポジトリなどのシステム依存関係は各実験の README に従ってください。一部のブラウザおよびメモリ実験には Python 3.11 以上が必要で、第8章の一部の同梱サードパーティコンポーネントには Python 3.12 以上が必要です。
+
 ## 🔑 API キー
 
 学習を円滑に進めるため、いくつかのプラットフォームで API キーを申請することをおすすめします。モデル選定については [このガイド](https://01.me/2025/07/llm-api-setup/) を参照してください。

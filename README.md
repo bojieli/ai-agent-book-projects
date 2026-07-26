@@ -63,6 +63,32 @@
 >
 > 📚 如何高效阅读本书？详见 **[学习建议](docs/zh-CN/LEARNING.md)**（核心理念、学习路径、难度分级、实践建议）。
 
+## 💻 运行配套实验
+
+项目统一支持 **Python 3.10+**。请在仓库根目录按章节安装依赖；将 `ch1` 替换为 `ch2` ~ `ch10` 即可安装对应章节：
+
+```bash
+# 推荐：使用提交到仓库的 uv.lock，获得可复现的章节环境
+uv sync --locked --extra ch1
+
+# 未安装 uv 时：使用 pip 从 pyproject.toml 重新解析
+python -m pip install -e ".[ch1]"
+```
+
+运行会调用模型的实验前，先复制 `.env.example` 为 `.env` 并填入至少一个提供商 Key；本地 Ollama 用户可启动 Ollama 后在命令中添加 `--provider ollama`。
+
+安装后可从仓库根目录运行实验，例如：
+
+```bash
+uv run python chapter1/context/main.py
+# 使用 pip 安装时也可直接运行：python chapter1/context/main.py
+```
+
+- `uv` 安装方法见 [官方文档](https://docs.astral.sh/uv/getting-started/installation/)；`pip` 仍受支持，但不会使用锁文件。
+- 各实验现有的 `requirements.txt` 在迁移期间继续有效，适合只运行单个项目或需要特殊版本约束的情况。
+- `all` 是不含本地训练栈的 CPU 友好组合，并不代表每个实验；`uv sync` 每次都会精确同步当前选择，使用特殊 extra 时请合并到同一条命令，例如 `uv sync --locked --extra ch2 --extra vllm` 或 `uv sync --locked --extra ch7 --extra unsloth`；pip 对应为 `python -m pip install -e ".[ch2,vllm]"`。
+- 浏览器、CUDA、FFmpeg、Ollama、Playwright 浏览器及外部仓库等系统依赖，请继续参考各实验 README。部分浏览器和记忆实验需要 Python 3.11+，第 8 章部分内置第三方组件需要 Python 3.12+。
+
 ## 🔑 API 密钥
 
 建议申请下面几个平台的 API Key 方便学习。模型选型可参考 [这篇指南](https://01.me/2025/07/llm-api-setup/)。

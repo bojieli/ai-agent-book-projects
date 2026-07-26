@@ -64,6 +64,32 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 >
 > 📚 Cách đọc sách hiệu quả? Xem **[Gợi ý học tập](LEARNING.md)** (ý tưởng cốt lõi, lộ trình, phân cấp độ khó, mẹo thực hành).
 
+## 💻 Chạy các thí nghiệm đi kèm
+
+Mốc dùng chung là **Python 3.10+**. Hãy cài phụ thuộc theo chương từ thư mục gốc của kho; thay `ch1` bằng `ch2` đến `ch10` cho chương khác:
+
+```bash
+# Khuyên dùng: sử dụng uv.lock đã commit để có môi trường chương tái lập được
+uv sync --locked --extra ch1
+
+# Không dùng uv: phân giải lại từ pyproject.toml bằng pip
+python -m pip install -e ".[ch1]"
+```
+
+Trước khi chạy thí nghiệm có gọi mô hình, hãy sao chép `.env.example` thành `.env` và điền ít nhất một khóa provider. Người dùng Ollama cục bộ có thể khởi động Ollama rồi thêm `--provider ollama` vào lệnh.
+
+Sau khi cài, chạy thí nghiệm từ thư mục gốc, ví dụ:
+
+```bash
+uv run python chapter1/context/main.py
+# Sau khi cài bằng pip: python chapter1/context/main.py
+```
+
+- Xem [hướng dẫn cài uv](https://docs.astral.sh/uv/getting-started/installation/). `pip` vẫn được hỗ trợ nhưng sẽ phân giải mới thay vì dùng lockfile.
+- Các tệp `requirements.txt` của từng thí nghiệm vẫn được hỗ trợ trong giai đoạn chuyển đổi, nhất là với dự án độc lập hoặc ràng buộc phiên bản đặc biệt.
+- `all` là tập rộng, thân thiện với CPU, không phải toàn bộ thí nghiệm. `uv sync` đồng bộ chính xác lựa chọn hiện tại mỗi lần chạy, vì vậy hãy gộp extra đặc biệt trong cùng một lệnh, ví dụ `uv sync --locked --extra ch2 --extra vllm` hoặc `uv sync --locked --extra ch7 --extra unsloth`; lệnh pip tương ứng là `python -m pip install -e ".[ch2,vllm]"`.
+- Làm theo README của từng thí nghiệm đối với phụ thuộc hệ thống như trình duyệt, CUDA, FFmpeg, Ollama, trình duyệt Playwright và kho ngoài. Một số thí nghiệm trình duyệt và bộ nhớ cần Python 3.11+, còn một số thành phần bên thứ ba được đưa vào Chương 8 cần Python 3.12+.
+
 ## 🔑 API Key
 
 Nên đăng ký API key từ vài nền tảng để thuận tiện học tập. Tham khảo [hướng dẫn này](https://01.me/2025/07/llm-api-setup/) để chọn mô hình.
