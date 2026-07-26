@@ -10,8 +10,8 @@
 | :--: | --- | :--: | --- |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Pretrains a small language model from scratch to understand the complete pretraining process and key technologies. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Performs continued pretraining on domain-specific data to improve model performance in the target domain. |
-| 7-6 | [sesame](sesame/) | ✅ | Focuses on training and evaluation methods for sequence modeling tasks. |
-| 7-6 | [orpheus](orpheus/) | ✅ | Trains models for music generation and understanding. |
+| 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: LoRA fine-tuning of the 1B TTS model, controlling expression with paralinguistic tags like `<laugh>` and `<sigh>` |
+| 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B speech SFT: LoRA fine-tuning of the TTS model, voice cloning via reference audio for cross-sentence timbre consistency |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Trains the reasoning ability of models in multiple language environments, improving performance on cross-lingual tasks. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | Distills CoT trajectories from frontier models like Claude via OpenRouter; rule-verified and converted into SFT data (companion to Experiment 7-9). |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | Teaches reasoning models to adaptively choose their reasoning mode (Thinking vs NoThinking) based on problem difficulty. Through constrained optimization and importance sampling, it significantly reduces reasoning costs (45-69%) while improving accuracy. Based on the DeepSeek-R1-Distill-Qwen model, trained using the DAPO algorithm. |

@@ -10,8 +10,8 @@
 | :--: | --- | :--: | --- |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 从零预训练小型 LLM/VLM，理解完整预训练流程与关键技术 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | 在特定领域数据上持续预训练，提升目标领域表现 |
-| 7-6 | [sesame](sesame/) | ✅ | 专注于序列建模任务的训练和评估方法 |
-| 7-6 | [orpheus](orpheus/) | ✅ | 训练模型的音乐生成与理解能力 |
+| 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 语音 SFT：LoRA 微调 1B TTS 模型，用 `<laugh>`、`<sigh>` 等副语言标记控制表达 |
+| 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B 语音 SFT：LoRA 微调 TTS 模型，拼接参考音频实现跨句音色一致的声音复刻 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | 训练模型在多语言环境下的推理能力，提升跨语言任务表现 |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | 经 OpenRouter 调用 Claude 等前沿模型蒸馏 CoT 轨迹，规则验证器过滤后生成 SFT 数据（实验 7-9 配套） |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | 让推理模型按问题难度自适应选 Thinking/NoThinking，约束优化 + 重要性采样降成本 45–69% 同时提准确率 |
