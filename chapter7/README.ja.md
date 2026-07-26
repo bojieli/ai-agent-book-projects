@@ -22,6 +22,9 @@
 | [sesame](sesame/) | ✅ | 系列モデリングタスクの訓練と評価の手法に焦点を当てる。 |
 | [orpheus](orpheus/) | ✅ | 音楽の生成と理解のためにモデルを訓練する。 |
 | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |
+| [cot-distillation](cot-distillation/) | ✅ | OpenRouter 経由で Claude などの先端モデルから CoT 軌跡を蒸留し、ルールベース検証器でフィルタして SFT データを生成する（実験 7-9）。 |
+| [RLVP](RLVP/) | 📖 | Rewarding Outcomes, Penalizing Paths（RLVP）のポストトレーニング研究（実験 7-14）。完全な訓練・評価コードは外部論文リポジトリ `19PINE-AI/rlvp` にあり、別途 clone が必要。 |
+
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |
