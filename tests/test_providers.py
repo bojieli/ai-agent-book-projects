@@ -4,15 +4,20 @@ Focus is behaviour parity with the three per-chapter copies this module
 replaces, plus the resolution rules that are easy to regress.
 """
 
+import dataclasses
+
 import pytest
 
 from agentbook.providers import (
     PROVIDERS,
     SUPPORTED_PROVIDERS,
+    Provider,
     map_model_to_openrouter,
     resolve_backend,
     resolve_llm_backend,
 )
+from agentbook.providers.registry import supported_providers
+from agentbook.providers.resolution import build_openrouter_backend
 
 PROVIDER_KEY_VARS = [
     "SILICONFLOW_API_KEY",
@@ -270,3 +275,130 @@ def test_other_providers_key_is_not_forwarded_to_openrouter(monkeypatch):
     backend = resolve_backend("doubao", model="gpt-5.6-luna", api_key="sk-ark-explicit")
     assert backend.using_openrouter is True
     assert backend.api_key == "sk-or-env"
+
+
+# --- extensibility: a registry-only edit must be sufficient -----------------
+#
+# registry.py promises that adding a provider means adding one entry and
+# nothing else. These pin that promise for the cases that previously needed an
+# edit to the resolver as well.
+
+
+@pytest.fixture
+def register_provider(monkeypatch):
+    """Register a temporary provider, removed again after the test.
+
+    Returns:
+        A callable taking a name plus ``Provider`` field overrides, based on
+        the ``openrouter`` entry.
+    """
+
+    def _register(name: str, **overrides) -> Provider:
+        spec = dataclasses.replace(PROVIDERS["openrouter"], name=name, **overrides)
+        monkeypatch.setitem(PROVIDERS, name, spec)
+        return spec
+
+    return _register
+
+
+def test_second_aggregator_namespaces_models(register_provider):
+    """A new aggregator must map bare model ids without touching resolution.py.
+
+    Before ``namespaces_models`` existed this was gated on the literal provider
+    name, so any other aggregator silently sent un-namespaced ids and 404'd at
+    request time rather than failing in config.
+    """
+    register_provider(
+        "together",
+        base_url="https://api.together.xyz/v1",
+        key_vars=("TOGETHER_API_KEY",),
+        namespaces_models=True,
+    )
+    backend = resolve_backend("together", model="gpt-4o", api_key="sk-tog")
+    assert backend.model == "openai/gpt-4o"
+    # The explicit key belongs to that aggregator, so it must be honoured...
+    assert backend.api_key == "sk-tog"
+    # ...and sent to that aggregator. Sharing OpenRouter's id format must not
+    # drag along OpenRouter's endpoint, or the credential goes to the wrong host.
+    assert backend.base_url == "https://api.together.xyz/v1"
+    assert backend.using_openrouter is False
+
+
+def test_other_aggregator_key_is_not_treated_as_an_openrouter_key(register_provider):
+    """A non-OpenRouter aggregator's key must not enable the gpt-5 reroute.
+
+    ``namespaces_models`` describes id formatting, not credential
+    compatibility: routing a Together key to OpenRouter fails authentication.
+    """
+    register_provider(
+        "together",
+        base_url="https://api.together.xyz/v1",
+        key_vars=("TOGETHER_API_KEY",),
+        namespaces_models=True,
+    )
+    backend = resolve_backend("together", model="gpt-5.6-luna", api_key="sk-tog")
+    assert backend.using_openrouter is False
+    assert backend.base_url == "https://api.together.xyz/v1"
+    assert backend.api_key == "sk-tog"
+
+
+def test_openrouter_still_routes_gpt5_with_an_explicit_key(monkeypatch):
+    """The real OpenRouter provider keeps its explicit-key gpt-5 behaviour."""
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    backend = resolve_backend("openrouter", model="gpt-5.6-luna", api_key="sk-or")
+    assert backend.using_openrouter is True
+    assert backend.api_key == "sk-or"
+    assert backend.model == "openai/gpt-5.6-luna"
+
+
+def test_single_vendor_provider_does_not_namespace_models(register_provider):
+    """The converse: a non-aggregator must receive the id it was given."""
+    register_provider(
+        "vendorx",
+        base_url="https://api.vendorx.test/v1",
+        key_vars=("VENDORX_API_KEY",),
+        namespaces_models=False,
+    )
+    backend = resolve_backend("vendorx", model="gpt-4o", api_key="sk-vx")
+    assert backend.model == "gpt-4o"
+
+
+def test_keyless_aggregator_still_gets_a_placeholder_key(register_provider):
+    """Every backend needs a non-empty key: the OpenAI client rejects ``""``.
+
+    The aggregator branch used to skip the placeholder fallback, so a keyless
+    aggregator resolved to an empty credential.
+    """
+    register_provider("keyless_agg", requires_key=False, key_vars=(), namespaces_models=True)
+    assert resolve_backend("keyless_agg", model="gpt-4o").api_key
+
+
+def test_openrouter_backend_never_carries_an_empty_key():
+    """The OpenRouter builder must apply the placeholder too.
+
+    Covers ``build_openrouter_backend`` directly: the test above now reaches
+    the plain-provider branch instead, so without this the builder's own
+    fallback is unguarded -- deleting it breaks no test even though the path
+    is reachable via a keyless provider that routes to OpenRouter.
+    """
+    assert build_openrouter_backend("gpt-4o", "").api_key
+    assert build_openrouter_backend("gpt-4o", "sk-real").api_key == "sk-real"
+
+
+def test_supported_providers_helper_sees_late_registrations(register_provider):
+    """``SUPPORTED_PROVIDERS`` is an import-time snapshot; the helper is live."""
+    register_provider("latecomer", key_vars=("LATE_API_KEY",))
+    assert "latecomer" not in SUPPORTED_PROVIDERS
+    assert "latecomer" in supported_providers()
+
+
+def test_placeholder_key_is_not_a_provider_name():
+    """The placeholder credential must not be mistakable for an identity.
+
+    It was once the string ``"ollama"``, making ``backend.api_key`` equal to
+    ``backend.provider`` and indistinguishable from a real user-set key.
+    """
+    backend = resolve_backend("ollama")
+    assert backend.api_key
+    assert backend.api_key != backend.provider
+    assert backend.api_key not in PROVIDERS

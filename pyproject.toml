@@ -323,9 +323,26 @@ include = ["agentbook*"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
+# Apply the exclusions below even when a path is named on the command line.
+# Without this, `ruff format chapter1/web-search-agent/tests` would reformat
+# files the exclusion is meant to protect, because an explicit path overrides
+# discovery-time filtering.
+# Apply the exclusions below even when a path is named on the command line,
+# which is how pre-commit invokes ruff and how the mistake below happens.
+force-exclude = true
 extend-exclude = [
     "chapter8/gaia-experience/AWorld",
     "chapter8/browser-use-rpa/browser-use",
     "chapter2/prompt-engineering/tau_bench",
     "_web",
 ]
+
+[tool.ruff.format]
+# black owns formatting here: these files are checked at its default 88 columns
+# by .github/workflows/web-search-agent-tests.yml, so reflowing them to the 100
+# set above turns that check red.
+#
+# Formatter-only, not an entry in extend-exclude above -- that list is global,
+# so excluding them there would also end `ruff check` coverage for the
+# directory. The trailing /* matters: a bare directory name is not matched here.
+exclude = ["chapter1/web-search-agent/tests/*"]
