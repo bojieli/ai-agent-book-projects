@@ -17,8 +17,8 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Wor
 
 - **Universal entry:** single `main.py` for all platforms
 - **Automatic backend:**
-  - **vLLM** on Linux/Windows with NVIDIA GPU
-  - **Ollama** on macOS, Windows, or Linux without GPU
+  - **vLLM** on Linux/WSL with NVIDIA GPU
+  - **Ollama** on macOS, native Windows, or Linux without GPU
 - **Standard tool calling** only (OpenAI-compatible format)
 - **Built-in tools:** weather, calculator, time, currency, PDF parse, code interpreter
 - **Interactive & example modes**
@@ -30,7 +30,7 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Wor
 # 1. From the repository root, install the shared Chapter 2 environment
 uv sync --locked --extra ch2
 
-# Optional GPU/vLLM path on supported Linux/Windows NVIDIA setups:
+# Optional GPU/vLLM path on supported Linux/WSL NVIDIA setups:
 # uv sync --locked --extra ch2 --extra vllm
 
 # Activate before changing directories:
@@ -41,7 +41,7 @@ source .venv/bin/activate
 
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch2]"
-# GPU/vLLM pip fallback: python -m pip install -e ".[ch2,vllm]"
+# Linux/WSL GPU/vLLM pip fallback: python -m pip install -e ".[ch2,vllm]"
 
 # 2. Enter project
 cd chapter2/local_llm_serving
@@ -60,7 +60,7 @@ python main.py
 
 **All platforms:** Python 3.10+ and the root `ch2` extra (`uv sync --locked --extra ch2`).
 
-Use `--extra vllm` only for the GPU/vLLM path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack.
+Use `--extra vllm` only for the Linux/WSL GPU path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack.
 
 #### macOS
 ```bash
@@ -70,8 +70,9 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**With NVIDIA GPU:** CUDA toolkit + drivers 452.39+ → vLLM used automatically.  
-**Without GPU:** install Ollama from [ollama.com](https://ollama.com/download/windows), then `ollama pull qwen3:0.6b`.
+**Native Windows:** install Ollama from [ollama.com](https://ollama.com/download/windows), then `ollama pull qwen3:0.6b`.
+
+**GPU/vLLM:** use Linux or WSL2 with NVIDIA GPU support, then install the `vllm` extra.
 
 #### Linux
 **With NVIDIA GPU:** CUDA → vLLM automatic.  
@@ -296,8 +297,8 @@ Standard OpenAI-compatible:
 
 - **统一入口：** 单一 `main.py` 覆盖各平台
 - **自动选后端：**
-  - Linux/Windows + NVIDIA GPU → **vLLM**
-  - macOS、无 GPU 的 Windows/Linux → **Ollama**
+  - Linux/WSL + NVIDIA GPU → **vLLM**
+  - macOS、原生 Windows、无 GPU 的 Linux → **Ollama**
 - **仅标准工具调用**（OpenAI 兼容格式）
 - **内置工具：** 天气、时间、汇率、PDF、代码解释器等
 - **交互与示例模式**
@@ -309,7 +310,7 @@ Standard OpenAI-compatible:
 # 在仓库根目录安装统一的第 2 章环境
 uv sync --locked --extra ch2
 
-# 支持的 Linux/Windows NVIDIA 环境如需 GPU/vLLM，可改用：
+# 支持的 Linux/WSL NVIDIA 环境如需 GPU/vLLM，可改用：
 # uv sync --locked --extra ch2 --extra vllm
 
 # 切换目录前先激活环境：
@@ -320,7 +321,7 @@ source .venv/bin/activate
 
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch2]"
-# GPU/vLLM pip 兜底：python -m pip install -e ".[ch2,vllm]"
+# Linux/WSL GPU/vLLM pip 兜底：python -m pip install -e ".[ch2,vllm]"
 
 cd chapter2/local_llm_serving
 
@@ -335,7 +336,7 @@ python main.py
 
 **全平台：** Python 3.10+，并安装根目录 `ch2` extra（`uv sync --locked --extra ch2`）。
 
-只有走 GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。
+只有走 Linux/WSL GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。
 
 #### macOS
 ```bash
@@ -345,8 +346,9 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**有 NVIDIA GPU：** 安装 CUDA 与驱动 452.39+ → 自动用 vLLM。  
-**无 GPU：** 从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再 `ollama pull qwen3:0.6b`。
+**原生 Windows：** 从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再 `ollama pull qwen3:0.6b`。
+
+**GPU/vLLM：** 使用 Linux 或启用 NVIDIA GPU 支持的 WSL2，再安装 `vllm` extra。
 
 #### Linux
 **有 NVIDIA GPU：** CUDA → 自动 vLLM。  
