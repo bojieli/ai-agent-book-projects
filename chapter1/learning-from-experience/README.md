@@ -78,7 +78,12 @@ A text-based treasure hunt game where agents must:
 ```bash
 # Recommended from the repository root: use the shared Chapter 1 environment
 uv sync --locked --extra ch1
+
+# Activate it before changing directories:
+# macOS/Linux:
 source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch1]"
@@ -388,7 +393,12 @@ LLM DECISION PROCESS
 ```bash
 # 推荐在仓库根目录使用统一的第 1 章环境
 uv sync --locked --extra ch1
+
+# 切换目录前先激活环境：
+# macOS/Linux：
 source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
 
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch1]"
