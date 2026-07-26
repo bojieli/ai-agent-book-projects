@@ -17,6 +17,7 @@ from agentbook.providers import (
     resolve_llm_backend,
 )
 from agentbook.providers.registry import supported_providers
+from agentbook.providers.resolution import build_openrouter_backend
 
 PROVIDER_KEY_VARS = [
     "SILICONFLOW_API_KEY",
@@ -370,6 +371,18 @@ def test_keyless_aggregator_still_gets_a_placeholder_key(register_provider):
     """
     register_provider("keyless_agg", requires_key=False, key_vars=(), namespaces_models=True)
     assert resolve_backend("keyless_agg", model="gpt-4o").api_key
+
+
+def test_openrouter_backend_never_carries_an_empty_key():
+    """The OpenRouter builder must apply the placeholder too.
+
+    Covers ``build_openrouter_backend`` directly: the test above now reaches
+    the plain-provider branch instead, so without this the builder's own
+    fallback is unguarded -- deleting it breaks no test even though the path
+    is reachable via a keyless provider that routes to OpenRouter.
+    """
+    assert build_openrouter_backend("gpt-4o", "").api_key
+    assert build_openrouter_backend("gpt-4o", "sk-real").api_key == "sk-real"
 
 
 def test_supported_providers_helper_sees_late_registrations(register_provider):
