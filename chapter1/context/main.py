@@ -82,7 +82,7 @@ Provide a comprehensive financial summary with all calculations shown."""
             Task description  
         """
         return """A multinational company has the following Q1 2024 expenses documented in this report:
-https://github.com/adobe/pdf-services-node-sdk-samples/raw/refs/heads/master/resources/extractPDFInput.pdf
+https://raw.githubusercontent.com/adobe/pdfservices-node-sdk-samples/master/resources/extractPDFInput.pdf
 
 Tasks to complete:
 1. Parse the PDF and extract all monetary values mentioned
