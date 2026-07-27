@@ -54,7 +54,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Library/Fonts
-          key: fonts-${{ runner.os }}-${{ runner.arch }}-v2-${{ hashFiles('.github/scripts/install_apple_fonts.sh') }}
+          key: fonts-${{ runner.os }}-${{ runner.arch }}-v3-${{ hashFiles('.github/scripts/install_apple_fonts.sh') }}
 
       # The MacTeX tree is installed by a root pkg into /usr/local/texlive, so it
       # can't be extracted straight back as the runner user. Cache a tarball
@@ -95,20 +95,18 @@ jobs:
       # runners (only an unusable reserved UI copy exists); without it
       # rsvg-convert renders Chinese figure text in a fallback font (Japanese
       # glyph variants). The Apple-font script fetches the real font from Apple's
-      # asset CDN. The Japanese Noto fonts (WIP ja build) are non-fatal so a bad
-      # cask name can never break the release build for the other languages.
+      # asset CDN. Arabic fonts are required by the release build; the Japanese
+      # Noto fonts (WIP ja build) remain non-fatal so a bad cask name can never
+      # break the release build for the other languages.
       - name: Install fonts (cache miss)
         if: steps.fonts-cache.outputs.cache-hit != 'true'
         env:
           HOMEBREW_NO_AUTO_UPDATE: '1'
           HOMEBREW_NO_INSTALL_CLEANUP: '1'
         run: |
-          brew install --cask font-dejavu font-noto-sans-cjk-sc font-noto-sans-cjk-tc font-noto-serif-tamil
+          brew install --cask font-dejavu font-noto-sans-cjk-sc font-noto-sans-cjk-tc font-noto-serif-tamil font-amiri font-noto-naskh-arabic font-noto-sans-arabic
           brew install --cask font-noto-sans-cjk-jp || true
           brew install --cask font-noto-serif-cjk-jp || brew install --cask font-noto-serif-cjk || true
-          brew install --cask font-amiri || true
-          brew install --cask font-noto-naskh-arabic || true
-          brew install --cask font-noto-sans-arabic || true
           bash .github/scripts/install_apple_fonts.sh
 
       # Refresh fontconfig on every run (the cache restore doesn't touch it).
@@ -130,9 +128,9 @@ jobs:
           PANGOCAIRO_BACKEND: fontconfig
         run: |
           set -u
-          main="book book-zhtw book-en book-ru book-vi book-ta"
+          main="book book-zhtw book-en book-ru book-vi book-ta book-ar"
           pids=""
-          for dir in $main book-ja book-ar; do
+          for dir in $main book-ja; do
             ( cd "$dir" && bash build_pdf.sh ) > "build_${dir}.log" 2>&1 &
             pids="$pids $!:$dir"
           done
@@ -141,14 +139,14 @@ jobs:
             pid="${pd%%:*}"; dir="${pd##*:}"
             if wait "$pid"; then
               echo "OK: $dir"
-            elif [ "$dir" = "book-ja" ] || [ "$dir" = "book-ar" ]; then
+            elif [ "$dir" = "book-ja" ]; then
               echo "::warning::$dir PDF build failed (WIP, non-fatal)"
             else
               echo "::error::PDF build failed for $dir"
               fail=1
             fi
           done
-          for dir in $main book-ja book-ar; do
+          for dir in $main book-ja; do
             echo "===================== $dir ====================="
             cat "build_${dir}.log" 2>/dev/null || true
           done
@@ -184,15 +182,16 @@ jobs:
           cp book-ru/AI-Agents-in-Depth-ru.pdf                   "$out/AI-Agents-in-Depth-ru.pdf"
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.pdf     "$out/AI-Agents-in-Depth-ta.pdf"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.pdf     "$out/AI-Agents-in-Depth-vi.pdf"
+          cp book-ar/AI-Agents-in-Depth-ar.pdf                    "$out/AI-Agents-in-Depth-ar.pdf"
           cp "book/深入理解-AI-Agent-李博杰-v1.3.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.epub       "$out/AI-Agents-in-Depth-en.epub"
           cp book-ru/AI-Agents-in-Depth-ru.epub                  "$out/AI-Agents-in-Depth-ru.epub"
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.epub    "$out/AI-Agents-in-Depth-ta.epub"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.epub    "$out/AI-Agents-in-Depth-vi.epub"
-          # WIP: ja artifacts are copied only if the (non-fatal) ja build produced them.
+          # WIP: ja artifacts and the Arabic EPUB are copied only if their
+          # non-fatal builds produced them.
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.epub    "$out/AI-Agents-in-Depth-ja.epub" || echo "ja EPUB not built yet (WIP) — skipping"
-          cp book-ar/AI-Agents-in-Depth-ar.pdf                    "$out/AI-Agents-in-Depth-ar.pdf"  || echo "ar PDF not built yet (WIP) — skipping"
           cp book-ar/AI-Agents-in-Depth-ar.epub                   "$out/AI-Agents-in-Depth-ar.epub" || echo "ar EPUB not built yet (WIP) — skipping"
           gh release upload latest "$out"/* --clobber --repo "${{ github.repository }}"
