@@ -38,7 +38,22 @@ This project corresponds to Experiment 4-2 in the book’s “Execution Tools”
 ### Installation
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/execution-tools
+
+# Exact legacy parity path, including optional scientific/ML spreadsheet packages:
+# python -m pip install -r requirements.txt
 ```
 
 ### Configuration
@@ -232,7 +247,22 @@ See `examples.py` for comprehensive usage examples.
 ### 安装
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/execution-tools
+
+# 精确复现旧版单项目环境，含可选科学计算/机器学习/表格处理依赖：
+# python -m pip install -r requirements.txt
 ```
 
 ### 配置
