@@ -152,37 +152,37 @@ Agent 執行任務的核心模式叫做 **ReAct**（Reasoning + Acting）。雖�
 
 ```
 軌跡 = [
-  {role: “user” , content: “根據公司季度收入：Q1 2.5M 美元，Q2 2.1M 歐元，Q3 1.8M 英鎊，Q4 380M 日元，計算公司年度總收入和季度平均收入” },
+  {role: "user" , content: "根據公司季度收入：Q1 2.5M 美元，Q2 2.1M 歐元，Q3 1.8M 英鎊，Q4 380M 日元，計算公司年度總收入和季度平均收入" },
   
   # 第一次迭代 - LLM 看到上述軌跡，生成響應
-  {role: “assistant” , 
-   reasoning: “需要將所有貨幣轉換為 USD...” ,
-   content: “” ,  # 沒有直接回複使用者
+  {role: "assistant" , 
+   reasoning: "需要將所有貨幣轉換為 USD..." ,
+   content: "" ,  # 沒有直接回複使用者
    tool_calls: [
-     {name: “convert_currency” , args: {amount: 2100000, from: “EUR” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 1800000, from: “GBP” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 380000000, from: “JPY” , to: “USD” }}
+     {name: "convert_currency" , args: {amount: 2100000, from: "EUR" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 1800000, from: "GBP" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 380000000, from: "JPY" , to: "USD" }}
    ]},
   
   # Agent 框架執行工具，新增結果到軌跡
-  {role: “tool” , content: “EUR->USD: 2282608.7” },
-  {role: “tool” , content: “GBP->USD: 2278481.01” },
-  {role: “tool” , content: “JPY->USD: 2541806.02” },
+  {role: "tool" , content: "EUR->USD: 2282608.7" },
+  {role: "tool" , content: "GBP->USD: 2278481.01" },
+  {role: "tool" , content: "JPY->USD: 2541806.02" },
   
   # 第二次迭代 - LLM 看到完整軌跡，包括工具結果
-  {role: “assistant” ,
-   reasoning: “已獲得轉換結果，現在需要彙總計算...” ,
-   content: “” ,
+  {role: "assistant" ,
+   reasoning: "已獲得轉換結果，現在需要彙總計算..." ,
+   content: "" ,
    tool_calls: [
-     {name: “code_interpreter” , args: {code: “total = 2500000 + 2282608.7 + ...” }}
+     {name: "code_interpreter" , args: {code: "total = 2500000 + 2282608.7 + ..." }}
    ]},
   
-  {role: “tool” , content: “Total: $9,602,895.73, Average: $2,400,723.93...” },
+  {role: "tool" , content: "Total: $9,602,895.73, Average: $2,400,723.93..." },
   
   # 第三次迭代 - LLM 看到完整軌跡，生成最終答案
-  {role: “assistant” ,
-   reasoning: “所有計算完成，總結結果...” ,
-   content: “FINAL ANSWER: 總收入$9,602,895.73...” }
+  {role: "assistant" ,
+   reasoning: "所有計算完成，總結結果..." ,
+   content: "FINAL ANSWER: 總收入$9,602,895.73..." }
 ]
 ```
 

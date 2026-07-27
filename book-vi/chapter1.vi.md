@@ -157,34 +157,34 @@ trajectory = [
 {role: "user" , content: "Dựa trên doanh thu hàng quý của công ty: Quý 1 2,5 triệu đô la Mỹ, quý 2 2,1 triệu euro, quý 3 1,8 triệu bảng Anh, quý 4 380 triệu yên, tính tổng doanh thu hàng năm và doanh thu trung bình hàng quý của công ty" },
 
 # Lần lặp đầu tiên - LLM nhìn thấy trajectory trên và tạo ra phản hồi
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Cần chuyển đổi tất cả các loại tiền tệ sang USD..." ,
 nội dung: "" , # Không trả lời trực tiếp cho người dùng
    tool_calls: [
-     {name: “convert_currency” , args: {amount: 2100000, from: “EUR” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 1800000, from: “GBP” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 380000000, from: “JPY” , to: “USD” }}
+     {name: "convert_currency" , args: {amount: 2100000, from: "EUR" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 1800000, from: "GBP" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 380000000, from: "JPY" , to: "USD" }}
    ]},
 
 # Công cụ thực thi khung tác nhân, thêm kết quả vào trajectory
-  {role: “tool” , content: “EUR->USD: 2282608.7” },
-  {role: “tool” , content: “GBP->USD: 2278481.01” },
-  {role: “tool” , content: “JPY->USD: 2541806.02” },
+  {role: "tool" , content: "EUR->USD: 2282608.7" },
+  {role: "tool" , content: "GBP->USD: 2278481.01" },
+  {role: "tool" , content: "JPY->USD: 2541806.02" },
 
 # Lần lặp thứ hai - LLM nhìn thấy toàn bộ trajectory, bao gồm cả kết quả công cụ
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Kết quả quy đổi đã có và bây giờ cần tổng hợp, tính toán..." ,
-   content: “” ,
+   content: "" ,
    tool_calls: [
-     {name: “code_interpreter” , args: {code: “total = 2500000 + 2282608.7 + ...” }}
+     {name: "code_interpreter" , args: {code: "total = 2500000 + 2282608.7 + ..." }}
    ]},
 
-  {role: “tool” , content: “Total: $9,602,895.73, Average: $2,400,723.93...” },
+  {role: "tool" , content: "Total: $9,602,895.73, Average: $2,400,723.93..." },
 
 # Lần lặp thứ ba - LLM nhìn thấy trajectory hoàn chỉnh và đưa ra câu trả lời cuối cùng
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Mọi tính toán đã hoàn tất, tổng hợp kết quả..." ,
-nội dung: “CÂU TRẢ LỜI CUỐI CÙNG: Tổng thu nhập $9.602.895,73…” }
+nội dung: "CÂU TRẢ LỜI CUỐI CÙNG: Tổng thu nhập $9.602.895,73…" }
 ]
 ```
 

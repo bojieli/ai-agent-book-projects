@@ -152,37 +152,37 @@ tool: {                            assistant: {
 
 ```
 траектория = [
-  {role: “user” , content: “По квартальным доходам компании: Q1 2.5M долларов, Q2 2.1M евро, Q3 1.8M фунтов, Q4 380M иен, рассчитай годовой суммарный доход компании и средний квартальный доход” },
+  {role: "user" , content: "По квартальным доходам компании: Q1 2.5M долларов, Q2 2.1M евро, Q3 1.8M фунтов, Q4 380M иен, рассчитай годовой суммарный доход компании и средний квартальный доход" },
   
   # Первая итерация — LLM видит указанную выше траекторию и генерирует ответ
-  {role: “assistant” , 
-   reasoning: “Нужно перевести все валюты в USD...” ,
-   content: “” ,  # Нет прямого ответа пользователю
+  {role: "assistant" , 
+   reasoning: "Нужно перевести все валюты в USD..." ,
+   content: "" ,  # Нет прямого ответа пользователю
    tool_calls: [
-     {name: “convert_currency” , args: {amount: 2100000, from: “EUR” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 1800000, from: “GBP” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 380000000, from: “JPY” , to: “USD” }}
+     {name: "convert_currency" , args: {amount: 2100000, from: "EUR" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 1800000, from: "GBP" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 380000000, from: "JPY" , to: "USD" }}
    ]},
   
   # Фреймворк агента выполняет инструменты и добавляет результаты в траекторию
-  {role: “tool” , content: “EUR->USD: 2282608.7” },
-  {role: “tool” , content: “GBP->USD: 2278481.01” },
-  {role: “tool” , content: “JPY->USD: 2541806.02” },
+  {role: "tool" , content: "EUR->USD: 2282608.7" },
+  {role: "tool" , content: "GBP->USD: 2278481.01" },
+  {role: "tool" , content: "JPY->USD: 2541806.02" },
   
   # Вторая итерация — LLM видит полную траекторию, включая результаты инструментов
-  {role: “assistant” ,
-   reasoning: “Результаты конвертации получены, теперь нужно свести и рассчитать...” ,
-   content: “” ,
+  {role: "assistant" ,
+   reasoning: "Результаты конвертации получены, теперь нужно свести и рассчитать..." ,
+   content: "" ,
    tool_calls: [
-     {name: “code_interpreter” , args: {code: “total = 2500000 + 2282608.7 + ...” }}
+     {name: "code_interpreter" , args: {code: "total = 2500000 + 2282608.7 + ..." }}
    ]},
   
-  {role: “tool” , content: “Total: $9,602,895.73, Average: $2,400,723.93...” },
+  {role: "tool" , content: "Total: $9,602,895.73, Average: $2,400,723.93..." },
   
   # Третья итерация — LLM видит полную траекторию и генерирует итоговый ответ
-  {role: “assistant” ,
-   reasoning: “Все расчёты завершены, подводим итог...” ,
-   content: “FINAL ANSWER: Суммарный доход $9,602,895.73...” }
+  {role: "assistant" ,
+   reasoning: "Все расчёты завершены, подводим итог..." ,
+   content: "FINAL ANSWER: Суммарный доход $9,602,895.73..." }
 ]
 ```
 
