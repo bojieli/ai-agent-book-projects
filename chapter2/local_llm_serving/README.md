@@ -21,7 +21,7 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. The
   - **Ollama** on macOS, native Windows, or Linux without GPU
 - **Standard tool calling** only (OpenAI-compatible format)
 - **Built-in tools:** weather, calculator, time, currency, PDF parse, code interpreter
-- **Interactive & example modes**
+- **Interactive & single-task modes**
 - **Streaming:** real-time thinking, tool calls, and responses
 
 ### Quick start
@@ -93,9 +93,9 @@ ollama pull qwen3:0.6b
 ```bash
 python main.py --backend ollama     # default install or native Windows
 python main.py --backend vllm       # Linux/WSL GPU after --extra vllm
-python main.py --mode examples
-python main.py --mode interactive
-python main.py --info
+python main.py --backend ollama --mode single --task "What's the weather in Tokyo?"
+python main.py --backend ollama --mode interactive
+python main.py --backend ollama --info
 ```
 
 #### In code
@@ -166,15 +166,15 @@ local_llm_serving/
 Shows internal thinking, tool calls, results, and streamed final text.
 
 ```bash
-python main.py              # streaming on by default
-python main.py --no-stream
+python main.py --backend ollama              # streaming on by default
+python main.py --backend ollama --no-stream
 # toggle during chat with /stream
 ```
 
 ```python
 from main import ToolCallingAgent
 
-agent = ToolCallingAgent()
+agent = ToolCallingAgent(backend="ollama")
 for chunk in agent.chat("What's the weather in Tokyo?", stream=True):
     chunk_type = chunk.get("type")
     content = chunk.get("content", "")
@@ -306,7 +306,7 @@ Standard OpenAI-compatible:
   - macOS、原生 Windows、无 GPU 的 Linux → **Ollama**
 - **仅标准工具调用**（OpenAI 兼容格式）
 - **内置工具：** 天气、时间、汇率、PDF、代码解释器等
-- **交互与示例模式**
+- **交互与单任务模式**
 - **流式输出：** 实时展示思考、工具调用与回复
 
 ### 快速开始
@@ -374,9 +374,9 @@ ollama pull qwen3:0.6b
 ```bash
 python main.py --backend ollama     # 默认安装或原生 Windows
 python main.py --backend vllm       # Linux/WSL GPU，需先安装 --extra vllm
-python main.py --mode examples
-python main.py --mode interactive
-python main.py --info
+python main.py --backend ollama --mode single --task "What's the weather in Tokyo?"
+python main.py --backend ollama --mode interactive
+python main.py --backend ollama --info
 ```
 
 #### 在代码中使用
@@ -447,15 +447,15 @@ local_llm_serving/
 展示内部思考、工具调用、工具结果与逐字最终回复。
 
 ```bash
-python main.py              # 默认开启流式
-python main.py --no-stream
+python main.py --backend ollama              # 默认开启流式
+python main.py --backend ollama --no-stream
 # 对话中用 /stream 切换
 ```
 
 ```python
 from main import ToolCallingAgent
 
-agent = ToolCallingAgent()
+agent = ToolCallingAgent(backend="ollama")
 for chunk in agent.chat("What's the weather in Tokyo?", stream=True):
     chunk_type = chunk.get("type")
     content = chunk.get("content", "")
