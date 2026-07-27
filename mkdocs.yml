@@ -85,6 +85,7 @@ plugins:
       lang:
         - ja          # CJK-aware tokenizer; far better for Chinese than `en`
         - en
+        - ar
   # Stamp each page with its git commit date — readers see "最后更新" trust signal.
   - git-revision-date-localized:
       enable_creation_date: true
@@ -149,6 +150,7 @@ extra:
     ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }
     vi:   { label: Tiếng Việt, prefix: book-vi/,   suffix: .vi,   readmeSuffix: vi }
     ja:   { label: 日本語,     prefix: book-ja/,   suffix: .ja,   readmeSuffix: ja }
+    ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
 
 nav:
   # The left sidebar is a clean chapter tree. With navigation.indexes,

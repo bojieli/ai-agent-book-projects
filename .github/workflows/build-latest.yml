@@ -16,6 +16,7 @@ on:
       - 'book-ta/**'
       - 'book-vi/**'
       - 'book-ja/**'
+      - 'book-ar/**'
       - 'build_epub.sh'
       - 'epub.css'
       - 'flatten_epub_toc.py'
@@ -105,6 +106,9 @@ jobs:
           brew install --cask font-dejavu font-noto-sans-cjk-sc font-noto-sans-cjk-tc font-noto-serif-tamil
           brew install --cask font-noto-sans-cjk-jp || true
           brew install --cask font-noto-serif-cjk-jp || brew install --cask font-noto-serif-cjk || true
+          brew install --cask font-amiri || true
+          brew install --cask font-noto-naskh-arabic || true
+          brew install --cask font-noto-sans-arabic || true
           bash .github/scripts/install_apple_fonts.sh
 
       # Refresh fontconfig on every run (the cache restore doesn't touch it).
@@ -128,7 +132,7 @@ jobs:
           set -u
           main="book book-zhtw book-en book-ru book-vi book-ta"
           pids=""
-          for dir in $main book-ja; do
+          for dir in $main book-ja book-ar; do
             ( cd "$dir" && bash build_pdf.sh ) > "build_${dir}.log" 2>&1 &
             pids="$pids $!:$dir"
           done
@@ -137,14 +141,14 @@ jobs:
             pid="${pd%%:*}"; dir="${pd##*:}"
             if wait "$pid"; then
               echo "OK: $dir"
-            elif [ "$dir" = "book-ja" ]; then
-              echo "::warning::Japanese PDF build failed (WIP, non-fatal)"
+            elif [ "$dir" = "book-ja" ] || [ "$dir" = "book-ar" ]; then
+              echo "::warning::$dir PDF build failed (WIP, non-fatal)"
             else
               echo "::error::PDF build failed for $dir"
               fail=1
             fi
           done
-          for dir in $main book-ja; do
+          for dir in $main book-ja book-ar; do
             echo "===================== $dir ====================="
             cat "build_${dir}.log" 2>/dev/null || true
           done
@@ -163,6 +167,10 @@ jobs:
       - name: Build Japanese EPUB (WIP, non-fatal)
         continue-on-error: true
         run: ./build_epub.sh ja
+
+      - name: Build Arabic EPUB (WIP, non-fatal)
+        continue-on-error: true
+        run: ./build_epub.sh ar
 
       - name: Upload to the rolling latest release
         env:
@@ -185,4 +193,6 @@ jobs:
           # WIP: ja artifacts are copied only if the (non-fatal) ja build produced them.
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.epub    "$out/AI-Agents-in-Depth-ja.epub" || echo "ja EPUB not built yet (WIP) — skipping"
+          cp book-ar/AI-Agents-in-Depth-ar.pdf                    "$out/AI-Agents-in-Depth-ar.pdf"  || echo "ar PDF not built yet (WIP) — skipping"
+          cp book-ar/AI-Agents-in-Depth-ar.epub                   "$out/AI-Agents-in-Depth-ar.epub" || echo "ar EPUB not built yet (WIP) — skipping"
           gh release upload latest "$out"/* --clobber --repo "${{ github.repository }}"
