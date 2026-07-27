@@ -49,14 +49,11 @@ cd chapter2/local_llm_serving
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
 
-# 3. Check system compatibility
-# Native Windows users should stay on Ollama even if CUDA is detected.
-python check_compatibility.py
-
-# 4. Run
+# 3. Run
 # Default root ch2 install:
 python main.py --backend ollama
 # Linux/WSL GPU path, only after installing --extra vllm:
+# python check_compatibility.py
 # python main.py --backend vllm
 ```
 
@@ -269,7 +266,7 @@ Standard OpenAI-compatible:
 - **Ollama not found:** Mac `brew install ollama && ollama serve`; Windows [ollama.com](https://ollama.com/download/windows); Linux install script above
 - **No models:** `ollama pull qwen3:0.6b`
 - **CUDA not available:** install drivers/CUDA for vLLM, or run `python main.py --backend ollama`
-- **Compatibility:** `python check_compatibility.py`
+- **Compatibility:** `python check_compatibility.py` is for the Linux/WSL vLLM path; native Windows should use `python main.py --backend ollama`.
 
 ### Supported models
 
@@ -333,11 +330,10 @@ cd chapter2/local_llm_serving
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
 
-python check_compatibility.py
-
 # 默认根目录 ch2 安装：
 python main.py --backend ollama
 # Linux/WSL GPU 路径，仅在安装 --extra vllm 后使用：
+# python check_compatibility.py
 # python main.py --backend vllm
 ```
 
@@ -537,7 +533,7 @@ LOG_LEVEL=INFO
 - **找不到 Ollama：** Mac `brew install ollama && ollama serve`；Windows 官网安装；Linux 用安装脚本
 - **没有模型：** `ollama pull qwen3:0.6b`
 - **CUDA 不可用：** 为 vLLM 安装驱动/CUDA，或运行 `python main.py --backend ollama`
-- **兼容性检查：** `python check_compatibility.py`
+- **兼容性检查：** `python check_compatibility.py` 仅用于 Linux/WSL vLLM 路径；原生 Windows 请使用 `python main.py --backend ollama`。
 
 ### 支持的模型
 
