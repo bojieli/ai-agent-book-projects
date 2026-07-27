@@ -134,7 +134,7 @@ uv sync --locked --python 3.12 --extra ch5
 # Activate it before changing directories:
 # macOS/Linux:
 source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
@@ -586,7 +586,7 @@ uv sync --locked --python 3.12 --extra ch5 --extra dev
 # Activate it before changing directories:
 # macOS/Linux:
 source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
 
 cd chapter5/coding-agent
@@ -796,7 +796,7 @@ uv sync --locked --python 3.12 --extra ch5
 # 切换目录前先激活环境：
 # macOS/Linux：
 source .venv/bin/activate
-# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
 # Windows cmd：.venv\Scripts\activate.bat
 
 # 未安装 uv 时可用 pip 兜底：
@@ -1243,7 +1243,7 @@ uv sync --locked --python 3.12 --extra ch5 --extra dev
 # 切换目录前先激活环境：
 # macOS/Linux：
 source .venv/bin/activate
-# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
 # Windows cmd：.venv\Scripts\activate.bat
 
 cd chapter5/coding-agent
