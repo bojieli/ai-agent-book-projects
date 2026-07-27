@@ -183,7 +183,22 @@ With `OPENAI_API_KEY` set, `--strategy compare` actually calls the model and mea
 #### 1. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/active-tool-selection
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 #### 2. Configure API Key
@@ -504,8 +519,11 @@ OPENAI_API_KEY=your-openai-api-key
 #### Import Errors
 
 ```bash
-# Reinstall dependencies
-pip install -r requirements.txt --upgrade
+# Reinstall the shared Chapter 4 environment from the repository root
+uv sync --locked --python 3.12 --extra ch4
+
+# Single-project compatibility path:
+# python -m pip install -r requirements.txt
 ```
 
 #### Low Similarity Scores
@@ -673,7 +691,22 @@ python demo_comparison.py --offline --output results.json
 #### 1. 安装依赖
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/active-tool-selection
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 #### 2. 配置 API Key
@@ -990,8 +1023,11 @@ OPENAI_API_KEY=your-openai-api-key
 #### 导入错误
 
 ```bash
-# Reinstall dependencies
-pip install -r requirements.txt --upgrade
+# 从仓库根目录重新安装统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 #### 相似度过低
