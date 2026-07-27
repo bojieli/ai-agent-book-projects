@@ -67,7 +67,7 @@ conversational-ui/
 #### 1) Environment
 
 ```bash
-# Python deps (Agent + backend)
+# From the repository root: Python deps (Agent + backend)
 uv sync --locked --python 3.12 --extra ch5
 
 # Activate it before changing directories:
@@ -260,7 +260,7 @@ conversational-ui/
 #### 1) 准备环境
 
 ```bash
-# Python 依赖（Agent + 后端）
+# 在仓库根目录安装 Python 依赖（Agent + 后端）
 uv sync --locked --python 3.12 --extra ch5
 
 # 切换目录前先激活环境：

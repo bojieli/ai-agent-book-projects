@@ -155,6 +155,7 @@ Comprehensive test coverage for all tools and features from tools.json.
 ### Run All Tests
 
 ```bash
+# From the repository root: install the Chapter 5 and test environments
 uv sync --locked --python 3.12 --extra ch5 --extra dev
 
 # Activate it before changing directories:

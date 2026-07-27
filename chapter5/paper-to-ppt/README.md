@@ -40,7 +40,7 @@ The script prints per-call prompt token series, totals, and **peak context** (ma
 ### Run
 
 ```bash
-# 1) Python deps
+# 1) From the repository root: Python deps
 uv sync --locked --python 3.12 --extra ch5
 
 # Activate it before changing directories:
@@ -205,7 +205,7 @@ Proposer 收到反馈 → 理解意图 → 修订代码 → 再次提交 Reviewe
 ### 运行
 
 ```bash
-# 1) Python 依赖
+# 1) 在仓库根目录安装 Python 依赖
 uv sync --locked --python 3.12 --extra ch5
 
 # 切换目录前先激活环境：
