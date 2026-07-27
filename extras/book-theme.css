@@ -575,7 +575,7 @@
 /* ── 12. Arabic / RTL edition ─────────────────────────────────── */
 
 html[dir="rtl"] body {
-  font-family: "Noto Naskh Arabic", "Amiri", "Noto Sans Arabic",
+  font-family: "Noto Naskh Arabic", Amiri, "Noto Sans Arabic",
                -apple-system, BlinkMacSystemFont, sans-serif;
 }
 

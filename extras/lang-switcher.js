@@ -252,13 +252,17 @@
 
     // ── language switch (the actual navigation) ──────────────
 
+    function applyDocumentLocale(code) {
+      document.documentElement.lang = code === "zhtw" ? "zh-TW" : code;
+      document.documentElement.dir = code === "ar" ? "rtl" : "ltr";
+    }
+
     function switchTo(target) {
       var rawPath = location.pathname;
       var basePath = siteBasePath();
       var cleanPath = "/" + rawPath.slice(basePath.length).replace(/^\//, "");
       var activeLang = detectLang(cleanPath);
-      document.documentElement.lang = activeLang === "zhtw" ? "zh-TW" : activeLang;
-      document.documentElement.dir = activeLang === "ar" ? "rtl" : "ltr";
+      applyDocumentLocale(activeLang);
       if (!target || target === activeLang) return;
       var rel = translatePath(cleanPath, activeLang, target);
       if (!rel) return;
@@ -278,6 +282,7 @@
       var basePath = siteBasePath();
       var cleanPath = "/" + rawPath.slice(basePath.length).replace(/^\//, "");
       var activeLang = detectLang(cleanPath);
+      applyDocumentLocale(activeLang);
 
       var sel = document.getElementById("lang-selector");
       if (!sel) return;

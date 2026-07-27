@@ -99,6 +99,7 @@ def set_xhtml_direction(data):
     for name in ("pre", "code", "kbd", "samp"):
         for element in root.iter(f"{{{XHTML}}}{name}"):
             element.set("dir", "ltr")
+    ET.register_namespace("", XHTML)
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 

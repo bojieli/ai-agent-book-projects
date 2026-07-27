@@ -47,7 +47,7 @@ html[dir="rtl"] body,
 html[lang="ar"] body,
 html[xml\:lang="ar"] body {
   text-align: right;
-  font-family: "Noto Naskh Arabic", "Amiri", "Noto Sans Arabic",
+  font-family: "Noto Naskh Arabic", Amiri, "Noto Sans Arabic",
                system-ui, sans-serif;
 }
 

@@ -54,7 +54,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Library/Fonts
-          key: fonts-${{ runner.os }}-${{ runner.arch }}-v1-${{ hashFiles('.github/scripts/install_apple_fonts.sh') }}
+          key: fonts-${{ runner.os }}-${{ runner.arch }}-v2-${{ hashFiles('.github/scripts/install_apple_fonts.sh') }}
 
       # The MacTeX tree is installed by a root pkg into /usr/local/texlive, so it
       # can't be extracted straight back as the runner user. Cache a tarball

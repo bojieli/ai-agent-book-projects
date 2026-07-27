@@ -29,7 +29,10 @@ COLORS = {
     'code_bg': '#f5f5f5',
 }
 
-FONT = "Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+FONT = (
+    "'Noto Naskh Arabic', Amiri, 'Noto Sans Arabic', "
+    "Arial, 'Helvetica Neue', Helvetica, sans-serif"
+)
 MONO = "'Courier New', Courier, monospace"
 STROKE_W = 2
 CORNER_R = 6
@@ -112,6 +115,16 @@ def _char_w(ch, mono=False):
         return 1000
     if ord(ch) < 0x100:
         return _CHAR_W.get(ch, 556)
+    if (
+        0x0600 <= ord(ch) <= 0x06FF or
+        0x0750 <= ord(ch) <= 0x077F or
+        0x08A0 <= ord(ch) <= 0x08FF or
+        0xFB50 <= ord(ch) <= 0xFDFF or
+        0xFE70 <= ord(ch) <= 0xFEFF
+    ):
+        # Arabic letters have narrower contextual advances than the generic
+        # non-Latin estimate, and shaping shortens many joined sequences.
+        return 450
     return 600
 
 
