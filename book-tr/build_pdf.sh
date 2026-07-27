@@ -27,20 +27,20 @@ export extra_mem_bot=8000000
 #    immediately with the correct "not found" result.
 export MKTEXTFM=0
 
-OUT="AI-Agents-in-Depth-Bojie-Li-v1.2.pdf"
+OUT="AI-Agents-in-Depth-Bojie-Li-v1.2-tr.pdf"
 CHAPTERS=(
-    introduction.md
-    chapter1.md
-    chapter2.md
-    chapter3.md
-    chapter4.md
-    chapter5.md
-    chapter6.md
-    chapter7.md
-    chapter8.md
-    chapter9.md
-    chapter10.md
-    afterword.md
+    introduction.tr.md
+    chapter1.tr.md
+    chapter2.tr.md
+    chapter3.tr.md
+    chapter4.tr.md
+    chapter5.tr.md
+    chapter6.tr.md
+    chapter7.tr.md
+    chapter8.tr.md
+    chapter9.tr.md
+    chapter10.tr.md
+    afterword.tr.md
 )
 
 # Verify all chapters exist
@@ -67,8 +67,8 @@ pandoc "${CHAPTERS[@]}" \
     -V classoption=cyan \
     -V classoption=device=normal \
     -V author="Bojie Li" \
-    --metadata title-meta="AI Agents in Depth: Design Principles and Engineering Practice" \
-    --metadata author-meta="Bojie Li (English translation: Devaraj)" \
+    --metadata title-meta="AI Agent'ları Derinlemesine Anlamak: Tasarım İlkeleri ve Mühendislik Pratiği" \
+    --metadata author-meta="Bojie Li (Turkish translation: memisemre)" \
     -H preamble.tex \
     --include-before-body=cover.tex \
     --highlight-style=kate \
