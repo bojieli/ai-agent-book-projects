@@ -2,7 +2,7 @@
 # Build the complete Arabic book as a single RTL PDF.
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
 #               fonts: Noto Naskh Arabic or Amiri, Noto Sans Arabic,
-#               and Menlo / DejaVu Sans Mono (see preamble.tex).
+#               and Courier New / DejaVu Sans Mono (see preamble.tex).
 # Usage: cd book-ar && bash build_pdf.sh
 #        PDF_ENGINE=tectonic bash build_pdf.sh  # lightweight local alternative
 # Note: chapter/section numbers come from the document class; source headings
@@ -21,11 +21,11 @@ cd "$SCRIPT_DIR"
 #    here instead of rebuilding the xelatex format.
 export extra_mem_top=8000000
 export extra_mem_bot=8000000
-# 2) The mac-only monospace font (Menlo) is probed with \IfFontExistsTF in
-#    preamble.tex. On systems without it, kpathsea otherwise spawns METAFONT to
-#    build a Menlo.tfm (slow, noisy, always fails) before the DejaVu Sans Mono
-#    fallback engages. Disabling on-the-fly TFM creation makes the probe return
-#    immediately with the correct "not found" result.
+# 2) The mac-first monospace font (Courier New) is probed with
+#    \IfFontExistsTF in preamble.tex. On systems without it, kpathsea otherwise
+#    spawns METAFONT to build a TFM (slow, noisy, always fails) before the
+#    DejaVu Sans Mono fallback engages. Disabling on-the-fly TFM creation makes
+#    the probe return immediately with the correct "not found" result.
 export MKTEXTFM=0
 
 OUT="AI-Agents-in-Depth-ar.pdf"

@@ -63,13 +63,21 @@
 \newunicodechar{ⓔ}{{\fallbackfont ⓔ}}
 % Math / symbols absent from the Latin text font
 \newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{±}{{\fallbackfont ±}}
+\newunicodechar{²}{{\fallbackfont ²}}
 \newunicodechar{→}{{\fallbackfont →}}
 \newunicodechar{←}{{\fallbackfont ←}}
+\newunicodechar{↓}{{\fallbackfont ↓}}
+\newunicodechar{─}{{\fallbackfont ─}}
+\newunicodechar{－}{{\fallbackfont －}}
 \newunicodechar{♠}{{\fallbackfont ♠}}
 \newunicodechar{♣}{{\fallbackfont ♣}}
 \newunicodechar{♥}{{\fallbackfont ♥}}
 \newunicodechar{♦}{{\fallbackfont ♦}}
+\newunicodechar{ư}{{\fallbackfont ư}}
 % Greek letters used inline in body text (Latin Modern lacks them here)
+\newunicodechar{Σ}{{\fallbackfont Σ}}
+\newunicodechar{Φ}{{\fallbackfont Φ}}
 \newunicodechar{α}{{\fallbackfont α}}
 \newunicodechar{β}{{\fallbackfont β}}
 \newunicodechar{γ}{{\fallbackfont γ}}
@@ -77,6 +85,7 @@
 \newunicodechar{ε}{{\fallbackfont ε}}
 \newunicodechar{η}{{\fallbackfont η}}
 \newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{κ}{{\fallbackfont κ}}
 \newunicodechar{λ}{{\fallbackfont λ}}
 \newunicodechar{μ}{{\fallbackfont μ}}
 \newunicodechar{π}{{\fallbackfont π}}
@@ -125,9 +134,44 @@
 \newunicodechar{能}{{\cjkfallback 能}}
 \newunicodechar{零}{{\cjkfallback 零}}
 
-% ── Code/monospace font (covers box-drawing glyphs used in code) ──
-% Menlo is a macOS font; fall back to DejaVu Sans Mono on Linux.
-\IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}
+% ── Code/monospace font (covers Arabic comments + box drawing) ───
+% Menlo and SF Mono omit Arabic, which turns translated code comments into
+% empty squares. Courier New is monospaced and includes Arabic on macOS;
+% DejaVu Sans Mono provides the same coverage on Linux.
+\IfFontExistsTF{Courier New}{%
+  \setmonofont[Scale=0.86]{Courier New}%
+}{%
+  \setmonofont[Scale=0.86]{DejaVu Sans Mono}%
+}
+
+% Pandoc's highlighted-code environments process text under the English
+% language and a verbatim scanner. Even with an Arabic-capable mono font,
+% unmarked Arabic runs are therefore laid out left-to-right. Detect Arabic in
+% the token classes that can carry prose and hand just those runs back to
+% Polyglossia so they are shaped and ordered correctly.
+\ExplSyntaxOn
+\cs_new_protected:Npn \arabic_code_wrap:n #1
+  {
+    \regex_match:nnTF { [\x{0600}-\x{06FF}] } { #1 }
+      { \textarabic{#1} }
+      { #1 }
+  }
+\NewDocumentCommand{\arabiccodewrap}{m}{\arabic_code_wrap:n{#1}}
+\ExplSyntaxOff
+\makeatletter
+\@ifundefined{CommentTok}{}{%
+  \let\arabiccodeoriginalcomment\CommentTok
+  \renewcommand{\CommentTok}[1]{\arabiccodeoriginalcomment{\arabiccodewrap{#1}}}%
+}
+\@ifundefined{NormalTok}{}{%
+  \let\arabiccodeoriginalnormal\NormalTok
+  \renewcommand{\NormalTok}[1]{\arabiccodeoriginalnormal{\arabiccodewrap{#1}}}%
+}
+\@ifundefined{StringTok}{}{%
+  \let\arabiccodeoriginalstring\StringTok
+  \renewcommand{\StringTok}[1]{\arabiccodeoriginalstring{\arabiccodewrap{#1}}}%
+}
+\makeatother
 
 % ── tcolorbox (ElegantBook already loads it; just add libraries) ──
 \tcbuselibrary{skins,breakable}
