@@ -51,7 +51,23 @@ data/PRD.md              (product requirements)          ├─► [LLM] diagnos
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/log-diagnosis
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env      # OPENAI_API_KEY (default gpt-5.6-luna); or OPENROUTER_API_KEY
 python demo.py           # full pipeline (two real LLM calls)
 ```
@@ -133,7 +149,7 @@ Default is mock; `--create-issue` goes live. Implementation in `github_mcp._crea
 
 1. GitHub PAT with `repo` → `.env` `GITHUB_TOKEN`; set `GITHUB_REPO=owner/repo`.
 2. Machine can start official GitHub MCP Server (default Docker `ghcr.io/github/github-mcp-server`); override with `GITHUB_MCP_COMMAND` (token as `GITHUB_PERSONAL_ACCESS_TOKEN`).
-3. `pip install mcp` (this path only).
+3. The root `ch5` extra includes the MCP SDK; the compatibility path above also keeps the old project-local install available.
 4. `python demo.py --create-issue`. Missing token/repo → tip + mock fallback.
 
 ### Limitations
@@ -190,7 +206,23 @@ data/PRD.md              (产品需求)          ├─► [LLM] diagnose()     
 ### 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/log-diagnosis
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env      # 填入 OPENAI_API_KEY（模型默认 gpt-5.6-luna）；未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter
 python demo.py           # 完整流程（两次真实 LLM 调用）
 ```
@@ -276,7 +308,7 @@ GitHub MCP Server，逐个调用其 `create_issue` 工具，传入 `build_issue(
 2. 确保本机可启动官方 GitHub MCP Server。默认启动命令用官方 Docker 镜像
    `ghcr.io/github/github-mcp-server`；可用 `GITHUB_MCP_COMMAND` 覆盖为任意暴露
    `create_issue` 工具的 MCP Server（token 经 `GITHUB_PERSONAL_ACCESS_TOKEN` 注入其环境）。
-3. `pip install mcp`（仅此路径需要；mock/自检不需要）。
+3. 根目录 `ch5` extra 已包含 MCP SDK；上方兼容路径仍保留旧版单项目安装。
 4. 运行 `python demo.py --create-issue`。缺少 `GITHUB_TOKEN` / `GITHUB_REPO` 时会打印提示并
    自动回退 mock，避免误联网。
 
