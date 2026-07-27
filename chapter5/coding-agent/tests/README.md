@@ -155,7 +155,15 @@ Comprehensive test coverage for all tools and features from tools.json.
 ### Run All Tests
 
 ```bash
-cd /Users/boj/ai-agent-book/projects/week5/coding-agent
+uv sync --locked --python 3.12 --extra ch5 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter5/coding-agent
 pytest
 ```
 
@@ -292,8 +300,8 @@ Add to your CI pipeline:
 # .github/workflows/test.yml
 - name: Run tests
   run: |
-    pip install -r requirements.txt
-    pytest --cov=tools --cov-report=xml
+    uv sync --locked --python 3.12 --extra ch5 --extra dev
+    uv run --locked --extra ch5 --extra dev --directory chapter5/coding-agent python -m pytest --cov=tools --cov-report=xml
 ```
 
 ## 📚 Adding New Tests

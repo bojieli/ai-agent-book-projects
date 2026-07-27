@@ -40,7 +40,23 @@ Problem ──► Model
 To verify the sandbox + ground-truth pipeline without an API key:
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/code-for-math
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 python demo.py --selfcheck        # run each problem's reference solution in the sandbox; score vs truth
 ```
 
@@ -178,7 +194,23 @@ Real run of `gpt-5.6-luna` (11 problems; reasoning model default `temperature=1`
 想验证「沙箱 + 题库真值」这条链路是否可用、但手头没有 API key？跑：
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/code-for-math
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按真值判分
 ```
 

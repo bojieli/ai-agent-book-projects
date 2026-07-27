@@ -68,7 +68,21 @@ conversational-ui/
 
 ```bash
 # Python deps (Agent + backend)
-pip install -r requirements.txt
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/conversational-ui
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Front-end deps (first npm install can be slow)
 cd frontend && npm install && cd ..
@@ -247,7 +261,21 @@ conversational-ui/
 
 ```bash
 # Python 依赖（Agent + 后端）
-pip install -r requirements.txt
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/conversational-ui
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 前端依赖（首次 npm install 较慢属正常）
 cd frontend && npm install && cd ..

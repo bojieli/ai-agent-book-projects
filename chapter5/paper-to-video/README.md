@@ -36,7 +36,23 @@ Per-page PNG slides ──► gpt-5.6-luna spoken script ──► OpenAI tts-1 
 ### Run
 
 ```bash
-pip install -r requirements.txt      # Python deps
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/paper-to-video
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env                  # OPENAI_API_KEY (or OPENROUTER_API_KEY for script fallback; TTS degrades offline)
 python demo.py                       # full 5-page lecture video
 ```
@@ -91,7 +107,7 @@ Logs print per-page “slide → script → audio duration”; end summary compa
 ### Dependencies
 
 - **ffmpeg / ffprobe** (validated on 8.x). macOS: `brew install ffmpeg`.
-- **Python**: `openai`, `Pillow`, `python-dotenv` (`requirements.txt`).
+- **Python**: root `ch5` extra (`openai`, `Pillow`, `python-dotenv`) or the compatibility `requirements.txt` path.
 - **CJK fonts**: script falls back over common macOS fonts (PingFang / STHeiti / Hiragino / Arial Unicode).
 - **Env**: `OPENAI_API_KEY` for official OpenAI; without it, `OPENROUTER_API_KEY` can fall back for scripts (TTS not on OpenRouter → offline silent). See `env.example`.
 
@@ -148,7 +164,23 @@ Logs print per-page “slide → script → audio duration”; end summary compa
 ### 运行命令
 
 ```bash
-pip install -r requirements.txt      # 安装 Python 依赖
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/paper-to-video
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env                  # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 兜底讲解词，TTS 降级为离线占位）
 python demo.py                       # 生成全部 5 页的完整讲解视频
 ```
@@ -210,7 +242,7 @@ ffprobe -v error -show_format -show_streams output/lecture.mp4
 ### 依赖
 
 - **ffmpeg / ffprobe**：命令行工具（本项目用 8.x 验证）。macOS 可 `brew install ffmpeg`。
-- **Python 包**：`openai`、`Pillow`、`python-dotenv`（见 `requirements.txt`）。
+- **Python 包**：根目录 `ch5` extra（`openai`、`Pillow`、`python-dotenv`），或兼容 `requirements.txt` 路径。
 - **中文字体**：渲染幻灯片需系统中文字体，脚本已按 macOS 常见字体
   （PingFang / STHeiti / Hiragino / Arial Unicode）自动回退。
 - **环境变量**：需 `OPENAI_API_KEY`（走官方 OpenAI）；未配置时可用 `OPENROUTER_API_KEY` 兜底讲解词生成（此时 TTS 因不在 OpenRouter 上而降级为离线静音占位）。可选项见 `env.example`。
