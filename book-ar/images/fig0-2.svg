@@ -25,7 +25,7 @@
 <!-- Context group -->
 <rect x="30" y="165" width="248" height="55" rx="6" fill="#d8d8d8" stroke="#333333" stroke-width="2"/>
 <text x="154" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الفصل الثاني: هندسة السياق</text>
-<text x="154" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الهندسة السريعة · KV Cache · الضغط · المهارات · شريط الحالة</text>
+<text x="154" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">هندسة الموجّهات · KV Cache · الضغط · المهارات · شريط الحالة</text>
 
 <rect x="30" y="230" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
 <text x="154" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الفصل الثالث: ذاكرة المستخدم وقاعدة المعرفة</text>
@@ -37,8 +37,8 @@
 <text x="410" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">MCP · سلامة الأدوات · بنية الأحداث غير المتزامنة</text>
 
 <rect x="286" y="230" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="410" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#333333" text-anchor="middle" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الفصل الخامس: وكيل الترميز وإنشاء الأكواد البرمجية</text>
-<text x="410" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">وكيل الترميز · الكود كتفكير · وكيل Bootstrapping</text>
+<text x="410" y="251" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#333333" text-anchor="middle" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الفصل الخامس: وكيل البرمجة وتوليد الشفرة</text>
+<text x="410" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">وكيل البرمجة · الشفرة بوصفها تفكيرًا · وكيل التمهيد الذاتي</text>
 
 <!-- Model group -->
 <rect x="542" y="165" width="248" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
