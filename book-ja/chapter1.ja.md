@@ -154,37 +154,37 @@ Agent がタスクを実行する核となるパターンは **ReAct**（Reasoni
 
 ```
 軌跡 = [
-  {role: “user” , content: “会社の四半期収入にもとづき：Q1 2.5M 米ドル、Q2 2.1M ユーロ、Q3 1.8M 英ポンド、Q4 380M 日本円。会社の年間総収入と四半期平均収入を計算せよ” },
+  {role: "user" , content: "会社の四半期収入にもとづき：Q1 2.5M 米ドル、Q2 2.1M ユーロ、Q3 1.8M 英ポンド、Q4 380M 日本円。会社の年間総収入と四半期平均収入を計算せよ" },
   
   # 1回目のイテレーション - LLM が上記の軌跡を見て、応答を生成
-  {role: “assistant” , 
-   reasoning: “すべての通貨を USD に変換する必要がある...” ,
-   content: “” ,  # ユーザーに直接返答しない
+  {role: "assistant" , 
+   reasoning: "すべての通貨を USD に変換する必要がある..." ,
+   content: "" ,  # ユーザーに直接返答しない
    tool_calls: [
-     {name: “convert_currency” , args: {amount: 2100000, from: “EUR” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 1800000, from: “GBP” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 380000000, from: “JPY” , to: “USD” }}
+     {name: "convert_currency" , args: {amount: 2100000, from: "EUR" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 1800000, from: "GBP" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 380000000, from: "JPY" , to: "USD" }}
    ]},
   
   # Agent フレームワークがツールを実行し、結果を軌跡に追加
-  {role: “tool” , content: “EUR->USD: 2282608.7” },
-  {role: “tool” , content: “GBP->USD: 2278481.01” },
-  {role: “tool” , content: “JPY->USD: 2541806.02” },
+  {role: "tool" , content: "EUR->USD: 2282608.7" },
+  {role: "tool" , content: "GBP->USD: 2278481.01" },
+  {role: "tool" , content: "JPY->USD: 2541806.02" },
   
   # 2回目のイテレーション - LLM がツール結果を含む完全な軌跡を見る
-  {role: “assistant” ,
-   reasoning: “変換結果を得た。次は集計計算が必要...” ,
-   content: “” ,
+  {role: "assistant" ,
+   reasoning: "変換結果を得た。次は集計計算が必要..." ,
+   content: "" ,
    tool_calls: [
-     {name: “code_interpreter” , args: {code: “total = 2500000 + 2282608.7 + ...” }}
+     {name: "code_interpreter" , args: {code: "total = 2500000 + 2282608.7 + ..." }}
    ]},
   
-  {role: “tool” , content: “Total: $9,602,895.73, Average: $2,400,723.93...” },
+  {role: "tool" , content: "Total: $9,602,895.73, Average: $2,400,723.93..." },
   
   # 3回目のイテレーション - LLM が完全な軌跡を見て、最終的な答えを生成
-  {role: “assistant” ,
-   reasoning: “すべての計算が完了。結果をまとめる...” ,
-   content: “FINAL ANSWER: 総収入$9,602,895.73...” }
+  {role: "assistant" ,
+   reasoning: "すべての計算が完了。結果をまとめる..." ,
+   content: "FINAL ANSWER: 総収入$9,602,895.73..." }
 ]
 ```
 
