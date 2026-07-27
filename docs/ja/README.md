@@ -1,12 +1,12 @@
 # AI Agent 徹底解説: 設計原理とエンジニアリング実践
 
-[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-電子書籍) [![Languages](https://img.shields.io/badge/translations-6%20languages-informational.svg)](#-電子書籍)
+[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-電子書籍) [![Languages](https://img.shields.io/badge/translations-8%20languages-informational.svg)](#-電子書籍)
 
-**[中文](../../README.md) · [English](../en/README.md) · [台灣正體](../zh-TW/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · 日本語 ← 現在**
+**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [台灣正體](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · 日本語 ← 現在**
 
-**Agent = LLM + コンテキスト + ツール** — 本書はこの中核となる公式を軸に、全10章を通じて AI エージェントを原理からエンジニアリング実践まで解説します。本文、図版、**88 個の付随実験**はすべてオープンソースです。ぜひ自分の手で実験を動かしてみてください。
+**Agent = LLM + コンテキスト + ツール** — 本書はこの中核となる公式を軸に、全10章を通じて AI エージェントを原理からエンジニアリング実践まで解説します。本文、図版、**92 個の付随実験**はすべてオープンソースです。ぜひ自分の手で実験を動かしてみてください。
 
-| 📚 基礎から本番まで **10 章** の本文 | 📂 **88 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **6 言語**: 中 / 英 / 台灣正體 / タミル / 越 / 日 |
+| 📚 基礎から本番まで **10 章** の本文 | 📂 **92 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **8 言語**: 中 / 英 / アラビア / 台灣正體 / 露 / タミル / 越 / 日 |
 | :---: | :---: | :---: |
 
 ## 📖 電子書籍
@@ -14,14 +14,16 @@
 > 📥 **ダウンロード**（全文、無料でオープンソース）。以下のリンクは常に `main` ブランチの最新ビルドを指します。固定版は [Releases](https://github.com/bojieli/ai-agent-book/releases) ページを参照してください。
 > - **中国語（原版）**: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **英語**（コミュニティ翻訳、[@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **アラビア語**（コミュニティ翻訳、[@TheSyBuilder](https://github.com/TheSyBuilder)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **繁体字中国語（台湾）**（コミュニティ翻訳、[@tigercosmos](https://github.com/tigercosmos)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
+> - **ロシア語**（コミュニティ翻訳、[@ui99ru](https://github.com/ui99ru)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **タミル語**（コミュニティ翻訳、[@nsdevaraj](https://github.com/nsdevaraj)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
 > - **ベトナム語**（コミュニティ翻訳、[@toanalien](https://github.com/toanalien)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
 > - **日本語**（コミュニティ翻訳、[@eltociear](https://github.com/eltociear)）: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
 
-中国語の本文ソースは [`book/`](../../book/) にあります。英語/繁体字中国語（台湾）/タミル語/ベトナム語/日本語版はコミュニティによる貢献であり（中国語原版より遅れる場合があります）、それぞれ [`book-en/`](../../book-en/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/) にあります。
+中国語の本文ソースは [`book/`](../../book/) にあります。英語/アラビア語/繁体字中国語（台湾）/ロシア語/タミル語/ベトナム語/日本語版はコミュニティによる貢献であり（中国語原版より遅れる場合があります）、それぞれ [`book-en/`](../../book-en/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/) にあります。
 
-共通のビルドスクリプトで、簡体字中国語、英語、繁体字中国語（台湾）、タミル語、ベトナム語、日本語の EPUB 3 版を生成できます。[EPUB ビルド手順](../../EPUB.md) を参照してください。
+共通のビルドスクリプトで、簡体字中国語、英語、アラビア語、繁体字中国語（台湾）、ロシア語、タミル語、ベトナム語、日本語の EPUB 3 版を生成できます。[EPUB ビルド手順](../../EPUB.md) を参照してください。アラビア語 PDF は `cd book-ar && bash build_pdf.sh` でビルドできます。
 
 <details>
 <summary><b>🔧 自分で PDF をビルドしますか？</b>（pandoc / xelatex / ElegantBook が必要）</summary>
@@ -136,7 +138,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 🐛 **コードの改善とバグ修正** | 付随プロジェクトをより堅牢に、使いやすく、本番対応にする |
 | 🧪 **新しい実践プロジェクト** | 実験のより良い実装を追加/置換、あるいは新しいサンプルを提供 |
 | 🎨 **図版の設計** | `book/images/` の図をより明確で洗練されたものにする（`book/gen_*_figs.py` で生成） |
-| 🌐 **新しい翻訳** | より多くの言語への翻訳を歓迎します。英語（`book-en/`）、繁体字中国語/台湾（`book-zhtw/`）、タミル語（`book-ta/`）、ベトナム語（`book-vi/`）、日本語（`book-ja/`）を参考にしてください |
+| 🌐 **新しい翻訳** | より多くの言語への翻訳を歓迎します。英語（`book-en/`）、アラビア語（`book-ar/`）、繁体字中国語/台湾（`book-zhtw/`）、ロシア語（`book-ru/`）、タミル語（`book-ta/`）、ベトナム語（`book-vi/`）、日本語（`book-ja/`）を参考にしてください |
 
 提出前に、該当する実験を実行して再現性を確認してください。まず issue を立ててアイデアを議論するのも歓迎です。
 

@@ -17,7 +17,7 @@ cp "$ROOT/index.md" "$DEST/index.md"
 [ -f "$ROOT/robots.txt" ] && cp "$ROOT/robots.txt" "$DEST/robots.txt"
 
 # The language editions, each with its images/ subfolder.
-for lang in book book-en book-ru book-ta book-vi book-zhtw book-ja; do
+for lang in book book-en book-ru book-ta book-vi book-zhtw book-ja book-ar; do
   mkdir -p "$DEST/$lang"
   cp -R "$ROOT/$lang" "$DEST/"
 done
