@@ -53,32 +53,32 @@ def fig9_1():
     W, H = 780, 560
     s = SVG(W, H)
 
-    s.text(W // 2, 30, 'Shared context vs independent context', size=FS_TITLE, bold=True)
+    s.text(W // 2, 30, 'Paylaşılan bağlam ile bağımsız bağlam karşılaştırması', size=FS_TITLE, bold=True)
 
     col_w = 350
     lx, rx = 20, W - col_w - 20
 
     # ── Left: shared context ──
-    s.group_box(lx, 55, col_w, 480, 'Shared context (single Agent, multiple phases)')
+    s.group_box(lx, 55, col_w, 480, 'Paylaşılan bağlam (tek Ajan, birden çok aşama)')
 
     ctx_x, ctx_w = lx + 15, col_w - 30
     phases = [
-        ('Phase 1: Requirements Analyst', 'medium', [
-            'sys: "Your responsibility is to fully understand the requirements..."',
+        ('Aşama 1: Gereksinim Analisti', 'medium', [
+            'sys: "Sorumluluğun gereksinimleri tam anlamak..."',
             'tools: [ask_question, save_req]',
-            'user: "Write a CSV analysis script"',
-            'agent: "What file types need to be processed?"',
+            'user: "CSV analiz betiği yaz"',
+            'agent: "Hangi dosya türleri işlenmeli?"',
         ]),
-        ('Phase 2: Software Engineer', 'light', [
-            'sys: "Write code based on confirmed requirements..."',
+        ('Aşama 2: Yazılım Mühendisi', 'light', [
+            'sys: "Onaylanan gereksinimlere göre kod yaz..."',
             'tools: [write_file, execute_code]',
             'agent: write_file("analyze.py", ...)',
             'agent: execute_code("python test.py")',
         ]),
-        ('Phase 3: Code Reviewer', 'light', [
-            'sys: "Review code quality and security..."',
+        ('Aşama 3: Kod İnceleyici', 'light', [
+            'sys: "Kod kalitesini ve güvenliğini incele..."',
             'tools: [run_linter, run_tests]',
-            'agent: run_linter → 2 warnings',
+            'agent: run_linter → 2 uyarı',
             'agent: approve_code()',
         ]),
     ]
@@ -93,28 +93,28 @@ def fig9_1():
         cy += ph + 2
 
     s.rect(ctx_x, cy, ctx_w, 28, fill='code_bg', rx=3)
-    s.text(ctx_x + ctx_w // 2, cy + 14, '↑ All phases share the same conversation history', size=FS_TINY, bold=True)
+    s.text(ctx_x + ctx_w // 2, cy + 14, '↑ Tüm aşamalar aynı konuşma geçmişini paylaşır', size=FS_TINY, bold=True)
     cy += 36
 
-    s.text(lx + col_w // 2, cy + 10, '✓ Complete execution trace', size=FS_SMALL, fill='text_light')
-    s.text(lx + col_w // 2, cy + 32, '✗ Context expands rapidly', size=FS_SMALL, fill='text_light')
+    s.text(lx + col_w // 2, cy + 10, '✓ Tam yürütme izi', size=FS_SMALL, fill='text_light')
+    s.text(lx + col_w // 2, cy + 32, '✗ Bağlam hızla genişler', size=FS_SMALL, fill='text_light')
 
     # ── Right: independent context ──
-    s.group_box(rx, 55, col_w, 480, 'Independent context (true multi-Agent)')
+    s.group_box(rx, 55, col_w, 480, 'Bağımsız bağlam (gerçek çoklu Ajan)')
 
     agents_data = [
-        ('Glossary Agent', [
-            'sys: "Identify terms and translate..."',
+        ('Sözlük Ajanı', [
+            'sys: "Terimleri belirle ve çevir..."',
             'tools: [search_dict, write_file]',
             '→ glossary.json',
         ]),
-        ('Translation Agent', [
-            'sys: "Translate this chapter..."',
+        ('Çeviri Ajanı', [
+            'sys: "Bu bölümü çevir..."',
             'tools: [read_file, write_file]',
             '→ chapter3_zh.md',
         ]),
-        ('Proofreading Agent', [
-            'sys: "Check terminology consistency..."',
+        ('Redaksiyon Ajanı', [
+            'sys: "Terim tutarlılığını kontrol et..."',
             'tools: [read_file, write_file]',
             '→ review_report.md',
         ]),
@@ -131,13 +131,13 @@ def fig9_1():
 
     fs_y = ay + 5
     s.rect(rx + 15, fs_y, ctx_w, 65, fill='medium', rx=4)
-    s.text(rx + 15 + ctx_w // 2, fs_y + 16, 'Shared file system', size=FS_SMALL, bold=True)
+    s.text(rx + 15 + ctx_w // 2, fs_y + 16, 'Paylaşılan dosya sistemi', size=FS_SMALL, bold=True)
     files = ['glossary.json', 'chapter3_zh.md', 'review_report.md']
     s.mono(rx + 27, fs_y + 38, '  '.join(files), size=11)
-    s.text(rx + 15 + ctx_w // 2, fs_y + 55, '+ Tool call parameters pass structured data', size=FS_TINY, fill='text_light')
+    s.text(rx + 15 + ctx_w // 2, fs_y + 55, '+ Araç çağrısı parametreleri yapılandırılmış veri taşır', size=FS_TINY, fill='text_light')
 
-    s.text(rx + col_w // 2, fs_y + 82, '✓ Modular · Extensible · Parallel', size=FS_SMALL, fill='text_light')
-    s.text(rx + col_w // 2, fs_y + 104, '✗ Information synchronization complex', size=FS_SMALL, fill='text_light')
+    s.text(rx + col_w // 2, fs_y + 82, '✓ Modüler · Genişletilebilir · Paralel', size=FS_SMALL, fill='text_light')
+    s.text(rx + col_w // 2, fs_y + 104, '✗ Bilgi senkronizasyonu karmaşık', size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-1.svg'))
 
@@ -150,25 +150,25 @@ def fig9_2():
     W, H = 780, 520
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Phase-based role switching: Coding Agent three phases', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Aşama bazlı rol değişimi: Coding Agent üç aşama', size=FS_TITLE, bold=True)
 
     phases = [
-        ('Requirements Analyst', 'medium',
-         '"Your responsibility is to fully understand the requirements.\nDo not rush to implement; at this stage\nyour task is to ask questions and confirm."',
+        ('Gereksinim Analisti', 'medium',
+         '"Sorumluluğun gereksinimleri tam anlamak.\nHemen uygulamaya geçme; bu aşamada\ngörevin soru sormak ve onaylamak."',
          ['ask_clarifying_question(q)', 'save_requirement(k, v)', 'complete_requirements_analysis()'],
          'complete_requirements_analysis()'),
-        ('Software Engineer', 'light',
-         '"Write high-quality Python code based on the confirmed requirements.\nFollow modular design and error handling best practices."',
+        ('Yazılım Mühendisi', 'light',
+         '"Onaylanan gereksinimlere göre yüksek kaliteli Python kodu yaz.\nModüler tasarım ve hata işleme en iyi uygulamalarını izle."',
          ['write_file(path, content)', 'read_file(path)', 'execute_code(code)'],
          'submit_for_review()'),
-        ('Code Reviewer', '#e8e8e8',
-         '"Evaluate code quality from multiple dimensions: \nfunctional correctness, coding standards, \nand security. Adopt critical thinking."',
+        ('Kod İnceleyici', '#e8e8e8',
+         '"Kod kalitesini birden çok boyutta değerlendir: \nişlevsel doğruluk, kodlama standartları, \nve güvenlik. Eleştirel düşün."',
          ['run_linter(file)', 'run_tests(file)', 'analyze_complexity(file)'],
          None),
     ]
 
     s.rect(30, 55, W - 60, 28, fill='code_bg', rx=3)
-    s.text(W // 2, 69, '▼ Continuous flow within the same context — conversation history fully preserved across stages ▼', size=FS_SMALL, bold=True)
+    s.text(W // 2, 69, '▼ Aynı bağlam içinde sürekli akış — konuşma geçmişi aşamalar boyunca tam korunur ▼', size=FS_SMALL, bold=True)
 
     pw = 225
     gap = 18
@@ -179,23 +179,23 @@ def fig9_2():
         x = px_start + i * (pw + gap)
 
         s.rect(x, py, pw, 380, fill=fill, rx=6)
-        s.text(x + pw // 2, py + 22, f'Stage {i + 1}', size=FS_TINY, fill='text_light')
+        s.text(x + pw // 2, py + 22, f'Aşama {i + 1}', size=FS_TINY, fill='text_light')
         s.text(x + pw // 2, py + 42, role, size=FS_BODY, bold=True)
 
         s.rect(x + 8, py + 60, pw - 16, 88, fill='code_bg', rx=3)
-        s.text(x + 14, py + 75, 'System Prompt', size=FS_TINY, fill='text_light', anchor='start')
+        s.text(x + 14, py + 75, 'Sistem İstemi', size=FS_TINY, fill='text_light', anchor='start')
         for j, ln in enumerate(prompt.split('\n')):
             s.text(x + 14, py + 92 + j * 16, ln, size=12, anchor='start', fill='text_light')
 
         s.rect(x + 8, py + 158, pw - 16, 18 + len(tools) * 20, fill='white', rx=3)
-        s.text(x + 14, py + 172, 'Tool Set', size=FS_TINY, fill='text_light', anchor='start')
+        s.text(x + 14, py + 172, 'Araç Kümesi', size=FS_TINY, fill='text_light', anchor='start')
         for j, tool in enumerate(tools):
             s.mono(x + 14, py + 190 + j * 20, tool, size=11)
 
         if trigger:
             ty = py + 290
             s.rect(x + 8, ty, pw - 16, 48, fill='dark', rx=12)
-            s.text(x + pw // 2, ty + 16, 'Trigger Transition', size=FS_TINY, fill='white')
+            s.text(x + pw // 2, ty + 16, 'Geçişi Tetikle', size=FS_TINY, fill='white')
             s.mono(x + pw // 2, ty + 34, trigger, size=10, anchor='middle', fill='white')
 
         if i < 2:
@@ -204,7 +204,7 @@ def fig9_2():
             ay = py + 310
             s.arrow(ax1, ay, ax2, ay)
 
-    s.text(W // 2, H - 10, 'Role Transition: Update system prompt + tool set, conversation history and state continuously preserved',
+    s.text(W // 2, H - 10, 'Rol Geçişi: Sistem istemini + araç kümesini güncelle, konuşma geçmişi ve durum kesintisiz korunur',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-2.svg'))
@@ -218,25 +218,25 @@ def fig9_3():
     W, H = 780, 520
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Proposer-Reviewer Loop: Slidev PPT Generation', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Proposer-Reviewer Döngüsü: Slidev PPT Üretimi', size=FS_TITLE, bold=True)
 
     # Editor (Proposer)
     ex, ey, ew, eh = 30, 65, 300, 200
     s.rect(ex, ey, ew, eh, fill='light')
     s.text(ex + ew // 2, ey + 22, 'Proposer Agent', size=FS_BODY, bold=True)
-    s.text(ex + 12, ey + 48, 'Input: Extended paper abstract (2000 characters)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(ex + 12, ey + 48, 'Girdi: Genişletilmiş makale özeti (2000 karakter)', size=FS_TINY, anchor='start', fill='text_light')
     editor_lines = [
         '---',
         'theme: academic',
         '---',
-        '# Transformer Attention Mechanism',
+        '# Transformer Dikkat Mekanizması',
         '',
-        '## Core Idea',
-        '- Self-attention computes Q·K^T/√d',
-        '- Multi-head attention processes in parallel',
+        '## Temel Fikir',
+        '- Self-attention Q·K^T/√d hesaplar',
+        '- Çok başlı dikkat paralel işler',
     ]
     ch = s.code_block(ex + 10, ey + 62, ew - 20, editor_lines, font_size=11, line_h=14)
-    s.text(ex + ew // 2, ey + eh - 10, 'Understand content structure → Decompose into slides', size=FS_TINY, fill='text_light')
+    s.text(ex + ew // 2, ey + eh - 10, 'İçerik yapısını anla → Slaytlara ayrıştır', size=FS_TINY, fill='text_light')
 
     # Critic (Reviewer)
     cx, cy, cw, ch_h = 450, 65, 300, 200
@@ -244,39 +244,39 @@ def fig9_3():
     s.text(cx + cw // 2, cy + 22, 'Reviewer Agent', size=FS_BODY, bold=True)
 
     s.rect(cx + 10, cy + 42, cw - 20, 38, fill='code_bg', rx=3)
-    s.text(cx + 18, cy + 55, '① Slidev rendering → PDF/PNG', size=FS_TINY, anchor='start')
-    s.text(cx + 18, cy + 70, '② Vision LLM multi-dimensional evaluation', size=FS_TINY, anchor='start')
+    s.text(cx + 18, cy + 55, '① Slidev render → PDF/PNG', size=FS_TINY, anchor='start')
+    s.text(cx + 18, cy + 70, '② Görsel LLM çok boyutlu değerlendirme', size=FS_TINY, anchor='start')
 
     feedback_items = [
-        'Page   Issue Type     Severity',
-        'P3    Content too dense    High',
-        'P7    Font too small    Medium',
-        'P11   Color mismatch   Low',
+        'Sayfa  Sorun Türü      Önem',
+        'P3    İçerik çok yoğun    Yüksek',
+        'P7    Yazı çok küçük    Orta',
+        'P11   Renk uyumsuzluğu   Düşük',
     ]
     s.rect(cx + 10, cy + 86, cw - 20, 75, fill='code_bg', rx=3)
-    s.text(cx + 18, cy + 100, 'Structured Feedback:', size=FS_TINY, anchor='start', bold=True)
+    s.text(cx + 18, cy + 100, 'Yapılandırılmış Geri Bildirim:', size=FS_TINY, anchor='start', bold=True)
     for i, fb in enumerate(feedback_items):
         s.mono(cx + 18, cy + 118 + i * 15, fb, size=11)
-    s.text(cx + cw // 2, cy + ch_h - 10, 'Rendering + visual analysis → actionable improvement suggestions', size=FS_TINY, fill='text_light')
+    s.text(cx + cw // 2, cy + ch_h - 10, 'Render + görsel analiz → uygulanabilir iyileştirme önerileri', size=FS_TINY, fill='text_light')
 
     # Arrows between Editor and Critic
     mid_y1 = ey + 70
     mid_y2 = ey + eh - 50
     s.arrow(ex + ew + 2, mid_y1, cx - 2, mid_y1)
-    s.text((ex + ew + cx) / 2, mid_y1 - 12, 'Slidev Code', size=FS_SMALL, bold=True)
+    s.text((ex + ew + cx) / 2, mid_y1 - 12, 'Slidev Kodu', size=FS_SMALL, bold=True)
 
     s.arrow(cx - 2, mid_y2, ex + ew + 2, mid_y2)
-    s.text((ex + ew + cx) / 2, mid_y2 + 16, 'Structured Feedback', size=FS_SMALL, bold=True)
+    s.text((ex + ew + cx) / 2, mid_y2 + 16, 'Yapılandırılmış Geri Bildirim', size=FS_SMALL, bold=True)
 
     # Iteration timeline
     iy = 290
     s.rect(30, iy, W - 60, 100, fill='code_bg', rx=4)
-    s.text(W // 2, iy + 18, 'Iterative Improvement Process', size=FS_BODY, bold=True)
+    s.text(W // 2, iy + 18, 'Yinelemeli İyileştirme Süreci', size=FS_BODY, bold=True)
 
     rounds = [
-        ('Round 1', '12-page draft\n5 issues', 'light'),
-        ('Round 2', '14 pages (split dense pages)\n2 issues', 'light'),
-        ('Round 3', '14 pages (font corrected)\n0 issues ✓', 'medium'),
+        ('Tur 1', '12 sayfalık taslak\n5 sorun', 'light'),
+        ('Tur 2', '14 sayfa (yoğun sayfalar bölündü)\n2 sorun', 'light'),
+        ('Tur 3', '14 sayfa (yazı boyutu düzeltildi)\n0 sorun ✓', 'medium'),
     ]
     rw = 190
     rx_start = (W - 3 * rw - 2 * 30) // 2
@@ -293,14 +293,14 @@ def fig9_3():
     # Why not single agent
     wy = 405
     s.rect(30, wy, W - 60, 90, fill='light', rx=4)
-    s.text(W // 2, wy + 20, 'Why not use a single agent?', size=FS_BODY, bold=True)
+    s.text(W // 2, wy + 20, 'Neden tekli ajan kullanılmıyor?', size=FS_BODY, bold=True)
 
     single_x = 60
     dual_x = W // 2 + 20
-    s.text(single_x, wy + 45, 'Single Agent: Renderings × N rounds → context explosion', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(single_x, wy + 63, '(1080p screenshot = thousands of tokens × 14 pages × 5 rounds)', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(dual_x, wy + 45, 'Dual Agent: Critic only sees current version', size=FS_TINY, anchor='start')
-    s.text(dual_x, wy + 63, 'Editor only accumulates text feedback → clean context', size=FS_TINY, anchor='start')
+    s.text(single_x, wy + 45, 'Tekli Ajan: Render çıktıları × N tur → bağlam patlaması', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(single_x, wy + 63, '(1080p ekran görüntüsü = binlerce token × 14 sayfa × 5 tur)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(dual_x, wy + 45, 'İkili Ajan: Critic yalnızca mevcut sürümü görür', size=FS_TINY, anchor='start')
+    s.text(dual_x, wy + 63, 'Editor yalnızca metin geri bildirimini biriktirir → temiz bağlam', size=FS_TINY, anchor='start')
 
     s.save(os.path.join(OUT, 'fig9-3.svg'))
 
@@ -313,21 +313,21 @@ def fig9_4():
     W, H = 780, 480
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Manager sequential coordination: Sub-Agent as tool', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Manager sıralı koordinasyon: Alt Ajan araç olarak', size=FS_TITLE, bold=True)
 
     # Manager
     mx, my, mw, mh = 240, 60, 300, 100
     s.rect(mx, my, mw, mh, fill='medium')
     s.text(mx + mw // 2, my + 22, 'Manager Agent', size=FS_BODY, bold=True)
-    s.text(mx + mw // 2, my + 46, 'Task understanding → decomposition → scheduling → synthesis', size=FS_TINY, fill='text_light')
-    s.text(mx + mw // 2, my + 66, 'Tool set: [call_agent_A, call_agent_B,', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 46, 'Görev anlama → ayrıştırma → zamanlama → sentezleme', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 66, 'Araç kümesi: [call_agent_A, call_agent_B,', size=FS_TINY, fill='text_light')
     s.text(mx + mw // 2, my + 82, 'call_agent_C, search, write_file]', size=FS_TINY, fill='text_light')
 
     # Sub-agents in sequence
     agents = [
-        ('Sub-Agent A', 'Data collection', 'Search technical documentation\nExtract key information', 'light'),
-        ('Sub-Agent B', 'Analysis and processing', 'Compare and analyze data\nGenerate statistical report', 'light'),
-        ('Sub-Agent C', 'Report generation', 'Write final report\nFormat output', 'light'),
+        ('Alt Ajan A', 'Veri toplama', 'Teknik dokümantasyonu ara\nAnahtar bilgiyi çıkar', 'light'),
+        ('Alt Ajan B', 'Analiz ve işleme', 'Veriyi karşılaştır ve analiz et\nİstatistik raporu üret', 'light'),
+        ('Alt Ajan C', 'Rapor üretimi', 'Nihai raporu yaz\nÇıktıyı biçimlendir', 'light'),
     ]
     aw = 210
     ax_start = (W - 3 * aw - 2 * 25) // 2
@@ -337,11 +337,11 @@ def fig9_4():
         x = ax_start + i * (aw + 25)
         s.rect(x, ay, aw, 120, fill=fill, rx=6)
         s.text(x + aw // 2, ay + 20, name, size=FS_SMALL, bold=True)
-        s.text(x + aw // 2, ay + 40, f'Roles: {role}', size=FS_TINY, fill='text_light')
+        s.text(x + aw // 2, ay + 40, f'Rol: {role}', size=FS_TINY, fill='text_light')
         for j, ln in enumerate(desc.split('\n')):
             s.text(x + aw // 2, ay + 62 + j * 18, ln, size=FS_TINY, fill='text_light')
 
-        badge_labels = [f'Step {i + 1}']
+        badge_labels = [f'Adım {i + 1}']
         s.badge(x + aw - 55, ay + 95, 50, 20, badge_labels[0], fill='dark', font_size=FS_TINY)
 
         # Arrow from Manager to sub-agent
@@ -355,22 +355,22 @@ def fig9_4():
     # Data flow
     dy = 380
     s.rect(30, dy, W - 60, 80, fill='code_bg', rx=4)
-    s.text(W // 2, dy + 18, 'Sequential execution flow', size=FS_BODY, bold=True)
+    s.text(W // 2, dy + 18, 'Sıralı yürütme akışı', size=FS_BODY, bold=True)
 
     flow_items = [
-        'Manager calls Agent A',
-        '→ A returns data',
-        '→ Manager passes to B',
-        '→ B returns analysis',
-        '→ Manager passes to C',
-        '→ C returns report',
+        'Manager Ajan A\'yı çağırır',
+        '→ A veri döndürür',
+        '→ Manager B\'ye aktarır',
+        '→ B analiz döndürür',
+        '→ Manager C\'ye aktarır',
+        '→ C rapor döndürür',
     ]
     fx_start = 55
     for i, item in enumerate(flow_items):
         s.text(fx_start + i * 118, dy + 42, item, size=FS_TINY, anchor='start',
                fill='text' if 'Call' in item or 'Return' in item else 'text_light')
 
-    s.text(W // 2, dy + 65, 'Manager perspective: calling Agent = calling tool (send request → receive response)',
+    s.text(W // 2, dy + 65, 'Manager perspektifi: Ajan çağırmak = araç çağırmak (istek gönder → yanıt al)',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-4.svg'))
@@ -384,25 +384,25 @@ def fig9_5():
     W, H = 780, 540
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.4: Book translation Agent — Manager mode', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Deney 9.4: Kitap çeviri Ajanı — Manager modu', size=FS_TITLE, bold=True)
 
     # Manager at top
     mx, my, mw, mh = 240, 55, 300, 70
     s.rect(mx, my, mw, mh, fill='medium')
     s.text(mx + mw // 2, my + 22, 'Manager Agent', size=FS_BODY, bold=True)
-    s.text(mx + mw // 2, my + 48, 'Task planning · Progress monitoring · Exception handling · Result synthesis', size=FS_TINY, fill='text_light')
+    s.text(mx + mw // 2, my + 48, 'Görev planlama · İlerleme izleme · İstisna yönetimi · Sonuç sentezi', size=FS_TINY, fill='text_light')
 
     # Three sub-agents
     sub_agents = [
-        (30, 'Glossary Agent', 'Glossary of terms',
-         ['Receive entire book → Identify specialized terms', 'Search specialized dictionaries + translation conventions', 'Output: glossary.json'],
-         ['{"attention": "attention",', ' "transformer": "Transformer",', ' "backprop": "backpropagation"}']),
-        (270, 'Translation Agent ×N', 'Chapter translation',
-         ['Input: chapter + glossary + guide', 'Strictly translate terms according to the glossary', 'Output: chapter{n}_zh.md'],
-         ['"...attention mechanism computes the similarity of', ' Query·Key^T ..."']),
-        (520, 'Proofreading Agent', 'Full-text review',
-         ['Scan and verify term consistency', 'Check fluency and readability', 'Output: review_report.md'],
-         ['P3: "attention"→"focus" inconsistency', 'P8: Long sentence suggested to split']),
+        (30, 'Sözlük Ajanı', 'Terim sözlüğü',
+         ['Tüm kitabı al → Uzmanlık terimlerini belirle', 'Uzman sözlükleri + çeviri geleneklerini ara', 'Çıktı: glossary.json'],
+         ['{"attention": "dikkat",', ' "transformer": "Transformer",', ' "backprop": "geri yayılım"}']),
+        (270, 'Çeviri Ajanı ×N', 'Bölüm çevirisi',
+         ['Girdi: bölüm + sözlük + rehber', 'Terimleri sözlüğe göre sıkı çevir', 'Çıktı: chapter{n}_zh.md'],
+         ['"...dikkat mekanizması Query·Key^T\'nin', ' benzerliğini hesaplar..."']),
+        (520, 'Redaksiyon Ajanı', 'Tam metin incelemesi',
+         ['Terim tutarlılığını tara ve doğrula', 'Akıcılık ve okunabilirliği kontrol et', 'Çıktı: review_report.md'],
+         ['P3: "attention"→"odak" tutarsızlığı', 'P8: Uzun cümle bölünmesi önerildi']),
     ]
 
     aw = 230
@@ -424,18 +424,18 @@ def fig9_5():
         s.arrow(mx + mw // 2, my + mh + 2, x + aw // 2, ay - 2, color='dark')
 
     # Sequential arrows between sub-agents
-    s.arrow(30 + aw + 4, ay + 90, 270 - 4, ay + 90, label='Glossary')
-    s.arrow(270 + aw + 4, ay + 90, 520 - 4, ay + 90, label='Translation')
+    s.arrow(30 + aw + 4, ay + 90, 270 - 4, ay + 90, label='Sözlük')
+    s.arrow(270 + aw + 4, ay + 90, 520 - 4, ay + 90, label='Çeviri')
 
     # Shared file system
     fy = 375
     s.rect(30, fy, W - 60, 70, fill='medium', rx=6)
-    s.text(W // 2, fy + 18, 'Shared file system', size=FS_BODY, bold=True)
+    s.text(W // 2, fy + 18, 'Paylaşılan dosya sistemi', size=FS_BODY, bold=True)
     files = [
-        ('glossary.json', 'Glossary of terms'),
-        ('chapter{1..10}_zh.md', 'Chapter translation'),
-        ('review_report.md', 'Review report'),
-        ('translation_guide.md', 'Translation guide'),
+        ('glossary.json', 'Terim sözlüğü'),
+        ('chapter{1..10}_zh.md', 'Bölüm çevirisi'),
+        ('review_report.md', 'İnceleme raporu'),
+        ('translation_guide.md', 'Çeviri rehberi'),
     ]
     fw = (W - 80) // len(files)
     for i, (fname, desc) in enumerate(files):
@@ -446,9 +446,9 @@ def fig9_5():
     # Key insight
     ky = 460
     s.rect(30, ky, W - 60, 60, fill='code_bg', rx=4)
-    s.text(W // 2, ky + 18, 'Context isolation advantages', size=FS_BODY, bold=True)
+    s.text(W // 2, ky + 18, 'Bağlam izolasyonu avantajları', size=FS_BODY, bold=True)
     s.text(W // 2, ky + 42,
-           'Glossary: only view terms | Translation: only view current chapter + glossary | Manager: only maintain file index',
+           'Sözlük: yalnızca terimleri görür | Çeviri: yalnızca mevcut bölüm + sözlüğü görür | Manager: yalnızca dosya indeksini tutar',
            size=FS_TINY, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-5.svg'))
@@ -462,27 +462,27 @@ def fig9_6():
     W, H = 780, 500
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Manager parallel coordination: message bus architecture', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Manager paralel koordinasyon: mesaj veri yolu mimarisi', size=FS_TITLE, bold=True)
 
     # Orchestration Agent
     ox, oy, ow, oh = 240, 55, 300, 70
     s.rect(ox, oy, ow, oh, fill='medium')
-    s.text(ox + ow // 2, oy + 22, 'Orchestration Agent', size=FS_BODY, bold=True)
-    s.text(ox + ow // 2, oy + 48, 'Parallel scheduling · Real-time monitoring · Result aggregation', size=FS_TINY, fill='text_light')
+    s.text(ox + ow // 2, oy + 22, 'Orkestrasyon Ajanı', size=FS_BODY, bold=True)
+    s.text(ox + ow // 2, oy + 48, 'Paralel zamanlama · Gerçek zamanlı izleme · Sonuç toplama', size=FS_TINY, fill='text_light')
 
     # Message bus
     bus_y = 155
     s.rect(50, bus_y, W - 100, 36, fill='dark', rx=4)
-    s.text(W // 2, bus_y + 18, 'Message Bus', size=FS_SMALL, fill='white', bold=True)
+    s.text(W // 2, bus_y + 18, 'Mesaj Veri Yolu', size=FS_SMALL, fill='white', bold=True)
 
     s.arrow(ox + ow // 2, oy + oh + 2, ox + ow // 2, bus_y - 2)
 
     # Parallel agents
     agents = [
-        ('Agent 1', 'Data collection', 'Running ◎', 'light'),
-        ('Agent 2', 'Content analysis', 'Running ◎', 'light'),
-        ('Agent 3', 'Chart Generation', 'Completed ✓', 'medium'),
-        ('Agent 4', 'Format Validation', 'Waiting ○', 'code_bg'),
+        ('Ajan 1', 'Veri toplama', 'Çalışıyor ◎', 'light'),
+        ('Ajan 2', 'İçerik analizi', 'Çalışıyor ◎', 'light'),
+        ('Ajan 3', 'Grafik Üretimi', 'Tamamlandı ✓', 'medium'),
+        ('Ajan 4', 'Biçim Doğrulama', 'Bekliyor ○', 'code_bg'),
     ]
     aw = 160
     gap = 14
@@ -496,21 +496,21 @@ def fig9_6():
         s.text(x + aw // 2, ay + 20, name, size=FS_SMALL, bold=True)
         s.text(x + aw // 2, ay + 40, role, size=FS_TINY, fill='text_light')
         s.text(x + aw // 2, ay + 65, status, size=FS_TINY,
-               fill='text_light' if 'Waiting' in status else 'text')
-        s.text(x + aw // 2, ay + 82, 'Independent Context', size=FS_TINY, fill='text_light')
+               fill='text_light' if 'Bekliyor' in status else 'text')
+        s.text(x + aw // 2, ay + 82, 'Bağımsız Bağlam', size=FS_TINY, fill='text_light')
 
         s.arrow(x + aw // 2, bus_y + 38, x + aw // 2, ay - 2, color='dark')
 
     # Message examples
     my = 350
     s.rect(30, my, W - 60, 125, fill='code_bg', rx=4)
-    s.text(W // 2, my + 18, 'Message Bus Communication Example', size=FS_BODY, bold=True)
+    s.text(W // 2, my + 18, 'Mesaj Veri Yolu İletişim Örneği', size=FS_BODY, bold=True)
 
     messages = [
-        ('Orch → Agent 1', '{"type":"start","task":"Collect arxiv papers","params":{"query":"LLM agent"}}'),
-        ('Agent 3 → Orch', '{"type":"completed","agent_id":"3","result":"charts/fig1.svg generated"}'),
-        ('Agent 1 → Agent 2', '{"type":"data_ready","source":"agent_1","file":"raw_data.json"}'),
-        ('Orch → Agent 4', '{"type":"start","depends_on":["agent_2","agent_3"]}'),
+        ('Orch → Ajan 1', '{"type":"start","task":"arxiv makalelerini topla","params":{"query":"LLM agent"}}'),
+        ('Ajan 3 → Orch', '{"type":"completed","agent_id":"3","result":"charts/fig1.svg üretildi"}'),
+        ('Ajan 1 → Ajan 2', '{"type":"data_ready","source":"agent_1","file":"raw_data.json"}'),
+        ('Orch → Ajan 4', '{"type":"start","depends_on":["agent_2","agent_3"]}'),
     ]
     for i, (sender, msg) in enumerate(messages):
         y = my + 40 + i * 22
@@ -528,19 +528,19 @@ def fig9_7():
     W, H = 780, 560
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.5/9.6: Phone + Computer Dual Agent', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Deney 9.5/9.6: Telefon + Bilgisayar İkili Ajan', size=FS_TITLE, bold=True)
 
     # Phone Agent (left)
     px, py, pw, ph = 30, 65, 310, 240
     s.rect(px, py, pw, ph, fill='light', rx=6)
-    s.text(px + pw // 2, py + 22, 'Phone Agent', size=FS_BODY, bold=True)
-    s.text(px + pw // 2, py + 42, 'Node.js · Real-time Voice Call', size=FS_TINY, fill='text_light')
+    s.text(px + pw // 2, py + 22, 'Telefon Ajanı', size=FS_BODY, bold=True)
+    s.text(px + pw // 2, py + 42, 'Node.js · Gerçek Zamanlı Sesli Arama', size=FS_TINY, fill='text_light')
 
     phone_pipeline = [
-        ('User Voice', 'Microphone Input', 'medium'),
-        ('VAD + ASR', 'Silero VAD → STT Transcription', 'light'),
-        ('LLM Inference', 'Understand Intent + Extract Information', 'light'),
-        ('TTS Synthesis', 'Generate Voice Reply → Playback', 'medium'),
+        ('Kullanıcı Sesi', 'Mikrofon Girdisi', 'medium'),
+        ('VAD + ASR', 'Silero VAD → STT Metne Dökme', 'light'),
+        ('LLM Çıkarımı', 'Niyeti Anla + Bilgi Çıkar', 'light'),
+        ('TTS Sentezi', 'Ses Yanıtı Üret → Çal', 'medium'),
     ]
     for i, (label, desc, fill) in enumerate(phone_pipeline):
         y = py + 60 + i * 42
@@ -553,14 +553,14 @@ def fig9_7():
     # Computer Agent (right)
     cx, cy, cw, ch_h = 440, 65, 310, 240
     s.rect(cx, cy, cw, ch_h, fill='light', rx=6)
-    s.text(cx + cw // 2, cy + 22, 'Computer Agent', size=FS_BODY, bold=True)
-    s.text(cx + cw // 2, cy + 42, 'Python · Browser Automation', size=FS_TINY, fill='text_light')
+    s.text(cx + cw // 2, cy + 22, 'Bilgisayar Ajanı', size=FS_BODY, bold=True)
+    s.text(cx + cw // 2, cy + 42, 'Python · Tarayıcı Otomasyonu', size=FS_TINY, fill='text_light')
 
     comp_pipeline = [
-        ('Screenshot', 'Current Browser Page', 'medium'),
-        ('Vision LLM', 'Understand Page Structure + Form Fields', 'light'),
-        ('Action Planning', 'Locate Fields → Plan Input Sequence', 'light'),
-        ('Execute Actions', 'Click / Input / Submit', 'medium'),
+        ('Ekran Görüntüsü', 'Mevcut Tarayıcı Sayfası', 'medium'),
+        ('Görsel LLM', 'Sayfa Yapısını + Form Alanlarını Anla', 'light'),
+        ('Eylem Planlama', 'Alanları Bul → Girdi Sırasını Planla', 'light'),
+        ('Eylemleri Yürüt', 'Tıkla / Girdi / Gönder', 'medium'),
     ]
     for i, (label, desc, fill) in enumerate(comp_pipeline):
         y = cy + 60 + i * 42
@@ -573,7 +573,7 @@ def fig9_7():
     # WebSocket connection between agents
     ws_y = py + ph + 15
     s.rect(30, ws_y, W - 60, 36, fill='dark', rx=4)
-    s.text(W // 2, ws_y + 18, 'WebSocket Bidirectional Communication (ws://localhost:8849)', size=FS_SMALL, fill='white', bold=True)
+    s.text(W // 2, ws_y + 18, 'WebSocket Çift Yönlü İletişim (ws://localhost:8849)', size=FS_SMALL, fill='white', bold=True)
 
     s.arrow(px + pw // 2, py + ph + 2, px + pw // 2, ws_y - 2, color='dark')
     s.arrow(cx + cw // 2, cy + ch_h + 2, cx + cw // 2, ws_y - 2, color='dark')
@@ -581,13 +581,13 @@ def fig9_7():
     # Message examples
     my = ws_y + 50
     s.rect(30, my, W - 60, 150, fill='code_bg', rx=4)
-    s.text(W // 2, my + 18, 'Real-time Bidirectional Message Stream (Use phone and computer simultaneously)', size=FS_BODY, bold=True)
+    s.text(W // 2, my + 18, 'Gerçek zamanlı çift yönlü mesaj akışı (telefon ve bilgisayar eşzamanlı kullanılır)', size=FS_BODY, bold=True)
 
     msgs = [
-        ('Phone → Computer', '[FROM_PHONE_AGENT] User says name is Zhang San', '→'),
-        ('Computer → Phone', '[FROM_COMPUTER_AGENT] Name filled in, ID number required', '←'),
-        ('Phone → Computer', '[FROM_PHONE_AGENT] ID number 310101199001011234', '→'),
-        ('Computer → Phone', '[FROM_COMPUTER_AGENT] Form submitted, registration successful', '←'),
+        ('Telefon → Bilgisayar', '[FROM_PHONE_AGENT] Kullanıcı adının Zhang San olduğunu söylüyor', '→'),
+        ('Bilgisayar → Telefon', '[FROM_COMPUTER_AGENT] Ad dolduruldu, kimlik numarası gerekiyor', '←'),
+        ('Telefon → Bilgisayar', '[FROM_PHONE_AGENT] Kimlik numarası 310101199001011234', '→'),
+        ('Bilgisayar → Telefon', '[FROM_COMPUTER_AGENT] Form gönderildi, kayıt başarılı', '←'),
     ]
     for i, (sender, content, direction) in enumerate(msgs):
         y = my + 42 + i * 26
@@ -597,7 +597,7 @@ def fig9_7():
 
     # Key point
     s.text(W // 2, my + 140,
-           'Key: Two agents run independent ReAct loops in parallel without blocking each other',
+           'Anahtar: İki ajan birbirini bloklamadan bağımsız ReAct döngülerini paralel çalıştırır',
            size=FS_SMALL, fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-7.svg'))
@@ -611,21 +611,21 @@ def fig9_8():
     W, H = 780, 530
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.7: Parallel Web Scraping — Cascade Termination', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Deney 9.7: Paralel Web Kazıma — Basamaklı Sonlandırma', size=FS_TITLE, bold=True)
 
     # Orchestration Agent
     ox, oy, ow, oh = 230, 55, 320, 65
     s.rect(ox, oy, ow, oh, fill='medium')
-    s.text(ox + ow // 2, oy + 20, 'Orchestration Agent', size=FS_BODY, bold=True)
-    s.text(ox + ow // 2, oy + 44, 'Dynamic creation · Real-time monitoring · Cascade termination', size=FS_TINY, fill='text_light')
+    s.text(ox + ow // 2, oy + 20, 'Orkestrasyon Ajanı', size=FS_BODY, bold=True)
+    s.text(ox + ow // 2, oy + 44, 'Dinamik oluşturma · Gerçek zamanlı izleme · Basamaklı sonlandırma', size=FS_TINY, fill='text_light')
 
     # Parallel Computer Use Agents
     agents = [
-        ('Agent 1', 'cs.edu.cn', 'Searching... ◎', 'light'),
-        ('Agent 2', 'math.edu.cn', 'Not found ✗', '#e8e8e8'),
-        ('Agent 3', 'phys.edu.cn', 'Found! ✓', 'medium'),
-        ('Agent 4', 'chem.edu.cn', 'Terminated ⊘', 'code_bg'),
-        ('Agent 5', 'bio.edu.cn', 'Terminated ⊘', 'code_bg'),
+        ('Ajan 1', 'cs.edu.cn', 'Aranıyor... ◎', 'light'),
+        ('Ajan 2', 'math.edu.cn', 'Bulunamadı ✗', '#e8e8e8'),
+        ('Ajan 3', 'phys.edu.cn', 'Bulundu! ✓', 'medium'),
+        ('Ajan 4', 'chem.edu.cn', 'Sonlandırıldı ⊘', 'code_bg'),
+        ('Ajan 5', 'bio.edu.cn', 'Sonlandırıldı ⊘', 'code_bg'),
     ]
     aw = 130
     gap = 12
@@ -638,23 +638,23 @@ def fig9_8():
         s.rect(x, ay, aw, 95, fill=fill, rx=4)
         s.text(x + aw // 2, ay + 16, name, size=FS_SMALL, bold=True)
         s.mono(x + aw // 2, ay + 35, url, size=10, anchor='middle')
-        s.text(x + aw // 2, ay + 55, 'Faculty Directory Search', size=FS_TINY, fill='text_light')
+        s.text(x + aw // 2, ay + 55, 'Akademik Kadro Araması', size=FS_TINY, fill='text_light')
         s.text(x + aw // 2, ay + 75, status, size=FS_TINY,
-               bold=('Found' in status), fill='text' if 'Found' in status else 'text_light')
+               bold=('Bulundu' in status), fill='text' if 'Bulundu' in status else 'text_light')
 
         s.arrow(ox + ow // 2, oy + oh + 2, x + aw // 2, ay - 2, color='dark')
 
     # Cascade termination flow
     ty = 280
     s.rect(30, ty, W - 60, 120, fill='code_bg', rx=4)
-    s.text(W // 2, ty + 18, 'Cascade Termination Timeline', size=FS_BODY, bold=True)
+    s.text(W // 2, ty + 18, 'Basamaklı Sonlandırma Zaman Çizelgesi', size=FS_BODY, bold=True)
 
     timeline = [
-        ('t=0s', 'Start 5 agents\nparallel search for teacher "Zhang Wei"'),
-        ('t=12s', 'Agent 2 completed\nNot found → Normal exit'),
-        ('t=18s', 'Agent 3 found target!\nSend target_found'),
-        ('t=18.1s', 'Orch broadcasts terminate\nto Agents 1,4,5'),
-        ('t=19s', 'All confirm termination\nAggregate results and return'),
+        ('t=0sn', '5 ajan başlat\n"Zhang Wei" öğretmeni paralel ara'),
+        ('t=12sn', 'Ajan 2 tamamlandı\nBulunamadı → Normal çıkış'),
+        ('t=18sn', 'Ajan 3 hedefi buldu!\ntarget_found gönder'),
+        ('t=18.1sn', 'Orch, 1,4,5 nolu Ajanlara\nterminate yayınlıyor'),
+        ('t=19sn', 'Tümü sonlandırmayı onayladı\nSonuçları topla ve döndür'),
     ]
     tw = 130
     tx_start = (W - len(timeline) * tw) // 2
@@ -669,20 +669,20 @@ def fig9_8():
     # Result and comparison
     ry = 420
     s.rect(30, ry, 340, 85, fill='light', rx=4)
-    s.text(200, ry + 18, 'Result found', size=FS_BODY, bold=True)
+    s.text(200, ry + 18, 'Bulunan sonuç', size=FS_BODY, bold=True)
     result_lines = [
-        'Name: Zhang Wei   School: School of Physics',
-        'Position: Professor   Field: Quantum Computing',
-        'Email: zhangwei@phys.edu.cn',
+        'Ad: Zhang Wei   Fakülte: Fizik Fakültesi',
+        'Unvan: Profesör   Alan: Kuantum Hesaplama',
+        'E-posta: zhangwei@phys.edu.cn',
     ]
     for i, ln in enumerate(result_lines):
         s.mono(50, ry + 40 + i * 16, ln, size=11)
 
     s.rect(400, ry, 350, 85, fill='medium', rx=4)
-    s.text(575, ry + 18, 'Performance Comparison', size=FS_BODY, bold=True)
-    s.text(420, ry + 42, 'Serial: 10 websites × 30s = ~5 minutes', size=FS_TINY, anchor='start', fill='text_light')
-    s.text(420, ry + 60, 'Parallel: 18s to find + 1s to terminate = 19s', size=FS_TINY, anchor='start', bold=True)
-    s.text(420, ry + 78, 'Speedup: ~15× (with cascade termination optimization)', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(575, ry + 18, 'Performans Karşılaştırması', size=FS_BODY, bold=True)
+    s.text(420, ry + 42, 'Seri: 10 site × 30sn = ~5 dakika', size=FS_TINY, anchor='start', fill='text_light')
+    s.text(420, ry + 60, 'Paralel: bulmak için 18sn + sonlandırmak için 1sn = 19sn', size=FS_TINY, anchor='start', bold=True)
+    s.text(420, ry + 78, 'Hızlanma: ~15× (basamaklı sonlandırma optimizasyonuyla)', size=FS_TINY, anchor='start', fill='text_light')
 
     s.save(os.path.join(OUT, 'fig9-8.svg'))
 
@@ -695,13 +695,13 @@ def fig9_9():
     W, H = 780, 440
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Handoff Chain Pattern: Peer-to-peer handoff + Contract-based collaboration', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Handoff Zincir Deseni: Eşler arası devir + Sözleşme tabanlı işbirliği', size=FS_TITLE, bold=True)
 
     nodes = [
-        ('Agent A', 'Requirements Analysis', 'Output: structured requirements document \nspec.json', 'medium'),
-        ('Agent B', 'Architecture Design', 'Output: technical design document \ndesign.md', 'light'),
-        ('Agent C', 'Code Implementation', 'Output: source code \nsrc/*.py', 'light'),
-        ('Agent D', 'Test Verification', 'Output: test report \ntest_report.md', 'medium'),
+        ('Ajan A', 'Gereksinim Analizi', 'Çıktı: yapılandırılmış gereksinim belgesi \nspec.json', 'medium'),
+        ('Ajan B', 'Mimari Tasarım', 'Çıktı: teknik tasarım belgesi \ndesign.md', 'light'),
+        ('Ajan C', 'Kod Uygulaması', 'Çıktı: kaynak kod \nsrc/*.py', 'light'),
+        ('Ajan D', 'Test Doğrulaması', 'Çıktı: test raporu \ntest_report.md', 'medium'),
     ]
 
     nw, nh = 160, 130
@@ -720,7 +720,7 @@ def fig9_9():
         for j, ln in enumerate(output.split('\n')):
             s.text(x + nw // 2, ny + 72 + j * 16, ln, size=FS_TINY, fill='text_light')
 
-        s.text(x + nw // 2, ny + nh - 8, 'Handoff after completion →', size=FS_TINY, fill='text_light')
+        s.text(x + nw // 2, ny + nh - 8, 'Tamamlanınca devret →', size=FS_TINY, fill='text_light')
 
         if i < len(nodes) - 1:
             s.arrow(x + nw + 4, ny + nh // 2, x + nw + gap - 4, ny + nh // 2)
@@ -728,13 +728,13 @@ def fig9_9():
     # Handoff data detail
     hy = 215
     s.rect(30, hy, W - 60, 90, fill='code_bg', rx=4)
-    s.text(W // 2, hy + 18, 'Handoff Content (Agent A → Agent B Example)', size=FS_BODY, bold=True)
+    s.text(W // 2, hy + 18, 'Devir İçeriği (Ajan A → Ajan B Örneği)', size=FS_BODY, bold=True)
 
     handoff_fields = [
-        ('Trigger Condition', 'A completes requirements document → is_complete=True'),
-        ('Target Agent', 'target="architect" (Agent B)'),
-        ('Handoff Content', 'files=["spec.json"] + summary="E-commerce system: 3 microservices, REST API"'),
-        ('Post-handoff Status', 'status="exit" (release resources, do not remain on standby)'),
+        ('Tetikleme Koşulu', 'A gereksinim belgesini tamamlar → is_complete=True'),
+        ('Hedef Ajan', 'target="architect" (Ajan B)'),
+        ('Devir İçeriği', 'files=["spec.json"] + summary="E-ticaret sistemi: 3 mikroservis, REST API"'),
+        ('Devir Sonrası Durum', 'status="exit" (kaynakları serbest bırak, bekleme durumunda kalma)'),
     ]
     for i, (field, value) in enumerate(handoff_fields):
         y = hy + 38 + i * 16
@@ -744,21 +744,21 @@ def fig9_9():
     # Comparison with Manager mode
     cy = 320
     s.rect(30, cy, 340, 100, fill='light', rx=4)
-    s.text(200, cy + 18, 'Decentralization Advantages', size=FS_SMALL, bold=True)
+    s.text(200, cy + 18, 'Merkezsizleşmenin Avantajları', size=FS_SMALL, bold=True)
     advantages = [
-        '✓ No central Manager needed to understand all roles',
-        '✓ Clear responsibility boundaries, interface decoupling',
-        '✓ Engineer can have multiple parallel instances',
+        '✓ Tüm rolleri anlayan merkezi Manager gerekmez',
+        '✓ Net sorumluluk sınırları, arayüz ayrıştırması',
+        '✓ Engineer birden çok paralel örneğe sahip olabilir',
     ]
     for i, adv in enumerate(advantages):
         s.text(48, cy + 42 + i * 20, adv, size=FS_TINY, anchor='start', fill='text_light')
 
     s.rect(400, cy, 350, 100, fill='light', rx=4)
-    s.text(575, cy + 18, 'Decentralization Limitations', size=FS_SMALL, bold=True)
+    s.text(575, cy + 18, 'Merkezsizleşmenin Sınırlamaları', size=FS_SMALL, bold=True)
     limits = [
-        '✗ Lack of global optimization perspective',
-        '✗ Difficult exception handling (no central coordination)',
-        '✗ Fixed process, hard to adjust dynamically',
+        '✗ Küresel optimizasyon perspektifi eksik',
+        '✗ İstisna yönetimi zor (merkezi koordinasyon yok)',
+        '✗ Süreç sabit, dinamik ayarlamak zor',
     ]
     for i, lim in enumerate(limits):
         s.text(418, cy + 42 + i * 20, lim, size=FS_TINY, anchor='start', fill='text_light')
@@ -774,24 +774,24 @@ def fig9_10():
     W, H = 780, 530
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'MetaGPT SOP Pipeline: Standardized Document-Driven', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'MetaGPT SOP Boru Hattı: Standartlaştırılmış Belge Odaklı', size=FS_TITLE, bold=True)
 
     roles = [
-        ('Product Manager', 'medium',
-         'Input: User Requirement Description',
-         ['Feature List + Priority', 'User Stories (5 items)', 'Acceptance Criteria'],
+        ('Ürün Yöneticisi', 'medium',
+         'Girdi: Kullanıcı Gereksinim Açıklaması',
+         ['Özellik Listesi + Öncelik', 'Kullanıcı Hikayeleri (5 adet)', 'Kabul Kriterleri'],
          'docs/PRD.md'),
-        ('Architect', 'light',
-         'Input: PRD.md',
-         ['Tech Stack: FastAPI+React', 'API Specification (OpenAPI)', 'Database Schema'],
+        ('Mimar', 'light',
+         'Girdi: PRD.md',
+         ['Teknoloji Yığını: FastAPI+React', 'API Spesifikasyonu (OpenAPI)', 'Veritabanı Şeması'],
          'docs/design.md'),
-        ('Engineer ×3', 'light',
-         'Input: design.md + module specification',
-         ['Module A: User Service', 'Module B: Order Service', 'Module C: Payment Service'],
+        ('Mühendis ×3', 'light',
+         'Girdi: design.md + modül spesifikasyonu',
+         ['Modül A: Kullanıcı Servisi', 'Modül B: Sipariş Servisi', 'Modül C: Ödeme Servisi'],
          'src/*.py'),
-        ('QA Engineer', 'medium',
-         'Input: src/ + PRD.md',
-         ['Unit Tests (pytest)', 'Integration Tests (API)', 'Bug Report → Engineer'],
+        ('QA Mühendisi', 'medium',
+         'Girdi: src/ + PRD.md',
+         ['Birim Testleri (pytest)', 'Entegrasyon Testleri (API)', 'Hata Raporu → Mühendis'],
          'docs/test_report.md'),
     ]
 
@@ -810,7 +810,7 @@ def fig9_10():
         s.text(x + 8, ry + 42, input_desc, size=11, anchor='start', fill='text_light')
 
         s.rect(x + 8, ry + 58, rw - 16, 20 + len(outputs) * 16, fill='code_bg', rx=3)
-        s.text(x + 14, ry + 72, 'Output:', size=FS_TINY, bold=True, anchor='start')
+        s.text(x + 14, ry + 72, 'Çıktı:', size=FS_TINY, bold=True, anchor='start')
         for j, out in enumerate(outputs):
             s.text(x + 14, ry + 88 + j * 16, out, size=11, anchor='start', fill='text_light')
 
@@ -825,25 +825,25 @@ def fig9_10():
     # QA → Engineer feedback loop
     qa_x = rx_start + 3 * (rw + gap) + rw // 2
     eng_x = rx_start + 2 * (rw + gap) + rw // 2
-    s.arrow_curved(qa_x, ry + 230 + 5, eng_x, ry + 230 + 5, curve=-30, label='Bug Fix', dash=True)
+    s.arrow_curved(qa_x, ry + 230 + 5, eng_x, ry + 230 + 5, curve=-30, label='Hata Düzeltme', dash=True)
 
     # Shared file system
     fy = 310
     s.rect(30, fy, W - 60, 50, fill='medium', rx=4)
-    s.text(W // 2, fy + 16, 'Shared Project Directory', size=FS_SMALL, bold=True)
+    s.text(W // 2, fy + 16, 'Paylaşılan Proje Dizini', size=FS_SMALL, bold=True)
     s.mono(W // 2, fy + 36, 'docs/PRD.md  docs/design.md  src/*.py  docs/test_report.md',
            size=11, anchor='middle')
 
     # Key insight
     ky = 375
     s.rect(30, ky, W - 60, 130, fill='code_bg', rx=4)
-    s.text(W // 2, ky + 18, 'MetaGPT Core Design', size=FS_BODY, bold=True)
+    s.text(W // 2, ky + 18, 'MetaGPT Temel Tasarımı', size=FS_BODY, bold=True)
 
     insights = [
-        ('Standardized Documents', 'Each role outputs a clear format — downstream only needs to understand the format, not the upstream thought process'),
-        ('Interface Decoupling', 'Improve PM (switch to a stronger model) — as long as the output conforms to the PRD format, downstream requires zero modification'),
-        ('No Manager', 'Control flows naturally along the DAG: PM→Arch→Eng→QA, no central scheduling overhead'),
-        ('Exception Channel', 'QA test failure → Bug report routed by module back to Engineer → iterative fix'),
+        ('Standartlaştırılmış Belgeler', 'Her rol net biçimde çıktı üretir — alt akış yalnızca biçimi anlamalı, üst akışın düşünce sürecini değil'),
+        ('Arayüz Ayrıştırması', 'PM\'i iyileştir (daha güçlü modele geç) — çıktı PRD biçimine uyduğu sürece alt akış sıfır değişiklik gerektirir'),
+        ('Manager Yok', 'Kontrol DAG boyunca doğal akar: PM→Arch→Eng→QA, merkezi zamanlama ek yükü yok'),
+        ('İstisna Kanalı', 'QA test başarısız → Hata raporu modüle göre Mühendis\'e yönlendirilir → yinelemeli düzeltme'),
     ]
     for i, (title, desc) in enumerate(insights):
         y = ky + 42 + i * 24
@@ -864,8 +864,8 @@ def fig9_11():
     #  Common Input
     in_x, in_y, in_w, in_h = 230, 55, 440, 64
     s.rect(in_x, in_y, in_w, in_h, fill='medium', rx=6)
-    s.text(in_x + in_w / 2, in_y + 22, 'Common Input: camera image + language instruction', size=FS_SMALL, bold=True)
-    s.text(in_x + in_w / 2, in_y + 44, '"Put the red block into the blue box"', size=FS_TINY, fill='text_light')
+    s.text(in_x + in_w / 2, in_y + 22, 'Ortak Girdi: kamera görüntüsü + dil talimatı', size=FS_SMALL, bold=True)
+    s.text(in_x + in_w / 2, in_y + 44, '"Kırmızı bloğu mavi kutuya koy"', size=FS_TINY, fill='text_light')
 
     #  Arrows leading to three branches
     s.arrow(in_x + 70, in_y + in_h + 2, 145, 165)   # → OpenVLA
@@ -878,23 +878,23 @@ def fig9_11():
     sx0 = (W - cols_total) / 2  # = 30
 
     columns = [
-        ('OpenVLA', 'Open source · discrete action tokens', 'light', [
-            ('Vision encoder', 'DINOv2 + SigLIP', 'Extract pixel features'),
-            ('LLM backbone', 'Llama 2 (7B)', 'Understand instructions and scenes'),
-            ('Decoding method', 'Autoregressive · text tokens', 'Discretize actions into options'),
-            ('Action output', '"a=[3,−2,5,...]" tokens', 'Generate 7-DOF control values step by step'),
+        ('OpenVLA', 'Açık kaynak · ayrık eylem tokenleri', 'light', [
+            ('Görsel kodlayıcı', 'DINOv2 + SigLIP', 'Piksel özelliklerini çıkar'),
+            ('LLM omurgası', 'Llama 2 (7B)', 'Talimatları ve sahneleri anla'),
+            ('Kod çözme yöntemi', 'Otoregresif · metin tokenleri', 'Eylemleri seçeneklere ayrıklaştır'),
+            ('Eylem çıktısı', '"a=[3,−2,5,...]" tokenleri', 'Adım adım 7-DOF kontrol değeri üret'),
         ]),
-        ('π₀（Pi-Zero）', 'Diffusion policy · smooth trajectory', 'medium', [
-            ('Vision encoder', 'ViT multi-view fusion', 'Extract pixel features'),
-            ('Mixture-of-Transformers', 'Fast-slow separated backbone', 'Language slow thinking + control fast thinking'),
-            ('Decoding method', 'Diffusion denoising iteration', 'Coarse-to-fine refinement of entire trajectory'),
-            ('Action output', 'Continuous action sequence (50 steps/batch)', 'High-frequency smooth control signal'),
+        ('π₀（Pi-Zero）', 'Difüzyon politikası · yumuşak yörünge', 'medium', [
+            ('Görsel kodlayıcı', 'ViT çoklu görünüm füzyonu', 'Piksel özelliklerini çıkar'),
+            ('Mixture-of-Transformers', 'Hızlı-yavaş ayrık omurga', 'Dil yavaş düşünme + kontrol hızlı düşünme'),
+            ('Kod çözme yöntemi', 'Difüzyon gürültü giderme yinelemesi', 'Tüm yörüngeyi kabadan inceye iyileştirme'),
+            ('Eylem çıktısı', 'Sürekli eylem dizisi (50 adım/parti)', 'Yüksek frekanslı yumuşak kontrol sinyali'),
         ]),
-        ('RT-2', 'Language model as action model', 'light', [
-            ('Vision-language backbone', 'PaLI-X / PaLM-E', 'VLM end-to-end understanding'),
-            ('Action representation', 'Action → natural language tokens', '"move arm 5cm right"'),
-            ('Decoding method', 'Reuse VLM autoregression', 'Shared weights with text generation'),
-            ('Action output', 'Text description → controller parsing', 'Inherit VLM\'s semantic generalization'),
+        ('RT-2', 'Eylem modeli olarak dil modeli', 'light', [
+            ('Görsel-dil omurgası', 'PaLI-X / PaLM-E', 'VLM uçtan uca anlama'),
+            ('Eylem gösterimi', 'Eylem → doğal dil tokenleri', '"kolu 5cm sağa hareket ettir"'),
+            ('Kod çözme yöntemi', 'VLM otoregresyonunu yeniden kullan', 'Metin üretimiyle paylaşılan ağırlıklar'),
+            ('Eylem çıktısı', 'Metin açıklaması → denetleyici ayrıştırması', 'VLM\'in anlamsal genelleme yeteneğini miras al'),
         ]),
     ]
 
@@ -923,10 +923,10 @@ def fig9_11():
     out_y = top_y + title_h + 4 * row_h + 14 + 24
     s.rect(30, out_y, W - 60, 50, fill='darker', rx=6)
     s.text(W / 2, out_y + 18,
-           'Robot control signals: 7-DOF joint angles / end-effector pose',
+           'Robot kontrol sinyalleri: 7-DOF eklem açıları / uç efektör pozu',
            size=FS_SMALL, bold=True, fill='white')
     s.text(W / 2, out_y + 36,
-           'The difference lies in "how to tell the robot what to do next," but both ultimately fall into a unified control interface',
+           'Fark, "robota bir sonraki adımı nasıl söyleyeceğinde" yatar, ancak sonuçta ikisi de birleşik bir kontrol arayüzüne iner',
            size=FS_TINY, fill='white')
 
     s.save(os.path.join(OUT, 'fig9-11.svg'))
@@ -940,27 +940,27 @@ def fig9_12():
     W, H = 780, 550
     s = SVG(W, H)
 
-    s.text(W // 2, 28, 'Experiment 9.9: Voice Werewolf — Information Permission Control', size=FS_TITLE, bold=True)
+    s.text(W // 2, 28, 'Deney 9.9: Sesli Kurt Adam — Bilgi İzin Kontrolü', size=FS_TITLE, bold=True)
 
     # Judge (code-driven)
     jx, jy, jw, jh = 260, 55, 260, 75
     s.rect(jx, jy, jw, jh, fill='dark', rx=6)
-    s.text(jx + jw // 2, jy + 20, 'Judge (code-driven)', size=FS_BODY, bold=True, fill='white')
-    s.text(jx + jw // 2, jy + 42, 'Game state · Phase control · Information distribution', size=FS_TINY, fill='white')
-    s.text(jx + jw // 2, jy + 58, 'Night → Day → Vote → Settle', size=FS_TINY, fill='white')
+    s.text(jx + jw // 2, jy + 20, 'Hakem (kod güdümlü)', size=FS_BODY, bold=True, fill='white')
+    s.text(jx + jw // 2, jy + 42, 'Oyun durumu · Aşama kontrolü · Bilgi dağıtımı', size=FS_TINY, fill='white')
+    s.text(jx + jw // 2, jy + 58, 'Gece → Gündüz → Oylama → Sonuçlandır', size=FS_TINY, fill='white')
 
     # Role agents
     roles = [
-        (40, 'Werewolf 1', '🐺', 'medium',
-         ['Visible: Teammate identities', 'Strategy: Disguise as villager', 'Night: Choose target']),
-        (185, 'Werewolf 2', '🐺', 'medium',
-         ['Visible: Teammate identities', 'Strategy: Follow votes to protect', 'Night: Negotiate target']),
-        (330, 'Seer', '🔮', 'light',
-         ['Visible: Investigation results', 'Strategy: Choose timing to reveal', 'Night: Check 1 person']),
-        (475, 'Witch', '🧪', 'light',
-         ['Visible: Death/healing', 'Strategy: Save potion/antidote', 'Night: Save/poison 1 person']),
-        (620, 'Villager ×2', '👤', '#e8e8e8',
-         ['Visible: Public information only', 'Strategy: Logical reasoning', 'Day: Analyze speech']),
+        (40, 'Kurt Adam 1', '🐺', 'medium',
+         ['Görünür: Takım arkadaşı kimlikleri', 'Strateji: Köylü gibi davran', 'Gece: Hedef seç']),
+        (185, 'Kurt Adam 2', '🐺', 'medium',
+         ['Görünür: Takım arkadaşı kimlikleri', 'Strateji: Oylamayı takip ederek koru', 'Gece: Hedefte anlaş']),
+        (330, 'Görücü', '🔮', 'light',
+         ['Görünür: Araştırma sonuçları', 'Strateji: Açıklama zamanını seç', 'Gece: 1 kişiyi kontrol et']),
+        (475, 'Cadı', '🧪', 'light',
+         ['Görünür: Ölüm/iyileştirme', 'Strateji: İksir/panzehiri sakla', 'Gece: 1 kişiyi kurtar/zehirle']),
+        (620, 'Köylü ×2', '👤', '#e8e8e8',
+         ['Görünür: Yalnızca kamuya açık bilgi', 'Strateji: Mantıksal muhakeme', 'Gündüz: Konuşmayı analiz et']),
     ]
 
     aw, ay = 135, 180
@@ -974,21 +974,21 @@ def fig9_12():
         s.arrow(jx + jw // 2, jy + jh + 2, x + aw // 2, ay - 2, color='dark')
 
         # Permission badge
-        if 'Werewolf' in name:
-            s.badge(x + aw - 45, ay + aw - 15, 40, 18, 'Mutual knowledge', fill='darker', font_size=11)
-        elif 'Seer' in name:
-            s.badge(x + aw - 55, ay + aw - 15, 50, 18, 'Investigation results', fill='darker', font_size=10)
+        if 'Kurt Adam' in name:
+            s.badge(x + aw - 45, ay + aw - 15, 40, 18, 'Karşılıklı bilgi', fill='darker', font_size=11)
+        elif 'Görücü' in name:
+            s.badge(x + aw - 55, ay + aw - 15, 50, 18, 'Araştırma sonuçları', fill='darker', font_size=10)
 
     # Info permission control
     iy = 340
     s.rect(30, iy, W - 60, 90, fill='code_bg', rx=4)
-    s.text(W // 2, iy + 18, 'Information permission control: judge filters context by role', size=FS_BODY, bold=True)
+    s.text(W // 2, iy + 18, 'Bilgi izin kontrolü: hakem role göre bağlamı filtreler', size=FS_BODY, bold=True)
 
     perms = [
-        ('Werewolf', 'All werewolf identities + night discussion + public speech'),
-        ('Seer', 'Investigation results (only self-investigated) + public speech'),
-        ('Witch', 'Deaths of the night + antidote/poison status + public speech'),
-        ('Villager', 'Public speech only + voting records (zero private information)'),
+        ('Kurt Adam', 'Tüm kurt adam kimlikleri + gece tartışması + herkese açık konuşma'),
+        ('Görücü', 'Araştırma sonuçları (yalnızca kendi araştırdığı) + herkese açık konuşma'),
+        ('Cadı', 'Gecenin ölümleri + panzehir/zehir durumu + herkese açık konuşma'),
+        ('Köylü', 'Yalnızca herkese açık konuşma + oylama kayıtları (sıfır özel bilgi)'),
     ]
     pw = (W - 80) // 2
     for i, (role, perm) in enumerate(perms):
@@ -1001,13 +1001,13 @@ def fig9_12():
     # Voice interaction
     vy = 445
     s.rect(30, vy, W - 60, 85, fill='light', rx=4)
-    s.text(W // 2, vy + 18, 'Real-time voice interaction (ASR + LLM + TTS)', size=FS_BODY, bold=True)
+    s.text(W // 2, vy + 18, 'Gerçek zamanlı sesli etkileşim (ASR + LLM + TTS)', size=FS_BODY, bold=True)
 
     voice_flow = [
-        ('Day discussion', 'Judge manages speaking order\nspeaking in seat order'),
-        ('Voting phase', 'Collect all player votes\ntally votes and announce results'),
-        ('Night phase', 'Judge wakes roles in sequence\nprivate voice channel'),
-        ('Human player', 'Random role assignment\nvoice-based voting/speech'),
+        ('Gündüz tartışması', 'Hakem konuşma sırasını yönetir\nkoltuk sırasına göre konuşma'),
+        ('Oylama aşaması', 'Tüm oyuncuların oyunu topla\noyları say ve sonucu duyur'),
+        ('Gece aşaması', 'Hakem rolleri sırayla uyandırır\nözel ses kanalı'),
+        ('İnsan oyuncu', 'Rastgele rol ataması\nses tabanlı oylama/konuşma'),
     ]
     vw = (W - 80) // len(voice_flow)
     for i, (title, desc) in enumerate(voice_flow):

@@ -2,11 +2,11 @@
 
 [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-%E0%AE%AA%E0%AE%A4%E0%AE%BF%E0%AE%B5%E0%AE%BF%E0%AE%B1%E0%AE%95%E0%AF%8D-success.svg)](#-மின--புத்தகம்) [![Languages](https://img.shields.io/badge/மொழ%E0%AE%AA%E0%AF%86%E0%AE%AF%E0%AE%B0%E0%AF%8D%E0%AE%AA%E0%AF%81-5%20%E0%AE%AE%E0%AF%8A%E0%AE%B4%E0%AE%BF%E0%AE%95%E0%AE%B3%E0%AF%8D-informational.svg)](#-மின--புத்தகம்)
 
-**[中文](../../README.md) · [台灣正體](../zh-TW/README.md) · [English](../en/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய**
+**[中文](../../README.md) · [台灣正體](../zh-TW/README.md) · [English](../en/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய · [Türkçe](../../README.tr.md)**
 
 **Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **88 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
 
-| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **88** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **5 மொழிகள்**: சீன / 台灣正體 / ஆங் / தமிழ் / வியத் |
+| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **88** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **6 மொழிகள்**: சீன / 台灣正體 / ஆங் / தமிழ் / வியத் / துருக்கியம் |
 | :---: | :---: | :---: |
 
 ## 📖 மின்-புத்தகம்
@@ -17,8 +17,9 @@
 > - **ஆங்கிலம்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
 > - **தமிழ்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
 > - **வியட்நாம்**（சமூக மொழிபெயர்ப்பு, by [@toanalien](https://github.com/toanalien)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
+> - **துருக்கியம்**（சமூக மொழிபெயர்ப்பு, by [@memisemre](https://github.com/memisemre)）：PDF/EPUB இன்னும் உருவாக்கப்படவில்லை — [`book-tr/`](../../book-tr/)-இல் நேரடியாகப் படிக்கவும்
 
-சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; 台灣正體/ஆங்/தமிழ்/வியத் பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-zhtw/`](../../book-zhtw/), [`book-en/`](../../book-en/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/)-இல் உள்ளன.
+சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; 台灣正體/ஆங்/தமிழ்/வியத்/துருக்கியம் பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-zhtw/`](../../book-zhtw/), [`book-en/`](../../book-en/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-tr/`](../../book-tr/)-இல் உள்ளன.
 
 ஒரே உருவாக்க நிரல் எளிய சீனம், பாரம்பரிய சீனம் (தைவான்), ஆங்கிலம், தமிழ் மற்றும் வியட்நாமியம் ஆகிய மொழிகளுக்கான EPUB 3 பதிப்புகளை உருவாக்குகிறது. [EPUB உருவாக்க வழிமுறைகளைப்](../../EPUB.md) பார்க்கவும்.
 
@@ -137,7 +138,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 🐛 **குறியீடு மேம்பாடு & bug திருத்தம்** | துணை திட்டங்களை வலுவானதாக, பயன்படுத்த எளிதாக, உற்பத்தி-தயாராக மாற்று |
 | 🧪 **புதிய நடைமுறை திட்டங்கள்** | சோதனைகளுக்கு சிறந்த செயலாக்கத்தைச் சேர்க்கவும்/மாற்றவும், அல்லது புதிய எடுத்துக்காட்டுகளைப் பங்களிக்கவும் |
 | 🎨 **பட வடிவமைப்பு** | `book/images/` விளக்கப்படங்களை தெளிவாகவும் அழகாகவும் மாற்று (`book/gen_*_figs.py` ஆல் உருவாக்கப்பட்டவை) |
-| 🌐 **புதிய மொழிபெயர்ப்புகள்** | மேலும் மொழிகளுக்கு மொழிபெயர்ப்பை வரவேற்கிறோம்; பாரம்பரிய சீனம்/தைவான் (`book-zhtw/`), ஆங்கிலம் (`book-en/`), தமிழ் (`book-ta/`), வியட்நாம் (`book-vi/`) பார்க்கவும் |
+| 🌐 **புதிய மொழிபெயர்ப்புகள்** | மேலும் மொழிகளுக்கு மொழிபெயர்ப்பை வரவேற்கிறோம்; பாரம்பரிய சீனம்/தைவான் (`book-zhtw/`), ஆங்கிலம் (`book-en/`), தமிழ் (`book-ta/`), வியட்நாம் (`book-vi/`), துருக்கியம் (`book-tr/`) பார்க்கவும் |
 
 சமர்ப்பிக்கும் முன், தொடர்புடைய சோதனைகளை இயக்கி மறு உருவாக்கத்தை உறுதிப்படுத்தவும்; கருத்துக்களைப் பேச முதலில் issue திறக்கலாம்.
 

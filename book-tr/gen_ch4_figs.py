@@ -53,11 +53,11 @@ def fig4_1():
     """MCP protocol sequence diagram (concrete message payloads)"""
     w, h = 880, 620
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "MCP protocol interaction sequence", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "MCP protokol etkileşim sırası", size=FS_TITLE, bold=True)
 
     cl_x, sv_x = 200, 680
-    svg.box(cl_x - 80, 50, 160, 44, "MCP Client", fill='medium', bold=True)
-    svg.box(sv_x - 80, 50, 160, 44, "MCP Server", fill='medium', bold=True)
+    svg.box(cl_x - 80, 50, 160, 44, "MCP İstemci", fill='medium', bold=True)
+    svg.box(sv_x - 80, 50, 160, 44, "MCP Sunucu", fill='medium', bold=True)
     svg.line(cl_x, 94, cl_x, 600, color='dark', dash=True)
     svg.line(sv_x, 94, sv_x, 600, color='dark', dash=True)
 
@@ -73,7 +73,7 @@ def fig4_1():
     # 2 initialize response
     y = 200
     svg.arrow(sv_x - 4, y, cl_x + 4, y, dash=True)
-    svg.text((cl_x + sv_x) / 2, y - 14, "initialize response", size=FS_BODY, bold=True)
+    svg.text((cl_x + sv_x) / 2, y - 14, "initialize yanıtı", size=FS_BODY, bold=True)
     svg.code_block(cl_x + 30, y + 6, 350, [
         '{"serverInfo": {"name": "weather-server"},',
         ' "capabilities": {"tools": {"listChanged":true}}}',
@@ -90,7 +90,7 @@ def fig4_1():
     # 4 tools/list response
     y = 340
     svg.arrow(sv_x - 4, y, cl_x + 4, y, dash=True)
-    svg.text((cl_x + sv_x) / 2, y - 14, "tools/list response", size=FS_BODY, bold=True)
+    svg.text((cl_x + sv_x) / 2, y - 14, "tools/list yanıtı", size=FS_BODY, bold=True)
     svg.code_block(cl_x + 10, y + 6, 400, [
         '{"tools": [{"name": "get_weather",',
         '  "inputSchema": {"city": "string"}}]}',
@@ -109,16 +109,16 @@ def fig4_1():
     # 6 tools/call response
     y = 510
     svg.arrow(sv_x - 4, y, cl_x + 4, y, dash=True)
-    svg.text((cl_x + sv_x) / 2, y - 14, "tools/call result", size=FS_BODY, bold=True)
+    svg.text((cl_x + sv_x) / 2, y - 14, "tools/call sonucu", size=FS_BODY, bold=True)
     svg.code_block(cl_x + 30, y + 6, 350, [
         '{"content": [{"type": "text",',
-        '  "text": "Beijing: 22°C, sunny"}]}',
+        '  "text": "Beijing: 22°C, açık"}]}',
     ], font_size=FS_TINY, line_h=18)
 
     # Phase labels on the left
-    svg.text(50, 165, "① Handshake", size=FS_SMALL, bold=True, fill='text_light')
-    svg.text(50, 310, "② Discovery", size=FS_SMALL, bold=True, fill='text_light')
-    svg.text(50, 465, "③ Invocation", size=FS_SMALL, bold=True, fill='text_light')
+    svg.text(50, 165, "① El sıkışma", size=FS_SMALL, bold=True, fill='text_light')
+    svg.text(50, 310, "② Keşif", size=FS_SMALL, bold=True, fill='text_light')
+    svg.text(50, 465, "③ Çağırma", size=FS_SMALL, bold=True, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig4-1.svg'))
 
@@ -129,21 +129,21 @@ def fig4_2():
     """Sub-Agent context preparation (comparison of 4 strategies)"""
     w, h = 880, 530
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Sub-Agent context passing strategies", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Alt Ajan bağlam aktarım stratejileri", size=FS_TITLE, bold=True)
 
     strategies = [
-        ("Minimal passing", "dark",
-         '"Query the status of order number 12345"',
-         "Zero context → privacy and security"),
-        ("Manual filtering and passing", "medium",
-         '"User region: US\\nSummary: Inquiry about refund"',
-         "Explicit selection → controllable"),
-        ("Automatic trimming and passing", "light",
-         '"User info + last 3 rounds\\n+ relevant tool results"',
-         "Rule-driven → balanced"),
-        ("LLM-generated context", "code_bg",
-         '"LLM analyzes trajectory\\n→ structured context object"',
-         "Most intelligent → 1 extra call"),
+        ("Minimal aktarım", "dark",
+         '"12345 numaralı siparişin durumunu sorgula"',
+         "Sıfır bağlam → gizlilik ve güvenlik"),
+        ("Elle filtreleme ve aktarım", "medium",
+         '"Kullanıcı bölgesi: TR\\nÖzet: İade sorgusu"',
+         "Açık seçim → kontrol edilebilir"),
+        ("Otomatik kırpma ve aktarım", "light",
+         '"Kullanıcı bilgisi + son 3 tur\\n+ ilgili araç sonuçları"',
+         "Kural odaklı → dengeli"),
+        ("LLM tarafından üretilen bağlam", "code_bg",
+         '"LLM izlenceyi analiz eder\\n→ yapılandırılmış bağlam nesnesi"',
+         "En akıllı → 1 ekstra çağrı"),
     ]
 
     col_w = 190
@@ -151,8 +151,8 @@ def fig4_2():
     start_x = (w - 4 * col_w - 3 * gap) / 2
 
     # Main Agent at top
-    svg.box(w / 2 - 100, 55, 200, 44, "Main Agent", fill='medium', bold=True)
-    svg.text(w / 2, 118, "How to prepare context for Sub-Agent?", size=FS_SMALL, fill='text_light')
+    svg.box(w / 2 - 100, 55, 200, 44, "Ana Ajan", fill='medium', bold=True)
+    svg.text(w / 2, 118, "Alt Ajan için bağlam nasıl hazırlanır?", size=FS_SMALL, fill='text_light')
 
     for i, (title, fill, example, note) in enumerate(strategies):
         x = start_x + i * (col_w + gap)
@@ -170,16 +170,16 @@ def fig4_2():
 
         svg.text(x + col_w / 2, top_y + 150, note, size=FS_TINY, fill='text_light')
 
-        svg.box(x + 15, top_y + 175, col_w - 30, 36, "Sub-Agent", fill='light', font_size=FS_SMALL)
+        svg.box(x + 15, top_y + 175, col_w - 30, 36, "Alt Ajan", fill='light', font_size=FS_SMALL)
 
     # Bottom: decision guide
     svg.line(30, 395, w - 30, 395, color='dark', dash=True)
-    svg.text(w / 2, 418, "Selection guide", size=FS_BODY, bold=True)
+    svg.text(w / 2, 418, "Seçim rehberi", size=FS_BODY, bold=True)
 
     guides = [
-        ("Simple high-frequency calls", "Check weather, calculator", "→ Minimal"),
-        ("Medium complexity", "Data query, file processing", "→ Automatic trimming"),
-        ("Complex tasks", "Generate report, customer service", "→ LLM generation"),
+        ("Basit yüksek frekanslı çağrılar", "Hava kontrolü, hesap makinesi", "→ Minimal"),
+        ("Orta karmaşıklık", "Veri sorgusu, dosya işleme", "→ Otomatik kırpma"),
+        ("Karmaşık görevler", "Rapor üretimi, müşteri hizmetleri", "→ LLM üretimi"),
     ]
     gx = 80
     for label, example, rec in guides:
@@ -198,18 +198,18 @@ def fig4_3():
     """Event-driven architecture (specific event source and payload)"""
     w, h = 880, 540
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Event-driven asynchronous Agent architecture", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Olay güdümlü asenkron Ajan mimarisi", size=FS_TITLE, bold=True)
 
     # Left: Event sources
     sources = [
-        ("Email", 'on_email_reply', '{"from":"alice@...",\n "subject":"Re:meeting"}'),
-        ("Timer", 'on_timer_expire', '{"task_id":"daily_report",\n "scheduled":"09:00"}'),
+        ("E-posta", 'on_email_reply', '{"from":"alice@...",\n "subject":"Re:toplantı"}'),
+        ("Zamanlayıcı", 'on_timer_expire', '{"task_id":"daily_report",\n "scheduled":"09:00"}'),
         ("Webhook", 'on_webhook', '{"repo":"agent-lib",\n "event":"pr_merged"}'),
-        ("User", 'on_user_message', '{"text":"Check tomorrow\'s weather for me\n"}'),
+        ("Kullanıcı", 'on_user_message', '{"text":"Yarının havasına\nbak"}'),
     ]
 
     src_x, src_w = 20, 155
-    svg.text(src_x + src_w / 2, 65, "Event source", size=FS_BODY, bold=True)
+    svg.text(src_x + src_w / 2, 65, "Olay kaynağı", size=FS_BODY, bold=True)
     for i, (name, event_type, payload) in enumerate(sources):
         y = 85 + i * 110
         svg.box(src_x, y, src_w, 40, name, fill='medium', bold=True, font_size=FS_SMALL)
@@ -219,14 +219,14 @@ def fig4_3():
 
     # Middle: Event queue
     q_x, q_w = 215, 190
-    svg.text(q_x + q_w / 2, 65, "Event queue", size=FS_BODY, bold=True)
+    svg.text(q_x + q_w / 2, 65, "Olay kuyruğu", size=FS_BODY, bold=True)
     svg.rect(q_x, 85, q_w, 390, fill='white', stroke='border', dash=True)
 
     queue_events = [
-        ("user.input", "Priority: normal", 'light'),
-        ("email.reply", "Priority: normal", 'light'),
-        ("user.interrupt", "Priority: urgent!", 'dark'),
-        ("timer.trigger", "Priority: normal", 'light'),
+        ("user.input", "Öncelik: normal", 'light'),
+        ("email.reply", "Öncelik: normal", 'light'),
+        ("user.interrupt", "Öncelik: acil!", 'dark'),
+        ("timer.trigger", "Öncelik: normal", 'light'),
     ]
     for i, (evt, pri, fill) in enumerate(queue_events):
         ey = 105 + i * 85
@@ -242,16 +242,16 @@ def fig4_3():
 
     # Right: Agent processing
     ag_x = 450
-    svg.text(ag_x + 200, 65, "Agent processing flow", size=FS_BODY, bold=True)
+    svg.text(ag_x + 200, 65, "Ajan işleme akışı", size=FS_BODY, bold=True)
 
-    svg.arrow(q_x + q_w + 2, 280, ag_x - 2, 280, label="Fetch event")
+    svg.arrow(q_x + q_w + 2, 280, ag_x - 2, 280, label="Olayı al")
 
     steps = [
-        ("Router", "LLM determines urgency", 'medium'),
-        ("Append to trace", "Structured event format", 'light'),
-        ("LLM inference", "Observe → Think → Act", 'light'),
-        ("Tool execution", "Async/sync dispatch", 'light'),
-        ("Result handling", "Notify/respond/store", 'medium'),
+        ("Yönlendirici", "LLM aciliyeti belirler", 'medium'),
+        ("İzlenceye ekle", "Yapılandırılmış olay biçimi", 'light'),
+        ("LLM çıkarımı", "Gözlemle → Düşün → Eyleme geç", 'light'),
+        ("Araç yürütme", "Async/sync dağıtım", 'light'),
+        ("Sonuç işleme", "Bildir/yanıtla/kaydet", 'medium'),
     ]
 
     step_w, step_h = 360, 50
@@ -264,7 +264,7 @@ def fig4_3():
             svg.arrow(ag_x + step_w / 2, sy + step_h + 2, ag_x + step_w / 2, sy + 78)
 
     # Feedback loop
-    svg.arrow_curved(ag_x + step_w, 450, ag_x + step_w, 130, curve=45, label="Loop", dash=True, color='dark')
+    svg.arrow_curved(ag_x + step_w, 450, ag_x + step_w, 130, curve=45, label="Döngü", dash=True, color='dark')
 
     svg.save(os.path.join(OUT, 'fig4-3.svg'))
 
@@ -275,7 +275,7 @@ def fig4_4():
     """Async event handling: timing comparison of three strategies"""
     w, h = 880, 580
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Three strategies for event handling", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Olay işleme için üç strateji", size=FS_TITLE, bold=True)
 
     lane_x = 130
     lane_w = 720
@@ -297,53 +297,53 @@ def fig4_4():
     # ── Lane 1: Cancellation ──
     y1 = 80
     svg.rect(lane_x, y1, lane_w, 140, fill='white', stroke='border', dash=True)
-    svg.text(lane_x / 2, y1 + 70, "Cancellation", size=FS_BODY, bold=True)
-    svg.text(lane_x / 2, y1 + 95, "(Urgent)", size=FS_SMALL, fill='text_light')
+    svg.text(lane_x / 2, y1 + 70, "İptal", size=FS_BODY, bold=True)
+    svg.text(lane_x / 2, y1 + 95, "(Acil)", size=FS_SMALL, fill='text_light')
 
-    time_bar(y1 + 15, 0.0, 0.40, 'medium', 'LLM reasoning...')
+    time_bar(y1 + 15, 0.0, 0.40, 'medium', 'LLM muhakeme yapıyor...')
     svg.line(tl_x0 + tl_w * 0.40, y1 + 10, tl_x0 + tl_w * 0.40, y1 + 130, color='border', dash=True)
-    svg.text(tl_x0 + tl_w * 0.40, y1 + 10, "⚡ user.interrupt: \"Stop!\"", size=FS_TINY, bold=True)
+    svg.text(tl_x0 + tl_w * 0.40, y1 + 10, "⚡ user.interrupt: \"Dur!\"", size=FS_TINY, bold=True)
     time_bar(y1 + 15, 0.40, 0.45, 'dark', '×', h_bar=28)
 
-    time_bar(y1 + 55, 0.0, 0.35, 'light', 'Tool executing...')
+    time_bar(y1 + 55, 0.0, 0.35, 'light', 'Araç yürütülüyor...')
     time_bar(y1 + 55, 0.40, 0.45, 'dark', '×', h_bar=28)
 
-    time_bar(y1 + 95, 0.47, 1.0, 'medium', 'New LLM reasoning (including interrupt event + clear queue)')
+    time_bar(y1 + 95, 0.47, 1.0, 'medium', 'Yeni LLM muhakemesi (kesinti olayı + temizlenmiş kuyruk dahil)')
 
     # ── Lane 2: Queued ──
     y2 = 240
     svg.rect(lane_x, y2, lane_w, 140, fill='white', stroke='border', dash=True)
-    svg.text(lane_x / 2, y2 + 70, "Queue-based", size=FS_BODY, bold=True)
+    svg.text(lane_x / 2, y2 + 70, "Kuyruk tabanlı", size=FS_BODY, bold=True)
     svg.text(lane_x / 2, y2 + 95, "(Normal)", size=FS_SMALL, fill='text_light')
 
     time_bar(y2 + 15, 0.0, 0.15, 'medium', 'LLM', h_bar=24)
-    time_bar(y2 + 15, 0.18, 0.60, 'light', 'Tool execution (search_web)')
-    time_bar(y2 + 15, 0.63, 0.90, 'medium', 'LLM comprehensive processing')
+    time_bar(y2 + 15, 0.18, 0.60, 'light', 'Araç yürütme (search_web)')
+    time_bar(y2 + 15, 0.63, 0.90, 'medium', 'LLM kapsamlı işleme')
 
     svg.line(tl_x0 + tl_w * 0.35, y2 + 46, tl_x0 + tl_w * 0.35, y2 + 130, color='dark', dash=True)
-    svg.text(tl_x0 + tl_w * 0.35, y2 + 58, "user: \"Only look at the last 1 month\"", size=FS_TINY, fill='text_light')
+    svg.text(tl_x0 + tl_w * 0.35, y2 + 58, "user: \"Sadece son 1 aya bak\"", size=FS_TINY, fill='text_light')
 
-    _pill(svg, tl_x0 + tl_w * 0.30, y2 + 65, 150, 24, "Enqueue waiting", fill='light', font_size=FS_TINY)
+    _pill(svg, tl_x0 + tl_w * 0.30, y2 + 65, 150, 24, "Kuyruğa alındı, bekliyor", fill='light', font_size=FS_TINY)
 
     time_bar(y2 + 100, 0.63, 0.68, 'dark', '', h_bar=20)
-    svg.text(tl_x0 + tl_w * 0.61, y2 + 110, "Batch append: tool.result + user input", size=FS_TINY, fill='text_light', anchor='end')
+    svg.text(tl_x0 + tl_w * 0.61, y2 + 110, "Toplu ekleme: tool.result + kullanıcı girdisi", size=FS_TINY, fill='text_light', anchor='end')
 
     # ── Lane 3: Parallel ──
     y3 = 400
     svg.rect(lane_x, y3, lane_w, 140, fill='white', stroke='border', dash=True)
-    svg.text(lane_x / 2, y3 + 70, "Parallel", size=FS_BODY, bold=True)
-    svg.text(lane_x / 2, y3 + 95, "(Independent)", size=FS_SMALL, fill='text_light')
+    svg.text(lane_x / 2, y3 + 70, "Paralel", size=FS_BODY, bold=True)
+    svg.text(lane_x / 2, y3 + 95, "(Bağımsız)", size=FS_SMALL, fill='text_light')
 
-    time_bar(y3 + 15, 0.0, 0.80, 'light', 'Main task: Data analysis (long execution)')
+    time_bar(y3 + 15, 0.0, 0.80, 'light', 'Ana görev: Veri analizi (uzun süren yürütme)')
 
     svg.line(tl_x0 + tl_w * 0.30, y3 + 50, tl_x0 + tl_w * 0.30, y3 + 130, color='dark', dash=True)
-    svg.text(tl_x0 + tl_w * 0.30, y3 + 58, "user: \"How is the weather today?\"", size=FS_TINY, fill='text_light')
+    svg.text(tl_x0 + tl_w * 0.30, y3 + 58, "user: \"Bugün hava nasıl?\"", size=FS_TINY, fill='text_light')
 
-    time_bar(y3 + 70, 0.32, 0.50, 'medium', 'Parallel LLM', h_bar=24)
-    time_bar(y3 + 70, 0.52, 0.62, 'dark', 'Weather', h_bar=24)
+    time_bar(y3 + 70, 0.32, 0.50, 'medium', 'Paralel LLM', h_bar=24)
+    time_bar(y3 + 70, 0.52, 0.62, 'dark', 'Hava', h_bar=24)
 
-    svg.text(tl_x0 + tl_w * 0.635, y3 + 82, "→ Reply to user immediately", size=FS_TINY, fill='text_light', anchor='start')
-    svg.text(tl_x0 + tl_w * 0.50, y3 + 115, "Tag: [Parallel with main task]", size=FS_TINY, fill='text_light')
+    svg.text(tl_x0 + tl_w * 0.635, y3 + 82, "→ Kullanıcıya hemen yanıt ver", size=FS_TINY, fill='text_light', anchor='start')
+    svg.text(tl_x0 + tl_w * 0.50, y3 + 115, "Etiket: [Ana görevle paralel]", size=FS_TINY, fill='text_light')
 
     svg.save(os.path.join(OUT, 'fig4-4.svg'))
 
@@ -354,18 +354,18 @@ def fig4_5():
     """Experiment 4.4: Event-driven Agent Architecture"""
     w, h = 880, 480
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 4.4: Event-driven Agent Architecture", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Deney 4.4: Olay Güdümlü Ajan Mimarisi", size=FS_TITLE, bold=True)
 
     # Event sources (left column)
     src_data = [
-        ("on_user_message", "Web/App"),
-        ("on_email_reply", "Email system"),
+        ("on_user_message", "Web/Uygulama"),
+        ("on_email_reply", "E-posta sistemi"),
         ("on_github_pr_update", "GitHub"),
-        ("on_timer_expire", "Timer"),
+        ("on_timer_expire", "Zamanlayıcı"),
         ("on_webhook_received", "Webhook"),
-        ("on_resource_alert", "System alert"),
+        ("on_resource_alert", "Sistem uyarısı"),
     ]
-    svg.text(85, 65, "External event source", size=FS_BODY, bold=True)
+    svg.text(85, 65, "Harici olay kaynağı", size=FS_BODY, bold=True)
     for i, (evt, src) in enumerate(src_data):
         y = 82 + i * 58
         svg.rect(10, y, 150, 44, fill='light')
@@ -374,27 +374,27 @@ def fig4_5():
 
     # FastAPI Server (center)
     svg.rect(200, 80, 200, 390, fill='white', stroke='border', dash=True)
-    svg.text(300, 100, "FastAPI server", size=FS_BODY, bold=True)
+    svg.text(300, 100, "FastAPI sunucusu", size=FS_BODY, bold=True)
 
     svg.rect(215, 120, 170, 50, fill='medium')
-    svg.text(300, 137, "HTTP endpoint", size=FS_SMALL, bold=True)
+    svg.text(300, 137, "HTTP uç noktası", size=FS_SMALL, bold=True)
     svg.text(300, 157, "POST /events/{type}", size=FS_TINY, fill='text_light')
 
     svg.rect(215, 190, 170, 50, fill='light')
-    svg.text(300, 207, "Event router", size=FS_SMALL, bold=True)
-    svg.text(300, 227, "LLM determines urgency", size=FS_TINY, fill='text_light')
+    svg.text(300, 207, "Olay yönlendirici", size=FS_SMALL, bold=True)
+    svg.text(300, 227, "LLM aciliyeti belirler", size=FS_TINY, fill='text_light')
 
     svg.rect(215, 260, 170, 50, fill='light')
-    svg.text(300, 277, "Event queue", size=FS_SMALL, bold=True)
-    svg.text(300, 297, "Priority sorting", size=FS_TINY, fill='text_light')
+    svg.text(300, 277, "Olay kuyruğu", size=FS_SMALL, bold=True)
+    svg.text(300, 297, "Öncelik sıralaması", size=FS_TINY, fill='text_light')
 
     svg.rect(215, 330, 170, 50, fill='light')
-    svg.text(300, 347, "Agent loop", size=FS_SMALL, bold=True)
-    svg.text(300, 367, "Fetch → Reason → Execute", size=FS_TINY, fill='text_light')
+    svg.text(300, 347, "Ajan döngüsü", size=FS_SMALL, bold=True)
+    svg.text(300, 367, "Al → Muhakeme et → Yürüt", size=FS_TINY, fill='text_light')
 
     svg.rect(215, 400, 170, 50, fill='medium')
-    svg.text(300, 417, "Session management", size=FS_SMALL, bold=True)
-    svg.text(300, 437, "Multi-threaded context", size=FS_TINY, fill='text_light')
+    svg.text(300, 417, "Oturum yönetimi", size=FS_SMALL, bold=True)
+    svg.text(300, 437, "Çok iş parçacıklı bağlam", size=FS_TINY, fill='text_light')
 
     for i in range(4):
         svg.arrow(300, 170 + i * 70, 300, 190 + i * 70)
@@ -403,13 +403,13 @@ def fig4_5():
         svg.arrow(160, 104 + i * 58, 213, 145)
 
     # MCP Tools (right)
-    svg.text(610, 65, "MCP tool server", size=FS_BODY, bold=True)
+    svg.text(610, 65, "MCP araç sunucusu", size=FS_BODY, bold=True)
 
     tools = [
-        ("Perception tools", "search_web, read_file\nread_webpage, parse_image"),
-        ("execution tool", "code_interpreter\nvirtual_terminal, write_file"),
-        ("collaboration tool", "browser_use\nrequest_human_approval"),
-        ("notification tool", "send_email, send_slack\nsend_im_notification"),
+        ("Algı araçları", "search_web, read_file\nread_webpage, parse_image"),
+        ("yürütme aracı", "code_interpreter\nvirtual_terminal, write_file"),
+        ("işbirliği aracı", "browser_use\nrequest_human_approval"),
+        ("bildirim aracı", "send_email, send_slack\nsend_im_notification"),
     ]
     for i, (name, desc) in enumerate(tools):
         y = 82 + i * 100
@@ -423,8 +423,8 @@ def fig4_5():
 
     # Persistent store
     svg.rect(740, 82, 130, 380, fill='code_bg', stroke='dark', rx=4)
-    svg.text(805, 115, "persistence layer", size=FS_SMALL, bold=True)
-    items = ["conversation history", "event log", "scheduled task", "tool status", "audit trail"]
+    svg.text(805, 115, "kalıcılık katmanı", size=FS_SMALL, bold=True)
+    items = ["konuşma geçmişi", "olay günlüğü", "zamanlanmış görev", "araç durumu", "denetim izi"]
     for i, item in enumerate(items):
         svg.text(805, 160 + i * 55, item, size=FS_SMALL)
 
@@ -437,18 +437,18 @@ def fig4_6():
     """sync-async model contradiction"""
     w, h = 880, 520
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "synchronous training paradigm vs asynchronous deployment reality", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "eşzamanlı eğitim paradigması ile asenkron dağıtım gerçekliği", size=FS_TITLE, bold=True)
 
     # Top half: training pattern
     svg.rect(20, 55, w - 40, 195, fill='white', stroke='border', dash=True)
-    svg.text(60, 78, "training paradigm (strictly synchronous sequence)", size=FS_BODY, bold=True, anchor='start')
-    _pill(svg, w - 200, 64, 160, 28, "API mandatory constraint", fill='dark', font_size=FS_SMALL)
+    svg.text(60, 78, "eğitim paradigması (katı biçimde eşzamanlı sıra)", size=FS_BODY, bold=True, anchor='start')
+    _pill(svg, w - 200, 64, 160, 28, "API zorunlu kısıtı", fill='dark', font_size=FS_SMALL)
 
     steps_train = [
-        ("Observation", 'medium', "User: Check Beijing weather"),
-        ("Thinking", 'light', "Need to call weather tool"),
-        ("Action", 'medium', "get_weather(Beijing)"),
-        ("Observation", 'light', "22°C, sunny"),
+        ("Gözlem", 'medium', "Kullanıcı: Pekin havasını kontrol et"),
+        ("Düşünme", 'light', "Hava aracını çağırmak gerekiyor"),
+        ("Eylem", 'medium', "get_weather(Pekin)"),
+        ("Gözlem", 'light', "22°C, açık"),
     ]
     bw, bh, gap = 180, 55, 22
     sx = (w - (4 * bw + 3 * gap)) / 2
@@ -462,24 +462,24 @@ def fig4_6():
 
     svg.rect(sx, 170, 4 * bw + 3 * gap, 30, fill='code_bg', stroke='dark', rx=4)
     svg.mono(sx + 10, 185,
-             "tool_call → next must be tool_result, otherwise API error", size=FS_TINY)
+             "tool_call → sonrasında mutlaka tool_result gelmeli, yoksa API hatası", size=FS_TINY)
 
     # Separator
     svg.line(20, 262, w - 20, 262, color='dark', dash=True)
-    svg.text(w / 2, 280, "contradiction", size=FS_BODY, bold=True, fill='darker')
+    svg.text(w / 2, 280, "çelişki", size=FS_BODY, bold=True, fill='darker')
 
     # Bottom half: async reality
     svg.rect(20, 295, w - 40, 210, fill='white', stroke='border', dash=True)
-    svg.text(60, 318, "deployment reality (asynchronous events interleaved)", size=FS_BODY, bold=True, anchor='start')
-    _pill(svg, w - 200, 304, 160, 28, "Format conflict!", fill='dark', font_size=FS_SMALL)
+    svg.text(60, 318, "dağıtım gerçekliği (asenkron olaylar iç içe)", size=FS_BODY, bold=True, anchor='start')
+    _pill(svg, w - 200, 304, 160, 28, "Biçim çakışması!", fill='dark', font_size=FS_SMALL)
 
     # Async timeline
     items = [
-        ("Assistant", 'medium', "tool_call:\nget_weather(Beijing)", 0.0, 0.20),
-        ("Waiting...", 'code_bg', "Tool execution ~5s", 0.22, 0.50),
-        ("User interrupts", 'dark', "\"No need, \ncheck Shanghai's \"", 0.40, 0.55),
-        ("???", 'code_bg', "When will tool_result arrive? \nHow to ensure format?", 0.57, 0.78),
-        ("placeholder", 'light', "[Tool still executing, \nprioritize interruption]", 0.80, 1.0),
+        ("Assistant", 'medium', "tool_call:\nget_weather(Pekin)", 0.0, 0.20),
+        ("Bekliyor...", 'code_bg', "Araç yürütme ~5sn", 0.22, 0.50),
+        ("Kullanıcı keser", 'dark', "\"Gerek yok, \nŞangay'ı kontrol et\"", 0.40, 0.55),
+        ("???", 'code_bg', "tool_result ne zaman gelecek? \nBiçim nasıl korunacak?", 0.57, 0.78),
+        ("yer tutucu", 'light', "[Araç hâlâ çalışıyor, \nkesintiye öncelik ver]", 0.80, 1.0),
     ]
 
     tl_x0, tl_w = 50, w - 100
@@ -494,13 +494,13 @@ def fig4_6():
 
     svg.rect(50, 410, w - 100, 40, fill='code_bg', stroke='dark', rx=4)
     svg.mono(60, 430,
-             "Solution: placeholder fixes format + non-urgent events enqueued + only interrupt when truly urgent",
+             "Çözüm: yer tutucuyla biçimi koru + acil olmayan olayları kuyruğa al + yalnızca gerçekten acilken kes",
              size=FS_TINY)
 
     # Bottom insight
     svg.rect(140, 465, w - 280, 40, fill='dark')
     svg.text(w / 2, 485,
-             "Fundamental solution: next-generation models need to be trained via RL in asynchronous environments",
+             "Temel çözüm: yeni nesil modellerin asenkron ortamlarda RL ile eğitilmesi gerekir",
              size=FS_SMALL, fill='white', bold=True)
 
     svg.save(os.path.join(OUT, 'fig4-6.svg'))
@@ -512,7 +512,7 @@ def fig4_7():
     """Experiment 4.5: Asynchronous Agent with Interruption Capability"""
     w, h = 880, 520
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 4.5: Asynchronous Agent Interruption and Recovery", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Deney 4.5: Asenkron Ajanda Kesinti ve Kurtarma", size=FS_TITLE, bold=True)
 
     # Timeline
     tl_y, tl_h = 60, 440
@@ -520,11 +520,11 @@ def fig4_7():
 
     # Lanes
     lanes = [
-        ("Agent", 80),
-        ("Tool A", 180),
-        ("Tool B", 260),
-        ("Tool C", 340),
-        ("Trajectory", 420),
+        ("Ajan", 80),
+        ("Araç A", 180),
+        ("Araç B", 260),
+        ("Araç C", 340),
+        ("İzlence", 420),
     ]
     for name, y in lanes:
         svg.text(55, y, name, size=FS_SMALL, bold=True)
@@ -538,42 +538,42 @@ def fig4_7():
         svg.text((xs + xe) / 2, y, label, size=11, fill=tc)
 
     # Phase 1: Agent starts 3 tools
-    tbar(80, 0.0, 0.12, 'medium', 'LLM: Launch 3 tools')
+    tbar(80, 0.0, 0.12, 'medium', 'LLM: 3 aracı başlat')
 
     # Tools running
-    tbar(180, 0.13, 0.45, 'light', 'Script A: 3% per second → 33s to complete')
-    tbar(260, 0.13, 0.70, 'light', 'Script B: 2% per second → 50s...')
-    tbar(340, 0.13, 0.90, 'code_bg', 'Script C: 1% per second → 100s...')
+    tbar(180, 0.13, 0.45, 'light', 'Betik A: saniyede %3 → 33sn\'de tamamlanır')
+    tbar(260, 0.13, 0.70, 'light', 'Betik B: saniyede %2 → 50sn...')
+    tbar(340, 0.13, 0.90, 'code_bg', 'Betik C: saniyede %1 → 100sn...')
 
     # Event: tool A completes
     t_done = 0.45
     svg.line(tl_x0 + tl_w * t_done, 70, tl_x0 + tl_w * t_done, 450, color='border', dash=True)
-    svg.text(tl_x0 + tl_w * t_done, 62, "A completed", size=FS_TINY, bold=True)
+    svg.text(tl_x0 + tl_w * t_done, 62, "A tamamlandı", size=FS_TINY, bold=True)
 
     # Agent checks others
-    tbar(80, 0.46, 0.58, 'medium', 'Query B, C progress')
-    tbar(420, 0.46, 0.58, 'light', 'B≈66% C≈33%')
+    tbar(80, 0.46, 0.58, 'medium', 'B, C ilerlemesini sorgula')
+    tbar(420, 0.46, 0.58, 'light', 'B≈%66 C≈%33')
 
     # Cancel C (< 50%)
     t_cancel = 0.60
     svg.line(tl_x0 + tl_w * t_cancel, 70, tl_x0 + tl_w * t_cancel, 450, color='dark', dash=True)
-    svg.text(tl_x0 + tl_w * t_cancel, 62, "Cancel C", size=FS_TINY, bold=True, fill='darker')
+    svg.text(tl_x0 + tl_w * t_cancel, 62, "C'yi iptal et", size=FS_TINY, bold=True, fill='darker')
 
     tbar(340, 0.60, 0.65, 'dark', '×')
 
     # B finishes
     t_b_done = 0.70
     svg.line(tl_x0 + tl_w * t_b_done, 70, tl_x0 + tl_w * t_b_done, 450, color='border', dash=True)
-    svg.text(tl_x0 + tl_w * t_b_done, 62, "B completed", size=FS_TINY, bold=True)
+    svg.text(tl_x0 + tl_w * t_b_done, 62, "B tamamlandı", size=FS_TINY, bold=True)
 
     # Agent generates report
-    tbar(80, 0.72, 0.95, 'medium', 'LLM: Integrate A+B results to generate report')
-    tbar(420, 0.72, 0.95, 'light', 'A result + B result + C cancellation record')
+    tbar(80, 0.72, 0.95, 'medium', 'LLM: A+B sonuçlarını birleştirip rapor üret')
+    tbar(420, 0.72, 0.95, 'light', 'A sonucu + B sonucu + C iptal kaydı')
 
     # Annotations
     svg.rect(tl_x0, 460, tl_w, 40, fill='code_bg', stroke='dark', rx=4)
     svg.mono(tl_x0 + 10, 480,
-             "Key: placeholder injection + async completion event + cancel_tool(task_id) API",
+             "Anahtar: yer tutucu enjeksiyonu + async tamamlanma olayı + cancel_tool(task_id) API",
              size=FS_TINY)
 
     svg.save(os.path.join(OUT, 'fig4-7.svg'))
@@ -585,53 +585,53 @@ def fig4_8():
     """Tool discovery hierarchy (server→tool matching)"""
     w, h = 880, 540
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Hierarchical tool matching", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Hiyerarşik araç eşleştirme", size=FS_TITLE, bold=True)
 
     # Query at top
     svg.rect(250, 55, 380, 44, fill='medium')
-    svg.text(440, 77, "Agent: \"I need to query GitHub repository contributor statistics\"", size=FS_SMALL, bold=True)
+    svg.text(440, 77, "Ajan: \"GitHub deposu katkıcı istatistiklerini sorgulamam gerekiyor\"", size=FS_SMALL, bold=True)
 
     svg.arrow(440, 99, 440, 130)
 
     # discover_tools
     svg.rect(300, 132, 280, 44, fill='dark')
-    svg.text(440, 154, "discover_tools(natural language requirement)", size=FS_SMALL, fill='white', bold=True)
+    svg.text(440, 154, "discover_tools(doğal dil gereksinimi)", size=FS_SMALL, fill='white', bold=True)
 
     svg.arrow(440, 176, 440, 210)
 
     # Layer 1: Server matching
     svg.rect(20, 210, w - 40, 110, fill='white', stroke='border', dash=True)
-    svg.text(55, 233, "Layer 1: Server matching (semantic similarity)", size=FS_BODY, bold=True, anchor='start')
+    svg.text(55, 233, "Katman 1: Sunucu eşleştirme (anlamsal benzerlik)", size=FS_BODY, bold=True, anchor='start')
 
     servers = [
         ("GitHub", 0.92, 'dark'),
         ("Weather", 0.15, 'light'),
         ("Finance", 0.23, 'light'),
         ("ArXiv", 0.18, 'light'),
-        ("File System", 0.31, 'light'),
+        ("Dosya Sistemi", 0.31, 'light'),
     ]
     sx = 50
     for name, score, fill in servers:
         svg.rect(sx, 255, 145, 50, fill=fill)
         tc = 'white' if fill in ('dark', 'darker') else 'text'
         svg.text(sx + 72, 272, name, size=FS_SMALL, bold=True, fill=tc)
-        svg.text(sx + 72, 292, f"Similarity: {score:.2f}", size=FS_TINY, fill='white' if fill == 'dark' else 'text_light')
+        svg.text(sx + 72, 292, f"Benzerlik: {score:.2f}", size=FS_TINY, fill='white' if fill == 'dark' else 'text_light')
         sx += 165
 
     # Arrow to layer 2
     svg.arrow(123, 305, 123, 345)
-    svg.text(175, 330, "Top-1 server", size=FS_SMALL, fill='text_light')
+    svg.text(175, 330, "En iyi 1 sunucu", size=FS_SMALL, fill='text_light')
 
     # Layer 2: Tool matching within server
     svg.rect(20, 345, w - 40, 160, fill='white', stroke='border', dash=True)
-    svg.text(55, 368, "Layer 2: Tool matching (26 tools within GitHub server)", size=FS_BODY, bold=True, anchor='start')
+    svg.text(55, 368, "Katman 2: Araç eşleştirme (GitHub sunucusunda 26 araç)", size=FS_BODY, bold=True, anchor='start')
 
     tools = [
-        ("search_repositories", 0.41, "Search repositories"),
-        ("list_contributors", 0.89, "Contributor list"),
-        ("get_repo_stats", 0.85, "Repository statistics"),
-        ("create_issue", 0.12, "Create Issue"),
-        ("get_commit_history", 0.67, "Commit history"),
+        ("search_repositories", 0.41, "Depo ara"),
+        ("list_contributors", 0.89, "Katkıcı listesi"),
+        ("get_repo_stats", 0.85, "Depo istatistikleri"),
+        ("create_issue", 0.12, "Issue oluştur"),
+        ("get_commit_history", 0.67, "Commit geçmişi"),
     ]
     tx = 30
     for name, score, desc in tools:
@@ -645,7 +645,7 @@ def fig4_8():
 
     # Bottom: result
     svg.rect(180, 468, 520, 30, fill='code_bg', stroke='dark', rx=4)
-    svg.mono(190, 483, "Return Top-3: list_contributors, get_repo_stats, get_commit_history", size=12)
+    svg.mono(190, 483, "En iyi 3'ü döndür: list_contributors, get_repo_stats, get_commit_history", size=12)
 
     svg.save(os.path.join(OUT, 'fig4-8.svg'))
 
@@ -656,15 +656,15 @@ def fig4_9():
     """KV Cache Optimization (System Prompt Stability)"""
     w, h = 880, 560
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "KV Cache Optimization for Dynamic Tool Loading", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Dinamik Araç Yükleme için KV Cache Optimizasyonu", size=FS_TITLE, bold=True)
 
     # Left: naive approach
     left_x = 30
-    svg.text(220, 65, "Naive Approach (Cache Invalidation)", size=FS_BODY, bold=True)
+    svg.text(220, 65, "Naif Yaklaşım (Önbellek Geçersizleşir)", size=FS_BODY, bold=True)
 
     blocks_naive = [
-        ("System Prompt", 120, 'medium', "You are an AI assistant...\n+ All tool schemas", "~50K tokens"),
-        ("User Message", 100, 'light', "Query NVDA stock price", ""),
+        ("Sistem İstemi", 120, 'medium', "Sen bir AI asistanısın...\n+ Tüm araç şemaları", "~50K token"),
+        ("Kullanıcı Mesajı", 100, 'light', "NVDA hisse fiyatını sorgula", ""),
         ("Assistant", 80, 'light', "tool_call: ...", ""),
     ]
     ny = 85
@@ -678,31 +678,31 @@ def fig4_9():
         ny += bh + 8
 
     svg.rect(left_x, ny + 5, 380, 40, fill='dark')
-    svg.text(left_x + 190, ny + 25, "Every time a new tool is loaded → entire cache invalidated!", size=FS_SMALL, fill='white', bold=True)
+    svg.text(left_x + 190, ny + 25, "Yeni bir araç her yüklendiğinde → tüm önbellek geçersizleşir!", size=FS_SMALL, fill='white', bold=True)
 
     # Right: optimized approach
     right_x = 460
-    svg.text(660, 65, "Optimized Approach (Cache Stability)", size=FS_BODY, bold=True)
+    svg.text(660, 65, "Optimize Edilmiş Yaklaşım (Önbellek Kararlılığı)", size=FS_BODY, bold=True)
 
     blocks_opt = [
-        ("System Prompt (Fixed)", 75, 'medium',
-         "You are an AI assistant...\nRole + Rules + Base Tools",
-         "~2K tokens | KV Cache"),
-        ("Agent Status Bar (Lightweight)", 45, 'code_bg',
-         "Available tools: web_search, get_weather...",
-         "~200 tokens"),
+        ("Sistem İstemi (Sabit)", 75, 'medium',
+         "Sen bir AI asistanısın...\nRol + Kurallar + Temel Araçlar",
+         "~2K token | KV Cache"),
+        ("Ajan Durum Çubuğu (Hafif)", 45, 'code_bg',
+         "Mevcut araçlar: web_search, get_weather...",
+         "~200 token"),
         ("User: discover_tools", 40, 'light',
-         '"I need to check stock price"',
+         '"Hisse fiyatını kontrol etmem gerekiyor"',
          ""),
-        ("Tool Result", 55, 'light',
-         "Return get_stock_quote schema",
-         "Tool definitions here"),
-        ("User Message", 40, 'light',
-         "Query NVDA stock price",
+        ("Araç Sonucu", 55, 'light',
+         "get_stock_quote şemasını döndür",
+         "Araç tanımları burada"),
+        ("Kullanıcı Mesajı", 40, 'light',
+         "NVDA hisse fiyatını sorgula",
          ""),
-        ("Agent Status Bar (Updated)", 45, 'code_bg',
-         "+get_stock_quote added",
-         "~220 tokens"),
+        ("Ajan Durum Çubuğu (Güncellendi)", 45, 'code_bg',
+         "+get_stock_quote eklendi",
+         "~220 token"),
     ]
     oy = 85
     for label, bh, fill, content, note in blocks_opt:
@@ -715,18 +715,18 @@ def fig4_9():
         oy += bh + 5
 
     svg.rect(right_x, oy + 5, 400, 40, fill='medium')
-    svg.text(right_x + 200, oy + 25, "System Prompt unchanged → KV Cache fully reused", size=FS_SMALL, bold=True)
+    svg.text(right_x + 200, oy + 25, "Sistem İstemi değişmedi → KV Cache tamamen yeniden kullanılır", size=FS_SMALL, bold=True)
 
     # Bottom comparison
     svg.line(30, 475, w - 30, 475, color='dark', dash=True)
     comps = [
-        ("Cache Hit Rate", "~0% (invalidated on every tool change)", "~95% (only hint changes slightly)"),
-        ("First Token Latency", "High (recompute 50K tokens each time)", "Low (incremental compute ~200 tokens)"),
+        ("Önbellek İsabet Oranı", "~%0 (her araç değişiminde geçersizleşir)", "~%95 (yalnızca ipucu hafifçe değişir)"),
+        ("İlk Token Gecikmesi", "Yüksek (her seferinde 50K token yeniden hesaplanır)", "Düşük (artımlı hesaplama ~200 token)"),
     ]
     cy = 495
-    svg.text(250, cy, "Comparison Dimension", size=FS_SMALL, bold=True)
-    svg.text(500, cy, "Naive Approach", size=FS_SMALL, bold=True)
-    svg.text(740, cy, "Optimized Approach", size=FS_SMALL, bold=True)
+    svg.text(250, cy, "Karşılaştırma Boyutu", size=FS_SMALL, bold=True)
+    svg.text(500, cy, "Naif Yaklaşım", size=FS_SMALL, bold=True)
+    svg.text(740, cy, "Optimize Edilmiş Yaklaşım", size=FS_SMALL, bold=True)
     for metric, naive, opt in comps:
         cy += 28
         svg.text(250, cy, metric, size=FS_TINY)
@@ -742,34 +742,34 @@ def fig4_10():
     """Tool Self-Evolution Pipeline (Multi-Stage)"""
     w, h = 880, 500
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Agent Self-Evolution: From Requirements to Tools", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Ajanın Kendi Kendine Evrimi: Gereksinimden Araca", size=FS_TITLE, bold=True)
 
     # Pipeline stages
     stages = [
-        ("① Requirement Identification", 'medium', [
-            "Task: YouTube Subtitle Extraction",
-            "Agent: Current tools insufficient",
-            "→ Initiate self-evolution",
+        ("① Gereksinim Tespiti", 'medium', [
+            "Görev: YouTube Altyazı Çıkarımı",
+            "Ajan: Mevcut araçlar yetersiz",
+            "→ Kendi kendine evrimi başlat",
         ]),
-        ("② Web Search", 'light', [
+        ("② Web Araması", 'light', [
             "search: youtube transcript",
             "python library",
-            "→ Found 3 candidate libraries",
+            "→ 3 aday kütüphane bulundu",
         ]),
-        ("③ GitHub Exploration", 'light', [
-            "Visit jdepoix/youtube-",
-            "transcript-api repository",
-            "→ Read README + Examples",
+        ("③ GitHub Keşfi", 'light', [
+            "jdepoix/youtube-",
+            "transcript-api deposunu ziyaret et",
+            "→ README + Örnekleri oku",
         ]),
-        ("④ Learning and Testing", 'light', [
-            "code_interpreter test:",
+        ("④ Öğrenme ve Test Etme", 'light', [
+            "code_interpreter testi:",
             "from youtube_transcript",
             "  _api import ...",
         ]),
-        ("⑤ Tool Encapsulation", 'medium', [
-            "Create MCP tool:",
+        ("⑤ Araç Kapsülleme", 'medium', [
+            "MCP aracı oluştur:",
             "get_youtube_transcript",
-            "(video_id) → text",
+            "(video_id) → metin",
         ]),
     ]
 
@@ -792,25 +792,25 @@ def fig4_10():
     svg.arrow(w / 2, 205, w / 2, 240)
 
     svg.rect(120, 240, w - 240, 50, fill='dark')
-    svg.text(w / 2, 265, "⑥ Register to tool library → reuse directly in future", size=FS_BODY, fill='white', bold=True)
+    svg.text(w / 2, 265, "⑥ Araç kütüphanesine kaydet → gelecekte doğrudan yeniden kullan", size=FS_BODY, fill='white', bold=True)
 
     # Reuse scenario
     svg.arrow(w / 2, 290, w / 2, 320)
     svg.rect(60, 320, w - 120, 160, fill='white', stroke='border', dash=True)
-    svg.text(w / 2, 345, "Tool reuse: next time encountering similar task", size=FS_BODY, bold=True)
+    svg.text(w / 2, 345, "Araç yeniden kullanımı: benzer görevle bir sonraki karşılaşma", size=FS_BODY, bold=True)
 
     svg.rect(80, 365, 340, 50, fill='code_bg', stroke='dark', rx=4)
-    svg.mono(90, 382, "Agent: \"I need to extract YouTube subtitles\"", size=FS_TINY)
+    svg.mono(90, 382, "Ajan: \"YouTube altyazılarını çıkarmam gerekiyor\"", size=FS_TINY)
     svg.mono(90, 400, "→ search_tools(\"youtube transcript\")", size=FS_TINY)
 
     svg.arrow(420, 390, 460, 390)
 
     svg.rect(460, 365, 330, 50, fill='light')
-    svg.text(625, 382, "Hit! get_youtube_transcript", size=FS_SMALL, bold=True)
-    svg.text(625, 402, "Skip search and creation, call directly", size=FS_TINY, fill='text_light')
+    svg.text(625, 382, "Bulundu! get_youtube_transcript", size=FS_SMALL, bold=True)
+    svg.text(625, 402, "Arama ve oluşturmayı atla, doğrudan çağır", size=FS_TINY, fill='text_light')
 
     svg.rect(200, 430, 480, 35, fill='medium')
-    svg.text(w / 2, 448, "Tool layer + Knowledge layer + Strategy layer → more proficient with use", size=FS_SMALL, bold=True)
+    svg.text(w / 2, 448, "Araç katmanı + Bilgi katmanı + Strateji katmanı → kullanımda daha da ustalaşır", size=FS_SMALL, bold=True)
 
     svg.save(os.path.join(OUT, 'fig4-10.svg'))
 
@@ -821,11 +821,11 @@ def fig4_11():
     """Experiment 4.7: Agent searches for tools on the web, self-evolves"""
     w, h = 880, 480
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Experiment 4.7: Self-evolving Agent pipeline", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Deney 4.7: Kendi kendine evrimleşen Ajan boru hattı", size=FS_TITLE, bold=True)
 
     # Top: minimal base tools
     svg.rect(30, 60, w - 60, 48, fill='medium')
-    svg.text(w / 2, 76, "Basic tools (minimal set)", size=FS_SMALL, bold=True)
+    svg.text(w / 2, 76, "Temel araçlar (minimal küme)", size=FS_SMALL, bold=True)
     base_tools = ["web_search", "read_webpage", "code_interpreter", "create_tool", "search_tools"]
     btx = 65
     for t in base_tools:
@@ -837,10 +837,10 @@ def fig4_11():
     svg.arrow(w / 2, 108, w / 2, 135)
     svg.rect(100, 135, w - 200, 45, fill='code_bg', stroke='dark', rx=4)
     svg.mono(110, 150,
-             "Task: \"NVDA latest stock price? Change from a week ago?\" → Agent: No financial tools!",
+             "Görev: \"NVDA son hisse fiyatı? Bir haftalık değişim?\" → Ajan: Finansal araç yok!",
              size=FS_TINY)
     svg.mono(110, 168,
-             "→ Identify capability gap → Initiate self-evolution",
+             "→ Yetenek açığını tespit et → Kendi kendine evrimi başlat",
              size=FS_TINY)
 
     # Evolution pipeline
@@ -848,16 +848,16 @@ def fig4_11():
 
     pipe_y = 210
     pipe_stages = [
-        ("web_search", "Search candidate solutions", 'light',
+        ("web_search", "Aday çözümleri ara", 'light',
          ["\"python stock price API\"",
           "→ yfinance, Alpha Vantage..."]),
-        ("read_webpage", "Evaluate solutions", 'light',
-         ["yfinance: free, no API key required",
-          "Alpha Vantage: requires registration..."]),
-        ("code_interpreter", "Test and verify", 'light',
+        ("read_webpage", "Çözümleri değerlendir", 'light',
+         ["yfinance: ücretsiz, API anahtarı gerektirmez",
+          "Alpha Vantage: kayıt gerektirir..."]),
+        ("code_interpreter", "Test et ve doğrula", 'light',
          ["import yfinance as yf",
           "yf.Ticker('NVDA').history()"]),
-        ("create_tool", "Encapsulate and register", 'medium',
+        ("create_tool", "Kapsülle ve kaydet", 'medium',
          ["name: get_stock_data",
           "schema: {ticker, period}"]),
     ]
@@ -879,16 +879,16 @@ def fig4_11():
     # Tool registry
     svg.arrow(w / 2, 330, w / 2, 360)
     svg.rect(200, 360, w - 400, 44, fill='dark')
-    svg.text(w / 2, 382, "Tool library: get_stock_data registered", size=FS_BODY, fill='white', bold=True)
+    svg.text(w / 2, 382, "Araç kütüphanesi: get_stock_data kaydedildi", size=FS_BODY, fill='white', bold=True)
 
     # Reuse
     svg.arrow(w / 2, 404, w / 2, 430)
     svg.rect(100, 430, w - 200, 40, fill='code_bg', stroke='dark', rx=4)
     svg.mono(110, 442,
-             "Reuse verification: \"Query TSLA stock price\" → search_tools hit → directly call get_stock_data",
+             "Yeniden kullanım doğrulaması: \"TSLA hisse fiyatını sorgula\" → search_tools eşleşti → doğrudan get_stock_data çağrılıyor",
              size=FS_TINY)
     svg.mono(110, 458,
-             "Skip search/evaluation/testing phases → cost reduction 90%+",
+             "Arama/değerlendirme/test aşamalarını atla → maliyette %90+ azalma",
              size=FS_TINY)
 
     svg.save(os.path.join(OUT, 'fig4-11.svg'))
@@ -900,53 +900,53 @@ def fig4_12():
     """Voyager learning loop (curriculum + skill library + iterative prompting)"""
     w, h = 880, 520
     svg = SVG(w, h)
-    svg.text(w / 2, 30, "Voyager: Agent architecture for continuous learning", size=FS_TITLE, bold=True)
+    svg.text(w / 2, 30, "Voyager: Sürekli öğrenme için Ajan mimarisi", size=FS_TITLE, bold=True)
 
     svg.rect(20, 65, 260, 180, fill='white', stroke='border', dash=True)
-    svg.text(150, 88, "Automatic curriculum generator", size=FS_BODY, bold=True)
+    svg.text(150, 88, "Otomatik müfredat üreteci", size=FS_BODY, bold=True)
     curriculum = [
-        "Input: current state + existing skills",
-        "Output: next exploration goal",
+        "Girdi: mevcut durum + mevcut beceriler",
+        "Çıktı: sıradaki keşif hedefi",
         "",
-        "Example goal sequence:",
-        "  Chop tree → Craft wooden planks",
-        "  → Craft wooden pickaxe → Mine stone",
-        "  → Craft furnace → Smelt iron ingots",
+        "Örnek hedef dizisi:",
+        "  Ağaç kes → Tahta kalas yap",
+        "  → Tahta kazma yap → Taş çıkar",
+        "  → Fırın yap → Demir cevheri erit",
     ]
     for i, line in enumerate(curriculum):
         svg.mono(32, 112 + i * 20, line, size=12)
 
     svg.rect(600, 65, 260, 180, fill='white', stroke='border', dash=True)
-    svg.text(730, 88, "Iterative prompting mechanism", size=FS_BODY, bold=True)
+    svg.text(730, 88, "Yinelemeli istem mekanizması", size=FS_BODY, bold=True)
     iterative = [
-        "Collect feedback on failure:",
-        "  - Environment observation (error message)",
-        "  - Self-verification result",
+        "Başarısızlıkta geri bildirim topla:",
+        "  - Ortam gözlemi (hata mesajı)",
+        "  - Kendi kendini doğrulama sonucu",
         "",
-        "Integrate into LLM Prompt",
-        "→ Guide code improvement",
-        "→ Iterate multiple times until success",
+        "LLM İstemine entegre et",
+        "→ Kod iyileştirmesini yönlendir",
+        "→ Başarılı olana kadar birden çok kez yinele",
     ]
     for i, line in enumerate(iterative):
         svg.mono(612, 112 + i * 20, line, size=12)
 
-    svg.arrow(280, 155, 370, 155, label="Goal")
-    svg.arrow(560, 155, 600, 155, label="Feedback")
+    svg.arrow(280, 155, 370, 155, label="Hedef")
+    svg.arrow(560, 155, 600, 155, label="Geri bildirim")
 
     svg.rect(370, 110, 190, 80, fill='medium')
-    svg.text(465, 140, "Agent execution", size=FS_BODY, bold=True)
-    svg.text(465, 165, "GPT-4 code generation", size=FS_SMALL, fill='text_light')
+    svg.text(465, 140, "Ajan yürütmesi", size=FS_BODY, bold=True)
+    svg.text(465, 165, "GPT-4 kod üretimi", size=FS_SMALL, fill='text_light')
 
     svg.arrow(465, 190, 465, 260)
-    svg.text(510, 230, "Success → Extract", size=FS_SMALL, fill='text_light')
+    svg.text(510, 230, "Başarı → Çıkar", size=FS_SMALL, fill='text_light')
 
     svg.rect(120, 260, 640, 240, fill='white', stroke='border', dash=True)
-    svg.text(440, 283, "Skill Library — core of externalized learning", size=FS_BODY, bold=True)
+    svg.text(440, 283, "Beceri Kütüphanesi — dışsallaştırılmış öğrenmenin çekirdeği", size=FS_BODY, bold=True)
 
     skills = [
-        ("chopTree()", "Chop tree\nBasic skill", "function chopTree() {\n  bot.dig(nearest('log'));\n}"),
-        ("craftPlanks()", "Craft wooden planks\nCall chopTree", "function craftPlanks() {\n  chopTree(); craft('planks');\n}"),
-        ("craftPickaxe()", "Craft wooden pickaxe\nCombine multiple skills", "function craftPickaxe() {\n  craftPlanks(); craft('stick');\n  craft('wooden_pickaxe');\n}"),
+        ("chopTree()", "Ağaç kes\nTemel beceri", "function chopTree() {\n  bot.dig(nearest('log'));\n}"),
+        ("craftPlanks()", "Tahta kalas yap\nchopTree'yi çağırır", "function craftPlanks() {\n  chopTree(); craft('planks');\n}"),
+        ("craftPickaxe()", "Tahta kazma yap\nBirden çok beceriyi birleştirir", "function craftPickaxe() {\n  craftPlanks(); craft('stick');\n  craft('wooden_pickaxe');\n}"),
     ]
     skx = 140
     for name, desc, code in skills:
@@ -960,7 +960,7 @@ def fig4_12():
             svg.mono(skx + 18, 400 + j * 18, cl, size=11)
         skx += 215
 
-    svg.arrow_curved(120, 380, 150, 245, curve=60, label="Existing skills", dash=True, color='dark')
+    svg.arrow_curved(120, 380, 150, 245, curve=60, label="Mevcut beceriler", dash=True, color='dark')
 
     svg.save(os.path.join(OUT, 'fig4-12.svg'))
 

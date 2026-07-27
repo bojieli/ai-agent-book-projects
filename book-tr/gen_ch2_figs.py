@@ -36,29 +36,29 @@ def fig2_1():
     W, H = 820, 620
     s = SVG(W, H)
 
-    s.text(410, 30, 'Overview of context window composition', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Bağlam penceresi bileşenlerine genel bakış', size=FS_TITLE, bold=True)
 
     lx, lw = 40, 700
     layers = [
-        ('System Prompt', 'medium', [
-            '"You are a helpful assistant. You MUST answer concisely."',
-            '"Use tools when the user asks for real-time information."',
+        ('Sistem İstemi', 'medium', [
+            '"Sen yardımsever bir asistansın. Yanıtların ÖZ olmalı."',
+            '"Kullanıcı gerçek zamanlı bilgi istediğinde araç kullan."',
         ]),
-        ('Tool Definitions', 'light', [
-            '{"name": "web_search", "description": "Search the web",',
+        ('Araç Tanımları', 'light', [
+            '{"name": "web_search", "description": "Web\'de ara",',
             ' "parameters": {"query": {"type": "string"}}}',
         ]),
-        ('Conversation History', 'light', [
-            'user: "What\'s the weather in Beijing today?"',
-            'assistant: [tool_call] → get_weather("Beijing")',
-            'tool: {"temp": "23°C", "conditions": "clear"}',
+        ('Konuşma Geçmişi', 'light', [
+            'user: "Bugün Pekin\'de hava nasıl?"',
+            'assistant: [tool_call] → get_weather("Pekin")',
+            'tool: {"temp": "23°C", "conditions": "açık"}',
         ]),
-        ('Reasoning Trace', '#e8e8e8', [
-            '<think>The user asks about the weather. I already have the tool result,',
-            'so I can directly summarize and respond without calling the tool again.</think>',
+        ('Muhakeme İzi', '#e8e8e8', [
+            '<think>Kullanıcı havayı soruyor. Araç sonucu zaten elimde,',
+            'bu yüzden aracı tekrar çağırmadan özetleyip yanıtlayabilirim.</think>',
         ]),
-        ('Current generation position →', 'white', [
-            'assistant: "Beijing is clear today, temperature 23°C..."  ← LLM is generating',
+        ('Mevcut üretim konumu →', 'white', [
+            'assistant: "Pekin bugün açık, sıcaklık 23°C..."  ← LLM üretiyor',
         ]),
     ]
 
@@ -75,13 +75,13 @@ def fig2_1():
     brace_top = 60
     brace_bot = y - 8
     s.brace_right(lx + lw + 8, brace_top, brace_bot)
-    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 - 12, 'Context', size=FS_BODY, bold=True, anchor='start')
-    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 + 12, 'Window', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 - 12, 'Bağlam', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + lw + 15, (brace_top + brace_bot) / 2 + 12, 'Penceresi', size=FS_BODY, bold=True, anchor='start')
 
     # Bottom annotation
     s.rect(100, y + 15, 620, 50, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, y + 32, 'Window size: Qwen3 = 32K tokens | Claude = 200K | Gemini = 2M', size=FS_SMALL)
-    s.text(410, y + 52, 'All content serialized into token stream → processed by Transformer attention mechanism', size=FS_SMALL, fill='text_light')
+    s.text(410, y + 32, 'Pencere boyutu: Qwen3 = 32K token | Claude = 200K | Gemini = 2M', size=FS_SMALL)
+    s.text(410, y + 52, 'Tüm içerik token akışına serileştirilir → Transformer dikkat mekanizmasıyla işlenir', size=FS_SMALL, fill='text_light')
 
     s.save(f'{OUT}/fig2-1.svg')
 
@@ -95,22 +95,22 @@ def fig2_2():
     W, H = 820, 540
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.1: Local LLM Tool Calling Architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Deney 2.1: Yerel LLM Araç Çağırma Mimarisi', size=FS_TITLE, bold=True)
 
     # Hardware box (left)
-    s.group_box(30, 65, 220, 130, 'Local Hardware')
+    s.group_box(30, 65, 220, 130, 'Yerel Donanım')
     s.box(50, 100, 180, 35, 'Apple M2 / 16GB', fill='light', font_size=FS_SMALL)
-    s.box(50, 145, 180, 35, 'MLX Inference Backend', fill='light', font_size=FS_SMALL)
+    s.box(50, 145, 180, 35, 'MLX Çıkarım Motoru', fill='light', font_size=FS_SMALL)
 
     # Model box (center)
     s.rect(290, 65, 240, 130, fill='medium')
     s.text(410, 95, 'Qwen3-0.6B', size=FS_BODY, bold=True)
-    s.text(410, 120, '0.6B parameters · Q4 quantization', size=FS_SMALL, fill='text_light')
-    s.text(410, 145, '> 100 tokens/s', size=FS_SMALL, fill='text_light')
-    s.text(410, 170, 'ReAct + Tool calling capability', size=FS_SMALL)
+    s.text(410, 120, '0.6B parametre · Q4 nicemleme', size=FS_SMALL, fill='text_light')
+    s.text(410, 145, '> 100 token/sn', size=FS_SMALL, fill='text_light')
+    s.text(410, 170, 'ReAct + Araç çağırma yeteneği', size=FS_SMALL)
 
     # Tool registry (right)
-    s.group_box(570, 65, 220, 130, 'Tool Registry')
+    s.group_box(570, 65, 220, 130, 'Araç Kayıt Defteri')
     s.box(590, 100, 180, 35, 'get_current_time', fill='code_bg', font_size=FS_SMALL)
     s.box(590, 145, 180, 35, 'get_temperature', fill='code_bg', font_size=FS_SMALL)
 
@@ -120,17 +120,17 @@ def fig2_2():
     s.arrow(568, 138, 532, 138)
 
     # ReAct loop (below)
-    s.group_box(50, 220, 720, 290, 'ReAct Loop')
+    s.group_box(50, 220, 720, 290, 'ReAct Döngüsü')
 
     # Step 1: User query
     s.rect(80, 260, 300, 40, fill='light')
-    s.text(90, 280, 'user: "What\'s the time and weather in Vancouver?"', size=FS_TINY, anchor='start')
+    s.text(90, 280, 'user: "Vancouver\'da saat kaç ve hava nasıl?"', size=FS_TINY, anchor='start')
 
     # Step 2: Think
     s.rect(80, 310, 300, 55, fill='#e8e8e8')
     s.text(90, 328, '<think>', size=FS_TINY, anchor='start', bold=True)
-    s.text(90, 348, 'Need to call get_current_time', size=FS_TINY, anchor='start')
-    s.text(90, 363, 'and get_temperature tools', size=FS_TINY, anchor='start')
+    s.text(90, 348, 'get_current_time ve get_temperature', size=FS_TINY, anchor='start')
+    s.text(90, 363, 'araçlarını çağırmak gerekiyor', size=FS_TINY, anchor='start')
     s.arrow(230, 302, 230, 308)
 
     # Step 3: Tool calls
@@ -147,20 +147,20 @@ def fig2_2():
     # Right side: loop arrow + final output
     # Loop arrow goes along the left outer edge to avoid blocking text inside the left column
     s.arrow_curved(80, 455, 80, 280, curve=-40, color='dark')
-    s.text(30, 367, 'Continue loop', size=FS_TINY, fill='text_light', bold=True)
+    s.text(30, 367, 'Döngüye devam', size=FS_TINY, fill='text_light', bold=True)
 
     # Final output box
     s.rect(430, 280, 320, 55, fill='medium')
-    s.text(440, 298, 'Final output:', size=FS_SMALL, bold=True, anchor='start')
-    s.text(440, 318, '"Vancouver: 05:18 AM, 13.2°C,', size=FS_TINY, anchor='start')
-    s.text(440, 335, '  clear sky, humidity 93%"', size=FS_TINY, anchor='start')
+    s.text(440, 298, 'Nihai çıktı:', size=FS_SMALL, bold=True, anchor='start')
+    s.text(440, 318, '"Vancouver: 05:18, 13.2°C,', size=FS_TINY, anchor='start')
+    s.text(440, 335, '  açık, nem %93"', size=FS_TINY, anchor='start')
 
     # Streaming annotation
     s.rect(430, 360, 320, 80, fill='code_bg', stroke='dark', rx=4)
-    s.text(590, 378, 'Streaming key timings', size=FS_SMALL, bold=True)
-    s.text(440, 400, '<think>... → hidden, not shown to user', size=FS_TINY, anchor='start')
-    s.text(440, 418, 'plain text → real-time streaming display', size=FS_TINY, anchor='start')
-    s.text(440, 436, '<tool_call> → parse and execute tool', size=FS_TINY, anchor='start')
+    s.text(590, 378, 'Akış zamanlaması', size=FS_SMALL, bold=True)
+    s.text(440, 400, '<think>... → gizli, kullanıcıya gösterilmez', size=FS_TINY, anchor='start')
+    s.text(440, 418, 'düz metin → gerçek zamanlı akış gösterimi', size=FS_TINY, anchor='start')
+    s.text(440, 436, '<tool_call> → ayrıştır ve aracı çalıştır', size=FS_TINY, anchor='start')
 
     s.save(f'{OUT}/fig2-2.svg')
 
@@ -174,7 +174,7 @@ def fig2_3():
     W, H = 920, 580
     s = SVG(W, H)
 
-    s.text(W / 2, 30, 'Token Structure of Chat Template', size=FS_TITLE, bold=True)
+    s.text(W / 2, 30, 'Sohbet Şablonunun Token Yapısı', size=FS_TITLE, bold=True)
 
     lx = 40
     rw = 800
@@ -182,27 +182,27 @@ def fig2_3():
     y = 65
     segments = [
         ('<|im_start|>system', 'darker', 'white', [
-            '# Tools',
-            'You may call one or more functions...',
+            '# Araçlar',
+            'Bir veya daha fazla fonksiyon çağırabilirsin...',
             '<tools>{"name":"get_weather",...}</tools>',
             '<tool_call>{"name":..., "arguments":...}</tool_call>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>user', 'darker', 'white', [
-            '"What\'s the weather like in Beijing today?"',
+            '"Bugün Pekin\'de hava nasıl?"',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>assistant', 'darker', 'white', [
-            '<think>Need to query weather, call get_weather tool</think>',
-            '<tool_call>{"name":"get_weather","args":{"city":"Beijing"}}</tool_call>',
+            '<think>Hava durumu sorgulanmalı, get_weather aracı çağrılsın</think>',
+            '<tool_call>{"name":"get_weather","args":{"city":"Pekin"}}</tool_call>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>user', 'darker', 'white', [
-            '<tool_response>{"temp":"23°C","sky":"clear"}</tool_response>',
+            '<tool_response>{"temp":"23°C","sky":"açık"}</tool_response>',
         ]),
         ('<|im_end|>', 'dark', 'white', []),
         ('<|im_start|>assistant', 'darker', 'white', [
-            '← LLM starts generating new tokens from here',
+            '← LLM yeni tokenleri buradan üretmeye başlar',
         ]),
     ]
 
@@ -220,8 +220,8 @@ def fig2_3():
             y += total_h + 4
 
     # Right annotation
-    s.text(lx + rw + 5, 80, 'special', size=FS_SMALL, anchor='start', bold=True)
-    s.text(lx + rw + 5, 100, 'tokens', size=FS_SMALL, anchor='start', bold=True)
+    s.text(lx + rw + 5, 80, 'özel', size=FS_SMALL, anchor='start', bold=True)
+    s.text(lx + rw + 5, 100, 'tokenler', size=FS_SMALL, anchor='start', bold=True)
 
     s.save(f'{OUT}/fig2-3.svg')
 
@@ -235,65 +235,65 @@ def fig2_4():
     W, H = 820, 480
     s = SVG(W, H)
 
-    s.text(410, 30, 'KV Cache Prefix Reuse Mechanism', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'KV Cache Önek Yeniden Kullanım Mekanizması', size=FS_TITLE, bold=True)
 
     lx = 40
     bw = 740
 
     # Request 1
-    s.text(lx, 70, 'Request 1', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx, 70, 'İstek 1', size=FS_BODY, bold=True, anchor='start')
     # System prompt portion (cached)
     s.rect(lx, 85, 380, 40, fill='medium')
-    s.text(lx + 190, 105, 'System Prompt + Tools (1200 tokens)', size=FS_SMALL)
+    s.text(lx + 190, 105, 'Sistem İstemi + Araçlar (1200 token)', size=FS_SMALL)
     # User message
     s.rect(lx + 385, 85, 180, 40, fill='light')
-    s.text(lx + 475, 105, 'user: "How\'s the weather?"', size=FS_SMALL)
+    s.text(lx + 475, 105, 'user: "Hava nasıl?"', size=FS_SMALL)
     # KV computed
     s.rect(lx + 570, 85, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 105, '→ generate response', size=FS_SMALL)
+    s.text(lx + 655, 105, '→ yanıt üret', size=FS_SMALL)
 
     # Request 2 (cache hit)
-    s.text(lx, 155, 'Request 2', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx, 155, 'İstek 2', size=FS_BODY, bold=True, anchor='start')
     # Same prefix — cached
     s.rect(lx, 170, 380, 40, fill='medium')
-    s.text(lx + 190, 190, 'System Prompt + Tools (cache hit ✓)', size=FS_SMALL)
+    s.text(lx + 190, 190, 'Sistem İstemi + Araçlar (önbellek isabeti ✓)', size=FS_SMALL)
     # Different user msg
     s.rect(lx + 385, 170, 180, 40, fill='light')
-    s.text(lx + 475, 190, 'user: "What time is it?"', size=FS_SMALL)
+    s.text(lx + 475, 190, 'user: "Saat kaç?"', size=FS_SMALL)
     s.rect(lx + 570, 170, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 190, '→ generate response', size=FS_SMALL)
+    s.text(lx + 655, 190, '→ yanıt üret', size=FS_SMALL)
 
     # Cache reuse arrow
-    s.arrow(lx + 190, 127, lx + 190, 168, label='KV reuse', color='dark')
+    s.arrow(lx + 190, 127, lx + 190, 168, label='KV yeniden kullanımı', color='dark')
 
     # Request 3 (cache miss)
-    s.text(lx, 245, 'Request 3', size=FS_BODY, bold=True, anchor='start')
-    s.text(lx + 85, 245, '(system prompt changed)', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(lx, 245, 'İstek 3', size=FS_BODY, bold=True, anchor='start')
+    s.text(lx + 85, 245, '(sistem istemi değişti)', size=FS_SMALL, anchor='start', fill='text_light')
     s.rect(lx, 260, 400, 40, fill='white', dash=True)
-    s.text(lx + 200, 280, 'System + Tools + "Time: 10:30:45"', size=FS_SMALL)
+    s.text(lx + 200, 280, 'Sistem + Araçlar + "Saat: 10:30:45"', size=FS_SMALL)
     s.rect(lx + 405, 260, 160, 40, fill='light')
-    s.text(lx + 485, 280, 'user: "How\'s the weather?"', size=FS_SMALL)
+    s.text(lx + 485, 280, 'user: "Hava nasıl?"', size=FS_SMALL)
     s.rect(lx + 570, 260, 170, 40, fill='#e8e8e8')
-    s.text(lx + 655, 280, '→ full recomputation ✗', size=FS_SMALL)
+    s.text(lx + 655, 280, '→ tam yeniden hesaplama ✗', size=FS_SMALL)
 
     # Performance comparison
     s.rect(80, 330, 660, 130, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, 355, 'Performance Comparison (3000 token context)', size=FS_BODY, bold=True)
+    s.text(410, 355, 'Performans Karşılaştırması (3000 tokenlık bağlam)', size=FS_BODY, bold=True)
 
     # Table header
     s.line(100, 370, 720, 370, color='dark')
-    s.text(230, 390, 'cache hit', size=FS_SMALL, bold=True)
-    s.text(490, 390, 'cache miss', size=FS_SMALL, bold=True)
+    s.text(230, 390, 'önbellek isabeti', size=FS_SMALL, bold=True)
+    s.text(490, 390, 'önbellek kaçırma', size=FS_SMALL, bold=True)
     s.line(100, 405, 720, 405, color='dark')
 
     # Rows
     s.text(130, 425, 'TTFT', size=FS_SMALL, anchor='start')
-    s.text(230, 425, '~0.5 seconds', size=FS_SMALL)
-    s.text(490, 425, '3 - 5 seconds', size=FS_SMALL)
+    s.text(230, 425, '~0.5 saniye', size=FS_SMALL)
+    s.text(490, 425, '3 - 5 saniye', size=FS_SMALL)
 
-    s.text(130, 450, 'Cost', size=FS_SMALL, anchor='start')
-    s.text(230, 450, 'only new tokens billed', size=FS_SMALL)
-    s.text(490, 450, 'all tokens rebilled', size=FS_SMALL)
+    s.text(130, 450, 'Maliyet', size=FS_SMALL, anchor='start')
+    s.text(230, 450, 'yalnızca yeni tokenler ücretlendirilir', size=FS_SMALL)
+    s.text(490, 450, 'tüm tokenler yeniden ücretlendirilir', size=FS_SMALL)
 
     s.save(f'{OUT}/fig2-4.svg')
 
@@ -307,7 +307,7 @@ def fig2_5():
     W, H = 820, 580
     s = SVG(W, H)
 
-    s.text(410, 30, 'System prompt injection architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Sistem istemi enjeksiyon mimarisi', size=FS_TITLE, bold=True)
 
     # Left: WITHOUT hints
     col_w = 350
@@ -315,23 +315,23 @@ def fig2_5():
     lx1 = 30
     lx2 = lx1 + col_w + col_gap
 
-    s.text(lx1 + col_w / 2, 65, 'No system prompt', size=FS_BODY, bold=True)
-    s.text(lx2 + col_w / 2, 65, 'With system prompt', size=FS_BODY, bold=True)
+    s.text(lx1 + col_w / 2, 65, 'Sistem istemi yok', size=FS_BODY, bold=True)
+    s.text(lx2 + col_w / 2, 65, 'Sistem istemi var', size=FS_BODY, bold=True)
 
     # Left column: raw trajectory
     y = 90
     left_items = [
-        ('system', 'System Prompt + Tools', 'medium', 35),
-        ('user', '"Help me contact Xfinity to negotiate"', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 1st attempt', '#e8e8e8', 35),
-        ('tool', 'Result: waited 45 minutes, not connected', 'light', 35),
-        ('assistant', 'web_search("Xfinity deals")', '#e8e8e8', 35),
-        ('tool', 'Result: [large amount of search content...]', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 2nd attempt', '#e8e8e8', 35),
-        ('tool', 'Result: connected, quoted $65/month', 'light', 35),
-        ('assistant', 'phone_call(Xfinity) → 3rd attempt', '#e8e8e8', 35),
-        ('tool', 'Result: confirmed price reduction to $59/month', 'light', 35),
-        ('user', '"Can you call again to follow up?"', 'light', 35),
+        ('system', 'Sistem İstemi + Araçlar', 'medium', 35),
+        ('user', '"Xfinity ile görüşüp indirim al"', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → 1. deneme', '#e8e8e8', 35),
+        ('tool', 'Sonuç: 45 dk beklendi, bağlanamadı', 'light', 35),
+        ('assistant', 'web_search("Xfinity kampanyaları")', '#e8e8e8', 35),
+        ('tool', 'Sonuç: [çok miktarda arama içeriği...]', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → 2. deneme', '#e8e8e8', 35),
+        ('tool', 'Sonuç: bağlandı, $65/ay teklif edildi', 'light', 35),
+        ('assistant', 'phone_call(Xfinity) → 3. deneme', '#e8e8e8', 35),
+        ('tool', 'Sonuç: $59/aya indirim onaylandı', 'light', 35),
+        ('user', '"Takip için tekrar arayabilir misin?"', 'light', 35),
     ]
 
     for role, content, fill, h in left_items:
@@ -340,16 +340,16 @@ def fig2_5():
         s.mono(lx1 + 65, y + h / 2, content, size=FS_TINY - 2)
         y += h + 3
 
-    s.text(lx1 + col_w / 2, y + 15, '→ Model needs to scan entire context to "count"', size=FS_SMALL, fill='text_light')
-    s.text(lx1 + col_w / 2, y + 35, 'number of calls made, prone to miscounting', size=FS_SMALL, fill='text_light')
+    s.text(lx1 + col_w / 2, y + 15, '→ Model "saymak" için tüm bağlamı taramak zorunda', size=FS_SMALL, fill='text_light')
+    s.text(lx1 + col_w / 2, y + 35, 'kaç kez çağrı yapıldığını yanlış sayabilir', size=FS_SMALL, fill='text_light')
 
     # Right column: with system hints
     y = 90
     right_items = [
-        ('system', 'System Prompt + Tools', 'medium', 35),
-        ('user', '"Help me contact Xfinity to negotiate"', 'light', 35),
-        ('...', '[ Same trajectory content ]', '#e8e8e8', 90),
-        ('user', '"Can you call again to follow up?"', 'light', 35),
+        ('system', 'Sistem İstemi + Araçlar', 'medium', 35),
+        ('user', '"Xfinity ile görüşüp indirim al"', 'light', 35),
+        ('...', '[ Aynı izlence içeriği ]', '#e8e8e8', 90),
+        ('user', '"Takip için tekrar arayabilir misin?"', 'light', 35),
     ]
     for role, content, fill, h in right_items:
         s.rect(lx2, y, col_w, h, fill=fill, rx=4)
@@ -363,18 +363,18 @@ def fig2_5():
     s.rect(lx2, hint_y, col_w, hint_h, fill='medium', stroke='border', rx=4)
     s.text(lx2 + 10, hint_y + 18, '<agent_status>', size=FS_SMALL, bold=True, anchor='start')
     hints = [
-        'phone_call called 3 times (Xfinity: 3)',
-        'Constraint check: limit reached (3/3) ✗',
-        'TODO: [✓]Contact Xfinity [✓]Confirm price reduction',
-        'Current time: 2025-09-14 10:30',
-        'Current status: waiting for user confirmation',
+        'phone_call 3 kez çağrıldı (Xfinity: 3)',
+        'Kısıt kontrolü: limite ulaşıldı (3/3) ✗',
+        'TODO: [✓]Xfinity\'i ara [✓]İndirimi onayla',
+        'Şu anki saat: 2025-09-14 10:30',
+        'Mevcut durum: kullanıcı onayı bekleniyor',
     ]
     for i, h in enumerate(hints):
         s.mono(lx2 + 15, hint_y + 40 + i * 20, h, size=FS_TINY - 2)
     s.text(lx2 + col_w - 10, hint_y + hint_h - 12, '</agent_status>', size=FS_SMALL, bold=True, anchor='end')
 
-    s.text(lx2 + col_w / 2, hint_y + hint_h + 18, '→ Model directly reads refined status', size=FS_SMALL, fill='text_light')
-    s.text(lx2 + col_w / 2, hint_y + hint_h + 38, 'Accurately follows constraints, no more calls', size=FS_SMALL, fill='text_light')
+    s.text(lx2 + col_w / 2, hint_y + hint_h + 18, '→ Model doğrudan işlenmiş durumu okur', size=FS_SMALL, fill='text_light')
+    s.text(lx2 + col_w / 2, hint_y + hint_h + 38, 'Kısıtlara doğru uyar, fazladan çağrı yapmaz', size=FS_SMALL, fill='text_light')
 
     # VS divider
     s.text(lx1 + col_w + col_gap / 2, 300, 'VS', size=FS_BODY, bold=True)
@@ -391,7 +391,7 @@ def fig2_6():
     W, H = 820, 530
     s = SVG(W, H)
 
-    s.text(410, 30, 'Context compression strategy comparison (OpenAI founder tracking experiment)', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Bağlam sıkıştırma stratejisi karşılaştırması (OpenAI kurucu takip deneyi)', size=FS_TITLE, bold=True)
 
     # Table layout
     tx = 30
@@ -401,12 +401,12 @@ def fig2_6():
     # so nothing overlaps in the narrow columns).
     header_y = 68
     headers = [
-        (tx + 72, 'Strategy'),
-        (tx + 195, 'Tokens'),
-        (tx + 282, 'Ratio'),
-        (tx + 352, 'Iters'),
-        (tx + 432, 'Result'),
-        (tx + 475 + 90, 'Token usage'),
+        (tx + 72, 'Strateji'),
+        (tx + 195, 'Token'),
+        (tx + 282, 'Oran'),
+        (tx + 352, 'Tur'),
+        (tx + 432, 'Sonuç'),
+        (tx + 475 + 90, 'Token kullanımı'),
     ]
     for cx, label in headers:
         s.text(cx, header_y, label, size=FS_SMALL, bold=True)
@@ -414,12 +414,12 @@ def fig2_6():
     s.line(tx, header_y + 12, tx + tw, header_y + 12)
 
     strategies = [
-        ('No compression', '> 110K', '100%', '5 (Failed)', False, 110000),
-        ('Individual summary', '123,205', '6.8%', '24', True, 123205),
-        ('Combined summary', '55,462', '2.1%', '21', True, 55462),
-        ('Context-aware', '25,198', '0.9%', '15', True, 25198),
-        ('Aware + citation', '45,544', '1.4%', '17', True, 45544),
-        ('Adaptive window', '181,372', '—', '8', True, 181372),
+        ('Sıkıştırma yok', '> 110K', '%100', '5 (Başarısız)', False, 110000),
+        ('Tekil özet', '123.205', '%6.8', '24', True, 123205),
+        ('Birleşik özet', '55.462', '%2.1', '21', True, 55462),
+        ('Bağlam duyarlı', '25.198', '%0.9', '15', True, 25198),
+        ('Duyarlı + atıf', '45.544', '%1.4', '17', True, 45544),
+        ('Uyarlanabilir pencere', '181.372', '—', '8', True, 181372),
     ]
 
     max_tokens = 190000
@@ -431,7 +431,7 @@ def fig2_6():
 
         # Strategy name
         s.text(tx + 72, y + 15, name, size=FS_SMALL, anchor='middle',
-               bold=(name == 'Context-aware'))
+               bold=(name == 'Bağlam duyarlı'))
 
         # Token count
         s.text(tx + 195, y + 15, tokens, size=FS_SMALL)
@@ -443,13 +443,13 @@ def fig2_6():
         s.text(tx + 352, y + 15, iters, size=FS_SMALL)
 
         # Result
-        result_text = '✓ Success' if success else '✗ Failure'
+        result_text = '✓ Başarılı' if success else '✗ Başarısız'
         result_color = 'text' if success else 'dark'
         s.text(tx + 432, y + 15, result_text, size=FS_SMALL, fill=result_color)
 
         # Bar
         bar_w = (token_val / max_tokens) * bar_max_w
-        bar_fill = '#e8e8e8' if name != 'Context-aware' else 'medium'
+        bar_fill = '#e8e8e8' if name != 'Bağlam duyarlı' else 'medium'
         if not success:
             bar_fill = 'white'
         s.rect(bar_x, y, bar_w, 30, fill=bar_fill, stroke='border', rx=3)
@@ -460,8 +460,8 @@ def fig2_6():
 
     # Bottom insight
     s.rect(100, H - 60, 620, 45, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, H - 45, 'Context-aware compression: 77% token reduction, highest success rate, fewest iterations', size=FS_SMALL, bold=True)
-    s.text(410, H - 25, 'Key: incorporate query intent and existing information into compression decisions', size=FS_SMALL, fill='text_light')
+    s.text(410, H - 45, 'Bağlam duyarlı sıkıştırma: %77 token azalması, en yüksek başarı oranı, en az tur', size=FS_SMALL, bold=True)
+    s.text(410, H - 25, 'Anahtar: sıkıştırma kararlarına sorgu niyetini ve mevcut bilgiyi de dahil etmek', size=FS_SMALL, fill='text_light')
 
     s.save(f'{OUT}/fig2-6.svg')
 
@@ -475,18 +475,18 @@ def fig2_7():
     W, H = 820, 600
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.7: Processing flow of six compression strategies', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Deney 2.7: Altı sıkıştırma stratejisinin işleme akışı', size=FS_TITLE, bold=True)
 
     # Input annotation
-    s.text(410, 58, 'Each search returns ~70K characters → each strategy handles it differently', size=FS_SMALL, fill='text_light')
+    s.text(410, 58, 'Her arama ~70K karakter döndürür → her strateji bunu farklı işler', size=FS_SMALL, fill='text_light')
 
     strategies = [
-        ('① No compression', 'Directly retain', 'Full original text into context', '> 110K tok → overflow', False),
-        ('② Individual summary', 'Independent summary', 'Each result independently generates 2-3 paragraph summary', '123K tok · 6.8%', True),
-        ('③ Combined summary', 'Merged summary', 'All results concatenated then unified summary', '55K tok · 2.1%', True),
-        ('④ Context-aware', 'Intelligent compression', 'Given query + context → targeted compression', '25K tok · 0.9%', True),
-        ('⑤ Aware + citation', 'Intelligent + traceability', 'Compressed content + retain URL citation markers', '45K tok · 1.4%', True),
-        ('⑥ Adaptive window', 'Delay Compression', '< 80% window retains original text, batch compression beyond', '181K tok · Maximum Fidelity', True),
+        ('① Sıkıştırma yok', 'Doğrudan sakla', 'Orijinal metnin tamamı bağlama girer', '> 110K tok → taşma', False),
+        ('② Tekil özet', 'Bağımsız özet', 'Her sonuç bağımsız olarak 2-3 paragraflık özet üretir', '123K tok · %6.8', True),
+        ('③ Birleşik özet', 'Birleştirilmiş özet', 'Tüm sonuçlar birleştirilip tek özet çıkarılır', '55K tok · %2.1', True),
+        ('④ Bağlam duyarlı', 'Akıllı sıkıştırma', 'Sorgu + bağlam verilerek → hedefli sıkıştırma', '25K tok · %0.9', True),
+        ('⑤ Duyarlı + atıf', 'Akıllı + izlenebilirlik', 'Sıkıştırılmış içerik + URL atıf işaretleri korunur', '45K tok · %1.4', True),
+        ('⑥ Uyarlanabilir pencere', 'Gecikmeli Sıkıştırma', 'Pencerenin %80\'inde orijinal metin, ötesinde toplu sıkıştırma', '181K tok · Maksimum Sadakat', True),
     ]
 
     lx = 30
@@ -531,48 +531,48 @@ def fig2_8():
     W, H = 820, 540
     s = SVG(W, H)
 
-    s.text(410, 30, 'Skills Progressive Disclosure Mechanism (PPTX Skill Example)', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Skills Kademeli Açığa Çıkarma Mekanizması (PPTX Skill Örneği)', size=FS_TITLE, bold=True)
 
     # Layer 1: Metadata (always loaded)
     y1 = 70
     s.rect(40, y1, 740, 90, fill='medium')
-    s.text(60, y1 + 20, 'Layer 1: Metadata (loaded at startup, ~200 tokens)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y1 + 20, 'Katman 1: Meta veri (başlangıçta yüklenir, ~200 token)', size=FS_BODY, bold=True, anchor='start')
     s.rect(60, y1 + 40, 700, 40, fill='code_bg', rx=4)
-    s.mono(70, y1 + 60, 'skills: [{name: "PPTX", desc: "Create PowerPoint presentations from content"}', size=FS_TINY)
-    s.mono(70, y1 + 75, '        {name: "PDF",  desc: "Extract and analyze PDF documents"}, ...]', size=FS_TINY - 2)
+    s.mono(70, y1 + 60, 'skills: [{name: "PPTX", desc: "İçerikten PowerPoint sunumu oluştur"}', size=FS_TINY)
+    s.mono(70, y1 + 75, '        {name: "PDF",  desc: "PDF belgelerini çıkar ve analiz et"}, ...]', size=FS_TINY - 2)
 
     # Trigger arrow
     s.arrow(410, y1 + 92, 410, y1 + 115)
-    s.text(430, y1 + 103, 'Task trigger: "Generate PPT from paper"', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(430, y1 + 103, 'Görev tetikleyicisi: "Makaleden PPT oluştur"', size=FS_SMALL, anchor='start', fill='text_light')
 
     # Layer 2: Core SKILL.md
     y2 = y1 + 120
     s.rect(40, y2, 740, 130, fill='light')
-    s.text(60, y2 + 20, 'Layer 2: SKILL.md Core Flow (loaded on demand, ~2K tokens)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y2 + 20, 'Katman 2: SKILL.md Temel Akış (istendiğinde yüklenir, ~2K token)', size=FS_BODY, bold=True, anchor='start')
     s.rect(60, y2 + 40, 700, 80, fill='code_bg', rx=4)
     lines2 = [
-        'PPTX Skill Core Flow:',
-        '1. markitdown extracts text → 2. Unzip PPTX to access XML',
-        '3. Modify slide{N}.xml content → 4. Repackage as .pptx',
-        'References: → html2pptx.md | → reference.md | → scripts/',
+        'PPTX Skill Temel Akışı:',
+        '1. markitdown metni çıkarır → 2. PPTX arşivi XML erişimi için açılır',
+        '3. slide{N}.xml içeriği değiştirilir → 4. .pptx olarak yeniden paketlenir',
+        'Referanslar: → html2pptx.md | → reference.md | → scripts/',
     ]
     for i, line in enumerate(lines2):
         s.mono(70, y2 + 56 + i * 19, line, size=FS_TINY)
 
     # Trigger arrow
     s.arrow(410, y2 + 132, 410, y2 + 155)
-    s.text(430, y2 + 143, 'Need detailed method: "Create PPT using HTML template"', size=FS_SMALL, anchor='start', fill='text_light')
+    s.text(430, y2 + 143, 'Ayrıntılı yöntem gerekiyor: "HTML şablonuyla PPT oluştur"', size=FS_SMALL, anchor='start', fill='text_light')
 
     # Layer 3: Sub-documents
     y3 = y2 + 160
     s.rect(40, y3, 740, 130, fill='white', dash=True)
-    s.text(60, y3 + 20, 'Layer 3: Sub-documents (selective deep dive, loaded on demand)', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, y3 + 20, 'Katman 3: Alt belgeler (seçici derinlemesine, istendiğinde yüklenir)', size=FS_BODY, bold=True, anchor='start')
 
     doc_w = 215
     docs = [
-        ('html2pptx.md', 'HTML template → PPT\n complete workflow'),
-        ('reference.md', 'XML format specification\n and technical details'),
-        ('scripts/*.py', 'Executable tools:\nthumbnail.py etc.'),
+        ('html2pptx.md', 'HTML şablonu → PPT\n tam iş akışı'),
+        ('reference.md', 'XML biçim spesifikasyonu\n ve teknik detaylar'),
+        ('scripts/*.py', 'Çalıştırılabilir araçlar:\nthumbnail.py vb.'),
     ]
     for i, (name, desc) in enumerate(docs):
         dx = 60 + i * (doc_w + 20)
@@ -584,7 +584,7 @@ def fig2_8():
 
     # Bottom: KV Cache note
     s.rect(100, y3 + 140, 620, 35, fill='code_bg', stroke='dark', rx=4)
-    s.text(410, y3 + 158, 'Fixed metadata → KV Cache friendly | Dynamic content appended → Cache not broken', size=FS_SMALL)
+    s.text(410, y3 + 158, 'Sabit meta veri → KV Cache dostu | Dinamik içerik ekleme → önbellek bozulmaz', size=FS_SMALL)
 
     s.save(f'{OUT}/fig2-8.svg')
 
@@ -598,71 +598,71 @@ def fig2_9():
     W, H = 820, 530
     s = SVG(W, H)
 
-    s.text(410, 30, 'Mem0 Memory Management Architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Mem0 Bellek Yönetim Mimarisi', size=FS_TITLE, bold=True)
 
     # Input conversation
     s.rect(30, 70, 250, 80, fill='light')
-    s.text(40, 88, 'New conversation input:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(40, 110, 'user: "I moved to Shenzhen,', size=FS_TINY)
-    s.mono(40, 128, 'new address is Nanshan Science Park"', size=FS_TINY)
+    s.text(40, 88, 'Yeni konuşma girdisi:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(40, 110, 'user: "Shenzhen\'e taşındım,', size=FS_TINY)
+    s.mono(40, 128, 'yeni adresim Nanshan Bilim Parkı"', size=FS_TINY)
 
     # MemoryBase (center)
     s.rect(310, 65, 200, 100, fill='medium')
     s.text(410, 85, 'MemoryBase', size=FS_BODY, bold=True)
-    s.text(410, 108, 'Memory Lifecycle Management', size=FS_SMALL, fill='text_light')
-    s.text(410, 130, 'Analyze → Classify → Decide', size=FS_SMALL, fill='text_light')
+    s.text(410, 108, 'Bellek Yaşam Döngüsü Yönetimi', size=FS_SMALL, fill='text_light')
+    s.text(410, 130, 'Analiz → Sınıflandır → Karar ver', size=FS_SMALL, fill='text_light')
     s.arrow(282, 110, 308, 110)
 
     # LLMBase (above MemoryBase)
     s.rect(330, 185, 160, 50, fill='#e8e8e8')
     s.text(410, 203, 'LLMBase', size=FS_SMALL, bold=True)
-    s.text(410, 222, 'Semantic analysis + Relationship judgment', size=FS_TINY)
+    s.text(410, 222, 'Anlamsal analiz + İlişki değerlendirme', size=FS_TINY)
     s.arrow(410, 167, 410, 183, color='dark')
     s.arrow(410, 183, 410, 167, color='dark')
 
     # Decision output
     s.rect(310, 255, 200, 80, fill='code_bg', stroke='dark', rx=4)
-    s.text(320, 273, 'Decision result:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(320, 293, 'Old: "User lives in Beijing Haidian"', size=FS_TINY)
-    s.mono(320, 311, '→ UPDATE: "Lives in Shenzhen Nanshan"', size=FS_TINY)
-    s.mono(320, 329, '→ ADD: "Moved to Shenzhen"', size=FS_TINY - 2)
+    s.text(320, 273, 'Karar sonucu:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(320, 293, 'Eski: "Kullanıcı Pekin Haidian\'da yaşıyor"', size=FS_TINY)
+    s.mono(320, 311, '→ UPDATE: "Shenzhen Nanshan\'da yaşıyor"', size=FS_TINY)
+    s.mono(320, 329, '→ ADD: "Shenzhen\'e taşındı"', size=FS_TINY - 2)
     s.arrow(410, 237, 410, 253, color='dark')
 
     # EmbeddingBase (right)
     s.rect(560, 70, 220, 70, fill='light')
     s.text(670, 90, 'EmbeddingBase', size=FS_SMALL, bold=True)
-    s.text(670, 112, 'Text → Vector (compute-intensive)', size=FS_TINY, fill='text_light')
+    s.text(670, 112, 'Metin → Vektör (hesaplama yoğun)', size=FS_TINY, fill='text_light')
     s.arrow(512, 95, 558, 90)
 
     # VectorStoreBase (right, below)
     s.rect(560, 160, 220, 100, fill='light')
     s.text(670, 180, 'VectorStoreBase', size=FS_SMALL, bold=True)
-    s.text(670, 200, 'Persistence + Retrieval (I/O intensive)', size=FS_TINY, fill='text_light')
+    s.text(670, 200, 'Kalıcılık + Erişim (I/O yoğun)', size=FS_TINY, fill='text_light')
     s.text(670, 225, 'Chroma / Qdrant / Milvus', size=FS_TINY, fill='text_light')
-    s.text(670, 248, '(HNSW / LSH index)', size=FS_TINY, fill='text_light')
+    s.text(670, 248, '(HNSW / LSH indeks)', size=FS_TINY, fill='text_light')
     s.arrow(670, 142, 670, 158)
 
     # Stored memories example
     s.rect(560, 290, 220, 120, fill='code_bg', stroke='dark', rx=4)
-    s.text(570, 310, 'Stored memory entries:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(570, 332, '"Lives in Shenzhen Nanshan Science Park"', size=FS_TINY)
-    s.mono(570, 352, '"Email: john@x.com"', size=FS_TINY)
-    s.mono(570, 372, '"Preference: Chinese communication"', size=FS_TINY)
-    s.mono(570, 392, '"Job: ML engineer"', size=FS_TINY)
+    s.text(570, 310, 'Saklanan bellek girdileri:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(570, 332, '"Shenzhen Nanshan Bilim Parkı\'nda yaşıyor"', size=FS_TINY)
+    s.mono(570, 352, '"E-posta: john@x.com"', size=FS_TINY)
+    s.mono(570, 372, '"Tercih: Çince iletişim"', size=FS_TINY)
+    s.mono(570, 392, '"Meslek: ML mühendisi"', size=FS_TINY)
     s.arrow(670, 262, 670, 288, color='dark')
 
     # Plugin mechanism note
     s.rect(30, 170, 250, 60, fill='code_bg', stroke='dark', rx=4)
-    s.text(155, 192, 'Plugin mechanism', size=FS_SMALL, bold=True)
-    s.text(155, 212, 'Replaceable LLM / embedding model / storage backend', size=FS_TINY, fill='text_light')
+    s.text(155, 192, 'Eklenti mekanizması', size=FS_SMALL, bold=True)
+    s.text(155, 212, 'Değiştirilebilir LLM / gömme modeli / depolama arka ucu', size=FS_TINY, fill='text_light')
 
     # Retrieval path
     s.rect(30, 390, 250, 80, fill='light')
-    s.text(40, 408, 'Memory retrieval:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(40, 430, 'query: "Where does the user live?"', size=FS_TINY)
-    s.mono(40, 450, '→ Vector similarity matching', size=FS_TINY)
-    s.mono(40, 468, '→ "Lives in Shenzhen Nanshan Science Park"', size=FS_TINY)
-    s.arrow_curved(282, 430, 558, 350, curve=-30, label='Retrieval', color='dark')
+    s.text(40, 408, 'Bellek erişimi:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(40, 430, 'query: "Kullanıcı nerede yaşıyor?"', size=FS_TINY)
+    s.mono(40, 450, '→ Vektör benzerliği eşleştirme', size=FS_TINY)
+    s.mono(40, 468, '→ "Shenzhen Nanshan Bilim Parkı\'nda yaşıyor"', size=FS_TINY)
+    s.arrow_curved(282, 430, 558, 350, curve=-30, label='Erişim', color='dark')
 
     s.save(f'{OUT}/fig2-10.svg')
 
@@ -676,29 +676,29 @@ def fig2_11_memobase():
     W, H = 820, 560
     s = SVG(W, H)
 
-    s.text(410, 30, 'Memobase multi-type memory architecture', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Memobase çoklu tür bellek mimarisi', size=FS_TITLE, bold=True)
 
     types = [
-        ('Episodic memory', 'Episodic', [
-            '2025-09-10 User booked Shanghai→Tokyo',
-            '2025-09-12 Flight rescheduled to 9/20',
-            '2025-09-13 Hotel changed to Shinjuku branch',
-        ], 'Timestamped event sequence'),
-        ('Semantic memory', 'Semantic', [
-            'User → is → ML engineer',
-            'User → is allergic to peanuts',
-            'User → prefers → window seat',
-        ], 'Entity-relationship network'),
-        ('Procedural memory', 'Procedural', [
-            'Travel planning pattern:',
-            '  Destination→Budget→Transport→Accommodation→Activities',
-            '(Automatically extracted from multiple interactions)',
-        ], 'Reusable strategy pattern'),
-        ('Working memory', 'Working', [
-            'Current task: Book a hotel in Tokyo',
-            'Completed: Flight booked (ANA NH919)',
-            'Pending: Choose hotel + arrange airport pickup',
-        ], 'Current task status'),
+        ('Olay belleği', 'Episodic', [
+            '2025-09-10 Kullanıcı Şangay→Tokyo uçuşu ayırttı',
+            '2025-09-12 Uçuş 9/20\'ye ertelendi',
+            '2025-09-13 Otel Shinjuku şubesine değiştirildi',
+        ], 'Zaman damgalı olay dizisi'),
+        ('Anlamsal bellek', 'Semantic', [
+            'Kullanıcı → dir → ML mühendisi',
+            'Kullanıcı → fıstığa alerjisi var',
+            'Kullanıcı → tercih eder → pencere koltuğu',
+        ], 'Varlık-ilişki ağı'),
+        ('İşlemsel bellek', 'Procedural', [
+            'Seyahat planlama örüntüsü:',
+            '  Hedef→Bütçe→Ulaşım→Konaklama→Aktiviteler',
+            '(Birden fazla etkileşimden otomatik çıkarılır)',
+        ], 'Yeniden kullanılabilir strateji örüntüsü'),
+        ('Çalışma belleği', 'Working', [
+            'Mevcut görev: Tokyo\'da otel ayırt',
+            'Tamamlanan: Uçuş ayırtıldı (ANA NH919)',
+            'Bekleyen: Otel seç + havalimanı transferi ayarla',
+        ], 'Mevcut görev durumu'),
     ]
 
     col_w = 185
@@ -731,17 +731,17 @@ def fig2_11_memobase():
         lt_x = start_x + i * (col_w + gap) + col_w / 2
         s.arrow_curved(wm_x - 20, arrow_y, lt_x + 20, arrow_y, curve=-30, dash=True, color='dark')
 
-    s.text(410, arrow_y - 10, 'Working memory ↔ Long-term memory dynamic interaction', size=FS_SMALL, fill='text_light')
+    s.text(410, arrow_y - 10, 'Çalışma belleği ↔ Uzun süreli bellek dinamik etkileşimi', size=FS_SMALL, fill='text_light')
 
     # Memory compression section (below)
     comp_y = 310
     s.rect(40, comp_y, 740, 110, fill='light')
-    s.text(60, comp_y + 22, 'Memory compression and organization', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, comp_y + 22, 'Bellek sıkıştırma ve düzenleme', size=FS_BODY, bold=True, anchor='start')
 
     comp_stages = [
-        ('Importance scoring', ['Access frequency × Time decay', '× Emotional intensity × Uniqueness']),
-        ('Clustering compression', ['Group similar memories', '→ Generate representative summary']),
-        ('Abstraction and generalization', ['Episodic memory → Semantic memory', 'Specific events → General rules']),
+        ('Önem puanlaması', ['Erişim sıklığı × Zaman azalması', '× Duygusal yoğunluk × Benzersizlik']),
+        ('Kümeleme sıkıştırması', ['Benzer bellekleri grupla', '→ Temsili özet üret']),
+        ('Soyutlama ve genelleme', ['Olay belleği → Anlamsal bellek', 'Belirli olaylar → Genel kurallar']),
     ]
 
     stage_w = 220
@@ -759,12 +759,12 @@ def fig2_11_memobase():
     # Privacy section
     priv_y = comp_y + 125
     s.rect(40, priv_y, 740, 90, fill='#e8e8e8')
-    s.text(60, priv_y + 20, 'Privacy protection: Hierarchical information storage', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, priv_y + 20, 'Gizlilik koruması: Katmanlı bilgi saklama', size=FS_BODY, bold=True, anchor='start')
 
     levels = [
-        ('L1 Public', 'Name, email', 'Plaintext'),
-        ('L2 Internal', 'Phone, address', 'Partial masking'),
-        ('L3 Confidential', 'ID number, password', 'Placeholder replacement'),
+        ('L1 Genel', 'Ad, e-posta', 'Düz metin'),
+        ('L2 Dahili', 'Telefon, adres', 'Kısmi maskeleme'),
+        ('L3 Gizli', 'Kimlik no, şifre', 'Yer tutucu ile değiştirme'),
     ]
 
     lev_w = 230
@@ -785,38 +785,38 @@ def fig2_9_memory_comparison():
     W, H = 820, 620
     s = SVG(W, H)
 
-    s.text(410, 30, 'Experiment 2.10: Comparison of four memory strategies', size=FS_TITLE, bold=True)
+    s.text(410, 30, 'Deney 2.10: Dört bellek stratejisinin karşılaştırması', size=FS_TITLE, bold=True)
 
     # Input conversation example
     s.rect(40, 60, 740, 55, fill='light')
-    s.text(50, 78, 'Original dialogue:', size=FS_SMALL, bold=True, anchor='start')
-    s.mono(50, 98, '"I am a senior engineer at TechCorp, leading a team of 5 to build a recommendation system, using ML for three years"', size=FS_TINY)
+    s.text(50, 78, 'Orijinal diyalog:', size=FS_SMALL, bold=True, anchor='start')
+    s.mono(50, 98, '"TechCorp\'ta kıdemli mühendisim, öneri sistemi geliştiren 5 kişilik ekibe liderlik ediyorum, 3 yıldır ML kullanıyorum"', size=FS_TINY)
 
     strategies = [
-        ('Simple Notes', 'Atomic facts', [
-            '"User company: TechCorp"',
-            '"User Position: Senior Engineer"',
-            '"User Team: 5 people"',
-            '"User Expertise: Recommendation System"',
-        ], 'Pros: O(1) operation, extremely low overhead\nCons: Complete loss of relevance'),
-        ('Enhanced Notes', 'Full Paragraph', [
-            '"Senior engineer at',
-            'TechCorp, leads a team',
-            'of 5 building a rec.',
-            'system, 3 yrs in ML."',
-        ], 'Pros: Semantic completeness\nCons: Redundancy + complex updates'),
-        ('JSON Cards', 'Hierarchical Structure', [
+        ('Basit Notlar', 'Atomik gerçekler', [
+            '"Kullanıcı şirketi: TechCorp"',
+            '"Kullanıcı Pozisyonu: Kıdemli Mühendis"',
+            '"Kullanıcı Ekibi: 5 kişi"',
+            '"Kullanıcı Uzmanlığı: Öneri Sistemi"',
+        ], 'Artı: O(1) işlem, çok düşük yük\nEksi: İlişki bağlamı tamamen kaybolur'),
+        ('Gelişmiş Notlar', 'Tam Paragraf', [
+            '"TechCorp\'ta kıdemli',
+            'mühendis, öneri sistemi',
+            'geliştiren 5 kişilik ekibe',
+            'liderlik ediyor, 3 yıl ML."',
+        ], 'Artı: Anlamsal bütünlük\nEksi: Yedeklilik + karmaşık güncelleme'),
+        ('JSON Kartları', 'Hiyerarşik Yapı', [
             'work:',
             '  company: "TechCorp"',
-            '  title: "Senior Engineer"',
+            '  title: "Kıdemli Mühendis"',
             '  team_size: 5',
-        ], 'Pros: Partial updates\nCons: Rigid classification'),
-        ('Adv. JSON Cards', 'Contextualized Knowledge', [
+        ], 'Artı: Kısmi güncelleme\nEksi: Katı sınıflandırma'),
+        ('Gelişmiş JSON Kartları', 'Bağlamsallaştırılmış Bilgi', [
             '{category: "work",',
-            ' title: "Senior Engineer",',
-            ' backstory: "Self-introduction",',
+            ' title: "Kıdemli Mühendis",',
+            ' backstory: "Kendini tanıtma",',
             ' ts: "09-14"}',
-        ], 'Pros: Disambiguation + traceability\nCons: High generation cost'),
+        ], 'Artı: Belirsizlik giderme + izlenebilirlik\nEksi: Yüksek üretim maliyeti'),
     ]
 
     col_w = 185
@@ -848,12 +848,12 @@ def fig2_9_memory_comparison():
     # Evaluation framework (bottom)
     eval_y = 420
     s.rect(40, eval_y, 740, 180, fill='light')
-    s.text(60, eval_y + 22, 'Three-Level Evaluation Framework', size=FS_BODY, bold=True, anchor='start')
+    s.text(60, eval_y + 22, 'Üç Seviyeli Değerlendirme Çerçevesi', size=FS_BODY, bold=True, anchor='start')
 
     eval_levels = [
-        ('Level 1: Basic Recall', 'Store and retrieve direct information', '"My membership number is 12345" → Exact return', 'light'),
-        ('Level 2: Multi-session Retrieval', 'Cross-session associative reasoning', '"Schedule maintenance for my car" → Identify two cars', '#e8e8e8'),
-        ('Level 3: Proactive Service', 'Integrate multiple memories, anticipatory assistance', 'Book international flight → Discover passport is about to expire', 'medium'),
+        ('Seviye 1: Temel Hatırlama', 'Doğrudan bilgiyi sakla ve getir', '"Üyelik numaram 12345" → Tam eşleşme döner', 'light'),
+        ('Seviye 2: Çoklu Oturum Erişimi', 'Oturumlar arası ilişkisel çıkarım', '"Arabama bakım ayarla" → İki aracı ayırt et', '#e8e8e8'),
+        ('Seviye 3: Proaktif Hizmet', 'Birden çok belleği bütünleştir, öngörülü yardım', 'Uluslararası uçuş ayırt → Pasaportun süresi dolmak üzere', 'medium'),
     ]
 
     for i, (level, desc, example, fill) in enumerate(eval_levels):
