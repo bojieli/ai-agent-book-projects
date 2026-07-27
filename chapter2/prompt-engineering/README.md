@@ -44,8 +44,22 @@ Uses a pre-generated chaotic `wiki.md`:
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 2 environment
+uv sync --locked --python 3.12 --extra ch2
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/prompt-engineering
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 (Older docs may mention `projects/week2/prompt-engineering`; use this repo path.)
@@ -276,8 +290,22 @@ User strategies include `llm`, `react`, `verify`, `reflection`. See original τ-
 ### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 2 章环境
+uv sync --locked --python 3.12 --extra ch2
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/prompt-engineering
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 （旧文档可能写 `projects/week2/prompt-engineering`；请使用本仓库路径。）
