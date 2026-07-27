@@ -11,7 +11,7 @@
 
 ### Overview
 
-Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Use Ollama on native Windows, and use auto-detection on macOS, Linux, and WSL.
+Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. The default root `ch2` install uses Ollama explicitly; Linux/WSL GPU users can add the `vllm` extra and run vLLM explicitly.
 
 ### Features
 
@@ -54,17 +54,17 @@ cd chapter2/local_llm_serving
 python check_compatibility.py
 
 # 4. Run
-# macOS/Linux/WSL auto-detect:
-python main.py
-# Native Windows:
-# python main.py --backend ollama
+# Default root ch2 install:
+python main.py --backend ollama
+# Linux/WSL GPU path, only after installing --extra vllm:
+# python main.py --backend vllm
 ```
 
 ### Prerequisites
 
 **All platforms:** Python 3.12 and the root `ch2` extra (`uv sync --locked --python 3.12 --extra ch2`).
 
-Use `--extra vllm` only for the Linux/WSL GPU path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack.
+Use `--extra vllm` only for the Linux/WSL GPU path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack. Use explicit `--backend` flags so CUDA presence does not select a backend you did not install.
 
 #### macOS
 ```bash
@@ -79,7 +79,8 @@ ollama pull qwen3:0.6b
 **GPU/vLLM:** use Linux or WSL2 with NVIDIA GPU support, then install the `vllm` extra.
 
 #### Linux
-**With NVIDIA GPU:** CUDA → vLLM automatic.  
+**With NVIDIA GPU:** install the `vllm` extra, then run `python main.py --backend vllm`.
+
 **Without GPU:**
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
@@ -90,11 +91,10 @@ ollama pull qwen3:0.6b
 ### Usage
 
 ```bash
-python main.py                      # auto-detect on macOS/Linux/WSL
+python main.py --backend ollama     # default install or native Windows
+python main.py --backend vllm       # Linux/WSL GPU after --extra vllm
 python main.py --mode examples
 python main.py --mode interactive
-python main.py --backend ollama     # native Windows or force Ollama
-python main.py --backend vllm       # force vLLM (GPU)
 python main.py --info
 ```
 
@@ -103,7 +103,8 @@ python main.py --info
 ```python
 from main import ToolCallingAgent
 
-agent = ToolCallingAgent()
+agent = ToolCallingAgent(backend="ollama")  # default install or native Windows
+# agent = ToolCallingAgent(backend="vllm")  # Linux/WSL GPU after --extra vllm
 response = agent.chat("What's the weather in Tokyo?")
 print(response)
 response = agent.chat("Tell me a joke", use_tools=False)
@@ -139,7 +140,7 @@ registry.register_tool(
 
 ```
 local_llm_serving/
-├── main.py              # Main entry (auto-detect backend)
+├── main.py              # Main entry with explicit backend flags
 ├── benchmark.py         # Serving benchmark: throughput / TTFT / KV cache / batching
 ├── agent.py             # vLLM agent
 ├── ollama_native.py     # Ollama native tool calling
@@ -267,7 +268,7 @@ Standard OpenAI-compatible:
 
 - **Ollama not found:** Mac `brew install ollama && ollama serve`; Windows [ollama.com](https://ollama.com/download/windows); Linux install script above
 - **No models:** `ollama pull qwen3:0.6b`
-- **CUDA not available:** install drivers/CUDA, or let the script fall back to Ollama
+- **CUDA not available:** install drivers/CUDA for vLLM, or run `python main.py --backend ollama`
 - **Compatibility:** `python check_compatibility.py`
 
 ### Supported models
@@ -295,7 +296,7 @@ Standard OpenAI-compatible:
 
 ### 概述
 
-跨平台本地 LLM 工具调用演示，统一使用 OpenAI 兼容 API。原生 Windows 使用 Ollama；macOS、Linux、WSL 使用自动检测。
+跨平台本地 LLM 工具调用演示，统一使用 OpenAI 兼容 API。默认根目录 `ch2` 安装显式使用 Ollama；Linux/WSL GPU 用户可额外安装 `vllm` extra 后显式运行 vLLM。
 
 ### 功能
 
@@ -334,17 +335,17 @@ cd chapter2/local_llm_serving
 
 python check_compatibility.py
 
-# macOS/Linux/WSL 自动检测：
-python main.py
-# 原生 Windows：
-# python main.py --backend ollama
+# 默认根目录 ch2 安装：
+python main.py --backend ollama
+# Linux/WSL GPU 路径，仅在安装 --extra vllm 后使用：
+# python main.py --backend vllm
 ```
 
 ### 前置条件
 
 **全平台：** Python 3.12，并安装根目录 `ch2` extra（`uv sync --locked --python 3.12 --extra ch2`）。
 
-只有走 Linux/WSL GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。
+只有走 Linux/WSL GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。请显式传入 `--backend`，避免仅因检测到 CUDA 而选择未安装的后端。
 
 #### macOS
 ```bash
@@ -359,7 +360,8 @@ ollama pull qwen3:0.6b
 **GPU/vLLM：** 使用 Linux 或启用 NVIDIA GPU 支持的 WSL2，再安装 `vllm` extra。
 
 #### Linux
-**有 NVIDIA GPU：** CUDA → 自动 vLLM。  
+**有 NVIDIA GPU：** 安装 `vllm` extra 后运行 `python main.py --backend vllm`。
+
 **无 GPU：**
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
@@ -370,11 +372,10 @@ ollama pull qwen3:0.6b
 ### 用法
 
 ```bash
-python main.py                      # macOS/Linux/WSL 自动检测
+python main.py --backend ollama     # 默认安装或原生 Windows
+python main.py --backend vllm       # Linux/WSL GPU，需先安装 --extra vllm
 python main.py --mode examples
 python main.py --mode interactive
-python main.py --backend ollama     # 原生 Windows 或强制 Ollama
-python main.py --backend vllm       # 强制 vLLM（GPU）
 python main.py --info
 ```
 
@@ -383,7 +384,8 @@ python main.py --info
 ```python
 from main import ToolCallingAgent
 
-agent = ToolCallingAgent()
+agent = ToolCallingAgent(backend="ollama")  # 默认安装或原生 Windows
+# agent = ToolCallingAgent(backend="vllm")  # Linux/WSL GPU，需先安装 --extra vllm
 response = agent.chat("What's the weather in Tokyo?")
 print(response)
 response = agent.chat("Tell me a joke", use_tools=False)
@@ -419,7 +421,7 @@ registry.register_tool(
 
 ```
 local_llm_serving/
-├── main.py              # 主入口（自动选后端）
+├── main.py              # 主入口，支持显式后端参数
 ├── benchmark.py         # 服务基准：吞吐 / TTFT / KV Cache / 批处理
 ├── agent.py             # vLLM Agent
 ├── ollama_native.py     # Ollama 原生工具调用
@@ -534,7 +536,7 @@ LOG_LEVEL=INFO
 
 - **找不到 Ollama：** Mac `brew install ollama && ollama serve`；Windows 官网安装；Linux 用安装脚本
 - **没有模型：** `ollama pull qwen3:0.6b`
-- **CUDA 不可用：** 安装驱动/CUDA，或让脚本自动改用 Ollama
+- **CUDA 不可用：** 为 vLLM 安装驱动/CUDA，或运行 `python main.py --backend ollama`
 - **兼容性检查：** `python check_compatibility.py`
 
 ### 支持的模型
