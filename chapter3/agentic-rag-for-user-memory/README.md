@@ -39,7 +39,7 @@ User Memory Test Cases (60 cases, 3 layers)
 
 ### Prerequisites
 
-- Python 3.8+  
+- Python 3.12 with the root `ch3` extra
 - **Port 4242 pipeline is OPTIONAL.** Default `retrieval_backend="auto"`: use pipeline if reachable, else **built-in local BM25** (offline).  
 - API keys only for LLM modes (`batch` / `interactive` / `demo`).  
 - **`--mode offline-demo` needs NO API key and NO port 4242.**  
@@ -47,8 +47,23 @@ User Memory Test Cases (60 cases, 3 layers)
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/agentic-rag-for-user-memory
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # Edit API keys
 ```
@@ -174,13 +189,28 @@ Educational curriculum materials.
 
 ### 前置条件
 
-Python 3.8+。**4242 流水线可选**；默认 `auto` 回退本地 BM25。仅 LLM 模式需 API Key。**`offline-demo` 无需 Key 与 4242。**
+Python 3.12 与根目录 `ch3` extra。**4242 流水线可选**；默认 `auto` 回退本地 BM25。仅 LLM 模式需 API Key。**`offline-demo` 无需 Key 与 4242。**
 
 ### 安装与后端
 
 ```bash
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/agentic-rag-for-user-memory
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 
 # 可选
