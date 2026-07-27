@@ -11,12 +11,12 @@
 
 ### Overview
 
-Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Works on Windows, macOS, and Linux by auto-selecting the best backend.
+Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Use Ollama on native Windows, and use auto-detection on macOS, Linux, and WSL.
 
 ### Features
 
 - **Universal entry:** single `main.py` for all platforms
-- **Automatic backend:**
+- **Backend paths:**
   - **vLLM** on Linux/WSL with NVIDIA GPU
   - **Ollama** on macOS, native Windows, or Linux without GPU
 - **Standard tool calling** only (OpenAI-compatible format)
@@ -50,10 +50,14 @@ cd chapter2/local_llm_serving
 # python -m pip install -r requirements.txt
 
 # 3. Check system compatibility
+# Native Windows users should stay on Ollama even if CUDA is detected.
 python check_compatibility.py
 
-# 4. Run (auto-detects backend)
+# 4. Run
+# macOS/Linux/WSL auto-detect:
 python main.py
+# Native Windows:
+# python main.py --backend ollama
 ```
 
 ### Prerequisites
@@ -70,7 +74,7 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**Native Windows:** install Ollama from [ollama.com](https://ollama.com/download/windows), then `ollama pull qwen3:0.6b`.
+**Native Windows:** install Ollama from [ollama.com](https://ollama.com/download/windows), then `ollama pull qwen3:0.6b`. Run with `python main.py --backend ollama` even if CUDA is available.
 
 **GPU/vLLM:** use Linux or WSL2 with NVIDIA GPU support, then install the `vllm` extra.
 
@@ -86,10 +90,10 @@ ollama pull qwen3:0.6b
 ### Usage
 
 ```bash
-python main.py                      # auto-detect
+python main.py                      # auto-detect on macOS/Linux/WSL
 python main.py --mode examples
 python main.py --mode interactive
-python main.py --backend ollama     # force Ollama
+python main.py --backend ollama     # native Windows or force Ollama
 python main.py --backend vllm       # force vLLM (GPU)
 python main.py --info
 ```
@@ -291,12 +295,12 @@ Standard OpenAI-compatible:
 
 ### 概述
 
-跨平台本地 LLM 工具调用演示，统一使用 OpenAI 兼容 API。在 Windows、macOS、Linux 上自动选择最合适的后端。
+跨平台本地 LLM 工具调用演示，统一使用 OpenAI 兼容 API。原生 Windows 使用 Ollama；macOS、Linux、WSL 使用自动检测。
 
 ### 功能
 
 - **统一入口：** 单一 `main.py` 覆盖各平台
-- **自动选后端：**
+- **后端路径：**
   - Linux/WSL + NVIDIA GPU → **vLLM**
   - macOS、原生 Windows、无 GPU 的 Linux → **Ollama**
 - **仅标准工具调用**（OpenAI 兼容格式）
@@ -329,7 +333,11 @@ cd chapter2/local_llm_serving
 # python -m pip install -r requirements.txt
 
 python check_compatibility.py
+
+# macOS/Linux/WSL 自动检测：
 python main.py
+# 原生 Windows：
+# python main.py --backend ollama
 ```
 
 ### 前置条件
@@ -346,7 +354,7 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**原生 Windows：** 从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再 `ollama pull qwen3:0.6b`。
+**原生 Windows：** 从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再 `ollama pull qwen3:0.6b`。即使检测到 CUDA，也请使用 `python main.py --backend ollama`。
 
 **GPU/vLLM：** 使用 Linux 或启用 NVIDIA GPU 支持的 WSL2，再安装 `vllm` extra。
 
@@ -362,11 +370,11 @@ ollama pull qwen3:0.6b
 ### 用法
 
 ```bash
-python main.py                      # 自动检测
+python main.py                      # macOS/Linux/WSL 自动检测
 python main.py --mode examples
 python main.py --mode interactive
-python main.py --backend ollama
-python main.py --backend vllm
+python main.py --backend ollama     # 原生 Windows 或强制 Ollama
+python main.py --backend vllm       # 强制 vLLM（GPU）
 python main.py --info
 ```
 
