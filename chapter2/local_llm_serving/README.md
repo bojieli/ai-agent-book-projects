@@ -28,10 +28,10 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. Use
 
 ```bash
 # 1. From the repository root, install the shared Chapter 2 environment
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # Optional GPU/vLLM path on supported Linux/WSL NVIDIA setups:
-# uv sync --locked --extra ch2 --extra vllm
+# uv sync --locked --python 3.12 --extra ch2 --extra vllm
 
 # Activate before changing directories:
 # macOS/Linux:
@@ -62,7 +62,7 @@ python main.py
 
 ### Prerequisites
 
-**All platforms:** Python 3.10+ and the root `ch2` extra (`uv sync --locked --extra ch2`).
+**All platforms:** Python 3.12 and the root `ch2` extra (`uv sync --locked --python 3.12 --extra ch2`).
 
 Use `--extra vllm` only for the Linux/WSL GPU path; the default `ch2` install keeps local serving usable with Ollama without pulling the Linux/GPU vLLM stack.
 
@@ -312,10 +312,10 @@ Standard OpenAI-compatible:
 
 ```bash
 # 在仓库根目录安装统一的第 2 章环境
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # 支持的 Linux/WSL NVIDIA 环境如需 GPU/vLLM，可改用：
-# uv sync --locked --extra ch2 --extra vllm
+# uv sync --locked --python 3.12 --extra ch2 --extra vllm
 
 # 切换目录前先激活环境：
 # macOS/Linux：
@@ -342,7 +342,7 @@ python main.py
 
 ### 前置条件
 
-**全平台：** Python 3.10+，并安装根目录 `ch2` extra（`uv sync --locked --extra ch2`）。
+**全平台：** Python 3.12，并安装根目录 `ch2` extra（`uv sync --locked --python 3.12 --extra ch2`）。
 
 只有走 Linux/WSL GPU/vLLM 路径时才需要额外选择 `--extra vllm`；默认 `ch2` 安装保留 Ollama 路径，不会拉取 Linux/GPU vLLM 栈。
 

@@ -52,7 +52,7 @@ skills/
 
 ```bash
 # From the repository root: use the shared Chapter 2 environment
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -189,7 +189,7 @@ skills/
 
 ```bash
 # 在仓库根目录使用统一的第 2 章环境
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # 切换目录前先激活环境：
 # macOS/Linux：

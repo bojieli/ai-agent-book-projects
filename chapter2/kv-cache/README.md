@@ -65,7 +65,7 @@ Both modes append tool results within an iteration so the API sees a complete tu
 
 ```bash
 # From the repository root: use the shared Chapter 2 environment
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -303,7 +303,7 @@ KV Cache 存储注意力机制中的键值对。对话上下文稳定时，可�
 
 ```bash
 # 在仓库根目录使用统一的第 2 章环境
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # 切换目录前先激活环境：
 # macOS/Linux：

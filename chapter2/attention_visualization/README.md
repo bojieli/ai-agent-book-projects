@@ -187,12 +187,12 @@ result = agent.generate_with_attention(
 
 ### Requirements & installation
 
-**Python:** 3.10+, PyTorch, Transformers — installed by the root `ch2` extra.
+**Python:** 3.12, PyTorch, Transformers — installed by the root `ch2` extra.
 **Frontend:** Node.js 14+, npm/yarn — see `frontend/package.json`.
 
 ```bash
 # From the repository root: use the shared Chapter 2 environment
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -416,12 +416,12 @@ result = agent.generate_with_attention(
 
 ### 依赖与安装
 
-**Python：** 3.10+、PyTorch、Transformers，由根目录 `ch2` extra 安装。
+**Python：** 3.12、PyTorch、Transformers，由根目录 `ch2` extra 安装。
 **前端：** Node.js 14+、npm/yarn，见 `frontend/package.json`。
 
 ```bash
 # 在仓库根目录使用统一的第 2 章环境
-uv sync --locked --extra ch2
+uv sync --locked --python 3.12 --extra ch2
 
 # 切换目录前先激活环境：
 # macOS/Linux：
