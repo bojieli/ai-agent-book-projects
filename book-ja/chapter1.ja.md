@@ -157,7 +157,7 @@ Agent がタスクを実行する核となるパターンは **ReAct**（Reasoni
   {role: "user" , content: "会社の四半期収入にもとづき：Q1 2.5M 米ドル、Q2 2.1M ユーロ、Q3 1.8M 英ポンド、Q4 380M 日本円。会社の年間総収入と四半期平均収入を計算せよ" },
   
   # 1回目のイテレーション - LLM が上記の軌跡を見て、応答を生成
-  {role: "assistant" , 
+  {role: "assistant" ,
    reasoning: "すべての通貨を USD に変換する必要がある..." ,
    content: "" ,  # ユーザーに直接返答しない
    tool_calls: [

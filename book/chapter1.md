@@ -155,7 +155,7 @@ Agent 执行任务的核心模式叫做 **ReAct**（Reasoning + Acting）。虽�
   {role: "user" , content: "根据公司季度收入：Q1 2.5M 美元，Q2 2.1M 欧元，Q3 1.8M 英镑，Q4 380M 日元，计算公司年度总收入和季度平均收入" },
   
   # 第一次迭代 - LLM 看到上述轨迹，生成响应
-  {role: "assistant" , 
+  {role: "assistant" ,
    reasoning: "需要将所有货币转换为 USD..." ,
    content: "" ,  # 没有直接回复用户
    tool_calls: [
