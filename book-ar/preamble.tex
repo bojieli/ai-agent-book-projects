@@ -14,6 +14,11 @@
 \usepackage{polyglossia}
 \setdefaultlanguage{arabic}
 \setotherlanguage{english}
+% Pandoc does not wrap every structural element in an explicit Arabic
+% environment. Keep Arabic coverage in the global body/sans families; forcing
+% Latin-only language families here makes unwrapped headings and captions lose
+% their Arabic glyphs. The language-specific monospace families are defined
+% with the selected true mono font below.
 \IfFontExistsTF{Noto Naskh Arabic}{%
   \setmainfont[Script=Arabic,Scale=1.08]{Noto Naskh Arabic}%
   \newfontfamily\arabicfont[Script=Arabic,Scale=1.08]{Noto Naskh Arabic}%
@@ -27,13 +32,9 @@
 \IfFontExistsTF{Noto Sans Arabic}{%
   \setsansfont[Script=Arabic,Scale=1.0]{Noto Sans Arabic}%
   \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.0]{Noto Sans Arabic}%
-  \newfontfamily\arabicfonttt[Script=Arabic,Scale=0.86]{Noto Sans Arabic}%
-  \newfontfamily\englishfonttt[Scale=0.86]{Noto Sans Arabic}%
 }{%
   \setsansfont[Script=Arabic,Scale=1.0]{Arial}%
   \newfontfamily\arabicfontsf[Script=Arabic,Scale=1.0]{Arial}%
-  \newfontfamily\arabicfonttt[Script=Arabic,Scale=0.86]{Arial}%
-  \newfontfamily\englishfonttt[Scale=0.86]{Arial}%
 }
 \setmathfont{texgyrepagella-math}[Extension = .otf]
 \hypersetup{pdflang={ar}}
@@ -140,8 +141,12 @@
 % DejaVu Sans Mono provides the same coverage on Linux.
 \IfFontExistsTF{Courier New}{%
   \setmonofont[Scale=0.86]{Courier New}%
+  \newfontfamily\englishfonttt[Scale=0.86]{Courier New}%
+  \newfontfamily\arabicfonttt[Script=Arabic,Scale=0.86]{Courier New}%
 }{%
   \setmonofont[Scale=0.86]{DejaVu Sans Mono}%
+  \newfontfamily\englishfonttt[Scale=0.86]{DejaVu Sans Mono}%
+  \newfontfamily\arabicfonttt[Script=Arabic,Scale=0.86]{DejaVu Sans Mono}%
 }
 
 % Pandoc's highlighted-code environments process text under the English
@@ -257,10 +262,12 @@
 \renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
 \setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
 
-% ── Figure captions: manual numbering in text, so suppress label ──
+% ── Captions: manual numbering in text, so suppress auto labels ──
 \usepackage{caption}
-% Sans, bold, centered. Figure numbers live in the caption text itself
-% (crossref.lua), so the automatic "Figure N:" label is suppressed.
+% Sans, bold, centered. Figure numbers live in the image caption itself, and
+% table numbers are likewise written immediately above each table as
+% "جدول N-M ...". Suppress labels globally; limiting this to figures would
+% duplicate every manual table number with an automatic "الجدول N:" prefix.
 \captionsetup{font={normalsize,sf,bf}, labelformat=empty, skip=4pt, justification=centering}
 
 % ── Blockquotes: teal left bar (experiments render as quotes) ────

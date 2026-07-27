@@ -15,6 +15,7 @@ import html
 import math
 import os
 import re
+import unicodedata
 
 COLORS = {
     'white': '#ffffff',
@@ -107,6 +108,8 @@ def _is_wide(ch):
 
 
 def _char_w(ch, mono=False):
+    if unicodedata.category(ch) in {'Mn', 'Me'}:
+        return 0
     if mono:
         return 600
     if ch in _SPECIAL_W:
