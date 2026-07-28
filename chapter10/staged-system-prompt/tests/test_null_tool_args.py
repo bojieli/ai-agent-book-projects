@@ -6,18 +6,6 @@ execute_code 的 code 为 null 时在日志切片处就 None[:80] -> TypeError�
 （避免 Config 校验 API Key），只测 _dispatch_tool 本身。
 """
 
-import sys
-from pathlib import Path
-from types import ModuleType
-
-sys.path.insert(0, str(Path(__file__).parent))
-
-try:
-    import openai  # noqa: F401
-except ImportError:
-    sys.modules["openai"] = ModuleType("openai")
-    sys.modules["openai"].OpenAI = object
-
 import tools as T
 from agent import StagedAgent
 from simulated_user import SimulatedUser

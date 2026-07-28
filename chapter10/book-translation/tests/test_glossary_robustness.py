@@ -7,26 +7,6 @@
 """
 
 import json
-import sys
-from pathlib import Path
-from types import ModuleType
-
-sys.path.insert(0, str(Path(__file__).parent))
-
-# 重依赖打桩：没装 openai / tiktoken 的环境里也能跑（装了则用真包）。
-try:
-    import openai  # noqa: F401
-except ImportError:
-    sys.modules["openai"] = ModuleType("openai")
-    sys.modules["openai"].OpenAI = object
-try:
-    import tiktoken  # noqa: F401
-except ImportError:
-    _tk = ModuleType("tiktoken")
-    _enc = type("Enc", (), {"encode": lambda self, t: list(t or "")})
-    _tk.encoding_for_model = lambda model: _enc()
-    _tk.get_encoding = lambda name: _enc()
-    sys.modules["tiktoken"] = _tk
 
 import agents
 

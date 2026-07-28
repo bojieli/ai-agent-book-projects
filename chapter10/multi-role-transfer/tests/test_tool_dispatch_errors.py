@@ -7,17 +7,7 @@
 """
 
 import json
-import sys
-from pathlib import Path
-from types import ModuleType, SimpleNamespace
-
-sys.path.insert(0, str(Path(__file__).parent))
-
-try:
-    import openai  # noqa: F401
-except ImportError:
-    sys.modules["openai"] = ModuleType("openai")
-    sys.modules["openai"].OpenAI = object
+from types import SimpleNamespace
 
 from orchestrator import MultiRoleOrchestrator
 
