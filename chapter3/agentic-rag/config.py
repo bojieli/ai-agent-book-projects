@@ -4,6 +4,9 @@ import os
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 from enum import Enum
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _openrouter_model_id(model: Optional[str]) -> str:
