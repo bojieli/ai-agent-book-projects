@@ -25,6 +25,8 @@
 ```bash
 # 从仓库根目录开始：使用共享的第 8 章环境
 uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方单项目兼容路径。
 
 # 切换目录前先激活环境：
 # macOS/Linux:

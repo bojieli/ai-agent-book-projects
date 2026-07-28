@@ -53,6 +53,8 @@ There is also a **"pre-save validation" gate** (corresponding to the "Test" step
 ```bash
 # From the repository root: use the shared Chapter 8 environment
 uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS needs macOS 14+ for the locked bitsandbytes wheel;
+# older macOS users should use the single-project compatibility path below.
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -222,6 +224,8 @@ This experiment **executes model-generated code** and **installs third-party pac
 ```bash
 # 从仓库根目录开始：使用共享的第 8 章环境
 uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方单项目兼容路径。
 
 # 切换目录前先激活环境：
 # macOS/Linux:
