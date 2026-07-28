@@ -54,7 +54,23 @@ CER-based objective metrics are computed with normalized transcript comparison.
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 6 environment
+uv sync --locked --python 3.12 --extra ch6
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6]"
+
+cd chapter6/tts-quality-eval
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 brew install ffmpeg
 export OPENAI_API_KEY=your-openai-api-key
 
@@ -166,7 +182,23 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 ## 运行
 
 ```bash
-pip install -r requirements.txt          # 只需 openai
+# 在仓库根目录使用统一的第 6 章环境
+uv sync --locked --python 3.12 --extra ch6
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6]"
+
+cd chapter6/tts-quality-eval
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 brew install ffmpeg                        # 提供 ffprobe（时长探测）
 export OPENAI_API_KEY=your-openai-api-key
 
