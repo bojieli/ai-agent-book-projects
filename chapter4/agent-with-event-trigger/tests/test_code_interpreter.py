@@ -31,7 +31,7 @@ def _load_agent_module():
         "mcp.client.stdio": mcp_stdio,
         "mcp.types": mcp_types,
     }
-    module_path = Path(__file__).with_name("agent.py")
+    module_path = Path(__file__).resolve().parents[1] / "agent.py"
     module_name = "_event_trigger_agent_under_test"
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     module = importlib.util.module_from_spec(spec)
