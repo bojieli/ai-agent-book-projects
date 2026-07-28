@@ -12,5 +12,5 @@ def test_progress_every_never_zero():
 
 def test_source_uses_max_guard():
     from pathlib import Path
-    src = Path(__file__).with_name("test_rl_learning.py").read_text()
+    src = (Path(__file__).parent / "manual" / "rl_learning_check.py").read_text()
     assert "progress_every = max(1, num_episodes // 10)" in src

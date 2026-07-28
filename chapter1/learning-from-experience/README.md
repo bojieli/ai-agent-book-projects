@@ -207,6 +207,22 @@ print(f"Feedback: {feedback}")
 print(f"Reward: {reward}")
 ```
 
+### Validation
+
+Install the `dev` extra from the repository root before running pytest in a clean environment:
+
+```bash
+uv sync --locked --extra ch1 --extra dev
+cd chapter1/learning-from-experience
+python -m pytest tests
+```
+
+The longer Q-learning learning-curve check is an offline manual smoke script, kept out of default pytest discovery:
+
+```bash
+python tests/manual/rl_learning_check.py --episodes 1000
+```
+
 ### Experiment Results
 
 #### Metrics Compared
@@ -257,6 +273,15 @@ learning-from-experience/
 ├── rl_agent.py            # Q-learning implementation
 ├── llm_agent.py           # LLM with in-context learning
 ├── experiment.py          # Main experiment runner
+├── demo.py                # Interactive local game demo
+├── quick_demo.py          # Short LLM learning demo
+├── env.example            # Optional API-key template
+├── tests/
+│   ├── test_basic.py
+│   ├── test_zero_episodes.py
+│   ├── test_rl_progress_small_episodes.py
+│   └── manual/
+│       └── rl_learning_check.py
 ├── requirements.txt       # Python dependencies
 ├── README.md              # This file
 └── results/               # Experiment outputs (created on run)
@@ -520,6 +545,22 @@ print(f"Feedback: {feedback}")
 print(f"Reward: {reward}")
 ```
 
+### 验证
+
+在干净环境中运行 pytest 前，先在仓库根目录安装 `dev` extra：
+
+```bash
+uv sync --locked --extra ch1 --extra dev
+cd chapter1/learning-from-experience
+python -m pytest tests
+```
+
+较长的 Q-learning 学习曲线检查是离线手动 smoke 脚本，不会被默认 pytest 收集：
+
+```bash
+python tests/manual/rl_learning_check.py --episodes 1000
+```
+
 ### 实验结果
 
 #### 对比指标
@@ -570,6 +611,15 @@ learning-from-experience/
 ├── rl_agent.py            # Q-learning implementation
 ├── llm_agent.py           # LLM with in-context learning
 ├── experiment.py          # Main experiment runner
+├── demo.py                # Interactive local game demo
+├── quick_demo.py          # Short LLM learning demo
+├── env.example            # Optional API-key template
+├── tests/
+│   ├── test_basic.py
+│   ├── test_zero_episodes.py
+│   ├── test_rl_progress_small_episodes.py
+│   └── manual/
+│       └── rl_learning_check.py
 ├── requirements.txt       # Python dependencies
 ├── README.md              # This file
 └── results/               # Experiment outputs (created on run)
