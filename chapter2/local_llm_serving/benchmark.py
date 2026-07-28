@@ -92,7 +92,7 @@ def stream_once(
 ) -> Dict[str, float]:
     """发起一次流式请求，返回 TTFT、总时长、输出 token 数与解码吞吐。
 
-    - ttft：从发起请求到收到第一个内容分片的时间（秒）
+    - ttft：从发起请求到收到第一个内容或推理分片的时间（秒）
     - total：整个响应的墙钟时间（秒）
     - output_tokens：优先取服务端返回的 usage.completion_tokens，
       否则用收到的内容分片数量作为近似
@@ -122,7 +122,12 @@ def stream_once(
         if not chunk.choices:
             continue
         delta = chunk.choices[0].delta
-        if getattr(delta, "content", None):
+        text = (
+            getattr(delta, "content", None)
+            or getattr(delta, "reasoning_content", None)
+            or getattr(delta, "reasoning", None)
+        )
+        if text:
             if ttft is None:
                 ttft = time.perf_counter() - start
             chunk_count += 1
