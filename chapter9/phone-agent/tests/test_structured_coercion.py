@@ -7,10 +7,7 @@
 """
 
 import sys
-from pathlib import Path
 from types import ModuleType
-
-sys.path.insert(0, str(Path(__file__).parent))
 
 try:
     import openai  # noqa: F401
