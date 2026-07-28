@@ -120,6 +120,27 @@ cp env.example .env
 export KIMI_API_KEY='your-api-key-here'
 ```
 
+#### Tests and Manual Demo
+
+Automated tests are offline regressions under `tests/` and do not require an API key.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/agent-with-event-trigger
+python -m pytest tests
+```
+
+The standalone live demo was moved to `tests/manual/demo.py`; it still requires a provider API key and is not collected by pytest:
+
+```bash
+KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
+```
+
 #### Start the Server
 
 ```bash
@@ -347,6 +368,8 @@ agent-with-event-trigger/
 ├── event_types.py           # Event type definitions
 ├── event_loop_demo.py       # Offline event-loop demo (timer / recurring / file-watch triggers)
 ├── server.py                # FastAPI server (main entry point)
+├── tests/                   # Automated regressions and manual live demos
+│   └── manual/
 ├── requirements.txt         # Dependencies (FastAPI, uvicorn, MCP)
 ├── env.example              # Environment template
 ├── README.md                # This file
@@ -644,6 +667,27 @@ cp env.example .env
 export KIMI_API_KEY='your-api-key-here'
 ```
 
+#### 测试与手动演示
+
+自动化测试位于 `tests/`，均为离线回归测试，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/agent-with-event-trigger
+python -m pytest tests
+```
+
+独立的联网演示已移动到 `tests/manual/demo.py`；它仍需要模型提供商 API Key，且不会被 pytest 默认收集：
+
+```bash
+KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
+```
+
 #### 启动服务器
 
 ```bash
@@ -852,6 +896,8 @@ agent-with-event-trigger/
 ├── event_types.py           # Event type definitions
 ├── event_loop_demo.py       # Offline event-loop demo (timer / recurring / file-watch triggers)
 ├── server.py                # FastAPI server (main entry point)
+├── tests/                   # Automated regressions and manual live demos
+│   └── manual/
 ├── requirements.txt         # Dependencies (FastAPI, uvicorn, MCP)
 ├── env.example              # Environment template
 ├── README.md                # This file
