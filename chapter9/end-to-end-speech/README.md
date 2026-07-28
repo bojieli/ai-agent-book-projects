@@ -32,8 +32,22 @@ This demo focuses on the **comparison** between the first two paradigms: End-to-
 ## Running
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+# 1. From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
+cd chapter9/end-to-end-speech
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # 2. Configure Key
 cp env.example .env
@@ -163,8 +177,22 @@ demo 提供两类任务（`--task`），对应书中两条对照轴：
 ## 运行
 
 ```bash
-# 1. 安装依赖
-pip install -r requirements.txt
+# 1. 从仓库根目录开始：使用共享的第 9 章核心环境
+uv sync --locked --python 3.12 --extra ch9
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch9]"
+
+cd chapter9/end-to-end-speech
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 2. 配置 Key
 cp env.example .env

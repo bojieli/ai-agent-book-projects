@@ -33,8 +33,24 @@ Compared to true streaming models (e.g., Qwen3-Omni using chunked/causal encoder
 ## Running
 
 ```bash
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/streaming-speech
-pip install -r requirements.txt          # Also requires ffmpeg on the machine: brew install ffmpeg
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
+# Also requires ffmpeg on the machine: brew install ffmpeg
 cp env.example .env                       # Fill in OPENAI_API_KEY (or directly export)
 python demo.py                             # Default: TTS synthesis + 0.5s granularity simulated-streaming (growing-prefix) recognition via real Whisper calls
 python demo.py --quick                     # Increase chunk granularity to 1.5s, reducing Whisper calls to ~1/3
@@ -134,8 +150,24 @@ It can be seen: streaming chunking advances the latency of the "first partial re
 ## 运行
 
 ```bash
+# 从仓库根目录开始：使用共享的第 9 章核心环境
+uv sync --locked --python 3.12 --extra ch9
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/streaming-speech
-pip install -r requirements.txt          # 另需本机 ffmpeg：brew install ffmpeg
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
+# 另需本机 ffmpeg：brew install ffmpeg
 cp env.example .env                       # 填入 OPENAI_API_KEY（或直接 export）
 python demo.py                             # 默认：TTS 合成 + 0.5s 粒度、真实调用 Whisper 的模拟流式（递增前缀）识别
 python demo.py --quick                     # 分块粒度放大到 1.5s，Whisper 调用减到约 1/3
