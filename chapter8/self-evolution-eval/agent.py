@@ -9,6 +9,12 @@ import re
 import time
 from typing import Any, Dict
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 BASELINE_ACTIONS = {
     "refund": "issue_full_refund",

@@ -1,4 +1,5 @@
-# The experiment uses only the Python standard library.
-# pytest is optional for the retained compatibility test.
+# The offline experiment uses only the Python standard library.
+# pytest and python-dotenv support testing and optional .env configuration.
 pytest>=8.0.0
 openai>=1.68.0
+python-dotenv>=1.0.0

@@ -7,6 +7,12 @@ import os
 import re
 from typing import Any, Dict, Iterable
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from verifier import DimensionResult, FAIL, PASS, UNCERTAIN
 
 

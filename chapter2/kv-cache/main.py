@@ -12,6 +12,13 @@ import logging
 from typing import Dict, List, Any
 from datetime import datetime
 from dataclasses import asdict
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from agent import KVCacheAgent, KVCacheMode, AgentMetrics, compare_implementations
 
 # Default model (Moonshot / Kimi). The whole current Kimi family (k2.5/k2.6/

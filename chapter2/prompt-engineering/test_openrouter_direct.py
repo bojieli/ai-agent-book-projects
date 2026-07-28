@@ -6,6 +6,13 @@ This helps isolate API connection issues from tau-bench logic
 
 import os
 import sys
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from litellm import completion
 
 def test_openrouter():
