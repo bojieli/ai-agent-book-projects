@@ -108,7 +108,7 @@ class Config:
     
     # File paths
     RESULTS_DIR: str = "results"
-    TEST_PDFS_DIR: str = "test_pdfs"
+    TEST_PDFS_DIR: str = "fixtures/pdfs"
     
     @classmethod
     def get_api_key(cls, provider: str = None) -> str:

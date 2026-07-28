@@ -4,6 +4,11 @@ Test script to verify provider configuration
 """
 
 import os
+
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import ContextAwareAgent, ContextMode
 
 def test_providers():

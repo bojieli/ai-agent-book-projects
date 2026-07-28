@@ -7,6 +7,10 @@ import os
 import sys
 import time
 
+from _bootstrap import add_project_root
+
+add_project_root()
+
 # Set a very simple task to test quickly
 task = "What is 10 + 5? Provide FINAL ANSWER with just the number."
 

@@ -6,6 +6,10 @@ Test that Doubao is the default provider
 import os
 import sys
 
+from _bootstrap import add_project_root
+
+add_project_root()
+
 # Test without any arguments - should use Doubao
 print("Testing default provider...")
 

@@ -4,6 +4,11 @@ Test script to verify conversation history persistence
 """
 
 import os
+
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from dotenv import load_dotenv
 from agent import ContextAwareAgent, ContextMode
 import json

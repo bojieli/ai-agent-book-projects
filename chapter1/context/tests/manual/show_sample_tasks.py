@@ -6,6 +6,11 @@ Demo script to showcase sample tasks with PDF functionality
 import os
 import sys
 from pathlib import Path
+
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from main import get_sample_tasks, ensure_sample_pdfs
 
 def main():
@@ -40,7 +45,7 @@ def main():
     print("💡 USAGE TIPS:")
     print("-"*60)
     print("1. Run 'python main.py' to enter interactive mode")
-    print("2. Type 'sample 3' to test PDF parsing capabilities")
+    print("2. Type 'sample 2' to test PDF parsing capabilities")
     print("3. Type 'sample 5' for the most comprehensive test")
     print("4. Switch modes with 'mode no_reasoning' to see ablation effects")
     
@@ -59,16 +64,16 @@ def main():
     print("-"*60)
     
     # Check if local PDFs exist
-    pdf_dir = Path("test_pdfs")
+    pdf_dir = Path("fixtures/pdfs")
     if pdf_dir.exists():
         pdfs = list(pdf_dir.glob("*.pdf"))
         if pdfs:
             print(f"✅ Found {len(pdfs)} local PDF files:")
             for pdf in pdfs:
                 print(f"   • {pdf.name}")
-            print("\nTask #3 will use these local PDFs for testing.")
+            print("\nTask #2 will use these local PDFs for testing.")
         else:
-            print("⚠️ No PDFs found in test_pdfs/")
+            print("⚠️ No PDFs found in fixtures/pdfs/")
     else:
         print("📥 PDF directory not found. Run 'create_pdfs' command to generate samples.")
     

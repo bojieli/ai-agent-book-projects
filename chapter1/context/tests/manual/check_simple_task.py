@@ -6,6 +6,11 @@ Test with a simpler task to diagnose the issue
 import os
 import sys
 import time
+
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import ContextAwareAgent, ContextMode
 
 def test_simple_task():
