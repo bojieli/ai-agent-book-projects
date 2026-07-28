@@ -125,6 +125,11 @@ MCP 在实践中面临三个递进的挑战——同步调用的限制、工具�
 
 **MCP 工具的上下文开销管理**。MCP 生态的快速扩张带来了一个工程问题：仅仅 5 个 MCP 服务器就可能引入数万 token 量级的工具定义开销（约 55,000 token，视具体服务器而定），在 200K 的上下文窗口里还没开始对话就用掉了近三成。Cursor 在实践中验证了一种缓解方案：将工具描述同步到文件夹中，Agent 默认只看到工具名称的索引，需要时再查询具体的定义。A/B 测试显示，这种方式使 MCP 工具相关任务的总 token 消耗减少了 46.9%。这种“文件系统作为上下文接口”的思路，与第二章讨论的 KV Cache 友好设计原则（合理组织输入格式以复用之前的计算结果、降低推理成本）和 Skills 的渐进式披露机制（不把所有信息一次性展示给模型，而是按需逐步提供）一脉相承——默认少给，按需加载。
 
+Pi Coding Agent 把这一思路落实为更激进的架构取舍：核心刻意不内置 MCP，优先建议把能力封装成带 README 的 CLI 工具，再由 Skills 按需加载；确实需要 MCP 生态时，则通过扩展接入[^ch4-pi-no-mcp]。社区扩展 `pi-mcp-adapter` 展示了一种折中实现：模型默认只看到一个约 200 token 的代理工具，通过“搜索→查看定义→调用”按需发现后端工具，MCP 服务器也延迟到首次使用时才启动[^ch4-pi-mcp-adapter]。这个案例说明，**是否采用 MCP 作为互操作协议**与**是否在会话开始时暴露所有 MCP 工具定义**是两个独立决策：后端可以保留 MCP 的生态兼容性，前端仍应以 CLI + Skills 或代理工具实现渐进式披露，避免服务器越接越多时上下文和 token 开销同步膨胀。
+
+[^ch4-pi-no-mcp]: Pi Coding Agent, “Philosophy: No MCP,” https://github.com/earendil-works/pi/tree/main/packages/coding-agent#philosophy；Mario Zechner, “What if you don’t need MCP at all?”, 2025-11-02. https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/；Pi 介绍中的相关讨论见 21:25 起：https://www.youtube.com/watch?v=Dli5slNaJu0&t=1285s（国内镜像：https://www.bilibili.com/video/BV1M7796VEHj/）
+[^ch4-pi-mcp-adapter]: `pi-mcp-adapter`, “Why This Exists” 与 “Quick Start,” https://github.com/nicobailon/pi-mcp-adapter
+
 **层次化组织与动态工具发现**。除了按需加载工具描述，当工具的数量增长到上百个时，层次化的组织方式也比扁平列表更有效。一种有效的方式是**按信息源的性质分类**：
 
 - **搜索工具**：主动查找信息（网络搜索、知识库搜索、文件搜索）
