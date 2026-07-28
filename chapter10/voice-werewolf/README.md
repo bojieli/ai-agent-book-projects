@@ -56,7 +56,23 @@ Win condition: All werewolves eliminated → Good guys win; Werewolf count ≥ G
 ## Running
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 10 environment
+uv sync --locked --python 3.12 --extra ch10
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch10]"
+
+cd chapter10/voice-werewolf
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # Fill in OPENAI_API_KEY; or directly export OPENAI_API_KEY=your-openai-api-key
 
 # Offline mode: No API Key required, rule-based decisions, zero cost, reproducible, best to run first to see the full picture
@@ -213,7 +229,23 @@ Comparison shows: Werewolf P1's context contains "Players in the werewolf factio
 ## 运行
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 10 章环境
+uv sync --locked --python 3.12 --extra ch10
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch10]"
+
+cd chapter10/voice-werewolf
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # 填入 OPENAI_API_KEY；或直接 export OPENAI_API_KEY=your-openai-api-key
 
 # 离线模式：无需 API Key，规则决策，零成本、可复现，最适合先跑通看全貌
