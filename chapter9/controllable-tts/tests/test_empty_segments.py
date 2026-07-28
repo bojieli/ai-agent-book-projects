@@ -6,12 +6,9 @@ synthesize_segments 会拿空文件列表去跑 ffmpeg concat，
 """
 
 import sys
-from pathlib import Path
 from types import ModuleType
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent))
 
 try:
     import openai  # noqa: F401

@@ -103,6 +103,24 @@ Common parameters (`python demo.py --help`):
 | `--list-voices` | **Offline** (no API key needed): Print the complete reference voice library (24 profiles and their instructions) |
 | `--dump-mapping` | **Offline** (no API key needed): Print the control marker → action mapping table, and demonstrate the parsing process on example text |
 
+## Validation
+
+The regression tests are offline: they validate marker parsing and empty-segment handling without calling TTS APIs or ffmpeg concat.
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/controllable-tts
+python -m pytest tests
+```
+
 ## Example Expected Output (Real Excerpt)
 
 ```text
@@ -132,6 +150,7 @@ Comparing the ffprobe durations of the three configurations reveals the differen
 | `markup.py` | Control marker parser: text with markers → list of segments (speech/silence) |
 | `tts.py` | OpenAI TTS synthesis + ffmpeg silence generation/concatenation |
 | `demo.py` | Demo entry point, three-configuration comparison + style variants |
+| `tests/` | Offline regression tests for marker parsing and empty-segment handling |
 
 ---
 
@@ -253,6 +272,24 @@ python demo.py                            # 生成 output/*.mp3
 | `--list-voices` | **离线**（无需 API key）：打印完整参考语音库（24 条档案及其 instructions） |
 | `--dump-mapping` | **离线**（无需 API key）：打印控制标记 → 动作映射表，并演示对示例文本的解析过程 |
 
+## 验证
+
+回归测试是离线的：测试会验证控制标记解析和空片段处理，不会调用 TTS API，也不会执行 ffmpeg concat。
+
+```bash
+# 在仓库根目录开始，加入 dev 工具以运行 pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/controllable-tts
+python -m pytest tests
+```
+
 ## 预期输出示例（真实节选）
 
 ```text
@@ -287,3 +324,4 @@ python demo.py                            # 生成 output/*.mp3
 | `markup.py` | 控制标记解析器：带标记文本 → 片段列表(语音/静音) |
 | `tts.py` | OpenAI TTS 合成 + ffmpeg 生成静音/拼接 |
 | `demo.py` | 演示入口，三种配置对比 + 风格变体 |
+| `tests/` | 控制标记解析和空片段处理的离线回归测试 |
