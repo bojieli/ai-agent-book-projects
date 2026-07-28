@@ -94,6 +94,21 @@ python demo.py state        # capability 3: checkpoint persist + cross-session r
 
 These demos do not network, call LLMs, or require `openai`—pure `asyncio` measures parallel speedup, frozen state after interrupt, and checkpoint save/restore.
 
+#### Tests (offline)
+
+The automated regression tests live in `tests/` and do not require an API key.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/async-agent
+python -m pytest tests
+```
+
 #### LLM verification scenarios (four book scenes; API key required)
 
 ```bash
@@ -371,6 +386,21 @@ python demo.py state        # 能力三：状态检查点持久化 + 跨会话�
 
 这三个演示不联网、不调用 LLM，连 `openai` 都无需安装——用纯 `asyncio` 直接测量并行加速、
 打断后的状态冻结、以及检查点的落盘与还原。
+
+#### 测试（离线）
+
+自动化回归测试位于 `tests/`，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/async-agent
+python -m pytest tests
+```
 
 #### LLM 验证场景（还原书中四个场景，需要 API key）
 
