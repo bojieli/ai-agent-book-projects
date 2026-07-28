@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-compact" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
 
 <rect x="20" y="65" width="220" height="250" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
 <text x="130" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="130" dy="179.2">quan sát đa phương</tspan><tspan x="130" dy="21.6">thức</tspan></text>
@@ -19,17 +19,17 @@
 <rect x="295" y="105" width="280" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
 <text x="450" y="125" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">bộ mã hóa hình ảnh</text>
 <text x="450" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">SigLIP → Tầm nhìn tokens</text>
-<line x1="435" y1="157" x2="435" y2="168" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="435" y1="157" x2="435" y2="168" stroke="#333333" stroke-width="2" marker-end="url(#ah-compact)" />
 <rect x="295" y="170" width="280" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="450" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">mô hình ngôn ngữ</text>
 <text x="450" y="210" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Llama 2 7B backbone</text>
-<line x1="435" y1="222" x2="435" y2="233" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="435" y1="222" x2="435" y2="233" stroke="#333333" stroke-width="2" marker-end="url(#ah-compact)" />
 <rect x="295" y="235" width="280" height="78" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
 <text x="435" y="254.56" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">bộ giải mã hành động</text>
 <text x="435" y="270.76" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Vectơ điều khiển liên tục chiều 14</text>
 <text x="435" y="0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central"><tspan x="435" dy="284.26">Phân chia hành động: 1 lần tạo ra các hành</tspan><tspan x="435" dy="11.88">động liên tiếp 25</tspan></text>
-<line x1="240" y1="160" x2="270" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<line x1="240" y1="290" x2="270" y2="257" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="240" y1="132" x2="278" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<line x1="240" y1="257" x2="278" y2="257" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
 <rect x="300" y="345" width="260" height="32" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="430" y="361" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Hướng dẫn: "Đặt lọ vào nồi"</text>
 <line x1="430" y1="345" x2="430" y2="315" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
