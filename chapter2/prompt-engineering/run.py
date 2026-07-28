@@ -1,6 +1,13 @@
 # Copyright Sierra
 
 import argparse
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from tau_bench.types import RunConfig
 from tau_bench.run import run
 from litellm import provider_list

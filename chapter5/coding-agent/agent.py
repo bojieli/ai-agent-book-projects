@@ -11,6 +11,12 @@ from datetime import datetime
 import anthropic
 import openai
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from system_state import SystemState
 from tool_registry import ToolRegistry
 
@@ -514,4 +520,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

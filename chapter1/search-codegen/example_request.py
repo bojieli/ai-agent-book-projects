@@ -8,6 +8,12 @@ import requests
 import os
 from typing import Dict, Any
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 def make_gpt5_openrouter_request(
     api_key: str,
     system_prompt: str,

@@ -18,6 +18,12 @@ from openai import OpenAI
 import glob as glob_module
 import subprocess
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def _is_reasoning_model(model) -> bool:
     """True for models that emit reasoning_content and only accept temperature=1.

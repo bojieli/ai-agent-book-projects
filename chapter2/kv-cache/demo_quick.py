@@ -6,6 +6,13 @@ Shows the difference between correct and incorrect implementations
 
 import os
 import sys
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from agent import KVCacheAgent, KVCacheMode
 
 def main():

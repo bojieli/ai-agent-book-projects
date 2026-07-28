@@ -11,6 +11,12 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 import sys
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def run_experiment(
     name: str,

@@ -12,6 +12,13 @@ import random
 import os
 import json
 from datetime import datetime
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from tau_bench.types import RunConfig
 # from litellm import provider_list  # This returns enums, not strings
 # Define provider choices as strings
