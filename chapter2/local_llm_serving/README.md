@@ -17,7 +17,7 @@ Cross-platform demo of LLM tool calling via standard OpenAI-compatible APIs. The
 
 - **Universal entry:** single `main.py` for all platforms
 - **Backend paths:**
-  - **vLLM** on Linux/WSL with NVIDIA GPU
+  - **vLLM** on Linux/WSL2 with NVIDIA GPU after installing the `vllm` extra
   - **Ollama** on macOS, native Windows, or Linux without GPU
 - **Standard tool calling** only (OpenAI-compatible format)
 - **Built-in tools:** weather, calculator, time, currency, PDF parse, code interpreter
@@ -71,9 +71,9 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**Native Windows:** install Ollama from [ollama.com](https://ollama.com/download/windows), then `ollama pull qwen3:0.6b`. Run with `python main.py --backend ollama` even if CUDA is available.
+**Native Windows always uses Ollama**, including systems with an NVIDIA GPU. Install it from [ollama.com](https://ollama.com/download/windows), then run `ollama pull qwen3:0.6b` and `python main.py --backend ollama`.
 
-**GPU/vLLM:** use Linux or WSL2 with NVIDIA GPU support, then install the `vllm` extra.
+Official vLLM GPU execution requires Linux. To use vLLM on a Windows machine, run the project inside WSL2 (with CUDA support) or a Linux container. Community-maintained native Windows ports are outside this project's supported setup.
 
 #### Linux
 **With NVIDIA GPU:** install the `vllm` extra, then run `python main.py --backend vllm`.
@@ -89,7 +89,7 @@ ollama pull qwen3:0.6b
 
 ```bash
 python main.py --backend ollama     # default install or native Windows
-python main.py --backend vllm       # Linux/WSL GPU after --extra vllm
+python main.py --backend vllm       # Linux/WSL2 GPU after --extra vllm
 python main.py --backend ollama --mode single --task "What's the weather in Tokyo?"
 python main.py --backend ollama --mode interactive
 python main.py --backend ollama --info
@@ -209,7 +209,7 @@ Companion to Experiment 2-1: measure **serving** metrics (throughput / latency /
 
 ```bash
 # 1. Start a server (pick one)
-python server.py                            # vLLM (NVIDIA GPU)
+python server.py                            # vLLM (Linux/WSL2 + NVIDIA GPU)
 ollama serve && ollama pull qwen3:0.6b      # Ollama (Mac / no GPU)
 
 # 2. Run benchmark
@@ -265,8 +265,9 @@ Standard OpenAI-compatible:
 
 - **Ollama not found:** Mac `brew install ollama && ollama serve`; Windows [ollama.com](https://ollama.com/download/windows); Linux install script above
 - **No models:** `ollama pull qwen3:0.6b`
-- **CUDA not available:** install drivers/CUDA for vLLM, or run `python main.py --backend ollama`
-- **Compatibility:** `python check_compatibility.py` is for the Linux/WSL vLLM path; native Windows should use `python main.py --backend ollama`.
+- **CUDA not available:** install drivers/CUDA for the vLLM path, or run `python main.py --backend ollama`
+- **Native Windows with CUDA:** use Ollama on native Windows; use WSL2 or a Linux container for vLLM
+- **Compatibility:** `python check_compatibility.py` is for the Linux/WSL2 vLLM path; native Windows should use `python main.py --backend ollama`.
 
 ### Supported models
 
@@ -277,7 +278,7 @@ Standard OpenAI-compatible:
 ### How it works
 
 1. Detect OS and GPU
-2. NVIDIA GPU → vLLM; else Ollama
+2. Linux/WSL2 + NVIDIA GPU → vLLM; native Windows, macOS, or Linux without CUDA → Ollama
 3. Both use standard OpenAI tool calling
 4. Tool results are fed back into the model
 
@@ -299,7 +300,7 @@ Standard OpenAI-compatible:
 
 - **统一入口：** 单一 `main.py` 覆盖各平台
 - **后端路径：**
-  - Linux/WSL + NVIDIA GPU → **vLLM**
+  - Linux/WSL2 + NVIDIA GPU，且已安装 `vllm` extra → **vLLM**
   - macOS、原生 Windows、无 GPU 的 Linux → **Ollama**
 - **仅标准工具调用**（OpenAI 兼容格式）
 - **内置工具：** 天气、时间、汇率、PDF、代码解释器等
@@ -351,9 +352,9 @@ ollama pull qwen3:0.6b
 ```
 
 #### Windows
-**原生 Windows：** 从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再 `ollama pull qwen3:0.6b`。即使检测到 CUDA，也请使用 `python main.py --backend ollama`。
+**原生 Windows 始终使用 Ollama**，包括装有 NVIDIA GPU 的系统。从 [ollama.com](https://ollama.com/download/windows) 安装 Ollama，再运行 `ollama pull qwen3:0.6b` 和 `python main.py --backend ollama`。
 
-**GPU/vLLM：** 使用 Linux 或启用 NVIDIA GPU 支持的 WSL2，再安装 `vllm` extra。
+vLLM 官方 GPU 执行环境要求 Linux。若要在 Windows 机器上使用 vLLM，请在支持 CUDA 的 WSL2 或 Linux 容器中运行本项目。社区维护的原生 Windows 移植版不属于本项目支持的配置。
 
 #### Linux
 **有 NVIDIA GPU：** 安装 `vllm` extra 后运行 `python main.py --backend vllm`。
@@ -369,7 +370,7 @@ ollama pull qwen3:0.6b
 
 ```bash
 python main.py --backend ollama     # 默认安装或原生 Windows
-python main.py --backend vllm       # Linux/WSL GPU，需先安装 --extra vllm
+python main.py --backend vllm       # Linux/WSL2 GPU，需先安装 --extra vllm
 python main.py --backend ollama --mode single --task "What's the weather in Tokyo?"
 python main.py --backend ollama --mode interactive
 python main.py --backend ollama --info
@@ -489,7 +490,7 @@ python test_streaming.py --mode compare
 
 ```bash
 # 1. 先启动服务端（二选一）
-python server.py                            # vLLM（需要 NVIDIA GPU）
+python server.py                            # vLLM（Linux/WSL2 + NVIDIA GPU）
 ollama serve && ollama pull qwen3:0.6b      # Ollama（Mac / 无 GPU）
 
 # 2. 运行基准
@@ -532,8 +533,9 @@ LOG_LEVEL=INFO
 
 - **找不到 Ollama：** Mac `brew install ollama && ollama serve`；Windows 官网安装；Linux 用安装脚本
 - **没有模型：** `ollama pull qwen3:0.6b`
-- **CUDA 不可用：** 为 vLLM 安装驱动/CUDA，或运行 `python main.py --backend ollama`
-- **兼容性检查：** `python check_compatibility.py` 仅用于 Linux/WSL vLLM 路径；原生 Windows 请使用 `python main.py --backend ollama`。
+- **CUDA 不可用：** 为 vLLM 路径安装驱动/CUDA，或运行 `python main.py --backend ollama`
+- **原生 Windows 有 CUDA：** 原生 Windows 请使用 Ollama；如需 vLLM，请使用 WSL2 或 Linux 容器
+- **兼容性检查：** `python check_compatibility.py` 仅用于 Linux/WSL2 vLLM 路径；原生 Windows 请使用 `python main.py --backend ollama`。
 
 ### 支持的模型
 
@@ -544,7 +546,7 @@ LOG_LEVEL=INFO
 ### 工作原理
 
 1. 检测操作系统与 GPU  
-2. 有 NVIDIA GPU → vLLM；否则 → Ollama  
+2. Linux/WSL2 + NVIDIA GPU → vLLM；原生 Windows、macOS 或无 CUDA 的 Linux → Ollama
 3. 两端均使用标准 OpenAI 工具调用  
 4. 工具结果回灌模型生成最终回复  
 

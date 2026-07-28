@@ -5,6 +5,9 @@ Configuration module for System-Hint Enhanced Agent
 import os
 from typing import Optional
 from dataclasses import dataclass
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @dataclass

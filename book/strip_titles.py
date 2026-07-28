@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Strip in-figure titles from manually-created SVGs and crop top whitespace.
+"""Strip in-figure titles from checked-in SVGs and crop top whitespace.
 
-按学术规范：图本身不包含标题（标题写在正文）。本脚本仅处理"手工 SVG"——
-对于生成器产出的 SVG，应在 svg_lib.py 设置 OMIT_TITLE=True 来处理。
+按学术规范：图本身不包含标题（标题写在正文）。本脚本保守地处理
+`images/` 中已签入的 SVG 文件。
 
 判定规则（保守）：
 - 第一处出现的 <text> 元素，若同时满足：font-size>=20 且 y<60 且 text-anchor=middle，

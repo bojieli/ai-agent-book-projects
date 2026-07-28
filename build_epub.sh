@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|ja]
-# Note: `all` does NOT include ja — the Japanese edition builds as separate
-# non-fatal CI steps. Build it explicitly with `./build_epub.sh ja`.
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar]
+# Note: `all` does NOT include ja or ar while their PDF pipelines are being
+# validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
 set -euo pipefail
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|ru|ta|vi|ja) ;;
+    all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|ja]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar]" >&2
         exit 2
         ;;
 esac
@@ -103,9 +103,23 @@ build_edition() {
             toc_label="目次"
             chapters=(introduction.ja.md chapter{1..10}.ja.md afterword.ja.md)
             ;;
+        ar)
+            directory="book-ar"
+            title="فهم وكلاء الذكاء الاصطناعي بعمق: مبادئ التصميم والممارسة الهندسية"
+            author="لي بوجي؛ الترجمة العربية: TheSyBuilder"
+            pdf="AI-Agents-in-Depth-ar.pdf"
+            output="AI-Agents-in-Depth-ar.epub"
+            title_label="صفحة العنوان"
+            toc_label="المحتويات"
+            chapters=(introduction.ar.md chapter{1..10}.ar.md afterword.ar.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
+    local -a direction_args=()
+    if [ "$language" = "ar" ]; then
+        direction_args=(--metadata dir=rtl)
+    fi
     local chapter
     for chapter in "${chapters[@]}" "$pdf"; do
         if [ ! -f "$edition_dir/$chapter" ]; then
@@ -137,11 +151,17 @@ build_edition() {
             --metadata title="$title" \
             --metadata author="$author" \
             --metadata lang="$language" \
+            "${direction_args[@]}" \
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
-    python3 "$ROOT/flatten_epub_toc.py" \
-        "$edition_dir/$output" "$title_label" "$toc_label"
+    if [ "$language" = "ar" ]; then
+        python3 "$ROOT/flatten_epub_toc.py" \
+            "$edition_dir/$output" "$title_label" "$toc_label" rtl
+    else
+        python3 "$ROOT/flatten_epub_toc.py" \
+            "$edition_dir/$output" "$title_label" "$toc_label"
+    fi
 
     if command -v epubcheck >/dev/null 2>&1; then
         epubcheck "$edition_dir/$output"

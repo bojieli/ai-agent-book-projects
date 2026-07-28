@@ -571,3 +571,50 @@
 [data-md-color-scheme="slate"] .hero {
   background: var(--fenix-bg);
 }
+
+/* ── 12. Arabic / RTL edition ─────────────────────────────────── */
+
+html[dir="rtl"] body {
+  font-family: "Noto Naskh Arabic", Amiri, "Noto Sans Arabic",
+               -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html[dir="rtl"] .md-typeset {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .md-typeset pre,
+html[dir="rtl"] .md-typeset code,
+html[dir="rtl"] .md-typeset kbd,
+html[dir="rtl"] .md-typeset samp,
+html[dir="rtl"] .md-typeset .highlight,
+html[dir="rtl"] .md-typeset .arithmatex,
+html[dir="rtl"] .md-typeset .mermaid {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+html[dir="rtl"] .md-typeset blockquote {
+  border-left: 0;
+  border-right: 0.2rem solid var(--fenix-border);
+  padding-left: 0;
+  padding-right: 0.8rem;
+}
+
+html[dir="rtl"] .md-typeset ul,
+html[dir="rtl"] .md-typeset ol {
+  margin-left: 0;
+  margin-right: 1.25em;
+}
+
+html[dir="rtl"] .md-typeset table:not([class]) th,
+html[dir="rtl"] .md-typeset table:not([class]) td {
+  text-align: right;
+}
+
+html[dir="rtl"] .lang-select {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}

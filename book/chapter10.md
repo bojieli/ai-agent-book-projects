@@ -56,6 +56,10 @@
 
 第二个维度是协作拓扑——Agent 之间的控制权和信息按什么结构流动。协作拓扑与上下文是否共享**概念上独立、实践中相关**：说它概念上独立，是因为共享上下文的系统同样存在拓扑，比如本章稍后介绍的 `transfer_to_agent`（实验 10-2），本质就是链式移交（handoff）在共享上下文下的形态；说它实践中相关，是因为一旦共享上下文，拓扑往往会退化（见下文），两个维度的取值并非可以随意组合。只不过在共享上下文时，移交无需决定“传什么”——完整历史天然保留——拓扑因此通常退化为一条角色切换的序列，没有太多架构决策可做（一个介于两者之间的例外是 group chat 式的多方协作，见本章后文去中心化一节）。而一旦选择不共享上下文，“信息如何流动、由谁协调”就成为必须显式设计的问题。
 
+> **术语说明：Graph 工程。** 2026 年 7 月开始流行的 “Graph Engineering”，在当前 Agent 语境中通常指显式设计执行图：节点是 Agent、普通程序或人工决策，边定义任务依赖、条件路由与失败后的去向，结构化状态在节点之间流动[^ch10-graph-engineering]。本章讨论的“协作拓扑”正是其中的多 Agent 子集——对等协作、管理者编排和去中心化移交，都是不同的图拓扑。由于这一名称仍很新，并且容易与知识图谱、GraphRAG 和执行轨迹混淆，本书仍以含义更稳定的“协作拓扑”和“编排”为主要术语。
+
+[^ch10-graph-engineering]: 这一名称的早期讨论见 Josh C. Simmons, *We Are Entering the Graph Engineering Phase*, 2026；相同的工程结构在主流框架中通常称为 graph-based workflow 或 orchestration，而非一门全新的技术。参见 https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。
+
 换句话说，这两个维度原则上构成一个 2×3 的组合矩阵（共享/不共享 × 三种拓扑），但共享上下文这一行里，拓扑大多退化为一条角色切换序列、没有多少架构决策可做（这正是后文“多阶段角色转换”所讨论的形态），因此本章只详细展开不共享上下文的三格。下面介绍的就是协作拓扑在不共享上下文时的三种典型形态，按复杂度递增：
 
 - **对等协作模式**（Peer Collaboration Pattern）：少量 Agent（通常 2-3 个）以平等身份交互，形成迭代改进循环——就像写论文时一个人起草、另一个人批注修改，反复几轮后质量远超一个人闷头写。

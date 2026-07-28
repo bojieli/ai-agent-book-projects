@@ -29,8 +29,11 @@ def toc_item(identifier, href, label):
     return item
 
 
-def flatten_nav(data, title_label, toc_label):
+def flatten_nav(data, title_label, toc_label, rtl=False):
     root = ET.fromstring(data)
+    if rtl:
+        root.set("dir", "rtl")
+        root.set("{http://www.w3.org/XML/1998/namespace}lang", "ar")
     nav = next(
         element
         for element in root.iter(f"{{{XHTML}}}nav")
@@ -74,6 +77,29 @@ def flatten_nav(data, title_label, toc_label):
                     sub_classes.append("subsection")
                     sub_li.set("class", " ".join(sub_classes))
 
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
+def set_page_progression(data):
+    root = ET.fromstring(data)
+    namespace = root.tag.partition("}")[0].lstrip("{")
+    spine_tag = f"{{{namespace}}}spine" if namespace else "spine"
+    spine = root.find(spine_tag)
+    if spine is None:
+        raise RuntimeError("EPUB package spine not found")
+    spine.set("page-progression-direction", "rtl")
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
+def set_xhtml_direction(data):
+    root = ET.fromstring(data)
+    root.set("dir", "rtl")
+    root.set("lang", "ar")
+    root.set("{http://www.w3.org/XML/1998/namespace}lang", "ar")
+    for name in ("pre", "code", "kbd", "samp"):
+        for element in root.iter(f"{{{XHTML}}}{name}"):
+            element.set("dir", "ltr")
+    ET.register_namespace("", XHTML)
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 
@@ -123,18 +149,31 @@ def flatten_ncx(data, title_label, toc_label):
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 
-def rewrite_epub(path, title_label, toc_label):
+def rewrite_epub(path, title_label, toc_label, rtl=False):
     replacements = {}
     with zipfile.ZipFile(path) as source:
         names = set(source.namelist())
         if "EPUB/nav.xhtml" not in names or "EPUB/toc.ncx" not in names:
             raise RuntimeError("EPUB navigation files not found")
         replacements["EPUB/nav.xhtml"] = flatten_nav(
-            source.read("EPUB/nav.xhtml"), title_label, toc_label
+            source.read("EPUB/nav.xhtml"), title_label, toc_label, rtl=rtl
         )
         replacements["EPUB/toc.ncx"] = flatten_ncx(
             source.read("EPUB/toc.ncx"), title_label, toc_label
         )
+        if rtl:
+            package_names = [
+                name for name in names if name.endswith(".opf")
+            ]
+            if len(package_names) != 1:
+                raise RuntimeError("Expected exactly one EPUB package document")
+            package_name = package_names[0]
+            replacements[package_name] = set_page_progression(source.read(package_name))
+            for name in names:
+                if name.endswith(".xhtml"):
+                    replacements[name] = set_xhtml_direction(
+                        replacements.get(name, source.read(name))
+                    )
 
         directory = os.path.dirname(os.path.abspath(path))
         descriptor, temporary_path = tempfile.mkstemp(suffix=".epub", dir=directory)
@@ -150,6 +189,9 @@ def rewrite_epub(path, title_label, toc_label):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        raise SystemExit(f"Usage: {sys.argv[0]} BOOK.epub TITLE_LABEL TOC_LABEL")
-    rewrite_epub(sys.argv[1], sys.argv[2], sys.argv[3])
+    if len(sys.argv) not in (4, 5):
+        raise SystemExit(
+            f"Usage: {sys.argv[0]} BOOK.epub TITLE_LABEL TOC_LABEL [rtl]"
+        )
+    rtl = len(sys.argv) == 5 and sys.argv[4].lower() == "rtl"
+    rewrite_epub(sys.argv[1], sys.argv[2], sys.argv[3], rtl=rtl)

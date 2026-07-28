@@ -268,7 +268,11 @@ GPT-5.6 是「模型即 Agent」概念的一個成熟例項——網路搜尋、
 
 回顧 AI 應用工程的發展，可以看到一條清晰的演進弧線：
 
-**軟體工程**（Software Engineering）是基礎——傳統的系統設計、架構、測試和部署實踐。**提示工程**（Prompt Engineering）是第一波創新——透過最佳化輸入給模型的自然語言指令來提升輸出質量。**上下文工程**（Context Engineering）是第二波——人們認識到單純最佳化提示詞還不夠，需要系統性地管理模型能看到的所有資訊（系統指令、工具定義、對話歷史、外部知識）。**Harness 工程**是第三波——它將視野從「模型能看到什麼」進一步擴充套件到「模型在什麼樣的系統中執行」，涵蓋了約束機制、驗證手段、回饋迴圈和錯誤恢復等模型之外的全部基礎設施。最新的一波是 **Loop 工程**（Loop Engineering）——它把視野從單次執行再擴充套件到跨輪次的持續自主運轉：誰來發現下一件該做的事、何時驗證、何時才算真正完成（第十章將結合多 Agent 協作系統展開）。
+**軟體工程**（Software Engineering）是基礎——傳統的系統設計、架構、測試和部署實踐。**提示工程**（Prompt Engineering）是第一波創新——透過最佳化輸入給模型的自然語言指令來提升輸出質量。**上下文工程**（Context Engineering）是第二波——人們認識到單純最佳化提示詞還不夠，需要系統性地管理模型能看到的所有資訊（系統指令、工具定義、對話歷史、外部知識）。**Harness 工程**是第三波——它將視野從「模型能看到什麼」進一步擴充套件到「模型在什麼樣的系統中執行」，涵蓋了約束機制、驗證手段、回饋迴圈和錯誤恢復等模型之外的全部基礎設施。隨後出現的 **Loop 工程**（Loop Engineering）又把視野從單次執行擴充套件到跨輪次的持續自主運轉：誰來發現下一件該做的事、何時驗證、何時才算真正完成（第十章將結合多 Agent 協作系統展開）。
+
+2026 年 7 月，業界又開始用 **Graph 工程**（Graph Engineering）描述一種更高層的編排視角：把 Agent 迴圈、確定性程式和人工審批組織成顯式的執行圖，其中節點承擔具體能力，邊規定路由與依賴，結構化狀態沿邊傳遞並在關鍵邊界處持久化[^ch1-graph-engineering-zhtw]。不過，Graph 工程並不是 Loop 工程的替代品，也不宜簡單視為上述演進鏈條中的「第六層」——迴圈本身就是帶有回邊的圖，而圖中的單個節點仍然可以執行 ReAct 或其他 Agent 迴圈。這個名稱目前尚未穩定，本書將其視為對既有編排與 Harness 實踐的新稱呼；其中涉及多 Agent 協作的部分將在第十章展開。這裡的「圖」指控制流或執行圖，不是 GraphRAG 所使用的知識圖譜。
+
+[^ch1-graph-engineering-zhtw]: Josh C. Simmons 在 2026 年 7 月 4 日的文章 *We Are Entering the Graph Engineering Phase* 中較早明確使用這一名稱，並將其概括為節點、型別化邊和可檢查點狀態；7 月 18 日，Peter Steinberger 關於「是否已從 loops 轉向 graphs」的討論進一步推動了該名稱傳播。需要注意的是，相關實踐早於這個名稱：LangGraph、Microsoft Agent Framework 和 Google ADK 的官方文件分別稱其為圖編排或 graph-based workflow。參見 https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://x.com/steipete/status/2078277297791189132、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。
 
 這五個階段不是替代關係，而是層層包含的：提示工程是上下文工程的子集，上下文工程是 Harness 工程的子集，Harness 工程是 Loop 工程的子集。每一層都在前一層的基礎上擴充套件了工程師的關注範圍和影響力。**當各家模型的能力越來越接近、不再是決定性的差異因素時，競爭優勢就轉移到了模型之外的工程實踐**。這一判斷在最近的工程實踐中得到驗證——LangChain 在 Terminal Bench 2.0（一個評估 Agent 在終端機環境中完成複雜任務能力的基準測試）上的實踐就是有力的例證：他們的 Coding Agent 從 52.8% 提升到 66.5%（從排行榜 30 名開外躍升至前 5），改變的不是模型，而是 Harness：讓 Agent 自動檢查自己的執行結果、偵測是否陷入了重複迴圈、最佳化思考策略等工程手段。OpenAI 的工程團隊也公開分享了類似的經驗——3 名工程師用 5 個月完成了約百萬行程式碼和近 1500 個 PR，達到傳統開發速度的約 10 倍。這一效率的背後不是模型有多強，而是 Harness 做對了。
 

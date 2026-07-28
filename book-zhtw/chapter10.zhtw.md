@@ -56,6 +56,10 @@
 
 第二個維度是協作拓撲——Agent 之間的控制權和資訊按什麼結構流動。協作拓撲與上下文是否共享**概念上獨立、實踐中相關**：說它概念上獨立，是因為共享上下文的系統同樣存在拓撲，比如本章稍後介紹的 `transfer_to_agent`（實驗 10-2），本質就是鏈式移交（handoff）在共享上下文下的形態；說它實踐中相關，是因為一旦共享上下文，拓撲往往會退化（見下文），兩個維度的取值並非可以隨意組合。只不過在共享上下文時，移交無需決定「傳什麼」——完整歷史天然保留——拓撲因此通常退化為一條角色切換的序列，沒有太多架構決策可做（一個介於兩者之間的例外是 group chat 式的多方協作，見本章後文去中心化一節）。而一旦選擇不共享上下文，「資訊如何流動、由誰協調」就成為必須顯式設計的問題。
 
+> **術語說明：Graph 工程。** 2026 年 7 月開始流行的「Graph Engineering」，在當前 Agent 語境中通常指顯式設計執行圖：節點是 Agent、一般程式或人工決策，邊定義任務依賴、條件路由與失敗後的去向，結構化狀態在節點之間流動[^ch10-graph-engineering-zhtw]。本章討論的「協作拓撲」正是其中的多 Agent 子集——對等協作、管理者編排和去中心化移交，都是不同的圖拓撲。由於這一名稱仍很新，並且容易與知識圖譜、GraphRAG 和執行軌跡混淆，本書仍以含義更穩定的「協作拓撲」和「編排」為主要術語。
+
+[^ch10-graph-engineering-zhtw]: 這一名稱的早期討論見 Josh C. Simmons, *We Are Entering the Graph Engineering Phase*, 2026；相同的工程結構在主流框架中通常稱為 graph-based workflow 或 orchestration，而非一門全新的技術。參見 https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase、https://docs.langchain.com/oss/python/langgraph/overview、https://learn.microsoft.com/en-us/agent-framework/workflows/、https://adk.dev/workflows/。
+
 換句話說，這兩個維度原則上構成一個 2×3 的組合矩陣（共享/不共享 × 三種拓撲），但共享上下文這一行裡，拓撲大多退化為一條角色切換序列、沒有多少架構決策可做（這正是後文「多階段角色轉換」所討論的形態），因此本章只詳細展開不共享上下文的三格。下面介紹的就是協作拓撲在不共享上下文時的三種典型形態，按複雜度遞增：
 
 - **對等協作模式**（Peer Collaboration Pattern）：少量 Agent（通常 2-3 個）以平等身份互動，形成迭代改進迴圈——就像寫論文時一個人起草、另一個人批註修改，反覆幾輪後質量遠超一個人悶頭寫。
