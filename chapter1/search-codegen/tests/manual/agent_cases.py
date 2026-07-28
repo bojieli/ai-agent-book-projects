@@ -1,12 +1,21 @@
 """
-Test cases for GPT-5 Native Tools Agent
-These tests demonstrate the use of web_search tool with OpenRouter format
+Live manual cases for GPT-5 Native Tools Agent.
+
+These cases demonstrate web_search with the OpenRouter format and require
+OPENROUTER_API_KEY.
 """
 
 import json
 import logging
+import sys
 from typing import Dict, Any, List
 from datetime import datetime
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from agent import GPT5NativeAgent, GPT5AgentChain
 from config import Config
 
@@ -19,10 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 class TestGPT5Agent:
-    """Test suite for GPT-5 Native Tools Agent"""
+    """Live manual case suite for GPT-5 Native Tools Agent"""
     
     def __init__(self):
-        """Initialize test suite"""
+        """Initialize manual case suite"""
         if not Config.validate():
             raise ValueError("Invalid configuration. Please check your .env file")
         
@@ -243,14 +252,14 @@ print(f"Volatility: {volatility:.2f}%")
             print(f"Error: {result.get('error', 'Unknown error')}")
     
     def run_all_tests(self):
-        """Run all test cases"""
+        """Run all live manual cases"""
         print("\n" + "="*60)
-        print("RUNNING GPT-5 NATIVE TOOLS TEST SUITE")
+        print("RUNNING GPT-5 NATIVE TOOLS MANUAL CASES")
         print(f"Timestamp: {datetime.now().isoformat()}")
         print(f"Model: {Config.MODEL_NAME}")
         print("="*60)
         
-        test_methods = [
+        case_methods = [
             ("Basic Web Search", self.test_web_search_basic),
             ("Web Search with Analysis", self.test_web_search_with_analysis),
             ("Complex Research", self.test_complex_research),
@@ -262,10 +271,10 @@ print(f"Volatility: {volatility:.2f}%")
         
         results_summary = []
         
-        for test_name, test_method in test_methods:
+        for case_name, case_method in case_methods:
             try:
-                print(f"\n🧪 Running: {test_name}")
-                result = test_method()
+                print(f"\n🧪 Running: {case_name}")
+                result = case_method()
                 
                 # Handle different result types
                 if isinstance(result, list):
@@ -278,22 +287,22 @@ print(f"Volatility: {volatility:.2f}%")
                     success = result.get("success", False)
                 
                 results_summary.append({
-                    "test": test_name,
+                    "case": case_name,
                     "success": success,
                     "result": result
                 })
                 
             except Exception as e:
-                logger.error(f"Test {test_name} failed with exception: {str(e)}")
+                logger.error(f"Manual case {case_name} failed with exception: {str(e)}")
                 results_summary.append({
-                    "test": test_name,
+                    "case": case_name,
                     "success": False,
                     "error": str(e)
                 })
         
         # Print summary
         print("\n" + "="*60)
-        print("TEST SUMMARY")
+        print("MANUAL CASE SUMMARY")
         print("="*60)
         
         passed = sum(1 for r in results_summary if r["success"])
@@ -301,9 +310,9 @@ print(f"Volatility: {volatility:.2f}%")
         
         for result in results_summary:
             status = "✅ PASS" if result["success"] else "❌ FAIL"
-            print(f"{result['test']}: {status}")
+            print(f"{result['case']}: {status}")
         
-        print(f"\nTotal: {passed}/{total} tests passed")
+        print(f"\nTotal: {passed}/{total} manual cases passed")
         print("="*60)
         
         return results_summary
@@ -311,10 +320,10 @@ print(f"Volatility: {volatility:.2f}%")
 
 def run_single_test(test_name: str = "basic"):
     """
-    Run a single test case
+    Run a single live manual case
     
     Args:
-        test_name: Name of test to run
+        test_name: Name of manual case to run
     """
     tester = TestGPT5Agent()
     
@@ -336,8 +345,6 @@ def run_single_test(test_name: str = "basic"):
 
 
 if __name__ == "__main__":
-    import sys
-    
     # Check configuration first
     Config.display()
     
@@ -346,7 +353,7 @@ if __name__ == "__main__":
         print("Please set up your .env file with OPENROUTER_API_KEY")
         sys.exit(1)
     
-    # Run tests
+    # Run manual cases
     if len(sys.argv) > 1:
         # Run specific test
         run_single_test(sys.argv[1])
