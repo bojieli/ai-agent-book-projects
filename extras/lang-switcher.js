@@ -124,6 +124,28 @@
         return "/" + dst.prefix + "chapter" + proseMatch[1] + (dst.suffix || "") + "/";
       }
 
+      // Handling book pages that use a shared ASCII slug:
+      // introduction, afterword, reference-answers, appendix, ...
+      var bookPageRe = new RegExp(
+        "^" +
+          escapeRe(src.prefix) +
+          "([a-z0-9-]+)" +
+          escapeRe(src.suffix || "") +
+          "$"
+      );
+
+      var bookPageMatch = pp.match(bookPageRe);
+
+      if (bookPageMatch) {
+        return (
+          "/" +
+          dst.prefix +
+          bookPageMatch[1] +
+          (dst.suffix || "") +
+          "/"
+        );
+      }
+
       // Experiment index: /chapterN/ (Chinese default) or
       // /chapterN/README.<readmeSuffix>/ (translated variants).
       if (/^chapter\d+$/.test(pp)) {
@@ -196,7 +218,8 @@
               var linkPath = u.pathname;
               if (linkPath.indexOf(base) === 0) {
                 var linkRel = "/" + linkPath.slice(base.length).replace(/^\//, "");
-                var translated = translatePath(linkRel, defCode, targetCode);
+                var linkLang = detectLang(linkRel);
+                var translated = translatePath(linkRel, linkLang, targetCode);
                 if (translated) {
                   el.setAttribute("href", base + translated.replace(/^\//, ""));
                 }
