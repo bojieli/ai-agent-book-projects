@@ -458,7 +458,15 @@ class LearningAgent:
                 parameters = dict(step_data['parameters'])
                 for key, value in parameters.items():
                     if isinstance(value, str):
-                        for param_key, param_value in example_params.items():
+                        # Template longest values first so a shorter param value
+                        # that is a substring of another field (e.g. subject
+                        # "Report" inside body "Report is ready") can't pre-empt
+                        # the longer match and mis-tag the field.
+                        for param_key, param_value in sorted(
+                            example_params.items(),
+                            key=lambda kv: len(str(kv[1])),
+                            reverse=True,
+                        ):
                             pv = str(param_value)
                             if pv and pv in value:
                                 value = value.replace(pv, f"{{{param_key}}}")
@@ -521,7 +529,15 @@ class LearningAgent:
                 await reset_result
             await self.replayer.setup()
             try:
-                validation = await self.replayer.replay_workflow(workflow)
+                # Validate with the learned example parameters so the replay
+                # substitutes the {placeholder} tokens back to concrete values.
+                # Without this the validation run types the literal token text
+                # (e.g. "{recipient}") into the page, so a correctly-learned
+                # workflow fails validation and is never published — every later
+                # replay then falls back to the LLM. (empty dict => no-op.)
+                validation = await self.replayer.replay_workflow(
+                    workflow, parameters=workflow.example_parameters
+                )
             finally:
                 await self.replayer.cleanup()
             if validation['success']:
