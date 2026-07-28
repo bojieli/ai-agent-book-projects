@@ -57,7 +57,7 @@ uv sync --locked --python 3.12 --extra ch2
 # Activate it before changing directories:
 # macOS/Linux:
 source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
@@ -96,6 +96,21 @@ Without an OpenAI key, `--offline` runs the same three-layer progressive disclos
 python demo.py --offline                       # writes output/presentation.pptx, no network
 python demo.py --offline -o output/deck.pptx   # custom output path
 ```
+
+#### Offline validation
+
+```bash
+# From the repository root; include dev tools for pytest.
+uv sync --locked --python 3.12 --extra ch2 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter2/agent-skills-ppt
+python -m pytest tests
+python demo.py --offline
+```
+
+`tests/` contains offline regressions for malformed or unsafe tool-dispatch arguments and PPTX generator edge cases. They do not require an API key.
 
 The bundled script can also run alone (no Agent):
 
@@ -136,6 +151,7 @@ python skills/pptx/scripts/generate_pptx.py papers/sample_outline.json output/de
 | `skills/pptx/scripts/generate_pptx.py` | Bundled generator: outline → `.pptx` |
 | `papers/sample_paper.md` | Bundled short paper/outline (online input) |
 | `papers/sample_outline.json` | Slide outline for offline mode (payload schema example) |
+| `tests/` | Offline regression tests for dispatch safety and generator edge cases |
 | `output/presentation.pptx` | Generated deck (created at runtime) |
 
 ### Use another paper
@@ -194,7 +210,7 @@ uv sync --locked --python 3.12 --extra ch2
 # 切换目录前先激活环境：
 # macOS/Linux：
 source .venv/bin/activate
-# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
 # Windows cmd：.venv\Scripts\activate.bat
 
 # 未安装 uv 时可用 pip 兜底：
@@ -233,6 +249,21 @@ python demo.py --help                          # 查看全部参数
 python demo.py --offline                       # 生成 output/presentation.pptx，全程无网络
 python demo.py --offline -o output/deck.pptx   # 指定输出路径
 ```
+
+#### 离线验证
+
+```bash
+# 从仓库根目录开始；pytest 需要 dev 依赖。
+uv sync --locked --python 3.12 --extra ch2 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter2/agent-skills-ppt
+python -m pytest tests
+python demo.py --offline
+```
+
+`tests/` 包含工具分发参数缺失、非法路径和 PPTX 生成器边界情况的离线回归测试，无需 API Key。
 
 捆绑脚本本身也可脱离 Agent 单独运行，直接把大纲 JSON 落地为 pptx：
 
@@ -275,6 +306,7 @@ python skills/pptx/scripts/generate_pptx.py papers/sample_outline.json output/de
 | `skills/pptx/scripts/generate_pptx.py` | 捆绑生成器，用 python-pptx 从大纲生成 .pptx |
 | `papers/sample_paper.md` | 自带的精简论文/大纲（在线模式输入） |
 | `papers/sample_outline.json` | 内置幻灯片大纲（离线模式输入，同时是 payload schema 的范例） |
+| `tests/` | 工具分发安全性与生成器边界情况的离线回归测试 |
 | `output/presentation.pptx` | 生成的演示文稿（输出，运行后产生） |
 
 ### 换一篇论文
