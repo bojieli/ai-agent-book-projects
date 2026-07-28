@@ -153,7 +153,7 @@ def main():
     print("Demo complete! 🎉")
     print("\nNext steps:")
     print("- Run 'python main.py' for interactive mode")
-    print("- Run 'python test_agent.py' for comprehensive tests")
+    print("- Run 'python main.py --mode test' for live manual cases")
     print("- Check README.md for more examples")
     print("="*60)
 

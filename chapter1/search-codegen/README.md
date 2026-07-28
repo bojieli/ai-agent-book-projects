@@ -23,7 +23,7 @@ An advanced AI agent leveraging GPT-5's native `web_search` and `code_interprete
 - **Reasoning Levels**: Support for low, medium, and high reasoning effort
 - **Interactive CLI**: User-friendly command-line interface with reasoning controls
 - **Agent Chaining**: Chain multiple requests for complex workflows
-- **Comprehensive Testing**: Test suite demonstrating various use cases
+- **Manual Live Cases**: OpenRouter-backed case suite demonstrating common workflows
 
 ### Prerequisites
 
@@ -88,11 +88,13 @@ python main.py
 python main.py --mode single --request "Search for latest AI news and analyze the trends"
 ```
 
-**Run tests:**
+**Run live manual cases:**
 
 ```bash
 python main.py --mode test
 ```
+
+These cases call OpenRouter and require `OPENROUTER_API_KEY`. Use the dry-run command below for an offline/no-key validation path.
 
 ### CLI Arguments
 
@@ -100,7 +102,7 @@ Run `python main.py --help` for the full (Chinese) help text.
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--mode` | Run mode: `interactive` / `single` / `test` | `interactive` |
+| `--mode` | Run mode: `interactive` / `single` / `test` live manual cases | `interactive` |
 | `--request` | Task or query for `single` / `--dry-run` | — |
 | `--model` | Override model name | `MODEL_NAME` from config |
 | `--reasoning` | Reasoning effort (`low` / `medium` / `high`) | `low` |
@@ -197,7 +199,9 @@ search-codegen/
 ├── agent.py          # Core GPT-5 agent implementation
 ├── config.py         # Configuration management
 ├── main.py           # Interactive CLI and entry point
-├── test_agent.py     # Comprehensive test suite
+├── tests/
+│   └── manual/
+│       └── agent_cases.py  # Live OpenRouter manual cases
 ├── env.example       # Environment variables template
 ├── requirements.txt  # Python dependencies
 └── README.md         # This file
@@ -228,9 +232,9 @@ Supports configurable reasoning effort:
 - **medium**: Balanced reasoning and response time
 - **high**: Deep reasoning for complex queries
 
-### Testing
+### Manual Live Cases
 
-The test suite includes comprehensive test cases:
+The manual case suite includes comprehensive live OpenRouter cases:
 
 1. **Basic Web Search**: Test internet search capabilities
 2. **Web Search with Analysis**: Search with analytical insights
@@ -241,14 +245,16 @@ The test suite includes comprehensive test cases:
 7. **Agent Chain**: Multi-step workflow
 
 ```bash
-# Run all tests
-python test_agent.py
+# Run all live manual cases
+python tests/manual/agent_cases.py
 
-# Run specific test
+# Run a specific live manual case through the main CLI
 python main.py --mode test --test basic
 ```
 
-Available test names: `basic`, `analysis`, `complex`, `code`, `reasoning`, `search_analyze`, `chain`
+Available case names: `basic`, `analysis`, `complex`, `code`, `reasoning`, `search_analyze`, `chain`
+
+There are no default offline pytest tests for this experiment yet. Use `python main.py --dry-run --request "..."` to validate request-body assembly without an API key.
 
 ### Interactive CLI Commands
 
@@ -343,7 +349,7 @@ Adjust `RATE_LIMIT_RPM` in `.env` if encountering rate limits.
 - **推理档位**：支持 low / medium / high 推理力度
 - **交互式 CLI**：带推理控制的命令行界面
 - **Agent 串联**：多请求链式工作流
-- **完整测试**：覆盖多种用例的测试套件
+- **联网手动用例**：基于 OpenRouter 的常见工作流演示用例
 
 ### 前置条件
 
@@ -408,11 +414,13 @@ python main.py
 python main.py --mode single --request "Search for latest AI news and analyze the trends"
 ```
 
-**运行测试：**
+**运行联网手动用例：**
 
 ```bash
 python main.py --mode test
 ```
+
+这些用例会调用 OpenRouter，需要 `OPENROUTER_API_KEY`。如需离线、无 Key 校验，请使用下面的 dry-run 命令。
 
 ### 命令行参数（CLI）
 
@@ -420,7 +428,7 @@ python main.py --mode test
 
 | 参数 | 说明 | 默认值 |
 |------|------|--------|
-| `--mode` | 运行模式：`interactive` 交互 / `single` 单次 / `test` 测试 | `interactive` |
+| `--mode` | 运行模式：`interactive` 交互 / `single` 单次 / `test` 联网手动用例 | `interactive` |
 | `--request` | `single` / `--dry-run` 模式下的任务或查询内容 | — |
 | `--model` | 覆盖模型名称 | 配置中的 `MODEL_NAME` |
 | `--reasoning` | 推理力度 Reasoning Effort（`low`/`medium`/`high`） | `low` |
@@ -517,7 +525,9 @@ search-codegen/
 ├── agent.py          # Core GPT-5 agent implementation
 ├── config.py         # Configuration management
 ├── main.py           # Interactive CLI and entry point
-├── test_agent.py     # Comprehensive test suite
+├── tests/
+│   └── manual/
+│       └── agent_cases.py  # Live OpenRouter manual cases
 ├── env.example       # Environment variables template
 ├── requirements.txt  # Python dependencies
 └── README.md         # This file
@@ -548,9 +558,9 @@ web_search 使用 OpenRouter 特定格式：
 - **medium**：推理深度与响应时间平衡  
 - **high**：复杂查询的深度推理  
 
-### 测试
+### 联网手动用例
 
-测试套件覆盖：
+手动用例套件覆盖以下 OpenRouter 联网场景：
 
 1. **Basic Web Search**：基础联网搜索  
 2. **Web Search with Analysis**：搜索 + 分析  
@@ -561,14 +571,16 @@ web_search 使用 OpenRouter 特定格式：
 7. **Agent Chain**：多步工作流  
 
 ```bash
-# Run all tests
-python test_agent.py
+# Run all live manual cases
+python tests/manual/agent_cases.py
 
-# Run specific test
+# Run a specific live manual case through the main CLI
 python main.py --mode test --test basic
 ```
 
-可用测试名：`basic`、`analysis`、`complex`、`code`、`reasoning`、`search_analyze`、`chain`
+可用用例名：`basic`、`analysis`、`complex`、`code`、`reasoning`、`search_analyze`、`chain`
+
+本实验暂未提供默认离线 pytest 测试。可使用 `python main.py --dry-run --request "..."` 在无 API Key 情况下验证请求体组装。
 
 ### 交互式 CLI 命令
 
