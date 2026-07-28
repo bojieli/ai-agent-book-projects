@@ -24,7 +24,7 @@ def wait_for_server(max_attempts=10):
     logger.info("Waiting for server to be ready...")
     for i in range(max_attempts):
         try:
-            response = requests.get(f"{BASE_URL}/stats")
+            response = requests.get(f"{BASE_URL}/stats", timeout=30)
             if response.status_code == 200:
                 logger.info("Server is ready!")
                 return True
@@ -37,7 +37,7 @@ def wait_for_server(max_attempts=10):
 def clear_index():
     """Clear the index before demo"""
     logger.info("Clearing existing index...")
-    response = requests.delete(f"{BASE_URL}/index")
+    response = requests.delete(f"{BASE_URL}/index", timeout=30)
     if response.status_code == 200:
         logger.info("Index cleared successfully")
     return response.json()
@@ -98,7 +98,7 @@ def index_sample_documents():
         logger.info(f"\nIndexing document {i}/{len(sample_documents)}: {doc['metadata']['title']}")
         response = requests.post(
             f"{BASE_URL}/index",
-            json={"text": doc["text"], "metadata": doc["metadata"]}
+            json={"text": doc["text"], "metadata": doc["metadata"]}, timeout=30
         )
         if response.status_code == 200:
             result = response.json()
@@ -117,7 +117,7 @@ def show_statistics():
     logger.info("INDEX STATISTICS")
     logger.info("="*50)
     
-    response = requests.get(f"{BASE_URL}/stats")
+    response = requests.get(f"{BASE_URL}/stats", timeout=30)
     if response.status_code == 200:
         stats = response.json()
         logger.info(f"Total documents: {stats['total_documents']}")
@@ -157,7 +157,7 @@ def perform_searches():
         
         response = requests.post(
             f"{BASE_URL}/search",
-            json={"query": query, "top_k": top_k}
+            json={"query": query, "top_k": top_k}, timeout=30
         )
         
         if response.status_code == 200:
@@ -186,7 +186,7 @@ def show_index_structure():
     logger.info("INDEX STRUCTURE VISUALIZATION")
     logger.info("="*50)
     
-    response = requests.get(f"{BASE_URL}/index/structure")
+    response = requests.get(f"{BASE_URL}/index/structure", timeout=30)
     if response.status_code == 200:
         data = response.json()
         
@@ -236,7 +236,7 @@ def test_specific_document_retrieval():
     doc_id = 0
     logger.info(f"\nRetrieving document with ID {doc_id}...")
     
-    response = requests.get(f"{BASE_URL}/document/{doc_id}")
+    response = requests.get(f"{BASE_URL}/document/{doc_id}", timeout=30)
     if response.status_code == 200:
         document = response.json()
         logger.info(f"Document {doc_id}:")

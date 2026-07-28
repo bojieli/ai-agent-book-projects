@@ -17,6 +17,7 @@ rich>=13.0.0
 
 # Common dependencies
 python-dotenv>=1.0.0
+requests>=2.31.0
 pandas>=2.0.0
 faiss-cpu>=1.7.4
 sentence-transformers>=2.2.2
@@ -29,6 +30,7 @@ pydantic>=2.5.0
 httpx>=0.25.0
 
 # Document processing
+aiofiles>=24.1.0
 pypdf>=3.17.0
 beautifulsoup4>=4.12.0
 lxml>=5.0.0

@@ -5,7 +5,7 @@
 import asyncio
 import json
 from typing import List, Dict, Any
-from agent import WebSearchAgent
+from agent import WebSearchAgent, is_failure_answer
 from config import Config
 import logging
 
@@ -33,10 +33,15 @@ class AdvancedWebSearchAgent(WebSearchAgent):
             logger.info(f"处理问题 {i}/{len(questions)}: {question}")
             try:
                 answer = self.search_and_answer(question)
+                # search_and_answer 内部已捕获异常并返回错误字符串（见 agent.py），
+                # 因此下面的 except 通常不会触发。用统一的 is_failure_answer 判定状态，
+                # 覆盖“出现错误 / 超过最大迭代次数 / 无法获取足够信息”所有失败兜底，
+                # 避免把失败的搜索错误地标记为 success。
+                status = "error" if is_failure_answer(answer) else "success"
                 results.append({
                     "question": question,
                     "answer": answer,
-                    "status": "success"
+                    "status": status
                 })
             except Exception as e:
                 results.append({
@@ -99,15 +104,22 @@ class AdvancedWebSearchAgent(WebSearchAgent):
 请验证以下陈述的真实性：
 "{statement}"
 
-请提供：
-1. 这个陈述是否准确（真/假/部分真实）
-2. 相关的事实和证据
-3. 信息来源
+请严格按以下格式作答：
+- 第一行只输出判定结论，三选一：真 / 假 / 部分真实
+- 之后另起一行给出相关事实、证据与信息来源
 """
         answer = self.search_and_answer(question)
-        
-        # 简单解析结果
-        is_true = "真" in answer[:100]
+
+        # 解析判定：模型被要求首行只输出“真/假/部分真实”。
+        # 按“部分真实 -> 假 -> 真”的优先级匹配，避免“真”字出现在
+        # “部分真实/不真实”里而被误判为真（原实现 `"真" in answer[:100]` 的缺陷）。
+        first_line = next((ln.strip() for ln in answer.splitlines() if ln.strip()), "")
+        if "部分真实" in first_line or "部分正确" in first_line:
+            is_true = False
+        elif any(neg in first_line for neg in ("假", "不真实", "不属实", "不准确", "不正确", "错误")):
+            is_true = False
+        else:
+            is_true = "真" in first_line or "属实" in first_line or "正确" in first_line
         return {
             "statement": statement,
             "is_true": is_true,

@@ -102,7 +102,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python create_data.py \
     --temperature 0.15 \
     --tensor_parallel_size 4 \
     --max_retries 3 \
-    &
+    > "$TEMP_DIR/instance1.log" 2>&1 &
 PID1=$!
 
 echo "Instance 1 is running (PID: $PID1)"
@@ -116,13 +116,16 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 python create_data.py \
     --temperature 0.15 \
     --tensor_parallel_size 4 \
     --max_retries 3 \
-    &
+    > "$TEMP_DIR/instance2.log" 2>&1 &
 PID2=$!
 
 echo "Instance 2 is running (PID: $PID2)"
 echo ""
 echo "Both instances are running. You can monitor GPU usage with:"
 echo "  watch -n 1 nvidia-smi"
+echo "Instance output is logged to:"
+echo "  $TEMP_DIR/instance1.log"
+echo "  $TEMP_DIR/instance2.log"
 echo ""
 
 # Wait for both to complete
@@ -131,8 +134,10 @@ echo "  Instance 1 (PID $PID1): GPU 0-3"
 echo "  Instance 2 (PID $PID2): GPU 4-7"
 echo ""
 
-wait $PID1
-STATUS1=$?
+# `|| STATUS=` keeps a non-zero child exit from killing the script under
+# set -e — otherwise everything below (logs, combined check, cleanup)
+# is unreachable and the sibling instance is orphaned.
+STATUS1=0; wait $PID1 || STATUS1=$?
 echo ""
 echo "Instance 1 completed with status: $STATUS1"
 if [ $STATUS1 -ne 0 ]; then
@@ -140,8 +145,7 @@ if [ $STATUS1 -ne 0 ]; then
     cat "$TEMP_DIR/instance1.log" | tail -50
 fi
 
-wait $PID2
-STATUS2=$?
+STATUS2=0; wait $PID2 || STATUS2=$?
 echo ""
 echo "Instance 2 completed with status: $STATUS2"
 if [ $STATUS2 -ne 0 ]; then

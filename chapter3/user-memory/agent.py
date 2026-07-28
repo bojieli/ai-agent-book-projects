@@ -737,8 +737,25 @@ Current Memory Context will be provided with each message."""
                 if current_tool_calls:
                     for tool_call in current_tool_calls:
                         function_name = tool_call["function"]["name"]
-                        function_args = json.loads(tool_call["function"]["arguments"])
-                        
+                        # The assistant message with tool_calls is already in
+                        # self.conversation; bailing out on malformed arguments
+                        # would leave this tool_call_id unanswered and every
+                        # later request would be rejected by the provider.
+                        # Answer it with an error message instead.
+                        try:
+                            function_args = json.loads(tool_call["function"]["arguments"] or "{}")
+                        except json.JSONDecodeError as exc:
+                            error_msg = f"Invalid tool arguments (not valid JSON): {exc}"
+                            logger.info(f"  ❌ Error: {error_msg}")
+                            if self.verbose:
+                                print(f"\n  ❌ Tool Error: {error_msg}")
+                            self.conversation.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call["id"],
+                                "content": json.dumps({"error": error_msg})
+                            })
+                            continue
+
                         # Track tool call count
                         self.tool_call_counts[function_name] = self.tool_call_counts.get(function_name, 0) + 1
                         call_number = self.tool_call_counts[function_name]

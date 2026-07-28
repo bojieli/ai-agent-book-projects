@@ -31,6 +31,10 @@ class EditTool(BaseTool):
         
         if not file_path.exists():
             return {"error": f"File not found: {file_path}"}
+
+        # Empty old_string matches between every character; replace_all would insert everywhere.
+        if old_string == "":
+            return {"error": "old_string cannot be empty"}
         
         try:
             with open(file_path, 'r', encoding='utf-8') as f:

@@ -28,10 +28,15 @@ BASE_URL = os.environ.get("OPENAI_BASE_URL")  # 可选，兼容自建/代理端�
 
 
 def _report_issues(report: dict) -> list:
-    """JSON null issues must behave like omit ([])."""
+    """Return issue dicts; null/non-list → []; skip non-dict entries."""
+    if not isinstance(report, dict):
+        return []
     issues = report.get("issues")
-    return issues if issues is not None else []
-
+    if issues is None:
+        return []
+    if not isinstance(issues, list):
+        return []
+    return [i for i in issues if isinstance(i, dict)]
 
 def _to_openrouter_model(model: str) -> str:
     """把模型名映射到 OpenRouter 命名空间（用于无 OPENAI_API_KEY 的回退路径）。"""
@@ -86,14 +91,19 @@ def _slug(name: str) -> str:
 
 
 def _loads_lenient(content: str):
-    """容错解析 JSON：兼容个别模型把 JSON 包在 ```json ... ``` 代码围栏里的情况。"""
+    """容错解析 JSON：兼容代码围栏；非法/空内容返回 None（不抛）。"""
     s = (content or "").strip()
     if s.startswith("```"):
         s = s.split("\n", 1)[-1] if "\n" in s else s
         s = s.rsplit("```", 1)[0].strip()
         if s.lower().startswith("json"):
             s = s[4:].strip()
-    return json.loads(s)
+    if not s:
+        return None
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        return None
 
 
 def count_tokens(text: str) -> int:
@@ -245,7 +255,9 @@ def glossary_agent(client, tracker, book_text, source_lang="英文", target_lang
     # 模型偶尔输出 JSON 数组等合法但非对象的 JSON；此时无法取 glossary，按空表处理。
     if not isinstance(data, dict):
         return []
-    return data.get("glossary", [])
+    # JSON null glossary must behave like omit ([]); .get(..., []) does not.
+    glossary = data.get("glossary") or []
+    return glossary if isinstance(glossary, list) else []
 
 
 def translation_agent(client, tracker, chapter_text, glossary, chapter_name,
@@ -308,7 +320,8 @@ def proofreading_agent(client, tracker, translations, glossary, target_lang="中
     content = llm_chat(
         client, tracker, "Proofreading", messages, json_mode=True, note="一致性审校"
     )
-    return _loads_lenient(content)
+    data = _loads_lenient(content)
+    return data if isinstance(data, dict) else {}
 
 
 def manager_decision(client, tracker, task, file_index, report):
@@ -334,7 +347,9 @@ def manager_decision(client, tracker, task, file_index, report):
     content = llm_chat(
         client, tracker, "Manager", messages, json_mode=True, note="调度决策"
     )
-    return _loads_lenient(content)
+    # 模型偶尔输出 JSON 数组或其他非 dict 结构（同 glossary_agent 的防护）
+    data = _loads_lenient(content)
+    return data if isinstance(data, dict) else {}
 
 
 # ============================================================================
@@ -501,7 +516,11 @@ def run_orchestration(chapters, out_dir, *, source_lang="英文", target_lang="�
         client, tracker, manager_context["task"],
         manager_context["file_index"], report_summary
     )
-    revise = decision.get("revise", [])
+    # dict.get 的默认值只在键缺失时生效；显式的 "revise": null 会返回 None，
+    # 直接迭代会 TypeError（与 issues:null 同类，见 test_null_issues.py）
+    revise = decision.get("revise") or []
+    if isinstance(revise, str):
+        revise = [revise]
     emit(f"Manager 决策 ✓：需修订章节 {revise or '无'}")
 
     for name in revise:

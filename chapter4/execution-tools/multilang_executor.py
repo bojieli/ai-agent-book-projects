@@ -171,16 +171,23 @@ class LanguageExecutor:
                     logger.warning(f"Failed to write stdin: {e}")
             
             start_time = time.time()
-            
+
+            # Drain both pipes concurrently with the wait. Reading only *after*
+            # process.wait() deadlocks as soon as the child fills the OS pipe
+            # buffer (~256 KB here): the child blocks in write(), so it never
+            # exits and wait() never returns, turning a fast program with large
+            # stdout into a bogus TIMEOUT.
+            stdout_task = asyncio.ensure_future(get_all_output(process.stdout))
+            stderr_task = asyncio.ensure_future(get_all_output(process.stderr))
+
             try:
                 # Wait for process with timeout
                 await asyncio.wait_for(process.wait(), timeout=timeout)
                 execution_time = time.time() - start_time
-                
-                # Read output non-blocking
-                stdout = await get_all_output(process.stdout)
-                stderr = await get_all_output(process.stderr)
-                
+
+                stdout = await stdout_task
+                stderr = await stderr_task
+
                 logger.debug(f'Command completed in {execution_time:.2f}s')
                 
                 return {
@@ -199,8 +206,8 @@ class LanguageExecutor:
                     kill_process_tree(process.pid)
                     logger.info(f'Process {process.pid} killed due to timeout')
 
-                stdout = await get_all_output(process.stdout)
-                stderr = await get_all_output(process.stderr)
+                stdout = await stdout_task
+                stderr = await stderr_task
                 
                 return {
                     "status": ExecutionStatus.TIMEOUT,

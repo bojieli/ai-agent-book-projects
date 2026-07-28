@@ -1,5 +1,7 @@
 # vLLM and dependencies
-vllm>=0.6.0
+# Official vLLM GPU execution requires Linux (native Windows uses Ollama).
+# WSL2 identifies itself as Linux, so vLLM is installed there as expected.
+vllm>=0.6.0; platform_system == "Linux"
 torch>=2.0.0
 transformers>=4.36.0
 accelerate>=0.25.0
@@ -14,7 +16,7 @@ uvicorn>=0.24.0
 python-weather>=2.0.0
 
 # For Ollama support (Mac/local development)
-ollama>=0.1.0
+ollama>=0.5.1
 
 # For additional tools
 PyPDF2>=3.0.0

@@ -138,9 +138,11 @@ class ToolRegistry:
             Dictionary with conversion result
         """
         try:
-            # Normalize currency codes (handle S$ notation)
-            from_currency = from_currency.replace("S$", "SGD").replace("$", "USD") if from_currency.startswith("S$") else from_currency
-            to_currency = to_currency.replace("S$", "SGD").replace("$", "USD") if to_currency.startswith("S$") else to_currency
+            # Normalize currency codes (handle S$ / $ notation). Must be
+            # unconditional: gated on startswith("S$"), the "$" -> USD
+            # replacement could never fire (no "$" survives the S$ replace).
+            from_currency = from_currency.upper().replace("S$", "SGD").replace("$", "USD")
+            to_currency = to_currency.upper().replace("S$", "SGD").replace("$", "USD")
             
             logger.info(f"Converting {amount} {from_currency} to {to_currency}")
             
@@ -343,12 +345,13 @@ class ContextAwareAgent:
             # V4 Flash: OpenAI-compatible; tool calling + thinking mode.
             # Legacy deepseek-chat / deepseek-reasoner aliases deprecated 2026-07-24.
             "deepseek": (deepseek_base, "deepseek-v4-flash"),
+            "zhipu": ("https://open.bigmodel.cn/api/paas/v4", "glm-5.2"),
             "openrouter": ("https://openrouter.ai/api/v1", "openai/gpt-5.6-luna"),
         }
         if self.provider not in provider_defaults:
             raise ValueError(
                 f"Unsupported provider: {provider}. Use 'siliconflow', 'doubao', "
-                "'kimi', 'moonshot', 'deepseek', or 'openrouter'"
+                "'kimi', 'moonshot', 'deepseek', 'zhipu', or 'openrouter'"
             )
         base_url, default_model = provider_defaults[self.provider]
         resolved_model = model or default_model
@@ -746,7 +749,27 @@ Important: When you have gathered all necessary information and computed the fin
                 messages.append(assistant_msg)
                 for tool_call in message.tool_calls:
                     function_name = tool_call.function.name
-                    function_args = json.loads(tool_call.function.arguments)
+                    raw_args = tool_call.function.arguments or "{}"
+                    try:
+                        function_args = json.loads(raw_args)
+                    except json.JSONDecodeError as exc:
+                        # Keep the turn alive on bad tool-arg JSON.
+                        err = (
+                            f"Invalid tool arguments (not valid JSON): {exc}. "
+                            f"Raw arguments: {raw_args[:500]}"
+                        )
+                        logger.warning(err)
+                        self.trajectory.tool_calls.append(ToolCall(
+                            tool_name=function_name,
+                            arguments={},
+                            result={"error": err},
+                        ))
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps({"error": err}),
+                        })
+                        continue
 
                     logger.info(f"Executing tool: {function_name} with args: {function_args}")
 
@@ -763,7 +786,11 @@ Important: When you have gathered all necessary information and computed the fin
                         tool_msg = {
                             "role": "tool",
                             "tool_call_id": tool_call.id,
-                            "content": json.dumps(result)
+                            # default=str: code_interpreter returns the raw
+                            # namespace in `variables`, which can hold sets,
+                            # dict views etc. that json can't encode — that
+                            # must not abort the whole task.
+                            "content": json.dumps(result, default=str)
                         }
                     else:
                         tool_msg = {

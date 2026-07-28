@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 515" width="880" height="515" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="60" y="55" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Пыль → Звезда</text>
+<text x="150" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Физические законы</text>
+<line x1="240" y1="80" x2="255" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="260" y="55" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="350" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Звезда → Планета</text>
+<text x="350" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Гравитационная агрегация</text>
+<line x1="440" y1="80" x2="455" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="460" y="55" width="180" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="550" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Планета → Жизнь</text>
+<text x="550" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Саморепликация ДНК</text>
+<line x1="640" y1="80" x2="655" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="660" y="55" width="180" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="750" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Жизнь → Агент</text>
+<text x="750" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Самозагрузка кода</text>
+<line x1="30" y1="120" x2="850" y2="120" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="30" y="135" width="400" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="230" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Саморепликация ДНК: случайная мутация + естественный отбор</text>
+<text x="230" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Не понимает себя · Не может целенаправленно меняться · 3,7 млрд лет слепых проб и ошибок</text>
+<rect x="450" y="135" width="400" height="70" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="650" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инициализация агента: понимание кода + целевой дизайн</text>
+<text x="650" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Понимает собственные механизмы · Создаёт целенаправленно · Наследует лучшие практики</text>
+<rect x="20" y="225" width="390" height="295" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="215" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Исходный агент (собственный код)</text>
+<rect x="30" y="265" width="175" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="118" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Системный промпт</text>
+<text x="40" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Вы агент службы поддержки авиакомпании</text>
+<text x="40" y="326" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Правила отмены: ...</text>
+<text x="40" y="344" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Правила переноса: ...</text>
+<text x="40" y="362" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Инструмент: cancel_order</text>
+<rect x="215" y="265" width="185" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="308" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Код фреймворка агента</text>
+<text x="225" y="308" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Loop:</text>
+<text x="225" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  msg = llm(ctx)</text>
+<text x="225" y="344" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  if tool_call:</text>
+<text x="225" y="362" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">    exec(tool)</text>
+<rect x="30" y="400" width="370" height="54" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="215" y="419" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Определение инструмента + интеграция MCP + формат сообщений</text>
+<text x="215" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Проверенная качественная реализация</text>
+<text x="440" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Копировать + изменить</text>
+<line x1="410" y1="375" x2="470" y2="375" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="470" y="225" width="390" height="295" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="665" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Новый агент (после направленной модификации)</text>
+<rect x="480" y="265" width="180" height="124" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="570" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Новый системный промпт</text>
+<text x="490" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Вы агент службы поддержки интернет-магазина</text>
+<text x="490" y="326" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Правила возврата: ...</text>
+<text x="490" y="344" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Запрос по логистике: ...</text>
+<text x="490" y="362" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Инструмент: refund_order</text>
+<rect x="670" y="265" width="180" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="760" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Унаследованный код фреймворка</text>
+<text x="680" y="308" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Loop:</text>
+<text x="680" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  msg = llm(ctx)</text>
+<text x="680" y="344" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  if tool_call:</text>
+<text x="680" y="362" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">    exec(tool)</text>
+<rect x="480" y="400" width="370" height="54" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="665" y="419" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Новые инструменты + новая бизнес-логика</text>
+<text x="665" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Архитектурный каркас полностью унаследован → качество гарантировано</text>
+</svg>

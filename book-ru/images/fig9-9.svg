@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 400" width="780" height="400" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="35" y="60" width="310" height="220" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="190" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Симулированный скриншот страницы (с аннотациями)</text>
+<rect x="43" y="88" width="294" height="28" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<rect x="47" y="92" width="180" height="20" rx="2" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="53" y="102" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">www.example.com</text>
+<rect x="43" y="86" width="194" height="30" rx="2" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="43" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">[1]</text>
+<rect x="55" y="126" width="80" height="30" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="95" y="141" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Отправить</text>
+<rect x="53" y="124" width="84" height="34" rx="2" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="53" y="121" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">[2]</text>
+<rect x="55" y="168" width="200" height="28" rx="3" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<rect x="55" y="168" width="200" height="28" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="65" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Введите имя...</text>
+<rect x="53" y="166" width="204" height="32" rx="2" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="53" y="163" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">[3]</text>
+<text x="65" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Документация →</text>
+<rect x="53" y="206" width="160" height="22" rx="2" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="53" y="203" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">[4]</text>
+<rect x="375" y="60" width="370" height="220" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="560" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Список элементов (текстовое описание)</text>
+<text x="385" y="100" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">[1] &lt;input type=&quot;text&quot; placeholder=</text>
+<text x="385" y="118" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">     "Поиск" aria-label="Search"/&gt;</text>
+<text x="385" y="136" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">[2] &lt;button id=&quot;submit-btn&quot;</text>
+<text x="385" y="154" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">     aria-label=&quot;Submit form&quot;/&gt;</text>
+<text x="385" y="172" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">[3] &lt;input type=&quot;text&quot; placeholder=</text>
+<text x="385" y="190" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">     "Введите имя" value=""/&gt;</text>
+<text x="385" y="208" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">[4] &lt;a href=&quot;/docs&quot;</text>
+<text x="385" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">     aria-label=&quot;Documentation&quot;/&gt;</text>
+<text x="560" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Модель выдаёт ID → система выполняет с центральными координатами</text>
+<rect x="35" y="295" width="710" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="315" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Поток SoM (реализация browser-use)</text>
+<rect x="65" y="340" width="117" height="50" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="123" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Приобретение CDP</text>
+<text x="123" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">DOM/A11y</text>
+<line x1="184" y1="365" x2="199" y2="365" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="197" y="340" width="117" height="50" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="255" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Интерактивность</text>
+<text x="255" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Обнаружение</text>
+<line x1="316" y1="365" x2="331" y2="365" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="329" y="340" width="117" height="50" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="387" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ограничивающая рамка</text>
+<text x="387" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">+ Присвоение ID</text>
+<line x1="448" y1="365" x2="463" y2="365" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="461" y="340" width="117" height="50" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="519" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">На скриншоте</text>
+<text x="519" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Рисование рамки аннотации</text>
+<line x1="580" y1="365" x2="595" y2="365" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="593" y="340" width="117" height="50" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="651" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Список текстов</text>
+<text x="651" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">+ Скриншот → модель</text>
+<text x="390" y="407" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Границы применимости: структурированные интерфейсы (web/Accessibility API) | Игры/Canvas откатываются к чисто визуальным методам</text>
+</svg>

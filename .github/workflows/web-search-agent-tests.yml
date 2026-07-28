@@ -1,0 +1,45 @@
+name: web-search-agent tests
+
+on:
+  pull_request:
+    paths:
+      - "chapter1/web-search-agent/**"
+      - ".github/workflows/web-search-agent-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "chapter1/web-search-agent/**"
+      - ".github/workflows/web-search-agent-tests.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chapter1/web-search-agent
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: chapter1/web-search-agent/requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Check formatting
+        run: python -m black --check tests
+
+      - name: Run offline unit tests
+        env:
+          MOONSHOT_API_KEY: ""
+          KIMI_API_KEY: ""
+          OPENROUTER_API_KEY: ""
+        run: python -m pytest

@@ -104,12 +104,21 @@ class MultiRoleOrchestrator:
         """
         self._log_role_banner()
 
-        response = self.client.chat.completions.create(
+        kwargs = dict(
             model=self.model,
             messages=self._messages_for_api(),
             tools=self._tools_for_current_role(),
             temperature=0,
         )
+        try:
+            response = self.client.chat.completions.create(**kwargs)
+        except Exception as e:
+            # 推理模型（如 gpt-5.x）只接受默认 temperature，会拒绝自定义值；
+            # 移除该参数重试一次（同 book-translation / voice-werewolf 的做法）。
+            if "temperature" not in str(e).lower():
+                raise
+            kwargs.pop("temperature", None)
+            response = self.client.chat.completions.create(**kwargs)
         msg = response.choices[0].message
 
         # 没有工具调用 => 最终回复

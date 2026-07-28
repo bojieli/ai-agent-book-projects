@@ -138,6 +138,8 @@ class ValidationTest:
                 intent="check weather in city",
                 description="Weather checking workflow"
             )
+            workflow1.mark_validated()
+            workflow2.mark_validated()
             
             kb.save_workflow(workflow1)
             kb.save_workflow(workflow2)
@@ -175,6 +177,7 @@ class ValidationTest:
             ]
             
             for w in workflows:
+                w.mark_validated()
                 kb.save_workflow(w)
             
             # Test matching

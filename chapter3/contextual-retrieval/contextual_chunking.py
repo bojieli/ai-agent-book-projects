@@ -266,7 +266,13 @@ class ContextualChunker:
         
         # Reconstruct sentences with their endings
         result = []
-        for i in range(0, len(sentences) - 1, 2):
+        # Step to the end of the list: re.split with a capturing group yields
+        # [text, delim, text, delim, ..., trailing_text], so stopping at
+        # len(sentences) - 1 dropped the trailing fragment whenever the text
+        # did not end in terminal punctuation (and returned [] for text with
+        # none at all). The strip-and-filter below still discards the empty
+        # tail that re.split produces when the text does end in punctuation.
+        for i in range(0, len(sentences), 2):
             if i + 1 < len(sentences):
                 result.append(sentences[i] + sentences[i + 1])
             else:

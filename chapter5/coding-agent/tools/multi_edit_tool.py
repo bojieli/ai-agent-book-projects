@@ -29,22 +29,25 @@ class MultiEditTool(BaseTool):
         edits = params.get("edits")
         if edits is None:
             edits = []
-        
+
+        creating_new = False
         if not file_path.exists():
-            # Check if this is a file creation (first edit has empty old_string)
+            # Defer create/write until every edit succeeds (atomic).
             if edits and edits[0]["old_string"] == "":
+                creating_new = True
                 try:
                     file_path.parent.mkdir(parents=True, exist_ok=True)
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write("")
                 except Exception as e:
                     return {"error": f"Error creating file: {str(e)}"}
             else:
                 return {"error": f"File not found: {file_path}"}
         
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
+            if creating_new:
+                content = ""
+            else:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
             
             original_content = content
             results = []
@@ -55,12 +58,14 @@ class MultiEditTool(BaseTool):
                 new_string = edit["new_string"]
                 replace_all = edit.get("replace_all", False)
                 
-                if old_string == "" and i == 0:
-                    # File creation case
-                    content = new_string
-                    results.append({"edit": i + 1, "action": "created", "success": True})
-                    continue
-                
+                # Empty old_string only valid when creating a new file (tools.json / Edit parity).
+                if old_string == "":
+                    if creating_new and i == 0:
+                        content = new_string
+                        results.append({"edit": i + 1, "action": "created", "success": True})
+                        continue
+                    return {"error": "old_string cannot be empty"}
+
                 if old_string not in content:
                     return {
                         "error": f"Edit #{i + 1} failed: String not found",

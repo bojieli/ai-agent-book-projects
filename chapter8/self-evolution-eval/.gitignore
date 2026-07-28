@@ -11,6 +11,7 @@ env/
 
 # Environment / secrets
 .env
+output/
 
 # Generated artifacts
 output/

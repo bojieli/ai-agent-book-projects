@@ -60,8 +60,9 @@ class RaptorIndexer:
         """Split text into chunks with overlap."""
         words = text.split()
         chunks = []
+        step = max(1, self.config.chunk_size - self.config.chunk_overlap)
         
-        for i in range(0, len(words), self.config.chunk_size - self.config.chunk_overlap):
+        for i in range(0, len(words), step):
             chunk = " ".join(words[i:i + self.config.chunk_size])
             if chunk:
                 chunks.append(chunk)

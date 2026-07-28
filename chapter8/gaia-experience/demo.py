@@ -297,7 +297,7 @@ class ExperienceLearningDemo:
             print(f"   - Learned experiences: {len(self.agent.experiences)}")
             print(f"   - Experience DB: {self.agent.experience_db_path}")
     
-    def run_interactive_mode(self):
+    async def run_interactive_mode(self):
         """Run interactive mode for testing."""
         print("\n" + "="*60)
         print("INTERACTIVE MODE")
@@ -314,13 +314,13 @@ class ExperienceLearningDemo:
                 choice = input("\nEnter command (1-5): ").strip()
                 
                 if choice == "1":
-                    asyncio.run(self.demo_knowledge_base_indexing())
+                    await self.demo_knowledge_base_indexing()
                 elif choice == "2":
-                    asyncio.run(self.demo_trajectory_summarization())
+                    await self.demo_trajectory_summarization()
                 elif choice == "3":
-                    asyncio.run(self.demo_experience_agent())
+                    await self.demo_experience_agent()
                 elif choice == "4":
-                    asyncio.run(self.demo_workflow())
+                    await self.demo_workflow()
                 elif choice == "5":
                     print("\nGoodbye!")
                     break
@@ -343,7 +343,7 @@ async def main():
     import sys
     if len(sys.argv) > 1:
         if sys.argv[1] == "--interactive":
-            demo.run_interactive_mode()
+            await demo.run_interactive_mode()
         elif sys.argv[1] == "--kb":
             await demo.demo_knowledge_base_indexing()
         elif sys.argv[1] == "--summarize":

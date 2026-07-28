@@ -1,12 +1,11 @@
--- crossref.lua — internal cross-reference links for the book (English edition).
+-- crossref.lua — internal cross-reference links for the Turkish edition.
 --
--- Keeps the existing manual numbering (Figure N-M, Chapter N) but turns every
+-- Keeps the existing manual numbering (Şekil N-M, Bölüm N) but turns every
 -- in-text reference into a clickable internal link, and drops a \label anchor
 -- on each figure and chapter. Uses raw LaTeX \label / \hyperref so it does not
 -- depend on LaTeX counters (the displayed text is the manual number verbatim).
 --
--- Unlike the Chinese edition (where 图N-M is a single Str token), English
--- references span two inline elements: Str("Figure") Space Str("2-6").
+-- Turkish references span two inline elements: Str("Şekil") Space Str("2-6").
 -- So matching happens at the Inlines level, pairing the keyword token with the
 -- following number token.
 --
@@ -58,7 +57,7 @@ return {
     -- pandoc 3.x: a standalone image is a Figure block carrying the caption.
     Figure = function(el)
       local cap = pandoc.utils.stringify(el.caption.long)
-      local n, m = cap:match('Figure%s*(%d+)%-(%d+)')
+      local n, m = cap:match('Şekil%s*(%d+)%-(%d+)')
       if n and m then
         el.identifier = fig_label(n, m)  -- LaTeX writer emits \label{fig:N-M}
       end
@@ -68,7 +67,7 @@ return {
     -- Fallback for any inline image that still carries its own caption.
     Image = function(el)
       local cap = pandoc.utils.stringify(el.caption)
-      local n, m = cap:match('Figure%s*(%d+)%-(%d+)')
+      local n, m = cap:match('Şekil%s*(%d+)%-(%d+)')
       if n and m and el.identifier == '' then
         el.identifier = fig_label(n, m)
       end
@@ -85,20 +84,20 @@ return {
         local linked = false
         if el.t == 'Str' and i + 2 <= n
             and inlines[i + 1].t == 'Space' and inlines[i + 2].t == 'Str' then
-          local kind = 'Figure'
-          local pre = split_kw(el.text, 'Figure')
+          local kind = 'Şekil'
+          local pre = split_kw(el.text, 'Şekil')
           if not pre then
-            kind = 'Chapter'
-            pre = split_kw(el.text, 'Chapter')
+            kind = 'Bölüm'
+            pre = split_kw(el.text, 'Bölüm')
           end
           if pre then
             local numtext = inlines[i + 2].text
-            if kind == 'Figure' then
+            if kind == 'Şekil' then
               local a, b, suffix = numtext:match('^(%d+)%-(%d+)(.*)$')
               if a and ok_suffix(suffix) then
                 if pre ~= '' then out:insert(pandoc.Str(pre)) end
                 out:insert(pandoc.RawInline('latex',
-                  '\\crossreflink{' .. fig_label(a, b) .. '}{Figure ' .. a .. '-' .. b .. '}'))
+                  '\\crossreflink{' .. fig_label(a, b) .. '}{Şekil ' .. a .. '-' .. b .. '}'))
                 if suffix ~= '' then out:insert(pandoc.Str(suffix)) end
                 linked = true
               end
@@ -107,7 +106,7 @@ return {
               if a and ok_suffix(suffix) then
                 if pre ~= '' then out:insert(pandoc.Str(pre)) end
                 out:insert(pandoc.RawInline('latex',
-                  '\\crossreflink{' .. chap_label(a) .. '}{Chapter ' .. a .. '}'))
+                  '\\crossreflink{' .. chap_label(a) .. '}{Bölüm ' .. a .. '}'))
                 if suffix ~= '' then out:insert(pandoc.Str(suffix)) end
                 linked = true
               end

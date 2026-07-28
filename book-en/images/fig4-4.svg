@@ -1,50 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 540" width="880" height="540" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 440" width="880" height="440" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<text x="315.0" y="55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">t₁</text>
-<text x="490.0" y="55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">t₂</text>
-<text x="665.0" y="55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">t₃</text>
-<rect x="130" y="80" width="720" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="65.0" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Cancellation</text>
-<text x="65.0" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">(Urgent)</text>
-<rect x="140.0" y="95" width="280.0" height="28" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="280.0" y="109.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM reasoning...</text>
-<line x1="420.0" y1="90" x2="420.0" y2="210" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="420.0" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">⚡ user.interrupt: &quot;Stop!&quot;</text>
-<rect x="420.0" y="95" width="35.0" height="28" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="437.5" y="109.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
-<rect x="140.0" y="135" width="245.0" height="28" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="262.5" y="149.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tool executing...</text>
-<rect x="420.0" y="135" width="35.0" height="28" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="437.5" y="149.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
-<rect x="469.0" y="175" width="371.0" height="28" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="654.5" y="189.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">New LLM reasoning (including interrupt event + clear queue)</text>
-<rect x="130" y="240" width="720" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="65.0" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Queue-based</text>
-<text x="65.0" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">(Normal)</text>
-<rect x="140.0" y="255" width="105.0" height="24" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="192.5" y="267.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM</text>
-<rect x="266.0" y="255" width="294.0" height="28" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="413.0" y="269.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tool execution (search_web)</text>
-<rect x="581.0" y="255" width="189.0" height="28" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="675.5" y="269.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM comprehensive processing</text>
-<line x1="385.0" y1="286" x2="385.0" y2="370" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="385.0" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">user: &quot;Only look at the last 1 month&quot;</text>
-<rect x="350.0" y="305" width="150" height="24" rx="12" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="425.0" y="317.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Enqueue waiting</text>
-<rect x="581.0" y="340" width="35.0" height="20" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="598.5" y="350.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal"></text>
-<text x="567.0" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Batch append: tool.result + user input</text>
-<rect x="130" y="400" width="720" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="65.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Parallel</text>
-<text x="65.0" y="495" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">(Independent)</text>
-<rect x="140.0" y="415" width="560.0" height="28" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="420.0" y="429.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Main task: Data analysis (long execution)</text>
-<line x1="350.0" y1="450" x2="350.0" y2="530" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="350.0" y="458" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">user: &quot;How is the weather today?&quot;</text>
-<rect x="364.0" y="470" width="126.0" height="24" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="427.0" y="482.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Parallel LLM</text>
-<rect x="504.0" y="470" width="70.0" height="24" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="539.0" y="482.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Weather</text>
-<text x="584.5" y="482" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ Reply to user immediately</text>
-<text x="490.0" y="515" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tag: [Parallel with main task]</text>
+<text x="85" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">External event source</text>
+<rect x="10" y="82" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Web/App</text>
+<text x="15" y="118" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_user_message</text>
+<rect x="10" y="140" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="156" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Email system</text>
+<text x="15" y="176" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_email_reply</text>
+<rect x="10" y="198" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="214" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">GitHub</text>
+<text x="15" y="234" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_github_pr_update</text>
+<rect x="10" y="256" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Timer</text>
+<text x="15" y="292" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_timer_expire</text>
+<rect x="10" y="314" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Webhook</text>
+<text x="15" y="350" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_webhook_received</text>
+<rect x="10" y="372" width="150" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">System alert</text>
+<text x="15" y="408" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">on_resource_alert</text>
+<rect x="200" y="80" width="200" height="390" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="300" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">FastAPI server</text>
+<rect x="215" y="120" width="170" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="300" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">HTTP endpoint</text>
+<text x="300" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">POST /events/{type}</text>
+<rect x="215" y="190" width="170" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Event router</text>
+<text x="300" y="227" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM determines urgency</text>
+<rect x="215" y="260" width="170" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300" y="277" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Event queue</text>
+<text x="300" y="297" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Priority sorting</text>
+<rect x="215" y="330" width="170" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300" y="347" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent loop</text>
+<text x="300" y="367" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Fetch → Reason → Execute</text>
+<rect x="215" y="400" width="170" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="300" y="417" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Session management</text>
+<text x="300" y="437" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Multi-threaded context</text>
+<line x1="300" y1="170" x2="300" y2="190" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="300" y1="240" x2="300" y2="260" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="300" y1="310" x2="300" y2="330" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="300" y1="380" x2="300" y2="400" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="104" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="162" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="220" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="278" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="336" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="160" y1="394" x2="213" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="610" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MCP tool server</text>
+<rect x="460" y="82" width="250" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585" y="104" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Perception tools</text>
+<text x="470" y="130" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">search_web, read_file</text>
+<text x="470" y="148" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">read_webpage, parse_image</text>
+<rect x="460" y="182" width="250" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585" y="204" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">execution tool</text>
+<text x="470" y="230" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">code_interpreter</text>
+<text x="470" y="248" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">virtual_terminal, write_file</text>
+<rect x="460" y="282" width="250" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585" y="304" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">collaboration tool</text>
+<text x="470" y="330" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">browser_use</text>
+<text x="470" y="348" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">request_human_approval</text>
+<rect x="460" y="382" width="250" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="585" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">notification tool</text>
+<text x="470" y="430" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">send_email, send_slack</text>
+<text x="470" y="448" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">send_im_notification</text>
+<line x1="400" y1="355" x2="458" y2="180" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="458" y1="260" x2="400" y2="355" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="740" y="82" width="130" height="380" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="805" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">persistence layer</text>
+<text x="805" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">conversation history</text>
+<text x="805" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">event log</text>
+<text x="805" y="270" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">scheduled task</text>
+<text x="805" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool status</text>
+<text x="805" y="380" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">audit trail</text>
 </svg>

@@ -65,7 +65,6 @@ def quickstart():
         config=MemoryProcessorConfig(
             conversation_interval=1,  # Process after each conversation
             min_conversation_turns=1,
-            update_threshold=0.6,
             output_operations=True
         ),
         verbose=False

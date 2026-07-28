@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 980 560" width="980" height="560" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="60" y="58" width="860" height="66" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="72" y="76" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Мультиплатформенный шлюз сообщений (слой взаимодействия с пользователем)</text>
+<rect x="129.0" y="84" width="130" height="32" rx="16" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="194.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">WhatsApp</text>
+<rect x="277.0" y="84" width="130" height="32" rx="16" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="342.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Telegram</text>
+<rect x="425.0" y="84" width="130" height="32" rx="16" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="490.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">iMessage</text>
+<rect x="573.0" y="84" width="130" height="32" rx="16" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="638.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Slack</text>
+<rect x="721.0" y="84" width="130" height="32" rx="16" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="786.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">CLI</text>
+<line x1="490.0" y1="126" x2="490.0" y2="158" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="502.0" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Запрос на естественном языке</text>
+<rect x="200" y="160" width="580" height="210" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="200" y="160" width="580" height="40" rx="6" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="490.0" y="180" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Среда выполнения кодинг-агента (ядро вывода + выполнения)</text>
+<rect x="208.0" y="216" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="274.0" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Code Interpreter</text>
+<text x="274.0" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Выполнение кода</text>
+<rect x="352.0" y="216" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="418.0" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Оболочка Bash</text>
+<text x="418.0" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Системные команды</text>
+<rect x="496.0" y="216" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="562.0" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Чтение файла</text>
+<text x="562.0" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Чтение файла</text>
+<rect x="640.0" y="216" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="706.0" y="238" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Записать файл</text>
+<text x="706.0" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Записать файл</text>
+<rect x="280.0" y="288" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="346.0" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Редактировать файл</text>
+<text x="346.0" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Редактировать файл</text>
+<rect x="424.0" y="288" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="490.0" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Glob</text>
+<text x="490.0" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Поиск файлов</text>
+<rect x="568.0" y="288" width="132" height="60" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="634.0" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Grep</text>
+<text x="634.0" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Поиск содержимого</text>
+<rect x="22" y="198" width="158" height="86" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="101.0" y="220" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Модуль веб-поиска</text>
+<text x="101.0" y="242" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Deep Research</text>
+<text x="101.0" y="264" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Веб-запрос · парсинг</text>
+<line x1="182" y1="241.0" x2="198" y2="265.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="800" y="198" width="158" height="86" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="879.0" y="220" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Автоматизация браузера</text>
+<text x="879.0" y="242" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Computer Use</text>
+<text x="879.0" y="264" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Playwright DOM</text>
+<line x1="782" y1="265.0" x2="798" y2="241.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="490.0" y1="372" x2="490.0" y2="408" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="502.0" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Чтение / запись файла</text>
+<rect x="60" y="410" width="860" height="140" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="72" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Файловая система (память · знания · хаб возможностей)</text>
+<rect x="53.0" y="444" width="162" height="76" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="134.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">MEMORY.md</text>
+<text x="134.0" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Факты высокого уровня / предпочтения пользователя</text>
+<rect x="231.0" y="444" width="162" height="76" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="312.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">daily/YYYY-MM-DD.md</text>
+<text x="312.0" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ежедневный архив / логи взаимодействий</text>
+<rect x="409.0" y="444" width="162" height="76" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="490.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">SOUL.md</text>
+<text x="490.0" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Идентичность агента и правила поведения</text>
+<rect x="587.0" y="444" width="162" height="76" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="668.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Файлы базы знаний</text>
+<text x="668.0" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Опыт выполнения задач / самоэволюция</text>
+<rect x="765.0" y="444" width="162" height="76" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="846.0" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Контроль версий Git</text>
+<text x="846.0" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Откат памяти / аудит истории</text>
+<rect x="60" y="566" width="860" height="38" rx="6" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="490.0" y="585" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM = новая операционная система: скрывает сложность интеллекта, обеспечивает единую абстракцию</text>
+</svg>

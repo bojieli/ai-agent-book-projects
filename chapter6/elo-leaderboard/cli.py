@@ -48,6 +48,9 @@ def _load_battles(path: str) -> pd.DataFrame:
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
     df = pd.DataFrame(data)
+    # `[]` from --num-battles 0 has no columns; treat as empty battle frame.
+    if len(df) == 0:
+        return pd.DataFrame(columns=["model_a", "model_b", "winner"])
     required = {"model_a", "model_b", "winner"}
     if not required.issubset(df.columns):
         raise ValueError(

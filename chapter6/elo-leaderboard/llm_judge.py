@@ -32,6 +32,12 @@ Bradley-Terry pipeline.
 import os
 from typing import Dict, List, Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Default candidate roster and judge (Claude models). Kept small because every
 # battle costs several API calls (two responses + two swapped judgements).
 DEFAULT_CANDIDATE_MODELS = ["claude-opus-4-8", "claude-haiku-4-5"]

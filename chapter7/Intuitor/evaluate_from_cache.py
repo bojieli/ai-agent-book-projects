@@ -23,12 +23,23 @@ def extract_answer_from_boxed(text: str) -> Optional[str]:
     # 确保是字符串
     text = str(text)
     
-    # 匹配 \\boxed{number}，这个模式同时匹配 \boxed{} 和 \(\boxed{}\)
-    match = re.search(r'\\boxed\{([^}]+)\}', text)
-    if match:
-        return match.group(1).strip()
-    
-    return None
+    # Balanced braces so nested LaTeX like \boxed{\frac{1}{2}} is not truncated.
+    marker = "\\boxed{"
+    start = text.find(marker)
+    if start < 0:
+        return None
+    i = start + len(marker)
+    depth = 1
+    while i < len(text) and depth:
+        ch = text[i]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+        i += 1
+    if depth != 0:
+        return None
+    return text[start + len(marker) : i - 1].strip()
 
 
 def extract_answer_from_gsm8k_format(text: str) -> Optional[str]:
@@ -51,6 +62,12 @@ def extract_answer_from_gsm8k_format(text: str) -> Optional[str]:
     return None
 
 
+def _format_normalized_number(num: float) -> str:
+    if num.is_integer():
+        return str(int(num))
+    return str(num)
+
+
 def normalize_number(text: str) -> Optional[str]:
     """标准化数字格式：去除逗号、空格、LaTeX 符号等"""
     if not text:
@@ -62,6 +79,28 @@ def normalize_number(text: str) -> Optional[str]:
     
     # 确保是字符串
     text = str(text)
+
+    # Evaluate \frac{a}{b} before brace stripping (else "\frac{6}{2}" becomes "frac62").
+    frac = re.search(r'\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', text)
+    if frac:
+        try:
+            num = float(frac.group(1).replace(",", "").strip())
+            den = float(frac.group(2).replace(",", "").strip())
+            if den != 0:
+                return _format_normalized_number(num / den)
+        except ValueError:
+            pass
+
+    # Plain a/b (e.g. boxed "6/2") before taking the first digit run alone.
+    slash = re.fullmatch(r'\s*(-?\d+(?:\.\d+)?)\s*/\s*(-?\d+(?:\.\d+)?)\s*', text)
+    if slash:
+        try:
+            num = float(slash.group(1))
+            den = float(slash.group(2))
+            if den != 0:
+                return _format_normalized_number(num / den)
+        except ValueError:
+            pass
     
     # 去除 LaTeX 符号
     text = text.replace("\\,", "")
@@ -75,14 +114,8 @@ def normalize_number(text: str) -> Optional[str]:
     match = re.search(r'-?\d+\.?\d*', text)
     if match:
         num_str = match.group(0)
-        # 转换为浮点数再转回字符串，以标准化格式
         try:
-            num = float(num_str)
-            # 如果是整数，返回整数格式
-            if num.is_integer():
-                return str(int(num))
-            else:
-                return str(num)
+            return _format_normalized_number(float(num_str))
         except ValueError:
             return None
     
@@ -179,17 +212,22 @@ def evaluate_from_parquet(parquet_path: str, verbose: bool = False):
         sample_id = row['sample_id']
         sample_data = row['sample']
         
-        # 转换 sample_id 为整数（如果它是字符串）
-        if isinstance(sample_id, str):
-            try:
-                sample_id = int(sample_id)
-            except ValueError:
-                if verbose:
-                    print(f"⚠️  样本 {sample_id}: 无法转换为整数")
-                continue
+        # 转换 sample_id 为原生 int：parquet 的数值列返回 np.int64，
+        # 直接放进结果里会让最后的 json.dump 抛
+        # "Object of type int64 is not JSON serializable"，把 -o 输出截断。
+        try:
+            sample_id = int(sample_id)
+        except (TypeError, ValueError):
+            if verbose:
+                print(f"⚠️  样本 {sample_id}: 无法转换为整数")
+            continue
         
         # 提取模型输出
-        model_output = sample_data.get('text', [''])[0] if isinstance(sample_data.get('text'), list) else sample_data.get('text', '')
+        text_field = sample_data.get('text', [''])
+        if isinstance(text_field, list):
+            model_output = text_field[0] if text_field else ''
+        else:
+            model_output = text_field if text_field is not None else ''
         
         # 确保 model_output 是字符串
         if isinstance(model_output, bytes):

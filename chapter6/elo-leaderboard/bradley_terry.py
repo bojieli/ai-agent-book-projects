@@ -32,6 +32,9 @@ def compute_mle_elo(df: pd.DataFrame,
     Returns:
         Series of Elo ratings indexed by model name
     """
+    # Empty battle frame (e.g. --num-battles 0 or fully filtered input) is valid.
+    if df is None or len(df) == 0:
+        return pd.Series(dtype=float)
     # Create pivot tables for wins
     ptbl_a_win = pd.pivot_table(
         df[df["winner"] == "model_a"],
@@ -42,7 +45,9 @@ def compute_mle_elo(df: pd.DataFrame,
         observed=False
     )
     
-    # Handle ties (including "tie (bothbad)")
+    # Handle ties (including "tie (bothbad)"). Symmetrize only after aligning to
+    # the full model square; (pivot + pivot.T) on a one-sided A×B pivot zeroes
+    # every cell via pandas index/column alignment.
     if sum(df["winner"].isin(["tie", "tie (bothbad)"])) == 0:
         ptbl_tie = pd.DataFrame(0, index=ptbl_a_win.index, columns=ptbl_a_win.columns)
     else:
@@ -54,7 +59,6 @@ def compute_mle_elo(df: pd.DataFrame,
             fill_value=0,
             observed=False
         )
-        ptbl_tie = ptbl_tie + ptbl_tie.T
     
     ptbl_b_win = pd.pivot_table(
         df[df["winner"] == "model_b"],
@@ -65,8 +69,15 @@ def compute_mle_elo(df: pd.DataFrame,
         observed=False
     )
     
+    # Align pivots on the full model universe (small samples otherwise leave NaNs).
+    models = sorted(set(df["model_a"]) | set(df["model_b"]))
+    ptbl_a_win = ptbl_a_win.reindex(index=models, columns=models, fill_value=0)
+    ptbl_b_win = ptbl_b_win.reindex(index=models, columns=models, fill_value=0)
+    ptbl_tie = ptbl_tie.reindex(index=models, columns=models, fill_value=0)
+    ptbl_tie = ptbl_tie + ptbl_tie.T
+
     # Compute win matrix (A wins * 2 + B wins * 2 + ties)
-    ptbl_win = ptbl_a_win * 2 + ptbl_b_win.T * 2 + ptbl_tie
+    ptbl_win = (ptbl_a_win * 2 + ptbl_b_win.T * 2 + ptbl_tie).fillna(0)
     
     # Map models to indices
     models = pd.Series(np.arange(len(ptbl_win.index)), index=ptbl_win.index)
@@ -140,7 +151,9 @@ def predict_win_rate(elo_ratings: Dict[str, float],
             wins[b][a] = 1 - ea
     
     data = {
-        a: [wins[a][b] if a != b else np.NAN for b in names]
+        # np.nan, not np.NAN: the upper-case aliases were removed in NumPy 2.0
+        # and requirements.txt allows numpy>=1.24 (i.e. 2.x).
+        a: [wins[a][b] if a != b else np.nan for b in names]
         for a in names
     }
     

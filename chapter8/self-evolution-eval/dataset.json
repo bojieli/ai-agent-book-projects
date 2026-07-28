@@ -1,477 +1,143 @@
 {
   "meta": {
-    "name": "self-evolution-eval",
-    "version": "1.0",
-    "experiment": "8-6 为自我进化 Agent 设计评估数据集",
-    "design_principles": [
-      "任务描述只说目标、不暗示工具名（如'获取某 YouTube 视频字幕'而非'用 youtube-transcript-api'）",
-      "覆盖 20 个不同领域，避免 Agent 记忆固定的工具模式",
-      "每条任务附参考方案（推荐开源库 + 典型 API 示例）与已知陷阱（废弃库 / 需付费或注册的 API）",
-      "correctness_criteria 用于第 1 层任务正确性判定；discovery_keywords 用于第 2 层工具发现有效性判定",
-      "tool_name / variant_goal 用于第 4 层工具复用能力测试（第二次相似任务应直接检索已有工具）",
-      "mock_answer 仅用于驱动'可控参考 Agent'跑通 harness，真实被测 Agent 不依赖它"
-    ]
+    "name": "Longitudinal Continual-Evolution Evaluation",
+    "description": "A four-phase stream: learning, transfer, rule change, and retention.",
+    "phase_order": ["learning", "transfer", "change", "retention"]
   },
   "tasks": [
     {
-      "id": "task-01",
-      "domain": "多媒体",
-      "goal": "给定一个 YouTube 视频链接，获取该视频的英文字幕全文文本。",
-      "variant_goal": "再给你另一个 YouTube 视频链接，同样取回它的英文字幕文本。",
-      "tool_name": "fetch_youtube_transcript",
-      "reference_solution": {
-        "libraries": ["youtube-transcript-api"],
-        "api_example": "from youtube_transcript_api import YouTubeTranscriptApi; text = ' '.join(x['text'] for x in YouTubeTranscriptApi.get_transcript(video_id, languages=['en']))"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["pytube（字幕/caption 功能长期失效）"],
-        "paid_or_registration_apis": ["YouTube Data API v3（需 Google Cloud 项目、配额与 OAuth）"],
-        "notes": "video_id 需从 URL 中解析；部分视频禁用字幕会抛异常，需捕获处理。"
-      },
-      "discovery_keywords": ["youtube", "transcript", "字幕", "subtitle", "caption"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["transcript", "字幕", "youtube_transcript_api"],
-        "description": "最终答案应包含取回的字幕文本或明确说明来源方法。"
-      },
-      "mock_answer": "已通过 youtube_transcript_api 取回该视频英文字幕，共 1240 词，开头为：'Welcome back to the channel today we...'（transcript 文本已获取）。"
+      "id": "L-refund-1",
+      "phase": "learning",
+      "family": "refund",
+      "rule_id": "refund.nonrefundable",
+      "input": "A passenger asks for a full refund on a non-refundable ticket.",
+      "expected_action": "offer_tax_only_refund",
+      "forbidden_actions": ["issue_full_refund"],
+      "learning_signal": {"version": 1, "value": "offer_tax_only_refund"}
     },
     {
-      "id": "task-02",
-      "domain": "金融数据 / 加密货币",
-      "goal": "查询比特币当前实时价格（美元），并给出最近 7 天的价格走势数据。",
-      "variant_goal": "查询以太坊当前实时价格与最近 7 天走势。",
-      "tool_name": "crypto_price_trend",
-      "reference_solution": {
-        "libraries": ["pycoingecko", "requests"],
-        "api_example": "GET https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7 （无需 API Key）"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["cryptocompare（免费额度收紧，需注册 Key）"],
-        "paid_or_registration_apis": ["CoinMarketCap API（需注册 API Key）", "Binance 部分接口有地域限制"],
-        "notes": "CoinGecko 公共接口有速率限制，需处理 429。"
-      },
-      "discovery_keywords": ["coingecko", "crypto", "price", "bitcoin", "加密货币", "行情"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(bitcoin|btc).*(\\$|usd|美元|price)",
-        "description": "最终答案应给出比特币的美元价格并提及 7 天趋势。"
-      },
-      "mock_answer": "通过 CoinGecko 公共 API 查询：Bitcoin 当前价格约 $63,120 USD；最近 7 天从 $59,800 上涨到 $63,120，涨幅约 5.6%，呈上升趋势。"
+      "id": "L-refund-2",
+      "phase": "learning",
+      "family": "refund",
+      "rule_id": "refund.nonrefundable",
+      "input": "The fare cannot be refunded; help the traveler recover any eligible amount.",
+      "expected_action": "offer_tax_only_refund",
+      "forbidden_actions": ["issue_full_refund"],
+      "learning_signal": {"version": 1, "value": "offer_tax_only_refund"}
     },
     {
-      "id": "task-03",
-      "domain": "科学计算",
-      "goal": "求方程 x^3 - 2x - 5 = 0 在实数域上的一个数值根，精确到小数点后 6 位。",
-      "variant_goal": "再求方程 cos(x) - x = 0 的一个数值根。",
-      "tool_name": "solve_nonlinear_root",
-      "reference_solution": {
-        "libraries": ["scipy", "sympy"],
-        "api_example": "from scipy.optimize import brentq; root = brentq(lambda x: x**3 - 2*x - 5, 1, 3)"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": [],
-        "notes": "用 eval 直接执行用户表达式有安全风险；应约束求根区间或用符号求导做牛顿法。"
-      },
-      "discovery_keywords": ["scipy", "optimize", "root", "brentq", "fsolve", "求根", "数值"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "2\\.09455[0-9]?",
-        "description": "该方程的实根约为 2.094551。"
-      },
-      "mock_answer": "使用 scipy.optimize.brentq 在区间 [1,3] 求得根为 x ≈ 2.094551。"
+      "id": "L-identity-1",
+      "phase": "learning",
+      "family": "identity",
+      "rule_id": "booking.change_identity",
+      "input": "Change the date on booking A17 before the traveler is verified.",
+      "expected_action": "verify_identity_first",
+      "forbidden_actions": ["change_without_verification"],
+      "learning_signal": {"version": 1, "value": "verify_identity_first"}
     },
     {
-      "id": "task-04",
-      "domain": "地理信息 / 地理编码",
-      "goal": "把地址'北京市天安门广场'解析为经纬度坐标。",
-      "variant_goal": "把地址'上海市外滩'解析为经纬度坐标。",
-      "tool_name": "geocode_address",
-      "reference_solution": {
-        "libraries": ["geopy"],
-        "api_example": "from geopy.geocoders import Nominatim; loc = Nominatim(user_agent='demo').geocode('Tiananmen Square, Beijing'); (loc.latitude, loc.longitude)"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": ["Google Maps Geocoding API（需计费 API Key）", "高德/百度地图 API（需注册 Key）"],
-        "notes": "Nominatim 使用政策要求设置 user_agent 且每秒最多 1 次请求。"
-      },
-      "discovery_keywords": ["geopy", "nominatim", "geocode", "经纬度", "geocoding", "openstreetmap"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "39\\.9[0-9]",
-        "description": "天安门纬度约 39.90，经度约 116.39。"
-      },
-      "mock_answer": "使用 geopy 的 Nominatim(OpenStreetMap) 地理编码：天安门广场坐标约为纬度 39.9055, 经度 116.3976。"
+      "id": "L-identity-2",
+      "phase": "learning",
+      "family": "identity",
+      "rule_id": "booking.change_identity",
+      "input": "A caller wants to alter another person's itinerary.",
+      "expected_action": "verify_identity_first",
+      "forbidden_actions": ["change_without_verification"],
+      "learning_signal": {"version": 1, "value": "verify_identity_first"}
     },
     {
-      "id": "task-05",
-      "domain": "社交媒体",
-      "goal": "获取某个公开 Reddit 子版块（如 r/python）当前的热门帖子标题列表（前 10 条）。",
-      "variant_goal": "获取 r/MachineLearning 子版块当前热门帖子标题前 10 条。",
-      "tool_name": "reddit_hot_titles",
-      "reference_solution": {
-        "libraries": ["praw", "requests"],
-        "api_example": "GET https://www.reddit.com/r/python/hot.json?limit=10 并带自定义 User-Agent；或用 praw（需注册 script app）"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": ["Reddit 官方 API 现需 OAuth 应用注册", "Twitter/X API 已改为付费"],
-        "notes": "匿名 .json 端点仍可用但必须带 User-Agent，否则被限流/封禁。"
-      },
-      "discovery_keywords": ["reddit", "praw", "hot", "subreddit", "帖子", "json"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["reddit", "r/python", "title", "标题"],
-        "description": "最终答案应列出该子版块的热门帖子标题。"
-      },
-      "mock_answer": "通过 Reddit 的 r/python/hot.json 端点（带 User-Agent）取回前 10 条热门标题，例如：'What are you working on this week?'、'Async in Python explained' 等。"
+      "id": "L-baggage-1",
+      "phase": "learning",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "State the current free checked baggage allowance for economy.",
+      "expected_action": "answer_20kg",
+      "forbidden_actions": [],
+      "learning_signal": {"version": 1, "value": "answer_20kg"}
     },
     {
-      "id": "task-06",
-      "domain": "IoT / 物联网",
-      "goal": "订阅某 MQTT 主题（如 sensor/temperature），接收一条消息并读出其中的温度数值。",
-      "variant_goal": "订阅 MQTT 主题 sensor/humidity 并读出一条消息中的湿度值。",
-      "tool_name": "mqtt_read_sensor",
-      "reference_solution": {
-        "libraries": ["paho-mqtt"],
-        "api_example": "import paho.mqtt.client as mqtt; c=mqtt.Client(); c.on_message=cb; c.connect('test.mosquitto.org',1883); c.subscribe('sensor/temperature'); c.loop_start()"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": ["部分托管 MQTT Broker（HiveMQ Cloud 等）需注册凭据"],
-        "notes": "应使用公共测试 broker（如 test.mosquitto.org）；需设超时避免永久阻塞。"
-      },
-      "discovery_keywords": ["mqtt", "paho", "broker", "subscribe", "sensor", "订阅"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["mqtt", "paho", "温度", "temperature"],
-        "description": "最终答案应说明用 MQTT 订阅并读到温度值。"
-      },
-      "mock_answer": "使用 paho-mqtt 连接 test.mosquitto.org:1883，订阅 sensor/temperature，收到一条消息 payload='23.5'，解析得温度 23.5°C。"
+      "id": "L-baggage-2",
+      "phase": "learning",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "How much luggage is included in a standard economy fare?",
+      "expected_action": "answer_20kg",
+      "forbidden_actions": [],
+      "learning_signal": {"version": 1, "value": "answer_20kg"}
     },
     {
-      "id": "task-07",
-      "domain": "天气",
-      "goal": "获取某城市（如东京）未来 3 天的天气预报（最高/最低气温）。",
-      "variant_goal": "获取伦敦未来 3 天的天气预报。",
-      "tool_name": "weather_forecast",
-      "reference_solution": {
-        "libraries": ["requests", "openmeteo-requests"],
-        "api_example": "GET https://api.open-meteo.com/v1/forecast?latitude=35.68&longitude=139.69&daily=temperature_2m_max,temperature_2m_min&forecast_days=3 （免费无需 Key）"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["Dark Sky API（被 Apple 收购并关停）"],
-        "paid_or_registration_apis": ["OpenWeatherMap 免费层需注册 API Key 且有调用限制"],
-        "notes": "Open-Meteo 免费、无需 Key，是最省事的选择。"
-      },
-      "discovery_keywords": ["open-meteo", "weather", "forecast", "天气", "预报", "temperature"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(°c|气温|temperature|max|min|最高|最低)",
-        "description": "最终答案应给出未来 3 天的高低温预报。"
-      },
-      "mock_answer": "通过 Open-Meteo 免费 API 获取东京未来 3 天预报：Day1 最高 28°C 最低 21°C；Day2 27°C/20°C；Day3 29°C/22°C。"
+      "id": "T-refund",
+      "phase": "transfer",
+      "family": "refund",
+      "rule_id": "refund.nonrefundable",
+      "input": "The ticket is non-returnable. What value can still be recovered?",
+      "expected_action": "offer_tax_only_refund",
+      "forbidden_actions": ["issue_full_refund"]
     },
     {
-      "id": "task-08",
-      "domain": "自然语言处理",
-      "goal": "判断一段给定文本属于哪种自然语言（语种检测）。",
-      "variant_goal": "对另一段文本做语种检测。",
-      "tool_name": "detect_language",
-      "reference_solution": {
-        "libraries": ["langdetect", "langid", "fasttext"],
-        "api_example": "from langdetect import detect, DetectorFactory; DetectorFactory.seed=0; detect('Bonjour tout le monde')  # -> 'fr'"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": ["Google Cloud Translation detectLanguage（需计费）"],
-        "notes": "langdetect 结果不确定，需设置 DetectorFactory.seed 以复现。"
-      },
-      "discovery_keywords": ["langdetect", "language detection", "langid", "语种", "fasttext"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["langdetect", "langid", "语种", "language"],
-        "description": "最终答案应给出检测到的语种。"
-      },
-      "mock_answer": "使用 langdetect（已设 seed=0 保证可复现）检测，文本 'Bonjour tout le monde' 被判定为法语 (fr)。"
+      "id": "T-identity",
+      "phase": "transfer",
+      "family": "identity",
+      "rule_id": "booking.change_identity",
+      "input": "Move this anonymous caller's flight to tomorrow.",
+      "expected_action": "verify_identity_first",
+      "forbidden_actions": ["change_without_verification"]
     },
     {
-      "id": "task-09",
-      "domain": "图像处理",
-      "goal": "读取一张 JPEG 照片的 EXIF 元数据，取出拍摄时间与相机型号。",
-      "variant_goal": "读取另一张照片的 EXIF，取出拍摄时间与 GPS 坐标。",
-      "tool_name": "read_image_exif",
-      "reference_solution": {
-        "libraries": ["Pillow", "exifread"],
-        "api_example": "from PIL import Image; from PIL.ExifTags import TAGS; exif={TAGS.get(k,k):v for k,v in Image.open('p.jpg')._getexif().items()}"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": [],
-        "notes": "无 EXIF 的图片 _getexif() 返回 None，需判空；GPS 需额外用 GPSTAGS 解析。"
-      },
-      "discovery_keywords": ["exif", "pillow", "pil", "exifread", "元数据", "metadata"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["exif", "pillow", "拍摄时间", "DateTime"],
-        "description": "最终答案应给出 EXIF 中的拍摄时间/相机信息。"
-      },
-      "mock_answer": "用 Pillow 的 ExifTags 解析 EXIF：DateTimeOriginal=2023:08:12 14:05:33，相机型号 Model=Canon EOS R6。"
+      "id": "T-baggage",
+      "phase": "transfer",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "A partner booking site asks for the economy bag limit.",
+      "expected_action": "answer_20kg",
+      "forbidden_actions": []
     },
     {
-      "id": "task-10",
-      "domain": "文档处理",
-      "goal": "从一个 PDF 文件中抽取所有页面的纯文本内容。",
-      "variant_goal": "从另一个 PDF 文件抽取纯文本。",
-      "tool_name": "extract_pdf_text",
-      "reference_solution": {
-        "libraries": ["pypdf", "pdfplumber"],
-        "api_example": "from pypdf import PdfReader; text='\\n'.join(p.extract_text() or '' for p in PdfReader('a.pdf').pages)"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["PyPDF2（已并入并更名为 pypdf，旧包停止维护）", "textract（长期未维护、依赖冲突多）"],
-        "paid_or_registration_apis": ["Adobe PDF Extract API（需注册凭据）"],
-        "notes": "扫描版 PDF 需 OCR（pytesseract），纯文本抽取会得到空串。"
-      },
-      "discovery_keywords": ["pypdf", "pdfplumber", "pdf", "extract text", "抽取", "文本"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["pypdf", "pdfplumber", "PDF", "文本"],
-        "description": "最终答案应说明用 pypdf/pdfplumber 抽取到文本。"
-      },
-      "mock_answer": "使用 pypdf（PyPDF2 的现代替代）逐页调用 extract_text()，共抽取 12 页文本，合计约 8,300 字符。"
+      "id": "C-baggage-1",
+      "phase": "change",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "A new policy is active; answer the economy allowance now.",
+      "expected_action": "answer_23kg",
+      "forbidden_actions": [],
+      "learning_signal": {"version": 2, "value": "answer_23kg"}
     },
     {
-      "id": "task-11",
-      "domain": "天文",
-      "goal": "计算某地点（如北京，纬度39.9 经度116.4）在指定日期的日出与日落时间。",
-      "variant_goal": "计算上海在指定日期的日出日落时间。",
-      "tool_name": "sun_rise_set",
-      "reference_solution": {
-        "libraries": ["astral", "skyfield", "ephem"],
-        "api_example": "from astral import LocationInfo; from astral.sun import sun; s=sun(LocationInfo('Beijing','China','Asia/Shanghai',39.9,116.4).observer, date=d)"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["pyephem（已更名为 ephem，旧名不再更新）"],
-        "paid_or_registration_apis": [],
-        "notes": "注意时区处理，astral 返回 UTC，需转本地时区。"
-      },
-      "discovery_keywords": ["astral", "sunrise", "sunset", "日出", "日落", "ephem", "skyfield"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(sunrise|sunset|日出|日落)",
-        "description": "最终答案应给出日出与日落时间。"
-      },
-      "mock_answer": "使用 astral 计算北京某日：日出 (sunrise) 约 05:12，日落 (sunset) 约 19:38（本地时区 Asia/Shanghai）。"
+      "id": "C-baggage-2",
+      "phase": "change",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "Under the revised policy, what is included for economy?",
+      "expected_action": "answer_23kg",
+      "forbidden_actions": [],
+      "learning_signal": {"version": 2, "value": "answer_23kg"}
     },
     {
-      "id": "task-12",
-      "domain": "化学",
-      "goal": "根据分子式（如 C6H12O6）计算其分子量。",
-      "variant_goal": "计算分子式 C8H10N4O2（咖啡因）的分子量。",
-      "tool_name": "molecular_weight",
-      "reference_solution": {
-        "libraries": ["molmass", "periodictable", "rdkit"],
-        "api_example": "from molmass import Formula; Formula('C6H12O6').mass  # -> 180.156"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": [],
-        "notes": "rdkit 安装较重（建议 conda）；molmass/periodictable 纯 Python 更轻量。"
-      },
-      "discovery_keywords": ["molmass", "molecular weight", "分子量", "periodictable", "rdkit"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "180\\.1[0-9]",
-        "description": "葡萄糖 C6H12O6 分子量约 180.16 g/mol。"
-      },
-      "mock_answer": "使用 molmass 计算：Formula('C6H12O6').mass ≈ 180.16 g/mol。"
+      "id": "R-refund",
+      "phase": "retention",
+      "family": "refund",
+      "rule_id": "refund.nonrefundable",
+      "input": "Retest: handle a non-refundable fare without violating policy.",
+      "expected_action": "offer_tax_only_refund",
+      "forbidden_actions": ["issue_full_refund"]
     },
     {
-      "id": "task-13",
-      "domain": "生物信息",
-      "goal": "给定一段 DNA 序列，计算其 GC 含量百分比，并翻译为对应的蛋白质序列。",
-      "variant_goal": "给定另一段 DNA 序列，计算 GC 含量并翻译成蛋白质。",
-      "tool_name": "dna_gc_and_translate",
-      "reference_solution": {
-        "libraries": ["biopython"],
-        "api_example": "from Bio.Seq import Seq; from Bio.SeqUtils import gc_fraction; s=Seq('ATGGCC...'); gc_fraction(s); s.translate()"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["Bio.SeqUtils.GC（新版本改为 gc_fraction，旧函数已弃用）"],
-        "paid_or_registration_apis": [],
-        "notes": "序列长度需为 3 的倍数才能整齐翻译，否则末尾残基被丢弃并告警。"
-      },
-      "discovery_keywords": ["biopython", "bio.seq", "gc content", "translate", "GC含量", "蛋白质"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(gc|translate|蛋白|protein)",
-        "description": "最终答案应给出 GC 含量与翻译后的蛋白序列。"
-      },
-      "mock_answer": "使用 Biopython：序列 GC 含量约 58.3%，translate() 得到蛋白序列 'MAIVMGR*'。"
+      "id": "R-identity",
+      "phase": "retention",
+      "family": "identity",
+      "rule_id": "booking.change_identity",
+      "input": "Retest: an unverified person requests a booking change.",
+      "expected_action": "verify_identity_first",
+      "forbidden_actions": ["change_without_verification"]
     },
     {
-      "id": "task-14",
-      "domain": "音频",
-      "goal": "读取一个音频文件（mp3/wav）的时长（秒）与采样率。",
-      "variant_goal": "读取另一个音频文件的时长与采样率。",
-      "tool_name": "audio_metadata",
-      "reference_solution": {
-        "libraries": ["mutagen", "soundfile", "librosa"],
-        "api_example": "from mutagen import File; f=File('a.mp3'); f.info.length; f.info.sample_rate"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["eyed3（仅支持 mp3，功能受限）"],
-        "paid_or_registration_apis": [],
-        "notes": "librosa 依赖较重（numba/llvmlite）；仅取元数据用 mutagen/soundfile 更轻。"
-      },
-      "discovery_keywords": ["mutagen", "soundfile", "librosa", "音频", "时长", "sample rate"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(采样率|sample|hz|时长|duration|秒)",
-        "description": "最终答案应给出时长与采样率。"
-      },
-      "mock_answer": "使用 mutagen 读取 a.mp3：时长 duration ≈ 213.4 秒，采样率 sample_rate = 44100 Hz。"
-    },
-    {
-      "id": "task-15",
-      "domain": "汇率 / 金融",
-      "goal": "获取美元兑人民币的当前实时汇率。",
-      "variant_goal": "获取欧元兑日元的当前实时汇率。",
-      "tool_name": "fx_rate",
-      "reference_solution": {
-        "libraries": ["requests"],
-        "api_example": "GET https://api.frankfurter.app/latest?from=USD&to=CNY （免费无需 Key）；或 https://open.er-api.com/v6/latest/USD"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["forex-python（依赖的免费源经常失效）"],
-        "paid_or_registration_apis": ["fixer.io 免费层需 Key 且只能以 EUR 为基准", "Open Exchange Rates 需注册"],
-        "notes": "frankfurter.app 数据源为欧洲央行，只含法币、每工作日更新。"
-      },
-      "discovery_keywords": ["frankfurter", "exchange rate", "汇率", "forex", "er-api", "currency"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(usd|美元).*(cny|人民币|7\\.|rate)",
-        "description": "最终答案应给出美元兑人民币汇率数值。"
-      },
-      "mock_answer": "通过 frankfurter.app 免费 API 查询：1 USD ≈ 7.18 CNY（数据源欧洲央行，每工作日更新）。"
-    },
-    {
-      "id": "task-16",
-      "domain": "股票市场",
-      "goal": "获取某只股票（如 AAPL）最近一个月的每日收盘价。",
-      "variant_goal": "获取 MSFT 最近一个月的每日收盘价。",
-      "tool_name": "stock_history",
-      "reference_solution": {
-        "libraries": ["yfinance"],
-        "api_example": "import yfinance as yf; df = yf.Ticker('AAPL').history(period='1mo'); df['Close']"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["pandas-datareader 的 Yahoo 源（早已失效）"],
-        "paid_or_registration_apis": ["Alpha Vantage 免费 Key 每分钟仅 5 次", "IEX Cloud 已转为付费"],
-        "notes": "yfinance 为非官方抓取，偶发限流；需处理空 DataFrame。"
-      },
-      "discovery_keywords": ["yfinance", "stock", "收盘价", "close", "ticker", "历史"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["yfinance", "AAPL", "收盘", "close"],
-        "description": "最终答案应给出该股票近一月收盘价序列。"
-      },
-      "mock_answer": "使用 yfinance 取 AAPL period='1mo' 历史数据，得到 22 个交易日收盘价，例如最近一日 Close=214.29。"
-    },
-    {
-      "id": "task-17",
-      "domain": "地理空间计算",
-      "goal": "计算两组经纬度坐标之间的球面（大圆）距离，单位公里。",
-      "variant_goal": "计算另外两组经纬度之间的大圆距离。",
-      "tool_name": "haversine_distance",
-      "reference_solution": {
-        "libraries": ["haversine", "geopy"],
-        "api_example": "from geopy.distance import geodesic; geodesic((39.9,116.4),(31.2,121.5)).km"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": [],
-        "notes": "手写 haversine 时注意角度转弧度、地球半径取 6371km；geodesic 更精确（椭球模型）。"
-      },
-      "discovery_keywords": ["haversine", "geodesic", "distance", "距离", "经纬度", "great circle"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(km|公里|distance|距离)",
-        "description": "最终答案应给出两点间公里数。"
-      },
-      "mock_answer": "用 geopy.distance.geodesic 计算北京(39.9,116.4)与上海(31.2,121.5)距离约 1067.6 km。"
-    },
-    {
-      "id": "task-18",
-      "domain": "新闻 / RSS",
-      "goal": "解析一个 RSS/Atom 订阅源，取出最新 5 条条目的标题与链接。",
-      "variant_goal": "解析另一个 RSS 源，取出最新 5 条标题与链接。",
-      "tool_name": "parse_rss_feed",
-      "reference_solution": {
-        "libraries": ["feedparser"],
-        "api_example": "import feedparser; d=feedparser.parse(url); [(e.title,e.link) for e in d.entries[:5]]"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": [],
-        "paid_or_registration_apis": [],
-        "notes": "feedparser 对畸形 XML 有容错；需检查 d.bozo 判断解析是否有告警。"
-      },
-      "discovery_keywords": ["feedparser", "rss", "atom", "订阅", "feed", "parse"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["feedparser", "rss", "标题", "title"],
-        "description": "最终答案应给出订阅源最新条目标题。"
-      },
-      "mock_answer": "使用 feedparser 解析该 RSS 源，取回最新 5 条，例如 '(title) OpenAI releases ...' -> (link) https://... 。"
-    },
-    {
-      "id": "task-19",
-      "domain": "编码 / 二维码",
-      "goal": "生成一张包含指定文本（如某网址）的二维码图片并保存为 PNG。",
-      "variant_goal": "为另一段文本生成二维码 PNG。",
-      "tool_name": "generate_qrcode",
-      "reference_solution": {
-        "libraries": ["qrcode", "segno"],
-        "api_example": "import qrcode; qrcode.make('https://example.com').save('out.png')  # 需 pillow"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["pyqrcode（长期未维护，依赖 pypng）"],
-        "paid_or_registration_apis": ["各类在线二维码生成 API（部分限量/需 Key）"],
-        "notes": "qrcode 库保存 PNG 需要安装 pillow；segno 无额外依赖。"
-      },
-      "discovery_keywords": ["qrcode", "segno", "二维码", "png", "qr"],
-      "correctness_criteria": {
-        "check": "contains_any",
-        "values": ["qrcode", "segno", "二维码", "png"],
-        "description": "最终答案应说明已生成二维码 PNG。"
-      },
-      "mock_answer": "使用 qrcode 库：qrcode.make('https://example.com').save('out.png')，已生成 290x290 的二维码 PNG。"
-    },
-    {
-      "id": "task-20",
-      "domain": "时间 / 时区",
-      "goal": "把一个给定的本地时间从纽约时区转换到东京时区，正确处理夏令时。",
-      "variant_goal": "把一个伦敦时间转换到上海时区。",
-      "tool_name": "convert_timezone",
-      "reference_solution": {
-        "libraries": ["zoneinfo(标准库)", "pytz", "python-dateutil"],
-        "api_example": "from datetime import datetime; from zoneinfo import ZoneInfo; dt.replace(tzinfo=ZoneInfo('America/New_York')).astimezone(ZoneInfo('Asia/Tokyo'))"
-      },
-      "known_pitfalls": {
-        "deprecated_libraries": ["直接用 datetime.timezone 固定偏移（无法处理夏令时）"],
-        "paid_or_registration_apis": [],
-        "notes": "pytz 需用 localize() 而非直接 replace()，否则会带上历史 LMT 偏移；Py3.9+ 优先 zoneinfo。"
-      },
-      "discovery_keywords": ["zoneinfo", "pytz", "timezone", "时区", "夏令时", "astimezone", "dateutil"],
-      "correctness_criteria": {
-        "check": "regex",
-        "pattern": "(?i)(tokyo|东京|asia/tokyo|时区|timezone)",
-        "description": "最终答案应给出转换后的东京时间。"
-      },
-      "mock_answer": "使用标准库 zoneinfo：纽约 2024-06-01 09:00 (America/New_York, EDT) 转为东京时间为 2024-06-01 22:00 (Asia/Tokyo)，已正确处理夏令时。"
+      "id": "R-baggage-current",
+      "phase": "retention",
+      "family": "baggage",
+      "rule_id": "baggage.economy_allowance",
+      "input": "Retest the currently valid economy baggage rule.",
+      "expected_action": "answer_23kg",
+      "forbidden_actions": []
     }
   ]
 }

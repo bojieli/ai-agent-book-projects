@@ -1,0 +1,32 @@
+[
+  {
+    "task_id": "positivity-alpha-jan",
+    "prompt": "Calculate test positivity for Alpha Health Centre in January 2025.",
+    "tool": "calculate_test_positivity",
+    "arguments": {"org_unit_id": "OU_ALPHA", "period": "2025-01"}
+  },
+  {
+    "task_id": "completeness-district-jan",
+    "prompt": "Calculate reporting completeness for Demo District in January 2025.",
+    "tool": "calculate_reporting_completeness",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-01"}
+  },
+  {
+    "task_id": "trend-alpha-jan-feb",
+    "prompt": "Compare Alpha Health Centre confirmed cases between January and February 2025.",
+    "tool": "compare_confirmed_cases",
+    "arguments": {"org_unit_id": "OU_ALPHA", "start_period": "2025-01", "end_period": "2025-02"}
+  },
+  {
+    "task_id": "quality-demo-feb",
+    "prompt": "Identify aggregate data-quality problems in Demo District for February 2025.",
+    "tool": "find_data_quality_issues",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-02"}
+  },
+  {
+    "task_id": "stockout-demo-feb",
+    "prompt": "Review positive commodity stock-out days in Demo District for February 2025.",
+    "tool": "review_stockouts",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-02"}
+  }
+]

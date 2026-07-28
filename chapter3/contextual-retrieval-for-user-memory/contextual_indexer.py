@@ -223,7 +223,7 @@ class ContextualMemoryIndexer:
                 try:
                     response = requests.post(
                         f"{self.retrieval_url}/index",
-                        json=doc
+                        json=doc, timeout=30
                     )
                     
                     if response.status_code == 200:

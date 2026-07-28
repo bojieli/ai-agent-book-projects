@@ -11,10 +11,14 @@ from typing import Any, Dict, Optional
 from playwright.async_api import Page, Browser, async_playwright, Locator
 import time
 
-from .workflow import Workflow, WorkflowStep, ActionType
+from .workflow import Workflow, WorkflowStep, ActionType, StatePredicate, PredicateType
 
 
 logger = logging.getLogger(__name__)
+
+
+class PredicateFailure(RuntimeError):
+    """Raised when the real page no longer satisfies a workflow assertion."""
 
 
 class WorkflowReplayer:
@@ -92,7 +96,9 @@ class WorkflowReplayer:
             "total_steps": len(workflow.steps),
             "errors": [],
             "execution_time": 0,
-            "model_calls_saved": len(workflow.steps)  # Each step would require an LLM call
+            "model_calls_saved": len(workflow.steps),  # Each step would require an LLM call
+            "failed_predicate": None,
+            "fallback_required": False,
         }
         
         try:
@@ -112,7 +118,9 @@ class WorkflowReplayer:
                 logger.info(f"Executing step {i+1}/{len(workflow.steps)}: {step.action_type.value}")
                 
                 try:
+                    await self._check_predicates(step.preconditions, f"step {i+1} precondition")
                     await self._execute_step(step)
+                    await self._check_predicates(step.postconditions, f"step {i+1} postcondition")
                     results["steps_completed"] += 1
                     
                     # Small delay between actions for stability
@@ -123,24 +131,67 @@ class WorkflowReplayer:
                     logger.error(error_msg)
                     results["errors"].append(error_msg)
                     
-                    # Try to recover if it's not a critical error
-                    if step.action_type not in [ActionType.NAVIGATE, ActionType.CLICK]:
-                        continue
-                    else:
-                        break
+                    if isinstance(e, PredicateFailure):
+                        results["failed_predicate"] = str(e)
+                    # A state mismatch makes all later actions unsafe. Stop
+                    # instead of claiming partial action execution as success.
+                    break
             
-            # Check if workflow completed successfully
-            results["success"] = (results["steps_completed"] == results["total_steps"])
+            if results["steps_completed"] == results["total_steps"]:
+                await self._check_predicates(workflow.final_predicates, "workflow final predicate")
+                results["success"] = True
             
         except Exception as e:
             logger.error(f"Workflow replay failed: {e}")
             results["errors"].append(str(e))
+            if isinstance(e, PredicateFailure):
+                results["failed_predicate"] = str(e)
         
         finally:
             results["execution_time"] = time.time() - start_time
+            results["fallback_required"] = not results["success"]
             logger.info(f"Workflow replay completed in {results['execution_time']:.2f}s")
         
         return results
+
+    async def _check_predicates(self, predicates, location: str) -> None:
+        for predicate in predicates:
+            ok, actual = await self._evaluate_predicate(predicate)
+            if not ok:
+                description = predicate.description or predicate.predicate_type.value
+                raise PredicateFailure(
+                    f"{location} failed: {description}; expected={predicate.expected!r}, actual={actual!r}"
+                )
+
+    async def _evaluate_predicate(self, predicate: StatePredicate):
+        if self.page is None:
+            return False, "page is not initialized"
+        if predicate.predicate_type == PredicateType.URL_CONTAINS:
+            actual = self.page.url
+            return str(predicate.expected) in actual, actual
+        if predicate.predicate_type == PredicateType.ELEMENT_VISIBLE:
+            if not predicate.selector:
+                return False, "missing selector"
+            locator = self.page.locator(predicate.selector)
+            actual = await locator.count() > 0 and await locator.first.is_visible()
+            return actual == bool(predicate.expected), actual
+        if predicate.predicate_type == PredicateType.ELEMENT_TEXT_CONTAINS:
+            if not predicate.selector:
+                return False, "missing selector"
+            locator = self.page.locator(predicate.selector).first
+            if await locator.count() == 0:
+                return False, "element missing"
+            actual = await locator.inner_text()
+            return str(predicate.expected) in actual, actual
+        if predicate.predicate_type == PredicateType.PAGE_STATE_EQUALS:
+            if not predicate.state_key:
+                return False, "missing state_key"
+            actual = await self.page.evaluate(
+                "key => window.__agentState ? window.__agentState[key] : undefined",
+                predicate.state_key,
+            )
+            return actual == predicate.expected, actual
+        return False, f"unsupported predicate {predicate.predicate_type}"
     
     async def _execute_step(self, step: WorkflowStep) -> None:
         """

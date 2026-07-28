@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="55" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Агент</text>
+<line x1="120" y1="80" x2="860" y2="80" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="180" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инструмент A</text>
+<line x1="120" y1="180" x2="860" y2="180" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инструмент B</text>
+<line x1="120" y1="260" x2="860" y2="260" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инструмент C</text>
+<line x1="120" y1="340" x2="860" y2="340" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Траектория</text>
+<line x1="120" y1="420" x2="860" y2="420" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="120.0" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="164.4" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: запустить 3 инструмента</text>
+<rect x="216.2" y="169.0" width="236.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.6" y="180" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Скрипт A: 3% в секунду → 33с до завершения</text>
+<rect x="216.2" y="249.0" width="421.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="427.1" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Скрипт B: 2% в секунду → 50с...</text>
+<rect x="216.2" y="329.0" width="569.8" height="22" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="493.4" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Скрипт C: 1% в секунду → 100с...</text>
+<line x1="453.0" y1="70" x2="453.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="453.0" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">A завершено</text>
+<rect x="460.40000000000003" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="504.80000000000007" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Запрос прогресса B, C</text>
+<rect x="460.40000000000003" y="409.0" width="88.80000000000001" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="504.80000000000007" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">B≈66% C≈33%</text>
+<line x1="564.0" y1="70" x2="564.0" y2="450" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="556.5" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Отмена C</text>
+<rect x="564.0" y="329.0" width="37.0" height="22" rx="3" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="597" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
+<line x1="638.0" y1="70" x2="638.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="645.5" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">B завершено</text>
+<rect x="652.8" y="69.0" width="170.20000000000005" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="737.9" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: объединить результаты A+B для создания отчёта</text>
+<rect x="652.8" y="409.0" width="170.20000000000005" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="737.9" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Результат A + результат B + запись об отмене C</text>
+<rect x="120" y="460" width="740" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="130" y="480" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">Ключевое: внедрение плейсхолдера + асинхронное событие завершения + API cancel_tool(task_id)</text>
+</svg>

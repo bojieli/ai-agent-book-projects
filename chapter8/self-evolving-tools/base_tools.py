@@ -1,7 +1,7 @@
 """
 五个基础工具中的「非工具库」部分：web_search / read_webpage / code_interpreter。
 
-设计原则（对应实验 8-5「最小预定义，最大自我进化」）：
+设计原则（对应补充案例“最小预定义，最大自我进化”）：
 - 这里 **不包含任何领域工具**（没有 get_stock_price、没有 get_youtube_transcript ...）。
 - Agent 只能靠 web_search 找开源库/API，read_webpage 读文档，
   code_interpreter 在子进程沙箱里真实执行代码来验证方案是否可行。

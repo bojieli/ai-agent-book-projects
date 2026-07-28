@@ -60,7 +60,7 @@ async def read_excel_data(
             sheets = excel_file.sheet_names
             for sheet in sheets:
                 df = pd.read_excel(path, sheet_name=sheet, nrows=max_rows)
-                data[sheet] = df.head(100).to_dict(orient="records")
+                data[sheet] = df.to_dict(orient="records")
         
         return {
             "success": True,

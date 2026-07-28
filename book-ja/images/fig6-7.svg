@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 980 520" width="980" height="520" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="20" y="60" width="420" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="230" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① 観察: 診断レポート</text>
+<text x="40" y="102" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">全体成功率: 88% (102/116)</text>
+<text x="40" y="124" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">transcription: 0%  complex_ui: 17%</text>
+<text x="40" y="146" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">math_counting: 0%  Wi-Fi 操作: 0%</text>
+<text x="40" y="168" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">タスク 82,102-115 に失敗が集中</text>
+<rect x="460" y="60" width="400" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② 仮説: 3層の改善フレームワーク</text>
+<rect x="475" y="94" width="60" height="24" rx="12" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="505.0" y="106.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">表層</text>
+<text x="545" y="106" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">H1 設定ナビのプロンプト H2 UI ルール</text>
+<rect x="475" y="126" width="60" height="24" rx="12" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="505.0" y="138.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">中間層</text>
+<text x="545" y="138" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">H3 マルチモーダルパイプライン修正 H4 Thinking</text>
+<rect x="475" y="158" width="60" height="24" rx="12" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="505.0" y="170.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">深層</text>
+<text x="545" y="170" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">H5 GPT-5 H6 UI 要素ツリー</text>
+<line x1="420" y1="125" x2="458" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="20" y="210" width="840" height="120" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ 実験: 段階的検証（設定ごとに 5 回 × 116 タスク）</text>
+<rect x="40" y="250" width="190" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="135" y="268" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">H1 ナビゲーション</text>
+<text x="135" y="288" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">設定 0%→75%</text>
+<text x="135" y="304" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">token+8%</text>
+<rect x="250" y="250" width="190" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="345" y="268" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">H3 マルチモーダル</text>
+<text x="345" y="288" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">文字起こし 0%→80%</text>
+<text x="345" y="304" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">レイテンシ +1s</text>
+<rect x="460" y="250" width="190" height="65" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="555" y="268" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">H4 Thinking</text>
+<text x="555" y="288" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">カウント 0%→70%</text>
+<text x="555" y="304" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">レイテンシ 3倍！</text>
+<rect x="670" y="250" width="190" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="765" y="268" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">H6 要素ツリー</text>
+<text x="765" y="288" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">UI 17%→52%</text>
+<text x="765" y="304" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">token+30%</text>
+<rect x="20" y="350" width="420" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="230" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">④ 意思決定: コストとベネフィットのトレードオフ</text>
+<text x="40" y="395" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">✓ H1+H3: 低コスト・高ベネフィット → デプロイ</text>
+<text x="40" y="419" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central">✗ H4: 恩恵を受けるのは 8% のタスクのみでレイテンシ 3倍 → 却下</text>
+<text x="40" y="443" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">✓ H6: 35% 改善 / 30% コスト → デプロイ</text>
+<text x="40" y="467" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">✗ H5: 15s/ステップは許容不可 → 代替案</text>
+<rect x="460" y="350" width="400" height="130" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">⑤ 反復: 新しいサイクル</text>
+<text x="480" y="395" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">H1+H3+H6 をデプロイ → 88%→94%</text>
+<text x="480" y="419" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">新しいレポートは異なる失敗モードを示す:</text>
+<text x="480" y="443" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  H7: 条件付きで Thinking を有効化</text>
+<text x="480" y="467" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  H8: ジェスチャーの行動空間を拡張</text>
+<line x1="870" y1="415" x2="870" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="885" y="270" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">↑ ループ</text>
+<rect x="80" y="500" width="720" height="42" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440" y="521" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">方法論: 観察 → 仮説 → 実験 → 意思決定 → 反復 = 錬金術から科学的エンジニアリングへ</text>
+</svg>

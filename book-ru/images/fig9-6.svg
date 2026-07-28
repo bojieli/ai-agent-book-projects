@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 505" width="780" height="505" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker><marker id="ah-sm" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#999999"/></marker></defs>
+
+<rect x="30" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="42" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">MGRD дистилляция мыслей с модальной привязкой</text>
+<rect x="45" y="80" width="320" height="56" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="65" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">① Выборка и фильтрация</text>
+<text x="65" y="114" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Текущая модель сэмплирует K цепочек рассуждений</text>
+<text x="65" y="128" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Цепочки фильтров на основе акустических признаков</text>
+<line x1="205" y1="136" x2="205" y2="144" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="45" y="144" width="320" height="56" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="65" y="162" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">② Совместное SFT</text>
+<text x="65" y="178" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Аудио CoT + текстовая мысль</text>
+<text x="65" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Совместная тонкая настройка</text>
+<line x1="205" y1="200" x2="205" y2="208" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="45" y="208" width="320" height="70" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="65" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">③ Оптимизация RLVR</text>
+<text x="65" y="245" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Составная награда: 0.8 точность + 0.2 формат мышления</text>
+<text x="65" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Итерация T раундов → база мыслей переносится в акустический анализ</text>
+<rect x="400" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="412" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">MPS: речь в темпе мысли</text>
+<rect x="415" y="82" width="155" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="492" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Блок формулировки</text>
+<text x="492" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Непрерывная генерация</text>
+<text x="492" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сегмент размышления</text>
+<rect x="580" y="82" width="155" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="657" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Мозг артикуляции</text>
+<text x="657" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Получить размышление → сгенерировать</text>
+<text x="657" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сегмент ответа</text>
+<line x1="570" y1="117" x2="578" y2="117" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="415" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="492" y="179" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сначала думать (Think-First)</text>
+<text x="492" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Задержка ~80 токенов | 93,9%</text>
+<rect x="580" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="657" y="179" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Говорит первым</text>
+<text x="657" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Нулевая задержка | 92.8%</text>
+<text x="575" y="220" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Каждый «мозг» поддерживает стандартный формат TBS → семантическая согласованность</text>
+<rect x="30" y="300" width="720" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Архитектура модели: аудиоэнкодер Qwen2 (25Гц, заморожен) → адаптер (↓12.5Гц) → Qwen2.5 32B</text>
+<rect x="55" y="335" width="205" height="35" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="157" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Аудиокодировщик</text>
+<text x="157" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Частота кадров 25Гц</text>
+<line x1="262" y1="352" x2="277" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="275" y="335" width="205" height="35" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="377" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Аудио-адаптер</text>
+<text x="377" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">12.5Гц вывод</text>
+<line x1="482" y1="352" x2="497" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="495" y="335" width="205" height="35" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="597" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Декодер LLM</text>
+<text x="597" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Мысль + ответ</text>
+<rect x="30" y="395" width="720" height="125" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="415" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ключевая идея: текстовая мысль агента → акустически закреплённая мысль</text>
+<rect x="45" y="433" width="330" height="40" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="210" y="447" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">❌ Текстовый агент: «в тексте песни упоминается печаль»</text>
+<text x="210" y="463" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Рассуждение на основе транскрипции → более длинная цепочка ухудшает результат</text>
+<rect x="400" y="433" width="340" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="570" y="447" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Акустическая привязка: "минорная последовательность + нисходящая мелодия"</text>
+<text x="570" y="463" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">MGRD итеративная дистилляция → более длинная цепочка мыслей даёт выше точность</text>
+<text x="390" y="495" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Обучение: 5М примеров холодный старт + 5К RL-примеров | Фильтрация данных: pass@8 ∈ [3,6] (средняя сложность)</text>
+<text x="390" y="510" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Spoken-MQA превосходит Gemini 2.5 Pro (81.5%) | Общий балл 83.6%</text>
+</svg>

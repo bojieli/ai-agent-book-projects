@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 310" width="780" height="310" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="72" y="75" width="76" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Агент</text>
+<rect x="152" y="75" width="76" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="190" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Требуется</text>
+<rect x="232" y="75" width="76" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="270" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">В</text>
+<rect x="312" y="75" width="76" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="350" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">реальный</text>
+<rect x="392" y="75" width="76" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="430" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Среда</text>
+<rect x="472" y="75" width="76" height="40" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="510" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Китайский</text>
+<rect x="552" y="75" width="76" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="590" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Выполнить</text>
+<rect x="632" y="75" width="76" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="670" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Задача</text>
+<text x="60" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">...</text>
+<text x="720" y="95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">...</text>
+<line x1="510" y1="117" x2="510" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="420" y="153" width="180" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="510" y="171" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">распределение вероятностей P(x_t | x_{&lt;t})</text>
+<rect x="460" y="186" width="50" height="12" rx="2" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="452" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="normal">Китайский</text>
+<text x="515" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">42%</text>
+<rect x="460" y="203" width="33" height="12" rx="2" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="452" y="209" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="normal">li</text>
+<text x="498" y="209" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">28%</text>
+<rect x="460" y="220" width="18" height="12" rx="2" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="452" y="226" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="normal">Вниз</text>
+<text x="483" y="226" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">15%</text>
+<rect x="460" y="237" width="18" height="12" rx="2" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="452" y="243" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="normal">...</text>
+<text x="483" y="243" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">15%</text>
+<text x="390" y="263" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Loss = −Σ log P(x_t | x_1...x_{t−1}) → минимизация перекрёстной энтропии</text>
+<text x="390" y="332" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Казалось бы простая целенаправленная модель обучения: языковые правила → знания о мире → базовое рассуждение</text>
+</svg>

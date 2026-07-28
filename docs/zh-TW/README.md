@@ -1,27 +1,34 @@
 # 深入理解 AI Agent：設計原理與工程實踐
 
-[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BD%BD-success.svg)](#-電子書) [![Languages](https://img.shields.io/badge/翻譯-5%20種%20語言-informational.svg)](#-電子書)
+[![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BC%89-success.svg)](#-電子書) [![線上閱讀](https://img.shields.io/badge/🌐_線上閱讀-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/翻譯-9%20種%20語言-informational.svg)](#-電子書)
 
-**[中文](../../README.md) · 台灣正體 ← 當前 · [English](../en/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [Türkçe](../../README.tr.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · 正體中文 ← 當前 · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
 
-**Agent = LLM + 上下文 + 工具**——本書圍繞這個核心公式，用 10 章把 AI Agent 從原理講到工程實戰。全書正文、配圖、**88 個配套實驗**全部開源，歡迎親手把實驗跑一遍。
+> 📥 **[下載 PDF / EPUB](#-電子書)**（推薦）— 推薦使用 PDF / EPUB 離線閱讀，排版最佳；也可[線上閱讀](https://bojieli.github.io/ai-agent-book/)（支援多語言切換、章節摺疊、全文搜尋，每次 main 分支推送後自動重新構建）。
 
-| 📚 **10 章** 正文，從基礎到生產 | 📂 **88 個** 配套專案（70+ 可獨立執行） | 🌐 **6 種** 語言：中 / 台灣正體 / 英 / 泰 / 越 / 土耳其 |
+**Agent = LLM + 上下文 + 工具**——本書圍繞這個核心公式，用 10 章把 AI Agent 從原理講到工程實戰。全書正文、配圖、**93 個配套實驗**全部開源，歡迎親手把實驗跑一遍。
+
+| 📚 **10 章** 正文，從基礎到生產 | 📂 **93 個** 配套專案（70+ 可獨立執行） | 🌐 **9 種** 語言：中 / 英 / 阿拉伯 / 正體中文 / 俄 / 泰米爾 / 越 / 日 / 土耳其 |
 | :---: | :---: | :---: |
 
 ## 📖 電子書
 
-> 📥 **直接下載**（全書正文，開源免費）。以下連結始終指向 main 分支的最新建置；固定版本見 [Releases](https://github.com/bojieli/ai-agent-book/releases)：
+> 📥 **直接下載**（推薦，全書正文，開源免費）。以下連結始終指向 main 分支的最新建置；固定版本見 [Releases](https://github.com/bojieli/ai-agent-book/releases)：
 > - **中文（原版）**：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
-> - **台灣正體**（社群翻譯，by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
-> - **英文**（社群翻譯，by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **英文**（社群翻譯，by [@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **阿拉伯語**（社群翻譯，by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
+> - **正體中文**（社群翻譯，by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
+> - **俄語**（社群翻譯，by [@ui99ru](https://github.com/ui99ru)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **泰米爾語**（社群翻譯，by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
 > - **越南語**（社群翻譯，by [@toanalien](https://github.com/toanalien)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
-> - **土耳其語**（社群翻譯，by [@memisemre](https://github.com/memisemre)）：尚未產生 PDF/EPUB，請直接閱讀 [`book-tr/`](../../book-tr/) 中的正文
+> - **日語**（社群翻譯，by [@eltociear](https://github.com/eltociear)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
+> - **土耳其語**（社群翻譯，by [@memisemre](https://github.com/memisemre)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+>
+> 🌐 也可[線上閱讀](https://bojieli.github.io/ai-agent-book/) — 支援多語言切換、章節摺疊、全文搜尋、配套實驗直達，每次 main 分支推送後自動重新構建。
 
-中文正文原始碼位於 [`book/`](../../book/)；台灣正體/英文/泰米爾/越南語/土耳其語版本為社群貢獻（可能滯後於中文原版），分別位於 [`book-zhtw/`](../../book-zhtw/)、[`book-en/`](../../book-en/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-tr/`](../../book-tr/)。
+中文正文原始碼位於 [`book/`](../../book/)；英文/阿拉伯語/正體中文/俄語/泰米爾/越南語/日語/土耳其語版本為社群貢獻（可能滯後於中文原版），分別位於 [`book-en/`](../../book-en/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/)、[`book-tr/`](../../book-tr/)。
 
-可使用統一的建置腳本產生中文、台灣正體、英文、泰米爾語和越南語 EPUB 3 電子書。請參閱 [EPUB 建置說明](../../EPUB.md)。
+可使用統一的建置腳本產生中文、英文、阿拉伯語、正體中文、俄語、泰米爾語、越南語、日語和土耳其語 EPUB 3 電子書。請參閱 [EPUB 建置說明](../../EPUB.md)。
 
 <details>
 <summary><b>🔧 想自行編譯 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>
@@ -33,7 +40,7 @@
   cd book && bash build_pdf.sh
   ```
 
-  圖表由 `book/gen_*_figs.py` 生成、存於 `book/images/`，排版細節見 `book/preamble.tex` 與 `book/*.lua`。
+  圖表以 SVG 檔案存於 `book/images/`，編譯時直接使用；排版細節見 `book/preamble.tex` 與 `book/*.lua`。
 
 </details>
 
@@ -43,16 +50,16 @@
 
 | 章 | 主題 | 一句話核心 | 正文 | 程式碼 |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Agent 基礎知識** | 「模型即 Agent」新典範 + **Agent = LLM + 上下文 + 工具**；Harness 工程才是競爭力 | [讀](../../book-zhtw/chapter1.zhtw.md) | [4](../../chapter1/README.zh-TW.md) |
+| 1 | 🚀 **Agent 基礎知識** | **Agent = LLM + 上下文 + 工具**；Harness 工程才是競爭力 | [讀](../../book-zhtw/chapter1.zhtw.md) | [4](../../chapter1/README.zh-TW.md) |
 | 2 | 🎯 **上下文工程** | 上下文決定能力上限：KV Cache、提示工程、Agent Skills、上下文壓縮 | [讀](../../book-zhtw/chapter2.zhtw.md) | [9](../../chapter2/README.zh-TW.md) |
 | 3 | 📚 **使用者記憶和知識庫** | 跨會話記住使用者、接入外部知識：使用者記憶、RAG、結構化索引、知識圖譜 | [讀](../../book-zhtw/chapter3.zhtw.md) | [13](../../chapter3/README.zh-TW.md) |
 | 4 | 🛠️ **工具** | 工具是 Agent 的雙手：MCP 協議、感知/執行/協作三類工具、事件驅動非同步 Agent、主動工具發現 | [讀](../../book-zhtw/chapter4.zhtw.md) | [7](../../chapter4/README.zh-TW.md) |
 | 5 | 💻 **Coding Agent 與程式碼生成** | 程式碼是「能創造新工具的工具」，生產級 Coding Agent 全景 | [讀](../../book-zhtw/chapter5.zhtw.md) | [12](../../chapter5/README.zh-TW.md) |
-| 6 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter6.zhtw.md) | [10](../../chapter6/README.zh-TW.md) |
-| 7 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter7.zhtw.md) | [14](../../chapter7/README.zh-TW.md) |
+| 6 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter6.zhtw.md) | [11](../../chapter6/README.zh-TW.md) |
+| 7 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter7.zhtw.md) | [16](../../chapter7/README.zh-TW.md) |
 | 8 | 🔄 **Agent 的自我進化** | 不改權重也能成長：經驗學習、從工具使用者到創造者 | [讀](../../book-zhtw/chapter8.zhtw.md) | [6](../../chapter8/README.zh-TW.md) |
 | 9 | 🎙️ **多模態與即時互動** | 從文字擴充套件到語音、GUI、物理世界：語音三典範、Computer Use、機器人 | [讀](../../book-zhtw/chapter9.zhtw.md) | [7](../../chapter9/README.zh-TW.md) |
-| 10 | 🤝 **多 Agent 協作** | 群體智慧高於個體：協作框架、上下文共享/隔離、湧現的「Agent 社會」 | [讀](../../book-zhtw/chapter10.zhtw.md) | [6](../../chapter10/README.zh-TW.md) |
+| 10 | 🤝 **多 Agent 協作** | 群體智慧高於個體：協作框架、上下文共享/隔離、湧現的「Agent 社會」 | [讀](../../book-zhtw/chapter10.zhtw.md) | [7](../../chapter10/README.zh-TW.md) |
 
 > 💡 **讀** = 在 GitHub 網頁直接讀章節正文（markdown）；**N** = 該章配套專案數，點選檢視程式碼。專案型別說明（✅ 可執行 / 📖 復現 / 🚧 設計）見各章 README。
 >
@@ -62,22 +69,29 @@
 
 建議申請下面幾個平台的 API Key 方便學習。模型選型可參考 [這篇指南](https://01.me/2025/07/llm-api-setup/)。
 
-| 平台 | 連結 | 特色 |
-| --- | --- | --- |
-| **Kimi**（月之暗面） | <https://platform.moonshot.cn/> | Kimi 系列，Coding、Agent 能力強 |
-| **智譜 GLM** | <https://open.bigmodel.cn/> | GLM-5.2 等，Coding、Agent 能力強 |
-| **Siliconflow** | <https://siliconflow.cn/> | 各種開源模型（DeepSeek、Qwen 等） |
-| **火山引擎** | <https://www.volcengine.com/product/ark> | 位元組豆包閉源模型，國內訪問延遲低 |
-| **OpenRouter** | <https://openrouter.ai/> | 一站式訪問 Gemini / Claude / GPT-5 等海外模型（官方 API 需海外 IP/支付方式，OpenAI 還需海外身份認證） |
+| 平台 | 連結 | 特色 | 訪問節點 |
+| --- | --- | --- | --- |
+| **Kimi**（月之暗面） | <https://platform.moonshot.cn/> | Kimi 系列，Coding、Agent 能力強 | 中國大陸 |
+| **智譜 GLM** | <https://open.bigmodel.cn/> | GLM-5.2 等，Coding、Agent 能力強 | 中國大陸 |
+| **Siliconflow** | <https://siliconflow.cn/> | 各種開源模型（DeepSeek、Qwen 等），中國大陸訪問速度快 | 中國大陸 |
+| **DeepSeek** | <https://platform.deepseek.com/> | DeepSeek 官方 API | 全球 + 中國大陸 |
+| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | 一站式訪問全球及國內主流模型（OpenAI、Claude、Gemini、Grok、Kimi、GLM、DeepSeek、Qwen、Minimax） | 全球 + 中國大陸 |
+| **OpenRouter** | <https://openrouter.ai/> | 一站式訪問全球及國內主流模型（GPT、Claude、Gemini、Kimi、GLM、DeepSeek、Qwen 等） | 全球 |
+
+## 💎 贊助商
+
+感謝 **Krill AI** 贊助本專案！Krill 提供 GPT / Claude / Gemini / 多款國產模型的官方穩定極速 API 中轉服務，支援企業級客製、報銷開票、7×16h 專屬技術支援，更有獨家適配的 WebSocket 連線方式，暢享極速首字速度。
+
+Krill 為本書讀者提供特別優惠：使用[此連結](https://www.krill-ai.com/register?invite=Q8D3L35725)註冊並在儲值時填寫優惠碼「ai-agent-book」，首次購買 Codex 套餐可享 77 折優惠！
 
 ## 📦 附錄 · 外部倉庫獲取
 
-第 6、7、9、10 章的評測基準、訓練框架、機器人平台等 20 個外部倉庫**未內建**（出於體積與版權），需要自行克隆到對應目錄。
+第 6、7、9、10 章的評測基準、訓練框架、機器人平台等 19 個外部倉庫**未內建**（出於體積與版權），需要自行克隆到對應目錄。
 
 ### 一鍵克隆指令碼
 
 <details>
-<summary><b>🔧 展開克隆命令</b>（共 20 個外部倉庫）</summary>
+<summary><b>🔧 展開克隆命令</b>（共 19 個外部倉庫）</summary>
 
 ```bash
 # 第 6 章 · 評測基準
@@ -96,7 +110,6 @@ git clone https://github.com/bojieli/AWorld.git                        chapter7/
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/bojieli/lighteval.git                     chapter7/Intuitor/lighteval
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # 實驗 7-14 RLVP 論文程式碼
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # 實驗 7-13 視覺-語言-動作 RL
 
@@ -109,7 +122,7 @@ git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10
 git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # 實驗 10-7 斯坦福 AI 小鎮
 ```
 
-> 各專案 README 如標註了特定 commit，請按說明 `git checkout` 到對應版本以保證復現一致。第 10 章 `use-computer-while-calling` 已發展為獨立維護的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)，本倉庫只保留指向它的說明文件。
+> 各專案 README 如標註了特定 commit，請按說明 `git checkout` 到對應版本以保證復現一致。第 10 章 `use-computer-while-calling` 已發展為獨立維護的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)，本倉庫不內建該目錄，用上面的克隆命令獲取。
 
 </details>
 
@@ -122,7 +135,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 6-2 / 6-3 / 6-4 / 6-9 | 📝 讀者練習 | 人肉基準、記憶評估、JSON Cards vs RAG、記憶選型——改造複用第 3 章 `user-memory` / `user-memory-evaluation` / `contextual-retrieval` |
 | 5-12 | 📝 讀者練習 | 能創造 Agent 的 Agent——基於 `chapter5/coding-agent` 自舉擴充套件 |
 | 7-8 | 📝 讀者練習 | Prompt 蒸餾——落地實現見 `chapter8/prompt-distillation`（跨章複用） |
-| 7-9 | 📝 讀者練習 | CoT 蒸餾 `[擴充套件]`——書中給出實驗設計與驗收標準，無專屬程式碼 |
+| 7-9 | 📝 讀者練習 | CoT 蒸餾 `[擴充套件]`——配套實現見 `chapter7/cot-distillation`（含 SFT 資料生成與規則驗證器） |
 | 6-11 | 🤖 模擬評估 | OpenVLA + RoboTwin2——VLA 訓練/環境依賴見 `chapter7/SimpleVLA-RL` 的 README |
 | 9-8 / 9-9 | 🔧 真實硬體 | XLeRobot 遙操作與 LLM Agent 控制——需 SO-100 機械臂，[Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
 | 9-10 | 🔧 真實硬體 | RGB 零樣本 Sim2Real 抓取——[`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real)（模擬可純 GPU，部署需 SO-100） |
@@ -136,8 +149,8 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 📝 **書籍內容改進** | 勘誤、補充、更清晰的表述，或新增前沿進展（正文見 `book/chapter*.md`） |
 | 🐛 **程式碼改進與 Bug 修復** | 讓配套專案更健壯、更易用、更貼近生產實踐 |
 | 🧪 **新的實踐專案** | 為某個實驗補充/替換更好的實現，或貢獻全新的示例專案 |
-| 🎨 **配圖設計改進** | 讓 `book/images/` 中的圖表更清晰美觀（配圖由 `book/gen_*_figs.py` 生成） |
-| 🌐 **新語言翻譯** | 歡迎翻譯成更多語言，可參考台灣正體（`book-zhtw/`）、英文（`book-en/`）、泰米爾語（`book-ta/`）、越南語（`book-vi/`）、土耳其語（`book-tr/`）的組織方式 |
+| 🎨 **配圖設計改進** | 直接改進 `book/images/` 中已簽入的 SVG 圖表，讓它們更清晰美觀 |
+| 🌐 **新語言翻譯** | 歡迎翻譯成更多語言，可參考英文（`book-en/`）、阿拉伯語（`book-ar/`）、正體中文（`book-zhtw/`）、俄語（`book-ru/`）、泰米爾語（`book-ta/`）、越南語（`book-vi/`）、日語（`book-ja/`）、土耳其語（`book-tr/`）的組織方式 |
 
 提交前建議先把相關實驗親手跑一遍、確認可復現；也歡迎先提 issue 討論想法。
 

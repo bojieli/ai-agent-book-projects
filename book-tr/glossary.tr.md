@@ -1,6 +1,6 @@
 # İngilizce - Türkçe Terimler Sözlüğü {.unnumbered}
 
-Türkçe çeviri projesinde, yapay zeka ve yazılım dünyasında kalıplaşmış teknik terimlerin zorlama Türkçe kelimelerle çevrilerek anlam kaybına yol açmasını önlemek amacıyla **orijinal İngilizce terimlerin korunması** ve metin içindeki akışa göre Türkçe karşılıklarının parantez içinde veya yan yana belirtilmesi prensibi benimsenmiştir. 
+Türkçe çeviri projesinde, yapay zeka ve yazılım dünyasında kalıplaşmış teknik terimlerin zorlama Türkçe kelimelerle çevrilerek anlam kaybına yol açmasını önlemek amacıyla **orijinal İngilizce terimlerin korunması** ve metin içindeki akışa göre Türkçe karşılıklarının parantez içinde veya yan yana belirtilmesi prensibi benimsenmiştir.
 
 Aşağıdaki tablo, open-source maintainer'ların ve çeviri denetçilerinin (özellikle Türkçe bilmeyen koordinatörlerin) çevirinin doğruluğunu İngilizce tanımlar üzerinden kontrol edebilmesi amacıyla 4 kolonlu bir yapıda (İngilizce Tanım dahil edilerek) hazırlanmıştır:
 

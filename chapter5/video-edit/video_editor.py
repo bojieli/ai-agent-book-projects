@@ -91,6 +91,8 @@ def _apply_edit_ffmpeg(source: str, plan: dict, out_path: str) -> str:
             vf_chain.append("drawtext=" + ":".join(opts))
         elif etype == "slowmo":
             factor = float(eff.get("factor", 2.0))
+            if factor <= 0:
+                continue
             vf_chain.append(f"setpts={factor}*PTS")
             # atempo 只支持 0.5~2.0，用 1/factor 放慢音频。
             af_chain.append(f"atempo={max(0.5, min(2.0, 1.0 / factor))}")

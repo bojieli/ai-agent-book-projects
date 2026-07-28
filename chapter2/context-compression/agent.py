@@ -39,6 +39,10 @@ class ToolCall:
     result: Optional[Any] = None
     compressed_result: Optional[CompressedContent] = None
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    # Provider-side tool_call id, so a tool message in the history can be
+    # matched back to the call that produced it (used by windowed compression
+    # to recover the original query).
+    id: Optional[str] = None
 
 
 @dataclass
@@ -48,6 +52,11 @@ class AgentTrajectory:
     total_tokens_used: int = 0
     prompt_tokens_used: int = 0
     completion_tokens_used: int = 0
+    # Prompt tokens of the most recent API call = the current context size.
+    # prompt_tokens_used above is a cumulative COST counter (each call's
+    # prompt re-counts the shared prefix), so it must not be compared
+    # against the per-request context window.
+    last_prompt_tokens: int = 0
     context_overflows: int = 0
     compression_strategy: CompressionStrategy = CompressionStrategy.NO_COMPRESSION
     start_time: float = field(default_factory=time.time)
@@ -239,14 +248,17 @@ TODAY'S DATE: {date_string}"""
         if self.compression_strategy != CompressionStrategy.WINDOWED_CONTEXT:
             return messages
         
-        # Check if we should start compressing (80% context usage)
+        # Check if we should start compressing (80% context usage).
+        # Use the LAST call's prompt size (current context), not the
+        # cumulative cost counter, which grows quadratically and would
+        # trigger compression long before the window is actually near full.
         context_threshold = Config.CONTEXT_WINDOW_SIZE * 0.8
-        
-        if self.trajectory.prompt_tokens_used <= context_threshold:
-            logger.debug(f"Windowed compression: Context usage below threshold ({self.trajectory.prompt_tokens_used:,}/{context_threshold:.0f} tokens)")
+
+        if self.trajectory.last_prompt_tokens <= context_threshold:
+            logger.debug(f"Windowed compression: Context usage below threshold ({self.trajectory.last_prompt_tokens:,}/{context_threshold:.0f} tokens)")
             return messages  # No compression needed yet
-        
-        logger.info(f"⚠️ Context usage exceeds 80% threshold ({self.trajectory.prompt_tokens_used:,}/{Config.CONTEXT_WINDOW_SIZE} tokens) - Starting compression")
+
+        logger.info(f"⚠️ Context usage exceeds 80% threshold ({self.trajectory.last_prompt_tokens:,}/{Config.CONTEXT_WINDOW_SIZE} tokens) - Starting compression")
         
         # Compression marker to identify already-compressed messages
         COMPRESSION_MARKER = "[COMPRESSED]"
@@ -293,7 +305,7 @@ TODAY'S DATE: {date_string}"""
                     
                     # Try to find the query from the tool call
                     for call in self.trajectory.tool_calls:
-                        if hasattr(call, 'id') and call.id == tool_call_id:
+                        if call.id is not None and call.id == tool_call_id:
                             query = call.arguments.get('query', query)
                             break
                     
@@ -399,8 +411,9 @@ TODAY'S DATE: {date_string}"""
                 total_tokens = usage_data.total_tokens if hasattr(usage_data, 'total_tokens') else 0
                 
                 logger.info(f"🔢 Kimi API Token Usage - Prompt: {prompt_tokens}, Completion: {completion_tokens}, Total: {total_tokens}")
-                
+
                 # Update trajectory
+                self.trajectory.last_prompt_tokens = prompt_tokens
                 self.trajectory.prompt_tokens_used += prompt_tokens
                 self.trajectory.completion_tokens_used += completion_tokens
                 self.trajectory.total_tokens_used += total_tokens
@@ -449,8 +462,9 @@ TODAY'S DATE: {date_string}"""
             total_tokens = response.usage.total_tokens
             
             logger.info(f"🔢 Kimi API Token Usage - Prompt: {prompt_tokens}, Completion: {completion_tokens}, Total: {total_tokens}")
-            
+
             # Update trajectory
+            self.trajectory.last_prompt_tokens = prompt_tokens
             self.trajectory.prompt_tokens_used += prompt_tokens
             self.trajectory.completion_tokens_used += completion_tokens
             self.trajectory.total_tokens_used += total_tokens
@@ -518,15 +532,18 @@ TODAY'S DATE: {date_string}"""
                 
                 # Check if we're approaching token limit based on actual usage
                 if self.trajectory.total_tokens_used > 0:  # Only check after first call
-                    # Compression demo uses a 128k context budget
-                    if self.trajectory.prompt_tokens_used > Config.CONTEXT_WINDOW_SIZE * 0.8:
-                        logger.warning(f"Approaching context limit: {self.trajectory.prompt_tokens_used:,} prompt tokens used")
+                    # Compression demo uses a 128k context budget. Compare the
+                    # LAST call's prompt size (the actual context) against the
+                    # window — the cumulative counter re-counts the shared
+                    # prefix every call and overstates usage quadratically.
+                    if self.trajectory.last_prompt_tokens > Config.CONTEXT_WINDOW_SIZE * 0.8:
+                        logger.warning(f"Approaching context limit: {self.trajectory.last_prompt_tokens:,} prompt tokens in last request")
                         self.trajectory.context_overflows += 1
-                        
+
                         if self.compression_strategy == CompressionStrategy.NO_COMPRESSION:
                             print("\n⚠️ Context overflow detected! This demonstrates the limitation of no compression.")
                             return {
-                                "error": f"Context window exceeded - {self.trajectory.prompt_tokens_used:,} tokens used (limit: {Config.CONTEXT_WINDOW_SIZE})",
+                                "error": f"Context window exceeded - {self.trajectory.last_prompt_tokens:,} tokens in last request (limit: {Config.CONTEXT_WINDOW_SIZE})",
                                 "trajectory": self.trajectory,
                                 "iterations": iteration
                             }
@@ -559,7 +576,8 @@ TODAY'S DATE: {date_string}"""
                             tool_name=function_name,
                             arguments=function_args,
                             result=result,
-                            compressed_result=compressed
+                            compressed_result=compressed,
+                            id=tool_call['id']
                         )
                         self.trajectory.tool_calls.append(tool_call_record)
                         

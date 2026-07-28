@@ -70,7 +70,7 @@ def resolve_llm_backend(primary_key: str, primary_base_url: str, model: str):
         return openrouter_key, base_url, map_model_to_openrouter(model), True
     raise ValueError(
         "No API key found. Set a provider key "
-        "(SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY) or "
+        "(SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY) or "
         "OPENROUTER_API_KEY (universal fallback)."
     )
 
@@ -95,6 +95,9 @@ class Config:
     DEEPSEEK_BASE_URL: str = os.getenv(
         "DEEPSEEK_BASE_URL", "https://api.deepseek.com"
     )
+
+    ZHIPU_API_KEY: str = os.getenv("ZHIPU_API_KEY", "")
+    ZHIPU_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4"
     
     # Model Configuration (defaults based on provider)
     MODEL_NAME: str = os.getenv("MODEL_NAME", "")  # Will be set based on provider if not specified
@@ -156,6 +159,8 @@ class Config:
             return cls.MOONSHOT_API_KEY
         elif provider == "deepseek":
             return cls.DEEPSEEK_API_KEY
+        elif provider == "zhipu":
+            return cls.ZHIPU_API_KEY
         else:
             return ""
     
@@ -186,6 +191,8 @@ class Config:
             # V4 Flash: tool calling + thinking mode (legacy deepseek-chat /
             # deepseek-reasoner aliases are deprecated 2026-07-24).
             return "deepseek-v4-flash"
+        elif provider == "zhipu":
+            return "glm-5.2"
         else:
             return ""
     
@@ -212,6 +219,8 @@ class Config:
                 print("ERROR: MOONSHOT_API_KEY is not set")
             elif provider == "deepseek":
                 print("ERROR: DEEPSEEK_API_KEY is not set")
+            elif provider == "zhipu":
+                print("ERROR: ZHIPU_API_KEY is not set")
             else:
                 print(f"ERROR: No API key configured for provider: {provider}")
             

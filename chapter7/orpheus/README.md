@@ -1,5 +1,7 @@
 # Orpheus TTS - Text-to-Speech Fine-tuning with Unsloth
 
+## English
+
 This project demonstrates how to fine-tune the Orpheus 3B text-to-speech model using Unsloth for efficient training and inference.
 
 ## Overview
@@ -261,3 +263,82 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 - Unsloth AI team for the efficient training framework
 - Hugging Face for hosting models and datasets
 
+---
+
+## 中文
+
+# Orpheus TTS：使用 Unsloth 微调文本转语音模型
+
+## 概述
+
+本项目演示如何使用 Unsloth 对 Orpheus TTS 模型进行高效微调，并提供训练、推理、情感标签和多说话人支持示例。
+
+## 功能
+
+- 使用 LoRA/QLoRA 进行显存友好的微调
+- 支持情感标签与富表现力语音
+- 支持多说话人数据与推理
+- 使用 SNAC 音频离散编码
+- 提供训练和推理脚本
+
+## 安装
+
+需要支持 CUDA 的 GPU、Python 3.10+、PyTorch、FFmpeg，以及与本机 CUDA 环境匹配的 Unsloth 依赖。
+
+```bash
+pip install -r requirements.txt
+```
+
+## 项目结构
+
+训练脚本负责加载数据集、模型与 LoRA 配置并保存适配器；推理脚本加载基础模型和适配器，将生成的音频 token 通过 SNAC 解码为音频文件。
+
+## 使用
+
+### 训练
+
+按脚本中的模型、数据集、批量大小、学习率和输出目录配置启动训练。显存不足时可减小批量大小、启用梯度累积或使用量化加载。
+
+### 推理
+
+加载训练后的适配器，输入文本后生成语音。文本中可加入模型支持的情感标签，以控制笑声、叹气等表达。
+
+### 情感标签
+
+Orpheus 支持在文本中嵌入特定标签来生成更有表现力的语音。实际可用标签取决于基础模型和训练数据。
+
+### 多说话人支持
+
+数据样本应包含稳定的说话人标识。推理时使用与训练一致的说话人 token，避免音色混淆。
+
+## 数据集格式
+
+数据集需要提供文本与音频字段，并可选择包含说话人信息。音频应使用一致的采样率和声道格式；训练前应过滤损坏或异常长度的样本。
+
+## 模型架构
+
+模型将文本 token 与 SNAC 音频 token 放在统一序列中进行自回归建模。特殊 token 用于标记文本、说话人、音频起止位置和生成边界。
+
+## 输出
+
+训练输出包含 LoRA 适配器、分词器和训练状态；推理输出为解码后的音频文件。
+
+## 显存占用
+
+显存需求取决于模型大小、序列长度、批量大小和量化方式。遇到显存不足时，应优先降低批量大小和最大序列长度。
+
+## 故障排查
+
+常见问题包括 CUDA/Flash Attention 版本不兼容、FFmpeg 缺失、音频格式错误、特殊 token 不匹配以及生成长度不足。
+
+## 性能建议
+
+使用混合精度、梯度检查点和批量预处理；在正式训练前先用少量样本完成端到端冒烟测试。
+
+## 资源、许可与引用
+
+模型、Unsloth、SNAC 和数据集的链接见英文部分。使用本项目时请分别遵守上游模型、代码和数据许可，并按上游要求引用。
+
+## 贡献与致谢
+
+欢迎通过 Issue 和 Pull Request 改进脚本与文档。感谢 Orpheus、Unsloth、SNAC 及其开源社区。

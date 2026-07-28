@@ -1,5 +1,5 @@
-# 实验 8-6：为自我进化 Agent 设计评估数据集
-# 仅 harness / demo 本身需要这两个依赖；dataset.json 中提到的各领域库
-# （youtube-transcript-api、yfinance 等）只是"参考方案"，被测 Agent 才会去安装，评估器不需要。
-openai>=1.30.0
+# The offline experiment uses only the Python standard library.
+# pytest and python-dotenv support testing and optional .env configuration.
+pytest>=8.0.0
+openai>=1.68.0
 python-dotenv>=1.0.0

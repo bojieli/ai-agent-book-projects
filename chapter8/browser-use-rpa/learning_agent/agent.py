@@ -20,7 +20,9 @@ from browser_use import Agent, Browser
 from browser_use.agent.views import AgentOutput, ActionResult
 from browser_use.browser.views import BrowserStateSummary
 
-from .workflow import Workflow, WorkflowStep, ActionType
+from .workflow import (
+    Workflow, WorkflowStep, ActionType, StatePredicate, PredicateType,
+)
 from .knowledge_base import KnowledgeBase
 from .replay import WorkflowReplayer
 
@@ -45,6 +47,7 @@ class LearningAgent:
                  browser: Optional[Browser] = None,
                  knowledge_base_path: str = "./knowledge_base",
                  headless: bool = False,
+                 validation_reset: Optional[Any] = None,
                  **agent_kwargs):
         """
         Initialize the learning agent.
@@ -55,12 +58,16 @@ class LearningAgent:
             browser: Browser instance (optional)
             knowledge_base_path: Path to store learned workflows
             headless: Whether to run browser in headless mode for replay
+            validation_reset: Sync or async callback that resets the target
+                sandbox before validating a candidate workflow. Without it,
+                candidates are audited but never published for reuse.
             **agent_kwargs: Additional arguments for browser-use Agent
         """
         self.task = task
         self.llm = llm
         self.browser = browser
         self.headless = headless
+        self.validation_reset = validation_reset
         
         # Initialize knowledge base
         self.knowledge_base = KnowledgeBase(knowledge_base_path)
@@ -150,21 +157,26 @@ class LearningAgent:
             Dictionary containing action data, or None if extraction fails
         """
         try:
-            action_dict = action.model_dump() if hasattr(action, 'model_dump') else {}
-            
+            # exclude_unset is essential: a plain model_dump() emits a key
+            # for EVERY registered action (None for the unset ones), which
+            # made the first branch match every action and drop it on
+            # None.get(...). browser-use itself reads action names the same
+            # way (see browser_use/agent/service.py).
+            action_dict = action.model_dump(exclude_unset=True) if hasattr(action, 'model_dump') else {}
+
             # Determine action type
             action_type = None
             parameters = {}
             element_info = None
-            
+
             # Parse different action types
             if 'go_to_url' in action_dict:
                 action_type = ActionType.NAVIGATE
                 parameters = {'url': action_dict['go_to_url'].get('url')}
-            
-            elif 'click_element' in action_dict:
+
+            elif 'click_element_by_index' in action_dict:
                 action_type = ActionType.CLICK
-                click_data = action_dict['click_element']
+                click_data = action_dict['click_element_by_index']
                 parameters = {
                     'while_holding_ctrl': click_data.get('while_holding_ctrl', False)
                 }
@@ -206,9 +218,9 @@ class LearningAgent:
                     'num_pages': scroll_data.get('num_pages', 1)
                 }
             
-            elif 'upload_file' in action_dict:
+            elif 'upload_file_to_element' in action_dict:
                 action_type = ActionType.UPLOAD_FILE
-                upload_data = action_dict['upload_file']
+                upload_data = action_dict['upload_file_to_element']
                 parameters = {
                     'path': upload_data.get('path', '')
                 }
@@ -292,13 +304,18 @@ class LearningAgent:
                 
                 result = await self._run_with_replay(match.workflow)
                 
-                # Update metrics
-                self.knowledge_base.update_workflow_metrics(
-                    match.workflow.workflow_id,
-                    success=result['success'],
-                    execution_time=result['execution_time'],
-                    model_calls_saved=result['model_calls_saved']
-                )
+                # A state-predicate failure means the page or API changed.
+                # Remove this version from retrieval before falling back.
+                if result['success']:
+                    self.knowledge_base.update_workflow_metrics(
+                        match.workflow.workflow_id,
+                        success=True,
+                        execution_time=result['execution_time'],
+                        model_calls_saved=result['model_calls_saved']
+                    )
+                else:
+                    reason = result.get('failed_predicate') or '; '.join(result.get('errors', []))
+                    self.knowledge_base.invalidate_workflow(match.workflow.workflow_id, reason)
                 
                 self.metrics['replay_used'] = True
                 self.metrics['success'] = result['success']
@@ -306,6 +323,11 @@ class LearningAgent:
                 # If replay failed, fall back to learning mode
                 if not result['success']:
                     logger.warning("Replay failed, falling back to learning mode")
+                    # The LLM loop is about to run, so this is no longer a
+                    # replay run. Leaving the flag set makes the summary log and
+                    # the demos report "0 LLM calls / Nx faster" for a run that
+                    # actually made real LLM calls.
+                    self.metrics['replay_used'] = False
                     result = await self._run_with_learning(max_steps)
             
             else:
@@ -422,26 +444,120 @@ class LearningAgent:
                 description=f"Learned workflow for: {self.task}",
                 initial_url=self.captured_steps[0].get('url') if self.captured_steps else None
             )
-            
+
+            # Template the captured literals with the learning task's
+            # parameters: captured steps store the exact values typed during
+            # learning, and parameterize() only substitutes {placeholder}
+            # tokens — without this step a replay would silently re-send the
+            # learning run's recipient/subject/content.
+            example_params = self._extract_task_parameters(self.task, workflow)
+            workflow.example_parameters = dict(example_params)
+
             # Convert captured steps to workflow steps
             for step_data in self.captured_steps:
+                parameters = dict(step_data['parameters'])
+                for key, value in parameters.items():
+                    if isinstance(value, str):
+                        # Replace each captured literal with its {token}. Match
+                        # longest values first so a shorter value that is a
+                        # substring of a longer field (e.g. subject "Report"
+                        # inside body "Report is ready") can't pre-empt it, and
+                        # stage substitutions through unique sentinels so an
+                        # already-inserted {token} is never re-scanned by a later
+                        # parameter whose value happens to appear in the token
+                        # text — the result no longer depends on iteration order.
+                        sentinels = {}
+                        for i, (param_key, param_value) in enumerate(sorted(
+                            example_params.items(),
+                            key=lambda kv: len(str(kv[1])),
+                            reverse=True,
+                        )):
+                            pv = str(param_value)
+                            if pv and pv in value:
+                                sentinel = f"\x00{i}\x00"
+                                sentinels[sentinel] = f"{{{param_key}}}"
+                                value = value.replace(pv, sentinel)
+                        for sentinel, token in sentinels.items():
+                            value = value.replace(sentinel, token)
+                        parameters[key] = value
+
                 step = WorkflowStep(
                     action_type=step_data['type'],
-                    parameters=step_data['parameters']
+                    parameters=parameters
                 )
-                
+
                 # Add element info if available
                 if step_data.get('element_info'):
                     element_info = step_data['element_info']
                     step.xpath = element_info.get('xpath')
                     step.element_attributes = element_info.get('attributes', {})
-                
+
                 workflow.add_step(step)
-            
-            # Save to knowledge base
-            self.knowledge_base.save_workflow(workflow)
-            
-            logger.info(f"Saved learned workflow with {len(workflow.steps)} steps")
+
+            # Derive conservative predicates from captured page state. A
+            # production extractor can add richer text and state assertions.
+            for step in workflow.steps:
+                selector = f"xpath={step.xpath}" if step.xpath else step.css_selector
+                if selector and step.action_type in {
+                    ActionType.CLICK, ActionType.INPUT_TEXT,
+                    ActionType.SELECT_OPTION, ActionType.UPLOAD_FILE,
+                }:
+                    step.preconditions.append(StatePredicate(
+                        PredicateType.ELEMENT_VISIBLE,
+                        expected=True,
+                        selector=selector,
+                        description="target element must be visible before action",
+                    ))
+                if step.action_type == ActionType.NAVIGATE and step.parameters.get('url'):
+                    step.postconditions.append(StatePredicate(
+                        PredicateType.URL_CONTAINS,
+                        expected=step.parameters['url'],
+                        description="navigation must reach the requested URL",
+                    ))
+
+            last_url = self.captured_steps[-1].get('url') if self.captured_steps else None
+            if last_url:
+                workflow.final_predicates.append(StatePredicate(
+                    PredicateType.URL_CONTAINS,
+                    expected=last_url,
+                    description="workflow must finish on the observed final page",
+                ))
+
+            # First-run success creates only a candidate. Publication requires
+            # an explicit environment reset and a full independent replay.
+            self.knowledge_base.save_candidate(workflow)
+            if self.validation_reset is None:
+                logger.warning(
+                    "Workflow remains candidate: no validation_reset callback was supplied"
+                )
+                return
+
+            import inspect
+            reset_result = self.validation_reset()
+            if inspect.isawaitable(reset_result):
+                await reset_result
+            await self.replayer.setup()
+            try:
+                # Validate with the learned example parameters so the replay
+                # substitutes the {placeholder} tokens back to concrete values.
+                # Without this the validation run types the literal token text
+                # (e.g. "{recipient}") into the page, so a correctly-learned
+                # workflow fails validation and is never published — every later
+                # replay then falls back to the LLM. (empty dict => no-op.)
+                validation = await self.replayer.replay_workflow(
+                    workflow, parameters=workflow.example_parameters
+                )
+            finally:
+                await self.replayer.cleanup()
+            if validation['success']:
+                workflow.mark_validated()
+                self.knowledge_base.publish_validated(workflow)
+                logger.info("Validated and published workflow with %s steps", len(workflow.steps))
+            else:
+                logger.warning(
+                    "Candidate replay failed and was not published: %s",
+                    validation.get('failed_predicate') or validation.get('errors'),
+                )
         
         except Exception as e:
             logger.error(f"Failed to save learned workflow: {e}")

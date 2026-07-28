@@ -1,0 +1,92 @@
+{
+  "learning_trajectories": [
+    {
+      "id": "gaia-web-01",
+      "task_family": "web_research",
+      "capabilities": ["search", "source_verification"],
+      "question": "Find the official release date and cite a source.",
+      "trajectory_steps": ["search for candidate pages", "open the official product page", "quote the release-date passage"],
+      "environment_score": 1.0,
+      "applies_when": ["答案依赖网页中的可核实事实", "搜索结果存在二手转述"],
+      "observed_strategies": ["verify the answer with a primary source", "separate discovery search from evidence lookup"],
+      "mistakes": [],
+      "exceptions": ["若一手来源已失效，应明确说明并使用两个独立来源交叉验证"]
+    },
+    {
+      "id": "gaia-web-02",
+      "task_family": "web_research",
+      "capabilities": ["search", "source_verification"],
+      "question": "Resolve conflicting dates reported by two pages.",
+      "trajectory_steps": ["open both reported sources", "find the primary publisher page", "use the primary date and quote its passage"],
+      "environment_score": 0.95,
+      "applies_when": ["答案依赖网页中的可核实事实", "多个来源相互冲突"],
+      "observed_strategies": ["verify the answer with a primary source", "quote the exact supporting passage"],
+      "mistakes": [],
+      "exceptions": []
+    },
+    {
+      "id": "gaia-web-03",
+      "task_family": "web_research",
+      "capabilities": ["search"],
+      "question": "Return the first date visible in search results.",
+      "trajectory_steps": ["read a search-result snippet", "return its date without opening the source"],
+      "environment_score": 0.1,
+      "applies_when": ["搜索结果存在二手转述"],
+      "observed_strategies": ["stop at the first search result"],
+      "mistakes": ["把搜索摘要当成最终证据，未打开来源页面"],
+      "exceptions": []
+    },
+    {
+      "id": "gaia-file-01",
+      "task_family": "file_analysis",
+      "capabilities": ["file_inspection", "parsing"],
+      "question": "Extract a total from an attached spreadsheet with an unknown extension.",
+      "trajectory_steps": ["inspect the file signature", "select a spreadsheet parser", "check the total against the parsed row count"],
+      "environment_score": 1.0,
+      "applies_when": ["任务带有附件", "扩展名不能可靠代表文件格式"],
+      "observed_strategies": ["inspect the file type before choosing a parser", "validate the computed total against row count"],
+      "mistakes": [],
+      "exceptions": ["损坏文件应停止解析并报告证据不足"]
+    },
+    {
+      "id": "gaia-file-02",
+      "task_family": "file_analysis",
+      "capabilities": ["file_inspection", "parsing"],
+      "question": "Read a renamed archive and calculate values from its CSV member.",
+      "trajectory_steps": ["inspect the file signature", "open the archive and select a CSV parser", "check the total against the parsed row count"],
+      "environment_score": 0.9,
+      "applies_when": ["任务带有附件", "扩展名不能可靠代表文件格式"],
+      "observed_strategies": ["inspect the file type before choosing a parser", "validate the computed total against row count"],
+      "mistakes": [],
+      "exceptions": []
+    },
+    {
+      "id": "gaia-file-03",
+      "task_family": "file_analysis",
+      "capabilities": ["parsing"],
+      "question": "Parse a renamed binary file as plain text.",
+      "trajectory_steps": ["choose a parser from the .txt filename", "silently discard undecodable bytes"],
+      "environment_score": 0.45,
+      "applies_when": ["任务带有附件"],
+      "observed_strategies": ["choose the parser from the filename extension"],
+      "mistakes": ["只根据扩展名选择解析器，导致部分内容丢失"],
+      "exceptions": []
+    }
+  ],
+  "transfer_cases": [
+    {
+      "id": "transfer-web",
+      "task_family": "web_research",
+      "query": "Return the first date visible in search results, but make sure the launch date is supported.",
+      "expected_guidance": ["verify the answer with a primary source"],
+      "harmful_guidance": ["stop at the first search result"]
+    },
+    {
+      "id": "transfer-file",
+      "task_family": "file_analysis",
+      "query": "An attachment was renamed to .txt; inspect and calculate the total safely.",
+      "expected_guidance": ["inspect the file type before choosing a parser", "validate the computed total against row count"],
+      "harmful_guidance": ["choose the parser from the filename extension"]
+    }
+  ]
+}

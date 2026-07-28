@@ -1,358 +1,233 @@
-# Agentic RAG for User Memory Evaluation
+# Agentic RAG for User Memory / 面向用户记忆的 Agentic RAG
 
-An educational project that combines **Retrieval-Augmented Generation (RAG)** with **User Memory Evaluation** to demonstrate how AI agents can effectively manage and query long-term conversation histories.
+> Companion material for *AI Agents in Depth*, Chapter 3 — agentic multi-hop retrieval over conversation memory with offline demo and optional pipeline backend.  
+> 配套《深入理解 AI Agent》第 3 章——对话记忆上的 Agentic 多跳检索；含离线演示与可选检索流水线。
 
-## 🎯 Learning Objectives
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-This project teaches you:
-1. **How to chunk long conversations** into manageable segments for indexing
-2. **How to integrate with external retrieval pipelines** for hybrid search
-3. **How to implement agentic RAG** with tool-calling and the ReAct pattern
-4. **How to evaluate memory systems** with automatic LLM-based scoring
-5. **How to optimize retrieval** for conversation-based queries
-6. **How to integrate evaluation frameworks** from different projects
+---
 
-## 🏗️ Architecture Overview
+## English
+
+### Learning objectives
+
+1. Chunk long conversations for indexing  
+2. Integrate external retrieval pipelines (hybrid search)  
+3. Agentic RAG with tool-calling and ReAct  
+4. Evaluate memory with automatic LLM scoring  
+5. Optimize retrieval for conversation queries  
+6. Integrate evaluation frameworks across projects  
+
+### Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│         User Memory Test Cases          │
-│     (60 test cases, 3 difficulty layers) │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│        Conversation Chunker              │
-│  (Splits into 20-round segments with    │
-│   overlap and contextual enrichment)     │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│    External Retrieval Pipeline           │
-│      (Port 4242 - Hybrid Search)         │
-│  ┌─────────────┐  ┌──────────────────┐  │
-│  │Dense Search │  │ Sparse Search    │  │
-│  │ (Embeddings)│  │    (BM25)        │  │
-│  └─────────────┘  └──────────────────┘  │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│       Agentic RAG Agent                  │
-│   (ReAct pattern with memory tools)      │
-│                                          │
-│  Tools:                                  │
-│  • search_memory                         │
-│  • get_conversation_context              │
-│  • get_full_conversation                 │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│        LLM Evaluation System              │
-│   (Automatic scoring and reasoning)      │
-│  • Reward score (0.0-1.0)                │
-│  • Pass/Fail determination               │
-│  • Detailed reasoning                    │
-└─────────────────────────────────────────┘
+User Memory Test Cases (60 cases, 3 layers)
+        → Conversation Chunker (~20-round segments + overlap + enrichment)
+        → External Retrieval Pipeline (port 4242) or local BM25
+             Dense + Sparse hybrid
+        → Agentic RAG Agent (ReAct; search_memory / get_conversation_context / get_full_conversation)
+        → LLM Evaluation (reward 0–1, pass/fail, reasoning)
 ```
 
-## 📚 Key Concepts
+### Key concepts
 
-### 1. Conversation Chunking
-Long conversation histories are divided into chunks of approximately 20 rounds (user-assistant exchanges). This makes them:
-- **Searchable**: Smaller units are easier to index and retrieve
-- **Contextual**: Each chunk maintains context from surrounding conversations
-- **Efficient**: Reduces the amount of text the LLM needs to process
-
-### 2. Hybrid Retrieval (via External Pipeline)
-The system integrates with an external retrieval pipeline service that provides:
-- **Dense Retrieval**: Uses embeddings for semantic similarity search
-- **Sparse Retrieval**: Uses BM25 for keyword matching and exact phrase search
-- **Hybrid Fusion**: Combines scores from both methods for optimal results
-- **Scalable Architecture**: Offloads indexing and search to dedicated service
-
-### 3. Agentic RAG Pattern
-The agent follows the ReAct (Reasoning + Acting) pattern:
-1. **Reason** about what information is needed
-2. **Act** by calling search tools
-3. **Observe** the results
-4. **Iterate** until sufficient information is found
-
-### 4. Automatic LLM Evaluation
-The system integrates with week2/user-memory-evaluation to provide:
-- **Reward Scoring**: Continuous score from 0.0 to 1.0
-- **Pass/Fail Assessment**: Automatic determination (≥0.6 passes)
-- **Detailed Reasoning**: Explanation of evaluation decisions
-- **Full Visibility**: Enhanced logging of LLM responses and tool calls
-
-### 5. Contextual Enrichment
-Chunks are enhanced with:
-- Metadata about the conversation (business, department, timestamps)
-- Context from previous and next chunks
-- Semantic tags for better retrieval
-
-## 🚀 Quick Start
+1. **Conversation chunking** — ~20 rounds, searchable, contextual, efficient  
+2. **Hybrid retrieval** (optional pipeline) — dense + BM25 + fusion; scalable  
+3. **Agentic RAG** — Reason → Act → Observe → iterate  
+4. **LLM evaluation** — integrates user-memory-evaluation style scoring (≥0.6 pass)  
+5. **Contextual enrichment** — metadata, neighbors, tags  
 
 ### Prerequisites
-- Python 3.8+
-- **Retrieval Pipeline Service on port 4242 is now OPTIONAL.** By default the indexer
-  uses `retrieval_backend="auto"`: it uses the external pipeline if it is reachable,
-  otherwise it transparently falls back to a **built-in, dependency-free local BM25
-  index** so the whole chunk → index → retrieve path runs fully offline.
-- API keys are only needed for the LLM-driven parts:
-  - A supported LLM provider (Kimi/Moonshot, OpenAI, SiliconFlow, DeepSeek, ...) for
-    agent answer generation (`--mode batch`/`interactive`/`demo`).
-  - The **offline comparison demo (`--mode offline-demo`) needs NO API key and NO
-    port 4242 service.**
+
+- Python 3.8+  
+- **Port 4242 pipeline is OPTIONAL.** Default `retrieval_backend="auto"`: use pipeline if reachable, else **built-in local BM25** (offline).  
+- API keys only for LLM modes (`batch` / `interactive` / `demo`).  
+- **`--mode offline-demo` needs NO API key and NO port 4242.**  
 
 ### Installation
 
 ```bash
-# Enter the project
 cd chapter3/agentic-rag-for-user-memory
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Setup environment variables
 cp env.example .env
-# Edit .env with your API keys
+# Edit API keys
 ```
 
-### Retrieval Backend (offline by default, pipeline optional)
+### Retrieval backend
 
-The retrieval backend is selectable via `--backend` (or `IndexConfig.retrieval_backend`):
+| value | behavior |
+|-------|----------|
+| `auto` | default — pipeline if up, else local BM25 |
+| `local` | always offline BM25 |
+| `pipeline` | always port 4242 |
 
-| value      | behavior                                                                 |
-|------------|--------------------------------------------------------------------------|
-| `auto`     | default — use the port-4242 pipeline if reachable, else local BM25        |
-| `local`    | always use the built-in offline BM25 index (no external service)         |
-| `pipeline` | always use the external retrieval pipeline on port 4242                   |
-
-To use the external pipeline (for dense/hybrid embeddings + reranking), start it first:
+Optional pipeline:
 
 ```bash
-# In a separate terminal (OPTIONAL)
 cd ../retrieval-pipeline
-python api_server.py   # serves http://localhost:4242
+python api_server.py   # http://localhost:4242
 ```
 
-### Running the Demo
+### Running
 
 ```bash
-# Offline comparison demo — NO API key, NO port 4242 needed.
-# Shows agentic multi-hop memory retrieval beating naive single-query recall,
-# on the multi-session layer2_01_multiple_vehicles case, with a metric table.
+# Offline multi-hop vs naive recall (no API, no 4242)
 python main.py --mode offline-demo
-python offline_demo.py                     # equivalent, standalone entry point
-python offline_demo.py --output results/offline_demo.json   # also dump JSON
+python offline_demo.py
+python offline_demo.py --output results/offline_demo.json
 
-# Test the system setup
 python test_pipeline.py
-
-# Run interactive mode
 python main.py
-
-# Quick demo with a simple test case (needs an LLM API key)
 python main.py --mode demo
-
-# Batch evaluation of a category (needs an LLM API key; --backend local stays offline)
 python main.py --mode batch --category layer1 --backend local
 ```
 
-### Offline demo result (reproducible)
+CLI: `--mode {interactive,batch,demo,offline-demo}`, `--category`, `--test-id`, `--query`, `--provider`, `--model`, `--index-mode {dense,sparse,hybrid}`, `--backend {auto,local,pipeline}`, `--top-k`, `--rounds-per-chunk`, `--store-path`, `--test-cases-dir`, `--output`, `--config`. See `python main.py --help` (Chinese).
 
-Running `python offline_demo.py` on `layer2_01_multiple_vehicles` (user owns a Honda
-Accord with a scheduled Firestone service and a Tesla Model 3 without one, discussed
-across two separate calls) yields, from real BM25 retrieval:
+### Offline demo results (reproducible)
 
-| metric                              | naive single-query | agentic multi-hop |
-|-------------------------------------|:------------------:|:-----------------:|
-| retrieval queries issued            | 1                  | 5                 |
-| memory chunks retrieved             | 3                  | 5                 |
-| decisive-evidence recall            | **50%**            | **100%**          |
-| can fully disambiguate & answer     | no                 | yes               |
+On `layer2_01_multiple_vehicles` (Honda + Tesla across sessions), real BM25:
 
-The naive query is dominated by "schedule service" keywords and misses the Honda
-appointment-confirmation chunk (`FS-447291`). The agentic strategy discovers the
-second vehicle from the first-round results, issues focused follow-up queries per
-vehicle, and recovers the missing evidence. The recall numbers are computed from
-actual retrieval, not hard-coded.
+| metric | naive single-query | agentic multi-hop |
+|--------|:------------------:|:-----------------:|
+| retrieval queries issued | 1 | 5 |
+| memory chunks retrieved | 3 | 5 |
+| decisive-evidence recall | **50%** | **100%** |
+| can fully disambiguate & answer | no | yes |
 
-### CLI flags (`main.py`)
+Naive is dominated by “schedule service” keywords and misses Honda confirmation (`FS-447291`). Agentic discovers the second vehicle, issues focused follow-ups, recovers evidence. Numbers from actual retrieval, not hard-coded.
 
-`--mode {interactive,batch,demo,offline-demo}`, `--category`, `--test-id`, `--query`,
-`--provider`, `--model`, `--index-mode {dense,sparse,hybrid}`,
-`--backend {auto,local,pipeline}`, `--top-k`, `--rounds-per-chunk`, `--store-path`,
-`--test-cases-dir`, `--output`, `--config`. Run `python main.py --help` for the
-(Chinese) descriptions.
+### Interactive options
 
-## 📖 Usage Guide
+Load / view test cases; configure chunking/index/agent; evaluate single or by category; generate reports.
 
-### Interactive Mode
-
-The interactive interface provides these options:
-
-1. **Load Test Cases**: Load test cases from the evaluation framework
-2. **View Test Cases**: Browse loaded test cases and their details
-3. **Configure Settings**: Adjust chunking, indexing, and agent parameters
-4. **Evaluate Single Test**: Run evaluation on a specific test case
-5. **Evaluate by Category**: Test all cases in a difficulty layer
-6. **Generate Report**: Create detailed evaluation reports
-
-### Example Workflow
+### Example code
 
 ```python
-# 1. Initialize the evaluator
 from config import Config
 from evaluator import UserMemoryEvaluator
 
 config = Config.from_env()
 evaluator = UserMemoryEvaluator(config)
-
-# 2. Load test cases
 test_cases = evaluator.load_test_cases(category="layer1")
-
-# 3. Evaluate a test case
 result = evaluator.evaluate_test_case("layer1_01_bank_account")
-
-# 4. Generate report
 report = evaluator.generate_report("results/evaluation_report.txt")
 ```
 
-### Configuring the System
-
-Key configuration options in `config.py`:
+### Config highlights
 
 ```python
-# Chunking settings
-config.chunking.rounds_per_chunk = 20  # Rounds per chunk
-config.chunking.overlap_rounds = 2     # Overlapping rounds
-
-# Index settings
-config.index.mode = "hybrid"           # dense, sparse, or hybrid
-config.index.enable_contextual = True  # Add contextual enrichment
-
-# Agent settings
-config.agent.max_search_results = 5    # Results per search
-config.evaluation.max_iterations = 10  # Max ReAct iterations
+config.chunking.rounds_per_chunk = 20
+config.chunking.overlap_rounds = 2
+config.index.mode = "hybrid"
+config.index.enable_contextual = True
+config.agent.max_search_results = 5
+config.evaluation.max_iterations = 10
 ```
 
-## 🧪 Test Case Structure
+### Test layers
 
-Test cases follow the user-memory-evaluation framework format:
+- **L1** simple retrieval — “What is my checking account number?”  
+- **L2** multi-conversation — “Which vehicle needs service first?”  
+- **L3** complex reasoning — “What urgent issues before my trip?”  
 
-### Test Case Fields
-- `test_id`: Unique identifier
-- `category`: Difficulty layer (layer1, layer2, layer3)
-- `title`: Descriptive title
-- `conversation_histories`: Past conversations to index
-- `user_question`: The question to answer
-- `evaluation_criteria`: Criteria for evaluating responses
-- `expected_behavior`: Optional expected agent behavior
+### Components
 
-### Layer 1: Simple Information Retrieval
-- Single conversation with clear information
-- Direct questions about specific details
-- Example: "What is my checking account number?"
+`chunker.py`, `indexer.py`, `tools.py` (`search_memory`, `get_conversation_context`, `get_full_conversation` — full content), `agent.py` (ReAct), `evaluator.py`.
 
-### Layer 2: Multi-Conversation Correlation
-- Multiple related conversations
-- Questions requiring information synthesis
-- Example: "Which of my vehicles needs service first?"
+### Metrics / troubleshooting
 
-### Layer 3: Complex Reasoning
-- Hidden patterns and implicit connections
-- Questions requiring deep analysis
-- Example: "What urgent issues should I address before my trip?"
+Success rate, LLM reward, iterations, tool calls, latency, index time.  
 
-## 🔧 Component Details
+**Top-k:** pipeline uses `top_k` (candidates) and `rerank_top_k` (final).  
+**LLM eval missing:** need evaluator API + criteria.  
+**Pipeline down:** not fatal with `--backend auto`; force offline with `--backend local`.
 
-### Chunker (`chunker.py`)
-- Splits conversations into fixed-size chunks
-- Maintains conversation flow with overlapping rounds
-- Adds contextual information to each chunk
+### Related
 
-### Indexer (`indexer.py`)
-- Integrates with external retrieval pipeline service
-- Sends documents for indexing via HTTP API
-- Manages document ID mapping
-- Performs hybrid searches through the pipeline
+`user-memory`, `user-memory-evaluation`, `agentic-rag`, `contextual-retrieval` (chapter3 paths).
 
-### Tools (`tools.py`)
-- `search_memory`: Main search interface with full content retrieval
-- `get_conversation_context`: Retrieves surrounding chunks
-- `get_full_conversation`: Gets entire conversation history
-Note: All tools return complete content (not truncated)
+### License
 
-### Agent (`agent.py`)
-- Implements ReAct pattern with tool calling
-- Manages conversation state
-- Generates responses based on retrieved information
+Educational curriculum materials.
 
-### Evaluator (`evaluator.py`)
-- Loads test cases from YAML files
-- Manages the indexing pipeline
-- Tracks evaluation metrics and results
-- Integrates automatic LLM evaluation
+---
 
-## 📊 Evaluation Metrics
+## 中文
 
-The system tracks comprehensive metrics:
-- **Success Rate**: Percentage of correctly answered questions
-- **LLM Evaluation Score**: Automatic reward score (0.0-1.0) with detailed reasoning
-- **Iterations**: Number of ReAct reasoning steps
-- **Tool Calls**: Number and types of tools used
-- **Processing Time**: Response generation time
-- **Indexing Time**: Time to build search indexes
-- **Result Quality**: Controlled by reranking with configurable top_k
+### 学习目标
 
-## 🔍 Troubleshooting
+1. 长对话分块索引  
+2. 对接外部混合检索流水线  
+3. 工具调用 + ReAct 的 Agentic RAG  
+4. LLM 自动打分评测记忆  
+5. 面向对话查询的检索优化  
+6. 跨项目评估框架集成  
 
-### Top-K Results Issue
-**Problem**: Getting 10 results regardless of `top_k` setting  
-**Solution**: The retrieval pipeline uses two parameters:
-- `top_k`: Initial retrieval count (for candidates)
-- `rerank_top_k`: Final result count (what you actually get)
+### 架构
 
-The system now correctly sets both parameters to respect your requested result count.
+用户记忆用例 → 对话分块（约 20 轮 + 重叠 + 上下文增强）→ 外部流水线（4242）或本地 BM25 → Agentic Agent（ReAct 记忆工具）→ LLM 评估。
 
-### LLM Evaluation Not Running
-**Problem**: No automatic evaluation after agent response  
-**Solution**: Ensure you have:
-- Valid OpenAI API key for evaluation
-- Access to week2/user-memory-evaluation module
-- Proper test case format with evaluation_criteria
+### 关键概念
 
-### Retrieval Pipeline Connection
-**Problem**: Cannot connect to retrieval pipeline  
-**Solution**: This is no longer fatal — with `--backend auto` (default) the system logs a
-warning and falls back to the built-in local BM25 backend. If you specifically want the
-external pipeline:
-- Start the service: `cd ../retrieval-pipeline && python api_server.py`
-- Verify it's running on `http://localhost:4242`
-- Or force offline mode explicitly with `--backend local`
+分块、混合检索、Agentic ReAct、自动 LLM 评测、上下文增强——与 English 节一致。
 
-## 📄 License
+### 前置条件
 
-This project is part of the AI Agent training curriculum and is intended for educational purposes.
+Python 3.8+。**4242 流水线可选**；默认 `auto` 回退本地 BM25。仅 LLM 模式需 API Key。**`offline-demo` 无需 Key 与 4242。**
 
-## 🔗 Related Projects
+### 安装与后端
 
-- `week2/user-memory`: Basic user memory system
-- `week2/user-memory-evaluation`: Evaluation framework
-- `week3/agentic-rag`: Original agentic RAG implementation
-- `week3/contextual-retrieval`: Advanced retrieval techniques
+```bash
+cd chapter3/agentic-rag-for-user-memory
+pip install -r requirements.txt
+cp env.example .env
 
+# 可选
+cd ../retrieval-pipeline && python api_server.py
+```
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+| 值 | 行为 |
+|----|------|
+| `auto` | 默认可达则用流水线，否则本地 BM25 |
+| `local` | 始终离线 BM25 |
+| `pipeline` | 始终 4242 |
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+### 运行
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+```bash
+python main.py --mode offline-demo
+python offline_demo.py
+python offline_demo.py --output results/offline_demo.json
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+python test_pipeline.py
+python main.py
+python main.py --mode demo
+python main.py --mode batch --category layer1 --backend local
+```
+
+CLI 标志见 English 节；`python main.py --help` 含中文说明。
+
+### 离线演示结果
+
+`layer2_01_multiple_vehicles` 上 naive 证据召回 **50%**、agentic **100%**（见 English 表）。
+
+### 配置、用例层级、组件
+
+`config.py` 分块/索引/Agent 参数；L1/L2/L3 用例；`chunker` / `indexer` / `tools` / `agent` / `evaluator`。
+
+### 故障排查
+
+Top-k 需同时设 `top_k` 与 `rerank_top_k`；流水线不可达时用 `--backend auto/local`；LLM 评测需有效 Key 与 `evaluation_criteria`。
+
+### 相关与许可
+
+见同章 `user-memory`、`user-memory-evaluation`、`agentic-rag`、`contextual-retrieval`。教学用途。
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+If primary keys are absent and `OPENROUTER_API_KEY` is set, chat LLM routes through OpenRouter with automatic model mapping. See `env.example`.

@@ -10,6 +10,8 @@ from mcp.client.stdio import stdio_client
 from mcp.types import TextContent
 import sys
 
+from result_parsing import parse_mapping
+
 
 class CollaborationAgent:
     """An AI agent that uses collaboration tools."""
@@ -43,7 +45,7 @@ class CollaborationAgent:
         """Call a tool and return the result."""
         result = await self.session.call_tool(tool_name, arguments)
         text_content = [c.text for c in result.content if isinstance(c, TextContent)]
-        return eval(text_content[0]) if text_content else {}
+        return parse_mapping(text_content[0]) if text_content else {}
     
     async def monitor_website_workflow(self, url: str, check_interval: int = 300):
         """Monitor a website and notify on changes.

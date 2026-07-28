@@ -24,10 +24,10 @@ jobs:
       # by material/templates/__init__.py and stable across 9.x releases.
       NO_MKDOCS_2_WARNING: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
       - name: Install MkDocs Material
@@ -36,7 +36,7 @@ jobs:
         run: bash scripts/build_site.sh
       - name: Build site
         run: mkdocs build -d site
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
@@ -48,4 +48,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

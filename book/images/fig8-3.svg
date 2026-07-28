@@ -1,22 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 194" width="880" height="194" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="27.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="122.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① 需求识别</text>
-<text x="122.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">现有工具不足</text>
-<rect x="239.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="334.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② 工具搜索</text>
-<text x="334.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">开放世界查找</text>
-<line x1="219.0" y1="90.0" x2="237.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="546.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ 代码封装</text>
-<text x="546.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">生成并封装</text>
-<line x1="431.0" y1="90.0" x2="449.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="663.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="758.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">④ 工具注册</text>
-<text x="758.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">纳入库可复用</text>
-<line x1="643.0" y1="90.0" x2="661.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="758.0" y1="132" x2="758.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="758.0" y1="166" x2="122.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="122.0" y1="166" x2="122.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">新工具注册后可被后续任务复用，持续扩展能力边界</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 410" width="1000" height="410" style="background:#ffffff">
+  <defs>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:16px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">能力的表示性质决定主要更新位置</text>
+
+  <rect x="35" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="145" y="105" text-anchor="middle" class="t h">知识</text>
+  <text x="145" y="135" text-anchor="middle" class="t s">事实、经验与例外</text>
+  <text x="145" y="164" text-anchor="middle" class="t s">Markdown / 知识库</text>
+
+  <rect x="275" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="385" y="105" text-anchor="middle" class="t h">指令</text>
+  <text x="385" y="135" text-anchor="middle" class="t s">可语言化的判断原则</text>
+  <text x="385" y="164" text-anchor="middle" class="t s">Prompt / Skill</text>
+
+  <rect x="515" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="625" y="105" text-anchor="middle" class="t h">程序</text>
+  <text x="625" y="135" text-anchor="middle" class="t s">确定性流程与强约束</text>
+  <text x="625" y="164" text-anchor="middle" class="t s">工具 / 工作流 / Harness</text>
+
+  <rect x="755" y="72" width="220" height="126" rx="9" class="accent"/>
+  <text x="865" y="105" text-anchor="middle" class="t h">参数</text>
+  <text x="865" y="135" text-anchor="middle" class="t s">高维感知与隐式策略</text>
+  <text x="865" y="164" text-anchor="middle" class="t s">SFT / 蒸馏 / RL</text>
+
+  <line x1="145" y1="226" x2="865" y2="226" stroke="#33434d" stroke-width="2"/>
+  <path d="M145 218 V234 M865 218 V234" stroke="#33434d" stroke-width="2"/>
+  <text x="145" y="260" text-anchor="middle" class="t s">易更新、可追溯</text>
+  <text x="865" y="260" text-anchor="middle" class="t s">内化、低推理开销</text>
+  <text x="500" y="289" text-anchor="middle" class="t h">不是单向阶梯，而是四种互补载体</text>
+
+  <rect x="145" y="320" width="710" height="58" rx="8" class="accent"/>
+  <text x="500" y="344" text-anchor="middle" class="t h">首要判断：能力能否被事实、语言规则或程序完整表达？</text>
+  <text x="500" y="367" text-anchor="middle" class="t s">稳定性、成本与更新频率决定具体部署方式，而非能力能否参数化</text>
 </svg>

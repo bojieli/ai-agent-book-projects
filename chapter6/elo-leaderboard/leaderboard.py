@@ -179,6 +179,9 @@ def get_rating_history(historical_leaderboards: List[Tuple]) -> pd.DataFrame:
                 'wins': row['wins']
             })
     
+    cols = ['date', 'model', 'rating', 'rank', 'matches', 'wins']
+    if not all_data:
+        return pd.DataFrame(columns=cols)
     history_df = pd.DataFrame(all_data)
     return history_df
 
@@ -194,6 +197,13 @@ def analyze_rating_changes(history_df: pd.DataFrame, top_n: int = 20) -> pd.Data
     Returns:
         DataFrame with change statistics
     """
+    stats_cols = [
+        'model', 'final_rating', 'initial_rating', 'rating_change',
+        'max_rating', 'min_rating', 'volatility', 'total_matches',
+    ]
+    if history_df is None or len(history_df) == 0:
+        return pd.DataFrame(columns=stats_cols)
+
     # Get final ratings
     final_date = history_df['date'].max()
     final_ratings = history_df[history_df['date'] == final_date].nlargest(top_n, 'rating')
@@ -223,6 +233,8 @@ def analyze_rating_changes(history_df: pd.DataFrame, top_n: int = 20) -> pd.Data
                 'total_matches': model_data.iloc[-1]['matches']
             })
     
+    if not stats:
+        return pd.DataFrame(columns=stats_cols)
     stats_df = pd.DataFrame(stats).sort_values('final_rating', ascending=False)
     return stats_df
 

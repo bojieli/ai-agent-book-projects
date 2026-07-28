@@ -57,7 +57,11 @@ class LegalAdvisorAgent:
 
     # --- 步骤 3+4：匹配最近原型并给出建议 ---
     def advise(self, known):
-        arch, dist = nearest_archetype(self.model, known)
+        matched = nearest_archetype(self.model, known)
+        # fit() can return n_archetypes=0 when every charge has too few samples to cluster.
+        if matched is None:
+            raise ValueError("模型中没有可用案件原型，无法给出量刑建议（样本过少无法聚类）")
+        arch, dist = matched
         m = arch["months"]
         defining = "；".join(
             f"{d['label']}（{d['direction']}，典型 {d['typical']}）"

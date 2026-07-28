@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 320" width="820" height="320" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="105.0" y="147.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Коммит кода</text>
+<text x="105.0" y="168.70000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Пул-реквест</text>
+<text x="220" y="157" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сегментация</text>
+<rect x="290" y="70" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="97.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка безопасности LLM₁</text>
+<rect x="450" y="70" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="80.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">SQL-инъекция</text>
+<text x="515.0" y="98.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">XSS</text>
+<text x="515.0" y="117.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Утечка разрешений</text>
+<line x1="180" y1="157" x2="288" y2="98" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="155" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="182.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка стиля LLM₂</text>
+<rect x="450" y="155" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="165.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Соглашение об именовании</text>
+<text x="515.0" y="183.89999999999998" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Дублирование кода</text>
+<text x="515.0" y="202.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Сложность</text>
+<line x1="180" y1="157" x2="288" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="290" y="240" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="367.5" y="267.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка логики LLM₃</text>
+<rect x="450" y="240" width="130" height="55" rx="6" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="515.0" y="250.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Граничное условие</text>
+<text x="515.0" y="268.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Нулевой указатель</text>
+<text x="515.0" y="287.09999999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Проблема параллелизма</text>
+<line x1="180" y1="157" x2="288" y2="268" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="640" y="130" width="150" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="715.0" y="147.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Агрегированный результат</text>
+<text x="715.0" y="168.70000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Комплексный отчёт проверки</text>
+<line x1="582" y1="98" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="183" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="582" y1="268" x2="638" y2="157" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+</svg>

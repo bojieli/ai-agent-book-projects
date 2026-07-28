@@ -23,3 +23,10 @@ def test_issues_preserved():
     assert _review_issues({"issues": issues}) == issues
     text = summarize_review({"overall_score": 50, "pass": False, "issues": issues})
     assert "high=1" in text
+
+
+def test_non_dict_issue_items_dropped():
+    assert _review_issues({"issues": [None, {"severity": "high"}, "x"]}) == [{"severity": "high"}]
+    text = summarize_review({"overall_score": 40, "pass": False, "issues": [None, {"severity": "high"}]})
+    assert "high=1" in text
+    assert "issues=1" in text

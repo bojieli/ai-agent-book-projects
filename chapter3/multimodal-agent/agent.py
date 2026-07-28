@@ -312,7 +312,7 @@ class MultimodalAgent:
         self.config = Config()
         self.current_model = model or self.config.default_model
         self.extraction_mode = mode or self.config.default_mode
-        self.enable_multimodal_tools = enable_tools
+        self.enable_multimodal_tools = False
         
         # Conversation history
         self.conversation_history: List[Message] = []
@@ -321,11 +321,23 @@ class MultimodalAgent:
         self.current_content_path: Optional[str] = None
         
         # Multimodal tools
-        self.tools = MultimodalTools(self) if enable_tools else None
+        self.tools: Optional[MultimodalTools] = None
         
         # Tool definitions for OpenAI-style function calling
-        self.tool_definitions = []
-        if enable_tools:
+        self.tool_definitions: List[Dict[str, Any]] = []
+        self.set_multimodal_tools_enabled(enable_tools)
+
+    def set_multimodal_tools_enabled(self, enabled: bool) -> None:
+        """Keep the multimodal tool state in sync."""
+        self.enable_multimodal_tools = enabled
+        if not enabled:
+            self.tools = None
+            return
+
+        if self.tools is None:
+            self.tools = MultimodalTools(self)
+
+        if not self.tool_definitions:
             self.tool_definitions = [
                 {
                     "type": "function",

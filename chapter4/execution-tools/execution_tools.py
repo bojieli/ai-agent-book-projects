@@ -50,13 +50,20 @@ def truncate_and_persist(
     with os.fdopen(fd, "w", encoding="utf-8") as f:
         f.write(text)
 
-    head_part = lines[:head_lines]
-    tail_part = lines[-tail_lines:]
-    omitted = max(len(lines) - head_lines - tail_lines, 0)
+    # lines[-0:] is the whole list in Python; treat 0 as "keep no tail".
+    head_n = max(0, head_lines)
+    tail_n = max(0, tail_lines)
+    head_part = lines[:head_n] if head_n else []
+    tail_part = lines[-tail_n:] if tail_n else []
+    omitted = max(len(lines) - head_n - tail_n, 0)
 
-    middle = f"... [省略 {omitted} 行，完整输出已保存至 {path}] ..."
     guide = f"[如需完整输出，请使用 read_file 工具读取 {path}]"
-    truncated = "\n".join(head_part + [middle] + tail_part + [guide])
+    if omitted == 0:
+        # Head+tail cover the file; do not concatenate overlapping slices.
+        truncated = "\n".join(lines + [guide])
+    else:
+        middle = f"... [省略 {omitted} 行，完整输出已保存至 {path}] ..."
+        truncated = "\n".join(head_part + [middle] + tail_part + [guide])
     return truncated, path
 
 

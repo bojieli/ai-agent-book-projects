@@ -34,8 +34,12 @@ def demo_basic_elo():
     for i, (model_a, model_b, winner) in enumerate(matches, 1):
         old_rating_a = elo.get_rating(model_a)
         old_rating_b = elo.get_rating(model_b)
-        
-        new_rating_a, new_rating_b = elo.update_ratings(model_a, model_b, winner)
+
+        # update_ratings expects 'model_a' / 'model_b' / 'tie', not the
+        # winning model's name (anything unrecognized is scored as a tie).
+        outcome = ("model_a" if winner == model_a
+                   else "model_b" if winner == model_b else "tie")
+        new_rating_a, new_rating_b = elo.update_ratings(model_a, model_b, outcome)
         
         print(f"Match {i}: {model_a} vs {model_b} -> {winner} wins")
         print(f"  {model_a}: {old_rating_a:.1f} → {new_rating_a:.1f} ({new_rating_a-old_rating_a:+.1f})")

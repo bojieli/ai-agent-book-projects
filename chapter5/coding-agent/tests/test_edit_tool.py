@@ -42,6 +42,24 @@ class TestEditTool:
         assert result.success
         assert result.data["replacements"] == 3
         assert file_path.read_text() == "replaced bar replaced baz replaced"
+
+    def test_empty_old_string_replace_all_rejected(self, system_state, temp_dir):
+        """Empty old_string with replace_all must not insert between every character."""
+        tool = EditTool(system_state)
+        file_path = temp_dir / "empty_old.txt"
+        original = "abcd"
+        file_path.write_text(original)
+
+        result = tool.execute({
+            "file_path": str(file_path),
+            "old_string": "",
+            "new_string": "X",
+            "replace_all": True,
+        })
+
+        assert "error" in result.data
+        assert "empty" in result.data["error"].lower()
+        assert file_path.read_text() == original
     
     def test_uniqueness_check(self, system_state, temp_dir):
         """Test that Edit fails if old_string is not unique (without replace_all)"""

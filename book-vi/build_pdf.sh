@@ -28,7 +28,7 @@ for cmd in pandoc xelatex rsvg-convert python3; do
     fi
 done
 
-OUT="AI-Agents-in-Depth-Bojie-Li-v1.2-vi.pdf"
+OUT="AI-Agents-in-Depth-Bojie-Li-v1.3-vi.pdf"
 CHAPTERS=(
     introduction.vi.md
     glossary.vi.md

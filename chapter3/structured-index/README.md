@@ -1,86 +1,61 @@
-# Structured Document Indexing with RAPTOR and GraphRAG
+# Structured Indexing: RAPTOR & GraphRAG / 结构化索引：RAPTOR 与 GraphRAG
 
-This educational project demonstrates two advanced approaches for indexing and querying large technical documents:
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-8**: hierarchical RAPTOR trees vs GraphRAG knowledge graphs, plus offline structured-vs-flat demo.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-8**：RAPTOR 层次树 vs GraphRAG 知识图谱，含离线「结构化 vs 扁平」演示。
 
-1. **RAPTOR** (Recursive Abstractive Processing for Tree-Organized Retrieval) - Creates a hierarchical tree structure with recursive summarization
-2. **GraphRAG** (Graph-based Retrieval Augmented Generation) - Builds a knowledge graph with entities, relationships, and community detection
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-Both approaches are optimized for handling large technical documentation like the Intel® 64 and IA-32 Architectures Software Developer's Manual.
+---
 
-## Features
+## English
 
-### RAPTOR Tree-Based Indexing
-- Hierarchical tree structure with multiple levels of abstraction
-- Recursive summarization for information compression
-- Multi-level search capability (leaf nodes to root summaries)
-- Clustering-based node grouping using Gaussian Mixture Models
-- UMAP dimensionality reduction for efficient clustering
+### Overview
 
-### GraphRAG Knowledge Graph Indexing
-- Entity and relationship extraction using LLMs
-- Community detection for identifying related concepts
-- Hierarchical community summarization
-- Graph-based search with multiple strategies
-- **Multi-hop relation traversal** (`GraphRAGIndexer.multi_hop_search`)：沿关系边做多跳遍历，
-  回答扁平向量检索无法表达的「A 通过什么与 B 相连」这类关系性问题（对应书中「多跳关系推理」）
-- Support for different entity types (instructions, registers, features, etc.)
+Two advanced approaches for large technical documents (e.g. Intel® SDM-style manuals):
 
-### HTTP API Service
-- RESTful API for building and querying indexes
-- Support for file uploads
-- Asynchronous processing for large documents
-- Hybrid search across both index types
-- Real-time index statistics and status monitoring
+1. **RAPTOR** — hierarchical tree with recursive abstractive summarization  
+2. **GraphRAG** — entities, relations, communities, multi-hop traversal  
 
-## Installation
+### Features
 
-1. Clone the repository and navigate to the project directory:
+**RAPTOR:** multi-level abstraction; recursive summaries; leaf→root search; GMM clustering; UMAP.
+
+**GraphRAG:** LLM entity/relation extract; community detection; community summaries; multi-strategy search; **`GraphRAGIndexer.multi_hop_search`** for “how is A connected to B” questions flat vector search cannot express.
+
+**HTTP API:** build/query, uploads, async large docs, hybrid search, stats.
+
+### Installation
+
 ```bash
-cd projects/week3/structured-index
-```
-
-2. Install dependencies:
-```bash
+cd chapter3/structured-index
 pip install -r requirements.txt
-```
-
-3. Copy and configure the environment file:
-```bash
 cp env.example .env
-# Edit .env with your API keys and preferences
+# API keys and preferences
 ```
 
-## Quick Start
+### CLI
 
-### 命令行接口（CLI）
-
-所有子命令都提供中文 `--help`：`python main.py --help`、`python main.py demo --help` 等。
+Chinese `--help` on all subcommands: `python main.py --help`, `python main.py demo --help`, etc.
 
 ```
 usage: main.py [-h] {build,query,demo,serve} ...
-  build   从文档构建结构化索引（需要 OPENAI_API_KEY）
-  query   查询已构建的索引（需要 OPENAI_API_KEY 及已有索引）
-  demo    离线对比演示：结构化索引 vs 扁平检索（无需 API Key）
-  serve   启动 HTTP API 服务
+  build   Build structured indexes (needs OPENAI_API_KEY)
+  query   Query existing indexes (needs key + built indexes)
+  demo    Offline structured vs flat compare (no API key)
+  serve   Start HTTP API
 ```
 
-#### 0. 离线对比演示（无需 API Key，推荐先跑这个）
+#### 0. Offline demo (no API key — recommended first)
 
-这是理解实验 3-8 的最快入口：它用一个手工整理的 Intel x86 SIMD 小知识库，
-直观对比「扁平检索」与「结构化索引」在三类查询上的差异，全程无需 OpenAI API：
+Hand-curated small Intel x86 SIMD knowledge base; three query types: multi-hop, cross-node synthesis, multi-level navigation.
 
 ```bash
-# 运行内置的三组对比查询（多跳关系推理 / 跨节点综合对比 / 多层次导航）
 python main.py demo
-
-# 自定义查询，同时给出扁平检索与图多跳遍历两种视角
 python main.py demo --query "VADDPS 用到哪个寄存器"
-
-# 把结果写入 JSON
 python main.py demo --output demo_result.json
 ```
 
-演示输出示例（多跳关系推理，扁平检索答不了、图检索沿关系边可达）：
+Example (multi-hop; flat fails, graph succeeds):
 
 ```
 【查询 1｜多跳关系推理】运行 ADDPS 指令前，操作系统必须把哪个控制寄存器位置 1？
@@ -93,252 +68,191 @@ python main.py demo --output demo_result.json
   ✓ 答案：CR4.OSFXSR（从 ADDPS 经 2 跳可达）
 ```
 
-> 说明：`build` 与 `query` 需要真实索引，而索引构建依赖 LLM（实体抽取、递归摘要），
-> 因此需要设置 `OPENAI_API_KEY`（嵌入用本地 `sentence-transformers`）。`demo`
-> 则把索引结果预先手工写好，让读者无需 API Key 也能看到结构化索引解决的问题。
+> `build` / `query` need real indexes (LLM for entities/summaries) → `OPENAI_API_KEY` (embeddings: local SentenceTransformers). `demo` uses hand-authored structure so readers see the point without keys.
 
-#### 1. 构建索引（需要 OPENAI_API_KEY）
+#### 1. Build (needs OPENAI_API_KEY)
 
 ```bash
-# 同时构建 RAPTOR 与 GraphRAG 索引
 python main.py build path/to/document.pdf
-
-# 只构建 RAPTOR，或只构建 GraphRAG
 python main.py build path/to/document.pdf --type raptor
 python main.py build path/to/document.pdf --type graphrag
-
-# 将索引统计写入 JSON
 python main.py build path/to/document.pdf --output stats.json
 ```
 
-#### 2. 查询索引
+#### 2. Query
 
 ```bash
-# 查询两种索引
 python main.py query "What are the MOV instruction variants?"
-
-# 指定索引类型与返回条数
 python main.py query "explain SSE instructions" --type raptor --top-k 10
-
-# GraphRAG 多跳关系遍历：以召回的最佳实体为起点，沿关系边走 N 跳
 python main.py query "SSE registers" --type graphrag --multi-hop 2
-
-# 将查询结果写入 JSON
 python main.py query "control registers" --output result.json
 ```
 
-#### 3. 启动 API 服务
+#### 3. Serve
 
 ```bash
 python main.py serve
+# http://localhost:4242
 ```
 
-### Using the HTTP API
+### HTTP API examples
 
-1. **Start the server:**
 ```bash
-python main.py serve
-# Server runs on http://localhost:4242
-```
-
-2. **Build an index via API:**
-```bash
-# Upload a file and build index
 curl -X POST "http://localhost:4242/upload" \
   -F "file=@path/to/intel_manual.pdf" \
   -F "index_type=both"
 
-# Build from text
 curl -X POST "http://localhost:4242/build" \
   -H "Content-Type: application/json" \
-  -d '{
-    "file_path": "/path/to/document.pdf",
-    "index_type": "both",
-    "force_rebuild": false
-  }'
-```
+  -d '{"file_path": "/path/to/document.pdf", "index_type": "both", "force_rebuild": false}'
 
-3. **Query the index:**
-```bash
 curl -X POST "http://localhost:4242/query" \
   -H "Content-Type: application/json" \
-  -d '{
-    "query": "What are vector instructions?",
-    "index_type": "hybrid",
-    "top_k": 5
-  }'
-```
+  -d '{"query": "What are vector instructions?", "index_type": "hybrid", "top_k": 5}'
 
-4. **Check index status:**
-```bash
 curl http://localhost:4242/status
 curl http://localhost:4242/statistics
 ```
 
-## API Endpoints
-
 | Endpoint | Method | Description |
-|----------|---------|-------------|
-| `/` | GET | API information and available endpoints |
-| `/build` | POST | Build index from text or file |
-| `/upload` | POST | Upload file and build index |
-| `/query` | POST | Query the indexes |
-| `/status` | GET | Get index status |
-| `/statistics` | GET | Get detailed index statistics |
-| `/indexes` | DELETE | Clear indexes |
+|----------|--------|-------------|
+| `/` | GET | API info |
+| `/build` | POST | Build from text/file |
+| `/upload` | POST | Upload + build |
+| `/query` | POST | Query indexes |
+| `/status` | GET | Status |
+| `/statistics` | GET | Stats |
+| `/indexes` | DELETE | Clear |
 
-## Project Structure
+### Project structure
 
 ```
 structured-index/
-├── config.py              # Configuration management
-├── raptor_indexer.py      # RAPTOR tree-based indexing
-├── graphrag_indexer.py    # GraphRAG graph-based indexing
-├── document_processor.py  # Document parsing and preprocessing
-├── api_service.py         # HTTP API service
-├── structured_vs_flat_demo.py  # 离线对比演示：结构化索引 vs 扁平检索（无需 API）
-├── main.py               # CLI interface
-├── requirements.txt      # Python dependencies
-├── env.example          # Environment variables template
-├── indexes/             # Saved index files
-│   ├── raptor/         # RAPTOR index storage
-│   └── graphrag/       # GraphRAG index storage
-└── cache/              # Temporary cache directory
+├── config.py, raptor_indexer.py, graphrag_indexer.py
+├── document_processor.py, api_service.py
+├── structured_vs_flat_demo.py   # offline demo
+├── main.py, requirements.txt, env.example
+├── indexes/{raptor,graphrag}/, cache/
 ```
 
-## How It Works
+### How it works
 
-### RAPTOR Indexing Process
+**RAPTOR:** chunk → embed → leaves → GMM cluster → parent summaries → multi-level tree → multi-level search.
 
-1. **Text Chunking**: Document is split into manageable chunks with overlap
-2. **Embedding Generation**: Each chunk is converted to vector embeddings
-3. **Leaf Node Creation**: Chunks become leaf nodes with summaries
-4. **Hierarchical Clustering**: Nodes are clustered using GMM
-5. **Parent Node Generation**: Clusters are summarized to create parent nodes
-6. **Tree Building**: Process repeats for multiple levels
-7. **Multi-level Search**: Queries search across all tree levels
+**GraphRAG:** entity extract → relations → NetworkX graph → communities → summaries → hierarchical merge → entity/community search (+ multi-hop).
 
-### GraphRAG Indexing Process
+### Advanced params (see `config.py`)
 
-1. **Entity Extraction**: LLM identifies entities (instructions, registers, etc.)
-2. **Relationship Discovery**: Connections between entities are extracted
-3. **Graph Construction**: NetworkX graph built from entities and relationships
-4. **Community Detection**: Related entities grouped using Leiden/Louvain
-5. **Community Summarization**: Each community gets a descriptive summary
-6. **Hierarchical Aggregation**: Similar communities are merged and summarized
-7. **Graph Search**: Queries match against entities and community summaries
+RAPTOR: `chunk_size`, `chunk_overlap`, `tree_depth`, `summarization_length`.  
+GraphRAG: `chunk_size`, `max_knowledge_triples`, community algorithm, summarization model.
 
-## Example: Processing Intel Architecture Manual
+### Performance / troubleshooting
 
-```python
-import asyncio
-from pathlib import Path
-from config import get_raptor_config, get_graphrag_config
-from raptor_indexer import RaptorIndexer
-from graphrag_indexer import GraphRAGIndexer
-from document_processor import DocumentProcessor
+Large manuals take time; watch API rate limits and memory. Cache speeds re-queries. OOM → smaller chunks; check keys; start with smaller models for tests.
 
-async def process_intel_manual():
-    # Process the Intel manual PDF
-    processor = DocumentProcessor()
-    intel_manual_path = Path("intel_x86_64_manual.pdf")
-    text = await processor.process_file(intel_manual_path)
-    
-    # Build RAPTOR index
-    raptor_config = get_raptor_config()
-    raptor = RaptorIndexer(raptor_config)
-    raptor.build_index(text)
-    raptor.save_index()
-    
-    # Build GraphRAG index
-    graphrag_config = get_graphrag_config()
-    graphrag = GraphRAGIndexer(graphrag_config)
-    graphrag.build_knowledge_graph(text)
-    graphrag.detect_communities()
-    graphrag.hierarchical_summarization()
-    graphrag.save_index()
-    
-    # Example queries
-    queries = [
-        "What are the different addressing modes?",
-        "Explain SIMD instructions",
-        "How does the MOV instruction work?",
-        "What are control registers?"
-    ]
-    
-    for query in queries:
-        print(f"\nQuery: {query}")
-        print("-" * 50)
-        
-        # RAPTOR search
-        raptor_results = raptor.search(query, top_k=3)
-        print("RAPTOR Results:")
-        for r in raptor_results:
-            print(f"  Level {r['level']}: {r['summary'][:100]}...")
-        
-        # GraphRAG search
-        graphrag_results = graphrag.search(query, top_k=3)
-        print("\nGraphRAG Results:")
-        for r in graphrag_results:
-            if r['type'] == 'entity':
-                print(f"  Entity: {r['name']} - {r['description'][:100]}...")
-            else:
-                print(f"  Community: {r['summary'][:100]}...")
+### Integration
 
-# Run the example
-asyncio.run(process_intel_manual())
+Backend for agentic-rag style projects; see related chapter labs.
+
+### References
+
+- [RAPTOR](https://arxiv.org/abs/2401.18059)  
+- [GraphRAG](https://github.com/microsoft/graphrag)  
+- [Intel SDM](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)  
+
+---
+
+## 中文
+
+### 概述
+
+面向大型技术文档的两种结构化索引：
+
+1. **RAPTOR** — 递归摘要的层次树  
+2. **GraphRAG** — 实体/关系/社区与多跳遍历  
+
+### 功能
+
+**RAPTOR：** 多层抽象、递归摘要、自叶到根检索、GMM 聚类、UMAP。  
+**GraphRAG：** LLM 抽实体关系、社区发现、社区摘要、多策略检索、**多跳关系遍历**（扁平向量难以表达的「A 与 B 如何相连」）。  
+**HTTP API：** 构建/查询、上传、异步大文档、混合检索、状态统计。
+
+### 安装
+
+```bash
+cd chapter3/structured-index
+pip install -r requirements.txt
+cp env.example .env
 ```
 
-## Advanced Configuration
+### 命令行
 
-### RAPTOR Parameters
+所有子命令有中文 `--help`：
 
-- `chunk_size`: Size of text chunks (default: 1000 words)
-- `chunk_overlap`: Overlap between chunks (default: 200 words)
-- `tree_depth`: Maximum tree depth (default: 3)
-- `summarization_length`: Target summary length (default: 200 words)
+```
+usage: main.py [-h] {build,query,demo,serve} ...
+  build   从文档构建结构化索引（需要 OPENAI_API_KEY）
+  query   查询已构建的索引
+  demo    离线对比：结构化 vs 扁平（无需 API Key）
+  serve   启动 HTTP API
+```
 
-### GraphRAG Parameters
+#### 0. 离线对比演示（推荐先跑）
 
-- `chunk_size`: Size of text chunks (default: 1200 words)
-- `max_knowledge_triples`: Max triples per chunk (default: 10)
-- `community_detection_algorithm`: "leiden" or "louvain"
-- `summarization_model`: Model for generating summaries
+```bash
+python main.py demo
+python main.py demo --query "VADDPS 用到哪个寄存器"
+python main.py demo --output demo_result.json
+```
 
-## Performance Considerations
+示例输出见 English 节：扁平只能召回词面片段；图检索可经 `ADDPS → SSE → CR4.OSFXSR` 多跳得到答案。
 
-1. **Large Documents**: Processing 5000+ page documents may take significant time
-2. **API Rate Limits**: Consider OpenAI API rate limits when processing
-3. **Memory Usage**: Large graphs require substantial memory
-4. **Caching**: Results are cached to improve subsequent query performance
-5. **Parallel Processing**: Use the API service for concurrent operations
+#### 1–3. 构建 / 查询 / 服务
 
-## Integration with Agentic RAG
+```bash
+python main.py build path/to/document.pdf
+python main.py build path/to/document.pdf --type raptor
+python main.py build path/to/document.pdf --type graphrag
+python main.py build path/to/document.pdf --output stats.json
 
-This project provides backend services for the agentic-rag project. See the agentic-rag README for integration details.
+python main.py query "What are the MOV instruction variants?"
+python main.py query "explain SSE instructions" --type raptor --top-k 10
+python main.py query "SSE registers" --type graphrag --multi-hop 2
+python main.py query "control registers" --output result.json
 
-## Troubleshooting
+python main.py serve
+```
 
-1. **Out of Memory**: Reduce chunk_size or process document in sections
-2. **API Errors**: Check API keys and rate limits
-3. **Slow Indexing**: Consider using faster/smaller models for initial testing
-4. **Import Errors**: Ensure all dependencies are installed correctly
+HTTP 示例与端点表与 English 节相同。
 
-## References
+### 项目结构
 
-- [RAPTOR Paper](https://arxiv.org/abs/2401.18059)
-- [GraphRAG by Microsoft](https://github.com/microsoft/graphrag)
-- [Intel Architecture Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
+```
+structured-index/
+├── config.py, raptor_indexer.py, graphrag_indexer.py
+├── document_processor.py, api_service.py
+├── structured_vs_flat_demo.py
+├── main.py, requirements.txt, env.example
+├── indexes/{raptor,graphrag}/, cache/
+```
 
+### 工作原理
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+**RAPTOR：** 分块 → 嵌入 → 叶节点 → 聚类 → 父节点摘要 → 多层树 → 多层检索。  
+**GraphRAG：** 实体 → 关系 → 图 → 社区 → 摘要 → 层次聚合 → 实体/社区检索（+ 多跳）。
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+### 性能与排错
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+大文档耗时；注意限流与内存。OOM 减小 chunk；检查 API Key。
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+### 参考
 
-> Note: embeddings here are local SentenceTransformers (all-MiniLM-L6-v2), so they are unaffected — only the chat LLM used for RAPTOR summarization and GraphRAG entity extraction is routed through OpenRouter.
+[RAPTOR](https://arxiv.org/abs/2401.18059) · [GraphRAG](https://github.com/microsoft/graphrag) · [Intel SDM](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+Chat LLM for RAPTOR summarization and GraphRAG entity extraction can use OpenRouter when `OPENROUTER_API_KEY` is set. **Embeddings stay local SentenceTransformers (all-MiniLM-L6-v2)** and are unaffected.

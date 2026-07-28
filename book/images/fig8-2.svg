@@ -1,22 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 194" width="880" height="194" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="27.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="122.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">成功轨迹</text>
-<text x="122.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">完成任务的过程</text>
-<rect x="239.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="334.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">策略总结</text>
-<text x="334.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">提炼为知识摘要</text>
-<line x1="219.0" y1="90.0" x2="237.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="546.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">知识摘要库</text>
-<text x="546.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">建立语义索引</text>
-<line x1="431.0" y1="90.0" x2="449.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="663.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="758.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">检索注入</text>
-<text x="758.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 决策时取用</text>
-<line x1="643.0" y1="90.0" x2="661.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="758.0" y1="132" x2="758.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="758.0" y1="166" x2="122.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="122.0" y1="166" x2="122.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">相似任务复用历史经验</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .label{font-size:13px;font-weight:700;fill:#2f617a}
+      .value{font-size:15px;fill:#3f515c}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="30" text-anchor="middle" class="t h">三层轨迹验证：尽量让证据来自真实环境</text>
+
+  <!-- 三类验证器 -->
+  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="107" text-anchor="middle" class="t h">结果验证器</text>
+  <text x="152.5" y="135" text-anchor="middle" class="t s">测试、金额、订单最终状态</text>
+
+  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="205" text-anchor="middle" class="t h">过程验证器</text>
+  <text x="152.5" y="233" text-anchor="middle" class="t s">政策、权限、动作与承诺</text>
+
+  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
+  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM Rubric</text>
+  <text x="152.5" y="331" text-anchor="middle" class="t s">自然、简洁、合规变通</text>
+
+  <!-- 结构化评价：改用纵向字段，避免中文字体宽度导致双列重叠 -->
+  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
+  <text x="502" y="97" text-anchor="middle" class="t h">结构化轨迹评价</text>
+  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
+
+  <text x="376" y="145" class="t label">任务结果</text>
+  <text x="376" y="168" class="t value">成功、部分成功或失败</text>
+
+  <text x="376" y="198" class="t label">维度评价</text>
+  <text x="376" y="221" class="t value">逐项评分，而不是只给总分</text>
+
+  <text x="376" y="251" class="t label">证据位置</text>
+  <text x="376" y="274" class="t value">标明对话轮次与工具状态</text>
+
+  <text x="376" y="304" class="t label">失败标签</text>
+  <text x="376" y="327" class="t value">保留问题类型，支持后续诊断</text>
+
+  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
+  <text x="502" y="378" text-anchor="middle" class="t s">证据不足时，允许拒绝评分</text>
+
+  <!-- 供进化模块使用的诊断信号 -->
+  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
+  <text x="841" y="156" text-anchor="middle" class="t h">可学习的诊断信号</text>
+  <text x="841" y="199" text-anchor="middle" class="t s">保留成功与失败的位置</text>
+  <text x="841" y="234" text-anchor="middle" class="t s">说明证据与问题类型</text>
+  <text x="841" y="269" text-anchor="middle" class="t s">交给独立模块选择更新对象</text>
+
+  <!-- 数据流 -->
+  <path d="M275 117 H307 V151 H340" class="line"/>
+  <path d="M275 215 H340" class="line"/>
+  <path d="M275 313 H307 V279 H340" class="line"/>
+  <path d="M662 220 H710" class="line"/>
 </svg>

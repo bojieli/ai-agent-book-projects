@@ -156,7 +156,7 @@ class ContextCompressor:
 Focus on information relevant to: {query}
 
 Original content:
-{content[:10000]}  # Limit for history compression
+{content[:10000]}
 
 Requirements:
 1. Keep all important facts, names, dates, and affiliations
@@ -188,9 +188,13 @@ Provide a focused summary:"""
                 summary_parts = []
                 for chunk in stream:
                     if chunk.choices and chunk.choices[0].delta.content:
-                        content = chunk.choices[0].delta.content
-                        print(content, end="", flush=True)
-                        summary_parts.append(content)
+                        # NB: do not name this `content` — that shadows the
+                        # `content` parameter (the original tool output) and
+                        # breaks the truncation fallback below when the stream
+                        # fails part-way through.
+                        delta_text = chunk.choices[0].delta.content
+                        print(delta_text, end="", flush=True)
+                        summary_parts.append(delta_text)
                 print("\n")  # New lines after streaming
                 compressed = "".join(summary_parts)
             else:
@@ -275,7 +279,7 @@ Title: {result.get('title', 'N/A')}
 URL: {result.get('url', 'N/A')}
 
 Content:
-{original_content[:5000]}  # Limit to prevent token overflow
+{original_content[:5000]}
 
 Provide a concise summary:"""
 
@@ -486,7 +490,7 @@ Analyze the following search results and provide a focused summary that directly
 Focus on extracting information most relevant to answering: {query}
 
 Search Results:
-{combined_content}  # Already limited per page
+{combined_content}
 
 Requirements:
 1. Focus only on information relevant to the query
@@ -597,7 +601,7 @@ Content: {limited_content}
 Analyze the following search results and provide a focused summary with citations.
 
 Search Results (with source IDs):
-{combined_content}  # Already limited per page
+{combined_content}
 
 Requirements:
 1. Focus on information relevant to: {query}

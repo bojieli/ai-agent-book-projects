@@ -1,5 +1,5 @@
-site_name: 深入理解 AI Agent
-site_description: 深入理解 AI Agent：设计原理与工程实践 — 在线阅读版
+site_name: AI Agents in Depth
+site_description: AI Agents in Depth — Design Principles and Engineering Practice. An open-source book covering AI Agents from theory to production, with 10 chapters and 92 companion experiments.
 site_url: https://bojieli.github.io/ai-agent-book
 repo_url: https://github.com/bojieli/ai-agent-book
 repo_name: bojieli/ai-agent-book
@@ -13,6 +13,7 @@ docs_dir: _web
 # `{#sec:foo}`, image `{height=55%}`) which Python-Markdown cannot parse.
 hooks:
   - scripts/mkdocs_pandoc_strip.py
+  - scripts/seo_meta.py
 
 theme:
   name: material
@@ -45,20 +46,27 @@ theme:
         name: 切换日间模式
   features:
     # ── Navigation ──────────────────────────────────────────────
-    # Layout matches icyfenix.cn: a tall chapter tree on the left,
-    # minimal top bar (logo + search + repo). Do NOT use navigation.tabs
-    # — that would cram all 10 chapters into a horizontal bar.
+    # Two-sidebar layout: the left sidebar is the BOOK structure only
+    # (a clean chapter tree), the right sidebar is the CURRENT PAGE
+    # outline. Do NOT use navigation.tabs — that would cram all 10
+    # chapters into a horizontal bar. Do NOT use toc.integrate — it
+    # folds each chapter's ~40-heading outline into the left sidebar,
+    # burying chapters 3-10 below the fold.
     - navigation.instant         # SPA-like page swaps, no full reload
     - navigation.instant.progress # show a loading bar on slow swaps
     - navigation.tracking        # URL changes with scroll
     - navigation.sections        # group nav entries into titled sections
-    - navigation.expand          # expand the active chapter's subtree only
-    - navigation.indexes         # section index pages
+    # navigation.expand OFF — with it on, all chapter subtrees are force-
+    # expanded and can't be collapsed (clicking the title does nothing).
+    - navigation.indexes         # chapter title = link to the chapter prose.
+    # Requires each chapter section's first child to be an index page;
+    # scripts/build_site.sh promotes book/chapterN.md to
+    # book/chapterN/index.md (the URL /book/chapterN/ is unchanged).
+    # The collapse chevron next to the title still toggles the subtree.
     - navigation.top             # "back to top" button
     - navigation.footer          # prev/next pager in footer
     # ── Table of contents (right sidebar) ──────────────────────
     - toc.follow                 # TOC tracks scroll position
-    - toc.integrate              # fold TOC into left sidebar on mobile
     # ── Content ─────────────────────────────────────────────────
     - content.code.copy          # copy button on code blocks
     - content.code.annotate      # rendered annotations in code
@@ -77,6 +85,7 @@ plugins:
       lang:
         - ja          # CJK-aware tokenizer; far better for Chinese than `en`
         - en
+        - ar
   # Stamp each page with its git commit date — readers see "最后更新" trust signal.
   - git-revision-date-localized:
       enable_creation_date: true
@@ -90,6 +99,9 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  # Render the book's `[^label]` citations as superscript links with a
+  # collected reference list at the bottom of each page (issue #328).
+  - footnotes
   - md_in_html
   - toc:
       permalink: true
@@ -114,6 +126,7 @@ markdown_extensions:
 
 extra_javascript:
   - extras/lang-switcher.js
+  - extras/nav-collapse.js
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js
   - extras/mermaid-init.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
@@ -126,38 +139,57 @@ extra_css:
 # Each entry maps its prefix + suffix rules to rewrite URLs across editions.
 extra:
   languages:
-    zh: { label: 中文, prefix: book/,   default: true }
-    zhtw: { label: 繁體中文, prefix: book-zhtw/, suffix: .zhtw }
-    en: { label: English, prefix: book-en/ }
-    ta: { label: தமிழ், prefix: book-ta/, suffix: .ta }
-    vi: { label: Tiếng Việt, prefix: book-vi/, suffix: .vi }
+    # `prefix` and `suffix` apply to chapter prose (book*/chapterN[.suffix]/).
+    # `readmeSuffix` is the URL slug used for the per-language experiment
+    # index page (chapterN/README.<readmeSuffix>/), which mkdocs renders
+    # from the source file README.<suffix>.md.
+    zh:   { label: 中文,      prefix: book/,      default: true }
+    zhtw: { label: 正體中文,   prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
+    en:   { label: English,   prefix: book-en/,                   readmeSuffix: en }
+    ru:   { label: Русский,    prefix: book-ru/,                   readmeSuffix: ru }
+    ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }
+    vi:   { label: Tiếng Việt, prefix: book-vi/,   suffix: .vi,   readmeSuffix: vi }
+    ja:   { label: 日本語,     prefix: book-ja/,   suffix: .ja,   readmeSuffix: ja }
+    ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
+    tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
 
 nav:
-  # Layout mirrors icyfenix.cn: the left sidebar is a clean chapter tree.
-  # Each chapter title links directly to the prose; the per-chapter
-  # experiment index lives one click deeper so the sidebar stays scannable
-  # instead of being flooded by 78 individual experiment entries.
+  # The left sidebar is a clean chapter tree. With navigation.indexes,
+  # each chapter's index page (book/chapterN/index.md, promoted from
+  # book/chapterN.md by scripts/build_site.sh) is attached to its section:
+  # clicking the chapter title opens the prose directly, and the chevron
+  # expands the subtree to reveal "配套实验" (the experiment index).
   - 首页: index.md
   - 引言: book/introduction.md
-  - 第1章 Agent基础知识: book/chapter1.md
-  - '第1章 · 配套实验': chapter1/README.md
-  - 第2章 上下文工程: book/chapter2.md
-  - '第2章 · 配套实验': chapter2/README.md
-  - 第3章 用户记忆和知识库: book/chapter3.md
-  - '第3章 · 配套实验': chapter3/README.md
-  - 第4章 工具: book/chapter4.md
-  - '第4章 · 配套实验': chapter4/README.md
-  - 第5章 CodingAgent与代码生成: book/chapter5.md
-  - '第5章 · 配套实验': chapter5/README.md
-  - 第6章 Agent的评估: book/chapter6.md
-  - '第6章 · 配套实验': chapter6/README.md
-  - 第7章 模型后训练: book/chapter7.md
-  - '第7章 · 配套实验': chapter7/README.md
-  - 第8章 Agent的自我进化: book/chapter8.md
-  - '第8章 · 配套实验': chapter8/README.md
-  - 第9章 多模态与实时交互: book/chapter9.md
-  - '第9章 · 配套实验': chapter9/README.md
-  - 第10章 多Agent协作: book/chapter10.md
-  - '第10章 · 配套实验': chapter10/README.md
+  - 第1章 Agent基础知识:
+      - book/chapter1/index.md
+      - 配套实验: chapter1/README.md
+  - 第2章 上下文工程:
+      - book/chapter2/index.md
+      - 配套实验: chapter2/README.md
+  - 第3章 用户记忆和知识库:
+      - book/chapter3/index.md
+      - 配套实验: chapter3/README.md
+  - 第4章 工具:
+      - book/chapter4/index.md
+      - 配套实验: chapter4/README.md
+  - 第5章 CodingAgent与代码生成:
+      - book/chapter5/index.md
+      - 配套实验: chapter5/README.md
+  - 第6章 Agent的评估:
+      - book/chapter6/index.md
+      - 配套实验: chapter6/README.md
+  - 第7章 模型后训练:
+      - book/chapter7/index.md
+      - 配套实验: chapter7/README.md
+  - 第8章 Agent的持续进化:
+      - book/chapter8/index.md
+      - 配套实验: chapter8/README.md
+  - 第9章 多模态与实时交互:
+      - book/chapter9/index.md
+      - 配套实验: chapter9/README.md
+  - 第10章 多Agent协作:
+      - book/chapter10/index.md
+      - 配套实验: chapter10/README.md
   - 后记: book/afterword.md
-  - 思考题参考答案: book/思考题参考答案.md
+  - 思考题参考答案: book/reference-answers.md

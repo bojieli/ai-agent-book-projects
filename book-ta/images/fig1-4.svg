@@ -1,46 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 440" width="820" height="440" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 480" width="820" height="480" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="30.0" y="65" width="240" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="150.0" y="84.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Post-training</text>
-<text x="150.0" y="110.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Post-training</text>
-<rect x="83.68756" y="140" width="132.62488" height="28" rx="14" fill="#666666" stroke="#333333" stroke-width="2"/>
-<text x="150.0" y="154.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Training time</text>
-<rect x="30.0" y="185" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="150.0" y="204.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Modify model weights</text>
-<rect x="30.0" y="230" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="150.0" y="249.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Permanent · General</text>
-<rect x="30.0" y="275" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="150.0" y="294.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">High cost · Slow update</text>
-<rect x="30.0" y="330" width="240" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="150.0" y="352" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Example: Learn &quot;when to call tools&quot;</text>
-<rect x="290.0" y="65" width="240" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="84.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">In-context learning</text>
-<text x="410.0" y="110.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">In-Context Learning</text>
-<rect x="339.03104" y="140" width="141.93792" height="28" rx="14" fill="#666666" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="154.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Inference time</text>
-<rect x="290.0" y="185" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="204.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Soft update via attention mechanism</text>
-<rect x="290.0" y="230" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="249.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Temporary · Immediate Adaptation</text>
-<rect x="290.0" y="275" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="294.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Limited by Window Size</text>
-<rect x="290.0" y="330" width="240" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="410.0" y="352" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Example: Learn New Format from 3 Examples</text>
-<rect x="550.0" y="65" width="240" height="65" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="670.0" y="84.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Externalized Learning</text>
-<text x="670.0" y="110.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Externalized Learning</text>
-<rect x="620.87572" y="140" width="98.24856" height="28" rx="14" fill="#666666" stroke="#333333" stroke-width="2"/>
-<text x="670.0" y="154.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Runtime</text>
-<rect x="550.0" y="185" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="670.0" y="204.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Knowledge Base + Tool Generation</text>
-<rect x="550.0" y="230" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="670.0" y="249.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Persistent · Updatable</text>
-<rect x="550.0" y="275" width="240" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="670.0" y="294.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Highly Reliable · Verifiable</text>
-<rect x="550.0" y="330" width="240" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="670.0" y="352" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Example: Solidify Process into Code Tool</text>
-<line x1="60" y1="430" x2="760" y2="430" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<text x="60" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Slow (Weeks)</text>
-<text x="410" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Learning Speed</text>
-<text x="760" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Fast (Milliseconds)</text>
+<rect x="260" y="70" width="300" height="100" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="410" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM（Kimi K3 / GPT-5.6）</text>
+<text x="410" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Native agent capabilities after RL training</text>
+<rect x="620" y="70" width="180" height="210" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="632" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Native tools</text>
+<rect x="635" y="105" width="150" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="710.0" y="130.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$web_search</text>
+<rect x="635" y="170" width="150" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="710.0" y="195.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">code_interpreter</text>
+<rect x="635" y="235" width="150" height="50" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="710.0" y="260.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">More tools...</text>
+<line x1="560" y1="120" x2="633" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="633" y1="195" x2="560" y2="145" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="100" y="210" width="460" height="280" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="112" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">ReAct loop (autonomous execution within the model)</text>
+<rect x="120" y="250" width="200" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="261.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">User: Search for Bitcoin trend in</text>
+<text x="220.0" y="277.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">the last month</text>
+<text x="220.0" y="293.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"></text>
+<rect x="120" y="325" width="200" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="336.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thought: Need to search</text>
+<text x="220.0" y="352.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">real-time</text>
+<text x="220.0" y="368.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">data, then analyze with code</text>
+<line x1="220" y1="307" x2="220" y2="323" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="340" y="250" width="200" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="267.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Call $web_search</text>
+<text x="440.0" y="287.90000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;BTC price last month&quot;</text>
+<line x1="322" y1="277" x2="338" y2="277" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="340" y="325" width="200" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="342.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Result: [price data]</text>
+<text x="440.0" y="362.90000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$67,230 → $71,450</text>
+<line x1="440" y1="307" x2="440" y2="323" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="120" y="400" width="200" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="418.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Call code_interpreter</text>
+<text x="220.0" y="436.59999999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">RSI, MACD calculation code</text>
+<line x1="340" y1="377" x2="220" y2="398" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="340" y="400" width="200" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="419.375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Final output: Technical analysis</text>
+<text x="440.0" y="435.625" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">report + visualization chart</text>
+<line x1="322" y1="427" x2="338" y2="427" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 565,480 Q 523.2305639386065,308.0187097062208 410,172" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<text x="605" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">RL training signal</text>
+<rect x="15" y="70" width="230" height="120" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="27" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Differences from traditional frameworks</text>
+<text x="130" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ No external orchestration code needed</text>
+<text x="130" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ No need to manually write ReAct loop</text>
+<text x="130" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Model autonomously decides the entire process</text>
 </svg>

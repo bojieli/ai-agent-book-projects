@@ -111,23 +111,27 @@ class ExperienceAgent(Agent):
         # is captured by AWorld and read back from the TaskResponse below.
         self.current_trajectory = []
 
-        # Execute the task
-        result = await Runners.run_task(task)
-        task_response = result.get(task.id)
+        try:
+            # Execute the task
+            result = await Runners.run_task(task)
+            task_response = result.get(task.id)
 
-        # Recover the actual execution trajectory produced by AWorld's replay
-        # buffer (TaskResponse.trajectory). Falls back to manually captured
-        # actions when the framework did not record a trajectory.
-        trajectory = self._extract_trajectory(task_response)
+            # Recover the actual execution trajectory produced by AWorld's replay
+            # buffer (TaskResponse.trajectory). Falls back to manually captured
+            # actions when the framework did not record a trajectory.
+            trajectory = self._extract_trajectory(task_response)
 
-        # Process result for learning if enabled
-        if self.learning_mode and task_response and self._is_successful(task_response, task):
-            await self._learn_from_success(question, task_response, trajectory)
-        
-        # Restore original prompt
-        self.system_prompt = original_prompt
-        
-        return task_response
+            # Process result for learning if enabled
+            if self.learning_mode and task_response and self._is_successful(task_response, task):
+                await self._learn_from_success(question, task_response, trajectory)
+
+            return task_response
+        finally:
+            # Restore in a finally: if run_task raises and the caller moves on
+            # to the next task, the injected experiences of THIS task must not
+            # leak into later tasks that have no matching experiences of
+            # their own.
+            self.system_prompt = original_prompt
     
     def _extract_trajectory(self, task_response: Optional[TaskResponse]) -> List[Dict[str, Any]]:
         """

@@ -123,7 +123,7 @@ def ffprobe_info(audio_path: str) -> dict:
 def print_e2e_result(result: PipelineResult, backend: str) -> None:
     s = result.stages[0]
     print(hr("="))
-    print(f"范式一：端到端语音思考（后端={backend}，模型={s.model}）")
+    print(f"范式二：端到端语音思考（后端={backend}，模型={s.model}）")
     print(hr("="))
     print("形态：音频进 → 单模型「听→想→说」→ 音频出（一次调用，无独立 ASR/LLM/TTS 段）")
     print(f"\n[单阶段] {s.name}  |  延迟={s.latency_s:.2f}s")
@@ -136,7 +136,7 @@ def print_e2e_result(result: PipelineResult, backend: str) -> None:
 
 def print_cascade_result(result: PipelineResult) -> None:
     print("\n" + hr("="))
-    print(f"范式二（对照基线）：级联流水线 ASR → LLM → TTS")
+    print(f"范式一（对照基线）：级联流水线 ASR → LLM → TTS")
     print(hr("="))
     for i, s in enumerate(result.stages, 1):
         print(f"\n[阶段 {i}] {s.name}  |  模型={s.model}  |  延迟={s.latency_s:.2f}s")

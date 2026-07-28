@@ -150,21 +150,21 @@ def main():
     print(f"  1. {Colors.RED}Baseline{Colors.ENDC} - Original Mistral (no Korean training)")
     print(f"  2. {Colors.GREEN}Pretrained{Colors.ENDC} - After Korean Wikipedia training")
     print(f"  3. {Colors.CYAN}Finetuned{Colors.ENDC} - After instruction tuning")
-    print(f"\n{Colors.CYAN}Generation settings: temperature=0.3, do_sample=True (no repetition_penalty){Colors.ENDC}\n")
+    print(f"\n{Colors.CYAN}Generation settings: temperature={args.temperature}, do_sample=True (no repetition_penalty){Colors.ENDC}\n")
     
     # Load all three models
     print_section("📥 LOADING MODELS", Colors.BLUE)
     
     print(f"{Colors.YELLOW}Loading baseline model (original Mistral v0.3)...{Colors.ENDC}")
-    baseline_model, baseline_tokenizer = load_baseline_model()
+    baseline_model, baseline_tokenizer = load_baseline_model(args.base_model, args.max_seq_length)
     print(f"{Colors.GREEN}✓ Baseline model loaded{Colors.ENDC}")
     
     print(f"\n{Colors.YELLOW}Loading pretrained model (after Korean pretraining)...{Colors.ENDC}")
-    pretrained_model, pretrained_tokenizer = load_model("lora_model_pretrained")
+    pretrained_model, pretrained_tokenizer = load_model(args.pretrained_path, args.max_seq_length)
     print(f"{Colors.GREEN}✓ Pretrained model loaded{Colors.ENDC}")
     
     print(f"\n{Colors.YELLOW}Loading finetuned model (after instruction tuning)...{Colors.ENDC}")
-    finetuned_model, finetuned_tokenizer = load_model("lora_model")
+    finetuned_model, finetuned_tokenizer = load_model(args.finetuned_path, args.max_seq_length)
     print(f"{Colors.GREEN}✓ Finetuned model loaded{Colors.ENDC}")
     
     # Define prompts

@@ -107,8 +107,10 @@ class Workspace:
             "print('SMOKE_TEST target dir:', d)\n"
             + self.files[path]
         )
-        result = _run_python_source(harness)
-        ok = "Traceback" not in result and "Error" not in result
+        result, returncode = _run_python(harness)
+        # 以退出码为准：超时（returncode 为 None）和非零退出都不能算 PASS；
+        # Traceback/Error 子串检查作为额外防线保留。
+        ok = returncode == 0 and "Traceback" not in result and "Error" not in result
         verdict = "PASS" if ok else "FAIL"
         return f"[tests] 冒烟测试结果：{verdict}\n{result}"
 
@@ -139,8 +141,8 @@ class Workspace:
         )
 
 
-def _run_python_source(source: str, timeout: int = 10) -> str:
-    """把源码写到临时文件并用子进程执行，返回合并后的输出。"""
+def _run_python(source: str, timeout: int = 10) -> tuple:
+    """执行源码，返回 (合并后的输出, 退出码)；超时时退出码为 None。"""
     with tempfile.TemporaryDirectory() as tmp:
         script = os.path.join(tmp, "snippet.py")
         with open(script, "w", encoding="utf-8") as fh:
@@ -154,7 +156,7 @@ def _run_python_source(source: str, timeout: int = 10) -> str:
                 cwd=tmp,
             )
         except subprocess.TimeoutExpired:
-            return f"执行超时（>{timeout}s）"
+            return f"执行超时（>{timeout}s）", None
         out = (proc.stdout or "").strip()
         err = (proc.stderr or "").strip()
         parts = []
@@ -163,7 +165,12 @@ def _run_python_source(source: str, timeout: int = 10) -> str:
         if err:
             parts.append("stderr:\n" + err)
         parts.append(f"退出码: {proc.returncode}")
-        return "\n".join(parts)
+        return "\n".join(parts), proc.returncode
+
+
+def _run_python_source(source: str, timeout: int = 10) -> str:
+    """把源码写到临时文件并用子进程执行，返回合并后的输出。"""
+    return _run_python(source, timeout)[0]
 
 
 # ----------------------------------------------------------------------------

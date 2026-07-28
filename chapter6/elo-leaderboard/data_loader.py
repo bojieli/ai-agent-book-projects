@@ -193,13 +193,20 @@ def get_time_slices(df: pd.DataFrame, interval: str = 'W') -> list:
     """
     if 'tstamp' not in df.columns:
         raise ValueError("DataFrame must have 'tstamp' column")
+
+    if len(df) == 0:
+        print(f"Created 0 time slices with interval '{interval}'")
+        return []
     
     df['datetime'] = pd.to_datetime(df['tstamp'], unit='s')
     min_date = df['datetime'].min()
     max_date = df['datetime'].max()
     
+    # Pandas 2.2+ removed 'M' (month-end); keep the documented monthly alias.
+    freq = "ME" if interval == "M" else interval
+
     # Generate date ranges
-    date_ranges = pd.date_range(start=min_date, end=max_date, freq=interval)
+    date_ranges = pd.date_range(start=min_date, end=max_date, freq=freq)
     
     slices = []
     for end_date in date_ranges:
@@ -207,8 +214,8 @@ def get_time_slices(df: pd.DataFrame, interval: str = 'W') -> list:
         if len(slice_df) > 0:
             slices.append((end_date, slice_df))
     
-    # Add final slice with all data
-    if date_ranges[-1] < max_date:
+    # Empty date_ranges when span < interval; also cover trailing gap to max_date.
+    if len(date_ranges) == 0 or date_ranges[-1] < max_date:
         slices.append((max_date, df.copy()))
     
     print(f"Created {len(slices)} time slices with interval '{interval}'")

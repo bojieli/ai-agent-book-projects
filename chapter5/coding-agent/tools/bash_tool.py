@@ -2,7 +2,6 @@
 Bash tool - Command execution in persistent shell sessions
 """
 
-import subprocess
 import time
 import hashlib
 from typing import Dict, Any
@@ -28,7 +27,8 @@ class BashTool(BaseTool):
         """
         command = params["command"]
         timeout_ms = params.get("timeout")
-        if timeout_ms is None:
+        # None/<=0: treat like omit. Exact 0 used to become timeout=0s and drop all output.
+        if timeout_ms is None or timeout_ms <= 0:
             timeout_ms = 120000
         timeout = timeout_ms / 1000  # Convert ms to seconds
         run_in_background = params.get("run_in_background", False)
@@ -45,24 +45,20 @@ class BashTool(BaseTool):
         session = self.state.shell_sessions[shell_id]
         
         if run_in_background:
-            # Start background process
+            # Start a separate native-shell process. ShellSession handles the
+            # platform-specific invocation and log location.
             bg_id = f"bg_{int(time.time())}_{hashlib.md5(command.encode()).hexdigest()[:8]}"
-            session.start()
-            # Launch command in background; the subshell grouping ensures the
-            # redirect covers the whole command (incl. && / || chains), so all
-            # output lands in the log file instead of leaking to this session.
-            bg_command = f"( {command} ) > /tmp/{bg_id}.log 2>&1 & echo $!"
-            output, exit_code = session.execute(bg_command, timeout=5)
+            pid = session.start_background(command, bg_id)
             
             return {
-                "output": f"Background job started with ID: {bg_id}\nPID: {output.strip()}",
+                "output": f"Background job started with ID: {bg_id}\nPID: {pid}",
                 "exit_code": 0,
                 "shell_id": shell_id,
                 "background_job_id": bg_id
             }
         else:
             # Execute command synchronously
-            output, exit_code = session.execute(command, timeout=int(timeout))
+            output, exit_code = session.execute(command, timeout=timeout)
             
             # Update system state directory
             self.state.current_directory = session.current_directory
@@ -77,4 +73,3 @@ class BashTool(BaseTool):
                 "shell_id": shell_id,
                 "working_directory": session.current_directory
             }
-

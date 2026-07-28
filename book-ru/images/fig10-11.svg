@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 890 515" width="890" height="515" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="26" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="101" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Менеджер продукта</text>
+<text x="34" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: описание требований пользователя</text>
+<rect x="34" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="40" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выход:</text>
+<text x="40" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Список функций + приоритет</text>
+<text x="40" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Пользовательские истории (5 шт.)</text>
+<text x="40" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Критерии приёмки</text>
+<rect x="34" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="101" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/PRD.md</text>
+<line x1="178" y1="170" x2="190" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="198" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="273" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Архитектор</text>
+<text x="206" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: PRD.md</text>
+<rect x="206" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="212" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выход:</text>
+<text x="212" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Стек технологий: FastAPI+React</text>
+<text x="212" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Спецификация API (OpenAPI)</text>
+<text x="212" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Схема базы данных</text>
+<rect x="206" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="273" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/design.md</text>
+<line x1="350" y1="170" x2="362" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="370" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Менеджер проекта</text>
+<text x="378" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: design.md</text>
+<rect x="378" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="384" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выход:</text>
+<text x="384" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Список задач + распределение</text>
+<text x="384" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Распределение на уровне файлов</text>
+<text x="384" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Порядок зависимостей модулей</text>
+<rect x="378" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="445" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/tasks.md</text>
+<line x1="522" y1="170" x2="534" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="542" y="55" width="150" height="230" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="617" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инженер ×3</text>
+<text x="550" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: tasks.md + design.md</text>
+<rect x="550" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="556" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выход:</text>
+<text x="556" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Модуль A: Сервис пользователей</text>
+<text x="556" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Модуль B: Сервис заказов</text>
+<text x="556" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Модуль C: Сервис платежей</text>
+<rect x="550" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="617" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">src/*.py</text>
+<line x1="694" y1="170" x2="706" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="714" y="55" width="150" height="230" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="789" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">QA-инженер</text>
+<text x="722" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: src/ + PRD.md</text>
+<rect x="722" y="113" width="134" height="68" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="728" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выход:</text>
+<text x="728" y="143" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Модульные тесты (pytest)</text>
+<text x="728" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Интеграционные тесты (API)</text>
+<text x="728" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Отчёт об ошибке → Инженер</text>
+<rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
+<path d="M 789,293 Q 703,326 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="703" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Исправление ошибки</text>
+
+<rect x="30" y="335" width="830" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="445" y="351" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Общая директория проекта</text>
+<text x="445" y="371" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">docs/PRD.md   docs/design.md   docs/tasks.md   src/*.py   docs/test_report.md</text>
+
+<rect x="30" y="400" width="830" height="130" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="445" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Основной дизайн MetaGPT</text>
+<text x="3" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.75" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Стандартизированные документы</text>
+<text x="314.1" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Каждая роль выдаёт фиксированный формат; downstream нужен формат, а не рассуждение</text>
+<text x="42" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Развязка интерфейса</text>
+<text x="270" y="466" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Заменить на более сильного менеджера продукта; если вывод сохраняет формат PRD, нижестоящий процесс не меняется</text>
+<text x="42" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Без менеджера</text>
+<text x="270" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Управление проходит по DAG: Менеджер продукта→Архитектор→Менеджер проекта→Инженер→QA</text>
+<text x="42" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">▸ Канал исключений</text>
+<text x="270" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Ошибка QA → отчёт об ошибке передаётся инженеру по модулю → итеративное исправление</text>
+</svg>

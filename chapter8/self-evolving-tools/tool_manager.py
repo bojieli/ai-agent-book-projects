@@ -177,7 +177,15 @@ class ToolLibrary:
                 return {"success": False, "error": "tool crashed", "stderr": r.stderr[-3000:]}
             for line in r.stdout.splitlines():
                 if line.startswith("__TOOL_RESULT__"):
-                    return {"success": True, "result": json.loads(line[len("__TOOL_RESULT__"):])}
+                    raw = line[len("__TOOL_RESULT__"):]
+                    try:
+                        return {"success": True, "result": json.loads(raw)}
+                    except json.JSONDecodeError as e:
+                        return {
+                            "success": False,
+                            "error": f"invalid result marker: {e}",
+                            "stdout": r.stdout[-2000:],
+                        }
             return {"success": False, "error": "no result marker", "stdout": r.stdout[-2000:]}
         except subprocess.TimeoutExpired:
             return {"success": False, "error": f"timeout after {timeout}s"}

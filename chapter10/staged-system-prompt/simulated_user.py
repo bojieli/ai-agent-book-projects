@@ -38,8 +38,9 @@ class SimulatedUser:
 
     def _match(self, q: str) -> str:
         best_reply, best_score = self.default_answer, 0
+        q_lower = q.lower()  # 关键词已小写，问题也必须小写，否则 "Move or Copy?" 匹配不上 "move"
         for keywords, reply in self.playbook:
-            score = sum(1 for kw in keywords if kw.lower() in q)
+            score = sum(1 for kw in keywords if kw.lower() in q_lower)
             if score > best_score:
                 best_reply, best_score = reply, score
         return best_reply

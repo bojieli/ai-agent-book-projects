@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 540" width="920" height="540" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="65" width="800" height="114" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="45" y="69" width="200" height="22" rx="11" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="145.0" y="80.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_start|&gt;system</text>
+<text x="260" y="85" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"># Инструменты</text>
+<text x="260" y="105" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">Вы можете вызвать одну или несколько функций...</text>
+<text x="260" y="125" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;tools&gt;{&quot;name&quot;:&quot;get_weather&quot;,...}&lt;/tools&gt;</text>
+<text x="260" y="145" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;tool_call&gt;{&quot;name&quot;:..., &quot;arguments&quot;:...}&lt;/tool_call&gt;</text>
+<rect x="40" y="183" width="140" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="110.0" y="195.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_end|&gt;</text>
+<rect x="40" y="215" width="800" height="54" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="45" y="219" width="200" height="22" rx="11" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="145.0" y="230.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_start|&gt;user</text>
+<text x="260" y="235" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">"Какая сегодня погода в Пекине?"</text>
+<rect x="40" y="273" width="140" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="110.0" y="285.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_end|&gt;</text>
+<rect x="40" y="305" width="800" height="74" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="45" y="309" width="200" height="22" rx="11" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="145.0" y="320.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_start|&gt;assistant</text>
+<text x="260" y="325" font-family="'Courier New', Courier, monospace" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;think&gt;Нужно запросить погоду, вызвать инструмент get_weather&lt;/think&gt;</text>
+<text x="260" y="345" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;tool_call&gt;{&quot;name&quot;:&quot;get_weather&quot;,&quot;args&quot;:{&quot;city&quot;:&quot;Beijing&quot;}}&lt;/tool_call&gt;</text>
+<rect x="40" y="383" width="140" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="110.0" y="395.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_end|&gt;</text>
+<rect x="40" y="415" width="800" height="54" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="45" y="419" width="200" height="22" rx="11" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="145.0" y="430.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_start|&gt;user</text>
+<text x="260" y="435" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;tool_response&gt;{&quot;temp&quot;:&quot;23°C&quot;,&quot;sky&quot;:&quot;clear&quot;}&lt;/tool_response&gt;</text>
+<rect x="40" y="473" width="140" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="110.0" y="485.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_end|&gt;</text>
+<rect x="40" y="505" width="800" height="54" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="45" y="509" width="200" height="22" rx="11" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="145.0" y="520.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">&lt;|im_start|&gt;assistant</text>
+<text x="260" y="525" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">← LLM начинает генерировать новые токены отсюда</text>
+<text x="845" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">особый</text>
+<text x="845" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">токены</text>
+</svg>

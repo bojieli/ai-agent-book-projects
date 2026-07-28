@@ -17,6 +17,7 @@
     # records 里是此前真实运行录下的每一步 token 用量（canned token counts）
 """
 
+import math
 import time
 from dataclasses import dataclass, asdict, field
 from typing import List, Optional
@@ -31,7 +32,10 @@ def _percentile(values: List[float], q: float) -> float:
     xs = sorted(values)
     if len(xs) == 1:
         return xs[0]
-    rank = max(1, min(len(xs), int(round(q / 100.0 * len(xs) + 0.5))))
+    # 最近秩 = ceil(q/100 * N)。不能用 int(round(x + 0.5))：当 q/100*N 恰为
+    # 整数 k 时，round(k + 0.5) 的银行家舍入会得到 k+1（如 n=100、q=99 时
+    # 秩变成 100，把 p99 报成最大值）。
+    rank = max(1, min(len(xs), math.ceil(q / 100.0 * len(xs))))
     return xs[rank - 1]
 
 
@@ -82,23 +86,38 @@ class Tracer:
         latency = time.time() - t0
 
         usage = resp.usage
+        # Some OpenAI-compatible providers omit usage (null); match from_records coercion.
+        if usage is None:
+            span = Span(
+                step=step,
+                tool=tool,
+                kind="llm",
+                tool_ctx_tokens=tool_ctx_tokens,
+                latency_s=latency,
+                cost_usd=0.0,
+            )
+            self.spans.append(span)
+            return resp
+
         # cached_tokens 藏在 prompt_tokens_details 里，注意做防御式读取
         cached = 0
         details = getattr(usage, "prompt_tokens_details", None)
         if details is not None:
             cached = getattr(details, "cached_tokens", 0) or 0
 
+        prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
+        completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
         span = Span(
             step=step,
             tool=tool,
             kind="llm",
-            prompt_tokens=usage.prompt_tokens,
+            prompt_tokens=prompt_tokens,
             cached_tokens=cached,
-            completion_tokens=usage.completion_tokens,
+            completion_tokens=completion_tokens,
             tool_ctx_tokens=tool_ctx_tokens,
             latency_s=latency,
             cost_usd=self.pricing.cost_usd(
-                usage.prompt_tokens, cached, usage.completion_tokens),
+                prompt_tokens, cached, completion_tokens),
         )
         self.spans.append(span)
         return resp
@@ -114,11 +133,12 @@ class Tracer:
                 step=r.get("step", ""),
                 tool=r.get("tool", ""),
                 kind=r.get("kind", "llm"),
-                # 防御：trace JSON 里字段缺失或显式为 null 时按 0（tool_ctx 按未知 -1）处理
+                # Missing/null tool_ctx → -1 (unknown); keep explicit 0 (known-zero).
                 prompt_tokens=int(r.get("prompt_tokens") or 0),
                 cached_tokens=int(r.get("cached_tokens") or 0),
                 completion_tokens=int(r.get("completion_tokens") or 0),
-                tool_ctx_tokens=int(r.get("tool_ctx_tokens") or -1),
+                tool_ctx_tokens=(-1 if r.get("tool_ctx_tokens") is None
+                                 else int(r.get("tool_ctx_tokens"))),
                 latency_s=float(r.get("latency_s") or 0.0),
             )
             span.cost_usd = tr.pricing.cost_usd(

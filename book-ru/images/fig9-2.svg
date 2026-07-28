@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 380" width="780" height="380" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<text x="170" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Ожидание VAD</text>
+<rect x="180" y="65" width="166" height="36" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<rect x="180" y="65" width="104" height="36" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="354" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">500-800мс</text>
+<text x="170" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Транскрипция ASR</text>
+<rect x="284" y="109" width="41" height="36" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<rect x="284" y="109" width="10" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="333" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">50-200мс</text>
+<text x="170" y="171" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">LLM TTFT</text>
+<rect x="294" y="153" width="104" height="36" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<rect x="294" y="153" width="20" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="406" y="171" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">100-500мс</text>
+<text x="170" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Генерация LLM</text>
+<rect x="315" y="197" width="62" height="36" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<rect x="315" y="197" width="20" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="385" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">100-300мс</text>
+<text x="170" y="259" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">TTS-синтез</text>
+<rect x="336" y="241" width="104" height="36" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<rect x="336" y="241" width="41" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="448" y="259" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">200-500мс</text>
+<line x1="180" y1="290" x2="660" y2="290" stroke="#999999" stroke-width="2"/>
+<line x1="180" y1="286" x2="180" y2="294" stroke="#999999" stroke-width="2"/>
+<text x="180" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0мс</text>
+<line x1="284" y1="286" x2="284" y2="294" stroke="#999999" stroke-width="2"/>
+<text x="284" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">500мс</text>
+<line x1="388" y1="286" x2="388" y2="294" stroke="#999999" stroke-width="2"/>
+<text x="388" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">1000мс</text>
+<line x1="493" y1="286" x2="493" y2="294" stroke="#999999" stroke-width="2"/>
+<text x="493" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">1500мс</text>
+<line x1="597" y1="286" x2="597" y2="294" stroke="#999999" stroke-width="2"/>
+<text x="597" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">2000мс</text>
+<rect x="40" y="330" width="700" height="80" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Общее время ответа</text>
+<rect x="60" y="368" width="200" height="28" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="160" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Лучший: 950 мс ≈ 0.9 с</text>
+<rect x="280" y="368" width="200" height="28" rx="3" fill="#e0e0e0" stroke="#333333" stroke-width="2"/>
+<text x="354.1" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Худший случай: 2300мс ≈ 2.3с</text>
+<text x="605.9" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">← Идеальный сценарий без нагрузки</text>
+</svg>

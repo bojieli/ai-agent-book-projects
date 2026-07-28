@@ -4,3 +4,4 @@ numpy>=1.24.0
 matplotlib>=3.7.0
 seaborn>=0.12.0
 python-dotenv>=1.0.0
+requests>=2.31.0

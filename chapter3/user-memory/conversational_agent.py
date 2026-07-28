@@ -154,9 +154,15 @@ You MUST analyze the context, user's questions and memories in detail, and provi
         """Get current memory context as a string"""
         if not self.config.enable_memory_context:
             return ""
-        
+
         context_parts = []
-        
+
+        # The background processor writes memory through its own manager
+        # instance; reload from disk so its updates are visible within the
+        # session (same reason main.py reloads after processing, and the
+        # same fix ConversationHistory got for issue #181).
+        self.memory_manager.load_memory()
+
         # Add memory summary
         memory_str = self.memory_manager.get_context_string()
         if memory_str:
@@ -217,14 +223,19 @@ You MUST analyze the context, user's questions and memories in detail, and provi
                 logger.info(f"Memory context added: {memory_context}")
             logger.info(f"Full prompt sent to API: {full_message}")
         
-        # Add to conversation
-        self.conversation.append({"role": "user", "content": full_message})
-        
+        # Persist only the raw message; the memory/history context block is
+        # sent transiently as this call's last message. Persisting
+        # full_message would embed the entire history inside every user turn
+        # of a conversation that already contains the previous turns natively,
+        # so tokens per turn would grow O(N^2) across the session.
+        self.conversation.append({"role": "user", "content": message})
+        api_messages = self.conversation[:-1] + [{"role": "user", "content": full_message}]
+
         try:
             # Call the model with streaming
             stream = self.client.chat.completions.create(
                 model=self.model,
-                messages=self.conversation,
+                messages=api_messages,
                 temperature=_reasoning_safe_temperature(self.model, self.config.temperature),
                 max_tokens=self.config.max_tokens,
                 stream=True

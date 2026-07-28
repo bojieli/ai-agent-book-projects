@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="97.5" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Источник события</text>
+<rect x="20" y="85" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="97.5" y="105.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Почта</text>
+<text x="25" y="141" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_email_reply</text>
+<text x="25" y="159" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;from&quot;:&quot;alice@...&quot;,</text>
+<text x="25" y="175" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;subject&quot;:&quot;Re:meeting&quot;}</text>
+<rect x="20" y="195" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="97.5" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Таймер</text>
+<text x="25" y="251" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_timer_expire</text>
+<text x="25" y="269" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;task_id&quot;:&quot;daily_report&quot;,</text>
+<text x="25" y="285" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;scheduled&quot;:&quot;09:00&quot;}</text>
+<rect x="20" y="305" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="97.5" y="325.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Webhook</text>
+<text x="25" y="361" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_webhook</text>
+<text x="25" y="379" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;repo&quot;:&quot;agent-lib&quot;,</text>
+<text x="25" y="395" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;event&quot;:&quot;pr_merged&quot;}</text>
+<rect x="20" y="415" width="155" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="97.5" y="435.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Пользователь</text>
+<text x="25" y="471" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">on_user_message</text>
+<text x="25" y="489" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">{"text":"Узнай погоду на завтра для меня</text>
+<text x="25" y="505" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;}</text>
+<text x="310.0" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Очередь событий</text>
+<rect x="215" y="85" width="190" height="390" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="225" y="105" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="127" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">user.input</text>
+<text x="310.0" y="149" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Приоритет: обычный</text>
+<rect x="225" y="190" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">email.reply</text>
+<text x="310.0" y="234" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Приоритет: обычный</text>
+<rect x="225" y="275" width="170" height="60" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="297" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">user.interrupt</text>
+<text x="310.0" y="319" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Приоритет: срочно!</text>
+<rect x="225" y="360" width="170" height="60" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">timer.trigger</text>
+<text x="310.0" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Приоритет: обычный</text>
+<line x1="177" y1="105" x2="213" y2="120" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="177" y1="215" x2="213" y2="205" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="177" y1="325" x2="213" y2="290" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="177" y1="435" x2="213" y2="375" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="650" y="65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Процесс обработки агента</text>
+<line x1="407" y1="280" x2="448" y2="280" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="427.5" y="270.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Событие получения</text>
+<rect x="450" y="110" width="360" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="468" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Маршрутизатор</text>
+<text x="798" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">LLM определяет срочность</text>
+<line x1="630.0" y1="162" x2="630.0" y2="188" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="450" y="190" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="430.2" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Добавить в trace</text>
+<text x="835.8" y="215.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Структурированный формат события</text>
+<line x1="630.0" y1="242" x2="630.0" y2="268" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="450" y="270" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="444.5" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">LLM inference</text>
+<text x="821.5" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Наблюдать → Думать → Действовать</text>
+<line x1="630.0" y1="322" x2="630.0" y2="348" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="450" y="350" width="360" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="363.6" y="375.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выполнение инструмента</text>
+<text x="877.4" y="375.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.45" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Асинхронная/синхронная диспетчеризация</text>
+<line x1="630.0" y1="402" x2="630.0" y2="428" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="450" y="430" width="360" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="417.8" y="455.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Обработка результата</text>
+<text x="848.2" y="455.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Уведомить/ответить/сохранить</text>
+<path d="M 810,450 Q 855.0,290.0 810,130" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<text x="832.5" y="280.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Loop</text>
+</svg>

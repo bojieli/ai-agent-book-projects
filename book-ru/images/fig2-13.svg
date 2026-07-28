@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 500" width="860" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker></defs>
+
+
+<!-- Column headers -->
+<text x="145" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ход 1 завершён</text>
+<text x="400" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ход 2 завершён</text>
+<text x="655" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ход 3 завершён</text>
+
+<text x="145" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(сначала загрузить PPTX Skill)</text>
+<text x="400" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(читать файл PDF)</text>
+<text x="655" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(написать HTML)</text>
+
+<!-- Column dividers -->
+<line x1="270" y1="55" x2="270" y2="430" stroke="#dddddd" stroke-width="1"/>
+<line x1="525" y1="55" x2="525" y2="430" stroke="#dddddd" stroke-width="1"/>
+
+<!-- ===================================================== -->
+<!-- Helper: 11 rows of fixed labels positioned at y = 100 + i*24 -->
+<!-- Row labels: -->
+<!--   0: system            (NEW T1, HIT T2, HIT T3) -->
+<!--   1: tools             (NEW T1, HIT T2, HIT T3) -->
+<!--   2: user_q1           (NEW T1, HIT T2, HIT T3) -->
+<!--   3: ★ skill_listing   (NEW T1, HIT T2, HIT T3) -->
+<!--   4: asst: Skill(pptx) (NEW T1, HIT T2, HIT T3) -->
+<!--   5: tool_result       (NEW T1, HIT T2, HIT T3) -->
+<!--   6: ★ skill_content   (NEW T1, HIT T2, HIT T3) -->
+<!--   7: asst: Read(pdf)   (—   T1, NEW T2, HIT T3) -->
+<!--   8: tool_result       (—   T1, NEW T2, HIT T3) -->
+<!--   9: asst: Write(html) (—   T1, —   T2, NEW T3) -->
+<!--  10: tool_result       (—   T1, —   T2, NEW T3) -->
+<!-- ===================================================== -->
+
+<!-- ============== COLUMN 1: Turn 1 ============== -->
+<!-- Rows 0-6: NEW (yellow) -->
+<rect x="25" y="100" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">system</text>
+<text x="258" y="111" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="124" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">инструменты</text>
+<text x="258" y="135" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="148" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="159" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">user_q1</text>
+<text x="258" y="159" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="172" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="183" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">★ skill_listing</text>
+<text x="258" y="183" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="196" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="207" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="258" y="207" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="220" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="231" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="258" y="231" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="25" y="244" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="255" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">★ skill_content</text>
+<text x="258" y="255" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<!-- Rows 7-10: future (dashed empty) -->
+<rect x="25" y="268" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="292" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="316" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="340" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+
+<!-- Column 1 footer: cost -->
+<rect x="25" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="145" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation для этого хода</text>
+<text x="145" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 2.5k токенов</text>
+
+<!-- ============== COLUMN 2: Turn 2 ============== -->
+<!-- Rows 0-6: CACHED (gray) -->
+<rect x="280" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
+<text x="513" y="111" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">инструменты</text>
+<text x="513" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="159" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">user_q1</text>
+<text x="513" y="159" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="172" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="183" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_listing</text>
+<text x="513" y="183" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="196" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="207" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="513" y="207" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="220" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="231" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="513" y="231" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="280" y="244" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="255" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_content</text>
+<text x="513" y="255" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<!-- Rows 7-8: NEW (yellow) -->
+<rect x="280" y="268" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="288" y="279" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Read(pdf)</text>
+<text x="513" y="279" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="280" y="292" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="288" y="303" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="513" y="303" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<!-- Rows 9-10: future (dashed) -->
+<rect x="280" y="316" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="280" y="340" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+
+<!-- Column 2 footer: cost -->
+<rect x="280" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="400" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation для этого хода</text>
+<text x="400" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.5k токенов</text>
+
+<!-- ============== COLUMN 3: Turn 3 ============== -->
+<!-- Rows 0-8: CACHED (gray) -->
+<rect x="535" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
+<text x="768" y="111" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">инструменты</text>
+<text x="768" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="159" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">user_q1</text>
+<text x="768" y="159" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="172" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="183" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_listing</text>
+<text x="768" y="183" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="196" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="207" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="768" y="207" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="220" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="231" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="768" y="231" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="244" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="255" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_content</text>
+<text x="768" y="255" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="268" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="279" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Read(pdf)</text>
+<text x="768" y="279" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<rect x="535" y="292" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="303" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="768" y="303" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">ПОПАДАНИЕ</text>
+
+<!-- Rows 9-10: NEW (yellow) -->
+<rect x="535" y="316" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="543" y="327" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Write(html)</text>
+<text x="768" y="327" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<rect x="535" y="340" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="543" y="351" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="768" y="351" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">НОВОЕ</text>
+
+<!-- Column 3 footer: cost -->
+<rect x="535" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="655" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation для этого хода</text>
+<text x="655" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.4k токенов</text>
+
+<!-- Legend -->
+<rect x="40" y="450" width="20" height="14" rx="2" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="68" y="457" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">NEW = новые токены, добавленные в этом раунде, оплачивается cache_creation один раз</text>
+
+<rect x="40" y="472" width="20" height="14" rx="2" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="3" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.89" fill="#333333" dominant-baseline="central">ПОПАДАНИЕ = уже есть в префиксе кэша, бесплатное попадание в этом шаге</text>
+
+<rect x="40" y="494" width="20" height="14" rx="2" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="68" y="501" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">— контент ещё не сгенерирован в этом шаге</text>
+
+<text x="465.2" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.4" fill="#666666" dominant-baseline="central">★ Помечать вложение с emit-once: платить cache_creation только на Ходе 1,</text>
+<text x="450" y="497" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" dominant-baseline="central">      затем постоянный HIT для всех последующих ходов, предельные затраты равны нулю.</text>
+
+<!-- Bottom note about position -->
+<text x="410" y="525" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-style="italic">Примечание: после вставки индексная позиция каждого сообщения никогда не меняется; новый контент добавляется только в конец массива.</text>
+</svg>

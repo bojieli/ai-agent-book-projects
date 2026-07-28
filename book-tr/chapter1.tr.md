@@ -99,7 +99,7 @@ Bir modelin kendi kararını verme alanı ne kadar genişlerse, yanlış bir kar
 
 Ama bunun ardında daha derin bir soru yatıyor: modeller güçlenmeye devam ederse, günümüzün Harness'i sonunda model tarafından "yutulacak" mı? Rich Sutton "The Bitter Lesson" (Acı Ders) yazısında, yapay zeka araştırmalarının yetmiş yıl boyunca tekrar tekrar sahnelenen bir manzarasına bakar[^ch1-1]: araştırmacılar bir alana dair anlayışlarını sisteme kodlarlar—kısa vadede etkilidir, ama uzun vadede hesaplama ve veriyle ölçeklenen genel yöntemler tarafından her zaman geride bırakılır: arama ve öğrenme. Bu ölçüyle bakıldığında, bir Harness'teki kısıtlama, doğrulama ve düzeltmenin ne kadarı modelin er ya da geç içselleştireceği bir "insan önseli"dir? Bu kitabın duruşu: **yönü onaylamak, hızı konusunda pragmatik kalmak**. Yön konusunda, modellerin Harness'i yutmaya devam edeceğinden kuşkumuz yok—tool calling ve uzun ufuklu planlama bir zamanlar dışsal orkestrasyondu, şimdi yerleşik yetenekler. Ama hız konusunda, bu "yutma" sezginin öngördüğünden çok daha yavaştır: eğitim aylar sürer ve bir model gerçek işin tüm kısıtlarını ve tercihlerini tek seferde içselleştiremez; modelin o anki yetenek sınırı, tam olarak Harness'in o anki değeridir. Harness engineering bu yüzden Acı Ders'e bir direniş değil, onun mühendislik zaman ölçeğindeki uygulamasıdır: model henüz güvenilir biçimde yapamadığı her şeyi Harness önce karşılar; model içselleştirdiği her katmanı Harness bırakır ve yeni yetenek sınırını desteklemeye geçer. Bu iplik kitabın tamamından geçer—Bölüm 2, context engineering açısından pragmatik yanıtı verir, Bölüm 8 bir Agent'ın bilgi ve yetenek yapılarını kendi başına nasıl keşfedebileceğini tartışır, Sonsöz ise "modeller Harness'i yutacak mı" sorusunun tam yanıtına geri döner.
 
-[^ch1-1]: Sutton, Rich. “The Bitter Lesson”, 2019. http://www.incompletenessideas.net/IncIdeas/BitterLesson.html
+[^ch1-1]: Sutton, Rich. “The Bitter Lesson”, 2019. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
 
 #### Agent Öğrenme Mekanizmaları: Post-training, In-context Learning ve Externalized Learning
 
@@ -154,7 +154,7 @@ Bir trajectory'nin yapısı, sözde kod (pseudocode) olarak şöyledir:
 ```
 trajectory = [
   {role: "user", content: "Şirketin çeyreklik gelirlerine göre: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, şirketin toplam yıllık gelirini ve ortalama çeyreklik gelirini hesapla"},
-  
+
   # İlk yineleme - LLM yukarıdaki trajectory'yi görür, bir yanıt üretir
   {role: "assistant",
    reasoning: "Tüm para birimlerini USD'ye çevirmem gerekiyor...",
@@ -164,12 +164,12 @@ trajectory = [
      {name: "convert_currency", args: {amount: 1800000, from: "GBP", to: "USD"}},
      {name: "convert_currency", args: {amount: 380000000, from: "JPY", to: "USD"}}
    ]},
-  
+
   # Agent çerçevesi araçları çalıştırır, sonuçları trajectory'ye ekler
   {role: "tool", content: "EUR->USD: 2282608.7"},
   {role: "tool", content: "GBP->USD: 2278481.01"},
   {role: "tool", content: "JPY->USD: 2541806.02"},
-  
+
   # İkinci yineleme - LLM, araç sonuçları dahil eksiksiz trajectory'yi görür
   {role: "assistant",
    reasoning: "Dönüşüm sonuçları elde edildi, şimdi toplamak ve hesaplamak gerekiyor...",
@@ -177,9 +177,9 @@ trajectory = [
    tool_calls: [
      {name: "code_interpreter", args: {code: "total = 2500000 + 2282608.7 + ..."}}
    ]},
-  
+
   {role: "tool", content: "Toplam: $9,602,895.73, Ortalama: $2,400,723.93..."},
-  
+
   # Üçüncü yineleme - LLM eksiksiz trajectory'yi görür, nihai yanıtı üretir
   {role: "assistant",
    reasoning: "Tüm hesaplamalar tamamlandı, sonuçlar özetleniyor...",
@@ -396,6 +396,10 @@ Bulundukları yere göre guardrail'ler üç türe ayrılır: girdi tarafı, yür
 
 Bazı mekanizmaların (örn. kural tabanlı regex filtreleme) hem girdi hem çıktı tarafında kullanılabildiğini unutmayın; yukarıdaki sınıflandırma en yaygın dağıtım konumlarını takip eder.
 
+Sınıflandırıcı guardrail'lerinin endüstrideki önemli örneklerinden biri Anthropic'in Constitutional Classifiers sistemidir[^ch1-3]. Temel mekanizması üç parçadan oluşur. Birincisi **kural güdümlüdür**: hangi içeriğe izin verilip hangisinin yasaklandığını doğal dille belirleyen bir “anayasa”, girdi ve çıktı sınıflandırıcılarını eğitmek için sentetik veri üretir. İkincisi **sorgu ile bağlamı birlikte değerlendirir**: yeni nesil sistem, tek başına zararsız görünen bir yanıtın aslında kullanıcının sorusuyla birlikte okunduğunda örtülü bir saldırıya hizmet edip etmediğini anlamak için kullanıcı sorgusunu ve model yanıtını birlikte inceler. Üçüncüsü **iki aşamalı taramadır**: çok hafif bir sonda tüm konuşmaları neredeyse sıfır ek maliyetle kontrol eder, yalnızca şüpheli durumları daha güçlü sınıflandırıcıya gönderir. Böylece ilk aşamadaki yanlış pozitifler kullanıcı deneyimini doğrudan bozmaz ve toplam maliyet düşük kalır.
+
+[^ch1-3]: Anthropic. “Next-generation Constitutional Classifiers: More efficient protection against universal jailbreaks”, 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; Cunningham et al., “Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks”, arXiv:2601.04603.
+
 #### İnsan Müdahalesi
 
 **Human in the loop (sürece insan dahil etme)**, temel bir koruyucu önlemdir: bir Agent'ın kullanıcı deneyimini bozmadan gerçek dünya performansını iyileştirmesini sağlar. En çok erken dağıtımda önem taşır; başarısızlık modlarını belirlemeye, uç durumları (edge case) ortaya çıkarmaya ve sağlam bir değerlendirme döngüsü kurmaya yardımcı olur.
@@ -425,7 +429,7 @@ Harness engineering merceğinden bakıldığında, bu kitabın her bölümü Har
 | Sistem Düzeyinde Doğrulama | Bölüm 6 (Değerlendirme) | Değerlendirme ortamı, veri kümeleri, otomatik değerlendirme, gözlemlenebilirlik | — |
 | Model Düzeyinde Düzeltme | Bölüm 7 (Post-Training) | SFT (Denetimli İnce Ayar), Pekiştirmeli Öğrenme—Harness'te biriken geri bildirim sinyallerini model parametrelerine yazmak, Harness engineering'in bir uzantısı olarak görülür | Hedef uyumsuzluğu, alignment ve sağlamlık |
 | Sistem Düzeyinde Düzeltme | Bölüm 8 (Kendi Kendine Evrim) | Externalized learning, araç yaratma, deneyim birikimi | — |
-| Çok Modlu Context ve Tools | Bölüm 9 (Çok Modlu ve Gerçek Zamanlı Etkileşim) | Sesli Agent, Computer Use, robotik işlem | Çok modlu girdinin güvenlik filtrelemesi, gerçek zamanlı etkileşimde izin kontrolü | 
+| Çok Modlu Context ve Tools | Bölüm 9 (Çok Modlu ve Gerçek Zamanlı Etkileşim) | Sesli Agent, Computer Use, robotik işlem | Çok modlu girdinin güvenlik filtrelemesi, gerçek zamanlı etkileşimde izin kontrolü |
 | Çoklu Agent'lar Arasında Kısıtlama ve Düzeltmeler | Bölüm 10 (Multi-Agent İş Birliği) | İş birliği mimarisi, başarısızlık modları, Agent toplumu | Agent'lar arası güven sınırı ihlalleri, paylaşılan kaynak çatışmaları |
 
 Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasarımının modelin kendisinin çözemediği sorunları nasıl çözebildiğini gösterir. Uzun görevlerin iki başarısızlık modunu—context'in tükenmesi ve görevin erken bitmiş sayılması—ele almak için yapılandırılmış bir Harness kullanarak, karmaşık görevleri bir "Başlatma Agent'ı" (ortamı kurar, görev listesini ayrıştırır) ile bir "Yürütme Agent'ı" (her oturumda artımlı ilerleme kaydeder ve net devir teslim çıktıları bırakır) arasında bölerler. İlerideki bölümler Harness'i bileşen bileşen ele alır—Bölüm 2, en merkezi olanla, context engineering ile başlar, Bölüm 5 ise Kodlama Agent'larında Harness engineering'in eksiksiz pratiğini ortaya koyar.

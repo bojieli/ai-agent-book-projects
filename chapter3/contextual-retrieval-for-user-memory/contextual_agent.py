@@ -334,9 +334,14 @@ Remember: Good service answers the question. Great service anticipates what come
                         
                         # Handle tool calls in stream
                         if chunk.choices[0].delta.tool_calls:
-                            for tc in chunk.choices[0].delta.tool_calls:
-                                # Build tool calls from stream
-                                pass  # Simplified for brevity
+                            # Tool-call deltas are not accumulated on this
+                            # path; silently dropping them would produce an
+                            # empty answer marked success=True. Fail loudly
+                            # until streaming tool support is implemented.
+                            raise NotImplementedError(
+                                "stream=True does not support tool calls yet; "
+                                "use stream=False"
+                            )
                     
                     # Process complete response
                     assistant_message = {
@@ -373,8 +378,20 @@ Remember: Good service answers the question. Great service anticipates what come
                     
                     for tool_call in assistant_message["tool_calls"]:
                         tool_name = tool_call["function"]["name"]
-                        tool_args = json.loads(tool_call["function"]["arguments"])
-                        
+                        # The assistant message with tool_calls is already in
+                        # the conversation; answer malformed arguments with an
+                        # error tool message instead of failing the question
+                        # (same guard as the sibling agents).
+                        try:
+                            tool_args = json.loads(tool_call["function"]["arguments"] or "{}")
+                        except json.JSONDecodeError as exc:
+                            messages.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call["id"],
+                                "content": json.dumps({"error": f"Invalid tool arguments (not valid JSON): {exc}"})
+                            })
+                            continue
+
                         # Execute tool
                         tool_result = self._execute_tool(tool_name, tool_args)
                         

@@ -506,6 +506,7 @@ async def analyze_video_ai(
     Returns:
         TextContent with AI analysis
     """
+    video = None
     try:
         path = validate_file_path(video_path)
 
@@ -566,9 +567,7 @@ async def analyze_video_ai(
                 frames_analyzed += 1
             
             frame_num += 1
-        
-        video.release()
-        
+
         # Generate overall summary
         combined_analyses = "\n\n".join([f"Frame {i+1} (t={a['timestamp']}s): {a['analysis']}" 
                                           for i, a in enumerate(frame_analyses)])
@@ -602,11 +601,17 @@ async def analyze_video_ai(
             message=error_msg,
             metadata={"error_type": "video_analysis_error"}
         )
-        
+
         return TextContent(
             type="text",
             text=json.dumps(action_response.model_dump())
         )
+    finally:
+        # Release the native decoder/file handle even when a per-frame Vision
+        # API call raises mid-loop (the most likely failure point), otherwise
+        # the VideoCapture leaks until GC finalizes it.
+        if video is not None:
+            video.release()
 
 
 async def trim_audio(
@@ -737,7 +742,16 @@ async def get_image_metadata(
         
         # Image info
         if hasattr(img, 'info'):
-            metadata["info"] = dict(img.info)
+            # PIL's img.info routinely carries non-JSON-serializable values --
+            # most notably the raw ICC color profile / EXIF blob as `bytes`
+            # (present in almost every real photo, screenshot or design export).
+            # Copying them verbatim would make the final json.dumps() raise
+            # TypeError, turning a valid image into a failure response. Summarize
+            # bytes as a size marker so metadata extraction still succeeds.
+            metadata["info"] = {
+                k: (f"<{len(v)} bytes>" if isinstance(v, (bytes, bytearray)) else v)
+                for k, v in img.info.items()
+            }
         
         result = {
             "metadata": metadata,

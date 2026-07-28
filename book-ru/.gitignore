@@ -1,0 +1,8 @@
+# Артефакты сборки PDF
+images/*.pdf
+*.pdf
+*.aux
+*.log
+*.toc
+*.out
+__pycache__/

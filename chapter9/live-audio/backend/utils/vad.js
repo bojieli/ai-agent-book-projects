@@ -171,6 +171,10 @@ class VoiceActivityDetector {
             this.speechStartTime = currentTime;
             this.speechBuffer = Buffer.alloc(0);
             console.log('Silero VAD: Speech started (prob:', speechProb.toFixed(3), ')');
+            // Emit the rising edge so the server can tell the client to barge
+            // in. Without this the client's 'speech_start' handler is dead and
+            // the assistant keeps talking over the user.
+            results.push({ type: 'speech_start', timestamp: currentTime });
           }
           
           this.lastSpeechTime = currentTime;

@@ -3,7 +3,7 @@
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
 #               fonts: Menlo / Arial Unicode MS (macOS) — Linux auto-falls back
 #               to DejaVu Sans/Mono and Noto CJK (see preamble.tex).
-# Usage: cd book && bash build_pdf.sh
+# Usage: cd book-tr && bash build_pdf.sh
 # Note: chapter/section numbers come from the document class; source headings
 #       carry no manual numbers (see git history for the de-numbering pass).
 
@@ -27,7 +27,7 @@ export extra_mem_bot=8000000
 #    immediately with the correct "not found" result.
 export MKTEXTFM=0
 
-OUT="AI-Agents-in-Depth-Bojie-Li-v1.2-tr.pdf"
+OUT="AI-Agents-in-Depth-Bojie-Li-v1.3-tr.pdf"
 CHAPTERS=(
     introduction.tr.md
     chapter1.tr.md

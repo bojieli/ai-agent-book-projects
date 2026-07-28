@@ -1,0 +1,153 @@
+% ===== ElegantBook preamble — адаптация под русский перевод =====
+% Отличия от оригинала (book/ апстрима):
+%   • основной шрифт — кириллический (PT Serif / DejaVu Serif / дефолт);
+%   • китайский рендерится через xeCJK (для остаточных иероглифов: термины гл.10,
+%     примеры в блоках кода) — грузится ТОЛЬКО если найден CJK-шрифт, иначе пропуск;
+%   • заголовок questionbox переведён;
+%   • сборка идёт с classoption=lang=en (структурные подписи латиницей), см. build_pdf.sh.
+
+% ── Основной (кириллический) шрифт ────────────────────────────────
+% Cambria — хорошая книжная засечка с полной кириллицей/греческим, есть на Windows.
+\IfFontExistsTF{PT Serif}{\setmainfont{PT Serif}}{%
+  \IfFontExistsTF{DejaVu Serif}{\setmainfont{DejaVu Serif}}{%
+    \IfFontExistsTF{Cambria}{\setmainfont{Cambria}}{%
+      \IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{}}}}
+
+% ── Санс-шрифт (заголовки глав/секций, титул выносок) — обязательно с кириллицей,
+%    иначе ElegantBook берёт Latin Modern Sans без кириллицы (тысячи «квадратов»). ─
+\IfFontExistsTF{DejaVu Sans}{\setsansfont{DejaVu Sans}}{%
+  \IfFontExistsTF{Segoe UI}{\setsansfont{Segoe UI}}{%
+    \IfFontExistsTF{Calibri}{\setsansfont{Calibri}}{%
+      \IfFontExistsTF{Arial}{\setsansfont{Arial}}{}}}}
+
+% ── Китайский фолбэк (xeCJK) — только если есть подходящий шрифт ───
+\IfFontExistsTF{Noto Sans CJK SC}{\newcommand{\cjkmain}{Noto Sans CJK SC}}{%
+  \IfFontExistsTF{Microsoft YaHei}{\newcommand{\cjkmain}{Microsoft YaHei}}{%
+    \IfFontExistsTF{SimSun}{\newcommand{\cjkmain}{SimSun}}{%
+      \IfFontExistsTF{Songti SC}{\newcommand{\cjkmain}{Songti SC}}{}}}}
+\ifdefined\cjkmain
+  \usepackage{xeCJK}
+  \setCJKmainfont{\cjkmain}
+  \setCJKsansfont{\cjkmain}
+  \setCJKmonofont{\cjkmain}
+\fi
+
+% ── Юникод-глифы, которых нет в основном шрифте ───────────────────
+\usepackage{newunicodechar}
+% Segoe UI Symbol есть на всех Windows и покрывает ★ ♦ ✓ ✗ стрелки и т.п.
+\IfFontExistsTF{DejaVu Sans}{\newfontfamily\fallbackfont{DejaVu Sans}}{%
+  \IfFontExistsTF{Segoe UI Symbol}{\newfontfamily\fallbackfont{Segoe UI Symbol}}{%
+    \IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{%
+      \newfontfamily\fallbackfont{Latin Modern Roman}}}}
+\newunicodechar{★}{{\fallbackfont ★}}   % сложность экспериментов «Эксперимент N-M ★★»
+\newunicodechar{☆}{{\fallbackfont ☆}}
+\newunicodechar{✓}{{\fallbackfont ✓}}
+\newunicodechar{✗}{{\fallbackfont ✗}}
+\newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{→}{{\fallbackfont →}}
+\newunicodechar{←}{{\fallbackfont ←}}
+\newunicodechar{↓}{{\fallbackfont ↓}}
+\newunicodechar{√}{{\fallbackfont √}}
+\newunicodechar{♦}{{\fallbackfont ♦}}\newunicodechar{♠}{{\fallbackfont ♠}}
+\newunicodechar{♥}{{\fallbackfont ♥}}\newunicodechar{♣}{{\fallbackfont ♣}}
+\newunicodechar{⟦}{{\fallbackfont ⟦}}
+\newunicodechar{⟧}{{\fallbackfont ⟧}}
+% Греческие буквы, встречающиеся в тексте (RL, τ-bench и т.п.)
+\newunicodechar{α}{{\fallbackfont α}}\newunicodechar{β}{{\fallbackfont β}}
+\newunicodechar{γ}{{\fallbackfont γ}}\newunicodechar{δ}{{\fallbackfont δ}}
+\newunicodechar{ε}{{\fallbackfont ε}}\newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{λ}{{\fallbackfont λ}}\newunicodechar{μ}{{\fallbackfont μ}}
+\newunicodechar{π}{{\fallbackfont π}}\newunicodechar{σ}{{\fallbackfont σ}}
+\newunicodechar{τ}{{\fallbackfont τ}}\newunicodechar{φ}{{\fallbackfont φ}}\newunicodechar{ω}{{\fallbackfont ω}}
+% Заглавные греческие буквы (Σ, Φ, ... в формулах)
+\newunicodechar{Γ}{{\fallbackfont Γ}}\newunicodechar{Δ}{{\fallbackfont Δ}}
+\newunicodechar{Θ}{{\fallbackfont Θ}}\newunicodechar{Λ}{{\fallbackfont Λ}}
+\newunicodechar{Ξ}{{\fallbackfont Ξ}}\newunicodechar{Π}{{\fallbackfont Π}}
+\newunicodechar{Σ}{{\fallbackfont Σ}}\newunicodechar{Φ}{{\fallbackfont Φ}}
+\newunicodechar{Ψ}{{\fallbackfont Ψ}}\newunicodechar{Ω}{{\fallbackfont Ω}}
+% Нижние индексы (₀…₉ в обозначениях вроде x₀)
+\newunicodechar{₀}{{\fallbackfont ₀}}\newunicodechar{₁}{{\fallbackfont ₁}}
+\newunicodechar{₂}{{\fallbackfont ₂}}\newunicodechar{₃}{{\fallbackfont ₃}}
+\newunicodechar{₄}{{\fallbackfont ₄}}\newunicodechar{₅}{{\fallbackfont ₅}}
+\newunicodechar{₆}{{\fallbackfont ₆}}\newunicodechar{₇}{{\fallbackfont ₇}}
+\newunicodechar{₈}{{\fallbackfont ₈}}\newunicodechar{₉}{{\fallbackfont ₉}}
+
+% ── Моноширинный шрифт для кода ───────────────────────────────────
+\IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\IfFontExistsTF{DejaVu Sans Mono}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}{\IfFontExistsTF{Consolas}{\setmonofont[Scale=0.86]{Consolas}}{}}}
+
+% ── tcolorbox + TikZ (для обложки) ────────────────────────────────
+\tcbuselibrary{skins,breakable}
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+\tikzfading[name=titlefade, top color=transparent!100, bottom color=transparent!0]
+
+% Акцентный цвет — глубокий navy (как в оригинале)
+\definecolor{structurecolor}{RGB}{30,58,107}
+\colorlet{accent}{structurecolor}
+\newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Перенос длинных строк в блоках кода ───────────────────────────
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+% ── Блоки кода: рамка в стиле O'Reilly ────────────────────────────
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm, before skip=0.7em, after skip=0.7em}
+\renewenvironment{Shaded}{\begin{codebox}}{\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{Verbatim}}%
+  {\end{Verbatim}\end{codebox}}
+
+% ── Выноски экспериментов и вопросов (experiment_box.lua) ─────────
+\newtcolorbox{experimentbox}{
+  breakable, enhanced, colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em}
+\newtcolorbox{questionbox}{
+  breakable, enhanced, colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em,
+  title={\sffamily\bfseries Вопрос для размышления},
+  fonttitle=\normalsize\color{white}, coltitle=white,
+  attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
+  boxed title style={colback=accent, colframe=accent, arc=0.8mm, outer arc=0.8mm}}
+
+% ── Рисунки: [H], чтобы сидели внутри выносок/цитат ──────────────
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Подписи к рисункам: номер задан вручную в тексте, метку подавляем ──
+\usepackage{caption}
+\captionsetup{font={normalsize,sf,bf}, labelformat=empty, skip=4pt, justification=centering}
+
+% ── Цитаты: бирюзовая левая полоса (эксперименты рендерятся как quote) ──
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[blanker, breakable,
+    borderline west={2.5pt}{0pt}{accent}, colback=accent!4,
+    left=1em, right=0.6em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em]%
+}{%
+  \end{tcolorbox}%
+}
+
+\setlength{\parindent}{2em}
+
+% ElegantBook empties the `plain` page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

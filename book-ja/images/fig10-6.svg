@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 530" width="780" height="530" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker><marker id="ah-sm" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#333333"/></marker></defs>
+
+<rect x="240" y="55" width="300" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="77" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">管理者 Agent</text>
+<text x="390" y="103" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">タスク計画 · 進捗監視 · 例外処理 · 結果統合</text>
+<rect x="30" y="170" width="230" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="145" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">用語集 Agent</text>
+<text x="145" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">用語集</text>
+<text x="42" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">全書を受け取る → 専門用語を特定</text>
+<text x="42" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">専門辞書 + 翻訳の慣例を検索</text>
+<text x="42" y="266" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">出力: glossary.json</text>
+<rect x="38" y="285" width="214" height="55" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="44" y="298" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">{"attention": "アテンション",</text>
+<text x="44" y="313" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;transformer&quot;: &quot;Transformer&quot;,</text>
+<text x="44" y="328" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central"> "backprop": "逆伝播"}</text>
+<line x1="390" y1="127" x2="145" y2="168" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="270" y="170" width="230" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="385" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">翻訳 Agent ×N</text>
+<text x="385" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">章の翻訳</text>
+<text x="282" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">入力: 章 + 用語集 + ガイド</text>
+<text x="282" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">用語集に厳密に従って翻訳</text>
+<text x="282" y="266" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">出力: chapter{n}_zh.md</text>
+<rect x="278" y="285" width="214" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="284" y="298" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">"...アテンション機構は次の類似度を計算する</text>
+<text x="284" y="313" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central"> Query·Key^T ..."</text>
+<line x1="390" y1="127" x2="385" y2="168" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="520" y="170" width="230" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="635" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">校正 Agent</text>
+<text x="635" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">全文レビュー</text>
+<text x="532" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">用語の一貫性を走査・検証</text>
+<text x="532" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">流暢さと読みやすさをチェック</text>
+<text x="532" y="266" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">出力: review_report.md</text>
+<rect x="528" y="285" width="214" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="534" y="298" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">P3: "アテンション"→"注意" の不一致</text>
+<text x="534" y="313" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">P8: 長文につき分割を提案</text>
+<line x1="390" y1="127" x2="635" y2="168" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="260" y1="365" x2="270" y2="365" stroke="#333333" stroke-width="2" marker-end="url(#ah-sm)"/>
+<text x="265.0" y="383" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="auto">用語集</text>
+<line x1="504" y1="365" x2="516" y2="365" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="510.0" y="383" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="auto">翻訳</text>
+<rect x="30" y="400" width="720" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">共有ファイルシステム</text>
+<text x="137" y="440" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">glossary.json</text>
+<text x="137" y="458" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">用語集</text>
+<text x="312" y="440" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">chapter{1..10}_zh.md</text>
+<text x="312" y="458" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">章の翻訳</text>
+<text x="487" y="440" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">review_report.md</text>
+<text x="487" y="458" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">レビューレポート</text>
+<text x="662" y="440" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">translation_guide.md</text>
+<text x="662" y="458" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">翻訳ガイド</text>
+<rect x="30" y="485" width="720" height="60" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="503" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">コンテキストの隔離の利点</text>
+<text x="390" y="527" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">用語集: 用語のみを閲覧 | 翻訳: 現在の章 + 用語集のみを閲覧 | 管理者: ファイルインデックスのみを保守</text>
+</svg>

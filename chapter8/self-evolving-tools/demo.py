@@ -1,5 +1,5 @@
 """
-实验 8-5 一键演示：`python demo.py`
+补充案例一键演示：`python demo.py`
 
 演示两件事：
   1) 进化：Agent 从零基础工具出发 —— 搜索 → 读文档 → 沙箱测试 → 封装工具 →
@@ -238,7 +238,7 @@ def run_online(tasks: list, allow_create: bool, model: str | None, output_path: 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="实验 8-5：Agent 从网络寻找工具、自我进化的一键演示。",
+        description="补充案例：Agent 从网络寻找工具并验证后复用。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="示例：\n"
                "  python demo.py                 跑默认两个任务（进化 + 复用，需 API）\n"

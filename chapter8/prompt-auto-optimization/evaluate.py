@@ -10,7 +10,7 @@
 """
 
 import json
-from config import get_client, get_model, TEMPERATURE
+from config import get_client, get_model, get_temperature
 from airline_env import run_agent
 
 
@@ -34,7 +34,7 @@ def _judge_handled(user_message: str, rubric: str, agent_reply: str) -> bool:
     resp = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
-        temperature=TEMPERATURE,
+        temperature=get_temperature(),
         response_format={"type": "json_object"},
     )
     try:
@@ -50,6 +50,7 @@ def evaluate_case(system_prompt: str, case: dict, verbose: bool = False) -> dict
     transferred = result["transferred"]
     should_transfer = case["should_transfer"]
 
+    handled = None
     if should_transfer:
         correct = transferred
         note = "应转接：" + ("已转接 ✓" if transferred else "未转接 ✗")
@@ -72,6 +73,7 @@ def evaluate_case(system_prompt: str, case: dict, verbose: bool = False) -> dict
         "final_text": result["final_text"],
         "transfer_reason": result["transfer_reason"],
         "tool_calls": result["tool_calls"],
+        "handled": handled,
     }
     if verbose:
         icon = "✓" if correct else "✗"

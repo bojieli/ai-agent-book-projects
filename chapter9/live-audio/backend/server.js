@@ -228,7 +228,13 @@ class ConnectionHandler {
       const vadResults = await this.vad.processAudioChunk(audioChunk);
       
       for (const result of vadResults) {
-        if (result.type === 'speech_end') {
+        if (result.type === 'speech_start') {
+          // Barge-in: tell the client to stop playing the current answer.
+          this.ws.send(JSON.stringify({
+            type: 'speech_start',
+            timestamp: result.timestamp
+          }));
+        } else if (result.type === 'speech_end') {
           // Speech segment ended, process with STT
           await this.processSpeechSegment(result.audioData, result.duration);
         }
@@ -496,7 +502,10 @@ class ConnectionHandler {
           // Handle any remaining content
           if (currentSentence.trim()) {
             await this.synthesizeAndStreamAudio(currentSentence);
-            accumulatedContent += currentSentence;
+            // NOTE: do NOT add currentSentence to accumulatedContent here.
+            // Every token already did `accumulatedContent += content` as it
+            // arrived, so adding the trailing fragment again duplicates it in
+            // the message the user sees and in the history replayed to the LLM.
             
             // Update message history with final content
             const lastMessage = this.messageHistory[this.messageHistory.length - 1];
@@ -744,7 +753,7 @@ class ConnectionHandler {
           url: config.TTS_API_URL,
           data: {
             "model": (config.TTS_PROVIDERS?.[config.TTS_PROVIDER]?.model) || "FunAudioLLM/CosyVoice2-0.5B",
-            "input": text,
+            "input": processedText,
             "voice": (config.TTS_PROVIDERS?.[config.TTS_PROVIDER]?.voice) || "FunAudioLLM/CosyVoice2-0.5B:diana",
             "response_format": "mp3",
             "sample_rate": 32000,

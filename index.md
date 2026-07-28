@@ -1,6 +1,6 @@
 ---
 title: 深入理解 AI Agent
-description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 AI Agent 从原理讲到工程实战的开源技术书。正文、配图、88 个配套实验全部开源。
+description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 AI Agent 从原理讲到工程实战的开源技术书。正文、配图、92 个配套实验全部开源。
 ---
 
 <div class="hero" markdown>
@@ -19,25 +19,8 @@ description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 A
 
 📥 [中文 PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf){.cta}
 📚 [中文 EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub){.cta}
-⭐ [GitHub Star](https://github.com/bojieli/ai-agent-book){.cta .secondary}
 
 </div>
-
-</div>
-
----
-
-## 这本书讲什么
-
-围绕核心公式 **Agent = LLM + 上下文 + 工具**,用 10 章把 AI Agent 从原理讲到工程实战。**全书正文、配图、88 个配套实验全部开源**,欢迎亲手把实验跑一遍。
-
-<div class="stat-row" markdown>
-
-📊 **10 章** 正文 · 从基础到生产
-
-📂 **88 个** 配套实验 · 70+ 可独立运行
-
-🌐 **5 种** 语言 · 中 / 繁 / 英 / 泰 / 越
 
 </div>
 
@@ -54,7 +37,7 @@ description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 A
 
 <a class="exp-card" href="book/chapter1/">
 <span class="exp-title">🚀 第 1 章 · Agent 基础知识</span>
-<span class="exp-desc">「模型即 Agent」新范式 + Agent 核心公式;Harness 工程才是竞争力</span>
+<span class="exp-desc">Agent = LLM + 上下文 + 工具；Harness 工程才是竞争力</span>
 </a>
 
 <a class="exp-card" href="book/chapter2/">
@@ -88,8 +71,8 @@ description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 A
 </a>
 
 <a class="exp-card" href="book/chapter8/">
-<span class="exp-title">🌱 第 8 章 · Agent 的自我进化</span>
-<span class="exp-desc">外部化学习、工具创造、经验积累——Agent 自己变得更聪明</span>
+<span class="exp-title">🌱 第 8 章 · Agent 的持续进化</span>
+<span class="exp-desc">从可靠学习信号到知识、指令、程序与参数更新</span>
 </a>
 
 <a class="exp-card" href="book/chapter9/">
@@ -115,9 +98,9 @@ description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 A
 
 使用顶部导航栏的语言 Tab 切换:
 
-| 中文 | 繁體中文 | English | தமிழ் | Tiếng Việt |
-|:---:|:---:|:---:|:---:|:---:|
-| ✅ 原版 | 社区翻译 | 社区翻译 | 社区翻译 | 社区翻译 |
+| 中文 | 正體中文 | English | العربية | Русский | தமிழ் | Tiếng Việt | 日本語 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| ✅ 原版 | 社区翻译 | 社区翻译 | 社区翻译 | 社区翻译 | 社区翻译 | 社区翻译 | 社区翻译 |
 
 ---
 

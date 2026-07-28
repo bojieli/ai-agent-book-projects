@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 760 194" width="760" height="194" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="73.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="168.0" y="66.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">カリキュラム生成器</text>
+<text x="168.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">段階的に新しいタスク</text>
+<text x="168.0" y="113.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">を提案</text>
+<rect x="285.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="380.0" y="60.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">反復的プロンプティン</text>
+<text x="380.0" y="80.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">グ機構</text>
+<text x="380.0" y="99.75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">スキルコードを生成しデバッ</text>
+<text x="380.0" y="119.25" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">グ</text>
+<line x1="265.0" y1="90.0" x2="283.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="497.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="592.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">スキルライブラリ</text>
+<text x="592.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">再利用可能なスキル</text>
+<text x="592.0" y="116.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">を保存</text>
+<line x1="477.0" y1="90.0" x2="495.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="592.0" y1="132" x2="592.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="592.0" y1="166" x2="168.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="168.0" y1="166" x2="168.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="380.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">スキルの蓄積がより難しいタスクを解放（オープンワールド探索）</text>
+</svg>

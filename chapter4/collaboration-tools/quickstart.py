@@ -10,6 +10,8 @@ from mcp.types import TextContent
 import sys
 import json
 
+from result_parsing import parse_mapping
+
 
 async def run_demo():
     """Run a demonstration of all collaboration tools."""
@@ -57,7 +59,7 @@ async def run_demo():
             
             if "timer_id" in str(timer_result):
                 # Parse timer_id from result
-                timer_data = eval(timer_result)
+                timer_data = parse_mapping(timer_result)
                 timer_id = timer_data.get("timer_id")
                 
                 print(f"\n📋 Checking timer status...")

@@ -1,19 +1,28 @@
-# 第 8 章 · Agent 的自我进化
+# 第 8 章 · Agent 的持续进化
 
-> 不改权重也能成长：经验学习、从工具使用者到创造者
+> 从运行轨迹中获得可靠信号，把经验转化为可验证、可回滚的能力更新
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter8.md)
 
-## 配套项目
+## 配套实验
 
-| 项目 | 类型 | 一句话说明 |
-| --- | :--: | --- |
-| [gaia-experience](gaia-experience/) | ✅ | 基于 AWorld + GAIA 的「学习-应用」闭环：自动总结成功轨迹为结构化经验，新任务中检索应用 |
-| [browser-use-rpa](browser-use-rpa/) | ✅ | 浏览器工作流录制系统，把重复操作封装为参数化工具，从 LLM 推理切换到自动化执行 3–5 倍加速 |
-| [prompt-distillation](prompt-distillation/) | ✅ | 将复杂提示的效果蒸馏进模型参数，减少推理提示长度，把上下文经验固化为参数化知识 |
-| [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 以 tau-bench 航空客服「过度转接」为例，Coding Agent 读/改 prompt 文件 → 重新评测 → 验证闭环 |
-| [self-evolving-tools](self-evolving-tools/) | ✅ | Alita 式「最小预定义，最大自我进化」：五个通用元工具，自己上网找库/读文档/沙箱测试并封装复用 |
-| [self-evolution-eval](self-evolution-eval/) | ✅ | 20 个跨领域任务 + 四层分层验证 harness + 可控参考 Agent，考察发现/创造/复用质量 |
+| 编号 | 项目 | 类型 | 一句话说明 |
+| :--: | --- | :--: | --- |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 实验 8-1：用环境结果、过程规则和语言 Rubric 形成带证据的客服轨迹诊断 |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 实验 8-2：比较成功、部分成功与失败轨迹，生成跨轨迹 Markdown 经验文档 |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 实验 8-3：从失败轨迹生成最小 Prompt 补丁，并以边界集和保留集控制发布 |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 实验 8-4：把浏览器轨迹编译为带状态谓词、经重置回放验证的工作流 |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 实验 8-5：由重复故障触发重试/熔断代码补丁、回归、灰度与回滚 |
+| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 8-6：用学习、迁移、规则变化和保持四阶段评估长期进化 |
+
+以上实验都提供无需 API Key 的离线入口和单元测试；需要真实模型或浏览器的扩展路径在各项目 README 中另行说明。
+
+## 补充案例
+
+| 编号 | 项目 | 关系 |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Prompt 蒸馏与参数化学习的跨章项目；训练方法归入第七章 |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita 式工具发现、封装与复用，是“将经验写成程序”的补充案例 |
 
 ## 项目类型说明
 

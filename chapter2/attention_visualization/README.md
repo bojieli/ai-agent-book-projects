@@ -1,28 +1,34 @@
-# Attention Visualization
+# Attention Visualization / 注意力机制可视化
 
-Interactive visualization tool for exploring attention mechanisms in language models. Each agent run creates a unique trajectory that can be viewed and compared in the frontend.
+> Companion material for *AI Agents in Depth*, Chapter 2 — **Experiment 2-2 ★: Attention mechanism visualization**.  
+> 配套《深入理解 AI Agent》第 2 章 **实验 2-2 ★：注意力机制可视化**。
 
-## Overview
+← [Chapter 2 index / 返回第 2 章目录](../README.md)
 
-This project provides an interactive way to understand how language models allocate attention when processing different types of queries. Each run of the agent creates a new trajectory file that captures:
-- The input query and model response
+---
+
+## English
+
+### Overview
+
+Interactive tools for exploring attention in language models. Each agent run can create a trajectory viewable in a frontend; a standalone CLI also writes heatmaps directly.
+
+Each run can capture:
+
+- Input query and model response
 - Token-by-token attention weights
 - Attention patterns across layers and heads
 - Statistical analysis of attention distribution
 
-## Architecture
+### Architecture
 
-The system follows a simple architecture:
-1. **Agent generates trajectories**: Run `agent.py` or `main.py` to generate new trajectories
-2. **JSON storage**: Each trajectory is saved as a unique JSON file in `frontend/public/trajectories/`
-3. **Frontend visualization**: React app loads and displays all trajectories with tab navigation
+1. **Agent generates trajectories**: Run `agent.py` or `main.py`
+2. **JSON storage**: Unique files under `frontend/public/trajectories/`
+3. **Frontend visualization**: React app loads trajectories with tab navigation
 
-## Quick Start (Standalone CLI)
+### Quick start (standalone CLI)
 
-The fastest way to reproduce the attention patterns described in Chapter 2
-(实验 2-2) is the standalone command-line tool `attention_cli.py`. It runs a
-real model, captures its self-attention, and writes a heatmap PNG directly —
-no frontend needed.
+Fastest way to reproduce Chapter 2 attention patterns (实验 2-2): `attention_cli.py` runs a real model, captures self-attention, and writes a heatmap PNG—no frontend.
 
 ```bash
 # Single heatmap for the default prompt (last layer, heads averaged)
@@ -55,54 +61,37 @@ Run `python attention_cli.py --help` for the full flag list. Key flags:
 | `--no-chat-template` | Feed the raw prompt (no `<|im_start|>` markers) | off |
 | `--cmap` | Matplotlib colormap | `viridis` |
 
-**What the heatmap shows.** Rows are Query positions (the token attending)
-and columns are Key positions (the token attended to). The tool measures and
-prints the **attention-sink share** — the fraction of each row's attention
-that lands on the first token — directly from the model's own weights. On
-`Qwen3-0.6B` the last-layer sink typically absorbs ~75–85% of every row (the
-Chapter 2 "注意力储存池 / Attention Sink" phenomenon), while layer 0 is close
-to a local diagonal pattern. The masked upper triangle makes the causal
-"triangle" structure explicit: each token only attends to itself and the
-tokens before it.
+**What the heatmap shows.** Rows are Query positions; columns are Key positions. The tool prints the **attention-sink share**—the fraction of each row’s attention on the first token. On `Qwen3-0.6B` the last-layer sink often absorbs ~75–85% of every row (Chapter 2 “Attention Sink”), while layer 0 is closer to a local diagonal. The masked upper triangle shows the causal triangle: each token attends only to itself and prior tokens.
 
-> First run downloads the model weights (~1–2 GB). GPU/MPS is recommended but
-> CPU works for these short prompts.
+> First run downloads model weights (~1–2 GB). GPU/MPS recommended; CPU works for short prompts.
 
-## Interactive Frontend Workflow
+### Interactive frontend workflow
 
-The visualization process can also be split into two manual steps: generating trajectories and viewing them in the frontend.
-
-### Step 1: Generate Trajectories
-
-Choose one of the following options to generate trajectory data:
+#### Step 1: Generate trajectories
 
 ```bash
-# Option A: Run basic attention tracking demo
+# Option A: basic attention tracking demo
 python agent.py
 
-# Option B: Run ReAct agent with tool calling (demonstrates multi-step reasoning)
+# Option B: ReAct agent with tool calling (multi-step reasoning)
 python main.py
 ```
 
-Each run creates a new trajectory file with a unique timestamp in `frontend/public/trajectories/`.
+Each run writes a timestamped trajectory under `frontend/public/trajectories/`.
 
-### Step 2: Start the Frontend
-
-In a separate terminal, start the frontend server:
+#### Step 2: Start the frontend
 
 ```bash
 cd frontend
-npm install  # First time only
+npm install  # first time only
 npm run dev
 ```
 
-### Step 3: View Visualizations
+#### Step 3: View
 
-Open your browser and navigate to http://localhost:3000
+Open http://localhost:3000. Keep the frontend running; new trajectories appear automatically.
 
-You can keep the frontend running and generate new trajectories in the first terminal - they'll automatically appear in the interface.
-
-## Project Structure
+### Project structure
 
 ```
 attention_visualization/
@@ -115,37 +104,27 @@ attention_visualization/
 ├── requirements.txt     # Python dependencies
 ├── env.example          # Environment variable template
 ├── frontend/            # Next.js frontend
-│   ├── pages/          # React pages
-│   ├── components/     # Visualization components
+│   ├── pages/
+│   ├── components/
 │   └── public/
 │       └── trajectories/  # Stored trajectory JSONs
 │           ├── trajectory_YYYYMMDD_HHMMSS.json
-│           └── manifest.json  # Index of all trajectories
+│           └── manifest.json
 └── attention_data/      # Additional trajectory storage
 ```
 
-## How It Works
+### How it works
 
-### 1. Trajectory Generation
+#### Trajectory generation
 
-#### Using `agent.py`
-- Runs a basic attention tracking demo with various query types
-- Captures attention weights for single-step responses
-- Good for understanding basic attention patterns
+**`agent.py`:** basic attention tracking on various query types; single-step responses; good for basic patterns.
 
-#### Using `main.py`
-- Implements a ReAct agent with tool calling capabilities
-- Demonstrates multi-step reasoning with structured thought process
-- Shows how attention shifts when the agent uses tools
-- Better for understanding complex reasoning patterns
+**`main.py`:** ReAct agent with tools; multi-step reasoning; shows how attention shifts with tools.
 
-Both scripts:
-- Generate unique trajectory files with timestamps
-- Save results to `frontend/public/trajectories/`
-- Update the manifest file for frontend discovery
+Both scripts write unique timestamped trajectories, save under `frontend/public/trajectories/`, and update the manifest.
 
-### 2. Data Format
-Each trajectory JSON contains:
+#### Data format
+
 ```json
 {
   "id": "20250914_123456",
@@ -163,44 +142,35 @@ Each trajectory JSON contains:
     "num_layers": 1,
     "num_heads": 16
   },
-  "metadata": {...}
+  "metadata": {}
 }
 ```
 
-### 3. Frontend Visualization
-The React frontend:
-- Loads all trajectories from the manifest
-- Provides tabs to switch between different runs
-- Displays attention heatmaps, token analysis, and statistics
-- Updates automatically when new trajectories are generated
+#### Frontend
 
-## Features
+Loads trajectories from the manifest; tabs between runs; heatmaps, token analysis, stats; auto-updates when new trajectories appear.
 
-- **Multiple Trajectories**: Each agent run creates a new trajectory file
-- **Tab Navigation**: Easy switching between different agent runs
-- **Attention Heatmap**: Interactive visualization of token-to-token attention
-- **Token Analysis**: View individual tokens and their attention patterns
-- **Statistical Metrics**: Average attention, maximum attention, and entropy
-- **Category Support**: Queries are categorized (Math, Knowledge, Reasoning, Code, Creative)
-- **Persistent Storage**: All trajectories are saved and can be revisited
+### Features
 
-## Generating Custom Trajectories
+- Multiple trajectories per agent run
+- Tab navigation between runs
+- Interactive attention heatmap
+- Token-level analysis
+- Stats: average / max attention, entropy
+- Categories: Math, Knowledge, Reasoning, Code, Creative
+- Persistent storage
 
-### Using agent.py
-Edit the `demonstrate_attention_tracking()` function to add custom queries:
+### Custom trajectories
+
+Edit `demonstrate_attention_tracking()` in `agent.py`:
 
 ```python
 test_prompts = [
     ("Your custom query here", "Category"),
-    # Add more queries...
 ]
 ```
 
-### Using main.py
-The ReAct agent demonstrates tool use and multi-step reasoning. Edit the test queries in `demonstrate_react_agent()`.
-
-### Manual Generation
-You can also use the agent programmatically:
+Or `demonstrate_react_agent()` in `main.py`. Programmatic:
 
 ```python
 from agent import AttentionVisualizationAgent
@@ -215,75 +185,255 @@ result = agent.generate_with_attention(
 )
 ```
 
-## Requirements
+### Requirements & installation
 
-### Python
-- Python 3.10+
-- PyTorch
-- Transformers
-- See `requirements.txt` for full list
+**Python:** 3.10+, PyTorch, Transformers — see `requirements.txt`.  
+**Frontend:** Node.js 14+, npm/yarn — see `frontend/package.json`.
 
-### Frontend
-- Node.js 14+
-- npm or yarn
-- See `frontend/package.json` for dependencies
-
-## Installation
-
-1. **Clone the repository**
-
-2. **Set up environment variables (optional):**
 ```bash
 cp env.example .env
-# Edit .env to customize model, device, and visualization settings
-```
-
-3. **Install Python dependencies:**
-```bash
+# edit .env for model, device, visualization settings
 pip install -r requirements.txt
+cd frontend && npm install
 ```
 
-4. **Install frontend dependencies:**
+### Tips
+
+- First run downloads ~1–2 GB model; prefer GPU/MPS
+- Run both `agent.py` and `main.py` to compare tool vs no-tool attention
+- Use tabs to compare similar queries
+- Look at patterns across math / knowledge / reasoning / code / creative
+
+### Troubleshooting
+
+**No trajectories in frontend:** run `agent.py` or `main.py` once; check `frontend/public/trajectories/` and `manifest.json`.
+
+**Frontend won’t start:** Node 14+; `npm install` in `frontend`; check port 3000.
+
+**Slow generation:** first-run download; use GPU/MPS; smaller `max_new_tokens`.
+
+### Notes
+
+- Trajectories are timestamped for uniqueness
+- Manifest keeps the last 50 trajectories
+- Trajectories persist across sessions
+
+---
+
+## 中文
+
+### 概述
+
+用于探索语言模型注意力机制的交互式工具。每次 Agent 运行可生成一条轨迹供前端查看与对比；也可用独立 CLI 直接导出热力图 PNG。
+
+每次运行可记录：
+
+- 输入查询与模型回复
+- 逐 token 注意力权重
+- 各层/各头的注意力模式
+- 注意力分布的统计分析
+
+### 架构
+
+1. **Agent 生成轨迹**：运行 `agent.py` 或 `main.py`
+2. **JSON 存储**：写入 `frontend/public/trajectories/` 下的唯一文件
+3. **前端可视化**：React 应用通过标签页加载并展示全部轨迹
+
+### 快速开始（独立 CLI）
+
+复现第 2 章注意力模式（实验 2-2）最快的方式是 `attention_cli.py`：真实跑模型、捕获自注意力、直接写出热力图 PNG——无需前端。
+
+```bash
+# 默认提示词热力图（最后一层、头平均）
+python attention_cli.py
+
+# 自定义提示词、指定层/头与输出路径
+python attention_cli.py --prompt "北京 的 天气 怎么样" \
+    --layer 0 --head 3 --output layer0_head3.png
+
+# 先生成一段续写，再可视化整段序列
+python attention_cli.py --prompt "Explain attention in one sentence." \
+    --max-new-tokens 40
+
+# 并排对比多层上的 attention sink
+python attention_cli.py --compare-layers 0 13 -1 --output layer_compare.png
+```
+
+完整参数见 `python attention_cli.py --help`。主要参数：
+
+| 参数 | 含义 | 默认 |
+| --- | --- | --- |
+| `-p, --prompt` | 待可视化文本 | `北京 的 天气 怎么样` |
+| `-o, --output` | 输出 PNG 路径 | `attention_heatmap.png` |
+| `-m, --model` | HF 模型名或本地路径 | `Qwen/Qwen3-0.6B` |
+| `--device` | `cuda` / `mps` / `cpu` | 自动检测 |
+| `-l, --layer` | 层索引（`-1` = 最后一层） | `-1` |
+| `--head` | 头索引（`-1` = 对头平均） | `-1` |
+| `--compare-layers` | 并排绘制多层 | 关 |
+| `--max-new-tokens` | 捕获注意力前先生成 N 个 token | `0` |
+| `--no-chat-template` | 直接喂原始提示词（不加 `<|im_start|>`） | 关 |
+| `--cmap` | Matplotlib 色图 | `viridis` |
+
+**热力图含义。** 行是 Query 位置，列是 Key 位置。工具会测量并打印 **attention sink 占比**——每行注意力落在第一个 token 上的比例。在 `Qwen3-0.6B` 上，最后一层 sink 通常吸收每行约 75–85% 的注意力（对应书中「注意力储存池 / Attention Sink」），而第 0 层更接近局部对角。上三角掩码使因果「三角」结构一目了然：每个 token 只关注自身及之前的 token。
+
+> 首次运行会下载模型权重（约 1–2 GB）。推荐 GPU/MPS；短提示词用 CPU 也可。
+
+### 交互式前端流程
+
+#### 步骤 1：生成轨迹
+
+```bash
+# 方案 A：基础注意力跟踪演示
+python agent.py
+
+# 方案 B：带工具调用的 ReAct Agent（多步推理）
+python main.py
+```
+
+每次运行会在 `frontend/public/trajectories/` 下写入带时间戳的轨迹文件。
+
+#### 步骤 2：启动前端
+
 ```bash
 cd frontend
-npm install
+npm install  # 仅首次
+npm run dev
 ```
 
-## Tips
+#### 步骤 3：查看
 
-- **First Time Setup**: The initial run will download the model (1~2 GB). GPU/MPS recommended for better performance
-- **Generate Multiple Runs**: Run both `agent.py` and `main.py` to see different attention patterns
-- **Compare Trajectories**: Use the tab interface to compare how the model handles similar queries
-- **Tool vs. No-Tool**: Compare `main.py` (with tools) vs `agent.py` (without tools) to see how tool use affects attention
-- **Analyze Patterns**: Look for attention focus differences in:
-  - Math calculations
-  - Knowledge queries
-  - Reasoning tasks
-  - Code generation
-  - Creative writing
-- **Frontend Auto-Discovery**: The frontend automatically detects new trajectories via the manifest file
+浏览器打开 http://localhost:3000。可保持前端运行，在另一终端继续生成新轨迹——界面会自动出现。
 
-## Troubleshooting
+### 项目结构
 
-### No trajectories showing in frontend
-1. Ensure you've run either `agent.py` or `main.py` at least once
-2. Check that trajectory files exist in `frontend/public/trajectories/`
-3. Verify `manifest.json` is present and contains trajectory entries
+```
+attention_visualization/
+├── attention_cli.py      # 独立 CLI：提示词 -> 注意力热力图 PNG
+├── agent.py               # 核心注意力跟踪 Agent
+├── main.py               # 带工具调用的 ReAct Agent
+├── tools.py              # 工具实现
+├── visualization.py      # 可视化工具（热力图 / 对比）
+├── config.py            # 配置
+├── requirements.txt     # Python 依赖
+├── env.example          # 环境变量模板
+├── frontend/            # Next.js 前端
+│   ├── pages/
+│   ├── components/
+│   └── public/
+│       └── trajectories/  # 轨迹 JSON
+│           ├── trajectory_YYYYMMDD_HHMMSS.json
+│           └── manifest.json
+└── attention_data/      # 额外轨迹存储
+```
 
-### Frontend not starting
-1. Ensure Node.js is installed (version 14+)
-2. Run `npm install` in the frontend directory
-3. Check for port conflicts (default port 3000)
+### 工作原理
 
-### Slow generation
-- First run downloads the model (1~2 GB)
-- Use GPU/MPS if available for faster generation
-- Set smaller `max_new_tokens` in test queries for quicker demos
+#### 轨迹生成
 
-## Notes
+**`agent.py`：** 多种查询类型的基础注意力跟踪；单步回复；适合理解基础模式。
 
-- Each trajectory is timestamped to ensure uniqueness
-- The manifest keeps track of the last 50 trajectories
-- Trajectories persist between sessions
-- The frontend automatically discovers new trajectories via the manifest
-- Both `agent.py` and `main.py` can be run multiple times to generate different trajectories
+**`main.py`：** 带工具的 ReAct Agent；多步推理；观察使用工具时注意力如何变化。
+
+两者均生成带时间戳的轨迹、写入 `frontend/public/trajectories/`，并更新 manifest。
+
+#### 数据格式
+
+```json
+{
+  "id": "20250914_123456",
+  "timestamp": "2025-09-14 12:34:56",
+  "test_case": {
+    "category": "Math",
+    "query": "What is 25 * 37?",
+    "description": "Agent trajectory from..."
+  },
+  "response": "The answer is...",
+  "tokens": ["What", "is", "25", ...],
+  "attention_data": {
+    "tokens": [...],
+    "attention_matrix": [[...]],
+    "num_layers": 1,
+    "num_heads": 16
+  },
+  "metadata": {}
+}
+```
+
+#### 前端
+
+从 manifest 加载全部轨迹；标签切换；展示热力图、token 分析与统计；有新轨迹时自动更新。
+
+### 功能
+
+- 多次运行各自独立轨迹
+- 标签导航
+- 交互式 token-to-token 热力图
+- Token 级分析
+- 统计：平均/最大注意力、熵
+- 分类：Math、Knowledge、Reasoning、Code、Creative
+- 持久化存储
+
+### 自定义轨迹
+
+在 `agent.py` 的 `demonstrate_attention_tracking()` 中编辑：
+
+```python
+test_prompts = [
+    ("Your custom query here", "Category"),
+]
+```
+
+或在 `main.py` 的 `demonstrate_react_agent()` 中修改。也可编程调用：
+
+```python
+from agent import AttentionVisualizationAgent
+
+agent = AttentionVisualizationAgent()
+result = agent.generate_with_attention(
+    "Your query here",
+    max_new_tokens=100,
+    temperature=0.3,
+    save_trajectory=True,
+    category="Custom"
+)
+```
+
+### 依赖与安装
+
+**Python：** 3.10+、PyTorch、Transformers，见 `requirements.txt`。  
+**前端：** Node.js 14+、npm/yarn，见 `frontend/package.json`。
+
+```bash
+cp env.example .env
+# 编辑 .env 配置模型、设备与可视化选项
+pip install -r requirements.txt
+cd frontend && npm install
+```
+
+### 提示
+
+- 首次运行下载约 1–2 GB 模型；推荐 GPU/MPS
+- 同时跑 `agent.py` 与 `main.py` 对比有/无工具时的注意力
+- 用标签对比相似查询
+- 观察数学 / 知识 / 推理 / 代码 / 创作等模式差异
+
+### 故障排除
+
+**前端无轨迹：** 至少运行一次 `agent.py` 或 `main.py`；检查 `frontend/public/trajectories/` 与 `manifest.json`。
+
+**前端无法启动：** 确认 Node 14+；在 `frontend` 中 `npm install`；检查 3000 端口占用。
+
+**生成很慢：** 首次下载模型；尽量用 GPU/MPS；减小 `max_new_tokens`。
+
+### 说明
+
+- 轨迹带时间戳保证唯一
+- manifest 保留最近 50 条轨迹
+- 轨迹跨会话持久存在
+
+---
+
+## Notes / 说明
+
+- Commands, paths, model names, and defaults are identical in both language sections.  
+- 命令、路径、模型名与默认值在中英文两节中保持一致。

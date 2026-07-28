@@ -6,7 +6,7 @@ import logging
 import os
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 import base64
 
 import requests
@@ -105,6 +105,31 @@ async def read_webpage(
         )
 
 
+def _sniff_document_type(path: Path) -> Optional[str]:
+    """Detect .pdf/.docx/.pptx from magic bytes when the extension is unusable.
+
+    A URL's path often carries no real extension (e.g.
+    https://arxiv.org/pdf/2301.07041 -> ".07041"), so the downloaded temp
+    file's suffix cannot be trusted to identify the format.
+    """
+    try:
+        with open(path, 'rb') as f:
+            header = f.read(4)
+        if header.startswith(b'%PDF'):
+            return '.pdf'
+        if header.startswith(b'PK\x03\x04'):
+            import zipfile
+            with zipfile.ZipFile(path) as zf:
+                names = zf.namelist()
+            if any(n.startswith('word/') for n in names):
+                return '.docx'
+            if any(n.startswith('ppt/') for n in names):
+                return '.pptx'
+    except Exception as e:
+        logging.debug(f"Document type sniffing failed: {e}")
+    return None
+
+
 async def read_document(
     file_path: str,
     extract_images: bool = False
@@ -131,6 +156,10 @@ async def read_document(
         logging.info(f"📄 Reading document: {path}")
         
         file_ext = path.suffix.lower()
+        if file_ext not in ('.pdf', '.docx', '.pptx'):
+            # The suffix came from the URL path and may be meaningless
+            # (".07041", ".tmp"), so fall back to the file's magic bytes.
+            file_ext = _sniff_document_type(path) or file_ext
         
         # PDF extraction
         if file_ext == '.pdf':

@@ -25,6 +25,46 @@ class ActionType(Enum):
     UPLOAD_FILE = "upload_file"
 
 
+class PredicateType(Enum):
+    """Machine-checkable browser state predicates."""
+    URL_CONTAINS = "url_contains"
+    ELEMENT_VISIBLE = "element_visible"
+    ELEMENT_TEXT_CONTAINS = "element_text_contains"
+    PAGE_STATE_EQUALS = "page_state_equals"
+
+
+class WorkflowStatus(Enum):
+    CANDIDATE = "candidate"
+    VALIDATED = "validated"
+    INVALID = "invalid"
+
+
+@dataclass
+class StatePredicate:
+    """A precondition, postcondition or final-state assertion."""
+
+    predicate_type: PredicateType
+    expected: Any = True
+    selector: Optional[str] = None
+    state_key: Optional[str] = None
+    description: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "predicate_type": self.predicate_type.value,
+            "expected": self.expected,
+            "selector": self.selector,
+            "state_key": self.state_key,
+            "description": self.description,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'StatePredicate':
+        values = dict(data)
+        values["predicate_type"] = PredicateType(values["predicate_type"])
+        return cls(**values)
+
+
 @dataclass
 class WorkflowStep:
     """Represents a single step in a workflow"""
@@ -48,6 +88,8 @@ class WorkflowStep:
     
     # Validation
     expected_outcome: Optional[str] = None
+    preconditions: List[StatePredicate] = field(default_factory=list)
+    postconditions: List[StatePredicate] = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert step to dictionary for serialization"""
@@ -60,7 +102,9 @@ class WorkflowStep:
             "description": self.description,
             "wait_before": self.wait_before,
             "timeout": self.timeout,
-            "expected_outcome": self.expected_outcome
+            "expected_outcome": self.expected_outcome,
+            "preconditions": [item.to_dict() for item in self.preconditions],
+            "postconditions": [item.to_dict() for item in self.postconditions],
         }
     
     @classmethod
@@ -68,6 +112,8 @@ class WorkflowStep:
         """Create step from dictionary"""
         data = data.copy()
         data['action_type'] = ActionType(data['action_type'])
+        data['preconditions'] = [StatePredicate.from_dict(item) for item in data.get('preconditions', [])]
+        data['postconditions'] = [StatePredicate.from_dict(item) for item in data.get('postconditions', [])]
         return cls(**data)
     
     @classmethod
@@ -118,6 +164,13 @@ class Workflow:
     # Performance metrics
     average_execution_time: float = 0.0
     model_calls_saved: int = 0
+
+    # Validation lifecycle. New workflows are candidates until a complete
+    # replay succeeds in a reset environment.
+    validation_status: WorkflowStatus = WorkflowStatus.CANDIDATE
+    final_predicates: List[StatePredicate] = field(default_factory=list)
+    validated_at: Optional[datetime] = None
+    invalid_reason: Optional[str] = None
     
     def add_step(self, step: WorkflowStep) -> None:
         """Add a step to the workflow"""
@@ -137,7 +190,11 @@ class Workflow:
             "example_parameters": self.example_parameters,
             "description": self.description,
             "average_execution_time": self.average_execution_time,
-            "model_calls_saved": self.model_calls_saved
+            "model_calls_saved": self.model_calls_saved,
+            "validation_status": self.validation_status.value,
+            "final_predicates": [item.to_dict() for item in self.final_predicates],
+            "validated_at": self.validated_at.isoformat() if self.validated_at else None,
+            "invalid_reason": self.invalid_reason,
         }
     
     @classmethod
@@ -148,6 +205,12 @@ class Workflow:
         data['created_at'] = datetime.fromisoformat(data['created_at'])
         if data.get('last_used_at'):
             data['last_used_at'] = datetime.fromisoformat(data['last_used_at'])
+        # Old files had no lifecycle field. Treat them as candidates so they
+        # cannot silently bypass the new validation protocol.
+        data['validation_status'] = WorkflowStatus(data.get('validation_status', 'candidate'))
+        data['final_predicates'] = [StatePredicate.from_dict(item) for item in data.get('final_predicates', [])]
+        if data.get('validated_at'):
+            data['validated_at'] = datetime.fromisoformat(data['validated_at'])
         return cls(**data)
     
     def to_json(self) -> str:
@@ -180,5 +243,21 @@ class Workflow:
                 for key, value in step.parameters.items():
                     if isinstance(value, str) and f"{{{param_key}}}" in value:
                         step.parameters[key] = value.replace(f"{{{param_key}}}", str(param_value))
+                for predicate in (*step.preconditions, *step.postconditions):
+                    if isinstance(predicate.expected, str) and f"{{{param_key}}}" in predicate.expected:
+                        predicate.expected = predicate.expected.replace(f"{{{param_key}}}", str(param_value))
+        for predicate in parameterized.final_predicates:
+            for param_key, param_value in parameters.items():
+                if isinstance(predicate.expected, str) and f"{{{param_key}}}" in predicate.expected:
+                    predicate.expected = predicate.expected.replace(f"{{{param_key}}}", str(param_value))
         
         return parameterized
+
+    def mark_validated(self) -> None:
+        self.validation_status = WorkflowStatus.VALIDATED
+        self.validated_at = datetime.now()
+        self.invalid_reason = None
+
+    def mark_invalid(self, reason: str) -> None:
+        self.validation_status = WorkflowStatus.INVALID
+        self.invalid_reason = reason

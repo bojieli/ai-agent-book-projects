@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 515" width="880" height="515" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="60" y="55" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">塵 → 星</text>
+<text x="150" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">物理法則</text>
+<line x1="240" y1="80" x2="255" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="260" y="55" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="350" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">星 → 惑星</text>
+<text x="350" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">重力による集積</text>
+<line x1="440" y1="80" x2="455" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="460" y="55" width="180" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="550" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">惑星 → 生命</text>
+<text x="550" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">DNA の自己複製</text>
+<line x1="640" y1="80" x2="655" y2="80" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="660" y="55" width="180" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="750" y="72" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">生命 → Agent</text>
+<text x="750" y="92" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">コードによるブートストラップ</text>
+<line x1="30" y1="120" x2="850" y2="120" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="30" y="135" width="400" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="230" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">DNA の自己複製：ランダムな突然変異 + 自然選択</text>
+<text x="230" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">自らを理解しない・方向性を持って改変できない・37 億年の盲目的な試行錯誤</text>
+<rect x="450" y="135" width="400" height="70" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="650" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent の自己ブートストラップ：コードを理解 + 方向性を持った設計</text>
+<text x="650" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">自らの仕組みを理解・目的を持って創造・ベストプラクティスを継承</text>
+<rect x="20" y="225" width="390" height="295" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="215" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">元の Agent（自身のコード）</text>
+<rect x="30" y="265" width="175" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="118" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">システムプロンプト</text>
+<text x="40" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">あなたは航空会社のカスタマーサービス Agent です</text>
+<text x="40" y="326" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">キャンセル規則: ...</text>
+<text x="40" y="344" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">振替規則: ...</text>
+<text x="40" y="362" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">ツール: cancel_order</text>
+<rect x="215" y="265" width="185" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="308" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent フレームワークのコード</text>
+<text x="225" y="308" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">loop:</text>
+<text x="225" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  msg = llm(ctx)</text>
+<text x="225" y="344" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  if tool_call:</text>
+<text x="225" y="362" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">    exec(tool)</text>
+<rect x="30" y="400" width="370" height="54" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="215" y="419" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">ツール定義 + MCP 統合 + メッセージ形式</text>
+<text x="215" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">検証済みの高品質な実装</text>
+<text x="440" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">コピー + 改変</text>
+<line x1="410" y1="375" x2="470" y2="375" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="470" y="225" width="390" height="295" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="665" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">新しい Agent（方向性を持った改変後）</text>
+<rect x="480" y="265" width="180" height="124" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="570" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">新しいシステムプロンプト</text>
+<text x="490" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">あなたは EC のカスタマーサービス Agent です</text>
+<text x="490" y="326" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">返金規則: ...</text>
+<text x="490" y="344" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">物流の問い合わせ: ...</text>
+<text x="490" y="362" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">ツール: refund_order</text>
+<rect x="670" y="265" width="180" height="124" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="760" y="285" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">継承したフレームワークのコード</text>
+<text x="680" y="308" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">loop:</text>
+<text x="680" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  msg = llm(ctx)</text>
+<text x="680" y="344" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  if tool_call:</text>
+<text x="680" y="362" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">    exec(tool)</text>
+<rect x="480" y="400" width="370" height="54" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="665" y="419" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">新しいツール + 新しいビジネスロジック</text>
+<text x="665" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">アーキテクチャフレームワークを完全に継承 → 品質を保証</text>
+</svg>

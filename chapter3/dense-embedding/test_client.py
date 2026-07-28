@@ -21,7 +21,7 @@ class VectorSearchClient:
                 "text": text,
                 "doc_id": doc_id,
                 "metadata": metadata or {}
-            }
+            }, timeout=30
         )
         return response.json()
     
@@ -33,7 +33,7 @@ class VectorSearchClient:
                 "query": query,
                 "top_k": top_k,
                 "return_documents": return_documents
-            }
+            }, timeout=30
         )
         return response.json()
     
@@ -41,18 +41,18 @@ class VectorSearchClient:
         """Delete a document."""
         response = requests.delete(
             f"{self.base_url}/index",
-            json={"doc_id": doc_id}
+            json={"doc_id": doc_id}, timeout=30
         )
         return response.json()
     
     def get_stats(self) -> Dict:
         """Get service statistics."""
-        response = requests.get(f"{self.base_url}/stats")
+        response = requests.get(f"{self.base_url}/stats", timeout=30)
         return response.json()
     
     def list_documents(self, limit: int = 10) -> List[Dict]:
         """List documents in the store."""
-        response = requests.get(f"{self.base_url}/documents", params={"limit": limit})
+        response = requests.get(f"{self.base_url}/documents", params={"limit": limit}, timeout=30)
         return response.json()
 
 
@@ -68,7 +68,7 @@ def run_demo():
     # Check service status
     print("\n📊 Checking service status...")
     try:
-        response = requests.get("http://localhost:8000/")
+        response = requests.get("http://localhost:8000/", timeout=30)
         status = response.json()
         print(f"✅ Service is running")
         print(f"   - Index type: {status['index_type']}")

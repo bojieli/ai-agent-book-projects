@@ -14,7 +14,7 @@ import logging
 from dataclasses import dataclass
 import uuid
 
-from .workflow import Workflow, WorkflowStep
+from .workflow import Workflow, WorkflowStep, WorkflowStatus
 
 
 logger = logging.getLogger(__name__)
@@ -64,6 +64,11 @@ class KnowledgeBase:
         Args:
             workflow: The workflow to save
         """
+        if workflow.validation_status != WorkflowStatus.VALIDATED:
+            raise ValueError(
+                "Only a workflow validated by complete replay in a reset environment may enter the ability store"
+            )
+
         # Generate ID if not present
         if not workflow.workflow_id:
             workflow.workflow_id = str(uuid.uuid4())
@@ -83,6 +88,35 @@ class KnowledgeBase:
             self.intent_index[workflow.intent].append(workflow.workflow_id)
         
         logger.info(f"Saved workflow '{workflow.workflow_id}' for intent: {workflow.intent}")
+
+    def save_candidate(self, workflow: Workflow) -> None:
+        """Persist a candidate for audit without making it retrievable."""
+        if not workflow.workflow_id:
+            workflow.workflow_id = str(uuid.uuid4())
+        workflow.validation_status = WorkflowStatus.CANDIDATE
+        candidate_file = self.storage_path / f"candidate_{workflow.workflow_id}.json"
+        candidate_file.write_text(workflow.to_json(), encoding="utf-8")
+
+    def publish_validated(self, workflow: Workflow) -> None:
+        """Move a replay-validated candidate into the retrievable store."""
+        self.save_workflow(workflow)
+        candidate_file = self.storage_path / f"candidate_{workflow.workflow_id}.json"
+        if candidate_file.exists():
+            candidate_file.unlink()
+
+    def invalidate_workflow(self, workflow_id: str, reason: str) -> None:
+        """Remove a broken workflow from retrieval and preserve it for audit."""
+        workflow = self.workflows.pop(workflow_id, None)
+        if not workflow:
+            return
+        workflow.mark_invalid(reason)
+        stable_file = self.storage_path / f"workflow_{workflow_id}.json"
+        if stable_file.exists():
+            stable_file.unlink()
+        invalid_file = self.storage_path / f"invalid_{workflow_id}.json"
+        invalid_file.write_text(workflow.to_json(), encoding="utf-8")
+        ids = self.intent_index.get(workflow.intent, [])
+        self.intent_index[workflow.intent] = [item for item in ids if item != workflow_id]
     
     def load_all_workflows(self) -> None:
         """Load all workflows from storage into memory."""
@@ -94,6 +128,10 @@ class KnowledgeBase:
                     workflow_data = json.load(f)
                     workflow = Workflow.from_dict(workflow_data)
                     
+                    if workflow.validation_status != WorkflowStatus.VALIDATED:
+                        logger.warning("Ignoring unvalidated workflow file: %s", workflow_file)
+                        continue
+
                     # Add to cache
                     self.workflows[workflow.workflow_id] = workflow
                     
@@ -141,6 +179,8 @@ class KnowledgeBase:
         task_lower = task_description.lower()
         
         for workflow in self.workflows.values():
+            if workflow.validation_status != WorkflowStatus.VALIDATED:
+                continue
             confidence, reason = self._calculate_match_confidence(task_lower, workflow)
             
             if confidence > 0.3:  # Minimum threshold

@@ -180,7 +180,8 @@ class StagedAgent:
     def _dispatch_tool(self, name: str, args: dict) -> str:
         """执行普通工具（非阶段转换工具），返回给模型的工具结果字符串。"""
         if name == "ask_clarifying_question":
-            question = args.get("question", "")
+            # 模型偶尔对必填字段显式传 null：.get(..., "") 兜不住 None。
+            question = args.get("question") or ""
             self._log("提问", question)
             if self.interactive:
                 answer = input(f"  [请回答需求分析师的问题] {question}\n  > ").strip()

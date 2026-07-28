@@ -77,7 +77,7 @@ class EventClient:
     def reset_agent(self) -> dict:
         """Reset the agent state"""
         try:
-            response = requests.post(f"{self.server_url}/agent/reset")
+            response = requests.post(f"{self.server_url}/agent/reset", timeout=30)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -86,7 +86,7 @@ class EventClient:
     def get_status(self) -> dict:
         """Get agent status"""
         try:
-            response = requests.get(f"{self.server_url}/agent/status")
+            response = requests.get(f"{self.server_url}/agent/status", timeout=30)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -95,7 +95,7 @@ class EventClient:
     def start_monitoring(self) -> dict:
         """Start system monitoring"""
         try:
-            response = requests.post(f"{self.server_url}/monitoring/start")
+            response = requests.post(f"{self.server_url}/monitoring/start", timeout=30)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -104,7 +104,7 @@ class EventClient:
     def stop_monitoring(self) -> dict:
         """Stop system monitoring"""
         try:
-            response = requests.post(f"{self.server_url}/monitoring/stop")
+            response = requests.post(f"{self.server_url}/monitoring/stop", timeout=30)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -115,7 +115,7 @@ class EventClient:
         try:
             response = requests.post(
                 f"{self.server_url}/process/register",
-                json={'process_id': process_id, 'name': name}
+                json={'process_id': process_id, 'name': name}, timeout=30
             )
             response.raise_for_status()
             return response.json()
@@ -127,7 +127,7 @@ class EventClient:
         try:
             response = requests.post(
                 f"{self.server_url}/process/unregister",
-                json={'process_id': process_id}
+                json={'process_id': process_id}, timeout=30
             )
             response.raise_for_status()
             return response.json()

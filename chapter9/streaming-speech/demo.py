@@ -158,7 +158,11 @@ def build_endpoints(total: float, chunk_step: float):
     while t < total:
         endpoints.append(round(t, 3))
         t += chunk_step
-    endpoints.append(round(total, 3))
+    # 浮点累加可能让 t 略小于 total（如 20 × 0.3 = 5.999999999999998），
+    # 此时循环末尾已追加过 round(total, 3)，再追加一次会重复计算一次
+    # 完整音频的 Whisper 转写。
+    if not endpoints or endpoints[-1] != round(total, 3):
+        endpoints.append(round(total, 3))
     return endpoints
 
 

@@ -4,6 +4,7 @@ An agent that demonstrates advanced trajectory management with system hints,
 including timestamps, tool call tracking, TODO lists, and detailed error messages.
 """
 
+import codecs
 import json
 import os
 import sys
@@ -20,6 +21,12 @@ import traceback
 import tempfile
 import shutil
 from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 
 def _reasoning_safe_temperature(model, requested=1.0):
@@ -461,12 +468,12 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
         
         return tools
     
-    def _execute_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Tuple[Any, Optional[str]]:
+    def _execute_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Tuple[Any, Optional[str], Optional[int]]:
         """
         Execute a tool and return the result with detailed error information
-        
+
         Returns:
-            Tuple of (result, error_detail)
+            Tuple of (result, error_detail, duration_ms)
         """
         start_time = datetime.now()
         
@@ -485,10 +492,10 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                 result = self._tool_update_todo_status(**arguments)
             else:
                 error = f"Unknown tool: {tool_name}"
-                return {"error": error}, error
-            
+                return {"error": error}, error, None
+
             duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
-            return result, None
+            return result, None, duration_ms
             
         except Exception as e:
             duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
@@ -497,9 +504,9 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             error_detail = self._get_detailed_error(e, tool_name, arguments)
             
             if self.config.enable_detailed_errors:
-                return {"error": error_detail}, error_detail
+                return {"error": error_detail}, error_detail, duration_ms
             else:
-                return {"error": str(e)}, str(e)
+                return {"error": str(e)}, str(e), duration_ms
     
     def _get_detailed_error(self, exception: Exception, tool_name: str, arguments: Dict[str, Any]) -> str:
         """Get detailed error information for debugging"""
@@ -572,9 +579,12 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                             "file_path": file_path,
                             "is_binary": True
                         }
-                    # Also check if it's valid UTF-8
+                    # Also check if it's valid UTF-8. Decode incrementally with
+                    # final=False so a multi-byte character split by the
+                    # 1024-byte read boundary is not mistaken for binary content
+                    # (every CJK character is 3 bytes, so this is common).
                     try:
-                        chunk.decode('utf-8')
+                        codecs.getincrementaldecoder('utf-8')().decode(chunk, False)
                     except UnicodeDecodeError:
                         return {
                             "success": False,
@@ -678,8 +688,13 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             output_buffer = io.StringIO()
             error_buffer = io.StringIO()
             
+            # Run with an explicit namespace: with bare exec(code), top-level
+            # assignments land in this method's locals while functions defined
+            # in the snippet resolve free variables via module globals, so
+            # "x = 5; def f(): return x; f()" raises NameError.
+            exec_ns = {}
             with contextlib.redirect_stdout(output_buffer), contextlib.redirect_stderr(error_buffer):
-                exec(code)
+                exec(code, exec_ns)
             
             # Get output
             stdout = output_buffer.getvalue()
@@ -702,9 +717,14 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             elif not os.path.isabs(working_dir):
                 working_dir = os.path.join(self.current_directory, working_dir)
             
-            # Update current directory if 'cd' command
-            if command.strip().startswith('cd '):
-                new_dir = command.strip()[3:].strip()
+            # Update current directory if the command is a PURE 'cd'.
+            # Compound commands like `cd proj && make` must fall through to
+            # the subprocess below (which runs with cwd=working_dir) —
+            # intercepting them here would treat "proj && make" as the
+            # directory name and fail with "Directory not found".
+            stripped = command.strip()
+            if stripped.startswith('cd ') and not any(t in stripped for t in ('&&', ';', '|')):
+                new_dir = stripped[3:].strip()
                 if not os.path.isabs(new_dir):
                     new_dir = os.path.join(self.current_directory, new_dir)
                 
@@ -870,7 +890,27 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                     
                     for tool_call in message.tool_calls:
                         function_name = tool_call.function.name
-                        function_args = json.loads(tool_call.function.arguments)
+                        raw_args = tool_call.function.arguments or "{}"
+                        try:
+                            function_args = json.loads(raw_args)
+                        except json.JSONDecodeError as exc:
+                            # Keep the turn alive on bad tool-arg JSON.
+                            err = (
+                                f"Invalid tool arguments (not valid JSON): {exc}. "
+                                f"Raw arguments: {raw_args[:500]}"
+                            )
+                            logger.warning(f"  ❌ {err}")
+                            self.tool_calls.append(ToolCall(
+                                tool_name=function_name,
+                                arguments={},
+                                error=err,
+                            ))
+                            self.conversation_history.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": json.dumps({"error": err}),
+                            })
+                            continue
                         
                         # Track tool call count
                         if self.config.enable_tool_counter:
@@ -889,7 +929,7 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                             logger.info(f"  📥 Args: {args_str}")
                         
                         # Execute the tool
-                        result, error = self._execute_tool(function_name, function_args)
+                        result, error, duration_ms = self._execute_tool(function_name, function_args)
                         
                         # Print tool result in a concise format
                         if error:
@@ -931,7 +971,8 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                             arguments=function_args,
                             result=result if not error else None,
                             error=error,
-                            call_number=call_number
+                            call_number=call_number,
+                            duration_ms=duration_ms
                         )
                         self.tool_calls.append(tool_call_record)
                         

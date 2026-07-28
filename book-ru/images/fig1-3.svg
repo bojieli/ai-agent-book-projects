@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 640" width="820" height="640" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="31.399200000000008" y="60" width="97.20159999999998" height="26" rx="13" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="80.0" y="73.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Раунд 1</text>
+<rect x="40" y="96" width="480" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="112" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user</text>
+<text x="50" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">"Рассчитать общую годовую выручку: Q1 $2.5M, Q2 €2.1M, Q3 £1.8M"</text>
+<rect x="40" y="156" width="480" height="45" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="50" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant.reasoning</text>
+<text x="50" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">"Нужно конвертировать EUR и GBP в USD, затем агрегировать"</text>
+<rect x="40" y="211" width="480" height="70" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="50" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant.tool_calls</text>
+<text x="50" y="247" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">convert_currency(2100000, &quot;EUR&quot;, &quot;USD&quot;)</text>
+<text x="50" y="265" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">convert_currency(1800000, &quot;GBP&quot;, &quot;USD&quot;)</text>
+<rect x="40" y="291" width="480" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="305" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">tool (результат)</text>
+<text x="50" y="327" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">EUR→USD: 2 282 608,70</text>
+<text x="290" y="327" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">GBP→USD: 2,278,481.01</text>
+<rect x="31.399200000000008" y="356" width="97.20159999999998" height="26" rx="13" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="80.0" y="369.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Раунд 2</text>
+<rect x="40" y="392" width="480" height="45" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="50" y="406" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant.reasoning</text>
+<text x="50" y="426" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">"Курсы обмена получены, вызвать интерпретатор кода для агрегации"</text>
+<rect x="40" y="447" width="480" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="50" y="461" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant.tool_calls</text>
+<text x="50" y="483" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">code_interpreter(&quot;total = 2.5M + 2.28M + 2.28M&quot;)</text>
+<rect x="31.399200000000008" y="507" width="97.20159999999998" height="26" rx="13" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="80.0" y="520.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Раунд 3</text>
+<rect x="40" y="543" width="480" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="557" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant.content (финальный ответ)</text>
+<text x="50" y="579" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">"Общая годовая выручка $7,061,089.71, средний квартальный $2,353,696.57"</text>
+<path d="M 540,60 C 560,60 560,319.0 565,324.0 C 560,329.0 560,588 540,588" fill="none" stroke="#333333" stroke-width="2"/>
+<text x="600" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Траектория</text>
+<text x="600" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">=</text>
+<text x="600" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Полный ввод получен</text>
+<text x="600" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">LLM на каждом шаге</text>
+<text x="600" y="370" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">вызов</text>
+<rect x="570" y="410" width="230" height="140" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="582" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Ключевые особенности</text>
+<text x="685" y="445" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Накопление контекста</text>
+<text x="685" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Полная история видна на каждом раунде</text>
+<text x="685" y="500" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Структурированная траектория</text>
+<text x="685" y="525" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">user / assistant / tool</text>
+</svg>

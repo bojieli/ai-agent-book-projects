@@ -5,6 +5,9 @@ from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
 from enum import Enum
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _reasoning_safe_temperature(model, requested=1.0):
@@ -278,7 +281,7 @@ class Config:
     def load(cls, path: str) -> "Config":
         """Load configuration from JSON file"""
         import json
-        
+
         with open(path, 'r') as f:
             config_dict = json.load(f)
         

@@ -1,6 +1,125 @@
-# 实验 5-9：动态表单生成的意图澄清系统（★★）
+# Experiment 5-9: Dynamic Form Intent Clarification / 实验 5-9：动态表单生成的意图澄清系统（★★）
 
-## 目的
+> Companion lab for *AI Agents in Depth*, Chapter 5 — incomplete user intent → one self-contained HTML form with cascading logic; submit JSON back to the Agent.  
+> 《深入理解 AI Agent》第 5 章：信息不完整时动态生成含级联逻辑的 HTML 表单，一次提交 JSON 交回 Agent。
+
+← [Chapter 5 index / 返回第 5 章目录](../README.md)
+
+---
+
+## English
+
+### Purpose
+
+When user requests are **incomplete**, the Agent does not ask one field at a time—it **dynamically generates a self-contained HTML form** to clarify intent in one shot. The form has **cascading logic** (fields shown only under certain choices; dropdown options depend on another field). User **submits once**; the front end returns JSON; the Agent continues the task.
+
+Acceptance scenario: user says “我想订一张去北京的机票” (book a flight to Beijing). Generated form includes:
+
+- Departure city (text)
+- Departure date (date picker)
+- Trip type (radio: one-way / round-trip)
+- **Return date (shown only for round-trip)** ← cascade ①: show/hide
+- Cabin (select: economy / business / first)
+- **Free checked baggage quota (options depend on cabin)** ← cascade ②: dynamic options
+
+### Mechanism
+
+`demo.py` validates in three steps; online and offline share the same mechanism—only “who writes the form” differs:
+
+- **Online (default)**: send the request to OpenAI; system prompt requires a self-contained HTML (inline `<style>` + `<script>`, cascade show/hide + “submit as JSON”). Needs `OPENAI_API_KEY`.
+- **Offline (`--offline`)**: no LLM; built-in flight schema **deterministically renders** the same cascading form. No API key. Form is real and browser-usable with **both** cascade types. Auto-falls back offline when `OPENAI_API_KEY` is unset.
+
+Three steps:
+
+1. **Generate form**: online model or offline schema → `generated_form.html` (override with `--output`).
+2. **Structural validation (no browser)**: BeautifulSoup + regex ensure required fields; return-date field has “round-trip only” JS toggle; print script evidence of cascade logic.
+3. **Simulated submit**: construct user JSON (round-trip), feed Agent; Agent outputs booking summary (model online; template offline)—closes “parse JSON → continue task”.
+
+### Run
+
+```bash
+pip install -r requirements.txt
+cp env.example .env                 # OPENAI_API_KEY (or OPENROUTER_API_KEY fallback)
+
+python demo.py                      # online: OpenAI generates (needs API key)
+python demo.py --offline            # offline schema render; no key
+python demo.py --offline --serve    # offline + local server; browser cascade/submit
+python demo.py --model gpt-5.6     # optional online model override (--offline ignores)
+python demo.py --request "我想订去东京的机票"   # custom vague request
+python demo.py --help
+```
+
+CLI:
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `-r` / `--request TEXT` | Vague user intent | `我想订一张去北京的机票` |
+| `-o` / `--output PATH` | HTML output path (relative paths resolve vs script dir) | `generated_form.html` |
+| `--model NAME` | Online model override (`--offline` ignores) | env `MODEL`, else `gpt-5.6-luna` |
+| `--offline` | Offline deterministic schema | off (auto-on if no key) |
+| `--serve` | Local HTTP + open browser after generate | off |
+| `--port N` | Port for `--serve` | `8000` |
+
+After a successful run:
+
+- Form at `generated_form.html`—open in a browser (or `--serve`); toggle one-way/round-trip for return-date cascade; change cabin for baggage options; submit prints summary JSON at page bottom.
+- Terminal prints field checks, cascade evidence, and Agent summary of submitted JSON.
+
+Env:
+
+- `OPENAI_API_KEY` (required online; auto offline if missing)
+- `OPENAI_BASE_URL` (optional OpenAI-compatible endpoint)
+- `MODEL` (optional; default `gpt-5.6-luna`)
+
+### Real run output
+
+**Offline (`--offline`, deterministic, no key)**
+
+```
+[步骤 2] 结构化校验表单字段与级联逻辑：
+  [PASS] 出发城市(文本输入)
+  [PASS] 出发日期(日期选择器)
+  [PASS] 旅行类型(单选:单程)
+  [PASS] 旅行类型(单选:往返)
+  [PASS] 返程日期(日期选择器)
+  [PASS] 返程字段级联逻辑(仅往返显示)
+
+[步骤 3] 解析 JSON 并继续任务，输出订票摘要：
+已收到您的订票信息：上海 → 北京，出发日期 2026-08-01。
+行程类型：往返，返程日期 2026-08-07。
+舱位：公务舱，免费托运 2 件。
+正在为您检索航班...
+```
+
+**Online (default, model `gpt-5.6-luna`)**
+
+```
+[步骤 2] 结构化校验表单字段与级联逻辑：
+  [PASS] 出发城市(文本输入) / [PASS] 出发日期(日期选择器)
+  [PASS] 旅行类型(单选:单程/往返) / [PASS] 返程日期(日期选择器)
+  [PASS] 返程字段级联逻辑(仅往返显示)
+
+  级联逻辑证据（脚本节选）:
+    | const returnDateField = document.getElementById('return_date_field');
+    | returnDateField.style.display = roundTrip ? 'block' : 'none';
+
+[步骤 3] Agent 解析 JSON 并继续任务，输出订票摘要：
+您选择的航段为：从上海出发，前往北京。出发日期为2026年8月1日，返程日期为
+2026年8月7日。行程类型为往返，舱位为商务舱，携带行李数量为2件。正在为您检索航班...
+```
+
+### Limitations
+
+- **Field naming not fully controllable (online only)**: different models/temps may vary `name`/id. System prompt asks for English names (`departure_city` / `departure_date` / `trip_type` / `return_date`); validation uses **robust keyword/attr matching** (agreed name first, then semantic/text). Occasional drift usually still passes. On `FAIL`, open `generated_form.html`. Offline schema is fully stable.
+- **Cascade verification**: default is static JS parse + keywords—no real browser. For live cascade, use `--serve` or open the HTML.
+- **Submit is simulated**: step 3 uses constructed JSON; real systems POST from form `submit` to a backend.
+- Online quality depends on model; `temperature=0` for more stable reproduction.
+
+---
+
+## 中文
+
+### 目的
 
 验证 Agent 在面对**信息不完整**的用户请求时，不是逐条一问一答，而是**动态生成
 一个自包含的 HTML 表单**来一次性澄清意图。表单内置**级联逻辑**（某些字段仅在特定
@@ -15,7 +134,7 @@
 - 舱位（下拉：经济舱 / 公务舱 / 头等舱）
 - **免费托运行李额度（可选项随"舱位"动态变化）** ← 级联逻辑②：动态选项
 
-## 机制
+### 机制
 
 `demo.py` 分三步验证，两种运行模式机制完全一致，只是"谁来写表单代码"不同：
 
@@ -32,11 +151,11 @@
 1. **生成表单**：在线让模型生成，或离线由内置 schema 渲染，保存为
    `generated_form.html`（路径可用 `--output` 覆盖）。
 2. **结构化校验（不依赖浏览器）**：用 BeautifulSoup + 正则检查表单确实含要求的
-   字段，且返程字段带"仅往返显示"的 JS toggle 逻辑，并打印级联逻辑的脚本证据。
+  字段，且返程字段带"仅往返显示"的 JS toggle 逻辑，并打印级联逻辑的脚本证据。
 3. **模拟提交**：构造一份用户提交的 JSON（往返场景），喂回 Agent；Agent 解析后
    输出订票摘要（在线交给模型，离线用确定性模板），验证"解析 JSON → 继续任务"闭环。
 
-## 运行
+### 运行
 
 ```bash
 pip install -r requirements.txt
@@ -72,7 +191,7 @@ python demo.py --help               # 查看全部参数
 - `OPENAI_BASE_URL`（可选，兼容 OpenAI 协议的第三方端点）
 - `MODEL`（可选，默认 `gpt-5.6-luna`）
 
-## 真实运行输出
+### 真实运行输出
 
 **离线模式（`--offline`，确定性渲染，无需 API Key）**
 
@@ -109,7 +228,7 @@ python demo.py --help               # 查看全部参数
 2026年8月7日。行程类型为往返，舱位为商务舱，携带行李数量为2件。正在为您检索航班...
 ```
 
-## 局限
+### 局限
 
 - **字段命名不完全可控（仅在线模式）**：不同模型/温度下，生成的 `name`、id 写法
   可能不同。system prompt 已约定英文 `name` 标识（`departure_city` /
@@ -123,3 +242,10 @@ python demo.py --help               # 查看全部参数
 - **提交是模拟的**：步骤 3 用一份构造的 JSON 代替真实前端提交，用来验证 Agent
   的"解析 → 继续任务"环节；真实系统里这份 JSON 由表单 `submit` 回调 POST 回后端。
 - 在线生成质量依赖模型；`temperature=0` 以尽量稳定复现。
+
+---
+
+## Notes / 说明
+
+- Prefer `--offline` / `--serve` for cascade UX without a key. / 无 Key 用 `--offline`；体验级联加 `--serve`。
+- Commands/code/paths/env vars are identical in both language sections. / 命令、代码、路径与环境变量在中英文两侧保持一致。

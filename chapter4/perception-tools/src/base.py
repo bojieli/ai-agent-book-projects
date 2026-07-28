@@ -93,18 +93,24 @@ def download_file_from_url(
     """
     max_size_bytes = max_size_mb * 1024 * 1024
     
+    # Best-effort size pre-check. Many hosts refuse HEAD (presigned S3/GCS URLs
+    # sign the verb and return 403; CDN/WAF-fronted endpoints often return 405),
+    # so a failed HEAD must not abort a download that GET can serve -- the
+    # streaming loop below enforces max_size_bytes either way.
     try:
-        # Check content length first
         head_response = requests.head(url, timeout=timeout, allow_redirects=True)
         head_response.raise_for_status()
-        
         content_length = head_response.headers.get("content-length")
-        if content_length and int(content_length) > max_size_bytes:
-            raise ValueError(
-                f"File size ({int(content_length) / (1024 * 1024):.2f} MB) "
-                f"exceeds maximum allowed size ({max_size_mb} MB)"
-            )
-        
+    except requests.RequestException:
+        content_length = None
+
+    if content_length and int(content_length) > max_size_bytes:
+        raise ValueError(
+            f"File size ({int(content_length) / (1024 * 1024):.2f} MB) "
+            f"exceeds maximum allowed size ({max_size_mb} MB)"
+        )
+
+    try:
         # Download the file
         response = requests.get(url, timeout=timeout, stream=True)
         response.raise_for_status()
@@ -129,5 +135,8 @@ def download_file_from_url(
         
     except requests.RequestException as e:
         raise requests.RequestException(f"Failed to download file from URL: {e}")
+    except ValueError:
+        # Documented in the docstring; must not be rewrapped as IOError.
+        raise
     except Exception as e:
         raise IOError(f"Error downloading file: {e}")

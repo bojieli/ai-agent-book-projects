@@ -132,8 +132,7 @@ processor = BackgroundMemoryProcessor(
     user_id="user789",
     provider="kimi",  # or "moonshot"
     config=MemoryProcessorConfig(
-        conversation_interval=2,
-        update_threshold=0.7
+        conversation_interval=2
     ),
     memory_mode=MemoryMode.JSON_CARDS
 )
@@ -144,8 +143,7 @@ processor = BackgroundMemoryProcessor(
     provider="openrouter",
     model="google/gemini-3.5-flash",  # or "openai/gpt-5", "anthropic/claude-sonnet-4"
     config=MemoryProcessorConfig(
-        conversation_interval=1,
-        update_threshold=0.6
+        conversation_interval=1
     ),
     memory_mode=MemoryMode.ENHANCED_NOTES
 )

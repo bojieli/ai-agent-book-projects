@@ -1,12 +1,12 @@
 """
-实验 8-3：系统提示词的自动优化（基于人类反馈的自动化系统提示学习）
+实验 8-3：基于失败轨迹的系统提示词自动优化
 
 一条命令跑通完整流程：
   1. 用【初始 prompt】评测 → 暴露"政策争议就转人工"的过度转接问题；
-  2. Coding Agent 读取 prompt 文件、定位转接规则、生成精确编辑并【真的改写文件】→ 展示 diff；
-  3. 用【自动优化后的 prompt】重新评测；
-  4. 对照【人工调优版 prompt】；
-  5. 打印"保留任务集 / 边界案例集"在优化前后 + 人工版的正确率对比表。
+  2. 从失败轨迹生成三维诊断，保留来源案例；
+  3. Coding Agent 生成候选 prompt 的最小 diff；
+  4. 用边界集与保留集决定候选版本是否可灰度发布；
+  5. 与人工调优版对照。
 
     python demo.py            # 完整运行：10 个用例 × 3 份 prompt
     python demo.py --quick    # 快速演示：每组只取 2 个用例，省时省钱
@@ -23,6 +23,8 @@ from evaluate import evaluate_prompt
 from coding_agent import optimize_prompt
 from config import get_provider, get_model
 from airline_env import CASES
+from learning_signal import diagnose_failures, format_learning_signal
+from release_gate import build_candidate_manifest, evaluate_release_gate
 
 GROUPS = ("holdout", "boundary")
 
@@ -30,16 +32,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 INITIAL_PROMPT = os.path.join(HERE, "prompts", "system_prompt.txt")
 MANUAL_PROMPT = os.path.join(HERE, "prompts", "system_prompt_manual.txt")
 WORKING_PROMPT = os.path.join(HERE, "runtime", "system_prompt_working.txt")
-
-# 人类专家反馈：这就是驱动"自动系统提示学习"的信号
-HUMAN_FEEDBACK = (
-    "评测发现 Agent 存在【过度转接】问题：一遇到政策争议（如乘客要求超政策退款、"
-    "要求免费、要求豁免费用）就直接转人工，而不尝试向乘客解释政策。\n"
-    "正确做法应该是：通过耐心、共情地解释政策来处理这类争议，并提供合规的替代方案，"
-    "而不是一转了之。真正需要转接人工的，只有两种情况——乘客明确要求人工客服，"
-    "以及出现紧急安全 / 人身健康风险。"
-)
-
 
 def _read(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -82,7 +74,7 @@ def main(cases=None, rounds=3, output=None):
     if cases is None:
         cases = CASES
     print("#" * 74)
-    print("# 实验 8-3：基于人类反馈的系统提示词自动优化（航空客服场景）")
+    print("# 实验 8-3：基于失败轨迹的系统提示词自动优化（航空客服场景）")
     print(f"# LLM 提供商: {get_provider()}   模型: {get_model()}")
     print(f"# 用例数: {len(cases)}（保留集 + 边界集）   Coding Agent 优化轮数上限: {rounds}")
     print("#" * 74)
@@ -107,23 +99,36 @@ def main(cases=None, rounds=3, output=None):
     for r in over_transfer:
         print(f"    - {r['id']}：政策争议却直接转人工，原因『{r['transfer_reason']}』")
 
-    # ---- 步骤 2：Coding Agent 自动改写 prompt 文件 ----
-    print("\n【步骤 2】Coding Agent 读取并改写系统提示词文件……")
-    opt = optimize_prompt(WORKING_PROMPT, HUMAN_FEEDBACK, max_rounds=rounds, verbose=True)
+    # ---- 步骤 2：由失败轨迹形成学习信号 ----
+    learning_signal = diagnose_failures(before)
+    print("\n【步骤 2】将失败轨迹整理为三维诊断")
+    print(format_learning_signal(learning_signal))
+
+    # ---- 步骤 3：Coding Agent 生成候选 prompt ----
+    print("\n【步骤 3】Coding Agent 读取诊断并生成候选系统提示词……")
+    opt = optimize_prompt(WORKING_PROMPT, learning_signal, max_rounds=rounds, verbose=True)
+    manifest = build_candidate_manifest(opt, learning_signal)
     print(f"\n  Coding Agent 改动说明：{opt['rationale']}")
     print("\n  ---------- 系统提示词文件 diff（真实写入磁盘）----------")
     print(opt["diff"] if opt["diff"].strip() else "  (无改动)")
     print("  --------------------------------------------------------")
 
-    # ---- 步骤 3：评测自动优化后的 prompt ----
-    print("\n【步骤 3】用自动优化后的系统提示词重新评测")
-    after = evaluate_prompt(opt["after"], label="自动优化后 prompt", cases=cases)
+    print(f"  候选补丁来源：{', '.join(manifest['source_case_ids'])}")
+    print(f"  候选补丁作用域：{manifest['scope']}")
 
-    # ---- 步骤 4：对照人工调优版 ----
-    print("\n【步骤 4】对照组：人工调优版系统提示词")
+    # ---- 步骤 4：评测候选 prompt 并运行发布门槛 ----
+    print("\n【步骤 4】评测候选系统提示词并运行发布门槛")
+    after = evaluate_prompt(opt["after"], label="自动优化后 prompt", cases=cases)
+    gate = evaluate_release_gate(before, after, manifest)
+    print(f"  发布决定：{gate['decision']}")
+    for check, passed in gate["checks"].items():
+        print(f"    {'✓' if passed else '✗'} {check}")
+
+    # ---- 步骤 5：对照人工调优版 ----
+    print("\n【步骤 5】对照组：人工调优版系统提示词")
     manual = evaluate_prompt(_read(MANUAL_PROMPT), label="人工调优版 prompt(对照)", cases=cases)
 
-    # ---- 步骤 5：对比表 ----
+    # ---- 步骤 6：对比表 ----
     print_table([
         ("初始 prompt(优化前)", before["holdout"], before["boundary"]),
         ("自动优化后 prompt", after["holdout"], after["boundary"]),
@@ -140,7 +145,8 @@ def main(cases=None, rounds=3, output=None):
           f"（{'提升 ✓' if b_after_c > b_before_c else '未提升'}）")
     print(f"  · 保留任务集正确率：{h_before_c} → {h_after_c} "
           f"（{'未退化 ✓' if h_after_c >= h_before_c else '退化 ✗'}）")
-    print(f"\n  优化后的工作副本已写入：{WORKING_PROMPT}")
+    print(f"\n  候选工作副本已写入：{WORKING_PROMPT}")
+    print("  它不会覆盖稳定版本；只有 release_to_canary 才允许进入灰度。")
 
     # ---- 可选：把对比结果落盘为 JSON，便于复现与二次分析 ----
     if output:
@@ -149,6 +155,9 @@ def main(cases=None, rounds=3, output=None):
             "model": get_model(),
             "rounds": rounds,
             "num_cases": len(cases),
+            "learning_signal": learning_signal,
+            "candidate_manifest": manifest,
+            "release_gate": gate,
             "rationale": opt["rationale"],
             "diff": opt["diff"],
             "rows": [
@@ -169,7 +178,7 @@ def main(cases=None, rounds=3, output=None):
 def _build_parser():
     parser = argparse.ArgumentParser(
         prog="demo.py",
-        description="实验 8-3：基于人类反馈的系统提示词自动优化演示（航空客服场景）。",
+        description="实验 8-3：从失败轨迹诊断到候选补丁与发布门槛（航空客服场景）。",
         formatter_class=argparse.RawTextHelpFormatter,
         epilog=(
             "示例：\n"

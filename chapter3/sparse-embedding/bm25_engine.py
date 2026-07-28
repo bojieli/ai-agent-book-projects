@@ -315,36 +315,45 @@ class BM25:
         query_terms = processor.tokenize(query)
         logger.info(f"Query terms after processing: {query_terms}")
         
-        # Find candidate documents (documents containing at least one query term)
+        # Find candidate documents (documents containing at least one query term).
+        # Resolve each term to the variant that actually matched the index:
+        # when the lowercase fallback finds the docs, scoring must use the
+        # lowercase term too, otherwise tf lookups return 0 and the fallback
+        # candidates all score 0.0.
         candidate_docs = set()
         term_doc_mapping = {}
-        
+        resolved_terms = []
+
         for term in query_terms:
             # Try exact match first
             docs = self.index.get_posting_list(term)
-            
+
             # If no exact match and term is not a number/code, try lowercase
             if not docs and not term[0].isdigit() and '-' not in term:
-                docs = self.index.get_posting_list(term.lower())
-            
+                lowered = term.lower()
+                docs = self.index.get_posting_list(lowered)
+                if docs:
+                    term = lowered
+
+            resolved_terms.append(term)
             candidate_docs.update(docs)
             term_doc_mapping[term] = docs
             logger.debug(f"Term '{term}' appears in {len(docs)} documents")
-        
+
         logger.info(f"Found {len(candidate_docs)} candidate documents")
-        
+
         # Score each candidate document
         doc_scores = []
         for doc_id in candidate_docs:
-            score = self.score_document(query_terms, doc_id)
-            
+            score = self.score_document(resolved_terms, doc_id)
+
             # Collect debug information
             debug_info = {
-                'matched_terms': [term for term in query_terms 
+                'matched_terms': [term for term in resolved_terms
                                  if doc_id in self.index.get_posting_list(term)],
                 'doc_length': self.index.doc_lengths[doc_id],
-                'term_frequencies': {term: self.index.term_frequency[doc_id].get(term, 0) 
-                                    for term in query_terms}
+                'term_frequencies': {term: self.index.term_frequency[doc_id].get(term, 0)
+                                    for term in resolved_terms}
             }
             
             doc_scores.append((doc_id, score, debug_info))

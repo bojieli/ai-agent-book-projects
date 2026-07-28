@@ -98,4 +98,3 @@ Pine AI'daki tüm çalışma arkadaşlarıma teşekkür ederim. Pine AI gibi mü
 AI sektöründeki pek çok dosta da teşekkür etmek isterim (adlarını burada tek tek anmıyorum). Çeşitli sektör tartışmalarında görüşlerime dürüst geri bildirimler verdiler, yanlış yargılarımın epeycesini düzelttiler ve modellere, Agent'lara dair kavrayışımı yükselttiler.
 
 En çok teşekkür etmek istediğim ise ailem, özellikle de eşim Meng Jiaying. Bu kitabı yazma sürecim boyunca beni hep destekledi ve kitap için çok sayıda değerli görüş sundu.
-

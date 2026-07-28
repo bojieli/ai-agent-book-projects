@@ -6,7 +6,11 @@
   - 一组带挑战性的参考文本（数字 / 多音字 / 长句 / 专有名词 + 情感）。
 """
 
+import os
 from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ---------------------------------------------------------------------------
 # 模型名（均为 OpenAI，读 OPENAI_API_KEY）。

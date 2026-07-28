@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 520" width="780" height="520" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker><marker id="ah-sm" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#999999"/></marker></defs>
+
+<rect x="30" y="65" width="310" height="240" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="185" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Phone Agent</text>
+<text x="185" y="107" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Node.js · Голосовой звонок в реальном времени</text>
+<rect x="40" y="125" width="290" height="36" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="139" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Голос пользователя</text>
+<text x="50" y="153" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход с микрофона</text>
+<line x1="185" y1="161" x2="185" y2="167" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="40" y="167" width="290" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="181" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">VAD + ASR</text>
+<text x="50" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Silero VAD → транскрипция STT</text>
+<line x1="185" y1="203" x2="185" y2="209" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="40" y="209" width="290" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="223" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Инференс LLM</text>
+<text x="50" y="237" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Понять намерение + извлечь информацию</text>
+<line x1="185" y1="245" x2="185" y2="251" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="40" y="251" width="290" height="36" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">TTS-синтез</text>
+<text x="50" y="279" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Генерация голосового ответа → Воспроизведение</text>
+<rect x="440" y="65" width="310" height="240" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="595" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Computer Agent</text>
+<text x="595" y="107" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Python · Автоматизация браузера</text>
+<rect x="450" y="125" width="290" height="36" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="460" y="139" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Скриншот</text>
+<text x="460" y="153" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Текущая страница браузера</text>
+<line x1="595" y1="161" x2="595" y2="167" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="450" y="167" width="290" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="460" y="181" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Vision LLM</text>
+<text x="460" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Понять структуру страницы + поля формы</text>
+<line x1="595" y1="203" x2="595" y2="209" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="450" y="209" width="290" height="36" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="460" y="223" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Планирование действий</text>
+<text x="460" y="237" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Определить поля → Спланировать последовательность ввода</text>
+<line x1="595" y1="245" x2="595" y2="251" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
+<rect x="450" y="251" width="290" height="36" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="460" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Выполнить действия</text>
+<text x="460" y="279" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Клик / Ввод / Отправка</text>
+<rect x="30" y="320" width="720" height="36" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="390" y="338" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Двусторонняя связь WebSocket (ws://localhost:8849)</text>
+<line x1="185" y1="307" x2="185" y2="318" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="595" y1="307" x2="595" y2="318" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="30" y="370" width="720" height="150" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Двунаправленный поток сообщений в реальном времени (использование компьютера во время звонка)</text>
+<text x="42" y="412" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Телефон → Компьютер</text>
+<text x="210" y="412" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">[FROM_PHONE_AGENT] Пользователь говорит, что имя — Zhang San</text>
+<text x="42" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Компьютер → Телефон</text>
+<text x="210" y="438" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">[FROM_COMPUTER_AGENT] Имя заполнено, нужен номер удостоверения</text>
+<text x="42" y="464" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Телефон → Компьютер</text>
+<text x="210" y="464" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">[FROM_PHONE_AGENT] Номер удостоверения 310101199001011234</text>
+<text x="42" y="490" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Компьютер → Телефон</text>
+<text x="210" y="490" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">[FROM_COMPUTER_AGENT] Форма отправлена, регистрация успешна</text>
+<text x="390" y="510" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ключевое: два агента выполняют независимые циклы ReAct параллельно, без блокировки</text>
+</svg>

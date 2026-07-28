@@ -197,6 +197,9 @@ def interactive_mode(user_id: str, memory_mode: MemoryMode = MemoryMode.NOTES,
             elif user_input.lower() == 'memory':
                 print("\n💭 Current Memory State:")
                 print("-"*40)
+                # Reload first: the background processor writes through its
+                # own manager instance, so the agent's copy can be stale.
+                agent.memory_manager.load_memory()
                 print(agent.memory_manager.get_context_string())
                 
             elif user_input.lower() == 'process':

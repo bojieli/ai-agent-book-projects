@@ -66,7 +66,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         prog="run_with_experience.py",
         description=(
-            "在 GAIA 基准上运行带“从经验中学习”能力的 Agent（实验 8-1：策略摘要）。\n"
+            "在 GAIA 基准上运行带“从经验中学习”能力的 Agent（实验 8-2：经验知识文档）。\n"
             "支持两种模式：学习模式（learning-mode）在任务成功后把轨迹提炼成经验并入库；\n"
             "应用模式（apply-experience）在解题前检索最相似的历史经验注入系统提示词。\n"
             "使用 --compare 可自动做 A/B 对照，直观展示“复用经验是否提升 GAIA 成绩”。"

@@ -27,6 +27,12 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # 示例多轮对话：内容刻意覆盖三个画像主题，便于观察 Profile 的两级结构
 SAMPLE_CONVERSATION = [
     {"role": "user", "content": "你好，我叫李明，今年 28 岁，住在上海。"},

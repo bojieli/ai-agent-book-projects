@@ -99,7 +99,7 @@ class ContextualLegalIndexer:
         
         # Try to clear the retrieval pipeline
         try:
-            response = requests.delete(f"{self.pipeline_url}/clear")
+            response = requests.delete(f"{self.pipeline_url}/clear", timeout=30)
             if response.status_code == 200:
                 logger.info("Cleared retrieval pipeline index")
             else:
@@ -255,7 +255,7 @@ class ContextualLegalIndexer:
             response = requests.post(
                 f"{self.pipeline_url}/index",
                 json=index_data,
-                headers={"Content-Type": "application/json"}
+                headers={"Content-Type": "application/json"}, timeout=30
             )
             
             if response.status_code == 200:
@@ -494,7 +494,7 @@ class ContextualLegalIndexer:
                         "mode": "hybrid",
                         "top_k": 10,
                         "rerank_top_k": 5
-                    }
+                    }, timeout=30
                 )
                 
                 if response.status_code == 200:

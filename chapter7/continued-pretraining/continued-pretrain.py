@@ -336,6 +336,10 @@ trainer = UnslothTrainer(
         # Checkpoint saving
         save_strategy = "steps",
         save_steps = 100,
+        # Keep only the 5 most recent checkpoints, as the banner above
+        # promises. Without this HF keeps every one, and a ~2000-step run
+        # writes ~20 LoRA+optimizer checkpoints (fills a free-Colab disk).
+        save_total_limit = 5,
         
         # WandB configuration
         report_to = "wandb",
@@ -464,6 +468,10 @@ trainer = UnslothTrainer(
         # Checkpoint saving
         save_strategy = "steps",
         save_steps = 100,
+        # Keep only the 5 most recent checkpoints, as the banner above
+        # promises. Without this HF keeps every one, and a ~2000-step run
+        # writes ~20 LoRA+optimizer checkpoints (fills a free-Colab disk).
+        save_total_limit = 5,
         
         # WandB configuration
         report_to = "wandb",

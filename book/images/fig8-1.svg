@@ -1,22 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 194" width="880" height="194" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="27.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="122.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">完成任务</text>
-<text x="122.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">产生原始经验</text>
-<rect x="239.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="334.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">提炼经验</text>
-<text x="334.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">总结·压缩·结构化</text>
-<line x1="219.0" y1="90.0" x2="237.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="546.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">存入外部系统</text>
-<text x="546.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">知识库/工具，可检索</text>
-<line x1="431.0" y1="90.0" x2="449.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="663.0" y="48" width="190" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="758.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">检索复用</text>
-<text x="758.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">下次任务调用</text>
-<line x1="643.0" y1="90.0" x2="661.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="758.0" y1="132" x2="758.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="758.0" y1="166" x2="122.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<line x1="122.0" y1="166" x2="122.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
-<text x="440.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">经验持续沉淀，跨会话复用</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" width="1000" height="360" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="28" text-anchor="middle" class="t h">持续进化：从运行经验到新版本 Agent</text>
+
+  <rect x="25" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="100" y="105" text-anchor="middle" class="t h">执行任务</text>
+  <text x="100" y="134" text-anchor="middle" class="t s">用户、环境与工具交互</text>
+
+  <rect x="205" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="280" y="105" text-anchor="middle" class="t h">记录轨迹</text>
+  <text x="280" y="134" text-anchor="middle" class="t s">动作、结果与反馈</text>
+
+  <rect x="385" y="72" width="150" height="90" rx="8" class="accent"/>
+  <text x="460" y="105" text-anchor="middle" class="t h">形成信号</text>
+  <text x="460" y="134" text-anchor="middle" class="t s">结果·过程·质量</text>
+
+  <rect x="565" y="55" width="230" height="124" rx="8" class="accent"/>
+  <text x="680" y="84" text-anchor="middle" class="t h">生成候选更新</text>
+  <rect x="582" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="582" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <text x="628" y="121" text-anchor="middle" class="t s">知识</text>
+  <text x="732" y="121" text-anchor="middle" class="t s">指令</text>
+  <text x="628" y="158" text-anchor="middle" class="t s">程序</text>
+  <text x="732" y="158" text-anchor="middle" class="t s">参数</text>
+
+  <rect x="825" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="900" y="105" text-anchor="middle" class="t h">验证与发布</text>
+  <text x="900" y="134" text-anchor="middle" class="t s">回归、灰度与回滚</text>
+
+  <path d="M175 117 H203" class="line"/>
+  <path d="M355 117 H383" class="line"/>
+  <path d="M535 117 H563" class="line"/>
+  <path d="M795 117 H823" class="line"/>
+
+  <path d="M900 162 V238 H100 V164" class="line" stroke-dasharray="7 5"/>
+  <text x="500" y="265" text-anchor="middle" class="t h">新的 Agent 进入下一轮运行</text>
+  <text x="500" y="294" text-anchor="middle" class="t s">只有改变后续行为且通过验证的更新，才构成持续进化</text>
+  <line x1="260" y1="318" x2="740" y2="318" stroke="#9aa8af" stroke-width="1"/>
 </svg>

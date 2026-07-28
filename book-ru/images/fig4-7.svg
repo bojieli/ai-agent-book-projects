@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 500" width="880" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="250" y="55" width="380" height="44" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="440" y="77" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent: «Нужна статистика контрибьюторов репозитория GitHub»</text>
+<line x1="440" y1="99" x2="440" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="300" y="132" width="280" height="44" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440" y="154" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">discover_tools(запрос на естественном языке)</text>
+<line x1="440" y1="176" x2="440" y2="210" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="20" y="210" width="840" height="110" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Слой 1: подбор сервера (семантическое сходство)</text>
+<rect x="50" y="255" width="145" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="122" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">GitHub</text>
+<text x="122" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">сходство: 0.92</text>
+<rect x="215" y="255" width="145" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="287" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Погода</text>
+<text x="287" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сходство: 0.15</text>
+<rect x="380" y="255" width="145" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="452" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Финансы</text>
+<text x="452" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сходство: 0.23</text>
+<rect x="545" y="255" width="145" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="617" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ArXiv</text>
+<text x="617" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сходство: 0.18</text>
+<rect x="710" y="255" width="145" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="782" y="272" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Файловая система</text>
+<text x="782" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">сходство: 0.31</text>
+<line x1="123" y1="305" x2="123" y2="345" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="175" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Top-1 сервер</text>
+<rect x="20" y="345" width="840" height="160" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="368" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Слой 2: подбор инструмента (26 инструментов сервера GitHub)</text>
+<rect x="30" y="388" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="35" y="406" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">search_repositories</text>
+<text x="108" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.41 | поиск репозиториев</text>
+<rect x="200" y="388" width="155" height="55" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="205" y="406" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="start" dominant-baseline="central">list_contributors</text>
+<text x="278" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.89 | список контрибьюторов</text>
+<rect x="370" y="388" width="155" height="55" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="375" y="406" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="start" dominant-baseline="central">get_repo_stats</text>
+<text x="448" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.85 | статистика репозитория</text>
+<rect x="540" y="388" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="545" y="406" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">create_issue</text>
+<text x="618" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.12 | создать Issue</text>
+<rect x="710" y="388" width="155" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="715" y="406" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">get_commit_history</text>
+<text x="788" y="428" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.67 | история коммитов</text>
+<rect x="180" y="468" width="520" height="30" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="190" y="483" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Top-3: list_contributors, get_repo_stats, get_commit_history</text>
+</svg>

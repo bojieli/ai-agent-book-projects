@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 204" width="860" height="204" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="220" y="46" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">素朴な方式: 全ツール定義をシステムプロンプトに配置</text>
+<rect x="30" y="62" width="380" height="70" rx="6" fill="#f0d8d8" stroke="#333333" stroke-width="2"/>
+<text x="220" y="84" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">システムプロンプト + 全ツール定義</text>
+<text x="220" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ツールの変更 → KV キャッシュ全体が無効化</text>
+<rect x="30" y="140" width="380" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220" y="163" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">毎ラウンド再計算、高コスト</text>
+<text x="640" y="46" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">最適化方式: ツール定義をオンデマンドで読み込み</text>
+<rect x="450" y="62" width="380" height="40" rx="6" fill="#d8e8d8" stroke="#333333" stroke-width="2"/>
+<text x="640" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">安定したシステムプロンプト（キャッシュヒットする接頭辞）</text>
+<rect x="450" y="106" width="380" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="640" y="126" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">オンデマンドで追加されるツール定義（変化する部分）</text>
+<rect x="450" y="150" width="380" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="640" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">会話の軌跡</text>
+<text x="640" y="206" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">安定した接頭辞は不変 → KV Cache を継続的に再利用</text>
+<line x1="430" y1="54" x2="430" y2="220" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+</svg>

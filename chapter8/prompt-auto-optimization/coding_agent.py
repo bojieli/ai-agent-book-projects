@@ -8,7 +8,8 @@ Coding Agent：读取系统提示词文件 → 定位相关规则 → 生成精�
 """
 
 import difflib
-from config import get_client, get_model, TEMPERATURE
+import json
+from config import get_client, get_model, get_temperature
 
 # 暴露给 Coding Agent 的"文件编辑工具"
 EDIT_TOOLS = [
@@ -75,7 +76,7 @@ def _apply_edits_from_args(working: str, args: dict) -> tuple[str, int, list, li
     return working, applied, errors, edits
 
 
-def optimize_prompt(prompt_path: str, feedback: str, max_rounds: int = 3, verbose: bool = True) -> dict:
+def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bool = True) -> dict:
     """
     让 Coding Agent 根据 human feedback 改写 prompt_path 指向的文件（原地覆盖）。
 
@@ -87,9 +88,11 @@ def optimize_prompt(prompt_path: str, feedback: str, max_rounds: int = 3, verbos
     with open(prompt_path, "r", encoding="utf-8") as f:
         original = f.read()
 
+    feedback_text = json.dumps(feedback, ensure_ascii=False, indent=2) if isinstance(feedback, dict) else str(feedback)
+
     system = (
         "你是一名资深的提示词工程 Coding Agent。你会收到一份航空客服 Agent 的"
-        "系统提示词文件，以及人类专家的反馈。请定位与'人工转接'相关的规则，"
+        "系统提示词文件，以及从失败轨迹生成的结构化诊断。请定位与'人工转接'相关的规则，"
         "生成精确的搜索/替换编辑来改进它，然后调用 apply_edits 工具落地修改。\n"
         "改动目标：\n"
         "1) 把转接的边界收紧、明确为仅两种情况：乘客明确要求人工客服、以及紧急安全情况；\n"
@@ -104,7 +107,7 @@ def optimize_prompt(prompt_path: str, feedback: str, max_rounds: int = 3, verbos
         {
             "role": "user",
             "content": (
-                f"【人类专家反馈】\n{feedback}\n\n"
+                f"【失败轨迹诊断】\n{feedback_text}\n\n"
                 f"【当前系统提示词文件内容】\n---\n{original}\n---\n\n"
                 "请调用 apply_edits 提交你的精确编辑。"
             ),
@@ -120,7 +123,7 @@ def optimize_prompt(prompt_path: str, feedback: str, max_rounds: int = 3, verbos
             messages=messages,
             tools=EDIT_TOOLS,
             tool_choice={"type": "function", "function": {"name": "apply_edits"}},
-            temperature=TEMPERATURE,
+            temperature=get_temperature(),
         )
         msg = resp.choices[0].message
         messages.append(msg)
@@ -130,8 +133,6 @@ def optimize_prompt(prompt_path: str, feedback: str, max_rounds: int = 3, verbos
 
         # 处理（唯一的）apply_edits 调用
         tc = msg.tool_calls[0]
-        import json
-
         try:
             args = json.loads(tc.function.arguments or "{}")
         except json.JSONDecodeError:

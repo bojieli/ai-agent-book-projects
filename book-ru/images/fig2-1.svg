@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="60" width="700" height="84" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Системный промпт</text>
+<text x="65" y="102" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">"Ты полезный помощник. Ты ДОЛЖЕН отвечать кратко."</text>
+<text x="65" y="124" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central">"Используйте инструменты, когда пользователь запрашивает информацию в реальном времени."</text>
+<rect x="40" y="152" width="700" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="172" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Определения инструментов</text>
+<text x="65" y="194" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">{"name": "web_search", "description": "Поиск в интернете",</text>
+<text x="65" y="216" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;parameters&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}}</text>
+<rect x="40" y="244" width="700" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="264" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">История диалога</text>
+<text x="65" y="286" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">user: "Какая сегодня погода в Пекине?"</text>
+<text x="65" y="308" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: [tool_call] → get_weather(&quot;Beijing&quot;)</text>
+<text x="65" y="330" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool: {&quot;temp&quot;: &quot;23°C&quot;, &quot;conditions&quot;: &quot;clear&quot;}</text>
+<rect x="40" y="358" width="700" height="84" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="55" y="378" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Трасса рассуждений</text>
+<text x="65" y="400" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;think&gt;Пользователь спрашивает о погоде. У меня уже есть результат инструмента,</text>
+<text x="65" y="422" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">поэтому я могу сразу подытожить и ответить без повторного вызова инструмента.&lt;/think&gt;</text>
+<rect x="40" y="450" width="700" height="62" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="55" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Текущая позиция генерации →</text>
+<text x="65" y="492" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: «В Пекине сегодня ясно, температура 23°C...»  ← LLM генерирует</text>
+<path d="M 748,60 C 768,60 768,281.0 773,286.0 C 768,291.0 768,512 748,512" fill="none" stroke="#333333" stroke-width="2"/>
+<text x="755" y="274.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Контекст</text>
+<text x="755" y="298.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Окно</text>
+<rect x="100" y="535" width="620" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Размер окна: Qwen3 = 32K токенов | Claude = 200K | Gemini = 2M</text>
+<text x="410" y="572" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Весь контент сериализуется в поток токенов → обрабатывается механизмом внимания Transformer</text>
+</svg>

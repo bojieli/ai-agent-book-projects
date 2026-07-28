@@ -59,6 +59,14 @@ def test_from_records_keeps_real_values():
     assert s.latency_s == 1.2
 
 
+def test_from_records_keeps_zero_tool_ctx_tokens():
+    """Explicit 0 means known-zero tool context, not unknown (-1)."""
+    tr = Tracer.from_records([_span(tool_ctx_tokens=0)],
+                             pricing=config.default_pricing())
+    assert tr.spans[0].tool_ctx_tokens == 0
+    assert tr.total_tool_ctx_tokens() == 0
+
+
 def _write_trace(tmp_path, scenarios):
     path = tmp_path / "trace.json"
     path.write_text(json.dumps({"model": "gpt-5.6-luna", "scenarios": scenarios}),

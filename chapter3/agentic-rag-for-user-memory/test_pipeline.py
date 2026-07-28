@@ -40,12 +40,12 @@ def test_retrieval_pipeline():
     
     try:
         # Clear existing index
-        requests.post("http://localhost:4242/clear")
+        requests.post("http://localhost:4242/clear", timeout=30)
         
         # Index test document (single document format)
         response = requests.post(
             "http://localhost:4242/index",
-            json=test_doc
+            json=test_doc, timeout=30
         )
         if response.status_code == 200:
             result = response.json()
@@ -66,7 +66,7 @@ def test_retrieval_pipeline():
                 "query": "test document",
                 "mode": "hybrid",
                 "top_k": 5
-            }
+            }, timeout=30
         )
         if response.status_code == 200:
             result = response.json()

@@ -535,6 +535,22 @@ async def mcp_get_subagent_status(
 # SERVER LIFECYCLE
 # ============================================================================
 
+async def _serve() -> None:
+    """Restore saved timers and serve requests on the SAME event loop.
+
+    `asyncio.run(_load_timers())` used to run in a throwaway loop: closing it
+    cancelled every `_run_timer` task that had just been restored, and the
+    CancelledError handler then marked those timers "cancelled" and re-saved,
+    which drops them from storage. Restored timers therefore never fired and
+    were lost from memory *and* disk.
+
+    `FastMCP.run(transport="stdio")` is itself just `anyio.run(run_stdio_async)`,
+    so awaiting `run_stdio_async()` here is the same server entry point.
+    """
+    await _load_timers()
+    await mcp.run_stdio_async()
+
+
 # Run the server
 if __name__ == "__main__":
     logger.info("Starting Collaboration Tools MCP Server...")
@@ -543,12 +559,9 @@ if __name__ == "__main__":
     config = load_config()
     logger.info(f"Configuration loaded: log_level={config.log_level}")
     
-    # Load saved timers
-    asyncio.run(_load_timers())
-    
     try:
-        # Run the MCP server
-        mcp.run(transport="stdio")
+        # Restore saved timers, then run the MCP server (one shared loop)
+        asyncio.run(_serve())
     finally:
         # Cleanup on exit
         logger.info("Shutting down Collaboration Tools MCP Server...")

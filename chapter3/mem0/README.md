@@ -1,383 +1,266 @@
-# Mem0 Agent with Kimi K3 for LOCOMO Benchmark
+# Mem0 Agent with Kimi K3 for LOCOMO Benchmark / Mem0 Agent 与 LOCOMO 评测
 
-A sophisticated AI agent implementation that combines the Mem0 memory framework with the Kimi K3 language model, specifically designed for the LOCOMO (Long-Context Multi-Agent) benchmark.
+> Companion material for *AI Agents in Depth*, Chapter 3 — Mem0 memory framework + Kimi for long-context multi-session memory (Experiment 3-2 comparison track).  
+> 配套《深入理解 AI Agent》第 3 章——Mem0 记忆框架 + Kimi，长上下文多会话记忆（实验 3-2 对照实现之一）。
 
-## Overview
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-This project implements an advanced conversational AI agent that:
-- **Persistent Memory**: Uses Mem0 framework for long-term memory management across sessions
-- **Advanced Language Model**: Integrates Kimi K3 model (1M-token context window; experiment caps usage at a smaller budget)
-- **LOCOMO Benchmark**: Evaluates agent performance on long-context multi-agent communication tasks
-- **Multi-Session Support**: Maintains context and consistency across multiple conversation sessions
-- **Multi-Agent Collaboration**: Supports multiple agents working together with shared memory
+---
 
-## Features
+## English
 
-### Core Capabilities
-- **Dynamic Memory Management**: Automatically extracts, consolidates, and retrieves relevant information
-- **Context Preservation**: Maintains conversation context across sessions and agents
-- **Performance Metrics**: Tracks consistency, coherence, response time, and memory utilization
-- **Flexible Backend**: Supports both local and cloud-based memory storage
+### Overview
 
-### Benchmark Scenarios
-The LOCOMO benchmark includes five scenario types:
-1. **Collaborative Planning**: Multiple agents plan complex projects together
-2. **Information Sharing**: Agents share and synthesize information across sessions
-3. **Problem Solving**: Multi-step problem solving with memory retention
-4. **Negotiation**: Multi-round negotiations with position tracking
-5. **Teaching & Learning**: Educational dialogues with progress tracking
+An agent that combines the **Mem0** memory framework with the **Kimi** language model for LOCOMO-style long-context multi-agent / multi-session tasks:
 
-## Installation
+- **Persistent memory** via Mem0 across sessions  
+- **Kimi** integration (experiment caps context budget below the model’s full window)  
+- **LOCOMO benchmark** scenarios  
+- Multi-session and multi-agent collaboration with shared memory  
 
-### Prerequisites
-- Python 3.8 or higher
-- Kimi API key (from Moonshot AI)
-- Optional: Mem0 cloud API key for cloud storage
+### Features
 
-### Setup
+**Core:** dynamic extract/consolidate/retrieve; context preservation; metrics (consistency, coherence, latency, memory use); local or cloud memory backend.
 
-1. Clone the repository:
+**LOCOMO scenarios:** collaborative planning; information sharing; multi-step problem solving; negotiation; teaching & learning.
+
+### Installation
+
+Prerequisites: Python 3.8+, Kimi API key; optional Mem0 cloud key.
+
 ```bash
-cd projects/week2/mem0
-```
-
-2. Install dependencies:
-```bash
+cd chapter3/mem0
 pip install -r requirements.txt
-```
-
-3. Configure environment variables:
-```bash
 cp env.example .env
-# Edit .env with your API keys and configuration
+# Edit .env with API keys
 ```
 
-Required environment variables:
-- `KIMI_API_KEY`: Your Kimi K3 API key
-- `MODEL_NAME`: Model name (default: kimi-k3). This is the raw Moonshot model
-  id (e.g. `kimi-k3`, `kimi-k2.5`, `kimi-k2.6`) passed straight to the API — do
-  NOT use a `provider/model` slash form here; Mem0 is configured with the
-  `openai` provider pointed at Moonshot's `base_url`, so it forwards the string
-  verbatim and `kimi/k3` returns "Not found the model".
-- `MEMORY_BACKEND`: Storage backend (local/cloud)
-- `MAX_TOKENS`: Maximum token limit (default: 128000)
+Required env:
 
-## Quick Start
+- `KIMI_API_KEY`  
+- `MODEL_NAME` (default `kimi-k3`) — **raw Moonshot model id** (e.g. `kimi-k3`, `kimi-k2.5`); do **not** use `provider/model` slash form; Mem0 uses OpenAI-compatible provider pointed at Moonshot `base_url` and forwards the string verbatim (`kimi/k3` → “Not found the model”)  
+- `MEMORY_BACKEND`: `local` / `cloud`  
+- `MAX_TOKENS` (default 128000)  
 
-### Basic Usage
-
-Run the quickstart examples to see the agent in action:
+### Quick start
 
 ```bash
 python quickstart.py
 ```
 
-This will demonstrate:
-- Basic conversation with memory
-- Multi-session memory persistence
-- Multi-agent collaboration
+Shows basic chat with memory, multi-session persistence, multi-agent collaboration.
 
-### Memory Pipeline Demo (提取—对比—决策)
+#### Memory pipeline demo (extract — compare — decide)
 
-The single clearest demonstration of Mem0's value — its ADD / UPDATE / DELETE /
-NOOP pipeline and cross-session recall — is the `demo` mode:
+Clearest demo of Mem0’s ADD / UPDATE / DELETE / NOOP and cross-session recall:
 
 ```bash
 python main.py --mode demo --user-id demo_user
 ```
 
-This reproduces the book's centerpiece example (chapter3.md): the user first
-says they live in Beijing, a later turn says they moved to Shanghai, and Mem0
-resolves the conflict with an **UPDATE** (revising the existing memory) instead
-of storing two contradictory records. In between, a stored memory is recalled
-via semantic search, showing memory being *used later*. (The same routine is
-`memory_pipeline_example()` in `quickstart.py`, run first by `python quickstart.py`.)
+Book centerpiece (chapter 3): user lives in Beijing, later moves to Shanghai → Mem0 **UPDATE**s instead of two contradictory memories; in between, semantic search recalls the stored fact. Same routine: `memory_pipeline_example()` in `quickstart.py`.
 
-### Direct Memory Operations CLI
-
-Mem0's memory API is exposed directly so you can observe each pipeline decision
-without the chat loop. All flags have Chinese `--help` (`python main.py --help`):
+#### Direct memory operations CLI
 
 ```bash
-# ADD — write a conversation/utterance; prints the ADD/UPDATE/DELETE events
+python main.py --help   # Chinese descriptions
+
 python main.py --mode memory --op add   --text "我住在北京，是一名后端工程师" --user-id u1
-
-# SEARCH — semantic recall
 python main.py --mode memory --op search --query "这个用户住在哪里？" --user-id u1
-
-# GET-ALL — list every stored memory (optionally dump to JSON)
 python main.py --mode memory --op get-all --user-id u1 --output mem.json
-
-# HISTORY — the change/audit trail of one memory id (shows UPDATE/DELETE over time)
 python main.py --mode memory --op history --memory-id <id>
-
-# DELETE — remove one memory by id
 python main.py --mode memory --op delete --memory-id <id>
 ```
 
-Key flags: `--op {add,search,get-all,history,delete}`, `--text`, `--query`,
-`--memory-id`, `--user-id`, `--agent-id`, `--model` (override `MODEL_NAME`),
-`--output` (write result JSON). `--text` accepts either a raw string or a path
-to a JSON message list.
+Flags: `--op {add,search,get-all,history,delete}`, `--text`, `--query`, `--memory-id`, `--user-id`, `--agent-id`, `--model`, `--output`. `--text` may be a raw string or path to a JSON message list.
 
-> These operations, `demo` mode, and the chat modes all require a working LLM
-> API key (`KIMI_API_KEY`) and a vector store — Mem0's fact extraction and
-> semantic retrieval are online model calls. With no key the CLI parses
-> arguments and then reports the missing key; no memory output is fabricated.
+> Demo, memory ops, and chat modes need a working LLM key (`KIMI_API_KEY`) and vector store. Without a key the CLI parses args then reports the missing key—no fabricated memory output.
 
-### Interactive Mode
-
-Start an interactive conversation session:
+#### Interactive / batch
 
 ```bash
 python main.py --mode interactive
-```
+# commands: help, memories, metrics, save, load, new, exit
 
-Available commands in interactive mode:
-- `help` - Show available commands
-- `memories` - Display stored memories
-- `metrics` - Show performance metrics
-- `save` - Save conversation state
-- `load` - Load previous state
-- `new` - Start a new session
-- `exit` - Exit the program
-
-### Batch Processing
-
-Process multiple conversations from a JSON file:
-
-```bash
 python main.py --mode batch --input conversations.json --output results.json
 ```
 
-Input format:
+Batch input format:
+
 ```json
 [
   {
     "session_id": "session_001",
     "user_id": "user_001",
     "agent_id": "agent_001",
-    "turns": [
-      "First user message",
-      "Second user message"
-    ]
+    "turns": ["First user message", "Second user message"]
   }
 ]
 ```
 
-## Running LOCOMO Benchmark
-
-### Full Benchmark
-
-Run the complete LOCOMO benchmark evaluation:
+### LOCOMO benchmark
 
 ```bash
 python experiment.py --scenarios 10 --output results/
 ```
 
-This will:
-1. Generate and run 10 benchmark scenarios
-2. Evaluate agent performance on each scenario
-3. Calculate metrics (consistency, coherence, memory utilization)
-4. Generate detailed reports with visualizations
+Metrics: consistency, coherence, memory retention, response time, context utilization. Results JSON under `results/` with per-scenario and overall metrics.
 
-### Benchmark Metrics
+### Architecture
 
-The benchmark evaluates:
-- **Consistency Score**: How well the agent maintains consistent information
-- **Coherence Score**: Relevance and logical flow of responses
-- **Memory Retention**: Effectiveness of memory storage and retrieval
-- **Response Time**: Average generation time per turn
-- **Context Utilization**: How well the agent uses available context
+- `agent.py`: `Mem0Agent`, `KimiK3Client`, `AgentContext`  
+- `config.py`: Kimi / Mem0 / LOCOMO config  
+- `experiment.py`: `LOCOMOBenchmark`  
 
-### Understanding Results
+Mem0 provides vector store, consolidation, retrieval, multi-level (user/agent/session) organization.
 
-Results are saved in JSON format with the following structure:
-```json
-{
-  "config": {...},
-  "scenarios": [
-    {
-      "scenario": {...},
-      "sessions": [...],
-      "overall_metrics": {
-        "avg_consistency": 0.92,
-        "avg_coherence": 0.88,
-        "memory_utilization": 42
-      }
-    }
-  ],
-  "overall_metrics": {...}
-}
-```
-
-## Architecture
-
-### Components
-
-1. **Agent Module** (`agent.py`)
-   - `Mem0Agent`: Main agent class with memory integration
-   - `KimiK3Client`: Client for Kimi K3 model API
-   - `AgentContext`: Context management for sessions
-
-2. **Configuration** (`config.py`)
-   - `KimiConfig`: Kimi model settings
-   - `Mem0Config`: Memory system configuration
-   - `LOCOMOConfig`: Benchmark parameters
-
-3. **Experiment Framework** (`experiment.py`)
-   - `LOCOMOBenchmark`: Benchmark implementation
-   - Scenario generation and evaluation
-   - Metrics calculation and reporting
-
-### Memory System
-
-The Mem0 framework provides:
-- **Vector Storage**: Efficient semantic search using embeddings
-- **Memory Consolidation**: Automatic extraction of key information
-- **Context Retrieval**: Intelligent retrieval of relevant memories
-- **Multi-level Organization**: User, agent, and session-level memories
-
-## Advanced Usage
-
-### Custom Scenarios
-
-Create custom benchmark scenarios by modifying `experiment.py`:
+### Memory backends
 
 ```python
-custom_scenario = {
-    "type": "custom_type",
-    "description": "Your scenario description",
-    "topics": ["topic1", "topic2"],
-    "context_requirements": ["requirement1", "requirement2"]
-}
-```
-
-### Memory Backends
-
-#### Local Storage (Chroma)
-```python
+# Local Chroma
 config.mem0.backend = "local"
 config.mem0.vector_store_config = {
     "provider": "chroma",
-    "config": {
-        "collection_name": "my_collection",
-        "path": "./data/chroma_db"
-    }
+    "config": {"collection_name": "my_collection", "path": "./data/chroma_db"}
 }
-```
 
-#### Cloud Storage (Mem0 Cloud)
-```python
+# Cloud
 config.mem0.backend = "cloud"
 config.mem0.api_key = "your_mem0_api_key"
 ```
 
-### Performance Tuning
+### Troubleshooting
 
-Optimize performance by adjusting:
-- `MAX_TOKENS`: Reduce for faster responses
-- `TEMPERATURE`: Lower for more consistent outputs
-- `context_window_size`: Balance between context and speed
-- Memory retrieval limit: Adjust in `_prepare_messages()`
+1. API key: set valid `KIMI_API_KEY` in `.env`  
+2. Local backend: write permission under `./data/`  
+3. Cloud: valid `MEM0_API_KEY`  
+4. Debug: `export LOG_LEVEL=DEBUG`  
 
-## Troubleshooting
+### Project structure
 
-### Common Issues
-
-1. **API Key Errors**
-   - Ensure `KIMI_API_KEY` is set in `.env`
-   - Check API key validity and permissions
-
-2. **Memory Backend Issues**
-   - For local: Ensure write permissions in `./data/`
-   - For cloud: Verify `MEM0_API_KEY` is correct
-
-3. **Performance Issues**
-   - Reduce `MAX_TOKENS` for faster responses
-   - Use local memory backend for lower latency
-   - Adjust batch sizes in benchmark runs
-
-### Debug Mode
-
-Enable detailed logging:
-```bash
-export LOG_LEVEL=DEBUG
-python main.py
-```
-
-## Development
-
-### Project Structure
 ```
 mem0/
-├── agent.py           # Core agent implementation
-├── config.py          # Configuration management
-├── experiment.py      # LOCOMO benchmark
-├── main.py           # Main entry point
-├── quickstart.py     # Example demonstrations
-├── requirements.txt  # Dependencies
-├── env.example      # Environment template
-└── README.md        # Documentation
+├── agent.py, config.py, experiment.py, main.py, quickstart.py
+├── requirements.txt, env.example, README.md
 ```
 
-### Testing
+### Limitations
 
-Run tests (when available):
+Needs network for APIs; memory grows with use; context capped in experiment config; quality depends on model availability.
+
+### License / acknowledgments
+
+Part of AI Agent Book materials. Mem0 by Mem0 AI; Kimi by Moonshot AI.
+
+---
+
+## 中文
+
+### 概述
+
+将 **Mem0** 记忆框架与 **Kimi** 语言模型结合，面向 LOCOMO 风格长上下文、多会话 / 多 Agent 任务：
+
+- 跨会话**持久记忆**  
+- Kimi 集成（实验中会限制上下文预算）  
+- LOCOMO 场景评测  
+- 多会话、多 Agent 共享记忆协作  
+
+### 功能
+
+**核心：** 自动抽取 / 合并 / 检索；跨会话上下文保持；一致性、连贯性、时延、记忆利用率等指标；本地或云端记忆后端。
+
+**LOCOMO 场景：** 协作规划、信息共享、多步解题、谈判、教与学。
+
+### 安装
+
+Python 3.8+、Kimi API Key；可选 Mem0 云端 Key。
+
 ```bash
-pytest tests/
+cd chapter3/mem0
+pip install -r requirements.txt
+cp env.example .env
+# 编辑 .env 填入 API Key
 ```
 
-### Contributing
+环境变量：
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+- `KIMI_API_KEY`  
+- `MODEL_NAME`（默认 `kimi-k3`）——**原始 Moonshot 模型 id**，不要用 `provider/model` 斜杠形式  
+- `MEMORY_BACKEND`：`local` / `cloud`  
+- `MAX_TOKENS`（默认 128000）  
 
-## Performance Benchmarks
+### 快速开始
 
-Typical performance metrics on standard hardware:
-- Average response time: 1-3 seconds
-- Memory retrieval: <100ms
-- Consistency score: 0.85-0.95
-- Coherence score: 0.80-0.90
-- Memory utilization: 20-100 items per session
+```bash
+python quickstart.py
+```
 
-## Limitations
+#### 记忆管线演示（提取—对比—决策）
 
-- Requires active internet connection for API calls
-- Memory storage grows with usage (periodic cleanup recommended)
-- Context window limited to 128K tokens
-- Response quality depends on model availability
+```bash
+python main.py --mode demo --user-id demo_user
+```
 
-## License
+书中示例：先说住在北京，后来说搬到上海 → Mem0 用 **UPDATE** 修订，而不是存两条矛盾记忆；中间用语义检索调用已存事实。
 
-This project is part of the AI Agent Book training materials.
+#### 直接记忆操作 CLI
 
-## Acknowledgments
+```bash
+python main.py --help
 
-- Mem0 framework by Mem0 AI
-- Kimi K3 model by Moonshot AI
-- LOCOMO benchmark concept for long-context evaluation
+python main.py --mode memory --op add   --text "我住在北京，是一名后端工程师" --user-id u1
+python main.py --mode memory --op search --query "这个用户住在哪里？" --user-id u1
+python main.py --mode memory --op get-all --user-id u1 --output mem.json
+python main.py --mode memory --op history --memory-id <id>
+python main.py --mode memory --op delete --memory-id <id>
+```
 
-## Support
+无 Key 时 CLI 会解析参数后明确报错，**不会伪造**记忆输出。
 
-For issues and questions:
-- Check the troubleshooting section
-- Review example code in `quickstart.py`
-- Refer to the main AI Agent Book documentation
+#### 交互 / 批处理
 
+```bash
+python main.py --mode interactive
+python main.py --mode batch --input conversations.json --output results.json
+```
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+### LOCOMO 基准
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+```bash
+python experiment.py --scenarios 10 --output results/
+```
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+指标：一致性、连贯性、记忆保持、响应时间、上下文利用等。
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+### 架构与后端
 
-> Note: mem0's embedder still uses OpenAI embeddings (OpenRouter has no embeddings endpoint), so `OPENAI_API_KEY` is still required for storing/retrieving memories. The OpenRouter fallback only covers the chat LLM (fact extraction, ADD/UPDATE/DELETE decisions, and answering).
+- `agent.py` / `config.py` / `experiment.py`  
+- 本地 Chroma 或 Mem0 Cloud（配置见 English 节代码块）  
+
+### 故障排查
+
+检查 `KIMI_API_KEY`、`./data/` 写权限、`MEM0_API_KEY`；`LOG_LEVEL=DEBUG`。
+
+### 项目结构
+
+```
+mem0/
+├── agent.py, config.py, experiment.py, main.py, quickstart.py
+├── requirements.txt, env.example, README.md
+```
+
+### 局限与许可
+
+需联网调用 API；记忆随使用增长；实验中上下文有上限。教学材料许可。
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+- Primary provider keys unchanged if set.  
+- Else `OPENROUTER_API_KEY` routes chat LLM via `https://openrouter.ai/api/v1` with automatic model id mapping; `OPENROUTER_MODEL` forces a specific id.  
+- **Note:** Mem0’s embedder still uses OpenAI embeddings (OpenRouter has no embeddings endpoint), so `OPENAI_API_KEY` is still required for store/retrieve. OpenRouter only covers the chat LLM (fact extraction, ADD/UPDATE/DELETE, answering).
+
+Add `OPENROUTER_API_KEY=...` to `.env` (see `env.example`).

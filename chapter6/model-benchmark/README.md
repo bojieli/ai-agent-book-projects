@@ -1,3 +1,114 @@
+# Multi-dimensional Model Benchmarking / 多维度模型性能基准 / 实验 6-8
+
+## English
+
+This directory implements a practical benchmarking harness for comparing multiple OpenAI-compatible LLM providers. One command can produce a table including **TTFT, end-to-end latency, throughput, std, p50/p95/p99, and success rate**.
+
+It supports:
+- **Concurrency stress testing**: sweep concurrency to identify rate limits and observe metric curves.
+- **Offline mock mode** (`--mock`): synthetic data pipeline for verifying aggregation logic without API keys/network.
+
+The original chapter workflow describes hourly probes, multiple context windows, and threshold checks. This project focuses on the core locally reproducible piece: measure TTFT precisely via streaming, evaluate percentile latency under concurrency, and use success rate as availability signal.
+
+## Metric definitions
+
+| Metric | Meaning | How measured |
+|---|---|---|
+| Success rate | Availability | successful request count / total |
+| TTFT | Time to first token | stream first non-empty chunk - request start |
+| End-to-end latency | complete response time | request start -> final chunk |
+| Throughput (tokens/s) | generation speed | output token count / (end-to-end - TTFT) |
+| p50 / p95 / p99 | latency percentiles | interpolation over successful requests |
+| std | standard deviation | per-provider latency dispersion |
+| aggregate throughput / RPS | batch throughput metrics | aggregated output token rate and request rate |
+
+If `usage.completion_tokens` is unavailable, token count falls back to chunk-count approximation with a documented caveat.
+
+## Run
+
+```bash
+cd chapter6/model-benchmark
+pip install -r requirements.txt
+
+cp env.example .env
+# or export OPENAI_API_KEY=... MOONSHOT_API_KEY=... ARK_API_KEY=...
+
+python demo.py
+```
+
+### Common parameters
+
+```bash
+python demo.py --list
+python demo.py --num-requests 20 --concurrency 5
+python demo.py --serial
+python demo.py --max-tokens 256
+```
+
+## Specify custom endpoint/model
+
+Use `--base-url`, `--model`, and `--api-key-env` to test a new provider without changing `DEFAULT_PROVIDERS`.
+
+```bash
+python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
+  --api-key-env DEEPSEEK_API_KEY --name "DeepSeek官方/deepseek-chat"
+```
+
+## Concurrency sweep
+
+```bash
+python demo.py --model gpt-5.6-luna --concurrency-sweep 1,2,4,8,16 --num-requests 100
+```
+
+As concurrency increases, p95/p99/std generally get worse, and success rate may drop due to rate limits; aggregate throughput/RPS usually rises then plateaus.
+
+## Metrics and export
+
+```bash
+python demo.py --metrics ttft,throughput
+python demo.py --output result.json
+```
+
+## Offline mock validation
+
+```bash
+python demo.py --mock
+python demo.py --mock --concurrency-sweep 1,2,4,8,16
+```
+
+This validates full aggregation logic with synthetic numbers labelled `[SYNTHETIC]`.
+
+## Default providers
+
+`DEFAULT_PROVIDERS` includes the keys that are present in environment:
+
+- OpenAI-compatible entries (gpt-5.6-luna)
+- Moonshot / doubao (explicit base_url + key)
+
+OpenRouter fallback behavior:
+- If `OPENAI_API_KEY` is missing, OpenAI-style entries can still run via OpenRouter (`OPENROUTER_API_KEY`), with model id mapping.
+- For gpt-5.x, OpenRouter is preferred when `OPENROUTER_API_KEY` exists.
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `benchmark.py` | core benchmark core: provider config, streaming measure, concurrency scheduling, aggregation |
+| `demo.py` | CLI, parameter parsing, reporting and mock mode |
+| `requirements.txt` | dependencies |
+| `env.example` | env templates |
+
+## Limitations
+
+- Default parameters are low-cost defaults (`N=10`, `concurrency=3`, `max_tokens=64`).
+- Larger requests increase cost and rate-limit risk.
+- TTFT depends heavily on geography/network.
+- Offline mock is for method validation only, not production decisions.
+
+---
+
+## 中文
+
 # 多维度模型性能基准测试（实验 6-8 配套代码）
 
 对多个 OpenAI 兼容的 LLM API 提供商做横向基准测试，一条命令跑出

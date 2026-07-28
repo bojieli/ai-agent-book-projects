@@ -39,7 +39,7 @@ def setup_environment():
         # Check if local retrieval pipeline is running
         import requests
         try:
-            response = requests.get(f"{config.knowledge_base.local_base_url}/health")
+            response = requests.get(f"{config.knowledge_base.local_base_url}/health", timeout=30)
             if response.status_code != 200:
                 logger.warning("Local retrieval pipeline not responding")
                 logger.info(f"Please ensure the retrieval pipeline is running at {config.knowledge_base.local_base_url}")

@@ -1,40 +1,38 @@
-# Contextual Retrieval System - Educational Implementation
+# Contextual Retrieval System / 上下文感知检索系统
 
-An educational implementation of Anthropic's Contextual Retrieval technique, demonstrating how contextualizing chunks before indexing dramatically improves retrieval accuracy in RAG systems.
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-11**: Anthropic-style contextual prefixes before indexing; offline BM25 recall@k compare.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-11**：索引前为分块生成上下文前缀；离线 BM25 recall@k 对比。
 
-## 🌟 Key Insight
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-**The Problem**: Traditional RAG systems lose context when chunking documents. A chunk saying "The company's revenue grew by 3%" loses meaning without knowing which company or time period.
+---
 
-**The Solution**: Contextual Retrieval prepends chunk-specific explanatory context to each chunk before embedding and indexing, preserving semantic meaning.
+## English
 
-## 📊 核心实验：离线量化召回提升（实验 3-11）
+### Overview
 
-上面的 Key Insight 是本项目要验证的核心主张。`compare_retrieval.py` 用一组
-可控的对比实验**完全离线**地量化它：把同一批文本块分别以两种方式建 BM25 索引——
-无上下文（只索引原始文本）与有上下文（索引 LLM 生成的前缀 + 原始文本）——
-再在评测集 `evaluation/retrieval_eval.json`（15 条查询 + 人工标注 gold 文本块）
-上比较 `recall@k`（命中率）。**无需任何 API 或检索服务**（BM25 + jieba 分词）。
+Educational implementation of Anthropic’s Contextual Retrieval: prepend chunk-specific context before embedding/indexing to fix the “orphaned chunk” problem.
+
+### Key insight
+
+**Problem:** Traditional RAG loses context when chunking. “The company’s revenue grew by 3%” is meaningless without which company / which period.
+
+**Solution:** Generate short explanatory context per chunk and prepend it before indexing so BM25 and embeddings keep identity signals.
+
+### Core offline experiment (Experiment 3-11)
+
+`compare_retrieval.py` quantifies the claim **fully offline**: same chunks indexed two ways—plain (raw text only) vs contextual (LLM-generated prefix + text)—then compares `recall@k` on `evaluation/retrieval_eval.json` (15 queries + human gold chunks). **No API or retrieval service** (BM25 + jieba).
 
 ```bash
-# 跑完整对比表（默认语料 document_store.json，默认评测集）
 python compare_retrieval.py
-
-# 查看每条查询的命中排名明细
 python compare_retrieval.py --per-query
-
-# 临时单条查询：并排看无上下文 / 有上下文的 Top-K 结果
 python compare_retrieval.py --query "国家主席有哪些职权？" --top-k 5
-
-# 只看无上下文基线 / 另存机器可读结果
 python compare_retrieval.py --mode plain
 python compare_retrieval.py --output result.json
-
-# 中文 --help
-python compare_retrieval.py --help
+python compare_retrieval.py --help   # Chinese help
 ```
 
-真实运行输出（22 个《宪法》《检察官法》文本块，15 条查询，jieba 分词）：
+Real run (22 Constitution / Prosecutor Law chunks, 15 queries, jieba):
 
 ```
 检索召回对比：无上下文分块  vs.  上下文感知检索（BM25）
@@ -49,131 +47,60 @@ python compare_retrieval.py --help
 失败率下降                    67%          0%          0%
 ```
 
-结论与书中一致：为文本块补上上下文前缀显著提升 top-1 召回（60% → 86.7%，
-失败率 1−recall@1 下降 67%），前缀为 BM25 注入了“身份标签”式的可匹配关键词。
-这一提升在 recall@1 上最明显；`--query` 模式可直观看到前缀如何把“正确所属章节”
-的文本块重新排到前面。
+Conclusion (matches the book): context prefixes lift top-1 recall (60% → 86.7%; failure rate 1−recall@1 down 67%). Gain is strongest at recall@1; `--query` shows how the prefix re-ranks the correct section first.
 
-> `--method embedding` / `--method hybrid`（上下文向量嵌入 + RRF 融合）需要
-> 调用 embedding API，无法离线运行；脚本会给出提示并回退到 BM25 离线结果。
-> 稠密检索 + 重排序的完整实现见 `contextual_tools.py`。
+> `--method embedding` / `--method hybrid` need embedding APIs (not offline); the script falls back to BM25 offline results. Full dense + rerank lives in `contextual_tools.py`.  
+> Same logic is also in `ContextualChunker.compare_retrieval_methods()`.
 
-同一对比逻辑也内建在 `ContextualChunker.compare_retrieval_methods()` 中（书中
-`compare_retrieval_methods` 功能），可对任意一组 `ContextualChunk` 直接做并排检索对比。
+### Educational features
 
-## 📚 Educational Features
+1. Watch LLM context generation per chunk  
+2. Dual indexing (BM25 + embeddings) benefits from context  
+3. Compare with `use_contextual=False`  
+4. Metrics and token/cost awareness  
 
-This implementation includes extensive logging and comparison capabilities to understand:
-
-1. **How Context Generation Works**: Watch the LLM generate context for each chunk
-2. **Dual Indexing Strategy**: See how both BM25 and embeddings benefit from context
-3. **Comparison Mode**: Run with `use_contextual=False` to compare against standard chunking
-4. **Performance Metrics**: Track improvements in retrieval accuracy
-5. **Cost Analysis**: Understand the token usage and costs
-
-## 🏗️ Architecture
+### Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│           Document Input                │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│          Basic Chunking                 │
-│   (Respects paragraph boundaries)       │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│     Context Generation (Optional)       │
-│         Using LLM API                   │
-│   (Enabled with use_contextual=True)   │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│      Enhanced Chunks                    │
-│  • Contextual: Context + Original Text  │
-│  • Standard: Original Text Only         │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│      Retrieval Pipeline Indexing        │
-│   • Sparse Index (BM25)                 │
-│   • Dense Index (Embeddings)            │
-└────────────────┬────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────┐
-│    Hybrid Search with Reranking         │
-│   Combines BM25 + Embedding scores      │
-│   Cross-encoder reranking for accuracy  │
-└─────────────────────────────────────────┘
+Document → Basic Chunking → Context Generation (optional LLM)
+  → Enhanced chunks (context+text vs text only)
+  → Retrieval pipeline (sparse BM25 + dense embeddings)
+  → Hybrid search + reranking
 ```
 
-## 🚀 Quick Start
-
-### 1. Installation
+### Quick start
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-
-```bash
 cp env.example .env
+# MOONSHOT_API_KEY / ARK_API_KEY / OPENAI_API_KEY / etc.
 
-# Edit .env and add your API keys:
-# - MOONSHOT_API_KEY for Kimi
-# - ARK_API_KEY for Doubao
-# - OPENAI_API_KEY for OpenAI
-# - etc.
-```
-
-### 3. Start the Retrieval Pipeline
-
-```bash
-# In a separate terminal, start the retrieval pipeline server
+# Separate terminal for full e2e with pipeline:
 cd ../retrieval-pipeline
 python main.py
-# Server will run on http://localhost:4242
-```
+# http://localhost:4242
 
-### 4. Index Documents
+# Back in this project directory (or a second terminal):
+cd ../contextual-retrieval
 
-```bash
-# Index Chinese law documents with contextual enhancement
+# Index with contextual enhancement
 python index_local_laws_contextual.py
-
-# Or index without contextual enhancement for comparison
 python index_local_laws_contextual.py --no-contextual
-```
 
-### 5. Run Queries
-
-```bash
-# Interactive mode with contextual retrieval
+# Queries
 python main.py
-
-# Query with specific mode
 python main.py --query "宪法第一条是什么" --mode agentic
-
-# Compare agentic vs non-agentic modes
 python main.py --query "宪法第一条是什么" --mode compare
 ```
 
-## Context Generation Process
+### Context generation process
 
-The system generates context for each chunk by:
+1. Provide full document (or surrounding context) to the LLM  
+2. Show the specific chunk  
+3. Ask for 2–3 sentence situating context  
 
-1. **Providing the full document** (or surrounding context) to the LLM
-2. **Showing the specific chunk** to be contextualized
-3. **Asking for concise context** (2-3 sentences) that situates the chunk
+Template sketch:
 
-Example prompt template:
 ```
 <document>
 [Full document or surrounding context]
@@ -187,33 +114,96 @@ Here is the chunk we want to situate:
 Please give a short, succinct context to situate this chunk within the overall document...
 ```
 
-## 📚 References
+### References / license
 
-- [Anthropic's Contextual Retrieval Blog Post](https://www.anthropic.com/engineering/contextual-retrieval)
+- [Anthropic Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)  
+- Educational project for learning purposes. Acknowledgments: Anthropic engineering research.
 
-## 🤝 Contributing
+---
 
-This is an educational implementation. Contributions welcome for:
-- Additional chunking strategies
-- Alternative context generation prompts
-- Performance optimizations
-- Evaluation metrics
-- Visualization tools
+## 中文
 
-## 📝 License
+### 概述
 
-Educational project for learning purposes.
+Anthropic 上下文感知检索的教学实现：在嵌入/建索引前为每个分块附加专属上下文，缓解「孤儿分块」问题。
 
-## 🙏 Acknowledgments
+### 核心洞察
 
-Based on research by Anthropic's engineering team on improving RAG retrieval accuracy through contextual enhancement.
+**问题：** 传统 RAG 分块后丢失语境。「公司收入增长 3%」不知是哪家公司、哪个时期。  
+**方案：** 为每块生成简短解释性上下文并前置，使 BM25 与向量都能保留身份信号。
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+### 核心实验：离线量化召回提升（实验 3-11）
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+`compare_retrieval.py` **完全离线**量化：同一批文本块分别以无上下文 / 有上下文前缀两种方式建 BM25 索引，在 `evaluation/retrieval_eval.json`（15 查询 + 人工 gold 块）上比较 `recall@k`。**无需 API 或检索服务**（BM25 + jieba）。
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+```bash
+python compare_retrieval.py
+python compare_retrieval.py --per-query
+python compare_retrieval.py --query "国家主席有哪些职权？" --top-k 5
+python compare_retrieval.py --mode plain
+python compare_retrieval.py --output result.json
+python compare_retrieval.py --help
+```
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+真实输出（22 个《宪法》《检察官法》文本块，15 查询）：
+
+```
+检索召回对比：无上下文分块  vs.  上下文感知检索（BM25）
+====================================================================
+方法                  recall@1    recall@3    recall@5
+----------------------------------------------------
+无上下文 (plain)          60.0%      86.7%      93.3%
+有上下文 (ctx)            86.7%      86.7%      93.3%
+----------------------------------------------------
+提升 (Δpp)             +26.7pp      +0.0pp      +0.0pp
+----------------------------------------------------
+失败率下降                    67%          0%          0%
+```
+
+结论与书中一致：上下文前缀显著提升 top-1 召回（60% → 86.7%，失败率下降 67%）。`--method embedding` / `hybrid` 需 embedding API，脚本会提示并回退 BM25 离线结果。完整稠密+重排见 `contextual_tools.py`。
+
+### 教学特性
+
+观察上下文生成、双索引策略、`use_contextual=False` 对照、指标与成本。
+
+### 架构
+
+文档 → 基础分块 → 可选 LLM 上下文生成 → 增强块 → 检索流水线（稀疏+稠密）→ 混合检索+重排。
+
+### 快速开始
+
+```bash
+pip install -r requirements.txt
+cp env.example .env
+
+# 另开一个终端运行完整检索流水线：
+cd ../retrieval-pipeline
+python main.py
+# http://localhost:4242
+
+# 回到本项目目录（或新开一个终端）：
+cd ../contextual-retrieval
+
+python index_local_laws_contextual.py
+python index_local_laws_contextual.py --no-contextual
+
+python main.py
+python main.py --query "宪法第一条是什么" --mode agentic
+python main.py --query "宪法第一条是什么" --mode compare
+```
+
+### 上下文生成流程
+
+向 LLM 提供全文（或周边）+ 目标块，请求 2–3 句定位上下文。提示模板见 English 节。
+
+### 参考与许可
+
+[Anthropic 博客](https://www.anthropic.com/engineering/contextual-retrieval) · 教学项目。
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+Chat LLM falls back to OpenRouter when primary keys are missing and `OPENROUTER_API_KEY` is set. See `env.example`. Related: [`../contextual-retrieval-for-user-memory/`](../contextual-retrieval-for-user-memory/) (Exp. 3-12).

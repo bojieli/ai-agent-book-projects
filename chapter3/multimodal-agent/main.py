@@ -184,12 +184,10 @@ async def interactive_chat(agent: MultimodalAgent) -> None:
                         
                 elif command == "/tools":
                     if args == "on":
-                        agent.enable_multimodal_tools = True
-                        agent.tools = MultimodalTools(agent) if not agent.tools else agent.tools
+                        agent.set_multimodal_tools_enabled(True)
                         print("Multimodal tools enabled")
                     elif args == "off":
-                        agent.enable_multimodal_tools = False
-                        agent.tools = None
+                        agent.set_multimodal_tools_enabled(False)
                         print("Multimodal tools disabled")
                     else:
                         print("Usage: /tools <on|off>")

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 440" width="880" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="55" width="160" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Запрос пользователя</text>
+<text x="110" y="93" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central">"поведение котёнка"</text>
+<line x1="190" y1="68" x2="238" y2="68" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="240" y="50" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="330.0" y="75.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Плотный поиск</text>
+<text x="330" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Семантическое соответствие: kitty ≈ cat</text>
+<text x="250" y="140" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc3: «повадки кошек и игры с кошками...»</text>
+<text x="700" y="140" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.87</text>
+<text x="250" y="172" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc7: «уход за шерстью кошек...»</text>
+<text x="700" y="172" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.82</text>
+<text x="250" y="204" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc1: «основы ухода за питомцами...»</text>
+<text x="700" y="204" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.71</text>
+<line x1="190" y1="90" x2="238" y2="270" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="240" y="250" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="330.0" y="264.275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Разреженный поиск</text>
+<text x="330.0" y="285.72499999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">(BM25)</text>
+<text x="330" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Точное совпадение: ключевое слово "kitty"</text>
+<text x="250" y="340" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc5: «приучение к лотку...»</text>
+<text x="700" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=8.4</text>
+<text x="250" y="372" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc9: «руководство по усыновлению котят...»</text>
+<text x="700" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=6.1</text>
+<text x="250" y="404" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc2: «советы по здоровью котят...»</text>
+<text x="700" y="404" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=3.2</text>
+<line x1="770" y1="180" x2="808" y2="220" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="770" y1="370" x2="808" y2="330" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="790" y="215" width="70" height="120" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="825" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Слияние</text>
+<text x="825" y="275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Дедупликация</text>
+<text x="825" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">6→5</text>
+</svg>

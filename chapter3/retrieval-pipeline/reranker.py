@@ -178,10 +178,11 @@ class Reranker:
             if not isinstance(scores, np.ndarray):
                 scores = np.array(scores)
             
-            # Ensure scores is 1D
-            if len(scores.shape) > 1:
-                scores = scores.squeeze()
-                
+            # Ensure scores is 1D. FlagReranker.compute_score returns a bare
+            # float when exactly one pair is scored, which becomes a 0-d array
+            # here — atleast_1d keeps the single-candidate case iterable.
+            scores = np.atleast_1d(np.asarray(scores).squeeze())
+
         except Exception as e:
             logger.error(f"Reranking failed: {e}")
             return []

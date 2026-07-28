@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 940 194" width="940" height="194" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="21.0" y="48" width="162" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="102.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① Поиск</text>
+<text x="102.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Поиск инструмента в сети</text>
+<rect x="205.0" y="48" width="162" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="286.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② Оценка</text>
+<text x="286.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Оценка пригодности</text>
+<line x1="185.0" y1="90.0" x2="203.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="389.0" y="48" width="162" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="470.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ Тестирование</text>
+<text x="470.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка работоспособности</text>
+<line x1="369.0" y1="90.0" x2="387.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="573.0" y="48" width="162" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="654.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">④ Упаковка</text>
+<text x="654.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">В стандартный инструмент</text>
+<line x1="553.0" y1="90.0" x2="571.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="757.0" y="48" width="162" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="838.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">⑤ Повтор. использование</text>
+<text x="838.0" y="104.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">В библиотеку инструментов</text>
+<line x1="737.0" y1="90.0" x2="755.0" y2="90.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="838.0" y1="132" x2="838.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="838.0" y1="166" x2="102.0" y2="166" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="102.0" y1="166" x2="102.0" y2="134" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="470.0" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Накопленные инструменты доступны новым задачам</text>
+</svg>

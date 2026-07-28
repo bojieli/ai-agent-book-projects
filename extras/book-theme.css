@@ -77,48 +77,187 @@
 }
 .md-search__input::placeholder { color: var(--fenix-ink-mute); }
 
-/* ── 2. 侧边栏:更宽、白底、单线分隔 ─────────────────────────── */
-
-.md-sidebar {
-  width: 320px;       /* fenix 的实测宽度 */
+/* ── 1b. 整页布局:全宽(fenix/VitePress 几何)──────────────────
+   Material 默认把整页装进 61rem 的 .md-grid 盒子:1920px 屏上两侧
+   各浪费 ~350px,正文却只有 ~660px,宽图和代码块很挤。桌面端解除
+   上限:header 与左侧栏贴住视口左缘;正文限制在书页式行宽内
+   (~50 汉字/行),与右侧大纲作为一个整体在剩余空间居中——正文的
+   margin-left:auto 和大纲的 margin-right:auto 平分空白,大纲因此
+   紧贴正文而不是漂到视口最右缘。
+   只在桌面端覆写:移动端抽屉几何被 Material 硬编码(见 2 节)。 */
+@media screen and (min-width: 76.25em) {
+  .md-grid { max-width: 100%; }
+  .md-header__inner { padding-left: 0.8rem; padding-right: 0.8rem; }
+  .md-content { max-width: 42rem; margin-left: auto; margin-right: 0; }
+  .md-sidebar--secondary { margin-right: auto; }
 }
-@media screen and (min-width: 1220px) {
+
+/* Material turns the chapter navigation into a drawer below 76.25rem and
+   already provides its own menu button there. On persistent-sidebar layouts,
+   expose the companion control added in the header override. Hiding the
+   primary sidebar removes it from the flex layout, so the article and its
+   outline automatically recenter in the newly available reading space. */
+.sidebar-toggle:not([hidden]) {
+  display: none;
+}
+@media screen and (min-width: 76.25em) {
+  .sidebar-toggle:not([hidden]) {
+    display: inline-flex;
+  }
+  .sidebar-toggle svg {
+    transition: transform 0.15s ease;
+  }
+  .sidebar-nav-collapsed .sidebar-toggle svg {
+    transform: scaleX(-1);
+  }
+  .sidebar-nav-collapsed .md-sidebar--primary {
+    display: none;
+  }
+}
+
+/* ── 2. 左侧栏(书的目录树):白底、单线分隔 ─────────────────────
+   结构(navigation.sections + navigation.indexes):
+     <li class="md-nav__item--section md-nav__item--nested">
+       <div class="md-nav__container md-nav__link">
+         <a>章节标题(点击进入正文)</a>
+         <label>折叠箭头(点击展开/收起)</label>
+       </div>
+       <nav>…配套实验…</nav>
+     </li>
+   桌面端的折叠行为由 nav-collapse.js 注入的 CSS 控制。 */
+
+/* 宽度只在桌面端覆写:移动端抽屉的收起位置被 Material 硬编码为
+   -12.1rem,改宽会让抽屉在收起时露出一条边(之前的 320px 全局
+   覆写正是这个 bug 的来源)。 */
+@media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
+    width: 15.5rem;
+    padding-left: 0.6rem;   /* 全宽布局下不让内容贴死视口左缘 */
     border-right: 1px solid var(--fenix-border);
   }
 }
 
 /* 侧边栏链接 —— 扁平、深蓝灰、无 hover 背景,只在 hover 时变墨绿 */
-.md-nav__item {
-  border-left: 2px solid transparent;
-  transition: border-color .12s;
-}
 .md-nav__link {
   color: var(--fenix-ink) !important;
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   margin: 0;
-  padding: 6px 12px 6px 0;
+  padding: 6px 0 6px 0;
   transition: color .12s;
 }
 .md-nav__link:hover,
 .md-nav__link:hover * {
   color: var(--fenix-link-hover) !important;
 }
-/* 当前激活的章节 —— 左侧一条墨绿色竖线(像 fenix 当前章节的视觉提示) */
-.md-nav__item--active {
-  border-left-color: var(--fenix-link-hover);
-}
-.md-nav__item--active > .md-nav__link {
-  color: var(--fenix-link-hover) !important;
-  font-weight: 500;
+
+/* 章节标题行:标题 <a> 占满剩余宽度,箭头 <label> 靠右。
+   flex-start 让箭头对齐标题的第一行(居中时,折成两行的长标题
+   会把箭头挤到两行中间,和单行章节高低不一);箭头在首行内的
+   垂直居中由 nav-collapse.js 注入的 label padding 完成。 */
+.md-sidebar--primary .md-nav__item--nested > .md-nav__container {
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
 }
 
-/* 章节分组标题(第1章/第2章...) —— 稍粗、深蓝灰 */
+/* 章节之间稍微多一点呼吸感(Material 默认 1.25em) */
+.md-sidebar--primary .md-nav__item--section {
+  margin: 1.4em 0;
+}
+.md-sidebar--primary .md-nav__item--nested > .md-nav__container > a.md-nav__link {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+/* 当前页面对应的链接 —— 墨绿高亮 + 左侧 2px 指示条(VitePress 风) */
+.md-sidebar--primary a.md-nav__link--active,
+.md-sidebar--primary a.md-nav__link--active * {
+  color: var(--fenix-link-hover) !important;
+}
+.md-sidebar--primary a.md-nav__link--active {
+  border-left: 2px solid var(--fenix-link-hover);
+  padding-left: 8px;
+  margin-left: -10px;
+}
+/* 配套实验子项已有自己的 1px 从属线(下方 2b),不叠加指示条;
+   子项规则特异性更高,border/padding 本就不会被覆盖,这里只还原
+   margin,避免子项整体左移 10px。 */
+.md-sidebar--primary .md-nav__item--nested .md-nav a.md-nav__link--active {
+  margin-left: 0;
+}
+
+/* 展开后的子项(配套实验)—— 缩进一层、次级颜色、左侧细线示从属 */
+.md-sidebar--primary .md-nav__item--nested .md-nav .md-nav__link {
+  padding-left: 0.7rem;
+  border-left: 1px solid var(--fenix-border);
+  color: var(--fenix-ink-soft) !important;
+  font-weight: 400;
+}
+.md-sidebar--primary .md-nav__item--nested .md-nav .md-nav__link:hover,
+.md-sidebar--primary .md-nav__item--nested .md-nav .md-nav__link:hover * {
+  color: var(--fenix-link-hover) !important;
+}
+.md-sidebar--primary .md-nav__item--nested .md-nav a.md-nav__link--active {
+  border-left-color: var(--fenix-link-hover);
+}
+
+/* 侧栏顶部的 sticky 站点标题:压过下方内容,避免滚动时叠字;
+   背景跟随 fenix 底色(否则暗色模式下露出 Material 默认底色的色块) */
+@media screen and (min-width: 76.25em) {
+  .md-nav--primary > .md-nav__title {
+    z-index: 3;
+    background: var(--fenix-bg);
+    box-shadow: none;
+  }
+}
+
+/* 章节分组标题 —— 稍粗、深蓝灰 */
 .md-nav__title {
   color: var(--fenix-ink) !important;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+}
+
+/* ── 2b. 右侧栏(本页大纲):弱化存在感,阅读时的"你在这里" ──── */
+
+/* 同上:宽度只在桌面端覆写(移动端的收起位置同样被硬编码)。
+   13.5rem 让大部分中文标题单行放下,不再折成两行。 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--secondary {
+    width: 13.5rem;
+    padding-right: 0.6rem;
+  }
+}
+.md-nav--secondary .md-nav__title {
+  color: var(--fenix-ink-mute) !important;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+  background: transparent;
+}
+.md-nav--secondary .md-nav__link {
+  color: var(--fenix-ink-soft) !important;
+  font-size: 0.72rem;
+  padding: 4px 0;
+}
+.md-nav--secondary .md-nav__link:hover,
+.md-nav--secondary .md-nav__link:hover * {
+  color: var(--fenix-link-hover) !important;
+}
+/* 当前阅读位置(toc.follow 跟随滚动) */
+.md-nav--secondary .md-nav__link--active,
+.md-nav--secondary .md-nav__link--active * {
+  color: var(--fenix-link-hover) !important;
+  font-weight: 500;
+}
+/* 大纲的层级缩进线 */
+.md-nav--secondary .md-nav__list .md-nav__list {
+  border-left: 1px solid var(--fenix-border);
+  padding-left: 0.55rem;
 }
 
 /* ── 3. 正文排版 ─────────────────────────────────────────────── */
@@ -354,8 +493,15 @@
   overflow: hidden;
   margin: 1.4rem 0;
 }
+/* Markdown 会把每个 exp-card 包一层 <p>:清零其边距并让卡片撑满
+   格子,否则模拟 1px 边框的灰底会从缝隙里透出成大块灰带。 */
+.exp-grid > p {
+  margin: 0;
+}
 .exp-card {
   display: block;
+  height: 100%;
+  box-sizing: border-box;
   background: var(--fenix-bg);
   padding: 14px 16px;
   text-decoration: none;
@@ -411,6 +557,10 @@
   --fenix-code-ink:   #79c0ff;
   --fenix-link:       #e6edf3;
   --fenix-link-hover: #42b983;
+  /* 让正文区背景与 header/侧栏一致(否则 Material slate 的默认底色
+     略浅,sticky 站点标题处会露出一块深色矩形)。 */
+  --md-default-bg-color: #0d1117;
+  --md-default-fg-color: #e6edf3;
 }
 [data-md-color-scheme="slate"] .md-header,
 [data-md-color-scheme="slate"] .md-sidebar--primary {
@@ -420,4 +570,51 @@
 [data-md-color-scheme="slate"] .exp-card,
 [data-md-color-scheme="slate"] .hero {
   background: var(--fenix-bg);
+}
+
+/* ── 12. Arabic / RTL edition ─────────────────────────────────── */
+
+html[dir="rtl"] body {
+  font-family: "Noto Naskh Arabic", Amiri, "Noto Sans Arabic",
+               -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html[dir="rtl"] .md-typeset {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .md-typeset pre,
+html[dir="rtl"] .md-typeset code,
+html[dir="rtl"] .md-typeset kbd,
+html[dir="rtl"] .md-typeset samp,
+html[dir="rtl"] .md-typeset .highlight,
+html[dir="rtl"] .md-typeset .arithmatex,
+html[dir="rtl"] .md-typeset .mermaid {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+html[dir="rtl"] .md-typeset blockquote {
+  border-left: 0;
+  border-right: 0.2rem solid var(--fenix-border);
+  padding-left: 0;
+  padding-right: 0.8rem;
+}
+
+html[dir="rtl"] .md-typeset ul,
+html[dir="rtl"] .md-typeset ol {
+  margin-left: 0;
+  margin-right: 1.25em;
+}
+
+html[dir="rtl"] .md-typeset table:not([class]) th,
+html[dir="rtl"] .md-typeset table:not([class]) td {
+  text-align: right;
+}
+
+html[dir="rtl"] .lang-select {
+  margin-left: 0;
+  margin-right: 0.5rem;
 }

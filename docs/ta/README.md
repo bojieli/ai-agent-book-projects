@@ -1,27 +1,34 @@
 # AI Agents ஆழத்தில்: வடிவமைப்பு கோட்பாடுகள் மற்றும் பொறியியல் நடைமுறைகள்
 
-[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-%E0%AE%AA%E0%AE%A4%E0%AE%BF%E0%AE%B5%E0%AE%BF%E0%AE%B1%E0%AE%95%E0%AF%8D-success.svg)](#-மின--புத்தகம்) [![Languages](https://img.shields.io/badge/மொழ%E0%AE%AA%E0%AF%86%E0%AE%AF%E0%AE%B0%E0%AF%8D%E0%AE%AA%E0%AF%81-5%20%E0%AE%AE%E0%AF%8A%E0%AE%B4%E0%AE%BF%E0%AE%95%E0%AE%B3%E0%AF%8D-informational.svg)](#-மின--புத்தகம்)
+[![PDF](https://img.shields.io/badge/PDF-%E0%AE%AA%E0%AE%A4%E0%AE%BF%E0%AE%B5%E0%AE%BF%E0%AE%B1%E0%AE%95%E0%AF%8D-success.svg)](#-மின்-புத்தகம்) [![நிகழ்நேரத்தில் படி](https://img.shields.io/badge/🌐_நிகழ்நேர_படி-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/மொழ%E0%AE%AA%E0%AF%86%E0%AE%AF%E0%AE%B0%E0%AF%8D%E0%AE%AA%E0%AF%81-9%20%E0%AE%AE%E0%AF%8A%E0%AE%B4%E0%AE%BF%E0%AE%95%E0%AE%B3%E0%AF%8D-informational.svg)](#-மின்-புத்தகம்)
 
-**[中文](../../README.md) · [台灣正體](../zh-TW/README.md) · [English](../en/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய · [Türkçe](../../README.tr.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [正體中文](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
 
-**Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **88 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
+> 📥 **[PDF / EPUB பதிவிறக்கம்](#-மின்-புத்தகம்)** (பரிந்துரைக்கப்படுகிறது) — சிறந்த வாசிப்பு அனுபவத்திற்கு PDF / EPUB பதிப்புகளைப் பரிந்துரைக்கிறோம்; [நிகழ்நேரத்திலும் படிக்கலாம்](https://bojieli.github.io/ai-agent-book/) (மொழி மாற்றி, மடிக்கக்கூடிய அத்தியாய மரம், முழு-உரை தேடல்; main கிளைக்கு ஒவ்வொரு push-ம் தானாகவே மீண்டும் கட்டப்படுகிறது).
 
-| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **88** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **6 மொழிகள்**: சீன / 台灣正體 / ஆங் / தமிழ் / வியத் / துருக்கியம் |
+**Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **93 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
+
+| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **93** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **9 மொழிகள்**: சீன / ஆங் / அரபு / 正體中文 / ரஷ்ய / தமிழ் / வியத் / ஜப் / துருக்கியம் |
 | :---: | :---: | :---: |
 
 ## 📖 மின்-புத்தகம்
 
-> 📥 **PDF / EPUB நேரடி பதிவிறக்கம்** (முழு உரை, இலவசம்). இந்த இணைப்புகள் எப்போதும் `main` கிளையின் சமீபத்திய கட்டமைப்பைச் சுட்டும்; நிலையான பதிப்புகளுக்கு [Releases](https://github.com/bojieli/ai-agent-book/releases) பார்க்கவும்:
+> 📥 **PDF / EPUB நேரடி பதிவிறக்கம்** (பரிந்துரைக்கப்படுகிறது; முழு உரை, இலவசம்). இந்த இணைப்புகள் எப்போதும் `main` கிளையின் சமீபத்திய கட்டமைப்பைச் சுட்டும்; நிலையான பதிப்புகளுக்கு [Releases](https://github.com/bojieli/ai-agent-book/releases) பார்க்கவும்:
 > - **சீனம் (அசல்)**：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
+> - **ஆங்கிலம்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **அரபு**（சமூக மொழிபெயர்ப்பு, by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **பாரம்பரிய சீனம் (தைவான்)**（சமூக மொழிபெயர்ப்பு, by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
-> - **ஆங்கிலம்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **ரஷ்யம்**（சமூக மொழிபெயர்ப்பு, by [@ui99ru](https://github.com/ui99ru)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **தமிழ்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
 > - **வியட்நாம்**（சமூக மொழிபெயர்ப்பு, by [@toanalien](https://github.com/toanalien)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
-> - **துருக்கியம்**（சமூக மொழிபெயர்ப்பு, by [@memisemre](https://github.com/memisemre)）：PDF/EPUB இன்னும் உருவாக்கப்படவில்லை — [`book-tr/`](../../book-tr/)-இல் நேரடியாகப் படிக்கவும்
+> - **ஜப்பானியம்**（சமூக மொழிபெயர்ப்பு, by [@eltociear](https://github.com/eltociear)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
+> - **துருக்கியம்**（சமூக மொழிபெயர்ப்பு, by [@memisemre](https://github.com/memisemre)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+>
+> 🌐 [நிகழ்நேரத்திலும் படிக்கலாம்](https://bojieli.github.io/ai-agent-book/) — மொழி மாற்றி, மடிக்கக்கூடிய அத்தியாய மரம், முழு-உரை தேடல் மற்றும் துணை சோதனைகளுக்கான நேரடி இணைப்புகள். main கிளைக்கு ஒவ்வொரு push-ம் தானாகவே மீண்டும் கட்டப்படுகிறது.
 
-சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; 台灣正體/ஆங்/தமிழ்/வியத்/துருக்கியம் பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-zhtw/`](../../book-zhtw/), [`book-en/`](../../book-en/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-tr/`](../../book-tr/)-இல் உள்ளன.
+சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; ஆங்/அரபு/正體中文/ரஷ்ய/தமிழ்/வியத்/ஜப்/துருக்கியம் பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/)-இல் உள்ளன.
 
-ஒரே உருவாக்க நிரல் எளிய சீனம், பாரம்பரிய சீனம் (தைவான்), ஆங்கிலம், தமிழ் மற்றும் வியட்நாமியம் ஆகிய மொழிகளுக்கான EPUB 3 பதிப்புகளை உருவாக்குகிறது. [EPUB உருவாக்க வழிமுறைகளைப்](../../EPUB.md) பார்க்கவும்.
+ஒரே உருவாக்க நிரல் எளிய சீனம், ஆங்கிலம், அரபு, பாரம்பரிய சீனம் (தைவான்), ரஷ்யம், தமிழ், வியட்நாமியம், ஜப்பானியம் மற்றும் துருக்கியம் ஆகிய மொழிகளுக்கான EPUB 3 பதிப்புகளை உருவாக்குகிறது. [EPUB உருவாக்க வழிமுறைகளைப்](../../EPUB.md) பார்க்கவும்.
 
 <details>
 <summary><b>🔧 PDF-ஐ தாங்களே கட்டவா?</b> (pandoc / xelatex / ElegantBook தேவை)</summary>
@@ -33,7 +40,7 @@
   cd book && bash build_pdf.sh
   ```
 
-  படங்கள் `book/gen_*_figs.py` ஆல் உருவாக்கப்பட்டு `book/images/`-இல் சேமிக்கப்படுகின்றன; typography விவரங்களுக்கு `book/preamble.tex` மற்றும் `book/*.lua` பார்க்கவும்.
+  படங்கள் SVG கோப்புகளாக `book/images/`-இல் சேமிக்கப்பட்டு உருவாக்கத்தின் போது நேரடியாகப் பயன்படுத்தப்படுகின்றன; typography விவரங்களுக்கு `book/preamble.tex` மற்றும் `book/*.lua` பார்க்கவும்.
 
 </details>
 
@@ -43,16 +50,16 @@
 
 | அதி | தலைப்பு | ஒரு வரி சுருக்கம் | உரை | குறியீடு |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **ஏஜென்ட் அடிப்படைகள்** | "மாதிரியே ஏஜென்ட்" முன்னுதாரணம் + **Agent = LLM + Context + Tools**; Harness பொறியியலே உண்மையான போட்டித் திறன் | [படி](../../book-ta/chapter1.ta.md) | [4](../../chapter1/README.ta.md) |
+| 1 | 🚀 **ஏஜென்ட் அடிப்படைகள்** | **Agent = LLM + Context + Tools**; Harness பொறியியலே உண்மையான போட்டித் திறன் | [படி](../../book-ta/chapter1.ta.md) | [4](../../chapter1/README.ta.md) |
 | 2 | 🎯 **சூழல் பொறியியல்** | சூழல் ஏஜெண்டின் திறனின் மேல் வரம்பைத் தீர்மானிக்கிறது: KV Cache, prompt engineering, Agent Skills, சூழல் சுருக்கம் | [படி](../../book-ta/chapter2.ta.md) | [9](../../chapter2/README.ta.md) |
 | 3 | 📚 **பயனர் நினைவகம் & அறிவுத் தளம்** | பயனரை அமர்வுகளுக்கு குறுக்கே நினைவில் வைத்தல் + வெளிப்புற அறிவு: பயனர் நினைவகம், RAG, கட்டமைக்கப்பட்ட குறியீடு, அறிவு வரைபடம் | [படி](../../book-ta/chapter3.ta.md) | [13](../../chapter3/README.ta.md) |
 | 4 | 🛠️ **கருவிகள்** | கருவிகள் ஏஜெண்டின் கைகள்: MCP நெறிமுறை, உணர்வு/செயலாக்கம்/ஒத்துழைப்பு, நிகழ்வு-இயக்கிய ஏஜென்ட், முனைப்பான கருவி கண்டுபிடிப்பு | [படி](../../book-ta/chapter4.ta.md) | [7](../../chapter4/README.ta.md) |
 | 5 | 💻 **Coding Agent & குறியீடு உருவாக்கம்** | குறியீடு "புதிய கருவியை உருவாக்கும் கருவி"; உற்பத்தி தர Coding Agent முழுமையாக | [படி](../../book-ta/chapter5.ta.md) | [12](../../chapter5/README.ta.md) |
-| 6 | 🎯 **ஏஜென்ட் மதிப்பீடு** | செயல்திறனை ஒப்பிடக்கூடிய சமிக்ஞையாக மாற்று: சூழல்கள், அளவீடுகள், புள்ளியியல் முக்கியத்துவம், மதிப்பீடு-இயக்கிய தேர்வு | [படி](../../book-ta/chapter6.ta.md) | [10](../../chapter6/README.ta.md) |
-| 7 | 🧠 **மாதிரி பிந்தைய பயிற்சி** | Pre-training/SFT/RL மூன்று நிலைகள்: SFT vs RL, கருவி அழைப்பை உள்ளடக்குதல், மாதிரி செயல்திறன் | [படி](../../book-ta/chapter7.ta.md) | [14](../../chapter7/README.ta.md) |
+| 6 | 🎯 **ஏஜென்ட் மதிப்பீடு** | செயல்திறனை ஒப்பிடக்கூடிய சமிக்ஞையாக மாற்று: சூழல்கள், அளவீடுகள், புள்ளியியல் முக்கியத்துவம், மதிப்பீடு-இயக்கிய தேர்வு | [படி](../../book-ta/chapter6.ta.md) | [11](../../chapter6/README.ta.md) |
+| 7 | 🧠 **மாதிரி பிந்தைய பயிற்சி** | Pre-training/SFT/RL மூன்று நிலைகள்: SFT vs RL, கருவி அழைப்பை உள்ளடக்குதல், மாதிரி செயல்திறன் | [படி](../../book-ta/chapter7.ta.md) | [16](../../chapter7/README.ta.md) |
 | 8 | 🔄 **ஏஜென்ட் சுய-பரிணாமம்** | எடைகளை மாற்றாமல் வளர்தல்: அனுபவத்திலிருந்து கற்றல், பயனரிலிருந்து உருவாக்குநர் | [படி](../../book-ta/chapter8.ta.md) | [6](../../chapter8/README.ta.md) |
 | 9 | 🎙️ **பல்முக & நிகழ்நேர இடைவினை** | உரையிலிருந்து குரல், GUI, பௌதீக உலகம்: மூன்று குரல் முன்னுதாரணங்கள், Computer Use, ரோபோட்டிக்ஸ் | [படி](../../book-ta/chapter9.ta.md) | [7](../../chapter9/README.ta.md) |
-| 10 | 🤝 **பல-ஏஜென்ட் ஒத்துழைப்பு** | கூட்டு நுண்ணறிவு > தனிப்பட்டது: ஒத்துழைப்பு கட்டமைப்பு, சூழல் பகிர்வு/தனிமைப்படுத்தல், "ஏஜென்ட் சமூகம்" | [படி](../../book-ta/chapter10.ta.md) | [6](../../chapter10/README.ta.md) |
+| 10 | 🤝 **பல-ஏஜென்ட் ஒத்துழைப்பு** | கூட்டு நுண்ணறிவு > தனிப்பட்டது: ஒத்துழைப்பு கட்டமைப்பு, சூழல் பகிர்வு/தனிமைப்படுத்தல், "ஏஜென்ட் சமூகம்" | [படி](../../book-ta/chapter10.ta.md) | [7](../../chapter10/README.ta.md) |
 
 
 > 💡 **படி** = GitHub-இல் அத்தியாய உரையைப் படிக்க (markdown); **N** = துணை திட்டங்களின் எண்ணிக்கை, குறியீட்டுக்கு சொடுக்கவும். திட்ட வகைகள் (✅ தனித்து / 📖 மறு உருவாக்கம் / 🚧 வடிவமைப்பு) ஒவ்வொரு அத்தியாய README-இல்.
@@ -63,22 +70,29 @@
 
 பல தளங்களில் API விசை பெற பரிந்துரைக்கப்படுகிறது. மாதிரி தேர்வுக்கு [இந்த வழிகாட்டி](https://01.me/2025/07/llm-api-setup/).
 
-| தளம் | Link | அம்சங்கள் |
-| --- | --- | --- |
-| **Kimi** (Moonshot) | <https://platform.moonshot.cn/> | Kimi series, நீண்ட சூழல் மற்றும் Agent திறன் வலுவாக |
-| **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6, சீன மொழி வலுவாக, செலவு-செயல்திறன் நல்லது |
-| **Siliconflow** | <https://siliconflow.cn/> | பல திறந்த மூல மாதிரிகள் (DeepSeek, Qwen போன்ற) |
-| **Volcano Engine** | <https://www.volcengine.com/product/ark> | ByteDance Doubao (மூடிய-மூல), சீனாவில் குறைந்த தாமதம் |
-| **OpenRouter** | <https://openrouter.ai/> | Gemini / Claude / GPT-5 ஒரே இடத்திலிருந்து (அதிகாரப்பூர்வ API-க்கு வெளிநாட்டு IP/கட்டணம் தேவை; OpenAI-க்கு வெளிநாட்டு ID சரிபார்ப்பும் தேவை) |
+| தளம் | Link | அம்சங்கள் | அணுகல் முனைகள் |
+| --- | --- | --- | --- |
+| **Kimi** (Moonshot) | <https://platform.moonshot.cn/> | Kimi series, நீண்ட சூழல் மற்றும் Agent திறன் வலுவாக | சீனா நிலப்பரப்பு |
+| **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6, சீன மொழி வலுவாக, செலவு-செயல்திறன் நல்லது | சீனா நிலப்பரப்பு |
+| **Siliconflow** | <https://siliconflow.cn/> | பல திறந்த மூல மாதிரிகள் (DeepSeek, Qwen போன்ற), சீனா நிலப்பரப்பில் விரைவான அணுகல் | சீனா நிலப்பரப்பு |
+| **DeepSeek** | <https://platform.deepseek.com/> | DeepSeek அதிகாரப்பூர்வ API | உலகளாவிய + சீனா நிலப்பரப்பு |
+| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | உலகளாவிய மற்றும் சீன உள்நாட்டு முக்கிய மாதிரிகளை (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) ஒரே இடத்திலிருந்து அணுகலாம் | உலகளாவிய + சீனா நிலப்பரப்பு |
+| **OpenRouter** | <https://openrouter.ai/> | உலகளாவிய மற்றும் சீன உள்நாட்டு முக்கிய மாதிரிகளை (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen போன்ற) ஒரே இடத்திலிருந்து அணுகலாம் | உலகளாவிய |
+
+## 💎 ஸ்பான்சர்கள்
+
+இந்த திட்டத்திற்கு ஸ்பான்சர் செய்த **Krill AI**-க்கு நன்றி! Krill நிறுவனம் GPT / Claude / Gemini மற்றும் பல சீன மாதிரிகளுக்கு அதிகாரப்பூர்வ, நிலையான, அதிவேக API அணுகல் சேவையை வழங்குகிறது; நிறுவன அளவிலான தனிப்பயனாக்கம், விலைப்பட்டியல் வசதி, 7×16 மணி நேர அர்ப்பணிப்பு தொழில்நுட்ப ஆதரவு, மேலும் விரைவான முதல் டோக்கன் வேகத்திற்கான பிரத்யேக WebSocket இணைப்பும் உண்டு.
+
+புத்தக வாசகர்களுக்கு Krill சிறப்பு சலுகை வழங்குகிறது: [இந்த இணைப்பு](https://www.krill-ai.com/register?invite=Q8D3L35725) மூலம் பதிவு செய்து, ரீசார்ஜ் செய்யும் போது "ai-agent-book" என்ற சலுகைக் குறியீட்டை உள்ளிட்டால், முதல் Codex திட்ட வாங்குதலில் 23% தள்ளுபடி!
 
 ## 📦 பின்னிணைப்பு · வெளிப்புற களஞ்சியங்களைப் பெறுதல்
 
-அத்தியாயம் 6, 7, 9, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 20 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
+அத்தியாயம் 6, 7, 9, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 19 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
 
 ### ஒரே நேரத்தில் clone ச்கிரிப்ட்
 
 <details>
-<summary><b>🔧 clone கட்டளைகளை விரிவாக்கு</b> (20 வெளிப்புற களஞ்சியங்கள்)</summary>
+<summary><b>🔧 clone கட்டளைகளை விரிவாக்கு</b> (19 வெளிப்புற களஞ்சியங்கள்)</summary>
 
 ```bash
 # அத்தியாயம் 6 · மதிப்பீட்டு Benchmarks
@@ -97,7 +111,6 @@ git clone https://github.com/bojieli/AWorld.git                        chapter7/
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/bojieli/lighteval.git                     chapter7/Intuitor/lighteval
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
 
@@ -110,7 +123,7 @@ git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10
 git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-7 Stanford AI Town
 ```
 
-> ஏதேனும் திட்ட README குறிப்பிட்ட commit-ஐ குறிப்பிட்டால், மறு உருவாக்கத்திற்கு அந்த பதிப்பிற்கு `git checkout` செய்யவும். அத்தியாயம் 10 `use-computer-while-calling` தனியாக பராமரிக்கப்படும் [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)-ஆக வளர்ந்துள்ளது; இந்த களஞ்சியம் அதை நோக்கிய ஆவணத்தை மட்டும் வைத்துள்ளது.
+> ஏதேனும் திட்ட README குறிப்பிட்ட commit-ஐ குறிப்பிட்டால், மறு உருவாக்கத்திற்கு அந்த பதிப்பிற்கு `git checkout` செய்யவும். அத்தியாயம் 10 `use-computer-while-calling` தனியாக பராமரிக்கப்படும் [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)-ஆக வளர்ந்துள்ளது; இந்த களஞ்சியம் அந்த அடைவை உள்ளடக்காது—மேலே உள்ள clone கட்டளையைப் பயன்படுத்தி அதைப் பெறவும்.
 
 </details>
 
@@ -123,7 +136,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 6-2 / 6-3 / 6-4 / 6-9 | 📝 வாசகர் பயிற்சி | மனித benchmark, நினைவக மதிப்பீடு, JSON Cards vs RAG, நினைவக தேர்வு — அத்தியாயம் 3 `user-memory` / `user-memory-evaluation` / `contextual-retrieval` மாற்றியமைத்தல் |
 | 5-12 | 📝 வாசகர் பயிற்சி | ஏஜென்ட்களை உருவாக்கும் ஏஜென்ட் — `chapter5/coding-agent`-இலிருந்து bootstrap |
 | 7-8 | 📝 வாசகர் பயிற்சி | Prompt distillation — `chapter8/prompt-distillation` பார்க்கவும் (அத்தியாயங்களுக்கு இடையே மறுபயன்பாடு) |
-| 7-9 | 📝 வாசகர் பயிற்சி | CoT distillation `[நீட்டிப்பு]` — புத்தகத்தில் வடிவமைப்பு மற்றும் ஏற்பு அளவுகோல்கள், தனி குறியீடு இல்லை |
+| 7-9 | 📝 வாசகர் பயிற்சி | CoT distillation `[நீட்டிப்பு]` — துணை செயலாக்கம் `chapter7/cot-distillation`-இல் (SFT தரவு உருவாக்கம் மற்றும் விதி சரிபார்ப்பாளர் உட்பட) |
 | 6-11 | 🤖 சோதனை மதிப்பீடு | OpenVLA + RoboTwin2 — VLA training/env சார்புகளுக்கு `chapter7/SimpleVLA-RL` README பார்க்கவும் |
 | 9-8 / 9-9 | 🔧 உண்மையான வன்பொருள் | XLeRobot teleoperation மற்றும் LLM Agent control — SO-100 arm தேவை, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
 | 9-10 | 🔧 உண்மையான வன்பொருள் | RGB zero-shot Sim2Real grasping — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (சோதனை pure GPU-இல்; வரிசைப்படுத்த SO-100 தேவை) |
@@ -137,8 +150,8 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 📝 **புத்தக உள்ளடக்கம்** | பிழைத்திருத்தம், சேர்த்தல், தெளிவான வார்த்தைகள், அல்லது புதிய முன்னேற்றங்கள் (உரை `book/chapter*.md`-இல்) |
 | 🐛 **குறியீடு மேம்பாடு & bug திருத்தம்** | துணை திட்டங்களை வலுவானதாக, பயன்படுத்த எளிதாக, உற்பத்தி-தயாராக மாற்று |
 | 🧪 **புதிய நடைமுறை திட்டங்கள்** | சோதனைகளுக்கு சிறந்த செயலாக்கத்தைச் சேர்க்கவும்/மாற்றவும், அல்லது புதிய எடுத்துக்காட்டுகளைப் பங்களிக்கவும் |
-| 🎨 **பட வடிவமைப்பு** | `book/images/` விளக்கப்படங்களை தெளிவாகவும் அழகாகவும் மாற்று (`book/gen_*_figs.py` ஆல் உருவாக்கப்பட்டவை) |
-| 🌐 **புதிய மொழிபெயர்ப்புகள்** | மேலும் மொழிகளுக்கு மொழிபெயர்ப்பை வரவேற்கிறோம்; பாரம்பரிய சீனம்/தைவான் (`book-zhtw/`), ஆங்கிலம் (`book-en/`), தமிழ் (`book-ta/`), வியட்நாம் (`book-vi/`), துருக்கியம் (`book-tr/`) பார்க்கவும் |
+| 🎨 **பட வடிவமைப்பு** | `book/images/`-இல் பதியப்பட்ட SVG விளக்கப்படங்களை நேரடியாக மேம்படுத்தவும் |
+| 🌐 **புதிய மொழிபெயர்ப்புகள்** | மேலும் மொழிகளுக்கு மொழிபெயர்ப்பை வரவேற்கிறோம்; ஆங்கிலம் (`book-en/`), அரபு (`book-ar/`), பாரம்பரிய சீனம்/தைவான் (`book-zhtw/`), தமிழ் (`book-ta/`), வியட்நாம் (`book-vi/`), ஜப்பானியம் (`book-ja/`), துருக்கியம் (`book-tr/`) பார்க்கவும் |
 
 சமர்ப்பிக்கும் முன், தொடர்புடைய சோதனைகளை இயக்கி மறு உருவாக்கத்தை உறுதிப்படுத்தவும்; கருத்துக்களைப் பேச முதலில் issue திறக்கலாம்.
 

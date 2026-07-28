@@ -120,6 +120,10 @@ def fit(schema, results, k_range=range(2, 5), save=True, verbose=True):
             sil = silhouette_score(Zc, km.labels_)
             if best is None or sil > best[0]:
                 best = (sil, k, km)
+        if best is None:
+            if verbose:
+                print(f"    {ch}: n={len(idx)}  样本过少，跳过聚类")
+            continue
         sil, k, km = best
         sils.append(sil)
         if verbose:

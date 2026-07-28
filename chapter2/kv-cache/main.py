@@ -12,6 +12,13 @@ import logging
 from typing import Dict, List, Any
 from datetime import datetime
 from dataclasses import asdict
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from agent import KVCacheAgent, KVCacheMode, AgentMetrics, compare_implementations
 
 # Default model (Moonshot / Kimi). The whole current Kimi family (k2.5/k2.6/
@@ -22,6 +29,7 @@ from agent import KVCacheAgent, KVCacheMode, AgentMetrics, compare_implementatio
 # (The non-reasoning moonshot-v1-* models do NOT report cached_tokens, so they
 # cannot demonstrate the cache effect.)
 DEFAULT_MODEL = "kimi-k2.6"
+DEFAULT_ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
 # Configure logging
 logging.basicConfig(
@@ -176,17 +184,17 @@ def run_report(inputs: List[str] = None, cache_price_ratio: float = 0.1) -> None
 
 def create_summary_task() -> str:
     """Create a task that requires reading multiple files"""
-    return """Please analyze and summarize all the projects in the week1 and week2 directories.
+    return """Please analyze and summarize all the projects in the chapter1 and chapter2 directories.
 For each project:
 1. Find all Python files
 2. Read the main files and understand the functionality
 3. Identify the key features and purpose
 4. Provide a comprehensive summary
 
-Start with week1 projects, then move to week2. Be thorough in your analysis."""
+Start with chapter1 projects, then move to chapter2. Be thorough in your analysis."""
 
 
-def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = "../..",
+def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = DEFAULT_ROOT_DIR,
                     model: str = DEFAULT_MODEL, output: str = None):
     """
     Run agent in a single mode
@@ -195,7 +203,7 @@ def run_single_mode(api_key: str, mode: str, task: str = None, root_dir: str = "
         api_key: API key for Kimi
         mode: KV cache mode to use
         task: Custom task (optional)
-        root_dir: Root directory for file operations (default: "../.." = /projects from kv-cache dir)
+        root_dir: Root directory for file operations (default: "../.." = repository root)
         model: Model to use
         output: Output path for the result JSON (optional; auto-named if omitted)
     """
@@ -360,7 +368,7 @@ def select_mode_interactive():
             print("\n\nExiting...")
             sys.exit(0)
 
-def run_comparison(api_key: str, task: str = None, root_dir: str = "../..",
+def run_comparison(api_key: str, task: str = None, root_dir: str = DEFAULT_ROOT_DIR,
                    model: str = DEFAULT_MODEL, output: str = None,
                    cache_price_ratio: float = 0.1):
     """
@@ -369,7 +377,7 @@ def run_comparison(api_key: str, task: str = None, root_dir: str = "../..",
     Args:
         api_key: API key for Kimi
         task: Custom task (optional)
-        root_dir: Root directory for file operations (default: "../.." = /projects from kv-cache dir)
+        root_dir: Root directory for file operations (default: "../.." = repository root)
         model: Model to use for all modes
         output: Output path for the comparison JSON (optional; auto-named if omitted)
         cache_price_ratio: Assumed price of a cached token vs a normal token (cost column)
@@ -476,8 +484,8 @@ def main():
     parser.add_argument("--cache-price-ratio", type=float, default=0.1,
                         help="成本估算中缓存 token 相对正常 token 的计费比例（默认：0.1，即缓存读取按一折计），仅作示意")
     parser.add_argument("--task", type=str, help="自定义任务描述（默认：分析并总结项目代码）")
-    parser.add_argument("--root-dir", type=str, default="../..",
-                        help="文件工具的根目录（默认：../.. 即仓库根，供 Agent 读取代码）")
+    parser.add_argument("--root-dir", type=str, default=DEFAULT_ROOT_DIR,
+                        help="文件工具的根目录（默认：仓库根目录，供 Agent 读取代码）")
     parser.add_argument("--interactive", action="store_true", default=True,
                         help="交互式菜单选择策略（默认开启）")
     parser.add_argument("--no-interactive", dest="interactive", action="store_false",

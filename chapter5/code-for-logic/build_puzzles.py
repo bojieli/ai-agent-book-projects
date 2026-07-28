@@ -119,6 +119,11 @@ def build_puzzle(pid, names, structs, nl_overrides=None):
 def _random_stmt(speaker, names, rng):
     """为 speaker 随机生成一句合法的结构化陈述。"""
     others = [n for n in names if n != speaker]
+    # Solo resident: only count statements are valid (no "others" to name).
+    if not others:
+        role = rng.choice(["knight", "knave"])
+        op = rng.choice([">=", "<=", "=="])
+        return ["count", role, op, rng.randint(1, len(names))]
     kind = rng.choice(["is", "is", "same", "diff", "count"])
     if kind == "is":
         return ["is", rng.choice(others), rng.choice(["knight", "knave"])]

@@ -127,4 +127,9 @@ def _default_temperature() -> str:
     return "1" if _is_reasoning_model(model) else "0"
 
 
-TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", _default_temperature()))
+def get_temperature() -> float:
+    """在调用时按当前解析出的模型选择温度，使 CLI/env 的 --model/--provider
+    覆盖生效。原来的模块级 TEMPERATURE 常量在 import 时就被固定，而 demo.py 在
+    import 之后才设置 LLM_MODEL/LLM_PROVIDER，导致温度停留在默认模型的值
+    （例如把非推理模型误用 temperature=1，破坏了本文件追求的可复现性）。"""
+    return float(os.getenv("LLM_TEMPERATURE", _default_temperature()))

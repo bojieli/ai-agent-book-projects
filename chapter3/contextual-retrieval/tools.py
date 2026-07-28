@@ -178,7 +178,7 @@ class KnowledgeBaseTools:
             response = requests.post(
                 f"{self.config.dify_base_url}/datasets/search",
                 headers=headers,
-                json=payload
+                json=payload, timeout=30
             )
             response.raise_for_status()
             
@@ -214,7 +214,7 @@ class KnowledgeBaseTools:
                     "query": query,
                     "index_type": "raptor",
                     "top_k": self.config.raptor_top_k
-                }
+                }, timeout=30
             )
             response.raise_for_status()
             
@@ -258,7 +258,7 @@ class KnowledgeBaseTools:
                     "index_type": "graphrag",
                     "top_k": self.config.graphrag_top_k,
                     "search_type": self.config.graphrag_search_type
-                }
+                }, timeout=30
             )
             response.raise_for_status()
             
@@ -338,7 +338,7 @@ class KnowledgeBaseTools:
         """Get document from local retrieval pipeline"""
         try:
             response = requests.get(
-                f"{self.config.local_base_url}/documents/{doc_id}"
+                f"{self.config.local_base_url}/documents/{doc_id}", timeout=30
             )
             
             if response.status_code == 404:
@@ -364,7 +364,7 @@ class KnowledgeBaseTools:
             
             response = requests.get(
                 f"{self.config.dify_base_url}/documents/{doc_id}",
-                headers=headers
+                headers=headers, timeout=30
             )
             
             if response.status_code == 404:
@@ -387,7 +387,7 @@ class KnowledgeBaseTools:
                     "query": f"node:{doc_id}",  # Specific node query
                     "index_type": "raptor",
                     "top_k": 1
-                }
+                }, timeout=30
             )
             
             if response.status_code == 404:
@@ -425,7 +425,7 @@ class KnowledgeBaseTools:
                     "index_type": "graphrag",
                     "top_k": 1,
                     "search_type": "hybrid"
-                }
+                }, timeout=30
             )
             
             if response.status_code == 404:

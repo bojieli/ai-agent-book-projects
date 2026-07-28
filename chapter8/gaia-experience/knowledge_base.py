@@ -41,6 +41,14 @@ class KnowledgeBase:
         # Initialize the sentence transformer
         try:
             self.encoder = SentenceTransformer(model_name)
+            # Derive the real embedding dimension from the loaded model so the
+            # FAISS index matches it. A fixed 384 silently breaks any non-384
+            # model chosen via --embedding-model / config.yaml (e.g.
+            # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
+            # and every search falls back to keyword-only for the whole KB.
+            model_dim = self.encoder.get_sentence_embedding_dimension()
+            if model_dim:
+                self.embedding_dim = model_dim
         except Exception as e:
             logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
             self.encoder = None
@@ -75,7 +83,22 @@ class KnowledgeBase:
                         self.metadata = pickle.load(f)
                 else:
                     self.metadata = [{}] * len(self.documents)
-                    
+
+                # A persisted index carries no model id / dimension, so a run
+                # that switched embedding models would reuse an index whose
+                # dimension no longer matches the encoder — every add()/search()
+                # would then raise a dimension mismatch (swallowed) and silently
+                # disable semantic search. Detect the mismatch and rebuild the
+                # index from the stored query texts.
+                if (self.encoder and self.index is not None
+                        and self.index.d != self.embedding_dim):
+                    logger.warning(
+                        "Persisted FAISS index dim %s != model dim %s "
+                        "(embedding model changed); rebuilding from stored queries.",
+                        self.index.d, self.embedding_dim,
+                    )
+                    self._rebuild_index_from_metadata()
+
                 logger.info(f"Loaded knowledge base with {len(self.documents)} documents")
             except Exception as e:
                 logger.error(f"Failed to load index: {e}")
@@ -89,6 +112,26 @@ class KnowledgeBase:
             self.index = faiss.IndexFlatL2(self.embedding_dim)
         self.documents = []
         self.metadata = []
+
+    def _rebuild_index_from_metadata(self):
+        """Rebuild the FAISS index at the current embedding dimension by
+        re-encoding the query texts persisted in metadata (used when a loaded
+        index was built with a different embedding model). One embedding per
+        document, in order, so index rows stay aligned with self.documents."""
+        self.index = faiss.IndexFlatL2(self.embedding_dim)
+        if not self.documents:
+            return
+        queries = [
+            (self.metadata[i].get('query', '') if i < len(self.metadata) else '')
+            for i in range(len(self.documents))
+        ]
+        try:
+            embeddings = self.encoder.encode(queries)
+            self.index.add(embeddings)
+            self._save_index()
+            logger.info(f"Rebuilt FAISS index with {self.index.ntotal} embeddings")
+        except Exception as e:
+            logger.error(f"Failed to rebuild FAISS index: {e}")
     
     def _save_index(self):
         """Save index to disk."""
@@ -121,6 +164,16 @@ class KnowledgeBase:
         
         logger.info(f"Indexing GAIA validation data from {validation_file}")
         
+        # The index is persisted and reloaded by __init__ (_load_index), so
+        # without this every run appends another full copy of the dataset and
+        # search() starts returning the same document top_k times.
+        existing_ids = {
+            doc.get('task_id')
+            for doc in self.documents
+            if doc.get('source') == 'gaia_validation'
+        }
+        skipped = 0
+        
         try:
             with open(validation_file, 'r', encoding='utf-8') as f:
                 for line_num, line in enumerate(f, 1):
@@ -133,9 +186,14 @@ class KnowledgeBase:
                         level = data.get('Level', 0)
                         metadata = data.get('Annotator Metadata', {})
                         
+                        task_id = data.get('task_id', f'gaia_{line_num}')
+                        if task_id in existing_ids:
+                            skipped += 1
+                            continue
+                        
                         # Create experience document
                         experience = {
-                            'task_id': data.get('task_id', f'gaia_{line_num}'),
+                            'task_id': task_id,
                             'question': question,
                             'answer': answer,
                             'level': level,
@@ -148,6 +206,7 @@ class KnowledgeBase:
                         
                         # Add to index
                         self.add_experience(question, experience)
+                        existing_ids.add(task_id)
                         
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to parse line {line_num}: {e}")
@@ -156,6 +215,8 @@ class KnowledgeBase:
             
             # Save the index after bulk indexing
             self._save_index()
+            if skipped:
+                logger.info(f"Skipped {skipped} GAIA records already present in the index")
             logger.info(f"Successfully indexed {len(self.documents)} experiences from GAIA validation")
             
         except Exception as e:
@@ -268,7 +329,7 @@ class KnowledgeBase:
                 
                 results = []
                 for idx in indices[0]:
-                    if idx < len(self.documents):
+                    if 0 <= idx < len(self.documents):
                         results.append(self.documents[idx])
                 
                 return results

@@ -202,7 +202,7 @@ class MemoryIndexer:
         """Send documents to the retrieval pipeline for indexing"""
         try:
             # First, clear existing index
-            clear_response = requests.post(f"{self.retrieval_url}/clear")
+            clear_response = requests.post(f"{self.retrieval_url}/clear", timeout=30)
             if clear_response.status_code == 200:
                 logger.info("Cleared existing index")
             
@@ -214,7 +214,7 @@ class MemoryIndexer:
                 try:
                     response = requests.post(
                         f"{self.retrieval_url}/index",
-                        json=doc  # Send individual document
+                        json=doc  # Send individual document, timeout=30
                     )
                     
                     if response.status_code == 200:
@@ -311,7 +311,7 @@ class MemoryIndexer:
                     "top_k": max(20, top_k),  # Retrieve more candidates for better reranking
                     "rerank_top_k": top_k,    # Return the requested number of results
                     "skip_reranking": False    # Always use reranking for better quality
-                }
+                }, timeout=30
             )
             response.raise_for_status()
             

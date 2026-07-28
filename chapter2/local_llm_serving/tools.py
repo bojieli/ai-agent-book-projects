@@ -93,7 +93,7 @@ class ToolRegistry:
                 "properties": {
                     "code": {
                         "type": "string",
-                        "description": "Python code to execute"
+                        "description": "Python code to execute. Use Python operators: ** for exponentiation (2 ** 10), not ^ — in Python ^ is bitwise XOR."
                     }
                 },
                 "required": ["code"]
@@ -426,10 +426,15 @@ class ToolRegistry:
             # Also strip any leading/trailing whitespace
             code = code.strip()
             
-            # Convert common mathematical notation to Python syntax
-            # Replace ^ with ** for exponentiation
-            code = re.sub(r'\^', '**', code)
-            
+            # NOTE: we deliberately do NOT rewrite '^' to '**' here. '^' is a
+            # valid Python operator (bitwise XOR), so a blanket substitution
+            # silently changes the meaning of correct code -- 5 ^ 3 is 6, but
+            # rewritten as 5 ** 3 it returns 125 with no error. It also broke
+            # anchored regexes (r'^a.*' -> r'**a.*' raises "nothing to repeat")
+            # and corrupted carets inside string literals. The two meanings of
+            # '^' cannot be told apart from the source, so the convention is
+            # stated in the tool description instead.
+
             # Create a full Python namespace with all builtins available
             # This gives the agent access to the complete Python environment
             import sys

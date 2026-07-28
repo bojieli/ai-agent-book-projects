@@ -76,7 +76,7 @@ Provide clean, well-documented Python code that solves the task."""
             "task": task_description,
             "code": code,
             "model": model,
-            "tokens_used": response.usage.total_tokens
+            "tokens_used": response.usage.total_tokens if response.usage else 0
         }
         
     except Exception as e:
@@ -130,7 +130,7 @@ Think through this problem step by step. Provide {reasoning_steps} clear reasoni
             "problem": problem,
             "reasoning": reasoning,
             "model": model,
-            "tokens_used": response.usage.total_tokens
+            "tokens_used": response.usage.total_tokens if response.usage else 0
         }
         
     except Exception as e:
@@ -192,9 +192,19 @@ Provide:
         )
         
         evaluation = response.choices[0].message.content
-        
-        # Try to extract structured response
-        approved = "approved: true" in evaluation.lower() or "safe to execute" in evaluation.lower()
+
+        # Try to extract structured response. Approval must be explicit and
+        # not contradicted: "safe to execute" alone is unusable as a signal
+        # because it is a substring of "not safe to execute" (and the prompt
+        # itself contains the phrase), which inverted rejections into
+        # approvals. Default to not approved when the verdict is unclear.
+        low = evaluation.lower()
+        approved = (
+            "approved: true" in low
+            and "approved: false" not in low
+            and "not safe" not in low
+            and "unsafe" not in low
+        )
         
         return {
             "success": True,

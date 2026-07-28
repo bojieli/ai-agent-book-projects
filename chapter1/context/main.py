@@ -81,7 +81,7 @@ Provide a comprehensive financial summary with all calculations shown."""
             Task description  
         """
         return """A multinational company has the following Q1 2024 expenses documented in this report:
-https://github.com/adobe/pdf-services-node-sdk-samples/raw/refs/heads/master/resources/extractPDFInput.pdf
+https://raw.githubusercontent.com/adobe/pdfservices-node-sdk-samples/master/resources/extractPDFInput.pdf
 
 Tasks to complete:
 1. Parse the PDF and extract all monetary values mentioned
@@ -795,7 +795,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
     current_api_key = api_key
     
     # Available providers
-    available_providers = ["siliconflow", "doubao", "kimi", "moonshot", "deepseek"]
+    available_providers = ["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu"]
     
     print("\n" + "="*60)
     print("INTERACTIVE MODE - Context-Aware Agent")
@@ -922,6 +922,8 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         print(f"  - {p}: Moonshot Kimi K3 model{status}")
                     elif p == "deepseek":
                         print(f"  - deepseek: DeepSeek V4 model{status}")
+                    elif p == "zhipu":
+                        print(f"  - zhipu: Zhipu GLM model{status}")
             
             elif user_input.lower().startswith('provider '):
                 new_provider = user_input[9:].strip().lower()
@@ -946,6 +948,11 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         new_api_key = os.getenv("DEEPSEEK_API_KEY")
                         if not new_api_key:
                             print("❌ DEEPSEEK_API_KEY not set in environment")
+                            continue
+                    elif new_provider == "zhipu":
+                        new_api_key = os.getenv("ZHIPU_API_KEY")
+                        if not new_api_key:
+                            print("❌ ZHIPU_API_KEY not set in environment")
                             continue
                     
                     # Update current settings
@@ -1008,6 +1015,9 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                 elif current_provider == "deepseek":
                     key_status = "✅ Set" if os.getenv("DEEPSEEK_API_KEY") else "❌ Not set"
                     print(f"  API Key (DEEPSEEK_API_KEY): {key_status}")
+                elif current_provider == "zhipu":
+                    key_status = "✅ Set" if os.getenv("ZHIPU_API_KEY") else "❌  Not set"
+                    print(f"  API Key (ZHIPU_API_KEY): {key_status}")
             
             elif user_input:
                 # Execute task
@@ -1087,7 +1097,7 @@ def main():
     )
     parser.add_argument(
         "--provider",
-        choices=["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "openrouter"],
+        choices=["siliconflow", "doubao", "kimi", "moonshot", "deepseek", "zhipu", "openrouter"],
         default="doubao",
         help="LLM 提供商（默认：doubao；openrouter 或缺失主 key 时经 OpenRouter 兜底）"
     )
@@ -1099,7 +1109,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        help="LLM 提供商的 API Key（也可通过环境变量 SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY 设置）"
+        help="LLM 提供商的 API Key（也可通过环境变量 SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY 设置；缺失主 key 时可用 OPENROUTER_API_KEY 兜底）"
     )
     parser.add_argument(
         "--output",
@@ -1122,6 +1132,8 @@ def main():
         api_key = os.getenv("MOONSHOT_API_KEY")
     elif args.provider == "deepseek":
         api_key = os.getenv("DEEPSEEK_API_KEY")
+    elif args.provider == "zhipu":
+        api_key = os.getenv("ZHIPU_API_KEY")
     else:
         logger.error(f"Unknown provider: {args.provider}")
         sys.exit(1)
@@ -1138,7 +1150,7 @@ def main():
         else:
             logger.error(
                 "No API key found. Set the provider key "
-                "(ARK_API_KEY/SILICONFLOW_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY) or "
+                "(ARK_API_KEY/SILICONFLOW_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY) or "
                 "OPENROUTER_API_KEY (universal fallback)."
             )
             sys.exit(1)

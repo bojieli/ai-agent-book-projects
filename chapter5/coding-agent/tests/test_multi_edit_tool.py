@@ -103,6 +103,30 @@ def old_function():
         assert file_path.exists()
         assert "def hello" in file_path.read_text()
         assert result.data["edit_results"][0]["action"] == "created"
+
+    def test_atomic_create_no_orphan_on_later_failure(self, system_state, temp_dir):
+        """Create-new-file must not leave an empty file if a later edit fails."""
+        tool = MultiEditTool(system_state)
+        file_path = temp_dir / "orphan_create.py"
+        assert not file_path.exists()
+
+        result = tool.execute({
+            "file_path": str(file_path),
+            "edits": [
+                {
+                    "old_string": "",
+                    "new_string": "def hello():\n    pass\n",
+                },
+                {
+                    "old_string": "NONEXISTENT",
+                    "new_string": "x",
+                },
+            ],
+        })
+
+        assert "error" in result.data
+        assert result.data["completed_edits"] == 1
+        assert not file_path.exists()
     
     def test_create_and_modify(self, system_state, temp_dir):
         """Test creating file and then modifying it in subsequent edits"""

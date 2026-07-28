@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 525" width="820" height="525" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="40" y="70" width="740" height="90" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Слой 1: метаданные (загружаются при запуске, ~300 токенов)</text>
+<rect x="60" y="108" width="700" height="48" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="130" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">skills: [{name: "PPTX", desc: "Создание презентаций PowerPoint из содержимого"}</text>
+<text x="70" y="145" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">        {name: "PDF",  desc: "Извлечение и анализ PDF-документов"}, ...]</text>
+<line x1="410" y1="162" x2="410" y2="185" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="173" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Триггер задачи: «Сгенерировать PPT из статьи»</text>
+<rect x="40" y="190" width="740" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="210" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Слой 2: основной процесс SKILL.md (загружается по запросу, ~2K токенов)</text>
+<rect x="60" y="230" width="700" height="100" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="250" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Основной поток PPTX Skill:</text>
+<text x="70" y="272" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">1. markitdown извлекает текст → 2. Распаковка PPTX для доступа к XML</text>
+<text x="70" y="294" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">3. Изменить содержимое slide{N}.xml → 4. Перепаковать в .pptx</text>
+<text x="70" y="316" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Ссылки: → html2pptx.md | → reference.md | → scripts/</text>
+<line x1="410" y1="342" x2="410" y2="365" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Нужен детальный метод: «Создать PPT с HTML-шаблоном»</text>
+<rect x="40" y="370" width="740" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="60" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Слой 3: субдокументы (выборочное углубление, загружаются по запросу)</text>
+<rect x="60" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="167.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">html2pptx.md</text>
+<text x="167.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Полный рабочий процесс</text>
+<text x="167.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">HTML-шаблон → PPT</text>
+<rect x="295" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="402.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">reference.md</text>
+<text x="402.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Спецификация формата XML</text>
+<text x="402.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">и технические детали</text>
+<rect x="530" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="637.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">scripts/*.py</text>
+<text x="637.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Исполняемые инструменты:</text>
+<text x="637.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">thumbnail.py и т.д.</text>
+<rect x="100" y="520" width="620" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="538" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Фиксированные метаданные → удобно для KV Cache | Динамический контент добавлен → кэш не инвалидирован</text>
+</svg>

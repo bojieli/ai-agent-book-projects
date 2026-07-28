@@ -143,7 +143,10 @@ class NotesMemoryManager(BaseMemoryManager):
         """Save notes to storage"""
         try:
             os.makedirs(os.path.dirname(self.memory_file) or ".", exist_ok=True)
-            with open(self.memory_file, 'w', encoding='utf-8') as f:
+            # Write to a temp file then atomically replace: a crash mid-dump
+            # must not truncate the only copy of the persisted data.
+            tmp_file = self.memory_file + '.tmp'
+            with open(tmp_file, 'w', encoding='utf-8') as f:
                 data = {
                     'user_id': self.user_id,
                     'type': 'notes',
@@ -151,6 +154,7 @@ class NotesMemoryManager(BaseMemoryManager):
                     'notes': [note.to_dict() for note in self.notes]
                 }
                 json.dump(data, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, self.memory_file)
             logger.info(f"Saved {len(self.notes)} notes for user {self.user_id}")
         except Exception as e:
             logger.error(f"Error saving notes: {e}")
@@ -383,7 +387,10 @@ class JSONMemoryManager(BaseMemoryManager):
         """Save JSON memory cards to storage"""
         try:
             os.makedirs(os.path.dirname(self.memory_file) or ".", exist_ok=True)
-            with open(self.memory_file, 'w', encoding='utf-8') as f:
+            # Write to a temp file then atomically replace: a crash mid-dump
+            # must not truncate the only copy of the persisted data.
+            tmp_file = self.memory_file + '.tmp'
+            with open(tmp_file, 'w', encoding='utf-8') as f:
                 data = {
                     'user_id': self.user_id,
                     'type': 'json_cards',
@@ -391,6 +398,7 @@ class JSONMemoryManager(BaseMemoryManager):
                     'memory_cards': self.memory_cards
                 }
                 json.dump(data, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, self.memory_file)
             logger.info(f"Saved memory cards for user {self.user_id}")
         except Exception as e:
             logger.error(f"Error saving memory cards: {e}")
@@ -561,7 +569,10 @@ class AdvancedJSONMemoryManager(BaseMemoryManager):
         """Save advanced JSON memory cards to storage"""
         try:
             os.makedirs(os.path.dirname(self.memory_file) or ".", exist_ok=True)
-            with open(self.memory_file, 'w', encoding='utf-8') as f:
+            # Write to a temp file then atomically replace: a crash mid-dump
+            # must not truncate the only copy of the persisted data.
+            tmp_file = self.memory_file + '.tmp'
+            with open(tmp_file, 'w', encoding='utf-8') as f:
                 data = {
                     'user_id': self.user_id,
                     'type': 'advanced_json_cards',
@@ -569,6 +580,7 @@ class AdvancedJSONMemoryManager(BaseMemoryManager):
                     'categories': self.categories
                 }
                 json.dump(data, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, self.memory_file)
             logger.info(f"Saved advanced memory cards for user {self.user_id}")
         except Exception as e:
             logger.error(f"Error saving advanced memory cards: {e}")

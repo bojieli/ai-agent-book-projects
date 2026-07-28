@@ -12,12 +12,18 @@ on:
       - 'book/**'
       - 'book-zhtw/**'
       - 'book-en/**'
+      - 'book-ru/**'
       - 'book-ta/**'
       - 'book-vi/**'
+      - 'book-ja/**'
+      - 'book-ar/**'
+      - 'book-tr/**'
       - 'build_epub.sh'
       - 'epub.css'
+      - 'epub_external_links.lua'
       - 'flatten_epub_toc.py'
       - '.github/workflows/build-latest.yml'
+      - '.github/scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -33,21 +39,138 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Install build tools
-        run: |
-          brew install pandoc poppler librsvg
-          brew install --cask mactex-no-gui font-dejavu font-noto-sans-cjk-sc font-noto-sans-cjk-tc font-noto-serif-tamil
-          echo "/Library/TeX/texbin" >> "$GITHUB_PATH"
+      # ── Build-environment caching ──────────────────────────────────────────
+      # GitHub-hosted runners are ephemeral, so the ~10 min of tool/font
+      # installs re-runs on every push. The two heavy pieces — the MacTeX tree
+      # (~5 min) and the document fonts (~2 min) — are cached across runs and
+      # only reinstalled on a cache miss.
+      #
+      # Bump the trailing "-vN" in a cache key whenever you change what that
+      # cache holds (the mactex package, or the font cask list / Apple-font
+      # script) so the next run rebuilds it instead of restoring a stale tree.
 
-      - name: Build PDFs
+      # Homebrew cask fonts AND the Apple PingFang download all land in
+      # ~/Library/Fonts, so one user-writable directory captures every font.
+      - name: Restore fonts cache
+        id: fonts-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Fonts
+          key: fonts-${{ runner.os }}-${{ runner.arch }}-v3-${{ hashFiles('.github/scripts/install_apple_fonts.sh') }}
+
+      # The MacTeX tree is installed by a root pkg into /usr/local/texlive, so it
+      # can't be extracted straight back as the runner user. Cache a tarball
+      # instead (a user-owned file actions/cache can read) and restore it with
+      # sudo. /Library/TeX holds the texbin symlinks and is tarred alongside.
+      - name: Restore TeX Live cache
+        id: texlive-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/texlive-cache/texlive.tar
+          key: texlive-${{ runner.os }}-${{ runner.arch }}-mactex-nogui-v1
+
+      - name: Install CLI tools
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+          HOMEBREW_NO_INSTALL_CLEANUP: '1'
+        run: brew install pandoc poppler librsvg
+
+      - name: Install MacTeX (cache miss)
+        if: steps.texlive-cache.outputs.cache-hit != 'true'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+          HOMEBREW_NO_INSTALL_CLEANUP: '1'
         run: |
-          set -e
-          for dir in book book-zhtw book-en book-vi book-ta; do
-            (cd "$dir" && bash build_pdf.sh)
+          brew install --cask mactex-no-gui
+          mkdir -p ~/texlive-cache
+          sudo tar -cf ~/texlive-cache/texlive.tar -C / usr/local/texlive Library/TeX
+          sudo chown "$USER" ~/texlive-cache/texlive.tar
+
+      - name: Restore MacTeX from cache (cache hit)
+        if: steps.texlive-cache.outputs.cache-hit == 'true'
+        run: sudo tar -xf ~/texlive-cache/texlive.tar -C /
+
+      - name: Put TeX on PATH
+        run: echo "/Library/TeX/texbin" >> "$GITHUB_PATH"
+
+      # PingFang is an on-demand font since macOS Sequoia and is absent on fresh
+      # runners (only an unusable reserved UI copy exists); without it
+      # rsvg-convert renders Chinese figure text in a fallback font (Japanese
+      # glyph variants). The Apple-font script fetches the real font from Apple's
+      # asset CDN. Arabic fonts are required by the release build; the Japanese
+      # Noto fonts (WIP ja build) remain non-fatal so a bad cask name can never
+      # break the release build for the other languages.
+      - name: Install fonts (cache miss)
+        if: steps.fonts-cache.outputs.cache-hit != 'true'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+          HOMEBREW_NO_INSTALL_CLEANUP: '1'
+        run: |
+          brew install --cask font-dejavu font-noto-sans-cjk-sc font-noto-sans-cjk-tc font-noto-serif-tamil font-amiri font-noto-naskh-arabic font-noto-sans-arabic
+          brew install --cask font-noto-sans-cjk-jp || true
+          brew install --cask font-noto-serif-cjk-jp || brew install --cask font-noto-serif-cjk || true
+          bash .github/scripts/install_apple_fonts.sh
+
+      # Refresh fontconfig on every run (the cache restore doesn't touch it).
+      # PANGOCAIRO_BACKEND=fontconfig at build time: pango's CoreText backend on
+      # the runners can't use the user-installed fonts and silently substitutes
+      # another CJK font in SVG figures; the fontconfig backend picks them up.
+      - name: Refresh font cache
+        run: fc-cache -f
+
+      # Each language is built in its own background job so the ~8 XeLaTeX
+      # passes run concurrently instead of back-to-back. Output is captured per
+      # language and printed after all jobs finish (interleaved live logs would
+      # be unreadable). The ja build (WIP) runs in the same batch but is
+      # non-fatal — only a main-language failure fails the step.
+      # macOS runners ship bash 3.2, so no associative arrays: pid↔dir pairing
+      # is carried in a "pid:dir" string list.
+      - name: Build PDFs
+        env:
+          PANGOCAIRO_BACKEND: fontconfig
+        run: |
+          set -u
+          main="book book-zhtw book-en book-ru book-vi book-ta book-ar book-tr"
+          pids=""
+          for dir in $main book-ja; do
+            ( cd "$dir" && bash build_pdf.sh ) > "build_${dir}.log" 2>&1 &
+            pids="$pids $!:$dir"
           done
+          fail=0
+          for pd in $pids; do
+            pid="${pd%%:*}"; dir="${pd##*:}"
+            if wait "$pid"; then
+              echo "OK: $dir"
+            elif [ "$dir" = "book-ja" ]; then
+              echo "::warning::$dir PDF build failed (WIP, non-fatal)"
+            else
+              echo "::error::PDF build failed for $dir"
+              fail=1
+            fi
+          done
+          for dir in $main book-ja; do
+            echo "===================== $dir ====================="
+            cat "build_${dir}.log" 2>/dev/null || true
+          done
+          exit $fail
+
+      - name: Verify Chinese figure fonts
+        run: |
+          python3 .github/scripts/verify_pdf_fonts.py \
+            "book/深入理解-AI-Agent-李博杰-v1.3.pdf" \
+            "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.pdf"
 
       - name: Build EPUBs
         run: ./build_epub.sh all
+
+      # WIP: ja EPUB depends on the ja PDF above; non-fatal, not part of `all`.
+      - name: Build Japanese EPUB (WIP, non-fatal)
+        continue-on-error: true
+        run: ./build_epub.sh ja
+
+      - name: Build Arabic EPUB (WIP, non-fatal)
+        continue-on-error: true
+        run: ./build_epub.sh ar
 
       - name: Upload to the rolling latest release
         env:
@@ -55,14 +178,24 @@ jobs:
         run: |
           set -e
           out="$(mktemp -d)"
-          cp "book/深入理解-AI-Agent-李博杰-v1.2.pdf"              "$out/AI-Agents-in-Depth-zh-CN.pdf"
-          cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.2-zhtw.pdf"   "$out/AI-Agents-in-Depth-zh-TW.pdf"
-          cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.2.pdf        "$out/AI-Agents-in-Depth-en.pdf"
-          cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.2-ta.pdf     "$out/AI-Agents-in-Depth-ta.pdf"
-          cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.2-vi.pdf     "$out/AI-Agents-in-Depth-vi.pdf"
-          cp "book/深入理解-AI-Agent-李博杰-v1.2.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
-          cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.2-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
-          cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.2.epub       "$out/AI-Agents-in-Depth-en.epub"
-          cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.2-ta.epub    "$out/AI-Agents-in-Depth-ta.epub"
-          cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.2-vi.epub    "$out/AI-Agents-in-Depth-vi.epub"
+          cp "book/深入理解-AI-Agent-李博杰-v1.3.pdf"              "$out/AI-Agents-in-Depth-zh-CN.pdf"
+          cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.pdf"   "$out/AI-Agents-in-Depth-zh-TW.pdf"
+          cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.pdf        "$out/AI-Agents-in-Depth-en.pdf"
+          cp book-ru/AI-Agents-in-Depth-ru.pdf                   "$out/AI-Agents-in-Depth-ru.pdf"
+          cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.pdf     "$out/AI-Agents-in-Depth-ta.pdf"
+          cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.pdf     "$out/AI-Agents-in-Depth-vi.pdf"
+          cp book-ar/AI-Agents-in-Depth-ar.pdf                    "$out/AI-Agents-in-Depth-ar.pdf"
+          cp book-tr/AI-Agents-in-Depth-Bojie-Li-v1.3-tr.pdf      "$out/AI-Agents-in-Depth-tr.pdf"
+          cp "book/深入理解-AI-Agent-李博杰-v1.3.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
+          cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
+          cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.epub       "$out/AI-Agents-in-Depth-en.epub"
+          cp book-ru/AI-Agents-in-Depth-ru.epub                  "$out/AI-Agents-in-Depth-ru.epub"
+          cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.epub    "$out/AI-Agents-in-Depth-ta.epub"
+          cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.epub    "$out/AI-Agents-in-Depth-vi.epub"
+          cp book-tr/AI-Agents-in-Depth-Bojie-Li-v1.3-tr.epub    "$out/AI-Agents-in-Depth-tr.epub"
+          # WIP: ja artifacts and the Arabic EPUB are copied only if their
+          # non-fatal builds produced them.
+          cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"
+          cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.epub    "$out/AI-Agents-in-Depth-ja.epub" || echo "ja EPUB not built yet (WIP) — skipping"
+          cp book-ar/AI-Agents-in-Depth-ar.epub                   "$out/AI-Agents-in-Depth-ar.epub" || echo "ar EPUB not built yet (WIP) — skipping"
           gh release upload latest "$out"/* --clobber --repo "${{ github.repository }}"

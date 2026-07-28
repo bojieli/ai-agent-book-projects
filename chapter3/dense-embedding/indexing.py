@@ -85,10 +85,11 @@ class AnnoyIndex(VectorIndex):
             del self.index_to_id[old_index]
             del self.vectors_cache[old_index]
         
-        # Add to index
+        # Cache the vector only. ANNOY refuses new items once build() has run,
+        # so the underlying index is (re)created from vectors_cache in
+        # rebuild_index() instead of being mutated in place here.
         current_index = self.next_index
-        self.index.add_item(current_index, vector.tolist())
-        
+
         # Update mappings
         self.id_to_index[doc_id] = current_index
         self.index_to_id[current_index] = doc_id
@@ -209,16 +210,23 @@ class AnnoyIndex(VectorIndex):
     
     def rebuild_index(self) -> None:
         """Build/rebuild the ANNOY index."""
-        if self.is_built and self.logger:
-            self.logger.logger.debug("Index already built, skipping rebuild")
+        if self.is_built:
+            if self.logger:
+                self.logger.logger.debug("Index already built, skipping rebuild")
             return
-        
+
         start_time = time.time()
-        
+
         if self.logger:
             self.logger.logger.info(f"🏗️  Building ANNOY index with {self.n_trees} trees")
-        
-        self.index.build(self.n_trees)
+
+        # ANNOY can neither accept items after a build nor be built twice, so
+        # always construct a fresh index from the cached vectors.
+        new_index = annoy.AnnoyIndex(self.dimension, self.metric)
+        for internal_index, vector in self.vectors_cache.items():
+            new_index.add_item(internal_index, vector.tolist())
+        new_index.build(self.n_trees)
+        self.index = new_index
         self.is_built = True
         
         if self.logger:

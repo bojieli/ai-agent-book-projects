@@ -1,0 +1,37 @@
+[
+  {
+    "task_id": "positivity-alpha-jan",
+    "tool": "calculate_test_positivity",
+    "arguments": {"org_unit_id": "OU_ALPHA", "period": "2025-01"},
+    "result": {"tests": 200, "confirmed_cases": 30, "test_positivity_pct": 15.0, "evidence": ["R001"]},
+    "supported_claims": ["Alpha Health Centre test positivity was 15.0% in 2025-01."]
+  },
+  {
+    "task_id": "completeness-district-jan",
+    "tool": "calculate_reporting_completeness",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-01"},
+    "result": {"expected_reports": 3, "submitted_reports": 2, "reporting_completeness_pct": 66.67, "evidence": ["R001", "R002", "R003"]},
+    "supported_claims": ["Demo District reporting completeness was 66.67% in 2025-01."]
+  },
+  {
+    "task_id": "trend-alpha-jan-feb",
+    "tool": "compare_confirmed_cases",
+    "arguments": {"org_unit_id": "OU_ALPHA", "start_period": "2025-01", "end_period": "2025-02"},
+    "result": {"start_cases": 30, "end_cases": 45, "absolute_change": 15, "percent_change": 50.0, "direction": "increase", "evidence": ["R001", "R004"]},
+    "supported_claims": ["Alpha Health Centre confirmed cases increased by 50.0% from 2025-01 to 2025-02."]
+  },
+  {
+    "task_id": "quality-demo-feb",
+    "tool": "find_data_quality_issues",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-02"},
+    "result": {"issue_count": 2, "issues": [{"row_id": "R005", "code": "confirmed_exceeds_tests"}, {"row_id": "R005", "code": "negative_stockout_days"}], "evidence": ["R005"]},
+    "supported_claims": ["Row R005 has two deterministic aggregate data-quality issues."]
+  },
+  {
+    "task_id": "stockout-demo-feb",
+    "tool": "review_stockouts",
+    "arguments": {"parent_org_unit": "Demo District", "period": "2025-02"},
+    "result": {"facilities_with_stockouts": 2, "total_stockout_days": 9, "facilities": [{"org_unit_id": "OU_ALPHA", "stockout_days": 2}, {"org_unit_id": "OU_GAMMA", "stockout_days": 7}], "evidence": ["R004", "R006"]},
+    "supported_claims": ["Two Demo District facilities reported a total of 9 positive stock-out days in 2025-02."]
+  }
+]

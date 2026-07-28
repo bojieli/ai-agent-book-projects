@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 455" width="780" height="455" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="240" y="60" width="300" height="100" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent-менеджер</text>
+<text x="390" y="106" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Понимание задачи → Декомпозиция → Планирование → Синтез</text>
+<text x="390" y="126" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Набор инструментов: [call_agent_A, call_agent_B,</text>
+<text x="390" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">call_agent_C, search, write_file]</text>
+<rect x="50" y="240" width="210" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="155" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Субагент A</text>
+<text x="155" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Роль: сбор данных</text>
+<text x="155" y="302" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Поиск технической документации</text>
+<text x="155" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Извлечь ключевую информацию</text>
+<rect x="205" y="335" width="50" height="20" rx="10" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="230.0" y="345.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Шаг 1</text>
+<line x1="290" y1="162" x2="155" y2="238" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="262" y1="300" x2="283" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="285" y="240" width="210" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Субагент B</text>
+<text x="390" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Роль: анализ и обработка</text>
+<text x="390" y="302" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Сравнение и анализ данных</text>
+<text x="390" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Генерация статистического отчёта</text>
+<rect x="440" y="335" width="50" height="20" rx="10" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="465.0" y="345.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Шаг 2</text>
+<line x1="390" y1="162" x2="390" y2="238" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="497" y1="300" x2="518" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="520" y="240" width="210" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="625" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Субагент C</text>
+<text x="625" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Роль: генерация отчёта</text>
+<text x="625" y="302" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Написать итоговый отчёт</text>
+<text x="625" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Форматировать вывод</text>
+<rect x="675" y="335" width="50" height="20" rx="10" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="700.0" y="345.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Шаг 3</text>
+<line x1="490" y1="162" x2="625" y2="238" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="30" y="380" width="720" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="398" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Последовательный поток выполнения</text>
+<text x="3" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.44" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Менеджер вызывает A</text>
+<text x="125" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.44" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ A возвращает данные</text>
+<text x="260.4" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.44" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">→ Менеджер передаёт B</text>
+<text x="395.8" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.44" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ B возвращает анализ</text>
+<text x="531.2" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.44" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">→ Менеджер передаёт C</text>
+<text x="667.2" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">→ C возвращает отчёт</text>
+<text x="390" y="452" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Взгляд менеджера: вызов агента = вызов инструмента (отправить запрос → получить ответ)</text>
+</svg>

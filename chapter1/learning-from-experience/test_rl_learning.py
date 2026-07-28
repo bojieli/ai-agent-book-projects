@@ -96,7 +96,8 @@ def test_rl_learning(stochastic=False, episodes=None):
                 victories += 1
             
             # Print progress
-            if (episode + 1) % (num_episodes // 10) == 0:
+            progress_every = max(1, num_episodes // 10)
+            if (episode + 1) % progress_every == 0:
                 recent_wins = sum(1 for r in recent_rewards[-100:] if r > 50)
                 avg_reward = np.mean(recent_rewards[-100:]) if recent_rewards else 0
                 print(f"  Episode {episode+1}: Recent wins={recent_wins}/100, "

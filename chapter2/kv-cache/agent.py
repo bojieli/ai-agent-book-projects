@@ -18,6 +18,12 @@ from openai import OpenAI
 import glob as glob_module
 import subprocess
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def _is_reasoning_model(model) -> bool:
     """True for models that emit reasoning_content and only accept temperature=1.
@@ -56,7 +62,7 @@ class KVCacheMode(Enum):
     DYNAMIC_SYSTEM = "dynamic_system"  # Changing system prompt with timestamp
     SHUFFLED_TOOLS = "shuffled_tools"  # Shuffling tool order each request
     DYNAMIC_PROFILE = "dynamic_profile"  # Changing user profile with credits
-    SLIDING_WINDOW = "sliding_window"  # Only keeping recent 5 messages
+    SLIDING_WINDOW = "sliding_window"  # Only keeping recent 6 messages
     TEXT_FORMAT = "text_format"  # Formatting messages as plain text
 
 
@@ -135,7 +141,8 @@ class LocalFileTools:
                 }
             
             # Determine end line
-            if size is None:
+            if size is None or size < 0:
+                # Negative size is a common "read all" sentinel; avoid lines[i:-n].
                 end = total_lines
             else:
                 end = min(offset + size, total_lines)
@@ -523,13 +530,17 @@ Always think step by step and use tools to gather information. When you have eno
             messages.append(profile_msg)
         
         if self.mode == KVCacheMode.SLIDING_WINDOW:
-            # Preserve all system and user messages, at the most recent 6 messages
+            # Keep only the most recent 6 history messages (the window).
+            # conversation_history holds assistant/tool messages, so the raw
+            # slice could start with a tool message whose paired assistant
+            # tool_calls message was trimmed away — the API rejects such a
+            # history. Walk the window start back to the owning assistant
+            # message so every tool message keeps its pair.
             if self.conversation_history:
-                # Include all system and user messages, and if there are at least 6 messages, include the last 6 messages regardless of role
-                system_user_msgs = [msg for msg in self.conversation_history if msg.get("role") in ("system", "user")]
-                messages.extend(system_user_msgs)
-                if len(self.conversation_history) >= 6:
-                    messages.extend(self.conversation_history[-6:])
+                start = max(0, len(self.conversation_history) - 6)
+                while start > 0 and self.conversation_history[start].get("role") == "tool":
+                    start -= 1
+                messages.extend(self.conversation_history[start:])
         elif self.mode == KVCacheMode.TEXT_FORMAT:
             # Format all history as plain text (breaks KV cache)
             # Reformatting each time breaks structured format

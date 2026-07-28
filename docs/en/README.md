@@ -1,27 +1,34 @@
 # AI Agents in Depth: Design Principles and Engineering Practice
 
-[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Languages](https://img.shields.io/badge/translations-6%20languages-informational.svg)](#-e-book)
+[![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Read online](https://img.shields.io/badge/🌐_Read_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/translations-9%20languages-informational.svg)](#-e-book)
 
-**[中文](../../README.md) · [台灣正體](../zh-TW/README.md) · English ← current · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [Türkçe](../../README.tr.md)**
+**[中文](../../README.md) · English ← current · [العربية](../ar/README.md) · [正體中文](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
 
-**Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **88 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
+> 📥 **[Download PDF / EPUB](#-e-book)** (recommended) — the PDF / EPUB editions offer the best reading experience; you can also [read online](https://bojieli.github.io/ai-agent-book/) (multi-language switcher, collapsible chapter tree, full-text search, auto-rebuilt on every push to main).
 
-| 📚 **10 chapters** of text, from basics to production | 📂 **88** companion projects (70+ standalone) | 🌐 **6 languages**: CN / zh-TW / EN / TA / VI / TR |
+**Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **93 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
+
+| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **9 languages**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR |
 | :---: | :---: | :---: |
 
 ## 📖 E-Book
 
-> 📥 **Download** (full text, free and open source). These links always point to the latest build of the `main` branch; fixed editions are on the [Releases](https://github.com/bojieli/ai-agent-book/releases) page:
+> 📥 **Download** (recommended; full text, free and open source). These links always point to the latest build of the `main` branch; fixed editions are on the [Releases](https://github.com/bojieli/ai-agent-book/releases) page:
 > - **Chinese (original)**: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
+> - **English** (community translation, by [@nsdevaraj](https://github.com/nsdevaraj) and [@whanyu1212](https://github.com/whanyu1212)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
 > - **Traditional Chinese (Taiwan)** (community translation, by [@tigercosmos](https://github.com/tigercosmos)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
-> - **English** (community translation, by [@nsdevaraj](https://github.com/nsdevaraj)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **Russian** (community translation, by [@ui99ru](https://github.com/ui99ru)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **Tamil** (community translation, by [@nsdevaraj](https://github.com/nsdevaraj)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
 > - **Vietnamese** (community translation, by [@toanalien](https://github.com/toanalien)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
-> - **Turkish** (community translation, by [@memisemre](https://github.com/memisemre)): PDF/EPUB not built yet — read the text directly in [`book-tr/`](../../book-tr/)
+> - **Japanese** (community translation, by [@eltociear](https://github.com/eltociear)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
+> - **Arabic** (community translation, by [@TheSyBuilder](https://github.com/TheSyBuilder)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
+> - **Turkish** (community translation, by [@memisemre](https://github.com/memisemre)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+>
+> 🌐 You can also [read online](https://bojieli.github.io/ai-agent-book/) — multi-language switcher, collapsible chapter tree, full-text search, and direct links to companion experiments. Auto-rebuilt on every push to main.
 
-Chinese text source is in [`book/`](../../book/); Traditional Chinese (Taiwan)/English/Tamil/Vietnamese/Turkish versions are community contributions (may lag behind the Chinese original), located in [`book-zhtw/`](../../book-zhtw/), [`book-en/`](../../book-en/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-tr/`](../../book-tr/) respectively.
+Chinese text source is in [`book/`](../../book/); English/Arabic/Traditional Chinese (Taiwan)/Russian/Tamil/Vietnamese/Japanese/Turkish versions are community contributions (may lag behind the Chinese original), located in [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/) respectively.
 
-The shared builder produces EPUB 3 editions for Simplified Chinese, Traditional Chinese (Taiwan), English, Tamil, and Vietnamese. See the [EPUB build instructions](../../EPUB.md).
+The shared builder produces EPUB 3 editions for Simplified Chinese, English, Arabic, Traditional Chinese (Taiwan), Russian, Tamil, Vietnamese, Japanese, and Turkish. See the [EPUB build instructions](../../EPUB.md).
 
 <details>
 <summary><b>🔧 Build the PDF yourself?</b> (requires pandoc / xelatex / ElegantBook)</summary>
@@ -33,7 +40,7 @@ The shared builder produces EPUB 3 editions for Simplified Chinese, Traditional 
   cd book && bash build_pdf.sh
   ```
 
-  Figures are generated by `book/gen_*_figs.py` and stored in `book/images/`; see `book/preamble.tex` and `book/*.lua` for typography details.
+  Figures are stored as SVG files in `book/images/` and used directly by the build; see `book/preamble.tex` and `book/*.lua` for typography details.
 
 </details>
 
@@ -43,16 +50,16 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 
 | Ch | Topic | One-line Summary | Text | Code |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Agent Fundamentals** | "Model as Agent" paradigm + **Agent = LLM + Context + Tools**; Harness engineering is the real competitive edge | [Read](../../book-en/chapter1.md) | [4](../../chapter1/README.en.md) |
+| 1 | 🚀 **Agent Fundamentals** | **Agent = LLM + Context + Tools**; Harness engineering is the real competitive edge | [Read](../../book-en/chapter1.md) | [4](../../chapter1/README.en.md) |
 | 2 | 🎯 **Context Engineering** | Context caps Agent ability: KV Cache, prompt engineering, Agent Skills, context compression | [Read](../../book-en/chapter2.md) | [9](../../chapter2/README.en.md) |
 | 3 | 📚 **User Memory & Knowledge Bases** | Cross-session user memory + external knowledge: user memory, RAG, structured indexes, knowledge graphs | [Read](../../book-en/chapter3.md) | [13](../../chapter3/README.en.md) |
 | 4 | 🛠️ **Tools** | Tools are the Agent's hands: MCP protocol, perception/execution/collaboration tools, event-driven async Agents, proactive tool discovery | [Read](../../book-en/chapter4.md) | [7](../../chapter4/README.en.md) |
 | 5 | 💻 **Coding Agent & Code Generation** | Code is a "tool that creates new tools"; production-grade Coding Agent in full | [Read](../../book-en/chapter5.md) | [12](../../chapter5/README.en.md) |
-| 6 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter6.md) | [10](../../chapter6/README.en.md) |
-| 7 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter7.md) | [14](../../chapter7/README.en.md) |
+| 6 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter6.md) | [11](../../chapter6/README.en.md) |
+| 7 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter7.md) | [16](../../chapter7/README.en.md) |
 | 8 | 🔄 **Agent Self-Evolution** | Growth without changing weights: learning from experience, from tool user to tool creator | [Read](../../book-en/chapter8.md) | [6](../../chapter8/README.en.md) |
 | 9 | 🎙️ **Multimodal & Real-Time Interaction** | Extending from text to voice, GUI, physical world: three voice paradigms, Computer Use, robotics | [Read](../../book-en/chapter9.md) | [7](../../chapter9/README.en.md) |
-| 10 | 🤝 **Multi-Agent Collaboration** | Collective intelligence > individual: collaboration frameworks, context sharing/isolation, emergent "Agent Society" | [Read](../../book-en/chapter10.md) | [6](../../chapter10/README.en.md) |
+| 10 | 🤝 **Multi-Agent Collaboration** | Collective intelligence > individual: collaboration frameworks, context sharing/isolation, emergent "Agent Society" | [Read](../../book-en/chapter10.md) | [7](../../chapter10/README.en.md) |
 
 > 💡 **Read** = read the chapter text on GitHub (markdown); **N** = number of companion projects, click for code. Project types (✅ Standalone / 📖 Reproduction / 🚧 Design) are explained in each chapter's README.
 >
@@ -62,22 +69,29 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 
 It is recommended to apply for API keys from several platforms for convenient learning. See [this guide](https://01.me/2025/07/llm-api-setup/) for model selection.
 
-| Platform | Link | Notes |
-| --- | --- | --- |
-| **Kimi** (Moonshot) | <https://platform.moonshot.cn/> | Kimi series, strong in long context and Agent capabilities |
-| **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 etc., strong Chinese ability, cost-effective |
-| **Siliconflow** | <https://siliconflow.cn/> | Various open-source models (DeepSeek, Qwen, etc.) |
-| **Volcano Engine** | <https://www.volcengine.com/product/ark> | ByteDance Doubao (closed-source), low latency in China |
-| **OpenRouter** | <https://openrouter.ai/> | One-stop access to Gemini / Claude / GPT-5 etc. (official APIs need overseas IP/payment; OpenAI also requires overseas ID verification) |
+| Platform | Link | Notes | Access endpoints |
+| --- | --- | --- | --- |
+| **Kimi** (Moonshot) | <https://platform.moonshot.cn/> | Kimi series, strong in long context and Agent capabilities | Mainland China |
+| **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 etc., strong Chinese ability, cost-effective | Mainland China |
+| **Siliconflow** | <https://siliconflow.cn/> | Various open-source models (DeepSeek, Qwen, etc.), fast access from mainland China | Mainland China |
+| **DeepSeek** | <https://platform.deepseek.com/> | Official DeepSeek API | Global + Mainland China |
+| **Krill AI** | [www.krill-ai.com](https://www.krill-ai.com/register?invite=Q8D3L35725) | One-stop access to major global and China-domestic models (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Global + Mainland China |
+| **OpenRouter** | <https://openrouter.ai/> | One-stop access to major global and China-domestic models (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen, etc.) | Global |
+
+## 💎 Sponsors
+
+Thanks to **Krill AI** for sponsoring this project! Krill provides an official, stable, and ultra-fast API relay for GPT / Claude / Gemini and many Chinese models, with enterprise-grade customization, invoicing, and 7×16h dedicated technical support, plus an exclusively adapted WebSocket connection for blazing-fast time to first token.
+
+Krill offers a special deal for readers of this book: register via [this link](https://www.krill-ai.com/register?invite=Q8D3L35725) and enter the promo code "ai-agent-book" when topping up to get 23% off your first Codex plan!
 
 ## 📦 Appendix · Obtaining External Repositories
 
-The 20 external repos for benchmarks, training frameworks, and robot platforms in Chapters 6, 7, 9, 10 are **not bundled** (due to size and licensing) and must be cloned into the corresponding directories.
+The 19 external repos for benchmarks, training frameworks, and robot platforms in Chapters 6, 7, 9, 10 are **not bundled** (due to size and licensing) and must be cloned into the corresponding directories.
 
 ### One-shot Clone Script
 
 <details>
-<summary><b>🔧 Expand clone commands</b> (20 external repos)</summary>
+<summary><b>🔧 Expand clone commands</b> (19 external repos)</summary>
 
 ```bash
 # Chapter 6 · Evaluation Benchmarks
@@ -96,7 +110,6 @@ git clone https://github.com/bojieli/AWorld.git                        chapter7/
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/bojieli/lighteval.git                     chapter7/Intuitor/lighteval
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
 
@@ -109,7 +122,7 @@ git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10
 git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # Exp 10-7 Stanford AI Town
 ```
 
-> If a project README specifies a particular commit, `git checkout` to that version for reproducibility. Chapter 10's `use-computer-while-calling` has evolved into the independently maintained [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct); this repo only keeps a pointer doc.
+> If a project README specifies a particular commit, `git checkout` to that version for reproducibility. Chapter 10's `use-computer-while-calling` has evolved into the independently maintained [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct); this repo does not bundle that directory — use the clone command above to fetch it.
 
 </details>
 
@@ -122,7 +135,7 @@ The experiments below have no dedicated clone command but specific reproduction 
 | 6-2 / 6-3 / 6-4 / 6-9 | 📝 Reader exercise | Human benchmark, memory eval, JSON Cards vs RAG, memory selection — adapt Chapter 3's `user-memory` / `user-memory-evaluation` / `contextual-retrieval` |
 | 5-12 | 📝 Reader exercise | Agent that creates Agents — bootstrap from `chapter5/coding-agent` |
 | 7-8 | 📝 Reader exercise | Prompt distillation — see `chapter8/prompt-distillation` (cross-chapter reuse) |
-| 7-9 | 📝 Reader exercise | CoT distillation `[Extension]` — design and acceptance criteria in book, no dedicated code |
+| 7-9 | 📝 Reader exercise | CoT distillation `[Extension]` — companion implementation at `chapter7/cot-distillation` (including SFT data generation and a rule verifier) |
 | 6-11 | 🤖 Simulation eval | OpenVLA + RoboTwin2 — see `chapter7/SimpleVLA-RL` README for VLA training/env deps |
 | 9-8 / 9-9 | 🔧 Real hardware | XLeRobot teleoperation and LLM Agent control — requires SO-100 arm, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
 | 9-10 | 🔧 Real hardware | RGB zero-shot Sim2Real grasping — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (simulation runs on pure GPU; deployment needs SO-100) |
@@ -136,8 +149,8 @@ The book and accompanying code are fully open source. Pull Requests are very wel
 | 📝 **Book content** | Errata, additions, clearer wording, or new developments (text in `book/chapter*.md`) |
 | 🐛 **Code improvements & bug fixes** | Make companion projects more robust, usable, and production-ready |
 | 🧪 **New practice projects** | Add/replace better implementations for experiments, or contribute new examples |
-| 🎨 **Figure design** | Make `book/images/` charts clearer and more polished (generated by `book/gen_*_figs.py`) |
-| 🌐 **New translations** | Translations into more languages are welcome; see Traditional Chinese/Taiwan (`book-zhtw/`), English (`book-en/`), Tamil (`book-ta/`), Vietnamese (`book-vi/`), Turkish (`book-tr/`) for reference |
+| 🎨 **Figure design** | Directly improve the checked-in SVG charts under `book/images/` |
+| 🌐 **New translations** | Translations into more languages are welcome; see English (`book-en/`), Traditional Chinese/Taiwan (`book-zhtw/`), Tamil (`book-ta/`), Vietnamese (`book-vi/`), Japanese (`book-ja/`), Turkish (`book-tr/`) for reference |
 
 Before submitting, please run the relevant experiments to confirm reproducibility; feel free to open an issue to discuss ideas first.
 

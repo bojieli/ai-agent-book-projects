@@ -1,6 +1,17 @@
 % ===== ElegantBook customizations for 《深入理解 AI Agent》 =====
 % Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
 
+% Turkish document labels. ElegantBook uses its English mode as the base
+% layout for Latin-script translations, so override the visible names here.
+\AtBeginDocument{%
+  \renewcommand{\contentsname}{İçindekiler}%
+  \renewcommand{\chaptername}{Bölüm}%
+  \renewcommand{\figurename}{Şekil}%
+  \renewcommand{\tablename}{Tablo}%
+  \renewcommand{\listfigurename}{Şekiller Listesi}%
+  \renewcommand{\listtablename}{Tablolar Listesi}%
+}
+
 % ── Text & math fonts: Palatino look, matching the author's papers ──
 % The papers' preprint style (arxiv.sty) uses mathpazo (Palatino body +
 % matching math) with helvet[scaled=.90] sans. These are the XeLaTeX-native
@@ -74,43 +85,17 @@
 \newunicodechar{ω}{{\fallbackfont ω}}
 
 % ── Residual CJK glyphs ──────────────────────────────────────────
-% This is an English book, but a handful of Han characters still appear as
-% inline examples (Chinese tokenization / translation / speech-recognition
-% cases). Route just those code points to a CJK font so they render, without
-% pulling in the whole ctex/xeCJK Chinese-typesetting stack. macOS: Heiti SC;
-% Linux: Noto Sans CJK SC.
-\IfFontExistsTF{Heiti SC}{\newfontfamily\cjkfallback{Heiti SC}}{\newfontfamily\cjkfallback{Noto Sans CJK SC}}
-\newunicodechar{医}{{\cjkfallback 医}}
-\newunicodechar{图}{{\cjkfallback 图}}
-\newunicodechar{型}{{\cjkfallback 型}}
-\newunicodechar{模}{{\cjkfallback 模}}
-\newunicodechar{生}{{\cjkfallback 生}}
-\newunicodechar{解}{{\cjkfallback 解}}
-\newunicodechar{陈}{{\cjkfallback 陈}}
-\newunicodechar{两}{{\cjkfallback 两}}
-\newunicodechar{么}{{\cjkfallback 么}}
-\newunicodechar{了}{{\cjkfallback 了}}
-\newunicodechar{京}{{\cjkfallback 京}}
-\newunicodechar{代}{{\cjkfallback 代}}
-\newunicodechar{体}{{\cjkfallback 体}}
-\newunicodechar{北}{{\cjkfallback 北}}
-\newunicodechar{右}{{\cjkfallback 右}}
-\newunicodechar{大}{{\cjkfallback 大}}
-\newunicodechar{天}{{\cjkfallback 天}}
-\newunicodechar{左}{{\cjkfallback 左}}
-\newunicodechar{怎}{{\cjkfallback 怎}}
-\newunicodechar{思}{{\cjkfallback 思}}
-\newunicodechar{推}{{\cjkfallback 推}}
-\newunicodechar{智}{{\cjkfallback 智}}
-\newunicodechar{样}{{\cjkfallback 样}}
-\newunicodechar{概}{{\cjkfallback 概}}
-\newunicodechar{气}{{\cjkfallback 气}}
-\newunicodechar{点}{{\cjkfallback 点}}
-\newunicodechar{理}{{\cjkfallback 理}}
-\newunicodechar{的}{{\cjkfallback 的}}
-\newunicodechar{考}{{\cjkfallback 考}}
-\newunicodechar{能}{{\cjkfallback 能}}
-\newunicodechar{零}{{\cjkfallback 零}}
+% Chinese terminology and tokenization examples occur throughout the Turkish
+% text. Use xeCJK for complete fallback coverage instead of enumerating a
+% brittle list of individual code points.
+\usepackage{xeCJK}
+\IfFontExistsTF{Heiti SC}{%
+  \setCJKmainfont{Heiti SC}%
+  \setCJKmonofont{Heiti SC}%
+}{%
+  \setCJKmainfont{Noto Sans CJK SC}%
+  \setCJKmonofont{Noto Sans Mono CJK SC}%
+}
 
 % ── Code/monospace font (covers box-drawing glyphs used in code) ──
 % Menlo is a macOS font; fall back to DejaVu Sans Mono on Linux.
@@ -182,7 +167,7 @@
   colback=accentbg, colframe=accent,
   boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
   arc=1.2mm, before skip=0.9em, after skip=0.9em,
-  title={\sffamily\bfseries Deep Thinking},
+  title={\sffamily\bfseries Derin Düşünme},
   fonttitle=\normalsize\color{white},
   coltitle=white,
   attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
@@ -217,3 +202,12 @@
 
 % ── Inline code: keep it tight ───────────────────────────────────
 \setlength{\parindent}{2em}
+
+% ElegantBook empties the plain page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

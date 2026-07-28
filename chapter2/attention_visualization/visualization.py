@@ -427,7 +427,7 @@ def clean_token_labels(tokens: List[str], max_len: int = 14) -> List[str]:
     for tok in tokens:
         label = tok.replace("\n", "\\n").replace("\t", "\\t")
         # Qwen byte-level space marker and plain spaces -> visible middle dot
-        label = label.replace("Ġ", " ").replace("Ġ", " ")
+        label = label.replace("Ġ", " ").replace("▁", " ")
         if label.strip() == "":
             label = "␣"
         if len(label) > max_len:

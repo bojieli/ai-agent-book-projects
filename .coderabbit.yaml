@@ -1,0 +1,19 @@
+# CodeRabbit configuration for ai-agent-book
+# See https://github.com/bojieli/ai-agent-book/issues/330
+
+language: zh-CN
+
+reviews:
+  path_filters:
+    - "!**/*.lock"              # skip lock files
+    - "!**/book*/images/**"     # skip book figures
+    - "!**/images/**"           # skip images in general
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.svg"
+  auto_review:
+    enabled: true
+    drafts: false               # don't review draft PRs
+
+chat:
+  auto_reply: true

@@ -43,8 +43,13 @@ export default function AttentionStats({ attentionData }: AttentionStatsProps) {
 
   const stats = calculateStats();
   
-  // Prepare data for chart
-  const chartData = attentionData.tokens.slice(0, stats.avgAttention.length).map((token, idx) => ({
+  // Prepare data for chart.
+  // avgAttention has one entry per matrix row (one per OUTPUT token), while
+  // attentionData.tokens is the full input+output sequence. Offset into the
+  // output-token slice so each stat lines up with the token it describes,
+  // instead of pairing output stats with the first (input) tokens.
+  const rowTokenOffset = Math.max(0, attentionData.tokens.length - stats.avgAttention.length);
+  const chartData = attentionData.tokens.slice(rowTokenOffset, rowTokenOffset + stats.avgAttention.length).map((token, idx) => ({
     position: idx,
     token: token.length > 10 ? token.substring(0, 10) + '...' : token,
     avgAttention: stats.avgAttention[idx]?.toFixed(4) || 0,
@@ -55,7 +60,7 @@ export default function AttentionStats({ attentionData }: AttentionStatsProps) {
   // Calculate global statistics
   const globalStats = {
     avgAttention: stats.avgAttention.reduce((a, b) => a + b, 0) / stats.avgAttention.length || 0,
-    maxAttention: Math.max(...stats.maxAttention) || 0,
+    maxAttention: stats.maxAttention.length ? Math.max(...stats.maxAttention) : 0,
     avgEntropy: stats.entropy.reduce((a, b) => a + b, 0) / stats.entropy.length || 0,
   };
 

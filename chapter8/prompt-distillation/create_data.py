@@ -248,7 +248,12 @@ async def generate_distillation_data(
                     'response': response,
                 })
     
-    print(f"\nInitial generation: {len(results)}/{len(sentences)} successful ({len(results)/len(sentences)*100:.2f}%)")
+    # results is keyed by sentence text, so len(results) counts UNIQUE
+    # sentences; the JSONL below writes one row per sentence occurrence. Count
+    # rows actually labeled so the reported rate matches the output when the
+    # corpus contains duplicate lines (common in language-ID data).
+    num_labeled = sum(1 for s in sentences if s in results)
+    print(f"\nInitial generation: {num_labeled}/{len(sentences)} successful ({num_labeled/len(sentences)*100:.2f}%)")
     
     # Show debugging info for failed samples
     if failed_examples:
@@ -321,7 +326,8 @@ async def generate_distillation_data(
         
         newly_successful = len(failed_indices) - len(new_failed_indices)
         print(f"  ✓ {newly_successful} more samples successful")
-        print(f"  Total successful: {len(results)}/{len(sentences)} ({len(results)/len(sentences)*100:.2f}%)")
+        num_labeled = sum(1 for s in sentences if s in results)
+        print(f"  Total successful: {num_labeled}/{len(sentences)} ({num_labeled/len(sentences)*100:.2f}%)")
         
         failed_indices = new_failed_indices
     
@@ -349,10 +355,11 @@ async def generate_distillation_data(
     print(f"\n{'='*60}")
     print("DATA GENERATION COMPLETE")
     print(f"{'='*60}")
+    num_labeled = sum(1 for s in sentences if s in results)
     print(f"Total sentences: {len(sentences)}")
-    print(f"Valid labels generated: {len(results)}")
+    print(f"Valid labels generated: {num_labeled}")
     print(f"Failed after {max_retries} retries: {len(failed_indices)}")
-    print(f"Final success rate: {len(results)/len(sentences)*100:.2f}%")
+    print(f"Final success rate: {num_labeled/len(sentences)*100:.2f}%")
     print(f"Saved to: {output_file}")
     
     if failed_indices:

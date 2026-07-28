@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 620" width="820" height="620" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-y" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#e6a817"/></marker><marker id="ah-o" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#d46e4e"/></marker></defs>
+
+
+<!-- messages array label -->
+<text x="150.352" y="60" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الرسائل: [</text>
+
+<!-- Row 1: system -->
+<rect x="50" y="78" width="500" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="534.5" y="94" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "النظام"، المحتوى: "أنت مساعد الرمز Claude..." }</text>
+
+<!-- Row 2: tools -->
+<rect x="50" y="114" width="500" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="405.2" y="130" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الأدوات: [مهارة، قراءة، باش، تحرير، كتابة، ...]</text>
+
+<!-- Bracket for "固定不变" -->
+<path d="M 560,78 C 575,78 575,114 580,123 C 575,132 575,146 560,146" fill="none" stroke="#999999" stroke-width="1.5"/>
+<text x="617.456" y="112" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ثابت</text>
+<text x="657.184" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">(زكسقف0000قكسز)</text>
+
+<!-- Row 3: user message -->
+<rect x="50" y="158" width="500" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
+<text x="530" y="174" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "المستخدم"، المحتوى: "ساعدني في إنشاء ملف PPT من ملف PDF هذا" }</text>
+
+<!-- Row 4: Skill listing attachment (highlighted yellow) -->
+<rect x="50" y="198" width="500" height="64" rx="4" fill="#fff3cd" stroke="#e6a817" stroke-width="2.5"/>
+<text x="288.2" y="214" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "المستخدم"، isMeta: صحيح،</text>
+<text x="272.6" y="232" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">  المحتوى: "&lt;system-reminder&gt;</text>
+<text x="475.4" y="250" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">     المهارات المتاحة: pdf، pptx، ...&lt;/system-reminder&gt;" }</text>
+
+<!-- Annotation A -->
+<line x1="600" y1="230" x2="555" y2="230" stroke="#e6a817" stroke-width="2" marker-end="url(#ah-y)"/>
+<text x="688.763" y="214" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ⓐ قائمة المهارات</text>
+<text x="708.692" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">تسخير تنبعث مرة واحدة</text>
+<text x="673.712" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">~ 300 رمز</text>
+
+<!-- Row 5: assistant Skill tool_use -->
+<rect x="50" y="270" width="500" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="506.6" y="286" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "المساعد"، استدعاءات الأداة: [Skill(skill: "pptx")] }</text>
+
+<!-- Row 6: tool_result placeholder -->
+<rect x="50" y="306" width="500" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
+<text x="537.2" y="322" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "الأداة"، المحتوى: "مهارة الإطلاق: pptx" } ← العنصر النائب</text>
+
+<!-- Row 7: skill content (highlighted orange) -->
+<rect x="50" y="346" width="500" height="64" rx="4" fill="#ffe4d9" stroke="#d46e4e" stroke-width="2.5"/>
+<text x="288.2" y="362" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "المستخدم"، isMeta: صحيح،</text>
+<text x="397.4" y="380" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">  content: "الدليل الأساسي: ...\n# PPTX Skill</text>
+<text x="342.8" y="398" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">     ## سير العمل: 1. استخدم تخفيض السعر..." }</text>
+
+<!-- Annotation B -->
+<line x1="600" y1="378" x2="555" y2="378" stroke="#d46e4e" stroke-width="2" marker-end="url(#ah-o)"/>
+<text x="698.598" y="362" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a04830" text-anchor="start" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ⓑ محتوى المهارة</text>
+<text x="708.692" y="380" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">أداة المهارة تنبعث مرة واحدة</text>
+<text x="666.368" y="398" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">~2K الرموز</text>
+
+<!-- Row 8: assistant Read tool_use -->
+<rect x="50" y="418" width="500" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="530" y="434" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "مساعد"، Tool_calls: [قراءة (ملف: "input.pdf")] }</text>
+
+<!-- Row 9: tool_result Read -->
+<rect x="50" y="454" width="500" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
+<text x="459.8" y="470" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "الأداة"، المحتوى: "... محتوى نص PDF..." }</text>
+
+<!-- Row 10: assistant Write -->
+<rect x="50" y="490" width="500" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="534.5" y="506" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "المساعد"، استدعاءات الأداة: [كتابة (ملف: "slides.html")] }</text>
+
+<!-- Row 11: tool_result Write -->
+<rect x="50" y="526" width="500" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
+<text x="420.8" y="542" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{ الدور: "الأداة"، المحتوى: "كتب 12345 بايت" }</text>
+
+<!-- Bracket for "持续 append" -->
+<path d="M 560,418 C 575,418 575,490 580,506 C 575,522 575,558 560,558" fill="none" stroke="#999999" stroke-width="1.5"/>
+<text x="719.363" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الأداة اللاحقة_استخدام /</text>
+<text x="709.223" y="496" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">تستمر نتيجة الأداة</text>
+<text x="673.122" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">إلحاق بالنهاية</text>
+
+<!-- Ellipsis -->
+<text x="300" y="580" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#999999" text-anchor="middle" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">.. جولات لاحقة ...</text>
+
+<!-- Closing bracket -->
+<text x="40" y="604" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">]</text>
+
+<!-- Bottom note -->
+<rect x="50" y="624" width="720" height="22" rx="4" fill="#f5f5f5" stroke="none"/>
+<text x="410" y="635" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ⓐ وⓑ كلاهما يصدران مرة واحدة: بعد دفع عملية إنشاء ذاكرة التخزين المؤقت مرة واحدة، يتواجدان بشكل دائم في بادئة ذاكرة التخزين المؤقت ولن يتحركا مع استخدام الأداة اللاحق</text>
+</svg>

@@ -25,6 +25,7 @@ class OllamaNativeAgent:
         self.client = ollama.Client()
         self.tool_registry = ToolRegistry()
         self.conversation_history = []
+        self._think_disabled: set[str] = set()
         
         # Check if Ollama is running
         try:
@@ -42,6 +43,35 @@ class OllamaNativeAgent:
             tools.append(tool_def)
         return tools
     
+    def _chat_with_think_fallback(self, **kwargs) -> dict:
+        """Call client.chat with think=True when supported, falling back gracefully.
+
+        Models without thinking support (qwen2.5, llama3.2, gemma, etc.) return
+        a 400 error when think=True. This method catches the error once per
+        model and retries without think, caching the result so subsequent calls
+        are free. Also catches unexpected errors (old client, unknown issues)
+        and retries — if the error wasn't think-related the retry will fail
+        again and the exception propagates naturally.
+        """
+        if self.model in self._think_disabled:
+            return self.client.chat(**kwargs)
+
+        try:
+            return self.client.chat(think=True, **kwargs)
+        except ollama.ResponseError as e:
+            if e.status_code == 400:
+                logger.info("Model '%s' does not support thinking, disabling", self.model)
+                self._think_disabled.add(self.model)
+                return self.client.chat(**kwargs)
+            raise
+        except Exception:
+            # Unknown failure with think=True (old client, unexpected issues).
+            # Retry without think; if the error was unrelated the retry will
+            # also fail and the exception propagates naturally.
+            logger.warning("think=True failed for '%s', retrying without think", self.model)
+            self._think_disabled.add(self.model)
+            return self.client.chat(**kwargs)
+
     def _execute_tool_calls(self, tool_calls: List[Dict[str, Any]]) -> List[str]:
         """
         Execute tool calls and return results in order.
@@ -102,11 +132,11 @@ class OllamaNativeAgent:
         
         try:
             # Call Ollama with tools
-            response = self.client.chat(
+            response = self._chat_with_think_fallback(
                 model=self.model,
                 messages=self.conversation_history,
                 tools=tools,
-                options={"temperature": temperature}
+                options={"temperature": temperature},
             )
             
             # Check if model made tool calls
@@ -135,11 +165,11 @@ class OllamaNativeAgent:
                     })
                 
                 # Get final response with tool results (still include tools!)
-                final_response = self.client.chat(
+                final_response = self._chat_with_think_fallback(
                     model=self.model,
                     messages=self.conversation_history,
                     tools=tools,  # IMPORTANT: Keep tools available
-                    options={"temperature": temperature}
+                    options={"temperature": temperature},
                 )
                 
                 final_content = final_response.get('message', {}).get('content', '')
@@ -196,12 +226,12 @@ class OllamaNativeAgent:
             
             try:
                 # Get response from model
-                stream_response = self.client.chat(
+                stream_response = self._chat_with_think_fallback(
                     model=self.model,
                     messages=self.conversation_history,
                     tools=tools,
                     options={"temperature": temperature},
-                    stream=True
+                    stream=True,
                 )
                 
                 collected_content = []
@@ -214,7 +244,11 @@ class OllamaNativeAgent:
                 for chunk in stream_response:
                     # Extract message content from chunk
                     message_chunk = chunk.get('message', {})
+                    thinking_chunk = message_chunk.get('thinking', '')
                     content_chunk = message_chunk.get('content', '')
+                    
+                    if thinking_chunk:
+                        yield {"type": "thinking", "content": thinking_chunk}
                     
                     if content_chunk:
                         collected_content.append(content_chunk)

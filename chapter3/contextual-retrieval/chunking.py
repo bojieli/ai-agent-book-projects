@@ -125,7 +125,13 @@ class DocumentChunker:
         
         # Reconstruct sentences with their endings
         result = []
-        for i in range(0, len(sentences) - 1, 2):
+        # Step to the end of the list: re.split with a capturing group yields
+        # [text, delim, text, delim, ..., trailing_text], so stopping at
+        # len(sentences) - 1 dropped the trailing fragment whenever the text
+        # did not end in terminal punctuation (and returned [] for text with
+        # none at all). The strip-and-filter below still discards the empty
+        # tail that re.split produces when the text does end in punctuation.
+        for i in range(0, len(sentences), 2):
             if i + 1 < len(sentences):
                 result.append(sentences[i] + sentences[i + 1])
             else:
@@ -259,7 +265,7 @@ class DocumentIndexer:
                             "chunk_index": chunk["chunk_index"],
                             "char_count": chunk["char_count"]
                         }
-                    }
+                    }, timeout=30
                 )
                 response.raise_for_status()
                 indexed_count += 1
@@ -320,14 +326,14 @@ class DocumentIndexer:
                 response = requests.post(
                     f"{self.kb_config.dify_base_url}/datasets/{self.kb_config.dify_dataset_id}/documents",
                     headers=headers,
-                    json=payload
+                    json=payload, timeout=30
                 )
             else:
                 # Create new document
                 response = requests.post(
                     f"{self.kb_config.dify_base_url}/documents",
                     headers=headers,
-                    json=payload
+                    json=payload, timeout=30
                 )
             
             response.raise_for_status()

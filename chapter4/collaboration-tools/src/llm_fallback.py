@@ -16,6 +16,12 @@ credential resolution so that:
 import os
 from typing import Optional, Tuple
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def map_model_for_openrouter(model: str) -> str:
     """Map a plain model id onto OpenRouter's `provider/model` form.

@@ -89,10 +89,20 @@ class GraphRAGIndexer:
             if current_size + len(words) > self.config.chunk_size:
                 if current_chunk:
                     chunks.append(" ".join(current_chunk))
-                # Start new chunk with overlap
-                overlap_size = min(self.config.chunk_overlap, len(current_chunk))
-                current_chunk = current_chunk[-overlap_size:] if overlap_size > 0 else []
-                current_size = sum(len(s.split()) for s in current_chunk)
+                # Start new chunk with overlap. chunk_overlap is a WORD budget
+                # (the same unit as chunk_size, which current_size is measured
+                # in); len(current_chunk) is a SENTENCE count, so using it here
+                # kept the whole previous chunk and the window never advanced.
+                overlap: List[str] = []
+                overlap_size = 0
+                for prev in reversed(current_chunk):
+                    prev_size = len(prev.split())
+                    if overlap_size + prev_size > self.config.chunk_overlap:
+                        break
+                    overlap.insert(0, prev)
+                    overlap_size += prev_size
+                current_chunk = overlap
+                current_size = overlap_size
             
             current_chunk.append(sentence)
             current_size += len(words)
@@ -305,8 +315,13 @@ class GraphRAGIndexer:
         
         logger.info("Creating hierarchical community summaries...")
         
-        # Group communities by similarity
-        community_embeddings = np.array([c.embedding for c in self.communities.values()])
+        # Group communities by similarity. Snapshot the ids up front: the loop
+        # below inserts the merged communities into self.communities, and
+        # iterating the live dict raised "RuntimeError: dictionary changed size
+        # during iteration". The snapshot also keeps i/j aligned with
+        # similarity_matrix, which is built once from these same communities.
+        community_ids = list(self.communities.keys())
+        community_embeddings = np.array([self.communities[cid].embedding for cid in community_ids])
         similarity_matrix = cosine_similarity(community_embeddings)
         
         # Simple hierarchical clustering
@@ -314,13 +329,13 @@ class GraphRAGIndexer:
         merged_communities = []
         processed = set()
         
-        for i, comm_id in enumerate(self.communities.keys()):
+        for i, comm_id in enumerate(community_ids):
             if comm_id in processed:
                 continue
             
             # Find similar communities
             similar = []
-            for j, other_id in enumerate(self.communities.keys()):
+            for j, other_id in enumerate(community_ids):
                 if i != j and similarity_matrix[i][j] > threshold:
                     similar.append(other_id)
                     processed.add(other_id)

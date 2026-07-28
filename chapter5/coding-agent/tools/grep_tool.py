@@ -52,12 +52,23 @@ class GrepTool(BaseTool):
         show_line_numbers = params.get("-n", False)
         multiline = params.get("multiline", False)
         head_limit = params.get("head_limit")
+        if head_limit is not None and head_limit < 0:
+            head_limit = None
+        # head_limit=0 means zero results (like `head -0`), not unlimited.
+        if head_limit == 0:
+            return {
+                "pattern": pattern,
+                "output": "No matches found.",
+                "matches": 0,
+            }
         file_type = params.get("type")
         
         # Determine context
         if context_around:
             context_before = context_around
             context_after = context_around
+        context_before = max(0, int(context_before))
+        context_after = max(0, int(context_after))
         
         # Compile regex
         regex_flags = re.MULTILINE if multiline else 0
@@ -188,8 +199,8 @@ class GrepTool(BaseTool):
                 if regex.search(content):
                     matching_files.append(str(file_path))
                     
-                    # Check head limit
-                    if head_limit and len(matching_files) >= head_limit:
+                    # Check head limit (0 means zero results; do not treat as unlimited)
+                    if head_limit is not None and len(matching_files) >= head_limit:
                         break
                         
             except (IOError, OSError, UnicodeDecodeError):
@@ -224,7 +235,7 @@ class GrepTool(BaseTool):
                     results.append(f"{file_path}:{matches}")
                     total_matches += matches
                     
-                    if head_limit and len(results) >= head_limit:
+                    if head_limit is not None and len(results) >= head_limit:
                         break
                         
             except (IOError, OSError, UnicodeDecodeError):
@@ -305,11 +316,11 @@ class GrepTool(BaseTool):
                     
                     prev_line = line_num
                     
-                    # Check head limit
-                    if head_limit and lines_added >= head_limit:
+                    # Check head limit (0 means zero results; do not treat as unlimited)
+                    if head_limit is not None and lines_added >= head_limit:
                         break
                 
-                if head_limit and lines_added >= head_limit:
+                if head_limit is not None and lines_added >= head_limit:
                     break
                     
             except (IOError, OSError, UnicodeDecodeError):

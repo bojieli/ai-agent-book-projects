@@ -1,0 +1,29 @@
+[
+  {
+    "id": "run-payment-001",
+    "tool": "charge_card",
+    "error_code": "PAYMENT_DECLINED",
+    "retryable": false,
+    "attempts": 4,
+    "outcome": "failure",
+    "evidence": "The same declined payment was submitted four times."
+  },
+  {
+    "id": "run-payment-002",
+    "tool": "charge_card",
+    "error_code": "PAYMENT_DECLINED",
+    "retryable": false,
+    "attempts": 3,
+    "outcome": "failure",
+    "evidence": "A second task repeated the identical non-retryable call three times."
+  },
+  {
+    "id": "run-timeout-001",
+    "tool": "inventory_lookup",
+    "error_code": "TEMPORARY_TIMEOUT",
+    "retryable": true,
+    "attempts": 2,
+    "outcome": "success",
+    "evidence": "A temporary timeout succeeded on the second retry."
+  }
+]

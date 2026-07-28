@@ -9,7 +9,7 @@
   - 私钥 / 证书（PEM 块）
   - JWT
   - 云厂商与第三方密钥（AWS AKIA、GitHub、Slack、Google、OpenAI 风格 sk-）
-  - HTTP Authorization: Bearer 令牌
+  - HTTP Authorization: Bearer / Basic 令牌
   - 配置中的口令 / 密钥赋值（password=..., token: ... 等）
   - 邮箱地址
   - 信用卡号（Luhn 校验）
@@ -60,9 +60,10 @@ def _cn_id_ok(value: str) -> bool:
 _RULES = [
     (
         "private_key", "[REDACTED_PRIVATE_KEY]",
+        # Truncated PEM (BEGIN without END) must still redact through EOF.
         re.compile(
             r"-----BEGIN (?:RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----"
-            r"[\s\S]*?-----END (?:RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----"
+            r"[\s\S]*?(?:-----END (?:RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----|(?=\Z))"
         ),
         0, None,
     ),
@@ -74,7 +75,7 @@ _RULES = [
     (
         # 连接串中的口令，如 postgres://user:PASSWORD@host:5432/db
         "url_credential", "[REDACTED_URL_CRED]",
-        re.compile(r"://[^\s:/@]+:([^\s:/@]+)@"),
+        re.compile(r"://[^\s:/@]*:([^\s@]+)@"),
         1, None,
     ),
     (
@@ -84,7 +85,7 @@ _RULES = [
     ),
     (
         "github_token", "[REDACTED_GITHUB_TOKEN]",
-        re.compile(r"\bgh[pousr]_[A-Za-z0-9]{36,}\b"),
+        re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{20,})\b"),
         0, None,
     ),
     (
@@ -108,12 +109,19 @@ _RULES = [
         1, None,
     ),
     (
+        "basic_auth", "[REDACTED_BASIC_AUTH]",
+        # Require Authorization: so English "Basic knowledge …" is not redacted.
+        re.compile(r"(?i)\bAuthorization\s*:\s*Basic\s+([A-Za-z0-9+/=]{4,})"),
+        1, None,
+    ),
+    (
         "secret_assignment", "[REDACTED_SECRET]",
         re.compile(
             r"(?i)(?:password|passwd|pwd|secret|token|api[_-]?key|"
-            r"access[_-]?key|auth|credential)[\"']?\s*[=:]\s*[\"']?([^\s\"',}]{4,})"
+            r"access[_-]?key|auth|credential)[\"']?\s*[=:]\s*"
+            r"(?:\"([^\"]{4,})\"|'([^']{4,})'|([^\s\"',}]{4,}))"
         ),
-        1, None,
+        (1, 2, 3), None,
     ),
     (
         "email", "[REDACTED_EMAIL]",
@@ -163,6 +171,7 @@ CATEGORY_LABELS = {
     "google_api_key": "Google API Key",
     "api_key": "API Key (sk-)",
     "bearer_token": "Bearer 令牌",
+    "basic_auth": "Basic 认证",
     "secret_assignment": "口令 / 密钥赋值",
     "email": "邮箱地址",
     "credit_card": "信用卡号",
@@ -184,8 +193,13 @@ def sanitize(text: str) -> Tuple[str, List[Dict]]:
     """
     candidates: List[Dict] = []
     for priority, (category, placeholder, pattern, group, validator) in enumerate(_RULES):
+        groups = group if isinstance(group, tuple) else (group,)
         for m in pattern.finditer(text):
-            start, end = m.span(group)
+            start = end = -1
+            for g in groups:
+                start, end = m.span(g)
+                if start >= 0:
+                    break
             if start < 0:  # 该捕获组未参与本次匹配
                 continue
             value = text[start:end]

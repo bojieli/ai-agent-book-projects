@@ -27,6 +27,12 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.types import TextContent
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def _reasoning_safe_temperature(model, requested=1.0):
     """Reasoning models (Kimi K3, GPT-5, ...) only accept temperature=1.
@@ -925,8 +931,11 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
             output_buffer = io.StringIO()
             error_buffer = io.StringIO()
             
+            # Use one namespace so functions defined by the snippet can resolve
+            # names assigned earlier in the same snippet.
+            exec_ns = {}
             with contextlib.redirect_stdout(output_buffer), contextlib.redirect_stderr(error_buffer):
-                exec(code)
+                exec(code, exec_ns)
             
             stdout = output_buffer.getvalue()
             stderr = error_buffer.getvalue()
@@ -1117,8 +1126,27 @@ Important: When you have completed all tasks, clearly state "FINAL ANSWER:" foll
                     
                     for tool_call in message.tool_calls:
                         function_name = tool_call.function.name
-                        function_args = json.loads(tool_call.function.arguments)
-                        
+                        raw_args = tool_call.function.arguments or "{}"
+                        try:
+                            function_args = json.loads(raw_args)
+                        except json.JSONDecodeError as exc:
+                            # Malformed/truncated arguments must not abort the
+                            # turn: the assistant message with tool_calls is
+                            # already in the history, so bailing out here would
+                            # leave this tool_call_id unanswered and every later
+                            # request would be rejected by the provider.
+                            err = (f"Invalid tool arguments (not valid JSON): {exc}. "
+                                   f"Raw arguments: {raw_args[:500]}")
+                            logger.warning(f"  ❌ {err}")
+                            self.tool_calls.append(ToolCall(
+                                tool_name=function_name, arguments={}, error=err))
+                            self.conversation_history.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": json.dumps({"error": err})
+                            })
+                            continue
+
                         if self.config.enable_tool_counter:
                             self.tool_call_counts[function_name] = self.tool_call_counts.get(function_name, 0) + 1
                             call_number = self.tool_call_counts[function_name]

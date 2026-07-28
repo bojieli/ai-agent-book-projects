@@ -201,7 +201,7 @@ class ContextualKnowledgeBaseTools(KnowledgeBaseTools):
                                 "context": chunk.context[:200],  # Store truncated context
                                 "original_text": chunk.text[:500]  # Store truncated original
                             }
-                        }
+                        }, timeout=30
                     )
                     response.raise_for_status()
                 
@@ -217,7 +217,7 @@ class ContextualKnowledgeBaseTools(KnowledgeBaseTools):
                                 "chunk_index": chunk.chunk_index,
                                 "is_contextual": False
                             }
-                        }
+                        }, timeout=30
                     )
                     response.raise_for_status()
                     
@@ -348,7 +348,7 @@ class ContextualKnowledgeBaseTools(KnowledgeBaseTools):
                     "mode": "embedding",  # Use embedding mode
                     "top_k": top_k,
                     "filter": {"is_contextual": use_contextual} if self.enable_comparison else None
-                }
+                }, timeout=30
             )
             response.raise_for_status()
             

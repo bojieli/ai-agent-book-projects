@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 420" width="780" height="420" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="35" y="60" width="340" height="180" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="205" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инструмент управления GUI (компьютер)</text>
+<text x="47" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Мышь:</text>
+<text x="105" y="98" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">mouse_move · left/right/middle_click</text>
+<text x="105" y="114" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">double/triple_click · left_click_drag</text>
+<text x="105" y="130" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">left_mouse_down/up</text>
+<text x="47" y="152" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Ключи:</text>
+<text x="105" y="152" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">печать (по символам, интервал 12мс)</text>
+<text x="105" y="168" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">key (комбинация клавиш) · hold_key (долгое нажатие)</text>
+<text x="30" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Прокрутка:</text>
+<text x="122" y="190" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">скролл в 4 направлениях + модификаторы</text>
+<rect x="400" y="60" width="345" height="100" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="572" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Действия восприятия</text>
+<text x="412" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Экран:</text>
+<text x="470" y="98" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">скриншот → масштабирование до разрешения обучения</text>
+<text x="412" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Cursor:</text>
+<text x="470" y="120" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">cursor_position → (x, y)</text>
+<text x="399.4" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Ожидание:</text>
+<text x="482.6" y="142" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">wait → ожидание стабилизации интерфейса</text>
+<rect x="400" y="175" width="345" height="65" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="572" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Выполнение команд (bash)</text>
+<text x="412" y="213" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Термин:</text>
+<text x="470" y="213" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">постоянная bash-сессия · тайм-аут 120с</text>
+<text x="470" y="229" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Обнаружение sentinel-строки завершено</text>
+<rect x="35" y="255" width="340" height="65" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="205" y="275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Редактирование файлов (str_replace_editor)</text>
+<text x="34.4" y="293" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Операции:</text>
+<text x="117.6" y="293" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">view · create · str_replace</text>
+<text x="105" y="309" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">insert · undo_edit</text>
+<rect x="400" y="255" width="345" height="65" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="572" y="275" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Механизм масштабирования координат</text>
+<text x="572" y="295" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">фактическое разрешение ↔ разрешение обучения (XGA/WXGA/FWXGA)</text>
+<text x="572" y="310" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">уменьшение скриншота → вывод модели → увеличение координат → выполнение xdotool</text>
+<rect x="35" y="335" width="710" height="110" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Типичный процесс выполнения: заполнение формы</text>
+<text x="123" y="385" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① скриншот</text>
+<text x="123" y="403" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Захват страницы</text>
+<line x1="186" y1="391" x2="196" y2="391" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="259" y="385" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② Вывод модели</text>
+<text x="253.6" y="403" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.58" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Найти поле имени</text>
+<line x1="322" y1="391" x2="332" y2="391" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="387" y="385" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ mouse_move</text>
+<text x="407" y="403" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.58" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Переместить в (324, 156)</text>
+<line x1="458" y1="391" x2="468" y2="391" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="531" y="385" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">④ left_click</text>
+<text x="594.9" y="403" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.58" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Клик для получения фокуса</text>
+<line x1="594" y1="391" x2="604" y2="391" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<text x="667" y="385" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">⑤ ввод</text>
+<text x="738.5" y="403" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">"Джон Смит"</text>
+<text x="390" y="430" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Каждое действие с интервалом 2-5с (последовательно: скриншот-распознавание-мышление-клик), 1/3 до 1/5 скорости человека</text>
+</svg>

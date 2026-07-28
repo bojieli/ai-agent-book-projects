@@ -1,5 +1,7 @@
 # Elo Rating Leaderboard from Pairwise Comparisons
 
+## English
+
 **Experiment 6-6**: Building Model Leaderboard from Pairwise Comparison Data
 
 This project implements an Elo rating system from scratch to analyze model performance using Chatbot Arena's public voting data. The implementation demonstrates how the Bradley-Terry model extracts relative model capabilities from millions of pairwise comparison votes.
@@ -47,7 +49,7 @@ Where:
 ## Installation
 
 ```bash
-cd projects/week6/elo-leaderboard
+cd chapter6/elo-leaderboard
 pip install -r requirements.txt
 ```
 
@@ -608,3 +610,86 @@ This project is part of the AI Agent practical training course materials.
 
 For questions or issues, please refer to the course materials or discussion forums.
 
+---
+
+## 中文
+
+该项目围绕**配对比较（pairwise）数据**构建 Elo/Bradley-Terry 排名流程，目标是用公开的模型对战投票数据（重点是 Chatbot Arena）形成可复现的模型排行榜与可视化分析。
+
+### 实验导向背景
+
+Elo 本质上用于“成对对局中的胜率”学习相对能力，最初用于棋类，现被广泛用于语言模型两两对比的排序。
+
+### 关键特性
+
+- 高性能实现：NumPy + Numba JIT + 并行处理。
+- 真实数据分析：接入大规模公开投票数据。
+- 胜率推断：可预测任意两个模型的胜率。
+- 历史追踪：可输出时间序列排行快照。
+- 交互可视化：支持静态图与动态动画。
+- 可扩展：可承接较大规模比赛集合。
+
+### 数学原理
+
+与 AndroidWorld 风格一致，评分来自 Bradley-Terry：
+
+```
+P(A 胜过 B) = 1 / (1 + 10^((R_B - R_A) / 400))
+```
+
+单步更新：
+
+```
+R_A_new = R_A + K * (S_A - E_A)
+```
+
+### 安装与运行
+
+```bash
+cd chapter6/elo-leaderboard
+pip install -r requirements.txt
+```
+
+### 命令行（`cli.py`）
+
+`cli.py` 是统一入口：
+- `battle`：生成/采集两两对战
+- `elo`：计算评级
+- `leaderboard`：出榜
+- `pipeline`：端到端一条龙
+
+```bash
+python cli.py --help
+python cli.py battle --help
+python cli.py   # 等价于 python cli.py pipeline
+```
+
+### 三类对战源
+
+- `simulate`：合成对战（有真值），用于验证是否恢复出正确排序。
+- `arena`：离线加载 `arena_data.json`（约 2GB）；可用 `--sample` 抽样。
+- `llm`：调用 LLM 判断对战，带位置偏差消除；支持 `anthropic`、`openrouter` 和 `auto`。
+
+`auto` 会优先使用 Anthropic key，失败时回退 OpenRouter；位置消偏策略与 A/B/tie 判定和后端无关。
+
+### 两种核心评分方法
+
+- Bradley-Terry（推荐）：更稳定，适合正式排行。
+- Online Elo：更贴近课程里的机制讲解，速度快但对顺序敏感。
+
+### 项目结构
+
+同上方英文学段落中的文件列表。
+
+### 使用示例
+
+核心示例同上英文学：
+- `python cli.py battle ...`
+- `python cli.py elo ...`
+- `python cli.py leaderboard ...`
+- `python demo.py` / `python benchmark.py`
+
+### 注意
+
+- `--sample`、`--pipeline`、`--top-n` 等参数见命令行帮助。
+- 建议先看 CLI 输出再对照 `leaderboard` 与可视化文件确认理解。

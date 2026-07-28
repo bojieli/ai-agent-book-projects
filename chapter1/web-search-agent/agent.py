@@ -66,6 +66,23 @@ def search_impl(arguments: Dict[str, Any]) -> Any:
     return arguments
 
 
+# search_and_answer 不抛异常，而是以字符串形式返回失败兜底文案。
+# 下列前缀 / 文案是判断“一次搜索是否失败”的唯一来源，供调用方（如
+# examples.batch_search）复用，避免把失败响应误判为 success。
+SEARCH_ERROR_PREFIX = "搜索过程中出现错误"
+MAX_ITERATIONS_MESSAGE = "抱歉，搜索过程超过了最大迭代次数，请稍后重试。"
+NO_INFO_MESSAGE = "抱歉，我无法获取足够的信息来回答您的问题。"
+
+
+def is_failure_answer(answer: str) -> bool:
+    """判断 search_and_answer 的返回是否为失败兜底（未能正常作答）。"""
+    return (
+        answer.startswith(SEARCH_ERROR_PREFIX)
+        or answer == MAX_ITERATIONS_MESSAGE
+        or answer == NO_INFO_MESSAGE
+    )
+
+
 class WebSearchAgent:
     """
     Web Search Agent - 使用 Kimi API 的内置搜索工具
@@ -87,7 +104,7 @@ class WebSearchAgent:
         """
         # 优先使用传入的 api_key，否则从环境变量获取
         # Moonshot 为主，OpenRouter 为通用兜底（当 MOONSHOT_API_KEY 缺失时启用）
-        from config import resolve_llm_backend
+        from config import resolve_llm_backend, Config
         primary_key = api_key or os.environ.get("MOONSHOT_API_KEY") or os.environ.get("KIMI_API_KEY")
         resolved_key, resolved_base_url, model, self.using_openrouter = \
             resolve_llm_backend(primary_key, base_url, model)
@@ -100,7 +117,9 @@ class WebSearchAgent:
 
         self.client = OpenAI(
             api_key=resolved_key,
-            base_url=resolved_base_url
+            base_url=resolved_base_url,
+            # 应用配置的搜索超时，避免后端挂起时请求默认阻塞约 10 分钟
+            timeout=Config.SEARCH_TIMEOUT,
         )
         self.model = model
         self.verbose = verbose
@@ -245,7 +264,18 @@ class WebSearchAgent:
                     # 执行每个工具调用
                     for tool_call in choice.message.tool_calls:
                         tool_call_name = tool_call.function.name
-                        tool_call_arguments = json.loads(tool_call.function.arguments)
+                        try:
+                            tool_call_arguments = json.loads(
+                                tool_call.function.arguments or "{}"
+                            )
+                        except json.JSONDecodeError:
+                            # Models sometimes emit slightly invalid JSON; match
+                            # chapter4 async-agent and keep the ReAct loop alive.
+                            tool_call_arguments = {}
+                            logger.warning(
+                                "工具参数不是合法 JSON，已按空对象继续: %r",
+                                tool_call.function.arguments,
+                            )
 
                         logger.info(f"执行工具: {tool_call_name}, 参数: {tool_call_arguments}")
                         # 行动：记录一次工具调用
@@ -269,6 +299,22 @@ class WebSearchAgent:
                             "name": tool_call_name,
                             "content": tool_content
                         })
+                elif finish_reason == "length":
+                    # 输出预算（max_tokens）耗尽导致截断：返回已生成内容并明确标注，
+                    # 而不是把半截答案当作完整答案，也不误报“无法获取足够信息”
+                    # （content 为空时，思考过程已耗尽整个预算）。
+                    partial = (choice.message.content or "").strip()
+                    logger.warning("回答因达到 max_tokens 上限被截断 (finish_reason=length)")
+                    note = "（注意：回答因达到 max_tokens 上限被截断，请增大 max_tokens 后重试。）"
+                    final = f"{partial}\n\n{note}" if partial else note
+                    self._emit({"iteration": iteration, "type": "answer", "content": final})
+                    # 存入历史时保留截断提示（final），否则 get_conversation_history()
+                    # 会丢失截断语义，后续复用历史时可能把不完整回答当作普通回答。
+                    self.conversation_history.append({
+                        "role": "assistant",
+                        "content": final
+                    })
+                    return final
                 else:
                     # 获得最终答案
                     if choice.message.content:
@@ -287,13 +333,13 @@ class WebSearchAgent:
             # 如果达到最大迭代次数仍未完成
             if iteration >= max_iterations:
                 logger.warning(f"达到最大迭代次数 {max_iterations}")
-                return "抱歉，搜索过程超过了最大迭代次数，请稍后重试。"
-            
-            return "抱歉，我无法获取足够的信息来回答您的问题。"
+                return MAX_ITERATIONS_MESSAGE
+
+            return NO_INFO_MESSAGE
                 
         except Exception as e:
-            logger.error(f"搜索过程中出现错误: {str(e)}")
-            return f"搜索过程中出现错误: {str(e)}"
+            logger.error(f"{SEARCH_ERROR_PREFIX}: {str(e)}")
+            return f"{SEARCH_ERROR_PREFIX}: {str(e)}"
     
     def clear_history(self):
         """清空对话历史"""

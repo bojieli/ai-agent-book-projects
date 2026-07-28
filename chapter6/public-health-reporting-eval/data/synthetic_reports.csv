@@ -1,0 +1,10 @@
+row_id,org_unit_id,org_unit_name,parent_org_unit,period,tests,confirmed_cases,deaths,report_expected,report_submitted,stockout_days
+R001,OU_ALPHA,Alpha Health Centre,Demo District,2025-01,200,30,0,1,1,0
+R002,OU_BETA,Beta Health Centre,Demo District,2025-01,180,18,0,1,1,3
+R003,OU_GAMMA,Gamma Health Centre,Demo District,2025-01,0,0,0,1,0,0
+R004,OU_ALPHA,Alpha Health Centre,Demo District,2025-02,240,45,1,1,1,2
+R005,OU_BETA,Beta Health Centre,Demo District,2025-02,120,130,0,1,1,-1
+R006,OU_GAMMA,Gamma Health Centre,Demo District,2025-02,160,16,0,1,1,7
+R007,OU_ALPHA,Alpha Health Centre,Demo District,2025-03,220,33,0,1,1,0
+R008,OU_BETA,Beta Health Centre,Demo District,2025-03,0,2,0,1,1,0
+R009,OU_GAMMA,Gamma Health Centre,Demo District,2025-03,140,14,2,1,0,4

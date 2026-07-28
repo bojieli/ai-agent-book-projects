@@ -11,6 +11,12 @@ from datetime import datetime
 import anthropic
 import openai
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from system_state import SystemState
 from tool_registry import ToolRegistry
 
@@ -184,7 +190,8 @@ class CodingAgent:
                 assistant_message = {"role": "assistant", "content": []}
                 current_text = ""
                 current_tool_use = None
-                
+                current_tool_json = ""
+
                 for event in stream:
                     if event.type == "content_block_start":
                         if event.content_block.type == "text":
@@ -196,7 +203,8 @@ class CodingAgent:
                                 "name": event.content_block.name,
                                 "input": {}
                             }
-                    
+                            current_tool_json = ""
+
                     elif event.type == "content_block_delta":
                         if event.delta.type == "text_delta":
                             current_text += event.delta.text
@@ -206,15 +214,11 @@ class CodingAgent:
                                 "accumulated": current_text
                             }
                         elif event.delta.type == "input_json_delta":
-                            # Accumulate tool input
+                            # Accumulate tool input; partial_json is a fragment,
+                            # only the concatenation of all fragments parses.
                             if current_tool_use:
-                                try:
-                                    current_tool_use["input"] = json.loads(
-                                        event.delta.partial_json
-                                    )
-                                except:
-                                    pass
-                    
+                                current_tool_json += event.delta.partial_json
+
                     elif event.type == "content_block_stop":
                         if current_text:
                             assistant_message["content"].append({
@@ -223,6 +227,12 @@ class CodingAgent:
                             })
                             current_text = ""
                         elif current_tool_use:
+                            try:
+                                current_tool_use["input"] = json.loads(
+                                    current_tool_json or "{}"
+                                )
+                            except json.JSONDecodeError:
+                                pass
                             assistant_message["content"].append(current_tool_use)
                             yield {
                                 "type": "tool_call",
@@ -510,4 +520,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

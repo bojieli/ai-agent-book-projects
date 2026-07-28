@@ -252,8 +252,8 @@ async def get_timer_status(timer_id: str) -> Dict[str, Any]:
         
         timer = _active_timers[timer_id]
         
-        # Calculate remaining time for active timers
-        if timer["status"] == "active":
+        # Recurring timers have an interval rather than a fixed expiry time.
+        if timer["status"] == "active" and timer.get("type") != "recurring":
             expiry = datetime.fromisoformat(timer["expiry_time"])
             remaining = (expiry - datetime.now()).total_seconds()
             timer["remaining_seconds"] = max(0, int(remaining))
@@ -291,6 +291,13 @@ async def set_recurring_timer(
         Dictionary with recurring timer ID
     """
     try:
+        if interval_seconds is None or interval_seconds <= 0:
+            return {
+                "success": False,
+                "error": "interval_seconds must be positive",
+                "message": "Failed to set recurring timer"
+            }
+
         timer_id = str(uuid.uuid4())
         
         timer_data = {
@@ -340,27 +347,43 @@ async def _run_recurring_timer(
 ):
     """Internal function to run a recurring timer."""
     try:
-        occurrence = 0
+        timer_data = _active_timers.get(timer_id)
+        if timer_data is None:
+            return
+
+        occurrence = timer_data.get("occurrences", 0)
+
+        # max_occurrences=0 means "never fire" (None means infinite).
+        if max_occurrences is not None and occurrence >= max_occurrences:
+            timer_data["status"] = "completed"
+            await _save_timers()
+            return
         
         while True:
             await asyncio.sleep(interval_seconds)
+
+            timer_data = _active_timers.get(timer_id)
+            if timer_data is None:
+                return
+
             occurrence += 1
-            
-            if timer_id in _active_timers:
-                timer_data = _active_timers[timer_id]
-                timer_data["occurrences"] = occurrence
-                timer_data["last_occurrence"] = datetime.now().isoformat()
-                
-                logger.info(f"Recurring timer {timer_id} occurrence {occurrence}")
-                
-                await _trigger_timer_callback(timer_data)
-                await _save_timers()
-                
-                # Check if we've reached max occurrences
-                if max_occurrences and occurrence >= max_occurrences:
-                    timer_data["status"] = "completed"
-                    logger.info(f"Recurring timer {timer_id} completed after {occurrence} occurrences")
-                    break
+            timer_data["occurrences"] = occurrence
+            timer_data["last_occurrence"] = datetime.now().isoformat()
+
+            logger.info(f"Recurring timer {timer_id} occurrence {occurrence}")
+
+            await _trigger_timer_callback(timer_data)
+
+            # Persist the terminal state, not an active record at the limit.
+            # Use `is not None`: max_occurrences=0 means "never fire", not infinite.
+            if max_occurrences is not None and occurrence >= max_occurrences:
+                timer_data["status"] = "completed"
+                logger.info(f"Recurring timer {timer_id} completed after {occurrence} occurrences")
+
+            await _save_timers()
+
+            if timer_data["status"] == "completed":
+                break
                     
     except asyncio.CancelledError:
         if timer_id in _active_timers:
@@ -381,7 +404,7 @@ async def _save_timers():
         # Only save timers with relevant status
         timers_to_save = {
             tid: timer for tid, timer in _active_timers.items()
-            if timer["status"] in ["active", "expired"]
+            if timer["status"] in ["active", "expired", "completed"]
         }
         
         with open(storage_path, 'w') as f:
@@ -404,8 +427,35 @@ async def _load_timers():
             saved_timers = json.load(f)
         
         # Restore active timers
+        state_changed = False
         for timer_id, timer_data in saved_timers.items():
             if timer_data["status"] == "active":
+                if timer_data.get("type") == "recurring":
+                    _active_timers[timer_id] = timer_data
+
+                    max_occurrences = timer_data.get("max_occurrences")
+                    occurrences = timer_data.get("occurrences", 0)
+                    if max_occurrences is not None and occurrences >= max_occurrences:
+                        # Older versions persisted the final occurrence before
+                        # changing the in-memory status to completed.
+                        timer_data["status"] = "completed"
+                        state_changed = True
+                        continue
+
+                    task = asyncio.create_task(
+                        _run_recurring_timer(
+                            timer_id,
+                            timer_data["interval_seconds"],
+                            max_occurrences
+                        )
+                    )
+                    _timer_tasks[timer_id] = task
+                    logger.info(
+                        f"Restored recurring timer {timer_id} after "
+                        f"{occurrences} occurrences"
+                    )
+                    continue
+
                 # Calculate remaining time
                 expiry = datetime.fromisoformat(timer_data["expiry_time"])
                 remaining = (expiry - datetime.now()).total_seconds()
@@ -422,6 +472,9 @@ async def _load_timers():
                     _active_timers[timer_id] = timer_data
             else:
                 _active_timers[timer_id] = timer_data
-                
+
+        if state_changed:
+            await _save_timers()
+
     except Exception as e:
         logger.error(f"Failed to load timers: {e}")

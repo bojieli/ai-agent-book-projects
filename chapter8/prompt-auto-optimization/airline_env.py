@@ -11,7 +11,7 @@
 """
 
 import json
-from config import get_client, get_model, TEMPERATURE
+from config import get_client, get_model, get_temperature
 
 # ----------------------------------------------------------------------------
 # 1. 工具定义（OpenAI function-calling 格式）
@@ -178,7 +178,7 @@ def run_agent(system_prompt: str, user_message: str, max_steps: int = 4) -> dict
             model=model,
             messages=messages,
             tools=TOOLS,
-            temperature=TEMPERATURE,
+            temperature=get_temperature(),
         )
         msg = resp.choices[0].message
 
@@ -225,7 +225,7 @@ def run_agent(system_prompt: str, user_message: str, max_steps: int = 4) -> dict
 
     # 超出步数上限仍未收敛，兜底再要一次纯文本回复
     resp = client.chat.completions.create(
-        model=model, messages=messages, temperature=TEMPERATURE
+        model=model, messages=messages, temperature=get_temperature()
     )
     return {
         "transferred": False,

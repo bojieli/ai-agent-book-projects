@@ -1,39 +1,44 @@
-# User Memory Evaluation Framework
+# User Memory Evaluation Framework / 用户记忆评估框架
 
-A comprehensive evaluation framework for testing AI agents' memory capabilities across three progressive levels of complexity. This framework uses realistic business conversation scenarios to assess whether agents can effectively store, retrieve, and utilize information from user interactions.
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-1**: three-layer memory eval suite with offline keyword-recall compare.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-1**：三层记忆评测集，含离线 keyword-recall 对照表。
 
-## Overview
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-The framework evaluates agent memory systems through three distinct layers:
+---
 
-### Layer 1: Basic Recall & Direct Retrieval
-Tests the agent's ability to accurately store and retrieve explicit, unambiguous information from a single conversation. Examples include account numbers, confirmation codes, and appointment details.
+## English
 
-### Layer 2: Contextual Reasoning & Disambiguation  
-Evaluates the agent's capability to handle ambiguous requests by retrieving ALL relevant information from multiple conversations and recognizing when clarification is needed. The agent must understand context and avoid making assumptions.
+### Overview
 
-### Layer 3: Cross-Session Synthesis & Proactive Assistance
-Assesses whether the agent can synthesize information across multiple conversations over time, identify critical connections, and provide proactive assistance without being explicitly asked.
+Evaluates agent memory on three progressive layers using realistic business conversations: store, retrieve, and use information from user interactions.
 
-## Features
+#### Layer 1: Basic Recall & Direct Retrieval  
+Single conversation; explicit facts (account numbers, confirmation codes, appointments).
 
-- **60 Realistic Test Cases**: 20 test cases per layer, each containing 50+ rounds of authentic business conversations
-- **LLM-as-Judge Evaluation**: Uses AI to evaluate semantic understanding rather than exact string matching
-- **Comprehensive Scenarios**: Covers banking, insurance, healthcare, travel, retail, and more
-- **Flexible Framework**: Supports interactive, batch, and programmatic evaluation modes
-- **Detailed Reporting**: Generates comprehensive evaluation reports with scores and insights
+#### Layer 2: Contextual Reasoning & Disambiguation  
+Multiple conversations; ambiguous asks; retrieve **all** relevant info; know when to clarify.
 
-## Quickstart: Scored Comparison of Memory Systems (Experiment 3-1)
+#### Layer 3: Cross-Session Synthesis & Proactive Assistance  
+Synthesize across sessions; surface critical connections; proactive help without being asked.
 
-The headline use of this repo is **comparing memory systems** on the three-layer
-suite and reading off a scored table. This runs **fully offline** (no API key)
-using the `keyword-recall` metric on the canned fixtures in `fixtures/`:
+### Features
+
+- **60 test cases** (20 per layer; 50+ rounds each)  
+- **LLM-as-Judge** for semantic scoring  
+- Banking, insurance, healthcare, travel, retail, …  
+- Interactive, batch, programmatic modes  
+- Detailed reports  
+
+### Quickstart: scored comparison (Experiment 3-1)
+
+Fully offline (no API key) with `keyword-recall` on fixtures:
 
 ```bash
 python main.py --mode compare --metric keyword-recall
 ```
 
-Real output (8 annotated test cases, four memory configurations):
+Real output (8 annotated cases, four configs):
 
 ```
              Memory System Comparison (Keyword Recall, 0.000-1.000)
@@ -47,272 +52,173 @@ Real output (8 annotated test cases, four memory configurations):
 └───────────────────────────────┴───────────┴───────────┴───────────┴──────────┘
 ```
 
-The scores are **computed** from `fixtures/system_responses.example.json` by the
-recall metric (not hand-written); they reproduce the book's observation that
-*Simple Notes* clears most Layer-1 recall cases but degrades sharply on the
-Layer-2/3 cases that need disambiguation and cross-session synthesis, whereas
-*Advanced JSON Cards* holds up across all three layers.
+Scores are **computed** from `fixtures/system_responses.example.json` (not hand-written). *Simple Notes* does OK on Layer 1 but drops on L2/L3; *Advanced JSON Cards* holds across layers.
 
-- `fixtures/gold_facts.json` — the key facts each answer must recall, transcribed
-  verbatim from the `test_cases/*.yaml` conversations (no invented values).
-- `fixtures/system_responses.example.json` — illustrative answers from four
-  configurations. Replace it with real outputs from your own memory system
-  (format: `{system_name: {test_id: answer}}`) to benchmark it against the set.
+- `fixtures/gold_facts.json` — key facts from `test_cases/*.yaml`  
+- `fixtures/system_responses.example.json` — replace with your `{system: {test_id: answer}}`  
 
-## Installation
+### Installation
 
-1. Clone the repository
-2. Install dependencies:
 ```bash
 pip install -r requirements.txt
-```
-
-3. Configure evaluator API (Kimi or OpenAI):
-```bash
 cp env.example .env
-# Edit .env with your API credentials
+# API credentials for LLM judge (Kimi or OpenAI)
 ```
 
-## Usage
+### Usage
 
-The CLI ships with a Chinese `--help`; run `python main.py --help` for the full
-list. Key flags:
+`python main.py --help` (Chinese). Key flags:
 
 | Flag | Meaning |
 | --- | --- |
-| `--mode {interactive,demo,batch,compare}` | Run mode (default `interactive`) |
-| `--metric {llm-judge,keyword-recall}` | Scorer: LLM-as-judge (needs API) or offline key-fact recall |
-| `--responses PATH` | Answers JSON (`batch`: `{test_id: ans}`; `compare`: `{system: {test_id: ans}}`) |
-| `--gold PATH` | Gold-fact annotations for `keyword-recall` (default `fixtures/gold_facts.json`) |
-| `--category {layer1,layer2,layer3}` | Restrict to one layer |
-| `--test-cases-dir PATH` | Alternate test-case (dataset) directory |
-| `--evaluator {kimi,openai}` / `--model NAME` | Judge backend / model override for `llm-judge` |
-| `--output PATH` | Report output file |
-| `--list` | Offline: list all test cases and exit |
-
-### Compare Mode (cross-system scored table)
+| `--mode {interactive,demo,batch,compare}` | Default `interactive` |
+| `--metric {llm-judge,keyword-recall}` | Judge (API) or offline key-fact recall |
+| `--responses PATH` | Answers JSON |
+| `--gold PATH` | Gold facts (default `fixtures/gold_facts.json`) |
+| `--category {layer1,layer2,layer3}` | One layer |
+| `--test-cases-dir PATH` | Alternate dataset dir |
+| `--evaluator {kimi,openai}` / `--model` | Judge backend |
+| `--output PATH` | Report file |
+| `--list` | List cases offline and exit |
 
 ```bash
-# Offline, deterministic (no API):
 python main.py --mode compare --metric keyword-recall --output compare.txt
-
-# Only the hardest layer:
 python main.py --mode compare --metric keyword-recall --category layer3
-
-# LLM-as-judge scoring of the same systems (requires API key):
 python main.py --mode compare --metric llm-judge --evaluator kimi
-```
 
-### Interactive Mode
-
-Run the interactive evaluation interface:
-
-```bash
 python main.py --mode interactive
-```
-
-This provides a menu-driven interface to:
-- Browse and view test cases
-- Run individual evaluations
-- Submit agent responses manually
-- Generate evaluation reports
-
-### Demo Mode
-
-See example evaluations with sample responses:
-
-```bash
 python main.py --mode demo
-```
-
-### Batch Mode
-
-Evaluate multiple test cases programmatically:
-
-```bash
 python main.py --mode batch --responses agent_responses.json
 ```
 
-The JSON file should map test IDs to agent responses:
-```json
-{
-  "layer1_01_bank_account": "Your checking account number is 4429853327.",
-  "layer1_02_insurance_claim": "Your claim number is CLM-2024-894327..."
-}
-```
+Batch JSON: `{"layer1_01_bank_account": "Your checking account number is 4429853327.", ...}`.
 
-### Programmatic Usage
+### Programmatic usage
 
 ```python
 from framework import UserMemoryEvaluationFramework
 
-# Initialize framework
 framework = UserMemoryEvaluationFramework()
-
-# List test cases
 test_cases = framework.list_test_cases(category="layer1")
-
-# Get conversation histories for a test
 histories = framework.get_conversation_histories("layer1_01_bank_account")
-
-# Get user question
 question = framework.get_user_question("layer1_01_bank_account")
-
-# Submit agent response for evaluation
 result = framework.submit_and_evaluate(
     test_id="layer1_01_bank_account",
     agent_response="Your checking account number is 4429853327.",
-    extracted_memory=None  # Optional
+    extracted_memory=None
 )
-
-# Check results
-print(f"Reward: {result.reward:.3f}")  # Continuous score from 0.0 to 1.0
-print(f"Passed: {result.reward >= 0.6}")  # Pass if reward >= 0.6
+print(f"Reward: {result.reward:.3f}")
+print(f"Passed: {result.reward >= 0.6}")
 print(f"Reasoning: {result.reasoning}")
 ```
 
-## Test Case Structure
+### Test case structure
 
-Each test case contains:
+Fields: `test_id`, `category`, `title`, `conversation_histories`, `user_question`, `evaluation_criteria`, `expected_behavior`.
 
-- **test_id**: Unique identifier
-- **category**: layer1, layer2, or layer3
-- **title**: Descriptive title
-- **conversation_histories**: One or more realistic conversations (50+ rounds each)
-- **user_question**: The question posed to the agent
-- **evaluation_criteria**: What the agent should retrieve/understand
-- **expected_behavior**: Ideal agent response
+L1: bank accounts, claims, appointments, flights, installs.  
+L2: multi-vehicle, multi-card, multi-policy.  
+L3: passport vs travel, coverage vs procedures, cross-session tax/warranty.
 
-### Example Test Case Scenarios
+### Metrics
 
-**Layer 1 Examples:**
-- Bank account setup with account numbers
-- Insurance claim with confirmation details  
-- Medical appointment scheduling
-- Airline reservations with seat assignments
-- Internet service installation
+**`keyword-recall` (offline):** `reward = (# gold facts in answer) / (# gold facts)`, normalized substring match.
 
-**Layer 2 Examples:**
-- Multiple vehicles requiring disambiguation
-- Several credit cards with different benefits
-- Multiple properties or insurance policies
-- Family members with separate accounts
+**`llm-judge` (API):** scores retrieval completeness, accuracy, context, proactivity vs criteria.
 
-**Layer 3 Examples:**
-- Passport expiring before booked international travel
-- Insurance coverage for planned medical procedure
-- Tax documents needed from various past conversations
-- Home warranty coverage for reported issue
-
-## Evaluation Metrics
-
-Two interchangeable scorers produce a continuous reward in `[0.0, 1.0]`:
-
-### 1. `keyword-recall` (offline, deterministic)
-
-Key-fact recall: `reward = (# gold facts found in the answer) / (# gold facts)`,
-using normalized substring matching (case/whitespace-insensitive; a fact may list
-several acceptable surface forms). Requires no API key, so it powers the offline
-comparison table. Gold facts live in `fixtures/gold_facts.json`.
-
-### 2. `llm-judge` (LLM-as-judge, needs API)
-
-Uses a judge LLM (Kimi or OpenAI) to score semantic quality against the test
-case's `evaluation_criteria` and `expected_behavior`, considering:
-
-1. **Information Retrieval**: Did the agent find the required information?
-2. **Completeness**: For ambiguous queries, did it retrieve ALL relevant information?
-3. **Accuracy**: Is the retrieved information correct?
-4. **Context Understanding**: Does the agent understand the situation?
-5. **Proactive Assistance**: Does it identify unstated but relevant connections?
-
-## Configuration
-
-Edit `config.py` or `.env` file:
+### Configuration
 
 ```python
-# Evaluator LLM Settings
 KIMI_API_KEY=your_key_here
 DEFAULT_EVALUATOR=kimi  # or openai
 MAX_RETRIES=3
 REQUEST_TIMEOUT=60
 ```
 
-## Extending the Framework
+### Extending
 
-### Adding New Test Cases
+Add YAML under `test_cases/layer*/`. Extend `LLMEvaluator` for custom judges.
 
-Create YAML files in the appropriate category folder:
+### Requirements / license
 
-```yaml
-test_id: layer1_new_case
-category: layer1
-title: New Test Case Title
-conversation_histories:
-  - conversation_id: conv_001
-    timestamp: "2024-11-20 10:00:00"
-    messages:
-      - role: user
-        content: "User message"
-      - role: assistant
-        content: "Assistant response"
-      # ... 50+ rounds
-user_question: "What information should I retrieve?"
-evaluation_criteria:
-  description: "What to evaluate"
-  required_information:
-    - "Key piece of information"
-  success_indicators:
-    - "Signs of success"
-expected_behavior: "Ideal response"
+Python 3.8+, Kimi or OpenAI key for judge modes, 8GB+ RAM recommended. MIT License.
+
+---
+
+## 中文
+
+### 概述
+
+用真实业务对话，在三层递进难度上评测 Agent 记忆：能否存储、检索并利用用户交互中的信息。
+
+#### 第 1 层：基础回忆与直接检索  
+单会话、明确事实（账号、确认码、预约等）。
+
+#### 第 2 层：上下文推理与消歧  
+多会话、请求含糊；需取回**全部**相关信息并知道何时澄清。
+
+#### 第 3 层：跨会话综合与主动协助  
+跨会话综合、发现关键关联、主动提示。
+
+### 特性
+
+- **60 个用例**（每层 20；各 50+ 轮）  
+- **LLM-as-Judge**  
+- 银行、保险、医疗、出行、零售等  
+- 交互 / 批处理 / 编程接口  
+- 详细报告  
+
+### 快速开始：记忆系统打分对照（实验 3-1）
+
+完全离线（无需 API）：
+
+```bash
+python main.py --mode compare --metric keyword-recall
 ```
 
-### Custom Evaluators
+实测表见 English 节。分数由 `fixtures/system_responses.example.json` **计算得出**；*Simple Notes* 在 L1 尚可、L2/L3 下降，*Advanced JSON Cards* 三层均稳。
 
-Extend the `LLMEvaluator` class:
+### 安装
 
-```python
-class CustomEvaluator(LLMEvaluator):
-    def evaluate(self, test_case, agent_response, extracted_memory=None):
-        # Custom evaluation logic
-        return EvaluationResult(...)
+```bash
+pip install -r requirements.txt
+cp env.example .env
+# LLM Judge 需配置 Kimi 或 OpenAI
 ```
 
-## Requirements
+### 用法
 
-- Python 3.8+
-- API key for Kimi or OpenAI
-- 8GB+ RAM for loading conversation histories
+`python main.py --help`（中文）。主要标志见 English 表。
 
-## License
+```bash
+python main.py --mode compare --metric keyword-recall --output compare.txt
+python main.py --mode compare --metric keyword-recall --category layer3
+python main.py --mode compare --metric llm-judge --evaluator kimi
 
-MIT License - See LICENSE file for details
-
-## Contributing
-
-Contributions are welcome! Areas for improvement:
-- Additional test cases for specific industries
-- Support for more evaluator LLMs
-- Multi-language test cases
-- Performance optimizations for large-scale evaluations
-
-## Citation
-
-If you use this framework in your research, please cite:
-
-```
-User Memory Evaluation Framework
-A comprehensive testing suite for AI agent memory systems
-https://github.com/your-repo/user-memory-evaluation
+python main.py --mode interactive
+python main.py --mode demo
+python main.py --mode batch --responses agent_responses.json
 ```
 
+编程接口见 English 节 `UserMemoryEvaluationFramework` 示例。
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+### 用例结构与指标
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+字段：`test_id`、`category`、`title`、`conversation_histories`、`user_question`、`evaluation_criteria`、`expected_behavior`。
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, `kimi-*` → `moonshotai/kimi-k2.6`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+- **`keyword-recall`**：离线关键事实召回  
+- **`llm-judge`**：语义评分（需 API）  
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+通过阈值：`reward >= 0.6`。
+
+### 扩展与要求
+
+在 `test_cases/layer*/` 添加 YAML；可继承 `LLMEvaluator`。Python 3.8+；Judge 模式需 API Key；建议 8GB+ 内存。MIT 许可。
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+When primary keys are missing and `OPENROUTER_API_KEY` is set, the chat/judge LLM can route through OpenRouter with automatic model mapping. See `env.example`.

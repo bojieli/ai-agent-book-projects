@@ -48,7 +48,9 @@ class NotebookEditTool(BaseTool):
                 new_cell = {
                     "cell_type": cell_type,
                     "metadata": {},
-                    "source": new_source.split('\n')
+                    # nbformat stores source as a list of lines that KEEP their
+                    # trailing '\n'; readers rebuild the cell with ''.join(source).
+                    "source": new_source.splitlines(keepends=True)
                 }
                 
                 if cell_type == "code":
@@ -91,7 +93,7 @@ class NotebookEditTool(BaseTool):
                 if cell_id:
                     for cell in cells:
                         if cell.get('id') == cell_id:
-                            cell["source"] = new_source.split('\n')
+                            cell["source"] = new_source.splitlines(keepends=True)
                             if cell_type:
                                 cell["cell_type"] = cell_type
                             break

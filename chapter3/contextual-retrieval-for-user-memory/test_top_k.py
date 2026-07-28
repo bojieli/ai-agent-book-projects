@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Check if retrieval pipeline is running
     import requests
     try:
-        response = requests.get("http://localhost:4242/")
+        response = requests.get("http://localhost:4242/", timeout=30)
         print("✓ Retrieval pipeline is running")
     except:
         print("✗ Retrieval pipeline is not running on port 4242")

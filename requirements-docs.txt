@@ -6,5 +6,5 @@
 # break the site build (it has happened — see PR #73). A pinned range lets
 # us upgrade deliberately rather than discovering the breakage in CI.
 
-mkdocs-material >= 9.5, < 10
+mkdocs-material[imaging] >= 9.5, < 10
 mkdocs-git-revision-date-localized-plugin >= 1.2, < 2

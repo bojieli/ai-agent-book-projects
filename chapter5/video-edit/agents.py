@@ -87,10 +87,16 @@ def _img_part(path: str) -> dict:
 
 def _extract_json(text: str) -> dict:
     """从 LLM 回复里稳健地抠出第一个 JSON 对象。"""
-    m = re.search(r"\{.*\}", text, re.DOTALL)
-    if not m:
+    start = text.find("{")
+    if start < 0:
         raise ValueError(f"未能从回复中解析 JSON：{text[:200]}")
-    return json.loads(m.group(0))
+    try:
+        obj, _ = json.JSONDecoder().raw_decode(text, start)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"未能从回复中解析 JSON：{text[:200]}") from e
+    if not isinstance(obj, dict):
+        raise ValueError(f"未能从回复中解析 JSON：{text[:200]}")
+    return obj
 
 
 def _num(value, default: float) -> float:

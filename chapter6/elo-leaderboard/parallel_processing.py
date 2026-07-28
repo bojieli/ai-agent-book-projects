@@ -123,15 +123,18 @@ def calculate_pairwise_win_rates_chunk(args: Tuple) -> List[dict]:
         total = len(matches)
         
         for _, row in matches.iterrows():
+            # Arena data has four winner values; any non-win outcome
+            # ('tie' and 'tie (bothbad)') is worth 0.5, matching the
+            # serial calculate_win_rate_matrix_from_data.
             if row['model_a'] == model_a:
                 if row['winner'] == 'model_a':
                     wins_a += 1
-                elif row['winner'] == 'tie':
+                elif row['winner'] != 'model_b':
                     wins_a += 0.5
             else:  # model_a is model_b in the row
                 if row['winner'] == 'model_b':
                     wins_a += 1
-                elif row['winner'] == 'tie':
+                elif row['winner'] != 'model_a':
                     wins_a += 0.5
         
         win_rate = wins_a / total if total > 0 else 0.5
@@ -189,8 +192,11 @@ def calculate_win_rate_matrix_parallel(df: pd.DataFrame,
     # Flatten results
     all_results = [item for chunk in results_chunks for item in chunk]
     
-    # Build matrix
-    win_rates = {model: {opponent: 0.5 for opponent in models} for model in models}
+    # Build matrix. Pairs with no data stay NaN (the serial version's
+    # convention) — 0.5 would misreport "no data" as an even record;
+    # the diagonal is 0.5 by definition.
+    win_rates = {model: {opponent: (0.5 if opponent == model else np.nan)
+                         for opponent in models} for model in models}
     
     for result in all_results:
         model_a = result['model_a']
@@ -223,9 +229,14 @@ def filter_data_parallel(df: pd.DataFrame,
     """
     if n_jobs == -1:
         n_jobs = min(cpu_count(), 4)  # Cap at 4 for filtering
+
+    if len(df) == 0:
+        return df.copy()
+
+    n_jobs = max(1, min(n_jobs, len(df)))
     
     # Split DataFrame into chunks
-    chunk_size = len(df) // n_jobs
+    chunk_size = max(1, len(df) // n_jobs)
     chunks = [df.iloc[i:i+chunk_size] for i in range(0, len(df), chunk_size)]
     
     def apply_filters(chunk):
@@ -291,6 +302,8 @@ def optimize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             # Try to get unique values - will fail if unhashable
             num_unique = df[col].nunique()
             num_total = len(df[col])
+            if num_total == 0:
+                continue
             
             # If less than 50% unique values, convert to category
             if num_unique / num_total < 0.5:
@@ -301,7 +314,7 @@ def optimize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             continue
     
     final_memory = df.memory_usage(deep=True).sum() / 1024**2
-    reduction = (1 - final_memory / initial_memory) * 100
+    reduction = 0.0 if initial_memory == 0 else (1 - final_memory / initial_memory) * 100
     
     print(f"Memory usage reduced from {initial_memory:.2f} MB to {final_memory:.2f} MB ({reduction:.1f}% reduction)")
     

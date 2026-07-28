@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 490" width="780" height="490" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="65" width="300" height="200" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="180" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Агент-предложитель</text>
+<text x="42" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Вход: расширенная аннотация статьи (2000 слов)</text>
+<rect x="40" y="127" width="280" height="124" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="50" y="144.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="50" y="158.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">theme: академический</text>
+<text x="50" y="172.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="50" y="186.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"># Механизм внимания Transformer</text>
+<text x="50" y="200.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="50" y="214.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">## Основная идея</text>
+<text x="3" y="228.0" font-family="'Courier New', Courier, monospace" font-size="10.96" fill="#333333" text-anchor="start" dominant-baseline="central">- Self-attention вычисляет Q·K^T/√d</text>
+<text x="50" y="242.0" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">- Параллельная обработка многоголового внимания</text>
+<text x="180" y="255" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Понять структуру контента → разбить на слайды</text>
+<rect x="450" y="65" width="300" height="200" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="600" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Агент-рецензент</text>
+<rect x="460" y="107" width="280" height="38" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="468" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">① Рендеринг Slidev → PDF/PNG</text>
+<text x="468" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">② Мультимодальная оценка Vision LLM</text>
+<rect x="460" y="151" width="280" height="85" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="468" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Структурированная обратная связь:</text>
+<text x="468" y="183" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Страница   Тип проблемы   Серьёзность</text>
+<text x="468" y="198" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">P3    Плотный контент   Высокая</text>
+<text x="468" y="213" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">P7    Слишком мелкий шрифт   Средняя</text>
+<text x="560.1" y="228" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">P11   Несовпадение цвета   Низкая</text>
+<text x="600" y="255" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Рендеринг + визуальный анализ → практические рекомендации</text>
+<line x1="332" y1="135" x2="448" y2="135" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="390.0" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Код Slidev</text>
+<line x1="448" y1="215" x2="332" y2="215" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="396.6" y="231" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.94" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Структурированная обратная связь</text>
+<rect x="30" y="290" width="720" height="110" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Процесс итеративного улучшения</text>
+<rect x="75" y="325" width="190" height="62" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Раунд 1</text>
+<text x="85" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">12-страничный черновик</text>
+<text x="85" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">5 проблем</text>
+<line x1="269" y1="356" x2="291" y2="356" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="295" y="325" width="190" height="62" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="305" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Раунд 2</text>
+<text x="305" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">14 страниц (разбиты плотные страницы)</text>
+<text x="305" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">2 проблемы</text>
+<line x1="489" y1="356" x2="511" y2="356" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="515" y="325" width="190" height="62" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="525" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Раунд 3</text>
+<text x="525" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">14 страниц (шрифт исправлен)</text>
+<text x="525" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">0 проблем ✓</text>
+<rect x="30" y="415" width="720" height="90" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="435" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Почему не использовать одного агента?</text>
+<text x="3" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.07" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Один агент: рендеринг изображений ×N раундов → взрыв контекста</text>
+<text x="16" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">(1080p скриншот = тысячи токенов × 14 страниц × 5 раундов)</text>
+<text x="467.1" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Двойной агент: Reviewer видит только текущую версию</text>
+<text x="454" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Предложитель накапливает только текстовую обратную связь → чистый контекст</text>
+</svg>

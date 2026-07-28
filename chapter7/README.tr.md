@@ -15,8 +15,10 @@
 | `verl/` | 📖 | verl, büyük dil modellerinin RLHF eğitimi için özel olarak tasarlanmış verimli bir pekiştirmeli öğrenme çerçevesidir; PPO, GRPO ve DAPO gibi çeşitli algoritmaları destekler. |
 | [Intuitor](Intuitor/) | ✅ | Modellerin sezgisel muhakeme yeteneğini eğitir; ayrıntılı düşünce zincirleri gerektirmeden hızlı, makul kararlar vermelerini sağlar. |
 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Modellerin çok dilli ortamlardaki muhakeme yeteneğini eğitir; diller arası görevlerdeki performansı artırır. |
+| [cot-distillation](cot-distillation/) | ✅ | Claude gibi öncü modellerden OpenRouter aracılığıyla CoT trajectory'leri damıtır, bunları kural tabanlı doğrulayıcılarla süzer ve Deney 7-9 için SFT verisi üretir. |
 | [SpatialReasoning](SpatialReasoning/) | 📖 | Konum, yön ve mesafe gibi uzamsal ilişkileri içeren problemleri ele almak için modellerin uzamsal muhakeme yeteneğini eğitmeye odaklanır. |
 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | Görsel, dil ve eylemi pekiştirmeli öğrenme eğitiminde birleştirir; modellerin görsel girdiyi anlamasını ve karşılık gelen eylemleri yürütmesini sağlar. |
+| [RLVP](RLVP/) | 📖 | Sonucu ödüllendirip hatalı yolu cezalandıran RLVP sonradan eğitim araştırmasıdır; tam eğitim ve değerlendirme kodu harici \`19PINE-AI/rlvp\` deposundan klonlanır. |
 | [continued-pretraining](continued-pretraining/) | ✅ | Hedef alandaki model performansını artırmak için alana özgü veriler üzerinde sürekli ön eğitim yapar. |
 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Tam ön eğitim sürecini ve temel teknikleri anlamak için küçük bir dil modelini sıfırdan ön eğitir. |
 | [sesame](sesame/) | ✅ | Dizi modelleme görevleri için eğitim ve değerlendirme yöntemlerine odaklanır. |

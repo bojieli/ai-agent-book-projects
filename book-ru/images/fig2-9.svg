@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="60" width="740" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="50" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Исходный диалог:</text>
+<text x="50" y="98" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">"Я старший инженер в TechCorp, руковожу командой из 5 человек по созданию рекомендательной системы, использую ML три года"</text>
+<rect x="25.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="117.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Простые заметки</text>
+<text x="117.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Атомарные факты</text>
+<line x1="117.5" y1="117" x2="117.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="25.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="33.0" y="205" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">"Компания пользователя: TechCorp"</text>
+<text x="33.0" y="223" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">"Должность пользователя: старший инженер"</text>
+<text x="33.0" y="241" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">"Команда пользователя: 5 человек"</text>
+<text x="33.0" y="259" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">"Экспертиза пользователя: система рекомендаций"</text>
+<text x="117.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Плюсы: операция O(1),</text>
+<text x="117.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">крайне низкие накладные расходы</text>
+<text x="117.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Минусы: полная потеря</text>
+<text x="117.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">релевантность</text>
+<rect x="220.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="312.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Расширенные заметки</text>
+<text x="312.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Полный абзац</text>
+<line x1="312.5" y1="117" x2="312.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="220.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="228.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">"Старший инженер в</text>
+<text x="228.0" y="223" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">TechCorp, руководит командой</text>
+<text x="228.0" y="241" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">из 5 при формировании рекомендации</text>
+<text x="228.0" y="259" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">система, 3 года опыта в ML."</text>
+<text x="312.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Плюсы: семантика</text>
+<text x="312.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">полнота</text>
+<text x="312.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Минусы: избыточность +</text>
+<text x="312.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">сложные обновления</text>
+<rect x="415.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="507.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">JSON-карточки</text>
+<text x="507.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Иерархическая структура</text>
+<line x1="507.5" y1="117" x2="507.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="415.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="423.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">работа:</text>
+<text x="423.0" y="223" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  company: &quot;TechCorp&quot;</text>
+<text x="423.0" y="241" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  title: "Старший инженер"</text>
+<text x="423.0" y="259" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  team_size: 5</text>
+<text x="487" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Плюсы: частичные обновления</text>
+<text x="507.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Минусы: жёсткая классификация</text>
+<rect x="610.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="702.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Adv. JSON Cards</text>
+<text x="702.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Контекстуализированные знания</text>
+<line x1="702.5" y1="117" x2="702.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="610.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="618.0" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">{category: &quot;work&quot;,</text>
+<text x="618.0" y="223" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> title: "Старший инженер",</text>
+<text x="618.0" y="241" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central"> backstory: «Самопредставление»,</text>
+<text x="618.0" y="259" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> ts: &quot;09-14&quot;}</text>
+<text x="708.1" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.09" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Плюсы: устранение неоднозначности +</text>
+<text x="702.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">трассируемость</text>
+<text x="702.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Минусы: высокая стоимость генерации</text>
+<rect x="40" y="420" width="740" height="180" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Трёхуровневая система оценки</text>
+<rect x="60" y="465" width="180" height="38" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="484" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Уровень 1: Базовое воспроизведение</text>
+<text x="252" y="477" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Хранить и получать прямую информацию</text>
+<text x="252" y="494" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">"Мой номер членства 12345" → Точный возврат</text>
+<rect x="60" y="510" width="180" height="38" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="150" y="529" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Уровень 2: Поиск по нескольким сессиям</text>
+<text x="252" y="522" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Ассоциативное рассуждение между сессиями</text>
+<text x="252" y="539" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">"Запланировать обслуживание моей машины" → Определить две машины</text>
+<rect x="60" y="555" width="180" height="38" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="150" y="574" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Уровень 3: Проактивное обслуживание</text>
+<text x="252" y="567" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Интеграция нескольких воспоминаний, проактивная помощь</text>
+<text x="252" y="584" font-family="'Courier New', Courier, monospace" font-size="11.5" fill="#333333" text-anchor="start" dominant-baseline="central">Забронировать международный рейс → Обнаружить, что паспорт скоро истекает</text>
+</svg>

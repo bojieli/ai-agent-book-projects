@@ -316,6 +316,14 @@ export default function Home() {
     websocketRef.current.onclose = () => {
       addLog('WebSocket closed');
       websocketRef.current = null;
+      // A server restart or network blip fires onclose mid-session. Without
+      // tearing down, the button stays "Stop Recording", the mic keeps
+      // capturing, the ping interval keeps firing, and the audio worklet
+      // silently discards every captured buffer (it checks
+      // websocketRef.current?.readyState, now null) -- a "zombie recording".
+      // websocketRef is already null here, so stopRecording won't re-close the
+      // socket or re-enter onclose.
+      stopRecording();
     };
 
     websocketRef.current.onerror = (error) => {
@@ -463,7 +471,12 @@ export default function Home() {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
     if (audioContextRef.current) {
-      audioContextRef.current.close();
+      // Guard against closing an already-closed context (stopRecording is now
+      // idempotent because onclose also calls it).
+      if (audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+      }
+      audioContextRef.current = null;
     }
     if (websocketRef.current) {
       websocketRef.current.close();
@@ -544,6 +557,15 @@ export default function Home() {
   useEffect(() => {
     scrollLogsToBottom();
   }, [logs]);
+
+  // Tear down the mic stream, AudioContext, WebSocket and ping interval if the
+  // component unmounts mid-recording (client-side nav / fast refresh), instead
+  // of leaving the microphone active and the ping interval firing.
+  useEffect(() => {
+    return () => {
+      stopRecording();
+    };
+  }, []);
 
 
 

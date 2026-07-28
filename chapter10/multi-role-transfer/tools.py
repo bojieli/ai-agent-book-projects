@@ -6,7 +6,7 @@ tools.py —— 各专业角色的专属工具实现 + OpenAI function-calling s
   而是展示「自主角色移交」这一机制。
 - research.web_search：内置知识库 mock（可控、可复现），
   未命中时诚实返回「未检索到」。
-- coding.execute_python：真实执行 Python 代码并捕获标准输出（受限命名空间）。
+- coding.execute_python：真实执行 Python 代码并捕获标准输出（子进程 + 超时）。
 - data_analysis.calculate / descriptive_stats：真实的安全计算。
 - writing.count_characters：真实的中英文字数统计。
 
@@ -16,10 +16,11 @@ tools.py —— 各专业角色的专属工具实现 + OpenAI function-calling s
 from __future__ import annotations
 
 import ast
-import io
-import math
 import operator
-import contextlib
+import os
+import subprocess
+import sys
+import tempfile
 from typing import Callable, Dict, List
 
 
@@ -79,42 +80,34 @@ def web_search(query: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# coding 角色：execute_python —— 真实执行代码并捕获 stdout
+# coding 角色：execute_python —— 真实执行代码并捕获 stdout（带超时）
 # ---------------------------------------------------------------------------
 
-def execute_python(code: str) -> str:
-    """在受限命名空间中执行 Python 代码，返回其标准输出。"""
-    safe_globals: Dict[str, object] = {
-        "__builtins__": {
-            "print": print,
-            "range": range,
-            "len": len,
-            "sum": sum,
-            "min": min,
-            "max": max,
-            "abs": abs,
-            "round": round,
-            "sorted": sorted,
-            "enumerate": enumerate,
-            "zip": zip,
-            "map": map,
-            "list": list,
-            "dict": dict,
-            "tuple": tuple,
-            "float": float,
-            "int": int,
-            "str": str,
-        },
-        "math": math,
-    }
-    buf = io.StringIO()
-    try:
-        with contextlib.redirect_stdout(buf):
-            exec(code, safe_globals, {})  # noqa: S102 —— 受限命名空间下的教学示例
-    except Exception as exc:  # noqa: BLE001
-        return f"代码执行出错：{type(exc).__name__}: {exc}\n已捕获输出：\n{buf.getvalue()}"
-    out = buf.getvalue().strip()
-    return out if out else "（代码已执行，但没有任何 print 输出）"
+def execute_python(code: str, timeout: int = 10) -> str:
+    """把源码写到临时文件并用子进程执行，返回 stdout（带超时）。"""
+    with tempfile.TemporaryDirectory() as tmp:
+        script = os.path.join(tmp, "snippet.py")
+        with open(script, "w", encoding="utf-8") as fh:
+            fh.write(code)
+        try:
+            proc = subprocess.run(
+                [sys.executable, script],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                cwd=tmp,
+            )
+        except subprocess.TimeoutExpired:
+            return f"执行超时（>{timeout}s）"
+        out = (proc.stdout or "").strip()
+        err = (proc.stderr or "").strip()
+        if proc.returncode != 0:
+            return (
+                f"代码执行出错：退出码 {proc.returncode}\n"
+                f"stderr：\n{err}\n"
+                f"已捕获输出：\n{out}"
+            )
+        return out if out else "（代码已执行，但没有任何 print 输出）"
 
 
 # ---------------------------------------------------------------------------

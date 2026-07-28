@@ -1,84 +1,58 @@
-# Multimodal Agent with Multiple Extraction Techniques
+# Multimodal Agent — Three Extraction Paradigms / 多模态 Agent——三种抽取范式对比
 
-An educational agent framework that compares different multimodal content extraction techniques across multiple AI providers (Gemini, OpenAI, Doubao).
+> Companion material for *AI Agents in Depth*, Chapter 3 — **Experiment 3-7**: native multimodal vs extract-to-text vs tool-based analysis.  
+> 配套《深入理解 AI Agent》第 3 章 **实验 3-7**：原生多模态 vs 先抽文本 vs 工具化分析。
 
-## Features
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
-### Three Extraction Modes
+---
 
-1. **Native Multimodality**: Direct processing using model's built-in multimodal capabilities
-   - Gemini 2.5 Pro: Documents (PDF), Images, Audio
-   - GPT-5/GPT-4o: Images (OpenAI multimodal format)
-   - Doubao 1.6: Images (OpenAI multimodal format)
+## English
 
-2. **Extract to Text**: Convert multimodal content to text first, then process
-   - PDF: OCR using Gemini or GPT-5
-   - Image: Generate descriptions using GPT-5 or Doubao 1.6
-   - Audio: Transcription using Whisper API or Gemini
+### Features — three extraction modes
 
-3. **Multimodal Analysis Tools**: Additive functionality for follow-up questions
-   - Image analysis tool (GPT-5/Doubao 1.6)
-   - Audio analysis tool (Gemini 2.5 Pro)
-   - PDF analysis tool (Gemini 2.5 Pro)
+1. **Native Multimodality**: model built-in multimodal  
+   - Gemini 2.5 Pro: PDF, image, audio  
+   - GPT-5/GPT-4o: images (OpenAI multimodal format)  
+   - Doubao 1.6: images  
 
-## Architecture
+2. **Extract to Text**: convert first, then reason  
+   - PDF OCR (Gemini or GPT-5)  
+   - Image captions (GPT-5 or Doubao 1.6)  
+   - Audio: Whisper or Gemini  
 
-The agent follows a modular architecture with clear separation of concerns:
+3. **Multimodal analysis tools**: add-on for follow-ups  
+   - Image / audio / PDF analysis tools  
+
+### Architecture
 
 ```
 MultimodalAgent
 ├── Configuration (config.py)
-│   ├── Model configurations
-│   ├── API key management
-│   └── Extraction mode settings
-├── Agent Core (agent.py)
-│   ├── Message handling (OpenAI format)
-│   ├── Conversation history
-│   ├── Mode-specific processing
-│   └── Streaming responses
-└── Multimodal Tools
-    ├── Image analysis
-    ├── Audio analysis
-    └── PDF analysis
+├── Agent Core (agent.py) — messages, history, modes, streaming
+└── Multimodal Tools — image, audio, PDF analysis
 ```
 
-## Installation
+### Installation
 
-1. Clone the repository and navigate to the project directory:
 ```bash
 cd chapter3/multimodal-agent
-```
-
-2. Install dependencies:
-```bash
 pip install -r requirements.txt
-```
-
-3. Configure API keys:
-```bash
 cp env.example .env
-# Edit .env with your API keys
+# Edit .env with API keys
+export $(cat .env | xargs)   # optional on Unix
 ```
 
-4. Load environment variables:
-```bash
-export $(cat .env | xargs)
-```
+### Quick offline start (no API key)
 
-## Quick Offline Start (No API Key)
-
-Generate a bundled multimodal sample — a chart-bearing report — so you can run
-Experiment 3-7 end to end. The exact quarterly figures live **only in the chart's
-bars**, not in the surrounding text, which is what makes the three-paradigm
-trade-off measurable.
+Generate a chart-bearing sample so Experiment 3-7 is measurable—**exact quarterly figures live only in the chart bars**, not surrounding text:
 
 ```bash
-# Offline: creates test_files/sample_chart.png and test_files/sample_report.pdf
 python create_sample.py           # or: python demo.py --generate-sample
+# → test_files/sample_chart.png, test_files/sample_report.pdf
 ```
 
-Then compare the three extraction paradigms on the same file + question
-(requires a vision API key such as OpenAI or Gemini):
+Then compare three paradigms (needs vision API key):
 
 ```bash
 python demo.py \
@@ -87,44 +61,27 @@ python demo.py \
   --model gpt-5.6-luna
 ```
 
-All CLIs expose a Chinese `--help` (`python demo.py --help`,
-`python main.py --help`, `python create_sample.py --help`).
+Chinese `--help` on `demo.py` / `main.py` / `create_sample.py`.
 
-## Usage
+### Usage
 
-### Interactive Chat Mode
-
-Start an interactive session with the agent:
+#### Interactive
 
 ```bash
 python main.py --interactive
 ```
 
-Available commands in interactive mode:
-- `/file <path>` - Load a multimodal file
-- `/mode <native|extract_to_text>` - Switch extraction mode
-- `/model <model_name>` - Switch model
-- `/tools <on|off>` - Enable/disable multimodal tools
-- `/history` - Show conversation history
-- `/clear` - Clear conversation history
-- `/quit` - Exit
+Commands: `/file <path>`, `/mode <native|extract_to_text>`, `/model <name>`, `/tools <on|off>`, `/history`, `/clear`, `/quit`.
 
-### Process Single File
-
-Process a file with a specific query:
+#### Single file
 
 ```bash
-# Native mode (default)
 python main.py --file document.pdf --query "What is the main topic?"
-
-# Extract to text mode
 python main.py --mode extract_to_text --file image.jpg --query "Describe this image"
-
-# With multimodal tools enabled
 python main.py --tools --mode extract_to_text --file audio.mp3 --query "What's the content?"
 ```
 
-### Programmatic Usage
+#### Programmatic
 
 ```python
 import asyncio
@@ -132,284 +89,189 @@ from agent import MultimodalAgent, MultimodalContent
 from config import ExtractionMode
 
 async def example():
-    # Initialize agent
     agent = MultimodalAgent(
         model="gemini-3.5-flash",
         mode=ExtractionMode.NATIVE,
         enable_tools=True
     )
-    
-    # Process a PDF
-    content = MultimodalContent(
-        type="pdf",
-        path="document.pdf"
-    )
-    
-    result = await agent.process_multimodal_content(
-        content,
-        "Summarize this document"
-    )
+    content = MultimodalContent(type="pdf", path="document.pdf")
+    result = await agent.process_multimodal_content(content, "Summarize this document")
     print(result)
-    
-    # Chat with streaming
     async for chunk in agent.chat("Tell me more about the key points", stream=True):
         print(chunk, end="", flush=True)
 
 asyncio.run(example())
 ```
 
-## Comparing Extraction Techniques
-
-### Demo Script
-
-Run the comprehensive comparison demo:
+### Demo comparison
 
 ```bash
-# Compare extraction modes for a specific file (flags form)
 python demo.py --file document.pdf --query "What are the key findings?" --model gpt-5.6-luna
-
-# Backward-compatible positional form still works
-python demo.py document.pdf "What are the key findings?"
-
-# Save the full transcript, and skip the cross-model pass
+python demo.py document.pdf "What are the key findings?"   # positional still works
 python demo.py --file test_files/sample_chart.png \
   --query "Which quarter had the highest revenue?" \
   --model gpt-5.6-luna --skip-model-comparison --output result.txt
-
-# This will run:
-# 1. Native multimodal mode
-# 2. Extract to text mode
-# 3. Extract to text with tools
-# 4. Comparison across different models (unless --skip-model-comparison)
 ```
 
-Demo CLI flags:
+Runs: (1) native (2) extract-to-text (3) extract + tools (4) cross-model unless skipped.
 
 | Flag | Description |
 |------|-------------|
-| `--file` / positional `file` | Multimodal file to process (image / PDF / audio) |
-| `--query` / positional `query` | Question to ask about the file |
-| `--model` | Model for native/extract modes (default: `gemini-3.5-flash`) |
-| `--skip-model-comparison` | Only run the three-paradigm comparison |
-| `--generate-sample` | Offline: create the bundled chart sample, then exit |
-| `--output`, `-o` | Also write the full transcript to a file |
+| `--file` / positional | Image / PDF / audio |
+| `--query` / positional | Question |
+| `--model` | Default `gemini-3.5-flash` |
+| `--skip-model-comparison` | Only three-paradigm compare |
+| `--generate-sample` | Offline sample then exit |
+| `--output`, `-o` | Transcript file |
 
-### Mode Comparison
+### Mode comparison
 
-| Mode | Advantages | Disadvantages | Best For |
+| Mode | Advantages | Disadvantages | Best for |
 |------|------------|---------------|----------|
-| **Native** | - Preserves full context<br>- Better visual understanding<br>- Direct processing | - Limited model support<br>- Higher token usage | Complex documents with mixed content |
-| **Extract to Text** | - Works with all models<br>- Lower token usage<br>- Can cache extractions | - Loses visual context<br>- Two-step process | Text-heavy documents, cost optimization |
-| **With Tools** | - Best of both worlds<br>- Follow-up questions<br>- Selective deep analysis | - More complex setup<br>- Multiple API calls | Interactive sessions, detailed Q&A |
+| **Native** | Full context; better vision | Limited models; more tokens | Mixed complex docs |
+| **Extract to Text** | Any text model; cacheable | Loses visual context | Text-heavy / cost |
+| **With Tools** | Follow-ups; selective depth | More API calls | Interactive Q&A |
 
-## Supported File Types
+### Supported files / models
 
-### Documents
-- PDF files (up to 1000 pages)
-- Best with Gemini 2.5 Pro native mode
+- PDF (best native Gemini), images (JPEG/PNG/GIF/BMP/WebP), audio (MP3/WAV/M4A/FLAC/AAC/OGG)  
+- Size limits: PDF/images 20MB, audio 25MB  
 
-### Images
-- JPEG, PNG, GIF, BMP, WebP
-- Supported by all models
-
-### Audio
-- MP3, WAV, M4A, FLAC, AAC, OGG
-- Transcription via Whisper or Gemini
-
-## Model Capabilities
-
-| Model | Native PDF | Native Image | Native Audio | Extract to Text | Tools Support |
-|-------|------------|--------------|--------------|-----------------|---------------|
+| Model | Native PDF | Native Image | Native Audio | Extract | Tools |
+|-------|------------|--------------|--------------|---------|-------|
 | Gemini 2.5 Pro | ✅ | ✅ | ✅ | ✅ | ✅ |
 | GPT-5/GPT-4o | ❌ | ✅ | ❌ | ✅ | ✅ |
 | Doubao 1.6 | ❌ | ✅ | ❌ | ✅ | ✅ |
 
-## API Configuration
+### API keys
 
-### Required API Keys
+- `GOOGLE_API_KEY` or `GEMINI_API_KEY` — PDF/audio native  
+- `OPENAI_API_KEY` — GPT + Whisper  
+- `DOUBAO_API_KEY` or `ARK_API_KEY`  
 
-1. **Google Gemini**: Required for PDF/Audio native processing
-   - Get key at: https://makersuite.google.com/app/apikey
-   - Set: `GOOGLE_API_KEY` (or `GEMINI_API_KEY` — both are read)
-
-2. **OpenAI**: Required for GPT models and Whisper
-   - Get key at: https://platform.openai.com/api-keys
-   - Set: `OPENAI_API_KEY`
-
-3. **Doubao**: Required for Doubao model
-   - Get key at: https://console.volcengine.com/
-   - Set: `DOUBAO_API_KEY` (or `ARK_API_KEY` — both are read)
-
-### File Size Limits
-- PDF: 20MB
-- Images: 20MB
-- Audio: 25MB
-
-## Testing
-
-Run the test suite:
+### Testing / best practices
 
 ```bash
 python test_multimodal.py
 ```
 
-## Examples
+Prefer native when vision/audio fidelity matters; extract-to-text for cost/cache; tools for multi-turn. Validate files and keys; handle rate limits.
 
-### Example 1: Analyzing a Research Paper
+### License
 
-```python
-# Native mode for best understanding
-agent = MultimodalAgent(
-    model="gemini-3.5-flash",
-    mode=ExtractionMode.NATIVE
-)
+MIT License — educational project.
 
-content = MultimodalContent(type="pdf", path="research_paper.pdf")
-summary = await agent.process_multimodal_content(
-    content,
-    "What are the main contributions and findings?"
-)
+---
+
+## 中文
+
+### 功能——三种抽取模式
+
+1. **原生多模态**：直接用模型内置能力（Gemini PDF/图/音频；GPT/豆包图像等）  
+2. **先抽文本再推理**：PDF OCR、图像描述、Whisper/Gemini 转写  
+3. **多模态分析工具**：跟进问题的图像 / 音频 / PDF 工具  
+
+### 架构
+
+```
+MultimodalAgent
+├── Configuration (config.py)
+├── Agent Core (agent.py)
+└── Multimodal Tools
 ```
 
-### Example 2: Processing Images with Follow-up
+### 安装
 
-```python
-# Extract to text with tools for follow-up questions
-agent = MultimodalAgent(
-    model="gpt-5.6-luna",
-    mode=ExtractionMode.EXTRACT_TO_TEXT,
-    enable_tools=True
-)
-
-# Initial processing
-await agent.chat("I have an image at photo.jpg", MultimodalContent(type="image", path="photo.jpg"))
-
-# Follow-up using tools
-await agent.chat("What objects are in the background?")
-await agent.chat("What's the color scheme?")
+```bash
+cd chapter3/multimodal-agent
+pip install -r requirements.txt
+cp env.example .env
+# 编辑 API Key
+export $(cat .env | xargs)   # Unix 可选
 ```
 
-### Example 3: Audio Transcription and Analysis
+### 离线快速开始（无需 API Key）
 
-```python
-# Using Whisper for transcription
-agent = MultimodalAgent(
-    model="gpt-5.6-luna",
-    mode=ExtractionMode.EXTRACT_TO_TEXT
-)
+生成带图表的样例报告——**精确季度数字只在柱状图里**，方便测三种范式取舍：
 
-content = MultimodalContent(type="audio", path="interview.mp3")
-transcript = await agent._extract_audio_to_text(content)
-print(f"Transcript: {transcript}")
-
-# Analyze the transcript
-analysis = await agent._answer_with_context(
-    transcript,
-    "What are the key points discussed?"
-)
+```bash
+python create_sample.py
 ```
 
-## Best Practices
+再对比三种范式（需视觉 API Key）：
 
-1. **Mode Selection**:
-   - Use Native mode when visual/audio understanding is crucial
-   - Use Extract to Text for cost optimization and caching
-   - Enable tools for interactive sessions with follow-ups
-
-2. **Model Selection**:
-   - Gemini 2.5 Pro: Best for PDFs and audio
-   - GPT-4o/GPT-5: Best for complex image understanding
-   - Doubao 1.6: Alternative for image processing
-
-3. **Performance Optimization**:
-   - Cache extracted text for repeated queries
-   - Use streaming for better user experience
-   - Process files under size limits
-
-4. **Error Handling**:
-   - Always validate file existence and type
-   - Check API key configuration before processing
-   - Handle rate limits and API errors gracefully
-
-## Troubleshooting
-
-### Common Issues
-
-1. **API Key Errors**:
-   - Ensure all required API keys are set in .env
-   - Check API key validity and quota
-
-2. **File Processing Errors**:
-   - Verify file format is supported
-   - Check file size is within limits
-   - Ensure file path is correct
-
-3. **Model Compatibility**:
-   - Not all models support all content types natively
-   - Use Extract to Text mode for unsupported combinations
-
-## Architecture Details
-
-### Message Format
-
-The agent uses OpenAI-compatible message format:
-
-```python
-{
-    "role": "user" | "assistant" | "system" | "tool",
-    "content": "message text" | [{"type": "text", "text": "..."}, ...],
-    "tool_calls": [...],  # Optional
-    "tool_call_id": "...",  # For tool responses
-}
+```bash
+python demo.py \
+  --file test_files/sample_chart.png \
+  --query "Which quarter had the highest revenue, and what was the exact value?" \
+  --model gpt-5.6-luna
 ```
 
-### Tool Calling Format
+各 CLI 均有中文 `--help`。
 
-Tools follow OpenAI function calling specification:
+### 用法
 
-```python
-{
-    "type": "function",
-    "function": {
-        "name": "analyze_image",
-        "description": "...",
-        "parameters": {
-            "type": "object",
-            "properties": {...},
-            "required": [...]
-        }
-    }
-}
+```bash
+python main.py --interactive
+# /file /mode /model /tools /history /clear /quit
+
+python main.py --file document.pdf --query "What is the main topic?"
+python main.py --mode extract_to_text --file image.jpg --query "Describe this image"
+python main.py --tools --mode extract_to_text --file audio.mp3 --query "What's the content?"
 ```
 
-### Streaming Implementation
+程序化用法见 English 节 `asyncio` 示例。
 
-The agent supports streaming responses for better UX:
-- Gemini: Native streaming API
-- OpenAI/Doubao: Stream via chat completions API
-- Tool results are streamed as they complete
+### 对比演示
 
-## Contributing
+```bash
+python demo.py --file document.pdf --query "What are the key findings?" --model gpt-5.6-luna
+python demo.py --file test_files/sample_chart.png \
+  --query "Which quarter had the highest revenue?" \
+  --model gpt-5.6-luna --skip-model-comparison --output result.txt
+```
 
-This is an educational project demonstrating multimodal AI capabilities. Contributions should focus on:
-- Adding new extraction techniques
-- Improving model comparisons
-- Enhancing documentation
-- Adding more test cases
+| 标志 | 说明 |
+|------|------|
+| `--file` | 多模态文件 |
+| `--query` | 问题 |
+| `--model` | 默认 `gemini-3.5-flash` |
+| `--skip-model-comparison` | 只做三范式对比 |
+| `--generate-sample` | 离线生成样例后退出 |
+| `--output`, `-o` | 保存完整记录 |
 
-## License
+### 模式对比
 
-MIT License - See LICENSE file for details
+| 模式 | 优势 | 劣势 | 适用 |
+|------|------|------|------|
+| **原生** | 上下文与视觉完整 | 模型支持有限、token 多 | 复杂混排文档 |
+| **抽文本** | 通用、可缓存 | 丢视觉细节 | 文本向 / 控成本 |
+| **工具** | 可追问、按需深挖 | 多次 API | 交互式问答 |
 
+### 文件与模型能力
 
-## OpenRouter 通用回退 / Universal OpenRouter fallback
+支持 PDF / 常见图像 / 常见音频；大小限制 PDF/图 20MB、音频 25MB。能力矩阵与 English 表相同。
 
-This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
+### API Key
 
-- If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `kimi-k3`, `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
-- Else a clear error lists the accepted keys.
+- `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`  
+- `OPENAI_API_KEY`  
+- `DOUBAO_API_KEY` 或 `ARK_API_KEY`  
 
-Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
+### 测试
 
-> Note: image analysis and text chat route through OpenRouter (vision-capable default `openai/gpt-5.6-luna`). Audio transcription (Whisper) and native-PDF extraction still require a direct OpenAI/Gemini key.
+```bash
+python test_multimodal.py
+```
+
+### 许可
+
+MIT — 教学项目。
+
+---
+
+## Notes / 说明
+
+### OpenRouter 通用回退 / Universal OpenRouter fallback
+
+Chat / vision can route via OpenRouter when `OPENROUTER_API_KEY` is set and primary keys are missing. **Audio transcription (Whisper) and native-PDF extraction still need direct OpenAI/Gemini keys.**

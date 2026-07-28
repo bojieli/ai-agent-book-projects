@@ -369,18 +369,30 @@ Focus on extracting factual information that would be useful for future conversa
             Processing results with list of operations
         """
         with self.processing_lock:
+            # Mark the current conversations as accounted for up front.
+            # Without this, an early return below leaves last_processed_count
+            # stale, so should_process() stays True and the background loop
+            # re-triggers every second forever.
+            self.last_processed_count = self.conversation_count
+            self.last_processed_timestamp = datetime.now()
+
+            # Reload history from disk: the main agent writes turns through its
+            # own ConversationHistory instance, so this instance's in-memory
+            # list is stale unless we re-read the file.
+            self.conversation_history.load_history()
+
             # Get recent conversation turns
             recent_turns = self.conversation_history.get_recent_turns(
                 limit=self.config.context_window
             )
-            
+
             if not recent_turns:
                 return {
                     'message': 'No recent conversations to process',
                     'operations': [],
                     'summary': {'added': 0, 'updated': 0, 'deleted': 0}
                 }
-            
+
             # Filter out already processed turns
             unprocessed_turns = []
             for turn in recent_turns:
@@ -389,7 +401,7 @@ Focus on extracting factual information that would be useful for future conversa
                 if turn_id not in self.processed_turn_ids:
                     unprocessed_turns.append(turn)
                     self.processed_turn_ids.add(turn_id)
-            
+
             # If all turns have been processed, nothing to do
             if not unprocessed_turns:
                 return {
@@ -458,11 +470,7 @@ Focus on extracting factual information that would be useful for future conversa
                 'summary': summary,
                 'details': operations  # Operations are the details
             }
-            
-            # Update last processed timestamp and count
-            self.last_processed_timestamp = datetime.now()
-            self.last_processed_count = self.conversation_count
-            
+
             return final_results
     
     def should_process(self) -> bool:

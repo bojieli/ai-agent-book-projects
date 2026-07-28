@@ -1,266 +1,64 @@
-# Browser-Use RPA with Learning Capability
+# 实验 8-4：从浏览器轨迹生成可验证工作流
 
-能操作电脑，并且越做越熟练的 Agent
+本项目展示“把经验写成程序”的第一种形式：Agent 首次探索网页任务后，把动作轨迹参数化为工作流；但首次成功只产生 `candidate`，不能直接进入能力库。候选工作流必须在重置后的环境中完整重放，并通过每一步的状态谓词与最终状态谓词，才会成为 `validated`。页面变化导致谓词失败时，旧版本转为 `invalid`，系统退回完整 Agent 重新探索。
 
-## 项目概述
-
-本项目实现了一个具有学习能力的浏览器自动化Agent。该Agent能够：
-
-1. **学习阶段**：通过多模态大模型（GPT-4o, Claude, Gemini等）完成新任务，并捕获成功的操作流程
-2. **应用阶段**：识别相似任务，直接回放已学习的工作流，无需再次调用大模型
-3. **持续改进**：记录执行指标，不断优化知识库
-
-## 架构设计
-
-```
-browser-use-rpa/
-├── browser-use/          # Browser-use 核心库（未修改）
-├── learning_agent/       # 学习Agent封装层
-│   ├── agent.py         # 主Agent类，封装browser-use
-│   ├── workflow.py      # 工作流数据结构
-│   ├── knowledge_base.py # 知识库管理
-│   └── replay.py        # 工作流回放器
-├── demo_weather.py      # 天气查询演示
-├── demo_email.py        # 邮件发送演示
-└── knowledge_base/      # 存储学习到的工作流
-```
-
-### 核心组件
-
-#### 1. LearningAgent (agent.py)
-- 封装browser-use的Agent类
-- 拦截并记录每个操作步骤
-- 提取稳定的XPath选择器
-- 管理学习和回放模式
-
-#### 2. Workflow (workflow.py)
-- 定义工作流数据结构
-- 支持参数化（如不同的收件人、主题等）
-- 记录元素选择器和操作参数
-
-#### 3. KnowledgeBase (knowledge_base.py)
-- 持久化存储工作流
-- 意图匹配算法
-- 性能指标跟踪
-
-#### 4. WorkflowReplayer (replay.py)
-- 使用Playwright直接控制浏览器
-- 智能等待元素加载
-- 错误恢复机制
-
-## 安装
+## 可离线复现的主实验
 
 ```bash
-# 1. 安装依赖
-pip install -r requirements.txt
-
-# 2. 安装Playwright浏览器
-playwright install chromium
-
-# 3. 配置环境变量
-cp env.example .env
-# 编辑.env文件，添加你的API密钥
+python workflow_validation_demo.py
+python -m unittest -v test_state_predicates.py
 ```
 
-## 使用示例
+模拟页面演示了完整生命周期：
 
-### 基本用法
+```text
+首次轨迹 → candidate → 重置环境 → 完整回放通过 → validated → 能力库
+                                                        │
+                                               页面或接口发生变化
+                                                        ↓
+                                      谓词失败 → invalid → 完整 Agent 重学
+```
+
+`WorkflowStep` 现在包含 `preconditions` 与 `postconditions`，`Workflow` 包含 `final_predicates`。内置谓词覆盖 URL 包含、元素可见、元素文本包含和页面状态值相等。`WorkflowReplayer` 在动作前后检查真实 Playwright 页面；任一谓词失败都会立即中止，返回明确原因与 `fallback_required=True`，不会把“动作执行过”误报为任务成功。
+
+`KnowledgeBase` 将候选区与正式能力库分开。`save_workflow` 拒绝未验证对象；`publish_validated` 只接收完整回放通过的版本；`invalidate_workflow` 会把失效版本移出检索，同时保留审计文件。
+
+## 接入真实浏览器 Agent
+
+`learning_agent/agent.py` 是对 browser-use 的封装。首次运行会捕获动作、提取参数和保守状态谓词，然后保存候选版本。调用者还必须提供一个 `validation_reset` 回调，用于把测试站点、账号或沙盒恢复到独立初始状态；没有回调时，候选只保留供审计，不会自动发布，以免通过重复发送邮件、重复下单等有副作用的方式“验证”。
 
 ```python
-from learning_agent import LearningAgent
-from llm_factory import make_llm  # 包装层 LLM 工厂：OpenAI 直连，缺 Key 时 OpenRouter 兜底
-
-# 创建学习Agent
 agent = LearningAgent(
-    task="发送邮件给test@example.com，主题是'测试'，内容是'这是一封测试邮件'",
-    llm=make_llm(),  # 默认 gpt-5.6-luna；无 OPENAI_API_KEY 时走 OpenRouter 兜底
+    task=task,
+    llm=llm,
     knowledge_base_path="./knowledge_base",
-    headless=False  # 显示浏览器界面
+    validation_reset=reset_test_account,
 )
-
-# 执行任务
 result = agent.run_sync(max_steps=20)
-
-print(f"任务完成: {'成功' if result['success'] else '失败'}")
-print(f"执行时间: {result['execution_time']:.2f}秒")
-print(f"是否使用已学习的工作流: {result['replay_used']}")
 ```
 
-### 运行演示
+真实浏览器演示仍可使用 `demo_email.py` 和 `demo_weather.py`，需要安装 `requirements.txt`、Chromium 与模型 API。上游 `browser-use/` 副本保持不变，本实验的生命周期与验证逻辑全部位于封装层。
 
-`demo_email.py` 是本实验的主入口，演示「学习一次工作流 → 用不同参数高速回放」这一核心思想。
-它提供了完整的中文命令行接口，运行 `python demo_email.py --help` 可查看所有参数：
+真实 LLM + 浏览器的最小冒烟测试如下；`--quick` 在这里不是 dry-run，它会实际调用模型并控制 Chromium：
 
 ```bash
-# 运行完整的「学习 → 回放」对比演示（默认行为，会打开浏览器）
-python demo_email.py
-
-# 快速冒烟测试：只跑一次简单任务，不做学习/回放对比
-python demo_email.py --quick
-
-# 无界面模式 + 使用 Gemini 模型
-python demo_email.py --model gemini-2.0-flash-exp --headless
-
-# 自定义两个阶段的任务，并把指标对比写入 JSON 文件
-python demo_email.py \
-    --task '给 a@b.com 发主题为"报告"的邮件' \
-    --replay-task '给 c@d.com 发主题为"周报"的邮件' \
-    --output results.json
-
-# 天气查询演示（另一个更轻量的例子）
-python demo_weather.py
+pip install -r requirements.txt
+playwright install chromium
+export OPENAI_API_KEY=your_api_key_here
+python demo_email.py --quick --headless --model gpt-5.6
 ```
 
-**命令行参数说明（`demo_email.py`）：**
+完整的候选发布测试还需为目标测试站点实现 `validation_reset`，并使用沙盒账号，随后运行不带 `--quick` 的学习—重放流程。没有可重置环境时，真实 LLM 轨迹只能形成候选，不应为了“验证”而在生产账号中重复发送邮件或提交订单。
 
-| 参数 | 说明 | 默认值 |
-|-----|------|-------|
-| `--task` | 学习阶段的任务描述 | 向 test@example.com 发送测试邮件 |
-| `--replay-task` | 回放阶段的任务描述（参数不同、流程相同） | 向 another@example.com 发送邮件 |
-| `--model` | 大模型；`gpt-*` 走 OpenAI（缺 Key 时 OpenRouter 兜底），`gemini-*` 走 Google | `gpt-5.6-luna` |
-| `--headless` | 以无界面模式运行浏览器 | 显示窗口 |
-| `--knowledge-base` | 工作流知识库存储目录 | `./email_knowledge` |
-| `--max-steps` | 学习阶段最大操作步数 | `20` |
-| `--output` | 把学习/回放指标与知识库统计写入 JSON 文件 | 不写出 |
-| `--quick` | 快速冒烟测试模式 | 关闭 |
+## 文件说明
 
-**预期结果：** 第一次运行时，Agent 处于学习阶段，会通过多模态大模型逐步探索并录制「发送邮件」工作流，
-耗时较长且产生多次 LLM 调用；随后回放阶段用新的收件人/主题参数复用同一工作流，几乎不再调用大模型，
-耗时显著下降。演示结束会打印两个阶段的耗时、LLM 调用次数与知识库统计；若指定了 `--output`，
-上述对比会以结构化 JSON 保存，便于复盘“学习一次、复用多次”带来的成本收益。
+| 文件 | 作用 |
+| --- | --- |
+| `learning_agent/workflow.py` | 状态谓词、工作流结构与 candidate/validated/invalid 生命周期 |
+| `learning_agent/replay.py` | 基于 Playwright 的动作执行和前置/后置/最终验证 |
+| `learning_agent/knowledge_base.py` | 候选审计、验证后发布、失效隔离 |
+| `learning_agent/agent.py` | 首次探索、参数化、重置回放与失败回退 |
+| `workflow_validation_demo.py` | 纯标准库的确定性状态机演示 |
+| `test_state_predicates.py` | 生命周期、页面变化和序列化测试 |
 
-> 注意：完整运行需要有效的模型 API Key（见 `.env`）以及本地可用的浏览器（`playwright install chromium`）。
-> `--help` 与参数解析本身无需上述依赖即可查看。
-
-## 验收标准测试
-
-### 1. 首次任务执行（学习阶段）
-
-运行 `demo_email.py`，观察第一阶段：
-
-- Agent通过"观察-思考-行动"循环完成任务
-- 每步操作都需要调用大模型
-- 成功后自动保存工作流到知识库
-- 显示执行时间和步骤数
-
-**示例输出：**
-```
-📚 PHASE 1: LEARNING - First Email Task
-Task: Send email to test@example.com
-🚀 Starting learning phase...
-✅ Learning phase completed!
-   - Success: ✓
-   - Execution time: 35.2 seconds
-   - LLM calls made: 12
-   - Workflow captured: Yes
-```
-
-### 2. 重复任务执行（应用阶段）
-
-继续观察第二阶段：
-
-- Agent识别相似任务，匹配已学习的工作流
-- 直接回放操作步骤，无需调用大模型
-- 自动填充新的参数（收件人、主题等）
-- 执行速度显著提升
-
-**示例输出：**
-```
-🚀 PHASE 2: REPLAY - Second Email Task
-Task: Send email to another@example.com
-🔄 Starting replay phase...
-✅ Replay phase completed!
-   - Success: ✓
-   - Execution time: 8.5 seconds
-   - Workflow reused: Yes
-   
-🎯 Performance Improvements:
-   - Speed: 4.1x faster
-   - LLM calls saved: 12
-   - Time saved: 26.7 seconds
-```
-
-## 技术特点
-
-### 1. 稳定的元素定位
-
-- **XPath优先**：捕获元素的完整XPath路径，对页面结构变化有较好的鲁棒性
-- **多重回退**：XPath失败时尝试CSS选择器、属性选择器等
-- **智能等待**：使用`wait_for(state='visible')`确保元素加载完成
-
-### 2. 工作流捕获机制
-
-```python
-# 从browser-use的内部状态提取元素信息
-element = selector_map[index]
-workflow_step = WorkflowStep(
-    action_type=ActionType.CLICK,
-    xpath=element.xpath,
-    element_attributes={
-        'id': element.attributes.get('id'),
-        'class': element.attributes.get('class'),
-        ...
-    }
-)
-```
-
-### 3. 意图匹配算法
-
-- 关键词匹配
-- 动词识别（send, write, check等）
-- 成功率加权
-- 置信度评分
-
-## 性能对比
-
-| 指标 | 学习阶段 | 回放阶段 | 提升 |
-|-----|---------|---------|-----|
-| 执行时间 | 30-40秒 | 5-10秒 | 3-5倍 |
-| LLM调用次数 | 10-15次 | 0次 | 100% |
-| 成功率 | 85% | 95%+ | 10%+ |
-
-## 知识库管理
-
-查看知识库统计：
-
-```python
-from learning_agent import KnowledgeBase
-
-kb = KnowledgeBase("./knowledge_base")
-stats = kb.get_statistics()
-print(stats)
-# {
-#     'total_workflows': 5,
-#     'total_executions': 23,
-#     'success_rate': '91.3%',
-#     'total_model_calls_saved': 156
-# }
-```
-
-清空知识库：
-
-```python
-kb.clear_all()  # 谨慎使用
-```
-
-## 限制和注意事项
-
-1. **动态内容**：对于高度动态的页面，XPath可能会变化
-2. **认证状态**：不会保存登录状态，每次都从头开始
-3. **复杂交互**：暂不支持拖拽、右键菜单等复杂操作
-4. **多标签页**：回放模式简化了标签页处理
-
-## 扩展建议
-
-1. **更智能的参数提取**：使用NLP模型提取任务参数
-2. **工作流组合**：将多个小工作流组合成复杂任务
-3. **错误恢复**：增强回放失败时的恢复策略
-4. **分布式知识库**：支持团队共享学习成果
-
-## 贡献
-
-欢迎提交Issue和Pull Request来改进本项目。
-
-## 许可
-
-本项目基于browser-use开发，遵循其开源许可协议。
+该项目检验的是“轨迹能否编译成经过验证的可执行能力”，而不只是回放速度。真实系统还应为高风险动作加入权限检查、幂等键、沙盒账号和人工批准。

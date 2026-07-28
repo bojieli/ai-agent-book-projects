@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 900 660" width="900" height="660" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="10.0" y="55" width="168" height="38" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="94.0" y="74" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Модель Diff + Apply</text>
+<rect x="10.0" y="101" width="168" height="116" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="16.0" y="117" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">Описание diff вывода LLM:</text>
+<text x="16.0" y="134" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">- def foo(x):</text>
+<text x="16.0" y="151" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">    return x</text>
+<text x="16.0" y="168" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">+ def foo(x, y=0):</text>
+<text x="16.0" y="185" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">+   return x + y</text>
+<text x="16.0" y="202" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">→ Малая модель находит и применяет</text>
+<rect x="14.0" y="229" width="160" height="80" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="94.0" y="244.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Преимущество: разделение</text>
+<text x="94.0" y="258.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Опасения</text>
+<text x="94.0" y="272.52000000000004" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Недостаток: незначительный</text>
+<text x="94.0" y="286.68000000000006" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Причины отклонения</text>
+<text x="94.0" y="300.8400000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Несогласованность</text>
+<rect x="188.0" y="55" width="168" height="38" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="272.0" y="74" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Старая строка → Новая строка</text>
+<rect x="188.0" y="101" width="168" height="99" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="194.0" y="117" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">old: &quot;def foo(x):\n</text>
+<text x="194.0" y="134" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">       return x&quot;</text>
+<text x="194.0" y="151" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">new: &quot;def foo(x, y=0):\n</text>
+<text x="194.0" y="168" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">       return x + y&quot;</text>
+<text x="194.0" y="185" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">→ Замена по точному совпадению строки</text>
+<rect x="192.0" y="229" width="160" height="80" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="272.0" y="244.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Преимущество: предсказуемость,</text>
+<text x="272.0" y="258.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Однозначно</text>
+<text x="272.0" y="272.52000000000004" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Недостаток: большой</text>
+<text x="272.0" y="286.68000000000006" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Удаления требуют полного</text>
+<text x="272.0" y="300.8400000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Выход</text>
+<rect x="366.0" y="55" width="168" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="450.0" y="74" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Позиционирование по номеру строки</text>
+<rect x="366.0" y="101" width="168" height="99" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="372.0" y="117" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">Удалить строки 42-43, вставить:</text>
+<text x="372.0" y="134" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  def foo(x, y=0):</text>
+<text x="372.0" y="151" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">    return x + y</text>
+<text x="372.0" y="168" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="372.0" y="185" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">→ Номер строки задаёт точный диапазон</text>
+<rect x="370.0" y="229" width="160" height="80" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="450.0" y="244.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Преимущество: эффективно для</text>
+<text x="450.0" y="258.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Крупные операции</text>
+<text x="450.0" y="272.52000000000004" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Недостаток: строка</text>
+<text x="450.0" y="286.68000000000006" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Числа склонны к ошибкам в</text>
+<text x="450.0" y="300.8400000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Длинные файлы</text>
+<rect x="544.0" y="55" width="168" height="38" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="628.0" y="74" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Vim-подобные команды</text>
+<rect x="544.0" y="101" width="168" height="99" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="550.0" y="117" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">42G  (Перейти на строку 42)</text>
+<text x="550.0" y="134" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">cw   (Заменить слово)</text>
+<text x="550.0" y="151" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">dd   (Удалить строку)</text>
+<text x="550.0" y="168" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">yy/p (Копировать/Вставить)</text>
+<text x="550.0" y="185" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">→ Богатая семантика редактирования</text>
+<rect x="548.0" y="229" width="160" height="80" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="628.0" y="244.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Преимущество: эффективность</text>
+<text x="628.0" y="258.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">перемещение/реорганизация</text>
+<text x="628.0" y="272.52000000000004" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Недостаток: слабый</text>
+<text x="628.0" y="286.68000000000006" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">модели производят больше</text>
+<text x="628.0" y="300.8400000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ошибки</text>
+<rect x="722.0" y="55" width="168" height="38" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="806.0" y="74" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сопоставление начала и конца</text>
+<rect x="722.0" y="101" width="168" height="99" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="728.0" y="117" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">start: &quot;def foo(x):&quot;</text>
+<text x="728.0" y="134" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">end:   &quot;    return x&quot;</text>
+<text x="728.0" y="151" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">new: &quot;def foo(x, y=0):</text>
+<text x="728.0" y="168" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">       return x + y&quot;</text>
+<text x="728.0" y="185" font-family="'Courier New', Courier, monospace" font-size="6.5" fill="#333333" text-anchor="start" dominant-baseline="central">→ Нужны только границы для локализации</text>
+<rect x="726.0" y="229" width="160" height="80" rx="3" fill="#ffffff" stroke="#999999" stroke-width="2"/>
+<text x="806.0" y="244.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Преимущество: большое удаление</text>
+<text x="806.0" y="258.36" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">без полного вывода</text>
+<text x="806.0" y="272.52000000000004" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Недостаток: граница</text>
+<text x="806.0" y="286.68000000000006" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">комбинация должна быть</text>
+<text x="806.0" y="300.8400000000001" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">уникальный</text>
+<line x1="30" y1="331" x2="870" y2="331" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="450.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Фактическое внедрение</text>
+<text x="240" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Старое→Новое</text>
+<rect x="250" y="379" width="408.0" height="28" rx="3" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="454.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Claude Code</text>
+<text x="240" y="431" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Позиционирование по номеру строки</text>
+<rect x="250" y="417" width="240.0" height="28" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="370.0" y="431" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Сценарии глубокой интеграции с IDE</text>
+<text x="240" y="469" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Diff + Применить</text>
+<rect x="250" y="455" width="192.0" height="28" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="346.0" y="469" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cursor</text>
+<text x="240" y="507" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Сопоставление начала и конца</text>
+<rect x="250" y="493" width="144.0" height="28" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="322.0" y="507" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Частичные кастомные решения</text>
+<text x="240" y="545" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">Команды Vim</text>
+<rect x="250" y="531" width="72.0" height="28" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="286.0" y="545" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Эксперим. решения</text>
+</svg>

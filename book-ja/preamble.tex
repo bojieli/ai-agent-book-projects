@@ -1,0 +1,191 @@
+% ===== ElegantBook customizations for 《深入理解 AI Agent》 =====
+% Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
+
+% ── Unicode glyph fallback (Times/Courier lack these) ─────────────
+\usepackage{newunicodechar}
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\IfFontExistsTF{Noto Sans CJK JP}{\newfontfamily\fallbackfont{Noto Sans CJK JP}}{\newfontfamily\fallbackfont{DejaVu Sans}}}
+\IfFontExistsTF{Hiragino Sans}{\newunicodechar{★}{{\fontspec{Hiragino Sans}★}}}{\IfFontExistsTF{Noto Sans CJK JP}{\newunicodechar{★}{{\fontspec{Noto Sans CJK JP}★}}}{\newunicodechar{★}{{\fontspec{DejaVu Sans}★}}}}
+\newunicodechar{✓}{{\fallbackfont ✓}}
+\newunicodechar{✗}{{\fallbackfont ✗}}
+% ― (U+2015 HORIZONTAL BAR) は日本語のダッシュ「――」として多用するが Latin 本文
+% フォント（lmroman）に無いため、CJK 対応の fallbackfont（Noto Sans CJK JP）で描画する。
+\newunicodechar{―}{{\fallbackfont ―}}
+\newunicodechar{₀}{{\fallbackfont ₀}}
+\newunicodechar{₁}{{\fallbackfont ₁}}
+\newunicodechar{₂}{{\fallbackfont ₂}}
+\newunicodechar{₃}{{\fallbackfont ₃}}
+\newunicodechar{₄}{{\fallbackfont ₄}}
+\newunicodechar{₅}{{\fallbackfont ₅}}
+\newunicodechar{₆}{{\fallbackfont ₆}}
+\newunicodechar{₇}{{\fallbackfont ₇}}
+\newunicodechar{₈}{{\fallbackfont ₈}}
+\newunicodechar{₉}{{\fallbackfont ₉}}
+\newunicodechar{ⓐ}{{\fallbackfont ⓐ}}
+\newunicodechar{ⓑ}{{\fallbackfont ⓑ}}
+\newunicodechar{ⓒ}{{\fallbackfont ⓒ}}
+\newunicodechar{ⓓ}{{\fallbackfont ⓓ}}
+\newunicodechar{ⓔ}{{\fallbackfont ⓔ}}
+% Math / symbols absent from the Latin text font
+\newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{♠}{{\fallbackfont ♠}}
+\newunicodechar{♣}{{\fallbackfont ♣}}
+\newunicodechar{♥}{{\fallbackfont ♥}}
+\newunicodechar{♦}{{\fallbackfont ♦}}
+% Greek letters used inline in body text (Latin Modern lacks them here)
+\newunicodechar{α}{{\fallbackfont α}}
+\newunicodechar{β}{{\fallbackfont β}}
+\newunicodechar{γ}{{\fallbackfont γ}}
+\newunicodechar{δ}{{\fallbackfont δ}}
+\newunicodechar{ε}{{\fallbackfont ε}}
+\newunicodechar{η}{{\fallbackfont η}}
+\newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{λ}{{\fallbackfont λ}}
+\newunicodechar{μ}{{\fallbackfont μ}}
+\newunicodechar{π}{{\fallbackfont π}}
+\newunicodechar{ρ}{{\fallbackfont ρ}}
+\newunicodechar{σ}{{\fallbackfont σ}}
+\newunicodechar{τ}{{\fallbackfont τ}}
+\newunicodechar{φ}{{\fallbackfont φ}}
+\newunicodechar{ω}{{\fallbackfont ω}}
+
+% ── Code/monospace font (covers box-drawing glyphs used in code) ──
+\setmonofont[Scale=0.86]{Menlo}
+
+% ── tcolorbox (ElegantBook already loads it; just add libraries) ──
+\tcbuselibrary{skins,breakable}
+
+% ── TikZ (for the full-bleed image cover in cover.tex) ───────────
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+% Vertical fade: invisible at the top, solid at the bottom — lets the cover
+% art melt smoothly into the navy title band.
+\tikzfading[name=titlefade, top color=transparent!100, bottom color=transparent!0]
+
+% Theme accent color: override ElegantBook's bright cyan with a deep navy
+% (classic, authoritative technical-book tone). Drives headings, rules, links,
+% code chrome and the cover. Tweak this one line to restyle the whole book.
+\definecolor{structurecolor}{RGB}{30,58,107}
+
+% Accent shade for code/figure chrome (follows the theme color above)
+\colorlet{accent}{structurecolor}
+
+% Internal cross-reference links (圖N-M / 第N章) — clickable + subtle teal,
+% independent of the document class's global linkcolor. Used by crossref.lua.
+\newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Wrap long lines in code blocks ───────────────────────────────
+% pandoc emits fancyvrb's Verbatim (via `Highlighting` for ```lang blocks
+% and plain `verbatim` for un-tagged blocks); neither wraps by default, so
+% long lines overflow the page. fvextra adds breaklines; re-define both
+% environments to wrap, breaking mid-token when a chunk has no spaces (URLs,
+% long identifiers, CJK comments). A teal ↳ marks each continued line.
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+% ── Code blocks: subtle O'Reilly-style framed box ────────────────
+% One shared box style for ALL code blocks so highlighted (```lang → Shaded)
+% and plain (``` → verbatim) blocks look identical. The plain verbatim nests
+% a fvextra Verbatim inside the box; \VerbatimEnvironment makes it end at
+% \end{verbatim} (the outer env name) rather than \end{Verbatim}.
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm,
+  before skip=0.7em, after skip=0.7em
+}
+\renewenvironment{Shaded}{\begin{codebox}}{\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{Verbatim}}%
+  {\end{Verbatim}\end{codebox}}
+
+% ── Experiment & question callouts (used by experiment_box.lua) ───
+\newtcolorbox{experimentbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em
+}
+
+\newtcolorbox{questionbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em,
+  title={\sffamily\bfseries 深度思考},
+  fonttitle=\normalsize\color{white},
+  coltitle=white,
+  attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
+  boxed title style={colback=accent, colframe=accent, arc=0.8mm, outer arc=0.8mm}
+}
+
+% ── Figures: force [H] so they can sit inside callout/quote boxes ─
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Figure captions: manual numbering in text, so suppress label ──
+\usepackage{caption}
+% Captions apply \sffamily, which switches Chinese to a CJK sans (Hiragino Sans).
+% The earlier fix used Scale=MatchLowercase, which scales CJK down to the Latin
+% x-height — wrong for Chinese, whose glyphs should sit at the nominal point
+% size (as they do in the body, which is why the body looks fine and only
+% captions were off). Render Hiragino Sans at nominal size (no MatchLowercase) with a
+% faux bold, so 中文 matches the Latin in captions. Injected into captions only;
+% headings and body are untouched.
+\IfFontExistsTF{Hiragino Sans}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{Hiragino Sans}}{\IfFontExistsTF{Noto Sans CJK JP}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{Noto Sans CJK JP}}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{DejaVu Sans}}}
+\DeclareCaptionFont{cjkmatch}{\CJKfamily{capcjksf}}
+\captionsetup{font={normalsize,sf,bf,cjkmatch}, labelformat=empty, skip=4pt, justification=centering}
+
+% ── Blockquotes: teal left bar (experiments render as quotes) ────
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[
+    blanker, breakable,
+    borderline west={2.5pt}{0pt}{accent},
+    colback=accent!4,
+    left=1em, right=0.6em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Inline code: keep it tight ───────────────────────────────────
+\setlength{\parindent}{2em}
+
+% 本文の日本語フォント。本書にはコード例や中国語の固有名詞（例: 硅基流动＝SiliconFlow）
+% など簡体字が含まれるため、全 CJK を網羅する Noto Serif/Sans CJK JP を最優先にする。
+% Hiragino Mincho ProN は簡体字（录/输/动 など）を持たず豆腐化するため最後のフォールバック。
+\IfFontExistsTF{Noto Serif CJK JP}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{Noto Serif CJK JP}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Noto Sans CJK JP}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Noto Sans CJK JP}%
+}{\IfFontExistsTF{Noto Sans CJK JP}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{Noto Sans CJK JP}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Noto Sans CJK JP}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Noto Sans CJK JP}%
+}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{Hiragino Mincho ProN}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Hiragino Sans}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Hiragino Mincho ProN}%
+}}
+
+% ElegantBook には lang=jp が無いため lang=cn を用いる（CJK 組版に必要）。ただし
+% 目次ラベルだけは中国語「目录」ではなく日本語「目次」に上書きする。
+\AtBeginDocument{\renewcommand{\contentsname}{目次}}
+
+% ElegantBook empties the `plain` page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
