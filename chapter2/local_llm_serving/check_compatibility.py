@@ -81,7 +81,27 @@ def provide_recommendations(cuda_available, system):
     print("💡 Recommendations")
     print("="*60)
     
-    if cuda_available:
+    # Official vLLM GPU execution requires Linux. WSL2 reports "linux", but
+    # native Windows is unsupported even when PyTorch detects CUDA.
+    if system.lower() == "windows":
+        print("\n🪟 You're on native Windows - will use Ollama")
+        if cuda_available:
+            print("  ℹ️  CUDA is available, but official vLLM requires Linux.")
+            print("  ℹ️  To use vLLM, run this project in WSL2 or a Linux container.")
+
+        print("\n📋 Setup steps:\n")
+        print("1️⃣  Install Ollama:")
+        print("   Download from: https://ollama.com/download/windows")
+        print("   Run OllamaSetup.exe\n")
+
+        print("2️⃣  Install a model:")
+        print("   ollama pull qwen3:0.6b  # Default model for this project\n")
+
+        print("3️⃣  Run the main script:")
+        print("   python main.py")
+        print("   # Will automatically use Ollama")
+
+    elif cuda_available:
         print("\n✅ Your system supports vLLM!")
         print("\nNext steps:")
         print("1. Install requirements: pip install -r requirements.txt")
@@ -102,22 +122,6 @@ def provide_recommendations(cuda_available, system):
         print("3️⃣  Run the main script:")
         print("   python main.py")
         print("   # Will automatically use Ollama")
-        
-    elif system.lower() == "windows":  # Windows
-        if not cuda_available:
-            print("\n🪟 You're on Windows without CUDA - will use Ollama")
-            print("\n📋 Setup steps:\n")
-            
-            print("1️⃣  Install Ollama:")
-            print("   Download from: https://ollama.com/download/windows")
-            print("   Run OllamaSetup.exe\n")
-            
-            print("2️⃣  Install a model:")
-            print("   ollama pull qwen3:0.6b  # Default model for this project\n")
-            
-            print("3️⃣  Run the main script:")
-            print("   python main.py")
-            print("   # Will automatically use Ollama")
         
     else:  # Linux without CUDA
         print("\n🐧 You're on Linux without CUDA - will use Ollama")

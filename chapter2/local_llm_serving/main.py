@@ -2,8 +2,8 @@
 """
 Main Entry Point for Tool Calling Demo
 Automatically selects the best backend based on your platform:
-- Linux/Windows with NVIDIA GPU: Uses vLLM
-- Mac/Windows/Linux without GPU: Uses Ollama
+- Linux (including WSL2) with NVIDIA GPU: Uses vLLM
+- Native Windows, macOS, or Linux without CUDA: Uses Ollama
 """
 
 import os
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class ToolCallingAgent:
     """
     Universal tool calling agent that works on all platforms
-    Automatically selects vLLM (if GPU available) or Ollama
+    Automatically selects vLLM (if supported and a GPU is available) or Ollama
     """
     
     def __init__(self, backend: Optional[str] = None):
@@ -43,17 +43,26 @@ class ToolCallingAgent:
         """Detect the best backend for current platform"""
         system = platform.system()
         
-        # Check for CUDA support (Linux/Windows with NVIDIA GPU)
-        if system in ["Linux", "Windows"]:
+        # Official vLLM GPU execution requires Linux. WSL2 reports itself as
+        # Linux here, while native Windows must use Ollama even when PyTorch
+        # can see a CUDA-capable GPU.
+        if system == "Linux":
             try:
                 import torch
                 if torch.cuda.is_available():
-                    logger.info("CUDA detected - will use vLLM")
+                    logger.info("CUDA detected on Linux - will use vLLM")
                     return "vllm"
             except ImportError:
                 pass
+
+        if system == "Windows":
+            logger.info(
+                "Native Windows detected - official vLLM requires Linux; "
+                "using Ollama (use WSL2 for vLLM)"
+            )
+            return "ollama"
         
-        # Default to Ollama for Mac or systems without CUDA
+        # Default to Ollama for macOS or Linux systems without CUDA
         logger.info(f"Using Ollama on {system}")
         return "ollama"
     
