@@ -19,6 +19,13 @@ This directory contains scripts for fine-tuning and running inference with the S
 # This project pins transformers==4.52.3, while the root ch7 extra uses
 # transformers>=4.55 for MultilingualReasoning, so no single environment
 # can satisfy both contracts safely.
+# From the repository root:
+cd chapter7/sesame
+python -m venv .venv-sesame
+source .venv-sesame/bin/activate
+# Windows PowerShell: .\.venv-sesame\Scripts\Activate.ps1
+# Windows cmd: .venv-sesame\Scripts\activate.bat
+
 python -m pip install -r requirements.txt
 
 # For Conda users, install ffmpeg
@@ -259,6 +266,13 @@ This project uses the Unsloth library and Sesame CSM model. Please refer to thei
 # Sesame 请使用单独的项目本地环境。
 # 本项目固定 transformers==4.52.3，而根目录 ch7 extra 为
 # MultilingualReasoning 使用 transformers>=4.55；单一环境无法安全同时满足两者。
+# 从仓库根目录开始：
+cd chapter7/sesame
+python -m venv .venv-sesame
+source .venv-sesame/bin/activate
+# Windows PowerShell：.\.venv-sesame\Scripts\Activate.ps1
+# Windows cmd：.venv-sesame\Scripts\activate.bat
+
 python -m pip install -r requirements.txt
 
 # Conda 用户可安装 ffmpeg
