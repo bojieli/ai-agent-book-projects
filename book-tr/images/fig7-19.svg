@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 500" width="780" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="50" y="60" width="380" height="78" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Text Thinking₁</text>
+<text x="65" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">&quot;Need to solve the equation x²+2x-8=0</text>
+<text x="65" y="114" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">First solve with sympy...&quot;</text>
+<line x1="240" y1="139" x2="240" y2="145" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="50" y="146" width="380" height="78" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="60" y="164" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Code Generation₁</text>
+<text x="65" y="178" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;code&gt;</text>
+<text x="65" y="188" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">from sympy import *</text>
+<text x="65" y="198" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">x=symbols(&quot;x&quot;)</text>
+<text x="65" y="208" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">solve(x**2+2*x-8,x)</text>
+<text x="65" y="218" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;/code&gt;</text>
+<line x1="240" y1="225" x2="240" y2="231" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="50" y="232" width="380" height="78" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Sandbox Feedback₁</text>
+<text x="65" y="270" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;interpreter&gt;</text>
+<text x="65" y="286" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">[-4, 2]</text>
+<text x="65" y="302" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;/interpreter&gt;</text>
+<line x1="240" y1="311" x2="240" y2="317" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="50" y="318" width="380" height="78" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="336" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Text Thinking₂</text>
+<text x="65" y="356" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">&quot;Solution: x=-4 or x=2</text>
+<text x="65" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Verification: 2²+2×2-8=0 ✓&quot;</text>
+<line x1="240" y1="397" x2="240" y2="403" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="50" y="404" width="380" height="78" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="422" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Final Answer</text>
+<text x="65" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">\boxed{-4, 2}</text>
+<rect x="470" y="60" width="280" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="610" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">SandboxFusion</text>
+<text x="610" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">128 parallel workers</text>
+<text x="610" y="125" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Python sandbox execution</text>
+<text x="610" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">sympy/numpy/scipy</text>
+<text x="610" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Timeout control + memory limit</text>
+<path d="M 432,185 Q 432.5041728782917,142.81000344028462 468,120" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="422" y="126" width="40" height="24" rx="3" fill="white"/>
+<text x="441.25208643914584" y="137.6550017201423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Code</text>
+<path d="M 468,150 Q 469.1695571333223,216.2033393123934 432,271" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="440" y="192" width="40" height="24" rx="3" fill="white"/>
+<text x="459.58477856666116" y="203.3516696561967" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Result</text>
+<rect x="470" y="220" width="280" height="260" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="610" y="242" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">PPO training loop</text>
+<text x="480" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Base model: Qwen2.5-32B</text>
+<text x="480" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">SFT cold start: ~1 hour</text>
+<text x="480" y="301" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">RL training: ~9 days / 400 steps</text>
+<text x="480" y="337" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Per step: 32 questions × 16 candidates = 512</text>
+<text x="480" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Average 7-9 rounds of interaction/response</text>
+<text x="480" y="391" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">AIME 2024 accuracy:</text>
+<text x="480" y="409" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">  SFT baseline: 25%</text>
+<text x="480" y="427" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">  After 110 steps: 52%</text>
+<text x="480" y="445" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">  After 400 steps: 67%</text>
+</svg>

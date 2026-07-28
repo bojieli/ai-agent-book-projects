@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 360" width="780" height="360" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="120" y="60" width="520" height="250" rx="0" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<line x1="120" y1="310" x2="640" y2="310" stroke="#333333" stroke-width="2"/>
+<line x1="120" y1="60" x2="120" y2="310" stroke="#333333" stroke-width="2"/>
+<text x="380" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Utilization ρ</text>
+<text x="95" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" transform="rotate(-90 95 185)">Total latency (s)</text>
+<path d="M 146.0,288.0701754385965 L 156.4,287.59856630824373 L 166.8,287.1062271062271 L 177.2,286.5917602996255 L 187.60000000000002,286.0536398467433 L 198.0,285.4901960784314 L 208.4,284.8995983935743 L 218.8,284.2798353909465 L 229.2,283.62869198312234 L 239.60000000000002,282.94372294372295 L 250.0,282.22222222222223 L 260.4,281.46118721461187 L 270.79999999999995,280.65727699530515 L 281.2,279.80676328502415 L 291.6,278.90547263681594 L 302.0,277.94871794871796 L 312.4,276.9312169312169 L 322.8,275.8469945355191 L 333.2,274.68926553672316 L 343.6,273.4502923976608 L 354.0,272.1212121212121 L 364.4,270.69182389937106 L 374.79999999999995,269.1503267973856 L 385.2,267.4829931972789 L 395.6,265.6737588652482 L 406.0,263.7037037037037 L 416.4,261.5503875968992 L 426.8,259.1869918699187 L 437.2,256.5811965811966 L 447.6,253.6936936936937 L 458.0,250.47619047619048 L 468.40000000000003,246.86868686868686 L 478.79999999999995,242.7956989247312 L 489.2,238.16091954022988 L 499.59999999999997,232.8395061728395 L 510.0,226.66666666666669 L 520.4000000000001,219.42028985507247 L 530.8,210.79365079365078 L 541.2,200.35087719298244 L 551.5999999999999,187.4509803921569 L 562.0,171.11111111111114 L 572.4,149.74358974358975 L 582.8,120.60606060606057 L 593.2,78.51851851851845 L 603.6,60.0 L 614.0,60.0" fill="none" stroke="#333333" stroke-width="3"/>
+<line x1="120" y1="310" x2="120" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="120" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.0</text>
+<line x1="224.0" y1="310" x2="224.0" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="224.0" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.2</text>
+<line x1="328.0" y1="310" x2="328.0" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="328.0" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.4</text>
+<line x1="432.0" y1="310" x2="432.0" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="432.0" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.6</text>
+<line x1="536.0" y1="310" x2="536.0" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="536.0" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">0.8</text>
+<line x1="640.0" y1="310" x2="640.0" y2="315" stroke="#333333" stroke-width="2"/>
+<text x="640.0" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">1.0</text>
+<line x1="115" y1="310.0" x2="120" y2="310.0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="310.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">0</text>
+<line x1="115" y1="268.3333333333333" x2="120" y2="268.3333333333333" stroke="#333333" stroke-width="2"/>
+<text x="110" y="268.3333333333333" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">2</text>
+<line x1="120" y1="268.3333333333333" x2="640" y2="268.3333333333333" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="115" y1="226.66666666666669" x2="120" y2="226.66666666666669" stroke="#333333" stroke-width="2"/>
+<text x="110" y="226.66666666666669" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">4</text>
+<line x1="120" y1="226.66666666666669" x2="640" y2="226.66666666666669" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="115" y1="185.0" x2="120" y2="185.0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="185.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">6</text>
+<line x1="120" y1="185.0" x2="640" y2="185.0" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="115" y1="143.33333333333334" x2="120" y2="143.33333333333334" stroke="#333333" stroke-width="2"/>
+<text x="110" y="143.33333333333334" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">8</text>
+<line x1="120" y1="143.33333333333334" x2="640" y2="143.33333333333334" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="115" y1="101.66666666666666" x2="120" y2="101.66666666666666" stroke="#333333" stroke-width="2"/>
+<text x="110" y="101.66666666666666" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">10</text>
+<line x1="120" y1="101.66666666666666" x2="640" y2="101.66666666666666" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="115" y1="60.0" x2="120" y2="60.0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="60.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">12</text>
+<line x1="120" y1="60.0" x2="640" y2="60.0" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="8,4"/>
+<circle cx="380.0" cy="268.3333333333333" r="5" fill="#333333" stroke="#333333" stroke-width="2"/>
+<text x="395.0" y="253.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">ρ=0.5 → 2s</text>
+<text x="395.0" y="272.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">User tolerance limit</text>
+<circle cx="536.0" cy="205.83333333333331" r="5" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="550.0" y="193.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">ρ=0.8 → 5s</text>
+<text x="550.0" y="212.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">Unacceptable</text>
+<circle cx="614.0" cy="60.0" r="5" fill="#333333" stroke="#333333" stroke-width="2"/>
+<text x="600" y="75.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">ρ→1 → ∞</text>
+<text x="390" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Total latency = S/(1−ρ)    Idle latency S=1s</text>
+<text x="390" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">In production, ρ is typically 0.5-0.8 → actual latency is 2-5× idle latency</text>
+</svg>
