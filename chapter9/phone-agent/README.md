@@ -116,6 +116,24 @@ Command-line arguments (`python demo.py --help` has Chinese descriptions):
 > Since `gpt-5.6*` requires organizational real-name authentication for direct connection to OpenAI, **OpenRouter is recommended**; just fill in
 > `OPENROUTER_API_KEY` in `.env` (do not set `OPENAI_API_KEY` in this case, otherwise direct connection will take priority).
 
+## Validation
+
+The regression tests are offline: they stub the dialog/model calls and do not dial phones or call any API.
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/phone-agent
+python -m pytest tests
+```
+
 ### Difference Between the Two Levels of "Mock"
 
 There are two independent layers of simulation in this experiment; do not confuse them:
@@ -159,6 +177,7 @@ Note: The IVR menu, employee ID, confirmation number, etc., are **simulated scen
 | `pine_voice.py` | Local **mock** client for the PineClaw Voice API, providing the `make_phone_call` tool |
 | `agent.py` | **ReAct Agent** (OpenAI function calling) that uses `make_phone_call` as a tool |
 | `demo.py` | End-to-end demonstration: from task assignment to reporting for a phone call |
+| `tests/` | Offline regression tests for structured call-record coercion |
 | `requirements.txt` / `env.example` | Dependencies and environment variable template |
 
 ---
@@ -294,6 +313,24 @@ python demo.py --help                                          # 查看全部参
 > 由于 `gpt-5.6*` 直连 OpenAI 需组织实名认证，**推荐用 OpenRouter**；只需在 `.env` 里填
 > `OPENROUTER_API_KEY` 即可（此时不要设 `OPENAI_API_KEY`，否则会优先直连）。
 
+## 验证
+
+回归测试是离线的：测试会打桩对话和模型调用，不会拨打电话，也不会调用任何 API。
+
+```bash
+# 在仓库根目录开始，加入 dev 工具以运行 pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/phone-agent
+python -m pytest tests
+```
+
 ### 两级「模拟」的区别
 
 本实验里有两层各自独立的模拟，别混淆：
@@ -343,4 +380,5 @@ Agent 向用户的最终汇报：
 | `pine_voice.py` | PineClaw Voice API 的本地**模拟**客户端，提供 `make_phone_call` 工具 |
 | `agent.py` | 把 `make_phone_call` 当工具的 **ReAct Agent**（OpenAI function calling） |
 | `demo.py` | 端到端演示：一个电话任务从下达到汇报 |
+| `tests/` | 结构化通话记录类型归一化的离线回归测试 |
 | `requirements.txt` / `env.example` | 依赖与环境变量模板 |
