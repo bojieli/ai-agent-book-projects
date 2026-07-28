@@ -213,6 +213,13 @@ Install the `dev` extra from the repository root before running pytest in a clea
 
 ```bash
 uv sync --locked --extra ch1 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
 cd chapter1/learning-from-experience
 python -m pytest tests
 ```
@@ -551,6 +558,13 @@ print(f"Reward: {reward}")
 
 ```bash
 uv sync --locked --extra ch1 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
 cd chapter1/learning-from-experience
 python -m pytest tests
 ```
