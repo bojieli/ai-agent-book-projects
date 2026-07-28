@@ -47,3 +47,12 @@ def test_normal_edits_pass(frontend_dir):
         _fake_client(json.dumps({"summary": "s", "files": files})),
         "model", frontend_dir, "把文字改成红色")
     assert args["files"] == files
+
+
+def test_file_entry_missing_content_dropped(frontend_dir):
+    """文件项有合法 path 但缺 content → 丢弃该项，避免下游写盘 f["content"]
+    抛出 KeyError 而中断整个 demo（与缺 path 抛白名单错误对称处理）。"""
+    args = agent.customize(
+        _fake_client(json.dumps({"summary": "s", "files": [{"path": "src/theme.css"}]})),
+        "model", frontend_dir, "把按钮改成蓝色")
+    assert args["files"] == []

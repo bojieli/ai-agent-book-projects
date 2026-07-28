@@ -180,7 +180,15 @@ def customize(client, model, frontend_dir: Path, requirement: str) -> dict:
         args = {}
 
     # 安全校验：只允许改写白名单内的文件。
-    files = [f for f in (args.get("files") or []) if isinstance(f, dict)]
+    # 要求每个文件项带有字符串 content：否则下游写盘循环会对
+    # {"path": ...}（缺少 content）抛出 KeyError 而中断整个 demo。
+    # 形状不合法的项直接丢弃（与非 dict 过滤一致）；白名单校验仍会对
+    # 带 content 但路径非法的项抛错。
+    files = [
+        f
+        for f in (args.get("files") or [])
+        if isinstance(f, dict) and isinstance(f.get("content"), str)
+    ]
     for f in files:
         path = f.get("path")
         if path not in EDITABLE_FILES:
