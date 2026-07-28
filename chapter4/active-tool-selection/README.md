@@ -226,6 +226,21 @@ This will demonstrate:
 - Passive tool injection (for comparison)
 - Efficiency metrics and insights
 
+#### 4. Run Tests
+
+The automated tests are offline regressions and do not require an API key.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/active-tool-selection
+python -m pytest tests
+```
+
 ### Performance Comparison
 
 See the measured, reproducible numbers in **Strategy Comparison** above.
@@ -733,6 +748,21 @@ python quickstart.py
 - 主动工具发现过程
 - 被动工具注入（对照）
 - 效率指标与洞察
+
+#### 4. 运行测试
+
+自动化测试是离线回归测试，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/active-tool-selection
+python -m pytest tests
+```
 
 ### 性能对比
 
