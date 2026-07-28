@@ -44,6 +44,18 @@ Each prediction is a transparent JSON trace containing the selected tool, argume
 The demo uses only Python's standard library and needs no API key:
 
 ```bash
+# From the repository root: use the shared Chapter 6 environment
+uv sync --locked --python 3.12 --extra ch6
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/public-health-reporting-eval
 python demo.py
 ```
@@ -63,9 +75,20 @@ TOTAL                          30/30
 Run the offline tests:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate       # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+# From the repository root, include the test environment
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter6/public-health-reporting-eval
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 pytest -q
 ```
 
@@ -116,6 +139,18 @@ This boundary keeps model/framework integration outside the benchmark. Any agent
 ### 直接离线运行
 
 ```bash
+# 在仓库根目录使用统一的第 6 章环境
+uv sync --locked --python 3.12 --extra ch6
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/public-health-reporting-eval
 python demo.py
 ```
@@ -123,9 +158,20 @@ python demo.py
 ### 运行测试
 
 ```bash
-python -m venv .venv
+# 在仓库根目录包含测试环境
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux：
 source .venv/bin/activate
-pip install -r requirements.txt
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+cd chapter6/public-health-reporting-eval
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 pytest -q
 ```
 

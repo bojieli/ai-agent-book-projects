@@ -44,13 +44,27 @@ Where:
 - **Disk Space**: At least 3GB free (2GB for data file, 1GB for processing)
 - **RAM**: 4GB+ recommended for full dataset analysis
 - **Internet**: Stable connection for ~2GB download
-- **Python**: 3.8+
+- **Python**: 3.12 for the root `ch6` install
 
 ## Installation
 
 ```bash
+# From the repository root: use the shared Chapter 6 environment
+uv sync --locked --python 3.12 --extra ch6
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/elo-leaderboard
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 ## 命令行工具 / Command-Line Interface (`cli.py`)
@@ -531,7 +545,7 @@ The built-in memory optimization reduces footprint by 30-50%, but very large ana
 
 ### Visualization Issues
 
-- Ensure matplotlib, seaborn, and plotly are installed: `pip install -r requirements.txt`
+- Ensure matplotlib, seaborn, and plotly are installed via the root `ch6` extra or the compatibility `requirements.txt` path.
 - For HTML animations, use a modern web browser (Chrome, Firefox, Safari, Edge)
 - If plots don't display in Jupyter, use `%matplotlib inline` or save to file
 
@@ -646,8 +660,22 @@ R_A_new = R_A + K * (S_A - E_A)
 ### 安装与运行
 
 ```bash
+# 在仓库根目录使用统一的第 6 章环境
+uv sync --locked --python 3.12 --extra ch6
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/elo-leaderboard
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 ### 命令行（`cli.py`）
