@@ -558,7 +558,7 @@ def ensure_sample_pdfs():
     Returns:
         bool: True if PDFs are available
     """
-    pdf_dir = Path("test_pdfs")
+    pdf_dir = Path("fixtures/pdfs")
     sample_pdf = pdf_dir / "simple_expense_report.pdf"
     
     if not pdf_dir.exists() or not sample_pdf.exists():
@@ -572,7 +572,7 @@ def ensure_sample_pdfs():
                 timeout=10
             )
             if result.returncode == 0:
-                print("✅ Sample PDFs created successfully in test_pdfs/")
+                print("✅ Sample PDFs created successfully in fixtures/pdfs/")
                 return True
             else:
                 print(f"⚠️ Could not create PDFs: {result.stderr}")
@@ -591,10 +591,10 @@ def get_sample_tasks():
         list: List of sample task dictionaries
     """
     # Check if we're running locally or need to use online PDFs
-    local_pdfs = Path("test_pdfs").exists()
+    local_pdfs = Path("fixtures/pdfs").exists()
     
     if local_pdfs:
-        pdf_path = "file://" + str(Path.cwd() / "test_pdfs" / "simple_expense_report.pdf")
+        pdf_path = "file://" + str(Path.cwd() / "fixtures/pdfs" / "simple_expense_report.pdf")
         pdf_note = "Using local PDF"
     else:
         # Use a publicly available PDF for testing
@@ -903,7 +903,7 @@ def interactive_mode(api_key: str, provider: str = "siliconflow", model: str = N
                         timeout=10
                     )
                     if result.returncode == 0:
-                        print("✅ Sample PDFs created successfully in test_pdfs/")
+                        print("✅ Sample PDFs created successfully in fixtures/pdfs/")
                         # Update sample tasks with new PDF paths
                         sample_tasks = get_sample_tasks()
                     else:

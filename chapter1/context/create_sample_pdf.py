@@ -261,14 +261,14 @@ if __name__ == "__main__":
     create_financial_report()
     create_simple_expense_report()
     
-    # Create a test directory for PDFs if needed
-    os.makedirs("test_pdfs", exist_ok=True)
+    # Create a fixture directory for PDFs if needed
+    os.makedirs("fixtures/pdfs", exist_ok=True)
     
     # Move PDFs to test directory
     import shutil
     for pdf in ["sample_financial_report_q1_2024.pdf", "simple_expense_report.pdf"]:
         if os.path.exists(pdf):
-            shutil.move(pdf, f"test_pdfs/{pdf}")
+            shutil.move(pdf, f"fixtures/pdfs/{pdf}")
     
-    print("\nPDFs created in test_pdfs/ directory")
+    print("\nPDFs created in fixtures/pdfs/ directory")
     print("You can host these PDFs online or use a local server for testing")

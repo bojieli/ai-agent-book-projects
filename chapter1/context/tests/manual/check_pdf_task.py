@@ -5,6 +5,11 @@ Test script to verify PDF parsing and currency conversion
 
 import os
 import sys
+
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import ContextAwareAgent, ContextMode
 
 def test_pdf_with_currencies():
@@ -25,7 +30,7 @@ def test_pdf_with_currencies():
     
     # Test task
     task = """
-    Analyze the expense report at test_pdfs/simple_expense_report.pdf
+    Analyze the expense report at fixtures/pdfs/simple_expense_report.pdf
     
     Extract the following expenses mentioned in the document:
     - US Office: $2,500,000 USD
@@ -87,7 +92,7 @@ def test_pdf_with_currencies():
 
 if __name__ == "__main__":
     # Ensure PDFs exist
-    if not os.path.exists("test_pdfs/simple_expense_report.pdf"):
+    if not os.path.exists("fixtures/pdfs/simple_expense_report.pdf"):
         print("⚠️ Creating sample PDFs...")
         os.system("python create_sample_pdf.py")
     
