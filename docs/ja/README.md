@@ -35,7 +35,7 @@
   cd book && bash build_pdf.sh
   ```
 
-  図版は `book/gen_*_figs.py` によって生成され、`book/images/` に保存されます。組版の詳細は `book/preamble.tex` と `book/*.lua` を参照してください。
+  図版は SVG ファイルとして `book/images/` に保存され、ビルド時に直接使用されます。組版の詳細は `book/preamble.tex` と `book/*.lua` を参照してください。
 
 </details>
 
@@ -137,7 +137,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 📝 **本文の内容** | 誤字修正、加筆、より分かりやすい表現、あるいは新しい動向（本文は `book/chapter*.md`） |
 | 🐛 **コードの改善とバグ修正** | 付随プロジェクトをより堅牢に、使いやすく、本番対応にする |
 | 🧪 **新しい実践プロジェクト** | 実験のより良い実装を追加/置換、あるいは新しいサンプルを提供 |
-| 🎨 **図版の設計** | `book/images/` の図をより明確で洗練されたものにする（`book/gen_*_figs.py` で生成） |
+| 🎨 **図版の設計** | `book/images/` にコミット済みの SVG 図版を直接改善する |
 | 🌐 **新しい翻訳** | より多くの言語への翻訳を歓迎します。英語（`book-en/`）、アラビア語（`book-ar/`）、繁体字中国語/台湾（`book-zhtw/`）、ロシア語（`book-ru/`）、タミル語（`book-ta/`）、ベトナム語（`book-vi/`）、日本語（`book-ja/`）を参考にしてください |
 
 提出前に、該当する実験を実行して再現性を確認してください。まず issue を立ててアイデアを議論するのも歓迎です。

@@ -1,10 +1,7 @@
-"""Repair text overflow in generated/static book SVGs (in place).
+"""Repair text overflow in checked-in book SVGs (in place).
 
-Most figures under images/ are produced by the gen_chN_figs.py scripts (which
-now self-correct via svg_lib.SVG.render), but several sets — fig0-*, fig6-*,
-fig7-*, the multimodal fig9-*, and fig10-* — are static SVGs with no live
-generator. This tool applies the same width model (svg_lib.fit_overflow) to any
-SVG on disk, shrinking only the font-size of text runs that spill outside their
+This tool applies the svg_lib.fit_overflow width model to any SVG on disk,
+shrinking only the font-size of text runs that spill outside their
 containing rectangle or the canvas. It is safe (positions are never moved) and
 idempotent (re-running makes no further changes).
 
