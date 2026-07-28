@@ -4,6 +4,9 @@
 
 import os
 from typing import Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def map_model_to_openrouter(model: str) -> str:
