@@ -37,6 +37,7 @@ The two levers are:
 | `agent.py` | 8-turn refund agent with `run_scenario(kv_cache, compress)` |
 | `demo.py` | CLI entry for online/offline runs |
 | `sample_trace.json` | captured 2×2 scenario token records for offline recomputation |
+| `tests/` | offline pytest regressions for trace parsing and usage accounting |
 | `requirements.txt` / `env.example` | dependencies and environment templates |
 
 ### Run
@@ -62,6 +63,21 @@ cd chapter6/agent-cost-analysis
 export OPENAI_API_KEY=your-openai-api-key   # or OPENROUTER_API_KEY=your-openrouter-api-key
 python demo.py
 python demo.py --offline --scenario all
+```
+
+### Tests
+
+Automated tests are offline and do not require API keys.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/agent-cost-analysis
+python -m pytest tests
 ```
 
 ### CLI options
@@ -131,6 +147,7 @@ Offline mode reads `sample_trace.json` and re-runs only cost arithmetic, enablin
 | `agent.py` | 多轮客服退款 Agent 任务；`run_scenario(kv_cache, compress)` 把两个开关正交组合成 2×2 场景，并用 tiktoken 估算「工具返回注入」token |
 | `demo.py` | 命令行入口（argparse）：在线跑真实模型 / 离线复算；选择 A/B 场景、模型单价、输出文件 |
 | `sample_trace.json` | 一次真实运行录下的四个场景逐步 token 用量（离线模式的输入，成本按当前单价重算）|
+| `tests/` | 离线 pytest 回归测试：trace 解析与 usage 计费容错 |
 | `requirements.txt` / `env.example` | 依赖与环境变量示例 |
 
 ## 运行
@@ -162,6 +179,21 @@ python demo.py --offline --scenario all
 ```
 
 在线模式会真实调用 OpenAI，`--scenario all` 约几十次 chat completion，运行一两分钟。
+
+## 测试
+
+自动化测试均为离线回归测试，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/agent-cost-analysis
+python -m pytest tests
+```
 
 ### 命令行参数（`python demo.py --help`）
 
