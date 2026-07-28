@@ -25,6 +25,7 @@ agent.py               StagedAgent: phase state machine + tool call loop + cross
 tools.py               Schemas and real implementations for three tool sets (virtual workspace / real code execution / linter / complexity analysis)
 simulated_user.py      Simulated user: automatically answers the Agent's questions during requirements clarification (predefined answers), enabling unattended operation
 config.py              Read API Key / base_url / model from environment variables
+tests/                 Offline regressions for tool argument coercion and stage transitions
 ```
 
 Key design points:
@@ -84,6 +85,21 @@ Can also switch to Kimi / Doubao compatible with the OpenAI protocol.
 
 **Universal fallback**: Prefers using `OPENAI_API_KEY` to connect directly to OpenAI; if this variable is not set but `OPENROUTER_API_KEY` is, it automatically switches to OpenRouter and maps the model name to its namespace
 (`gpt-5.6-luna` → `openai/gpt-5.6-luna`). Note: The `gpt-5.6` series requires organization verification for direct OpenAI connection. Simply setting `OPENROUTER_API_KEY` (without `OPENAI_API_KEY`) forces the use of OpenRouter, which is more convenient.
+
+## Offline Validation
+
+```bash
+# From the repository root; include dev tools for pytest.
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/staged-system-prompt
+python -m pytest tests
+python demo.py --list-stages
+```
+
+`tests/` contains offline regressions for null tool arguments and review-stage transition payloads. They do not require an API key.
 
 ## What the Demo Illustrates
 
@@ -209,6 +225,7 @@ agent.py               StagedAgent：阶段状态机 + 工具调用循环 + 跨�
 tools.py               三套工具的 Schema 与真实实现（虚拟工作区 / 真实执行代码 / linter / 复杂度分析）
 simulated_user.py      模拟用户：需求澄清阶段自动回答 Agent 的提问（预设答案），实现无人值守
 config.py              从环境变量读取 API Key / base_url / model
+tests/                 工具参数归一化与阶段转换载荷的离线回归测试
 ```
 
 关键设计：
@@ -270,6 +287,21 @@ python demo.py --help
 `OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
 （`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
 只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
+
+## 离线验证
+
+```bash
+# 从仓库根目录开始；pytest 需要 dev 依赖。
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/staged-system-prompt
+python -m pytest tests
+python demo.py --list-stages
+```
+
+`tests/` 包含 `null` 工具参数和审查阶段转换载荷的离线回归测试，无需 API Key。
 
 ## 演示说明了什么问题
 

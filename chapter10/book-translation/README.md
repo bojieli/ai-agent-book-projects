@@ -33,6 +33,7 @@ book-translation/
 ├── sample_book/       # Bundled short English technical book (4 short chapters, includes terminology and code)
 │   ├── chapter1.md ... chapter4.md
 ├── output/            # Generated at runtime: glossary / chapter translations / proofreading report (gitignored)
+├── tests/             # Offline regressions for glossary/proofreading edge cases
 ├── requirements.txt
 └── env.example
 ```
@@ -90,6 +91,21 @@ python demo.py --dry-run     # Prints four-agent collaboration diagram + Manager
 ```
 
 This mode uses `tiktoken` to estimate the context size each agent will read offline, intuitively confirming that the "Manager context only grows by a few lines of records per chapter, independent of each chapter's text length," while the single agent's cumulative context grows linearly with the book's length.
+
+## Offline Validation
+
+```bash
+# From the repository root; include dev tools for pytest.
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/book-translation
+python -m pytest tests
+python demo.py --dry-run
+```
+
+`tests/` contains offline regressions for null/malformed glossary and proofreading issue payloads. The tests stub LLM calls and do not require an API key.
 
 ## Token Statistics Definitions
 
@@ -165,6 +181,7 @@ book-translation/
 ├── sample_book/       # 自带英文技术小书（4 个短章节，含术语与代码）
 │   ├── chapter1.md ... chapter4.md
 ├── output/            # 运行时生成：术语表 / 各章译文 / 审校报告（已 gitignore）
+├── tests/             # 术语表 / 审校边界情况的离线回归测试
 ├── requirements.txt
 └── env.example
 ```
@@ -229,6 +246,21 @@ python demo.py --dry-run     # 打印四 Agent 协作图 + Manager 计划 + toke
 
 该模式用 `tiktoken` 离线估算各 Agent 会读到的上下文规模，直观印证「Manager 上下文
 只随章节数加几行记录、与每章正文长度无关」，而单 Agent 的累积上下文随书长线性膨胀。
+
+## 离线验证
+
+```bash
+# 从仓库根目录开始；pytest 需要 dev 依赖。
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/book-translation
+python -m pytest tests
+python demo.py --dry-run
+```
+
+`tests/` 包含 `glossary` 与审校报告的空值 / 非法结构回归测试。测试会打桩 LLM 调用，无需 API Key。
 
 ## token 统计口径
 

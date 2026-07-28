@@ -49,6 +49,7 @@ Code structure:
 - `roles.py` — 5 role definitions (system prompts + tool sets) + `transfer_to_agent` schema
 - `orchestrator.py` — Handoff orchestrator (shared history + main loop for swapping system prompts/tool sets, with deadlock prevention and self-handoff rejection)
 - `demo.py` — Single-command demo entry point
+- `tests/` — Offline regressions for tool dispatch and local tools
 
 ## How to Run
 
@@ -114,6 +115,21 @@ python demo.py --interactive           # Interactive multi-turn, type exit to qu
 Three built-in scenarios (`SCENARIOS`): `cagr` (default, new energy vehicle sales → CAGR → investment summary),
 `solar` (same chain with a different set of photovoltaic installation data), `coding` (routes to the `coding` role
 to actually run a Fibonacci script via `execute_python`, then `writing`/`triage` wraps up).
+
+## Offline Validation
+
+```bash
+# From the repository root; include dev tools for pytest.
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/multi-role-transfer
+python -m pytest tests
+python demo.py --list-roles
+```
+
+`tests/` contains offline regressions for `count_characters`, `execute_python` timeouts, and tool-dispatch error handling. They do not require an API key.
 
 ## Demo Description
 
@@ -236,6 +252,7 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
 - `roles.py` —— 5 个角色定义（系统提示词 + 工具集）+ `transfer_to_agent` schema
 - `orchestrator.py` —— 移交编排器（共享历史 + 换系统提示词/工具集的主循环，含防死循环/拒绝自我移交）
 - `demo.py` —— 一条命令的演示入口
+- `tests/` —— 工具分发与本地工具的离线回归测试
 
 ## 运行方式
 
@@ -301,6 +318,21 @@ python demo.py --interactive           # 交互式多轮，输入 exit 退出
 三个内置场景（`SCENARIOS`）：`cagr`（默认，新能源汽车销量→CAGR→投资总结）、
 `solar`（同类链路换一组光伏装机数据）、`coding`（路由到 `coding` 角色用
 `execute_python` 真正跑斐波那契脚本，再由 `writing`/`triage` 收尾）。
+
+## 离线验证
+
+```bash
+# 从仓库根目录开始；pytest 需要 dev 依赖。
+uv sync --locked --python 3.12 --extra ch10 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter10/multi-role-transfer
+python -m pytest tests
+python demo.py --list-roles
+```
+
+`tests/` 包含 `count_characters`、`execute_python` 超时和工具分发错误处理的离线回归测试，无需 API Key。
 
 ## 演示说明
 

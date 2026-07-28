@@ -1,17 +1,5 @@
 """Null ask_clarifying_question.question must coerce to empty string."""
 
-import sys
-from pathlib import Path
-from types import ModuleType
-
-sys.path.insert(0, str(Path(__file__).parent))
-
-try:
-    import openai  # noqa: F401
-except ImportError:
-    sys.modules["openai"] = ModuleType("openai")
-    sys.modules["openai"].OpenAI = object
-
 import tools as T
 from agent import StagedAgent
 from simulated_user import SimulatedUser
