@@ -300,7 +300,11 @@ ch6  = ["agentbook[viz,tokens,analysis,providers]"]
 # requirements.txt in a separate venv. Add the `unsloth` extra for the
 # Unsloth-accelerated experiments.
 ch7  = ["agentbook[train,audio,viz]"]
-ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,train,orchestration]"]
+# Ordinary Chapter 8 experiments are inference/RAG/browser/orchestration demos.
+# The prompt-distillation training project keeps its Linux/CUDA stack isolated in
+# its own requirements.txt because it also needs vLLM and tighter training-stack
+# compatibility than the shared chapter aggregate should impose.
+ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,orchestration]"]
 ch9  = []                                     # hosted speech APIs: core only
 ch10 = ["agentbook[tokens]"]                  # tiktoken only
 
