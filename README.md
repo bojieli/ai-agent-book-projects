@@ -39,7 +39,7 @@
   cd book && bash build_pdf.sh
   ```
 
-  图表由 `book/gen_*_figs.py` 生成、存于 `book/images/`，排版细节见 `book/preamble.tex` 与 `book/*.lua`。
+  图表以 SVG 文件存于 `book/images/`，编译时直接使用；排版细节见 `book/preamble.tex` 与 `book/*.lua`。
 
 </details>
 
@@ -148,7 +148,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 📝 **书籍内容改进** | 勘误、补充、更清晰的表述，或新增前沿进展（正文见 `book/chapter*.md`） |
 | 🐛 **代码改进与 Bug 修复** | 让配套项目更健壮、更易用、更贴近生产实践 |
 | 🧪 **新的实践项目** | 为某个实验补充/替换更好的实现，或贡献全新的示例项目 |
-| 🎨 **配图设计改进** | 让 `book/images/` 中的图表更清晰美观（配图由 `book/gen_*_figs.py` 生成） |
+| 🎨 **配图设计改进** | 直接改进 `book/images/` 中已签入的 SVG 图表，让它们更清晰美观 |
 | 🌐 **新语言翻译** | 欢迎翻译成更多语言，可参考英文（`book-en/`）、阿拉伯语（`book-ar/`）、正体中文（`book-zhtw/`）、俄语（`book-ru/`）、泰米尔语（`book-ta/`）、越南语（`book-vi/`）、日语（`book-ja/`）的组织方式 |
 
 提交前建议先把相关实验亲手跑一遍、确认可复现；也欢迎先提 issue 讨论想法。

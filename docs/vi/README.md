@@ -39,7 +39,7 @@ Trình dựng chung tạo sách EPUB 3 cho tiếng Trung giản thể, tiếng A
   cd book && bash build_pdf.sh
   ```
 
-  Hình vẽ do `book/gen_*_figs.py` tạo, lưu trong `book/images/`; chi tiết typography xem `book/preamble.tex` và `book/*.lua`.
+  Hình vẽ được lưu dưới dạng SVG trong `book/images/` và được bản dựng sử dụng trực tiếp; chi tiết typography xem `book/preamble.tex` và `book/*.lua`.
 
 </details>
 
@@ -149,7 +149,7 @@ Sách và mã đi kèm hoàn toàn mã nguồn mở. Rất hoan nghênh Pull Req
 | 📝 **Cải tiến nội dung sách** | Hiệu đính, bổ sung, diễn đạt rõ hơn, hoặc tiến triển mới (nội dung trong `book/chapter*.md`) |
 | 🐛 **Cải tiến code & sửa bug** | Dự án đi kèm mạnh mẽ hơn, dễ dùng hơn, gần sản xuất hơn |
 | 🧪 **Dự án thực hành mới** | Bổ sung/thay thế cài đặt tốt hơn cho thí nghiệm, hoặc đóng góp ví dụ mới |
-| 🎨 **Cải tiến hình vẽ** | Biểu đồ trong `book/images/` rõ và đẹp hơn (do `book/gen_*_figs.py` tạo) |
+| 🎨 **Cải tiến hình vẽ** | Cải tiến trực tiếp các biểu đồ SVG đã được lưu trong `book/images/` |
 | 🌐 **Bản dịch ngôn ngữ mới** | Hoan nghênh dịch sang nhiều ngôn ngữ; xem tiếng Anh (`book-en/`), Ả Rập (`book-ar/`), Trung phồn thể/Đài Loan (`book-zhtw/`), Tamil (`book-ta/`), Việt (`book-vi/`), Nhật (`book-ja/`) |
 
 Trước khi gửi, hãy chạy thí nghiệm liên quan để xác nhận tái hiện; có thể mở issue thảo luận trước.
