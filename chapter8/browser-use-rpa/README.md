@@ -37,12 +37,28 @@ agent = LearningAgent(
 result = agent.run_sync(max_steps=20)
 ```
 
-真实浏览器演示仍可使用 `demo_email.py` 和 `demo_weather.py`，需要安装 `requirements.txt`、Chromium 与模型 API。上游 `browser-use/` 副本保持不变，本实验的生命周期与验证逻辑全部位于封装层。
+真实浏览器演示仍可使用 `demo_email.py` 和 `demo_weather.py`，需要安装根目录 `ch8` 依赖、Chromium 与模型 API。上游 `browser-use/` 副本保持不变，本实验的生命周期与验证逻辑全部位于封装层。
 
 真实 LLM + 浏览器的最小冒烟测试如下；`--quick` 在这里不是 dry-run，它会实际调用模型并控制 Chromium：
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/browser-use-rpa
+
+# 迁移期间仍支持单项目兼容路径（playwright-stealth 等历史可选依赖）：
+# python -m pip install -r requirements.txt
+
 playwright install chromium
 export OPENAI_API_KEY=your_api_key_here
 python demo_email.py --quick --headless --model gpt-5.6

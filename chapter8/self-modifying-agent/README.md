@@ -10,7 +10,23 @@ python -m unittest -v test_evolution.py
 `python demo.py` 使用确定性生成器，便于检查发布协议。要测试真实 LLM Coding Agent：
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/self-modifying-agent
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 export OPENAI_API_KEY=your_api_key_here
 python demo.py --generator llm --model gpt-5.6
 ```
