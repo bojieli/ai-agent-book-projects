@@ -1,11 +1,6 @@
 """detect_pii must treat JSON null pii_values like an empty list."""
 import json
-import sys
-import types
 from unittest.mock import patch
-
-sys.modules.setdefault("ollama", types.ModuleType("ollama"))
-sys.modules.setdefault("dotenv", types.SimpleNamespace(load_dotenv=lambda: None))
 
 from agent import LogSanitizationAgent
 
