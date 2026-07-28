@@ -83,6 +83,24 @@ See all CLI parameters with `python demo.py --help`: `--task`, `--question`, `--
 
 Requires `ffprobe`/`ffplay` (for validation, listening to audio): `brew install ffmpeg` (macOS).
 
+## Validation
+
+The regression tests are offline: they use fake clients and do not call audio or chat APIs.
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/end-to-end-speech
+python -m pytest tests
+```
+
 ## Example Expected Output (Real Excerpt)
 
 ```text
@@ -139,6 +157,7 @@ The backend for the end-to-end path is switchable:
 - `demo.py`: Runnable main program (`python demo.py`), runs both end-to-end + cascaded on the same problem and prints a real comparison.
 - `speech_model.py`: `EndToEndSpeechModel` (gpt-audio / switchable to Step-Audio R1) and `CascadedSpeechModel` (whisper-1 → gpt-5.6-luna → tts-1).
 - `requirements.txt` / `env.example`: Dependencies and environment variable template.
+- `tests/`: Offline regression tests for cascaded reasoning edge cases.
 - `audio/`: Input/output audio generated at runtime (ignored in `.gitignore`).
 
 ---
@@ -228,6 +247,24 @@ CLI 全部参数见 `python demo.py --help`：`--task`、`--question`、`--audio
 
 依赖 `ffprobe`/`ffplay`（用于校验、试听音频）：`brew install ffmpeg`（macOS）。
 
+## 验证
+
+回归测试是离线的：测试使用假客户端，不会调用音频或聊天 API。
+
+```bash
+# 在仓库根目录开始，加入 dev 工具以运行 pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/end-to-end-speech
+python -m pytest tests
+```
+
 ## 预期输出示例（真实节选）
 
 ```text
@@ -284,4 +321,5 @@ CLI 全部参数见 `python demo.py --help`：`--task`、`--question`、`--audio
 - `demo.py`：可运行主程序（`python demo.py`），同题跑通端到端 + 级联并打印真实对照。
 - `speech_model.py`：`EndToEndSpeechModel`（gpt-audio / 可切 Step-Audio R1）与 `CascadedSpeechModel`（whisper-1 → gpt-5.6-luna → tts-1）。
 - `requirements.txt` / `env.example`：依赖与环境变量样例。
+- `tests/`：级联思考边界情况的离线回归测试。
 - `audio/`：运行时生成的输入/输出音频（已在 `.gitignore` 中忽略）。
