@@ -314,7 +314,7 @@ conda create -n adapt_think python=3.13
 conda activate adapt_think
 
 # Install dependencies
-cd projects/week7/AdaptThink-original
+cd chapter7/AdaptThink-original
 pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```
