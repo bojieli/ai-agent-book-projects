@@ -10,6 +10,12 @@ from typing import List, Tuple, Dict, Optional
 from pathlib import Path
 import ollama
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from config import (
     OLLAMA_MODEL, 
     OLLAMA_TEMPERATURE,

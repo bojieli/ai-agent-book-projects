@@ -18,6 +18,12 @@ import sys
 import json
 import argparse
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from sandbox import run_python
 
 # ---------------------------------------------------------------------------

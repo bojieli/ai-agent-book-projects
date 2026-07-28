@@ -22,6 +22,12 @@ from typing import Any
 import requests
 from requests.exceptions import RequestException
 
+try:
+	from dotenv import load_dotenv
+	load_dotenv()
+except ImportError:
+	pass
+
 # Configuration
 API_KEY = os.getenv('BROWSER_USE_API_KEY')
 if not API_KEY:

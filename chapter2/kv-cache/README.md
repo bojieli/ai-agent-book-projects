@@ -66,7 +66,8 @@ Both modes append tool results within an iteration so the API sees a complete tu
 ```bash
 cd chapter2/kv-cache
 pip install -r requirements.txt
-export MOONSHOT_API_KEY="your-api-key-here"
+cp env.example .env                  # edit .env with your key
+# Or export MOONSHOT_API_KEY="your-api-key-here"
 ```
 
 > **OpenRouter fallback:** If `MOONSHOT_API_KEY` / `KIMI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the experiment uses OpenRouter (`kimi-*` → `moonshotai/kimi-k2`). With a Moonshot key set, behavior is unchanged.
@@ -289,7 +290,8 @@ KV Cache 存储注意力机制中的键值对。对话上下文稳定时，可�
 ```bash
 cd chapter2/kv-cache
 pip install -r requirements.txt
-export MOONSHOT_API_KEY="your-api-key-here"
+cp env.example .env                  # 编辑 .env，填入 API Key
+# 或 export MOONSHOT_API_KEY="your-api-key-here"
 ```
 
 > **通用回退（OpenRouter）**：未设置 `MOONSHOT_API_KEY` / `KIMI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，实验会自动改走 OpenRouter（`kimi-*` 会映射为 `moonshotai/kimi-k2`）。设置了 Moonshot key 时行为完全不变。
