@@ -60,7 +60,24 @@ python voice_library.py
 ## Installation and Execution
 
 ```bash
-pip install -r requirements.txt          # Requires ffmpeg/ffprobe installed on the system
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
+cd chapter9/controllable-tts
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
+# Requires ffmpeg/ffprobe installed on the system
 cp env.example .env                       # Fill in a valid OPENAI_API_KEY
 python demo.py                            # Generates output/*.mp3
 ```
@@ -193,7 +210,24 @@ python voice_library.py
 ## 安装与运行
 
 ```bash
-pip install -r requirements.txt          # 需系统已装 ffmpeg/ffprobe
+# 从仓库根目录开始：使用共享的第 9 章核心环境
+uv sync --locked --python 3.12 --extra ch9
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch9]"
+
+cd chapter9/controllable-tts
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
+# 需系统已装 ffmpeg/ffprobe
 cp env.example .env                       # 填入有效的 OPENAI_API_KEY
 python demo.py                            # 生成 output/*.mp3
 ```

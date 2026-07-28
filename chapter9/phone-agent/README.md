@@ -69,8 +69,22 @@ For real usage, please refer to the official PineClaw documentation; it is recom
 ## Running
 
 ```bash
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/phone-agent
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 cp env.example .env
 # Edit .env, fill in OPENROUTER_API_KEY or OPENAI_API_KEY (at least one)
@@ -233,8 +247,22 @@ def make_phone_call(phone_number, goal, context=""):
 ## 运行
 
 ```bash
+# 从仓库根目录开始：使用共享的第 9 章核心环境
+uv sync --locked --python 3.12 --extra ch9
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/phone-agent
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 cp env.example .env
 # 编辑 .env，填入 OPENROUTER_API_KEY 或 OPENAI_API_KEY（至少其一）
