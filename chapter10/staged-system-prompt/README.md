@@ -37,7 +37,22 @@ Key design points:
 ## How to Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 10 environment
+uv sync --locked --python 3.12 --extra ch10
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch10]"
+
+cd chapter10/staged-system-prompt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Configuration (choose one)
 export OPENAI_API_KEY=your-openai-api-key           # Option A: direct export
@@ -206,7 +221,22 @@ config.py              从环境变量读取 API Key / base_url / model
 ## 如何运行
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 10 章环境
+uv sync --locked --python 3.12 --extra ch10
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch10]"
+
+cd chapter10/staged-system-prompt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 配置（二选一）
 export OPENAI_API_KEY=your-openai-api-key           # 方式 A：直接 export
