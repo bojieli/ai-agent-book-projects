@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick test to verify Q-learning agent can learn the simplified game.
+Manual check to verify Q-learning can learn the simplified game.
 """
 
 import sys
@@ -8,14 +8,15 @@ import argparse
 from pathlib import Path
 import numpy as np
 
-# Add parent directory to path for imports
-sys.path.append(str(Path(__file__).parent))
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from game_environment import TreasureHuntGame
 from rl_agent import QLearningAgent
 
 
-def test_rl_learning(stochastic=False, episodes=None):
+def run_rl_learning_check(stochastic=False, episodes=None):
     """Test that Q-learning can learn the game.
     
     Args:
@@ -178,4 +179,4 @@ if __name__ == "__main__":
     
     stochastic = args.stochastic  # Default is False (deterministic)
     
-    test_rl_learning(stochastic=stochastic, episodes=args.episodes)
+    run_rl_learning_check(stochastic=stochastic, episodes=args.episodes)
