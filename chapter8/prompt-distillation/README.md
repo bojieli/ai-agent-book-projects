@@ -95,9 +95,8 @@ The project uses the same multilingual language classification task as tinker:
 
 ```bash
 # From the repository root: use a separate Linux/CUDA project-local environment.
-# The current root ch8 training lock can pair torch/transformers/peft versions
-# that fail at import for these training scripts, so keep this stack isolated
-# until the shared training contract is reconciled.
+# The root ch8 extra intentionally excludes this training stack; ordinary
+# Chapter 8 experiments should not pull TRL/PEFT/vLLM or CUDA-oriented deps.
 # requirements.txt includes vLLM, which is Linux/GPU-only in this repository.
 cd chapter8/prompt-distillation
 python -m venv .venv-prompt-distillation
@@ -686,8 +685,8 @@ Assistant: ja
 
 ```bash
 # 从仓库根目录开始：请使用单独的 Linux/CUDA 项目本地环境。
-# 当前根目录 ch8 训练锁可能组合出会让这些训练脚本导入失败的
-# torch/transformers/peft 版本，因此在共享训练依赖契约调整前保持隔离。
+# 根目录 ch8 extra 有意不包含本训练栈；普通第 8 章实验不应拉取
+# TRL/PEFT/vLLM 或 CUDA 取向依赖。
 # requirements.txt 包含 vLLM；本仓库将 vLLM 视为 Linux/GPU-only 依赖。
 cd chapter8/prompt-distillation
 python -m venv .venv-prompt-distillation
