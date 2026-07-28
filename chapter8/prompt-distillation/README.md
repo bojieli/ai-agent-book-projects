@@ -94,15 +94,14 @@ The project uses the same multilingual language classification task as tinker:
 1. Install the required dependencies:
 
 ```bash
-# From the repository root: use a separate project-local environment.
+# From the repository root: use a separate Linux/CUDA project-local environment.
 # The current root ch8 training lock can pair torch/transformers/peft versions
 # that fail at import for these training scripts, so keep this stack isolated
 # until the shared training contract is reconciled.
+# requirements.txt includes vLLM, which is Linux/GPU-only in this repository.
 cd chapter8/prompt-distillation
 python -m venv .venv-prompt-distillation
 source .venv-prompt-distillation/bin/activate
-# Windows PowerShell: .\.venv-prompt-distillation\Scripts\Activate.ps1
-# Windows cmd: .venv-prompt-distillation\Scripts\activate.bat
 
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
@@ -686,14 +685,13 @@ Assistant: ja
 1. 安装所需的依赖项：
 
 ```bash
-# 从仓库根目录开始：请使用单独的项目本地环境。
+# 从仓库根目录开始：请使用单独的 Linux/CUDA 项目本地环境。
 # 当前根目录 ch8 训练锁可能组合出会让这些训练脚本导入失败的
 # torch/transformers/peft 版本，因此在共享训练依赖契约调整前保持隔离。
+# requirements.txt 包含 vLLM；本仓库将 vLLM 视为 Linux/GPU-only 依赖。
 cd chapter8/prompt-distillation
 python -m venv .venv-prompt-distillation
 source .venv-prompt-distillation/bin/activate
-# Windows PowerShell：.\.venv-prompt-distillation\Scripts\Activate.ps1
-# Windows cmd：.venv-prompt-distillation\Scripts\activate.bat
 
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
