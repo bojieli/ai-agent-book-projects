@@ -29,7 +29,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 build_edition() {
     local language="$1"
-    local directory title author pdf output title_label toc_label
+    local directory title author pdf output title_label toc_label direction
     local -a chapters
 
     case "$language" in
@@ -126,9 +126,9 @@ build_edition() {
     esac
 
     local edition_dir="$ROOT/$directory"
-    local -a direction_args=()
+    direction="ltr"
     if [ "$language" = "ar" ]; then
-        direction_args=(--metadata dir=rtl)
+        direction="rtl"
     fi
     local chapter
     for chapter in "${chapters[@]}" "$pdf"; do
@@ -162,7 +162,7 @@ build_edition() {
             --metadata title="$title" \
             --metadata author="$author" \
             --metadata lang="$language" \
-            "${direction_args[@]}" \
+            --metadata dir="$direction" \
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
