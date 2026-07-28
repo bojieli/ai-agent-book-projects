@@ -104,7 +104,7 @@ def build_documents(
         )
         pitfalls = tuple(text for text, _ in pitfall_support.most_common())
         sources = tuple(
-            f"{record['id']} ({record['outcome']}, score={float(record['environment_score']):.2f})"
+            f"{record['id']} ({record['outcome']}, score={float(record.get('environment_score', 0.0)):.2f})"
             for record in records
         )
         documents.append(ExperienceDocument(

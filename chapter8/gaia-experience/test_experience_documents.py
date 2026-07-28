@@ -42,6 +42,23 @@ class ExperienceDocumentTest(unittest.TestCase):
             self.assertEqual(2, len(paths))
             self.assertTrue(all(path.suffix == ".md" for path in paths))
 
+    def test_build_documents_tolerates_missing_environment_score(self):
+        # outcome_label already reads the score with .get(default); the sources
+        # line must too, otherwise a record missing environment_score raises
+        # KeyError instead of scoring 0.0.
+        record = {
+            "id": "gaia-x",
+            "task_family": "web_research",
+            "observed_strategies": ["s"],
+            "mistakes": [],
+            "exceptions": [],
+            "applies_when": [],
+            "capabilities": [],
+        }
+        documents = build_documents([record])
+        self.assertEqual(1, len(documents))
+        self.assertIn("gaia-x (failure, score=0.00)", documents[0].sources)
+
 
 if __name__ == "__main__":
     unittest.main()

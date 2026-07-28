@@ -41,6 +41,14 @@ class KnowledgeBase:
         # Initialize the sentence transformer
         try:
             self.encoder = SentenceTransformer(model_name)
+            # Derive the real embedding dimension from the loaded model so the
+            # FAISS index matches it. A fixed 384 silently breaks any non-384
+            # model chosen via --embedding-model / config.yaml (e.g.
+            # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
+            # and every search falls back to keyword-only for the whole KB.
+            model_dim = self.encoder.get_sentence_embedding_dimension()
+            if model_dim:
+                self.embedding_dim = model_dim
         except Exception as e:
             logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
             self.encoder = None
