@@ -51,6 +51,10 @@ the runnable entry point, tests, fixtures, and generated outputs obvious.
 
 - Automated regression tests go under `tests/` and should run with
   `python -m pytest tests` from the experiment directory.
+- When documenting pytest commands for a clean environment, include the `dev`
+  extra from the repository root, for example
+  `uv sync --locked --python 3.12 --extra chN --extra dev`.
+- The equivalent pip testing fallback is `python -m pip install -e ".[chN,dev]"`.
 - Automated tests should avoid live API calls, network dependence, GPU-only
   paths, and heavyweight model downloads unless they are explicitly marked and
   isolated.
@@ -58,7 +62,7 @@ the runnable entry point, tests, fixtures, and generated outputs obvious.
 - If tests import root-level experiment modules after being moved, add a small
   `tests/conftest.py` path bootstrap rather than changing user-facing imports.
 - Manual/live smoke scripts go under `tests/manual/` and should not be named
-  `test_*.py`, so pytest does not collect them by default.
+  `test_*.py` or `*_test.py`, so pytest does not collect them by default.
 - Manual scripts should state which API keys or external tools they require.
 
 ## Fixtures
@@ -116,6 +120,7 @@ uv lock --check
 Then add experiment-specific checks, for example:
 
 ```bash
+uv sync --locked --python 3.12 --extra chN --extra dev
 python -m pytest tests
 python main.py --help
 python tests/manual/show_sample_tasks.py
