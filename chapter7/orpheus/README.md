@@ -23,7 +23,7 @@ Orpheus is a text-to-speech (TTS) model that converts text into natural-sounding
 ## Installation
 
 ### Prerequisites
-- Python 3.12 for the root `ch7` install
+- Python 3.10+
 - CUDA-compatible GPU (recommended: 16GB+ VRAM)
 - CUDA toolkit installed
 
@@ -32,23 +32,17 @@ Orpheus is a text-to-speech (TTS) model that converts text into natural-sounding
 **IMPORTANT**: The `datasets` package version must be between 3.4.1 and 4.0.0 for compatibility.
 
 ```bash
-# From the repository root: use the shared Chapter 7 environment plus Unsloth
-uv sync --locked --python 3.12 --extra ch7 --extra unsloth
-
-# Activate it before changing directories:
-# macOS/Linux:
-source .venv/bin/activate
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-# Windows cmd: .venv\Scripts\activate.bat
-
-# pip fallback when uv is not installed:
-# python -m pip install -e ".[ch7,unsloth]"
-
+# From the repository root: use a separate project-local environment for Orpheus.
+# Its audio stack needs a torch/torchaudio pair matched to your CUDA platform,
+# so do not install it into the shared root .venv.
 cd chapter7/orpheus
+python -m venv .venv-orpheus
+source .venv-orpheus/bin/activate
+# Windows PowerShell: .\.venv-orpheus\Scripts\Activate.ps1
+# Windows cmd: .venv-orpheus\Scripts\activate.bat
 
-# Single-project compatibility path, still supported for exact legacy parity
-# (project pins, xformers, hf_transfer, and CUDA-specific Unsloth stacks):
-# python -m pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 For Colab or specific environments, you may need:
@@ -298,26 +292,20 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## 安装
 
-需要支持 CUDA 的 GPU、Python 3.12（根目录 `ch7` 安装）、PyTorch、FFmpeg，以及与本机 CUDA 环境匹配的 Unsloth 依赖。
+需要支持 CUDA 的 GPU、Python 3.10+、PyTorch、FFmpeg，以及与本机 CUDA 环境匹配的 Unsloth 依赖。
 
 ```bash
-# 在仓库根目录使用统一的第 7 章环境，并显式加入 Unsloth
-uv sync --locked --python 3.12 --extra ch7 --extra unsloth
-
-# 切换目录前先激活环境：
-# macOS/Linux：
-source .venv/bin/activate
-# Windows PowerShell：.\.venv\Scripts\Activate.ps1
-# Windows cmd：.venv\Scripts\activate.bat
-
-# 未安装 uv 时可用 pip 兜底：
-# python -m pip install -e ".[ch7,unsloth]"
-
+# 从仓库根目录开始：Orpheus 请使用单独的项目本地环境。
+# 它的音频栈需要与本机 CUDA 平台匹配的 torch/torchaudio 组合，
+# 因此不要安装到共享的根目录 .venv 中。
 cd chapter7/orpheus
+python -m venv .venv-orpheus
+source .venv-orpheus/bin/activate
+# Windows PowerShell：.\.venv-orpheus\Scripts\Activate.ps1
+# Windows cmd：.venv-orpheus\Scripts\activate.bat
 
-# 迁移期间仍支持单项目兼容路径，用于完全复现旧版依赖
-#（项目固定版本、xformers、hf_transfer 与 CUDA 相关 Unsloth 栈）：
-# python -m pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 ## 项目结构
