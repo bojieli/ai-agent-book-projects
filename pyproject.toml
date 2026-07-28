@@ -144,6 +144,10 @@ torch = [
 rag = [
     "agentbook[tokens]",
     "chromadb>=0.5.0",
+    # Chroma does not cap onnxruntime, but onnxruntime 1.24+ dropped Python
+    # 3.10 wheels. Keep the advertised Python 3.10 contract without holding
+    # newer interpreters back from current releases.
+    "onnxruntime<1.24; python_version < '3.11'",
     "faiss-cpu>=1.7.4",
     "sentence-transformers>=2.2.2",
     "rank-bm25>=0.2.2",
