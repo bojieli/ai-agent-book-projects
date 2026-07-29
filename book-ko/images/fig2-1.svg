@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="60" width="700" height="84" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="80" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">시스템 프롬프트(System Prompt)</text>
+<text x="65" y="102" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;당신은 유용한 어시스턴트입니다. 반드시 간결하게 답하세요.&quot;</text>
+<text x="65" y="124" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;사용자가 실시간 정보를 요청하면 도구를 사용하세요.&quot;</text>
+<rect x="40" y="152" width="700" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="172" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">도구 정의(Tool Definitions)</text>
+<text x="65" y="194" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;웹 검색&quot;,</text>
+<text x="65" y="216" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;parameters&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}}</text>
+<rect x="40" y="244" width="700" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="264" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">대화 기록(Conversation History)</text>
+<text x="65" y="286" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">user: &quot;오늘 서울 날씨는 어때?&quot;</text>
+<text x="65" y="308" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: [tool_call] → get_weather(&quot;서울&quot;)</text>
+<text x="65" y="330" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool: {&quot;temp&quot;: &quot;23°C&quot;, &quot;conditions&quot;: &quot;맑음&quot;}</text>
+<rect x="40" y="358" width="700" height="84" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="55" y="378" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">이번 라운드의 사고(Reasoning)</text>
+<text x="65" y="400" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;think&gt;사용자가 날씨를 물었고 도구 결과도 얻었으므로,</text>
+<text x="65" y="422" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">도구를 다시 호출하지 않고 바로 요약해 답할 수 있다.&lt;/think&gt;</text>
+<rect x="40" y="450" width="700" height="62" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="55" y="470" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">현재 생성 위치 →</text>
+<text x="65" y="492" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: &quot;서울은 오늘 맑고 기온은 23°C입니다...&quot;  ← LLM 생성 중</text>
+<path d="M 748,60 C 768,60 768,281.0 773,286.0 C 768,291.0 768,512 748,512" fill="none" stroke="#333333" stroke-width="2"/>
+<text x="755" y="274.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="18" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">컨텍스트</text>
+<text x="755" y="298.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="18" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">창</text>
+<rect x="100" y="535" width="620" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="552" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">창 크기: Qwen3 = 32K tokens | Claude = 200K | Gemini = 2M</text>
+<text x="410" y="572" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">모든 콘텐츠를 토큰 스트림으로 직렬화 → Transformer 어텐션 메커니즘으로 처리</text>
+</svg>

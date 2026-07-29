@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="60" width="320" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="200.0" y="82.5" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">고전 RL Agent</text>
+<rect x="430" y="60" width="320" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="590" y="82.5" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Agent</text>
+<rect x="30" y="115" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="115" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="137" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">닫힌 유한 집합: {동,서,남,북,줍기,공격}</text>
+<text x="438" y="137" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">개방형·무한: 자연어 + 도구 호출</text>
+<text x="390" y="137" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">행동 공간</text>
+<rect x="30" y="163" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="163" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="185" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">사전 지식 없이 무작위 정책으로 시작</text>
+<text x="438" y="185" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">방대한 사전 학습 지식 + 언어 규칙</text>
+<text x="390" y="185" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">사전 지식</text>
+<rect x="30" y="211" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="211" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="233" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">해시 인코딩: state_id=0x3A7F</text>
+<text x="438" y="233" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">의미 이해: &quot;창고에 붉은 열쇠가 있음&quot;</text>
+<text x="390" y="233" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">상태 표현</text>
+<rect x="30" y="259" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="259" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="281" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">스칼라 보상: R ∈ {-1, 0, +5, +50}</text>
+<text x="438" y="281" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">보상 + 언어 피드백 + 자기 성찰</text>
+<text x="390" y="281" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">학습 신호</text>
+<rect x="30" y="307" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="307" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="329" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">내부 사고 없음(순수 반응형)</text>
+<text x="438" y="329" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">사고를 특수 행동으로 사용(CoT)</text>
+<text x="390" y="329" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">사고 능력</text>
+<rect x="30" y="355" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="355" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="377" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">단일 환경, 규칙 변경 시 재학습</text>
+<text x="438" y="377" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">작업 간 제로샷/퓨샷 전이</text>
+<text x="390" y="377" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">일반화 역량</text>
+<rect x="30" y="403" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="403" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="425" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">에피소드 약 10,000개 / 10초</text>
+<text x="438" y="425" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">에피소드 약 1개 / 2분</text>
+<text x="390" y="425" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">샘플 효율</text>
+</svg>

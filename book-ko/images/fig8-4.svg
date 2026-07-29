@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/></marker>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:19px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .note{font-size:14px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">경험의 지식화: 원시 궤적은 증거이며 지식 문서가 재사용 단위입니다</text>
+
+  <rect x="22" y="78" width="168" height="96" rx="8" class="box"/>
+  <text x="106" y="111" text-anchor="middle" class="t h">원시 궤적</text>
+  <text x="106" y="139" text-anchor="middle" class="t s">행동·결과·환경</text>
+  <text x="106" y="160" text-anchor="middle" class="t s">변경 불가 증거</text>
+
+  <rect x="215" y="78" width="168" height="96" rx="8" class="box"/>
+  <text x="299" y="111" text-anchor="middle" class="t h">단일 평가</text>
+  <text x="299" y="139" text-anchor="middle" class="t s">성공·실패·태그</text>
+  <text x="299" y="160" text-anchor="middle" class="t s">증거 위치 보존</text>
+
+  <rect x="408" y="63" width="184" height="126" rx="8" class="accent"/>
+  <text x="500" y="97" text-anchor="middle" class="t h">궤적 간 비교</text>
+  <text x="500" y="128" text-anchor="middle" class="t s">동종 업무 집계</text>
+  <text x="500" y="151" text-anchor="middle" class="t s">성공·실패 대조</text>
+  <text x="500" y="174" text-anchor="middle" class="t s">공통점·경계 추출</text>
+
+  <rect x="617" y="63" width="184" height="126" rx="8" class="accent"/>
+  <text x="709" y="97" text-anchor="middle" class="t h">Markdown 문서</text>
+  <text x="709" y="128" text-anchor="middle" class="t s">적용 상황·전략</text>
+  <text x="709" y="151" text-anchor="middle" class="t s">예외·금지 영역·출처</text>
+  <text x="709" y="174" text-anchor="middle" class="t s">버전·검증 시각</text>
+
+  <rect x="826" y="78" width="152" height="96" rx="8" class="box"/>
+  <text x="902" y="111" text-anchor="middle" class="t h">검색 적용</text>
+  <text x="902" y="139" text-anchor="middle" class="t s">새 업무에 필요시 로드</text>
+  <text x="902" y="160" text-anchor="middle" class="t s">계속 피드백 생성</text>
+
+  <path d="M190 126 H213" class="line"/>
+  <path d="M383 126 H406" class="line"/>
+  <path d="M592 126 H615" class="line"/>
+  <path d="M801 126 H824" class="line"/>
+
+  <path d="M902 174 V244 H500 V191" class="line" stroke-dasharray="7 5"/>
+  <text x="700" y="270" text-anchor="middle" class="t s">새 증거로 기존 지식을 수정·한정·폐기합니다</text>
+
+  <rect x="215" y="302" width="586" height="48" rx="8" fill="#fafbfb" stroke="#9aa8af"/>
+  <text x="508" y="332" text-anchor="middle" class="t note">3장과 추출·검색 인프라를 공유하고, 이 장에서는 궤적 평가·행동 개선 루프를 추가합니다</text>
+</svg>

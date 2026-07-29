@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 412" width="920" height="412" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="24" y="70" width="200" height="42" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="124.0" y="91" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">단순 노트</text>
+<rect x="38" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="48" y="150" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;사용자 이메일:</text>
+<text x="48" y="172" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> john@x.com&quot;</text>
+<text x="124.0" y="236" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 원자적 사실 · O(1)</text>
+<text x="124.0" y="262" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 오버헤드 매우 낮음</text>
+<text x="124.0" y="292" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 연관성 손실</text>
+<rect x="248" y="70" width="200" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="348.0" y="91" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">향상된 노트</text>
+<rect x="262" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="272" y="150" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;TechCorp의</text>
+<text x="272" y="172" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">선임 엔지니어,</text>
+<text x="272" y="194" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">5명 추천팀 담당…&quot;</text>
+<text x="348.0" y="236" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 완전한 서사</text>
+<text x="348.0" y="262" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 의미 완전성</text>
+<text x="348.0" y="292" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 중복 · 갱신 어려움</text>
+<text x="348.0" y="318" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 장문 검색 어려움</text>
+<rect x="472" y="70" width="200" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="572.0" y="91" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">JSON 카드</text>
+<rect x="486" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="496" y="150" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">work.position</text>
+<text x="496" y="172" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> .title = …</text>
+<text x="496" y="194" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">(범주→키·값)</text>
+<text x="572.0" y="236" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 3단계 구조화</text>
+<text x="572.0" y="262" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 부분 갱신 지원</text>
+<text x="572.0" y="292" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 경직된 분류</text>
+<rect x="696" y="70" width="200" height="42" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="796.0" y="91" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">고급 JSON 카드</text>
+<rect x="710" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="720" y="150" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ backstory</text>
+<text x="720" y="172" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ person</text>
+<text x="720" y="194" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ relationship</text>
+<text x="796.0" y="236" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 중의성 해소 · 지식 관리</text>
+<text x="796.0" y="262" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 출처와 관계 포함</text>
+<text x="796.0" y="292" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 생성·유지 비용 높음</text>
+<line x1="70" y1="400" x2="850" y2="400" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="70" y="383" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">단순성</text>
+<text x="850" y="383" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">표현력</text>
+<text x="460" y="424" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">단순성은 낮아지고, 표현력은 높아짐</text>
+</svg>

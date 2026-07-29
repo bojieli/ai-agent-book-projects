@@ -1,9 +1,9 @@
 # فهم وكلاء الذكاء الاصطناعي بعمق: مبادئ التصميم والممارسة الهندسية
 
-[![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-9%20لغات-informational.svg)](#-الكتاب-الإلكتروني)
+[![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-10%20لغات-informational.svg)](#-الكتاب-الإلكتروني)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > **ملاحظة حول الترجمة:** هذه ترجمة عربية كاملة، خضعت لمراجعة تحريرية وتقنية شملت سلامة المعنى، وطبيعية الأسلوب، واتساق المصطلحات، وبنية النص والرسوم.
 >
@@ -11,7 +11,7 @@
 
 **الوكيل = LLM + السياق + الأدوات** — تنظم هذه المعادلة فصول الكتاب العشرة، التي تنتقل من المبادئ إلى الممارسة الهندسية. والنص الكامل والرسوم و**93 تجربة مصاحبة** كلها مفتوحة المصدر، ويمكنك تشغيل التجارب بنفسك.
 
-| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **9 لغات**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR |
+| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **10 لغات**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 الكتاب الإلكتروني
@@ -26,12 +26,13 @@
 > - **اليابانية** (ترجمة المجتمع، بواسطة [@eltociear](https://github.com/eltociear)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
 > - **العربية** (ترجمة مجتمعية بواسطة [@TheSyBuilder](https://github.com/TheSyBuilder) — النسخة الحالية): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **التركية** (ترجمة المجتمع، بواسطة [@memisemre](https://github.com/memisemre)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+> - **الكورية** (ترجمة المجتمع، بواسطة [@JeongJaeSoon](https://github.com/JeongJaeSoon)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.epub)
 >
 > 🌐 يمكنك أيضًا [القراءة عبر الإنترنت](https://bojieli.github.io/ai-agent-book/) عبر واجهة متعددة اللغات، وشجرة فصول قابلة للطي، وبحث في النص الكامل، وروابط مباشرة للتجارب المصاحبة. ويُعاد بناء الموقع تلقائيًا عند كل دفع إلى الفرع `main`.
 
-يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد النسخة التركية في [`book-tr/`](../../book-tr/).
+يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية والكورية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد النسختان التركية والكورية في [`book-tr/`](../../book-tr/) و[`book-ko/`](../../book-ko/).
 
-ينتج سكربت البناء الموحّد كتب EPUB 3 باللغات التسع، ومنها العربية ذات اتجاه القراءة من اليمين إلى اليسار. راجع [تعليمات إنشاء EPUB](../../EPUB.md).
+ينتج سكربت البناء الموحّد كتب EPUB 3 باللغات العشر، ومنها العربية ذات اتجاه القراءة من اليمين إلى اليسار. راجع [تعليمات إنشاء EPUB](../../EPUB.md).
 
 <details>
 <summary><b>🔧 بناء ملف PDF محليًا</b> (يتطلب pandoc وxelatex وElegantBook)</summary>
@@ -153,7 +154,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 🐛 **تحسينات على الكود وإصلاحات للأخطاء** | اجعل المشاريع المصاحبة أكثر قوة وقابلة للاستخدام وجاهزة للإنتاج |
 | 🧪 **مشاريع تدريبية جديدة** | إضافة/استبدال تطبيقات أفضل للتجارب، أو المساهمة بأمثلة جديدة |
 | 🎨 **تصميم الشكل** | تحسين مخططات SVG المحفوظة في المستودع ضمن `book/images/` مباشرةً |
-| 🌐 **ترجمات جديدة** | نرحب بالترجمات إلى المزيد من اللغات؛ انظر العربية (`book-ar/`)، والإنجليزية (`book-en/`)، والصينية التقليدية/تايوان (`book-zhtw/`)، والروسية (`book-ru/`)، والتاميلية (`book-ta/`)، والفيتنامية (`book-vi/`)، واليابانية (`book-ja/`)، والتركية (`book-tr/`) كمرجع |
+| 🌐 **ترجمات جديدة** | نرحب بالترجمات إلى المزيد من اللغات؛ انظر العربية (`book-ar/`)، والإنجليزية (`book-en/`)، والصينية التقليدية/تايوان (`book-zhtw/`)، والروسية (`book-ru/`)، والتاميلية (`book-ta/`)، والفيتنامية (`book-vi/`)، واليابانية (`book-ja/`)، والتركية (`book-tr/`)، والكورية (`book-ko/`) كمرجع |
 
 قبل إرسال مساهمتك، شغّل التجارب ذات الصلة للتأكد من قابلية إعادة النتائج. ويمكنك فتح issue لمناقشة الفكرة أولًا.
 

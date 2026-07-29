@@ -1,5 +1,5 @@
 site_name: AI Agents in Depth
-site_description: AI Agents in Depth — Design Principles and Engineering Practice. An open-source book covering AI Agents from theory to production, with 10 chapters and 92 companion experiments.
+site_description: AI Agents in Depth — Design Principles and Engineering Practice. An open-source book covering AI Agents from theory to production, with 10 chapters and 93 companion experiments.
 site_url: https://bojieli.github.io/ai-agent-book
 repo_url: https://github.com/bojieli/ai-agent-book
 repo_name: bojieli/ai-agent-book
@@ -84,6 +84,7 @@ plugins:
   - search:
       lang:
         - ja          # CJK-aware tokenizer; far better for Chinese than `en`
+        - ko          # Korean tokenizer for the Korean edition
         - en
         - ar
   # Stamp each page with its git commit date — readers see "最后更新" trust signal.
@@ -150,6 +151,7 @@ extra:
     ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }
     vi:   { label: Tiếng Việt, prefix: book-vi/,   suffix: .vi,   readmeSuffix: vi }
     ja:   { label: 日本語,     prefix: book-ja/,   suffix: .ja,   readmeSuffix: ja }
+    ko:   { label: 한국어,     prefix: book-ko/,   suffix: .ko,   readmeSuffix: ko }
     ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
     tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
 
