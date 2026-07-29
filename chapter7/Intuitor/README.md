@@ -429,6 +429,12 @@ python3 evaluate_from_cache.py \
 - ✅ Standardizes number formats (removes commas, spaces, etc.)
 - ✅ Displays detailed error sample analysis
 
+Offline regression tests for answer extraction and cached-output parsing live in `tests/`:
+
+```bash
+python -m pytest tests
+```
+
 **Example Output**:
 ```
 📂 Reading predictions: /root/.cache/huggingface/lighteval/.../GENERATIVE.parquet
@@ -1351,6 +1357,12 @@ python3 evaluate_from_cache.py \
 - ✅ 自动从 Hugging Face 加载 GSM8K 金标答案
 - ✅ 标准化数字格式（去除逗号、空格等）
 - ✅ 显示详细的错误样本分析
+
+答案提取和缓存输出解析的离线回归测试位于 `tests/`：
+
+```bash
+python -m pytest tests
+```
 
 **示例输出**：
 ```

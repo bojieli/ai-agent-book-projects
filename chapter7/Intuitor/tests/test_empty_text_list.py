@@ -18,5 +18,5 @@ def test_nonempty_text_list():
 
 def test_source_guards_empty_list():
     from pathlib import Path
-    src = Path(__file__).with_name("evaluate_from_cache.py").read_text()
+    src = (Path(__file__).resolve().parents[1] / "evaluate_from_cache.py").read_text()
     assert "text_field[0] if text_field else ''" in src
