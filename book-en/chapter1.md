@@ -120,7 +120,7 @@ But a deeper question follows: if models keep getting stronger, will today's Har
 
 #### Agent Learning Mechanisms: From Contextual Adaptation to Persistent Updates
 
-The preceding discussion showed how reinforcement learning can internalize tool-use policies as native model capabilities. But changes in an Agent's behavior do not occur only during training. Based on where an update occurs and how long it persists, these changes can be understood as three complementary paths (Figure 1-1): within-task contextual adaptation, cross-task updates to external artifacts, and parameter updates during training cycles.
+The preceding discussion noted that a model can internalize tool-use policies as native capabilities through reinforcement learning. But changes in an Agent's behavior do not occur only during training. Based on where an update occurs and how long it persists, these changes can be understood as three complementary paths (Figure 1-1): within-task contextual adaptation, cross-task updates to external artifacts, and parameter updates during training cycles.
 
 ![Figure 1-1: Three Levels of Agent Capability Updates](images/fig1-1.svg)
 
