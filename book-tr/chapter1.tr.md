@@ -119,7 +119,7 @@ Ama bunun ardında daha derin bir soru yatıyor: modeller güçlenmeye devam ede
 
 #### Agent Öğrenme Mekanizmaları: Post-training, In-context Learning ve Externalized Learning
 
-Pekiştirmeli öğrenmenin bir modelin bir aracı ne zaman ve nasıl çağıracağı kararını nasıl içselleştirmesini sağladığını az önce gördük. Ama bir Agent'ın öğrenmesi eğitim aşamasıyla sınırlı değildir—birçok okuyucu, bir Agent'ın deneyimden öğrendiğini duyduğu an modelin yeniden eğitilmesi gerektiğini varsayar. Oysa post-training, bir Agent'ın deneyimden öğrenmesinin yalnızca bir yoludur. Öğrenme mekanizmaları birbirini tamamlayan üç paradigmaya ayrılır (Şekil 1-1):
+Az önce, bir modelin pekiştirmeli öğrenme yoluyla bir aracı ne zaman ve nasıl çağıracağı kararını içselleştirebileceğini gördük. Ama bir Agent'ın öğrenmesi eğitim aşamasıyla sınırlı değildir—birçok okuyucu, bir Agent'ın deneyimden öğrendiğini duyduğu an modelin yeniden eğitilmesi gerektiğini varsayar. Oysa post-training, bir Agent'ın deneyimden öğrenmesinin yalnızca bir yoludur. Öğrenme mekanizmaları birbirini tamamlayan üç paradigmaya ayrılır (Şekil 1-1):
 
 ![Şekil 1-1: Bir Agent'ın üç öğrenme paradigması](images/fig1-1.svg)
 
