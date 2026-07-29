@@ -1,15 +1,15 @@
 """Regression coverage for evaluation menu memory display."""
-import os
-import sys
+import builtins
 import types
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-import main
-from config import MemoryMode
+from pathlib import Path
 
 
 def test_evaluation_option_two_prints_memory_manager_context(monkeypatch, capsys):
+    monkeypatch.syspath_prepend(str(Path(__file__).parent))
+
+    import main
+    from config import MemoryMode
+
     class FakeTestSuite:
         test_cases = [object()]
 
@@ -17,10 +17,20 @@ def test_evaluation_option_two_prints_memory_manager_context(monkeypatch, capsys
         def __init__(self):
             self.test_suite = FakeTestSuite()
 
-    fake_framework_module = types.SimpleNamespace(UserMemoryEvaluationFramework=FakeFramework)
-    monkeypatch.setitem(sys.modules, "models", types.SimpleNamespace())
-    monkeypatch.setitem(sys.modules, "evaluator", types.SimpleNamespace())
-    monkeypatch.setitem(sys.modules, "framework", fake_framework_module)
+    fake_evaluation_modules = {
+        "config": types.SimpleNamespace(),
+        "models": types.SimpleNamespace(),
+        "evaluator": types.SimpleNamespace(),
+        "framework": types.SimpleNamespace(UserMemoryEvaluationFramework=FakeFramework),
+    }
+    real_import = builtins.__import__
+
+    def import_fake_evaluation_module(name, globals=None, locals=None, fromlist=(), level=0):
+        if level == 0 and name in fake_evaluation_modules:
+            return fake_evaluation_modules[name]
+        return real_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", import_fake_evaluation_module)
 
     class FakeMemoryManager:
         def get_context_string(self):
