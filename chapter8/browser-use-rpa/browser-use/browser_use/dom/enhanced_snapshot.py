@@ -93,7 +93,7 @@ def build_snapshot_lookup(
 			stacking_contexts = None
 			if snapshot_index in layout_index_map:
 				layout_idx = layout_index_map[snapshot_index]
-				if layout_idx < len(layout.get('bounds', [])):
+				if layout_idx < len(layout.get('bounds') or []):
 					# Parse bounding box
 					bounds = layout['bounds'][layout_idx]
 					if len(bounds) >= 4:
@@ -110,17 +110,17 @@ def build_snapshot_lookup(
 						)
 
 					# Parse computed styles for this layout node
-					if layout_idx < len(layout.get('styles', [])):
+					if layout_idx < len(layout.get('styles') or []):
 						style_indices = layout['styles'][layout_idx]
 						computed_styles = _parse_computed_styles(strings, style_indices)
 						cursor_style = computed_styles.get('cursor')
 
 					# Extract paint order if available
-					if layout_idx < len(layout.get('paintOrders', [])):
+					if layout_idx < len(layout.get('paintOrders') or []):
 						paint_order = layout.get('paintOrders', [])[layout_idx]
 
 					# Extract client rects if available
-					client_rects_data = layout.get('clientRects', [])
+					client_rects_data = layout.get('clientRects') or []
 					if layout_idx < len(client_rects_data):
 						client_rect_data = client_rects_data[layout_idx]
 						if client_rect_data and len(client_rect_data) >= 4:
@@ -132,7 +132,7 @@ def build_snapshot_lookup(
 							)
 
 					# Extract scroll rects if available
-					scroll_rects_data = layout.get('scrollRects', [])
+					scroll_rects_data = layout.get('scrollRects') or []
 					if layout_idx < len(scroll_rects_data):
 						scroll_rect_data = scroll_rects_data[layout_idx]
 						if scroll_rect_data and len(scroll_rect_data) >= 4:
@@ -144,7 +144,7 @@ def build_snapshot_lookup(
 							)
 
 					# Extract stacking contexts if available
-					if layout_idx < len(layout.get('stackingContexts', [])):
+					if layout_idx < len(layout.get('stackingContexts') or []):
 						stacking_contexts = layout.get('stackingContexts', {}).get('index', [])[layout_idx]
 
 			snapshot_lookup[backend_node_id] = EnhancedSnapshotNode(
