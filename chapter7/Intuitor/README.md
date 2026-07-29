@@ -432,7 +432,8 @@ python3 evaluate_from_cache.py \
 Offline regression tests for answer extraction and cached-output parsing live in `tests/`:
 
 ```bash
-python -m pytest tests
+# From this repository root:
+python -m pytest chapter7/Intuitor/tests
 ```
 
 **Example Output**:
@@ -1361,7 +1362,8 @@ python3 evaluate_from_cache.py \
 答案提取和缓存输出解析的离线回归测试位于 `tests/`：
 
 ```bash
-python -m pytest tests
+# 在本仓库根目录运行：
+python -m pytest chapter7/Intuitor/tests
 ```
 
 **示例输出**：
