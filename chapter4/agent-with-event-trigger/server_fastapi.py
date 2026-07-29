@@ -304,8 +304,8 @@ async def handle_event(event_req: EventRequest):
             "result": {
                 "final_answer": result.get('final_answer'),
                 "iterations": result.get('iterations'),
-                "tool_calls_count": len(result.get('tool_calls', [])),
-                "todo_items": len(result.get('todo_list', [])),
+                "tool_calls_count": len(result.get('tool_calls') or []),
+                "todo_items": len(result.get('todo_list') or []),
                 "success": result.get('success', False),
                 "trajectory_file": result.get('trajectory_file')
             }
