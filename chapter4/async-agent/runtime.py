@@ -19,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import datetime
 import json
+import os
 import time
 from typing import Optional
 
@@ -383,6 +384,9 @@ class AgentRuntime:
     def save_checkpoint(self, path: str) -> str:
         """把当前状态写入检查点文件（JSON），返回文件路径。"""
         data = self.snapshot()
+        dirname = os.path.dirname(path)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         self.log("STATE", f"已保存检查点 -> {path}"
@@ -396,5 +400,5 @@ class AgentRuntime:
         self.trajectory = [Event.from_dict(d) for d in data.get("trajectory", [])]
         self.tasks.restore(data.get("tasks", []))
         self.log("STATE", f"已从检查点恢复 <- {path}"
-                          f"（{len(self.trajectory)} 条轨迹事件，{len(data.get('tasks', []))} 个任务）")
+                          f"（{len(self.trajectory)} 条轨迹事件，{len(data.get('tasks') or [])} 个任务）")
         return data
