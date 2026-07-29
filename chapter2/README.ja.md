@@ -16,7 +16,6 @@
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Agent Skills の「段階的開示」という概念を再現する。Agent は最初、薄い Skill ディレクトリしか見えない。タスクに `pptx` Skill が必要だと識別して初めて、その完全なワークフロー、詳細ドキュメント、同梱スクリプトを段階的に読み込み、最終的に python-pptx を使って実際の `.pptx` ファイルを生成する。 |
 | 2-8 | [system-hint](system-hint/) | ✅ | System Hint が Agent の挙動に与える影響を研究し、システムプロンプトの最適化によって性能を向上させる方法を探る。 |
 | 2-9 | [context-compression](context-compression/) | ✅ | 要約、重要情報抽出、意味的圧縮を含む複数のコンテキスト圧縮戦略を実装・比較する。Agent 能力を維持しながらトークン使用量を削減する。 |
-| 3-3 | [log-sanitization](log-sanitization/) | ✅ | デバッグ情報を保持しつつ機密データを保護する、インテリジェントなログサニタイズシステムを実装する。 |
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

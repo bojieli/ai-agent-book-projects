@@ -1,9 +1,9 @@
 # Log Sanitization / 日志脱敏
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — intelligent log sanitization that redacts secrets and PII while preserving debug value.  
-> 配套《深入理解 AI Agent》第 2 章——在保留调试信息的同时检测并脱敏日志中的敏感数据。
+> Companion material for *AI Agents in Depth*, Chapter 3 — intelligent log sanitization that redacts secrets and PII while preserving debug value.  
+> 配套《深入理解 AI Agent》第 3 章——在保留调试信息的同时检测并脱敏日志中的敏感数据。
 
-← [Chapter 2 index / 返回第 2 章目录](../README.md)
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
 ---
 
