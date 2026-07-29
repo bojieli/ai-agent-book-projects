@@ -91,7 +91,7 @@ class WebTools:
                         'url': url,
                         'snippet': result.get('snippet', ''),
                         'content': page_content.get('content', ''),
-                        'content_length': len(page_content.get('content', '')),
+                        'content_length': len(page_content.get('content') or ''),
                         'fetch_success': page_content.get('success', False)
                     })
                     
