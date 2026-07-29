@@ -54,7 +54,7 @@ python demo.py --model gpt-5.6 --output output/run.json
 
 ```bash
 python demo.py --dry-run
-python -m unittest -v test_learning_and_release.py
+python -m pytest tests
 ```
 
 项目也保留人工调优版 `prompts/system_prompt_manual.txt` 作为对照。完整实验比较初始版、自动候选版和人工版在两组任务上的表现；具体准确率会随被测模型变化，是否发布则始终由显式门槛决定，而不是由 Coding Agent 自己决定。
@@ -69,6 +69,6 @@ python -m unittest -v test_learning_and_release.py
 | `coding_agent.py` | 生成并应用可审计的最小 Prompt 编辑 |
 | `release_gate.py` | 候选 manifest、回归门槛和发布决定 |
 | `demo.py` | 串联完整闭环并输出对照结果 |
-| `test_learning_and_release.py` | 离线验证诊断、接受和拒绝路径 |
+| `tests/` | 离线验证诊断、补丁应用、工具空值处理、接受和拒绝路径 |
 
 本实验仍是教学规模的航空客服模拟。接入生产系统时，规则遵从应读取真实政策验证器，任务解决应读取订单最终状态，合规变通则可使用经过专家校准的 LLM Judge；三种信号不能被一个模糊总分替代。
