@@ -6,12 +6,12 @@
 
 ## 付随プロジェクト
 
-| プロジェクト | 種類 | 説明 |
-| --- | :--: | --- |
-| [learning-from-experience](learning-from-experience/) | ✅ | 従来の強化学習（Q 学習）と LLM ベースのインコンテキスト学習を比較し、Shunyu Yao のブログ記事「The Second Half」の重要な洞察を再現する。宝探しゲームを通じて、LLM が 250〜400 倍のサンプル効率で従来の RL を上回る様子を示す。 |
-| [web-search-agent](web-search-agent/) | ✅ | 基本的なディープ検索能力を持つ Agent を実装し、複数ラウンドの検索と情報統合を可能にする。 |
-| [search-codegen](search-codegen/) | ✅ | 基本的なディープ検索とコードサンドボックス能力を備えた Agent を構築し、Web 検索やコード実行などのツールを活用して複雑な分析を行う。 |
-| [context](context/) | ✅ | 体系的なアブレーション（実験）を通じて、Agent のさまざまなコンテキスト構成要素の重要性を示す。複数の LLM プロバイダー（SiliconFlow Qwen、ByteDance Doubao、Moonshot Kimi）をサポートし、異なるコンテキストモードを設定して Agent の挙動の変化を観察できる。 |
+| 実験 | プロジェクト | 種類 | 説明 |
+| :--: | --- | :--: | --- |
+| 1-1 | [context](context/) | ✅ | 体系的なアブレーション（実験）を通じて、Agent のさまざまなコンテキスト構成要素の重要性を示す。複数の LLM プロバイダー（SiliconFlow Qwen、ByteDance Doubao、Moonshot Kimi）をサポートし、異なるコンテキストモードを設定して Agent の挙動の変化を観察できる。 |
+| 1-2 | [web-search-agent](web-search-agent/) | ✅ | 基本的なディープ検索能力を持つ Agent を実装し、複数ラウンドの検索と情報統合を可能にする。 |
+| 1-3 | [search-codegen](search-codegen/) | ✅ | 基本的なディープ検索とコードサンドボックス能力を備えた Agent を構築し、Web 検索やコード実行などのツールを活用して複雑な分析を行う。 |
+| 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | 従来の強化学習（Q 学習）と LLM ベースのインコンテキスト学習を比較し、Shunyu Yao のブログ記事「The Second Half」の重要な洞察を再現する。宝探しゲームを通じて、LLM が 250〜400 倍のサンプル効率で従来の RL を上回る様子を示す。 |
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

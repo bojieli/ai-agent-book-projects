@@ -27,6 +27,12 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.types import TextContent
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 def _reasoning_safe_temperature(model, requested=1.0):
     """Reasoning models (Kimi K3, GPT-5, ...) only accept temperature=1.

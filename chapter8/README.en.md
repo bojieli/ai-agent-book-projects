@@ -6,14 +6,24 @@
 
 ## Companion Projects
 
-| Project | Type | Description |
-| --- | :--: | --- |
-| [gaia-experience](gaia-experience/) | ✅ | Based on the AWorld framework and GAIA benchmark, implements a complete "learn-apply" loop. The agent automatically summarizes successful task trajectories into structured experiences and retrieves and applies them in new tasks, achieving self-evolution. |
-| [browser-use-rpa](browser-use-rpa/) | ✅ | Implements a workflow recording system for browser automation, automatically encapsulating repetitive operation sequences into parameterized tools. By switching from expensive LLM inference to precise automated execution, it achieves a 3-5x speed improvement. |
-| [prompt-distillation](prompt-distillation/) | ✅ | Distills the effectiveness of complex prompts into model parameters, reducing prompt length during inference and solidifying contextual experience into parameterized knowledge. |
-| [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Automated system prompt learning based on human feedback: Using the tau-bench style airline customer service "over-transfer" problem as an example, a Coding Agent reads the system prompt file, identifies problematic rules, generates precise modifications, and actually rewrites the prompt file. It then re-evaluates the changes, forming a "feedback → rewrite → verify" loop. |
-| [self-evolving-tools](self-evolving-tools/) | ✅ | An Alita-style "minimal predefined, maximum self-evolution" approach: The agent has no pre-built domain-specific tools, only five general meta-tools. When encountering a task it cannot perform, it searches the web for open-source libraries/APIs, reads documentation, tests them in a sandbox, encapsulates feasible solutions as new tools, stores them in the tool library for reuse, and emphasizes hallucination control throughout the process. |
-| [self-evolution-eval](self-evolution-eval/) | ✅ | A dedicated dataset and validation methodology designed to evaluate an agent's "self-evolution" capability (discovering, creating, and reusing tools on its own): 20 cross-domain tasks (without hinting at tool names) + a four-layer hierarchical validation harness + a controllable reference agent. It goes beyond checking "if the result is correct" to assess the quality of discovery, creation, and reuse. |
+| Exp. | Project | Type | Description |
+| :--: | --- | :--: | --- |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Experiment 8-1: combines environment outcomes, process rules, and language rubrics into evidence-backed diagnoses of customer-service trajectories |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Experiment 8-2: compares successful, partially successful, and failed trajectories to generate cross-trajectory Markdown experience documents |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 8-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 8-4: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Experiment 8-5: repeated failures trigger retry/circuit-breaker code patches, regression tests, canary rollout, and rollback |
+| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 8-6: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
+
+All experiments above offer offline entry points and unit tests that require no API Key; extension paths that need real models or a browser are documented in each project's README.
+
+## Supplementary Cases
+
+| Exp. | Project | Relation |
+| :--: | --- | --- |
+| 7-8 | [prompt-distillation](prompt-distillation/) | Cross-chapter project on prompt distillation and parameterized learning; the training method belongs to Chapter 7 |
+| — | [self-evolving-tools](self-evolving-tools/) | Alita-style tool discovery, encapsulation, and reuse — a supplementary case of "writing experience into programs" |
+
 ## Project Types
 
 | Icon | Type | Meaning |

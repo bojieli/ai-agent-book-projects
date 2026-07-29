@@ -7,6 +7,12 @@ import os
 import re
 from typing import Any, Dict
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from evolution import candidate_from_source
 
 

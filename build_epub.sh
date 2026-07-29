@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|ja]
-# Note: `all` does NOT include ja — the Japanese edition builds as separate
-# non-fatal CI steps. Build it explicitly with `./build_epub.sh ja`.
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]
+# Note: `all` does NOT include ja or ar while their PDF pipelines are being
+# validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
 set -euo pipefail
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|ru|ta|vi|ja) ;;
+    all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|ja]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]" >&2
         exit 2
         ;;
 esac
@@ -29,7 +29,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 build_edition() {
     local language="$1"
-    local directory title author pdf output title_label toc_label
+    local directory title author pdf output title_label toc_label direction
     local -a chapters
 
     case "$language" in
@@ -46,7 +46,7 @@ build_edition() {
         zh-TW)
             directory="book-zhtw"
             title="深入理解 AI Agent：設計原理與工程實踐"
-            author="李博杰；正體中文翻譯：tigercosmos"
+            author="李博杰；繁體中文（台灣）翻譯：tigercosmos"
             pdf="深入理解-AI-Agent-李博杰-v1.3-zhtw.pdf"
             output="深入理解-AI-Agent-李博杰-v1.3-zhtw.epub"
             title_label="扉頁"
@@ -93,6 +93,16 @@ build_edition() {
             toc_label="Mục lục"
             chapters=(introduction.vi.md glossary.vi.md chapter{1..10}.vi.md afterword.vi.md)
             ;;
+        tr)
+            directory="book-tr"
+            title="AI Agent'ları Derinlemesine Anlamak: Tasarım İlkeleri ve Mühendislik Pratiği"
+            author="Bojie Li; Türkçe çeviri: memisemre"
+            pdf="AI-Agents-in-Depth-Bojie-Li-v1.3-tr.pdf"
+            output="AI-Agents-in-Depth-Bojie-Li-v1.3-tr.epub"
+            title_label="Başlık Sayfası"
+            toc_label="İçindekiler"
+            chapters=(introduction.tr.md chapter{1..10}.tr.md afterword.tr.md)
+            ;;
         ja)
             directory="book-ja"
             title="AI Agent 徹底解説：設計原理とエンジニアリング実践"
@@ -103,9 +113,23 @@ build_edition() {
             toc_label="目次"
             chapters=(introduction.ja.md chapter{1..10}.ja.md afterword.ja.md)
             ;;
+        ar)
+            directory="book-ar"
+            title="فهم وكلاء الذكاء الاصطناعي بعمق: مبادئ التصميم والممارسة الهندسية"
+            author="لي بوجي؛ الترجمة العربية: TheSyBuilder"
+            pdf="AI-Agents-in-Depth-ar.pdf"
+            output="AI-Agents-in-Depth-ar.epub"
+            title_label="صفحة العنوان"
+            toc_label="المحتويات"
+            chapters=(introduction.ar.md chapter{1..10}.ar.md afterword.ar.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
+    direction="ltr"
+    if [ "$language" = "ar" ]; then
+        direction="rtl"
+    fi
     local chapter
     for chapter in "${chapters[@]}" "$pdf"; do
         if [ ! -f "$edition_dir/$chapter" ]; then
@@ -132,16 +156,23 @@ build_edition() {
             --mathml \
             --split-level=1 \
             --highlight-style=kate \
+            --lua-filter="$ROOT/epub_external_links.lua" \
             --css="$ROOT/epub.css" \
             --epub-cover-image="$cover" \
             --metadata title="$title" \
             --metadata author="$author" \
             --metadata lang="$language" \
+            --metadata dir="$direction" \
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
-    python3 "$ROOT/flatten_epub_toc.py" \
-        "$edition_dir/$output" "$title_label" "$toc_label"
+    if [ "$language" = "ar" ]; then
+        python3 "$ROOT/flatten_epub_toc.py" \
+            "$edition_dir/$output" "$title_label" "$toc_label" rtl
+    else
+        python3 "$ROOT/flatten_epub_toc.py" \
+            "$edition_dir/$output" "$title_label" "$toc_label"
+    fi
 
     if command -v epubcheck >/dev/null 2>&1; then
         epubcheck "$edition_dir/$output"
@@ -151,7 +182,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en ru ta vi; do
+    for language in zh-CN zh-TW en ru ta vi tr; do
         build_edition "$language"
     done
 else

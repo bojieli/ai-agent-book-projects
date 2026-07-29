@@ -7,6 +7,12 @@ import json
 import os
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from agent import DeterministicReportingAgent
 from evaluator import evaluate, expected_by_task, load_json
 from reporting_tools import ReportingEnvironment

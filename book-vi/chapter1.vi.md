@@ -26,13 +26,29 @@ Ba thành phần này tương ứng chính xác với ba khái niệm cốt lõi
 |**Mắt**| Ngữ cảnh |**Observation Space**(Observation Space) | Tất cả thông tin Agent có thể nhìn thấy - những gì có thể nhìn thấy, những gì có thể đọc được, những gì có thể ghi nhớ và những hệ thống nào có thể truy cập |
 |**Tay và chân**| Công cụ |**Action Space**(Action Space) | Bộ sưu tập mọi thứ Agent có thể làm - những "phương tiện" có sẵn, từ gửi tin nhắn đến thực thi mã đến điều khiển giao diện |
 
+### Không gian quan sát và không gian hành động: Giao diện giữa mô hình và thế giới
+
+Trong giáo trình kinh điển *Computer Architecture: A Quantitative Approach*, Hennessy và Patterson mở đầu Chương 1 bằng câu hỏi “What Is Computer Architecture?” và xem **kiến trúc tập lệnh** (Instruction Set Architecture, ISA) là giao diện giữa phần mềm và phần cứng[^ch1-agent-interface]. Góc nhìn này cũng rất hữu ích để hiểu Agent: **không gian quan sát và không gian hành động cùng tạo thành giao diện giữa LLM và môi trường bên ngoài**. Không gian quan sát chuyển thông tin trong môi trường thành ngữ cảnh mà mô hình có thể xử lý; không gian hành động chuyển quyết định của mô hình thành thao tác lên thế giới bên ngoài. Thông tin không đi vào không gian quan sát gần như không tồn tại đối với mô hình. Một thao tác không nằm trong không gian hành động vẫn chỉ là điều mô hình có thể đề xuất bằng lời, ngay cả khi nó biết chính xác cần làm gì.
+
+Vì vậy, **khi giữ nguyên mô hình nền tảng, đòn bẩy kỹ thuật hệ thống chủ yếu để cải thiện hiệu suất Agent thường là định nghĩa lại hoặc mở rộng không gian quan sát và hành động**. Theo thuật ngữ của cuốn sách này, đó là mở rộng ngữ cảnh và công cụ. Nhiều vấn đề tưởng như cần một “mô hình thông minh hơn” thực chất là vấn đề giao diện: đưa dữ liệu liên quan đến nhiệm vụ vào ngữ cảnh hoặc cung cấp thao tác cần thiết dưới dạng công cụ, và một nhiệm vụ trước đây không thể giải có thể trở nên giải được mà không cần huấn luyện lại mô hình.
+
+**Manus: hợp nhất những không gian vốn tách biệt.** Trước khi Manus xuất hiện, Agent trong môi trường sản xuất chủ yếu phát triển theo ba hướng riêng: Deep Research, Coding và Computer Use. Manus là Agent sản xuất có ảnh hưởng rộng đầu tiên kết hợp cả ba trong một hệ thống. Web mở rộng không gian quan sát; hệ thống tệp và khả năng thực thi mã mở rộng không gian hành động; còn nhận biết màn hình cùng thao tác nhấp và nhập liệu đưa giao diện đồ họa vào cả hai không gian. Manus không trở thành Agent đa dụng chỉ bằng cách thay một mô hình mạnh hơn. Nó lấy hợp của không gian quan sát và hành động từ ba loại Agent, cho phép một Agent duy nhất vượt qua ranh giới sản phẩm trước đó.
+
+**OpenClaw: mở rộng giao diện vào đời sống số của người dùng.** OpenClaw tiếp tục đẩy cả hai không gian ra xa hơn. Nó nhận nhiệm vụ và trả kết quả qua các kênh nhắn tin mà người dùng vốn đã sử dụng—WhatsApp, Telegram, Slack, Discord, iMessage và nhiều kênh khác—nên có thể truy cập Agent từ gần như bất kỳ đâu. Gateway ưu tiên cục bộ, cùng các công cụ, plugin và Skills được cấp quyền, có thể kết nối với những ứng dụng đám mây như Google Drive và Notion cũng như hệ thống tệp cục bộ. Vì vậy, với sự cho phép rõ ràng của người dùng, các tệp số phân tán giữa nhiều tài khoản và thiết bị có thể đi vào không gian quan sát của một Agent và được công cụ của nó xử lý. So với hình thái Manus ban đầu tập trung vào sandbox đám mây cô lập, nơi thường phải tải tệp lên hoặc cấu hình riêng một connector, OpenClaw ưu tiên cục bộ vượt qua ranh giới dữ liệu rộng hơn. Về sau Manus cũng bổ sung connector Google Drive và quyền truy cập tệp cục bộ từ máy tính để bàn—điều này càng củng cố luận điểm rằng sự tiến hóa của sản phẩm thường chính là sự mở rộng không gian quan sát và hành động[^ch1-agent-products].
+
+Mở rộng không gian không có nghĩa là đưa mọi thông tin và công cụ vào mô hình cùng một lúc. Ngữ cảnh không liên quan tạo thêm nhiễu, còn quá nhiều công cụ làm tăng chi phí lựa chọn và rủi ro bảo mật. Việc mở rộng hữu ích phải **theo nhu cầu, có liên quan và được kiểm soát**: truy xuất đưa đúng thông tin vào ngữ cảnh, khám phá công cụ chỉ hiển thị những hành động đang cần, còn quyền truy cập và xác minh kết quả giới hạn các hành động đó. Những chương sau sẽ trình bày chi tiết từng kỹ thuật này.
+
+[^ch1-agent-interface]: John L. Hennessy and David A. Patterson, *Computer Architecture: A Quantitative Approach*, ấn bản thứ 6, Morgan Kaufmann, 2019, Chương 1, “What Is Computer Architecture?”. Cuốn sách phân biệt kiến trúc tập lệnh, tổ chức máy tính và triển khai phần cứng; chính kiến trúc tập lệnh là giao diện giữa phần mềm và phần cứng. Xem https://shop.elsevier.com/books/computer-architecture/hennessy/978-0-12-811905-1
+
+[^ch1-agent-products]: Tài liệu chính thức của Manus mô tả Sandbox ban đầu là một máy ảo đám mây cô lập. Khi giới thiệu Google Drive Connector, Manus nói rõ rằng quy trình trước đó bị phân mảnh vì người dùng phải tải xuống và tải lên tệp thủ công giữa Drive, máy tính để bàn và Manus. Khi ra mắt My Computer vào tháng 3 năm 2026, Manus gọi việc những công việc quan trọng nằm ở máy cục bộ chứ không ở đám mây là giới hạn căn bản của sandbox đám mây. README chính thức của OpenClaw mô tả đây là trợ lý cá nhân luôn hoạt động, ưu tiên cục bộ và chạy trên thiết bị của người dùng, đồng thời liệt kê hơn hai mươi kênh nhắn tin; hệ thống công cụ và plugin có thể bổ sung tích hợp đám mây và năng lực cục bộ. Xem https://manus.im/blog/manus-sandbox, https://manus.im/blog/manus-google-drive-connector, https://manus.im/blog/manus-my-computer-desktop, https://github.com/openclaw/openclaw và https://docs.openclaw.ai/tools
+
 Hiểu được vai trò của ba yếu tố này và mối quan hệ qua lại của chúng là cơ sở để xây dựng một hệ thống Agent hiệu quả. Chúng tôi bắt đầu với bàn tay và bàn chân (công cụ) cụ thể nhất và dần dần đi sâu hơn vào não (LLM) và mắt (ngữ cảnh). Trước tiên, chúng ta hãy xem các loại Agent khác nhau diễn ra như thế nào trong ba chiều này:
 
 | Sản phẩm Agent | Mắt (nhận thức) | Tay chân (hành động) | Policy |
 |---------|------|---------|------|
 |**Cursor và các Coding Agent khác**| Tài liệu yêu cầu, cơ sở mã, môi trường đầu cuối | Mở (tư duy nội bộ, tìm kiếm mã, đọc và ghi tệp, thực thi lệnh, v.v.) | Phát triển tăng dần: hiểu yêu cầu → tìm kiếm mã liên quan → chỉnh sửa mã → kiểm tra và xác minh → gỡ lỗi và sửa chữa |
 |**Nghiên cứu sâu và các Agent tìm kiếm khác**| Tài nguyên Internet, cơ sở dữ liệu học thuật, tập tin cục bộ | Mở (tư duy nội bộ, truy vấn tìm kiếm, đọc trang web, tạo bản tóm tắt) | Lặp đi lặp lại sâu hơn: điều chỉnh hướng tìm kiếm dựa trên thông tin hiện có và dần dần tổng hợp một báo cáo hoàn chỉnh |
-|**Manus và các Agent điều khiển máy tính khác**| Màn hình máy tính, trang trình duyệt, hệ thống tập tin | Mở (suy nghĩ nội bộ, nhấp chuột, gõ, cuộn, chụp ảnh màn hình, thực thi mã, v.v.) | Nhận thức trực quan + thao tác: quan sát màn hình → xác định các yếu tố mục tiêu → thực hiện thao tác → xác minh kết quả |
+|**Browser Use và các Agent điều khiển máy tính khác**| Màn hình máy tính, trang trình duyệt, hệ thống tập tin | Mở (suy nghĩ nội bộ, nhấp chuột, gõ, cuộn, chụp ảnh màn hình, thực thi mã, v.v.) | Nhận thức trực quan + thao tác: quan sát màn hình → xác định các yếu tố mục tiêu → thực hiện thao tác → xác minh kết quả |
 |**Các Agent điện thoại như Trợ lý di động Doubao**| Màn hình điện thoại di động, cài đặt App | Mở (suy nghĩ nội tâm, nhấp chuột, trượt, nhập liệu, mở Ứng dụng, v.v.) | Hiểu ý định + Kiểm soát ứng dụng: hiểu nhu cầu của người dùng → xác định vị trí Ứng dụng mục tiêu → thực hiện thao tác → xác nhận hoàn thành |
 |**Pine AI và các Agent dịch vụ cá nhân khác**| Thông tin tài khoản người dùng, lịch sử hóa đơn, cơ sở kiến thức nhà cung cấp dịch vụ | Cởi mở (suy nghĩ nội tâm, gọi điện, gửi email, điền biểu mẫu, xác nhận với người dùng) | Thực hiện nhiệm vụ nhiều bước: thu thập thông tin → xây dựng chiến lược đàm phán → liên hệ với nhà cung cấp dịch vụ → đàm phán → báo cáo kết quả |
 
@@ -80,7 +96,11 @@ nội dung: '{"temp":28,"sky:"trời quang"}' }
 
 Các nhà phát triển chỉ cần xác định công cụ và thực hiện lệnh gọi công cụ, đồng thời mô hình sẽ tự động hoàn thành quyết định "có nên gọi hay không, gọi cái nào và chuyển tham số nào". Chương 2 sẽ mở rộng chi tiết về cấu trúc API này.
 
-Khi thiết kế các công cụ cho Agent, tính linh hoạt của các công cụ phải được duy trì nhiều nhất có thể để mang lại cho LLM nhiều không gian phát triển hơn. Ví dụ: thay vì thiết kế một công cụ máy tính chuyên dụng, tốt hơn nên cung cấp trình thông dịch mã Python và tạo môi trường thực thi hộp cát an toàn cho Agent. Thay vì thiết kế một công cụ ghi nhật ký công việc, tốt hơn là cung cấp các công cụ đọc và ghi tệp và tạo hệ thống tệp ảo cho Agent. Các công cụ phổ biến cho phép Agent giải quyết vấn đề một cách sáng tạo bằng cách kết hợp các khả năng cơ bản.
+Khi thiết kế công cụ cho Agent, có thể bắt đầu bằng năng lực hẹp nhất mà nhiệm vụ yêu cầu, rồi từng bước mở rộng khi độ phức tạp tăng lên. Nếu nhiệm vụ chỉ gồm các phép tính số học cơ bản, một máy tính với tham số rõ ràng là đủ; khi nhiệm vụ mở rộng sang đọc bảng tính, làm sạch giá trị bị thiếu, tính toán thống kê và vẽ biểu đồ, trình thông dịch Python bị giới hạn sẽ dễ kết hợp và khám phá hơn so với việc liên tục bổ sung công cụ chuyên dụng. Tuy nhiên, tính đa dụng cũng làm tăng rủi ro lỗi và bề mặt tấn công: mã phải chạy trong hộp cát cách ly, mặc định không được truy cập mạng hoặc đọc tệp ngoài thư mục làm việc được cấp quyền, đồng thời phải giới hạn thời gian thực thi, CPU, bộ nhớ và kích thước đầu ra.
+
+Tương tự, một công cụ ghi nhật ký duy nhất phù hợp để ghi lại một quá trình thực thi; với các nhiệm vụ dài hạn kéo dài nhiều giờ hay thậm chí nhiều ngày, một thư mục làm việc ảo được kiểm soát có thể cùng lúc lưu kế hoạch, kết quả trung gian, nhật ký thực thi và sản phẩm cuối cùng, nhờ đó Agent có thể tiếp tục công việc qua nhiều lần chạy. Thư mục này cũng phải giới hạn các đường dẫn được phép đọc và ghi, dung lượng và loại tệp, đồng thời ngăn việc vượt ra ngoài đường dẫn cho phép, thay vì phơi bày toàn bộ hệ thống tệp của máy chủ cho Agent.
+
+Công cụ đa dụng không phải lúc nào cũng ưu việt hơn công cụ chuyên dụng. Các thao tác có rủi ro cao hoặc chịu ràng buộc nghiệp vụ chặt chẽ—như thanh toán, xóa dữ liệu, gửi email và triển khai lên môi trường sản xuất—vẫn nên được đóng gói thành các công cụ chuyên dụng có tham số rõ ràng, quyền hạn giới hạn và khả năng kiểm toán toàn bộ quá trình; khi cần, có thể bổ sung bước xem trước và xác nhận của con người. Vì vậy, nguyên tắc cốt lõi khi thiết kế công cụ là: **các năng lực nền tảng đa dụng được dùng để kết hợp và khám phá; các công cụ chuyên dụng được dùng để kiểm soát những thao tác rủi ro cao và chịu quy tắc nghiệp vụ chặt chẽ**.
 
 ### LLM: Bộ não của Agent
 
@@ -104,7 +124,7 @@ Nhưng ở đây còn treo lơ lửng một câu hỏi sâu hơn: nếu mô hìn
 
 #### Cơ chế học tập của Agent: post-training, In-Context Learning (học trong ngữ cảnh) và học từ bên ngoài
 
-Trước đây chúng ta đã thảo luận về cách mô hình nội hóa chiến lược quyết định gọi công cụ thành khả năng gốc thông qua học tăng cường. Nhưng việc học của Agent không chỉ diễn ra ở giai đoạn huấn luyện - một số độc giả cho rằng mô hình phải được huấn luyện khi Agent học hỏi kinh nghiệm. Trên thực tế, post-training không phải là cách duy nhất Agent học hỏi kinh nghiệm. Cơ chế học tập của Agent có thể được tóm tắt thành ba mô hình bổ sung (Hình 1-1):
+Trước đây chúng ta đã đề cập rằng mô hình có thể nội hóa chiến lược quyết định gọi công cụ thành khả năng gốc thông qua học tăng cường. Nhưng việc học của Agent không chỉ diễn ra ở giai đoạn huấn luyện - một số độc giả cho rằng mô hình phải được huấn luyện khi Agent học hỏi kinh nghiệm. Trên thực tế, post-training không phải là cách duy nhất Agent học hỏi kinh nghiệm. Cơ chế học tập của Agent có thể được tóm tắt thành ba mô hình bổ sung (Hình 1-1):
 
 ![Hình 1-1: Ba mô hình học tập của Đặc vụ ](images/fig1-1.svg)
 
@@ -157,34 +177,34 @@ trajectory = [
 {role: "user" , content: "Dựa trên doanh thu hàng quý của công ty: Quý 1 2,5 triệu đô la Mỹ, quý 2 2,1 triệu euro, quý 3 1,8 triệu bảng Anh, quý 4 380 triệu yên, tính tổng doanh thu hàng năm và doanh thu trung bình hàng quý của công ty" },
 
 # Lần lặp đầu tiên - LLM nhìn thấy trajectory trên và tạo ra phản hồi
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Cần chuyển đổi tất cả các loại tiền tệ sang USD..." ,
 nội dung: "" , # Không trả lời trực tiếp cho người dùng
    tool_calls: [
-     {name: “convert_currency” , args: {amount: 2100000, from: “EUR” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 1800000, from: “GBP” , to: “USD” }},
-     {name: “convert_currency” , args: {amount: 380000000, from: “JPY” , to: “USD” }}
+     {name: "convert_currency" , args: {amount: 2100000, from: "EUR" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 1800000, from: "GBP" , to: "USD" }},
+     {name: "convert_currency" , args: {amount: 380000000, from: "JPY" , to: "USD" }}
    ]},
 
 # Công cụ thực thi khung tác nhân, thêm kết quả vào trajectory
-  {role: “tool” , content: “EUR->USD: 2282608.7” },
-  {role: “tool” , content: “GBP->USD: 2278481.01” },
-  {role: “tool” , content: “JPY->USD: 2541806.02” },
+  {role: "tool" , content: "EUR->USD: 2282608.7" },
+  {role: "tool" , content: "GBP->USD: 2278481.01" },
+  {role: "tool" , content: "JPY->USD: 2541806.02" },
 
 # Lần lặp thứ hai - LLM nhìn thấy toàn bộ trajectory, bao gồm cả kết quả công cụ
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Kết quả quy đổi đã có và bây giờ cần tổng hợp, tính toán..." ,
-   content: “” ,
+   content: "" ,
    tool_calls: [
-     {name: “code_interpreter” , args: {code: “total = 2500000 + 2282608.7 + ...” }}
+     {name: "code_interpreter" , args: {code: "total = 2500000 + 2282608.7 + ..." }}
    ]},
 
-  {role: “tool” , content: “Total: $9,602,895.73, Average: $2,400,723.93...” },
+  {role: "tool" , content: "Total: $9,602,895.73, Average: $2,400,723.93..." },
 
 # Lần lặp thứ ba - LLM nhìn thấy trajectory hoàn chỉnh và đưa ra câu trả lời cuối cùng
-  {role: “assistant” ,
+  {role: "assistant" ,
 lý do: "Mọi tính toán đã hoàn tất, tổng hợp kết quả..." ,
-nội dung: “CÂU TRẢ LỜI CUỐI CÙNG: Tổng thu nhập $9.602.895,73…” }
+nội dung: "CÂU TRẢ LỜI CUỐI CÙNG: Tổng thu nhập $9.602.895,73…" }
 ]
 ```
 
@@ -270,7 +290,11 @@ Lấy Claude Code làm ví dụ. Hầu hết các mã trong Harness của nó l�
 
 Nhìn lại sự phát triển của kỹ thuật ứng dụng AI, chúng ta có thể thấy một vòng tiến hóa rõ ràng:
 
-**Kỹ thuật phần mềm** là nền tảng - phương pháp thiết kế, kiến trúc, thử nghiệm và triển khai hệ thống truyền thống. **Prompt Engineering** là làn sóng đổi mới đầu tiên - nâng cao chất lượng đầu ra bằng cách tối ưu hóa hướng dẫn ngôn ngữ tự nhiên đầu vào cho mô hình. **Context Engineering**(kỹ thuật ngữ cảnh) là làn sóng thứ hai - mọi người nhận ra rằng chỉ tối ưu hóa từ ngữ prompt là chưa đủ, mà cần quản lý một cách có hệ thống toàn bộ thông tin mà mô hình có thể nhìn thấy (system prompt, định nghĩa công cụ, lịch sử hội thoại, kiến thức bên ngoài). **Harness Engineering (kỹ thuật Harness)** là làn sóng thứ ba - nó tiếp tục mở rộng tầm nhìn từ "những gì mô hình có thể nhìn thấy" đến "mô hình chạy trong hệ thống nào", bao gồm tất cả cơ sở hạ tầng ngoài mô hình như cơ chế ràng buộc, phương pháp xác minh, vòng phản hồi và khôi phục lỗi. Làn sóng mới nhất là **Loop Engineering (kỹ thuật vòng lặp)** - nó mở rộng tầm nhìn từ một lần chạy đơn lẻ sang sự vận hành tự chủ liên tục xuyên suốt nhiều lượt: ai sẽ phát hiện việc tiếp theo cần làm, khi nào cần xác minh, khi nào mới được coi là thực sự hoàn thành (Chương 10 sẽ triển khai chủ đề này cùng với hệ thống cộng tác đa Agent).
+**Kỹ thuật phần mềm** là nền tảng - phương pháp thiết kế, kiến trúc, thử nghiệm và triển khai hệ thống truyền thống. **Prompt Engineering** là làn sóng đổi mới đầu tiên - nâng cao chất lượng đầu ra bằng cách tối ưu hóa hướng dẫn ngôn ngữ tự nhiên đầu vào cho mô hình. **Context Engineering**(kỹ thuật ngữ cảnh) là làn sóng thứ hai - mọi người nhận ra rằng chỉ tối ưu hóa từ ngữ prompt là chưa đủ, mà cần quản lý một cách có hệ thống toàn bộ thông tin mà mô hình có thể nhìn thấy (system prompt, định nghĩa công cụ, lịch sử hội thoại, kiến thức bên ngoài). **Harness Engineering (kỹ thuật Harness)** là làn sóng thứ ba - nó tiếp tục mở rộng tầm nhìn từ "những gì mô hình có thể nhìn thấy" đến "mô hình chạy trong hệ thống nào", bao gồm tất cả cơ sở hạ tầng ngoài mô hình như cơ chế ràng buộc, phương pháp xác minh, vòng phản hồi và khôi phục lỗi. Tiếp theo là **Loop Engineering (kỹ thuật vòng lặp)**, mở rộng tầm nhìn từ một lần chạy đơn lẻ sang sự vận hành tự chủ liên tục xuyên suốt nhiều lượt: ai sẽ phát hiện việc tiếp theo cần làm, khi nào cần xác minh, khi nào mới được coi là thực sự hoàn thành (Chương 10 sẽ triển khai chủ đề này cùng với hệ thống cộng tác đa Agent).
+
+Vào tháng 7 năm 2026, ngành bắt đầu dùng **Graph Engineering (kỹ thuật đồ thị)** để mô tả một góc nhìn điều phối ở tầng cao hơn: tổ chức các vòng lặp Agent, chương trình tất định và bước phê duyệt của con người thành một đồ thị thực thi tường minh, trong đó các nút đảm nhiệm năng lực cụ thể, các cạnh quy định định tuyến và quan hệ phụ thuộc, còn trạng thái có cấu trúc di chuyển theo các cạnh và được lưu bền vững tại những ranh giới quan trọng[^ch1-graph-engineering-vi]. Tuy nhiên, Graph Engineering không thay thế Loop Engineering và cũng không nên đơn giản được xem là "tầng thứ sáu" trong tiến trình trên—bản thân vòng lặp đã là một đồ thị có cạnh quay lại, và mỗi nút trong đồ thị vẫn có thể chạy ReAct hoặc một vòng lặp Agent khác. Tên gọi này chưa ổn định, vì vậy cuốn sách xem đây là thuật ngữ mới cho các thực hành điều phối và Harness vốn đã tồn tại; phần liên quan đến cộng tác đa Agent sẽ được trình bày trong Chương 10. "Đồ thị" ở đây là đồ thị luồng điều khiển hoặc đồ thị thực thi, không phải đồ thị tri thức mà GraphRAG sử dụng.
+
+[^ch1-graph-engineering-vi]: Josh C. Simmons đã dùng rõ tên gọi này trong bài *We Are Entering the Graph Engineering Phase* ngày 4 tháng 7 năm 2026, tóm lược nó bằng các nút, cạnh có kiểu và trạng thái có checkpoint. Ngày 18 tháng 7, câu hỏi của Peter Steinberger về việc cuộc thảo luận đã chuyển từ loops sang graphs hay chưa đã giúp tên gọi lan rộng hơn. Bản thân các thực hành này có trước tên gọi: tài liệu chính thức của LangGraph, Microsoft Agent Framework và Google ADK gọi chúng là graph orchestration hoặc graph-based workflows. Xem https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase, https://x.com/steipete/status/2078277297791189132, https://docs.langchain.com/oss/python/langgraph/overview, https://learn.microsoft.com/en-us/agent-framework/workflows/ và https://adk.dev/workflows/.
 
 Năm giai đoạn này không thay thế mà được bao gồm từng lớp: Prompt Engineering là một tập hợp con của Context Engineering, Context Engineering là một tập hợp con của Harness Engineering, và Harness Engineering là một tập hợp con của Loop Engineering. Mỗi lớp mở rộng trọng tâm và tầm ảnh hưởng của kỹ sư dựa trên lớp trước đó. **Khi năng lực của mỗi mô hình ngày càng gần nhau và không còn là yếu tố khác biệt mang tính quyết định, lợi thế cạnh tranh sẽ chuyển sang thực hành kỹ thuật bên ngoài mô hình**. Nhận định này đã được xác minh trong thực tiễn kỹ thuật gần đây - thực tiễn của LangChain trên Terminal Bench 2.0 (một bài kiểm tra điểm chuẩn để đánh giá khả năng Agent hoàn thành các nhiệm vụ phức tạp trong môi trường thiết bị đầu cuối) là một ví dụ điển hình: Coding Agent của họ đã tăng từ 52,8% lên 66,5% (nhảy từ vị trí thứ 30 trong bảng xếp hạng lên top 5). Thứ thay đổi không phải là mô hình mà là Harness: Hãy để Agent tự động kiểm tra kết quả thực thi của chính nó, phát hiện xem liệu nó có bị mắc kẹt trong một vòng lặp lặp đi lặp lại hay không và tối ưu hóa các chiến lược tư duy cũng như các phương pháp kỹ thuật khác. Đội ngũ kỹ sư của OpenAI cũng công khai chia sẻ kinh nghiệm tương tự - 3 kỹ sư đã hoàn thành khoảng một triệu dòng mã và gần 1.500 PR trong 5 tháng, đạt tốc độ phát triển truyền thống khoảng 10 lần. Lý do đằng sau sự hiệu quả này không phải là mô hình mạnh đến mức nào mà là Harness đã làm đúng.
 
@@ -297,7 +321,7 @@ Dựa trên trải nghiệm Anthropic, hệ thống Agent thành công tuân the
 
 **Hãy minh bạch**. Hiển thị rõ ràng các bước lập kế hoạch, nhật ký thực hiện và theo dõi quyết định của Agent - điều này không chỉ để thuận tiện cho việc gỡ lỗi mà còn là điều kiện tiên quyết để người dùng tạo dựng niềm tin. Bởi vì một khi xảy ra lỗi trong hộp đen, người quan sát bên ngoài không thể xác định cũng như sửa lỗi đó.
 
-**Thiết kế giao diện công cụ (ACI, Agent-Computer Interface)**. ACI nhấn mạnh việc thiết kế giao diện theo quan điểm Agent (làm cho Agent dễ hiểu và dễ sử dụng), thay vì API truyền thống thiết kế giao diện theo quan điểm của lập trình viên. Việc đặt tên và tham số của các công cụ phải trực quan và các khu vực dễ bị lạm dụng phải được chủ động bảo vệ khỏi sai sót. Thiết kế phải tránh xảy ra sai sót - ví dụ: giao diện USB chỉ có thể được cắm từ một hướng, điều này tránh cho người dùng mắc lỗi cắm ngược. Ý tưởng "loại bỏ lỗi thông qua thiết kế" này có một thuật ngữ đặc biệt trong ngành sản xuất, được gọi là **chống lỗi**(Poka-yoke), bắt nguồn từ Hệ thống Sản xuất Toyota. Các công cụ được thiết kế kém sẽ thường xuyên gây ra lỗi ngay cả ở những mô hình mạnh nhất - bởi vì kênh liên lạc duy nhất giữa mô hình và công cụ chính là giao diện, và các giao diện mơ hồ sẽ bị mô hình khuếch đại thành lỗi hệ thống.
+**Thiết kế giao diện công cụ (ACI, Agent-Computer Interface)**. ACI nhấn mạnh việc thiết kế giao diện theo quan điểm Agent (làm cho Agent dễ hiểu và dễ sử dụng), thay vì API truyền thống thiết kế giao diện theo quan điểm của lập trình viên. Việc đặt tên và tham số của các công cụ phải trực quan, và những chỗ dễ bị dùng sai phải được thiết kế sao cho lỗi không thể xảy ra - ví dụ: góc vát của thẻ SIM khiến thẻ chỉ lắp vào khay theo một hướng, tránh lỗi lắp ngược của ngưới dùng; lò vi sóng tuyệt đối không hoạt động khi cửa chưa đóng kín, tránh hành vi nguy hiểm là vận hành khi cửa mở. Ý tưởng "loại bỏ lỗi thông qua thiết kế" này có một thuật ngữ đặc biệt trong ngành sản xuất, được gọi là **chống lỗi**(Poka-yoke), bắt nguồn từ Hệ thống Sản xuất Toyota. Các công cụ được thiết kế kém sẽ thường xuyên gây ra lỗi ngay cả ở những mô hình mạnh nhất - bởi vì kênh liên lạc duy nhất giữa mô hình và công cụ chính là giao diện, và các giao diện mơ hồ sẽ bị mô hình khuếch đại thành lỗi hệ thống.
 
 Ba phần sau đây mở rộng về ba chủ đề riêng biệt nhưng quan trọng trong Harness Engineering: lựa chọn mô hình, chế độ điều phối, guardrails và an toàn. Không cái nào trong số chúng thuộc về năm yếu tố của Harness, nhưng chúng là những quyết định không thể tránh khỏi trong thực hành kỹ thuật.
 
@@ -444,6 +468,8 @@ Hoạt động thực hành của Anthropic trong việc xây dựng Agent chạ
 Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ bản để hiểu và xây dựng AI Agent.
 
 **Agent = Não + Mắt + Tay và Chân**: LLM là bộ não (cốt lõi của việc ra quyết định), ngữ cảnh là đôi mắt (quyết định những gì nó có thể nhìn thấy) và công cụ là bàn tay và bàn chân (quyết định những gì nó có thể làm). Cả ba đều không thể thiếu.
+
+**Mở rộng ngữ cảnh và công cụ là đòn bẩy năng lực chủ yếu**: Khi giữ nguyên mô hình, việc định nghĩa lại hoặc mở rộng không gian quan sát và hành động—tức mở rộng ngữ cảnh và công cụ—thường có thể trực tiếp biến một nhiệm vụ không thể giải thành có thể giải. Sự tiến hóa từ Manus đến OpenClaw cho thấy tính đa dụng phần lớn đến từ việc mở rộng ranh giới giao diện; sự mở rộng đó phải diễn ra theo nhu cầu và đi kèm quyền truy cập cùng cơ chế xác minh.
 
 **Con mắt (ngữ cảnh) là yếu tố quyết định**: Ngữ cảnh bao gồm tiền tố tĩnh (system prompt + định nghĩa công cụ) và trajectory động (lịch sử tin nhắn). Các thí nghiệm cắt bỏ cho thấy rằng việc loại bỏ bất kỳ một thành phần nào đều gây ra sự xuống cấp đáng kể của hệ thống. Bản chất của vòng lặp ReAct là cho phép mô hình tiếp tục nâng cao nhiệm vụ bằng cách liên tục thêm các trajectory.
 

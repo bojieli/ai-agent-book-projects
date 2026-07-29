@@ -10,6 +10,12 @@ from pathlib import Path
 from datetime import datetime
 import anthropic
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from system_state import SystemState
 from tool_registry import ToolRegistry
 
@@ -293,4 +299,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

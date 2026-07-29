@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 490" width="880" height="490" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="60" width="250" height="150" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="155" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Rubric</text>
+<line x1="40" y1="94" x2="270" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="45" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Factual Correctness: Essential</text>
+<text x="45" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Logical Coherence: Important</text>
+<text x="45" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Hallucination Detection: Veto ⚠</text>
+<text x="45" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Completeness: Important</text>
+<rect x="290" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="415" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Candidate Answer</text>
+<line x1="300" y1="94" x2="530" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="305" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Agent Output:</text>
+<text x="305" y="137" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Refund processed, $150 will be credited within</text>
+<text x="305" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> 3-5 business days.&quot;</text>
+<text x="305" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<rect x="570" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="695" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Reference Solution (Optional)</text>
+<line x1="580" y1="94" x2="810" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="585" y="115" font-family="'Courier New', Courier, monospace" font-size="11.5" fill="#333333" text-anchor="start" dominant-baseline="central">Standard Answer / Scoring Points:</text>
+<text x="585" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Must include refund amount</text>
+<text x="585" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Must include credit time</text>
+<text x="585" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Cannot promise a specific date</text>
+<line x1="155" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="415" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="695" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="280" y="245" width="320" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Judge Model (GPT-5 / Gemini 2.5)</text>
+<text x="440" y="282" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#cccccc" text-anchor="middle" dominant-baseline="central" font-weight="normal">Multi-source heterogeneous evaluation to prevent same-source bias</text>
+<line x1="440" y1="295" x2="440" y2="325" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="60" y="328" width="760" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Structured evaluation output</text>
+<rect x="75" y="370" width="360" height="125" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="85" y="390" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Factual Correctness   </text>
+<text x="250" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
+<text x="300" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Amount and time are both accurate</text>
+<text x="85" y="414" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Completeness     </text>
+<text x="250" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">3/4</text>
+<text x="300" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Missing explanation of refund method</text>
+<text x="85" y="438" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Hallucination Detection    </text>
+<text x="250" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">PASS</text>
+<text x="300" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">No false information</text>
+<text x="85" y="462" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Logical Coherence   </text>
+<text x="250" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
+<text x="300" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Clear causal relationship</text>
+<rect x="460" y="370" width="345" height="125" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="632" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Scoring Aggregation Strategy</text>
+<text x="475" y="415" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Weighted average: Σ(weight × dimension score)</text>
+<text x="475" y="437" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Veto: Hallucination=FAIL → total score=0</text>
+<text x="475" y="459" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Multi-judge: median of 3 judges</text>
+<text x="475" y="481" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">Edge case flag: disagreement &gt;2 points → human review</text>
+</svg>

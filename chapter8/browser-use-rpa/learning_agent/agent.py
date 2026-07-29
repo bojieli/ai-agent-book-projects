@@ -458,10 +458,27 @@ class LearningAgent:
                 parameters = dict(step_data['parameters'])
                 for key, value in parameters.items():
                     if isinstance(value, str):
-                        for param_key, param_value in example_params.items():
+                        # Replace each captured literal with its {token}. Match
+                        # longest values first so a shorter value that is a
+                        # substring of a longer field (e.g. subject "Report"
+                        # inside body "Report is ready") can't pre-empt it, and
+                        # stage substitutions through unique sentinels so an
+                        # already-inserted {token} is never re-scanned by a later
+                        # parameter whose value happens to appear in the token
+                        # text — the result no longer depends on iteration order.
+                        sentinels = {}
+                        for i, (param_key, param_value) in enumerate(sorted(
+                            example_params.items(),
+                            key=lambda kv: len(str(kv[1])),
+                            reverse=True,
+                        )):
                             pv = str(param_value)
                             if pv and pv in value:
-                                value = value.replace(pv, f"{{{param_key}}}")
+                                sentinel = f"\x00{i}\x00"
+                                sentinels[sentinel] = f"{{{param_key}}}"
+                                value = value.replace(pv, sentinel)
+                        for sentinel, token in sentinels.items():
+                            value = value.replace(sentinel, token)
                         parameters[key] = value
 
                 step = WorkflowStep(
@@ -521,7 +538,15 @@ class LearningAgent:
                 await reset_result
             await self.replayer.setup()
             try:
-                validation = await self.replayer.replay_workflow(workflow)
+                # Validate with the learned example parameters so the replay
+                # substitutes the {placeholder} tokens back to concrete values.
+                # Without this the validation run types the literal token text
+                # (e.g. "{recipient}") into the page, so a correctly-learned
+                # workflow fails validation and is never published — every later
+                # replay then falls back to the LLM. (empty dict => no-op.)
+                validation = await self.replayer.replay_workflow(
+                    workflow, parameters=workflow.example_parameters
+                )
             finally:
                 await self.replayer.cleanup()
             if validation['success']:

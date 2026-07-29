@@ -6,21 +6,22 @@
 
 ## 配套项目
 
-| 项目 | 类型 | 一句话说明 |
-| --- | :--: | --- |
-| [user-memory](user-memory/) | ✅ | 长期用户记忆系统，让 Agent 记住偏好与历史交互、提供个性化服务 |
-| [mem0](mem0/) · [memobase](memobase/) | ✅ | 用 mem0、Memobase 两个开源框架各实现一版用户记忆，作为实验 3-2 的对照实现 |
-| [user-memory-evaluation](user-memory-evaluation/) | ✅ | 系统化评估用户记忆系统的准确性、相关性和有效性 |
-| [dense-embedding](dense-embedding/) | ✅ | 向量相似性搜索服务，对比 ANNOY（树）与 HNSW（图）两种 ANN 算法的权衡 |
-| [sparse-embedding](sparse-embedding/) | ✅ | 从零实现基于 BM25 的稀疏向量搜索引擎，可视化内部工作机制 |
-| [retrieval-pipeline](retrieval-pipeline/) | ✅ | 稠密 + 稀疏 + 神经重排序的完整流水线，用测试用例展示混合检索的互补效果 |
-| [multimodal-agent](multimodal-agent/) | ✅ | 对比原生多模态、提取为文本、工具化分析三种策略在保真度/成本/灵活性上的权衡 |
-| [structured-index](structured-index/) | ✅ | 实现并对比 RAPTOR（递归抽象树）与 GraphRAG（知识图谱）两种结构化索引 |
-| [agentic-rag](agentic-rag/) | ✅ | 对比 Non-Agentic 与 Agentic RAG，展示 ReAct 主导的迭代检索在司法问答上的优势 |
-| [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | 用 Agentic RAG 管理用户对话历史，实现跨会话记忆检索 |
-| [contextual-retrieval](contextual-retrieval/) | ✅ | 实现 Anthropic 的上下文感知检索，为分块生成前缀摘要，失败率降低 49–67% |
-| [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | 结合 Advanced JSON Cards 与上下文感知 RAG，形成双层记忆结构实现主动服务 |
-| [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | 以司法判例跑通「因子发现 → 聚类原型 → 对话式建议」三段流水线 |
+| 编号 | 项目 | 类型 | 一句话说明 |
+| :--: | --- | :--: | --- |
+| 3-1, 3-2 | [user-memory](user-memory/) | ✅ | 长期用户记忆系统，让 Agent 记住偏好与历史交互、提供个性化服务 |
+| 3-1 | [user-memory-evaluation](user-memory-evaluation/) | ✅ | 系统化评估用户记忆系统的准确性、相关性和有效性 |
+| 3-2 | [mem0](mem0/) · [memobase](memobase/) | ✅ | 用 mem0、Memobase 两个开源框架各实现一版用户记忆，作为实验 3-2 的对照实现 |
+| 3-3 | [log-sanitization](log-sanitization/) | ✅ | 智能日志脱敏系统，基于本地 Ollama 模型检测并脱敏日志中的密钥和 PII 敏感数据 |
+| 3-4 | [dense-embedding](dense-embedding/) | ✅ | 向量相似性搜索服务，对比 ANNOY（树）与 HNSW（图）两种 ANN 算法的权衡 |
+| 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | 从零实现基于 BM25 的稀疏向量搜索引擎，可视化内部工作机制 |
+| 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | 稠密 + 稀疏 + 神经重排序的完整流水线，用测试用例展示混合检索的互补效果 |
+| 3-7 | [multimodal-agent](multimodal-agent/) | ✅ | 对比原生多模态、提取为文本、工具化分析三种策略在保真度/成本/灵活性上的权衡 |
+| 3-8 | [structured-index](structured-index/) | ✅ | 实现并对比 RAPTOR（递归抽象树）与 GraphRAG（知识图谱）两种结构化索引 |
+| 3-9 | [agentic-rag](agentic-rag/) | ✅ | 对比 Non-Agentic 与 Agentic RAG，展示 ReAct 主导的迭代检索在司法问答上的优势 |
+| 3-10 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | 用 Agentic RAG 管理用户对话历史，实现跨会话记忆检索 |
+| 3-11 | [contextual-retrieval](contextual-retrieval/) | ✅ | 实现 Anthropic 的上下文感知检索，为分块生成前缀摘要，失败率降低 49–67% |
+| 3-12 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | 结合 Advanced JSON Cards 与上下文感知 RAG，形成双层记忆结构实现主动服务 |
+| 3-13 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | 以司法判例跑通「因子发现 → 聚类原型 → 对话式建议」三段流水线 |
 
 ## 项目类型说明
 

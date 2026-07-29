@@ -85,6 +85,7 @@ plugins:
       lang:
         - ja          # CJK-aware tokenizer; far better for Chinese than `en`
         - en
+        - ar
   # Stamp each page with its git commit date — readers see "最后更新" trust signal.
   - git-revision-date-localized:
       enable_creation_date: true
@@ -143,12 +144,14 @@ extra:
     # index page (chapterN/README.<readmeSuffix>/), which mkdocs renders
     # from the source file README.<suffix>.md.
     zh:   { label: 中文,      prefix: book/,      default: true }
-    zhtw: { label: 正體中文,   prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
+    zhtw: { label: 繁體中文（台灣）, prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
     en:   { label: English,   prefix: book-en/,                   readmeSuffix: en }
     ru:   { label: Русский,    prefix: book-ru/,                   readmeSuffix: ru }
     ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }
     vi:   { label: Tiếng Việt, prefix: book-vi/,   suffix: .vi,   readmeSuffix: vi }
     ja:   { label: 日本語,     prefix: book-ja/,   suffix: .ja,   readmeSuffix: ja }
+    ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
+    tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
 
 nav:
   # The left sidebar is a clean chapter tree. With navigation.indexes,
@@ -189,4 +192,4 @@ nav:
       - book/chapter10/index.md
       - 配套实验: chapter10/README.md
   - 后记: book/afterword.md
-  - 思考题参考答案: book/思考题参考答案.md
+  - 思考题参考答案: book/reference-answers.md

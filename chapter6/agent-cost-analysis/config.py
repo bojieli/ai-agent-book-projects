@@ -20,6 +20,9 @@
 
 import os
 from dataclasses import dataclass
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # 使用的模型（默认当前廉价旗舰 gpt-5.6-luna；可用 COST_DEMO_MODEL / --model 覆盖）
 MODEL = os.environ.get("COST_DEMO_MODEL", "gpt-5.6-luna")
