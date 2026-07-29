@@ -541,7 +541,7 @@ PineClaw는 **Channel 메커니즘**을 도입해 이 문제를 해결합니다.
 
 **에이전트 상태 표시줄 마커**: 각 이벤트 앞에 명시적인 마커를 붙입니다.
 
-```
+```text
 [Unprocessed Event 1/4] Tool result from database_query: ...
 [Unprocessed Event 2/4] User supplementary note: Only look at Beijing data
 [Unprocessed Event 3/4] System reminder: Report deadline is in 30 minutes

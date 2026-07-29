@@ -20,7 +20,7 @@
 
 구체적인 예로 이 과정을 이해해 보겠습니다. 사용자와 에이전트가 다음과 같이 대화했다고 가정합니다.
 
-```
+```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
       and I'm vegetarian, so I'll need a special meal.
 Agent: I'll search for flights to Tokyo for next Friday...
@@ -32,7 +32,7 @@ User: Yes, and use my United MileagePlus number 12345678.
 
 대화가 끝나면 에이전트 프레임워크는 전용 LLM을 호출하여 대화를 분석하고 장기적으로 기억할 가치가 있는 정보를 추출합니다.
 
-```
+```text
 Extracted memories:
 - User prefers window seats (preference)
 - User is vegetarian, needs special meals on flights (dietary restriction)
@@ -394,7 +394,7 @@ TF-IDF는 단순한 직관에 기반합니다. 한 단어가 어떤 문서에 �
 >
 > 질의할 때는 BM25 계산의 각 단계를 로그로 상세히 보여 줍니다. 다시 “model distillation” 질의를 예로 들겠습니다. 아래 로그는 프로젝트에 포함된 소규모 표본 말뭉치(문서 N=10개)에서 가져왔으므로 앞서 말한 문서 100개 시나리오보다 적중 수가 훨씬 적습니다. 수동으로 다시 계산하기 쉽도록 BM25 매개변수는 k1=1.5, b=0.75, 평균 문서 길이는 avgdl=250단어로 고정했습니다. IDF는 표준식 IDF=ln((N−df+0.5)/(df+0.5))를 사용하며, df는 해당 단어를 포함한 문서 수입니다.
 >
-> ```
+> ```text
 > 질의 토큰: ["model", "distillation"]
 >
 > 단어 "model" → 역색인에서 문서 3개 적중(df=3, IDF=ln((10−3+0.5)/(3+0.5))=0.76):
@@ -537,7 +537,7 @@ GraphRAG는 먼저 LLM으로 텍스트에서 핵심 엔터티(인물, 장소, �
 
 RAPTOR와 GraphRAG가 학계의 지식 구성 탐구를 대표한다면, ByteDance의 Volcano Engine이 오픈 소스로 공개한 [OpenViking](https://github.com/volcengine/OpenViking)은 세 번째 철학인 **파일 시스템 패러다임**을 제안합니다. 컨텍스트를 평면적인 벡터 조각이나 그래프 노드로 취급하지 않고, 메모리와 리소스, 스킬을 모두 가상 파일 시스템의 디렉터리와 파일로 대응시킵니다. 각 항목에는 고유한 URI가 있습니다.
 
-```
+```text
 viking://
 ├── resources/          # External knowledge: documents, codebases, web pages
 ├── user/memories/      # User memories: preferences, habits

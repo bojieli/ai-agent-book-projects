@@ -26,7 +26,7 @@ function Pandoc(doc)
     if block.t == "Header" then
       local text = pandoc.utils.stringify(block)
 
-      if text:match("^실험%s?%d") then
+      if text:match("^실험%s*%d") then
         if in_box then close_box() end
         box_level = block.level
         block.classes:insert("unnumbered")

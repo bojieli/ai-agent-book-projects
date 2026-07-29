@@ -152,7 +152,7 @@ The book and accompanying code are fully open source. Pull Requests are very wel
 | 🐛 **Code improvements & bug fixes** | Make companion projects more robust, usable, and production-ready |
 | 🧪 **New practice projects** | Add/replace better implementations for experiments, or contribute new examples |
 | 🎨 **Figure design** | Directly improve the checked-in SVG charts under `book/images/` |
-| 🌐 **New translations** | Translations into more languages are welcome; see English (`book-en/`), Traditional Chinese/Taiwan (`book-zhtw/`), Tamil (`book-ta/`), Vietnamese (`book-vi/`), Japanese (`book-ja/`), Turkish (`book-tr/`), and Korean (`book-ko/`) for reference |
+| 🌐 **New translations** | Translations into more languages are welcome; see English (`book-en/`), Arabic (`book-ar/`), Traditional Chinese/Taiwan (`book-zhtw/`), Russian (`book-ru/`), Tamil (`book-ta/`), Vietnamese (`book-vi/`), Japanese (`book-ja/`), Turkish (`book-tr/`), and Korean (`book-ko/`) for reference |
 
 Before submitting, please run the relevant experiments to confirm reproducibility; feel free to open an issue to discuss ideas first.
 

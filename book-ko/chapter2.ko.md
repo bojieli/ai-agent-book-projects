@@ -236,9 +236,13 @@ Chat Completions 계열 API의 핵심 입력은 보통 `messages`라고 부르�
 이제 JSON 구조를 이해했으므로 위 단계를 Python 코드로 연결해 보겠습니다. 다음은 하나의 루프를 중심으로 만든 최소한의 에이전트 구현입니다.
 
 ```python
-from openai import OpenAI
+from openai import APIError, OpenAI
 
-client = OpenAI()
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="EMPTY",  # The local vLLM server does not require a real key
+    timeout=30.0,
+)
 
 # ── Tool definitions ──
 tools = [
@@ -286,12 +290,15 @@ messages = [
 ]
 
 # ── Agent core loop ──
-# Production code needs a max_iterations cap here: as discussed later in
-# this chapter, Agents can become stuck repeating the same tool calls forever
-while True:
-    response = client.chat.completions.create(
-        model="Qwen3-0.6B", messages=messages, tools=tools
-    )
+# Bound the loop because Agents can become stuck repeating tool calls forever.
+MAX_ITERATIONS = 10
+for _ in range(MAX_ITERATIONS):
+    try:
+        response = client.chat.completions.create(
+            model="Qwen3-0.6B", messages=messages, tools=tools
+        )
+    except APIError as exc:
+        raise RuntimeError("Local model request failed") from exc
     assistant_message = response.choices[0].message
 
     # Append model's response to message list (whether text or tool calls)
@@ -311,14 +318,16 @@ while True:
             "content": result,
         })
     # Return to top of loop, call model again with updated message list
+else:
+    raise RuntimeError(f"Agent did not finish within {MAX_ITERATIONS} iterations")
 ```
 
-루프에는 하나의 핵심 분기가 있습니다. **모델이 `tool_calls`를 반환하면 도구를 실행하고 계속하며, 그렇지 않으면 결과를 출력하고 종료합니다.** 이 과정에서 모델 응답과 도구 실행 결과를 라운드마다 덧붙이므로 `messages` 목록은 계속 늘어납니다.
+루프에는 하나의 핵심 분기가 있습니다. **모델이 `tool_calls`를 반환하면 도구를 실행하고 계속하며, 그렇지 않으면 결과를 출력하고 종료합니다.** 모델 요청이 실패하거나 열 번 안에 최종 응답이 나오지 않아도 명시적인 오류로 종료합니다. 이 과정에서 모델 응답과 도구 실행 결과를 라운드마다 덧붙이므로 `messages` 목록은 계속 늘어납니다.
 
 라운드가 진행되면서 `messages` 목록은 다음과 같이 바뀝니다.
 
 **초기 상태(첫 번째 호출 전):**
-```
+```text
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Written by developer
   { role: "user",    content: "What's the current time and weather in Vancouver?" },  # User input
@@ -326,7 +335,7 @@ messages = [
 ```
 
 **첫 번째 호출 후(모델이 도구 호출을 반환):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -337,7 +346,7 @@ messages = [
 ```
 
 **두 번째 호출 후(모델이 최종 응답을 반환하고 루프 종료):**
-```
+```text
 messages = [
   { role: "system",    content: "..." },
   { role: "user",      content: "What's the current time..." },
@@ -582,7 +591,7 @@ Markdown은 가독성을 유지하면서 가벼운 구조를 제공하므로 계
 
 반면 프로세스 중심의 프롬프트는 명확한 표준 운영 절차(Standard Operating Procedure, SOP)를 제공하는 효과적인 교육 설명서처럼 작동합니다.
 
-```
+```text
 File Processing Standard Operating Procedure:
 
 Step 1: Validation
@@ -882,7 +891,7 @@ Claude Code의 도구 정의를 보면 각 설명이 사용 경계(“NEVER invo
 
 아래는 N번째 API 호출에서 에이전트 프레임워크가 실제로 구성하는 메시지 목록입니다.
 
-```
+```text
 messages: [
   { role: "system",    content: "You are a customer service assistant..." }  ← Fixed (KV Cache cached)
   { role: "user",      content: "Help me cancel my Xfinity plan" }  ← Original user request

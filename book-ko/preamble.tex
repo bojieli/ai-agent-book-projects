@@ -1,10 +1,9 @@
-% ===== ElegantBook customizations for 《深入理解 AI Agent》 =====
-% Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
+% ===== ElegantBook customizations for 《AI 에이전트를 깊이 이해하기》 =====
 
 % ── Unicode glyph fallback (Times/Courier lack these) ─────────────
 \usepackage{newunicodechar}
 \IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\IfFontExistsTF{Noto Sans CJK KR}{\newfontfamily\fallbackfont{Noto Sans CJK KR}}{\newfontfamily\fallbackfont{DejaVu Sans}}}
-\IfFontExistsTF{Noto Sans CJK KR}{\newunicodechar{★}{{\fontspec{Noto Sans CJK KR}★}}}{\newunicodechar{★}{{\fontspec{DejaVu Sans}★}}}
+\newunicodechar{★}{{\fallbackfont ★}}
 \newunicodechar{✓}{{\fallbackfont ✓}}
 \newunicodechar{✗}{{\fallbackfont ✗}}
 % Render U+2015 with a CJK-aware fallback because Latin Modern omits it.
@@ -55,12 +54,8 @@
 
 % ── TikZ (for the full-bleed image cover in cover.tex) ───────────
 \usepackage{tikz}
-\usetikzlibrary{fadings}
-% Vertical fade: invisible at the top, solid at the bottom — lets the cover
-% art melt smoothly into the navy title band.
-\tikzfading[name=titlefade, top color=transparent!100, bottom color=transparent!0]
 
-% Theme accent color: override ElegantBook's bright cyan with a deep navy
+% Theme accent color: use a deep navy
 % (classic, authoritative technical-book tone). Drives headings, rules, links,
 % code chrome and the cover. Tweak this one line to restyle the whole book.
 \definecolor{structurecolor}{RGB}{30,58,107}
@@ -68,7 +63,7 @@
 % Accent shade for code/figure chrome (follows the theme color above)
 \colorlet{accent}{structurecolor}
 
-% Internal cross-reference links (그림 N-M / 제N장) — clickable + subtle teal,
+% Internal cross-reference links (그림 N-M / 제N장) — clickable + subtle navy,
 % independent of the document class's global linkcolor. Used by crossref.lua.
 \newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
 \colorlet{accentbg}{structurecolor!6}
@@ -79,7 +74,7 @@
 % and plain `verbatim` for un-tagged blocks); neither wraps by default, so
 % long lines overflow the page. fvextra adds breaklines; re-define both
 % environments to wrap, breaking mid-token when a chunk has no spaces (URLs,
-% long identifiers, CJK comments). A teal ↳ marks each continued line.
+% long identifiers, CJK comments). An accent-colored ↳ marks each continued line.
 \usepackage{fvextra}
 \fvset{breaklines=true,breakanywhere=true,%
   breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
@@ -115,12 +110,7 @@
   breakable, enhanced,
   colback=accentbg, colframe=accent,
   boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
-  arc=1.2mm, before skip=0.9em, after skip=0.9em,
-  title={\sffamily\bfseries 깊이 생각해 보기},
-  fonttitle=\normalsize\color{white},
-  coltitle=white,
-  attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
-  boxed title style={colback=accent, colframe=accent, arc=0.8mm, outer arc=0.8mm}
+  arc=1.2mm, before skip=0.9em, after skip=0.9em
 }
 
 % ── Figures: force [H] so they can sit inside callout/quote boxes ─
@@ -138,7 +128,7 @@
 \DeclareCaptionFont{cjkmatch}{\CJKfamily{capcjksf}}
 \captionsetup{font={normalsize,sf,bf,cjkmatch}, labelformat=empty, skip=4pt, justification=centering}
 
-% ── Blockquotes: teal left bar (experiments render as quotes) ────
+% ── Blockquotes: accent left bar (experiments render as quotes) ──
 \renewenvironment{quote}{%
   \begin{tcolorbox}[
     blanker, breakable,
@@ -151,7 +141,7 @@
   \end{tcolorbox}%
 }
 
-% ── Inline code: keep it tight ───────────────────────────────────
+% ── Paragraph indentation ────────────────────────────────────────
 \setlength{\parindent}{2em}
 
 % Prefer the Korean Noto CJK families in CI. macOS system fonts provide a
