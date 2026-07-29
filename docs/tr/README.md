@@ -3,7 +3,7 @@
 [![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-9%20dil-informational.svg)](#-e-kitap)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [正體中文](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an**
+**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an**
 
 > 📥 **[PDF / EPUB indir](#-e-kitap)** (önerilir) — PDF / EPUB sürümleri en iyi okuma deneyimini sunar; kitabı [çevrimiçi](https://bojieli.github.io/ai-agent-book/) da okuyabilirsiniz.
 
