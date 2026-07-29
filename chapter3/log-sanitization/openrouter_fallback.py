@@ -1,4 +1,4 @@
-"""Universal OpenRouter fallback helper (Chapter 2 experiments).
+"""Universal OpenRouter fallback helper (Chapter 3 experiments).
 
 Goal: every experiment keeps working when the direct provider key is missing
 but ``OPENROUTER_API_KEY`` is present. Default behavior is fully preserved:

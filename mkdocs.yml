@@ -144,7 +144,7 @@ extra:
     # index page (chapterN/README.<readmeSuffix>/), which mkdocs renders
     # from the source file README.<suffix>.md.
     zh:   { label: 中文,      prefix: book/,      default: true }
-    zhtw: { label: 正體中文,   prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
+    zhtw: { label: 繁體中文（台灣）, prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
     en:   { label: English,   prefix: book-en/,                   readmeSuffix: en }
     ru:   { label: Русский,    prefix: book-ru/,                   readmeSuffix: ru }
     ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }

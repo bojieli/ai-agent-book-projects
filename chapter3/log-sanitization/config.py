@@ -21,7 +21,7 @@ METRICS_FILE = OUTPUT_DIR / "performance_metrics.json"
 
 # Evaluation Framework Path
 # The user-memory-evaluation framework lives in chapter3, not chapter2.
-# PROJECT_ROOT = chapter2/log-sanitization, so go up two levels to the repo root.
+# PROJECT_ROOT = chapter3/log-sanitization, so go up two levels to the repo root.
 EVAL_FRAMEWORK_PATH = PROJECT_ROOT.parent.parent / "chapter3" / "user-memory-evaluation"
 
 # System Prompt for PII Detection

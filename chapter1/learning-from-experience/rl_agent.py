@@ -203,7 +203,7 @@ class QLearningAgent:
                 recent = self.episode_victories[-window:]
                 self.learning_curve.append({
                     "episode": episode + 1,
-                    "victory_rate": sum(recent) / len(recent),
+                    "victory_rate": sum(recent) / len(recent) if recent else 0.0,
                     "q_table_size": len(self.q_table),
                     "epsilon": self.epsilon,
                 })

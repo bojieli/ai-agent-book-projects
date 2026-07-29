@@ -398,8 +398,9 @@ def _resolve_gemini_model(api_key: str) -> str:
     try:
         with urllib.request.urlopen(url, timeout=20) as r:
             data = json.loads(r.read())
-        names = [m["name"].split("/")[-1] for m in data.get("models", [])
-                 if "generateContent" in m.get("supportedGenerationMethods", [])]
+        models_list = data.get("models") or [] if isinstance(data, dict) else []
+        names = [(m.get("name") or "").split("/")[-1] for m in models_list
+                 if isinstance(m, dict) and "generateContent" in (m.get("supportedGenerationMethods") or [])]
         # 优先默认的 gemini-3.5-flash（已验证支持音频输入），再退到 pro / 旧 flash 系列。
         for want in (config.GEMINI_MODEL_DEFAULT, "gemini-3.5-flash",
                      "gemini-2.5-pro", "gemini-2.5-flash", "gemini-flash-latest"):

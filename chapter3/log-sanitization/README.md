@@ -1,9 +1,9 @@
 # Log Sanitization / 日志脱敏
 
-> Companion material for *AI Agents in Depth*, Chapter 2 — intelligent log sanitization that redacts secrets and PII while preserving debug value.  
-> 配套《深入理解 AI Agent》第 2 章——在保留调试信息的同时检测并脱敏日志中的敏感数据。
+> Companion material for *AI Agents in Depth*, Chapter 3 — intelligent log sanitization that redacts secrets and PII while preserving debug value.  
+> 配套《深入理解 AI Agent》第 3 章——在保留调试信息的同时检测并脱敏日志中的敏感数据。
 
-← [Chapter 2 index / 返回第 2 章目录](../README.md)
+← [Chapter 3 index / 返回第 3 章目录](../README.md)
 
 ---
 
@@ -84,8 +84,8 @@ ollama pull qwen3:0.6b
 
 #### 3. Python deps
 ```bash
-# From the repository root: use the shared Chapter 2 environment
-uv sync --locked --python 3.12 --extra ch2
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -94,9 +94,9 @@ source .venv/bin/activate
 # Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
-# python -m pip install -e ".[ch2]"
+# python -m pip install -e ".[ch3]"
 
-cd chapter2/log-sanitization
+cd chapter3/log-sanitization
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -126,11 +126,11 @@ python regex_sanitizer.py
 
 ```bash
 # From the repository root; include dev tools for pytest.
-uv sync --locked --python 3.12 --extra ch2 --extra dev
+uv sync --locked --python 3.12 --extra ch3 --extra dev
 source .venv/bin/activate
 # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 
-cd chapter2/log-sanitization
+cd chapter3/log-sanitization
 python -m pytest tests
 python main.py --demo
 python regex_sanitizer.py
@@ -290,8 +290,8 @@ ollama pull qwen3:0.6b
 
 #### 3. 安装 Python 依赖
 ```bash
-# 在仓库根目录使用统一的第 2 章环境
-uv sync --locked --python 3.12 --extra ch2
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
 
 # 切换目录前先激活环境：
 # macOS/Linux：
@@ -300,9 +300,9 @@ source .venv/bin/activate
 # Windows cmd：.venv\Scripts\activate.bat
 
 # 未安装 uv 时可用 pip 兜底：
-# python -m pip install -e ".[ch2]"
+# python -m pip install -e ".[ch3]"
 
-cd chapter2/log-sanitization
+cd chapter3/log-sanitization
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -332,11 +332,11 @@ python regex_sanitizer.py
 
 ```bash
 # 从仓库根目录开始；pytest 需要 dev 依赖。
-uv sync --locked --python 3.12 --extra ch2 --extra dev
+uv sync --locked --python 3.12 --extra ch3 --extra dev
 source .venv/bin/activate
 # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 
-cd chapter2/log-sanitization
+cd chapter3/log-sanitization
 python -m pytest tests
 python main.py --demo
 python regex_sanitizer.py

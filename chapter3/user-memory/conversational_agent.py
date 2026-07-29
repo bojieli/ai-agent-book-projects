@@ -170,17 +170,21 @@ You MUST analyze the context, user's questions and memories in detail, and provi
             context_parts.append(memory_str)
             context_parts.append("")
         
-        # Add ALL conversation history
+        # Keep raw conversation turns scoped to the active session. Persisted
+        # turns from earlier sessions are input to the background memory
+        # processor, but the conversational agent should learn about those
+        # sessions only through the structured long-term memory above.
         if self.conversation_history:
-            # Get ALL conversation history, not just recent
-            all_conversations = self.conversation_history.conversations if hasattr(self.conversation_history, 'conversations') else []
+            session_turns = self.conversation_history.get_session_turns(
+                self.session_id
+            )
             
-            if all_conversations:
-                context_parts.append("=== FULL CONVERSATION HISTORY ===")
-                context_parts.append(f"Total conversations: {len(all_conversations)}")
+            if session_turns:
+                context_parts.append("=== CURRENT SESSION HISTORY ===")
+                context_parts.append(f"Total turns: {len(session_turns)}")
                 context_parts.append("")
                 
-                for turn in all_conversations:
+                for turn in session_turns:
                     context_parts.append(f"[Session: {turn.session_id}, Turn {turn.turn_number}, Time: {turn.timestamp}]")
                     context_parts.append(f"User: {turn.user_message}")
                     context_parts.append(f"Assistant: {turn.assistant_message}")
