@@ -245,7 +245,7 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             
             # Call the model
             response = self.client.chat.completions.create(
-                model="Qwen3-0.6B",
+                model="Qwen/Qwen3-0.6B",
                 messages=messages,
                 tools=tools,
                 tool_choice="auto" if use_tools else None,
