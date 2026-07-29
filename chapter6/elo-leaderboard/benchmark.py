@@ -115,10 +115,11 @@ def main():
     print(f"\nBasic Implementation:     {time_basic:8.2f} seconds")
     print(f"Optimized Implementation: {time_optimized:8.2f} seconds")
     print(f"\nSpeedup: {speedup:.1f}x faster")
-    print(f"Time saved: {time_basic - time_optimized:.2f} seconds ({(1-time_optimized/time_basic)*100:.1f}% reduction)")
+    pct_reduction = (1 - time_optimized / time_basic) * 100 if time_basic > 0 else 0.0
+    print(f"Time saved: {time_basic - time_optimized:.2f} seconds ({pct_reduction:.1f}% reduction)")
     
     # Extrapolate to full dataset
-    if len(df_sample) < len(df_filtered):
+    if len(df_sample) > 0 and len(df_sample) < len(df_filtered):
         full_time_basic = time_basic * (len(df_filtered) / len(df_sample))
         full_time_optimized = time_optimized * (len(df_filtered) / len(df_sample))
         
