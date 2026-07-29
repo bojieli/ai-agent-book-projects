@@ -10,7 +10,7 @@ from evaluator import MAX_SCORE, expected_by_task, load_json, score_prediction
 from reporting_tools import ReportingEnvironment
 
 
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _sample_expected():
