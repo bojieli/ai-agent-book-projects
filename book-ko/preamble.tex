@@ -2,7 +2,7 @@
 
 % ── Unicode glyph fallback (Times/Courier lack these) ─────────────
 \usepackage{newunicodechar}
-\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\IfFontExistsTF{Noto Sans CJK KR}{\newfontfamily\fallbackfont{Noto Sans CJK KR}}{\newfontfamily\fallbackfont{DejaVu Sans}}}
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\IfFontExistsTF{DejaVu Sans}{\newfontfamily\fallbackfont{DejaVu Sans}}{\newfontfamily\fallbackfont{Noto Sans CJK KR}}}
 \newunicodechar{★}{{\fallbackfont ★}}
 \newunicodechar{✓}{{\fallbackfont ✓}}
 \newunicodechar{✗}{{\fallbackfont ✗}}
@@ -48,6 +48,11 @@
 
 % ── Code/monospace font (covers box-drawing glyphs used in code) ──
 \IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}
+
+% Korean word boundaries are meaningful. xeCJK defaults to discarding spaces
+% between CJK characters and adding spacing at CJK/Latin boundaries because
+% that is conventional for Chinese text. Preserve only the source spacing.
+\xeCJKsetup{CJKspace=true,CJKecglue={},xCJKecglue=false}
 
 % ── tcolorbox (ElegantBook already loads it; just add libraries) ──
 \tcbuselibrary{skins,breakable}
@@ -161,8 +166,9 @@
 }}
 
 % ElegantBook has no Korean locale, so lang=cn supplies CJK typesetting.
-% Override the reader-facing chapter wrapper and table-of-contents label.
-\ctexset{chapter={name={제,장},number=\arabic{chapter}}}
+% Override its chapter wrapper directly; ctex heading keys are not enabled by
+% ElegantBook's scheme=plain setup.
+\renewcommand{\xchaptertitle}{제\thechapter 장}
 \AtBeginDocument{\renewcommand{\contentsname}{목차}}
 
 % ElegantBook empties the `plain` page style used on chapter-opening pages.

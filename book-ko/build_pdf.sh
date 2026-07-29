@@ -1,7 +1,8 @@
 #!/bin/bash
 # Build the complete book as a single PDF (ElegantBook design, teal/cyan theme).
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
-#               Korean fonts: Noto Serif CJK KR / Noto Sans CJK KR, Menlo
+#               Korean fonts: Noto Serif/Sans CJK KR, DejaVu Sans/Mono
+#               (Menlo is used when available on macOS)
 # Usage: cd book-ko && bash build_pdf.sh
 # ElegantBook has no `lang=ko`, so `lang=cn` provides the required CJK
 # typesetting support while preamble.tex overrides reader-facing labels.
@@ -52,6 +53,7 @@ pandoc "${CHAPTERS[@]}" \
     --pdf-engine=xelatex \
     --lua-filter=crossref.lua \
     --lua-filter=experiment_box.lua \
+    --lua-filter=korean_spacing.lua \
     --toc \
     --toc-depth=3 \
     --number-sections \
