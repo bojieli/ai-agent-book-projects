@@ -37,7 +37,7 @@ Each prediction is a transparent JSON trace containing the selected tool, argume
 | `agent.py` | Lightweight deterministic reference agent |
 | `evaluator.py` | Objective six-point scoring rubric |
 | `demo.py` | CLI for reference or external predictions |
-| `test_offline.py` | Offline regression and mutation tests |
+| `tests/` | Offline regression and mutation tests |
 
 ## Run offline
 
@@ -89,7 +89,7 @@ cd chapter6/public-health-reporting-eval
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
 
-pytest -q
+python -m pytest tests
 ```
 
 ## Evaluate another agent
@@ -172,7 +172,7 @@ cd chapter6/public-health-reporting-eval
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
 
-pytest -q
+python -m pytest tests
 ```
 
 ### 评测外部 Agent
