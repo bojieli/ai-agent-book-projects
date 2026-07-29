@@ -3,11 +3,6 @@ Test suite locking out ZeroDivisionError in QLearningAgent.train
 when computing victory_rate on an empty episode_victories list.
 """
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
 from rl_agent import QLearningAgent
 
 
@@ -24,7 +19,7 @@ def test_q_learning_agent_train_empty_victories_snapshot():
     # Simulate snapshot logic when checkpoint_interval matches
     recent = agent.episode_victories[-1000:]
     victory_rate = sum(recent) / len(recent) if recent else 0.0
-    
+
     agent.learning_curve.append({
         "episode": 1,
         "victory_rate": victory_rate,

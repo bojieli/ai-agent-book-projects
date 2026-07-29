@@ -3,12 +3,6 @@ Test suite locking out TypeError in event server response formatting
 when handle_event returns a result dictionary with tool_calls or todo_list set to None.
 """
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-
 def test_server_result_formatting_handles_null_lists():
     """
     Ensure event response dictionary formats tool_calls_count and todo_items without TypeError
@@ -22,7 +16,7 @@ def test_server_result_formatting_handles_null_lists():
         'success': True,
         'trajectory_file': None
     }
-    
+
     formatted = {
         "final_answer": result.get('final_answer'),
         "iterations": result.get('iterations'),
