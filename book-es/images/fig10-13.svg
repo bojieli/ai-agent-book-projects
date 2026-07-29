@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 560" width="780" height="560" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="260" y="55" width="260" height="75" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="390" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">法官（代码驱动）</text>
+<text x="390" y="97" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">游戏状态 · 阶段控制 · 信息分发</text>
+<text x="390" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Night → Day → Vote → Settle</text>
+<rect x="40" y="180" width="135" height="155" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="107" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🐺 狼人 1</text>
+<text x="107" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可见: 同伴身份</text>
+<text x="107" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">策略: 伪装村民</text>
+<text x="107" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">夜晚: 选择目标</text>
+<line x1="390" y1="132" x2="107" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="130" y="315" width="40" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="150.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">互知</text>
+<rect x="185" y="180" width="135" height="155" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="252" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🐺 狼人 2</text>
+<text x="252" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可见: 同伴身份</text>
+<text x="252" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">策略: 跟票保护</text>
+<text x="252" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">夜晚: 协商目标</text>
+<line x1="390" y1="132" x2="252" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="275" y="315" width="40" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="295.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">互知</text>
+<rect x="330" y="180" width="135" height="155" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="397" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🔮 预言家</text>
+<text x="397" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可见: 验人结果</text>
+<text x="397" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">策略: 择机跳出</text>
+<text x="397" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">夜晚: 查验 1 人</text>
+<line x1="390" y1="132" x2="397" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="410" y="315" width="50" height="18" rx="9" fill="#666666" stroke="#333333" stroke-width="2"/>
+<text x="435.0" y="324.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">验人结果</text>
+<rect x="475" y="180" width="135" height="155" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="542" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">🧪 女巫</text>
+<text x="542" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可见: 死亡/救治</text>
+<text x="542" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">策略: 保药/解药</text>
+<text x="542" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">夜晚: 救/毒 1 人</text>
+<line x1="390" y1="132" x2="542" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="620" y="180" width="135" height="155" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="687" y="200" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">👤 村民 ×2</text>
+<text x="687" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可见: 仅公开信息</text>
+<text x="687" y="252" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">策略: 逻辑推理</text>
+<text x="687" y="276" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">白天: 分析发言</text>
+<line x1="390" y1="132" x2="687" y2="178" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="30" y="355" width="720" height="95" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">信息权限控制：法官按角色过滤上下文</text>
+<text x="50" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">狼人:</text>
+<text x="105" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">所有狼人身份 + 夜晚商议 + 公开发言</text>
+<text x="400" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">预言家:</text>
+<text x="460" y="399" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">验人结果(仅自己验的) + 公开发言</text>
+<text x="50" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">女巫:</text>
+<text x="105" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">当晚死亡者 + 解药/毒药状态 + 公开发言</text>
+<text x="400" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">村民:</text>
+<text x="460" y="423" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">仅公开发言 + 投票记录（零私有信息）</text>
+<rect x="30" y="468" width="720" height="105" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="488" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">实时语音交互（ASR + LLM + TTS）</text>
+<text x="137" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">白天讨论</text>
+<text x="137" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">法官管理发言顺序</text>
+<text x="137" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">按座位依次发言</text>
+<text x="312" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">投票阶段</text>
+<text x="312" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">收集所有玩家投票</text>
+<text x="312" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">统计票数公布结果</text>
+<text x="487" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">夜晚阶段</text>
+<text x="487" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">法官依次唤醒角色</text>
+<text x="487" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">私密语音通道</text>
+<text x="662" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">真人玩家</text>
+<text x="662" y="534" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">随机分配角色</text>
+<text x="662" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">语音表达投票/发言</text>
+</svg>

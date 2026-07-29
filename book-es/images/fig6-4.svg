@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 490" width="880" height="490" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="60" width="250" height="150" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="155" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Rubric（评分标准）</text>
+<line x1="40" y1="94" x2="270" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="45" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">事实正确性: Essential</text>
+<text x="45" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">逻辑连贯性: Important</text>
+<text x="45" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">幻觉检测: Veto ⚠</text>
+<text x="45" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">完整性: Important</text>
+<rect x="315" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="440" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">候选回答</text>
+<line x1="325" y1="94" x2="555" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="330" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Agent 输出:</text>
+<text x="330" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;退款已处理，$150将在</text>
+<text x="330" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> 3-5工作日内到账。&quot;</text>
+<text x="330" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<rect x="600" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="725" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">参考方案（可选）</text>
+<line x1="610" y1="94" x2="840" y2="94" stroke="#999999" stroke-width="2"/>
+<text x="615" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">标准答案 / 评分要点:</text>
+<text x="615" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">必须包含退款金额</text>
+<text x="615" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">必须包含到账时间</text>
+<text x="615" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">不可承诺具体日期</text>
+<line x1="155" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="440" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="725" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="280" y="245" width="320" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Judge 模型 (GPT-5 / Gemini 2.5)</text>
+<text x="440" y="282" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#cccccc" text-anchor="middle" dominant-baseline="central" font-weight="normal">多源异构评判防止同源偏见</text>
+<line x1="440" y1="295" x2="440" y2="325" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="60" y="328" width="760" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">结构化评估输出</text>
+<rect x="75" y="370" width="360" height="125" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="85" y="390" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">事实正确性   </text>
+<text x="250" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
+<text x="300" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">金额和时间均准确</text>
+<text x="85" y="414" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">完整性     </text>
+<text x="250" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">3/4</text>
+<text x="300" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">缺少退款方式说明</text>
+<text x="85" y="438" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">幻觉检测    </text>
+<text x="250" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">PASS</text>
+<text x="300" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">无虚假信息</text>
+<text x="85" y="462" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">逻辑连贯性   </text>
+<text x="250" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
+<text x="300" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">因果关系清晰</text>
+<rect x="460" y="370" width="345" height="125" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="632" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">评分聚合策略</text>
+<text x="475" y="415" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">加权平均: Σ(权重×维度分)</text>
+<text x="475" y="437" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">一票否决: 幻觉=FAIL → 总分=0</text>
+<text x="475" y="459" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">多评委: 3个Judge取中位数</text>
+<text x="475" y="481" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">边界案例标记: 分歧&gt;2分→人审</text>
+</svg>

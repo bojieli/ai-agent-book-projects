@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 300" width="780" height="300" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+
+
+<rect x="30" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="125" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x2460; &#x622A;&#x56FE;</text>
+
+<rect x="55" y="95" width="140" height="90" rx="4" fill="#ffffff" stroke="#999999" stroke-width="1.5"/>
+<text x="125" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x8BA1;&#x7B97;&#x673A;&#x5C4F;&#x5E55;</text>
+<rect x="72" y="128" width="106" height="14" rx="2" fill="#e8e8e8" stroke="none"/>
+<rect x="72" y="146" width="80" height="14" rx="2" fill="#e8e8e8" stroke="none"/>
+<rect x="72" y="164" width="50" height="12" rx="2" fill="#d0d0d0" stroke="none"/>
+
+<text x="125" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999999" text-anchor="middle" dominant-baseline="central">&#x684C;&#x9762; / &#x6D4F;&#x89C8;&#x5668; / &#x5E94;&#x7528;</text>
+<text x="125" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999999" text-anchor="middle" dominant-baseline="central">&#x7B49;&#x5F85;&#x754C;&#x9762;&#x7A33;&#x5B9A;&#x540E;&#x622A;&#x56FE;</text>
+
+<line x1="220" y1="130" x2="283" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="252" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x622A;&#x56FE;</text>
+
+<rect x="295" y="55" width="190" height="185" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x2461; &#x6A21;&#x578B;&#x63A8;&#x7406;</text>
+
+<text x="390" y="103" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x8F93;&#x5165;</text>
+<text x="390" y="121" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x622A;&#x56FE; + &#x4EFB;&#x52A1;&#x6307;&#x4EE4;</text>
+<line x1="310" y1="137" x2="470" y2="137" stroke="#999999" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="390" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x8F93;&#x51FA;</text>
+<text x="390" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x601D;&#x8003;: &#x201C;&#x641C;&#x7D22;&#x6846;&#x5728;&#x5C4F;&#x5E55;&#x4E2D;&#x592E;&#x201D;</text>
+<text x="390" y="195" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">&#x52A8;&#x4F5C;: click(512, 250)</text>
+<text x="390" y="215" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">&#x52A8;&#x4F5C;: type(&quot;weather&quot;)</text>
+
+<line x1="485" y1="130" x2="548" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="517" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x52A8;&#x4F5C;</text>
+
+<rect x="560" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="655" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x2462; &#x6267;&#x884C;&#x52A8;&#x4F5C;</text>
+
+<text x="655" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">&#x6267;&#x884C;&#x5DE5;&#x5177;</text>
+<text x="655" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">xdotool / Playwright</text>
+<line x1="575" y1="147" x2="735" y2="147" stroke="#999999" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="655" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x9F20;&#x6807;: &#x79FB;&#x52A8;&#x3001;&#x70B9;&#x51FB;&#x3001;&#x62D6;&#x62FD;</text>
+<text x="655" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x952E;&#x76D8;: &#x8F93;&#x5165;&#x3001;&#x7EC4;&#x5408;&#x952E;</text>
+<text x="655" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x6EDA;&#x52A8;: &#x4E0A;&#x4E0B;&#x5DE6;&#x53F3;</text>
+<text x="655" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x7B49;&#x5F85;: &#x754C;&#x9762;&#x54CD;&#x5E94;</text>
+
+<path d="M 655 240 L 655 280 L 125 280 L 125 248" stroke="#333333" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+<text x="390" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central">&#x2463; &#x754C;&#x9762;&#x72B6;&#x6001;&#x53D8;&#x5316; &#x2192; &#x7B49;&#x5F85;&#x7A33;&#x5B9A; &#x2192; &#x8FDB;&#x5165;&#x4E0B;&#x4E00;&#x8F6E;&#x622A;&#x56FE;</text>
+<text x="390" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#999999" text-anchor="middle" dominant-baseline="central">&#x5178;&#x578B;&#x573A;&#x666F;&#xFF1A;&#x5B8C;&#x6210;&#x4E00;&#x4E2A;&#x591A;&#x6B65;&#x8868;&#x5355;&#x586B;&#x5199;&#x53EF;&#x80FD;&#x9700;&#x8981; 10-20 &#x8F6E;&#x5FAA;&#x73AF;</text>
+</svg>

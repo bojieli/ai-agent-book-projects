@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" style="background:#ffffff">
+<style>text{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif}</style>
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#555555"/></marker>
+</defs>
+
+<!-- Left section: API layer -->
+<text x="200" y="24" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">API 层面（开发者看到的）</text>
+
+<rect x="20" y="40" width="360" height="220" rx="8" fill="#f8f9fb" stroke="#b0b8c4" stroke-width="1.5"/>
+
+<!-- System message -->
+<rect x="35" y="55" width="330" height="82" rx="5" fill="#ffffff" stroke="#d0d5dc" stroke-width="1"/>
+<text x="50" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">{ </text>
+<text x="68" y="80" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"role"</text>
+<text x="128" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="144" y="80" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"system"</text>
+<text x="224" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">,</text>
+
+<text x="68" y="104" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"content"</text>
+<text x="148" y="104" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="164" y="104" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"你是助手"</text>
+<text x="264" y="104" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace"> }</text>
+
+<!-- User message -->
+<rect x="35" y="152" width="330" height="82" rx="5" fill="#ffffff" stroke="#d0d5dc" stroke-width="1"/>
+<text x="50" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">{ </text>
+<text x="68" y="177" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"role"</text>
+<text x="128" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="144" y="177" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"user"</text>
+<text x="208" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">,</text>
+
+<text x="68" y="201" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"content"</text>
+<text x="148" y="201" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="164" y="201" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"你好"</text>
+<text x="224" y="201" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace"> }</text>
+
+<!-- Arrow -->
+<line x1="395" y1="150" x2="455" y2="150" stroke="#555555" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+<!-- Right section: Model layer -->
+<text x="680" y="24" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">模型层面（经 Chat Template 转换后）</text>
+
+<rect x="475" y="40" width="405" height="220" rx="8" fill="#f5faf7" stroke="#8fc5a6" stroke-width="1.5"/>
+
+<!-- Token line 1: <|im_start|>system -->
+<rect x="490" y="55" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="66" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="66" font-size="14" fill="#333333" dominant-baseline="central">system</text>
+
+<!-- Token line 2: 你是助手<|im_end|> -->
+<text x="490" y="98" font-size="14" fill="#333333" dominant-baseline="central">你是助手</text>
+<rect x="568" y="86" width="120" height="22" rx="4" fill="#999999"/>
+<text x="628" y="97" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_end|&gt;</text>
+
+<!-- Token line 3: <|im_start|>user -->
+<rect x="490" y="118" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="129" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="129" font-size="14" fill="#333333" dominant-baseline="central">user</text>
+
+<!-- Token line 4: 你好<|im_end|> -->
+<text x="490" y="161" font-size="14" fill="#333333" dominant-baseline="central">你好</text>
+<rect x="530" y="149" width="120" height="22" rx="4" fill="#999999"/>
+<text x="590" y="160" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_end|&gt;</text>
+
+<!-- Token line 5: <|im_start|>assistant -->
+<rect x="490" y="181" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="192" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="192" font-size="14" fill="#333333" dominant-baseline="central">assistant</text>
+
+<!-- Token line 6: (模型从这里开始生成) -->
+<text x="490" y="226" font-size="13" fill="#888888" dominant-baseline="central">（模型从这里开始生成）</text>
+<line x1="490" y1="234" x2="680" y2="234" stroke="#888888" stroke-width="1" stroke-dasharray="4,3"/>
+
+</svg>

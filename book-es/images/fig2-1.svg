@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="60" width="700" height="84" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">系统提示词（System Prompt）</text>
+<text x="65" y="102" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;You are a helpful assistant. You MUST answer concisely.&quot;</text>
+<text x="65" y="124" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Use tools when the user asks for real-time information.&quot;</text>
+<rect x="40" y="152" width="700" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="172" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">工具定义（Tool Definitions）</text>
+<text x="65" y="194" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">{&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;Search the web&quot;,</text>
+<text x="65" y="216" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;parameters&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}}</text>
+<rect x="40" y="244" width="700" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="55" y="264" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">对话历史（Conversation History）</text>
+<text x="65" y="286" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">user: &quot;北京今天天气怎么样？&quot;</text>
+<text x="65" y="308" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: [tool_call] → get_weather(&quot;北京&quot;)</text>
+<text x="65" y="330" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool: {&quot;temp&quot;: &quot;23°C&quot;, &quot;conditions&quot;: &quot;晴&quot;}</text>
+<rect x="40" y="358" width="700" height="84" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="55" y="378" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">本轮思考（Reasoning）</text>
+<text x="65" y="400" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;think&gt;用户问天气，我已经获得了工具结果，</text>
+<text x="65" y="422" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">可以直接汇总回答，无需再调用工具。&lt;/think&gt;</text>
+<rect x="40" y="450" width="700" height="62" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="55" y="470" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">当前生成位置 →</text>
+<text x="65" y="492" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">assistant: &quot;北京今天晴，气温 23°C...&quot;  ← LLM 正在生成</text>
+<path d="M 748,60 C 768,60 768,281.0 773,286.0 C 768,291.0 768,512 748,512" fill="none" stroke="#333333" stroke-width="2"/>
+<text x="755" y="274.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">上下文</text>
+<text x="755" y="298.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">窗口</text>
+<rect x="100" y="535" width="620" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="552" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">窗口大小：Qwen3 = 32K tokens | Claude = 200K | Gemini = 2M</text>
+<text x="410" y="572" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">所有内容序列化为 token 流 → Transformer 注意力机制处理</text>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 900 340" width="900" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="44" width="370" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="55.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">非智能体化 RAG</text>
+<text x="215.0" y="81.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">固定前置步骤，一次性检索</text>
+<rect x="80" y="110" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">用户查询</text>
+<line x1="215.0" y1="156" x2="215.0" y2="174" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="174" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="196" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">检索（一次）</text>
+<line x1="215.0" y1="220" x2="215.0" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="238" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">直接生成答案</text>
+<rect x="500" y="44" width="370" height="46" rx="6" fill="#eef3f6" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="55.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">智能体化 RAG（Agentic）</text>
+<text x="685.0" y="81.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 用 ReAct 主导，迭代检索</text>
+<rect x="530" y="110" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="132" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">思考：分析需求、定关键词</text>
+<line x1="685.0" y1="156" x2="685.0" y2="174" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="530" y="174" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="196" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">行动：调用检索工具</text>
+<line x1="685.0" y1="220" x2="685.0" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="530" y="238" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">观察：信息是否充分？</text>
+<line x1="840" y1="260" x2="858" y2="260" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="858" y1="260" x2="858" y2="196" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="858" y1="196" x2="840" y2="196" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="862" y="228.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">不够</text>
+<line x1="685.0" y1="302" x2="685.0" y2="320" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="550" y="322" width="270" height="44" rx="6" fill="#dfeef0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="344" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">充分 → 综合生成答案</text>
+</svg>

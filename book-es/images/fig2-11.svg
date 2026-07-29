@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 525" width="820" height="525" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="40" y="70" width="740" height="90" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">第一层：元数据（启动时加载，~300 tokens）</text>
+<rect x="60" y="108" width="700" height="48" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="130" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">skills: [{name: &quot;PPTX&quot;, desc: &quot;Create PowerPoint presentations from content&quot;}</text>
+<text x="70" y="145" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">        {name: &quot;PDF&quot;,  desc: &quot;Extract and analyze PDF documents&quot;}, ...]</text>
+<line x1="410" y1="162" x2="410" y2="185" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="173" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">任务触发：&quot;从论文生成 PPT&quot;</text>
+<rect x="40" y="190" width="740" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="210" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">第二层：SKILL.md 核心流程（按需加载，~2K tokens）</text>
+<rect x="60" y="230" width="700" height="100" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="250" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">PPTX Skill 核心流程:</text>
+<text x="70" y="272" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">1. markitdown 提取文本 → 2. 解压 PPTX 访问 XML</text>
+<text x="70" y="294" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">3. 修改 slide{N}.xml 内容 → 4. 重新打包为 .pptx</text>
+<text x="70" y="316" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">引用: → html2pptx.md | → reference.md | → scripts/</text>
+<line x1="410" y1="342" x2="410" y2="365" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="353" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">需要详细方法：&quot;用 HTML 模板创建 PPT&quot;</text>
+<rect x="40" y="370" width="740" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="60" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">第三层：子文档（选择性深入，按需加载）</text>
+<rect x="60" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="167.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">html2pptx.md</text>
+<text x="167.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">HTML 模板 → PPT</text>
+<text x="167.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">的完整工作流</text>
+<rect x="295" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="402.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">reference.md</text>
+<text x="402.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">XML 格式规范</text>
+<text x="402.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">和技术细节</text>
+<rect x="530" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="637.5" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">scripts/*.py</text>
+<text x="637.5" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">可执行工具:</text>
+<text x="637.5" y="473" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">thumbnail.py 等</text>
+<rect x="100" y="520" width="620" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="538" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">元数据固定 → KV Cache 友好 | 动态内容追加 → 不破坏缓存</text>
+</svg>

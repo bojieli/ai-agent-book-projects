@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 390" width="860" height="390" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="185" width="110" height="56" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="85.0" y="213.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">用户</text>
+<rect x="250" y="95" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="114.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">张医生-A</text>
+<text x="334.0" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">科室：牙科</text>
+<rect x="470" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="545.0" y="123.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">仁爱口腔医院</text>
+<rect x="680" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="755.0" y="114.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">地址</text>
+<text x="755.0" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">徐汇区 XX 路</text>
+<rect x="250" y="280" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="299.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">张医生-B</text>
+<text x="334.0" y="320.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">科室：心内科</text>
+<rect x="470" y="280" width="180" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="560.0" y="299.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">华山医院</text>
+<text x="560.0" y="320.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">心血管中心</text>
+<line x1="140" y1="205" x2="250" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="156.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">我的牙医</text>
+<line x1="140" y1="222" x2="250" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="251.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">我的心脏科医生</text>
+<line x1="418" y1="123" x2="470" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="113.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">就职于</text>
+<line x1="620" y1="123" x2="680" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="650.0" y="113.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">地址</text>
+<line x1="418" y1="308" x2="470" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="298.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">就职于</text>
+<text x="40" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· 多跳推理：“我的牙医所在医院的地址” = 用户 → 张医生-A → 仁爱口腔医院 → 地址，沿关系边逐跳遍历</text>
+<text x="40" y="398" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· 实体消歧：两个同名“张医生”是图中不同节点，靠各自的关系边（牙科 / 心内科）区分。每条边 = 一个三元组（主语-关系-宾语）</text>
+</svg>

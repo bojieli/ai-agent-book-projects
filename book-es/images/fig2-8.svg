@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 30 900 260" width="900" height="260" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="170" y="44" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">结构化 API 消息</text>
+<rect x="30" y="62" width="300" height="58" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="44" y="84" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">system</text>
+<text x="44" y="104" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">“You are a helpful assistant.”</text>
+<rect x="30" y="132" width="300" height="58" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="44" y="154" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user</text>
+<text x="44" y="174" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">“北京今天天气怎么样？”</text>
+<rect x="30" y="202" width="300" height="58" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="44" y="224" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant</text>
+<text x="44" y="244" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">（待生成）</text>
+<line x1="345" y1="170" x2="405" y2="170" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="375.0" y="158.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle">Chat Template</text>
+<text x="640" y="44" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">模型实际处理的线性 Token 流</text>
+<rect x="420" y="62" width="450" height="117.0" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="430" y="82.5" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;|im_start|&gt;system</text>
+<text x="430" y="103.5" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">You are a helpful assistant.&lt;|im_end|&gt;</text>
+<text x="430" y="124.5" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;|im_start|&gt;user</text>
+<text x="430" y="145.5" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">北京今天天气怎么样？&lt;|im_end|&gt;</text>
+<text x="430" y="166.5" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;|im_start|&gt;assistant</text>
+<text x="645" y="254" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">特殊标记界定角色与消息边界，拼成一段连续序列</text>
+</svg>

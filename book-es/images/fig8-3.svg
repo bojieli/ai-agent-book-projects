@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 410" width="1000" height="410" style="background:#ffffff">
+  <defs>
+    <style>
+      .t{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:16px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">能力的表示性质决定主要更新位置</text>
+
+  <rect x="35" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="145" y="105" text-anchor="middle" class="t h">知识</text>
+  <text x="145" y="135" text-anchor="middle" class="t s">事实、经验与例外</text>
+  <text x="145" y="164" text-anchor="middle" class="t s">Markdown / 知识库</text>
+
+  <rect x="275" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="385" y="105" text-anchor="middle" class="t h">指令</text>
+  <text x="385" y="135" text-anchor="middle" class="t s">可语言化的判断原则</text>
+  <text x="385" y="164" text-anchor="middle" class="t s">Prompt / Skill</text>
+
+  <rect x="515" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="625" y="105" text-anchor="middle" class="t h">程序</text>
+  <text x="625" y="135" text-anchor="middle" class="t s">确定性流程与强约束</text>
+  <text x="625" y="164" text-anchor="middle" class="t s">工具 / 工作流 / Harness</text>
+
+  <rect x="755" y="72" width="220" height="126" rx="9" class="accent"/>
+  <text x="865" y="105" text-anchor="middle" class="t h">参数</text>
+  <text x="865" y="135" text-anchor="middle" class="t s">高维感知与隐式策略</text>
+  <text x="865" y="164" text-anchor="middle" class="t s">SFT / 蒸馏 / RL</text>
+
+  <line x1="145" y1="226" x2="865" y2="226" stroke="#33434d" stroke-width="2"/>
+  <path d="M145 218 V234 M865 218 V234" stroke="#33434d" stroke-width="2"/>
+  <text x="145" y="260" text-anchor="middle" class="t s">易更新、可追溯</text>
+  <text x="865" y="260" text-anchor="middle" class="t s">内化、低推理开销</text>
+  <text x="500" y="289" text-anchor="middle" class="t h">不是单向阶梯，而是四种互补载体</text>
+
+  <rect x="145" y="320" width="710" height="58" rx="8" class="accent"/>
+  <text x="500" y="344" text-anchor="middle" class="t h">首要判断：能力能否被事实、语言规则或程序完整表达？</text>
+  <text x="500" y="367" text-anchor="middle" class="t s">稳定性、成本与更新频率决定具体部署方式，而非能力能否参数化</text>
+</svg>

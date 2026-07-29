@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 400" width="880" height="400" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="65" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="110.0" y="92.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① 用户查询</text>
+<text x="110" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;故意杀人罪判几年？&quot;</text>
+<line x1="200" y1="92" x2="238" y2="92" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="240" y="65" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="330.0" y="92.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② 检索 (Retrieval)</text>
+<text x="330" y="140" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">稠密检索 + BM25</text>
+<text x="330" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Top-K 文本块</text>
+<line x1="420" y1="92" x2="458" y2="92" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="460" y="65" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="550.0" y="92.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ 增强 (Augment)</text>
+<text x="550" y="140" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">查询 + 检索结果</text>
+<text x="550" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 构造完整 Prompt</text>
+<line x1="640" y1="92" x2="678" y2="92" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="680" y="65" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="770.0" y="92.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">④ 生成 (Generate)</text>
+<text x="770" y="140" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM 综合上下文</text>
+<text x="770" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 生成回答</text>
+<line x1="20" y1="195" x2="860" y2="195" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440.0" y="215" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">具体数据流示例</text>
+<rect x="20" y="235" width="400" height="90" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="220" y="253" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">检索到的文本块</text>
+<text x="30" y="278" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">《刑法》第232条：故意杀人的，处死刑、</text>
+<text x="30" y="298" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">无期徒刑或十年以上有期徒刑...</text>
+<rect x="440" y="235" width="420" height="90" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="650" y="253" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">增强后的 Prompt</text>
+<text x="450" y="278" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">基于以下法条回答问题：</text>
+<text x="450" y="298" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">[《刑法》第232条...]  问：故意杀人罪判几年？</text>
+<rect x="20" y="345" width="840" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="363" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">生成的回答</text>
+<text x="30" y="390" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">根据《刑法》第232条，故意杀人罪处死刑、无期徒刑或十年以上有期徒刑；</text>
+<text x="30" y="412" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">情节较轻的，处三年以上十年以下有期徒刑。</text>
+</svg>

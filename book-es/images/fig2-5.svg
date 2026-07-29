@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 900 184" width="900" height="184" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="26.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="126.0" y="74.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">用户请求</text>
+<text x="126.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">“帮我联系 Xfinity 砍价”</text>
+<rect x="242.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="342.0" y="74.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">本地 LLM 服务</text>
+<text x="342.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">vLLM/Ollama（OpenAI 兼容）</text>
+<line x1="228.0" y1="86.0" x2="240.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="458.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="558.0" y="74.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">模型推理</text>
+<text x="558.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">决定并生成 tool_call</text>
+<line x1="444.0" y1="86.0" x2="456.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="674.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="774.0" y="74.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">本地工具执行</text>
+<text x="774.0" y="100.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">调用函数 / 外部 API</text>
+<line x1="660.0" y1="86.0" x2="672.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="774.0" y1="128" x2="774.0" y2="158" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="774.0" y1="158" x2="558.0" y2="158" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="558.0" y1="158" x2="558.0" y2="130" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="666.0" y="176" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">工具结果回传模型，生成最终回复</text>
+</svg>

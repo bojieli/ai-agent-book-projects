@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker>
+</defs>
+
+
+
+<!-- Central Agent circle -->
+<circle cx="390" cy="230" r="68" fill="#e8e8e8" stroke="#333333" stroke-width="2.5"/>
+<text x="390" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" fill="#333333" text-anchor="middle" font-weight="bold">Agent</text>
+<text x="390" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">&#x81EA;&#x4E3B;&#x51B3;&#x7B56;&#x7CFB;&#x7EDF;</text>
+
+<!-- LLM (top) -->
+<rect x="295" y="62" width="190" height="72" rx="8" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">LLM&#xFF1A;&#x5927;&#x8111;</text>
+<text x="390" y="116" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle">&#x7406;&#x89E3; &#xB7; &#x601D;&#x8003; &#xB7; &#x89C4;&#x5212; &#xB7; &#x51B3;&#x7B56;</text>
+<line x1="390" y1="134" x2="390" y2="162" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<!-- Context (left) -->
+<rect x="50" y="194" width="190" height="72" rx="8" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="145" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">&#x4E0A;&#x4E0B;&#x6587;&#xFF1A;&#x773C;&#x775B;</text>
+<text x="145" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle">&#x6307;&#x4EE4; &#xB7; &#x8BB0;&#x5FC6; &#xB7; &#x77E5;&#x8BC6; &#xB7; &#x8F68;&#x8FF9;</text>
+<line x1="240" y1="230" x2="322" y2="230" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<!-- Tools (right) -->
+<rect x="540" y="194" width="190" height="72" rx="8" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="635" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" font-weight="bold">&#x5DE5;&#x5177;&#xFF1A;&#x624B;&#x811A;</text>
+<text x="635" y="248" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle">&#x611F;&#x77E5; &#xB7; &#x6267;&#x884C; &#xB7; &#x534F;&#x4F5C; &#xB7; &#x4EE3;&#x7801;</text>
+<line x1="458" y1="230" x2="540" y2="230" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<!-- Details under LLM -->
+<rect x="30" y="62" width="240" height="72" rx="6" fill="#f5f5f5" stroke="#999999" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="150" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#555555" text-anchor="middle">&#x7B2C; 6 &#x7AE0; &#x8BC4;&#x4F30; &#xB7; &#x7B2C; 7 &#x7AE0; &#x540E;&#x8BAD;&#x7EC3;</text>
+<text x="150" y="102" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">&#x6A21;&#x578B;&#x5373; Agent &#xB7; SFT &#xB7; &#x5F3A;&#x5316;&#x5B66;&#x4E60;</text>
+<text x="150" y="122" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">&#x8BC4;&#x4F30;&#x8D2F;&#x7A7F;&#x5168;&#x5C40;</text>
+<line x1="270" y1="98" x2="293" y2="98" stroke="#999999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah-light)"/>
+
+<!-- Details under Context -->
+<rect x="50" y="295" width="240" height="72" rx="6" fill="#f5f5f5" stroke="#999999" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="170" y="315" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#555555" text-anchor="middle">&#x7B2C; 2 &#x7AE0; &#x4E0A;&#x4E0B;&#x6587;&#x5DE5;&#x7A0B; &#xB7; &#x7B2C; 3 &#x7AE0; &#x77E5;&#x8BC6;&#x5E93;</text>
+<text x="170" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">&#x63D0;&#x793A;&#x5DE5;&#x7A0B; &#xB7; KV Cache &#xB7; &#x538B;&#x7F29; &#xB7; &#x8BB0;&#x5FC6;</text>
+<text x="170" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">RAG &#xB7; &#x7ED3;&#x6784;&#x5316;&#x7D22;&#x5F15; &#xB7; Agentic RAG</text>
+<line x1="170" y1="266" x2="170" y2="293" stroke="#999999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah-light)"/>
+
+<!-- Details under Tools -->
+<rect x="490" y="295" width="240" height="72" rx="6" fill="#f5f5f5" stroke="#999999" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="610" y="315" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#555555" text-anchor="middle">&#x7B2C; 4 &#x7AE0; &#x5DE5;&#x5177; &#xB7; &#x7B2C; 5 &#x7AE0; &#x4EE3;&#x7801;&#x751F;&#x6210;</text>
+<text x="610" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">MCP &#xB7; &#x5F02;&#x6B65;&#x4E8B;&#x4EF6;&#x67B6;&#x6784; &#xB7; &#x5DE5;&#x5177;&#x5B89;&#x5168;</text>
+<text x="610" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#888888" text-anchor="middle">&#x4EE3;&#x7801;&#x5373;&#x601D;&#x8003; &#xB7; Agent &#x81EA;&#x4E3E;</text>
+<line x1="610" y1="266" x2="610" y2="293" stroke="#999999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah-light)"/>
+
+<!-- Applications at bottom -->
+<rect x="195" y="400" width="390" height="60" rx="8" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="390" y="422" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" font-weight="bold">&#x7B2C; 8 &#x7AE0; &#x81EA;&#x6211;&#x8FDB;&#x5316; &#xB7; &#x7B2C; 9 &#x7AE0; &#x591A;&#x6A21;&#x6001; &#xB7; &#x7B2C; 10 &#x7AE0; &#x591A; Agent</text>
+<text x="390" y="446" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle">&#x5B66;&#x4E60;&#x8303;&#x5F0F; &#xB7; &#x5DE5;&#x5177;&#x521B;&#x9020; &#xB7; &#x8BED;&#x97F3; &#xB7; &#x673A;&#x5668;&#x4EBA; &#xB7; &#x534F;&#x4F5C;</text>
+<line x1="390" y1="298" x2="390" y2="398" stroke="#999999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah-light)"/>
+
+</svg>
