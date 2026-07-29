@@ -55,11 +55,12 @@ python demo.py --model gpt-5.6 --output output/run.json
 ```bash
 # 在仓库根目录安装包含 pytest 的测试环境：
 uv sync --locked --python 3.12 --extra ch8 --extra dev
-source .venv/bin/activate
-cd chapter8/prompt-auto-optimization
 
 # 未安装 uv 时可用 pip 测试环境兜底：
 # python -m pip install -e ".[ch8,dev]"
+
+source .venv/bin/activate
+cd chapter8/prompt-auto-optimization
 
 python demo.py --dry-run
 python -m pytest tests
