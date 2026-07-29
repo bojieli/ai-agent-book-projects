@@ -26,7 +26,7 @@ Un sistema de evaluación vale aún más en una era de rápida evolución de mod
 
 Antes de profundizar en la metodología, construyamos intuición a través de un ejemplo completo. Supongamos que hemos construido un Agente de atención al cliente y necesitamos evaluar su capacidad para manejar solicitudes de reembolso.
 
-**Caso de Prueba**: El usuario desea devolver un pedido de hace 3 días (Pedido #12345, Monto $299). Política de la empresa: Reembolso completo dentro de los 7 días.
+**Caso de Prueba**: El usuario desea devolver un pedido de hace 3 días (Pedido #12345, Monto \$299). Política de la empresa: Reembolso completo dentro de los 7 días.
 
 **Trayectoria del Agente**:
 
@@ -41,7 +41,7 @@ Agente (pensando): Fecha de pedido 2026-04-07, hoy es 2026-04-10, son 3 días, d
 Agente → Llama a la herramienta process_refund(order_id="12345", amount=299)
 La herramienta devuelve: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
 
-Agente: Se ha iniciado el reembolso. El reembolso completo para el Pedido #12345 (Auriculares Bluetooth, $299) se está procesando y se espera que llegue en 3-5 días hábiles. El ID de reembolso es R-98765.
+Agente: Se ha iniciado el reembolso. El reembolso completo para el Pedido #12345 (Auriculares Bluetooth, \$299) se está procesando y se espera que llegue en 3-5 días hábiles. El ID de reembolso es R-98765.
 ```
 
 **Puntuación con una Rúbrica** (cuatro dimensiones, cada una puntuada de 1 a 4). La Tabla 6-1 proporciona un ejemplo de puntuación para esta tarea de reembolso.
@@ -50,7 +50,7 @@ Tabla 6-1 Ejemplo de Puntuación con Rúbrica para Tarea de Reembolso de Atenci�
 
 | Dimensión | Criterio | Puntuación | Razón |
 |------------------------|--------------------------------|------|--------------------------------|
-| Corrección Operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente un reembolso completo de $299 |
+| Corrección Operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente un reembolso completo de \$299 |
 | Cumplimiento de Políticas | ¿Sigue la política de reembolso de 7 días? | 4 | El pedido está dentro del período de reembolso, cumple con la política |
 | Compleitud de Información | ¿Proporciona el monto, el tiempo de llegada y el ID de reembolso? | 4 | Se proporcionaron los tres datos clave |
 | Detección de Alucinaciones (Ítem de Veto) | ¿Fabrica información inexistente? | Aprobado | Toda la información proviene de las salidas de las herramientas |
@@ -188,10 +188,10 @@ Tabla 6-4 Ejemplo de Costo de Tres Turnos para el Agente de Reembolso
 
 | Turno | Operación | Tokens de Entrada | Tokens de Salida | Costo del Turno |
 |-------|--------------------------------------------|------------------------|------------|---------|
-| 1 | Prompt del sistema + pregunta del usuario | 2,500 (2,000 prompt sistema) | 150 | $0.0098 |
-| 2 | Contexto previo + resultado de herramienta | 3,200 (2,000 acierto de cache) | 120 | $0.0060 |
-| 3 | Contexto previo + resultado de reembolso | 3,800 (3,200 acierto de cache) | 200 | $0.0058 |
-| **Total** | | **9,500** | **470** | **$0.022** |
+| 1 | Prompt del sistema + pregunta del usuario | 2,500 (2,000 prompt sistema) | 150 | \$0.0098 |
+| 2 | Contexto previo + resultado de herramienta | 3,200 (2,000 acierto de cache) | 120 | \$0.0060 |
+| 3 | Contexto previo + resultado de reembolso | 3,800 (3,200 acierto de cache) | 200 | \$0.0058 |
+| **Total** | | **9,500** | **470** | **\$0.022** |
 
 Estrategias de optimización de costos: Reutilización de KV Cache, Compresión de Contexto, Enrutamiento Graduado de Modelos y Procesamiento por Lotes Asincrónico.
 
@@ -203,7 +203,7 @@ Estrategias de optimización de costos: Reutilización de KV Cache, Compresión 
 
 ## Significación Estadística de los Resultados de Evaluación
 
-El error estándar de una proporción binomial se calcula como $\sqrt{p(1-p)/n}$. Para $n=100$ casos y tasa de éxito $p=0.7$, el error estándar es aprox. $4.6\%$, lo que da un intervalo de confianza del $95\%$ de $70\% \pm 9\%$. Diferencias pequeñas (como 73% vs 70%) están dentro de la banda de ruido. Se recomienda realizar análisis pareados (prueba de McNemar) y corregir por comparaciones múltiples (Bonferroni).
+El error estándar de una proporción binomial se calcula como $\sqrt{p(1-p)/n}$. Para $n=100$ casos y tasa de éxito $p=0.7$, el error estándar es aprox. 4.6%, lo que da un intervalo de confianza del 95% de $70\% \pm 9\%$. Diferencias pequeñas (como 73% vs 70%) están dentro de la banda de ruido. Se recomienda realizar análisis pareados (prueba de McNemar) y corregir por comparaciones múltiples (Bonferroni).
 
 ## Observabilidad del Agente
 

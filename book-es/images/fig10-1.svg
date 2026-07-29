@@ -44,7 +44,7 @@
 <text x="437" y="326" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ review_report.md</text>
 <rect x="425" y="351" width="320" height="65" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="585" y="367" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">共享文件系统</text>
-<text x="437" y="389" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">glossary.json  chapter1_zh.md  review_report.md</text>
+<text x="437" y="389" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">glossary.json  chapter1_zh.md  review_report.md</text>
 <text x="585" y="406" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">+ 工具调用参数传递结构化数据</text>
 <text x="585" y="433" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 模块化 · 可扩展 · 并行</text>
 <text x="585" y="455" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ 信息同步复杂</text>

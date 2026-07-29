@@ -30,6 +30,11 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "cover-
 
 def generate_openai(prompt, out):
     """OpenAI Images API. Uses gpt-image-1 if available, else dall-e-3."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        print("OPENAI_API_KEY environment variable not set. Skipping API image generation.")
+        print("Cover page will use default TikZ vector art in cover.tex.")
+        return False
     from openai import OpenAI
     import base64, urllib.request
     client = OpenAI()
@@ -38,6 +43,7 @@ def generate_openai(prompt, out):
                                     size="1024x1536", quality="high", n=1)
         data = base64.b64decode(r.data[0].b64_json)
         open(out, "wb").write(data)
+        return True
     except Exception as e:
         print(f"gpt-image-1 unavailable ({e}); falling back to dall-e-3 …")
         r = client.images.generate(model="dall-e-3", prompt=prompt,
@@ -45,6 +51,7 @@ def generate_openai(prompt, out):
                                     style="natural", n=1)
         url = r.data[0].url
         urllib.request.urlretrieve(url, out)
+        return True
 
 
 def generate(prompt, out):
@@ -54,6 +61,6 @@ def generate(prompt, out):
 if __name__ == "__main__":
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     print("Generating cover image …")
-    generate(PROMPT, OUT)
-    print(f"Saved {OUT}")
+    if generate(PROMPT, OUT):
+        print(f"Saved {OUT}")
     print("Now rebuild:  bash build_pdf.sh   (cover.tex auto-detects the image)")

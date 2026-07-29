@@ -64,7 +64,7 @@
 
 <!-- Row 10: assistant Write -->
 <rect x="50" y="490" width="500" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
-<text x="62" y="506" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", tool_calls: [Write(file: "slides.html")] }</text>
+<text x="62" y="506" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", tool_calls: [Write(file: "slides.html")] }</text>
 
 <!-- Row 11: tool_result Write -->
 <rect x="50" y="526" width="500" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>

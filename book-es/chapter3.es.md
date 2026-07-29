@@ -134,7 +134,7 @@ Divide documentos largos en fragmentos (chunks):
 
 Un **Embedding** mapea palabras o textos a vectores en un espacio de alta dimensión donde la proximidad representa similitud semántica. Se mide habitualmente con la **Similitud Coseno**:
 
-$$\text{cos}(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
+$$\cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
 
 ![Figura 3-6: Evolución de la tecnología de embeddings densos](images/fig3-6.svg)
 
@@ -171,7 +171,7 @@ Proceso en 3 etapas:
 1. **Recuperación Paralela** (Densa + Dispersa).
 2. **Fusión de Resultados**: Normalización o Fusión por Rango Recíproco (RRF, Reciprocal Rank Fusion):
 
-$$\text{RRF\_Score}(d) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
+$$\operatorname{RRF\_Score}(d) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
 
 3. **Reordenamiento Neuronal (Neural Reranking)**: Uso de un **Cross-Encoder** que evalúa conjuntamente la consulta y el documento candidato para la clasificación final.
 

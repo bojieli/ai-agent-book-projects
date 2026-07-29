@@ -58,7 +58,7 @@
 <text x="728" y="159" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">集成测试 (API)</text>
 <text x="728" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Bug 报告 → Engineer</text>
 <rect x="722" y="223" width="134" height="30" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
+<text x="789" y="238" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central">docs/test_report.md</text>
 <path d="M 789,293 Q 703,326 617,293" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
 <text x="703" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Bug 修复</text>
 

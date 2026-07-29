@@ -245,7 +245,7 @@ El post-entrenamiento escribe estrategias de interacción directamente en los pa
 2. ★★ ¿Qué criterios utilizaría para decidir si una capacidad debe enseñarse mediante post-entrenamiento o suministrarse mediante In-Context Learning / RAG?
 3. ★★★ ¿Qué desafíos diferentes surgen al destilar modelos de chat, modelos de razonamiento y modelos de agentes?
 4. ★★★ En interacciones multiturno, ¿cómo diseñaría una estrategia de asignación de crédito para recompensar decisiones tomadas en turnos tempranos?
-5. ★★★ Con un presupuesto fijo de $10,000, ¿cómo distribuirá la inversión entre contexto/conocimiento, Prompts/Skills, restricciones programáticas y entrenamiento de parámetros?
+5. ★★★ Con un presupuesto fijo de \$10,000, ¿cómo distribuirá la inversión entre contexto/conocimiento, Prompts/Skills, restricciones programáticas y entrenamiento de parámetros?
 6. ★★★ ¿Qué tan lejos están los métodos de RL actuales del aprendizaje autónomo sin función de recompensa explícita?
 7. ★★ ¿Cuándo tiene ventaja "escribir memoria en parámetros" sobre "almacenarla en una base de conocimientos RAG"?
 8. ★★★ ¿Podría aplicarse la generalización de débil a fuerte (Weak-to-Strong) para que un modelo pequeño entrene a uno grande en el contexto de Agentes?

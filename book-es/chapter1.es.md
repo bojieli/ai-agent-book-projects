@@ -285,46 +285,67 @@ Muchos sistemas combinan ambos: los procesos críticos funcionan como workflows,
 
 #### Comparación Breve de los Principales Frameworks de Agentes
 
-| Enfoque del Harness | Capítulo Correspondiente | Contenido Central | Preocupaciones de Seguridad |
-|---------------|-----------------|------------------------------------|---------------------------|
-| Diseño de contexto | Capítulo 2 (Ingeniería de Contexto) | Ingeniería de Prompts, Barra de Estado, Compresión de Contexto, Skills | Inyección de Prompts y fuga de información |
-| Extensión de contexto | Capítulo 3 (Bases de Conocimiento) | Memoria de usuario, RAG, índices estructurados, Agentic RAG | Exposición de información sensible, privacidad |
-| Diseño de herramientas | Capítulo 4 (Diseño de Herramientas) | Clasificación, control de permisos, estándar MCP, arquitectura asíncrona | Operaciones indebidas, accesos no autorizados |
-| Verificación de herramientas | Capítulo 5 (Generación de Código) | Harness para Agentes de código, TDD, reglas en código | Suplantación de identidad, atribución de responsabilidad |
-| Verificación del sistema | Capítulo 6 (Evaluación) | Entornos de evaluación, conjuntos de datos, observabilidad | — |
-| Corrección a nivel modelo | Capítulo 7 (Posentrenamiento) | SFT, Aprendizaje por Refuerzo | Desviación de objetivos, alineación y robustez |
-| Corrección continua | Capítulo 8 (Evolución Continua) | Aprendizaje por trayectoria, creación de herramientas, auto-modificación | Envenenamiento de memoria, deriva de capacidad |
-| Contexto y herramientas multimodales | Capítulo 9 (Multimodalidad e Interacción) | Agentes de Voz, Computer Use, manipulación robótica | Filtrado de entradas multimodales, control en tiempo real |
-| Restricciones entre Agentes | Capítulo 10 (Colaboración Multiagente) | Arquitecturas de colaboración, modos de fallo, sociedad de Agentes | Violación de fronteras de confianza, conflictos de recursos |
+A medida que se profundiza la tendencia de "El Modelo como Agente", el valor central de un framework ya no reside en "orquestar llamadas a LLMs", ya que los modelos deciden cada vez más por sí mismos. Lo que se ha vuelto más importante es la ingeniería de Harness alrededor del modelo: gestión de contexto, el ecosistema de herramientas, restricciones de seguridad y recuperación de errores. Al elegir un framework, la pregunta no es qué tan sofisticado es el framework, sino si te permite concentrarte en la lógica de negocio a través de la capa de abstracción más delgada posible.
+
+Los patrones de orquestación resuelven la organización del contexto y las herramientas dentro del Harness: cómo se conectan las llamadas al LLM, las herramientas y los flujos de datos. Pero completar la tarea no es suficiente; las tareas también deben completarse de manera correcta y segura. Por lo tanto, pasamos a la forma principal en que se implementan en la práctica la restricción, la verificación y la corrección: los guardarraíles.
 
 ### Guardarraíles y Seguridad
 
-Los **guardarraíles (guardrails)** implementan la capa de restricción, verificación y corrección:
-- **Entrada**: Clasificadores de relevancia, clasificadores de seguridad (jailbreaks e inyección de prompts), moderación de contenido y reglas rígidas.
-- **Ejecución**: Clasificación del nivel de riesgo de la herramienta (bajo/medio/alto) y autorización explícita.
-- **Salida**: Filtros de PII (información de identificación personal) y validación de respuestas.
+Esta sección ofrece una visión general de alto nivel sobre los guardarraíles para establecer el panorama general. Los detalles de implementación y la práctica se desarrollan en el Capítulo 2 (protección contra inyección de prompts), Capítulo 4 (control de permisos de herramientas) y Capítulo 5 (seguridad en la ejecución de código); los lectores por primera vez no necesitan seguir cada detalle inmediatamente.
 
-Anthropic utiliza los *Constitutional Classifiers* para evaluar la seguridad de manera automatizada[^ch1-3].
+Los guardarraíles son la forma principal en que se implementa la capa de "restricción, verificación y corrección" del Harness: una defensa en profundidad por capas que mantiene el comportamiento del Agente seguro y controlable. Unos **guardarraíles (guardrails)** bien diseñados ayudan a gestionar los riesgos de privacidad de datos (por ejemplo, prevenir la fuga del prompt del sistema) y los riesgos reputacionales (por ejemplo, mantener el comportamiento del modelo consistente con la marca). Comienza con guardarraíles para los riesgos que ya has identificado y añade otros nuevos a medida que salgan a la luz nuevas vulnerabilidades.
 
-[^ch1-3]: Anthropic. "Next-generation Constitutional Classifiers", 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers
+Piensa en los guardarraíles como una defensa en profundidad. Es poco probable que un solo guardarraíl sea suficiente por sí solo, pero varios especializados combinados crean un sistema de Agentes mucho más resiliente.
+
+#### Tipos de Guardarraíles
+
+Según el lugar en que se sitúan en el flujo de ejecución, los guardarraíles se dividen en tres tipos: de entrada, de ejecución y de salida.
+
+**De entrada (Input-side)**: Los guardarraíles de entrada interceptan las peticiones antes de que lleguen al Agente, habitualmente mediante cuatro mecanismos. Los **clasificadores de relevancia** marcan consultas fuera de tema (por ejemplo, al preguntar a un asistente de programación: "¿Cuánto mide el Empire State Building?"). Los **clasificadores de seguridad** detectan jailbreaks (incitar al modelo a eludir sus restricciones de seguridad) e inyecciones de prompts (incrustar instrucciones maliciosas en la entrada). La diferencia clave: en un jailbreak, el usuario intenta eludir las restricciones del modelo directamente; en la inyección de prompts, un atacante manipula el comportamiento del modelo de forma indirecta a través de datos externos (contenido web, documentos). La **moderación de contenido** marca entradas dañinas o inapropiadas, como contenido violento o discriminatorio. Las **protecciones basadas en reglas** aplican filtros deterministas por expresiones regulares para bloquear patrones de riesgo conocidos.
+
+**De ejecución (Execution-side)**: Los guardarraíles de ejecución validan las llamadas a herramientas. El núcleo es la **clasificación de riesgo de herramientas**: según si una operación es reversible, su nivel de permisos y su impacto financiero, a cada herramienta se le asigna un nivel de riesgo (bajo/medio/alto). Las operaciones de alto riesgo requieren revisión adicional o confirmación humana.
+
+**De salida (Output-side)**: Los guardarraíles de salida comprueban la respuesta antes de devolverla al usuario. Los **filtros de PII** revisan la salida en busca de información de identificación personal (ej. números de identificación, teléfonos) para prevenir exposiciones innecesarias; la **validación de salidas** garantiza que la respuesta se alinee con los valores de la marca mediante verificaciones de contenido.
+
+Ten en cuenta que algunos mecanismos (ej. filtrado por expresiones regulares basado en reglas) se pueden utilizar tanto en el lado de entrada como en el de salida; la categorización anterior sigue las ubicaciones de despliegue más comunes.
+
+Una práctica representativa de la industria en guardarraíles basados en clasificadores son los *Constitutional Classifiers* de Anthropic[^ch1-3]. Su diseño consta de tres elementos clave: primero, **entrenamiento impulsado por reglas**: una "constitución" escrita en lenguaje natural —que especifica explícitamente qué está permitido y qué no— se utiliza para generar datos de entrenamiento sintéticos para los clasificadores de entrada y salida; segundo, **juicio contextual conjunto**: la nueva generación comprueba la pregunta del usuario y la respuesta del modelo juntas, porque algunas respuestas parecen perfectamente bien por sí solas, y solo frente a la pregunta queda claro el contexto real; tercero, **evaluación en dos etapas**: una sonda extremadamente ligera revisa la representación interna del modelo antes de ejecutar clasificadores más profundos.
+
+[^ch1-3]: Anthropic. "Next-generation Constitutional Classifiers: Defensas más eficientes a nivel de producción contra jailbreaks universales", 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; artículo: Cunningham et al., "Constitutional Classifiers++: Defensas eficientes a nivel de producción contra jailbreaks universales", arXiv:2601.04603
 
 #### Intervención Humana (Human-in-the-loop)
-Permite escalar el control a un operador humano cuando se superan umbrales de fallo o en operaciones de alto riesgo (cancelación de pedidos, reembolsos elevados, transacciones financieras).
+
+La intervención de **humano en el bucle (Human-in-the-loop)** es una medida de protección clave: permite que un Agente mejore su rendimiento en el mundo real sin degradar la experiencia del usuario. Es de máxima importancia en las primeras etapas de despliegue, donde ayuda a identificar modos de fallo, sacar a la luz casos límite y establecer un ciclo de evaluación robusto.
+
+Con un mecanismo de humano en el bucle, un Agente que no puede completar una tarea puede transferir el control de forma elegante. En atención al cliente, esto significa escalar a un representante humano; para un Coding Agent, significa devolver el control al desarrollador.
+
+Habitualmente existen dos situaciones principales que activan la intervención humana:
+
+**Superar Umbrales de Fallo**
+Establece límites para los reintentos y operaciones del Agente. Si el Agente supera esos límites (por ejemplo, si aún no puede inferir la intención del cliente tras varios intentos), escala a un humano.
+
+**Operaciones de Alto Riesgo**
+Las operaciones sensibles, irreversibles o de alto riesgo deben activar la supervisión humana, al menos hasta que el equipo haya generado suficiente confianza en la fiabilidad del Agente. Ejemplos típicos: cancelar el pedido de un usuario, autorizar un reembolso elevado o procesar un pago.
+
+Con los cinco elementos de Harness en mente, el resto del libro sigue esta estructura.
 
 ### Este Libro como Guía Práctica de Ingeniería de Harness
+
+Visto a través de la lente de la ingeniería de Harness, cada capítulo de este libro construye de forma sistemática un componente del Harness. La seguridad, mientras tanto, no pertenece a un solo capítulo; es una preocupación transversal de todo el libro (una preocupación transversal afecta a muchas partes de un sistema a la vez, de la misma manera que el registro de logs, en ingeniería de software, debe atravesar cada módulo). La siguiente tabla presenta las funciones de Harness, las consideraciones de seguridad y los capítulos correspondientes en una sola vista:
 
 | Enfoque del Harness | Capítulo Correspondiente | Contenido Central | Preocupaciones de Seguridad |
 |--------------------|--------------------|-------------------------------|------------------------|
 | Diseño de Contexto | Capítulo 2 (Ingeniería de Contexto) | Ingeniería de prompts, barra de estado del Agente, compresión de contexto, Skills del Agente | Inyección de prompts y fuga de información |
 | Extensión de Contexto | Capítulo 3 (Base de Conocimiento) | Memoria del usuario, RAG, indexación estructurada, RAG agentizado | Exposición de información sensible, protección de la privacidad |
 | Diseño de Herramientas y Restricciones | Capítulo 4 (Diseño de Herramientas) | Clasificación de herramientas, control de permisos, estándar MCP, arquitectura asíncrona | Operaciones erróneas, acceso no autorizado, operaciones irreversibles |
-| Verificación y Corrección de Herramientas | Capítulo 5 (Generación de Código) | Harness de Agentes de código, desarrollo guiado por pruebas, reglas codificadas | Suplantación de identidad, atribución de responsabilidad |
+| Verificación y Corrección de Herramientas | Capítulo 5 (Generación de Código) | Harness de Coding Agents, desarrollo guiado por pruebas, reglas codificadas | Suplantación de identidad, atribución de responsabilidad |
 | Verificación a Nivel de Sistema | Capítulo 6 (Evaluación) | Entorno de evaluación, conjuntos de datos, evaluación automatizada, observabilidad | — |
 | Corrección a Nivel de Modelo | Capítulo 7 (Posentrenamiento) | SFT (Ajuste Fino Supervisado), Aprendizaje por Refuerzo | Desalineación de objetivos, alineación y robustez |
 | Corrección a Nivel de Sistema | Capítulo 8 (Autoevolución) | Aprendizaje externalizado, creación de herramientas, acumulación de experiencia | — |
 | Contexto y Herramientas Multimodales | Capítulo 9 (Interacción Multimodal y en Tiempo Real) | Agentes de voz, uso de computadoras, operación robótica | Filtrado de seguridad de entradas multimodales, control de permisos en tiempo real |
 | Restricciones y Correcciones entre Múltiples Agentes | Capítulo 10 (Colaboración Multiagente) | Arquitectura de colaboración, modos de fallo, sociedad de Agentes | Violación de límites de confianza entre Agentes, conflictos de recursos compartidos |
 
+La práctica de Anthropic en la construcción de Agentes de larga duración muestra cómo el diseño de Harness puede resolver problemas que el modelo por sí solo no puede. Dividen las tareas complejas entre un "Agente de Inicialización" (que configura el entorno y descompone la lista de tareas) y un "Agente de Ejecución" (que avanza de forma incremental en cada sesión y deja artefactos de entrega claros), utilizando un Harness estructurado para abordar los dos modos de fallo de las tareas largas: quedarse sin contexto y declarar la tarea completada prematuramente. Los capítulos siguientes analizan el Harness componente por componente: el Capítulo 2 comienza con el más central, la ingeniería de contexto, y el Capítulo 5 expone la práctica completa de la ingeniería de Harness en los Coding Agents.
 ## Resumen del Capítulo
 
 - **Agente = Motor de Razonamiento + Contexto de Trabajo + Interfaces de Acción**: Ninguno de los tres componentes es prescindible.
