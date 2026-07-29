@@ -256,10 +256,28 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             assistant_message = response.choices[0].message
             content = assistant_message.content or ""
             
-            # Check for tool calls in the response
+            # Read tool calls from the structured field. With
+            # enable_auto_tool_choice + the hermes parser, vLLM extracts the
+            # <tool_call> tags out of the text and returns them here instead of
+            # leaving them in `content` (which only holds <think> and final text).
             tool_calls = []
-            if use_tools and content:
-                tool_calls = self._parse_tool_calls(content)
+            if use_tools and assistant_message.tool_calls:
+                for tc in assistant_message.tool_calls:
+                    raw_args = tc.function.arguments
+                    try:
+                        parsed_args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"Failed to parse tool arguments for {tc.function.name}: {e}")
+                        parsed_args = {}
+                    logger.info(f"Model requested tool call: {tc.function.name}({raw_args})")
+                    tool_calls.append({
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {
+                            "name": tc.function.name,
+                            "arguments": parsed_args,
+                        },
+                    })
             
             if tool_calls:
                 logger.info(f"Model requested {len(tool_calls)} tool call(s)")
