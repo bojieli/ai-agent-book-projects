@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar]
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]
 # Note: `all` does NOT include ja or ar while their PDF pipelines are being
 # validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar) ;;
+    all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|ja|ar]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]" >&2
         exit 2
         ;;
 esac
@@ -29,7 +29,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 build_edition() {
     local language="$1"
-    local directory title author pdf output title_label toc_label
+    local directory title author pdf output title_label toc_label direction
     local -a chapters
 
     case "$language" in
@@ -93,6 +93,16 @@ build_edition() {
             toc_label="Mục lục"
             chapters=(introduction.vi.md glossary.vi.md chapter{1..10}.vi.md afterword.vi.md)
             ;;
+        tr)
+            directory="book-tr"
+            title="AI Agent'ları Derinlemesine Anlamak: Tasarım İlkeleri ve Mühendislik Pratiği"
+            author="Bojie Li; Türkçe çeviri: memisemre"
+            pdf="AI-Agents-in-Depth-Bojie-Li-v1.3-tr.pdf"
+            output="AI-Agents-in-Depth-Bojie-Li-v1.3-tr.epub"
+            title_label="Başlık Sayfası"
+            toc_label="İçindekiler"
+            chapters=(introduction.tr.md chapter{1..10}.tr.md afterword.tr.md)
+            ;;
         ja)
             directory="book-ja"
             title="AI Agent 徹底解説：設計原理とエンジニアリング実践"
@@ -116,9 +126,9 @@ build_edition() {
     esac
 
     local edition_dir="$ROOT/$directory"
-    local -a direction_args=()
+    direction="ltr"
     if [ "$language" = "ar" ]; then
-        direction_args=(--metadata dir=rtl)
+        direction="rtl"
     fi
     local chapter
     for chapter in "${chapters[@]}" "$pdf"; do
@@ -146,12 +156,13 @@ build_edition() {
             --mathml \
             --split-level=1 \
             --highlight-style=kate \
+            --lua-filter="$ROOT/epub_external_links.lua" \
             --css="$ROOT/epub.css" \
             --epub-cover-image="$cover" \
             --metadata title="$title" \
             --metadata author="$author" \
             --metadata lang="$language" \
-            "${direction_args[@]}" \
+            --metadata dir="$direction" \
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
@@ -171,7 +182,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en ru ta vi; do
+    for language in zh-CN zh-TW en ru ta vi tr; do
         build_edition "$language"
     done
 else

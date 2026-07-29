@@ -1,14 +1,14 @@
 # 深入理解 AI Agent：设计原理与工程实践
 
-[![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BD%BD-success.svg)](#-电子书) [![在线阅读](https://img.shields.io/badge/🌐_在线阅读-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE) [![Languages](https://img.shields.io/badge/翻译-8%20种%20语言-informational.svg)](#-电子书)
+[![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BD%BD-success.svg)](#-电子书) [![在线阅读](https://img.shields.io/badge/🌐_在线阅读-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE) [![Languages](https://img.shields.io/badge/翻译-9%20种%20语言-informational.svg)](#-电子书)
 
-**中文** ← 当前 · [English](docs/en/README.md) · [العربية](docs/ar/README.md) · [正體中文](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md)
+**中文** ← 当前 · [English](docs/en/README.md) · [العربية](docs/ar/README.md) · [正體中文](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md) · [Türkçe](docs/tr/README.md)
 
 > 📥 **[下载 PDF / EPUB](#-电子书)**（推荐）— 推荐使用 PDF / EPUB 离线阅读，排版最佳；也可[在线阅读](https://bojieli.github.io/ai-agent-book/)（支持多语言切换、章节折叠、全文搜索，每次推送自动更新）。
 
-**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**92 个配套实验**全部开源，欢迎亲手把实验跑一遍。
+**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**93 个配套实验**全部开源，欢迎亲手把实验跑一遍。
 
-| 📚 **10 章** 正文，从基础到生产 | 📂 **92 个** 配套项目（70+ 可独立运行） | 🌐 **8 种** 语言：中 / 英 / 阿 / 正体中文 / 俄 / 泰米尔 / 越 / 日 |
+| 📚 **10 章** 正文，从基础到生产 | 📂 **93 个** 配套项目（70+ 可独立运行） | 🌐 **9 种** 语言：中 / 英 / 阿 / 正体中文 / 俄 / 泰米尔 / 越 / 日 / 土耳其 |
 | :---: | :---: | :---: |
 
 ## 📖 电子书
@@ -22,12 +22,13 @@
 > - **越南语**（社区翻译，by [@toanalien](https://github.com/toanalien)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
 > - **日语**（社区翻译，by [@eltociear](https://github.com/eltociear)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
 > - **阿拉伯语**（社区翻译，by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
+> - **土耳其语**（社区翻译，by [@memisemre](https://github.com/memisemre)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
 >
 > 🌐 也可[在线阅读](https://bojieli.github.io/ai-agent-book/) — 支持多语言切换、章节折叠、全文搜索、配套实验直达，每次 main 分支推送后自动重新构建。
 
-中文正文源码位于 [`book/`](book/)；英文/阿拉伯语/正体中文/俄语/泰米尔/越南语/日语版本为社区贡献（可能滞后于中文原版），分别位于 [`book-en/`](book-en/)、[`book-ar/`](book-ar/)、[`book-zhtw/`](book-zhtw/)、[`book-ru/`](book-ru/)、[`book-ta/`](book-ta/)、[`book-vi/`](book-vi/)、[`book-ja/`](book-ja/)。
+中文正文源码位于 [`book/`](book/)；英文/阿拉伯语/正体中文/俄语/泰米尔/越南语/日语/土耳其语版本为社区贡献（可能滞后于中文原版），分别位于 [`book-en/`](book-en/)、[`book-ar/`](book-ar/)、[`book-zhtw/`](book-zhtw/)、[`book-ru/`](book-ru/)、[`book-ta/`](book-ta/)、[`book-vi/`](book-vi/)、[`book-ja/`](book-ja/)、[`book-tr/`](book-tr/)。
 
-可使用统一的构建脚本生成中文、英文、阿拉伯语、正体中文、俄语、泰米尔语、越南语和日语 EPUB 3 电子书。请参阅 [EPUB 构建说明](EPUB.md)。
+可使用统一的构建脚本生成中文、英文、阿拉伯语、正体中文、俄语、泰米尔语、越南语、日语和土耳其语 EPUB 3 电子书。请参阅 [EPUB 构建说明](EPUB.md)。
 
 <details>
 <summary><b>🔧 想自行编译 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>
@@ -175,7 +176,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 🐛 **代码改进与 Bug 修复** | 让配套项目更健壮、更易用、更贴近生产实践 |
 | 🧪 **新的实践项目** | 为某个实验补充/替换更好的实现，或贡献全新的示例项目 |
 | 🎨 **配图设计改进** | 直接改进 `book/images/` 中已签入的 SVG 图表，让它们更清晰美观 |
-| 🌐 **新语言翻译** | 欢迎翻译成更多语言，可参考英文（`book-en/`）、阿拉伯语（`book-ar/`）、正体中文（`book-zhtw/`）、俄语（`book-ru/`）、泰米尔语（`book-ta/`）、越南语（`book-vi/`）、日语（`book-ja/`）的组织方式 |
+| 🌐 **新语言翻译** | 欢迎翻译成更多语言，可参考英文（`book-en/`）、阿拉伯语（`book-ar/`）、正体中文（`book-zhtw/`）、俄语（`book-ru/`）、泰米尔语（`book-ta/`）、越南语（`book-vi/`）、日语（`book-ja/`）、土耳其语（`book-tr/`）的组织方式 |
 
 提交前建议先把相关实验亲手跑一遍、确认可复现；也欢迎先提 issue 讨论想法。
 

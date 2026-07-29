@@ -17,8 +17,10 @@ on:
       - 'book-vi/**'
       - 'book-ja/**'
       - 'book-ar/**'
+      - 'book-tr/**'
       - 'build_epub.sh'
       - 'epub.css'
+      - 'epub_external_links.lua'
       - 'flatten_epub_toc.py'
       - '.github/workflows/build-latest.yml'
       - '.github/scripts/**'
@@ -128,7 +130,7 @@ jobs:
           PANGOCAIRO_BACKEND: fontconfig
         run: |
           set -u
-          main="book book-zhtw book-en book-ru book-vi book-ta book-ar"
+          main="book book-zhtw book-en book-ru book-vi book-ta book-ar book-tr"
           pids=""
           for dir in $main book-ja; do
             ( cd "$dir" && bash build_pdf.sh ) > "build_${dir}.log" 2>&1 &
@@ -183,12 +185,14 @@ jobs:
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.pdf     "$out/AI-Agents-in-Depth-ta.pdf"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.pdf     "$out/AI-Agents-in-Depth-vi.pdf"
           cp book-ar/AI-Agents-in-Depth-ar.pdf                    "$out/AI-Agents-in-Depth-ar.pdf"
+          cp book-tr/AI-Agents-in-Depth-Bojie-Li-v1.3-tr.pdf      "$out/AI-Agents-in-Depth-tr.pdf"
           cp "book/深入理解-AI-Agent-李博杰-v1.3.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.epub       "$out/AI-Agents-in-Depth-en.epub"
           cp book-ru/AI-Agents-in-Depth-ru.epub                  "$out/AI-Agents-in-Depth-ru.epub"
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.epub    "$out/AI-Agents-in-Depth-ta.epub"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.epub    "$out/AI-Agents-in-Depth-vi.epub"
+          cp book-tr/AI-Agents-in-Depth-Bojie-Li-v1.3-tr.epub    "$out/AI-Agents-in-Depth-tr.epub"
           # WIP: ja artifacts and the Arabic EPUB are copied only if their
           # non-fatal builds produced them.
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v1.3-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"
