@@ -49,6 +49,7 @@ CER-based objective metrics are computed with normalized transcript comparison.
 | `config.py` | providers, model pricing, configs, corpus |
 | `pipeline.py` | synthesis, ffprobe duration, transcription, CER, rubric scoring |
 | `demo.py` | command entry, run grid, output summaries |
+| `tests/` | offline regression tests for judge-response robustness |
 | `requirements.txt` / `env.example` | dependencies and env template |
 
 ### Run
@@ -88,6 +89,16 @@ python demo.py --dump-rubric
 ```
 
 Outputs are under `output/` (audio) and `output/results.json` (structured results).
+
+### Tests
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+source .venv/bin/activate
+cd chapter6/tts-quality-eval
+python -m pytest tests
+```
 
 ### Robustness notes
 
@@ -177,6 +188,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 | `config.py` | 模型名与单价、provider 注册表（`PROVIDERS` / `PROVIDER_CONFIGS`）、TTS 配置集合、测试语料 |
 | `pipeline.py` | 多 provider 合成分发 / ffprobe 时长 / Whisper 回译 / CER 计算 / LLM Rubric / 可选 Gemini |
 | `demo.py` | 入口：多配置 × 多语料跑全流程，打印逐条明细 + 对比汇总表 |
+| `tests/` | 离线回归测试，覆盖评审响应健壮性 |
 | `requirements.txt` / `env.example` | 依赖与环境变量示例 |
 
 ## 运行
@@ -222,6 +234,16 @@ python demo.py --dump-rubric      # 查看 Rubric 维度定义
 完整参数见 `python demo.py --help`（全中文）。合成音频写入 `output/`（已被 `.gitignore`
 忽略），结构化结果写入 `output/results.json`（可用 `--output` 改目录）。
 **幂等**：默认复用已存在的音频，重复运行不会重复合成。
+
+## 测试
+
+```bash
+# 在仓库根目录安装 pytest 等开发工具
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+source .venv/bin/activate
+cd chapter6/tts-quality-eval
+python -m pytest tests
+```
 
 ## 测试语料
 
