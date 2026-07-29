@@ -1,6 +1,7 @@
 # فهم وكلاء الذكاء الاصطناعي بعمق: مبادئ التصميم والممارسة الهندسية
 
 [![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-9%20لغات-informational.svg)](#-الكتاب-الإلكتروني)
+[![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
 **[中文](../../README.md) · [English](../en/README.md) · العربية ← الحالية · [正體中文](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
 

@@ -1,6 +1,7 @@
 # Hiểu sâu về AI Agent: Nguyên lý thiết kế và thực hành kỹ thuật
 
 [![PDF](https://img.shields.io/badge/PDF-tải%20về-success.svg)](#-sách-điện-tử) [![Đọc trực tuyến](https://img.shields.io/badge/🌐_Đọc_trực_tuyến-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/dịch-9%20ngôn%20ngữ-informational.svg)](#-sách-điện-tử)
+[![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
 **[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [正體中文](../zh-TW/README.md) · [Русский](../ru/README.md) · Tiếng Việt ← hiện tại · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
 
