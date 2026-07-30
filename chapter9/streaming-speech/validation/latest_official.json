@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "run_id": "exp9-3-qwen2audio-whisper-provenance-20260730-v3",
+  "run_directory": "validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3",
+  "manifest_sha256": "c68c931de97346894e2f291345fb8f784939576d5f9b6a2301cf195a7173ae56",
+  "execution_status": "pass",
+  "manuscript_results_reproduced": false
+}

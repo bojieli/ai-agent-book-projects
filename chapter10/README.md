@@ -8,12 +8,12 @@
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 10-1 | [staged-system-prompt](staged-system-prompt/) | ✅ | 同一 Coding Agent 在需求澄清/实现/审查三阶段加载不同提示词与工具集，对话历史跨阶段共享，审查不通过可回退 |
-| 10-2 | [multi-role-transfer](multi-role-transfer/) | ✅ | 共享上下文下的链式 handoff：多角色各有独立提示词与工具，通过 `transfer_to_agent` 自主切换 |
-| 10-3 | [book-translation](book-translation/) | 🚧 | 四角色管理者模式及单 Agent 对照已有真实模型小样本结果；仍需按正文使用含大量插图和代码的技术书，并完整比较质量、效率和资源消耗 |
+| 10-1 | [staged-system-prompt](staged-system-prompt/) | ✅ | [正式 Kimi K3 v3](staged-system-prompt/runs/exp10-1-kimi-k3-20260730-v3/manifest.json)以 30 次真实调用跑通需求→实现→审查→回退→复审→批准，受控真实 lint 缺陷被拒绝并修复，13 项门禁与全部源码/回执/产物 hash 均通过 |
+| 10-2 | [multi-role-transfer](multi-role-transfer/) | ✅ | [同一次真实 Kimi K2.5 + Tavily 验收](multi-role-transfer/validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json)在共享历史上完成 `triage → research → data_analysis → writing → triage`：9/9 行为门禁与 6/6 溯源门禁全通过；9 份 Moonshot 原始请求/响应（唯一 response ID/usage）、3 份去凭据 Tavily 原始 HTTP 回执、5 个运行时源码 hash 与 4 个 artifact hash 均由 acceptance/manifest 绑定且复核一致 |
+| 10-3 | [book-translation](book-translation/) | ✅ | [正式 ARK v4](book-translation/validation/real_20260730T061500Z_v4/evidence.json)在英文版第 1–2 章的 242,090 字节、23 图、14 代码块上完成 26 单元双臂对照：12/12 门禁、39 份原始裁判回执和 37 个溯源 hash 均通过；Manager 上下文缩小 20.43×、token 减少 6.48×且匿名质量 4.654 > 4.481，但慢 6.57%，宽泛术语一致率与 Markdown 精确保真也出现明确负结果 |
 | 10-4 | `use-computer-while-calling/` | 📖 | 本地路径对应固定到 `7d70007…` 的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)：快慢 Agent 通过进程内 `SharedState` 黑板、状态摘要和双向文本队列协作；当前 checkout 缺失，未声称运行 |
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | 真实 Playwright 表单与真实 LLM 自主触发 Phone Agent；校验、重问、双向并行、脱敏时序和选择性提交已实现并验证，但 PSTN/真人音频因无授权参与者仍为 `not_run`，整体验收 `incomplete` |
-| 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N 个独立 Playwright 浏览器会话并行搜索真实大学网站，真实 LLM 证据抽取；状态监控、超时/错误隔离、单次结算、级联终止 ack、资源审计及同站串并行实测齐全 |
+| 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | [同一次真实验收运行](parallel-web-research/validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json)覆盖 10 站点串并行与 4 会话级联：12/12 门禁通过、实测加速 1.872×、24 份完整浏览器观测、3 份带 response ID/usage 的 ARK 原始响应和 114 条总线事件均由运行时 manifest 绑定；7 个实际源码/输入 hash 与全部 artifact hash 已复核一致，凭据扫描为零 |
 | 10-7 | `generative_agents/` | 📖 | 斯坦福「AI 小镇」生成式智能体；本地路径对应固定到 `fe05a71…` 的 `joonspk-research/generative_agents`，当前 checkout 缺失，未声称运行 |
 | 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 6–8 人、精确角色、真人席位、ASR/TTS/打断、三回合/胜负/策略与隔离门禁均已实现；无授权真人且 Audio API 返回 `insufficient_quota`，真人音频、三回合和策略验收仍未运行，整体 `incomplete` |
 

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-07-30T05:42:00Z",
+  "stage": "first_blinded_quality_judgment",
+  "outcome": "runner_stopped_before_checkpoint",
+  "exception_type": "ValueError",
+  "exception": "judge variants must contain exactly X and Y",
+  "raw_response_retained": false,
+  "note": "This negative-provenance marker records the original runner limitation. The retry-capable runner stores all subsequent credential-free raw judge attempts. Translation-arm checkpoints were not changed or replayed."
+}

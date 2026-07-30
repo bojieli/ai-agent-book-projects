@@ -45,7 +45,8 @@ STAGE_PROMPTS: Dict[str, str] = {
         "工作方式：\n"
         "1. 用 write_file 写出高质量、可读、带模块与函数 docstring 的 Python 代码，"
         "避免裸 except，注意异常处理。\n"
-        "2. 可用 execute_code 做自测，确认逻辑正确、能运行。\n"
+        "2. 可用 execute_code 做自测；执行临时目录已包含 write_file 写入的工作区文件，"
+        "请直接用相对路径读取或运行它们，不要猜测 /tmp 等宿主机路径。\n"
         "3. 代码完成并自测通过后，调用 submit_for_review 提交审查。\n"
         "如果是被审查阶段退回来的（历史里会有问题清单），"
         "请针对每一条问题逐个修复后再重新 submit_for_review。"
@@ -139,6 +140,7 @@ class StagedAgent:
         verbose: bool = True,
         interactive: bool = False,
         client: Any = None,
+        inject_first_review_fault: bool = False,
     ) -> None:
         Config.validate()
         self.client = client or OpenAI(api_key=Config.API_KEY, base_url=Config.BASE_URL)
@@ -165,6 +167,8 @@ class StagedAgent:
         self.completion_reason = "not_started"
         self.stage_entries: List[dict] = []
         self.transition_events: List[dict] = []
+        self.inject_first_review_fault = inject_first_review_fault
+        self.review_fault_events: List[dict] = []
 
     # --- 日志与打印 ------------------------------------------------------
     def _log(self, action: str, detail: str) -> None:
@@ -451,6 +455,13 @@ class StagedAgent:
 
         if kind == "to_review":
             file = descriptor.get("file", "")
+            if self.inject_first_review_fault and not self.review_fault_events:
+                event = self.workspace.inject_review_fault(file)
+                event.update({
+                    "injected_after_step": self.steps,
+                    "purpose": "exercise the manuscript-required review-to-implementation fallback",
+                })
+                self.review_fault_events.append(event)
             self.history.append({
                 "role": "user",
                 "content": (

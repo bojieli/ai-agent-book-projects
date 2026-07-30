@@ -1,7 +1,7 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "experiment": "9-5",
-  "timestamp_utc": "2026-07-29T15:46:14.726728+00:00",
+  "timestamp_utc": "2026-07-30T05:30:13.308665+00:00",
   "artifact_generation": {
     "recorded_timestamp_utc": "2026-07-29T10:19:56.497167+00:00",
     "provider": "Fish Audio",
@@ -22,7 +22,8 @@
       "demo.py": "73a87e6020910cc3b43a6ae7291defe39d9c715a964a04e8a674c4d0e4d02fe9",
       "tts.py": "e7ce66c0aa2fc3b7a78530001623e5c68b78a5bf37aa97eb77203312f5a4b0c9",
       "markup.py": "5230a2a178cedfe9b5b8d79e80912ce8aa6326a8e2e7d7fdda1b670c49c843ad",
-      "voice_library.py": "c1fb6720742ae49677226dab85ad2bf580e137ee040ba17c8730399fc6a5fd70"
+      "voice_library.py": "c1fb6720742ae49677226dab85ad2bf580e137ee040ba17c8730399fc6a5fd70",
+      "evaluate_audio_quality.py": "4fedd536432702c7d4eec9360fb3671461648ee5f316a494f55fafdc29fcafa1"
     }
   },
   "reference_statistics": {
@@ -320,6 +321,66 @@
       "format": "mp3"
     }
   },
+  "qualitative_study": {
+    "path": "validation/audio_quality_study.json",
+    "present": true,
+    "valid": true,
+    "error": null,
+    "judge_type": "multimodal_llm_not_human_mos",
+    "provider": "Mistral Voxtral API",
+    "model": "voxtral-small-latest",
+    "aggregate": {
+      "configurations": {
+        "A_no_control_markers": {
+          "dimension_means": {
+            "naturalness": 4.0,
+            "expressive_fit": 4.0,
+            "thinking_behavior": 3.6666666666666665,
+            "speaker_consistency": 4.0,
+            "human_customer_service": 4.0
+          },
+          "overall_mean": 3.9333333333333327,
+          "rank_points": 6
+        },
+        "B_single_reference": {
+          "dimension_means": {
+            "naturalness": 3.3333333333333335,
+            "expressive_fit": 3.3333333333333335,
+            "thinking_behavior": 2.6666666666666665,
+            "speaker_consistency": 3.3333333333333335,
+            "human_customer_service": 3.3333333333333335
+          },
+          "overall_mean": 3.2,
+          "rank_points": 4
+        },
+        "C_24_reference_library": {
+          "dimension_means": {
+            "naturalness": 4.666666666666667,
+            "expressive_fit": 4.666666666666667,
+            "thinking_behavior": 4.333333333333333,
+            "speaker_consistency": 4.666666666666667,
+            "human_customer_service": 4.666666666666667
+          },
+          "overall_mean": 4.6000000000000005,
+          "rank_points": 8
+        }
+      },
+      "aggregate_ranking": [
+        "C_24_reference_library",
+        "A_no_control_markers",
+        "B_single_reference"
+      ],
+      "expected_manuscript_ranking": [
+        "C_24_reference_library",
+        "B_single_reference",
+        "A_no_control_markers"
+      ],
+      "manuscript_quality_ordering_reproduced": false,
+      "near_human_customer_service_supported": true,
+      "manuscript_quality_claim_reproduced": false
+    },
+    "sha256": "8ef0917a2cf801590242fa4a670446835048ccb44a522516f2e0dc879de6e0cb"
+  },
   "acceptance": {
     "structural_and_media_gates": {
       "fish_s1_provider_recorded": true,
@@ -333,9 +394,11 @@
       "thinking_native_filler_exercised": true
     },
     "structural_and_media_passed": true,
-    "qualitative_listening_study_present": false,
-    "near_human_customer_service_claim_evaluated": false,
-    "manuscript_results_fully_reproduced": false,
-    "statement": "Real Fish S1 media fulfills the construction and A/B/C comparison. The subjective quality ordering remains unevaluated."
+    "qualitative_listening_study_present": true,
+    "qualitative_judge_is_human_mos": false,
+    "near_human_customer_service_claim_evaluated": true,
+    "manuscript_quality_claim_reproduced": false,
+    "experiment_execution_complete": true,
+    "statement": "Real Fish S1 media and a schema-checked, position-balanced multimodal listening study complete the A/B/C experiment. The saved result reports independently whether the manuscript's subjective ordering reproduced; this is not a human MOS panel."
   }
 }

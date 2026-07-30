@@ -1,0 +1,26 @@
+[
+  {
+    "en": "token",
+    "zh": "词元",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "prompt",
+    "zh": "提示词",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "latency",
+    "zh": "时延",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "embedding",
+    "zh": "嵌入向量",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  }
+]

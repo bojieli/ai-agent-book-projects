@@ -98,6 +98,17 @@ python demo.py --role research         # Start from the research role
 python demo.py --interactive           # Interactive multi-turn, type exit to quit
 ```
 
+Run the provenance-complete Moonshot + Tavily acceptance campaign with:
+
+```bash
+python run_official_experiment.py --run-id exp10-2-kimi-k2.5-tavily-receipts-YYYYMMDD-vN
+```
+
+This path retains credential-free raw Moonshot requests/responses, response IDs
+and usage, raw Tavily HTTP response bodies with the API key removed from the
+stored request, current runtime source hashes, artifact hashes, and a combined
+behavior/provenance acceptance record.
+
 Three built-in scenarios (`SCENARIOS`): `cagr` (default, new energy vehicle sales → CAGR → investment summary),
 `solar` (same chain with a different set of photovoltaic installation data), `coding` (routes to the `coding` role
 to actually run a Fibonacci script via `execute_python`, then `writing`/`triage` wraps up).
@@ -129,9 +140,12 @@ making it clear at a glance how "different specialized roles take turns on the s
 ### Expected Output Shape
 
 The following excerpt illustrates the console format. The canonical accepted real run is
-[`validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json`](validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json):
-it records Moonshot `kimi-k2.5`, real Tavily results with source URLs, the complete handoff chain,
-the calculation tool call, the counted draft, raw provider response IDs/usage, and all acceptance gates.
+[`validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json):
+it records Moonshot `kimi-k2.5`, three real Tavily searches with source URLs, the complete handoff chain,
+the calculation tool call, and the counted draft. All 9 behavior and 6 provenance gates passed. The run
+retains nine raw Moonshot requests/responses with unique response IDs and usage, three raw Tavily response
+bodies, five runtime source hashes, and four artifact hashes; all declared hashes recompute and the
+credential scan found zero hits. The older v2 JSON remains as a sanitized summary-only historical run.
 
 ```text
 === Role Roster (5 specialized roles) ===
@@ -306,9 +320,11 @@ triage → research → data_analysis → writing
 ### 预期输出形态
 
 以下片段用于说明控制台输出格式。正式验收以
-[`validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json`](validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json)
-为准：该文件记录 Moonshot `kimi-k2.5`、带来源 URL 的真实 Tavily 结果、完整移交链、计算工具调用、
-长度核对、原始 provider response ID/usage 与全部验收门禁。
+[`validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json)
+为准：该次运行记录 Moonshot `kimi-k2.5`、3 次带来源 URL 的真实 Tavily 检索、完整移交链、计算工具调用与
+长度核对；9/9 行为门禁和 6/6 溯源门禁全通过。9 份 Moonshot 原始请求/响应均有唯一 response ID 与
+usage，3 份 Tavily 原始响应已保留，5 个运行时源码 hash 和 4 个 artifact hash 均复核一致，凭据扫描为零。
+旧 v2 JSON 仅作为脱敏汇总型历史运行保留。
 
 ```
 === 角色花名册（共 5 个专业角色）===

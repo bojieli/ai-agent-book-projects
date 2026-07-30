@@ -6,7 +6,7 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from llm import extract_profile
 from message_bus import BROADCAST, MessageBus
@@ -64,13 +64,19 @@ class BrowserPool:
 
 class WorkerAgent:
     def __init__(self, worker_id: str, site: Website, bus: MessageBus, target: str,
-                 browsers: BrowserPool, timeout: float = 120):
+                 browsers: BrowserPool, timeout: float = 120,
+                 browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+                 llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+                 run_phase: str = "parallel"):
         self.id, self.site, self.bus, self.target = worker_id, site, bus, target
         self.browsers, self.timeout = browsers, timeout
         self.sub = bus.subscribe(worker_id, types=["task_assigned", "terminate"])
         self.terminate = asyncio.Event()
         self._termination_reason = ""
         self.context = None
+        self.browser_receipt_sink = browser_receipt_sink
+        self.llm_receipt_sink = llm_receipt_sink
+        self.run_phase = run_phase
 
     async def report(self, state: TaskState, note: str):
         await self.bus.send(self.id, "coordinator", "status_update", {
@@ -120,18 +126,41 @@ class WorkerAgent:
             self.context = await self.browsers.new_context()
             page = await self.context.new_page()
             await self.report(TaskState.RUNNING, f"正在加载 {self.site.url}")
-            await self._navigate_interruptibly(page)
+            navigation = await self._navigate_interruptibly(page)
             if self.terminate.is_set():
                 raise asyncio.CancelledError
             await self.report(TaskState.RUNNING, "正在读取渲染后的教师页面")
             text = await self._await_interruptibly(
                 page.locator("body").inner_text(timeout=20_000)
             )
+            if self.browser_receipt_sink:
+                self.browser_receipt_sink({
+                    "kind": "rendered_browser_observation",
+                    "phase": self.run_phase,
+                    "worker_id": self.id,
+                    "site": self.site.name,
+                    "college": self.site.college,
+                    "requested_url": self.site.url,
+                    "final_url": page.url,
+                    "http_status": navigation.status if navigation else None,
+                    "rendered_body_text": text,
+                })
             if self.terminate.is_set():
                 raise asyncio.CancelledError
             await self.report(TaskState.RUNNING, "正在做证据约束的教师信息抽取")
             profile = await self._await_interruptibly(
-                extract_profile(self.target, self.site.college, self.site.url, text)
+                extract_profile(
+                    self.target,
+                    self.site.college,
+                    self.site.url,
+                    text,
+                    receipt_sink=self.llm_receipt_sink,
+                    call_context={
+                        "phase": self.run_phase,
+                        "worker_id": self.id,
+                        "site": self.site.name,
+                    },
+                )
             )
             if profile.get("found"):
                 await self.bus.send(self.id, "coordinator", "target_found", {
@@ -280,26 +309,71 @@ class Coordinator:
         }
 
 
-async def search_one(site: Website, target: str, browsers: BrowserPool, timeout: float) -> dict:
+async def search_one(
+    site: Website,
+    target: str,
+    browsers: BrowserPool,
+    timeout: float,
+    browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+    llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+    worker_id: str = "serial",
+    run_phase: str = "serial",
+) -> dict:
     context = await browsers.new_context()
     started = time.monotonic()
     try:
         page = await context.new_page()
-        await page.goto(site.url, wait_until="domcontentloaded", timeout=int(timeout * 1000))
+        navigation = await page.goto(site.url, wait_until="domcontentloaded", timeout=int(timeout * 1000))
         text = await page.locator("body").inner_text(timeout=20_000)
-        profile = await extract_profile(target, site.college, site.url, text)
+        if browser_receipt_sink:
+            browser_receipt_sink({
+                "kind": "rendered_browser_observation",
+                "phase": run_phase,
+                "worker_id": worker_id,
+                "site": site.name,
+                "college": site.college,
+                "requested_url": site.url,
+                "final_url": page.url,
+                "http_status": navigation.status if navigation else None,
+                "rendered_body_text": text,
+            })
+        profile = await extract_profile(
+            target,
+            site.college,
+            site.url,
+            text,
+            receipt_sink=llm_receipt_sink,
+            call_context={"phase": run_phase, "worker_id": worker_id, "site": site.name},
+        )
         return {"site": site.name, "profile": profile, "seconds": time.monotonic() - started}
     finally:
         await context.close()
         await browsers.mark_closed()
 
 
-async def run_sequential(sites: List[Website], target: str, browsers: BrowserPool, timeout: float) -> dict:
+async def run_sequential(
+    sites: List[Website],
+    target: str,
+    browsers: BrowserPool,
+    timeout: float,
+    browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+    llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+    run_phase: str = "serial",
+) -> dict:
     started = time.monotonic()
     results = []
     for site in sites:
         try:
-            item = await search_one(site, target, browsers, timeout)
+            item = await search_one(
+                site,
+                target,
+                browsers,
+                timeout,
+                browser_receipt_sink=browser_receipt_sink,
+                llm_receipt_sink=llm_receipt_sink,
+                worker_id=f"serial-{len(results):02d}",
+                run_phase=run_phase,
+            )
             results.append(item)
             if item["profile"].get("found"):
                 break

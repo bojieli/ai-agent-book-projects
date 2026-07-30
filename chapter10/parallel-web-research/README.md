@@ -22,6 +22,17 @@ cp env.example .env                 # configure one real text-model endpoint
 python demo.py                       # 10 Stanford pages + real serial comparison
 ```
 
+For the provenance-complete acceptance campaign (the default comparison plus
+the four-worker live cascade in one run):
+
+```bash
+python run_official_experiment.py --run-id exp10-6-real-receipts-YYYYMMDD-vN
+```
+
+This runner stores full rendered browser observations, credential-free raw SDK
+request/response bodies with provider response IDs and usage, the message-bus
+event stream, exact runtime source hashes, artifact hashes, and acceptance gates.
+
 Use your own university school/directory list:
 
 ```bash
@@ -34,7 +45,20 @@ python demo.py --target 'Professor Name' --sites-json sites.example.json --agent
 
 On 2026-07-29, the default ten-page Stanford run found Andrew Ng on the live Stanford HAI page using ARK extraction. Parallel wall time was 18.542 s; serial time was 58.264 s, a measured 3.142× speedup. All 10 parallel and 10 serial browser contexts closed. The live cascade stress run produced one winner, one terminate broadcast, three losing-worker acknowledgements, and 4/4 closed contexts.
 
-Sanitized machine-readable records are committed in [`validation/real_parallel_serial_2026-07-29.json`](validation/real_parallel_serial_2026-07-29.json) and [`validation/real_cascade_2026-07-29.json`](validation/real_cascade_2026-07-29.json). Tests assert the speedup, single broadcast, all loser acknowledgements, and created/closed context equality.
+The current provenance-complete campaign is
+[`validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json`](validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json).
+All 12 acceptance gates passed: the ten-site parallel and serial paths both
+found the target and closed all 20 contexts; the measured speedup was 1.872×;
+the cascade produced one broadcast, three loser acknowledgements, and 4/4
+closed contexts. The run retains 24 full browser observations, three raw ARK
+responses with unique response IDs and usage, and 114 bus events. Seven runtime
+source/input hashes and all four artifact hashes recompute exactly, and the
+credential scan found zero hits.
+
+The earlier sanitized summary-only records remain at
+[`validation/real_parallel_serial_2026-07-29.json`](validation/real_parallel_serial_2026-07-29.json)
+and [`validation/real_cascade_2026-07-29.json`](validation/real_cascade_2026-07-29.json)
+for historical comparison; they are not the current provenance anchor.
 
 ---
 

@@ -1,0 +1,1475 @@
+{
+  "schema_version": 1,
+  "receipts": [
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-00",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://med.stanford.edu/profiles/browse",
+        "task_id": "agent-00"
+      },
+      "sequence": 1,
+      "relative_seconds": 0.686733
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-01",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://law.stanford.edu/directory/?tax_and_terms=1067",
+        "task_id": "agent-01"
+      },
+      "sequence": 2,
+      "relative_seconds": 0.686779
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-02",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://ed.stanford.edu/faculty",
+        "task_id": "agent-02"
+      },
+      "sequence": 3,
+      "relative_seconds": 0.686806
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-03",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://www.gsb.stanford.edu/faculty-research/faculty",
+        "task_id": "agent-03"
+      },
+      "sequence": 4,
+      "relative_seconds": 0.686832
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-04",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://sustainability.stanford.edu/people/faculty",
+        "task_id": "agent-04"
+      },
+      "sequence": 5,
+      "relative_seconds": 0.686872
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-05",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://humsci.stanford.edu/about/leadership-and-administration/deans-office",
+        "task_id": "agent-05"
+      },
+      "sequence": 6,
+      "relative_seconds": 0.6869
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-06",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://engineering.stanford.edu/faculty-research/faculty",
+        "task_id": "agent-06"
+      },
+      "sequence": 7,
+      "relative_seconds": 0.686919
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-07",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://www.cs.stanford.edu/people/faculty",
+        "task_id": "agent-07"
+      },
+      "sequence": 8,
+      "relative_seconds": 0.686941
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-08",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://profiles.stanford.edu/andrew-ng",
+        "task_id": "agent-08"
+      },
+      "sequence": 9,
+      "relative_seconds": 0.686976
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "agent-09",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://hai.stanford.edu/people/andrew-ng",
+        "task_id": "agent-09"
+      },
+      "sequence": 10,
+      "relative_seconds": 0.687013
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "medicine-profiles"
+      },
+      "sequence": 11,
+      "relative_seconds": 0.687258
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "law-faculty"
+      },
+      "sequence": 12,
+      "relative_seconds": 0.6873
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "education-faculty"
+      },
+      "sequence": 13,
+      "relative_seconds": 0.687311
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "business-faculty"
+      },
+      "sequence": 14,
+      "relative_seconds": 0.687316
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 15,
+      "relative_seconds": 0.687321
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "humanities-faculty"
+      },
+      "sequence": 16,
+      "relative_seconds": 0.687325
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "engineering-faculty"
+      },
+      "sequence": 17,
+      "relative_seconds": 0.687333
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "computer-science"
+      },
+      "sequence": 18,
+      "relative_seconds": 0.687344
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "stanford-profiles"
+      },
+      "sequence": 19,
+      "relative_seconds": 0.687348
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "human-ai"
+      },
+      "sequence": 20,
+      "relative_seconds": 0.687353
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://engineering.stanford.edu/faculty-research/faculty",
+        "source": "engineering-faculty"
+      },
+      "sequence": 21,
+      "relative_seconds": 0.889102
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://profiles.stanford.edu/andrew-ng",
+        "source": "stanford-profiles"
+      },
+      "sequence": 22,
+      "relative_seconds": 0.891061
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://www.gsb.stanford.edu/faculty-research/faculty",
+        "source": "business-faculty"
+      },
+      "sequence": 23,
+      "relative_seconds": 0.891731
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://www.cs.stanford.edu/people/faculty",
+        "source": "computer-science"
+      },
+      "sequence": 24,
+      "relative_seconds": 0.892867
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://humsci.stanford.edu/about/leadership-and-administration/deans-office",
+        "source": "humanities-faculty"
+      },
+      "sequence": 25,
+      "relative_seconds": 0.893457
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://hai.stanford.edu/people/andrew-ng",
+        "source": "human-ai"
+      },
+      "sequence": 26,
+      "relative_seconds": 0.894183
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://sustainability.stanford.edu/people/faculty",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 27,
+      "relative_seconds": 0.894792
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://law.stanford.edu/directory/?tax_and_terms=1067",
+        "source": "law-faculty"
+      },
+      "sequence": 28,
+      "relative_seconds": 0.895493
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://ed.stanford.edu/faculty",
+        "source": "education-faculty"
+      },
+      "sequence": 29,
+      "relative_seconds": 0.896322
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://med.stanford.edu/profiles/browse",
+        "source": "medicine-profiles"
+      },
+      "sequence": 30,
+      "relative_seconds": 0.897096
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "human-ai"
+      },
+      "sequence": 31,
+      "relative_seconds": 2.94925
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "human-ai"
+      },
+      "sequence": 32,
+      "relative_seconds": 2.967068
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "computer-science"
+      },
+      "sequence": 33,
+      "relative_seconds": 3.515442
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "engineering-faculty"
+      },
+      "sequence": 34,
+      "relative_seconds": 3.516676
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "education-faculty"
+      },
+      "sequence": 35,
+      "relative_seconds": 3.517178
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "computer-science"
+      },
+      "sequence": 36,
+      "relative_seconds": 3.529748
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "computer-science"
+      },
+      "sequence": 37,
+      "relative_seconds": 3.530003
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "computer-science"
+      },
+      "sequence": 38,
+      "relative_seconds": 3.530032
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "engineering-faculty"
+      },
+      "sequence": 39,
+      "relative_seconds": 3.531499
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "engineering-faculty"
+      },
+      "sequence": 40,
+      "relative_seconds": 3.532551
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "engineering-faculty"
+      },
+      "sequence": 41,
+      "relative_seconds": 3.532621
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "education-faculty"
+      },
+      "sequence": 42,
+      "relative_seconds": 3.533912
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "education-faculty"
+      },
+      "sequence": 43,
+      "relative_seconds": 3.535628
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "education-faculty"
+      },
+      "sequence": 44,
+      "relative_seconds": 3.535752
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-07",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "computer-science"
+      },
+      "sequence": 45,
+      "relative_seconds": 3.536631
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-06",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "engineering-faculty"
+      },
+      "sequence": 46,
+      "relative_seconds": 3.538605
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "education-faculty"
+      },
+      "sequence": 47,
+      "relative_seconds": 3.541659
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "medicine-profiles"
+      },
+      "sequence": 48,
+      "relative_seconds": 3.75104
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "medicine-profiles"
+      },
+      "sequence": 49,
+      "relative_seconds": 3.765506
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "medicine-profiles"
+      },
+      "sequence": 50,
+      "relative_seconds": 3.765695
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "medicine-profiles"
+      },
+      "sequence": 51,
+      "relative_seconds": 3.76572
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "medicine-profiles"
+      },
+      "sequence": 52,
+      "relative_seconds": 3.769237
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 53,
+      "relative_seconds": 3.869376
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 54,
+      "relative_seconds": 3.882985
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 55,
+      "relative_seconds": 3.883282
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "sustainability-faculty"
+      },
+      "sequence": 56,
+      "relative_seconds": 3.883308
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-04",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "sustainability-faculty"
+      },
+      "sequence": 57,
+      "relative_seconds": 3.887195
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "business-faculty"
+      },
+      "sequence": 58,
+      "relative_seconds": 4.022245
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "business-faculty"
+      },
+      "sequence": 59,
+      "relative_seconds": 4.04849
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "business-faculty"
+      },
+      "sequence": 60,
+      "relative_seconds": 4.048768
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "business-faculty"
+      },
+      "sequence": 61,
+      "relative_seconds": 4.048793
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "business-faculty"
+      },
+      "sequence": 62,
+      "relative_seconds": 4.052864
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "stanford-profiles"
+      },
+      "sequence": 63,
+      "relative_seconds": 4.096373
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "stanford-profiles"
+      },
+      "sequence": 64,
+      "relative_seconds": 4.108352
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "stanford-profiles"
+      },
+      "sequence": 65,
+      "relative_seconds": 4.108574
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "stanford-profiles"
+      },
+      "sequence": 66,
+      "relative_seconds": 4.108605
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-08",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "stanford-profiles"
+      },
+      "sequence": 67,
+      "relative_seconds": 4.112019
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "humanities-faculty"
+      },
+      "sequence": 68,
+      "relative_seconds": 4.438119
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "humanities-faculty"
+      },
+      "sequence": 69,
+      "relative_seconds": 4.45015
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "humanities-faculty"
+      },
+      "sequence": 70,
+      "relative_seconds": 4.450428
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "humanities-faculty"
+      },
+      "sequence": 71,
+      "relative_seconds": 4.450488
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-05",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "humanities-faculty"
+      },
+      "sequence": 72,
+      "relative_seconds": 4.453989
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "law-faculty"
+      },
+      "sequence": 73,
+      "relative_seconds": 4.851059
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "law-faculty"
+      },
+      "sequence": 74,
+      "relative_seconds": 4.896252
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "not_found",
+      "payload": {
+        "reason": "target name absent from rendered page",
+        "source": "law-faculty"
+      },
+      "sequence": 75,
+      "relative_seconds": 4.896543
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "页面中未找到目标",
+        "source": "law-faculty"
+      },
+      "sequence": 76,
+      "relative_seconds": 4.896576
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "law-faculty"
+      },
+      "sequence": 77,
+      "relative_seconds": 4.901334
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "target_found",
+      "payload": {
+        "data": {
+          "found": true,
+          "name": "Andrew Ng",
+          "college": "Stanford HAI",
+          "position": "Adjunct Professor at Stanford University",
+          "research": "machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms... including such applications as autonomous driving",
+          "evidence": "PEOPLE\nFACULTY\nAndrew Ng\n\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University",
+          "provider": "ark",
+          "url": "https://hai.stanford.edu/people/andrew-ng"
+        },
+        "source": "human-ai"
+      },
+      "sequence": 78,
+      "relative_seconds": 24.704684
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "找到目标教师",
+        "source": "human-ai"
+      },
+      "sequence": 79,
+      "relative_seconds": 24.704725
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "coordinator",
+      "target": "*",
+      "type": "terminate",
+      "payload": {
+        "reason": "target_found_by_agent-09",
+        "winner": "agent-09"
+      },
+      "sequence": 80,
+      "relative_seconds": 24.704815
+    },
+    {
+      "phase": "default_parallel",
+      "sender_id": "agent-09",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "human-ai"
+      },
+      "sequence": 81,
+      "relative_seconds": 24.708345
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "coordinator",
+      "target": "agent-00",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=a",
+        "task_id": "agent-00"
+      },
+      "sequence": 82,
+      "relative_seconds": 70.274917
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "coordinator",
+      "target": "agent-01",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=b",
+        "task_id": "agent-01"
+      },
+      "sequence": 83,
+      "relative_seconds": 70.274965
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "coordinator",
+      "target": "agent-02",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=c",
+        "task_id": "agent-02"
+      },
+      "sequence": 84,
+      "relative_seconds": 70.275001
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "coordinator",
+      "target": "agent-03",
+      "type": "task_assigned",
+      "payload": {
+        "target": "Andrew Ng",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=d",
+        "task_id": "agent-03"
+      },
+      "sequence": 85,
+      "relative_seconds": 70.27504
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "hai-a"
+      },
+      "sequence": 86,
+      "relative_seconds": 70.27531
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "hai-b"
+      },
+      "sequence": 87,
+      "relative_seconds": 70.275322
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "hai-c"
+      },
+      "sequence": 88,
+      "relative_seconds": 70.275462
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "创建独立 Chromium context",
+        "source": "hai-d"
+      },
+      "sequence": 89,
+      "relative_seconds": 70.275471
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://hai.stanford.edu/people/andrew-ng?worker=a",
+        "source": "hai-a"
+      },
+      "sequence": 90,
+      "relative_seconds": 70.324832
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://hai.stanford.edu/people/andrew-ng?worker=b",
+        "source": "hai-b"
+      },
+      "sequence": 91,
+      "relative_seconds": 70.325715
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://hai.stanford.edu/people/andrew-ng?worker=c",
+        "source": "hai-c"
+      },
+      "sequence": 92,
+      "relative_seconds": 70.326756
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在加载 https://hai.stanford.edu/people/andrew-ng?worker=d",
+        "source": "hai-d"
+      },
+      "sequence": 93,
+      "relative_seconds": 70.327528
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "hai-b"
+      },
+      "sequence": 94,
+      "relative_seconds": 72.714991
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "hai-b"
+      },
+      "sequence": 95,
+      "relative_seconds": 72.740861
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "hai-d"
+      },
+      "sequence": 96,
+      "relative_seconds": 72.833325
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "hai-a"
+      },
+      "sequence": 97,
+      "relative_seconds": 72.834426
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "hai-d"
+      },
+      "sequence": 98,
+      "relative_seconds": 72.866066
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "hai-a"
+      },
+      "sequence": 99,
+      "relative_seconds": 72.935108
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在读取渲染后的教师页面",
+        "source": "hai-c"
+      },
+      "sequence": 100,
+      "relative_seconds": 73.01882
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "执行中",
+        "note": "正在做证据约束的教师信息抽取",
+        "source": "hai-c"
+      },
+      "sequence": 101,
+      "relative_seconds": 73.042117
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "target_found",
+      "payload": {
+        "data": {
+          "found": true,
+          "name": "Andrew Ng",
+          "college": "Stanford HAI",
+          "position": "Adjunct Professor at Stanford University",
+          "research": "machine learning with an emphasis on deep learning, applications to computer vision and speech, including autonomous driving",
+          "evidence": "Andrew Ng\n\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University",
+          "provider": "ark",
+          "url": "https://hai.stanford.edu/people/andrew-ng?worker=c"
+        },
+        "source": "hai-c"
+      },
+      "sequence": 102,
+      "relative_seconds": 81.137594
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已完成",
+        "note": "找到目标教师",
+        "source": "hai-c"
+      },
+      "sequence": 103,
+      "relative_seconds": 81.137654
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "coordinator",
+      "target": "*",
+      "type": "terminate",
+      "payload": {
+        "reason": "target_found_by_agent-02",
+        "winner": "agent-02"
+      },
+      "sequence": 104,
+      "relative_seconds": 81.137722
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已终止",
+        "note": "安全点响应终止：target_found_by_agent-02",
+        "source": "hai-a"
+      },
+      "sequence": 105,
+      "relative_seconds": 81.142402
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已终止",
+        "note": "安全点响应终止：target_found_by_agent-02",
+        "source": "hai-b"
+      },
+      "sequence": 106,
+      "relative_seconds": 81.142416
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "status_update",
+      "payload": {
+        "state": "已终止",
+        "note": "安全点响应终止：target_found_by_agent-02",
+        "source": "hai-d"
+      },
+      "sequence": 107,
+      "relative_seconds": 81.142423
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "ack",
+      "payload": {
+        "acked": "terminate",
+        "source": "hai-a"
+      },
+      "sequence": 108,
+      "relative_seconds": 81.142461
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "ack",
+      "payload": {
+        "acked": "terminate",
+        "source": "hai-b"
+      },
+      "sequence": 109,
+      "relative_seconds": 81.142465
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "ack",
+      "payload": {
+        "acked": "terminate",
+        "source": "hai-d"
+      },
+      "sequence": 110,
+      "relative_seconds": 81.142468
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-02",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "hai-c"
+      },
+      "sequence": 111,
+      "relative_seconds": 81.151721
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-00",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "hai-a"
+      },
+      "sequence": 112,
+      "relative_seconds": 81.152082
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-01",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "hai-b"
+      },
+      "sequence": 113,
+      "relative_seconds": 81.152275
+    },
+    {
+      "phase": "cascade_stress",
+      "sender_id": "agent-03",
+      "target": "coordinator",
+      "type": "resource_closed",
+      "payload": {
+        "browser_context_closed": true,
+        "source": "hai-d"
+      },
+      "sequence": 114,
+      "relative_seconds": 81.152431
+    }
+  ]
+}
