@@ -4,13 +4,13 @@
 
 
 
-<text x="145" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Putaran 1 selesai</text>
-<text x="400" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Putaran 2 selesai</text>
-<text x="655" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Putaran 3 selesai</text>
+<text x="145" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Giliran 1 selesai</text>
+<text x="400" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Giliran 2 selesai</text>
+<text x="655" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Giliran 3 selesai</text>
 
-<text x="145" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(load PPTX skill pertama)</text>
-<text x="400" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(baca file PDF)</text>
-<text x="655" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(tulis HTML)</text>
+<text x="145" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(memuat Skill PPTX pertama kali)</text>
+<text x="400" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(membaca file PDF)</text>
+<text x="655" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(menulis HTML)</text>
 
 
 <line x1="270" y1="55" x2="270" y2="430" stroke="#dddddd" stroke-width="1" />
@@ -35,11 +35,11 @@
 
 
 <rect x="25" y="100" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5" />
-<text x="33" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">sistem</text>
+<text x="33" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">system</text>
 <text x="258" y="111" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">BARU</text>
 
 <rect x="25" y="124" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5" />
-<text x="33" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">tool</text>
+<text x="33" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" dominant-baseline="central">tools</text>
 <text x="258" y="135" font-family="Arial, sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">BARU</text>
 
 <rect x="25" y="148" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5" />
@@ -71,16 +71,16 @@
 
 <rect x="25" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5" />
 <text x="145" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation untuk giliran ini</text>
-<text x="145" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 2,5k token</text>
+<text x="145" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 2.5k token</text>
 
 
 
 <rect x="280" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
-<text x="288" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">sistem</text>
+<text x="288" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
 <text x="513" y="111" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
 
 <rect x="280" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
-<text x="288" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tool</text>
+<text x="288" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tools</text>
 <text x="513" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
 
 <rect x="280" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
@@ -119,16 +119,16 @@
 
 <rect x="280" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5" />
 <text x="400" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation untuk giliran ini</text>
-<text x="400" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0,5k token</text>
+<text x="400" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.5k token</text>
 
 
 
 <rect x="535" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
-<text x="543" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">sistem</text>
+<text x="543" y="111" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
 <text x="768" y="111" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
 
 <rect x="535" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
-<text x="543" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tool</text>
+<text x="543" y="135" font-family="'Courier New', Courier, monospace" font-size="11" fill="#777777" dominant-baseline="central">tools</text>
 <text x="768" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
 
 <rect x="535" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
@@ -171,21 +171,21 @@
 
 <rect x="535" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5" />
 <text x="655" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">cache_creation untuk giliran ini</text>
-<text x="655" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0,4k token</text>
+<text x="655" y="410" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.4k token</text>
 
 
 <rect x="40" y="450" width="20" height="14" rx="2" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5" />
-<text x="68" y="457" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">BARU = token baru ditambahkan pada giliran ini, bayar pembuatan cache satu kali</text>
+<text x="68" y="457" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">BARU = token baru ditambahkan giliran ini, membayar cache_creation sekali</text>
 
 <rect x="40" y="472" width="20" height="14" rx="2" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1" />
-<text x="68" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">HIT = sudah ada di prefix cache, hit gratis pada giliran ini</text>
+<text x="68" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">HIT = sudah ada di prefiks cache, hit gratis pada giliran ini</text>
 
 <rect x="40" y="494" width="20" height="14" rx="2" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3" />
 <text x="68" y="501" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" dominant-baseline="central">— konten belum dihasilkan pada giliran ini</text>
 
-<text x="450" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" dominant-baseline="central">★ Tandai lampiran dengan emit-once: bayar cache_creation hanya pada Giliran 1,</text>
-<text x="450" y="497" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" dominant-baseline="central">      lalu HIT permanen untuk semua giliran berikutnya, biaya marjinal nol.</text>
+<text x="450" y="479" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" dominant-baseline="central">★ Tandai lampiran dengan dikirim sekali: bayar cache_creation hanya pada Giliran 1,</text>
+<text x="450" y="497" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" dominant-baseline="central">      kemudian permanen HIT untuk semua giliran selanjutnya, biaya marjinal nol.</text>
 
 
-<text x="410" y="525" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-style="italic">Catatan: setelah disisipkan, posisi indeks dari setiap pesan tidak pernah berubah; konten baru hanya ditambahkan ke akhir array.</text>
+<text x="410" y="525" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-style="italic">Catatan: setelah disisipkan, posisi indeks setiap pesan tidak pernah bergeser; konten baru hanya ditambahkan ke akhir array.</text>
 </svg>

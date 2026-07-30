@@ -764,22 +764,22 @@
 <rect x="819" y="65" width="1" height="30" fill="#505050" />
 <rect x="60" y="65" width="760" height="30" fill="none" stroke="#333333" stroke-width="2" rx="4" />
 <text x="60" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">sparse</text>
-<text x="820" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">padat</text>
+<text x="820" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">dense</text>
 <line x1="98.0" y1="65" x2="98.0" y2="95" stroke="#333333" stroke-width="2" />
 <line x1="98.0" y1="95" x2="117.5" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
 <rect x="20" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="117.5" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">reward biner</text>
+<text x="117.5" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">binary reward</text>
 <line x1="30" y1="162" x2="205" y2="162" stroke="#999999" stroke-width="2" />
-<text x="30" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">GAIA: kecocokan persis → 0 / 1</text>
-<text x="30" y="204" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">SWE-Bench: tes lulus → 0 / 1</text>
-<text x="30" y="226" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">kesulitan penugasan kredit (credit assignment): dalam 10 langkah</text>
+<text x="30" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">GAIA: exact match → 0 / 1</text>
+<text x="30" y="204" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">SWE-Bench: test pass → 0 / 1</text>
+<text x="30" y="226" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">kesulitan credit assignment: dalam 10 langkah</text>
 <text x="30" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">langkah mana yang menyebabkan kegagalan?</text>
 <line x1="310.8" y1="65" x2="310.8" y2="95" stroke="#333333" stroke-width="2" />
 <line x1="310.8" y1="95" x2="310.8" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
 <rect x="213.3" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="310.8" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">reward milestone</text>
+<text x="310.8" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">milestone reward</text>
 <line x1="223.3" y1="162" x2="398.3" y2="162" stroke="#999999" stroke-width="2" />
-<text x="223.3" y="182" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">Verifikasi multi-dimensi τ²-bench:</text>
+<text x="223.3" y="182" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">verifikasi multi-dimensi τ²-bench:</text>
 <text x="223.3" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  Status DB ✓ (+0.4)</text>
 <text x="223.3" y="226" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">  konfirmasi kata kunci ✓ (+0.3)</text>
 <text x="223.3" y="248" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  kepatuhan proses ✓ (+0.3)</text>
@@ -788,23 +788,23 @@
 <rect x="433.70000000000005" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
 <text x="531.2" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">process reward</text>
 <line x1="443.70000000000005" y1="162" x2="618.7" y2="162" stroke="#999999" stroke-width="2" />
-<text x="443.70000000000005" y="182" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">feedback langsung per langkah:</text>
+<text x="443.70000000000005" y="182" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">umpan balik langsung per langkah:</text>
 <text x="443.70000000000005" y="204" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  verifikasi identitas → +0.1</text>
-<text x="443.70000000000005" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  informasi query → +0.1</text>
-<text x="443.70000000000005" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  konfirmasi user → +0.2</text>
+<text x="443.70000000000005" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  query informasi → +0.1</text>
+<text x="443.70000000000005" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  konfirmasi pengguna → +0.2</text>
 <line x1="744.0" y1="65" x2="744.0" y2="95" stroke="#333333" stroke-width="2" />
 <line x1="744.0" y1="95" x2="744.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
 <rect x="646.5" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="744.0" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">kontinu padat</text>
+<text x="744.0" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">dense continuous</text>
 <line x1="656.5" y1="162" x2="831.5" y2="162" stroke="#999999" stroke-width="2" />
-<text x="656.5" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Skor sebagian AndroidWorld:</text>
+<text x="656.5" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Skor parsial AndroidWorld:</text>
 <text x="656.5" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  klik benar → +0.05</text>
-<text x="656.5" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  isi field → +0.1</text>
+<text x="656.5" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  pengisian field → +0.1</text>
 <text x="656.5" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  state akhir → +0.5</text>
 <rect x="100" y="290" width="680" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2" />
-<text x="115" y="308" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Kasus Pine AI: reward biner membutuhkan 100 percobaan untuk berhasil secara kebetulan</text>
-<text x="115" y="328" font-family="'Courier New', Courier, monospace" font-size="14.5" fill="#333333" text-anchor="start" dominant-baseline="central">akar penyebab: RL bebas model hanya melihat reward=0, tidak bisa belajar dari observasi</text>
+<text x="115" y="308" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Kasus Pine AI: binary reward butuh 100 percobaan untuk berhasil secara kebetulan</text>
+<text x="115" y="328" font-family="'Courier New', Courier, monospace" font-size="14.5" fill="#333333" text-anchor="start" dominant-baseline="central">akar masalah: model-free RL hanya melihat reward=0, tidak bisa belajar dari observasi</text>
 <rect x="100" y="355" width="680" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="440.0" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">trade-off: dense reward lebih mudah dipelajari, tetapi biaya anotasinya tinggi dan dapat terlalu membatasi inovasi</text>
-<text x="440.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">praktik: process reward dan outcome reward digunakan bersama</text>
+<text x="440.0" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">trade-off: dense reward lebih mudah dipelajari, tapi biaya anotasi tinggi dan dapat terlalu membatasi inovasi</text>
+<text x="440.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">praktik: process reward dan outcome reward digunakan bersamaan</text>
 </svg>
