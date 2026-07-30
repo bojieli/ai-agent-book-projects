@@ -60,21 +60,24 @@ def _apply_one(content: str, old_str: str, new_str: str) -> tuple[str, str | Non
     return content.replace(old_str, new_str, 1), None
 
 
-def _apply_edits_from_args(working: str, args: dict) -> tuple[str, int, list, list]:
-    """Apply apply_edits tool args to working text. JSON null edits like omit ([])."""
+def _apply_edits_from_args(working: str, args: dict) -> tuple[str, int, list, list, list]:
+    """Apply edits; null edits → []; skip non-dict entries with a warning."""
     edits = args.get("edits")
     if edits is None:
         edits = []
     errors = []
+    warnings = []
     applied = 0
     for e in edits:
+        if not isinstance(e, dict):
+            warnings.append(f"跳过非对象编辑项 ({type(e).__name__}): {e!r}")
+            continue
         working, err = _apply_one(working, e.get("old_str", ""), e.get("new_str", ""))
         if err:
             errors.append(err)
         else:
             applied += 1
-    return working, applied, errors, edits
-
+    return working, applied, errors, warnings, edits
 
 def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bool = True) -> dict:
     """
@@ -138,26 +141,30 @@ def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bo
         except json.JSONDecodeError:
             args = {}
         rationale = args.get("rationale", rationale)
-        working, applied, errors, edits = _apply_edits_from_args(working, args)
+        working, applied, errors, warnings, edits = _apply_edits_from_args(working, args)
 
         if verbose:
-            print(f"  [round {round_idx + 1}] 提交 {len(edits)} 条编辑，成功 {applied}，失败 {len(errors)}")
+            print(f"  [round {round_idx + 1}] 提交 {len(edits)} 条编辑，成功 {applied}，失败 {len(errors)}，跳过 {len(warnings)}")
 
         if not errors:
-            # 全部编辑成功，落盘
+            # 有效编辑已全部成功应用，落盘
+            msg_content = "所有有效编辑已成功应用。"
+            if warnings:
+                msg_content += "\n以下非对象编辑项已被跳过：\n" + "\n".join(f"- {w}" for w in warnings)
             messages.append(
-                {"role": "tool", "tool_call_id": tc.id, "content": "所有编辑已成功应用。"}
+                {"role": "tool", "tool_call_id": tc.id, "content": msg_content}
             )
             break
         else:
-            # 有失败：回滚到原文，把错误反馈给模型重试（保持编辑的原子性）
+            # 有实际应用失败：回滚到原文，把错误反馈给模型重试（保持编辑的原子性）
             working = original
             feedback_msg = (
                 "以下编辑未能应用，请修正后重新提交完整的编辑列表（注意 old_str 必须与文件逐字符一致）：\n"
                 + "\n".join(f"- {er}" for er in errors)
             )
+            if warnings:
+                feedback_msg += "\n另有以下非对象编辑项已被跳过：\n" + "\n".join(f"- {w}" for w in warnings)
             messages.append({"role": "tool", "tool_call_id": tc.id, "content": feedback_msg})
-
     # 落盘（原地覆盖 prompt 文件）
     with open(prompt_path, "w", encoding="utf-8") as f:
         f.write(working)
