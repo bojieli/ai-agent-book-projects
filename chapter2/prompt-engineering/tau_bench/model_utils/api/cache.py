@@ -31,7 +31,7 @@ def enable_cache():
 
 def hash_item(item: Any) -> int:
     if isinstance(item, dict):
-        return hash(tuple({k: hash_item(v) for k, v in sorted(item.items())}))
+        return hash(tuple((k, hash_item(v)) for k, v in sorted(item.items())))
     elif isinstance(item, list):
         return hash(tuple([hash_item(x) for x in item]))
     elif isinstance(item, set):
