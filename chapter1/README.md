@@ -4,6 +4,10 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter1.md)
 
+逐项正文验收、真实 API 状态与证据路径见
+[EXPERIMENT_LEDGER.md](EXPERIMENT_LEDGER.md)。其中实验 1-1 的五臂正式运行已完成，
+但“去掉 reasoning 必然退化”没有在该次运行中复现；实验 1-3 则在推理前受官方配额阻塞。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
