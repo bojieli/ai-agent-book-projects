@@ -31,15 +31,42 @@ def enable_cache():
 
 def hash_item(item: Any) -> Any:
     if isinstance(item, dict):
-        return tuple((k, hash_item(v)) for k, v in sorted(item.items()))
+        entries = ((hash_item(key), hash_item(value)) for key, value in item.items())
+        return (
+            "dict",
+            tuple(
+                sorted(
+                    entries,
+                    key=lambda entry: (
+                        type(entry[0]).__module__,
+                        type(entry[0]).__qualname__,
+                        repr(entry[0]),
+                    ),
+                )
+            ),
+        )
     elif isinstance(item, list):
-        return tuple(hash_item(x) for x in item)
+        return ("list", tuple(hash_item(x) for x in item))
     elif isinstance(item, set):
-        return tuple(sorted((hash_item(x) for x in item), key=lambda x: str(x)))
+        return (
+            "set",
+            tuple(
+                sorted(
+                    (hash_item(x) for x in item),
+                    key=lambda x: (type(x).__module__, type(x).__qualname__, repr(x)),
+                )
+            ),
+        )
     elif isinstance(item, tuple):
-        return tuple(hash_item(x) for x in item)
+        return ("tuple", tuple(hash_item(x) for x in item))
     elif isinstance(item, BaseModel):
-        return hash_item(item.model_dump() if hasattr(item, "model_dump") else item.dict())
+        values = item.model_dump() if hasattr(item, "model_dump") else item.dict()
+        return (
+            "model",
+            type(item).__module__,
+            type(item).__qualname__,
+            hash_item(values),
+        )
     return item
 
 
@@ -48,7 +75,7 @@ def hash_func_call(func: Callable[..., Any], args: tuple[Any], kwargs: dict[str,
     bound_args.apply_defaults()
     standardized_args = sorted(bound_args.arguments.items())
     arg_hash = hash_item(standardized_args)
-    hashed_func = getattr(func, "__qualname__", getattr(func, "__name__", str(func)))
+    hashed_func = id(func)
     call = (hashed_func, arg_hash)
     return hashlib.md5(str(call).encode()).hexdigest()
 
