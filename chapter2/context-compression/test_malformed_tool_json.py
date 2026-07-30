@@ -32,22 +32,31 @@ def test_execute_research_survives_malformed_tool_arguments_json():
             enable_streaming=False,
         )
 
-    bad_call = {
-        "id": "call-bad",
+    bad_call_search = {
+        "id": "call-bad-search",
         "type": "function",
         "function": {
             "name": "search_web",
             "arguments": '{"query": "openai",}',  # trailing comma
         },
     }
-    tool_msg = {"role": "assistant", "content": "searching", "tool_calls": [bad_call]}
+    bad_call_fetch = {
+        "id": "call-bad-fetch",
+        "type": "function",
+        "function": {
+            "name": "fetch_webpage",
+            "arguments": '{"url": "https://example.com",}',  # malformed JSON
+        },
+    }
+    tool_msg = {"role": "assistant", "content": "searching", "tool_calls": [bad_call_search, bad_call_fetch]}
     final_msg = {"role": "assistant", "content": "FINAL ANSWER: ok", "tool_calls": None}
 
     agent._non_streaming_response = MagicMock(side_effect=[tool_msg, final_msg])
 
-    # Do NOT mock _execute_tool, let real dispatch run over missing query arguments
+    # Do NOT mock _execute_tool, let real dispatch run over missing query/url arguments
     result = agent.execute_research(max_iterations=3)
 
     assert result.get("error") is None
-    assert len(agent.trajectory.tool_calls) == 1
+    assert len(agent.trajectory.tool_calls) == 2
     assert agent.trajectory.tool_calls[0].result == {"error": "Missing required argument 'query' for search_web"}
+    assert agent.trajectory.tool_calls[1].result == {"error": "Missing required argument 'url' for fetch_webpage"}

@@ -203,7 +203,10 @@ TODAY'S DATE: {date_string}"""
         if tool_name == "search_web":
             if "query" not in arguments:
                 return {"error": "Missing required argument 'query' for search_web"}, None
-            result = self.web_tools.search_web(**arguments)
+            try:
+                result = self.web_tools.search_web(**arguments)
+            except Exception as e:
+                return {"error": f"Failed to execute search_web: {e}"}, None
             
             # Apply compression strategy
             query = arguments.get('query', '')
@@ -219,7 +222,10 @@ TODAY'S DATE: {date_string}"""
         elif tool_name == "fetch_webpage":
             if "url" not in arguments:
                 return {"error": "Missing required argument 'url' for fetch_webpage"}, None
-            result = self.web_tools.fetch_webpage(**arguments)
+            try:
+                result = self.web_tools.fetch_webpage(**arguments)
+            except Exception as e:
+                return {"error": f"Failed to execute fetch_webpage: {e}"}, None
             
             # For fetch, we typically don't compress (used for follow-ups)
             return result, None
@@ -574,11 +580,11 @@ TODAY'S DATE: {date_string}"""
                             function_args = json.loads(raw_args)
                             if not isinstance(function_args, dict):
                                 function_args = {}
-                        except json.JSONDecodeError:
+                        except (json.JSONDecodeError, TypeError):
                             # Tolerate bad tool-arg JSON; keep the loop alive.
                             function_args = {}
                             logger.warning(
-                                "工具参数不是合法 JSON，已按空对象继续: %r",
+                                "Tool argument is not valid JSON, proceeding with empty object: %r",
                                 raw_args,
                             )
                         
