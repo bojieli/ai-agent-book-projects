@@ -69,3 +69,19 @@ def test_cache_distinguishes_same_named_function_instances():
 
     assert lookup_a(7) == ("a", 7)
     assert lookup_b(7) == ("b", 7)
+
+
+def test_cache_distinguishes_nan_dictionary_keys():
+    calls = 0
+
+    @cache_call_w_dedup
+    def lookup(value):
+        nonlocal calls
+        calls += 1
+        return calls, value
+
+    first_result = lookup({float("nan"): "value"})
+    second_result = lookup({float("nan"): "value"})
+
+    assert first_result[0] == 1
+    assert second_result[0] == 2
