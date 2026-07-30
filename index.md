@@ -1,6 +1,6 @@
 ---
 title: 深入理解 AI Agent
-description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 AI Agent 从原理讲到工程实战的开源技术书。正文、配图、93 个配套实验全部开源。
+description: 围绕核心公式 Agent = LLM + 上下文 + 工具,用 10 章把 AI Agent 从原理讲到工程实战的开源技术书。正文、配图、94 个配套实验全部开源。
 ---
 
 <div class="hero" markdown>
