@@ -1,0 +1,89 @@
+{
+  "signature": "c3f22d92a68a59a14b7d6ed17887ecd05796bc2314023f9391ed711f3e4d8af8",
+  "parsed": {
+    "advice": "匹配训练集原型为“故意伤害罪-prototype-1”（样本量100），匹配依据为案件关键因素与原型定义特征高度重合，包括injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事等（对应原型中z值较高的特征）。该原型刑期统计区间：中位数8个月，四分位区间6-12个月（q25=6.0，q75=12.0），范围3-36个月。需注意，案件中自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，可能导致实际刑期与统计区间存在差异，不确定性较高。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-0317ae92dc821b04",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:03.759235+00:00",
+    "latency_ms": 26429.064,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"故意伤害罪\", \"surrender\": true, \"truthful_confession\": null, \"compensation_to_victim\": \"全额赔偿\", \"victim_forgiveness\": true, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": \"自首\", \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": null, \"guilty_plea\": true, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"injury_degree\": \"轻伤二级\", \"weapon_type\": null, \"criminal_cause\": \"债务纠纷\", \"community_correction_eligibility\": null, \"victim_fault\": null, \"compensation_status\": \"全额赔偿\", \"mutual_fight\": null, \"injury_result\": \"轻伤\", \"criminal_motive\": \"琐事\", \"drunk_crime\": null, \"minor_injury_count\": 1.0, \"serious_injury_count\": 0.0}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"故意伤害罪-prototype-1\", \"charge\": \"故意伤害罪\", \"prototype_size\": 100, \"sentence_months\": {\"median\": 8.0, \"q25\": 6.0, \"q75\": 12.0, \"min\": 3.0, \"max\": 36.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=轻伤\", \"z\": 1.5568442135769593}, {\"feature\": \"num:minor_injury_count\", \"z\": 1.4868344442139674}, {\"feature\": \"num:crime_amount\", \"z\": -1.1597831108065333}, {\"feature\": \"cat:injury_degree=轻伤二级\", \"z\": 1.1511080895758883}, {\"feature\": \"cat:criminal_cause=琐事争执\", \"z\": 1.0373867906329766}, {\"feature\": \"bool:mutual_fight\", \"z\": 0.8262918864452846}, {\"feature\": \"cat:criminal_motive=琐事\", \"z\": 0.7564756876813216}, {\"feature\": \"num:crime_count\", \"z\": -0.7017513783529625}], \"match_distance\": 0.15484050438307592}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "02178538652398866d4fff57f472cc97f9dc7178d7aa526f9b569",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配训练集原型为“故意伤害罪-prototype-1”（样本量100），匹配依据为案件关键因素与原型定义特征高度重合，包括injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事等（对应原型中z值较高的特征）。该原型刑期统计区间：中位数8个月，四分位区间6-12个月（q25=6.0，q75=12.0），范围3-36个月。需注意，案件中自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，可能导致实际刑期与统计区间存在差异，不确定性较高。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户提供的司法数据分析请求。首先，我要仔细阅读用户给出的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE ONLY的内容，然后根据要求生成JSON格式的建议。\n\n首先，用户的问题是关于故意伤害罪的案件，需要根据匹配的训练集原型来给出刑期建议。根据系统提示，我只能使用给出的训练集案件原型统计与已抽取因素，不能使用外部法律知识或自行给出刑期数字。需要解释匹配依据和统计区间，并强调不确定性。\n\n先看HELDOUT EXTRACTED FACTORS中的关键因素：charge是故意伤害罪，injury_result是轻伤，minor_injury_count是1.0，injury_degree是轻伤二级，criminal_cause是债务纠纷，criminal_motive是琐事，mutual_fight是null，还有surrender=true，truthful_confession=null，compensation_to_victim=全额赔偿，victim_forgiveness=true，guilty_plea=true等。\n\n然后看MATCHED TRAINING PROTOTYPE ONLY，原型ID是故意伤害罪-prototype-1，prototype_size是100，sentence_months的统计数据是median=8.0，q25=6.0，q75=12.0，min=3.0，max=36.0。defining_features里有几个关键的匹配特征，比如cat:injury_result=轻伤（z值1.556）、num:minor_injury_count（z值1.486）、cat:injury_degree=轻伤二级（z值1.151）、cat:criminal_motive=琐事（z值0.756）等。这些特征与HELDOUT中的因素有部分匹配，比如injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事，这些在原型的defining features中都有较高的z值，说明匹配度较高。不过criminal_cause在HELDOUT中是债务纠纷，而原型中的defining feature是“cat:criminal_cause=琐事争执”，这里可能存在差异，但用户提供的HELDOUT中criminal_cause是债务纠纷，而原型的defining feature里有“琐事争执”，不过匹配距离是0.1548，说明还是有一定匹配度的。\n\n接下来，匹配依据应该基于原型的defining features与HELDOUT因素的重合部分。比如injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事，这些在HELDOUT中都存在，而原型的defining features中这些特征的z值较高，说明这些是原型的关键特征，因此匹配依据是这些特征的一致性。\n\n然后是统计区间，原型的sentence_months给出了median=8.0，q25=6.0，q75=12.0，min=3.0，max=36.0。所以统计区间应该引用这些数据，即四分位区间为6-12个月，中位数为8个月，同时要说明这是基于匹配原型的统计结果。\n\n需要注意的是，HELDOUT中的一些因素在原型的defining features中可能有正负z值，比如num:crime_amount和num:crime_count是负z值，可能表示这些因素在原型中影响较小或缺失，而HELDOUT中这些因素也是null或未提及，可能影响不大。另外，HELDOUT中有surrender=true、compensation_to_victim=全额赔偿、victim_forgiveness=true、guilty_plea=true这些从轻情节，但匹配的原型defining features中没有这些特征，可能原型中未重点考虑这些因素，这可能导致统计区间的不确定性，需要指出。\n\n现在需要组织语言：首先说明匹配的原型是“故意伤害罪-prototype-1”，匹配依据是案件的关键因素与原型的定义特征高度重合，如injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事等。然后给出原型的刑期统计区间：中位数8个月，四分位区间6-12个月（q25=6.0，q75=12.0），范围3-36个月。接着强调不确定性，因为案件中存在的自首、全额赔偿、被害人谅解、认罪认罚等从轻情节在匹配原型的定义特征中未被重点纳入，可能影响实际刑期与统计区间的差异。\n\n最后，按照要求返回JSON格式，键为\"advice\"，值为上述解释内容。"
+          }
+        }
+      ],
+      "created": 1785386550,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 1189,
+        "prompt_tokens": 811,
+        "total_tokens": 2000,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1027,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 1189,
+      "prompt_tokens": 811,
+      "total_tokens": 2000,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1027,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "02178538652398866d4fff57f472cc97f9dc7178d7aa526f9b569"
+  }
+}

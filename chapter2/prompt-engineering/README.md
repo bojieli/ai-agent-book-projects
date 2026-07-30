@@ -86,6 +86,15 @@ evidence; they are not converted into zero-score model outcomes. Campaign
 completion requires every arm/task receipt, objective τ-bench scoring, hashes,
 usage/cost, and a clean credential scan, regardless of which hypothesis wins.
 
+The completed canonical run is
+`runs/exp2-4-kimi-k3-20260730-v7`: all 60 cells have real Kimi K3 action/user
+receipts and no transport or task errors. Its observed pass counts were
+baseline 7/10, Trump 6/10, casual 9/10, randomized organization 8/10,
+no-description 9/10, and all ablations 8/10. These results complete the
+preregistered experiment but do **not** reproduce the manuscript's historical
+“over 30%” and “45%” point estimates; `comparison.json` records that
+qualification instead of retrofitting a favorable claim.
+
 Example **real smoke** table (`--model gpt-4o --env airline --end-index 4`, only 4 tasks/group—illustrates table shape, not stable science):
 
 ```

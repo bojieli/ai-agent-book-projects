@@ -1,0 +1,78 @@
+{
+  "signature": "1ecdb0af17e663288f4ff9304d487d97bfbfebafa523d5355e671c7294d31ebf",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 3,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 3,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "建议忠实于给定原型统计，正确地将统计数据作为不确定的参考而非承诺，并指出了刑期预测存在的不确定性。对留出案件有用，包含了明确的法律免责声明。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-13dd35638f8b54b0",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:43:02.882933+00:00",
+    "latency_ms": 2835.122,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：北京市丰台区人民检察院指控：2012年至2013年9月期间，被告人张×1伙同他人在本市丰台区长辛店地区，冒充“北京燃气公司”工作人员，以为居民检查燃气泄漏为由，通过向被害人张×2等多人出售燃气报警器的形式，诈骗被害人共计12000余元。被告人张×1于2013年9月13日被北京市公安局丰台分局长辛店派出所查获。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：4个月\n匹配原型：{\"prototype_id\": \"诈骗罪-prototype-0\", \"charge\": \"诈骗罪\", \"prototype_size\": 22, \"sentence_months\": {\"median\": 45.0, \"q25\": 11.25, \"q75\": 58.5, \"min\": 3.0, \"max\": 168.0}, \"defining_features\": [{\"feature\": \"cat:proceeds_use=挥霍\", \"z\": 3.726229148285477}, {\"feature\": \"bool:booty_squandered\", \"z\": 3.629934841284343}, {\"feature\": \"cat:disposal_of_stolen_property=挥霍\", \"z\": 2.823242590137243}, {\"feature\": \"cat:restitution_situation=部分退赃\", \"z\": 2.149983260084719}, {\"feature\": \"num:fraud_victim_count\", \"z\": 1.7078406967199085}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.6821971448205932}, {\"feature\": \"num:fraud_amount\", \"z\": 1.6088028147438735}, {\"feature\": \"cat:return_of_stolen_property=部分退赃\", \"z\": 1.5149027385089702}], \"match_distance\": 0.258570130426063}\n生成建议：匹配依据：待匹配案件的“fraud_target=个人”与训练原型“诈骗罪-prototype-0”的定义特征“cat:fraud_target=个人”相匹配。该原型统计的刑期区间为：最小值3.0个月，25%分位数11.25个月，中位数45.0个月，75%分位数58.5个月，最大值168.0个月。不确定性：待匹配案件中，原型的其他定义特征（如proceeds_use=挥霍、booty_squandered、disposal_of_stolen_property=挥霍、restitution_situation=部分退赃、fraud_victim_count、fraud_amount、return_of_stolen_property=部分退赃等）均无对应因素（显示为null），仅单一特征匹配，匹配度有限，刑期预测存在不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad657d5eda9c29ac17a48",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 3,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 3,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"建议忠实于给定原型统计，正确地将统计数据作为不确定的参考而非承诺，并指出了刑期预测存在的不确定性。对留出案件有用，包含了明确的法律免责声明。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386583,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 110,
+        "prompt_tokens": 808,
+        "total_tokens": 918,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 110,
+      "prompt_tokens": 808,
+      "total_tokens": 918,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad657d5eda9c29ac17a48"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "signature": "772d5e040e820fee3c7f2a284662a08e838215d57602d6cb8d344abc90a5adae",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议中明确指出了待匹配案件与匹配原型的特征相符之处，并且提供了原型的详细统计数据，包括中位数、四分位数、最小值和最大值，这显示了高度的原型依据和数值忠实度。同时，建议中也提到了待匹配案件中某些特征为null可能影响匹配准确性，体现了不确定性和谨慎性。此外，建议对留出案件具有实际用途，因为它提供了一个基于统计的量刑范围。最后，建议包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-00d660cf28f916f3",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:43:02.096300+00:00",
+    "latency_ms": 3977.14,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：淮北市相山区人民检察院指控：2012年7月至9月期间，被告人许某以为他人订购车辆为由先后骗取被害人祝某甲、蒋某、刘某、张某某等人钱款共计163800元，全部赃款被其用于赌博等所挥霍。公诉机关当庭宣读、出示了相关证据，认为：被告人许某虚构事实、隐瞒真相，多次骗取他人财物，数额巨大，其行为触犯了《中华人民共和国刑法》××之规定，应以××追究其刑事责任。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：66个月\n匹配原型：{\"prototype_id\": \"诈骗罪-prototype-0\", \"charge\": \"诈骗罪\", \"prototype_size\": 22, \"sentence_months\": {\"median\": 45.0, \"q25\": 11.25, \"q75\": 58.5, \"min\": 3.0, \"max\": 168.0}, \"defining_features\": [{\"feature\": \"cat:proceeds_use=挥霍\", \"z\": 3.726229148285477}, {\"feature\": \"bool:booty_squandered\", \"z\": 3.629934841284343}, {\"feature\": \"cat:disposal_of_stolen_property=挥霍\", \"z\": 2.823242590137243}, {\"feature\": \"cat:restitution_situation=部分退赃\", \"z\": 2.149983260084719}, {\"feature\": \"num:fraud_victim_count\", \"z\": 1.7078406967199085}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.6821971448205932}, {\"feature\": \"num:fraud_amount\", \"z\": 1.6088028147438735}, {\"feature\": \"cat:return_of_stolen_property=部分退赃\", \"z\": 1.5149027385089702}], \"match_distance\": 0.05566992861242549}\n生成建议：匹配依据：待匹配案件的“disposal_of_stolen_property=挥霍”“booty_squandered=true”“fraud_target=个人”及“fraud_amount”等特征与匹配原型“诈骗罪-prototype-0”的定义特征相符。该原型包含22个案件，刑期统计区间为：中位数45.0个月，四分位25%为11.25个月，四分位75%为58.5个月，最小值3.0个月，最大值168.0个月。不确定性：待匹配案件中“restitution_situation”“return_of_stolen_property”等原型定义特征为null，可能影响匹配准确性，刑期存在波动可能。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad656d5eda9c29ac17a43",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议中明确指出了待匹配案件与匹配原型的特征相符之处，并且提供了原型的详细统计数据，包括中位数、四分位数、最小值和最大值，这显示了高度的原型依据和数值忠实度。同时，建议中也提到了待匹配案件中某些特征为null可能影响匹配准确性，体现了不确定性和谨慎性。此外，建议对留出案件具有实际用途，因为它提供了一个基于统计的量刑范围。最后，建议包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386582,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 179,
+        "prompt_tokens": 804,
+        "total_tokens": 983,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 179,
+      "prompt_tokens": 804,
+      "total_tokens": 983,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad656d5eda9c29ac17a43"
+  }
+}

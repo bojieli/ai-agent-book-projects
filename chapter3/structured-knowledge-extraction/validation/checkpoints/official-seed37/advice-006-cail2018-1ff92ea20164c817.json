@@ -1,0 +1,89 @@
+{
+  "signature": "2f23690cad76a4ab3eaa8de092035e76f646a5e4e539ff9c37fd510e8f3659bd",
+  "parsed": {
+    "advice": "匹配依据：待分析案件的核心特征“injury_result=重伤”“serious_injury_count=1.0”“injury_degree=重伤二级”与训练集原型“故意伤害罪-prototype-0”的关键定义特征（z值较高的伤情相关特征）高度匹配，匹配距离为0.209，表明两者特征相似度较高。统计区间：该原型包含18个案件，刑期中位数为36个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：待分析案件存在“全额赔偿”“被害人谅解”“被害人过错”等因素，但原型的定义特征中未突出体现这些因素的影响，可能导致实际刑期与原型统计区间存在差异。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-1ff92ea20164c817",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:07.832489+00:00",
+    "latency_ms": 17280.584,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"故意伤害罪\", \"surrender\": false, \"truthful_confession\": null, \"compensation_to_victim\": \"全额赔偿\", \"victim_forgiveness\": true, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": \"被抓获\", \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": null, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"injury_degree\": \"重伤二级\", \"weapon_type\": null, \"criminal_cause\": \"琐事争执\", \"community_correction_eligibility\": null, \"victim_fault\": true, \"compensation_status\": \"全额赔偿\", \"mutual_fight\": null, \"injury_result\": \"重伤\", \"criminal_motive\": \"琐事\", \"drunk_crime\": null, \"minor_injury_count\": 0.0, \"serious_injury_count\": 1.0}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"故意伤害罪-prototype-0\", \"charge\": \"故意伤害罪\", \"prototype_size\": 18, \"sentence_months\": {\"median\": 36.0, \"q25\": 24.0, \"q75\": 38.25, \"min\": 9.0, \"max\": 96.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=重伤\", \"z\": 4.229908779144486}, {\"feature\": \"num:serious_injury_count\", \"z\": 4.229908779144443}, {\"feature\": \"cat:injury_degree=重伤二级\", \"z\": 3.8219021986682136}, {\"feature\": \"cat:injury_degree=重伤\", \"z\": 1.4201266762286806}, {\"feature\": \"num:crime_amount\", \"z\": -1.181082234467661}, {\"feature\": \"cat:arrest_method=自首\", \"z\": 1.0441851275732448}, {\"feature\": \"bool:surrender\", \"z\": 1.011423265985623}, {\"feature\": \"cat:weapon_type=卡刀\", \"z\": 1.0027816465415866}], \"match_distance\": 0.2090534943522655}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386528064e542ae8f7c04736102ead861a601340cc20c09",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：待分析案件的核心特征“injury_result=重伤”“serious_injury_count=1.0”“injury_degree=重伤二级”与训练集原型“故意伤害罪-prototype-0”的关键定义特征（z值较高的伤情相关特征）高度匹配，匹配距离为0.209，表明两者特征相似度较高。统计区间：该原型包含18个案件，刑期中位数为36个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：待分析案件存在“全额赔偿”“被害人谅解”“被害人过错”等因素，但原型的定义特征中未突出体现这些因素的影响，可能导致实际刑期与原型统计区间存在差异。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，根据提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE ONLY来生成司法数据分析建议。首先，我要仔细分析这两个部分的内容。\n\n首先看HELDOUT EXTRACTED FACTORS，里面的罪名是“故意伤害罪”，关键因素包括：injury_result=重伤，serious_injury_count=1.0，injury_degree=重伤二级，arrest_method=被抓获，compensation_to_victim=全额赔偿，victim_forgiveness=true，victim_fault=true等。\n\n然后是MATCHED TRAINING PROTOTYPE ONLY，原型ID是“故意伤害罪-prototype-0”，原型大小18个案件，刑期统计是median=36.0，q25=24.0，q75=38.25，min=9.0，max=96.0。定义特征里，最重要的几个是injury_result=重伤、serious_injury_count、injury_degree=重伤二级等，这些和HELDOUT中的因素高度匹配，比如injury_result=重伤、serious_injury_count=1.0、injury_degree=重伤二级都是原型的关键特征，z值较高，说明这些特征对匹配贡献大。\n\n接下来，我需要解释匹配依据，即HELDOUT中的重伤结果、重伤二级的伤情程度、1人重伤数量等核心特征与原型的定义特征高度相关，匹配距离0.209较低，说明匹配度较高。然后要说明统计区间，即该原型案件的刑期中位数36个月，四分位区间24.0-38.25个月，最小值9个月，最大值96个月。同时要强调不确定性，因为HELDOUT中存在全额赔偿、被害人谅解、被害人过错等因素，而原型的定义特征中未包含这些因素（比如原型的定义特征里没有赔偿、谅解、被害人过错相关的z值高的特征），这些因素可能影响刑期，但原型统计未体现，所以存在不确定性。\n\n需要注意的是，用户要求只使用给出的训练集案件原型统计与已抽取因素，不能用外部知识或自行给刑期数字。所以要基于原型的统计数据（median、q25、q75等）来描述，同时说明匹配依据是核心伤情特征的匹配，以及存在的不确定性因素（赔偿、谅解、被害人过错等未在原型定义特征中突出体现）。\n\n最后，按照要求返回JSON格式，键为\"advice\"，值为上述解释内容，强调匹配依据、统计区间和不确定性。"
+          }
+        }
+      ],
+      "created": 1785386545,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 752,
+        "prompt_tokens": 810,
+        "total_tokens": 1562,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 570,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 752,
+      "prompt_tokens": 810,
+      "total_tokens": 1562,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 570,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386528064e542ae8f7c04736102ead861a601340cc20c09"
+  }
+}

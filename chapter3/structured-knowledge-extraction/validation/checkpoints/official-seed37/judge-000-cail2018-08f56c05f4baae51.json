@@ -1,0 +1,78 @@
+{
+  "signature": "74a88ef36f1aa8d0c271e3b257ae17c3550b3e9582eccded13999f1c2a420834",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议中明确指出了待预测案件与原型案件在多个定义特征上存在不匹配，并且指出了原型样本量较小导致的统计结果局限性，这显示了对原型统计的忠实性和不确定性的考虑。同时，建议中包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-08f56c05f4baae51",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:55.389837+00:00",
+    "latency_ms": 3280.101,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：公诉机关指控，2008年10月29日17时许，被告人彭某利用在本市上城区近江食品市场东6区3号之4号摊位做搬运工的便利，趁市场关门前将自己摊位2楼仓库内的天窗打开，而后于当晚6时许市场关门无人后，攀爬市场外的水管进入市场，从市场东6区1-2号摊位、7-8号摊位、10号摊位、11-12号摊位内的收银台抽屉内共窃得现金2075元及中国银行转账支票一张（支票金额为11768元，非单位不能支取）。同年11月3日9时30分许，彭某携带该转账支票到上城区秋涛路437号中国银行近江分理处提取支票中的现金时被民警抓获。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：8个月\n匹配原型：{\"prototype_id\": \"盗窃罪-prototype-1\", \"charge\": \"盗窃罪\", \"prototype_size\": 1, \"sentence_months\": {\"median\": 4.0, \"q25\": 4.0, \"q75\": 4.0, \"min\": 4.0, \"max\": 4.0}, \"defining_features\": [{\"feature\": \"cat:theft_tool=筷子\", \"z\": 18.947295321496338}, {\"feature\": \"cat:disposal_of_stolen_property=全部发还\", \"z\": 6.633249580710821}, {\"feature\": \"cat:stolen_property_disposal=返还被害人\", \"z\": 5.916079783099585}, {\"feature\": \"cat:theft_target=现金\", \"z\": 3.6606010435446397}, {\"feature\": \"cat:stolen_property_recovery=全部追回\", \"z\": 3.584153156068214}, {\"feature\": \"cat:return_of_stolen_property=全部退赃\", \"z\": 3.2015621187164305}, {\"feature\": \"cat:theft_location=公共场所\", \"z\": 3.0964875737063133}, {\"feature\": \"cat:theft_method=趁人不备\", \"z\": 2.789352578086535}], \"match_distance\": 0.5352754821097585}\n生成建议：匹配依据：待预测案件与训练集原型“盗窃罪-prototype-1”共享部分定义特征，包括“theft_target=现金”“theft_location=公共场所”。但存在多处特征不匹配，如待预测案件中“theft_tool”“disposal_of_stolen_property”“stolen_property_disposal”“stolen_property_recovery”“return_of_stolen_property”等关键特征信息缺失或与原型定义特征（如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等）不一致，匹配距离为0.535。统计区间：该原型案件量为1，刑期统计区间为4.0个月（min=4.0，max=4.0，q25=4.0，q75=4.0，median=4.0）。不确定性：由于待预测案件与原型存在多个定义特征差异，且原型样本量较小（n=1），统计结果可能存在局限性，刑期预测存在不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6504240f92a2620f3be",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议中明确指出了待预测案件与原型案件在多个定义特征上存在不匹配，并且指出了原型样本量较小导致的统计结果局限性，这显示了对原型统计的忠实性和不确定性的考虑。同时，建议中包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386576,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 129,
+        "prompt_tokens": 930,
+        "total_tokens": 1059,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 129,
+      "prompt_tokens": 930,
+      "total_tokens": 1059,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6504240f92a2620f3be"
+  }
+}

@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 from tau_bench.envs import user as user_module
 from tau_bench.envs.user import LLMUserSimulationEnv
+from ablation_agent import completion_token_limit
 
 
 class Message:
@@ -48,3 +49,8 @@ def test_kimi_user_simulator_reserves_room_after_hidden_reasoning(monkeypatch):
     ordinary = LLMUserSimulationEnv(model="gpt-4o-mini", provider="openai", seed=10)
     ordinary._completion([{"role": "system", "content": "simulate"}])
     assert captured[-1]["max_tokens"] == 1024
+
+
+def test_kimi_action_model_reserves_room_after_hidden_reasoning():
+    assert completion_token_limit("kimi-k3") == 8192
+    assert completion_token_limit("gpt-4o-mini") == 4096

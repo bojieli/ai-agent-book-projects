@@ -48,6 +48,10 @@ blocked before any model token or Skill invocation:
   and used the authenticated Claude Code login; the service returned `Your
   organization has disabled Claude subscription access for Claude Code`, again
   with zero usage.
+- `runs/exp2-6-claude-pptx-20260730-v4` retried the credential exposed to the
+  current validation session; Anthropic again returned `401 API key is invalid`
+  before any model token or Skill invocation. Its fail-closed manifest and
+  credential-free stream are retained.
 
 Both credential-free streams and fail-closed manifests are retained. Neither is
 accepted as Experiment 2-6. Completion requires a valid Anthropic API key or an

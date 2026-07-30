@@ -18,6 +18,11 @@ from tau_bench.envs.base import Env
 from tau_bench.types import SolveResult, Action, RESPOND_ACTION_NAME
 
 
+def completion_token_limit(model: str) -> int:
+    """Return enough output budget for reasoning models to emit an action."""
+    return 8192 if "kimi-k3" in str(model).lower() else 4096
+
+
 class AblationAgent(Agent):
     """
     Agent that supports tone modifications for ablation studies
@@ -147,13 +152,21 @@ class AblationAgent(Agent):
             # Get completion from model
             try:
                 # Prepare completion kwargs
+                # Kimi K3 can spend most of a 4K completion budget on hidden
+                # reasoning in the longer Tau-Bench tasks and then return an
+                # empty visible message with no tool call.  That is not a
+                # usable Agent action and caused the otherwise complete 60-cell
+                # campaign to fail at the simulator boundary.  Reserve the same
+                # reasoning headroom used by the paired Kimi user simulator;
+                # ordinary non-reasoning models retain the historical limit.
+                completion_limit = completion_token_limit(self.model)
                 completion_kwargs = {
                     "messages": messages,
                     "model": self.model,
                     "custom_llm_provider": self.provider,
                     "tools": self.tools_info,
                     "temperature": self.temperature,
-                    "max_tokens": 4096,
+                    "max_tokens": completion_limit,
                 }
                 requested_seed = (
                     self.seed + (task_index or 0) * 1000 + step
@@ -190,7 +203,7 @@ class AblationAgent(Agent):
                         "messages": copy.deepcopy(messages),
                         "tools": copy.deepcopy(self.tools_info),
                         "temperature": self.temperature,
-                        "max_tokens": 4096,
+                        "max_tokens": completion_limit,
                     },
                     "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
                     "response": {

@@ -1,0 +1,89 @@
+{
+  "signature": "3cf09794d7d3e6c800c5a0512fb5cfa77bbf9df5316f0507ea7c02a95f542211",
+  "parsed": {
+    "advice": "匹配依据：HELDOUT案件的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）等特征与训练集原型“故意伤害罪-prototype-1”的关键定义特征（如cat:injury_result=轻伤、num:minor_injury_count、cat:injury_degree=轻伤二级、cat:criminal_cause=琐事争执）高度匹配。统计区间：该原型刑期中位数为8个月，四分位区间（Q25-Q75）为6-12个月，刑期范围3-36个月。因可能存在未纳入统计的其他影响因素，实际刑期存在不确定性。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-14123b59cc7ff466",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:07.708747+00:00",
+    "latency_ms": 18832.737,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"故意伤害罪\", \"surrender\": null, \"truthful_confession\": null, \"compensation_to_victim\": \"全额赔偿\", \"victim_forgiveness\": null, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": null, \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": null, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"injury_degree\": \"轻伤二级\", \"weapon_type\": \"拳头\", \"criminal_cause\": \"琐事争执\", \"community_correction_eligibility\": null, \"victim_fault\": null, \"compensation_status\": \"全额赔偿\", \"mutual_fight\": null, \"injury_result\": \"轻伤\", \"criminal_motive\": null, \"drunk_crime\": null, \"minor_injury_count\": 1.0, \"serious_injury_count\": 0.0}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"故意伤害罪-prototype-1\", \"charge\": \"故意伤害罪\", \"prototype_size\": 100, \"sentence_months\": {\"median\": 8.0, \"q25\": 6.0, \"q75\": 12.0, \"min\": 3.0, \"max\": 36.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=轻伤\", \"z\": 1.5568442135769593}, {\"feature\": \"num:minor_injury_count\", \"z\": 1.4868344442139674}, {\"feature\": \"num:crime_amount\", \"z\": -1.1597831108065333}, {\"feature\": \"cat:injury_degree=轻伤二级\", \"z\": 1.1511080895758883}, {\"feature\": \"cat:criminal_cause=琐事争执\", \"z\": 1.0373867906329766}, {\"feature\": \"bool:mutual_fight\", \"z\": 0.8262918864452846}, {\"feature\": \"cat:criminal_motive=琐事\", \"z\": 0.7564756876813216}, {\"feature\": \"num:crime_count\", \"z\": -0.7017513783529625}], \"match_distance\": 0.10249547587327176}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386528027446ef7fb8513dceba8bbc8b237b7867ee15b69",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：HELDOUT案件的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）等特征与训练集原型“故意伤害罪-prototype-1”的关键定义特征（如cat:injury_result=轻伤、num:minor_injury_count、cat:injury_degree=轻伤二级、cat:criminal_cause=琐事争执）高度匹配。统计区间：该原型刑期中位数为8个月，四分位区间（Q25-Q75）为6-12个月，刑期范围3-36个月。因可能存在未纳入统计的其他影响因素，实际刑期存在不确定性。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，根据提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE来生成建议。首先，我要仔细查看这两个部分的内容。\n\n首先，HELDOUT EXTRACTED FACTORS中的罪名是“故意伤害罪”，伤害结果是“轻伤”，轻伤数量是1.0，伤害程度是“轻伤二级”，犯罪原因是“琐事争执”，其他因素如自首、坦白、赔偿、谅解等都是null或未提及。\n\n然后，MATCHED TRAINING PROTOTYPE是“故意伤害罪-prototype-1”，原型大小100，刑期的中位数是8个月，四分位25%是6个月，75%是12个月，最小值3个月，最大值36个月。定义特征中，有几个关键特征与HELDOUT中的因素匹配，比如“injury_result=轻伤”、“minor_injury_count”、“injury_degree=轻伤二级”、“criminal_cause=琐事争执”，这些z值较高，说明是原型的重要特征。\n\n接下来，我需要确定匹配依据：HELDOUT中的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）均与原型的关键定义特征匹配，因此匹配到该原型。\n\n然后，统计区间应使用原型的刑期统计数据，即中位数8个月，四分位区间6-12个月，同时要强调不确定性，因为可能存在其他未提及的因素影响。\n\n需要注意用户要求只使用训练集原型统计，不能用外部知识，解释匹配依据和统计区间，强调不确定性。所以建议部分应说明匹配到的原型，依据的关键特征，然后给出原型的刑期统计区间，并指出存在不确定性。\n\n现在组织语言：匹配依据为HELDOUT案件的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）等特征与“故意伤害罪-prototype-1”的关键定义特征（如injury_result=轻伤、minor_injury_count、injury_degree=轻伤二级、criminal_cause=琐事争执）高度匹配。该原型统计的刑期中位数为8个月，四分位区间（Q25-Q75）为6-12个月，刑期范围3-36个月。由于案件可能存在未纳入统计的其他因素，实际刑期存在不确定性。\n\n最后，按照要求返回JSON格式的advice。"
+          }
+        }
+      ],
+      "created": 1785386546,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 694,
+        "prompt_tokens": 810,
+        "total_tokens": 1504,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 546,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 694,
+      "prompt_tokens": 810,
+      "total_tokens": 1504,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 546,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386528027446ef7fb8513dceba8bbc8b237b7867ee15b69"
+  }
+}

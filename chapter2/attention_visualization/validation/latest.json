@@ -1,0 +1,22 @@
+{
+  "experiment_id": "2-2",
+  "status": "passed",
+  "gates": {
+    "exact_model": true,
+    "pinned_real_model_revision": true,
+    "beijing_prompt_exact": true,
+    "three_layers_captured": true,
+    "causal_triangle_exact": true,
+    "thinking_region_present": true,
+    "final_answer_region_present": true,
+    "lossless_matrices_present": true,
+    "heatmaps_present": true
+  },
+  "artifacts": {
+    "experiment_protocol.json": "4c07857114b50ebb637a944a4bb79e6393f8357bceaafd86105a3a1c5527af68",
+    "evidence.json": "01d12ef468d6d1dc39d2edf80ce94eb298f59aeca27edbf93373b42f751f671a",
+    "attention_matrices.npz": "ff744b3d6ce7e2d7cf8673da9a8da5f1821254d988de8558490bf74e6c014530",
+    "beijing_attention_layers.png": "ebf82d6f6b08c5f4ce0912bb315bb582f8e864dc1138e94c7dde98b7c1b07fdb",
+    "reasoning_answer_attention_layers.png": "14478900b7975a30afb3094330013e7a864aad93c5b1d4c7b28b9e4539d1666b"
+  }
+}
