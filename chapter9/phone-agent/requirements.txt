@@ -1,2 +1,4 @@
 openai>=1.40.0
 python-dotenv>=1.0.0
+pine-voice>=0.1.5
+pytest>=7.4

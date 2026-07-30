@@ -1,0 +1,226 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "9-10",
+  "kind": "reference_and_blocker_audit_not_acceptance",
+  "generated_at": "2026-07-29T15:35:16.622749+00:00",
+  "host": {
+    "node": "bojMacBook-Pro.local",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "source_integrity": {
+    "head": "87d6c1d969f6e0ca4dc5697940804e231118a63a",
+    "expected_head": "87d6c1d969f6e0ca4dc5697940804e231118a63a",
+    "passed": true,
+    "files": [
+      {
+        "path": "docs/zero_shot_rgb_sim2real.md",
+        "expected_blob": "844d113a726d7c3c8494700496591a2604f742e0",
+        "found_blob": "844d113a726d7c3c8494700496591a2604f742e0",
+        "passed": true
+      },
+      {
+        "path": "docs/assets/camera_alignment_step_1.2.png",
+        "expected_blob": "688f0089c4a99bb2f608a805cbbb9fd96fb80830",
+        "found_blob": "688f0089c4a99bb2f608a805cbbb9fd96fb80830",
+        "passed": true
+      },
+      {
+        "path": "docs/assets/camera_alignment_step_1.3.png",
+        "expected_blob": "20943d0a0eff5b64afaafb04dab3522791e3bcf2",
+        "found_blob": "20943d0a0eff5b64afaafb04dab3522791e3bcf2",
+        "passed": true
+      },
+      {
+        "path": "docs/assets/eval_return_success_curves.png",
+        "expected_blob": "7185d982e165081ec0ad5ded4eb21dc9f172bac9",
+        "found_blob": "7185d982e165081ec0ad5ded4eb21dc9f172bac9",
+        "passed": true
+      },
+      {
+        "path": "docs/assets/tutorial_result_video.mp4",
+        "expected_blob": "d15f57adfd8b889ed8bb4d44d073f0cf7ba96c4a",
+        "found_blob": "d15f57adfd8b889ed8bb4d44d073f0cf7ba96c4a",
+        "passed": true
+      },
+      {
+        "path": "env_config.json",
+        "expected_blob": "e32727956fc9dbf64336b53b77bc1a6044e2f5ef",
+        "found_blob": "e32727956fc9dbf64336b53b77bc1a6044e2f5ef",
+        "passed": true
+      },
+      {
+        "path": "system_id_so100.npy",
+        "expected_blob": "047b0110496f15f3a78a41b59c9f041cbbbbfd91",
+        "found_blob": "047b0110496f15f3a78a41b59c9f041cbbbbfd91",
+        "passed": true
+      },
+      {
+        "path": "lerobot_sim2real/scripts/record_reset_distribution.py",
+        "expected_blob": "ff20e1c3ea34b6d75f646c325f6fe49e1d83903c",
+        "found_blob": "ff20e1c3ea34b6d75f646c325f6fe49e1d83903c",
+        "passed": true
+      },
+      {
+        "path": "lerobot_sim2real/scripts/camera_alignment.py",
+        "expected_blob": "5d7a323075e43ba5c0a24bd2ce6c910f89e4a9c6",
+        "found_blob": "5d7a323075e43ba5c0a24bd2ce6c910f89e4a9c6",
+        "passed": true
+      },
+      {
+        "path": "lerobot_sim2real/scripts/capture_background_image.py",
+        "expected_blob": "f30d97cd7ead0cdfe9b38ea6c9523a5f38b404aa",
+        "found_blob": "f30d97cd7ead0cdfe9b38ea6c9523a5f38b404aa",
+        "passed": true
+      },
+      {
+        "path": "lerobot_sim2real/scripts/train_ppo_rgb.py",
+        "expected_blob": "af900d1e247349b61b707b4a63d30e0d297c9ea9",
+        "found_blob": "af900d1e247349b61b707b4a63d30e0d297c9ea9",
+        "passed": true
+      }
+    ]
+  },
+  "runtime": {
+    "python": "3.11.4",
+    "mani_skill_importable": false,
+    "nvidia_smi": null,
+    "apple_mps_available": true,
+    "upstream_training_backend": "CUDA (the pinned PPO implementation sets device cuda when available and the documented setup requires NVIDIA >=8GB)"
+  },
+  "stages": {
+    "1": {
+      "name": "environment_alignment",
+      "robot_actuation_required": true,
+      "reference_asset_verified": {
+        "path": "docs/assets/camera_alignment_step_1.2.png",
+        "sha256": "195d35f2f944345db9d21215d7bbf1745370605c20959cff315293ebcd58415c",
+        "width": 1260,
+        "height": 1260,
+        "channels": 3,
+        "mean_rgb": [
+          144.2132,
+          117.0811,
+          103.9883
+        ],
+        "pixel_stddev": 33.3767
+      },
+      "local_upstream_invocation": {
+        "command": [
+          "/Users/boj/miniconda3/bin/python",
+          "/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/camera_alignment.py",
+          "--help"
+        ],
+        "return_code": 1,
+        "timed_out": false,
+        "output": "Traceback (most recent call last):\n  File \"/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/camera_alignment.py\", line 7, in <module>\n    from mani_skill.utils.wrappers.flatten import FlattenRGBDObservationWrapper\nModuleNotFoundError: No module named 'mani_skill'\n"
+      },
+      "complete": false,
+      "blocker": "No authorized/calibrated SO-100 camera run or ManiSkill runtime. The pinned script connects the robot and calls real_env.reset(), so only --help was probed; the verified image is upstream reference evidence, not this host's alignment."
+    },
+    "2": {
+      "name": "background_replacement",
+      "robot_actuation_required": false,
+      "reference_asset_verified": {
+        "path": "docs/assets/camera_alignment_step_1.3.png",
+        "sha256": "f8e79ebf6f727dc703d091978af60b04563b8eb37ee4360df14809dd36c75503",
+        "width": 1260,
+        "height": 1260,
+        "channels": 3,
+        "mean_rgb": [
+          113.6085,
+          114.9122,
+          112.5164
+        ],
+        "pixel_stddev": 57.1852
+      },
+      "local_upstream_invocation": {
+        "command": [
+          "/Users/boj/miniconda3/bin/python",
+          "/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/capture_background_image.py",
+          "--help"
+        ],
+        "return_code": 1,
+        "timed_out": false,
+        "output": "Traceback (most recent call last):\n  File \"/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/capture_background_image.py\", line 3, in <module>\n    from mani_skill.utils.wrappers.flatten import FlattenRGBDObservationWrapper\nModuleNotFoundError: No module named 'mani_skill'\n"
+      },
+      "complete": false,
+      "blocker": "No local empty-scene background capture or ManiSkill runtime; the verified composite is upstream reference evidence, not a local composite."
+    },
+    "3": {
+      "name": "domain_randomization_and_real_dynamics_calibration",
+      "robot_actuation_required": false,
+      "real_dynamics_measurement": {
+        "path": "system_id_so100.npy",
+        "sha256": "4ca6cc4cd5c26540685d54e2cd2babde2204d0d3f369a63b5e817b1e7cf381db",
+        "source": "real SO-100 system-identification capture committed by the pinned upstream",
+        "samples": 139,
+        "joints": 6,
+        "qpos_dtype": "float32",
+        "target_qpos_dtype": "float32",
+        "mean_absolute_tracking_error_by_joint": [
+          0.09687472,
+          0.13199401,
+          0.14799425,
+          0.0692635,
+          0.11893595,
+          0.0782366
+        ],
+        "max_absolute_tracking_error_by_joint": [
+          0.18611592,
+          0.23677669,
+          0.22161102,
+          0.18297092,
+          0.18330097,
+          0.19700873
+        ],
+        "best_tracking_lag_samples_by_joint": [
+          3,
+          4,
+          4,
+          4,
+          3,
+          3
+        ],
+        "sample_period_seconds": null,
+        "note": "The upstream artifact contains no timestamps, so lag is reported in samples and is not converted to milliseconds."
+      },
+      "local_upstream_invocation": {
+        "command": [
+          "/Users/boj/miniconda3/bin/python",
+          "/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/record_reset_distribution.py",
+          "--help"
+        ],
+        "return_code": 1,
+        "timed_out": false,
+        "output": "Traceback (most recent call last):\n  File \"/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/record_reset_distribution.py\", line 5, in <module>\n    from mani_skill.utils.wrappers.record import RecordEpisode\nModuleNotFoundError: No module named 'mani_skill'\n"
+      },
+      "complete": false,
+      "blocker": "Pinned real dynamics were measured, but randomized ManiSkill resets could not execute without ManiSkill/NVIDIA and the required visual/physical ranges were not locally evaluated."
+    },
+    "4": {
+      "name": "rgb_only_ppo_training_and_evaluation",
+      "robot_actuation_required": false,
+      "local_upstream_invocation": {
+        "command": [
+          "/Users/boj/miniconda3/bin/python",
+          "/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/train_ppo_rgb.py",
+          "--help"
+        ],
+        "return_code": 1,
+        "timed_out": false,
+        "output": "Traceback (most recent call last):\n  File \"/tmp/lerobot-sim2real-audit-20260729/lerobot_sim2real/scripts/train_ppo_rgb.py\", line 6, in <module>\n    import tyro\nModuleNotFoundError: No module named 'tyro'\n"
+      },
+      "complete": false,
+      "simulation_success_rate": null,
+      "blocker": "No importable ManiSkill or NVIDIA CUDA runtime; no PPO checkpoint or >90% direct evaluation exists on this host. Apple MPS is not a proven substitute for this pinned CUDA path."
+    },
+    "5": {
+      "name": "zero_shot_real_world_deployment",
+      "robot_actuation_required": true,
+      "complete": false,
+      "blocker": "No SO-100, authorized operator, calibrated workspace, E-stop, observer, or stage-4 checkpoint; no actuation was attempted."
+    }
+  },
+  "actuation_attempted": false
+}

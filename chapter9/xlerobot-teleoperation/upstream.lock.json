@@ -1,0 +1,29 @@
+{
+  "experiment_id": "9-8",
+  "repository": "https://github.com/Vector-Wangel/XLeRobot.git",
+  "commit": "3d14695e40c9c68229c0aacffca6053c75cd3eb6",
+  "guide": {
+    "published_url": "https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html",
+    "path": "docs/en/source/software/getting_started/XLeRobot_teleop.md",
+    "git_blob": "3992358282ff54cfce8d90a525e784aedcf045f7"
+  },
+  "entrypoints": {
+    "keyboard": {
+      "path": "software/examples/4_xlerobot_teleop_keyboard.py",
+      "git_blob": "efbe076dfbda3c6280fa54f0eb5bca1a12518a0d"
+    },
+    "xbox": {
+      "path": "software/examples/5_xlerobot_teleop_xbox.py",
+      "git_blob": "de7bc17d570167e58b15e38c06c0fa23af74632a"
+    },
+    "joycon": {
+      "path": "software/examples/7_xlerobot_teleop_joycon.py",
+      "git_blob": "21a48258d22b1fc002f63555a2f3dc2950bdfb24"
+    },
+    "vr": {
+      "path": "software/examples/8_xlerobot_teleop_vr.py",
+      "git_blob": "315bb81f13a37746de0f329e3ba11240a2230806"
+    }
+  },
+  "verified_at": "2026-07-29"
+}
