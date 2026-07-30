@@ -42,7 +42,7 @@ La expansión no significa arrojar cada token y herramienta disponible al modelo
 
 [^ch1-agent-products]: Los materiales oficiales de Manus describen su Sandbox original como una máquina virtual aislada en la nube. Al presentar su conector de Google Drive, Manus recordó explícitamente el flujo de trabajo fragmentado anterior de descargar y subir archivos manualmente. Al lanzar My Computer en marzo de 2026, calificó el hecho de que el trabajo importante reside localmente como una limitación fundamental del sandbox en la nube. El README oficial de OpenClaw describe un asistente personal siempre activo con prioridad local que se ejecuta en los propios dispositivos del usuario y enumera más de veinte canales de mensajería. Ver https://manus.im/blog/manus-sandbox
 
-Comprender lo que hace cada componente y cómo se acoplan entre sí es la base para construir sistemas de Agentes efectivos. Comenzaremos con el más concreto de los tres —las herramientas, las interfaces de acción— y avanzaremos hacia adentro hasta el LLM y el contexto. Primero, así es como se comparan diferentes tipos de Agentes en estas tres dimensiones:
+Comprender lo que hace cada componente y cómo se acoplan entre sí es la base para construir sistemas de Agentes efectivos. Comenzaremos con el más concreto de los tres , las herramientas, las interfaces de acción,  y avanzaremos hacia adentro hasta el LLM y el contexto. Primero, así es como se comparan diferentes tipos de Agentes en estas tres dimensiones:
 
 | Producto de Agente | Contexto de Trabajo | Interfaces de Acción | Estrategia |
 |-----------------|------------------------|--------------------------|-----------------------------|
@@ -116,7 +116,7 @@ El paradigma "El Modelo como Agente" (Model as Agent) es la dirección más reci
 
 Cuanto mayor es la autoridad de decisión que tiene un modelo, mayor es el impacto de una decisión equivocada, lo que exige mecanismos de restricción, verificación y corrección más precisos para mantener la confiabilidad. La verdadera ventaja de los proveedores de modelos no es "hacer el framework más delgado", sino ser capaces de cooptimizar el modelo y su Harness circundante, iterando continuamente.
 
-Sin embargo, surge una pregunta más profunda: si los modelos se vuelven cada vez más fuertes, ¿el Harness actual terminará siendo absorbido por el modelo? En "La Lección Amarga" (The Bitter Lesson), Rich Sutton revisó un patrón repetido a lo largo de setenta años de investigación en IA[^ch1-1]: los investigadores codificaban repetidamente su comprensión de un dominio en un sistema, logrando ganancias a corto plazo pero perdiendo finalmente ante métodos generales —búsqueda y aprendizaje— que escalan con el cómputo y los datos. Visto desde esta perspectiva, ¿cuánto del Harness es un "conocimiento previo humano" destinado a ser internalizado por el modelo? La posición de este libro se resume en: **respaldar la dirección, mantener el pragmatismo respecto al ritmo**.
+Sin embargo, surge una pregunta más profunda: si los modelos se vuelven cada vez más fuertes, ¿el Harness actual terminará siendo absorbido por el modelo? En "La Lección Amarga" (The Bitter Lesson), Rich Sutton revisó un patrón repetido a lo largo de setenta años de investigación en IA[^ch1-1]: los investigadores codificaban repetidamente su comprensión de un dominio en un sistema, logrando ganancias a corto plazo pero perdiendo finalmente ante métodos generales , búsqueda y aprendizaje,  que escalan con el cómputo y los datos. Visto desde esta perspectiva, ¿cuánto del Harness es un "conocimiento previo humano" destinado a ser internalizado por el modelo? La posición de este libro se resume en: **respaldar la dirección, mantener el pragmatismo respecto al ritmo**.
 
 [^ch1-1]: Sutton, Rich. “The Bitter Lesson”, 2019. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
 
@@ -148,7 +148,7 @@ Los dos primeros elementos forman el prefijo estático; los últimos tres forman
 
 Examinamos cómo influye cada componente del contexto en el comportamiento del Agente mediante un **estudio de ablación** sistemático. Como muestra la Figura 1-2, el experimento ejecutó cinco grupos controlados: una línea base completa y cuatro grupos a los que les faltaba un componente.
 
-![Figura 1-2: Experimento 1-1—Diseño del estudio de ablación de contexto](images/fig1-2.svg)
+![Figura 1-2: Experimento 1-1, Diseño del estudio de ablación de contexto](images/fig1-2.svg)
 
 Los resultados revelaron el papel irremplazable de cada componente. Las **Definiciones de Herramientas** son la base de la capacidad de acción; sin ellas, el Agente no reconoce ni puede llamar a ninguna herramienta. Los **Resultados de Herramientas** son clave para el control de bucle cerrado; su ausencia priva al Agente de retroalimentación y provoca que caiga en bucles infinitos. El **proceso de razonamiento** mantiene la coherencia de las decisiones anteriores. El **historial de mensajes** evita operaciones redundantes y mantiene la continuidad de la tarea.
 
@@ -160,7 +160,7 @@ El patrón central mediante el cual un Agente ejecuta una tarea se llama **ReAct
 
 Consideremos la **trayectoria**: el historial de mensajes que se acumula a medida que el Agente trabaja. En cada llamada al LLM, el contexto completo es el **prefijo estático** más la **trayectoria** (historial dinámico) (Figura 1-3). De aquí se deriva una verdad clave: **Contexto del Agente = Prefijo Estático + Trayectoria**.
 
-![Figura 1-3: Trayectoria del Agente—Bucle ReAct para una tarea de agregación multimoneda](images/fig1-3.svg)
+![Figura 1-3: Trayectoria del Agente, Bucle ReAct para una tarea de agregación multimoneda](images/fig1-3.svg)
 
 Estructura de una trayectoria en pseudocódigo:
 
@@ -212,9 +212,9 @@ Kimi K3 destaca en la **estabilidad de cadenas largas de llamadas a herramientas
 
 #### Experimento 1-3 ★: Capacidad Nativa de Deep Research de GPT-5.6
 
-**OpenAI GPT-5.6** ilustra cómo un modelo avanzado con herramientas integradas a nivel de API (búsqueda web e intérprete de código) cierra el bucle de orquestación de "búsqueda—lectura—análisis" en el servidor. Incorpora **Llamadas a Herramientas de Forma Libre (Freeform Tool Calling)** y un mecanismo de **clarificación de intención** interactivo antes de iniciar la ejecución.
+**OpenAI GPT-5.6** ilustra cómo un modelo avanzado con herramientas integradas a nivel de API (búsqueda web e intérprete de código) cierra el bucle de orquestación de "búsqueda, lectura, análisis" en el servidor. Incorpora **Llamadas a Herramientas de Forma Libre (Freeform Tool Calling)** y un mecanismo de **clarificación de intención** interactivo antes de iniciar la ejecución.
 
-![Figura 1-4: Arquitectura "El Modelo como Agente"—Llamada Nativa a Herramientas](images/fig1-4.svg)
+![Figura 1-4: Arquitectura "El Modelo como Agente", Llamada Nativa a Herramientas](images/fig1-4.svg)
 
 ## Ingeniería de Harness: Competitividad Más Allá del Modelo
 
@@ -309,7 +309,7 @@ Según el lugar en que se sitúan en el flujo de ejecución, los guardarraíles 
 
 Ten en cuenta que algunos mecanismos (ej. filtrado por expresiones regulares basado en reglas) se pueden utilizar tanto en el lado de entrada como en el de salida; la categorización anterior sigue las ubicaciones de despliegue más comunes.
 
-Una práctica representativa de la industria en guardarraíles basados en clasificadores son los *Constitutional Classifiers* de Anthropic[^ch1-3]. Su diseño consta de tres elementos clave: primero, **entrenamiento impulsado por reglas**: una "constitución" escrita en lenguaje natural —que especifica explícitamente qué está permitido y qué no— se utiliza para generar datos de entrenamiento sintéticos para los clasificadores de entrada y salida; segundo, **juicio contextual conjunto**: la nueva generación comprueba la pregunta del usuario y la respuesta del modelo juntas, porque algunas respuestas parecen perfectamente bien por sí solas, y solo frente a la pregunta queda claro el contexto real; tercero, **evaluación en dos etapas**: una sonda extremadamente ligera revisa la representación interna del modelo antes de ejecutar clasificadores más profundos.
+Una práctica representativa de la industria en guardarraíles basados en clasificadores son los *Constitutional Classifiers* de Anthropic[^ch1-3]. Su diseño consta de tres elementos clave: primero, **entrenamiento impulsado por reglas**: una "constitución" escrita en lenguaje natural , que especifica explícitamente qué está permitido y qué no,  se utiliza para generar datos de entrenamiento sintéticos para los clasificadores de entrada y salida; segundo, **juicio contextual conjunto**: la nueva generación comprueba la pregunta del usuario y la respuesta del modelo juntas, porque algunas respuestas parecen perfectamente bien por sí solas, y solo frente a la pregunta queda claro el contexto real; tercero, **evaluación en dos etapas**: una sonda extremadamente ligera revisa la representación interna del modelo antes de ejecutar clasificadores más profundos.
 
 [^ch1-3]: Anthropic. "Next-generation Constitutional Classifiers: Defensas más eficientes a nivel de producción contra jailbreaks universales", 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; artículo: Cunningham et al., "Constitutional Classifiers++: Defensas eficientes a nivel de producción contra jailbreaks universales", arXiv:2601.04603
 
@@ -339,9 +339,9 @@ Visto a través de la lente de la ingeniería de Harness, cada capítulo de este
 | Extensión de Contexto | Capítulo 3 (Base de Conocimiento) | Memoria del usuario, RAG, indexación estructurada, RAG agentizado | Exposición de información sensible, protección de la privacidad |
 | Diseño de Herramientas y Restricciones | Capítulo 4 (Diseño de Herramientas) | Clasificación de herramientas, control de permisos, estándar MCP, arquitectura asíncrona | Operaciones erróneas, acceso no autorizado, operaciones irreversibles |
 | Verificación y Corrección de Herramientas | Capítulo 5 (Generación de Código) | Harness de Coding Agents, desarrollo guiado por pruebas, reglas codificadas | Suplantación de identidad, atribución de responsabilidad |
-| Verificación a Nivel de Sistema | Capítulo 6 (Evaluación) | Entorno de evaluación, conjuntos de datos, evaluación automatizada, observabilidad | — |
+| Verificación a Nivel de Sistema | Capítulo 6 (Evaluación) | Entorno de evaluación, conjuntos de datos, evaluación automatizada, observabilidad |, |
 | Corrección a Nivel de Modelo | Capítulo 7 (Posentrenamiento) | SFT (Ajuste Fino Supervisado), Aprendizaje por Refuerzo | Desalineación de objetivos, alineación y robustez |
-| Corrección a Nivel de Sistema | Capítulo 8 (Autoevolución) | Aprendizaje externalizado, creación de herramientas, acumulación de experiencia | — |
+| Corrección a Nivel de Sistema | Capítulo 8 (Autoevolución) | Aprendizaje externalizado, creación de herramientas, acumulación de experiencia |, |
 | Contexto y Herramientas Multimodales | Capítulo 9 (Interacción Multimodal y en Tiempo Real) | Agentes de voz, uso de computadoras, operación robótica | Filtrado de seguridad de entradas multimodales, control de permisos en tiempo real |
 | Restricciones y Correcciones entre Múltiples Agentes | Capítulo 10 (Colaboración Multiagente) | Arquitectura de colaboración, modos de fallo, sociedad de Agentes | Violación de límites de confianza entre Agentes, conflictos de recursos compartidos |
 
