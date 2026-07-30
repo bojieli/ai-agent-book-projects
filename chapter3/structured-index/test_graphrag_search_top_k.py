@@ -1,7 +1,10 @@
 """Regression test: GraphRAGIndexer.search must return empty list for non-positive top_k."""
+import importlib
 import sys
 import types
+from contextlib import contextmanager
 from dataclasses import dataclass
+
 import numpy as np
 
 import pytest
@@ -23,61 +26,82 @@ class GraphRAGConfig:
     llm_model: str = "test"
 
 
-@pytest.fixture(autouse=True)
-def mock_graphrag_deps(monkeypatch):
-    mods = [
-        "openai",
-        "sentence_transformers",
-        "pandas",
-        "sklearn",
-        "sklearn.metrics",
-        "sklearn.metrics.pairwise",
-        "loguru",
-        "tqdm",
-        "config",
-    ]
-    for name in mods:
-        if name not in sys.modules:
-            monkeypatch.setitem(sys.modules, name, types.ModuleType(name))
+_MISSING = object()
+_STUBBED_MODULES = (
+    "openai",
+    "sentence_transformers",
+    "pandas",
+    "sklearn",
+    "sklearn.metrics",
+    "sklearn.metrics.pairwise",
+    "loguru",
+    "tqdm",
+    "config",
+    "networkx",
+)
 
-    monkeypatch.setattr(sys.modules["openai"], "OpenAI", object, raising=False)
-    monkeypatch.setattr(
-        sys.modules["sklearn.metrics.pairwise"],
-        "cosine_similarity",
-        lambda a, b: np.array([[0.95]]),
-        raising=False,
+
+class GraphStub:
+    def __init__(self):
+        self._neighbors = {}
+
+    def add_node(self, node):
+        self._neighbors.setdefault(node, set())
+
+    def __contains__(self, node):
+        return node in self._neighbors
+
+    def neighbors(self, node):
+        return iter(self._neighbors[node])
+
+
+@contextmanager
+def _isolated_graphrag_module():
+    modules = {name: types.ModuleType(name) for name in _STUBBED_MODULES}
+    modules["openai"].OpenAI = object
+    modules["sentence_transformers"].SentenceTransformer = STStub
+    modules["sklearn"].__path__ = []
+    modules["sklearn"].metrics = modules["sklearn.metrics"]
+    modules["sklearn.metrics"].__path__ = []
+    modules["sklearn.metrics"].pairwise = modules["sklearn.metrics.pairwise"]
+    modules["sklearn.metrics.pairwise"].cosine_similarity = (
+        lambda a, b: np.array([[0.95]])
     )
-    monkeypatch.setattr(
-        sys.modules["sentence_transformers"],
-        "SentenceTransformer",
-        STStub,
-        raising=False,
+    modules["loguru"].logger = types.SimpleNamespace(
+        info=lambda *a, **k: None,
+        warning=lambda *a, **k: None,
+        error=lambda *a, **k: None,
     )
-    monkeypatch.setattr(
-        sys.modules["loguru"],
-        "logger",
-        types.SimpleNamespace(
-            info=lambda *a, **k: None,
-            warning=lambda *a, **k: None,
-            error=lambda *a, **k: None,
-        ),
-        raising=False,
+    modules["tqdm"].tqdm = lambda x, **k: x
+    modules["config"].GraphRAGConfig = GraphRAGConfig
+    modules["networkx"].Graph = GraphStub
+
+    previous_module = sys.modules.pop("graphrag_indexer", _MISSING)
+    try:
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            for name, module in modules.items():
+                monkeypatch.setitem(sys.modules, name, module)
+            yield importlib.import_module("graphrag_indexer")
+    finally:
+        sys.modules.pop("graphrag_indexer", None)
+        if previous_module is not _MISSING:
+            sys.modules["graphrag_indexer"] = previous_module
+
+
+@pytest.fixture
+def graphrag_module():
+    with _isolated_graphrag_module() as module:
+        yield module
+
+
+def _make_indexer(graphrag_module):
+    indexer = graphrag_module.GraphRAGIndexer.__new__(
+        graphrag_module.GraphRAGIndexer
     )
-    monkeypatch.setattr(sys.modules["tqdm"], "tqdm", lambda x, **k: x, raising=False)
-    monkeypatch.setattr(sys.modules["config"], "GraphRAGConfig", GraphRAGConfig, raising=False)
-
-from graphrag_indexer import Entity, GraphRAGIndexer  # noqa: E402
-import networkx as nx  # noqa: E402
-
-
-def _make_indexer():
-    indexer = GraphRAGIndexer.__new__(GraphRAGIndexer)
-    indexer.config = sys.modules["config"].GraphRAGConfig()
-    indexer.embedding_model = sys.modules[
-        "sentence_transformers"
-    ].SentenceTransformer()
+    indexer.config = graphrag_module.GraphRAGConfig()
+    indexer.embedding_model = graphrag_module.SentenceTransformer()
     indexer.entities = {
-        "e1": Entity(
+        "e1": graphrag_module.Entity(
             "e1",
             "intel x86",
             "instruction",
@@ -85,7 +109,7 @@ def _make_indexer():
             np.array([0.1, 0.2, 0.3]),
             {},
         ),
-        "e2": Entity(
+        "e2": graphrag_module.Entity(
             "e2",
             "registers",
             "register",
@@ -93,7 +117,7 @@ def _make_indexer():
             np.array([0.1, 0.2, 0.3]),
             {},
         ),
-        "e3": Entity(
+        "e3": graphrag_module.Entity(
             "e3",
             "cpu flags",
             "feature",
@@ -103,23 +127,39 @@ def _make_indexer():
         ),
     }
     indexer.communities = {}
-    indexer.graph = nx.Graph()
-    for eid in indexer.entities:
-        indexer.graph.add_node(eid)
+    indexer.graph = graphrag_module.nx.Graph()
+    for entity_id in indexer.entities:
+        indexer.graph.add_node(entity_id)
     return indexer
 
 
-def test_search_nonpositive_top_k_returns_empty():
-    indexer = _make_indexer()
+def test_search_nonpositive_top_k_returns_empty(graphrag_module):
+    indexer = _make_indexer(graphrag_module)
     assert indexer.search("intel", top_k=0) == []
     assert indexer.search("intel", top_k=-1) == []
     assert indexer.search("intel", top_k=-5) == []
     assert indexer.embedding_model.encode_calls == 0
 
 
-def test_search_positive_top_k_returns_results():
-    indexer = _make_indexer()
+def test_search_positive_top_k_returns_results(graphrag_module):
+    indexer = _make_indexer(graphrag_module)
     results = indexer.search("intel", top_k=2)
     assert len(results) == 2
     assert results[0]["id"] in ("e1", "e2", "e3")
     assert results[1]["id"] in ("e1", "e2", "e3")
+
+
+def test_dependency_stubs_are_restored():
+    tracked_modules = (*_STUBBED_MODULES, "graphrag_indexer")
+    before = {
+        name: sys.modules.get(name, _MISSING)
+        for name in tracked_modules
+    }
+
+    with _isolated_graphrag_module() as module:
+        assert sys.modules["graphrag_indexer"] is module
+        for name in _STUBBED_MODULES:
+            assert sys.modules[name] is not before[name]
+
+    for name, previous_module in before.items():
+        assert sys.modules.get(name, _MISSING) is previous_module
