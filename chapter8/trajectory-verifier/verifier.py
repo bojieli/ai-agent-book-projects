@@ -222,7 +222,7 @@ class TrajectoryVerifier:
         ]
         return {
             "trajectory_id": trajectory.get("id"),
-            "overall_score": round(sum(scores) / len(scores), 3),
+            "overall_score": round(sum(scores) / len(scores), 3) if scores else 0.0,
             "release_recommendation": "reject" if critical_failures else "review_or_accept",
             "critical_failures": critical_failures,
             "dimensions": [asdict(item) for item in dimensions],
