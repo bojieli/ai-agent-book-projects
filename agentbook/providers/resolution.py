@@ -59,6 +59,10 @@ def build_openrouter_backend(
     return Backend(
         api_key=api_key or _PLACEHOLDER_KEY,
         base_url=openrouter_base_url(),
+        # The caller asked for this model and is being rerouted for credential
+        # reasons alone, so an unmapped id is sent as-is and rejected by name.
+        # Substituting here would answer as a different vendor's model without
+        # the reader ever learning theirs was unavailable.
         model=map_model_to_openrouter(model),
         provider=provider,
         using_openrouter=True,
@@ -153,8 +157,10 @@ def resolve_backend(
             base_url=spec.resolved_base_url(),
             # An aggregator resells many vendors' models and so expects
             # namespaced ids: a bare override like "gpt-4o" is mapped even when
-            # talking to the aggregator directly.
-            model=map_model_to_openrouter(resolved_model)
+            # talking to the aggregator directly. An id with no mapping cannot
+            # be requested here at all, so a working default beats a certain
+            # failure -- unlike the reroute path above.
+            model=map_model_to_openrouter(resolved_model, substitute_unknown=True)
             if spec.namespaces_models
             else resolved_model,
             provider=spec.name,

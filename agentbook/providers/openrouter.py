@@ -17,6 +17,7 @@ __all__ = [
     "OPENROUTER_BASE_URL",
     "OPENROUTER_DEFAULT_MODEL",
     "ZERO_COST_HINT",
+    "is_openrouter_key",
     "map_model_to_openrouter",
     "openrouter_base_url",
     "openrouter_key",
@@ -42,6 +43,31 @@ def openrouter_key() -> str:
     return os.getenv("OPENROUTER_API_KEY", "").strip()
 
 
+def is_openrouter_key(api_key: str) -> bool:
+    """Report whether a credential looks like an OpenRouter key.
+
+    OpenRouter issues keys under the ``sk-or-`` prefix, so a key the reader
+    pasted can usually be attributed without asking them which service it came
+    from. This is a naming convention rather than a guarantee, which bounds
+    where the answer may be used.
+
+    Intended for callers that accept a key of unknown origin -- a CLI taking
+    ``--api-key``, say -- and must pick which provider to resolve. It is
+    deliberately *not* used by :func:`~agentbook.providers.resolve_backend`,
+    whose ``api_key`` argument means "this provider's credential"; inferring
+    routing from the value there would silently override the caller and send a
+    provider's key to the wrong host when a prefix collides.
+
+    Args:
+        api_key: A credential of unknown origin. ``None`` and ``""`` are
+            tolerated and report ``False``.
+
+    Returns:
+        ``True`` if the key carries OpenRouter's prefix.
+    """
+    return (api_key or "").strip().startswith("sk-or-")
+
+
 def openrouter_base_url() -> str:
     """Return the OpenRouter endpoint, honouring an environment override.
 
@@ -52,7 +78,7 @@ def openrouter_base_url() -> str:
     return os.getenv("OPENROUTER_BASE_URL", "").strip() or OPENROUTER_BASE_URL
 
 
-def map_model_to_openrouter(model: str) -> str:
+def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> str:
     """Map a bare model id to the equivalent OpenRouter model id.
 
     Mapping rules, applied in order:
@@ -63,14 +89,25 @@ def map_model_to_openrouter(model: str) -> str:
     * ``kimi-*`` becomes ``moonshotai/kimi-k2.6`` (kimi-k3 is not hosted)
     * ``deepseek-*`` becomes ``deepseek/<id>``
 
+    What to do with an unmapped id -- a native one such as ``doubao-*`` or
+    ``glm-*``, which OpenRouter does not reliably host -- depends on why the
+    caller is mapping, so it is the caller's decision rather than a fixed rule
+    here. Talking to an aggregator that *requires* a namespaced id, a working
+    default beats a request that cannot succeed. Rerouting a request the reader
+    already aimed at a named model, silently answering as a different vendor's
+    model is worse than failing.
+
     Args:
         model: A bare or already-namespaced model id. ``None`` and ``""`` are
-            tolerated and fall through to the default.
+            tolerated.
+        substitute_unknown: When ``True``, an unmapped id becomes
+            ``OPENROUTER_MODEL`` or the package default. When ``False`` it is
+            returned unchanged, to be rejected by OpenRouter under the name the
+            reader actually asked for.
 
     Returns:
-        An OpenRouter-valid model id. Ids with no known mapping -- native ones
-        such as ``doubao-*`` and ``glm-*``, which OpenRouter does not reliably
-        host -- fall back to ``OPENROUTER_MODEL`` or the package default.
+        An OpenRouter model id, or the unchanged input for an unmapped id when
+        ``substitute_unknown`` is ``False``.
     """
     m = (model or "").strip()
     if "/" in m:
@@ -88,4 +125,6 @@ def map_model_to_openrouter(model: str) -> str:
         return "moonshotai/kimi-k2.6"
     if ml.startswith("deepseek"):
         return "deepseek/" + m
-    return os.getenv("OPENROUTER_MODEL", OPENROUTER_DEFAULT_MODEL)
+    if substitute_unknown:
+        return os.getenv("OPENROUTER_MODEL", OPENROUTER_DEFAULT_MODEL)
+    return m

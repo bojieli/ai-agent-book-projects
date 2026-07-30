@@ -47,6 +47,7 @@ from .models import Backend, Provider
 from .openrouter import (
     OPENROUTER_BASE_URL,
     OPENROUTER_DEFAULT_MODEL,
+    is_openrouter_key,
     map_model_to_openrouter,
 )
 from .registry import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider
@@ -60,6 +61,7 @@ __all__ = [
     "Backend",
     "Provider",
     "canonical_provider",
+    "is_openrouter_key",
     "map_model_to_openrouter",
     "resolve_backend",
     "resolve_llm_backend",

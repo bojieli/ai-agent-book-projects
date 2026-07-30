@@ -12,6 +12,7 @@ from agentbook.providers import (
     PROVIDERS,
     SUPPORTED_PROVIDERS,
     Provider,
+    is_openrouter_key,
     map_model_to_openrouter,
     resolve_backend,
     resolve_llm_backend,
@@ -70,8 +71,18 @@ def test_map_model_to_openrouter(model, expected):
 
 
 def test_unknown_model_falls_back_to_openrouter_model_env(monkeypatch):
+    """Substituting a working default is opt-in, for callers that cannot send
+    an unmapped id at all."""
     monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
-    assert map_model_to_openrouter("doubao-seed-1-6") == "google/gemma-4-31b-it:free"
+    mapped = map_model_to_openrouter("doubao-seed-1-6", substitute_unknown=True)
+    assert mapped == "google/gemma-4-31b-it:free"
+
+
+def test_unknown_model_is_returned_unchanged_by_default(monkeypatch):
+    """The default keeps the reader's model id, so an unhosted one is rejected
+    by name rather than silently answered by a different vendor's model."""
+    monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    assert map_model_to_openrouter("doubao-seed-1-6") == "doubao-seed-1-6"
 
 
 # --- provider resolution ----------------------------------------------------
@@ -383,6 +394,63 @@ def test_openrouter_backend_never_carries_an_empty_key():
     """
     assert build_openrouter_backend("gpt-4o", "").api_key
     assert build_openrouter_backend("gpt-4o", "test-real-key").api_key == "test-real-key"
+
+
+def test_reroute_keeps_an_unmapped_model_id(monkeypatch):
+    """Falling back for credential reasons must not change which model runs.
+
+    A reader who named a native model and has only an OpenRouter key should see
+    that model rejected, not silently answered by whatever OPENROUTER_MODEL
+    happens to be -- the request would otherwise succeed against a different
+    vendor entirely.
+    """
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-env-key")
+    monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    backend = resolve_backend("doubao", model="doubao-seed-1-6")
+    assert backend.using_openrouter is True
+    assert backend.model == "doubao-seed-1-6"
+
+
+def test_aggregator_substitutes_an_unmapped_model_id(register_provider, monkeypatch):
+    """The namespacing path keeps substituting: a bare unmapped id cannot be
+    requested from an aggregator at all, so a working default beats a certain
+    404."""
+    monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    register_provider(
+        "together",
+        base_url="https://api.together.xyz/v1",
+        key_vars=("TOGETHER_API_KEY",),
+        namespaces_models=True,
+    )
+    backend = resolve_backend("together", model="doubao-seed-1-6", api_key="test-together-key")
+    assert backend.model == "google/gemma-4-31b-it:free"
+
+
+@pytest.mark.parametrize(
+    "api_key,expected",
+    [
+        ("sk-or-v1-abc", True),
+        ("  sk-or-v1-abc  ", True),
+        ("sk-proj-abc", False),
+        ("test-moonshot-key", False),
+        ("", False),
+        (None, False),
+    ],
+)
+def test_is_openrouter_key(api_key, expected):
+    assert is_openrouter_key(api_key) is expected
+
+
+def test_is_openrouter_key_does_not_influence_resolution(monkeypatch):
+    """Attribution is for callers choosing a provider, not for the resolver.
+
+    ``api_key`` means "this provider's credential"; honouring the prefix here
+    would override the caller and contradict
+    ``test_fallback_key_is_not_reusable_as_a_provider_key``.
+    """
+    backend = resolve_backend("kimi", model="kimi-k2.6", api_key="sk-or-v1-abc")
+    assert backend.using_openrouter is False
+    assert backend.base_url == "https://api.moonshot.cn/v1"
 
 
 def test_supported_providers_helper_sees_late_registrations(register_provider):
