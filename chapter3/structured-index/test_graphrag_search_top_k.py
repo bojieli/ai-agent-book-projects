@@ -134,6 +134,7 @@ def _make_indexer(graphrag_module):
 
 
 def test_search_nonpositive_top_k_returns_empty(graphrag_module):
+    """Non-positive result limits return before query encoding."""
     indexer = _make_indexer(graphrag_module)
     assert indexer.search("intel", top_k=0) == []
     assert indexer.search("intel", top_k=-1) == []
@@ -142,6 +143,7 @@ def test_search_nonpositive_top_k_returns_empty(graphrag_module):
 
 
 def test_search_positive_top_k_returns_results(graphrag_module):
+    """Positive result limits still run retrieval and cap the results."""
     indexer = _make_indexer(graphrag_module)
     results = indexer.search("intel", top_k=2)
     assert len(results) == 2
@@ -150,6 +152,7 @@ def test_search_positive_top_k_returns_results(graphrag_module):
 
 
 def test_dependency_stubs_are_restored():
+    """Scoped dependency replacements leave neighboring collection unchanged."""
     tracked_modules = (*_STUBBED_MODULES, "graphrag_indexer")
     before = {
         name: sys.modules.get(name, _MISSING)
