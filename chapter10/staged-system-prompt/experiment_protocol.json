@@ -18,8 +18,14 @@
     }
   },
   "limits": {
-    "max_total_steps": 60,
+    "max_total_steps": 90,
     "max_revisions": 3
+  },
+  "review_fault_injection": {
+    "enabled": true,
+    "timing": "after the first submit_for_review and before the reviewer starts",
+    "kind": "real tab plus trailing-whitespace defect in the submitted source",
+    "acceptance_rule": "the real linter must expose the defect, the reviewer must request revision, and final approved source must remove it"
   },
   "required_stages": ["requirements", "implementation", "review"],
   "required_transitions": [
@@ -36,6 +42,7 @@
     "review_failure_and_implementation_reentry": true,
     "final_review_approval": true,
     "real_linter_test_and_complexity_outputs": true,
+    "controlled_real_defect_injection_and_repair": true,
     "credential_free_evidence": true
   }
 }

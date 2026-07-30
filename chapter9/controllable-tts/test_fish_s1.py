@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from evaluate_audio_quality import DIMENSIONS, OUTPUTS, PERMUTATIONS, aggregate, validate_response
 from markup import parse
 from voice_library import EMOTIONS, SPEEDS, STYLES, load_voice_library
 
@@ -25,3 +26,41 @@ def test_library_requires_exact_cartesian_product(tmp_path):
 
 def test_dimensions_are_4_by_3_by_2():
     assert len(EMOTIONS) * len(SPEEDS) * len(STYLES) == 24
+
+
+def _judge_response(scores):
+    return {
+        "clips": {
+            alias: {
+                dimension: {"score": scores[alias], "reason": f"audible evidence for {alias}"}
+                for dimension in DIMENSIONS
+            }
+            for alias in ("X", "Y", "Z")
+        },
+        "ranking": sorted(("X", "Y", "Z"), key=scores.get, reverse=True),
+        "ranking_reason": "audible comparison",
+    }
+
+
+def test_quality_response_rejects_bare_scores_without_audible_evidence():
+    response = _judge_response({"X": 1, "Y": 2, "Z": 3})
+    response["clips"]["X"]["naturalness"]["reason"] = ""
+    with pytest.raises(ValueError, match="audible evidence"):
+        validate_response(response)
+
+
+def test_position_balanced_aggregate_maps_aliases_back_to_configurations():
+    # Each pass gives C=5, B=4, A=2 regardless of its anonymous position.
+    passes = []
+    score_by_name = {
+        "A_no_control_markers": 2,
+        "B_single_reference": 4,
+        "C_24_reference_library": 5,
+    }
+    for permutation in PERMUTATIONS:
+        mapping = dict(zip(("X", "Y", "Z"), permutation))
+        scores = {alias: score_by_name[name] for alias, name in mapping.items()}
+        passes.append({"alias_to_configuration": mapping, "response": _judge_response(scores)})
+    result = aggregate(passes)
+    assert result["aggregate_ranking"] == list(reversed(list(OUTPUTS)))
+    assert result["manuscript_quality_claim_reproduced"] is True

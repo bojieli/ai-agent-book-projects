@@ -22,7 +22,7 @@ The pipeline answers these through a single command and produces a structured co
 ### Evaluation dimensions
 
 The acceptance path sends both the synthesized audio and a fixed real reference
-clip to Gemini and records the manuscript's exact four dimensions:
+clip to an audio-capable judge and records the manuscript's exact four dimensions:
 
 - Accuracy: omissions, substitutions, additions, numbers, names, and polyphones
 - Naturalness: machine artifacts, pauses, emphasis, rhythm, and fluency
@@ -40,7 +40,7 @@ CER-based objective metrics are computed with normalized transcript comparison.
 
 ### Judge/backend details
 
-- The manuscript-grade path is `--gemini`: Gemini directly hears both audio clips.
+- The manuscript-grade path is retained under the backward-compatible `--gemini` flag. It directly sends both clips through the configured Google Gemini, OpenRouter, or Mistral Voxtral audio route; no route substitutes transcripts for either clip.
 - Optional `--with-asr` adds Whisper/CER as a secondary objective measure.
 - The transcript-only LLM path remains a diagnostic fallback and is explicitly marked incomplete because it cannot judge emotion or speaker identity.
 
@@ -84,7 +84,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 
 ### Limitations
 
-- `--gemini` requires a real reference-audio file; the default is the immutable
+- `--gemini` requires `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, or `MISTRAL_API_KEY` plus a real reference-audio file; the default is the immutable
   Chapter 9 Fish S1 reference clip and its SHA-256 is saved in the report.
 - CER is optional and depends on Whisper accuracy; it is not substituted for direct listening.
 - Scores are comparative experimental measurements, not absolute quality certification.
@@ -109,7 +109,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 
 ## 评审维度与 Rubric
 
-对每条合成语音，Gemini 同时接收**合成语音、原文、目标情感和固定参考语音**，按正文
+对每条合成语音，音频多模态评审模型同时接收**合成语音、原文、目标情感和固定参考语音**，按正文
 精确规定的四维 Rubric 逐项 1–5 分打分：
 
 | 维度 | 含义 |
@@ -139,7 +139,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
   | `minimax` | `MINIMAX_API_KEY`（可选 `MINIMAX_REGION`） | voice_id；model 默认 speech-2.8-hd（另有 speech-2.8-turbo） |
   | `doubao` | `DOUBAO_APP_ID` + `DOUBAO_ACCESS_TOKEN` | voice_type |
 
-  > 说明：本仓库仅 **OpenAI** 路径经端到端验证；其余四家按各自公开 REST 文档实现，请用自己
+  > 说明：本仓库的 **OpenAI 与 Fish Audio** 路径已有端到端保存证据；其余三家按各自公开 REST 文档实现，请用自己
   > 账号可用的 voice/model 覆盖 `config.PROVIDER_CONFIGS` 后使用。缺对应 key 时该 provider
   > 的行会被记为失败，**不中断整表**。
 - **诊断回退（非验收）**：可用 Whisper（`whisper-1`）把合成语音回译成文本算 CER，再用
@@ -150,10 +150,13 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
   OpenRouter 不提供音频/转写）；**仅 LLM Rubric 的 chat 评审支持 OpenRouter 回退**——
   `gpt-5.x` 直连需组织实名认证，故只要设置了 `OPENROUTER_API_KEY`，评审就优先走
   OpenRouter（`gpt-*` 映射为 `openai/*`）。
-- **质量评审（正文验收路径）**：`--gemini` 让 **Gemini 多模态同时听合成音频和参考音频**
-  （原文 + 目标情感 + 两段音频 + Rubric 一起输入），需 `GEMINI_API_KEY`。默认模型为
-  `gemini-3.5-flash`（已验证支持音频输入）；代码会先探测 `/models`，若该名不可用再
-  自动回退到当前可用模型（如 `gemini-2.5-pro`）。
+- **质量评审（正文验收路径）**：`--gemini`（保留的兼容参数名）让**音频多模态模型同时听合成音频和参考音频**
+  （原文 + 目标情感 + 两段音频 + Rubric 一起输入）。程序先尝试 `GEMINI_API_KEY` 的
+  Google 直连；若直连凭据不可用但有 `OPENROUTER_API_KEY`，则把两段原始音频以
+  `input_audio` 发送给 OpenRouter；若前两路不可用且配置了 `MISTRAL_API_KEY`，再用
+  Mistral 原生 data-URL `input_audio` 格式把同两段 MP3 交给 `voxtral-small-latest`。
+  可用 `TTS_AUDIO_JUDGE_MODEL` / `TTS_MISTRAL_AUDIO_JUDGE_MODEL` 覆盖模型。三条路径都会记录实际模型和脱敏的
+  provider attempt，不会把 key 写入结果。
 
 > `--gemini` 才是正文方案。程序默认复用第 9 章固定的真实参考片段，并把参考片段与每条
 > 合成音频的 SHA-256 都写入结果。回译路径只是故障诊断，不能冒充音频评审。
@@ -163,7 +166,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 | 文件 | 说明 |
 |------|------|
 | `config.py` | 模型名与单价、provider 注册表（`PROVIDERS` / `PROVIDER_CONFIGS`）、TTS 配置集合、测试语料 |
-| `pipeline.py` | 多 provider 合成分发 / ffprobe 时长 / Whisper 回译 / CER 计算 / LLM Rubric / 可选 Gemini |
+| `pipeline.py` | 多 provider 合成分发 / ffprobe 时长 / Whisper 回译 / CER 计算 / LLM Rubric / Gemini、OpenRouter、Voxtral 双音频评审 |
 | `demo.py` | 入口：多配置 × 多语料跑全流程，打印逐条明细 + 对比汇总表 |
 | `requirements.txt` / `env.example` | 依赖与环境变量示例 |
 
@@ -179,6 +182,7 @@ python demo.py --quick   # 只用前 2 条语料，快速冒烟
 python demo.py --extra   # 额外加入 gpt-4o-mini-tts 配置
 python demo.py --providers openai,fishaudio --gemini --fresh
 python demo.py --providers openai,fishaudio --gemini --with-asr
+python demo.py --providers openai,fishaudio --gemini --limit 4
 python demo.py --fresh   # 忽略已有音频全部重合成
 
 # 多 provider / 自定义输入（新增）
@@ -195,6 +199,22 @@ python demo.py --dump-rubric      # 查看 Rubric 维度定义
 完整参数见 `python demo.py --help`（全中文）。合成音频写入 `output/`（已被 `.gitignore`
 忽略），结构化结果写入 `output/results.json`（可用 `--output` 改目录）。
 **幂等**：默认复用已存在的音频，重复运行不会重复合成。
+
+## 当前真实验收状态（2026-07-30）
+
+[`validation/mistral_multimodal_20260730/results.json`](validation/mistral_multimodal_20260730/results.json)
+与同目录的 [`manifest.json`](validation/mistral_multimodal_20260730/manifest.json) 保存当前
+完整验收：OpenAI `tts-1/alloy` 与 Fish S1 两个真实合成 provider，覆盖数字、多音字、
+长句和兴奋情感四类文本，共 8/8 单元。每个单元把候选 MP3 与固定真实参考 MP3 一起交给
+Mistral `voxtral-small-latest`，四维分数均为 1–5 整数；Fish 四维均分为
+5.00/4.00/4.00/3.00，OpenAI 为 5.00/4.00/3.75/2.75。manifest 会复核结果、参考音频、
+八段候选音频和前序合成结果的 SHA-256；合成音频是前序真实 provider 运行的留存产物，
+不是在 OpenAI 余额耗尽后伪造的新合成。
+
+早期 [`real_multimodal_20260730`](validation/real_multimodal_20260730/manifest.json) 与
+[`audio_fallback_probe_20260730`](validation/audio_fallback_probe_20260730/manifest.json)
+仍保留 Google key 无效、OpenRouter 401 和 OpenAI 新合成余额不足的负面证据；它们是
+故障历史，不再代表当前 Voxtral 直接听评的验收状态。
 
 ## 测试语料
 

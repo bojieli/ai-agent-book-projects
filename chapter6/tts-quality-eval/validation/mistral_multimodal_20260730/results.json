@@ -1,0 +1,384 @@
+{
+  "schema_version": "2.0",
+  "experiment": "6-5",
+  "generated_at_utc": "2026-07-30T04:47:32.164712+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio",
+      "openai"
+    ],
+    "configurations": [
+      {
+        "name": "tts1-alloy-1.0",
+        "provider": "openai",
+        "model": "tts-1",
+        "voice": "alloy",
+        "speed": 1.0
+      },
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone",
+      "long",
+      "emotion"
+    ],
+    "expected_records": 8,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 8,
+    "direct_audio_four_dimension_records": 8,
+    "expected_records": 8,
+    "all_cells_complete": true,
+    "multi_provider": true,
+    "manuscript_core_complete": true
+  },
+  "records": [
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "openai",
+      "ok": true,
+      "error": null,
+      "audio_path": "tts1-alloy-1.0__num.mp3",
+      "audio_sha256": "954eca94164d5af7d4a849def397e16a192d22a86168fab86f76ccd2443fb3ed",
+      "audio_bytes": 132960,
+      "duration": 6.648,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.061371841155235,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 3,
+        "音色一致性": 2
+      },
+      "reasons": {
+        "准确性": "合成语音准确无误地朗读了原文，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿，特别是在数字和百分点的表达上。",
+        "情感表达": "合成语音的语调和语速基本符合中性情感，但缺乏参考说话人语音中的自然感和情感表达。",
+        "音色一致性": "合成语音的音色与参考说话人语音存在明显差异，音色不一致。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "openai",
+      "ok": true,
+      "error": null,
+      "audio_path": "tts1-alloy-1.0__polyphone.mp3",
+      "audio_sha256": "fa6e6ca29a3d17d33167c04c32b132d6aee2cb406d2acbf7bbeb13529af98abb",
+      "audio_bytes": 130560,
+      "duration": 6.528,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.28921568627451,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "合成语音与原文完全一致，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿和重音。",
+        "情感表达": "语调和语速基本符合中性情感，但强调稍显不足。",
+        "音色一致性": "合成语音的音色与参考说话人有一定差异，但总体还算接近。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "openai",
+      "ok": true,
+      "error": null,
+      "audio_path": "tts1-alloy-1.0__long.mp3",
+      "audio_sha256": "c04786022e111c49f635eb361cb4cae3b786334291af86f7f36e69fff7909d1a",
+      "audio_bytes": 273600,
+      "duration": 13.68,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.45906432748538,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "合成语音与原文完全一致，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿和重音。",
+        "情感表达": "语调和语速基本符合中性情感，但强调不够明显。",
+        "音色一致性": "合成语音的音色与参考说话人有一些差异，但总体还算接近。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "openai",
+      "ok": true,
+      "error": null,
+      "audio_path": "tts1-alloy-1.0__emotion.mp3",
+      "audio_sha256": "86215ce027003e1b0a721545b594ef0325745738a46bbf927a7843da3a15b514",
+      "audio_bytes": 116160,
+      "duration": 5.808,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 5.3374655647382925,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "没有漏读、错读、添读、数字、专名和多音字。",
+        "自然度": "有一些机器感，但总体流畅度较好。",
+        "情感表达": "语调和语速表现出兴奋，但强调不够明显。",
+        "音色一致性": "音色与参考说话人有一些差异，但总体相似。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": true,
+      "error": null,
+      "audio_path": "fishaudio-s1-clone__num.mp3",
+      "audio_sha256": "6e9717e58f422db10b8e9538aa3812de456a1dde4bd9028fde928c2eaac42ad3",
+      "audio_bytes": 101981,
+      "duration": 6.373813,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.236082859663439,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "合成语音准确无误地朗读了原文，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿和重音。",
+        "情感表达": "合成语音的语调和语速基本符合中性情感，但强调不够明显。",
+        "音色一致性": "合成语音的音色与参考说话人有一些差异，但总体还算相似。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": true,
+      "error": null,
+      "audio_path": "fishaudio-s1-clone__polyphone.mp3",
+      "audio_sha256": "6bff6109ec7682f85680d8b60ea58dd48fbe5b3eeda59fb326d2288d250c85b5",
+      "audio_bytes": 95293,
+      "duration": 5.955813,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.701289311803443,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "合成语音与原文完全一致，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿和重音。",
+        "情感表达": "语调和语速基本符合中性情感，但强调稍显不足。",
+        "音色一致性": "合成语音的音色与参考说话人有一定差异，但总体还算接近。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "fishaudio",
+      "ok": true,
+      "error": null,
+      "audio_path": "fishaudio-s1-clone__long.mp3",
+      "audio_sha256": "89542f05312bac767d5151f7552d0c75065cc7ecdf739dcc180b3c92a67b21c5",
+      "audio_bytes": 206052,
+      "duration": 12.87825,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.7366684137984585,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "合成语音与原文完全一致，没有漏读、错读、添读、数字、专名和多音字的问题。",
+        "自然度": "合成语音流畅度较好，但有一些不自然的停顿和重音。",
+        "情感表达": "合成语音的语调和语速基本符合中性情感，但缺乏一些细微的情感变化。",
+        "音色一致性": "合成语音的音色与参考说话人有一些差异，但总体上还算相似。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "fishaudio",
+      "ok": true,
+      "error": null,
+      "audio_path": "fishaudio-s1-clone__emotion.mp3",
+      "audio_sha256": "81608431645b08be6bf7171dbb250f391b1ba7f5714d535c0e2ce323d7f6ca29",
+      "audio_bytes": 104488,
+      "duration": 6.5305,
+      "hypothesis": null,
+      "cer": null,
+      "asr_accuracy": null,
+      "speed": 4.746956588316362,
+      "scores": {
+        "准确性": 5,
+        "自然度": 4,
+        "情感表达": 4,
+        "音色一致性": 3
+      },
+      "reasons": {
+        "准确性": "没有漏读、错读、添读、数字、专名和多音字。",
+        "自然度": "有轻微的机器感，但总体流畅度较好。",
+        "情感表达": "语调和语速表现出兴奋，但强调稍显不足。",
+        "音色一致性": "音色与参考说话人有明显差异。"
+      },
+      "judge_model": "mistral/voxtral-small-latest",
+      "evidence_mode": "direct-audio-with-reference",
+      "judge_provider_attempts": [
+        {
+          "provider": "Mistral Voxtral API",
+          "model": "voxtral-small-latest",
+          "status": "ok",
+          "attempts": 1
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 4,
+      "n": 4,
+      "cer": null,
+      "asr_accuracy": null,
+      "准确性": 5,
+      "自然度": 4,
+      "情感表达": 4,
+      "音色一致性": 3
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "n_ok": 4,
+      "n": 4,
+      "cer": null,
+      "asr_accuracy": null,
+      "准确性": 5,
+      "自然度": 4,
+      "情感表达": 3.75,
+      "音色一致性": 2.75
+    }
+  ]
+}

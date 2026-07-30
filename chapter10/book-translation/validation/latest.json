@@ -1,0 +1,61 @@
+{
+  "experiment": "10-3",
+  "status": "complete",
+  "evidence": "validation/real_20260730T061500Z_v4/evidence.json",
+  "evidence_sha256": "9e765aa3d9b194346e1b9b5398018b99c369c2f8c79df231a433cc9e89ab1b5e",
+  "acceptance_gates": {
+    "real_illustrated_code_heavy_technical_book": true,
+    "four_agent_roles_executed": true,
+    "both_modes_translated_every_chapter": true,
+    "real_usage_recorded_for_every_call": true,
+    "uniform_translation_api_fingerprint": true,
+    "manager_context_excludes_translation_bodies": true,
+    "quality_compared_for_every_translation_unit": true,
+    "raw_judge_receipts_hashed": true,
+    "raw_judge_response_ids_and_usage_recorded": true,
+    "checkpoint_fingerprints_match": true,
+    "all_declared_provenance_hashes_match": true,
+    "efficiency_and_resources_compared": true
+  },
+  "comparison": {
+    "context_peak": {
+      "orchestration_manager": 4618,
+      "single_agent": 94355
+    },
+    "wall_clock_seconds": {
+      "orchestration": 270.8285449161194,
+      "single_agent": 254.12669750023633
+    },
+    "total_tokens": {
+      "orchestration": 203277,
+      "single_agent": 1317808
+    }
+  },
+  "quality_aggregate": {
+    "modes": {
+      "orchestration": {
+        "dimension_means": {
+          "accuracy": 4.730769230769231,
+          "fluency": 4.615384615384615,
+          "terminology": 4.846153846153846,
+          "markdown_code_fidelity": 4.423076923076923
+        },
+        "overall_mean": 4.653846153846154
+      },
+      "single_agent": {
+        "dimension_means": {
+          "accuracy": 4.538461538461538,
+          "fluency": 4.3076923076923075,
+          "terminology": 4.346153846153846,
+          "markdown_code_fidelity": 4.730769230769231
+        },
+        "overall_mean": 4.480769230769231
+      }
+    },
+    "chapter_preferences": {
+      "orchestration": 15,
+      "single_agent": 11,
+      "tie": 0
+    }
+  }
+}

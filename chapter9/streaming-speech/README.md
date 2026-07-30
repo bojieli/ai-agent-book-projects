@@ -35,9 +35,25 @@ python demo.py \
 
 结果写入 `validation/latest.json`。`--skip-whisper` 只用于单独调试 Qwen，不能完成书中的对照验收。原始 BF16 模型约 16.8GB；MLX 量化权重约 6.6GB。
 
+保持上述科学设计不变并生成完整验收 manifest：
+
+```bash
+python run_official_experiment.py --run-id exp9-3-qwen2audio-whisper-provenance-YYYYMMDD-vN
+```
+
+官方 runner 在运行前后核对源码 hash，并绑定三类测试音频、原始源音频、Whisper
+checkpoint、Qwen2-Audio snapshot 的每个文件（包括 6.56GB 权重）、13 个原始前缀
+输出、运行日志和独立 acceptance 文件。
+
 ## 已验证结果
 
-2026-07-29 在 Apple Silicon 上真实运行 `mlx-community/Qwen2-Audio-7B-Instruct-4bit`。正常、停顿、噪声三种输入的最终 transcript 都收敛到参考句，Qwen 每次都重新编码更长的前缀；实测单前缀约 2.7–5.7s，因此本机结果并不伪称书中 GPU 的 100–200ms。强噪声样本确实产生 `<|noise|>`，但同一回答也出现 laughter/cough 假阳性；原始输出完整保存在证据中，便于审计模型的事件检测误差。
+当前 canonical 记录是 [`validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json`](validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)。
+2026-07-30 在 Apple Silicon 上严格复跑 `mlx-community/Qwen2-Audio-7B-Instruct-4bit`；8/8
+执行与溯源门禁通过，但正文结果只复现 2/6。13 次前缀推理实测 8.4–11.3s，不能据此声称
+100–200ms；传统路径也未在三类输入上全部落入 800–1100ms。900ms 停顿被 VAD 分为两段，
+但 Qwen 漏报 `<|silence|>`；强噪声样本检出 `<|noise|>`，同时误报 `<|cough|>` 与
+`<|laughter|>`。这些负结果与所有原始响应都保留在验收记录中。2026-07-29 的 `latest.json`
+和 `latest_v2.json` 作为历史运行保留，不再承担 canonical 选择职责。
 
 ```bash
 pytest -q
@@ -47,4 +63,4 @@ pytest -q
 
 ## English
 
-This is actual Qwen2-Audio growing-prefix inference, not a Whisper substitute. Every `[0:t]` prefix is fully re-encoded and compared with a real 600ms-VAD + open-source Whisper pipeline on normal, long-pause, and noisy speech. CUDA uses the original model; Apple Silicon can use the published 4-bit MLX conversion of the same Qwen2-Audio architecture. Raw responses and measured results are saved under `validation/`.
+This is actual Qwen2-Audio growing-prefix inference, not a Whisper substitute. Every `[0:t]` prefix is fully re-encoded and compared with a real 600ms-VAD + open-source Whisper pipeline on normal, long-pause, and noisy speech. CUDA uses the original model; Apple Silicon can use the published 4-bit MLX conversion of the same Qwen2-Audio architecture. The canonical v3 manifest binds raw responses, sources, audio, the Whisper checkpoint, and every Qwen snapshot file. Execution passed while the manuscript result bundle did not: only 2/6 claims reproduced, with 8.4–11.3s prefix inference and retained acoustic-event errors.

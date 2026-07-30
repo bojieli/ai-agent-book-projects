@@ -400,9 +400,21 @@ async def search_arxiv(
             max_results=max_results,
             sort_by=sort_criterion
         )
+
+        # arxiv.Client defaults to page_size=100 even when the caller asks for
+        # only a handful of papers.  That needlessly expands the official API
+        # request and made paired experiment arms much more susceptible to
+        # export.arxiv.org throttling.  Keep the request page bounded by the
+        # public MCP argument while retaining the library's documented delay
+        # and retry behavior.
+        client = arxiv.Client(
+            page_size=max(1, min(max_results, 100)),
+            delay_seconds=3.0,
+            num_retries=3,
+        )
         
         papers = []
-        for result in search.results():
+        for result in client.results(search):
             papers.append({
                 "title": result.title,
                 "authors": [author.name for author in result.authors],

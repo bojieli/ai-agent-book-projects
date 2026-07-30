@@ -4,6 +4,8 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter7.md)
 
+逐实验的实现、外部源码与直接证据边界见 [验收台账](EXPERIMENT_LEDGER.md)。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
@@ -15,7 +17,7 @@
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 两条真实语音 SFT 轨道：副语言标记建模与跨句音色一致；需训练后 adapter、音频和人工/自动对照证据才算完成 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 多语言思考 SFT 实现；需训练 checkpoint 与跨语言基准前后对照才算完成 |
 | 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 教师提示/响应生成、学生训练与质量-成本对照的跨章实现；仅生成示例或提示机制不构成完成 |
-| 7-9 | [cot-distillation](cot-distillation/) | 🚧 | 已生成并规则过滤真实教师 CoT 轨迹；仍需训练学生并验证数学/代码提升及反思、回溯、验证行为 |
+| 7-9 | [cot-distillation](cot-distillation/) | 🚧 | 已保存并规则过滤真实 Kimi K3 CoT；现已补齐无 mock 的学生 SFT、同题三臂对照、配对显著性与反思/回溯/验算验收代码，但当前主机尚无 CUDA checkpoint，不能宣称蒸馏提升 |
 | 7-10 | [AdaptThink 配套说明](AdaptThink/) · `AdaptThink-original/` | 📖 | `bojieli/AdaptThink` 外部训练代码；让模型按难度选择 Thinking/NoThinking |
 | 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL` 的 GeneralPoints-L/VL：同预算 SFT 与 PPO 的 ID/OOD 记忆—泛化对照 |
 | 7-12 | [SpatialReasoning 配套说明](SpatialReasoning/) · `SFTvsRL/` | 📖 | 同一 `bojieli/SFTvsRL` checkout 的 V-IRL-L/VL 训练与跨城市/规则 OOD 评估，不是独立 SpatialReasoning 代码仓库 |

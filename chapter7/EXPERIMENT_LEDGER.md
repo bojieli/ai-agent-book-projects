@@ -1,0 +1,28 @@
+# Chapter 7 experiment coverage ledger
+
+Training-paper reproduction guides are tracked separately from completed local
+runs. Paper numbers, copied logs, static scripts, and source checkouts do not
+prove that a checkpoint was trained or evaluated in this workspace.
+
+| Experiment | Manuscript acceptance scope | Current evidence | Audit status |
+| --- | --- | --- | --- |
+| 7-1 | 10,000-episode Q-learning curve and 100-episode greedy evaluation in the treasure environment | Cross-chapter [`learning-from-experience`](../chapter1/learning-from-experience/) evidence contains the deterministic Q-learning arm and completion gates. | **Complete** |
+| 7-2 | Same environment comparison with Kimi K3, including the first successful trajectory and no fallback | [`validation/20260730_011704/evidence.json`](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json) retains 17/17 raw API receipts and the first-game trajectory. | **Complete** |
+| 7-3 | Train 100M MiniMind through pretrain, SFT, and preference optimization; compare QK Norm + Muon | README pins authoritative `bojieli/minimind` at `8bdc5d9…` and exact entrypoints. Checkout/checkpoints/current training evidence are absent. | **External reproduction; not run** |
+| 7-4 | Train VLM projection alignment then SFT and evaluate vision-language outputs | README pins authoritative `bojieli/minimind-v` at `ead791c…` and entrypoints. Checkout/checkpoints/current training evidence are absent. | **External reproduction; not run** |
+| 7-5 | Korean continued pretraining plus Korean instruction SFT, with Korean gain and English-retention comparison | Local training/evaluation code and an RTX-4090 three-stage raw report are retained in [`continued-pretraining/model_eval_results.md`](continued-pretraining/model_eval_results.md); checkpoint/data hashes and a run manifest were not retained. | **Historical executed result; provenance weaker than current standard** |
+| 7-6 | Train/evaluate Orpheus cross-sentence voice consistency and Sesame paralinguistic tags, including failure comparisons | Real training/inference entrypoints exist in `orpheus/` and `sesame/`; no trained adapters, generated comparison audio, or acceptance report. | **Incomplete—GPU training** |
+| 7-7 | SFT gpt-oss-20b for selectable reasoning language and test zero-shot Chinese plus trained languages | `MultilingualReasoning/gpt_oss_20b_sft.py` implements training. No checkpoint or before/after multilingual benchmark. | **Incomplete—GPU training** |
+| 7-8 | Generate teacher outputs, train prompt-distilled student, and compare teacher/student quality, latency, and cost | Cross-chapter `chapter8/prompt-distillation` contains all three entrypoints, but no retained student checkpoint or completed quality-cost report. | **Incomplete—GPU training** |
+| 7-9 | Rejection-sample verified teacher CoT, SFT a student, compare baseline/student/teacher, and inspect reflection/backtracking/verification | 23/24 real Kimi K3 AIME teacher trajectories retained. `train_student.py` and `evaluate_student.py` implement the real parameter-update and paired acceptance stages with no mock success path; targeted/resumable collection can retry the one timed-out case without overwriting verified rows. [`student_sft_preflight_20260730.json`](cot-distillation/validation/student_sft_preflight_20260730.json) hashes the 23-row set and proves the pinned Trainer/LoRA stack imports; the sole current blocker is no CUDA device, so no student result exists yet. | **Implementation complete; execution incomplete—CUDA** |
+| 7-10 | AdaptThink training and evaluation of Thinking/NoThinking routing | Authoritative `bojieli/AdaptThink` checkout matches `0033ad1…`; scripts are statically mapped, not run. | **External reproduction; not run** |
+| 7-11 | GeneralPoints language/VL SFT-vs-PPO ID/OOD comparison under equal budget | Authoritative `bojieli/SFTvsRL` checkout matches `fef0a4a…`; exact GP train/eval scripts mapped, no checkpoint/run. | **External reproduction; not run** |
+| 7-12 | V-IRL-VL PPO navigation with ID/rule-OOD/visual-OOD evaluation | Same pinned SFTvsRL checkout is the real source; `SpatialReasoning/` is a guide, not a separate implementation. No training/evaluation run. | **External reproduction; not run** |
+| 7-13 | SimpleVLA-RL LIBERO/RoboTwin training/evaluation, including result reward and emergent policy evidence | Pinned `PRIME-RL/SimpleVLA-RL` checkout at `7c51662…`. Checkpoint placeholders, simulator/assets, and full CUDA lock remain unresolved; no run. | **External reproduction; dependency contract incomplete** |
+| 7-14 | RLVP GRPO baseline vs verified path signals on TerminalBench and miniF2F over required seeds | README pins `19PINE-AI/rlvp` at `1ad30bc…` and exact train/eval sequence; checkout and CUDA results are absent. | **External reproduction; not run** |
+| 7-15 | ReTool SFT warmup + PPO with live SandboxFusion execution and AIME comparison | veRL checkout matches `1593fc3…`; README pins SandboxFusion `4a0d573…`, which is absent locally. No sandbox service, SFT checkpoint, PPO run, or evaluation. | **External reproduction; not run** |
+| 7-16 | Run AWorld MCP reset/episode loop and train Qwen3-4B until reward/tool-use improves | AWorld and veRL checkouts match the pinned SHAs and exact entrypoints are mapped. Historical upstream logs in the checkout do not establish a current run; no local reward curve/checkpoint. | **External reproduction; not run** |
+
+Pinned source identities and acquisition commands are maintained in
+[README.md](README.md). The current host is Apple Silicon/macOS and cannot
+execute the NVIDIA/CUDA experiments without moving the same protocols to a GPU host.

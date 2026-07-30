@@ -1,0 +1,60 @@
+{
+  "overall_score": 75,
+  "pass": false,
+  "issues": [
+    {
+      "page": 4,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "放大Transformer架构图，确保图中模块名称和连接关系清晰可见"
+    },
+    {
+      "page": 4,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "移除图片下方的长段文字说明，仅保留简洁标题或关键标注"
+    },
+    {
+      "page": 5,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Encoder和Decoder内容拆分到两页，每页不超过4个要点"
+    },
+    {
+      "page": 10,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Training Setup的三个部分拆分到单独页面，每个部分保留2-3个要点"
+    },
+    {
+      "page": 12,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "大幅放大注意力可视化图，确保文字标签和连接线清晰可辨"
+    },
+    {
+      "page": 12,
+      "issue_type": "readability",
+      "severity": "high",
+      "suggestion": "移除图片下方的详细说明文字，仅保留标题和简短解释"
+    },
+    {
+      "page": 13,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "大幅放大指代消解可视化图，确保文字和注意力权重分布清晰可见"
+    },
+    {
+      "page": 13,
+      "issue_type": "readability",
+      "severity": "high",
+      "suggestion": "移除图片下方的说明文字，改用简洁标题突出核心发现"
+    },
+    {
+      "page": 14,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Key Contributions和Future Work拆分到两页，每部分保留3-4个要点"
+    }
+  ]
+}

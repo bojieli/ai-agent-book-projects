@@ -1,0 +1,86 @@
+[
+  {
+    "en": "AI Agent",
+    "zh": "AI 智能体",
+    "pos": "noun",
+    "context": "A system that autonomously plans, executes, and adjusts actions using an LLM as its reasoning engine, context as its working information, and tools as its action interfaces. Examples include Cursor (coding), Deep Research (search), and Manus (browser control)."
+  },
+  {
+    "en": "ReAct Loop",
+    "zh": "推理-行动-观察循环",
+    "pos": "noun",
+    "context": "The core operational loop of an AI Agent: the model first reasons about the next step, then acts by calling tools, then observes the results, and repeats this cycle until the task is complete. This loop connects LLM, context, and tools into a unified system."
+  },
+  {
+    "en": "Harness Engineering",
+    "zh": "智能体框架工程",
+    "pos": "noun",
+    "context": "The engineering practice of designing and optimizing the infrastructure around the LLM to ensure reliable task execution. It includes context management, tool interfaces, safety constraints, verification, and correction mechanisms. The formula is: Agent = Model + Harness."
+  },
+  {
+    "en": "Context Engineering",
+    "zh": "上下文工程",
+    "pos": "noun",
+    "context": "The practice of designing, organizing, and managing the context provided to an LLM at each decision point. It includes prompt engineering, dynamic prompts (Agent Skills), Agent Status Bar, and context compression strategies to ensure the model receives sufficient, refined, and structured information."
+  },
+  {
+    "en": "Agent Skills",
+    "zh": "智能体技能",
+    "pos": "noun",
+    "context": "Modular, loadable knowledge packages that provide specialized domain guidance to an Agent. Skills use progressive disclosure: metadata (name + description) is loaded upfront, while full content is loaded on demand via a dedicated tool. This avoids loading all knowledge into the context at once, improving efficiency and KV Cache compatibility."
+  },
+  {
+    "en": "Agent Status Bar",
+    "zh": "智能体状态栏",
+    "pos": "noun",
+    "context": "A mechanism that injects dynamic meta-information (e.g., task progress, tool call counts, environment state) at the end of the context. This converts implicit states scattered in the trajectory into explicit, directly usable knowledge for the model, improving decision-making and efficiency."
+  },
+  {
+    "en": "KV Cache",
+    "zh": "键值缓存",
+    "pos": "noun",
+    "context": "An optimization in LLM inference that caches the key-value states of already processed tokens to avoid redundant computation. It requires the prefix (e.g., system prompt + tool definitions) to remain byte-for-byte unchanged; any modification invalidates the cache, increasing latency and cost."
+  },
+  {
+    "en": "Tool Calling",
+    "zh": "工具调用",
+    "pos": "noun",
+    "context": "A core capability of modern LLM Agents that allows the model to invoke external tools in a structured way. The model decides which tool to call, with what arguments, and when to call it, transforming the LLM from a text generator into an intelligent system that can act through external interfaces."
+  },
+  {
+    "en": "Observation Space",
+    "zh": "观察空间",
+    "pos": "noun",
+    "context": "In the context of AI Agents, the observation space refers to all the information available to the Agent at a decision point, including the environment, user memory, domain knowledge, its own state, and task progress. It corresponds to the 'Context' component in the Agent formula (Agent = LLM + Context + Tools)."
+  },
+  {
+    "en": "Action Space",
+    "zh": "动作空间",
+    "pos": "noun",
+    "context": "In the context of AI Agents, the action space refers to the complete set of actions the Agent can perform, including predefined tool calls, code execution, delegating work to sub-agents, or responding to external events. It corresponds to the 'Tools' component in the Agent formula (Agent = LLM + Context + Tools)."
+  },
+  {
+    "en": "token",
+    "zh": "词元",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "prompt",
+    "zh": "提示词",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "latency",
+    "zh": "时延",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "embedding",
+    "zh": "嵌入向量",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  }
+]

@@ -1,0 +1,22 @@
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 134679.49it/s]
+
+[normal] validation/scenarios/normal.wav
+   2.00s |   9.97s | 麻烦你帮我把明天下午的会议 []
+   4.00s |   9.88s | 麻烦你帮我把明天下午的会议改到两点半地点 []
+   6.00s |  10.45s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。 []
+   7.49s |  10.79s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。 []
+
+[pause] validation/scenarios/long_pause.wav
+   2.00s |   8.41s | 麻烦你帮我把明天下午的会议 []
+   4.00s |   8.74s | 麻烦你帮我把明天下午的会议改到两点半地点 []
+   6.00s |  10.99s | 麻烦你帮我把明天下午的会议改到两点半地点还还是在三号会议室 ['<|noise|>', '<|laughter|>', '<|cough|>']
+   8.00s |  10.70s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。 []
+   8.39s |  10.82s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。 []
+
+[noise] validation/scenarios/background_noise.wav
+   2.00s |   8.96s | 麻烦你帮我把明天下午的会议 []
+   4.00s |  10.23s | 麻烦你帮我把明天下午的会议改到两点半地点 ['<|noise|>', '<|laughter|>', '<|cough|>']
+   6.00s |  10.29s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。 []
+   7.49s |  11.27s | 麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。 ['<|noise|>', '<|laughter|>', '<|cough|>']
+
+Sanitized evidence: /Users/boj/book/ai-agent-book/chapter9/streaming-speech/validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/evidence.json

@@ -20,16 +20,17 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 
 # ---------------------------------------------------------------------------
 # research 角色：web_search —— 真实 Tavily 搜索
 # ---------------------------------------------------------------------------
 
-def web_search(query: str) -> str:
+def web_search(query: str, receipt_sink: Optional[Callable[[dict], None]] = None) -> str:
     """Run a real Tavily web search and return attributable source excerpts."""
     api_key = os.environ.get("TAVILY_API_KEY", "").strip()
     if not api_key:
@@ -48,12 +49,30 @@ def web_search(query: str) -> str:
         headers={"Content-Type": "application/json"},
         method="POST",
     )
+    started = time.monotonic()
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
-            payload = json.loads(response.read())
+            status = response.status
+            raw_response = response.read().decode("utf-8", "replace")
+            payload = json.loads(raw_response)
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")[:1000]
         raise RuntimeError(f"Tavily HTTP {exc.code}: {detail}") from None
+    if receipt_sink:
+        receipt_sink({
+            "kind": "tavily_search",
+            "request": {
+                "method": "POST",
+                "url": "https://api.tavily.com/search",
+                "headers": {"Content-Type": "application/json"},
+                "body": {key: value for key, value in body.items() if key != "api_key"},
+            },
+            "response": {
+                "http_status": status,
+                "raw_body": raw_response,
+            },
+            "duration_seconds": round(time.monotonic() - started, 3),
+        })
     results = []
     for item in payload.get("results") or []:
         if not isinstance(item, dict):

@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Dict, List, Tuple
+import time
+from typing import Callable, Dict, Optional
+
+
+ReceiptSink = Optional[Callable[[Dict[str, object]], None]]
 
 
 def _backends():
@@ -25,7 +29,14 @@ def _backends():
     return out
 
 
-async def extract_profile(target: str, college: str, url: str, text: str) -> Dict[str, object]:
+async def extract_profile(
+    target: str,
+    college: str,
+    url: str,
+    text: str,
+    receipt_sink: ReceiptSink = None,
+    call_context: Optional[Dict[str, object]] = None,
+) -> Dict[str, object]:
     """Extract only facts visible in the browser observation.
 
     The deterministic name-presence gate prevents a model from supplying a profile
@@ -47,6 +58,7 @@ async def extract_profile(target: str, college: str, url: str, text: str) -> Dic
     }
     last = None
     for client, model, provider in _backends():
+        started = time.monotonic()
         try:
             kwargs = dict(
                 model=model,
@@ -56,6 +68,19 @@ async def extract_profile(target: str, college: str, url: str, text: str) -> Dic
             if "kimi-k3" in model:
                 kwargs.update(temperature=1, max_tokens=2048)
             response = await client.chat.completions.create(**kwargs)
+            raw_response = response.model_dump(mode="json")
+            if receipt_sink:
+                receipt_sink({
+                    "kind": "llm_chat_completion",
+                    "context": dict(call_context or {}),
+                    "provider": provider,
+                    "request": kwargs,
+                    "response": raw_response,
+                    "response_id": response.id,
+                    "response_model": response.model,
+                    "usage": response.usage.model_dump(mode="json") if response.usage else None,
+                    "duration_seconds": round(time.monotonic() - started, 3),
+                })
             content = response.choices[0].message.content or ""
             if not content.strip():
                 raise ValueError("empty model response")
@@ -65,5 +90,14 @@ async def extract_profile(target: str, college: str, url: str, text: str) -> Dic
             return result
         except Exception as exc:
             last = exc
+            if receipt_sink:
+                receipt_sink({
+                    "kind": "llm_chat_completion_error",
+                    "context": dict(call_context or {}),
+                    "provider": provider,
+                    "model": model,
+                    "error_type": type(exc).__name__,
+                    "duration_seconds": round(time.monotonic() - started, 3),
+                })
             print(f"  [extract] {provider} failed: {type(exc).__name__}; trying next endpoint")
     raise RuntimeError("all configured LLM extraction endpoints failed") from last

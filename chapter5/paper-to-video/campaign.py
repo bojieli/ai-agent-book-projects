@@ -90,24 +90,43 @@ def cached_json_call(
         if cached.get("signature") != signature:
             raise RuntimeError(f"cached provider-call signature mismatch: {path}")
         return cached["parsed"], cached["receipt"]
-    started = time.perf_counter()
-    response = client.chat.completions.create(
-        model=model,
-        messages=messages,
-        temperature=1,
-        max_tokens=max_tokens,
-        response_format={"type": "json_object"},
-    )
-    raw = response.model_dump(mode="json")
-    receipt = {
-        "provider": provider,
-        "request": {"model": model, "messages": messages, "temperature": 1, "max_tokens": max_tokens, "response_format": {"type": "json_object"}},
-        "response": raw,
-        "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
-    }
-    parsed = parse_json_content(response.choices[0].message.content or "")
-    atomic_json(path, {"signature": signature, "parsed": parsed, "receipt": receipt})
-    return parsed, receipt
+    failed_attempts: list[dict[str, Any]] = []
+    for attempt in range(1, 4):
+        started = time.perf_counter()
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=1,
+            max_tokens=max_tokens,
+            response_format={"type": "json_object"},
+        )
+        raw = response.model_dump(mode="json")
+        receipt = {
+            "provider": provider,
+            "request": {"model": model, "messages": messages, "temperature": 1, "max_tokens": max_tokens, "response_format": {"type": "json_object"}},
+            "response": raw,
+            "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+            "json_attempt": attempt,
+        }
+        try:
+            parsed = parse_json_content(response.choices[0].message.content or "")
+        except (ValueError, json.JSONDecodeError) as exc:
+            # Providers occasionally ignore response_format or truncate an
+            # object. Preserve the real failed receipt and retry the API; do
+            # not fabricate a narration or visual judgment to fill the page.
+            failed_attempts.append({"error": str(exc), "receipt": receipt})
+            atomic_json(
+                path.with_name(path.stem + ".failed-attempts.json"),
+                {"signature": signature, "attempts": failed_attempts},
+            )
+            if attempt == 3:
+                raise RuntimeError(
+                    f"provider returned malformed JSON three times: {path}"
+                ) from exc
+            continue
+        atomic_json(path, {"signature": signature, "parsed": parsed, "receipt": receipt})
+        return parsed, receipt
+    raise AssertionError("unreachable JSON retry loop")
 
 
 def slide_sections(markdown: str) -> list[str]:

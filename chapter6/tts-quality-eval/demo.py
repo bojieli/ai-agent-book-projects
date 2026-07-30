@@ -3,13 +3,13 @@
     python demo.py                      # 默认 4 个 OpenAI 配置 x 4 条语料
     python demo.py --providers openai,minimax   # 跨服务商横向对比
     python demo.py --text '一段话'       # 自定义文本
-    python demo.py --gemini             # 评审改用 Gemini 多模态直接听音频（需 GEMINI_API_KEY）
+    python demo.py --gemini             # 评审改用多模态模型直接听两段音频
     python demo.py --quick              # 只用前 2 条语料，快速冒烟
     python demo.py --list-providers     # 离线：查看 provider 及配置状态
     python demo.py --dump-rubric        # 离线：查看 Rubric 维度定义
 
 流程：多 provider TTS 合成 -> ffprobe 时长 -> Whisper 回译 -> CER/字准确率
-      -> LLM/Gemini Rubric 打分 -> 打印逐条明细 + 配置对比汇总表。
+      -> LLM/多模态音频 Rubric 打分 -> 打印逐条明细 + 配置对比汇总表。
 幂等：音频写入 output/ 并复用（除非 --fresh）。完整参数见 `python demo.py --help`。
 """
 
@@ -108,10 +108,14 @@ def evaluate_one(
             "scores": rub.scores, "reasons": rub.reasons,
             "judge_model": rub.judge_model,
             "evidence_mode": rub.evidence_mode,
+            "judge_provider_attempts": rub.provider_attempts,
         })
     except Exception as e:  # 单条失败不影响整表
         rec["failed_stage"] = stage
         rec["error"] = f"{type(e).__name__}: {e}"
+        attempts = getattr(e, "provider_attempts", None)
+        if attempts:
+            rec["judge_provider_attempts"] = attempts
     return rec
 
 
@@ -229,7 +233,11 @@ def main():
     ap.add_argument("--output", metavar="目录",
                     help=f"输出目录（音频 + results.json），默认 {OUT_DIR}")
     ap.add_argument("--extra", action="store_true", help="额外加入 gpt-4o-mini-tts 配置")
-    ap.add_argument("--gemini", action="store_true", help="用 Gemini 多模态直接听音频评审（需 GEMINI_API_KEY）")
+    ap.add_argument(
+        "--gemini",
+        action="store_true",
+        help="用 Gemini/OpenRouter/Voxtral 多模态路线直接听两段音频评审",
+    )
     ap.add_argument(
         "--reference-audio",
         default=DEFAULT_REFERENCE_AUDIO,
@@ -241,6 +249,7 @@ def main():
         help="Gemini 直听之外再运行 Whisper/CER；需要可用 OPENAI_API_KEY",
     )
     ap.add_argument("--quick", action="store_true", help="只用前 2 条语料快速冒烟")
+    ap.add_argument("--limit", type=int, default=0, help="只用前 N 条语料（0 = 全部）")
     ap.add_argument("--fresh", action="store_true", help="忽略已有音频，全部重新合成")
     ap.add_argument("--list-providers", action="store_true", dest="list_providers",
                     help="离线打印所有 TTS provider 及配置状态后退出（无需 key）")
@@ -266,8 +275,14 @@ def main():
         print("错误：缺少 OPENAI_API_KEY（回译/默认评审需要）。请 export 或写入 .env 后重试。",
               file=sys.stderr)
         sys.exit(1)
-    if args.gemini and not os.environ.get("GEMINI_API_KEY", "").strip():
-        print("错误：--gemini 需要 GEMINI_API_KEY。", file=sys.stderr)
+    if (args.gemini
+            and not os.environ.get("GEMINI_API_KEY", "").strip()
+            and not os.environ.get("OPENROUTER_API_KEY", "").strip()
+            and not os.environ.get("MISTRAL_API_KEY", "").strip()):
+        print(
+            "错误：--gemini 需要 GEMINI_API_KEY、OPENROUTER_API_KEY 或 MISTRAL_API_KEY。",
+            file=sys.stderr,
+        )
         sys.exit(1)
     if args.gemini and not os.path.isfile(args.reference_audio):
         print(f"错误：参考语音不存在：{args.reference_audio}", file=sys.stderr)
@@ -292,9 +307,14 @@ def main():
                                 challenge="自定义文本", emotion="中性")]
     else:
         corpus = config.CORPUS[:2] if args.quick else config.CORPUS
+        if args.limit:
+            if args.limit < 0:
+                print("错误：--limit 不能为负数。", file=sys.stderr)
+                sys.exit(1)
+            corpus = corpus[:args.limit]
 
     judge_model = args.judge_model or config.JUDGE_MODEL
-    mode = ("Gemini 多模态音频评审" if args.gemini
+    mode = ("多模态直接音频评审" if args.gemini
             else f"Whisper 回译 + LLM Rubric（{judge_model}）")
     providers_used = sorted({getattr(c, "provider", "openai") for c in configs})
     print("=" * 72)
@@ -339,7 +359,7 @@ def main():
     complete_records = [
         r for r in records
         if r.get("ok")
-        and r.get("evidence_mode") == "gemini-direct-audio-with-reference"
+        and r.get("evidence_mode") == "direct-audio-with-reference"
         and set(r.get("scores", {})) == exact_dims
         and all(1 <= int(v) <= 5 for v in r.get("scores", {}).values())
     ]

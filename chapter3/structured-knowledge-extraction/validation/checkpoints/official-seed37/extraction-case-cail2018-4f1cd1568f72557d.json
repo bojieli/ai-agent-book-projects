@@ -1,0 +1,124 @@
+{
+  "signature": "c5ec9a110db2b2be0f89bf525eafa92552b6582a9778bc653668e1cd6828d55a",
+  "parsed": {
+    "cases": [
+      {
+        "id": "cail2018-4f1cd1568f72557d",
+        "charge": "故意伤害罪",
+        "factors": {
+          "surrender": null,
+          "truthful_confession": null,
+          "compensation_to_victim": null,
+          "victim_forgiveness": null,
+          "joint_crime": null,
+          "criminal_record": null,
+          "arrest_method": null,
+          "return_of_stolen_property": null,
+          "crime_count": 1,
+          "crime_amount": null,
+          "guilty_plea": true,
+          "first_offense": null,
+          "recidivism": null,
+          "criminal_form": "既遂",
+          "disposal_of_stolen_property": null,
+          "victim_count": 1,
+          "injury_degree": "轻伤二级",
+          "weapon_type": "铁棍",
+          "criminal_cause": "琐事争执",
+          "community_correction_eligibility": null,
+          "victim_fault": null,
+          "compensation_status": null,
+          "mutual_fight": true,
+          "injury_result": "轻伤",
+          "criminal_motive": "琐事",
+          "drunk_crime": null,
+          "minor_injury_count": 1,
+          "serious_injury_count": 0
+        }
+      }
+    ]
+  },
+  "receipt": {
+    "purpose": "3-13 modular extraction case cail2018-4f1cd1568f72557d",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:40:15.135924+00:00",
+    "latency_ms": 40401.298,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法判例结构化抽取器。严格按给定的、由训练数据自下而上发现的 schema 抽取。numeric 输出数值，bool 输出 true/false，categorical 取 schema 值；文本未提及必须为 null，不得推断。保持 id 与 charge。只返回 JSON：{\"cases\":[{\"id\":\"...\",\"charge\":\"...\",\"factors\":{...}}]}。"
+        },
+        {
+          "role": "user",
+          "content": "DISCOVERED SCHEMA:\n{\"core\": [{\"key\": \"surrender\", \"name_cn\": \"自首\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否具有自首情节？\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"如实供述\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否如实供述罪行？\"}, {\"key\": \"compensation_to_victim\", \"name_cn\": \"赔偿被害人损失\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"被告人对被害人损失的赔偿情况如何？\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否对被告人表示谅解？\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否属于共同犯罪？\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否有犯罪前科？\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"kind\": \"categorical\", \"values\": [\"被抓获\", \"传唤到案\", \"自首\", \"现场等待\"], \"direction\": \"neutral\", \"question\": \"被告人的到案方式是什么？\"}, {\"key\": \"return_of_stolen_property\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"被告人的退赃情况如何？\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人的犯罪次数是多少？\"}, {\"key\": \"crime_amount\", \"name_cn\": \"犯罪金额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"犯罪涉及的金额是多少？\"}, {\"key\": \"guilty_plea\", \"name_cn\": \"认罪态度\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否自愿认罪？\"}, {\"key\": \"first_offense\", \"name_cn\": \"初犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否为初犯？\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否构成累犯？\"}, {\"key\": \"criminal_form\", \"name_cn\": \"犯罪形态\", \"kind\": \"categorical\", \"values\": [\"既遂\", \"未遂\", \"既遂+未遂\"], \"direction\": \"neutral\", \"question\": \"犯罪形态是既遂还是未遂？\"}, {\"key\": \"disposal_of_stolen_property\", \"name_cn\": \"赃款赃物处理情况\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"销赃牟利\", \"部分发还\", \"全部发还\"], \"direction\": \"neutral\", \"question\": \"赃款赃物的处理情况如何？\"}, {\"key\": \"victim_count\", \"name_cn\": \"被害人数量\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"本案涉及的被害人数量是多少？\"}], \"extensions\": {\"盗窃罪\": [{\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃次数是多少？\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃数额是多少？\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否属于入户盗窃？\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"kind\": \"categorical\", \"values\": [\"全部追回\", \"部分追回\", \"未追回\"], \"direction\": \"mitigating\", \"question\": \"赃物追回情况如何？\"}, {\"key\": \"destructive_means\", \"name_cn\": \"破坏性手段\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否采用破坏性手段盗窃？\"}, {\"key\": \"use_special_convenience\", \"name_cn\": \"利用特殊便利\", \"kind\": \"categorical\", \"values\": [\"钥匙\", \"工作便利\", \"无\"], \"direction\": \"aggravating\", \"question\": \"是否利用特殊便利实施盗窃？\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"kind\": \"categorical\", \"values\": [\"扒窃\", \"入户盗窃\", \"趁人不备\", \"撬锁\", \"爬窗\", \"顺手牵羊\"], \"direction\": \"aggravating\", \"question\": \"盗窃方式是什么？\"}, {\"key\": \"theft_target\", \"name_cn\": \"盗窃对象\", \"kind\": \"categorical\", \"values\": [\"手机\", \"现金\", \"电脑\", \"电动车\", \"首饰\", \"食品\"], \"direction\": \"neutral\", \"question\": \"盗窃对象是什么？\"}, {\"key\": \"theft_tool\", \"name_cn\": \"盗窃工具\", \"kind\": \"categorical\", \"values\": [\"螺丝刀\", \"老虎钳\", \"撬棍\", \"镊子\", \"钥匙\", \"徒手\"], \"direction\": \"aggravating\", \"question\": \"使用的盗窃工具是什么？\"}, {\"key\": \"theft_location\", \"name_cn\": \"盗窃场所\", \"kind\": \"categorical\", \"values\": [\"户内\", \"公共场所\", \"网吧\", \"超市\", \"户外\"], \"direction\": \"neutral\", \"question\": \"盗窃场所是什么？\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物处理方式\", \"kind\": \"categorical\", \"values\": [\"变卖挥霍\", \"藏匿\", \"返还被害人\"], \"direction\": \"aggravating\", \"question\": \"赃物处理方式是什么？\"}, {\"key\": \"drug_user_identity\", \"name_cn\": \"吸毒人员身份\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否为吸毒人员？\"}], \"故意伤害罪\": [{\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"重伤二级\", \"轻微伤\", \"重伤一级\"], \"direction\": \"aggravating\", \"question\": \"被害人损伤程度是什么？\"}, {\"key\": \"weapon_type\", \"name_cn\": \"伤害工具\", \"kind\": \"categorical\", \"values\": [\"菜刀\", \"木棍\", \"尖刀\", \"拳头\", \"铁棍\", \"U型锁\", \"铁锹\", \"酒瓶\"], \"direction\": \"aggravating\", \"question\": \"使用的伤害工具是什么？\"}, {\"key\": \"criminal_cause\", \"name_cn\": \"犯罪起因\", \"kind\": \"categorical\", \"values\": [\"琐事争执\", \"债务纠纷\", \"感情纠纷\", \"邻里矛盾\", \"被害人过错\", \"工作纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪起因是什么？\"}, {\"key\": \"community_correction_eligibility\", \"name_cn\": \"社区矫正评估\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"是否具备社区矫正条件？\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否存在过错？\"}, {\"key\": \"compensation_status\", \"name_cn\": \"赔偿情况\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"赔偿情况如何？\"}, {\"key\": \"mutual_fight\", \"name_cn\": \"互殴情节\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否存在互殴情节？\"}, {\"key\": \"injury_result\", \"name_cn\": \"伤害后果\", \"kind\": \"categorical\", \"values\": [\"轻伤\", \"重伤\", \"轻微伤\", \"死亡\"], \"direction\": \"aggravating\", \"question\": \"伤害后果是什么？\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"kind\": \"categorical\", \"values\": [\"报复\", \"琐事\", \"感情纠纷\", \"债务纠纷\", \"征地纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪动机是什么？\"}, {\"key\": \"drunk_crime\", \"name_cn\": \"酒后犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否酒后犯罪？\"}, {\"key\": \"minor_injury_count\", \"name_cn\": \"轻伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"轻伤人数是多少？\"}, {\"key\": \"serious_injury_count\", \"name_cn\": \"重伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"重伤人数是多少？\"}], \"诈骗罪\": [{\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗次数是多少？\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗数额是多少？\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"kind\": \"categorical\", \"values\": [\"虚构事实\", \"伪造证件\", \"冒充身份\", \"网络诈骗\", \"代还信用卡\", \"虚构投资\"], \"direction\": \"aggravating\", \"question\": \"诈骗手段是什么？\"}, {\"key\": \"restitution_situation\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"退赃情况如何？\"}, {\"key\": \"fraud_target\", \"name_cn\": \"诈骗对象\", \"kind\": \"categorical\", \"values\": [\"个人\", \"老年人\", \"国家财产\", \"金融机构\", \"亲友\"], \"direction\": \"aggravating\", \"question\": \"诈骗对象是什么？\"}, {\"key\": \"proceeds_use\", \"name_cn\": \"赃款用途\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"偿还赌债\", \"日常生活\", \"业务经营\"], \"direction\": \"aggravating\", \"question\": \"赃款用途是什么？\"}, {\"key\": \"impersonate_identity\", \"name_cn\": \"冒充身份\", \"kind\": \"categorical\", \"values\": [\"国家机关工作人员\", \"公司经理\", \"驾校人员\", \"民警\"], \"direction\": \"aggravating\", \"question\": \"冒充的身份是什么？\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗方式\", \"kind\": \"categorical\", \"values\": [\"虚构交易平台\", \"伪造合同\", \"虚假贷款\", \"代还信用卡报酬\", \"丢包诈骗\"], \"direction\": \"aggravating\", \"question\": \"具体诈骗方式是什么？\"}, {\"key\": \"fraud_victim_count\", \"name_cn\": \"诈骗被害人人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗被害人人数是多少？\"}, {\"key\": \"booty_squandered\", \"name_cn\": \"赃款挥霍\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"赃款是否被挥霍？\"}, {\"key\": \"fraud_middleman\", \"name_cn\": \"存在中间人\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否存在中间人？\"}]}}\n\nCASE:\n{\"id\": \"cail2018-4f1cd1568f72557d\", \"charge\": \"故意伤害罪\", \"fact\": \"经审理查明，2015年9月14日17时左右，被告人贾某甲因琐事与被害人贾某丁在博野县东墟镇东墟中学门口发生殴斗，经劝阻双方离开。随后，被告人贾某甲携一根铁棍与贾某乙、贾某驾车赶到博野县东墟镇南田村贾某丁家，被告人贾某甲用铁棍将贾某丁手部打伤。经保定市法医鉴定中心鉴定，贾某丁的伤情属轻伤二级。案发后，被害人贾某丁与被告人贾某甲亲属就民事赔偿部分已调解处理。\\r\\n上述事实被告人在开庭审理过程中亦无异议，且有博野县公安局刑警大队现场勘验检查笔录、现场照片、被害人贾某丁的陈述、证人贾某乙、贾某丙的证言、保定市法医鉴定中心司法鉴定意见书和协议书等证据证实，足以认定。\"}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 2000,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386415591c3e452fc13d1575f4c4fc19c0a06ce18d34c16",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"cases\":[{\"id\":\"cail2018-4f1cd1568f72557d\",\"charge\":\"故意伤害罪\",\"factors\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":null,\"criminal_record\":null,\"arrest_method\":null,\"return_of_stolen_property\":null,\"crime_count\":1,\"crime_amount\":null,\"guilty_plea\":true,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":\"既遂\",\"disposal_of_stolen_property\":null,\"victim_count\":1,\"injury_degree\":\"轻伤二级\",\"weapon_type\":\"铁棍\",\"criminal_cause\":\"琐事争执\",\"community_correction_eligibility\":null,\"victim_fault\":null,\"compensation_status\":null,\"mutual_fight\":true,\"injury_result\":\"轻伤\",\"criminal_motive\":\"琐事\",\"drunk_crime\":null,\"minor_injury_count\":1,\"serious_injury_count\":0}}]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户提供的司法判例结构化抽取任务。首先，我需要仔细阅读用户提供的schema和案例内容，然后按照要求抽取相关信息。\n\n首先，案例的id是\"cail2018-4f1cd1568f72557d\"，charge是\"故意伤害罪\"，这两个需要保持不变。接下来，我需要根据schema中的core部分和extensions中的故意伤害罪部分来抽取factors。\n\n先看core部分的各个key：\n\n1. surrender（自首）：案例中没有提到被告人自首，所以是null。\n2. truthful_confession（如实供述）：案例提到“上述事实被告人在开庭审理过程中亦无异议”，通常“无异议”可以视为如实供述，但需要确认是否明确。不过严格来说，“无异议”可能更接近认罪态度（guilty_plea），如实供述需要明确是否供述罪行。这里可能需要判断，但案例中没有明确说“如实供述”，所以可能为null？或者“无异议”是否算？不过根据严格要求，未提及必须为null，所以如实供述这里没有明确文字，所以null。\n3. compensation_to_victim（赔偿被害人损失）：案例提到“案发后，被害人贾某丁与被告人贾某甲亲属就民事赔偿部分已调解处理”。调解处理可能意味着赔偿了，但schema中的values是“未赔偿”“部分赔偿”“全额赔偿”。这里没有说明是部分还是全额，所以无法确定，因此是null。\n4. victim_forgiveness（被害人谅解）：案例只说调解处理，没有提到谅解，所以null。\n5. joint_crime（共同犯罪）：案例中提到“被告人贾某甲携一根铁棍与贾某乙、贾某驾车赶到”，但后面只说被告人贾某甲用铁棍打伤，贾某乙、贾某是否参与犯罪？案例中没有说贾某乙、贾某被认定为共犯，所以无法确定，因此joint_crime是null。\n6. criminal_record（前科情况）：未提及，null。\n7. arrest_method（到案方式）：未提及如何到案，null。\n8. return_of_stolen_property（退赃情况）：故意伤害罪可能涉及退赃吗？通常退赃是针对财产犯罪，这里是故意伤害，可能不涉及，所以null。\n9. crime_count（犯罪次数）：案例只提到一次伤害行为，所以犯罪次数是1？案例中没有提到多次犯罪，所以crime_count是1？需要确认案例中的“犯罪次数”是指本次犯罪的次数还是多次犯罪。这里案例描述的是一次事件，所以crime_count应为1？\n10. crime_amount（犯罪金额）：故意伤害罪通常没有犯罪金额，所以null。\n11. guilty_plea（认罪态度）：案例提到“被告人在开庭审理过程中亦无异议”，通常“无异议”视为自愿认罪，所以guilty_plea是true。\n12. first_offense（初犯）：未提及，null。\n13. recidivism（累犯）：未提及，null。\n14. criminal_form（犯罪形态）：故意伤害罪的形态，案例中被害人已构成轻伤二级，属于既遂，所以criminal_form是“既遂”？因为已经造成伤害结果，所以既遂。schema中的values有“既遂”“未遂”“既遂+未遂”，这里应选“既遂”。\n15. disposal_of_stolen_property（赃款赃物处理情况）：故意伤害罪不涉及赃款赃物，null。\n16. victim_count（被害人数量）：案例中被害人是贾某丁一人，所以victim_count是1。\n\n接下来是extensions中的故意伤害罪部分：\n\n1. injury_degree（损伤程度）：案例明确提到“经保定市法医鉴定中心鉴定，贾某丁的伤情属轻伤二级”，所以injury_degree是“轻伤二级”。\n2. weapon_type（伤害工具）：案例提到“被告人贾某甲用铁棍将贾某丁手部打伤”，所以weapon_type是“铁棍”，schema中的values有“菜刀”“木棍”“尖刀”“拳头”“铁棍”“U型锁”“铁锹”“酒瓶”，所以“铁棍”正确。\n3. criminal_cause（犯罪起因）：案例开头“被告人贾某甲因琐事与被害人贾某丁在博野县东墟镇东墟中学门口发生殴斗”，所以起因是“琐事争执”，schema中的values有“琐事争执”，所以criminal_cause是“琐事争执”。\n4. community_correction_eligibility（社区矫正评估）：未提及，null。\n5. victim_fault（被害人过错）：案例未提到被害人有过错，所以null。\n6. compensation_status（赔偿情况）：和core中的compensation_to_victim类似，案例提到调解处理，但未说明部分还是全额，所以null（schema中values是“未赔偿”“部分赔偿”“全额赔偿”）。\n7. mutual_fight（互殴情节）：案例提到“发生殴斗”，“殴斗”通常是互殴，所以mutual_fight是true。\n8. injury_result（伤害后果）：案例中伤情是轻伤二级，schema中的values有“轻伤”“重伤”“轻微伤”“死亡”，轻伤二级属于轻伤，所以injury_result是“轻伤”。\n9. criminal_motive（犯罪动机）：案例提到因琐事，schema中的values有“报复”“琐事”“感情纠纷”“债务纠纷”“征地纠纷”，所以criminal_motive是“琐事”。\n10. drunk_crime（酒后犯罪）：未提及，null。\n11. minor_injury_count（轻伤人数）：被害人1人，伤情是轻伤二级，所以minor_injury_count是1。\n12. serious_injury_count（重伤人数）：0，因为是轻伤，所以serious_injury_count是0？\n\n现在检查各个部分：\n\ncore部分的crime_count：案例中只描述了一次犯罪行为，所以犯罪次数是1，numeric类型，所以1。\n\nvictim_count是1，正确。\n\nextensions中的故意伤害罪：\n\ninjury_degree：轻伤二级；weapon_type：铁棍；criminal_cause：琐事争执；mutual_fight：true；injury_result：轻伤；criminal_motive：琐事；minor_injury_count：1；serious_injury_count：0。\n\n其他都是null。\n\n现在整理：\n\nfactors中的core部分：\n\nsurrender: null,\n\ntruthful_confession: null,\n\ncompensation_to_victim: null,\n\nvictim_forgiveness: null,\n\njoint_crime: null,\n\ncriminal_record: null,\n\narrest_method: null,\n\nreturn_of_stolen_property: null,\n\ncrime_count: 1,\n\ncrime_amount: null,\n\nguilty_plea: true,\n\nfirst_offense: null,\n\nrecidivism: null,\n\ncriminal_form: \"既遂\",\n\ndisposal_of_stolen_property: null,\n\nvictim_count: 1,\n\nextensions中的故意伤害罪部分：\n\ninjury_degree: \"轻伤二级\",\n\nweapon_type: \"铁棍\",\n\ncriminal_cause: \"琐事争执\",\n\ncommunity_correction_eligibility: null,\n\nvictim_fault: null,\n\ncompensation_status: null,\n\nmutual_fight: true,\n\ninjury_result: \"轻伤\",\n\ncriminal_motive: \"琐事\",\n\ndrunk_crime: null,\n\nminor_injury_count: 1,\n\nserious_injury_count: 0,\n\n需要确认crime_count是否正确，案例中是否有多次犯罪？案例只描述了一次事件，所以犯罪次数1正确。\n\nguilty_plea：被告人无异议，视为自愿认罪，所以true。\n\ncriminal_form：既遂，正确，因为已经造成轻伤结果。\n\nmutual_fight：殴斗即互殴，true。\n\nminor_injury_count：1，正确；serious_injury_count：0，正确。\n\n其他未提及的都是null。"
+          }
+        }
+      ],
+      "created": 1785386455,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 1978,
+        "prompt_tokens": 3207,
+        "total_tokens": 5185,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1750,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 1978,
+      "prompt_tokens": 3207,
+      "total_tokens": 5185,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1750,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386415591c3e452fc13d1575f4c4fc19c0a06ce18d34c16"
+  }
+}

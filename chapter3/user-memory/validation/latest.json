@@ -1,20 +1,20 @@
 {
   "schema_version": "chapter3-evidence-v1",
   "experiment": "3-1-and-3-2",
-  "run_id": "20260729T214915Z-3_1_and_3_2-95c7b98f",
-  "created_at": "2026-07-29T21:49:15.412512+00:00",
+  "run_id": "20260730T043652Z-3_1_and_3_2-16200e94",
+  "created_at": "2026-07-30T04:36:53.131949+00:00",
   "status": "passed",
-  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/user-memory/validation/runs/20260729T214915Z-3_1_and_3_2-95c7b98f",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/user-memory/validation/runs/20260730T043652Z-3_1_and_3_2-16200e94",
   "artifacts": {
-    "evidence.json": "eda4172bf58d8ecc0607813fabde50db082a91c53f9388564d45118f361fc769",
-    "receipts.json": "eb739d9a82c937608b7e4edb746cbda6cefe44982e80bba8dd63e935de05d174",
-    "manifest.json": "43cb7e2eaf4c8dd6b9039d099172057fcc9c77e796a5bd32908d63895e827102"
+    "evidence.json": "b29968a6780727a56ce641481f1be7f454865ab9017fdb184f0cf60ad00de724",
+    "receipts.json": "89bd28e4a9714e804c0b46614ae61f4ae9b52a16dcb5eea297dc30e559f61dae",
+    "manifest.json": "bb802c3d5cfff3014a40d3d616d6b9f5f794e9f53e316734bcf478f254984f37"
   },
   "inputs": [
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/user-memory/run_evaluation.py",
-      "sha256": "dd85135232e65eacb4399acb910bf90ec8ca2d26a5602dc286422dd8cd0d3ace",
-      "bytes": 23589
+      "sha256": "a69f0039de306cbda2ef8920195a9720b7435e9a072b7c7f1823c5e3d61dc286",
+      "bytes": 23587
     },
     {
       "path": "/Users/boj/book/ai-agent-book/chapter3/user-memory-evaluation/test_cases/layer1/01_bank_account_setup.yaml",
@@ -462,7 +462,7 @@
           "total_tokens": 1126107
         },
         "latency_ms": {
-          "total": 10583750.72799999,
+          "total": 10583750.727999993,
           "mean_per_call": 40550.76907279694
         }
       },

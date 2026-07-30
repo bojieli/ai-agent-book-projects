@@ -1,0 +1,366 @@
+{
+  "schema_version": 2,
+  "experiment": "9-3",
+  "timestamp_utc": "2026-07-30T05:24:57.619611+00:00",
+  "model": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
+  "device": "mlx",
+  "method": "growing-prefix full re-encoding (not true streaming)",
+  "parameters": {
+    "chunk_seconds": 2.0,
+    "whisper_model": "tiny",
+    "vad_silence_ms": 600,
+    "cer_normalization": "NFKC + Traditional-to-Simplified Chinese + casefold + remove punctuation/symbols/separators"
+  },
+  "provenance": {
+    "host": {
+      "platform": "macOS-26.3-arm64-arm-64bit",
+      "machine": "arm64",
+      "cpu": "Apple M2 Max",
+      "memory_bytes": 103079215104,
+      "python": "3.11.4",
+      "packages": {
+        "mlx-audio": "0.4.6",
+        "openai-whisper": "20231106",
+        "librosa": "0.10.2.post1",
+        "opencc-python-reimplemented": "0.1.7"
+      },
+      "whisper_baseline": {
+        "model": "tiny",
+        "path": "/Users/boj/.cache/whisper/tiny.pt",
+        "sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9"
+      }
+    },
+    "qwen2_audio": {
+      "repository": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
+      "snapshot_revision": "c65570002626f41b4dc08b7b54f42f99f3e82e7f",
+      "snapshot_path": "/Users/boj/.cache/huggingface/hub/models--mlx-community--Qwen2-Audio-7B-Instruct-4bit/snapshots/c65570002626f41b4dc08b7b54f42f99f3e82e7f",
+      "total_bytes": 6574659991,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size_bytes": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "README.md",
+          "size_bytes": 1716,
+          "sha256": "1cddc760431c9c2c043ed4d17d9c17716a1f81978e6093389420cd46e7f2ce6d"
+        },
+        {
+          "path": "config.json",
+          "size_bytes": 913,
+          "sha256": "39493dad1678533cc2a7ba2de0a573cc926a78ef4c7abef72a6b660159de94b7"
+        },
+        {
+          "path": "merges.txt",
+          "size_bytes": 1671839,
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+        },
+        {
+          "path": "preprocessor_config.json",
+          "size_bytes": 342,
+          "sha256": "4cd7c6c061fe79244c57b0c320b2873f3ee5acce2277f7cc3aced042725680f2"
+        },
+        {
+          "path": "tokenizer.json",
+          "size_bytes": 7028015,
+          "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size_bytes": 638335,
+          "sha256": "c738158e70eeecf25736a6c4d8e5f34cfce683079980757edfb0665a7b2457ed"
+        },
+        {
+          "path": "vocab.json",
+          "size_bytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        },
+        {
+          "path": "weights.safetensors",
+          "size_bytes": 6562540479,
+          "sha256": null
+        }
+      ],
+      "large_weight_hash_note": "Snapshot revision pins large files; files over 10 MiB are inventoried by path and size without rehashing."
+    }
+  },
+  "cases": [
+    {
+      "scenario": "normal",
+      "audio": "validation/scenarios/normal.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "media": {
+        "sha256": "22cbbff9df0ec0efc9a09b5d250b8d63c1876363716b8a1d7aa9f85f16e8a410",
+        "expected_acoustic_events": []
+      },
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 9.968843291979283,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 9.877914333250374,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 10.44804058270529,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 7.4875,
+          "inference_seconds": 10.78756216680631,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "configured_silence_ms": 600,
+        "first_speech_start_seconds": 0.02,
+        "first_endpoint_audio_seconds": 7.16,
+        "first_decision_audio_seconds": 7.76,
+        "post_speech_vad_delay_seconds": 0.6,
+        "first_segment_asr_seconds": 0.6523482501506805,
+        "all_segments_asr_seconds": 0.6523482501506805,
+        "post_endpoint_response_seconds": 1.2523482501506806,
+        "first_response_from_audio_start_seconds": 8.41234825015068,
+        "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家",
+        "segment_transcripts": [
+          "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家"
+        ],
+        "segment_asr_seconds": [
+          0.6523482501506805
+        ],
+        "segment_count": 1,
+        "endpoints": [
+          7.16
+        ],
+        "decisions": [
+          7.76
+        ]
+      },
+      "whisper_final_cer": 0.02857142857142857,
+      "qwen2_event_evaluation": {
+        "true_positive": [],
+        "false_positive": [],
+        "false_negative": [],
+        "exact_match": true
+      }
+    },
+    {
+      "scenario": "pause",
+      "audio": "validation/scenarios/long_pause.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "media": {
+        "sha256": "7b4b9975d58c71c50cdb81ff9578a0b04192aeb3cbea634384a804ea4e3dc48d",
+        "expected_acoustic_events": [
+          "<|silence|>"
+        ]
+      },
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 8.413955624680966,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 8.742833625059575,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 10.989260375034064,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还还是在三号会议室",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点还还是在三号会议室', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        },
+        {
+          "prefix_seconds": 8.0,
+          "inference_seconds": 10.69584474992007,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 8.3875,
+          "inference_seconds": 10.8182367910631,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "configured_silence_ms": 600,
+        "first_speech_start_seconds": 0.02,
+        "first_endpoint_audio_seconds": 4.04,
+        "first_decision_audio_seconds": 4.64,
+        "post_speech_vad_delay_seconds": 0.6,
+        "first_segment_asr_seconds": 0.3871377082541585,
+        "all_segments_asr_seconds": 0.7301125833764672,
+        "post_endpoint_response_seconds": 0.9871377082541585,
+        "first_response_from_audio_start_seconds": 5.027137708254158,
+        "transcript": "麻煩你幫我把明天下午的會議改到兩點半地點 還是在三號會議時別忘了通知大家",
+        "segment_transcripts": [
+          "麻煩你幫我把明天下午的會議改到兩點半地點",
+          "還是在三號會議時別忘了通知大家"
+        ],
+        "segment_asr_seconds": [
+          0.3871377082541585,
+          0.34297487512230873
+        ],
+        "segment_count": 2,
+        "endpoints": [
+          4.04,
+          8.06
+        ],
+        "decisions": [
+          4.64,
+          8.66
+        ]
+      },
+      "whisper_final_cer": 0.02857142857142857,
+      "qwen2_event_evaluation": {
+        "true_positive": [],
+        "false_positive": [],
+        "false_negative": [
+          "<|silence|>"
+        ],
+        "exact_match": false
+      }
+    },
+    {
+      "scenario": "noise",
+      "audio": "validation/scenarios/background_noise.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "media": {
+        "sha256": "034f4e9d4f5c2b69407e1e9813b4544792764a7e2e7340af410945b5c90c48b1",
+        "expected_acoustic_events": [
+          "<|noise|>"
+        ]
+      },
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 8.962713832966983,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 10.234860499855131,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 10.288799332920462,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 7.4875,
+          "inference_seconds": 11.268820082768798,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "configured_silence_ms": 600,
+        "first_speech_start_seconds": 0.0,
+        "first_endpoint_audio_seconds": 7.4875,
+        "first_decision_audio_seconds": 8.0875,
+        "post_speech_vad_delay_seconds": 0.6,
+        "first_segment_asr_seconds": 0.5559374578297138,
+        "all_segments_asr_seconds": 0.5559374578297138,
+        "post_endpoint_response_seconds": 1.155937457829714,
+        "first_response_from_audio_start_seconds": 8.643437457829714,
+        "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家",
+        "segment_transcripts": [
+          "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家"
+        ],
+        "segment_asr_seconds": [
+          0.5559374578297138
+        ],
+        "segment_count": 1,
+        "endpoints": [
+          7.487
+        ],
+        "decisions": [
+          8.088
+        ]
+      },
+      "whisper_final_cer": 0.02857142857142857,
+      "qwen2_event_evaluation": {
+        "true_positive": [
+          "<|noise|>"
+        ],
+        "false_positive": [
+          "<|cough|>",
+          "<|laughter|>"
+        ],
+        "false_negative": [],
+        "exact_match": false
+      }
+    }
+  ],
+  "cost": {
+    "paid_external_requests": 0,
+    "total_usd": 0,
+    "note": "Both models ran locally."
+  },
+  "acceptance": {
+    "execution_gates": {
+      "real_qwen2_audio": true,
+      "growing_prefix_full_reencoding": true,
+      "real_600ms_vad_whisper_baseline": true,
+      "normal_pause_noise_scenarios": true,
+      "corrected_vad_latency_accounting": true,
+      "normalized_cer": true,
+      "provenance_complete": true
+    },
+    "execution_passed": true,
+    "manuscript_result_claims": {
+      "qwen_incremental_latency_100_to_200ms": false,
+      "traditional_post_endpoint_latency_800_to_1100ms": false,
+      "pause_split_into_two_segments": true,
+      "pause_specific_two_to_zero_error": false,
+      "noise_token_detected": true,
+      "noise_caused_earlier_vad_start": false
+    },
+    "manuscript_results_reproduced": false
+  }
+}

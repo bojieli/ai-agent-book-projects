@@ -45,7 +45,11 @@ Level 3 PII includes:
 - Usernames for Financial Accounts
 - Passwords
 
-Analyze the conversation and return a JSON with the exact PII values found. NEVER use placeholders. Simply return the PII values found."""
+Analyze the conversation and return JSON with a pii_items array. Each item must include:
+- type: the PII category label
+- value: the exact sensitive substring copied verbatim from the input text
+
+Do not include labels or explanations inside value. NEVER use placeholders."""
 
 USER_PROMPT_TEMPLATE = """Analyze the following conversation for Level 3 PII:
 
@@ -55,13 +59,26 @@ USER_PROMPT_TEMPLATE = """Analyze the following conversation for Level 3 PII:
 PII_DETECTION_SCHEMA = {
     "type": "object",
     "properties": {
-        "pii_values": {
+        "pii_items": {
             "type": "array",
             "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "PII category label, e.g. ssn, credit_card_number, email"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "Exact sensitive substring copied verbatim from the input text"
+                    }
+                },
+                "required": ["type", "value"],
+                "additionalProperties": False
             },
-            "description": "Array of exact PII values found in the conversation. NEVER use placeholders."
+            "description": "Array of structured PII items. The value field must be copied verbatim from the input text."
         }
     },
-    "required": ["pii_values"]
+    "required": ["pii_items"],
+    "additionalProperties": False
 }

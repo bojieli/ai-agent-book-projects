@@ -1,0 +1,78 @@
+{
+  "signature": "ae1dc731145d984c76bc2a52269f848d9c4946128d10d600cbc9aff7c11a8267",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议中明确指出了匹配依据，包括诈骗金额、诈骗目标、诈骗次数、诈骗被害人数量和犯罪金额等因素，这些因素与训练原型的特征存在关联，符合原型统计的要求。同时，建议中提到了刑期统计区间，包括中位数、四分位区间、最小值和最大值，这与原型统计数据一致。此外，建议中也提到了退赃情况、坦白、赔偿谅解等情节未知，以及诈骗方法与原型定义特征中的不完全一致，体现了对不确定性的考虑和谨慎态度。最后，建议中包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-2c6e52cdfbb2c177",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:43:04.209375+00:00",
+    "latency_ms": 4198.98,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：晋江市人民检察院指控，2015年4月25日，被告人吴某在位于晋江市西园街道王厝双水湾小区4号楼2梯2306室的租房内，向被害人吴某谎称系该房屋的产权所有人，以提供伪造的房产证作为抵押借贷的方式，骗走被害人吴某13万元（币种人民币，下同）。事后，被告人吴某转账10500元给被害人吴某，后于2017年6月28日被抓获归案。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：48个月\n匹配原型：{\"prototype_id\": \"诈骗罪-prototype-1\", \"charge\": \"诈骗罪\", \"prototype_size\": 98, \"sentence_months\": {\"median\": 18.0, \"q25\": 8.0, \"q75\": 37.5, \"min\": 4.0, \"max\": 180.0}, \"defining_features\": [{\"feature\": \"num:fraud_amount\", \"z\": 1.2307636843371674}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.0781858944170049}, {\"feature\": \"cat:fraud_method=虚构事实\", \"z\": 1.023056629094547}, {\"feature\": \"num:fraud_count\", \"z\": 0.9259512058187134}, {\"feature\": \"num:fraud_victim_count\", \"z\": 0.7729058128215746}, {\"feature\": \"num:crime_amount\", \"z\": 0.7680126997226981}, {\"feature\": \"cat:restitution_situation=全部退赃\", \"z\": 0.6567069704900581}, {\"feature\": \"num:theft_amount\", \"z\": -0.6458056132900002}], \"match_distance\": 0.43279151303600627}\n生成建议：匹配依据为本案诈骗金额（130000元）、诈骗目标（个人）、诈骗次数（1次）、诈骗被害人数量（1人）、犯罪金额（130000元）等因素与训练原型“诈骗罪-prototype-1”的高权重特征（z值较高）存在关联。该原型包含98个案件，其刑期统计区间为：中位数18个月，四分位区间8-37.5个月，最小值4个月，最大值180个月。需注意，本案退赃情况、坦白、赔偿谅解等情节未知，且诈骗方法（伪造证件）与原型定义特征中的“虚构事实”不完全一致，刑期存在不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6584240f92a2620f3f5",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议中明确指出了匹配依据，包括诈骗金额、诈骗目标、诈骗次数、诈骗被害人数量和犯罪金额等因素，这些因素与训练原型的特征存在关联，符合原型统计的要求。同时，建议中提到了刑期统计区间，包括中位数、四分位区间、最小值和最大值，这与原型统计数据一致。此外，建议中也提到了退赃情况、坦白、赔偿谅解等情节未知，以及诈骗方法与原型定义特征中的不完全一致，体现了对不确定性的考虑和谨慎态度。最后，建议中包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386585,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 197,
+        "prompt_tokens": 778,
+        "total_tokens": 975,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 197,
+      "prompt_tokens": 778,
+      "total_tokens": 975,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6584240f92a2620f3f5"
+  }
+}

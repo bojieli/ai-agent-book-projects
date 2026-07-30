@@ -10,9 +10,12 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from evaluate_audio_quality import validate_study
+
 HERE = Path(__file__).parent
 MANIFEST = HERE / "reference_audio" / "manifest.json"
 RUN = HERE / "validation" / "latest.json"
+QUALITY_STUDY = HERE / "validation" / "audio_quality_study.json"
 
 
 def sha256(path: Path) -> str:
@@ -76,8 +79,18 @@ def main() -> int:
         ),
         "thinking_native_filler_exercised": any("(uncertain)" in segment.get("fish_text", "") for segment in c_segments),
     }
+    quality_study = None
+    quality_study_valid = False
+    quality_study_error = None
+    if QUALITY_STUDY.is_file():
+        try:
+            quality_study = json.loads(QUALITY_STUDY.read_text(encoding="utf-8"))
+            validate_study(quality_study)
+            quality_study_valid = True
+        except (json.JSONDecodeError, OSError, ValueError) as exc:
+            quality_study_error = str(exc)
     artifact = {
-        "schema_version": 2,
+        "schema_version": 3,
         "experiment": "9-5",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "artifact_generation": {
@@ -97,7 +110,9 @@ def main() -> int:
             "manifest_sha256": sha256(MANIFEST),
             "run_evidence_sha256": sha256(RUN),
             "implementation_sha256": {
-                name: sha256(HERE / name) for name in ("demo.py", "tts.py", "markup.py", "voice_library.py")
+                name: sha256(HERE / name) for name in (
+                    "demo.py", "tts.py", "markup.py", "voice_library.py", "evaluate_audio_quality.py"
+                )
             },
         },
         "reference_statistics": {
@@ -108,19 +123,41 @@ def main() -> int:
         },
         "reference_checks": reference_checks,
         "outputs": outputs,
+        "qualitative_study": {
+            "path": str(QUALITY_STUDY.relative_to(HERE)),
+            "present": QUALITY_STUDY.is_file(),
+            "valid": quality_study_valid,
+            "error": quality_study_error,
+            "judge_type": (quality_study or {}).get("study_design", {}).get("judge_type"),
+            "provider": (quality_study or {}).get("provider"),
+            "model": (quality_study or {}).get("model"),
+            "aggregate": (quality_study or {}).get("aggregate"),
+            "sha256": sha256(QUALITY_STUDY) if QUALITY_STUDY.is_file() else None,
+        },
         "acceptance": {
             "structural_and_media_gates": gates,
             "structural_and_media_passed": all(gates.values()),
-            "qualitative_listening_study_present": False,
-            "near_human_customer_service_claim_evaluated": False,
-            "manuscript_results_fully_reproduced": False,
-            "statement": "Real Fish S1 media fulfills the construction and A/B/C comparison. The subjective quality ordering remains unevaluated.",
+            "qualitative_listening_study_present": quality_study_valid,
+            "qualitative_judge_is_human_mos": False,
+            "near_human_customer_service_claim_evaluated": quality_study_valid,
+            "manuscript_quality_claim_reproduced": (
+                quality_study.get("aggregate", {}).get("manuscript_quality_claim_reproduced")
+                if quality_study_valid else None
+            ),
+            "experiment_execution_complete": all(gates.values()) and quality_study_valid,
+            "statement": (
+                "Real Fish S1 media and a schema-checked, position-balanced multimodal listening study "
+                "complete the A/B/C experiment. The saved result reports independently whether the "
+                "manuscript's subjective ordering reproduced; this is not a human MOS panel."
+                if quality_study_valid else
+                "Real Fish S1 media fulfills construction, but the blinded qualitative study is absent or invalid."
+            ),
         },
     }
     output = HERE / "validation" / "acceptance.json"
     output.write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(output)
-    return 0 if artifact["acceptance"]["structural_and_media_passed"] else 1
+    return 0 if artifact["acceptance"]["experiment_execution_complete"] else 1
 
 
 if __name__ == "__main__":

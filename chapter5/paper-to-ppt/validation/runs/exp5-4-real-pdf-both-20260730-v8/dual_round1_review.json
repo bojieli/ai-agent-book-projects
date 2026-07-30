@@ -1,0 +1,30 @@
+{
+  "overall_score": 80,
+  "pass": false,
+  "issues": [
+    {
+      "page": 3,
+      "issue_type": "readability",
+      "severity": "low",
+      "suggestion": "将中英文混合的\"辅助\"统一为英文\"aids\"或中文\"辅助\"，保持语言一致性"
+    },
+    {
+      "page": 13,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "放大Long-Distance Attention图示，确保文本标签清晰可辨，避免因图片过小影响观众理解注意力模式"
+    },
+    {
+      "page": 14,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "增大Anaphora Attention图示尺寸，确保句子中的单词和连接线清晰可见，提升注意力可视化的可读性"
+    },
+    {
+      "page": 17,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Future directions拆分为两条独立要点：\"Extend to multi-modal inputs; develop local restricted attention\"和\"Explore non-sequential generation; enhance attention interpretability\"，避免单条要点包含过多信息"
+    }
+  ]
+}

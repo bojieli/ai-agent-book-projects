@@ -46,9 +46,11 @@ python demo.py
 
 脱敏证据在 `validation/latest.json`，包含 provider=`Fish Audio`、backend=`s1`、24 条库维度、解析轨迹、每段采用的 reference SHA-256 和输出 ffprobe 信息。生成音频在 `output/`，API key 与用户标识不会写入证据。
 
-`python validate_artifacts.py` 会重新核对 24 条参考音的 hash/时长、A/B/C 输出媒体和正文示例的三次路由，不会再次调用 API。严格审计写入 `validation/acceptance.json`。本次构建与 A/B/C 运行估计产生 30 次 Fish 请求（24+1+1+4）；SDK 未返回逐请求美元费用。
+`python evaluate_audio_quality.py` 会把 A/B/C 隐去配置名称，以三种轮换顺序交给真实音频理解模型直接聆听；支持 Gemini、OpenRouter 音频路由、DashScope Omni 和 Mistral Voxtral，并保存实际成功的 provider/model 及失败的前置尝试。每次都按自然度、情绪匹配、思考停顿、音色一致性和真人客服感五维评分，理由必须引用可听见证据；三次位置平衡用于降低顺序偏差。结果写入 `validation/audio_quality_study.json`。这是多模态模型听测，不冒充真人 MOS 面板。
 
-结构与真实媒体验收已通过；但正文“无标记机械、单参考情感单调、多参考接近真人客服”是主观听感排序，目前没有盲听、MOS 或客观韵律评测，因此不能标为完整结果复现。
+`python validate_artifacts.py` 会重新核对 24 条参考音的 hash/时长、A/B/C 输出媒体、正文示例的三次路由，以及听测的三种排列、逐项证据、音频 hash 和重算聚合结果，不会再次调用 API。严格审计写入 `validation/acceptance.json`。本次构建与 A/B/C 运行估计产生 30 次 Fish 请求（24+1+1+4）；SDK 未返回逐请求美元费用。验收把“实验已经完整执行”和“正文主观排序是否复现”分开报告，因此真实负结果也不会被伪装成未运行。
+
+2026-07-30 的真实听测使用 Mistral `voxtral-small-latest`。三次轮换位置后，多参考 C 组总均分 4.60、真人客服感 4.67，均为三组最高，支持“多参考更接近真人客服”；但完整的 `C > B > A` 排序没有复现：无标记 A 为 3.93，单参考 B 为 3.20。正式结论因此是“C 的主要优势复现，B 优于 A 未复现”，而不是把部分正结果改写为全部成功。逐次匿名映射、原始理由和聚合结果见 `validation/audio_quality_study.json`。
 
 ```bash
 pytest -q

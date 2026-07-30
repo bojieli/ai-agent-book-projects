@@ -1,1 +1,7 @@
-openai>=1.40
+openai>=1.40,<3
+torch>=2.3,<3
+# Keep the trainer trio together.  Broad lower bounds allowed pip to combine
+# transformers 5.x with an old PEFT installation, which cannot import Trainer.
+transformers==4.48.3
+accelerate==1.2.1
+peft==0.14.0

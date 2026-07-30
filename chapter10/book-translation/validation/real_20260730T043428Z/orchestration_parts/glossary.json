@@ -1,0 +1,86 @@
+[
+  {
+    "en": "AI Agent",
+    "zh": "AI 智能体",
+    "pos": "noun",
+    "context": "A system that autonomously plans, executes, and adjusts actions using an LLM as its reasoning engine, context as its working information, and tools as its action interfaces. Examples include Cursor, Deep Research, Manus, and Pine AI."
+  },
+  {
+    "en": "LLM (Large Language Model)",
+    "zh": "大语言模型",
+    "pos": "noun",
+    "context": "The reasoning engine of an AI Agent, responsible for understanding intent, planning, decision-making, and judgment. Enhanced through pre-training (world knowledge) and post-training (e.g., supervised fine-tuning, reinforcement learning)."
+  },
+  {
+    "en": "Context",
+    "zh": "上下文",
+    "pos": "noun",
+    "context": "The working set of information available to an Agent at each decision point, including system prompts, tool definitions, user messages, assistant messages, tool results, and dynamic state (e.g., Agent Status Bar). Determines the ceiling of Agent capability."
+  },
+  {
+    "en": "Tools",
+    "zh": "工具",
+    "pos": "noun",
+    "context": "The action interfaces of an Agent, enabling it to interact with external systems (e.g., APIs, file systems, browsers). Includes perception tools, execution tools, collaboration tools, event trigger tools, and user communication tools."
+  },
+  {
+    "en": "ReAct Loop",
+    "zh": "推理-行动循环",
+    "pos": "noun",
+    "context": "The core operational loop of an Agent: Reason → Act (tool call) → Observe (tool result) → Reason → Act → Observe. Repeats until the task is complete. Forms the foundation of Agent autonomy."
+  },
+  {
+    "en": "Harness Engineering",
+    "zh": "智能体工程框架",
+    "pos": "noun",
+    "context": "The engineering infrastructure surrounding the LLM in an Agent system, including context management, tool interfaces, safety constraints (Constrain), verification (Verify), and error recovery (Correct). Formula: Agent = Model + Harness."
+  },
+  {
+    "en": "Agent Status Bar",
+    "zh": "智能体状态栏",
+    "pos": "noun",
+    "context": "A mechanism that injects dynamic meta-information (e.g., task progress, tool call counts, environment state) at the end of the context to help the model track implicit states explicitly. Analogous to a phone's status bar (time, battery, etc.)."
+  },
+  {
+    "en": "KV Cache",
+    "zh": "键值缓存",
+    "pos": "noun",
+    "context": "An optimization in LLM inference that caches intermediate key-value states of processed tokens to avoid redundant computation. Requires a stable prefix (e.g., system prompt, tool definitions) for reuse across requests."
+  },
+  {
+    "en": "Prompt Injection",
+    "zh": "提示注入",
+    "pos": "noun",
+    "context": "A security threat where malicious instructions are embedded in external content (e.g., web pages, documents) to hijack an Agent's behavior. Mitigated via source tagging, structured roles, and input sanitization."
+  },
+  {
+    "en": "Agent Skills",
+    "zh": "智能体技能",
+    "pos": "noun",
+    "context": "Modular, loadable knowledge packages that provide specialized domain guidance (e.g., document processing, coding standards). Uses progressive disclosure: metadata is loaded first, full content is fetched on demand via a dedicated tool."
+  },
+  {
+    "en": "token",
+    "zh": "词元",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "prompt",
+    "zh": "提示词",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "latency",
+    "zh": "时延",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  },
+  {
+    "en": "embedding",
+    "zh": "嵌入向量",
+    "pos": "名词",
+    "context": "编辑部指定术语"
+  }
+]

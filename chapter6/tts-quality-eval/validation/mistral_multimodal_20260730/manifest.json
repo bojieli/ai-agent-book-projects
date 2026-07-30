@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "experiment": "6-5",
+  "status": "complete",
+  "generated_at_utc": "2026-07-30T04:47:32.164712+00:00",
+  "run_dir": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "command": "GEMINI_API_KEY= OPENROUTER_API_KEY= python demo.py --providers openai,fishaudio --gemini --limit 4 --output validation/mistral_multimodal_20260730",
+  "status_reasons": [
+    "Eight of eight cells completed across two real synthesis providers and four challenge texts. Every cell supplied a content-hashed candidate MP3 and the same content-hashed real reference MP3 to Mistral voxtral-small-latest.",
+    "The judge returned all four manuscript rubric dimensions as integers in [1,5]. The structured completion gates recompute to manuscript_core_complete=true.",
+    "Synthesis audio was retained from the preceding real provider run rather than regenerated under the currently exhausted OpenAI account. synthesis_source_results.json independently records the same eight audio hashes and shows those cells had reached the earlier multimodal-judge stage."
+  ],
+  "provider_receipt_count": 8,
+  "inputs": [
+    {
+      "path": "chapter6/tts-quality-eval/config.py",
+      "bytes": 8642,
+      "sha256": "891396771cd7beb32ab8e4b316f9a6f73683951e0327dcae6504d858ffd92ba1"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/demo.py",
+      "bytes": 17662,
+      "sha256": "75260a454a3425b749cc294aad87cd4751ef8a9c6882aae1dd577f6a121e38b1"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/pipeline.py",
+      "bytes": 32401,
+      "sha256": "0815da5ff74acd099a189a097a9a1e1aa02ade2e22ba230a2245b021374eb901"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/synthesis_source_results.json",
+      "bytes": 7525,
+      "sha256": "965ecf983521894175404106108d4c32ba8c9ff97a2ae5f740af679d04d204d8"
+    },
+    {
+      "path": "chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+      "bytes": 73977,
+      "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/tts1-alloy-1.0__num.mp3",
+      "bytes": 132960,
+      "sha256": "954eca94164d5af7d4a849def397e16a192d22a86168fab86f76ccd2443fb3ed"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/tts1-alloy-1.0__polyphone.mp3",
+      "bytes": 130560,
+      "sha256": "fa6e6ca29a3d17d33167c04c32b132d6aee2cb406d2acbf7bbeb13529af98abb"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/tts1-alloy-1.0__long.mp3",
+      "bytes": 273600,
+      "sha256": "c04786022e111c49f635eb361cb4cae3b786334291af86f7f36e69fff7909d1a"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/tts1-alloy-1.0__emotion.mp3",
+      "bytes": 116160,
+      "sha256": "86215ce027003e1b0a721545b594ef0325745738a46bbf927a7843da3a15b514"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/fishaudio-s1-clone__num.mp3",
+      "bytes": 101981,
+      "sha256": "6e9717e58f422db10b8e9538aa3812de456a1dde4bd9028fde928c2eaac42ad3"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/fishaudio-s1-clone__polyphone.mp3",
+      "bytes": 95293,
+      "sha256": "6bff6109ec7682f85680d8b60ea58dd48fbe5b3eeda59fb326d2288d250c85b5"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/fishaudio-s1-clone__long.mp3",
+      "bytes": 206052,
+      "sha256": "89542f05312bac767d5151f7552d0c75065cc7ecdf739dcc180b3c92a67b21c5"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/fishaudio-s1-clone__emotion.mp3",
+      "bytes": 104488,
+      "sha256": "81608431645b08be6bf7171dbb250f391b1ba7f5714d535c0e2ce323d7f6ca29"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/mistral_multimodal_20260730/results.json",
+      "bytes": 12890,
+      "sha256": "9d5ae20c9fb9852882732bdc73d7dc78714f7ad5e0025574f90b8584b2841b86"
+    }
+  ]
+}

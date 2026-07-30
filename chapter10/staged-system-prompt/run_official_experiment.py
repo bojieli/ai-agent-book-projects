@@ -56,6 +56,10 @@ def validate_manifest(manifest: dict) -> list[str]:
     transitions = [event["kind"] for event in result["transition_events"]]
     stages = [event["stage"] for event in result["stage_entries"]]
     receipts = manifest["provider_receipts"]
+    successful_receipts = [
+        receipt for receipt in receipts
+        if receipt["response_id"] and receipt["usage_complete"]
+    ]
     required = manifest["protocol"]["value"]["required_transitions"]
     cursor = 0
     for name in transitions:
@@ -67,15 +71,36 @@ def validate_manifest(manifest: dict) -> list[str]:
         "transition_sequence": cursor == len(required),
         "rollback": result["revision_count"] >= 1 and stages.count("implementation") >= 2,
         "review_reentry": stages.count("review") >= 2,
-        "receipts": bool(receipts) and all(r["response_id"] and r["usage_complete"] for r in receipts),
+        # Failed attempts are retained as evidence instead of being deleted.
+        # Every receipt must therefore be either a complete success or an
+        # explicitly typed provider error.
+        "receipts": bool(successful_receipts) and all(
+            (r["response_id"] and r["usage_complete"]) or r.get("error_type")
+            for r in receipts
+        ),
         "provider": all(r["provider"] == "moonshot" for r in receipts),
-        "usage": manifest["usage_and_cost"]["requests"] == len(receipts),
+        "usage": manifest["usage_and_cost"]["requests"] == len(successful_receipts),
         "tool_evidence": all(
             any(log["action"] == action for log in manifest["execution_logs"])
             for action in ("run_linter", "run_tests", "analyze_complexity", "审查不通过 -> 回退实现")
         ),
         "files": bool(manifest["workspace"]["files"]),
+        "credentials_absent": manifest["security"]["credentials_absent_from_receipts"],
     }
+    fault_required = manifest["protocol"]["value"].get("review_fault_injection", {}).get(
+        "enabled", False
+    )
+    if fault_required:
+        events = manifest.get("review_fault_events") or []
+        markers = {event.get("marker") for event in events}
+        final_sources = manifest.get("workspace", {}).get("file_contents", {}).values()
+        checks["controlled_fault_injected"] = (
+            len(events) == 1 and events[0].get("source_changed") is True
+        )
+        checks["controlled_fault_repaired"] = bool(markers) and all(
+            marker and all(marker not in source for source in final_sources)
+            for marker in markers
+        )
     manifest["acceptance_checks"] = checks
     errors.extend(name for name, ok in checks.items() if not ok)
     return errors
@@ -101,7 +126,9 @@ def main() -> None:
     Config.API_KEY = api_key
     Config.BASE_URL = protocol["backend"]["base_url"]
     Config.MODEL = protocol["backend"]["model"]
-    Config.TEMPERATURE = 0.2
+    # Kimi K3 rejects any explicit value other than 1.  Using its supported
+    # value avoids manufacturing one failed 400 receipt before every real call.
+    Config.TEMPERATURE = 1.0
     inner = OpenAI(api_key=api_key, base_url=Config.BASE_URL)
     client = RecordingClient(
         inner, receipt_dir, provider=protocol["backend"]["provider"], base_url=Config.BASE_URL
@@ -116,6 +143,7 @@ def main() -> None:
         verbose=True,
         interactive=False,
         client=client,
+        inject_first_review_fault=protocol.get("review_fault_injection", {}).get("enabled", False),
     )
     result = agent.run(protocol["task"])
     duration = round(time.perf_counter() - started, 3)
@@ -135,6 +163,7 @@ def main() -> None:
             "response_model": response.get("model"),
             "finish_reason": ((response.get("choices") or [{}])[0]).get("finish_reason"),
             "usage_complete": all(usage.get(k) is not None for k in ("prompt_tokens", "completion_tokens")),
+            "error_type": (raw.get("error") or {}).get("type"),
             "sha256": sha256(Path(raw["receipt_path"])),
         })
 
@@ -172,9 +201,19 @@ def main() -> None:
             "requirements": agent.workspace.requirements,
             "review_issues": agent.workspace.review_issues,
             "files": workspace_files,
+            # Needed only for validating that the injected canary was actually
+            # removed.  The same content is also persisted under workspace/.
+            "file_contents": dict(agent.workspace.files),
         },
+        "review_fault_events": agent.review_fault_events,
         "provider_receipts": receipts,
         "usage_and_cost": usage_cost(client.usage(), protocol["backend"]["pricing"]),
+        "security": {
+            "credentials_absent_from_receipts": all(
+                api_key not in Path(raw["receipt_path"]).read_text(encoding="utf-8")
+                for raw in client.receipts
+            )
+        },
         "acceptance_checks": {},
         "official_complete": False,
     }

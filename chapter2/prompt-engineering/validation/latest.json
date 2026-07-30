@@ -1,0 +1,12 @@
+{
+  "experiment_id": "2-4",
+  "status": "passed",
+  "run_dir": "runs/exp2-4-kimi-k3-20260730-v7",
+  "campaign_complete": true,
+  "protocol_sha256": "ec1ec36d5a6ee21b5185295a7a4447f4e0173f1681a9fe471b240dda1e7cf32a",
+  "comparison_sha256": "64d4218ce721bd51c58fce4314ffc62fa8e8fd66975b5b4be54051a64be8a63a",
+  "manifest_sha256": "4b812fec9278d677018f5327ecf7a4d6ff545d120da9deecaca75ba591925596",
+  "runner_sha256": "bd17518395098636afc3a44eecbefa7cb823c4b6da019321fd3866b9d9c454d3",
+  "historical_percentages_reproduced": false,
+  "qualification": "All 60 preregistered real-provider cells completed; observed outcomes do not reproduce the manuscript's historical 30%/45% point estimates."
+}

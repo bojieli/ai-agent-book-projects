@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "experiment": "6-5",
+  "status": "incomplete",
+  "generated_at_utc": "2026-07-30T04:26:35.560333+00:00",
+  "run_dir": "chapter6/tts-quality-eval/validation/audio_fallback_probe_20260730",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "command": "python demo.py --providers fishaudio --gemini --quick --output validation/audio_fallback_probe_20260730",
+  "provider_receipt_count": 2,
+  "status_reasons": [
+    "Fish Audio returned two non-empty MP3 artifacts. The Google Gemini credential was rejected and the exact OpenRouter two-input_audio fallback returned HTTP 401, so no direct-audio judge record completed."
+  ],
+  "inputs": [
+    {
+      "path": "chapter6/tts-quality-eval/config.py",
+      "bytes": 8642,
+      "sha256": "891396771cd7beb32ab8e4b316f9a6f73683951e0327dcae6504d858ffd92ba1"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/demo.py",
+      "bytes": 17225,
+      "sha256": "c2da1f44b3ac3ec9e9b6648ee535e57c8fa757a14a45028f1e125ed9cb8f1938"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/pipeline.py",
+      "bytes": 27511,
+      "sha256": "db62ac8058561ae22b9a2dacd67aec42176f181a401e162009e1a3be7360ed54"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter6/tts-quality-eval/validation/audio_fallback_probe_20260730/fishaudio-s1-clone__num.mp3",
+      "bytes": 99055,
+      "sha256": "0bfb70e01370fe9f28ddbde6aebb9b23ec5cb5e312377edbdace44ad43a071a6"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/audio_fallback_probe_20260730/fishaudio-s1-clone__polyphone.mp3",
+      "bytes": 95293,
+      "sha256": "f90e5bc2f8f21f707697b5db949c1400b6fe899b3b64bd9e4e2c374bb79e0b77"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/audio_fallback_probe_20260730/results.json",
+      "bytes": 4469,
+      "sha256": "9e66a07e8817b8cfe261f65970d2dd46b4bd2fe118e9aa324feba849652d957f"
+    }
+  ]
+}

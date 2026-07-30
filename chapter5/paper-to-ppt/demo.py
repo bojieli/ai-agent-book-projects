@@ -578,6 +578,14 @@ def main(argv=None):
         "same_independent_vision_judge_scored_both": bool(
             dual_final and single_final and judge_meter.calls == 2
         ),
+        # The manuscript acceptance criterion is about the rendered result,
+        # not merely about having exercised the review mechanism.  A run with
+        # 10--20 pages and real Vision receipts is still incomplete when the
+        # independent pixel-level judge reports blocking layout/overflow
+        # defects in the proposer--reviewer deck.
+        "dual_final_deck_passes_visual_acceptance": bool(
+            dual_final and dual_final.get("pass") is True
+        ),
         "real_api_receipts_complete": bool(
             receipts
             and all(r.get("response", {}).get("id")

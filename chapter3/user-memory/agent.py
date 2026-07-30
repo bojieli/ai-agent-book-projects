@@ -438,25 +438,33 @@ Current Memory Context will be provided with each message."""
                 # Content should already have the structure
                 memory_content = content
             else:
-                # Parse content to extract structure
-                parts = str(content).split(':')
-                if len(parts) >= 2:
-                    category = "personal"
-                    subcategory = "info"
-                    key = parts[0].strip().replace(' ', '_').lower()
-                    value = ':'.join(parts[1:]).strip()
+                try:
+                    parsed_content = json.loads(content)
+                except (TypeError, json.JSONDecodeError):
+                    parsed_content = None
+
+                if isinstance(parsed_content, dict):
+                    memory_content = parsed_content
                 else:
-                    category = "general"
-                    subcategory = "notes"
-                    key = f"note_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                    value = content
-                
-                memory_content = {
-                    'category': category,
-                    'subcategory': subcategory,
-                    'key': key,
-                    'value': value
-                }
+                    # Fallback for legacy "key: value" style content.
+                    parts = str(content).split(':')
+                    if len(parts) >= 2:
+                        category = "personal"
+                        subcategory = "info"
+                        key = parts[0].strip().replace(' ', '_').lower()
+                        value = ':'.join(parts[1:]).strip()
+                    else:
+                        category = "general"
+                        subcategory = "notes"
+                        key = f"note_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                        value = content
+
+                    memory_content = {
+                        'category': category,
+                        'subcategory': subcategory,
+                        'key': key,
+                        'value': value
+                    }
             
             memory_id = self.memory_manager.add_memory(
                 content=memory_content,

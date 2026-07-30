@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "experiment": "7-9",
+  "stage": "student_sft_preflight",
+  "generated_at_utc": "2026-07-30T04:51:13.181684+00:00",
+  "ready": false,
+  "training_data": {
+    "path": "/Users/boj/book/ai-agent-book/chapter7/cot-distillation/data/sft_cot_distill_aime_kimi_k3.jsonl",
+    "sha256": "0c6cab7cb8e0bd13671eda4e2bd0dc2530f7483f09ae42e946b87600a979968e",
+    "samples": 23
+  },
+  "host": {
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "machine": "arm64",
+    "torch": "2.7.0",
+    "cuda_available": false,
+    "gpu_names": []
+  },
+  "dependencies": {
+    "torch": true,
+    "transformers": true,
+    "accelerate": true,
+    "peft": true
+  },
+  "dependency_versions": {
+    "torch": "2.7.0",
+    "transformers": "4.48.3",
+    "accelerate": "1.2.1",
+    "peft": "0.14.0"
+  },
+  "trainer_stack_importable": true,
+  "trainer_stack_error": null,
+  "blockers": [
+    "no CUDA device available"
+  ]
+}

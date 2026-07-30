@@ -1,0 +1,62 @@
+{
+  "paper": {
+    "title": "Attention Is All You Need",
+    "authors": "Ashish Vaswani et al.",
+    "arxiv_id": "1706.03762",
+    "pdf_url": "https://arxiv.org/pdf/1706.03762",
+    "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+    "observed_pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+  },
+  "paper_text": {
+    "path": "/Users/boj/book/ai-agent-book/chapter5/paper-to-ppt/validation/runs/exp5-4-real-pdf-both-20260730-v7/source/paper_text.md",
+    "sha256": "4da5f2a1da38bad8149832b5ada3c94f0619188db8fed5cdca8ff63405587eb8",
+    "characters": 39819
+  },
+  "visuals": [
+    {
+      "filename": "paper_figure_1_transformer.png",
+      "pdf_page": 3,
+      "source_label": "Figure 1",
+      "caption": "The Transformer model architecture.",
+      "rect": [
+        92,
+        60,
+        520,
+        405
+      ],
+      "sha256": "09364ee993caf62234733a5aaacc31bc0472b8db4b6107455f898e3a7a020597",
+      "bytes": 94487,
+      "public_copy_sha256": "09364ee993caf62234733a5aaacc31bc0472b8db4b6107455f898e3a7a020597"
+    },
+    {
+      "filename": "paper_figure_3_long_distance.png",
+      "pdf_page": 13,
+      "source_label": "Figure 3 (long-distance dependency focus)",
+      "caption": "Published encoder attention linking 'making' to 'more difficult'.",
+      "rect": [
+        190,
+        88,
+        425,
+        311
+      ],
+      "sha256": "611a465fc6ba0f266c0a4743600b26ba861ebee93597e04f7c34067a8ddba296",
+      "bytes": 43326,
+      "public_copy_sha256": "611a465fc6ba0f266c0a4743600b26ba861ebee93597e04f7c34067a8ddba296"
+    },
+    {
+      "filename": "paper_figure_4_anaphora.png",
+      "pdf_page": 14,
+      "source_label": "Figure 4 (lower panel, anaphora focus)",
+      "caption": "Published attention from 'its' to 'Law' and 'application'.",
+      "rect": [
+        92,
+        360,
+        310,
+        610
+      ],
+      "sha256": "fdc5b28e860e65ff5922d237d190fa11f5586bfb00894b58d09cf38299bfef67",
+      "bytes": 30161,
+      "public_copy_sha256": "fdc5b28e860e65ff5922d237d190fa11f5586bfb00894b58d09cf38299bfef67"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "transport": "mcp-stdio",
+  "server": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/src/main.py",
+  "tools_list_received": true,
+  "server_name": "perception-tools",
+  "server_version": "1.26.0",
+  "tool_count": 126,
+  "unique_tool_count": 126,
+  "schema_tokens_o200k": 50120,
+  "schema_bytes": 206819,
+  "schema_sha256": "77b57f69c57243f3295e6b2c3cf493420fe1bdbdd816df7d6374a1640221d627",
+  "required_tools_present": {
+    "web_search": true,
+    "code_interpreter": true,
+    "yfinance_quote": true,
+    "search_news": true,
+    "arxiv_search": true,
+    "arxiv_download": true,
+    "github_list_contributors": true
+  },
+  "catalog_gzip_bytes": 21244,
+  "catalog_gzip_sha256": "dd911ebfaf881037289bcf3c64cfe48fb2b4639438800860d50b9ec79615b903",
+  "catalog_gzip_content_sha256": "77b57f69c57243f3295e6b2c3cf493420fe1bdbdd816df7d6374a1640221d627"
+}

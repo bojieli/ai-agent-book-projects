@@ -1,0 +1,54 @@
+{
+  "overall_score": 65,
+  "pass": false,
+  "issues": [
+    {
+      "page": 2,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "要点数量达6条，超出建议的5条上限，建议将最后1-2条拆分至下一页或合并相似内容"
+    },
+    {
+      "page": 3,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "要点数量达7条（含子要点），内容拥挤，建议将Recurrent models和Convolutional models分拆为两页展示"
+    },
+    {
+      "page": 13,
+      "issue_type": "readability",
+      "severity": "high",
+      "suggestion": "Learning rate公式存在LaTeX渲染错误（显示为“d_{text{model}}^{-0.5} \\cdot \\min(\\text{step_num}^{-0.5}, \\text{step_num} \\cdot \\text{warmup_steps}^{-1.5})”），需修正公式格式确保正确显示"
+    },
+    {
+      "page": 15,
+      "issue_type": "layout",
+      "severity": "low",
+      "suggestion": "底部要点符号不一致（混合使用“-”和“■”），建议统一使用项目符号“■”保持格式统一"
+    },
+    {
+      "page": 17,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "注意力可视化图尺寸过小，文字和连线细节模糊不清，建议放大图片至页面70%以上面积或分拆为多页展示"
+    },
+    {
+      "page": 18,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "指代消解可视化图尺寸不足，紫色线条和文字难以辨认，建议单独放大展示或增加图例说明"
+    },
+    {
+      "page": 19,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "Limitations（3条）和Future work（4条）共7个要点，内容过于密集，建议分拆为“局限性”和“未来工作”两页分别展示"
+    },
+    {
+      "page": 20,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "结论要点达6条，超出建议数量，建议删除“Code available...”等次要信息或拆分至单独的“资源链接”页"
+    }
+  ]
+}

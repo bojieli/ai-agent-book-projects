@@ -56,6 +56,12 @@ def map_model_to_openrouter(model: str) -> str:
 # 发送给 Vision 前把截图缩放到该宽度，兼顾“看得清文字溢出”与“控制 token 成本”
 VISION_IMAGE_WIDTH = 1280
 
+FIGURE_PAGE_TITLES = {
+    "paper_figure_1_transformer.png": "Transformer Architecture (Figure 1)",
+    "paper_figure_3_long_distance.png": "Long-Distance Attention (Figure 3)",
+    "paper_figure_4_anaphora.png": "Anaphora Attention (Figure 4)",
+}
+
 
 class TokenMeter:
     """累计一个“角色/模式”消耗的 token，并记录每次调用的 prompt token（用于看上下文峰值）。"""
@@ -151,7 +157,12 @@ def _client() -> OpenAI:
     return OpenAI(
         api_key=api_key,
         base_url=base_url,
-        timeout=60.0,
+        # Large single-agent requests carry the extracted paper plus several
+        # full slide revisions (and later image history). Ark can legitimately
+        # take more than one minute to produce the complete Markdown deck.
+        # Keep bounded retries, but give each real request enough time instead
+        # of abandoning an otherwise healthy formal campaign mid-arm.
+        timeout=300.0,
         max_retries=4,
     )
 
@@ -212,6 +223,60 @@ def _slide_count(slides: str) -> int:
     return slides.replace("\r\n", "\n").count("\n---\n")
 
 
+def _slide_contract_issues(slides: str) -> list[str]:
+    """Return deterministic density/page-count failures before rendering.
+
+    Vision remains the authority for pixel-level quality.  This inexpensive
+    source gate prevents repeatedly paying to render drafts that already
+    violate the Proposer's explicit 18--20 page / four-bullet instructions.
+    """
+    normalized = slides.replace("\r\n", "\n")
+    pages = normalized.split("\n---\n")[1:]
+    issues = []
+    if not 18 <= len(pages) <= 20:
+        issues.append(f"page count is {len(pages)}; required 18-20")
+    for page_number, page in enumerate(pages, 1):
+        bullet_count = len(re.findall(r"(?m)^\s*(?:[-*+]|[■▪•])\s+", page))
+        if bullet_count > 4:
+            issues.append(
+                f"page {page_number} has {bullet_count} bullets; maximum is 4 total"
+            )
+        figure_match = re.search(r"/((?:paper_figure_)[^\s\"')>]+)", page)
+        if figure_match:
+            required_title = FIGURE_PAGE_TITLES.get(figure_match.group(1))
+            if required_title and not re.search(
+                rf"(?m)^#{{1,3}}\s+{re.escape(required_title)}\s*$", page
+            ):
+                issues.append(
+                    f"page {page_number} source figure must use one-line title: "
+                    f"{required_title}"
+                )
+            style_match = re.search(r"style=[\"']([^\"']*)[\"']", page)
+            style = style_match.group(1) if style_match else ""
+            if not all(re.search(pattern, style) for pattern in (
+                r"(?:^|;)\s*max-height:\s*460px\s*(?:;|$)",
+                r"(?:^|;)\s*width:\s*100%\s*(?:;|$)",
+                r"(?:^|;)\s*object-fit:\s*contain\s*(?:;|$)",
+            )):
+                issues.append(
+                    f"page {page_number} source figure must use inline style "
+                    "max-height: 460px; width: 100%; object-fit: contain;"
+                )
+            prose_lines = [
+                line.strip()
+                for line in page.splitlines()
+                if line.strip()
+                and not line.lstrip().startswith("#")
+                and "<img" not in line
+            ]
+            if bullet_count or len(prose_lines) > 1:
+                issues.append(
+                    f"page {page_number} source figure must have only a title "
+                    "and at most one caption"
+                )
+    return issues
+
+
 # --------------------------------------------------------------------------- #
 # Reviewer 的审查评分标准（Proposer / 单 Agent / 独立评委共用同一套 rubric）
 # --------------------------------------------------------------------------- #
@@ -225,7 +290,8 @@ REVIEW_RUBRIC = """你是一名严格的演示文稿质量审核员（Reviewer�
 - layout（对齐混乱、标题与正文比例失衡、空页）
 
 请以**目标用户是听众**的严格标准审查——一页幻灯片若要点超过约 5 条、或正文文字块偏长、
-或图片挤压了文字空间，都应视为 overcrowded/image_size 问题。报告真实存在的问题，
+或图片挤压了文字空间，都应视为 overcrowded/image_size 问题。五个或更少的精炼要点本身
+是可接受的，不得仅因页面恰好有五个要点而报错。报告真实存在的问题，
 但不要放过"塞得太满"。对每个问题给出：page（页码，整数）、
 issue_type（上面之一）、severity（high/medium/low）、suggestion（具体、可执行的修改建议，中文）。
 
@@ -283,9 +349,15 @@ Slidev 语法要点：
 - 可用 Windi/Uno CSS 工具类控制排版（如 text-sm、grid grid-cols-2 gap-4）。
 
 要求：
-- 最终生成 10-20 页，覆盖论文的标题、背景/动机、方法、实验结果、局限与结论。
+- 最终生成 18-20 页，覆盖论文的标题、背景/动机、方法、实验结果、局限与结论。
 - 至少在 3 页中使用提供的图表/表格，且图文匹配。
-- 每页信息量适中、不要塞太多字，宁可拆页也不要溢出。
+- 每页最多 4 个要点，不得粘贴长段原文，宁可精简也不要溢出。
+- 三张原论文图必须各占一张专用页面；为避免 UnoCSS 动态类漏编译，图片必须使用行内属性
+  `style="max-height: 460px; width: 100%; object-fit: contain;"`，并且页面除标题和一行
+  短图注外不得放正文，以保证整张图和图注都在页面边界内且标签可读。
+- 三张原图页面必须分别使用不会换行的精确标题：`Transformer Architecture (Figure 1)`、
+  `Long-Distance Attention (Figure 3)`、`Anaphora Attention (Figure 4)`。
+- 要点统一用 Markdown `- `，不要用 `■` 等字符伪装项目符号；多个小节合计仍不得超过 4 条。
 - 只输出 slides.md 的完整内容，用 ```markdown 代码块包裹，不要额外解释。"""
 
 
@@ -299,7 +371,7 @@ class Proposer:
         first_user = (
             f"以下是论文全文（Markdown）：\n\n{paper_md}\n\n"
             f"可直接引用的图表文件（放在 Slidev public 目录，用 /文件名 引用）：\n{fig_desc}\n\n"
-            f"请生成一版 10-20 页的完整初稿。内容必须忠于论文，至少引用上面列出的三张原论文图，"
+            f"请生成一版 18-20 页的完整初稿。内容必须忠于论文，至少引用上面列出的三张原论文图，"
             f"并覆盖问题、Transformer 架构、注意力机制、训练、主要实验、局限和结论。"
             f"不要复制长段原文；每页保持听众可读的信息密度。生成完整的 slides.md。"
         )
@@ -318,19 +390,22 @@ class Proposer:
             reply = resp.choices[0].message.content
             self.messages.append({"role": "assistant", "content": reply})
             slides = _extract_slides_md(reply)
-            pages = _slide_count(slides)
-            if 10 <= pages <= 20:
+            issues = _slide_contract_issues(slides)
+            if not issues:
                 return slides
             if attempt < 2:
                 self.messages.append({
                     "role": "user",
                     "content": (
-                        f"硬性验收失败：你刚才生成了 {pages} 页，必须是 10–20 页。"
-                        "请在不删除三张原论文图、不丢失主要贡献的前提下合并或拆分内容，"
-                        "重新输出完整 slides.md；不得超过 20 页。"
+                        "硬性源码验收失败：" + "; ".join(issues) + "。"
+                        "请在不删除三张原论文图、不丢失主要贡献的前提下精简、合并或拆分内容，"
+                        "重新输出完整 slides.md；必须保持 18–20 页且每页最多 4 个 Markdown 要点。"
                     ),
                 })
-        raise RuntimeError(f"Proposer failed the 10–20 page contract after 3 attempts ({pages} pages)")
+        raise RuntimeError(
+            "Proposer failed the source density contract after 3 attempts: "
+            + "; ".join(issues)
+        )
 
     def propose(self) -> str:
         """首轮生成。"""
@@ -346,7 +421,7 @@ class Proposer:
                 "给出如下结构化改进建议（JSON）：\n\n"
                 f"{feedback}\n\n"
                 "请理解这些问题并修订 slides.md（可拆页、精简文字、调整图片尺寸等），"
-                "重新输出完整的 slides.md。修订后仍必须保持 10–20 页；解决拥挤时优先精简与合并，"
+                "重新输出完整的 slides.md。修订后仍必须保持 18–20 页；解决拥挤时优先精简与合并，"
                 "不得用无限拆页规避版面问题。"
             ),
         })
@@ -373,7 +448,7 @@ class SelfReviewAgent:
         first_user = (
             f"以下是论文全文（Markdown）：\n\n{paper_md}\n\n"
             f"可直接引用的图表文件：\n{fig_desc}\n\n"
-            f"请生成一版 10-20 页的完整初稿。内容必须忠于论文，至少引用上面列出的三张原论文图，"
+            f"请生成一版 18-20 页的完整初稿。内容必须忠于论文，至少引用上面列出的三张原论文图，"
             f"并覆盖问题、Transformer 架构、注意力机制、训练、主要实验、局限和结论。"
             f"不要复制长段原文；每页保持听众可读的信息密度。生成完整的 slides.md。"
         )
@@ -394,25 +469,29 @@ class SelfReviewAgent:
             reply = resp.choices[0].message.content
             self.messages.append({"role": "assistant", "content": reply})
             slides = _extract_slides_md(reply)
-            pages = _slide_count(slides)
-            if 10 <= pages <= 20:
+            issues = _slide_contract_issues(slides)
+            if not issues:
                 return slides
             if attempt < 2:
                 self.messages.append({
                     "role": "user",
                     "content": (
-                        f"硬性验收失败：当前是 {pages} 页，必须保持 10–20 页。"
-                        "请保留三张原论文图和全部核心章节，压缩或重组后重新输出完整 slides.md。"
+                        "硬性源码验收失败：" + "; ".join(issues) + "。"
+                        "请保留三张原论文图和全部核心章节，压缩或重组后重新输出完整 slides.md；"
+                        "必须保持 18–20 页且每页最多 4 个 Markdown 要点。"
                     ),
                 })
-        raise RuntimeError(f"Single Agent failed the 10–20 page contract after 3 attempts ({pages} pages)")
+        raise RuntimeError(
+            "Single Agent failed the source density contract after 3 attempts: "
+            + "; ".join(issues)
+        )
 
     def self_review_and_revise(self, png_paths: list[str]) -> str:
         """把最新渲染截图加入**同一**上下文，让模型自审并修订。图片会一直留在历史里。"""
         content = [{"type": "text",
                     "text": (f"这是你上一版 slides.md 渲染出的 {len(png_paths)} 页截图。"
                              "请自我审查（文字溢出/拥挤/图片尺寸/可读性/布局），"
-                             "然后输出修订后的完整 slides.md。修订后硬性保持 10–20 页，"
+                             "然后输出修订后的完整 slides.md。修订后硬性保持 18–20 页，"
                              "并保留三张原论文图。")}]
         for i, p in enumerate(png_paths, 1):
             content.append({"type": "text", "text": f"第 {i} 页："})

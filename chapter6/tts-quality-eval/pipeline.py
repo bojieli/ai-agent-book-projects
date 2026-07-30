@@ -4,9 +4,9 @@
   合成(OpenAI TTS) -> 时长探测(ffprobe) -> 回译(Whisper) -> 计算 CER/字准确率
       -> LLM Rubric 打分(gpt-5.6-luna) [可选: Gemini 音频评审 gemini-3.5-flash]
 
-说明：TTS 合成与 Whisper 回译必须走 OpenAI 直连（OpenRouter 不提供音频/转写）；
-仅 LLM Rubric 的 chat 评审支持 OpenRouter 回退——gpt-5.x 直连需组织实名认证，
-故只要有 OPENROUTER_API_KEY 就优先经 OpenRouter 调评审模型（见 get_judge_client_and_model）。
+说明：TTS 合成与 Whisper 回译必须走 OpenAI 直连；文本 Rubric 与直接听音频的
+多模态 Rubric 支持 Google Gemini、OpenRouter 与 Mistral Voxtral。每条路径都把
+两段真实音频交给音频模型，不会退化成转写文本评审。
 
 所有对外函数都做了健壮性处理：单条失败抛出带上下文的异常，由 demo.py 捕获后
 在汇总表里记为失败，而不会中断整表。
@@ -19,6 +19,7 @@ import os
 import re
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -386,6 +387,15 @@ class RubricResult:
     raw: str = ""
     judge_model: str = ""
     evidence_mode: str = ""
+    provider_attempts: list = field(default_factory=list)
+
+
+class JudgeRouteError(RuntimeError):
+    """A sanitized multimodal-judge failure carrying every attempted route."""
+
+    def __init__(self, message: str, provider_attempts: list):
+        super().__init__(message)
+        self.provider_attempts = provider_attempts
 
 
 def judge_rubric(reference: str, emotion: str, hypothesis: str,
@@ -458,6 +468,209 @@ def _resolve_gemini_model(api_key: str) -> str:
     return config.GEMINI_MODEL_DEFAULT
 
 
+def _parse_direct_audio_rubric(text: str, *, judge_model: str, provider_attempts: list) -> RubricResult:
+    """Validate a direct-audio judge response against the exact four dimensions."""
+    parsed = json.loads(text)
+    scores, reasons = {}, {}
+    for dim in RUBRIC_DIMENSIONS:
+        item = parsed.get(dim, {})
+        scores[dim] = int(item.get("score") or 0) if isinstance(item, dict) else int(item or 0)
+        reasons[dim] = str(item.get("reason", "")).strip() if isinstance(item, dict) else ""
+    return RubricResult(
+        scores=scores,
+        reasons=reasons,
+        raw=text,
+        judge_model=judge_model,
+        evidence_mode="direct-audio-with-reference",
+        provider_attempts=provider_attempts,
+    )
+
+
+def _message_text(data: dict) -> str:
+    """Extract text from OpenAI-compatible string or chunk-list content."""
+    choices = data.get("choices") or []
+    message_content = ((choices[0].get("message") or {}).get("content")) if choices else None
+    if isinstance(message_content, list):
+        return "".join(
+            str(item.get("text", "")) for item in message_content if isinstance(item, dict)
+        ).strip()
+    return str(message_content or "").strip()
+
+
+def _judge_mistral_audio(
+    prompt: str,
+    audio_b64: str,
+    reference_audio_b64: str,
+    *,
+    provider_attempts: list,
+) -> RubricResult:
+    """Send both MP3s to Mistral Voxtral using its native data-URL chunks."""
+    import urllib.error
+    import urllib.request
+
+    key = os.environ.get("MISTRAL_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("缺少 MISTRAL_API_KEY，无法回退 Voxtral 音频评审。")
+    model = os.environ.get("TTS_MISTRAL_AUDIO_JUDGE_MODEL", "voxtral-small-latest").strip()
+    body = {
+        "model": model,
+        "temperature": 0.0,
+        "response_format": {"type": "json_object"},
+        "messages": [{"role": "user", "content": [
+            {"type": "text", "text": prompt},
+            {"type": "text", "text": "待评估合成语音（candidate）:"},
+            {
+                "type": "input_audio",
+                "input_audio": "data:audio/mpeg;base64," + audio_b64,
+            },
+            {"type": "text", "text": "参考说话人语音（reference）:"},
+            {
+                "type": "input_audio",
+                "input_audio": "data:audio/mpeg;base64," + reference_audio_b64,
+            },
+        ]}],
+    }
+    req = urllib.request.Request(
+        "https://api.mistral.ai/v1/chat/completions",
+        data=json.dumps(body).encode(),
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=90) as response:
+                data = json.loads(response.read())
+            break
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", "replace")[:2000]
+            error = f"Mistral Voxtral HTTP {exc.code}: {detail}"
+            if exc.code >= 500 and attempt < 2:
+                time.sleep(2 ** attempt)
+                continue
+            provider_attempts.append({
+                "provider": "Mistral Voxtral API",
+                "model": model,
+                "status": "unavailable",
+                "error": error,
+                "attempts": attempt + 1,
+            })
+            raise JudgeRouteError(error, provider_attempts) from None
+    text = _message_text(data)
+    if not text:
+        error = f"Mistral Voxtral 未返回评审文本：{data}"
+        provider_attempts.append({
+            "provider": "Mistral Voxtral API",
+            "model": model,
+            "status": "unavailable",
+            "error": error,
+        })
+        raise JudgeRouteError(error, provider_attempts)
+    provider_attempts.append({
+        "provider": "Mistral Voxtral API",
+        "model": model,
+        "status": "ok",
+        "attempts": attempt + 1,
+    })
+    return _parse_direct_audio_rubric(
+        text,
+        judge_model=f"mistral/{model}",
+        provider_attempts=provider_attempts,
+    )
+
+
+def _judge_openrouter_audio(
+    prompt: str,
+    audio_b64: str,
+    reference_audio_b64: str,
+    *,
+    provider_attempts: list,
+) -> RubricResult:
+    """Send both audio clips to an audio-capable Gemini route on OpenRouter."""
+    import urllib.error
+    import urllib.request
+
+    key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("缺少 OPENROUTER_API_KEY，无法回退多模态音频评审。")
+    model = os.environ.get("TTS_AUDIO_JUDGE_MODEL", "google/gemini-3.5-flash").strip()
+    content = [
+        {"type": "text", "text": prompt},
+        {
+            "type": "input_audio",
+            "input_audio": {"data": audio_b64, "format": "mp3"},
+        },
+        {
+            "type": "input_audio",
+            "input_audio": {"data": reference_audio_b64, "format": "mp3"},
+        },
+    ]
+    body = {
+        "model": model,
+        "temperature": 0.0,
+        "response_format": {"type": "json_object"},
+        "messages": [{"role": "user", "content": content}],
+    }
+    req = urllib.request.Request(
+        f"{OPENROUTER_BASE_URL}/chat/completions",
+        data=json.dumps(body).encode(),
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=90) as response:
+            data = json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")[:2000]
+        error = f"OpenRouter audio HTTP {exc.code}: {detail}"
+        provider_attempts.append({
+            "provider": "OpenRouter audio route",
+            "model": model,
+            "status": "unavailable",
+            "error": error,
+        })
+        if os.environ.get("MISTRAL_API_KEY", "").strip():
+            return _judge_mistral_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        raise JudgeRouteError(error, provider_attempts) from None
+    text = _message_text(data)
+    if not text:
+        error = f"OpenRouter audio 未返回评审文本：{data}"
+        provider_attempts.append({
+            "provider": "OpenRouter audio route",
+            "model": model,
+            "status": "unavailable",
+            "error": error,
+        })
+        if os.environ.get("MISTRAL_API_KEY", "").strip():
+            return _judge_mistral_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        raise JudgeRouteError(error, provider_attempts)
+    provider_attempts.append({
+        "provider": "OpenRouter audio route",
+        "model": model,
+        "status": "ok",
+    })
+    return _parse_direct_audio_rubric(
+        text,
+        judge_model=f"openrouter/{model}",
+        provider_attempts=provider_attempts,
+    )
+
+
 def judge_gemini_audio(
     reference: str,
     emotion: str,
@@ -466,14 +679,19 @@ def judge_gemini_audio(
 ) -> RubricResult:
     """让 Gemini 同时听合成音频与参考音频，执行正文四维 Rubric。
 
-    需要 GEMINI_API_KEY。默认关闭；--gemini 开启。失败抛异常由上层记为失败。
+    默认关闭；--gemini 开启。依次尝试已配置的 Google Gemini、OpenRouter 与
+    Mistral Voxtral，失败抛异常由上层记为失败。
     """
     import urllib.error
     import urllib.request
     key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not key:
-        raise RuntimeError("缺少 GEMINI_API_KEY，无法使用 Gemini 音频评审。")
-    model = _resolve_gemini_model(key)
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    mistral_key = os.environ.get("MISTRAL_API_KEY", "").strip()
+    if not key and not openrouter_key and not mistral_key:
+        raise RuntimeError(
+            "缺少 GEMINI_API_KEY / OPENROUTER_API_KEY / MISTRAL_API_KEY，"
+            "无法使用直接音频评审。"
+        )
     with open(audio_path, "rb") as f:
         audio_b64 = base64.b64encode(f.read()).decode()
     if not reference_audio_path or not os.path.isfile(reference_audio_path):
@@ -495,6 +713,22 @@ def judge_gemini_audio(
         f"合成语音原文：{reference}\n期望情感：{emotion}\n"
         "音频顺序：1=待评估合成语音；2=参考说话人语音。"
     )
+    provider_attempts = []
+    if not key:
+        if openrouter_key:
+            return _judge_openrouter_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        return _judge_mistral_audio(
+            prompt,
+            audio_b64,
+            reference_audio_b64,
+            provider_attempts=provider_attempts,
+        )
+    model = _resolve_gemini_model(key)
     body = {
         "contents": [{"parts": [
             {"text": prompt},
@@ -516,7 +750,28 @@ def judge_gemini_audio(
         # Preserve the provider's diagnostic while never serializing the key
         # (it only appears in the request URL, not this response excerpt).
         detail = exc.read().decode("utf-8", "replace")[:2000]
-        raise RuntimeError(f"Gemini HTTP {exc.code}: {detail}") from None
+        direct_error = f"Gemini HTTP {exc.code}: {detail}"
+        provider_attempts.append({
+            "provider": "Google Gemini API",
+            "model": model,
+            "status": "unavailable",
+            "error": direct_error,
+        })
+        if openrouter_key:
+            return _judge_openrouter_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        if mistral_key:
+            return _judge_mistral_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        raise JudgeRouteError(direct_error, provider_attempts) from None
     # Gemini 在安全拦截时不返回 candidates（或 candidate 无 content/parts），
     # 防御式取值并给出带 promptFeedback 的清晰错误，交由上层记为该条失败。
     candidates = data.get("candidates") or []
@@ -524,21 +779,38 @@ def judge_gemini_audio(
     if candidates:
         parts = (candidates[0].get("content") or {}).get("parts") or []
     if not parts or not parts[0].get("text"):
-        raise RuntimeError(f"Gemini 未返回评审文本：{data.get('promptFeedback') or data}")
+        error = f"Gemini 未返回评审文本：{data.get('promptFeedback') or data}"
+        provider_attempts.append({
+            "provider": "Google Gemini API",
+            "model": model,
+            "status": "unavailable",
+            "error": error,
+        })
+        if openrouter_key:
+            return _judge_openrouter_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        if mistral_key:
+            return _judge_mistral_audio(
+                prompt,
+                audio_b64,
+                reference_audio_b64,
+                provider_attempts=provider_attempts,
+            )
+        raise JudgeRouteError(error, provider_attempts)
     text = parts[0]["text"]
-    parsed = json.loads(text)
-    scores, reasons = {}, {}
-    # 评审 JSON 的 score 字段缺失或为 null 时按 0 分处理，与 judge_rubric 一致
-    for dim in RUBRIC_DIMENSIONS:
-        item = parsed.get(dim, {})
-        scores[dim] = int(item.get("score") or 0) if isinstance(item, dict) else int(item or 0)
-        reasons[dim] = str(item.get("reason", "")).strip() if isinstance(item, dict) else ""
-    return RubricResult(
-        scores=scores,
-        reasons=reasons,
-        raw=text,
+    provider_attempts.append({
+        "provider": "Google Gemini API",
+        "model": model,
+        "status": "ok",
+    })
+    return _parse_direct_audio_rubric(
+        text,
         judge_model=model,
-        evidence_mode="gemini-direct-audio-with-reference",
+        provider_attempts=provider_attempts,
     )
 
 
