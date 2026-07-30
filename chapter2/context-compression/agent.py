@@ -197,8 +197,17 @@ TODAY'S DATE: {date_string}"""
         Returns:
             Tuple of (tool result, compressed content if applicable)
         """
+        if not isinstance(arguments, dict):
+            arguments = {}
+
         if tool_name == "search_web":
-            result = self.web_tools.search_web(**arguments)
+            if "query" not in arguments:
+                return {"error": "Missing required argument 'query' for search_web"}, None
+            try:
+                result = self.web_tools.search_web(**arguments)
+            except Exception as e:
+                logger.error(f"Failed to execute search_web: {e}")
+                return {"error": f"Failed to execute search_web: {e}"}, None
             
             # Apply compression strategy
             query = arguments.get('query', '')
@@ -212,11 +221,16 @@ TODAY'S DATE: {date_string}"""
             return result, compressed
             
         elif tool_name == "fetch_webpage":
-            result = self.web_tools.fetch_webpage(**arguments)
+            if "url" not in arguments:
+                return {"error": "Missing required argument 'url' for fetch_webpage"}, None
+            try:
+                result = self.web_tools.fetch_webpage(**arguments)
+            except Exception as e:
+                logger.error(f"Failed to execute fetch_webpage: {e}")
+                return {"error": f"Failed to execute fetch_webpage: {e}"}, None
             
             # For fetch, we typically don't compress (used for follow-ups)
             return result, None
-            
         else:
             return {"error": f"Unknown tool: {tool_name}"}, None
     
@@ -563,7 +577,30 @@ TODAY'S DATE: {date_string}"""
                     
                     for tool_call in message['tool_calls']:
                         function_name = tool_call['function']['name']
-                        function_args = json.loads(tool_call['function']['arguments'])
+                        raw_args = tool_call['function'].get('arguments') or "{}"
+                        try:
+                            if isinstance(raw_args, dict):
+                                function_args = raw_args
+                            elif isinstance(raw_args, (bytes, bytearray)):
+                                function_args = json.loads(raw_args.decode("utf-8"))
+                            elif isinstance(raw_args, str):
+                                function_args = json.loads(raw_args)
+                            else:
+                                function_args = json.loads(str(raw_args))
+
+                            if not isinstance(function_args, dict):
+                                logger.warning(
+                                    "Tool argument JSON is not an object, proceeding with empty object: %r",
+                                    raw_args,
+                                )
+                                function_args = {}
+                        except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
+                            # Tolerate bad tool-arg JSON; keep the loop alive.
+                            function_args = {}
+                            logger.warning(
+                                "Tool argument is not valid JSON, proceeding with empty object: %r",
+                                raw_args,
+                            )
                         
                         print(f"\n🔧 Executing: {function_name}")
                         print(f"   Args: {function_args}")
