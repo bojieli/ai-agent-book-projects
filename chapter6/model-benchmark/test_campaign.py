@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from types import SimpleNamespace
 
-from analysis import availability_summary, completion_audit, percentile, summarize_workloads
+from analysis import availability_summary, completion_audit, markdown, percentile, summarize_workloads
 from campaign import (
     CampaignStore,
     Observation,
@@ -360,3 +360,54 @@ def test_non_usd_pricing_requires_dated_fx_for_comparable_cost():
         status="verified_with_fx",
     )
     assert converted.usd_conversion_complete is True
+
+
+def test_markdown_tolerates_null_percentage_fields() -> None:
+    report = {
+        "campaign_id": "exp6-8-test",
+        "observation_count": 0,
+        "completion_audit": {"official_complete": False},
+        "workload": [
+            {
+                "provider": "openai",
+                "target_context_tokens": 8192,
+                "target_output_tokens": 512,
+                "requests": 0,
+                "success_rate": None,
+                "ttft_s": {"p50": None, "p95": None, "p99": None},
+                "e2e_s": {"p50": None, "p95": None, "p99": None},
+                "input_prefill_throughput_tokens_s": {"p50": None},
+                "output_throughput_tokens_s": {"p50": None},
+                "output_length_attainment_rate": None,
+                "reasoning_tokens": {"p50": None},
+                "thinking_ttft_s": {"p50": None},
+            }
+        ],
+        "availability": [
+            {
+                "provider": "openai",
+                "probes": 0,
+                "uptime": None,
+                "outage_count": 0,
+                "mttr_s": None,
+                "longest_continuous_availability_s": 0.0,
+            }
+        ],
+        "rate_limits": [
+            {
+                "provider": "openai",
+                "concurrency": 1,
+                "success_rate": None,
+                "measured_rpm": None,
+                "measured_input_tpm": None,
+                "measured_output_tpm": None,
+            }
+        ],
+        "costs": [],
+        "external_benchmark_comparison": [],
+    }
+
+    result = markdown(report)
+    assert "| openai | 8192 | 512 | 0 | — | —/—/— | —/—/— | — | — | — | — | — |" in result
+    assert "| openai | 0 | — | 0 | — | 0.00 |" in result
+    assert "| openai | 1 | — | — | — | — |" in result
