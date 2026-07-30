@@ -51,7 +51,10 @@ def generate_openai(prompt, out):
                                         size="1024x1792", quality="hd",
                                         style="natural", n=1)
             url = r.data[0].url
-            with urllib.request.urlopen(url, timeout=30) as resp:
+            parsed = urllib.parse.urlparse(url)
+            if parsed.scheme != "https" or not parsed.netloc:
+                raise ValueError(f"Invalid URL scheme or host for image download: {url}")
+            with urllib.request.urlopen(url, timeout=60) as resp:
                 with open(out, "wb") as f:
                     f.write(resp.read())
             return True
