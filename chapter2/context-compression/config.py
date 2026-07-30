@@ -75,13 +75,15 @@ class Config:
 
         Computed at call time so a runtime override of ``Config.MODEL_NAME``
         (e.g. via ``--model``) is respected.
+
+        端点、接受的 key 变量与模型名映射由 agentbook 的 provider 注册表统一
+        维护。此处保持三元组返回值：调用方按 3 个字段解包，测试也按这个形状
+        打桩。
         """
-        from openrouter_fallback import resolve_llm as _resolve
-        return _resolve(
-            model=cls.MODEL_NAME,
-            primary_keys=("MOONSHOT_API_KEY", "KIMI_API_KEY"),
-            primary_base_url=cls.MOONSHOT_BASE_URL,
-        )
+        from agentbook.providers import resolve_backend
+
+        backend = resolve_backend("kimi", model=cls.MODEL_NAME)
+        return backend.api_key, backend.base_url, backend.model
 
     @classmethod
     def create_directories(cls):
