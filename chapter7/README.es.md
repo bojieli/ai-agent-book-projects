@@ -4,26 +4,30 @@
 
 ← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter7.es.md)
 
+Los límites de implementación, código externo y evidencia directa de cada experimento se detallan en el [registro de aceptación](EXPERIMENT_LEDGER.md).
+
 ## Proyectos Complementarios
 
 | Exp. | Proyecto | Tipo | Descripción |
 | :--: | --- | :--: | --- |
-| 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Pre-entrenamiento desde cero de LLM/VLM pequeños para comprender el proceso completo |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Pre-entrenamiento continuo sobre datos de dominio específico para mejorar el rendimiento |
-| 7-6 | [sesame](sesame/) | ✅ | SFT de voz Sesame CSM: ajuste LoRA de modelo TTS 1B con etiquetas paralingüísticas |
-| 7-6 | [orpheus](orpheus/) | ✅ | SFT de voz Orpheus 3B: ajuste LoRA de modelo TTS para clonación de voz consistente |
-| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Entrenamiento de capacidad de razonamiento en entornos multilingües |
-| 7-9 | [cot-distillation](cot-distillation/) | ✅ | Destilación de trayectorias CoT desde modelos avanzados vía OpenRouter y filtrado por reglas |
-| 7-10 | [AdaptThink](AdaptThink/) | 📖 | Selección adaptativa entre Thinking/NoThinking según la dificultad del problema |
-| 7-11 | `SFTvsRL/` | 📖 | Comparación sistemática entre ajuste fino supervisado y aprendizaje por refuerzo |
-| 7-12 | [SpatialReasoning](SpatialReasoning/) | 📖 | Entrenamiento de capacidades de razonamiento espacial (posiciones, direcciones, distancias) |
-| 7-13 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | Aprendizaje por refuerzo visión-lenguaje-acción para ejecución de acciones físicas |
-| 7-14 | [RLVP](RLVP/) | 📖 | Investigación de posentrenamiento con recompensa de resultados y penalización de trayectorias |
-| 7-15 | [retool](retool/) | 📖 | Mejora del razonamiento matemático mediante diálogo multirronda y sandbox de código en dos etapas |
-| 7-16 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | Entrenamiento de Agentes encarnados basados en el marco AWorld en entornos virtuales |
-| — | `verl/` | 📖 | Marco eficiente de RLHF para LLMs con soporte para PPO/GRPO/DAPO |
-| — | [Intuitor](Intuitor/) | ✅ | Entrenamiento de razonamiento intuitivo rápido sin depender de cadenas de pensamiento detalladas |
-| — | `tinker-cookbook/` | 📖 | Colección de trucos prácticos y mejores prácticas para entrenamiento de modelos |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | En el mismo entorno determinista de búsqueda del tesoro se completaron 10.000 partidas de Q-learning, 100 evaluaciones voraces y una primera ejecución oficial con Moonshot `kimi-k3`; la [evidencia de ambos brazos](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json) conserva 17/17 respuestas originales de la API sin *fallback* |
+| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | 📖 | Documentación complementaria y código externo `bojieli/minimind` fijado a `8bdc5d9…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
+| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | Documentación complementaria y código externo `bojieli/minimind-v` fijado a `ead791c…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
+| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Preentrenamiento continuo sobre datos de un dominio específico para mejorar su rendimiento |
+| 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | Dos vías reales de SFT de voz: modelado con etiquetas paralingüísticas y coherencia de timbre entre frases; se requiere el adaptador entrenado, audio y evidencia comparativa para completarlas |
+| 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | Implementación de SFT de razonamiento multilingüe; se necesita un checkpoint entrenado y comparaciones antes/después en benchmarks entre idiomas |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Implementación transversal de generación de prompts/respuestas del profesor, entrenamiento del alumno y comparación calidad-costo; generar ejemplos o prompts no basta para considerarla completa |
+| 7-9 | [cot-distillation](cot-distillation/) | 🚧 | Conserva y filtra por reglas CoT reales de Kimi K3; incluye SFT del alumno sin mocks, comparación de tres brazos sobre los mismos problemas, significación pareada y validación de reflexión/retroceso, pero la máquina actual carece de un checkpoint CUDA |
+| 7-10 | [documentación de AdaptThink](AdaptThink/) · `AdaptThink-original/` | 📖 | Código de entrenamiento externo de `bojieli/AdaptThink` para que el modelo elija Thinking/NoThinking según la dificultad |
+| 7-11 | `SFTvsRL/` | 📖 | GeneralPoints-L/VL de `bojieli/SFTvsRL`: comparación memoria-generalización ID/OOD entre SFT y PPO con el mismo presupuesto |
+| 7-12 | [documentación de SpatialReasoning](SpatialReasoning/) · `SFTvsRL/` | 📖 | Entrenamiento V-IRL-L/VL y evaluación OOD entre ciudades/reglas en el mismo *checkout* de `bojieli/SFTvsRL`; no es un repositorio SpatialReasoning independiente |
+| 7-13 | [documentación de SimpleVLA-RL](SimpleVLA-RL/) · `SimpleVLA-RL/SimpleVLA-RL/` | 📖 | Repositorio `PRIME-RL/SimpleVLA-RL` y `verl/` integrado fijados; OpenVLA-OFT, LIBERO/RoboTwin, checkpoints, Flash Attention, CUDA/controlador y recursos del simulador aún no forman un bloqueo de dependencias completamente validado |
+| 7-14 | [documentación de RLVP](RLVP/) · `RLVP/rlvp/` | 📖 | El código completo de entrenamiento/evaluación procede de `19PINE-AI/rlvp` fijado a `1ad30bc…`; el *checkout* no está presente y el entrenamiento no se ejecutó |
+| 7-15 | [documentación de retool](retool/) · `verl/` · `SandboxFusion/` | 📖 | La receta ReTool procede de `bojieli/verl` y la ejecución de código en tiempo real depende de `bojieli/SandboxFusion`; no existe un repositorio de código independiente llamado `retool` |
+| 7-16 | [documentación de AWorld-train](AWorld-train/) · `AWorld/` | 📖 | Sandbox MCP y entrada de entrenamiento de GAIA en `bojieli/AWorld`, con `bojieli/verl` como backend de entrenamiento |
+| — | `verl/` | 📖 | Marco eficiente de RLHF para LLM compatible con PPO, GRPO, DAPO y otros algoritmos |
+| — | [Intuitor](Intuitor/) | ✅ | Entrena razonamiento intuitivo para obtener decisiones plausibles con rapidez sin depender de una cadena de pensamiento detallada |
+| — | `tinker-cookbook/` | 📖 | Colección de técnicas prácticas y mejores prácticas para entrenar modelos |
 
 ## Tipos de Proyectos
 
@@ -31,4 +35,4 @@
 | :--: | --- | --- |
 | ✅ | **Autónomo** | Código completo en este repositorio, se ejecuta tras configurar la Clave API |
 | 📖 | **Guía de Reproducción** | Documento detallado que depende de **repositorios externos** para realizar `git clone` |
-| 🚧 | **Documento de Diseño** | Solo arquitectura/plan de implementación, el código ejecutable aún está en desarrollo |
+| 🚧 | **En curso** | Existe una implementación, pero el entrenamiento o la evidencia de aceptación requerida por el texto aún no está completa |
