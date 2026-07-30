@@ -347,7 +347,7 @@ class BM25:
             docs = self.index.get_posting_list(term)
 
             # If no exact match and term is not a number/code, try lowercase
-            if not docs and not term[0].isdigit() and '-' not in term:
+            if not docs and term and not term[0].isdigit() and '-' not in term:
                 lowered = term.lower()
                 docs = self.index.get_posting_list(lowered)
                 if docs:
