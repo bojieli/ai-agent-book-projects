@@ -1,8 +1,9 @@
 #!/bin/bash
 # Build the complete book as a single PDF (ElegantBook design, teal/cyan theme).
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
-#               Korean fonts: Noto Serif/Sans CJK KR, DejaVu Sans/Mono
-#               (Menlo is used when available on macOS)
+#               Korean fonts: Noto Serif/Sans CJK KR, or macOS Apple CJK fonts
+#               Code fallback: DejaVu Sans Mono (Menlo on macOS)
+#               Figure-caption fallback: DejaVu Sans
 # Usage: cd book-ko && bash build_pdf.sh
 # ElegantBook has no `lang=ko`, so `lang=cn` provides the required CJK
 # typesetting support while preamble.tex overrides reader-facing labels.
