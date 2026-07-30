@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 540" width="880" height="540" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="50" width="560" height="118" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="36" y="72" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">정적 접두부(바이트 단위 불변, KV Cache 지속 적중)</text>
+<rect x="40" y="84" width="520" height="34" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="101" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">System Prompt</text>
+<rect x="40" y="124" width="520" height="34" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="141" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">핵심 도구 정의: web_search, code_interpreter, tool_search</text>
+<rect x="20" y="180" width="560" height="386" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="36" y="202" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">궤적(기존 내용은 그대로 두고 새 내용을 끝에 추가)</text>
+<rect x="40" y="214" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="229.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">User: NVDA 주가 조회</text>
+<rect x="40" y="250" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="265.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Assistant: tool_search_call(주가)</text>
+<rect x="40" y="286" width="520" height="40" rx="6" fill="#d8e8d8" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="306.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tool_search_output → get_stock_quote 전체 schema 주입</text>
+<rect x="40" y="332" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="347.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Assistant: get_stock_quote 호출 → Tool Result</text>
+<rect x="40" y="368" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="383.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">User: GitHub 저장소 기여자 분석</text>
+<rect x="40" y="404" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="419.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Assistant: tool_search_call(GitHub)</text>
+<rect x="40" y="440" width="520" height="40" rx="6" fill="#d8e8d8" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="460.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tool_search_output → list_contributors 등 schema 주입</text>
+<rect x="40" y="486" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="501.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Assistant: 호출 → Tool Result → 응답</text>
+<rect x="40" y="522" width="520" height="30" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="300.0" y="537.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">…… 이번 라운드의 최신 콘텐츠</text>
+<line x1="562" y1="306.0" x2="592" y2="306.0" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<line x1="562" y1="460.0" x2="592" y2="460.0" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="600" y="294.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">최초 등장: prefill 1회(캐시에 기록)</text>
+<text x="600" y="316.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">이후 일반 기록으로 캐시에 적중</text>
+<text x="600" y="448.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">로드한 도구를 제거하거나 재정렬하면 안 됨</text>
+<text x="600" y="470.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">그러면 변경 지점부터 캐시가 무효화됨</text>
+</svg>

@@ -21,7 +21,7 @@ from openai import OpenAI
 from airline_env import AirlineEnv
 
 
-MODEL = os.environ.get("MODEL", "gpt-5.6-luna")  # 默认用小模型作为代表（本实验的核心：小模型+代码化规则）
+MODEL = os.environ.get("MODEL", "qwen3:4b")
 MAX_TURNS = 6
 
 # --- 通用 OpenRouter 兜底 ---
@@ -138,7 +138,7 @@ CODIFIED_CANCEL_TOOL = {
 }
 
 
-def _make_client(model: str | None = None):
+def _make_client(model: str | None = None, provider: str = "ollama"):
     """构造客户端并解析模型名，含通用 OpenRouter 兜底。返回 (client, resolved_model)。
 
     - 有 OPENAI_API_KEY：直连；但当 model 是 gpt-5.x 且同时设置了 OPENROUTER_API_KEY
@@ -146,18 +146,30 @@ def _make_client(model: str | None = None):
     - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：改走 OpenRouter（模型名自动映射）。
     """
     model = model or MODEL
-    api_key = os.environ.get("OPENAI_API_KEY")
-    base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
-    prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
+    if provider == "ollama":
+        api_key = "ollama"
+        base_url = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434/v1")
+    elif provider == "openrouter":
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        base_url = OPENROUTER_BASE_URL
+        model = _map_to_openrouter_model(model)
+    elif provider == "openai":
+        api_key = os.environ.get("OPENAI_API_KEY")
+        base_url = os.environ.get("OPENAI_BASE_URL")
+    elif provider == "moonshot":
+        api_key = os.environ.get("MOONSHOT_API_KEY")
+        base_url = "https://api.moonshot.cn/v1"
+    elif provider == "ark":
+        api_key = os.environ.get("ARK_API_KEY")
+        base_url = "https://ark.cn-beijing.volces.com/api/v3"
+    else:
+        raise ValueError(f"unsupported provider: {provider}")
     if not api_key:
         raise RuntimeError("未设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请参考 env.example 配置。")
     kw = {"api_key": api_key}
     if base_url:
         kw["base_url"] = base_url
-    return OpenAI(**kw), model
+    return OpenAI(**kw), model, provider
 
 
 def _dispatch(env: AirlineEnv, mode: str, name: str, args: dict) -> dict:
@@ -176,14 +188,14 @@ def _dispatch(env: AirlineEnv, mode: str, name: str, args: dict) -> dict:
 
 
 def run_agent(env: AirlineEnv, user_message: str, mode: str, verbose: bool = False,
-              model: str | None = None) -> dict:
+              model: str | None = None, provider: str = "ollama") -> dict:
     """跑一个 case，返回 {final_text, transcript}。env 被就地修改（状态即真值）。
 
     model 为空时回退到模块级默认 MODEL（小模型）。三方对照实验里，可用它把
     "控制组"跑在一个更大的模型上，验证"小模型+代码化规则"能否追平"大模型裸跑"。
     """
     assert mode in ("control", "codified")
-    client, model = _make_client(model or MODEL)
+    client, model, provider = _make_client(model or MODEL, provider)
 
     if mode == "control":
         system, tools = CONTROL_SYSTEM, [GET_RESERVATION_TOOL, CONTROL_CANCEL_TOOL]
@@ -195,11 +207,29 @@ def run_agent(env: AirlineEnv, user_message: str, mode: str, verbose: bool = Fal
         {"role": "user", "content": user_message},
     ]
     transcript: list[dict] = []
+    provider_receipts: list[dict] = []
     final_text = ""
+    started = time.monotonic()
 
     for _turn in range(MAX_TURNS):
         resp = _chat_with_retry(client, messages, tools, model=model)
         msg = resp.choices[0].message
+        usage = getattr(resp, "usage", None)
+        provider_receipts.append({
+            "turn": _turn + 1,
+            "response_id": getattr(resp, "id", None),
+            "response_model": getattr(resp, "model", None),
+            "finish_reason": getattr(resp.choices[0], "finish_reason", None),
+            "usage": {
+                "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                "completion_tokens": getattr(usage, "completion_tokens", None),
+                "total_tokens": getattr(usage, "total_tokens", None),
+                "cached_prompt_tokens": getattr(
+                    getattr(usage, "prompt_tokens_details", None),
+                    "cached_tokens", None,
+                ),
+            },
+        })
 
         if msg.tool_calls:
             messages.append({
@@ -231,7 +261,15 @@ def run_agent(env: AirlineEnv, user_message: str, mode: str, verbose: bool = Fal
         messages.append({"role": "assistant", "content": final_text})
         break
 
-    return {"final_text": final_text, "transcript": transcript}
+    return {
+        "provider": provider,
+        "model": model,
+        "final_text": final_text,
+        "transcript": transcript,
+        "messages": messages,
+        "provider_receipts": provider_receipts,
+        "duration_s": round(time.monotonic() - started, 3),
+    }
 
 
 def _chat_with_retry(client: OpenAI, messages, tools, model: str | None = None, retries: int = 3):

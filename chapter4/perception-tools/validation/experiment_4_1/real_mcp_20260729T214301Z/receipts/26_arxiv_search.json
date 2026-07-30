@@ -1,0 +1,64 @@
+{
+  "case": "arxiv_search",
+  "tool": "arxiv_search",
+  "arguments": {
+    "query": "agentic artificial intelligence",
+    "max_results": 2,
+    "sort_by": "relevance"
+  },
+  "arguments_sha256": "7c091475ba1290dac931ea59515b34385cafe55fcafc0018f292c7d05d7152c1",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "export.arxiv.org",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "query": "agentic artificial intelligence",
+      "papers": [
+        {
+          "title": "Creative Problem Solving in Artificially Intelligent Agents: A Survey and Framework",
+          "authors": [
+            "Evana Gizzi",
+            "Lakshmi Nair",
+            "Sonia Chernova",
+            "Jivko Sinapov"
+          ],
+          "summary": "Creative Problem Solving (CPS) is a sub-area within Artificial Intelligence (AI) that focuses on methods for solving off-nominal, or anomalous problems in autonomous systems. Despite many advancements in planning and learning, resolving novel problems or adapting existing knowledge to a new context, especially in cases where the environment may change in unpredictable ways post deployment, remains a limiting factor in the safe and useful integration of intelligent systems. The emergence of incre...",
+          "published": "2022-04-21T18:31:44+00:00",
+          "url": "http://arxiv.org/abs/2204.10358v1",
+          "pdf_url": "https://arxiv.org/pdf/2204.10358v1",
+          "categories": [
+            "cs.AI"
+          ]
+        },
+        {
+          "title": "The Artificial Scientist: Logicist, Emergentist, and Universalist Approaches to Artificial General Intelligence",
+          "authors": [
+            "Michael Timothy Bennett",
+            "Yoshihiro Maruyama"
+          ],
+          "summary": "We attempt to define what is necessary to construct an Artificial Scientist, explore and evaluate several approaches to artificial general intelligence (AGI) which may facilitate this, conclude that a unified or hybrid approach is necessary and explore two theories that satisfy this requirement to some degree....",
+          "published": "2021-10-05T05:58:23+00:00",
+          "url": "http://arxiv.org/abs/2110.01831v1",
+          "pdf_url": "https://arxiv.org/pdf/2110.01831v1",
+          "categories": [
+            "cs.AI"
+          ]
+        }
+      ],
+      "count": 2
+    },
+    "metadata": {
+      "query": "agentic artificial intelligence",
+      "max_results": 2
+    }
+  },
+  "elapsed_seconds": 3.126
+}

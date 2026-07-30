@@ -1,2 +1,4 @@
 openai>=1.30.0
 python-dotenv>=1.0.0
+psycopg2-binary>=2.9.9
+playwright>=1.45.0

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 1130 440" width="1130" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="55" width="160" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="110" y="73" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">사용자 질의</text>
+<text x="110" y="93" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">&quot;냥이 행동&quot;</text>
+<line x1="190" y1="68" x2="238" y2="68" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="240" y="50" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="330.0" y="75.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">밀집 검색</text>
+<text x="330" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">의미 일치: 냥이 ≈ 고양이</text>
+<text x="250" y="140" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc3: &quot;고양이 습성과 놀이...&quot;</text>
+<text x="700" y="140" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.87</text>
+<text x="250" y="172" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc7: &quot;고양이 그루밍 습관...&quot;</text>
+<text x="700" y="172" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.82</text>
+<text x="250" y="204" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc1: &quot;반려동물 돌봄 기초...&quot;</text>
+<text x="700" y="204" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">cos=0.71</text>
+<line x1="190" y1="90" x2="238" y2="270" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="240" y="250" width="180" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="330.0" y="275.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">희소 검색(BM25)</text>
+<text x="330" y="318" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">정확히 일치: &quot;냥이&quot; 키워드</text>
+<text x="250" y="340" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc5: &quot;냥이 화장실 훈련...&quot;</text>
+<text x="700" y="340" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=8.4</text>
+<text x="250" y="372" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc9: &quot;냥이 입양 안내...&quot;</text>
+<text x="700" y="372" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=6.1</text>
+<text x="250" y="404" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">doc2: &quot;새끼 고양이 건강 팁...&quot;</text>
+<text x="700" y="404" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">BM25=3.2</text>
+<line x1="770" y1="180" x2="808" y2="220" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="770" y1="370" x2="808" y2="330" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="790" y="215" width="70" height="120" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="825" y="250" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">결과</text>
+<text x="825" y="275" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">융합</text>
+<text x="825" y="300" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">RRF·6→5</text>
+<line x1="860" y1="275" x2="898" y2="275" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="900" y="215" width="120" height="120" rx="6" fill="#c8c8c8" stroke="#333333" stroke-width="2"/>
+<text x="960" y="250" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">신경망</text>
+<text x="960" y="275" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">재순위화</text>
+<text x="960" y="305" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교차 인코더 정렬</text>
+<line x1="960" y1="335" x2="960" y2="352" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="960" y="370" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">최종 순위 Top-N</text>
+</svg>

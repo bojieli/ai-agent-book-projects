@@ -18,7 +18,7 @@ Two usage paths:
 - **Offline demos (recommended first; zero deps, no API key)**: three measurable capabilities—**parallel vs serial wall-clock, interrupt/cancel then recover, checkpoint persist and restore**. No network, no LLM, no need for `openai`; `python demo.py` runs as-is.
 - **LLM scenarios (four book verification scenes)**: decisions by a real LLM (default OpenAI `gpt-5.6-luna`, function calling); API key required.
 
-Both paths share the same async runtime. Long-running work uses **simulated async “terminal commands”** (with progress), never real dangerous shell commands.
+Both paths share the same async runtime. Long-running work uses **real, allowlisted Python subprocesses**. No shell is opened: progress is parsed from child stdout, completion includes observed hashes/return codes, and cancellation terminates the child PID.
 
 ### Architecture
 
@@ -45,7 +45,7 @@ Corresponds to section 5 of the design doc—all single-threaded `asyncio`:
                    │   turn_task cancelable│  (on interrupt, cancel this child task)
                    └──────────────────────┘
 
-  TaskManager: simulated async terminal tasks (start / query / cancel / cancel_all)
+  TaskManager: bounded real subprocesses (start / query / cancel / cancel_all)
                natural completion -> inject as new event (async.result) into inbox
 ```
 
@@ -54,7 +54,9 @@ Code files:
 | File | Role |
 |------|------|
 | `events.py`  | `Event` model (checkpoint `to_dict`/`from_dict`), event types, **urgency** `classify_urgency()` |
-| `tasks.py`   | Simulated async “terminal commands” and `TaskManager` (progress, cancel/query by id, `snapshot`/`restore`) |
+| `tasks.py`   | Allowlisted subprocess `TaskManager` (stdout progress, OS cancel/query by id, executable receipts, `snapshot`/`restore`) |
+| `analysis_worker.py` | Real executable that hashes and analyzes `book/chapter4.md` while emitting progress |
+| `run_real_experiment.py` | Durable, model-independent acceptance campaign for all four manuscript scenarios |
 | `runtime.py` | `AgentRuntime`: event loop, two processing modes, LLM function calling, tool exec, `save_checkpoint`/`load_checkpoint` |
 | `async_demos.py` | Three **offline demos** (no API key): parallel wall-clock, interrupt/recover, state checkpoint |
 | `demo.py`    | Unified CLI (argparse subcommands): offline demos + four LLM scenarios |
@@ -72,13 +74,24 @@ Urgency rules (simple and explainable):
 
 #### Async tools
 
-`run_terminal_command` is **async**: returns a `task_id` placeholder immediately (non-blocking); the command advances progress in the background at a fixed rate; on real completion, the result is injected as a **new event** (`async.result`). Also: `query_task` / `cancel_task` by id, `get_current_time` for immediate questions.
+`run_terminal_command` is **async**: it returns a `task_id` placeholder immediately, then starts an allowlisted child process with `asyncio.create_subprocess_exec` and `shell=False`. Progress comes from the process's stdout. On completion, file metrics, input/stdout hashes, PID, return code, and duration are injected as a **new event** (`async.result`). `cancel_task` sends termination to that PID. Also: `query_task` by id and `get_current_time` for immediate questions.
 
-**Timeline acceleration**: 1 “simulated second” maps to `0.4` real seconds by default (`FLUX_TICK_REAL` tunable). Speed deltas **3% / 2% / 1% per (sim) second** and the **50%** threshold logic are preserved.
+**Timeline acceleration**: one logical progress tick maps to `0.4` wall-clock seconds by default (`FLUX_TICK_REAL` tunable). The real executables retain the **3% / 2% / 1% per tick** rates and **50%** threshold.
 
 ### How to run
 
 CLI entry is `demo.py` with argparse subcommands; `python demo.py --help` for full usage.
+
+For canonical, machine-readable evidence across all four scenarios:
+
+```bash
+python run_real_experiment.py --tick-real 0.15
+pytest -q test_tasks_env.py test_real_tasks.py
+```
+
+The campaign takes about 20 seconds and writes per-scenario receipts, Japanese
+HTML, the integrated report, acceptance gates, and a hash manifest under
+`validation/experiment_4_5/`.
 
 #### Offline demos (no API key, out of the box)
 
@@ -253,7 +266,7 @@ User: “run these three scripts at once; when the first finishes, query the oth
 - **Only `scenarios` needs network and a valid API key** (`OPENAI_API_KEY`, or `MOONSHOT_API_KEY` / `ARK_API_KEY`).
 - LLM wording varies per run; the four scenarios’ **behavioral logic** is stable. Retry on occasional high latency.
 - Timeline is accelerated; larger `FLUX_TICK_REAL` is closer to book “tens of seconds”; too small may break scenario 4’s under-50% cancel window.
-- All “terminal commands” are simulated and never execute real shell commands on your machine.
+- Terminal jobs are real allowlisted Python child processes. Arbitrary commands and shell syntax are rejected before task allocation.
 
 ---
 
@@ -301,7 +314,7 @@ Agent 需要同时管理多个并发任务，处理打断与恢复，并根据�
                    │   turn_task 可被取消  │  （打断时 cancel 掉这个子任务）
                    └──────────────────────┘
 
-  TaskManager：管理模拟异步终端任务（start / query / cancel / cancel_all）
+  TaskManager：管理受限的真实子进程（start / query / cancel / cancel_all）
                任务自然完成 -> 以"新事件"(async.result) 注入 inbox
 ```
 
@@ -310,7 +323,9 @@ Agent 需要同时管理多个并发任务，处理打断与恢复，并根据�
 | 文件 | 作用 |
 |------|------|
 | `events.py`  | 事件模型 `Event`（含检查点序列化 `to_dict`/`from_dict`）、事件类型、**紧急度判定** `classify_urgency()` |
-| `tasks.py`   | 模拟异步"终端命令"与 `TaskManager`（进度推进、按 ID 取消/查询、状态 `snapshot`/`restore`） |
+| `tasks.py`   | 真实受限子进程 `TaskManager`（stdout 进度、PID 取消/查询、可执行回执、`snapshot`/`restore`） |
+| `analysis_worker.py` | 真实分析进程：读取并哈希 `book/chapter4.md`，从 stdout 输出进度 |
+| `run_real_experiment.py` | 覆盖书中四场景的持久化验收运行器 |
 | `runtime.py` | `AgentRuntime`：事件循环、两种处理机制、LLM function calling、工具执行、检查点 `save_checkpoint`/`load_checkpoint` |
 | `async_demos.py` | 三个**离线演示**（无需 API key）：并行墙钟对比、打断/恢复、状态检查点 |
 | `demo.py`    | 统一命令行入口（argparse 子命令）：离线演示 + 四个 LLM 验证场景 |
@@ -331,11 +346,13 @@ Agent 需要同时管理多个并发任务，处理打断与恢复，并根据�
 #### 异步工具
 
 `run_terminal_command` 是**异步**工具：调用后立刻返回 `task_id` 占位符（不阻塞），
-命令在后台按固定速度推进进度；真正完成后，其结果作为一条**新事件**（`async.result`）注入对话。
+随后用 `asyncio.create_subprocess_exec`（`shell=False`）启动白名单子进程；进度来自真实 stdout。
+完成后把 PID、返回码、输入/输出哈希和文件分析指标作为**新事件**（`async.result`）注入对话；
+取消操作会终止对应 PID。
 另有 `query_task` / `cancel_task` 按 ID 查询进度与取消，`get_current_time` 用于即时提问。
 
-**时间轴加速**：为便于复现，1 个"模拟秒"默认映射为 `0.4` 真实秒（`FLUX_TICK_REAL` 可调）。
-速度差 **3% / 2% / 1% 每（模拟）秒** 与 **是否过 50%** 的判定逻辑完全保留。
+**时间轴加速**：为便于复现，一个逻辑进度 tick 默认映射为 `0.4` 真实秒（`FLUX_TICK_REAL` 可调）。
+真实子进程保留 **3% / 2% / 1% 每 tick** 与 **是否过 50%** 的判定逻辑。
 
 ### 二、运行
 
@@ -534,7 +551,7 @@ Agent 执行长任务，用户发"取消"。框架立即取消当前执行流并
   若遇到 OpenAI 偶发的高延迟，重跑即可。
 - 时间轴已加速；把 `FLUX_TICK_REAL` 调大可让演示更接近书中"几十秒"的真实节奏，
   调小则更快（过小可能让场景 4 的"未过 50% 就取消"来不及判定）。
-- 所有"终端命令"均为模拟，不会在你的机器上真实执行任何命令。
+- 终端任务是真实但受限的 Python 子进程；任意命令与 shell 语法会在分配任务 ID 前被拒绝。
 
 ---
 
@@ -542,5 +559,5 @@ Agent 执行长任务，用户发"取消"。框架立即取消当前执行流并
 
 - Design details: [`agent_framework_design.md`](./agent_framework_design.md).  
 - 设计细节见 [`agent_framework_design.md`](./agent_framework_design.md)。  
-- Simulated terminal tasks never run real shell commands.  
-- 模拟终端任务不会真实执行 shell 命令。
+- Terminal jobs are real allowlisted child processes and never invoke a shell.
+- 终端任务是白名单真实子进程，且绝不调用 shell。

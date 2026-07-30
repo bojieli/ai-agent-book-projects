@@ -5,7 +5,7 @@ import sys
 from multilang_executor import LanguageExecutor, ExecutionStatus
 
 
-async def test_language(executor: LanguageExecutor, language: str, code: str, description: str):
+async def run_language_case(executor: LanguageExecutor, language: str, code: str, description: str):
     """Test a specific language."""
     print(f"\n{'='*60}")
     print(f"Testing {language}: {description}")
@@ -143,7 +143,7 @@ echo "Sum of 1-10: $sum"
     results = []
     for language, code, description in tests:
         try:
-            success = await test_language(executor, language, code, description)
+            success = await run_language_case(executor, language, code, description)
             results.append((language, success))
         except Exception as e:
             print(f"❌ EXCEPTION: {e}")

@@ -1,0 +1,11 @@
+openai>=1.30.0
+playwright>=1.44.0
+python-dotenv>=1.0.0
+sounddevice>=0.4.6
+numpy>=1.26.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+twilio>=9.0.0
+fastapi>=0.111.0
+uvicorn>=0.30.0
+python-multipart>=0.0.9

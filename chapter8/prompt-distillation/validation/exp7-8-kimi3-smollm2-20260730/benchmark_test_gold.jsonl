@@ -1,0 +1,80 @@
+{"id": "test-ar-000", "split": "test", "source_label": "ar", "gold_label": "ar", "text": "إن الاستمرارية ، بعد كل شيء ، هي فضيلة ، أو هكذا يقول أولئك الذين لم يفرضوها عليهم."}
+{"id": "test-ar-001", "split": "test", "source_label": "ar", "gold_label": "ar", "text": "حاولت مكاتب السياحة إعادة تسمية منطقة L'Estrie ، ولكن حتى أكثر الكيوبيين المتشددين تشدد على العرف ، إذا كان تقريبًا ، ترجمة للمقاطعات."}
+{"id": "test-ar-002", "split": "test", "source_label": "ar", "gold_label": "ar", "text": "حاولت مكاتب السياحة إعادة تسمية منطقة L'Estrie ، ولكن حتى أكثر الكيوبيين المتشددين تشدد على العرف ، إذا كان تقريبًا ، ترجمة للمقاطعات."}
+{"id": "test-ar-003", "split": "test", "source_label": "ar", "gold_label": "ar", "text": "هذا هو رئيس الرقيب كليم فرانسيس ، متقاعد من القوات الجوية الأمريكية."}
+{"id": "test-bg-000", "split": "test", "source_label": "bg", "gold_label": "ot", "text": "Освен че проучи внимателно различни официални документи, чешкото правителство разгледа също така снимки от охранителни камери, направени пред посолството на Ирак."}
+{"id": "test-bg-001", "split": "test", "source_label": "bg", "gold_label": "ot", "text": "Общата биология всъщност е на една ръка разстояние."}
+{"id": "test-bg-002", "split": "test", "source_label": "bg", "gold_label": "ot", "text": "Тънкостите на галското подчинително наклонение изобщо не го притесняват и той дори не се безпокои, когато се упражнява."}
+{"id": "test-bg-003", "split": "test", "source_label": "bg", "gold_label": "ot", "text": "80% от участниците ще покажат повишени умения за разрешаване на конфликти."}
+{"id": "test-de-000", "split": "test", "source_label": "de", "gold_label": "de", "text": "Die Abdeckung (dünnes Plastik)war leider gebrochen! Habe Ersatz angefordert, hat auch super geklappt, nur das die Lampe wieder den selben Schaden hat... wenn mich nicht alles täuscht wurde mir die gleiche einfach nochmal geschickt!!!!😈 Hoffentlich passts beim dritten mal!!!😡 Ansonsten gäbe es bei dem Preis eh nichts auszusetzen! Aber mehr Sterne hat sich der Service nicht verdient..."}
+{"id": "test-de-001", "split": "test", "source_label": "de", "gold_label": "de", "text": "Besser etwas größer bestellen !"}
+{"id": "test-de-002", "split": "test", "source_label": "de", "gold_label": "de", "text": "Lichter sind gut. Farben sind OK. Aber es hängt und es Klackert.--.Schade.--!!"}
+{"id": "test-de-003", "split": "test", "source_label": "de", "gold_label": "de", "text": "Dicht und Robust, alles was er soll."}
+{"id": "test-el-000", "split": "test", "source_label": "el", "gold_label": "el", "text": "Ήταν η μοναδική απώλεια στην Κρίση της Κούβας και, ο Kaiser, πήρε τις φωτογραφίες και πέταξε κατευθείαν στο Αεροδρόμιο Andrews της Πολεμικής Αεροπορίας στην Ουάσινγκτον."}
+{"id": "test-el-001", "split": "test", "source_label": "el", "gold_label": "el", "text": "Όμως, καθώς μεγάλωνε, ε, δεν αναγνώρισε ποτέ ότι έκανε λάθος, αλλά άλλαξε τη συμπεριφορά της."}
+{"id": "test-el-002", "split": "test", "source_label": "el", "gold_label": "el", "text": "Και είναι διαφορετικό, όπως κάτω από κάθε πελάτη, είναι όλα τα αρχεία τους."}
+{"id": "test-el-003", "split": "test", "source_label": "el", "gold_label": "el", "text": "Και είναι διαφορετικό, όπως κάτω από κάθε πελάτη, είναι όλα τα αρχεία τους."}
+{"id": "test-en-000", "split": "test", "source_label": "en", "gold_label": "en", "text": "We like the rack. There were some sharp pointed wires that needed to be cut before installing it."}
+{"id": "test-en-001", "split": "test", "source_label": "en", "gold_label": "en", "text": "Love the gloves , but be,careful if you are allergic to nickel don't buy them they are made with nickel chloride which I am allergic very highly allergic to so that was the only downfall"}
+{"id": "test-en-002", "split": "test", "source_label": "en", "gold_label": "en", "text": "Ordered this for my son. We waited for 3weeks to arrive. The left side where the whole for the garter is torn so we had to tape it. The black paint was erased after a week. This mask is really thin."}
+{"id": "test-en-003", "split": "test", "source_label": "en", "gold_label": "en", "text": "Bought a few for craft show tables. I’ve owned them for years & I just can’t get the wrinkles out."}
+{"id": "test-es-000", "split": "test", "source_label": "es", "gold_label": "es", "text": "La compré para mi mujer y le ha gustado bastante. Es muy grande, pero dormimos en una cama de 1,50m y no hemos tenido problema de espacio. La única pega que encuentra es que es baja para dormir sin almohada, si pone la almohada debajo le resulta demasiado alta. También la usa en el sofá. Los materiales son de calidad y agradables"}
+{"id": "test-es-001", "split": "test", "source_label": "es", "gold_label": "es", "text": "No se sujeta bien al secador y es un secador universal con boquilla larga. No es satisfactorio para mi agrado"}
+{"id": "test-es-002", "split": "test", "source_label": "es", "gold_label": "es", "text": "Han tardado el tiempo que decía en la entrega, y todo estaba bien. Pero creo que le falta una guía/soporte, al igual que otros protectores de pantalla tienen para ser más sencillos fe colocar. También creo que no es exactamente igual que el OPPO A3, pero aún así ha quedado bien."}
+{"id": "test-es-003", "split": "test", "source_label": "es", "gold_label": "es", "text": "Buenas tardes. No me ha llegado el pedido del libro y pone que está entregado. Espero su contestación lo antes posible gracias"}
+{"id": "test-fr-000", "split": "test", "source_label": "fr", "gold_label": "fr", "text": "Au bout de 1 mois quasiment casser j'ai du re commander une coque. Le miroir est très fragile et le tissu sur le bord aussi"}
+{"id": "test-fr-001", "split": "test", "source_label": "fr", "gold_label": "fr", "text": "livraison vraiment désastreux par dhl et colissimo voir les photos en dessous"}
+{"id": "test-fr-002", "split": "test", "source_label": "fr", "gold_label": "fr", "text": "Copie chinoise de l'original. Qualité de finition moyenne, j'ai même un doute sur la sécurité. Le dock ne fonctionne pas avec. pas assez puissant."}
+{"id": "test-fr-003", "split": "test", "source_label": "fr", "gold_label": "fr", "text": "compliqué ce livre mais après chaque envoi je vous enverrai une satisfaction du moment que le transporteur est bpost plus facile"}
+{"id": "test-hi-000", "split": "test", "source_label": "hi", "gold_label": "hi", "text": "इसलिए मुझे नहीं पता  कि मैंने तमन्ना की थी या नहीं |"}
+{"id": "test-hi-001", "split": "test", "source_label": "hi", "gold_label": "hi", "text": "इसलिए मुझे नहीं पता  कि मैंने तमन्ना की थी या नहीं |"}
+{"id": "test-hi-002", "split": "test", "source_label": "hi", "gold_label": "hi", "text": "और, ज़ाहिर है, एंड्रोव ग्रोमिकोव ने कोई जवाब नहीं दिया, लेकिन हमारे पास यू 2 की फिल्मों के आधार पर सारी जानकारी थी।"}
+{"id": "test-hi-003", "split": "test", "source_label": "hi", "gold_label": "hi", "text": "उह, मैं अभी भी एक और केवल नौ दो-दो था जिसने कभी रेगुलेटर पर इंजेक्शन सेट कर दिया था।"}
+{"id": "test-it-000", "split": "test", "source_label": "it", "gold_label": "ot", "text": "Una persona sta affettando delle cipolle."}
+{"id": "test-it-001", "split": "test", "source_label": "it", "gold_label": "ot", "text": "Diversi bambini saltano su e giù su un trampolino."}
+{"id": "test-it-002", "split": "test", "source_label": "it", "gold_label": "ot", "text": "Il tasso di disoccupazione civile è migliorato marginalmente il mese scorso, scendendo al 6,1 per cento, anche se le aziende hanno tagliato le buste paga di 93.000 unità."}
+{"id": "test-it-003", "split": "test", "source_label": "it", "gold_label": "ot", "text": "Myanmar arresta 44 persone per violenza settaria"}
+{"id": "test-ja-000", "split": "test", "source_label": "ja", "gold_label": "ot", "text": "SSDへシステムの引っ越しに使いました。 簡単に目的は達成しました。 ソケットのバネが弱いようです。 簡単に外れてしまう ので・・・それなりの工夫が必要でした。 個体差はあるかもしれませんが・・・。"}
+{"id": "test-ja-001", "split": "test", "source_label": "ja", "gold_label": "ot", "text": "軽いので持ち運びしやすいです。 車の中でも使えることも考慮すると手頃かなと思います。"}
+{"id": "test-ja-002", "split": "test", "source_label": "ja", "gold_label": "ot", "text": "もう、見るべしとしか言えない。 でも、一部のヒロインが好きな方（僕）には、残念。出てこないんだもん。あんまり。"}
+{"id": "test-ja-003", "split": "test", "source_label": "ja", "gold_label": "ot", "text": "なんだかちょいちょいバグるのか左に移動します。 が、繋ぎ直すと大丈夫！ でも、ちょっと面倒なので☆１つ減らしときました。"}
+{"id": "test-nl-000", "split": "test", "source_label": "nl", "gold_label": "ot", "text": "Het vlees, gevogelte, boter, kaas en noten werden een jaar geleden in beslag genomen in een LaGrou Cold Storage warehouse in Chicago."}
+{"id": "test-nl-001", "split": "test", "source_label": "nl", "gold_label": "ot", "text": "Een zwarte hond die naar de camera kijkt."}
+{"id": "test-nl-002", "split": "test", "source_label": "nl", "gold_label": "ot", "text": "Een schildpad zwemt in het water."}
+{"id": "test-nl-003", "split": "test", "source_label": "nl", "gold_label": "ot", "text": "De technologisch geplaatste Nasdaq Composite Index .IXIC daalde met 25,36 punten, of 1,53 procent, tot 1.628,26."}
+{"id": "test-pl-000", "split": "test", "source_label": "pl", "gold_label": "ot", "text": "Opalona dziewczyna w kwiatowym bikini pływa w ciemnoniebieskiej wodzie."}
+{"id": "test-pl-001", "split": "test", "source_label": "pl", "gold_label": "ot", "text": "Jeśli nie jesteś pewien, jak to zrobić, nie rób tego wcale."}
+{"id": "test-pl-002", "split": "test", "source_label": "pl", "gold_label": "ot", "text": "Rada Kolebki Wolności nie jest pierwszą, która złamała stanowisko grupy narodowej."}
+{"id": "test-pl-003", "split": "test", "source_label": "pl", "gold_label": "ot", "text": "Średnia dla przemysłu Dow Jones spadła o 10,89 dnia do poziomu 9 837,94, po awansie o 111,04 w środę."}
+{"id": "test-pt-000", "split": "test", "source_label": "pt", "gold_label": "ot", "text": "A Kollar-Kotelly agendou outra audiência para Janeiro sobre o cumprimento do acordo antitrust."}
+{"id": "test-pt-001", "split": "test", "source_label": "pt", "gold_label": "ot", "text": "A jovem mulher está a namoriscar com o jovem rapaz."}
+{"id": "test-pt-002", "split": "test", "source_label": "pt", "gold_label": "ot", "text": "Um grupo de homens joga futebol na praia."}
+{"id": "test-pt-003", "split": "test", "source_label": "pt", "gold_label": "ot", "text": "Uma jovem com sujidade na cara e uma bicicleta vermelha de criança está no fundo."}
+{"id": "test-ru-000", "split": "test", "source_label": "ru", "gold_label": "ru", "text": "Моим детям сейчас двадцать один и двадцать четыре года, поэтому, мне не приходится"}
+{"id": "test-ru-001", "split": "test", "source_label": "ru", "gold_label": "ru", "text": "Но я торопился высадить тебя."}
+{"id": "test-ru-002", "split": "test", "source_label": "ru", "gold_label": "ru", "text": "Но я торопился высадить тебя."}
+{"id": "test-ru-003", "split": "test", "source_label": "ru", "gold_label": "ru", "text": "Через каждые сто градусов пятна краски меняют свой цвет, она может быть красной и изменить цвет на синий."}
+{"id": "test-sw-000", "split": "test", "source_label": "sw", "gold_label": "ot", "text": "Baada ya kukataa kwanza ombi la Hazmi ya mkopo, msimamizi alikubali kumruhusu kutumia akaunti ya benki ya msimamizi ili kupokea uhamisho wa waya wa $5,000."}
+{"id": "test-sw-001", "split": "test", "source_label": "sw", "gold_label": "ot", "text": "Kwa hiyo, watu wazima hawana haja ya kufundisha watoto wa shule ya kwanza katika kujifanya, kama wanavyofanya wakati wa kuwasaidia puzzles au kazi nyingine zinazofanana."}
+{"id": "test-sw-002", "split": "test", "source_label": "sw", "gold_label": "ot", "text": "Ni nafasi yetu pekee... Maneno yake mengine yalipotelea kwa kelele ya mikono iliyosisitiza ya kwamba msichana yule ashikwe mateka."}
+{"id": "test-sw-003", "split": "test", "source_label": "sw", "gold_label": "ot", "text": "Kwa upande mwingine, kuna majukumu kama vile mipangilio ya IT na usimamizi ambao lazima uwe ndani ya kampuni."}
+{"id": "test-th-000", "split": "test", "source_label": "th", "gold_label": "ot", "text": "ชายหาดคือสถานที่สวยงานและเป็นสถานที่ที่ดีที่จะไปดังนั้นนั่นอาจจะเป็นหนึ่งในสถานที่โปรดปรานที่สุดของฉันที่จะไป แล้วคุณล่ะ"}
+{"id": "test-th-001", "split": "test", "source_label": "th", "gold_label": "ot", "text": "เอ่อ อย่างไรก็ตามฉันสงสัยพลเมืองในมาดริดและแอตแลนตา ในขณะที่พวกเขาอาจเสียดายการสูญเสียบางส่วนของประเพณี แล้วชอบความทันสมัย"}
+{"id": "test-th-002", "split": "test", "source_label": "th", "gold_label": "ot", "text": "บ่อยครั้งที่คนเดียวที่สามารถรักษา caida de mollera เป็น curandera"}
+{"id": "test-th-003", "split": "test", "source_label": "th", "gold_label": "ot", "text": "Shakur ได้รับการยืนยันตัวโดยเจ้าหน้าที่ของสเปนในฐานะ Farid Hilali"}
+{"id": "test-tr-000", "split": "test", "source_label": "tr", "gold_label": "tr", "text": "New Republic’in Charles Lane’i, kaçırma haberinin sadece Gabriel Garcaa Marquez’in dürüst olmayan gazetecilik kayıtlarını uzattığını söylüyor."}
+{"id": "test-tr-001", "split": "test", "source_label": "tr", "gold_label": "tr", "text": "New Republic’in Charles Lane’i, kaçırma haberinin sadece Gabriel Garcaa Marquez’in dürüst olmayan gazetecilik kayıtlarını uzattığını söylüyor."}
+{"id": "test-tr-002", "split": "test", "source_label": "tr", "gold_label": "tr", "text": "Yüzbaşı, dedi ve konuşurken, takip eden gemilere işaret etti, Albay Bishop bizi tutuyor."}
+{"id": "test-tr-003", "split": "test", "source_label": "tr", "gold_label": "tr", "text": "Savaştan sonra yapılan bir örnek evlerdeki geliştirmelerde en çok bulunan şeylerden biri de çocuklardı ve çocukların şehri olarak düşünüldüğünde çok iyi tasarlanmışlardı."}
+{"id": "test-ur-000", "split": "test", "source_label": "ur", "gold_label": "ur", "text": "تو ویسے ہی، والد چلا جاتا ہے اور میرے لئے چاکلیٹ دودھ کا یہ اچھا بڑا گلاس بنا دیتا ہے."}
+{"id": "test-ur-001", "split": "test", "source_label": "ur", "gold_label": "ur", "text": "مشورے اور عدالت یا انتظامی ایجنسی کی مخالفت کرنے کے لئے نوٹس بھیجا جائیں گے."}
+{"id": "test-ur-002", "split": "test", "source_label": "ur", "gold_label": "ur", "text": "انٹیلی جنس طور پر، یہ ممکن نہیں ہوتا کہ غیر مساوی پیچیدہ اداروں کے اس سیارے بڑے بندوق سے بڑے پیمانے پر پیدا ہوسکتے ہیں."}
+{"id": "test-ur-003", "split": "test", "source_label": "ur", "gold_label": "ur", "text": "دیکھو تم بڑی مصیبت میں آگۓ ہو"}
+{"id": "test-vi-000", "split": "test", "source_label": "vi", "gold_label": "vi", "text": "Người câu cá nước ngọt phải có giấy phép, hãy hỏi văn phòng du lịch gần nhất để biết thông tin về cách lấy giấy phép."}
+{"id": "test-vi-001", "split": "test", "source_label": "vi", "gold_label": "vi", "text": "Đây là kết quả mới nhất: 5,615 nhóm đối tượng tham gia hội cựu sinh viên không đóng góp, 81 1.4 phần trăm, người đóng góp nhiều nhất là $2,840 và người đóng góp ít nhất là $5."}
+{"id": "test-vi-002", "split": "test", "source_label": "vi", "gold_label": "vi", "text": "Nghiệp vụ không chuyển đổi-- được và mất"}
+{"id": "test-vi-003", "split": "test", "source_label": "vi", "gold_label": "vi", "text": "Câu hỏi duy nhất về cuộc khảo sát NEA là Bạn đã đọc bất kỳ tài liệu nào trong năm qua chưa?"}
+{"id": "test-zh-000", "split": "test", "source_label": "zh", "gold_label": "zh", "text": "根本不是那么回事，用指甲都能划出痕迹 用钥匙那叫一个惨不忍睹啊"}
+{"id": "test-zh-001", "split": "test", "source_label": "zh", "gold_label": "zh", "text": "邮寄地址错误，请尽快处理，上次回复说是调查清楚后给我回电，又过去一个礼拜，一点消息没有！"}
+{"id": "test-zh-002", "split": "test", "source_label": "zh", "gold_label": "zh", "text": "面料很好，透气舒服，但是档部设计不好，穿着很难受，不像是可以直接穿的内裤"}
+{"id": "test-zh-003", "split": "test", "source_label": "zh", "gold_label": "zh", "text": "我订购的是独家签名版，为何收到的书是无签名的？？"}

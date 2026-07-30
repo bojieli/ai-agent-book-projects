@@ -31,6 +31,9 @@ env/
 # Trajectory files
 *.json
 !package.json
+!experiment_protocol.json
+!validation/
+!validation/**
 
 # IDE
 .vscode/

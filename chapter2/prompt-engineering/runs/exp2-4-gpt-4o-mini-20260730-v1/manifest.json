@@ -1,0 +1,33 @@
+{
+  "experiment_id": "2-4",
+  "campaign_complete": false,
+  "protocol_sha256": "ebedaecdbb6c4fc8d8d92222dc17334a27a1b1b9f19e4732578563f5e9389424",
+  "summary_path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/comparison.json",
+  "summary_sha256": "0b26332ceba12fc3ab3e5713c4239a382607dd86b76d2e364dc1863067bad19a",
+  "arm_artifacts": {
+    "baseline": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-baseline_0730022052.json",
+      "sha256": "0edf8d281ea5e5d39ca5079d445b1684b1ec8de1026013590d68c5a0e88121fd"
+    },
+    "tone_trump": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_trump_0730022059.json",
+      "sha256": "1531727c765cd3b1caef4b3c486399467979a40f951c603ae577241ed7918ccb"
+    },
+    "tone_casual": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_casual_0730022104.json",
+      "sha256": "4a1205d5ee3394b18e95d184a2f6dc7a565a2c1ba1558428b83f394f3d989b51"
+    },
+    "wiki_random": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-wiki_random_0730022109.json",
+      "sha256": "bca0c69faf8faceabf444cc5f85c51bd7b4db4b72ea83151ed1ea88e60891264"
+    },
+    "no_tool_desc": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-no_tool_desc_0730022115.json",
+      "sha256": "7a0fd841f28b3c6a8fe0f801bb33fba08acbdaa3a3dadbc0330334d209592ebf"
+    },
+    "all_ablations": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_casual_wiki_random_no_tool_desc_0730022120.json",
+      "sha256": "aee798ceabad4e2022adcbadef6aca739937be4fbeffc9f98c9c65950bbd3990"
+    }
+  }
+}

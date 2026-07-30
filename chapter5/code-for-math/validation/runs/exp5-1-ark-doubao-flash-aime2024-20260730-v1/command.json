@@ -1,0 +1,20 @@
+{
+  "cwd": "chapter5/code-for-math",
+  "argv": [
+    "python",
+    "-u",
+    "demo.py",
+    "--mode",
+    "both",
+    "--provider",
+    "ark",
+    "--model",
+    "doubao-seed-1-6-flash-250615",
+    "--problems",
+    "aime_2024.json",
+    "--output",
+    "validation/real_ark_doubao_flash_aime2024_20260730.json",
+    "--resume"
+  ],
+  "resumed": true
+}

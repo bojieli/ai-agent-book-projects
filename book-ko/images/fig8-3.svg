@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 410" width="1000" height="410" style="background:#ffffff">
+  <defs>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:16px;fill:#52636d}
+      .q{font-size:18px;font-weight:700}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+    </style>
+  </defs>
+  <text x="500" y="30" text-anchor="middle" class="t h">능력의 표현 특성이 주된 갱신 위치를 결정합니다</text>
+
+  <rect x="35" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="145" y="105" text-anchor="middle" class="t h">지식</text>
+  <text x="145" y="135" text-anchor="middle" class="t s">사실·경험·예외</text>
+  <text x="145" y="164" text-anchor="middle" class="t s">Markdown / 지식 베이스</text>
+
+  <rect x="275" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="385" y="105" text-anchor="middle" class="t h">지침</text>
+  <text x="385" y="135" text-anchor="middle" class="t s">언어화 가능한 판단 원칙</text>
+  <text x="385" y="164" text-anchor="middle" class="t s">Prompt / Skill</text>
+
+  <rect x="515" y="72" width="220" height="126" rx="9" class="box"/>
+  <text x="625" y="105" text-anchor="middle" class="t h">프로그램</text>
+  <text x="625" y="135" text-anchor="middle" class="t s">결정론적 절차·강제 제약</text>
+  <text x="625" y="164" text-anchor="middle" class="t s">도구 / 워크플로 / Harness</text>
+
+  <rect x="755" y="72" width="220" height="126" rx="9" class="accent"/>
+  <text x="865" y="105" text-anchor="middle" class="t h">매개변수</text>
+  <text x="865" y="135" text-anchor="middle" class="t s">고차원 지각·암묵적 전략</text>
+  <text x="865" y="164" text-anchor="middle" class="t s">SFT / 증류 / RL</text>
+
+  <line x1="145" y1="226" x2="865" y2="226" stroke="#33434d" stroke-width="2"/>
+  <path d="M145 218 V234 M865 218 V234" stroke="#33434d" stroke-width="2"/>
+  <text x="145" y="260" text-anchor="middle" class="t s">갱신 용이·추적 가능</text>
+  <text x="865" y="260" text-anchor="middle" class="t s">내재화·낮은 추론 비용</text>
+  <text x="500" y="289" text-anchor="middle" class="t h">단방향 사다리가 아닌 네 가지 상호 보완 수단</text>
+
+  <rect x="145" y="320" width="710" height="58" rx="8" class="accent"/>
+  <text x="500" y="344" text-anchor="middle" class="t q">첫 판단: 능력을 사실·언어 규칙·프로그램으로 완전히 표현할 수 있는가?</text>
+  <text x="500" y="367" text-anchor="middle" class="t s">안정성·비용·갱신 빈도가 배치 방식을 정하며 매개변수화 가능 여부와는 무관합니다</text>
+</svg>

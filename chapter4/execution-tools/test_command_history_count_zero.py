@@ -1,33 +1,16 @@
 """get_command_history(count=0) must return an empty list, not the full history."""
-import asyncio
-import sys
-import tempfile
-import shutil
-from pathlib import Path
-
 import pytest
 
-
-class Config:
-    WORKSPACE_DIR = Path(tempfile.mkdtemp())
-    AUTO_VERIFY_CODE = False
-    REQUIRE_APPROVAL_FOR_DANGEROUS_OPS = False
-
-
-sys.modules["config"] = type(sys)("config")
-sys.modules["config"].Config = Config
-
+from config import Config
 from terminal_controller import TerminalController
 
 
 @pytest.fixture
-def tc():
-    Config.WORKSPACE_DIR = Path(tempfile.mkdtemp())
+def tc(tmp_path, monkeypatch):
+    monkeypatch.setattr(Config, "WORKSPACE_DIR", tmp_path)
     controller = TerminalController()
     controller.command_history = ["cmd0", "cmd1", "cmd2", "cmd3", "cmd4"]
-    yield controller
-    if Config.WORKSPACE_DIR.exists():
-        shutil.rmtree(Config.WORKSPACE_DIR, ignore_errors=True)
+    return controller
 
 
 @pytest.mark.asyncio

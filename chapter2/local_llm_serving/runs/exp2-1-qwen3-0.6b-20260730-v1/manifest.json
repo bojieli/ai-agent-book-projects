@@ -1,0 +1,15 @@
+{
+  "experiment_id": "2-1",
+  "official_complete": false,
+  "protocol_sha256": "829b8c2d19926af25ca5dd3271065a33b26460191aa0ccb15bb4fdfdbf1dc12a",
+  "evidence_sha256": "3611fb226a763898596f996e8bc3221f4bb36b5b443a84970fffe8a1cf84d5e3",
+  "credential_scan_passed": true,
+  "credential_scan_findings": [],
+  "review_status": "rejected_after_manual_argument_check",
+  "rejection_reason": "The model passed America/New_York to get_current_time for Vancouver, so the final time was incorrect.",
+  "cost": {
+    "amount": 0,
+    "currency": "USD",
+    "qualification": "local inference"
+  }
+}

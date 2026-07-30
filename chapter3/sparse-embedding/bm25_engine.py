@@ -164,14 +164,14 @@ class InvertedIndex:
         
         logger.debug(f"Document {doc_id}: {len(tokens)} tokens, {len(term_freq)} unique terms")
         
-        # Update inverted index
-        for term in term_freq:
-            self.index[term].add(doc_id)
-            
-        # Update document frequency
+        # Update inverted index and document frequency.  The previous version
+        # checked membership only after inserting the document, so the
+        # educational ``document_frequency`` view was always zero even though
+        # search happened to use posting-list lengths directly.
         for term in term_freq:
             if doc_id not in self.index[term]:
                 self.document_frequency[term] += 1
+            self.index[term].add(doc_id)
         
         self.total_documents += 1
         self._update_statistics()
@@ -253,18 +253,36 @@ class BM25:
         
         logger.info(f"BM25 initialized with k1={k1}, b={b}, avgdl={self.avgdl:.2f}")
     
-    def calculate_idf(self, term: str) -> float:
-        """Calculate Inverse Document Frequency for a term"""
+    def calculate_raw_idf(self, term: str) -> float:
+        """Calculate the Robertson/Sparck Jones IDF printed in Chapter 3."""
         N = self.index.total_documents
         df = len(self.index.get_posting_list(term))
         
         if df == 0:
             return 0
         
-        # BM25 IDF formula
-        idf = math.log((N - df + 0.5) / (df + 0.5) + 1)
+        return math.log((N - df + 0.5) / (df + 0.5))
+
+    def calculate_idf(self, term: str) -> float:
+        """Return RSJ IDF with a small floor for corpus-ubiquitous terms.
+
+        Raw RSJ IDF is negative when a term occurs in more than half of a tiny
+        corpus.  Letting that value flow into ranking perversely rewards a
+        document for matching fewer query terms.  Production BM25 variants
+        conventionally floor or smooth that edge case; the raw value remains
+        available through :meth:`calculate_raw_idf` for transparent teaching
+        and hand calculation.
+        """
+        df = len(self.index.get_posting_list(term))
+        if df == 0:
+            return 0
+        raw_idf = self.calculate_raw_idf(term)
+        idf = max(raw_idf, 1e-6)
         
-        logger.debug(f"IDF for '{term}': N={N}, df={df}, idf={idf:.4f}")
+        logger.debug(
+            f"IDF for '{term}': N={self.index.total_documents}, df={df}, "
+            f"raw_idf={raw_idf:.4f}, scoring_idf={idf:.4f}"
+        )
         return idf
     
     def calculate_term_score(self, term: str, doc_id: int) -> float:
@@ -329,7 +347,7 @@ class BM25:
             docs = self.index.get_posting_list(term)
 
             # If no exact match and term is not a number/code, try lowercase
-            if not docs and not term[0].isdigit() and '-' not in term:
+            if not docs and term and not term[0].isdigit() and '-' not in term:
                 lowered = term.lower()
                 docs = self.index.get_posting_list(lowered)
                 if docs:

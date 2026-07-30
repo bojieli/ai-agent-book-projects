@@ -213,6 +213,29 @@ python benchmark.py --help
 
 > `kv-cache` needs server prefix caching (vLLM automatic prefix caching is on by default). Hit group keeps the system prompt byte-identical; miss group inserts a unique counter only at the **start** of the system prompt so the whole prefix invalidates—demonstrating “once the system prompt is fixed, don’t change it.”
 
+### Complete manuscript campaign (`run_experiment.py`)
+
+The benchmark above measures individual serving properties. The acceptance
+campaign additionally exercises the manuscript's complete Vancouver example:
+Qwen3 emits two raw XML tool calls in one turn, the time and weather tools run
+concurrently, their results are returned through the chat template, and the
+model decides to stop. It then records five matched prefix-cache hit/miss pairs.
+The exact rendered token stream, every Ollama stream chunk, model digest,
+server token counts/durations, wall-clock TTFT, hashes, and a credential scan
+are retained; no output is synthesized.
+
+```bash
+ollama serve                         # separate terminal, if not already running
+ollama pull qwen3:0.6b
+python run_experiment.py \
+  --output runs/exp2-1-qwen3-0.6b-$(date +%Y%m%d-%H%M%S)
+```
+
+The frozen design is [experiment_protocol.json](experiment_protocol.json).
+`manifest.json` is the completion receipt and `evidence.json` is the raw
+auditable record. Local inference costs $0 in API fees; the report does not
+generalize the measured throughput to other hardware.
+
 ### Configuration
 
 Copy `env.example` to `.env`:

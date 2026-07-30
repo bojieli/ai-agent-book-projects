@@ -16,7 +16,14 @@ from pydantic import Field
 # Import all tool functions
 from search_tools import search_web, download_file, search_knowledge_base
 from multimodal_tools import read_webpage, read_document, parse_image, parse_video, extract_youtube_transcript, download_youtube_video
-from filesystem_tools import read_file, grep_search, summarize_text
+from filesystem_tools import (
+    copy_path,
+    delete_path,
+    grep_search,
+    move_path,
+    read_file,
+    summarize_text,
+)
 from public_data_tools import (
     get_weather, get_stock_price, convert_currency,
     search_wikipedia, search_arxiv, search_wayback,
@@ -31,6 +38,7 @@ from google_search_enhanced import google_search_api, read_webpage_content
 from wiki_enhanced import get_article_content, get_article_categories, get_article_links, get_article_history
 from arxiv_enhanced import get_paper_details, download_paper, get_arxiv_categories
 from wayback_enhanced import get_archived_content
+from expanded_catalog import enrich_existing_tools, register_expanded_tools
 
 
 # Configure logging
@@ -195,6 +203,34 @@ async def text_summarizer(
 ):
     """Summarize text."""
     return await summarize_text(text, max_length, use_llm)
+
+
+@mcp.tool(description="Move a file or directory inside the configured mutation workspace")
+async def filesystem_move(
+    source_path: str = Field(description="Relative source path beneath PERCEPTION_MUTATION_ROOT"),
+    destination_path: str = Field(description="Relative destination path beneath PERCEPTION_MUTATION_ROOT"),
+    overwrite: bool = Field(default=False, description="Quarantine an existing destination before moving"),
+):
+    """Move one workspace-confined filesystem object."""
+    return await move_path(source_path, destination_path, overwrite)
+
+
+@mcp.tool(description="Copy a file or directory inside the configured mutation workspace")
+async def filesystem_copy(
+    source_path: str = Field(description="Relative source path beneath PERCEPTION_MUTATION_ROOT"),
+    destination_path: str = Field(description="Relative destination path beneath PERCEPTION_MUTATION_ROOT"),
+    overwrite: bool = Field(default=False, description="Quarantine an existing destination before copying"),
+):
+    """Copy one workspace-confined filesystem object."""
+    return await copy_path(source_path, destination_path, overwrite)
+
+
+@mcp.tool(description="Delete a file or directory from the configured mutation workspace using reversible quarantine")
+async def filesystem_delete(
+    path: str = Field(description="Relative path beneath PERCEPTION_MUTATION_ROOT"),
+):
+    """Quarantine one workspace-confined filesystem object."""
+    return await delete_path(path)
 
 
 # ============================================================================
@@ -645,6 +681,18 @@ async def notion_search(
 ):
     """Search Notion."""
     return await search_notion(query, database_id, page_size)
+
+
+# Complete the 56 native schema descriptions before adding the expanded
+# catalog. The implementations and native parameter schemas remain unchanged.
+enrich_existing_tools(mcp)
+
+# Experiment 4-6 requires 120+ tools from this perception MCP server.  The
+# 56 native tools plus 70 additional real-backed, read-mostly tools bring the
+# server catalog to 126 tools. Registration is dynamic only to avoid repetitive
+# wrapper functions; tools/list still
+# returns ordinary full JSON schemas and every tool is callable over MCP.
+register_expanded_tools(mcp)
 
 
 # ============================================================================

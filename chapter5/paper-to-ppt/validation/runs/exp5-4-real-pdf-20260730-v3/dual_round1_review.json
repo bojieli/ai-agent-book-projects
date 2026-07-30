@@ -1,0 +1,66 @@
+{
+  "overall_score": 55,
+  "pass": false,
+  "issues": [
+    {
+      "page": 2,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将6个要点拆分为2页，例如将BLEU分数单独作为一页突出展示关键结果"
+    },
+    {
+      "page": 3,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将传统方法的挑战拆分为单独页面，或减少子要点数量至2个以内"
+    },
+    {
+      "page": 4,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将现有模型局限性和注意力机制分为2页，每部分保留3个核心要点"
+    },
+    {
+      "page": 5,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "增大架构图尺寸并移除图片下方的文字说明，或单独用一页展示清晰的架构图"
+    },
+    {
+      "page": 5,
+      "issue_type": "readability",
+      "severity": "high",
+      "suggestion": "确保架构图中的文字清晰可辨，必要时拆分图表或局部放大关键组件"
+    },
+    {
+      "page": 5,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "删除图片下方的长段文字说明，仅保留底部的总结句"
+    },
+    {
+      "page": 6,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将编码器架构的子层信息拆分为单独页面，或简化为要点列表"
+    },
+    {
+      "page": 7,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将解码器的三个子层拆分为单独页面详细说明，主页面仅保留核心结构概述"
+    },
+    {
+      "page": 8,
+      "issue_type": "overcrowded",
+      "severity": "low",
+      "suggestion": "缩短定义部分的描述文字，或拆分为单独的'注意力定义'和'注意力类型'两页"
+    },
+    {
+      "page": 10,
+      "issue_type": "layout",
+      "severity": "high",
+      "suggestion": "补充Multi-Head Attention的核心要点（如并行注意力头、拼接输出等），避免空页"
+    }
+  ]
+}

@@ -96,7 +96,7 @@ class Config:
             ),
             "doubao-1.6": ModelConfig(
                 provider=Provider.DOUBAO,
-                model_name="Doubao-1.6",
+                model_name=os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
                 api_key=self.doubao_api_key,
                 base_url="https://ark.cn-beijing.volces.com/api/v3",
                 supports_native_multimodal=True
@@ -104,7 +104,7 @@ class Config:
         }
         
         # Default settings
-        self.default_model = "gemini-3.5-flash"
+        self.default_model = os.getenv("MULTIMODAL_MODEL", "doubao-1.6")
         self.default_mode = ExtractionMode.NATIVE
         self.enable_multimodal_tools = False
         

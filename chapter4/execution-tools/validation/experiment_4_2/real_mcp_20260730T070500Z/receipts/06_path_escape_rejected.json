@@ -1,0 +1,16 @@
+{
+  "case": "path_escape_rejected",
+  "tool": "file_write",
+  "arguments": {
+    "path": "../../escape.py",
+    "content": "print('escape')\n",
+    "overwrite": true
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Path ../../escape.py is outside workspace directory"
+  },
+  "latency_seconds": 0.002
+}

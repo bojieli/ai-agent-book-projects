@@ -1,0 +1,11 @@
+{
+  "suite": "todo_list",
+  "case_id": "todo-05",
+  "token": "ECHO-851",
+  "artifacts": [
+    "request.txt",
+    "work.txt",
+    "quality.txt",
+    "handoff.txt"
+  ]
+}

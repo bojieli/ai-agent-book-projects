@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "experiment": "10-8",
+  "generated_at": "2026-07-29T18:42:35+0800",
+  "acceptance_path": false,
+  "mode": "offline_all_ai_supplement",
+  "players": 7,
+  "human_players": [],
+  "role_counts": {"狼人": 2, "预言家": 1, "女巫": 1, "村民": 3},
+  "completed_day_night_vote_cycles": 2,
+  "winner": "狼人阵营",
+  "information_isolation_pass": true,
+  "strategy_audit": null,
+  "voice_events": [],
+  "gates": {
+    "exact_6_to_8_player_role_roster": {"status": "pass"},
+    "one_authorized_human_participant": {"status": "not_run"},
+    "real_human_asr": {"status": "not_run"},
+    "real_ai_and_judge_tts": {"status": "not_run"},
+    "three_complete_cycles": {"status": "supplemental_only", "observed": 2},
+    "information_isolation": {"status": "pass"},
+    "real_llm_strategy_acceptance": {"status": "not_run"}
+  },
+  "overall_status": "supplemental_only"
+}

@@ -1,0 +1,51 @@
+{
+  "case": "video_analyze",
+  "tool": "video_analyze",
+  "arguments": {
+    "video_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/media/visual-marker.mp4",
+    "num_frames": 1,
+    "prompt": "Read the text shown in this frame."
+  },
+  "arguments_sha256": "d39e0938b666e12e0067756177509b02cd086b231986f78507bdd832d025b98c",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "opencv-and-configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "visual-marker.mp4",
+      "frames_analyzed": 1,
+      "analyses": [
+        {
+          "frame_number": 0,
+          "timestamp": 0.0,
+          "analysis": "The text in the frame reads:\n\n**EXPERIMENT 4-1**  \n**PERCEPTION TOOLS VERIFIED**\n\nThis appears to be a title or heading, likely indicating that a specific experiment (Experiment 4-1) has been conducted and that the perception tools used in the experiment have been verified or validated.",
+          "provider_receipt": {
+            "provider": "dashscope",
+            "response_id": "chatcmpl-2867b194-bd23-94b4-bdae-5a48cdccfb2e",
+            "response_model": "qwen-vl-max",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 443,
+              "completion_tokens": 66,
+              "total_tokens": 509
+            },
+            "latency_seconds": 3.58
+          }
+        }
+      ],
+      "combined_analysis": "Frame 1 (t=0.0s): The text in the frame reads:\n\n**EXPERIMENT 4-1**  \n**PERCEPTION TOOLS VERIFIED**\n\nThis appears to be a title or heading, likely indicating that a specific experiment (Experiment 4-1) has been conducted and that the perception tools used in the experiment have been verified or validated."
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/media/visual-marker.mp4"
+    }
+  },
+  "elapsed_seconds": 3.603
+}

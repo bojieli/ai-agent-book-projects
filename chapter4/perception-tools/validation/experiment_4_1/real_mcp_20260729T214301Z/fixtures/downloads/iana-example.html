@@ -1,0 +1,201 @@
+
+<!doctype html>
+<html>
+<head>
+	<title>Example Domains</title>
+
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+    <link rel="stylesheet" href="/static/css/iana_website.3c174467e53c.css"/>
+    <link rel="shortcut icon" type="image/ico" href="/static/img/bookmark_icon.e14a2530b3e9.ico"/>
+    <script type="text/javascript" src="/static/js/jquery.a8e7cabd4d49.js"></script>
+    <script type="text/javascript" src="/static/js/dtable.46ee921d4414.js" defer></script>
+    <script type="text/javascript" src="/static/js/relative-time.79f0e30be3b8.js" defer></script>
+
+	
+</head>
+
+<body>
+
+
+
+<header>
+    <div id="header">
+        <div id="logo">
+            <a href="/"><img src="/static/img/iana-logo-header.426b3ac01d35.svg" alt="Homepage"/></a>
+        </div>
+        <div class="navigation">
+            <ul>
+                <li><a href="/domains">Domains</a></li>
+                <li><a href="/protocols">Protocols</a></li>
+                <li><a href="/numbers">Numbers</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    
+</header>
+
+
+<div id="body">
+
+
+<article class="hemmed sidenav">
+
+    <main>
+    
+<ol class="breadcrumb">
+	<li><a href="/help">Instructions and Guides</a></li>
+</ol>
+<h1 id="example-domains">Example Domains</h1>
+<div class="help-article-flow">
+<div class="help-article">
+
+<p>As described in <a href="/go/rfc2606">RFC 2606</a> and <a href="/go/rfc6761">RFC 6761</a>, a
+number of domains such as example.com and example.org are maintained
+for documentation purposes. These domains may be used as illustrative
+examples in documents without prior coordination with us. They are not
+available for registration or transfer.</p>
+<p>We provide a web service on the example domain hosts to provide basic
+information on the purpose of the domain. These web services are
+provided as best effort, but are not designed to support production
+applications. While incidental traffic for incorrectly configured
+applications is expected, please do not design applications that require
+the example domains to have operating HTTP service.</p>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><a href="/domains/reserved">IANA-managed Reserved Domains</a></li>
+</ul>
+
+<div class="last-updated">Last revised <time class="relative-time" datetime="2017-05-13">2017-05-13</time>.</div>
+
+</div>
+
+</div>
+
+    </main>
+
+    <nav id="sidenav">
+    
+    </nav>
+
+</article>
+
+
+</div>
+
+<footer>
+    <div id="footer">
+        <table class="navigation">
+            <tr>
+                <td class="section"><a href="/domains">Domain&nbsp;Names</a></td>
+                <td class="subsection">
+                    <ul>
+                        <li><a href="/domains/root">Root Zone Registry</a></li>
+                        <li><a href="/domains/int">.INT Registry</a></li>
+                        <li><a href="/domains/arpa">.ARPA Registry</a></li>
+                        <li><a href="/domains/idn-tables">IDN Repository</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="section"><a href="/numbers">Number&nbsp;Resources</a></td>
+                <td class="subsection">
+                    <ul>
+                        <li><a href="/numbers/registries">Number Registries</a></li>
+                        <li><a href="/numbers/allocations/">RIR Allocation Data</a></li>
+                        <li><a href="/help/abuse">Abuse Information</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="section"><a href="/protocols">Protocols</a></td>
+                <td class="subsection">
+                    <ul>
+                        <li><a href="/protocols">Protocol Registries</a></li>
+                        <li><a href="/time-zones">Time Zone Database</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="section"><a href="/about">About&nbsp;Us</a></td>
+                <td class="subsection">
+                    <ul>
+                        <li><a href="/news">News</a></li>
+                        <li><a href="/performance">Performance</a></li>
+                        <li><a href="/about/organization">The Organization</a></li>
+                        <li><a href="/archive">Archive</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <div id="custodian">
+            <p>The IANA functions coordinate the Internet’s globally unique identifiers, and
+                are provided by <a href="https://pti.icann.org">Public Technical Identifiers</a>, an affiliate of
+                <a href="https://www.icann.org/">ICANN</a>.</p>
+        </div>
+        <div id="legalnotice">
+            <ul>
+                <li><a href="https://www.icann.org/privacy/policy">Privacy Policy</a></li>
+                <li><a href="https://www.icann.org/privacy/tos">Terms of Service</a></li>
+                
+            </ul>
+        </div>
+    </div>
+</footer>
+
+
+
+<script>
+// Highlight the table-of-contents entry for the section currently at the
+// top of the viewport, following the page as it scrolls. Purely additive:
+// without JS the rail still works as a list of jump links.
+(function () {
+	var toc = document.querySelector('.article-toc');
+	if (!toc) return;
+
+	var sections = Array.prototype.map.call(
+		toc.querySelectorAll('a[href^="#"]'),
+		function (a) {
+			var id = decodeURIComponent(a.getAttribute('href')).slice(1);
+			return { link: a, target: document.getElementById(id) };
+		}
+	).filter(function (s) { return s.target; });
+	if (!sections.length) return;
+
+	var current = null;
+	function update() {
+		var line = 120; // trigger line, px below the top of the viewport
+		var active = sections[0];
+		for (var i = 0; i < sections.length; i++) {
+			if (sections[i].target.getBoundingClientRect().top - line <= 0) {
+				active = sections[i];
+			}
+		}
+		if (active && active.link !== current) {
+			if (current) current.classList.remove('is-current');
+			active.link.classList.add('is-current');
+			current = active.link;
+		}
+	}
+
+	var ticking = false;
+	function onScroll() {
+		if (ticking) return;
+		ticking = true;
+		window.requestAnimationFrame(function () { update(); ticking = false; });
+	}
+	window.addEventListener('scroll', onScroll, { passive: true });
+	window.addEventListener('resize', onScroll);
+	update();
+})();
+</script>
+
+
+</body>
+
+</html>

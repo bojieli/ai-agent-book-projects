@@ -17,13 +17,13 @@
    [THINKING]   思考停顿 + 迟疑语气（=情绪思考/慢速/正式，并插入停顿）
    [SEARCHING]  搜索性停顿（同上，停顿略短）
    [PAUSE] / <pause> / [停顿]     插入停顿
-   [BREATH] / <breath>            换气停顿
-   [SIGH]  / <sigh>               叹气（用叹气拟声词近似）
-   [LAUGH:small] / [LAUGH] / <laugh>  轻笑（用笑声拟声词近似）
+   [BREATH] / <breath>            Fish S1 原生吸气声
+   [SIGH]  / <sigh>               Fish S1 原生叹气声
+   [LAUGH:small] / [LAUGH] / <laugh>  Fish S1 原生轻笑声
    <emphasis>...</emphasis> / [强调]...[/强调]   对包裹的文本加重强调
 
-注意：OpenAI TTS 无法像 Fish Audio 那样「原生生成」笑声/叹气等非语言音，
-这里用「拟声词 + 匹配情绪」的方式近似（详见 README 的 provider 适配说明）。
+非语言片段会保留为 S1 的 `(gasping)` / `(sighing)` / `(chuckling)` 原生标记，
+由 Fish Audio 直接合成声音，而不是把拟声文字念出来。
 """
 
 import re
@@ -39,8 +39,8 @@ _STYLE_ALIAS = {"正式": "formal", "轻松": "casual", "随意": "casual"}
 # 各内联事件插入的停顿时长（毫秒）
 PAUSE_MS = 500
 BREATH_MS = 400
-THINKING_MS = 500
-SEARCHING_MS = 400
+THINKING_MS = 1200
+SEARCHING_MS = 700
 SIGH_TAIL_MS = 300
 
 
@@ -80,11 +80,11 @@ def parse(text: str, trace: list | None = None):
         log(f"  {why:22s} -> 插入静音 {ms}ms")
 
     def add_speech_token(token, emotion, speed, style, why):
-        """插入一个独立的、带指定情绪的短语音片段（用于笑声/叹气等拟声词）。"""
+        """Insert a Fish S1 native non-verbal marker as a speech segment."""
         flush()
         segments.append(Segment(type="speech", text=token, emotion=emotion,
                                 speed=speed, style=style, emphasis=False))
-        log(f"  {why:22s} -> 拟声语音 '{token}' (情绪={emotion},语速={speed})")
+        log(f"  {why:22s} -> Fish S1 原生标记 '{token}' (情绪={emotion},语速={speed})")
 
     def set_state(**kw):
         flush()  # 状态改变前，先把旧状态的文本收尾
@@ -160,24 +160,26 @@ def parse(text: str, trace: list | None = None):
             set_state(emotion="thinking", speed="slow", style="formal")
             log(f"  {m:22s} -> 切换到 思考/慢速/正式 参考语音")
             add_silence(THINKING_MS, "[THINKING] 停顿")
+            add_speech_token("(uncertain)嗯……", "thinking", "slow", "formal", "[THINKING] 填充音")
             continue
         if tag == "searching":
             set_state(emotion="thinking", speed="slow", style="formal")
             log(f"  {m:22s} -> 切换到 思考/慢速/正式 参考语音")
             add_silence(SEARCHING_MS, "[SEARCHING] 停顿")
+            add_speech_token("(uncertain)那个……", "thinking", "slow", "formal", "[SEARCHING] 填充音")
             continue
         if tag in ("pause", "停顿"):
             add_silence(PAUSE_MS, m)
             continue
         if tag in ("breath", "换气"):
-            add_silence(BREATH_MS, m)
+            add_speech_token("(gasping)", state["emotion"], state["speed"], state["style"], m)
             continue
         if tag == "sigh":
-            add_speech_token("唉——", "frustrated", "slow", "formal", m)
+            add_speech_token("(sighing)", "frustrated", "slow", "formal", m)
             segments.append(Segment(type="silence", ms=SIGH_TAIL_MS))
             continue
         if tag == "laugh":
-            add_speech_token("哈哈，", "happy", "fast", "casual", m)
+            add_speech_token("(chuckling)", "happy", "fast", "casual", m)
             continue
 
         # 未知标记：忽略但记录

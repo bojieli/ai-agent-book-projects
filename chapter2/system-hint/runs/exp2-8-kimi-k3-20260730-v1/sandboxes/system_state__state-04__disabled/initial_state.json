@@ -1,0 +1,12 @@
+{
+  "suite": "system_state",
+  "case_id": "state-04",
+  "system": {
+    "os": "Linux",
+    "shell": "fish",
+    "python": "3.10.14",
+    "cwd": "workspace/delta",
+    "manager": "apt",
+    "package": "curl"
+  }
+}

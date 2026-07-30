@@ -1,0 +1,1795 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer3_11_immigration_status_complexity",
+  "mode": "advanced_json_cards",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "visa_attorney_consultation",
+      "memory": [
+        {
+          "category": "visa_status",
+          "card_key": "h1b_expiration_2024",
+          "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+          "person": "User",
+          "relationship": "Self",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "expiration_date": "2024-09-30",
+            "total_years_in_h1b": 6,
+            "extension_type": "initial"
+          }
+        },
+        {
+          "category": "green_card_processing",
+          "card_key": "employer_gc_status_2024",
+          "backstory": "User's employer discussed green card processing but has not filed any applications",
+          "person": "User",
+          "relationship": "Employer",
+          "timestamp": "2024-03-15",
+          "status": "Not Started",
+          "facts": {
+            "processing_status": "not_filed",
+            "employer_communication": "mentioned but not initiated"
+          }
+        },
+        {
+          "category": "perm_timeline",
+          "card_key": "perm_deadline_missed_2024",
+          "backstory": "PERM labor certification requires filing 365 days before H1B expiration for 1-year extensions; user's deadline already passed",
+          "person": "User",
+          "relationship": "USCIS Requirements",
+          "timestamp": "2024-03-15",
+          "status": "Deadline Passed",
+          "facts": {
+            "processing_time": "8-12 months",
+            "365_day_deadline_status": "missed",
+            "purpose": "proves no qualified U.S. workers for position"
+          }
+        },
+        {
+          "category": "family_visa_status",
+          "card_key": "spouse_h4_ead_2024",
+          "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+          "person": "User's Spouse",
+          "relationship": "Spouse",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "visa_type": "H4",
+            "work_authorization_status": "approved",
+            "recently_obtained": true
+          }
+        },
+        {
+          "category": "h4_ead_processing",
+          "card_key": "h4_ead_timeline_2024",
+          "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+          "person": "User",
+          "relationship": "USCIS Processing",
+          "timestamp": "2024-03-15",
+          "status": "Pending (Hypothetical)",
+          "facts": {
+            "processing_time": "8-10 months",
+            "expedite_requirement": "financial hardship",
+            "user_hardship_factors": [
+              "mortgage",
+              "car payments"
+            ]
+          }
+        },
+        {
+          "category": "green_card_category",
+          "card_key": "eb_eligibility_india_2024",
+          "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years)",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-03-15",
+          "status": "Eligible",
+          "facts": {
+            "eb2_qualifications": {
+              "position": "Senior Software Engineer",
+              "education": "Master's degree"
+            },
+            "eb1_qualifications": {
+              "achievements": [
+                "3 patents",
+                "published papers"
+              ],
+              "india_wait_time": "~2 years"
+            },
+            "eb2_india_backlog": "priority date 2012"
+          }
+        },
+        {
+          "category": "dependent_age_out",
+          "card_key": "daughter_h4_age_out_2024",
+          "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+          "person": "User's Daughter",
+          "relationship": "Daughter",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "age": 17,
+            "visa_type": "H4",
+            "age_out_age": 21,
+            "college_application_status": "in_progress",
+            "recommended_status_change": "F-1 student visa"
+          }
+        },
+        {
+          "category": "visitor_visa_intent",
+          "card_key": "in_laws_b2_visit_2024",
+          "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+          "person": "User's Spouse's Parents",
+          "relationship": "In-laws",
+          "timestamp": "2024-03-15",
+          "status": "Planned",
+          "facts": {
+            "visa_type": "B-2",
+            "intended_duration": "6 months",
+            "non_immigrant_evidence": "property ownership in India",
+            "visit_purpose": "help with house, spend time with family"
+          }
+        },
+        {
+          "category": "employment_termination",
+          "card_key": "h1b_grace_period_2024",
+          "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+          "person": "User",
+          "relationship": "USCIS Policy",
+          "timestamp": "2024-03-15",
+          "status": "Applicable",
+          "facts": {
+            "grace_period_days": 60,
+            "requirements_during_grace": "find new employer or change visa status"
+          }
+        },
+        {
+          "category": "premium_processing",
+          "card_key": "premium_processing_details_2024",
+          "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-03-15",
+          "status": "Potential",
+          "facts": {
+            "fee": "$2,805",
+            "processing_time": "15 days",
+            "employer_interest": "might file",
+            "applicable_to": "certain visa applications"
+          }
+        },
+        {
+          "category": "o1_visa_eligibility",
+          "card_key": "o1_visa_patents_2024",
+          "backstory": "User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-03-15",
+          "status": "Potential",
+          "facts": {
+            "eligibility_factors": [
+              "3 patents",
+              "published papers"
+            ],
+            "potential_sponsor": "university (part-time consulting)",
+            "consulting_hours": "10 hours per week",
+            "benefits": "more flexible, no annual cap; higher evidence bar than H1B"
+          }
+        }
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "visa_attorney_consultation"
+      }
+    },
+    {
+      "session_index": 2,
+      "conversation_id": "employer_hr_discussion",
+      "memory": [
+        {
+          "category": "visa_status",
+          "card_key": "h1b_expiration_2024",
+          "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+          "person": "User",
+          "relationship": "Self",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "expiration_date": "2024-09-30",
+            "total_years_in_h1b": 6,
+            "extension_type": "initial"
+          }
+        },
+        {
+          "category": "green_card_processing",
+          "card_key": "employer_gc_status_2024",
+          "backstory": "User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting",
+          "person": "User",
+          "relationship": "Employer",
+          "timestamp": "2024-05-20",
+          "status": "Initiated",
+          "facts": {
+            "processing_status": "internal posting pending",
+            "employer_communication": "confirmed start of process",
+            "internal_posting_duration": "30 days",
+            "legal_review_time": "2-3 weeks"
+          }
+        },
+        {
+          "category": "perm_timeline",
+          "card_key": "perm_process_steps_2024",
+          "backstory": "PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed",
+          "person": "User",
+          "relationship": "USCIS Requirements",
+          "timestamp": "2024-05-20",
+          "status": "Deadline Passed",
+          "facts": {
+            "processing_time": "8-12 months",
+            "365_day_deadline_status": "missed",
+            "purpose": "proves no qualified U.S. workers for position",
+            "internal_posting_duration": "30 days",
+            "prevailing_wage_determination_time": "4-6 months",
+            "posting_purpose": "check for qualified internal candidates"
+          }
+        },
+        {
+          "category": "family_visa_status",
+          "card_key": "spouse_h4_ead_2024",
+          "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+          "person": "User's Spouse",
+          "relationship": "Spouse",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "visa_type": "H4",
+            "work_authorization_status": "approved",
+            "recently_obtained": true
+          }
+        },
+        {
+          "category": "h4_ead_processing",
+          "card_key": "h4_ead_timeline_2024",
+          "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+          "person": "User",
+          "relationship": "USCIS Processing",
+          "timestamp": "2024-03-15",
+          "status": "Pending (Hypothetical)",
+          "facts": {
+            "processing_time": "8-10 months",
+            "expedite_requirement": "financial hardship",
+            "user_hardship_factors": [
+              "mortgage",
+              "car payments"
+            ]
+          }
+        },
+        {
+          "category": "green_card_category",
+          "card_key": "eb_eligibility_india_2024",
+          "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-05-20",
+          "status": "Eligible",
+          "facts": {
+            "eb2_qualifications": {
+              "position": "Senior Software Engineer",
+              "education": "Master's degree"
+            },
+            "eb1_qualifications": {
+              "achievements": [
+                "3 patents",
+                "published papers"
+              ],
+              "india_wait_time": "~2 years"
+            },
+            "eb2_india_backlog": "priority date 2012",
+            "company_sponsorship_policy": "EB-2 or EB-3 only",
+            "eb1_sponsorship": "not sponsored (complexity, lower approval rates)"
+          }
+        },
+        {
+          "category": "dependent_age_out",
+          "card_key": "daughter_h4_age_out_2024",
+          "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+          "person": "User's Daughter",
+          "relationship": "Daughter",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "age": 17,
+            "visa_type": "H4",
+            "age_out_age": 21,
+            "college_application_status": "in_progress",
+            "recommended_status_change": "F-1 student visa"
+          }
+        },
+        {
+          "category": "visitor_visa_intent",
+          "card_key": "in_laws_b2_visit_2024",
+          "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+          "person": "User's Spouse's Parents",
+          "relationship": "In-laws",
+          "timestamp": "2024-03-15",
+          "status": "Planned",
+          "facts": {
+            "visa_type": "B-2",
+            "intended_duration": "6 months",
+            "non_immigrant_evidence": "property ownership in India",
+            "visit_purpose": "help with house, spend time with family"
+          }
+        },
+        {
+          "category": "employment_termination",
+          "card_key": "h1b_grace_period_2024",
+          "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+          "person": "User",
+          "relationship": "USCIS Policy",
+          "timestamp": "2024-03-15",
+          "status": "Applicable",
+          "facts": {
+            "grace_period_days": 60,
+            "requirements_during_grace": "find new employer or change visa status"
+          }
+        },
+        {
+          "category": "premium_processing",
+          "card_key": "premium_processing_details_2024",
+          "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Potential",
+          "facts": {
+            "fee": "$2,805",
+            "processing_time": "15 days",
+            "employer_interest": "requires director approval",
+            "applicable_to": "I-140 (after PERM)",
+            "employee_payment_allowed": false
+          }
+        },
+        {
+          "category": "o1_visa_eligibility",
+          "card_key": "o1_visa_patents_2024",
+          "backstory": "User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-03-15",
+          "status": "Potential",
+          "facts": {
+            "eligibility_factors": [
+              "3 patents",
+              "published papers"
+            ],
+            "potential_sponsor": "university (part-time consulting)",
+            "consulting_hours": "10 hours per week",
+            "benefits": "more flexible, no annual cap; higher evidence bar than H1B"
+          }
+        },
+        {
+          "category": "green_card_budget",
+          "card_key": "employer_gc_budget_2024",
+          "backstory": "Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Active",
+          "facts": {
+            "total_budget": "$15,000-20,000",
+            "includes_attorney_fees": true
+          }
+        },
+        {
+          "category": "immigration_lawyers",
+          "card_key": "employer_immigration_law_firm_2024",
+          "backstory": "Company uses Friedman & Associates for immigration matters; all communication must go through HR",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Active",
+          "facts": {
+            "law_firm_name": "Friedman & Associates",
+            "communication_channel": "HR only",
+            "direct_contact_allowed": false
+          }
+        }
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "employer_hr_discussion"
+      }
+    },
+    {
+      "session_index": 3,
+      "conversation_id": "university_international_office",
+      "memory": [
+        {
+          "category": "visa_status",
+          "card_key": "h1b_expiration_2024",
+          "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+          "person": "User",
+          "relationship": "Self",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "expiration_date": "2024-09-30",
+            "total_years_in_h1b": 6,
+            "extension_type": "initial"
+          }
+        },
+        {
+          "category": "green_card_processing",
+          "card_key": "employer_gc_status_2024",
+          "backstory": "User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting",
+          "person": "User",
+          "relationship": "Employer",
+          "timestamp": "2024-05-20",
+          "status": "Initiated",
+          "facts": {
+            "processing_status": "internal posting pending",
+            "employer_communication": "confirmed start of process",
+            "internal_posting_duration": "30 days",
+            "legal_review_time": "2-3 weeks"
+          }
+        },
+        {
+          "category": "perm_timeline",
+          "card_key": "perm_process_steps_2024",
+          "backstory": "PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed",
+          "person": "User",
+          "relationship": "USCIS Requirements",
+          "timestamp": "2024-05-20",
+          "status": "Deadline Passed",
+          "facts": {
+            "processing_time": "8-12 months",
+            "365_day_deadline_status": "missed",
+            "purpose": "proves no qualified U.S. workers for position",
+            "internal_posting_duration": "30 days",
+            "prevailing_wage_determination_time": "4-6 months",
+            "posting_purpose": "check for qualified internal candidates"
+          }
+        },
+        {
+          "category": "family_visa_status",
+          "card_key": "spouse_h4_ead_2024",
+          "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+          "person": "User's Spouse",
+          "relationship": "Spouse",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "visa_type": "H4",
+            "work_authorization_status": "approved",
+            "recently_obtained": true,
+            "status_change_gap": "several months (if user changes to university H1B, spouse needs new H4, during which EAD is invalid)"
+          }
+        },
+        {
+          "category": "h4_ead_processing",
+          "card_key": "h4_ead_timeline_2024",
+          "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+          "person": "User",
+          "relationship": "USCIS Processing",
+          "timestamp": "2024-03-15",
+          "status": "Pending (Hypothetical)",
+          "facts": {
+            "processing_time": "8-10 months",
+            "expedite_requirement": "financial hardship",
+            "user_hardship_factors": [
+              "mortgage",
+              "car payments"
+            ]
+          }
+        },
+        {
+          "category": "green_card_category",
+          "card_key": "eb_eligibility_india_2024",
+          "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-05-20",
+          "status": "Eligible",
+          "facts": {
+            "eb2_qualifications": {
+              "position": "Senior Software Engineer",
+              "education": "Master's degree"
+            },
+            "eb1_qualifications": {
+              "achievements": [
+                "3 patents",
+                "published papers"
+              ],
+              "india_wait_time": "~2 years"
+            },
+            "eb2_india_backlog": "priority date 2012",
+            "company_sponsorship_policy": "EB-2 or EB-3 only",
+            "eb1_sponsorship": "not sponsored (complexity, lower approval rates)"
+          }
+        },
+        {
+          "category": "dependent_age_out",
+          "card_key": "daughter_h4_age_out_2024",
+          "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+          "person": "User's Daughter",
+          "relationship": "Daughter",
+          "timestamp": "2024-03-15",
+          "status": "Active",
+          "facts": {
+            "age": 17,
+            "visa_type": "H4",
+            "age_out_age": 21,
+            "college_application_status": "in_progress",
+            "recommended_status_change": "F-1 student visa",
+            "f1_funding_requirement": "$70,000 per year (tuition + living expenses)",
+            "f1_immigrant_intent_concern": "yes (due to pending green card)"
+          }
+        },
+        {
+          "category": "visitor_visa_intent",
+          "card_key": "in_laws_b2_visit_2024",
+          "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+          "person": "User's Spouse's Parents",
+          "relationship": "In-laws",
+          "timestamp": "2024-03-15",
+          "status": "Planned",
+          "facts": {
+            "visa_type": "B-2",
+            "intended_duration": "6 months",
+            "non_immigrant_evidence": "property ownership in India",
+            "visit_purpose": "help with house, spend time with family"
+          }
+        },
+        {
+          "category": "employment_termination",
+          "card_key": "h1b_grace_period_2024",
+          "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+          "person": "User",
+          "relationship": "USCIS Policy",
+          "timestamp": "2024-03-15",
+          "status": "Applicable",
+          "facts": {
+            "grace_period_days": 60,
+            "requirements_during_grace": "find new employer or change visa status"
+          }
+        },
+        {
+          "category": "premium_processing",
+          "card_key": "premium_processing_details_2024",
+          "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Potential",
+          "facts": {
+            "fee": "$2,805",
+            "processing_time": "15 days",
+            "employer_interest": "requires director approval",
+            "applicable_to": "I-140 (after PERM)",
+            "employee_payment_allowed": false
+          }
+        },
+        {
+          "category": "o1_visa_eligibility",
+          "card_key": "o1_visa_patents_2024",
+          "backstory": "User has 3 patents and published papers (15 peer-reviewed, 500+ citations), potentially qualifying for O-1 visa; university (part-time consulting) may sponsor; unauthorized work complicates eligibility",
+          "person": "User",
+          "relationship": "Visa Category Eligibility",
+          "timestamp": "2024-07-02",
+          "status": "Potential (Complicated)",
+          "facts": {
+            "eligibility_factors": [
+              "3 patents",
+              "15 peer-reviewed papers",
+              "over 500 citations"
+            ],
+            "potential_sponsor": "university (part-time consulting)",
+            "consulting_hours": "10 hours per week",
+            "benefits": "more flexible, no annual cap; higher evidence bar than H1B",
+            "unauthorized_work_complication": "significant (must disclose past compensated work)"
+          }
+        },
+        {
+          "category": "green_card_budget",
+          "card_key": "employer_gc_budget_2024",
+          "backstory": "Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Active",
+          "facts": {
+            "total_budget": "$15,000-20,000",
+            "includes_attorney_fees": true
+          }
+        },
+        {
+          "category": "immigration_lawyers",
+          "card_key": "employer_immigration_law_firm_2024",
+          "backstory": "Company uses Friedman & Associates for immigration matters; all communication must go through HR",
+          "person": "User",
+          "relationship": "Employer Policy",
+          "timestamp": "2024-05-20",
+          "status": "Active",
+          "facts": {
+            "law_firm_name": "Friedman & Associates",
+            "communication_channel": "HR only",
+            "direct_contact_allowed": false
+          }
+        },
+        {
+          "category": "employment_authorization",
+          "card_key": "unauthorized_consulting_2024",
+          "backstory": "User worked part-time (10 hours/week) as a consultant at a university for ~6 months without proper authorization (no concurrent H1B or other work authorization), constituting unauthorized employment",
+          "person": "User",
+          "relationship": "University (Part-time Consulting)",
+          "timestamp": "2024-07-02",
+          "status": "Completed (Unauthorized)",
+          "facts": {
+            "start_date": "~2024-01-02",
+            "duration_months": 6,
+            "hours_per_week": 10,
+            "compensation_type": "paid",
+            "authorization_status": "unauthorized",
+            "impact": "complicates future immigration benefits (green card, O-1)"
+          }
+        },
+        {
+          "category": "h1b_sponsorship",
+          "card_key": "university_h1b_sponsorship_2024",
+          "backstory": "University can sponsor H1B for full-time position only; cap-exempt (no lottery), regular processing 4-6 months, premium processing (15 days) possible if department uses non-federal funds (federal grants like NSF cannot pay)",
+          "person": "User",
+          "relationship": "University (Potential Employer)",
+          "timestamp": "2024-07-02",
+          "status": "Potential (Requires Full-Time Offer)",
+          "facts": {
+            "sponsorship_type": "cap-exempt H1B",
+            "position_requirement": "full-time",
+            "regular_processing_time": "4-6 months",
+            "premium_processing_available": true,
+            "premium_processing_funding_restriction": "federal grants (e.g., NSF) cannot pay",
+            "requires_formal_offer": true
+          }
+        }
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "university_international_office"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer3_11_immigration_status_complexity advanced_json_cards session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:53:38.062625+00:00",
+      "latency_ms": 93279.865,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of cards. Every card must include category, card_key, backstory, person, relationship, timestamp, status, and a facts object. Keep conflicting instructions as ordered versions rather than silently merging them."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: advanced_json_cards\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=visa_attorney_consultation\ntimestamp=2024-03-15\nmetadata={}\nUSER: Hi, I need help with my work visa situation. My H1B is expiring soon\nASSISTANT: I can help with that. When does your current H1B expire?\nUSER: September 30th this year\nASSISTANT: That's about six months away. Are you in your initial three-year period?\nUSER: No, this is my first extension, so I've been on H1B for six years total\nASSISTANT: Then you're approaching the six-year maximum. Has your employer started green card processing?\nUSER: They mentioned it but haven't filed anything yet\nASSISTANT: That's concerning. You need either PERM or I-140 filed to extend beyond six years\nUSER: What's PERM?\nASSISTANT: Labor certification - proves no qualified U.S. workers for your position\nUSER: How long does that take?\nASSISTANT: Currently 8-12 months just for PERM, then I-140 after\nUSER: That won't be ready by September\nASSISTANT: No, which is why we need alternative strategies\nUSER: What are my options?\nASSISTANT: If PERM is filed 365 days before H1B expires, you get one-year extensions\nUSER: But that deadline already passed\nASSISTANT: Unfortunately yes. Another option is spending one year outside the U.S.\nUSER: I can't leave for a year, my daughter is in high school here\nASSISTANT: Is your spouse on H4 visa?\nUSER: Yes, and she just got her work authorization\nASSISTANT: She could potentially change to H1B if she finds a sponsor\nUSER: Then I'd be on H4?\nASSISTANT: Yes, as her dependent, but you couldn't work without EAD\nUSER: How long for H4 EAD?\nASSISTANT: Currently 8-10 months processing\nUSER: So I'd be without work for almost a year?\nASSISTANT: Unless we expedite, which requires showing financial hardship\nUSER: We have a mortgage and car payments\nASSISTANT: That could qualify. What about your employer - will they file premium processing?\nUSER: What's that?\nASSISTANT: Pay extra $2,805 for 15-day processing on certain applications\nUSER: They might, they value my work\nASSISTANT: Good. Has your employer ever filed for other employees' green cards?\nUSER: Yes, several colleagues got theirs\nASSISTANT: Then they know the process. Push them to start immediately\nUSER: What category would I be?\nASSISTANT: What's your position and education?\nUSER: Senior Software Engineer with a Master's degree\nASSISTANT: Likely EB-2 category. Are you from India or China?\nUSER: India\nASSISTANT: That's significant backlog - current priority date is 2012\nUSER: Twelve year wait?\nASSISTANT: For final green card, yes. But I-140 approval lets you extend H1B indefinitely\nUSER: That's some relief\nASSISTANT: Also consider EB-1 if you have exceptional achievements\nUSER: Like what?\nASSISTANT: Patents, publications, conference presentations, awards\nUSER: I have three patents and several published papers\nASSISTANT: That's promising! EB-1 has much shorter wait\nUSER: How short?\nASSISTANT: Currently about 2 years for India\nUSER: Much better than 12\nASSISTANT: Yes. Gather documentation of all achievements\nUSER: What else would I need?\nASSISTANT: Letters from experts in your field, evidence of impact\nUSER: I can get those\nASSISTANT: Good. Now, is your daughter a U.S. citizen?\nUSER: No, she was born in India, came here when she was 5\nASSISTANT: So she's also on H4. She'll age out at 21\nUSER: She's 17 now\nASSISTANT: Critical issue - if she turns 21 before green card, she loses status\nUSER: What can we do?\nASSISTANT: She needs to change to F-1 student visa for college\nUSER: She's applying to universities now\nASSISTANT: Good timing. F-1 gives independent status\nUSER: What about my spouse's parents visiting?\nASSISTANT: On visitor visa?\nUSER: They want to come for six months\nASSISTANT: B-2 visitor visa allows that, but careful with intent\nUSER: What do you mean?\nASSISTANT: They can't work or appear to be immigrating\nUSER: They just want to help with the house and spend time with us\nASSISTANT: That's fine, but they should maintain ties to India\nUSER: They own property there\nASSISTANT: Perfect evidence of non-immigrant intent\nUSER: Back to my situation - what if my company lays people off?\nASSISTANT: You'd have 60 days to find new employment or change status\nUSER: Only 60 days?\nASSISTANT: Yes, the grace period is short\nUSER: What if I start my own company?\nASSISTANT: You can't work for your own company on H1B\nUSER: Even if it sponsors me?\nASSISTANT: Correct, ownership issues make it problematic\nUSER: What about O-1 visa?\nASSISTANT: For extraordinary ability - your patents might qualify\nUSER: Is that better than H1B?\nASSISTANT: More flexible, no annual cap, but higher evidence bar\nUSER: Should I pursue both?\nASSISTANT: Can't have multiple petitions from same employer\nUSER: So I need to choose?\nASSISTANT: Or have different employers file different petitions\nUSER: My university might sponsor O-1 for research work\nASSISTANT: You do research there?\nUSER: Part-time consulting, about 10 hours per week\nASSISTANT: Perfect for O-1. Keep H1B with main employer\nUSER: Can I work two jobs like that?\nASSISTANT: Yes, concurrent employment is allowed\nUSER: This is getting complex\nASSISTANT: Immigration often is. Document everything carefully\nUSER: What documents are most important?\nASSISTANT: Pay stubs, tax returns, I-94 records, approval notices\nUSER: I should organize those\nASSISTANT: Yes, and keep multiple copies\nUSER: Thank you for explaining everything\nASSISTANT: Start the green card process immediately. Time is critical"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785358418300b9f1f8d82739748c57f1ca9984b4fb5e4d1c82",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\n  {\n    \"category\": \"visa_status\",\n    \"card_key\": \"h1b_expiration_2024\",\n    \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\",\n    \"person\": \"User\",\n    \"relationship\": \"Self\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Active\",\n    \"facts\": {\n      \"expiration_date\": \"2024-09-30\",\n      \"total_years_in_h1b\": 6,\n      \"extension_type\": \"initial\"\n    }\n  },\n  {\n    \"category\": \"green_card_processing\",\n    \"card_key\": \"employer_gc_status_2024\",\n    \"backstory\": \"User's employer discussed green card processing but has not filed any applications\",\n    \"person\": \"User\",\n    \"relationship\": \"Employer\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Not Started\",\n    \"facts\": {\n      \"processing_status\": \"not_filed\",\n      \"employer_communication\": \"mentioned but not initiated\"\n    }\n  },\n  {\n    \"category\": \"perm_timeline\",\n    \"card_key\": \"perm_deadline_missed_2024\",\n    \"backstory\": \"PERM labor certification requires filing 365 days before H1B expiration for 1-year extensions; user's deadline already passed\",\n    \"person\": \"User\",\n    \"relationship\": \"USCIS Requirements\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Deadline Passed\",\n    \"facts\": {\n      \"processing_time\": \"8-12 months\",\n      \"365_day_deadline_status\": \"missed\",\n      \"purpose\": \"proves no qualified U.S. workers for position\"\n    }\n  },\n  {\n    \"category\": \"family_visa_status\",\n    \"card_key\": \"spouse_h4_ead_2024\",\n    \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\",\n    \"person\": \"User's Spouse\",\n    \"relationship\": \"Spouse\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Active\",\n    \"facts\": {\n      \"visa_type\": \"H4\",\n      \"work_authorization_status\": \"approved\",\n      \"recently_obtained\": true\n    }\n  },\n  {\n    \"category\": \"h4_ead_processing\",\n    \"card_key\": \"h4_ead_timeline_2024\",\n    \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\",\n    \"person\": \"User\",\n    \"relationship\": \"USCIS Processing\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Pending (Hypothetical)\",\n    \"facts\": {\n      \"processing_time\": \"8-10 months\",\n      \"expedite_requirement\": \"financial hardship\",\n      \"user_hardship_factors\": [\"mortgage\", \"car payments\"]\n    }\n  },\n  {\n    \"category\": \"green_card_category\",\n    \"card_key\": \"eb_eligibility_india_2024\",\n    \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years)\",\n    \"person\": \"User\",\n    \"relationship\": \"Visa Category Eligibility\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Eligible\",\n    \"facts\": {\n      \"eb2_qualifications\": {\n        \"position\": \"Senior Software Engineer\",\n        \"education\": \"Master's degree\"\n      },\n      \"eb1_qualifications\": {\n        \"achievements\": [\"3 patents\", \"published papers\"],\n        \"india_wait_time\": \"~2 years\"\n      },\n      \"eb2_india_backlog\": \"priority date 2012\"\n    }\n  },\n  {\n    \"category\": \"dependent_age_out\",\n    \"card_key\": \"daughter_h4_age_out_2024\",\n    \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\",\n    \"person\": \"User's Daughter\",\n    \"relationship\": \"Daughter\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Active\",\n    \"facts\": {\n      \"age\": 17,\n      \"visa_type\": \"H4\",\n      \"age_out_age\": 21,\n      \"college_application_status\": \"in_progress\",\n      \"recommended_status_change\": \"F-1 student visa\"\n    }\n  },\n  {\n    \"category\": \"visitor_visa_intent\",\n    \"card_key\": \"in_laws_b2_visit_2024\",\n    \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\",\n    \"person\": \"User's Spouse's Parents\",\n    \"relationship\": \"In-laws\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Planned\",\n    \"facts\": {\n      \"visa_type\": \"B-2\",\n      \"intended_duration\": \"6 months\",\n      \"non_immigrant_evidence\": \"property ownership in India\",\n      \"visit_purpose\": \"help with house, spend time with family\"\n    }\n  },\n  {\n    \"category\": \"employment_termination\",\n    \"card_key\": \"h1b_grace_period_2024\",\n    \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\",\n    \"person\": \"User\",\n    \"relationship\": \"USCIS Policy\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Applicable\",\n    \"facts\": {\n      \"grace_period_days\": 60,\n      \"requirements_during_grace\": \"find new employer or change visa status\"\n    }\n  },\n  {\n    \"category\": \"premium_processing\",\n    \"card_key\": \"premium_processing_details_2024\",\n    \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing\",\n    \"person\": \"User\",\n    \"relationship\": \"Employer Policy\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Potential\",\n    \"facts\": {\n      \"fee\": \"$2,805\",\n      \"processing_time\": \"15 days\",\n      \"employer_interest\": \"might file\",\n      \"applicable_to\": \"certain visa applications\"\n    }\n  },\n  {\n    \"category\": \"o1_visa_eligibility\",\n    \"card_key\": \"o1_visa_patents_2024\",\n    \"backstory\": \"User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor\",\n    \"person\": \"User\",\n    \"relationship\": \"Visa Category Eligibility\",\n    \"timestamp\": \"2024-03-15\",\n    \"status\": \"Potential\",\n    \"facts\": {\n      \"eligibility_factors\": [\"3 patents\", \"published papers\"],\n      \"potential_sponsor\": \"university (part-time consulting)\",\n      \"consulting_hours\": \"10 hours per week\",\n      \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\"\n    }\n  }\n]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create memory cards based on the conversation provided. Let's start by identifying key facts, ensuring each card has category, card_key, backstory, person, relationship, timestamp, status, and facts. \n\nFirst, the main user's H1B situation. The user's H1B is expiring on September 30, 2024, and they've been on H1B for 6 years (first extension, so total 6 years). That's a key fact. Category could be \"visa_status\". Card_key might be \"h1b_expiration_2024\". Backstory: User's H1B expiring, initial extension, 6 years total. Person: User. Relationship: Self. Timestamp: 2024-03-15 (session date). Status: Active. Facts: {expiration_date: \"2024-09-30\", total_years: 6, extension_type: \"initial\"}.\n\nNext, green card processing. User mentioned employer \"mentioned it but haven't filed anything yet\". Category \"green_card_processing\". Card_key \"employer_gc_status_2024\". Backstory: Employer discussed GC but not filed. Person: User. Relationship: Employer. Timestamp: 2024-03-15. Status: Not Started. Facts: {status: \"not_filed\", employer_action: \"mentioned\"}.\n\nPERM timeline: Assistant said PERM takes 8-12 months, then I-140. User's deadline for 365-day filing passed. Category \"perm_timeline\". Card_key \"perm_deadline_missed_2024\". Backstory: PERM 365-day deadline before H1B expiry passed. Person: User. Relationship: USCIS Requirements. Timestamp: 2024-03-15. Status: Deadline Passed. Facts: {processing_time: \"8-12 months\", deadline_status: \"passed\"}.\n\nSpouse's visa: User's spouse is on H4 with work authorization. Category \"spouse_visa\". Card_key \"spouse_h4_ead_2024\". Backstory: Spouse has H4 visa and recent work authorization. Person: User's Spouse. Relationship: Dependent. Timestamp: 2024-03-15. Status: Active. Facts: {visa_type: \"H4\", ead_status: \"authorized\"}.\n\nH4 EAD processing: 8-10 months, expedite possible with financial hardship. User has mortgage and car payments. Category \"h4_ead_processing\". Card_key \"h4_ead_timeline_2024\". Backstory: H4 EAD takes 8-10 months, user has financial obligations. Person: User. Relationship: USCIS Processing. Timestamp: 2024-03-15. Status: Pending (if applicable, but here it's info). Facts: {processing_time: \"8-10 months\", expedite_qualifier: \"financial_hardship\", financial_obligations: [\"mortgage\", \"car_payments\"]}.\n\nPremium processing: $2,805 for 15-day processing. User's employer \"might\" file. Category \"premium_processing\". Card_key \"premium_processing_details_2024\". Backstory: Premium processing cost and timeline, employer consideration. Person: User. Relationship: Employer. Timestamp: 2024-03-15. Status: Potential. Facts: {cost: \"$2,805\", processing_time: \"15 days\", employer_interest: \"might\"}.\n\nEB-2 vs EB-1: User is Senior Software Engineer with Master's (EB-2), from India (backlog 2012 priority date). Has 3 patents, published papers, possible EB-1 (2-year wait for India). Category \"green_card_category\". Card_key \"eb_category_eligibility_2024\". Backstory: User's qualifications for EB-2 and EB-1. Person: User. Relationship: Visa Category. Timestamp: 2024-03-15. Status: Eligible. Facts: {eb2: {position: \"Senior Software Engineer\", education: \"Master's degree\"}, eb1: {achievements: [\"3 patents\", \"published papers\"], wait_time: \"2 years (India)\"}, eb2_backlog: \"2012 priority date (India)\"}.\n\nDaughter's status: 17, H4, will age out at 21. Needs F-1 for college. Category \"dependent_status\". Card_key \"daughter_h4_age_out_2024\". Backstory: Daughter on H4, 17, aging out at 21; applying to universities. Person: User's Daughter. Relationship: Dependent. Timestamp: 2024-03-15. Status: Active. Facts: {age: 17, visa_type: \"H4\", age_out_date: \"21st birthday\", recommended_status: \"F-1 student visa\", college_application_status: \"in_progress\"}.\n\nSpouse's parents: Want B-2 for 6 months, own property in India (non-immigrant intent). Category \"visitor_visa\". Card_key \"in_laws_b2_intent_2024\". Backstory: In-laws want B-2, have property in India. Person: User's Spouse's Parents. Relationship: In-laws. Timestamp: 2024-03-15. Status: Planned. Facts: {visa_type: \"B-2\", duration: \"6 months\", non_immigrant_evidence: \"property ownership (India)\"}.\n\nH1B grace period: 60 days if laid off. Category \"employment_termination\". Card_key \"h1b_grace_period_2024\". Backstory: 60-day window if user loses job. Person: User. Relationship: USCIS Policy. Timestamp: 2024-03-15. Status: Applicable. Facts: {grace_period_days: 60, requirements: \"find new employment or change status\"}.\n\nPremium processing cost: $2,805 for 15-day processing. Category \"premium_processing_cost\". Card_key \"premium_processing_fee_2024\". Backstory: Premium processing fee and timeline. Person: User. Relationship: USCIS Fees. Timestamp: 2024-03-15. Status: Active. Facts: {fee: \"$2,805\", processing_time: \"15 days\", applicability: \"certain applications\"}.\n\nO-1 visa possibility: User has 3 patents, part-time consulting at university which might sponsor. Category \"o1_visa_eligibility\". Card_key \"o1_visa_patents_2024\". Backstory: User's patents and university consulting for O-1 sponsorship. Person: User. Relationship: Visa Category. Timestamp: 2024-03-15. Status: Potential. Facts: {eligibility_factors: [\"3 patents\", \"published papers\"], potential_sponsor: \"university (part-time consulting)\", consulting_hours: \"10 hours per week\"}.\n\nH4 dependency: If spouse changes to H1B, user becomes H4 dependent, can't work without EAD. Category \"h4_dependent_status\". Card_key \"h4_dependent_work_restrictions_2024\". Backstory: User as H4 dependent can't work without EAD. Person: User. Relationship: Spouse Visa. Timestamp: 2024-03-15. Status: Hypothetical. Facts: {dependent_status: \"H4\", work_authorization: \"requires EAD\"}.\n\nFinancial hardship for expedite: User has mortgage and car payments, which could qualify. Category \"expedite_qualification\". Card_key \"financial_hardship_expedite_2024\". Backstory: User's financial obligations as hardship for expediting EAD. Person: User. Relationship: USCIS Expedite Policy. Timestamp: 2024-03-15. Status: Applicable. Facts: {hardship_factors: [\"mortgage\", \"car payments\"], qualification: \"potential\"}.\n\nNeed to ensure all cards have the required fields. Let me check each card for category, card_key, backstory, person, relationship, timestamp, status, facts. Also, avoid duplicates. For example, premium processing cost is a separate fact, so that's a card. \n\nI think that covers the main points. Now, structure each as a card in the memory array."
+            }
+          }
+        ],
+        "created": 1785358511,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 3789,
+          "prompt_tokens": 1691,
+          "total_tokens": 5480,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1891,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 3789,
+        "prompt_tokens": 1691,
+        "total_tokens": 5480,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1891,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785358418300b9f1f8d82739748c57f1ca9984b4fb5e4d1c82"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_11_immigration_status_complexity advanced_json_cards session 2",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:55:11.346196+00:00",
+      "latency_ms": 74777.093,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of cards. Every card must include category, card_key, backstory, person, relationship, timestamp, status, and a facts object. Keep conflicting instructions as ordered versions rather than silently merging them."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: advanced_json_cards\nSESSION INDEX: 2\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[{\"category\": \"visa_status\", \"card_key\": \"h1b_expiration_2024\", \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\", \"person\": \"User\", \"relationship\": \"Self\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"expiration_date\": \"2024-09-30\", \"total_years_in_h1b\": 6, \"extension_type\": \"initial\"}}, {\"category\": \"green_card_processing\", \"card_key\": \"employer_gc_status_2024\", \"backstory\": \"User's employer discussed green card processing but has not filed any applications\", \"person\": \"User\", \"relationship\": \"Employer\", \"timestamp\": \"2024-03-15\", \"status\": \"Not Started\", \"facts\": {\"processing_status\": \"not_filed\", \"employer_communication\": \"mentioned but not initiated\"}}, {\"category\": \"perm_timeline\", \"card_key\": \"perm_deadline_missed_2024\", \"backstory\": \"PERM labor certification requires filing 365 days before H1B expiration for 1-year extensions; user's deadline already passed\", \"person\": \"User\", \"relationship\": \"USCIS Requirements\", \"timestamp\": \"2024-03-15\", \"status\": \"Deadline Passed\", \"facts\": {\"processing_time\": \"8-12 months\", \"365_day_deadline_status\": \"missed\", \"purpose\": \"proves no qualified U.S. workers for position\"}}, {\"category\": \"family_visa_status\", \"card_key\": \"spouse_h4_ead_2024\", \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\", \"person\": \"User's Spouse\", \"relationship\": \"Spouse\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"visa_type\": \"H4\", \"work_authorization_status\": \"approved\", \"recently_obtained\": true}}, {\"category\": \"h4_ead_processing\", \"card_key\": \"h4_ead_timeline_2024\", \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\", \"person\": \"User\", \"relationship\": \"USCIS Processing\", \"timestamp\": \"2024-03-15\", \"status\": \"Pending (Hypothetical)\", \"facts\": {\"processing_time\": \"8-10 months\", \"expedite_requirement\": \"financial hardship\", \"user_hardship_factors\": [\"mortgage\", \"car payments\"]}}, {\"category\": \"green_card_category\", \"card_key\": \"eb_eligibility_india_2024\", \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years)\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-03-15\", \"status\": \"Eligible\", \"facts\": {\"eb2_qualifications\": {\"position\": \"Senior Software Engineer\", \"education\": \"Master's degree\"}, \"eb1_qualifications\": {\"achievements\": [\"3 patents\", \"published papers\"], \"india_wait_time\": \"~2 years\"}, \"eb2_india_backlog\": \"priority date 2012\"}}, {\"category\": \"dependent_age_out\", \"card_key\": \"daughter_h4_age_out_2024\", \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\", \"person\": \"User's Daughter\", \"relationship\": \"Daughter\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"age\": 17, \"visa_type\": \"H4\", \"age_out_age\": 21, \"college_application_status\": \"in_progress\", \"recommended_status_change\": \"F-1 student visa\"}}, {\"category\": \"visitor_visa_intent\", \"card_key\": \"in_laws_b2_visit_2024\", \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\", \"person\": \"User's Spouse's Parents\", \"relationship\": \"In-laws\", \"timestamp\": \"2024-03-15\", \"status\": \"Planned\", \"facts\": {\"visa_type\": \"B-2\", \"intended_duration\": \"6 months\", \"non_immigrant_evidence\": \"property ownership in India\", \"visit_purpose\": \"help with house, spend time with family\"}}, {\"category\": \"employment_termination\", \"card_key\": \"h1b_grace_period_2024\", \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\", \"person\": \"User\", \"relationship\": \"USCIS Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Applicable\", \"facts\": {\"grace_period_days\": 60, \"requirements_during_grace\": \"find new employer or change visa status\"}}, {\"category\": \"premium_processing\", \"card_key\": \"premium_processing_details_2024\", \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Potential\", \"facts\": {\"fee\": \"$2,805\", \"processing_time\": \"15 days\", \"employer_interest\": \"might file\", \"applicable_to\": \"certain visa applications\"}}, {\"category\": \"o1_visa_eligibility\", \"card_key\": \"o1_visa_patents_2024\", \"backstory\": \"User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-03-15\", \"status\": \"Potential\", \"facts\": {\"eligibility_factors\": [\"3 patents\", \"published papers\"], \"potential_sponsor\": \"university (part-time consulting)\", \"consulting_hours\": \"10 hours per week\", \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\"}}]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=employer_hr_discussion\ntimestamp=2024-05-20\nmetadata={}\nUSER: Hi, I wanted to discuss my visa situation and green card sponsorship\nASSISTANT: Of course! I see you're on H1B. How can we help?\nUSER: My six years are almost up in September\nASSISTANT: Right, I see that in your file. We should start your green card process\nUSER: My attorney said we needed to start months ago\nASSISTANT: Well, we have a process. First, we need to post the job internally\nUSER: How long does that take?\nASSISTANT: Company policy requires 30 days internal posting\nUSER: Then what?\nASSISTANT: If no qualified internal candidates, we proceed with PERM\nUSER: But PERM takes 8-12 months\nASSISTANT: Yes, it's a lengthy process unfortunately\nUSER: I'll be out of status before it's done\nASSISTANT: Let me check... You're right, timing is tight\nUSER: Can we expedite anything?\nASSISTANT: Company policy is no premium processing for PERM\nUSER: PERM can't be premium processed anyway\nASSISTANT: Oh right, I meant for the I-140 later\nUSER: Will you at least premium process the I-140?\nASSISTANT: That requires director approval for the extra cost\nUSER: How much?\nASSISTANT: $2,805 for premium processing\nUSER: I can pay it myself if needed\nASSISTANT: Company policy doesn't allow employee payment\nUSER: This is frustrating\nASSISTANT: I understand. Let me talk to leadership\nUSER: What about the job requirements for PERM?\nASSISTANT: We'll use your current job description\nUSER: But I've taken on additional responsibilities\nASSISTANT: We need to use the original H1B job description\nUSER: That's from six years ago\nASSISTANT: It maintains consistency for immigration\nUSER: But it doesn't reflect my actual work\nASSISTANT: We can update it slightly\nUSER: My attorney mentioned EB-1 might be faster\nASSISTANT: Company doesn't sponsor EB-1 applications\nUSER: Why not?\nASSISTANT: They're complex and have lower approval rates\nUSER: But I have patents and publications\nASSISTANT: That's impressive but policy is EB-2 or EB-3 only\nUSER: Can I self-petition for EB-1?\nASSISTANT: You'd need to do that outside company sponsorship\nUSER: But I'd still need H1B extension meanwhile\nASSISTANT: Right, and we control that\nUSER: So I'm stuck with your timeline\nASSISTANT: We'll do our best to expedite\nUSER: What about prevailing wage determination?\nASSISTANT: That's the first step, takes 4-6 months\nUSER: Can we start that immediately?\nASSISTANT: After the internal posting completes\nUSER: So another month delay\nASSISTANT: Company process, I'm sorry\nUSER: My spouse just got H4 EAD work permit\nASSISTANT: That's great for your family\nUSER: If I lose H1B, she loses work authorization\nASSISTANT: True, they're connected\nUSER: This affects our whole family\nASSISTANT: We understand the importance\nUSER: Do you though? My daughter's college depends on this\nASSISTANT: We value your contributions\nUSER: Then why the delays?\nASSISTANT: Legal wants to review all applications\nUSER: How long does legal review take?\nASSISTANT: Usually 2-3 weeks\nUSER: On top of everything else?\nASSISTANT: It's part of the timeline\nUSER: What if another company offers sponsorship?\nASSISTANT: You're free to pursue other opportunities\nUSER: But I've been here eight years\nASSISTANT: We'd hate to lose you\nUSER: Then help me stay legally\nASSISTANT: I'll escalate to the VP\nUSER: When will I hear back?\nASSISTANT: Give me a week\nUSER: I need answers sooner\nASSISTANT: I'll try for three days\nUSER: What about my team members from India?\nASSISTANT: What about them?\nUSER: Three got green cards last year\nASSISTANT: Each case is different\nUSER: They had less experience than me\nASSISTANT: Timing and process change\nUSER: This seems discriminatory\nASSISTANT: It's absolutely not, just procedural timing\nUSER: I'm documenting everything\nASSISTANT: That's your right\nUSER: What about company immigration lawyers?\nASSISTANT: We use Friedman & Associates\nUSER: Can I speak with them directly?\nASSISTANT: All communication goes through HR\nUSER: That's inefficient\nASSISTANT: It's policy for consistency\nUSER: My personal attorney says direct communication is normal\nASSISTANT: Different companies, different approaches\nUSER: What's the total budget for my green card?\nASSISTANT: We typically allocate $15,000-20,000\nUSER: Is that including attorney fees?\nASSISTANT: Yes, all inclusive\nUSER: That seems sufficient\nASSISTANT: Budget isn't the issue\nUSER: Then what is?\nASSISTANT: Process and timing requirements\nUSER: Which could have started months ago\nASSISTANT: I'll push for expedited handling\nUSER: Please do, my family's future depends on it\nASSISTANT: Understood. I'll update you this week"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785358511540b9f1f8d82739748c57f1ca9984b4fb5e5b6029",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [{\"category\": \"visa_status\", \"card_key\": \"h1b_expiration_2024\", \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\", \"person\": \"User\", \"relationship\": \"Self\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"expiration_date\": \"2024-09-30\", \"total_years_in_h1b\": 6, \"extension_type\": \"initial\"}}, {\"category\": \"green_card_processing\", \"card_key\": \"employer_gc_status_2024\", \"backstory\": \"User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting\", \"person\": \"User\", \"relationship\": \"Employer\", \"timestamp\": \"2024-05-20\", \"status\": \"Initiated\", \"facts\": {\"processing_status\": \"internal posting pending\", \"employer_communication\": \"confirmed start of process\", \"internal_posting_duration\": \"30 days\", \"legal_review_time\": \"2-3 weeks\"}}, {\"category\": \"perm_timeline\", \"card_key\": \"perm_process_steps_2024\", \"backstory\": \"PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed\", \"person\": \"User\", \"relationship\": \"USCIS Requirements\", \"timestamp\": \"2024-05-20\", \"status\": \"Deadline Passed\", \"facts\": {\"processing_time\": \"8-12 months\", \"365_day_deadline_status\": \"missed\", \"purpose\": \"proves no qualified U.S. workers for position\", \"internal_posting_duration\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months\", \"posting_purpose\": \"check for qualified internal candidates\"}}, {\"category\": \"family_visa_status\", \"card_key\": \"spouse_h4_ead_2024\", \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\", \"person\": \"User's Spouse\", \"relationship\": \"Spouse\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"visa_type\": \"H4\", \"work_authorization_status\": \"approved\", \"recently_obtained\": true}}, {\"category\": \"h4_ead_processing\", \"card_key\": \"h4_ead_timeline_2024\", \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\", \"person\": \"User\", \"relationship\": \"USCIS Processing\", \"timestamp\": \"2024-03-15\", \"status\": \"Pending (Hypothetical)\", \"facts\": {\"processing_time\": \"8-10 months\", \"expedite_requirement\": \"financial hardship\", \"user_hardship_factors\": [\"mortgage\", \"car payments\"]}}, {\"category\": \"green_card_category\", \"card_key\": \"eb_eligibility_india_2024\", \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-05-20\", \"status\": \"Eligible\", \"facts\": {\"eb2_qualifications\": {\"position\": \"Senior Software Engineer\", \"education\": \"Master's degree\"}, \"eb1_qualifications\": {\"achievements\": [\"3 patents\", \"published papers\"], \"india_wait_time\": \"~2 years\"}, \"eb2_india_backlog\": \"priority date 2012\", \"company_sponsorship_policy\": \"EB-2 or EB-3 only\", \"eb1_sponsorship\": \"not sponsored (complexity, lower approval rates)\"}}, {\"category\": \"dependent_age_out\", \"card_key\": \"daughter_h4_age_out_2024\", \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\", \"person\": \"User's Daughter\", \"relationship\": \"Daughter\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"age\": 17, \"visa_type\": \"H4\", \"age_out_age\": 21, \"college_application_status\": \"in_progress\", \"recommended_status_change\": \"F-1 student visa\"}}, {\"category\": \"visitor_visa_intent\", \"card_key\": \"in_laws_b2_visit_2024\", \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\", \"person\": \"User's Spouse's Parents\", \"relationship\": \"In-laws\", \"timestamp\": \"2024-03-15\", \"status\": \"Planned\", \"facts\": {\"visa_type\": \"B-2\", \"intended_duration\": \"6 months\", \"non_immigrant_evidence\": \"property ownership in India\", \"visit_purpose\": \"help with house, spend time with family\"}}, {\"category\": \"employment_termination\", \"card_key\": \"h1b_grace_period_2024\", \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\", \"person\": \"User\", \"relationship\": \"USCIS Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Applicable\", \"facts\": {\"grace_period_days\": 60, \"requirements_during_grace\": \"find new employer or change visa status\"}}, {\"category\": \"premium_processing\", \"card_key\": \"premium_processing_details_2024\", \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Potential\", \"facts\": {\"fee\": \"$2,805\", \"processing_time\": \"15 days\", \"employer_interest\": \"requires director approval\", \"applicable_to\": \"I-140 (after PERM)\", \"employee_payment_allowed\": false}}, {\"category\": \"o1_visa_eligibility\", \"card_key\": \"o1_visa_patents_2024\", \"backstory\": \"User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-03-15\", \"status\": \"Potential\", \"facts\": {\"eligibility_factors\": [\"3 patents\", \"published papers\"], \"potential_sponsor\": \"university (part-time consulting)\", \"consulting_hours\": \"10 hours per week\", \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\"}}, {\"category\": \"green_card_budget\", \"card_key\": \"employer_gc_budget_2024\", \"backstory\": \"Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"total_budget\": \"$15,000-20,000\", \"includes_attorney_fees\": true}}, {\"category\": \"immigration_lawyers\", \"card_key\": \"employer_immigration_law_firm_2024\", \"backstory\": \"Company uses Friedman & Associates for immigration matters; all communication must go through HR\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"law_firm_name\": \"Friedman & Associates\", \"communication_channel\": \"HR only\", \"direct_contact_allowed\": false}}]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to analyze the new session and update the memory state with relevant facts while retaining existing valid information. Let's start by identifying key points from the conversation:\n\n1. **Green Card Process Initiation**: Employer confirms starting the green card process, with first step being a 30-day internal job posting (company policy).\n2. **PERM Timeline**: After internal posting (30 days), proceed to PERM if no internal candidates. PERM takes 8-12 months (consistent with existing fact).\n3. **Premium Processing for I-140**: Company policy requires director approval for I-140 premium processing ($2,805 fee), employee cannot pay (new info).\n4. **Job Description for PERM**: Must use original H1B job description (from 6 years ago) for consistency, can update slightly (new info).\n5. **EB-1 Sponsorship**: Company does not sponsor EB-1 (policy: EB-2 or EB-3 only) due to complexity and lower approval rates (new info).\n6. **Prevailing Wage Determination (PWD)**: First step after internal posting, takes 4-6 months (new info).\n7. **Legal Review**: Takes 2-3 weeks, part of the process (new info).\n8. **Immigration Lawyers**: Company uses Friedman & Associates; communication must go through HR (new info).\n9. **Green Card Budget**: $15,000-20,000 all-inclusive (including attorney fees) (new info).\n\nNow, I need to create new memory cards for these points or update existing ones if they conflict. Existing cards to check:\n\n- **green_card_processing**: Previously \"Not Started\", now employer is starting the process (update status to \"Initiated\" and add facts about internal posting, PWD, legal review).\n- **perm_timeline**: Existing facts about processing time (8-12 months) still valid; add info about internal posting requirement (30 days) and PWD (4-6 months after posting).\n- **premium_processing**: Existing fee ($2,805) and processing time (15 days) valid; add that I-140 premium requires director approval, employee cannot pay (company policy).\n- **green_card_category**: Existing EB-1 eligibility, now add that company does not sponsor EB-1 (policy: EB-2/EB-3 only).\n- **New categories**: \"green_card_budget\" (budget amount), \"immigration_lawyers\" (law firm, communication policy).\n\nLet's structure each new/updated card:\n\n1. **Update \"green_card_processing\"**:\n   - Category: green_card_processing\n   - Card_key: employer_gc_status_2024 (existing key, update)\n   - Backstory: Updated to reflect employer initiating process with internal posting.\n   - Person: User\n   - Relationship: Employer\n   - Timestamp: 2024-05-20 (new session date)\n   - Status: \"Initiated\" (previously \"Not Started\")\n   - Facts: Add \"internal_posting_duration\": \"30 days\", \"next_step_after_posting\": \"PERM if no internal candidates\", \"legal_review_time\": \"2-3 weeks\", \"current_status\": \"internal posting pending\"\n\n2. **Update \"perm_timeline\"**:\n   - Category: perm_timeline\n   - Card_key: perm_deadline_missed_2024 (existing key, update backstory/facts)\n   - Backstory: Add that employer requires 30-day internal posting before PERM.\n   - Facts: Add \"internal_posting_requirement\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months (after internal posting)\", \"posting_purpose\": \"check for qualified internal candidates\"\n\n3. **Update \"premium_processing\"**:\n   - Category: premium_processing\n   - Card_key: premium_processing_details_2024 (existing key)\n   - Facts: Add \"i140_premium_approval\": \"requires director approval\", \"employee_payment_allowed\": false, \"applicable_to\": \"I-140 (after PERM)\" (update from \"certain visa applications\")\n\n4. **Update \"green_card_category\"**:\n   - Category: green_card_category\n   - Card_key: eb_eligibility_india_2024 (existing key)\n   - Facts: Add \"company_sponsorship_policy\": \"EB-2 or EB-3 only\", \"eb1_sponsorship\": \"not sponsored (complexity, lower approval rates)\"\n\n5. **New card \"green_card_budget\"**:\n   - Category: green_card_budget\n   - Card_key: employer_gc_budget_2024\n   - Backstory: Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees.\n   - Person: User\n   - Relationship: Employer Policy\n   - Timestamp: 2024-05-20\n   - Status: Active\n   - Facts: {\"total_budget\": \"$15,000-20,000\", \"includes_attorney_fees\": true}\n\n6. **New card \"immigration_lawyers\"**:\n   - Category: immigration_lawyers\n   - Card_key: employer_immigration_law_firm_2024\n   - Backstory: Company uses Friedman & Associates for immigration matters; all communication must go through HR.\n   - Person: User\n   - Relationship: Employer Policy\n   - Timestamp: 2024-05-20\n   - Status: Active\n   - Facts: {\"law_firm_name\": \"Friedman & Associates\", \"communication_channel\": \"HR only\", \"direct_contact_allowed\": false}\n\n7. **Update \"perm_timeline\" card_key to \"perm_process_steps_2024\" (since it now includes steps)**:\n   - Backstory: PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months.\n   - Facts: Add \"internal_posting_duration\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months\", \"posting_purpose\": \"check for qualified internal candidates\"\n\n8. **Update \"h1b_expiration_2024\"**: No changes, expiration still Sep 2024, 6 years.\n\nNow, ensure all cards have required fields and no duplicates. Remove the old \"perm_timeline\" card and replace with updated \"perm_process_steps_2024\". Update \"green_card_processing\" from \"Not Started\" to \"Initiated\"."
+            }
+          }
+        ],
+        "created": 1785358586,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 3439,
+          "prompt_tokens": 2986,
+          "total_tokens": 6425,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1504,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 3439,
+        "prompt_tokens": 2986,
+        "total_tokens": 6425,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1504,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785358511540b9f1f8d82739748c57f1ca9984b4fb5e5b6029"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_11_immigration_status_complexity advanced_json_cards session 3",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:56:26.129449+00:00",
+      "latency_ms": 88427.273,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of cards. Every card must include category, card_key, backstory, person, relationship, timestamp, status, and a facts object. Keep conflicting instructions as ordered versions rather than silently merging them."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: advanced_json_cards\nSESSION INDEX: 3\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[{\"category\": \"visa_status\", \"card_key\": \"h1b_expiration_2024\", \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\", \"person\": \"User\", \"relationship\": \"Self\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"expiration_date\": \"2024-09-30\", \"total_years_in_h1b\": 6, \"extension_type\": \"initial\"}}, {\"category\": \"green_card_processing\", \"card_key\": \"employer_gc_status_2024\", \"backstory\": \"User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting\", \"person\": \"User\", \"relationship\": \"Employer\", \"timestamp\": \"2024-05-20\", \"status\": \"Initiated\", \"facts\": {\"processing_status\": \"internal posting pending\", \"employer_communication\": \"confirmed start of process\", \"internal_posting_duration\": \"30 days\", \"legal_review_time\": \"2-3 weeks\"}}, {\"category\": \"perm_timeline\", \"card_key\": \"perm_process_steps_2024\", \"backstory\": \"PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed\", \"person\": \"User\", \"relationship\": \"USCIS Requirements\", \"timestamp\": \"2024-05-20\", \"status\": \"Deadline Passed\", \"facts\": {\"processing_time\": \"8-12 months\", \"365_day_deadline_status\": \"missed\", \"purpose\": \"proves no qualified U.S. workers for position\", \"internal_posting_duration\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months\", \"posting_purpose\": \"check for qualified internal candidates\"}}, {\"category\": \"family_visa_status\", \"card_key\": \"spouse_h4_ead_2024\", \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\", \"person\": \"User's Spouse\", \"relationship\": \"Spouse\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"visa_type\": \"H4\", \"work_authorization_status\": \"approved\", \"recently_obtained\": true}}, {\"category\": \"h4_ead_processing\", \"card_key\": \"h4_ead_timeline_2024\", \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\", \"person\": \"User\", \"relationship\": \"USCIS Processing\", \"timestamp\": \"2024-03-15\", \"status\": \"Pending (Hypothetical)\", \"facts\": {\"processing_time\": \"8-10 months\", \"expedite_requirement\": \"financial hardship\", \"user_hardship_factors\": [\"mortgage\", \"car payments\"]}}, {\"category\": \"green_card_category\", \"card_key\": \"eb_eligibility_india_2024\", \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-05-20\", \"status\": \"Eligible\", \"facts\": {\"eb2_qualifications\": {\"position\": \"Senior Software Engineer\", \"education\": \"Master's degree\"}, \"eb1_qualifications\": {\"achievements\": [\"3 patents\", \"published papers\"], \"india_wait_time\": \"~2 years\"}, \"eb2_india_backlog\": \"priority date 2012\", \"company_sponsorship_policy\": \"EB-2 or EB-3 only\", \"eb1_sponsorship\": \"not sponsored (complexity, lower approval rates)\"}}, {\"category\": \"dependent_age_out\", \"card_key\": \"daughter_h4_age_out_2024\", \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\", \"person\": \"User's Daughter\", \"relationship\": \"Daughter\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"age\": 17, \"visa_type\": \"H4\", \"age_out_age\": 21, \"college_application_status\": \"in_progress\", \"recommended_status_change\": \"F-1 student visa\"}}, {\"category\": \"visitor_visa_intent\", \"card_key\": \"in_laws_b2_visit_2024\", \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\", \"person\": \"User's Spouse's Parents\", \"relationship\": \"In-laws\", \"timestamp\": \"2024-03-15\", \"status\": \"Planned\", \"facts\": {\"visa_type\": \"B-2\", \"intended_duration\": \"6 months\", \"non_immigrant_evidence\": \"property ownership in India\", \"visit_purpose\": \"help with house, spend time with family\"}}, {\"category\": \"employment_termination\", \"card_key\": \"h1b_grace_period_2024\", \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\", \"person\": \"User\", \"relationship\": \"USCIS Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Applicable\", \"facts\": {\"grace_period_days\": 60, \"requirements_during_grace\": \"find new employer or change visa status\"}}, {\"category\": \"premium_processing\", \"card_key\": \"premium_processing_details_2024\", \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Potential\", \"facts\": {\"fee\": \"$2,805\", \"processing_time\": \"15 days\", \"employer_interest\": \"requires director approval\", \"applicable_to\": \"I-140 (after PERM)\", \"employee_payment_allowed\": false}}, {\"category\": \"o1_visa_eligibility\", \"card_key\": \"o1_visa_patents_2024\", \"backstory\": \"User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-03-15\", \"status\": \"Potential\", \"facts\": {\"eligibility_factors\": [\"3 patents\", \"published papers\"], \"potential_sponsor\": \"university (part-time consulting)\", \"consulting_hours\": \"10 hours per week\", \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\"}}, {\"category\": \"green_card_budget\", \"card_key\": \"employer_gc_budget_2024\", \"backstory\": \"Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"total_budget\": \"$15,000-20,000\", \"includes_attorney_fees\": true}}, {\"category\": \"immigration_lawyers\", \"card_key\": \"employer_immigration_law_firm_2024\", \"backstory\": \"Company uses Friedman & Associates for immigration matters; all communication must go through HR\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"law_firm_name\": \"Friedman & Associates\", \"communication_channel\": \"HR only\", \"direct_contact_allowed\": false}}]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=university_international_office\ntimestamp=2024-07-02\nmetadata={}\nUSER: Hi, I need help with my immigration paperwork for my research position\nASSISTANT: Hello! I can assist with that. What type of visa are you currently on?\nUSER: H1B with my primary employer, but I consult here part-time\nASSISTANT: I see. Do you have concurrent H1B with us?\nUSER: No, I've been working on a consulting agreement\nASSISTANT: How many hours per week?\nUSER: About 10 hours\nASSISTANT: That requires proper work authorization\nUSER: I thought consulting was allowed\nASSISTANT: Not without concurrent H1B or other authorization\nUSER: Oh no, have I been working illegally?\nASSISTANT: When did you start?\nUSER: About six months ago\nASSISTANT: That's concerning. You've been out of status\nUSER: What does that mean?\nASSISTANT: Unauthorized employment can affect future immigration benefits\nUSER: My green card application?\nASSISTANT: Potentially, yes\nUSER: What should I do?\nASSISTANT: Stop working immediately until we get proper authorization\nUSER: But I have ongoing research projects\nASSISTANT: I understand, but continuing makes it worse\nUSER: Can we fix this retroactively?\nASSISTANT: No, we can't backdate work authorization\nUSER: My attorney mentioned O-1 visa possibility\nASSISTANT: O-1 is for extraordinary ability\nUSER: I have patents and publications\nASSISTANT: How many publications?\nUSER: About 15 peer-reviewed papers\nASSISTANT: That's good. Citation count?\nUSER: Over 500 citations total\nASSISTANT: Strong for O-1. But there's the unauthorized work issue\nUSER: Will that disqualify me?\nASSISTANT: It complicates things significantly\nUSER: What if we just apply going forward?\nASSISTANT: We must disclose previous employment\nUSER: Even consulting?\nASSISTANT: Any work for compensation\nUSER: I thought universities were different\nASSISTANT: No, same immigration laws apply\nUSER: My department head said it was fine\nASSISTANT: Academic departments don't always understand immigration law\nUSER: Clearly not\nASSISTANT: Let's focus on solutions\nUSER: Please, my H1B expires in September\nASSISTANT: That's very soon\nUSER: My company is dragging on green card filing\nASSISTANT: Typical unfortunately\nUSER: Can the university sponsor me instead?\nASSISTANT: For full-time position only\nUSER: What if I increase to full-time?\nASSISTANT: Is there a full-time position available?\nUSER: The professor mentioned possibility\nASSISTANT: We'd need formal offer letter\nUSER: How long for university H1B?\nASSISTANT: Cap-exempt, so no lottery, but still 4-6 months regular\nUSER: Or 15 days premium?\nASSISTANT: Yes, if department pays\nUSER: Will they?\nASSISTANT: Depends on funding and need\nUSER: The grant has money\nASSISTANT: Federal grant?\nUSER: Yes, NSF grant\nASSISTANT: Federal funds can't pay premium processing\nUSER: Another obstacle\nASSISTANT: Department might have other funds\nUSER: I'll ask\nASSISTANT: Now about your daughter\nUSER: She's applying to universities\nASSISTANT: Will she need F-1 visa?\nUSER: She's currently on H4\nASSISTANT: F-1 requires proof of funding\nUSER: We can show bank statements\nASSISTANT: Need about $70,000 per year demonstrated\nUSER: That much?\nASSISTANT: Tuition plus living expenses\nUSER: We don't have that much saved\nASSISTANT: Sponsor letters from family?\nUSER: Maybe from India\nASSISTANT: They need to show strong finances\nUSER: This is getting complicated\nASSISTANT: Also, change from H4 to F-1 shows immigrant intent issue\nUSER: What issue?\nASSISTANT: F-1 requires non-immigrant intent\nUSER: But we have green card pending\nASSISTANT: Exactly the problem\nUSER: So she can't get F-1?\nASSISTANT: It's possible but complicated\nUSER: What's the alternative?\nASSISTANT: Stay on H4 until age 21\nUSER: Then what?\nASSISTANT: She'd need independent status\nUSER: But she'll be in college\nASSISTANT: Gap problem if green card isn't ready\nUSER: This is a nightmare\nASSISTANT: Common situation unfortunately\nUSER: My spouse wants to work too\nASSISTANT: She has H4 EAD?\nUSER: Yes, but tied to my H1B\nASSISTANT: Right, dependent benefit\nUSER: If I change to university H1B?\nASSISTANT: She'd need new H4 based on that\nUSER: More paperwork and delays\nASSISTANT: Several months typically\nUSER: During which she can't work?\nASSISTANT: Correct, gap in authorization\nUSER: We can't afford that\nASSISTANT: I understand the difficulty\nUSER: What about the unauthorized work?\nASSISTANT: We should consult immigration attorney\nUSER: I have one personally\nASSISTANT: Good, this needs careful handling\nUSER: Will the university report me?\nASSISTANT: We have obligation to correct going forward\nUSER: But not report past?\nASSISTANT: Depends on circumstances\nUSER: That's not reassuring\nASSISTANT: I recommend full legal consultation immediately\nUSER: I will. This is so stressful\nASSISTANT: Immigration is complex, we'll help where we can"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785358586322b9f1f8d82739748c57f1ca9984b4fb5e5492ec",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [{\"category\": \"visa_status\", \"card_key\": \"h1b_expiration_2024\", \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\", \"person\": \"User\", \"relationship\": \"Self\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"expiration_date\": \"2024-09-30\", \"total_years_in_h1b\": 6, \"extension_type\": \"initial\"}}, {\"category\": \"green_card_processing\", \"card_key\": \"employer_gc_status_2024\", \"backstory\": \"User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting\", \"person\": \"User\", \"relationship\": \"Employer\", \"timestamp\": \"2024-05-20\", \"status\": \"Initiated\", \"facts\": {\"processing_status\": \"internal posting pending\", \"employer_communication\": \"confirmed start of process\", \"internal_posting_duration\": \"30 days\", \"legal_review_time\": \"2-3 weeks\"}}, {\"category\": \"perm_timeline\", \"card_key\": \"perm_process_steps_2024\", \"backstory\": \"PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed\", \"person\": \"User\", \"relationship\": \"USCIS Requirements\", \"timestamp\": \"2024-05-20\", \"status\": \"Deadline Passed\", \"facts\": {\"processing_time\": \"8-12 months\", \"365_day_deadline_status\": \"missed\", \"purpose\": \"proves no qualified U.S. workers for position\", \"internal_posting_duration\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months\", \"posting_purpose\": \"check for qualified internal candidates\"}}, {\"category\": \"family_visa_status\", \"card_key\": \"spouse_h4_ead_2024\", \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\", \"person\": \"User's Spouse\", \"relationship\": \"Spouse\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"visa_type\": \"H4\", \"work_authorization_status\": \"approved\", \"recently_obtained\": true, \"status_change_gap\": \"several months (if user changes to university H1B, spouse needs new H4, during which EAD is invalid)\"}}, {\"category\": \"h4_ead_processing\", \"card_key\": \"h4_ead_timeline_2024\", \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\", \"person\": \"User\", \"relationship\": \"USCIS Processing\", \"timestamp\": \"2024-03-15\", \"status\": \"Pending (Hypothetical)\", \"facts\": {\"processing_time\": \"8-10 months\", \"expedite_requirement\": \"financial hardship\", \"user_hardship_factors\": [\"mortgage\", \"car payments\"]}}, {\"category\": \"green_card_category\", \"card_key\": \"eb_eligibility_india_2024\", \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-05-20\", \"status\": \"Eligible\", \"facts\": {\"eb2_qualifications\": {\"position\": \"Senior Software Engineer\", \"education\": \"Master's degree\"}, \"eb1_qualifications\": {\"achievements\": [\"3 patents\", \"published papers\"], \"india_wait_time\": \"~2 years\"}, \"eb2_india_backlog\": \"priority date 2012\", \"company_sponsorship_policy\": \"EB-2 or EB-3 only\", \"eb1_sponsorship\": \"not sponsored (complexity, lower approval rates)\"}}, {\"category\": \"dependent_age_out\", \"card_key\": \"daughter_h4_age_out_2024\", \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\", \"person\": \"User's Daughter\", \"relationship\": \"Daughter\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"age\": 17, \"visa_type\": \"H4\", \"age_out_age\": 21, \"college_application_status\": \"in_progress\", \"recommended_status_change\": \"F-1 student visa\", \"f1_funding_requirement\": \"$70,000 per year (tuition + living expenses)\", \"f1_immigrant_intent_concern\": \"yes (due to pending green card)\"}}, {\"category\": \"visitor_visa_intent\", \"card_key\": \"in_laws_b2_visit_2024\", \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\", \"person\": \"User's Spouse's Parents\", \"relationship\": \"In-laws\", \"timestamp\": \"2024-03-15\", \"status\": \"Planned\", \"facts\": {\"visa_type\": \"B-2\", \"intended_duration\": \"6 months\", \"non_immigrant_evidence\": \"property ownership in India\", \"visit_purpose\": \"help with house, spend time with family\"}}, {\"category\": \"employment_termination\", \"card_key\": \"h1b_grace_period_2024\", \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\", \"person\": \"User\", \"relationship\": \"USCIS Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Applicable\", \"facts\": {\"grace_period_days\": 60, \"requirements_during_grace\": \"find new employer or change visa status\"}}, {\"category\": \"premium_processing\", \"card_key\": \"premium_processing_details_2024\", \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Potential\", \"facts\": {\"fee\": \"$2,805\", \"processing_time\": \"15 days\", \"employer_interest\": \"requires director approval\", \"applicable_to\": \"I-140 (after PERM)\", \"employee_payment_allowed\": false}}, {\"category\": \"o1_visa_eligibility\", \"card_key\": \"o1_visa_patents_2024\", \"backstory\": \"User has 3 patents and published papers (15 peer-reviewed, 500+ citations), potentially qualifying for O-1 visa; university (part-time consulting) may sponsor; unauthorized work complicates eligibility\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-07-02\", \"status\": \"Potential (Complicated)\", \"facts\": {\"eligibility_factors\": [\"3 patents\", \"15 peer-reviewed papers\", \"over 500 citations\"], \"potential_sponsor\": \"university (part-time consulting)\", \"consulting_hours\": \"10 hours per week\", \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\", \"unauthorized_work_complication\": \"significant (must disclose past compensated work)\"}}, {\"category\": \"green_card_budget\", \"card_key\": \"employer_gc_budget_2024\", \"backstory\": \"Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"total_budget\": \"$15,000-20,000\", \"includes_attorney_fees\": true}}, {\"category\": \"immigration_lawyers\", \"card_key\": \"employer_immigration_law_firm_2024\", \"backstory\": \"Company uses Friedman & Associates for immigration matters; all communication must go through HR\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"law_firm_name\": \"Friedman & Associates\", \"communication_channel\": \"HR only\", \"direct_contact_allowed\": false}}, {\"category\": \"employment_authorization\", \"card_key\": \"unauthorized_consulting_2024\", \"backstory\": \"User worked part-time (10 hours/week) as a consultant at a university for ~6 months without proper authorization (no concurrent H1B or other work authorization), constituting unauthorized employment\", \"person\": \"User\", \"relationship\": \"University (Part-time Consulting)\", \"timestamp\": \"2024-07-02\", \"status\": \"Completed (Unauthorized)\", \"facts\": {\"start_date\": \"~2024-01-02\", \"duration_months\": 6, \"hours_per_week\": 10, \"compensation_type\": \"paid\", \"authorization_status\": \"unauthorized\", \"impact\": \"complicates future immigration benefits (green card, O-1)\"}}, {\"category\": \"h1b_sponsorship\", \"card_key\": \"university_h1b_sponsorship_2024\", \"backstory\": \"University can sponsor H1B for full-time position only; cap-exempt (no lottery), regular processing 4-6 months, premium processing (15 days) possible if department uses non-federal funds (federal grants like NSF cannot pay)\", \"person\": \"User\", \"relationship\": \"University (Potential Employer)\", \"timestamp\": \"2024-07-02\", \"status\": \"Potential (Requires Full-Time Offer)\", \"facts\": {\"sponsorship_type\": \"cap-exempt H1B\", \"position_requirement\": \"full-time\", \"regular_processing_time\": \"4-6 months\", \"premium_processing_available\": true, \"premium_processing_funding_restriction\": \"federal grants (e.g., NSF) cannot pay\", \"requires_formal_offer\": true}}]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to analyze the new session and update the memory state by adding new cards or updating existing ones based on the conversation. Let's start by identifying key facts from the new session.\n\nFirst, the user has been working part-time (10 hours/week) as a consultant at a university for about six months without proper authorization (no concurrent H1B or other work authorization). This is unauthorized employment, which affects future immigration benefits, including green card and O-1 applications.\n\nNext, the user's O-1 visa eligibility: previously noted 3 patents and published papers, now updated to 15 peer-reviewed papers and over 500 citations. However, unauthorized work complicates this significantly.\n\nThe user's H1B expiration is in September (consistent with existing \"h1b_expiration_2024\" card, which has expiration_date \"2024-09-30\"). The user's company is dragging on green card filing, and the university might sponsor a full-time position if available, which would be cap-exempt H1B (no lottery) with 4-6 months regular processing; premium processing is 15 days but federal grants (like NSF) can't pay for it, though department might use other funds.\n\nDaughter's F-1 visa: previously noted as recommended, now details added: F-1 requires proof of funding (~$70,000/year for tuition + living expenses), and changing from H4 to F-1 may raise non-immigrant intent issues due to pending green card.\n\nSpouse's H4 EAD: if user changes to university H1B, spouse would need new H4, causing a gap in work authorization (several months), which the user can't afford.\n\nUniversity sponsorship: can only sponsor full-time positions; user might increase to full-time if a position is available, requiring a formal offer letter.\n\nUnauthorized work: must be disclosed in any visa application, as it's work for compensation, and universities are not exempt from immigration laws.\n\nNow, I need to create new cards for these facts and update existing ones where necessary. Let's go through each category:\n\n1. **Unauthorized Employment**: New card for the 6 months of part-time consulting without authorization.\n2. **O-1 Visa Eligibility**: Update existing card with new publication count (15) and citations (500+), and add unauthorized work complication.\n3. **University H1B Sponsorship**: New card for potential full-time H1B sponsorship by university (cap-exempt, processing times, premium processing constraints with federal grants).\n4. **Daughter's F-1 Visa Funding**: Update existing daughter card with F-1 funding requirement ($70k/year) and non-immigrant intent issue due to pending green card.\n5. **Spouse's H4 EAD Gap**: Update spouse's H4 EAD card with gap if user changes to university H1B.\n6. **H1B Expiration Urgency**: Existing card is still valid, but maybe note urgency (expires in September, as mentioned).\n\nLet's structure each card with required fields:\n\n- **Unauthorized Employment**:\n  - category: \"employment_authorization\"\n  - card_key: \"unauthorized_consulting_2024\"\n  - backstory: \"User worked part-time (10 hours/week) as a consultant at a university for ~6 months without proper authorization (no concurrent H1B or other work authorization), constituting unauthorized employment.\"\n  - person: \"User\"\n  - relationship: \"University (Part-time Consulting)\"\n  - timestamp: \"2024-07-02\" (session timestamp)\n  - status: \"Completed (Unauthorized)\"\n  - facts: {\"start_date\": \"~2024-01-02\", \"duration_months\": 6, \"hours_per_week\": 10, \"compensation_type\": \"paid\", \"authorization_status\": \"unauthorized\", \"impact\": \"complicates future immigration benefits (green card, O-1)\"}\n\n- **O-1 Visa Eligibility Update**: Existing card \"o1_visa_eligibility\" has key \"o1_visa_patents_2024\". Need to update facts with publication count (15 peer-reviewed papers) and citations (500+), and add unauthorized work complication.\n  - backstory: Update to mention 15 peer-reviewed papers, 500+ citations, and unauthorized work issue.\n  - facts: Add \"publication_count\": 15, \"citation_count\": \"over 500\", \"unauthorized_work_complication\": \"significant, must disclose in application\"\n\n- **University H1B Sponsorship**:\n  - category: \"h1b_sponsorship\"\n  - card_key: \"university_h1b_sponsorship_2024\"\n  - backstory: \"University can sponsor H1B for full-time position only; cap-exempt (no lottery), regular processing 4-6 months, premium processing (15 days) possible if department uses non-federal funds (federal grants like NSF cannot pay premium).\"\n  - person: \"User\"\n  - relationship: \"University (Potential Employer)\"\n  - timestamp: \"2024-07-02\"\n  - status: \"Potential (Requires Full-Time Offer)\"\n  - facts: {\"sponsorship_type\": \"cap-exempt H1B\", \"position_requirement\": \"full-time\", \"regular_processing_time\": \"4-6 months\", \"premium_processing_available\": true, \"premium_processing_funding_restriction\": \"federal grants (e.g., NSF) cannot pay\", \"requires_formal_offer\": true}\n\n- **Daughter's F-1 Visa Update**: Existing card \"daughter_h4_age_out_2024\". Update facts with funding requirement and non-immigrant intent issue.\n  - facts: Add \"f1_funding_requirement\": \"$70,000 per year (tuition + living expenses)\", \"f1_immigrant_intent_concern\": \"yes (due to pending green card)\"\n\n- **Spouse's H4 EAD Gap**: Existing card \"spouse_h4_ead_2024\". Add gap if user changes H1B sponsor.\n  - facts: Add \"status_change_gap\": \"several months (if user changes to university H1B, spouse needs new H4, during which EAD is invalid)\"\n\nNow, ensure all existing cards are retained unless updated, and new cards are added. Check for conflicts and order versions if needed, but here updates are additive."
+            }
+          }
+        ],
+        "created": 1785358674,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 3897,
+          "prompt_tokens": 3435,
+          "total_tokens": 7332,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1447,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 3897,
+        "prompt_tokens": 3435,
+        "total_tokens": 7332,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1447,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785358586322b9f1f8d82739748c57f1ca9984b4fb5e5492ec"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer3_11_immigration_status_complexity advanced_json_cards",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:57:54.562947+00:00",
+      "latency_ms": 41842.968,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: advanced_json_cards\nLONG-TERM MEMORY:\n[{\"category\": \"visa_status\", \"card_key\": \"h1b_expiration_2024\", \"backstory\": \"User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status\", \"person\": \"User\", \"relationship\": \"Self\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"expiration_date\": \"2024-09-30\", \"total_years_in_h1b\": 6, \"extension_type\": \"initial\"}}, {\"category\": \"green_card_processing\", \"card_key\": \"employer_gc_status_2024\", \"backstory\": \"User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting\", \"person\": \"User\", \"relationship\": \"Employer\", \"timestamp\": \"2024-05-20\", \"status\": \"Initiated\", \"facts\": {\"processing_status\": \"internal posting pending\", \"employer_communication\": \"confirmed start of process\", \"internal_posting_duration\": \"30 days\", \"legal_review_time\": \"2-3 weeks\"}}, {\"category\": \"perm_timeline\", \"card_key\": \"perm_process_steps_2024\", \"backstory\": \"PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed\", \"person\": \"User\", \"relationship\": \"USCIS Requirements\", \"timestamp\": \"2024-05-20\", \"status\": \"Deadline Passed\", \"facts\": {\"processing_time\": \"8-12 months\", \"365_day_deadline_status\": \"missed\", \"purpose\": \"proves no qualified U.S. workers for position\", \"internal_posting_duration\": \"30 days\", \"prevailing_wage_determination_time\": \"4-6 months\", \"posting_purpose\": \"check for qualified internal candidates\"}}, {\"category\": \"family_visa_status\", \"card_key\": \"spouse_h4_ead_2024\", \"backstory\": \"User's spouse holds an H4 visa and recently obtained work authorization\", \"person\": \"User's Spouse\", \"relationship\": \"Spouse\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"visa_type\": \"H4\", \"work_authorization_status\": \"approved\", \"recently_obtained\": true, \"status_change_gap\": \"several months (if user changes to university H1B, spouse needs new H4, during which EAD is invalid)\"}}, {\"category\": \"h4_ead_processing\", \"card_key\": \"h4_ead_timeline_2024\", \"backstory\": \"H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof\", \"person\": \"User\", \"relationship\": \"USCIS Processing\", \"timestamp\": \"2024-03-15\", \"status\": \"Pending (Hypothetical)\", \"facts\": {\"processing_time\": \"8-10 months\", \"expedite_requirement\": \"financial hardship\", \"user_hardship_factors\": [\"mortgage\", \"car payments\"]}}, {\"category\": \"green_card_category\", \"card_key\": \"eb_eligibility_india_2024\", \"backstory\": \"User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-05-20\", \"status\": \"Eligible\", \"facts\": {\"eb2_qualifications\": {\"position\": \"Senior Software Engineer\", \"education\": \"Master's degree\"}, \"eb1_qualifications\": {\"achievements\": [\"3 patents\", \"published papers\"], \"india_wait_time\": \"~2 years\"}, \"eb2_india_backlog\": \"priority date 2012\", \"company_sponsorship_policy\": \"EB-2 or EB-3 only\", \"eb1_sponsorship\": \"not sponsored (complexity, lower approval rates)\"}}, {\"category\": \"dependent_age_out\", \"card_key\": \"daughter_h4_age_out_2024\", \"backstory\": \"User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities\", \"person\": \"User's Daughter\", \"relationship\": \"Daughter\", \"timestamp\": \"2024-03-15\", \"status\": \"Active\", \"facts\": {\"age\": 17, \"visa_type\": \"H4\", \"age_out_age\": 21, \"college_application_status\": \"in_progress\", \"recommended_status_change\": \"F-1 student visa\", \"f1_funding_requirement\": \"$70,000 per year (tuition + living expenses)\", \"f1_immigrant_intent_concern\": \"yes (due to pending green card)\"}}, {\"category\": \"visitor_visa_intent\", \"card_key\": \"in_laws_b2_visit_2024\", \"backstory\": \"Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)\", \"person\": \"User's Spouse's Parents\", \"relationship\": \"In-laws\", \"timestamp\": \"2024-03-15\", \"status\": \"Planned\", \"facts\": {\"visa_type\": \"B-2\", \"intended_duration\": \"6 months\", \"non_immigrant_evidence\": \"property ownership in India\", \"visit_purpose\": \"help with house, spend time with family\"}}, {\"category\": \"employment_termination\", \"card_key\": \"h1b_grace_period_2024\", \"backstory\": \"If laid off, user has 60-day grace period to find new employment or change status\", \"person\": \"User\", \"relationship\": \"USCIS Policy\", \"timestamp\": \"2024-03-15\", \"status\": \"Applicable\", \"facts\": {\"grace_period_days\": 60, \"requirements_during_grace\": \"find new employer or change visa status\"}}, {\"category\": \"premium_processing\", \"card_key\": \"premium_processing_details_2024\", \"backstory\": \"Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Potential\", \"facts\": {\"fee\": \"$2,805\", \"processing_time\": \"15 days\", \"employer_interest\": \"requires director approval\", \"applicable_to\": \"I-140 (after PERM)\", \"employee_payment_allowed\": false}}, {\"category\": \"o1_visa_eligibility\", \"card_key\": \"o1_visa_patents_2024\", \"backstory\": \"User has 3 patents and published papers (15 peer-reviewed, 500+ citations), potentially qualifying for O-1 visa; university (part-time consulting) may sponsor; unauthorized work complicates eligibility\", \"person\": \"User\", \"relationship\": \"Visa Category Eligibility\", \"timestamp\": \"2024-07-02\", \"status\": \"Potential (Complicated)\", \"facts\": {\"eligibility_factors\": [\"3 patents\", \"15 peer-reviewed papers\", \"over 500 citations\"], \"potential_sponsor\": \"university (part-time consulting)\", \"consulting_hours\": \"10 hours per week\", \"benefits\": \"more flexible, no annual cap; higher evidence bar than H1B\", \"unauthorized_work_complication\": \"significant (must disclose past compensated work)\"}}, {\"category\": \"green_card_budget\", \"card_key\": \"employer_gc_budget_2024\", \"backstory\": \"Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"total_budget\": \"$15,000-20,000\", \"includes_attorney_fees\": true}}, {\"category\": \"immigration_lawyers\", \"card_key\": \"employer_immigration_law_firm_2024\", \"backstory\": \"Company uses Friedman & Associates for immigration matters; all communication must go through HR\", \"person\": \"User\", \"relationship\": \"Employer Policy\", \"timestamp\": \"2024-05-20\", \"status\": \"Active\", \"facts\": {\"law_firm_name\": \"Friedman & Associates\", \"communication_channel\": \"HR only\", \"direct_contact_allowed\": false}}, {\"category\": \"employment_authorization\", \"card_key\": \"unauthorized_consulting_2024\", \"backstory\": \"User worked part-time (10 hours/week) as a consultant at a university for ~6 months without proper authorization (no concurrent H1B or other work authorization), constituting unauthorized employment\", \"person\": \"User\", \"relationship\": \"University (Part-time Consulting)\", \"timestamp\": \"2024-07-02\", \"status\": \"Completed (Unauthorized)\", \"facts\": {\"start_date\": \"~2024-01-02\", \"duration_months\": 6, \"hours_per_week\": 10, \"compensation_type\": \"paid\", \"authorization_status\": \"unauthorized\", \"impact\": \"complicates future immigration benefits (green card, O-1)\"}}, {\"category\": \"h1b_sponsorship\", \"card_key\": \"university_h1b_sponsorship_2024\", \"backstory\": \"University can sponsor H1B for full-time position only; cap-exempt (no lottery), regular processing 4-6 months, premium processing (15 days) possible if department uses non-federal funds (federal grants like NSF cannot pay)\", \"person\": \"User\", \"relationship\": \"University (Potential Employer)\", \"timestamp\": \"2024-07-02\", \"status\": \"Potential (Requires Full-Time Offer)\", \"facts\": {\"sponsorship_type\": \"cap-exempt H1B\", \"position_requirement\": \"full-time\", \"regular_processing_time\": \"4-6 months\", \"premium_processing_available\": true, \"premium_processing_funding_restriction\": \"federal grants (e.g., NSF) cannot pay\", \"requires_formal_offer\": true}}]\n\nUSER QUESTION:\nMy H1B expires in two months and I just got a termination notice from my employer citing 'restructuring.' What's my legal status and what are my options to stay in the country?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "021785358674755b9f1f8d82739748c57f1ca9984b4fb5eea88a2",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your legal status and options are as follows, based on your situation:\n\n\n### **Current Legal Status**  \nUpon termination, you have a **60-day grace period** (from your last day of employment) to either:  \n- Find a new employer to file an H-1B petition (or other work visa), or  \n- Change your visa status (e.g., to F-1, H-4, or O-1).  \n\nThis grace period is governed by USCIS policy (see: `h1b_grace_period_2024`), and you must take action before it expires to avoid falling out of status.  \n\n\n### **Key Options to Stay in the U.S.**  \n\n#### 1. **Find a New H-1B Employer**  \nYou can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration).  \n\n- **Cap-Exempt H-1B**: If the new employer is a university, nonprofit, or government research institution, they may sponsor a cap-exempt H-1B (no lottery required). For example, the university where you previously consulted could potentially sponsor a full-time cap-exempt H-1B (see: `h1b_sponsorship`), but this requires a **formal full-time job offer**.  \n  - *Note*: University H-1B processing takes 4–6 months regularly, but premium processing (15 days) is possible if the department uses non-federal funds (e.g., not NSF grants).  \n\n\n#### 2. **Change to O-1 Visa (Specialty Occupation)**  \nYou may qualify for an O-1 visa, given your 3 patents, 15 peer-reviewed papers, and 500+ citations (see: `o1_visa_eligibility`). A university (e.g., your former consulting partner) could sponsor this visa, which is flexible (no annual cap) but has a higher evidence bar than H-1B.  \n\n- **Critical Risk**: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements.  \n\n\n#### 3. **Change to Another Nonimmigrant Status**  \n- **F-1 Student Visa**: Enrolling in a full-time academic program would allow you to change to F-1 status. However, this requires proving sufficient funding and may raise \"immigrant intent\" concerns if you have a pending green card (though your employer’s green card process is now halted due to termination).  \n- **H-4 Dependent Visa**: If your spouse holds a valid H-1B, you could change to H-4 status. However, this would not grant work authorization unless your spouse’s H-1B is tied to a pending green card (unlikely here, as your employer’s process was only in the initial stages).  \n\n\n### **Critical Risks & Next Steps**  \n- **Unauthorized Employment Impact**: The 6 months of unauthorized consulting (see: `unauthorized_consulting_2024`) must be disclosed on all future immigration applications. This could delay or deny approvals (e.g., O-1, new H-1B).  \n- **Time Sensitivity**: Your H-1B expires in ~2 months, and the 60-day grace period is time-limited. Prioritize securing a job offer or filing for status change immediately.  \n- **Green Card Process**: Your former employer’s green card process (internal posting pending) is now inactive due to termination. Pursuing this via a new employer would restart the process (PERM, I-140, etc.), which takes 8–12 months (see: `perm_timeline`).  \n\n\n**Immediate Actions**:  \n1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship.  \n2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure.  \n3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period.  \n\nActing quickly is critical to avoid accruing unlawful presence.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question step by step. First, the user mentioned their H1B expires in two months, which aligns with the memory where the H1B expiration date is 2024-09-30. They also got a termination notice due to restructuring. \n\nFirst, I need to address their legal status after termination. From the memory, there's a card under \"employment_termination\" with key \"h1b_grace_period_2024\" stating that if laid off, the user has a 60-day grace period to find new employment or change status. So that's the immediate status: they enter a 60-day grace period starting from the termination date.\n\nNext, their options to stay. Let's go through the relevant memory cards. \n\n1. **Finding a new H1B employer**: Since they're in the grace period, they can find a new employer to file an H1B petition. The H1B is expiring in two months (around September 30), so the new employer would need to file before the grace period ends or the H1B expiration, whichever comes first. The grace period is 60 days from termination, so if termination is, say, August 1, grace ends October 1, but H1B expires September 30. So they need to act quickly.\n\n2. **Changing visa status**: Possible options could be other nonimmigrant visas. For example, if they have a spouse with H1B, maybe H4, but the user's spouse is on H4 with EAD, but the user themselves would need to change to H4, but that's dependent on spouse's H1B. Alternatively, maybe F-1 if they enroll in school, but that's a status change.\n\n3. **O-1 visa eligibility**: The user has a card \"o1_visa_eligibility\" with potential eligibility due to 3 patents, 15 peer-reviewed papers, 500+ citations. The university (where they did unauthorized consulting) may sponsor, but it's for part-time, but O-1 can be for part-time? Wait, the O-1 card says \"university (part-time consulting) may sponsor\" but the H1B sponsorship from the university requires full-time. O-1 might be an option, but there's a complication: unauthorized employment (the 6 months of part-time consulting without authorization). The impact is that it complicates future immigration benefits, so they need to disclose that, which could affect O-1 approval.\n\n4. **University H1B sponsorship**: The \"h1b_sponsorship\" card mentions the university can sponsor cap-exempt H1B for full-time only. So if the user can get a full-time offer from the university, that's a cap-exempt H1B, which doesn't require lottery. Regular processing is 4-6 months, but premium processing is available if department uses non-federal funds. Since their H1B expires in two months, premium processing (15 days) would be necessary here to get approval before expiration. But they need a formal full-time offer first.\n\n5. **Green card process**: The employer was initiating green card processing with internal job posting, but since they're terminated, that process is likely halted. The PERM timeline had a deadline passed, so even if they stayed, PERM might not have been feasible. So green card via current employer is probably not an option now.\n\n6. **Grace period requirements**: They must find new employer or change status within 60 days. If they don't, they'd be out of status.\n\nAlso, need to mention the unauthorized employment impact: the 6 months of part-time consulting without authorization could affect any new visa applications, as they must disclose it, and USCIS may view it negatively.\n\nSo summarizing: Legal status is 60-day grace period from termination. Options include finding new H1B employer (file before grace period/H1B expiration), changing to another visa (e.g., F-1), pursuing O-1 (with disclosure of unauthorized work), or university cap-exempt H1B (if full-time offer and premium processing). Risks include unauthorized work complicating applications, and time constraints with H1B expiration and grace period."
+            }
+          }
+        ],
+        "created": 1785358716,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1867,
+          "prompt_tokens": 2649,
+          "total_tokens": 4516,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 907,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1867,
+        "prompt_tokens": 2649,
+        "total_tokens": 4516,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 907,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785358674755b9f1f8d82739748c57f1ca9984b4fb5eea88a2"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer3_11_immigration_status_complexity advanced_json_cards",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T20:58:36.413971+00:00",
+      "latency_ms": 16578.24,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=visa_attorney_consultation\ntimestamp=2024-03-15\nmetadata={}\nUSER: Hi, I need help with my work visa situation. My H1B is expiring soon\nASSISTANT: I can help with that. When does your current H1B expire?\nUSER: September 30th this year\nASSISTANT: That's about six months away. Are you in your initial three-year period?\nUSER: No, this is my first extension, so I've been on H1B for six years total\nASSISTANT: Then you're approaching the six-year maximum. Has your employer started green card processing?\nUSER: They mentioned it but haven't filed anything yet\nASSISTANT: That's concerning. You need either PERM or I-140 filed to extend beyond six years\nUSER: What's PERM?\nASSISTANT: Labor certification - proves no qualified U.S. workers for your position\nUSER: How long does that take?\nASSISTANT: Currently 8-12 months just for PERM, then I-140 after\nUSER: That won't be ready by September\nASSISTANT: No, which is why we need alternative strategies\nUSER: What are my options?\nASSISTANT: If PERM is filed 365 days before H1B expires, you get one-year extensions\nUSER: But that deadline already passed\nASSISTANT: Unfortunately yes. Another option is spending one year outside the U.S.\nUSER: I can't leave for a year, my daughter is in high school here\nASSISTANT: Is your spouse on H4 visa?\nUSER: Yes, and she just got her work authorization\nASSISTANT: She could potentially change to H1B if she finds a sponsor\nUSER: Then I'd be on H4?\nASSISTANT: Yes, as her dependent, but you couldn't work without EAD\nUSER: How long for H4 EAD?\nASSISTANT: Currently 8-10 months processing\nUSER: So I'd be without work for almost a year?\nASSISTANT: Unless we expedite, which requires showing financial hardship\nUSER: We have a mortgage and car payments\nASSISTANT: That could qualify. What about your employer - will they file premium processing?\nUSER: What's that?\nASSISTANT: Pay extra $2,805 for 15-day processing on certain applications\nUSER: They might, they value my work\nASSISTANT: Good. Has your employer ever filed for other employees' green cards?\nUSER: Yes, several colleagues got theirs\nASSISTANT: Then they know the process. Push them to start immediately\nUSER: What category would I be?\nASSISTANT: What's your position and education?\nUSER: Senior Software Engineer with a Master's degree\nASSISTANT: Likely EB-2 category. Are you from India or China?\nUSER: India\nASSISTANT: That's significant backlog - current priority date is 2012\nUSER: Twelve year wait?\nASSISTANT: For final green card, yes. But I-140 approval lets you extend H1B indefinitely\nUSER: That's some relief\nASSISTANT: Also consider EB-1 if you have exceptional achievements\nUSER: Like what?\nASSISTANT: Patents, publications, conference presentations, awards\nUSER: I have three patents and several published papers\nASSISTANT: That's promising! EB-1 has much shorter wait\nUSER: How short?\nASSISTANT: Currently about 2 years for India\nUSER: Much better than 12\nASSISTANT: Yes. Gather documentation of all achievements\nUSER: What else would I need?\nASSISTANT: Letters from experts in your field, evidence of impact\nUSER: I can get those\nASSISTANT: Good. Now, is your daughter a U.S. citizen?\nUSER: No, she was born in India, came here when she was 5\nASSISTANT: So she's also on H4. She'll age out at 21\nUSER: She's 17 now\nASSISTANT: Critical issue - if she turns 21 before green card, she loses status\nUSER: What can we do?\nASSISTANT: She needs to change to F-1 student visa for college\nUSER: She's applying to universities now\nASSISTANT: Good timing. F-1 gives independent status\nUSER: What about my spouse's parents visiting?\nASSISTANT: On visitor visa?\nUSER: They want to come for six months\nASSISTANT: B-2 visitor visa allows that, but careful with intent\nUSER: What do you mean?\nASSISTANT: They can't work or appear to be immigrating\nUSER: They just want to help with the house and spend time with us\nASSISTANT: That's fine, but they should maintain ties to India\nUSER: They own property there\nASSISTANT: Perfect evidence of non-immigrant intent\nUSER: Back to my situation - what if my company lays people off?\nASSISTANT: You'd have 60 days to find new employment or change status\nUSER: Only 60 days?\nASSISTANT: Yes, the grace period is short\nUSER: What if I start my own company?\nASSISTANT: You can't work for your own company on H1B\nUSER: Even if it sponsors me?\nASSISTANT: Correct, ownership issues make it problematic\nUSER: What about O-1 visa?\nASSISTANT: For extraordinary ability - your patents might qualify\nUSER: Is that better than H1B?\nASSISTANT: More flexible, no annual cap, but higher evidence bar\nUSER: Should I pursue both?\nASSISTANT: Can't have multiple petitions from same employer\nUSER: So I need to choose?\nASSISTANT: Or have different employers file different petitions\nUSER: My university might sponsor O-1 for research work\nASSISTANT: You do research there?\nUSER: Part-time consulting, about 10 hours per week\nASSISTANT: Perfect for O-1. Keep H1B with main employer\nUSER: Can I work two jobs like that?\nASSISTANT: Yes, concurrent employment is allowed\nUSER: This is getting complex\nASSISTANT: Immigration often is. Document everything carefully\nUSER: What documents are most important?\nASSISTANT: Pay stubs, tax returns, I-94 records, approval notices\nUSER: I should organize those\nASSISTANT: Yes, and keep multiple copies\nUSER: Thank you for explaining everything\nASSISTANT: Start the green card process immediately. Time is critical\n\nconversation_id=employer_hr_discussion\ntimestamp=2024-05-20\nmetadata={}\nUSER: Hi, I wanted to discuss my visa situation and green card sponsorship\nASSISTANT: Of course! I see you're on H1B. How can we help?\nUSER: My six years are almost up in September\nASSISTANT: Right, I see that in your file. We should start your green card process\nUSER: My attorney said we needed to start months ago\nASSISTANT: Well, we have a process. First, we need to post the job internally\nUSER: How long does that take?\nASSISTANT: Company policy requires 30 days internal posting\nUSER: Then what?\nASSISTANT: If no qualified internal candidates, we proceed with PERM\nUSER: But PERM takes 8-12 months\nASSISTANT: Yes, it's a lengthy process unfortunately\nUSER: I'll be out of status before it's done\nASSISTANT: Let me check... You're right, timing is tight\nUSER: Can we expedite anything?\nASSISTANT: Company policy is no premium processing for PERM\nUSER: PERM can't be premium processed anyway\nASSISTANT: Oh right, I meant for the I-140 later\nUSER: Will you at least premium process the I-140?\nASSISTANT: That requires director approval for the extra cost\nUSER: How much?\nASSISTANT: $2,805 for premium processing\nUSER: I can pay it myself if needed\nASSISTANT: Company policy doesn't allow employee payment\nUSER: This is frustrating\nASSISTANT: I understand. Let me talk to leadership\nUSER: What about the job requirements for PERM?\nASSISTANT: We'll use your current job description\nUSER: But I've taken on additional responsibilities\nASSISTANT: We need to use the original H1B job description\nUSER: That's from six years ago\nASSISTANT: It maintains consistency for immigration\nUSER: But it doesn't reflect my actual work\nASSISTANT: We can update it slightly\nUSER: My attorney mentioned EB-1 might be faster\nASSISTANT: Company doesn't sponsor EB-1 applications\nUSER: Why not?\nASSISTANT: They're complex and have lower approval rates\nUSER: But I have patents and publications\nASSISTANT: That's impressive but policy is EB-2 or EB-3 only\nUSER: Can I self-petition for EB-1?\nASSISTANT: You'd need to do that outside company sponsorship\nUSER: But I'd still need H1B extension meanwhile\nASSISTANT: Right, and we control that\nUSER: So I'm stuck with your timeline\nASSISTANT: We'll do our best to expedite\nUSER: What about prevailing wage determination?\nASSISTANT: That's the first step, takes 4-6 months\nUSER: Can we start that immediately?\nASSISTANT: After the internal posting completes\nUSER: So another month delay\nASSISTANT: Company process, I'm sorry\nUSER: My spouse just got H4 EAD work permit\nASSISTANT: That's great for your family\nUSER: If I lose H1B, she loses work authorization\nASSISTANT: True, they're connected\nUSER: This affects our whole family\nASSISTANT: We understand the importance\nUSER: Do you though? My daughter's college depends on this\nASSISTANT: We value your contributions\nUSER: Then why the delays?\nASSISTANT: Legal wants to review all applications\nUSER: How long does legal review take?\nASSISTANT: Usually 2-3 weeks\nUSER: On top of everything else?\nASSISTANT: It's part of the timeline\nUSER: What if another company offers sponsorship?\nASSISTANT: You're free to pursue other opportunities\nUSER: But I've been here eight years\nASSISTANT: We'd hate to lose you\nUSER: Then help me stay legally\nASSISTANT: I'll escalate to the VP\nUSER: When will I hear back?\nASSISTANT: Give me a week\nUSER: I need answers sooner\nASSISTANT: I'll try for three days\nUSER: What about my team members from India?\nASSISTANT: What about them?\nUSER: Three got green cards last year\nASSISTANT: Each case is different\nUSER: They had less experience than me\nASSISTANT: Timing and process change\nUSER: This seems discriminatory\nASSISTANT: It's absolutely not, just procedural timing\nUSER: I'm documenting everything\nASSISTANT: That's your right\nUSER: What about company immigration lawyers?\nASSISTANT: We use Friedman & Associates\nUSER: Can I speak with them directly?\nASSISTANT: All communication goes through HR\nUSER: That's inefficient\nASSISTANT: It's policy for consistency\nUSER: My personal attorney says direct communication is normal\nASSISTANT: Different companies, different approaches\nUSER: What's the total budget for my green card?\nASSISTANT: We typically allocate $15,000-20,000\nUSER: Is that including attorney fees?\nASSISTANT: Yes, all inclusive\nUSER: That seems sufficient\nASSISTANT: Budget isn't the issue\nUSER: Then what is?\nASSISTANT: Process and timing requirements\nUSER: Which could have started months ago\nASSISTANT: I'll push for expedited handling\nUSER: Please do, my family's future depends on it\nASSISTANT: Understood. I'll update you this week\n\nconversation_id=university_international_office\ntimestamp=2024-07-02\nmetadata={}\nUSER: Hi, I need help with my immigration paperwork for my research position\nASSISTANT: Hello! I can assist with that. What type of visa are you currently on?\nUSER: H1B with my primary employer, but I consult here part-time\nASSISTANT: I see. Do you have concurrent H1B with us?\nUSER: No, I've been working on a consulting agreement\nASSISTANT: How many hours per week?\nUSER: About 10 hours\nASSISTANT: That requires proper work authorization\nUSER: I thought consulting was allowed\nASSISTANT: Not without concurrent H1B or other authorization\nUSER: Oh no, have I been working illegally?\nASSISTANT: When did you start?\nUSER: About six months ago\nASSISTANT: That's concerning. You've been out of status\nUSER: What does that mean?\nASSISTANT: Unauthorized employment can affect future immigration benefits\nUSER: My green card application?\nASSISTANT: Potentially, yes\nUSER: What should I do?\nASSISTANT: Stop working immediately until we get proper authorization\nUSER: But I have ongoing research projects\nASSISTANT: I understand, but continuing makes it worse\nUSER: Can we fix this retroactively?\nASSISTANT: No, we can't backdate work authorization\nUSER: My attorney mentioned O-1 visa possibility\nASSISTANT: O-1 is for extraordinary ability\nUSER: I have patents and publications\nASSISTANT: How many publications?\nUSER: About 15 peer-reviewed papers\nASSISTANT: That's good. Citation count?\nUSER: Over 500 citations total\nASSISTANT: Strong for O-1. But there's the unauthorized work issue\nUSER: Will that disqualify me?\nASSISTANT: It complicates things significantly\nUSER: What if we just apply going forward?\nASSISTANT: We must disclose previous employment\nUSER: Even consulting?\nASSISTANT: Any work for compensation\nUSER: I thought universities were different\nASSISTANT: No, same immigration laws apply\nUSER: My department head said it was fine\nASSISTANT: Academic departments don't always understand immigration law\nUSER: Clearly not\nASSISTANT: Let's focus on solutions\nUSER: Please, my H1B expires in September\nASSISTANT: That's very soon\nUSER: My company is dragging on green card filing\nASSISTANT: Typical unfortunately\nUSER: Can the university sponsor me instead?\nASSISTANT: For full-time position only\nUSER: What if I increase to full-time?\nASSISTANT: Is there a full-time position available?\nUSER: The professor mentioned possibility\nASSISTANT: We'd need formal offer letter\nUSER: How long for university H1B?\nASSISTANT: Cap-exempt, so no lottery, but still 4-6 months regular\nUSER: Or 15 days premium?\nASSISTANT: Yes, if department pays\nUSER: Will they?\nASSISTANT: Depends on funding and need\nUSER: The grant has money\nASSISTANT: Federal grant?\nUSER: Yes, NSF grant\nASSISTANT: Federal funds can't pay premium processing\nUSER: Another obstacle\nASSISTANT: Department might have other funds\nUSER: I'll ask\nASSISTANT: Now about your daughter\nUSER: She's applying to universities\nASSISTANT: Will she need F-1 visa?\nUSER: She's currently on H4\nASSISTANT: F-1 requires proof of funding\nUSER: We can show bank statements\nASSISTANT: Need about $70,000 per year demonstrated\nUSER: That much?\nASSISTANT: Tuition plus living expenses\nUSER: We don't have that much saved\nASSISTANT: Sponsor letters from family?\nUSER: Maybe from India\nASSISTANT: They need to show strong finances\nUSER: This is getting complicated\nASSISTANT: Also, change from H4 to F-1 shows immigrant intent issue\nUSER: What issue?\nASSISTANT: F-1 requires non-immigrant intent\nUSER: But we have green card pending\nASSISTANT: Exactly the problem\nUSER: So she can't get F-1?\nASSISTANT: It's possible but complicated\nUSER: What's the alternative?\nASSISTANT: Stay on H4 until age 21\nUSER: Then what?\nASSISTANT: She'd need independent status\nUSER: But she'll be in college\nASSISTANT: Gap problem if green card isn't ready\nUSER: This is a nightmare\nASSISTANT: Common situation unfortunately\nUSER: My spouse wants to work too\nASSISTANT: She has H4 EAD?\nUSER: Yes, but tied to my H1B\nASSISTANT: Right, dependent benefit\nUSER: If I change to university H1B?\nASSISTANT: She'd need new H4 based on that\nUSER: More paperwork and delays\nASSISTANT: Several months typically\nUSER: During which she can't work?\nASSISTANT: Correct, gap in authorization\nUSER: We can't afford that\nASSISTANT: I understand the difficulty\nUSER: What about the unauthorized work?\nASSISTANT: We should consult immigration attorney\nUSER: I have one personally\nASSISTANT: Good, this needs careful handling\nUSER: Will the university report me?\nASSISTANT: We have obligation to correct going forward\nUSER: But not report past?\nASSISTANT: Depends on circumstances\nUSER: That's not reassuring\nASSISTANT: I recommend full legal consultation immediately\nUSER: I will. This is so stressful\nASSISTANT: Immigration is complex, we'll help where we can\n\nQUESTION: My H1B expires in two months and I just got a termination notice from my employer citing 'restructuring.' What's my legal status and what are my options to stay in the country?\nANSWER: Your legal status and options are as follows, based on your situation:\n\n\n### **Current Legal Status**  \nUpon termination, you have a **60-day grace period** (from your last day of employment) to either:  \n- Find a new employer to file an H-1B petition (or other work visa), or  \n- Change your visa status (e.g., to F-1, H-4, or O-1).  \n\nThis grace period is governed by USCIS policy (see: `h1b_grace_period_2024`), and you must take action before it expires to avoid falling out of status.  \n\n\n### **Key Options to Stay in the U.S.**  \n\n#### 1. **Find a New H-1B Employer**  \nYou can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration).  \n\n- **Cap-Exempt H-1B**: If the new employer is a university, nonprofit, or government research institution, they may sponsor a cap-exempt H-1B (no lottery required). For example, the university where you previously consulted could potentially sponsor a full-time cap-exempt H-1B (see: `h1b_sponsorship`), but this requires a **formal full-time job offer**.  \n  - *Note*: University H-1B processing takes 4–6 months regularly, but premium processing (15 days) is possible if the department uses non-federal funds (e.g., not NSF grants).  \n\n\n#### 2. **Change to O-1 Visa (Specialty Occupation)**  \nYou may qualify for an O-1 visa, given your 3 patents, 15 peer-reviewed papers, and 500+ citations (see: `o1_visa_eligibility`). A university (e.g., your former consulting partner) could sponsor this visa, which is flexible (no annual cap) but has a higher evidence bar than H-1B.  \n\n- **Critical Risk**: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements.  \n\n\n#### 3. **Change to Another Nonimmigrant Status**  \n- **F-1 Student Visa**: Enrolling in a full-time academic program would allow you to change to F-1 status. However, this requires proving sufficient funding and may raise \"immigrant intent\" concerns if you have a pending green card (though your employer’s green card process is now halted due to termination).  \n- **H-4 Dependent Visa**: If your spouse holds a valid H-1B, you could change to H-4 status. However, this would not grant work authorization unless your spouse’s H-1B is tied to a pending green card (unlikely here, as your employer’s process was only in the initial stages).  \n\n\n### **Critical Risks & Next Steps**  \n- **Unauthorized Employment Impact**: The 6 months of unauthorized consulting (see: `unauthorized_consulting_2024`) must be disclosed on all future immigration applications. This could delay or deny approvals (e.g., O-1, new H-1B).  \n- **Time Sensitivity**: Your H-1B expires in ~2 months, and the 60-day grace period is time-limited. Prioritize securing a job offer or filing for status change immediately.  \n- **Green Card Process**: Your former employer’s green card process (internal posting pending) is now inactive due to termination. Pursuing this via a new employer would restart the process (PERM, I-140, etc.), which takes 8–12 months (see: `perm_timeline`).  \n\n\n**Immediate Actions**:  \n1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship.  \n2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure.  \n3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period.  \n\nActing quickly is critical to avoid accruing unlawful presence.\nEVALUATION CRITERIA: The agent must identify multiple critical legal issues and timeline impossibilities by connecting information across all conversations:\n\nImmediate Crisis Issues:\n1. 60-day grace period starts upon termination, but H1B expires September 30th (less than 2 months away)\n2. Unauthorized employment at university for 6 months creates serious status violation\n3. Cannot legally continue university work without proper authorization\n4. Family's dependent status (spouse H4 EAD and daughter H4) terminated with H1B\n\nFailed Safety Nets:\n1. Company never started green card process despite promises (only internal posting mentioned)\n2. No PERM filed 365 days before expiry, so no H1B extension possible\n3. University O-1 sponsorship compromised by unauthorized work history\n4. EB-1 self-petition takes too long without maintaining status\n\nDocumentation Problems:\n1. Must disclose unauthorized university work in any new petition\n2. Previous status violations affect all future immigration benefits\n3. University has \"obligation to correct\" and might report violations\n\nFamily Complications:\n1. Spouse loses work authorization immediately\n2. Daughter approaching 21, needs F-1 but shows immigrant intent\n3. F-1 requires $70,000 proof of funds they don't have\n4. Cannot maintain mortgage/car payments without income\n\nTimeline Impossibilities:\n1. New H1B takes 4-6 months (only 2 months remaining)\n2. Premium processing still takes 15 days minimum plus preparation\n3. University can't use federal grant funds for premium processing\n4. PERM process needs 8-12 months (was never started)\n\nLimited Options:\n1. Find new employer for H1B transfer within days (complicated by violations)\n2. Spouse change to H1B if she finds sponsor (but process takes months)\n3. Leave US immediately to avoid accruing unlawful presence\n4. Student visa (but shows immigrant intent with pending GC)\n5. Marriage to US citizen (not applicable based on conversations)\n\nThe agent should recognize this is an emergency requiring immediate legal consultation, possible departure from US to avoid unlawful presence, and that the unauthorized work has severely compromised all options.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a697d0efb1450ac9b5b76",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 4,\n      \"reasoning\": \"The response accurately identifies the user's legal status and options based on the information provided in the conversations. It correctly states the 60-day grace period post-termination, the unauthorized work issue, and the potential options to stay in the U.S., including finding a new H-1B employer, changing to an O-1 visa, or changing to another nonimmigrant status.\",\n      \"evidence\": [\n        \"Your legal status and options are as follows, based on your situation: Upon termination, you have a 60-day grace period (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).\",\n        \"Critical Risk: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements.\"\n      ]\n    },\n    \"recall\": {\n      \"score\": 4,\n      \"reasoning\": \"The response recalls all the critical information from the conversations, including the user's H-1B expiration date, the unauthorized work at the university, the potential impact on the user's green card application, and the complications with the user's family's visas.\",\n      \"evidence\": [\n        \"My H1B expires in two months and I just got a termination notice from my employer citing 'restructuring.'\",\n        \"Upon termination, you have a 60-day grace period (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).\",\n        \"That's concerning. You've been out of status Unauthorized employment can affect future immigration benefits\"\n      ]\n    },\n    \"reasoning\": {\n      \"score\": 4,\n      \"reasoning\": \"The response provides a logical and coherent explanation of the user's situation and options. It connects the information from the conversations to explain the implications of the user's termination and unauthorized work, and it outlines the potential paths to stay in the U.S. while highlighting the risks and complications.\",\n      \"evidence\": [\n        \"### **Current Legal Status** Upon termination, you have a **60-day grace period** (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).\",\n        \"### **Key Options to Stay in the U.S.** 1. **Find a New H-1B Employer** You can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration).\"\n      ]\n    },\n    \"proactivity\": {\n      \"score\": 4,\n      \"reasoning\": \"The response is proactive in advising the user on the immediate actions to take, such as contacting potential employers, consulting an immigration attorney, and filing for a status change. It also emphasizes the urgency of the situation and the need to act quickly to avoid accruing unlawful presence.\",\n      \"evidence\": [\n        \"**Immediate Actions**: 1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship. 2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure. 3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period.\"\n      ]\n    }\n  },\n  \"hallucination\": {\n    \"detected\": false,\n    \"claims\": [],\n    \"reasoning\": \"The response does not contain any factual claims that are unsupported or contradicted by the information provided in the conversations.\"\n  },\n  \"overall_reasoning\": \"The response demonstrates a comprehensive understanding of the user's complex immigration situation, accurately recalling and connecting information from the conversations to provide a clear and detailed explanation of the user's legal status and options. It also proactively advises the user on the immediate actions to take, emphasizing the urgency and potential consequences of the situation.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785358718,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1026,
+          "prompt_tokens": 5536,
+          "total_tokens": 6562,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 1026,
+        "prompt_tokens": 5536,
+        "total_tokens": 6562,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a697d0efb1450ac9b5b76"
+    }
+  ],
+  "updated_at_epoch": 1785358732.996664,
+  "answer": "Your legal status and options are as follows, based on your situation:\n\n\n### **Current Legal Status**  \nUpon termination, you have a **60-day grace period** (from your last day of employment) to either:  \n- Find a new employer to file an H-1B petition (or other work visa), or  \n- Change your visa status (e.g., to F-1, H-4, or O-1).  \n\nThis grace period is governed by USCIS policy (see: `h1b_grace_period_2024`), and you must take action before it expires to avoid falling out of status.  \n\n\n### **Key Options to Stay in the U.S.**  \n\n#### 1. **Find a New H-1B Employer**  \nYou can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration).  \n\n- **Cap-Exempt H-1B**: If the new employer is a university, nonprofit, or government research institution, they may sponsor a cap-exempt H-1B (no lottery required). For example, the university where you previously consulted could potentially sponsor a full-time cap-exempt H-1B (see: `h1b_sponsorship`), but this requires a **formal full-time job offer**.  \n  - *Note*: University H-1B processing takes 4–6 months regularly, but premium processing (15 days) is possible if the department uses non-federal funds (e.g., not NSF grants).  \n\n\n#### 2. **Change to O-1 Visa (Specialty Occupation)**  \nYou may qualify for an O-1 visa, given your 3 patents, 15 peer-reviewed papers, and 500+ citations (see: `o1_visa_eligibility`). A university (e.g., your former consulting partner) could sponsor this visa, which is flexible (no annual cap) but has a higher evidence bar than H-1B.  \n\n- **Critical Risk**: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements.  \n\n\n#### 3. **Change to Another Nonimmigrant Status**  \n- **F-1 Student Visa**: Enrolling in a full-time academic program would allow you to change to F-1 status. However, this requires proving sufficient funding and may raise \"immigrant intent\" concerns if you have a pending green card (though your employer’s green card process is now halted due to termination).  \n- **H-4 Dependent Visa**: If your spouse holds a valid H-1B, you could change to H-4 status. However, this would not grant work authorization unless your spouse’s H-1B is tied to a pending green card (unlikely here, as your employer’s process was only in the initial stages).  \n\n\n### **Critical Risks & Next Steps**  \n- **Unauthorized Employment Impact**: The 6 months of unauthorized consulting (see: `unauthorized_consulting_2024`) must be disclosed on all future immigration applications. This could delay or deny approvals (e.g., O-1, new H-1B).  \n- **Time Sensitivity**: Your H-1B expires in ~2 months, and the 60-day grace period is time-limited. Prioritize securing a job offer or filing for status change immediately.  \n- **Green Card Process**: Your former employer’s green card process (internal posting pending) is now inactive due to termination. Pursuing this via a new employer would restart the process (PERM, I-140, etc.), which takes 8–12 months (see: `perm_timeline`).  \n\n\n**Immediate Actions**:  \n1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship.  \n2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure.  \n3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period.  \n\nActing quickly is critical to avoid accruing unlawful presence.",
+  "result": {
+    "test_id": "layer3_11_immigration_status_complexity",
+    "layer": "layer3",
+    "title": "Immigration Status Complexity",
+    "mode": "advanced_json_cards",
+    "session_count": 3,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "visa_attorney_consultation",
+        "memory": [
+          {
+            "category": "visa_status",
+            "card_key": "h1b_expiration_2024",
+            "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+            "person": "User",
+            "relationship": "Self",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "expiration_date": "2024-09-30",
+              "total_years_in_h1b": 6,
+              "extension_type": "initial"
+            }
+          },
+          {
+            "category": "green_card_processing",
+            "card_key": "employer_gc_status_2024",
+            "backstory": "User's employer discussed green card processing but has not filed any applications",
+            "person": "User",
+            "relationship": "Employer",
+            "timestamp": "2024-03-15",
+            "status": "Not Started",
+            "facts": {
+              "processing_status": "not_filed",
+              "employer_communication": "mentioned but not initiated"
+            }
+          },
+          {
+            "category": "perm_timeline",
+            "card_key": "perm_deadline_missed_2024",
+            "backstory": "PERM labor certification requires filing 365 days before H1B expiration for 1-year extensions; user's deadline already passed",
+            "person": "User",
+            "relationship": "USCIS Requirements",
+            "timestamp": "2024-03-15",
+            "status": "Deadline Passed",
+            "facts": {
+              "processing_time": "8-12 months",
+              "365_day_deadline_status": "missed",
+              "purpose": "proves no qualified U.S. workers for position"
+            }
+          },
+          {
+            "category": "family_visa_status",
+            "card_key": "spouse_h4_ead_2024",
+            "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+            "person": "User's Spouse",
+            "relationship": "Spouse",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "visa_type": "H4",
+              "work_authorization_status": "approved",
+              "recently_obtained": true
+            }
+          },
+          {
+            "category": "h4_ead_processing",
+            "card_key": "h4_ead_timeline_2024",
+            "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+            "person": "User",
+            "relationship": "USCIS Processing",
+            "timestamp": "2024-03-15",
+            "status": "Pending (Hypothetical)",
+            "facts": {
+              "processing_time": "8-10 months",
+              "expedite_requirement": "financial hardship",
+              "user_hardship_factors": [
+                "mortgage",
+                "car payments"
+              ]
+            }
+          },
+          {
+            "category": "green_card_category",
+            "card_key": "eb_eligibility_india_2024",
+            "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years)",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-03-15",
+            "status": "Eligible",
+            "facts": {
+              "eb2_qualifications": {
+                "position": "Senior Software Engineer",
+                "education": "Master's degree"
+              },
+              "eb1_qualifications": {
+                "achievements": [
+                  "3 patents",
+                  "published papers"
+                ],
+                "india_wait_time": "~2 years"
+              },
+              "eb2_india_backlog": "priority date 2012"
+            }
+          },
+          {
+            "category": "dependent_age_out",
+            "card_key": "daughter_h4_age_out_2024",
+            "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+            "person": "User's Daughter",
+            "relationship": "Daughter",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "age": 17,
+              "visa_type": "H4",
+              "age_out_age": 21,
+              "college_application_status": "in_progress",
+              "recommended_status_change": "F-1 student visa"
+            }
+          },
+          {
+            "category": "visitor_visa_intent",
+            "card_key": "in_laws_b2_visit_2024",
+            "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+            "person": "User's Spouse's Parents",
+            "relationship": "In-laws",
+            "timestamp": "2024-03-15",
+            "status": "Planned",
+            "facts": {
+              "visa_type": "B-2",
+              "intended_duration": "6 months",
+              "non_immigrant_evidence": "property ownership in India",
+              "visit_purpose": "help with house, spend time with family"
+            }
+          },
+          {
+            "category": "employment_termination",
+            "card_key": "h1b_grace_period_2024",
+            "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+            "person": "User",
+            "relationship": "USCIS Policy",
+            "timestamp": "2024-03-15",
+            "status": "Applicable",
+            "facts": {
+              "grace_period_days": 60,
+              "requirements_during_grace": "find new employer or change visa status"
+            }
+          },
+          {
+            "category": "premium_processing",
+            "card_key": "premium_processing_details_2024",
+            "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-03-15",
+            "status": "Potential",
+            "facts": {
+              "fee": "$2,805",
+              "processing_time": "15 days",
+              "employer_interest": "might file",
+              "applicable_to": "certain visa applications"
+            }
+          },
+          {
+            "category": "o1_visa_eligibility",
+            "card_key": "o1_visa_patents_2024",
+            "backstory": "User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-03-15",
+            "status": "Potential",
+            "facts": {
+              "eligibility_factors": [
+                "3 patents",
+                "published papers"
+              ],
+              "potential_sponsor": "university (part-time consulting)",
+              "consulting_hours": "10 hours per week",
+              "benefits": "more flexible, no annual cap; higher evidence bar than H1B"
+            }
+          }
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "visa_attorney_consultation"
+        }
+      },
+      {
+        "session_index": 2,
+        "conversation_id": "employer_hr_discussion",
+        "memory": [
+          {
+            "category": "visa_status",
+            "card_key": "h1b_expiration_2024",
+            "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+            "person": "User",
+            "relationship": "Self",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "expiration_date": "2024-09-30",
+              "total_years_in_h1b": 6,
+              "extension_type": "initial"
+            }
+          },
+          {
+            "category": "green_card_processing",
+            "card_key": "employer_gc_status_2024",
+            "backstory": "User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting",
+            "person": "User",
+            "relationship": "Employer",
+            "timestamp": "2024-05-20",
+            "status": "Initiated",
+            "facts": {
+              "processing_status": "internal posting pending",
+              "employer_communication": "confirmed start of process",
+              "internal_posting_duration": "30 days",
+              "legal_review_time": "2-3 weeks"
+            }
+          },
+          {
+            "category": "perm_timeline",
+            "card_key": "perm_process_steps_2024",
+            "backstory": "PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed",
+            "person": "User",
+            "relationship": "USCIS Requirements",
+            "timestamp": "2024-05-20",
+            "status": "Deadline Passed",
+            "facts": {
+              "processing_time": "8-12 months",
+              "365_day_deadline_status": "missed",
+              "purpose": "proves no qualified U.S. workers for position",
+              "internal_posting_duration": "30 days",
+              "prevailing_wage_determination_time": "4-6 months",
+              "posting_purpose": "check for qualified internal candidates"
+            }
+          },
+          {
+            "category": "family_visa_status",
+            "card_key": "spouse_h4_ead_2024",
+            "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+            "person": "User's Spouse",
+            "relationship": "Spouse",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "visa_type": "H4",
+              "work_authorization_status": "approved",
+              "recently_obtained": true
+            }
+          },
+          {
+            "category": "h4_ead_processing",
+            "card_key": "h4_ead_timeline_2024",
+            "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+            "person": "User",
+            "relationship": "USCIS Processing",
+            "timestamp": "2024-03-15",
+            "status": "Pending (Hypothetical)",
+            "facts": {
+              "processing_time": "8-10 months",
+              "expedite_requirement": "financial hardship",
+              "user_hardship_factors": [
+                "mortgage",
+                "car payments"
+              ]
+            }
+          },
+          {
+            "category": "green_card_category",
+            "card_key": "eb_eligibility_india_2024",
+            "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-05-20",
+            "status": "Eligible",
+            "facts": {
+              "eb2_qualifications": {
+                "position": "Senior Software Engineer",
+                "education": "Master's degree"
+              },
+              "eb1_qualifications": {
+                "achievements": [
+                  "3 patents",
+                  "published papers"
+                ],
+                "india_wait_time": "~2 years"
+              },
+              "eb2_india_backlog": "priority date 2012",
+              "company_sponsorship_policy": "EB-2 or EB-3 only",
+              "eb1_sponsorship": "not sponsored (complexity, lower approval rates)"
+            }
+          },
+          {
+            "category": "dependent_age_out",
+            "card_key": "daughter_h4_age_out_2024",
+            "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+            "person": "User's Daughter",
+            "relationship": "Daughter",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "age": 17,
+              "visa_type": "H4",
+              "age_out_age": 21,
+              "college_application_status": "in_progress",
+              "recommended_status_change": "F-1 student visa"
+            }
+          },
+          {
+            "category": "visitor_visa_intent",
+            "card_key": "in_laws_b2_visit_2024",
+            "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+            "person": "User's Spouse's Parents",
+            "relationship": "In-laws",
+            "timestamp": "2024-03-15",
+            "status": "Planned",
+            "facts": {
+              "visa_type": "B-2",
+              "intended_duration": "6 months",
+              "non_immigrant_evidence": "property ownership in India",
+              "visit_purpose": "help with house, spend time with family"
+            }
+          },
+          {
+            "category": "employment_termination",
+            "card_key": "h1b_grace_period_2024",
+            "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+            "person": "User",
+            "relationship": "USCIS Policy",
+            "timestamp": "2024-03-15",
+            "status": "Applicable",
+            "facts": {
+              "grace_period_days": 60,
+              "requirements_during_grace": "find new employer or change visa status"
+            }
+          },
+          {
+            "category": "premium_processing",
+            "card_key": "premium_processing_details_2024",
+            "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Potential",
+            "facts": {
+              "fee": "$2,805",
+              "processing_time": "15 days",
+              "employer_interest": "requires director approval",
+              "applicable_to": "I-140 (after PERM)",
+              "employee_payment_allowed": false
+            }
+          },
+          {
+            "category": "o1_visa_eligibility",
+            "card_key": "o1_visa_patents_2024",
+            "backstory": "User has 3 patents and published papers, potentially qualifying for O-1 visa; university (part-time consulting) may sponsor",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-03-15",
+            "status": "Potential",
+            "facts": {
+              "eligibility_factors": [
+                "3 patents",
+                "published papers"
+              ],
+              "potential_sponsor": "university (part-time consulting)",
+              "consulting_hours": "10 hours per week",
+              "benefits": "more flexible, no annual cap; higher evidence bar than H1B"
+            }
+          },
+          {
+            "category": "green_card_budget",
+            "card_key": "employer_gc_budget_2024",
+            "backstory": "Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Active",
+            "facts": {
+              "total_budget": "$15,000-20,000",
+              "includes_attorney_fees": true
+            }
+          },
+          {
+            "category": "immigration_lawyers",
+            "card_key": "employer_immigration_law_firm_2024",
+            "backstory": "Company uses Friedman & Associates for immigration matters; all communication must go through HR",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Active",
+            "facts": {
+              "law_firm_name": "Friedman & Associates",
+              "communication_channel": "HR only",
+              "direct_contact_allowed": false
+            }
+          }
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "employer_hr_discussion"
+        }
+      },
+      {
+        "session_index": 3,
+        "conversation_id": "university_international_office",
+        "memory": [
+          {
+            "category": "visa_status",
+            "card_key": "h1b_expiration_2024",
+            "backstory": "User's H1B visa is expiring, with initial extension completed, totaling 6 years in H1B status",
+            "person": "User",
+            "relationship": "Self",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "expiration_date": "2024-09-30",
+              "total_years_in_h1b": 6,
+              "extension_type": "initial"
+            }
+          },
+          {
+            "category": "green_card_processing",
+            "card_key": "employer_gc_status_2024",
+            "backstory": "User's employer discussed green card processing but has not filed any applications; now initiating process with internal job posting",
+            "person": "User",
+            "relationship": "Employer",
+            "timestamp": "2024-05-20",
+            "status": "Initiated",
+            "facts": {
+              "processing_status": "internal posting pending",
+              "employer_communication": "confirmed start of process",
+              "internal_posting_duration": "30 days",
+              "legal_review_time": "2-3 weeks"
+            }
+          },
+          {
+            "category": "perm_timeline",
+            "card_key": "perm_process_steps_2024",
+            "backstory": "PERM labor certification requires 30-day internal job posting first; after posting, prevailing wage determination takes 4-6 months; overall processing takes 8-12 months; user's deadline already passed",
+            "person": "User",
+            "relationship": "USCIS Requirements",
+            "timestamp": "2024-05-20",
+            "status": "Deadline Passed",
+            "facts": {
+              "processing_time": "8-12 months",
+              "365_day_deadline_status": "missed",
+              "purpose": "proves no qualified U.S. workers for position",
+              "internal_posting_duration": "30 days",
+              "prevailing_wage_determination_time": "4-6 months",
+              "posting_purpose": "check for qualified internal candidates"
+            }
+          },
+          {
+            "category": "family_visa_status",
+            "card_key": "spouse_h4_ead_2024",
+            "backstory": "User's spouse holds an H4 visa and recently obtained work authorization",
+            "person": "User's Spouse",
+            "relationship": "Spouse",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "visa_type": "H4",
+              "work_authorization_status": "approved",
+              "recently_obtained": true,
+              "status_change_gap": "several months (if user changes to university H1B, spouse needs new H4, during which EAD is invalid)"
+            }
+          },
+          {
+            "category": "h4_ead_processing",
+            "card_key": "h4_ead_timeline_2024",
+            "backstory": "H4 EAD processing currently takes 8-10 months; expediting requires financial hardship proof",
+            "person": "User",
+            "relationship": "USCIS Processing",
+            "timestamp": "2024-03-15",
+            "status": "Pending (Hypothetical)",
+            "facts": {
+              "processing_time": "8-10 months",
+              "expedite_requirement": "financial hardship",
+              "user_hardship_factors": [
+                "mortgage",
+                "car payments"
+              ]
+            }
+          },
+          {
+            "category": "green_card_category",
+            "card_key": "eb_eligibility_india_2024",
+            "backstory": "User, a Senior Software Engineer with a Master's degree, qualifies for EB-2; has 3 patents/publications making EB-1 possible (India backlog: EB-2 priority date 2012, EB-1 wait ~2 years); employer does not sponsor EB-1",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-05-20",
+            "status": "Eligible",
+            "facts": {
+              "eb2_qualifications": {
+                "position": "Senior Software Engineer",
+                "education": "Master's degree"
+              },
+              "eb1_qualifications": {
+                "achievements": [
+                  "3 patents",
+                  "published papers"
+                ],
+                "india_wait_time": "~2 years"
+              },
+              "eb2_india_backlog": "priority date 2012",
+              "company_sponsorship_policy": "EB-2 or EB-3 only",
+              "eb1_sponsorship": "not sponsored (complexity, lower approval rates)"
+            }
+          },
+          {
+            "category": "dependent_age_out",
+            "card_key": "daughter_h4_age_out_2024",
+            "backstory": "User's daughter (17) is on H4 visa, will age out at 21; currently applying to universities",
+            "person": "User's Daughter",
+            "relationship": "Daughter",
+            "timestamp": "2024-03-15",
+            "status": "Active",
+            "facts": {
+              "age": 17,
+              "visa_type": "H4",
+              "age_out_age": 21,
+              "college_application_status": "in_progress",
+              "recommended_status_change": "F-1 student visa",
+              "f1_funding_requirement": "$70,000 per year (tuition + living expenses)",
+              "f1_immigrant_intent_concern": "yes (due to pending green card)"
+            }
+          },
+          {
+            "category": "visitor_visa_intent",
+            "card_key": "in_laws_b2_visit_2024",
+            "backstory": "Spouse's parents plan to visit for 6 months on B-2 visa; own property in India (non-immigrant intent proof)",
+            "person": "User's Spouse's Parents",
+            "relationship": "In-laws",
+            "timestamp": "2024-03-15",
+            "status": "Planned",
+            "facts": {
+              "visa_type": "B-2",
+              "intended_duration": "6 months",
+              "non_immigrant_evidence": "property ownership in India",
+              "visit_purpose": "help with house, spend time with family"
+            }
+          },
+          {
+            "category": "employment_termination",
+            "card_key": "h1b_grace_period_2024",
+            "backstory": "If laid off, user has 60-day grace period to find new employment or change status",
+            "person": "User",
+            "relationship": "USCIS Policy",
+            "timestamp": "2024-03-15",
+            "status": "Applicable",
+            "facts": {
+              "grace_period_days": 60,
+              "requirements_during_grace": "find new employer or change visa status"
+            }
+          },
+          {
+            "category": "premium_processing",
+            "card_key": "premium_processing_details_2024",
+            "backstory": "Premium processing costs $2,805 for 15-day processing on certain applications; employer may consider filing for I-140 with director approval; no employee payment allowed",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Potential",
+            "facts": {
+              "fee": "$2,805",
+              "processing_time": "15 days",
+              "employer_interest": "requires director approval",
+              "applicable_to": "I-140 (after PERM)",
+              "employee_payment_allowed": false
+            }
+          },
+          {
+            "category": "o1_visa_eligibility",
+            "card_key": "o1_visa_patents_2024",
+            "backstory": "User has 3 patents and published papers (15 peer-reviewed, 500+ citations), potentially qualifying for O-1 visa; university (part-time consulting) may sponsor; unauthorized work complicates eligibility",
+            "person": "User",
+            "relationship": "Visa Category Eligibility",
+            "timestamp": "2024-07-02",
+            "status": "Potential (Complicated)",
+            "facts": {
+              "eligibility_factors": [
+                "3 patents",
+                "15 peer-reviewed papers",
+                "over 500 citations"
+              ],
+              "potential_sponsor": "university (part-time consulting)",
+              "consulting_hours": "10 hours per week",
+              "benefits": "more flexible, no annual cap; higher evidence bar than H1B",
+              "unauthorized_work_complication": "significant (must disclose past compensated work)"
+            }
+          },
+          {
+            "category": "green_card_budget",
+            "card_key": "employer_gc_budget_2024",
+            "backstory": "Employer allocates $15,000-20,000 for green card process, all-inclusive including attorney fees",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Active",
+            "facts": {
+              "total_budget": "$15,000-20,000",
+              "includes_attorney_fees": true
+            }
+          },
+          {
+            "category": "immigration_lawyers",
+            "card_key": "employer_immigration_law_firm_2024",
+            "backstory": "Company uses Friedman & Associates for immigration matters; all communication must go through HR",
+            "person": "User",
+            "relationship": "Employer Policy",
+            "timestamp": "2024-05-20",
+            "status": "Active",
+            "facts": {
+              "law_firm_name": "Friedman & Associates",
+              "communication_channel": "HR only",
+              "direct_contact_allowed": false
+            }
+          },
+          {
+            "category": "employment_authorization",
+            "card_key": "unauthorized_consulting_2024",
+            "backstory": "User worked part-time (10 hours/week) as a consultant at a university for ~6 months without proper authorization (no concurrent H1B or other work authorization), constituting unauthorized employment",
+            "person": "User",
+            "relationship": "University (Part-time Consulting)",
+            "timestamp": "2024-07-02",
+            "status": "Completed (Unauthorized)",
+            "facts": {
+              "start_date": "~2024-01-02",
+              "duration_months": 6,
+              "hours_per_week": 10,
+              "compensation_type": "paid",
+              "authorization_status": "unauthorized",
+              "impact": "complicates future immigration benefits (green card, O-1)"
+            }
+          },
+          {
+            "category": "h1b_sponsorship",
+            "card_key": "university_h1b_sponsorship_2024",
+            "backstory": "University can sponsor H1B for full-time position only; cap-exempt (no lottery), regular processing 4-6 months, premium processing (15 days) possible if department uses non-federal funds (federal grants like NSF cannot pay)",
+            "person": "User",
+            "relationship": "University (Potential Employer)",
+            "timestamp": "2024-07-02",
+            "status": "Potential (Requires Full-Time Offer)",
+            "facts": {
+              "sponsorship_type": "cap-exempt H1B",
+              "position_requirement": "full-time",
+              "regular_processing_time": "4-6 months",
+              "premium_processing_available": true,
+              "premium_processing_funding_restriction": "federal grants (e.g., NSF) cannot pay",
+              "requires_formal_offer": true
+            }
+          }
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "university_international_office"
+        }
+      }
+    ],
+    "answer": "Your legal status and options are as follows, based on your situation:\n\n\n### **Current Legal Status**  \nUpon termination, you have a **60-day grace period** (from your last day of employment) to either:  \n- Find a new employer to file an H-1B petition (or other work visa), or  \n- Change your visa status (e.g., to F-1, H-4, or O-1).  \n\nThis grace period is governed by USCIS policy (see: `h1b_grace_period_2024`), and you must take action before it expires to avoid falling out of status.  \n\n\n### **Key Options to Stay in the U.S.**  \n\n#### 1. **Find a New H-1B Employer**  \nYou can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration).  \n\n- **Cap-Exempt H-1B**: If the new employer is a university, nonprofit, or government research institution, they may sponsor a cap-exempt H-1B (no lottery required). For example, the university where you previously consulted could potentially sponsor a full-time cap-exempt H-1B (see: `h1b_sponsorship`), but this requires a **formal full-time job offer**.  \n  - *Note*: University H-1B processing takes 4–6 months regularly, but premium processing (15 days) is possible if the department uses non-federal funds (e.g., not NSF grants).  \n\n\n#### 2. **Change to O-1 Visa (Specialty Occupation)**  \nYou may qualify for an O-1 visa, given your 3 patents, 15 peer-reviewed papers, and 500+ citations (see: `o1_visa_eligibility`). A university (e.g., your former consulting partner) could sponsor this visa, which is flexible (no annual cap) but has a higher evidence bar than H-1B.  \n\n- **Critical Risk**: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements.  \n\n\n#### 3. **Change to Another Nonimmigrant Status**  \n- **F-1 Student Visa**: Enrolling in a full-time academic program would allow you to change to F-1 status. However, this requires proving sufficient funding and may raise \"immigrant intent\" concerns if you have a pending green card (though your employer’s green card process is now halted due to termination).  \n- **H-4 Dependent Visa**: If your spouse holds a valid H-1B, you could change to H-4 status. However, this would not grant work authorization unless your spouse’s H-1B is tied to a pending green card (unlikely here, as your employer’s process was only in the initial stages).  \n\n\n### **Critical Risks & Next Steps**  \n- **Unauthorized Employment Impact**: The 6 months of unauthorized consulting (see: `unauthorized_consulting_2024`) must be disclosed on all future immigration applications. This could delay or deny approvals (e.g., O-1, new H-1B).  \n- **Time Sensitivity**: Your H-1B expires in ~2 months, and the 60-day grace period is time-limited. Prioritize securing a job offer or filing for status change immediately.  \n- **Green Card Process**: Your former employer’s green card process (internal posting pending) is now inactive due to termination. Pursuing this via a new employer would restart the process (PERM, I-140, etc.), which takes 8–12 months (see: `perm_timeline`).  \n\n\n**Immediate Actions**:  \n1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship.  \n2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure.  \n3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period.  \n\nActing quickly is critical to avoid accruing unlawful presence.",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 4
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 1.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The response accurately identifies the user's legal status and options based on the information provided in the conversations. It correctly states the 60-day grace period post-termination, the unauthorized work issue, and the potential options to stay in the U.S., including finding a new H-1B employer, changing to an O-1 visa, or changing to another nonimmigrant status.",
+          "evidence": [
+            "Your legal status and options are as follows, based on your situation: Upon termination, you have a 60-day grace period (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).",
+            "Critical Risk: You previously worked 6 months of unauthorized part-time consulting (no concurrent H-1B or work authorization). This must be disclosed on O-1 applications and may complicate approval, as USCIS strictly enforces authorization requirements."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The response recalls all the critical information from the conversations, including the user's H-1B expiration date, the unauthorized work at the university, the potential impact on the user's green card application, and the complications with the user's family's visas.",
+          "evidence": [
+            "My H1B expires in two months and I just got a termination notice from my employer citing 'restructuring.'",
+            "Upon termination, you have a 60-day grace period (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).",
+            "That's concerning. You've been out of status Unauthorized employment can affect future immigration benefits"
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The response provides a logical and coherent explanation of the user's situation and options. It connects the information from the conversations to explain the implications of the user's termination and unauthorized work, and it outlines the potential paths to stay in the U.S. while highlighting the risks and complications.",
+          "evidence": [
+            "### **Current Legal Status** Upon termination, you have a **60-day grace period** (from your last day of employment) to either: - Find a new employer to file an H-1B petition (or other work visa), or - Change your visa status (e.g., to F-1, H-4, or O-1).",
+            "### **Key Options to Stay in the U.S.** 1. **Find a New H-1B Employer** You can seek a new employer to sponsor an H-1B petition. Since your H-1B expires on **September 30, 2024**, the new employer must file the petition before your grace period ends (whichever comes first: 60 days post-termination or H-1B expiration)."
+          ]
+        },
+        "proactivity": {
+          "score": 4,
+          "reasoning": "The response is proactive in advising the user on the immediate actions to take, such as contacting potential employers, consulting an immigration attorney, and filing for a status change. It also emphasizes the urgency of the situation and the need to act quickly to avoid accruing unlawful presence.",
+          "evidence": [
+            "**Immediate Actions**: 1. Contact potential employers (especially cap-exempt entities like universities) to secure a job offer for H-1B or O-1 sponsorship. 2. Consult an immigration attorney (via your network, as your employer’s firm, Friedman & Associates, only communicates through HR) to address the unauthorized work disclosure. 3. File for a status change (e.g., F-1) if employment options are not feasible within the grace period."
+          ]
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The response does not contain any factual claims that are unsupported or contradicted by the information provided in the conversations."
+      },
+      "overall_reasoning": "The response demonstrates a comprehensive understanding of the user's complex immigration situation, accurately recalling and connecting information from the conversations to provide a clear and detailed explanation of the user's legal status and options. It also proactively advises the user on the immediate actions to take, emphasizing the urgency and potential consequences of the situation."
+    }
+  }
+}

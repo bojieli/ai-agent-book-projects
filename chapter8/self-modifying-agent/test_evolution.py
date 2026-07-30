@@ -2,7 +2,10 @@ import json
 import unittest
 from pathlib import Path
 
-from evolution import diagnose, generate_candidate, release_manifest, validate_candidate
+from evolution import (
+    diagnose, generate_candidate, generate_rejected_control,
+    release_manifest, validate_candidate,
+)
 
 
 ROOT = Path(__file__).parent
@@ -39,6 +42,25 @@ class SelfModificationTest(unittest.TestCase):
         checks = {"static_compile": True, "failure_replay": True, "old_task_regression": False}
         manifest = release_manifest(self.stable, self.candidate, self.diagnosis, checks)
         self.assertEqual("reject_candidate", manifest["decision"])
+
+    def test_bad_fix_is_retained_with_concrete_rejection_reason(self):
+        candidate = generate_rejected_control(self.stable, self.diagnosis)
+        checks = validate_candidate(candidate["source"], self.trajectories, self.stable)
+        manifest = release_manifest(self.stable, candidate, self.diagnosis, checks)
+        self.assertEqual("reject_candidate", manifest["decision"])
+        self.assertIn("temporary_recovery", manifest["failed_checks"])
+        self.assertTrue(manifest["rejection_reason"])
+
+    def test_manifest_contains_change_contract_canary_and_rollback(self):
+        checks = validate_candidate(self.candidate["source"], self.trajectories, self.stable)
+        manifest = release_manifest(self.stable, self.candidate, self.diagnosis, checks)
+        self.assertTrue(manifest["failure_cluster"])
+        self.assertTrue(manifest["source_trajectories"])
+        self.assertEqual("retry_and_circuit_breaker_control", manifest["target_component"])
+        self.assertTrue(manifest["expected_fix"])
+        self.assertTrue(manifest["potential_regressions"])
+        self.assertTrue(manifest["canary_gate"]["eligible"])
+        self.assertEqual(manifest["stable_sha256"], manifest["rollback_sha256"])
 
 
 if __name__ == "__main__":

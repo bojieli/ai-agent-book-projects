@@ -13,6 +13,7 @@
 """
 
 import base64
+import hashlib
 import json
 import os
 import re
@@ -163,32 +164,65 @@ def _synth_elevenlabs(cfg: config.TTSConfig, text: str) -> bytes:
 
 def _synth_fishaudio(cfg: config.TTSConfig, text: str) -> bytes:
     key = _require_env("FISH_API_KEY")
-    body = {"text": text, "format": "mp3"}
-    if cfg.voice:
-        body["reference_id"] = cfg.voice
-    # Fish Audio /v1/tts 接受 JSON，直接返回音频字节。
-    return _http_post("https://api.fish.audio/v1/tts", body,
-                      {"Authorization": f"Bearer {key}"})
+    if not cfg.voice:
+        raise RuntimeError(
+            "Fish Audio voice consistency requires a real reference_id; "
+            "set FISH_REFERENCE_ID."
+        )
+    # Use Fish's maintained SDK instead of assuming the REST response is raw
+    # MP3.  The current S1 endpoint streams MessagePack chunks and the SDK is
+    # the provider-supported decoder for that wire format.
+    from fish_audio_sdk import Session, TTSRequest
+
+    request = TTSRequest(text=text, reference_id=cfg.voice, format="mp3")
+    return b"".join(Session(key).tts(request, backend=cfg.model or "s1"))
+
+
+# Minimax /v1/t2a_v2 uses Bearer auth and no longer takes a GroupId query
+# parameter.  The global and mainland-China deployments live on separate hosts;
+# pick one via MINIMAX_REGION (defaults to the global api.minimax.io host).
+_MINIMAX_T2A_ENDPOINTS = {
+    "global": "https://api.minimax.io/v1/t2a_v2",
+    "cn": "https://api.minimaxi.com/v1/t2a_v2",
+}
+# Success criteria for the non-streaming t2a_v2 call: base_resp.status_code == 0
+# (request accepted) and data.status == 2 (synthesis finished).
+_MINIMAX_SUCCESS_CODE = 0
+_MINIMAX_STATUS_DONE = 2
+
+
+def _minimax_endpoint() -> str:
+    """Return the t2a_v2 endpoint for MINIMAX_REGION: cn -> api.minimaxi.com,
+    otherwise the global api.minimax.io host."""
+    region = os.environ.get("MINIMAX_REGION", "").strip().lower()
+    if region in ("cn", "cn_zh", "china", "minimaxi"):
+        return _MINIMAX_T2A_ENDPOINTS["cn"]
+    return _MINIMAX_T2A_ENDPOINTS["global"]
 
 
 def _synth_minimax(cfg: config.TTSConfig, text: str) -> bytes:
     key = _require_env("MINIMAX_API_KEY")
-    group = _require_env("MINIMAX_GROUP_ID")
-    url = f"https://api.minimax.chat/v1/t2a_v2?GroupId={group}"
     body = {
-        "model": cfg.model or "speech-01-turbo",
+        "model": cfg.model or "speech-2.8-hd",
         "text": text,
         "stream": False,
         "voice_setting": {"voice_id": cfg.voice, "speed": cfg.speed},
         "audio_setting": {"format": "mp3", "sample_rate": 32000},
     }
-    raw = _http_post(url, body, {"Authorization": f"Bearer {key}"})
+    raw = _http_post(_minimax_endpoint(), body, {"Authorization": f"Bearer {key}"})
     data = json.loads(raw)
-    # 返回 JSON，音频为 data.audio（hex 编码）。
-    hexstr = (data.get("data") or {}).get("audio")
-    if not hexstr:
-        err = data.get("base_resp", {})
-        raise RuntimeError(f"Minimax 无音频返回：{err or data}")
+    # Validate the request-level return code first, then the synthesis status.
+    base_resp = data.get("base_resp") or {}
+    if base_resp.get("status_code") != _MINIMAX_SUCCESS_CODE:
+        raise RuntimeError(f"Minimax t2a_v2 failed: base_resp={base_resp or data}")
+    payload = data.get("data") or {}
+    status = payload.get("status")
+    hexstr = payload.get("audio")
+    if status != _MINIMAX_STATUS_DONE or not hexstr:
+        raise RuntimeError(
+            f"Minimax returned no finished audio: status={status} base_resp={base_resp}"
+        )
+    # data.audio is a hex-encoded mp3 payload.
     return bytes.fromhex(hexstr)
 
 
@@ -312,35 +346,36 @@ def char_error_rate(reference: str, hypothesis: str) -> ErrorRate:
 # ---------------------------------------------------------------------------
 # 5) LLM Rubric 评审（默认，OpenAI 闭环）
 # ---------------------------------------------------------------------------
-RUBRIC_DIMENSIONS = ["清晰度", "自然度", "停顿节奏", "整体"]
+RUBRIC_DIMENSIONS = ["准确性", "自然度", "情感表达", "音色一致性"]
 
 # 维度说明（供 --dump-rubric 离线打印，也是评审 prompt 的依据）。括号内标注与书中
 # 四维度（准确性 / 自然度 / 情感表达 / 音色一致性）的对应关系。
 RUBRIC_DESCRIPTIONS = {
-    "清晰度": "转写与原文是否高度一致，漏字/错字/多字越多分越低（对应书中「准确性」）。",
-    "自然度": "语速是否接近自然朗读（中文约 4-6 字/秒），过快>7 或过慢<3 都不自然。",
-    "停顿节奏": "结合语速与文本长度判断停顿/节奏是否合理，过快通常意味吞字、节奏差。",
-    "整体": "综合以上给出的总体印象分。",
+    "准确性": "逐字核对原文，检查漏读、错读、添读、数字、专名与多音字。",
+    "自然度": "直接听语音的流畅度、机器感、停顿、重音和韵律是否符合人类习惯。",
+    "情感表达": "语调、语速和强调是否符合中性、兴奋、悲伤或疑问等目标情感。",
+    "音色一致性": "把合成语音与同时提供的参考语音比较，判断说话人音色是否一致。",
 }
-# 说明：默认（回译）评审看不到音频，无法覆盖书中「情感表达 / 音色一致性」；这两维需
-# 多模态直接听音频，用 --gemini 复现（音色一致性还需参考语音，本 demo 未提供）。
+# The text-only judge remains a diagnostic fallback.  It cannot complete the
+# manuscript experiment because it cannot hear emotion or compare a speaker.
 
 _JUDGE_SYSTEM = """你是严格的 TTS（文本转语音）质量评审专家。
 你将拿到：原始参考文本、该文本的期望情感、由 Whisper 对合成语音回译得到的转写文本，
 以及从音频客观测得的时长、语速（字/秒）和字错误率（CER）。
-请据此对合成语音质量按 Rubric 逐维度打分（1-5 的整数，5 最好）：
+请据此对合成语音质量按 Rubric 逐维度打分（1-5 的整数，5 最好）。你无法听到音频，
+所以情感表达和音色一致性必须返回 0 并明确标记无法判定；本路径仅是诊断回退，不能验收实验：
 
-- 清晰度：转写与原文是否高度一致（漏字/错字/多字越多分越低；CER 越高分越低）。
+- 准确性：转写与原文是否高度一致（漏字/错字/多字越多分越低；CER 越高分越低）。
 - 自然度：语速是否接近自然朗读（中文自然朗读约 4-6 字/秒；过快>7 或过慢<3 都不自然）。
-- 停顿节奏：结合语速与文本长度，判断停顿/节奏是否合理（过快通常意味着吞字、节奏差）。
-- 整体：综合以上给出的总体印象分。
+- 情感表达：返回 0，理由说明文本特征不足以判断真实语调。
+- 音色一致性：返回 0，理由说明没有听到参考语音和合成语音。
 
 注意：你看不到音频本身，只能基于以上可测特征做保守、可解释的判断。
 只输出 JSON，格式：
-{"清晰度": {"score": int, "reason": str},
+{"准确性": {"score": int, "reason": str},
  "自然度": {"score": int, "reason": str},
- "停顿节奏": {"score": int, "reason": str},
- "整体": {"score": int, "reason": str}}
+ "情感表达": {"score": int, "reason": str},
+ "音色一致性": {"score": int, "reason": str}}
 reason 用一句简短中文说明。"""
 
 
@@ -349,6 +384,8 @@ class RubricResult:
     scores: dict            # 维度 -> int
     reasons: dict           # 维度 -> str
     raw: str = ""
+    judge_model: str = ""
+    evidence_mode: str = ""
 
 
 def judge_rubric(reference: str, emotion: str, hypothesis: str,
@@ -385,7 +422,13 @@ def judge_rubric(reference: str, emotion: str, hypothesis: str,
         else:  # 兼容模型直接返回数字（null 按 0 分）
             scores[dim] = int(item or 0)
             reasons[dim] = ""
-    return RubricResult(scores=scores, reasons=reasons, raw=raw)
+    return RubricResult(
+        scores=scores,
+        reasons=reasons,
+        raw=raw,
+        judge_model=judge_model,
+        evidence_mode="transcript-metrics-only-incomplete",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -415,11 +458,17 @@ def _resolve_gemini_model(api_key: str) -> str:
     return config.GEMINI_MODEL_DEFAULT
 
 
-def judge_gemini_audio(reference: str, emotion: str, audio_path: str) -> RubricResult:
-    """把合成音频 + 原文 + Rubric 一起交给 Gemini 多模态直接「听」并打分。
+def judge_gemini_audio(
+    reference: str,
+    emotion: str,
+    audio_path: str,
+    reference_audio_path: str,
+) -> RubricResult:
+    """让 Gemini 同时听合成音频与参考音频，执行正文四维 Rubric。
 
     需要 GEMINI_API_KEY。默认关闭；--gemini 开启。失败抛异常由上层记为失败。
     """
+    import urllib.error
     import urllib.request
     key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not key:
@@ -427,17 +476,30 @@ def judge_gemini_audio(reference: str, emotion: str, audio_path: str) -> RubricR
     model = _resolve_gemini_model(key)
     with open(audio_path, "rb") as f:
         audio_b64 = base64.b64encode(f.read()).decode()
+    if not reference_audio_path or not os.path.isfile(reference_audio_path):
+        raise RuntimeError(
+            f"音色一致性评估需要真实参考语音，文件不存在: {reference_audio_path!r}"
+        )
+    with open(reference_audio_path, "rb") as f:
+        reference_audio_b64 = base64.b64encode(f.read()).decode()
     prompt = (
-        "你是 TTS 质量评审专家。请直接聆听下面这段合成语音，对照原始文本与期望情感，"
-        "按 1-5 分为四个维度打分并给出简短理由，只输出 JSON："
-        '{"清晰度":{"score":int,"reason":str},"自然度":{"score":int,"reason":str},'
-        '"停顿节奏":{"score":int,"reason":str},"整体":{"score":int,"reason":str}}\n'
-        f"原始文本：{reference}\n期望情感：{emotion}"
+        "你是严格的 TTS 质量评审专家。你会收到两段音频：第一段是待评估的合成语音，"
+        "第二段是参考说话人语音。请直接聆听并按正文四维 Rubric 独立打 1-5 整数分："
+        "(1)准确性：逐字核对原文，检查漏读、错读、添读、数字、专名和多音字；"
+        "(2)自然度：检查机器感、不自然停顿、流畅度、重音和韵律；"
+        "(3)情感表达：检查语调、语速和强调是否符合期望情感；"
+        "(4)音色一致性：只比较说话人音色，不要把内容或录音质量差异误当作不同说话人。"
+        "每个理由必须引用一个可听见的具体观察。只输出 JSON："
+        '{"准确性":{"score":int,"reason":str},"自然度":{"score":int,"reason":str},'
+        '"情感表达":{"score":int,"reason":str},"音色一致性":{"score":int,"reason":str}}\n'
+        f"合成语音原文：{reference}\n期望情感：{emotion}\n"
+        "音频顺序：1=待评估合成语音；2=参考说话人语音。"
     )
     body = {
         "contents": [{"parts": [
             {"text": prompt},
             {"inline_data": {"mime_type": "audio/mp3", "data": audio_b64}},
+            {"inline_data": {"mime_type": "audio/mp3", "data": reference_audio_b64}},
         ]}],
         "generationConfig": {"temperature": 0.0, "responseMimeType": "application/json"},
     }
@@ -447,8 +509,14 @@ def judge_gemini_audio(reference: str, emotion: str, audio_path: str) -> RubricR
         url, data=json.dumps(body).encode(),
         headers={"Content-Type": "application/json"}, method="POST",
     )
-    with urllib.request.urlopen(req, timeout=90) as r:
-        data = json.loads(r.read())
+    try:
+        with urllib.request.urlopen(req, timeout=90) as r:
+            data = json.loads(r.read())
+    except urllib.error.HTTPError as exc:
+        # Preserve the provider's diagnostic while never serializing the key
+        # (it only appears in the request URL, not this response excerpt).
+        detail = exc.read().decode("utf-8", "replace")[:2000]
+        raise RuntimeError(f"Gemini HTTP {exc.code}: {detail}") from None
     # Gemini 在安全拦截时不返回 candidates（或 candidate 无 content/parts），
     # 防御式取值并给出带 promptFeedback 的清晰错误，交由上层记为该条失败。
     candidates = data.get("candidates") or []
@@ -465,4 +533,19 @@ def judge_gemini_audio(reference: str, emotion: str, audio_path: str) -> RubricR
         item = parsed.get(dim, {})
         scores[dim] = int(item.get("score") or 0) if isinstance(item, dict) else int(item or 0)
         reasons[dim] = str(item.get("reason", "")).strip() if isinstance(item, dict) else ""
-    return RubricResult(scores=scores, reasons=reasons, raw=text)
+    return RubricResult(
+        scores=scores,
+        reasons=reasons,
+        raw=text,
+        judge_model=model,
+        evidence_mode="gemini-direct-audio-with-reference",
+    )
+
+
+def sha256_file(path: str) -> str:
+    """Return a content identity for an evidence audio file."""
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "redaction": "all collected values replaced with <redacted>",
+  "events": [
+    {"sequence": 1, "at": 19.711342, "sender": "phone_agent", "recipient": "computer_agent", "type": "call_started", "payload": {"fields": ["firstName", "lastName", "gender", "userNumber"]}},
+    {"sequence": 2, "at": 19.711714, "sender": "phone_agent", "recipient": "computer_agent", "type": "question_asked", "payload": {"field": "firstName", "attempt": 1}},
+    {"sequence": 3, "at": 22.437785, "sender": "phone_agent", "recipient": "computer_agent", "type": "info_collected", "payload": {"field": "firstName", "value": "<redacted>", "attempt": 1}},
+    {"sequence": 4, "at": 22.43812, "sender": "phone_agent", "recipient": "computer_agent", "type": "question_asked", "payload": {"field": "lastName", "attempt": 1}},
+    {"sequence": 5, "at": 22.520051, "sender": "computer_agent", "recipient": "phone_agent", "type": "field_filled", "payload": {"field": "firstName"}},
+    {"sequence": 6, "at": 25.792242, "sender": "phone_agent", "recipient": "computer_agent", "type": "info_collected", "payload": {"field": "lastName", "value": "<redacted>", "attempt": 1}},
+    {"sequence": 7, "at": 25.793196, "sender": "phone_agent", "recipient": "computer_agent", "type": "question_asked", "payload": {"field": "gender", "attempt": 1}},
+    {"sequence": 8, "at": 25.874117, "sender": "computer_agent", "recipient": "phone_agent", "type": "field_filled", "payload": {"field": "lastName"}},
+    {"sequence": 9, "at": 29.852781, "sender": "phone_agent", "recipient": "computer_agent", "type": "info_collected", "payload": {"field": "gender", "value": "<redacted>", "attempt": 1}},
+    {"sequence": 10, "at": 29.854119, "sender": "phone_agent", "recipient": "computer_agent", "type": "question_asked", "payload": {"field": "userNumber", "attempt": 1}},
+    {"sequence": 11, "at": 29.965478, "sender": "computer_agent", "recipient": "phone_agent", "type": "field_filled", "payload": {"field": "gender"}},
+    {"sequence": 12, "at": 32.229468, "sender": "phone_agent", "recipient": "computer_agent", "type": "info_collected", "payload": {"field": "userNumber", "value": "<redacted>", "attempt": 1}},
+    {"sequence": 13, "at": 32.229907, "sender": "phone_agent", "recipient": "computer_agent", "type": "task_completed", "payload": {}},
+    {"sequence": 14, "at": 32.258196, "sender": "computer_agent", "recipient": "phone_agent", "type": "field_filled", "payload": {"field": "userNumber"}},
+    {"sequence": 15, "at": 32.258767, "sender": "computer_agent", "recipient": "phone_agent", "type": "form_ready", "payload": {"errors": 0, "submitted": false}},
+    {"sequence": 16, "at": 32.266255, "sender": "computer_agent", "recipient": "manager", "type": "registration_finished", "payload": {"filled": ["firstName", "lastName", "gender", "userNumber"], "submitted": false, "errors": []}}
+  ]
+}

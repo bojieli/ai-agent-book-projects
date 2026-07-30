@@ -27,8 +27,10 @@ import asyncio
 import json
 import logging
 import os
+import time
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from openai import OpenAI
@@ -83,6 +85,39 @@ def _get_client() -> OpenAI:
     if base_url:
         kwargs["base_url"] = base_url
     return OpenAI(**kwargs)
+
+
+def _record_call(purpose: str, request: Dict[str, Any], response, latency: float) -> None:
+    """Atomically checkpoint credential-free raw model evidence."""
+    target = os.getenv("COLLAB_LLM_RECEIPT_PATH")
+    if not target:
+        return
+    path = Path(target)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    usage = getattr(response, "usage", None)
+    choice = response.choices[0]
+    row = {
+        "purpose": purpose,
+        "called_at": datetime.utcnow().isoformat() + "Z",
+        "request": request,
+        "response": {
+            "id": getattr(response, "id", None),
+            "model": getattr(response, "model", None),
+            "finish_reason": getattr(choice, "finish_reason", None),
+            "content": choice.message.content,
+        },
+        "usage": {
+            "prompt_tokens": getattr(usage, "prompt_tokens", None),
+            "completion_tokens": getattr(usage, "completion_tokens", None),
+            "total_tokens": getattr(usage, "total_tokens", None),
+        },
+        "latency_seconds": round(latency, 3),
+    }
+    existing = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else []
+    existing.append(row)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(existing, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary.replace(path)
 
 
 def _count_tokens(text: str) -> int:
@@ -217,15 +252,18 @@ def _prepare_llm_generated_context(
 
 只输出移交上下文正文本身（不要解释、不要 JSON、不要包含被规则排除的隐私字段）。"""
 
-    response = client.chat.completions.create(
-        model=DEFAULT_MODEL,
-        messages=[
+    request = {
+        "model": DEFAULT_MODEL,
+        "messages": [
             {"role": "system", "content": "你负责为子 Agent 挑选并压缩最相关的上下文，严格遵守隐私与压缩规则。"},
             {"role": "user", "content": prompt},
         ],
-        temperature=0.2,
-        max_tokens=600,
-    )
+        "temperature": 1 if "kimi-k3" in DEFAULT_MODEL.lower() else 0.2,
+        "max_tokens": 600,
+    }
+    started = time.perf_counter()
+    response = client.chat.completions.create(**request)
+    _record_call("llm_generated_context", request, response, time.perf_counter() - started)
     generated = (response.choices[0].message.content or "").strip()
     prep_tokens = response.usage.total_tokens if response.usage else 0
 
@@ -302,12 +340,15 @@ def _run_turn(record: Dict[str, Any]) -> Dict[str, Any]:
     if _offline():
         return _run_turn_offline(record)
     client = _get_client()
-    response = client.chat.completions.create(
-        model=DEFAULT_MODEL,
-        messages=record["messages"],
-        temperature=0.3,
-        max_tokens=800,
-    )
+    request = {
+        "model": DEFAULT_MODEL,
+        "messages": record["messages"],
+        "temperature": 1 if "kimi-k3" in DEFAULT_MODEL.lower() else 0.3,
+        "max_tokens": 800,
+    }
+    started = time.perf_counter()
+    response = client.chat.completions.create(**request)
+    _record_call("subagent_turn", request, response, time.perf_counter() - started)
     reply = response.choices[0].message.content or ""
     record["messages"].append({"role": "assistant", "content": reply})
     prompt_tokens = response.usage.prompt_tokens if response.usage else 0

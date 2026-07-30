@@ -1,0 +1,11 @@
+{
+  "suite": "todo_list",
+  "case_id": "todo-01",
+  "token": "ALPHA-417",
+  "artifacts": [
+    "inventory.txt",
+    "decision.txt",
+    "audit.txt",
+    "summary.txt"
+  ]
+}

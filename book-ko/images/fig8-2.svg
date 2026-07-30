@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .label{font-size:13px;font-weight:700;fill:#2f617a}
+      .value{font-size:15px;fill:#3f515c}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="30" text-anchor="middle" class="t h">3계층 궤적 검증: 증거는 가능한 한 실제 환경에서</text>
+
+  <!-- 세 가지 검증기 -->
+  <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="107" text-anchor="middle" class="t h">결과 검증기</text>
+  <text x="152.5" y="135" text-anchor="middle" class="t s">테스트·금액·주문의 최종 상태</text>
+
+  <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
+  <text x="152.5" y="205" text-anchor="middle" class="t h">과정 검증기</text>
+  <text x="152.5" y="233" text-anchor="middle" class="t s">정책·권한·행동·약속</text>
+
+  <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
+  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM 루브릭</text>
+  <text x="152.5" y="331" text-anchor="middle" class="t s">자연성·간결성·규정 내 대안</text>
+
+  <!-- 구조화된 평가: 한글이 겹치지 않도록 세로 필드 사용 -->
+  <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
+  <text x="502" y="97" text-anchor="middle" class="t h">구조화된 궤적 평가</text>
+  <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
+
+  <text x="376" y="145" class="t label">업무 결과</text>
+  <text x="376" y="168" class="t value">성공·부분 성공·실패</text>
+
+  <text x="376" y="198" class="t label">차원별 평가</text>
+  <text x="376" y="221" class="t value">총점이 아닌 항목별 평가</text>
+
+  <text x="376" y="251" class="t label">증거 위치</text>
+  <text x="376" y="274" class="t value">대화 턴과 도구 상태 표시</text>
+
+  <text x="376" y="304" class="t label">실패 태그</text>
+  <text x="376" y="327" class="t value">후속 진단용 문제 유형 보존</text>
+
+  <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
+  <text x="502" y="378" text-anchor="middle" class="t s">증거 부족 시 평가 거부 가능</text>
+
+  <!-- 진화 모듈에 전달할 진단 신호 -->
+  <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
+  <text x="841" y="156" text-anchor="middle" class="t h">학습 가능한 진단 신호</text>
+  <text x="841" y="199" text-anchor="middle" class="t s">성공·실패 위치 보존</text>
+  <text x="841" y="234" text-anchor="middle" class="t s">증거와 문제 유형 명시</text>
+  <text x="841" y="269" text-anchor="middle" class="t s">독립 모듈이 갱신 대상 선택</text>
+
+  <!-- 데이터 흐름 -->
+  <path d="M275 117 H307 V151 H340" class="line"/>
+  <path d="M275 215 H340" class="line"/>
+  <path d="M275 313 H307 V279 H340" class="line"/>
+  <path d="M662 220 H710" class="line"/>
+</svg>

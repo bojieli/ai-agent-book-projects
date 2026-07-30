@@ -1,0 +1,35 @@
+{
+  "case": "video_parser",
+  "tool": "video_parser",
+  "arguments": {
+    "video_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/visual-marker.mp4",
+    "extract_frames": false
+  },
+  "arguments_sha256": "ea72a221aa0269dad089b80df9b9a01b02daa280288207c10db43d74b1bd63b0",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "local-opencv",
+    "origin": "local-process"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "visual-marker.mp4",
+      "duration_seconds": 1.6666666666666667,
+      "fps": 3.0,
+      "frame_count": 5,
+      "resolution": "1200x360",
+      "width": 1200,
+      "height": 360
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/visual-marker.mp4"
+    }
+  },
+  "elapsed_seconds": 0.006
+}

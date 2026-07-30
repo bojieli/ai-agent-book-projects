@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 500" width="860" height="500" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker></defs>
+
+
+<!-- Column headers -->
+<text x="145" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Turn 1 완료 시점</text>
+<text x="400" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Turn 2 완료 시점</text>
+<text x="655" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Turn 3 완료 시점</text>
+
+<text x="145" y="82" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(PPTX skill 최초 로드)</text>
+<text x="400" y="82" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(PDF 파일 읽기)</text>
+<text x="655" y="82" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">(HTML 쓰기)</text>
+
+<!-- Column dividers -->
+<line x1="270" y1="55" x2="270" y2="430" stroke="#dddddd" stroke-width="1"/>
+<line x1="525" y1="55" x2="525" y2="430" stroke="#dddddd" stroke-width="1"/>
+
+<!-- ===================================================== -->
+<!-- Helper: 11 rows of fixed labels positioned at y = 100 + i*24 -->
+<!-- Row labels: -->
+<!--   0: system            (NEW T1, HIT T2, HIT T3) -->
+<!--   1: tools             (NEW T1, HIT T2, HIT T3) -->
+<!--   2: user_q1           (NEW T1, HIT T2, HIT T3) -->
+<!--   3: ★ skill_listing   (NEW T1, HIT T2, HIT T3) -->
+<!--   4: asst: Skill(pptx) (NEW T1, HIT T2, HIT T3) -->
+<!--   5: tool_result       (NEW T1, HIT T2, HIT T3) -->
+<!--   6: ★ skill_content   (NEW T1, HIT T2, HIT T3) -->
+<!--   7: asst: Read(pdf)   (—   T1, NEW T2, HIT T3) -->
+<!--   8: tool_result       (—   T1, NEW T2, HIT T3) -->
+<!--   9: asst: Write(html) (—   T1, —   T2, NEW T3) -->
+<!--  10: tool_result       (—   T1, —   T2, NEW T3) -->
+<!-- ===================================================== -->
+
+<!-- ============== COLUMN 1: Turn 1 ============== -->
+<!-- Rows 0-6: NEW (yellow) -->
+<rect x="25" y="100" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="111" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">system</text>
+<text x="258" y="111" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="124" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="135" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">tools</text>
+<text x="258" y="135" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="148" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="159" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">user_q1</text>
+<text x="258" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="172" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="183" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">★ skill_listing</text>
+<text x="258" y="183" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="196" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="207" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="258" y="207" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="220" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="231" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="258" y="231" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="25" y="244" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="33" y="255" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">★ skill_content</text>
+<text x="258" y="255" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<!-- Rows 7-10: future (dashed empty) -->
+<rect x="25" y="268" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="292" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="316" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="25" y="340" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+
+<!-- Column 1 footer: cost -->
+<rect x="25" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="145" y="392" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">이번 라운드의 cache_creation</text>
+<text x="145" y="410" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 2.5k tokens</text>
+
+<!-- ============== COLUMN 2: Turn 2 ============== -->
+<!-- Rows 0-6: CACHED (gray) -->
+<rect x="280" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="111" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
+<text x="513" y="111" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="135" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">tools</text>
+<text x="513" y="135" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="159" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">user_q1</text>
+<text x="513" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="172" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="183" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_listing</text>
+<text x="513" y="183" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="196" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="207" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="513" y="207" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="220" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="231" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="513" y="231" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="280" y="244" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="288" y="255" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_content</text>
+<text x="513" y="255" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<!-- Rows 7-8: NEW (yellow) -->
+<rect x="280" y="268" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="288" y="279" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Read(pdf)</text>
+<text x="513" y="279" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="280" y="292" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="288" y="303" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="513" y="303" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<!-- Rows 9-10: future (dashed) -->
+<rect x="280" y="316" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="280" y="340" width="240" height="22" rx="3" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+
+<!-- Column 2 footer: cost -->
+<rect x="280" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="400" y="392" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">이번 라운드의 cache_creation</text>
+<text x="400" y="410" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.5k tokens</text>
+
+<!-- ============== COLUMN 3: Turn 3 ============== -->
+<!-- Rows 0-8: CACHED (gray) -->
+<rect x="535" y="100" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="111" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">system</text>
+<text x="768" y="111" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="124" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="135" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">tools</text>
+<text x="768" y="135" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="148" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="159" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">user_q1</text>
+<text x="768" y="159" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="172" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="183" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_listing</text>
+<text x="768" y="183" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="196" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="207" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Skill(pptx)</text>
+<text x="768" y="207" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="220" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="231" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="768" y="231" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="244" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="255" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">★ skill_content</text>
+<text x="768" y="255" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="268" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="279" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">asst: Read(pdf)</text>
+<text x="768" y="279" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<rect x="535" y="292" width="240" height="22" rx="3" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="543" y="303" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#777777" dominant-baseline="central">tool_result</text>
+<text x="768" y="303" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#666666" text-anchor="end" dominant-baseline="central">HIT</text>
+
+<!-- Rows 9-10: NEW (yellow) -->
+<rect x="535" y="316" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="543" y="327" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">asst: Write(html)</text>
+<text x="768" y="327" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<rect x="535" y="340" width="240" height="22" rx="3" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="543" y="351" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="11" fill="#333333" dominant-baseline="central">tool_result</text>
+<text x="768" y="351" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', sans-serif" font-size="10" fill="#c9a227" text-anchor="end" dominant-baseline="central" font-weight="bold">NEW</text>
+
+<!-- Column 3 footer: cost -->
+<rect x="535" y="378" width="240" height="44" rx="4" fill="#fff8e1" stroke="#e6a817" stroke-width="1.5"/>
+<text x="655" y="392" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">이번 라운드의 cache_creation</text>
+<text x="655" y="410" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#a06a00" text-anchor="middle" dominant-baseline="central" font-weight="bold">≈ 0.4k tokens</text>
+
+<!-- Legend -->
+<rect x="40" y="450" width="20" height="14" rx="2" fill="#fff3cd" stroke="#e6a817" stroke-width="1.5"/>
+<text x="68" y="457" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" dominant-baseline="central">NEW = 이번 라운드에 추가된 token, cache_creation 1회 과금</text>
+
+<rect x="40" y="472" width="20" height="14" rx="2" fill="#f0f0f0" stroke="#aaaaaa" stroke-width="1"/>
+<text x="68" y="479" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" dominant-baseline="central">HIT = 캐시 접두부에 있어 이번 라운드는 무료 적중</text>
+
+<rect x="40" y="494" width="20" height="14" rx="2" fill="none" stroke="#cccccc" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="68" y="501" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#333333" dominant-baseline="central">— 이번 라운드에서 아직 생성되지 않은 콘텐츠</text>
+
+<text x="450" y="479" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#666666" dominant-baseline="central">★는 1회 삽입 attachment: Turn 1에서 cache_creation을 한 번만 과금하고,</text>
+<text x="450" y="497" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="12" fill="#666666" dominant-baseline="central">이후 모든 라운드에서 계속 HIT하여 한계비용이 0입니다.</text>
+
+<!-- Bottom note about position -->
+<text x="410" y="525" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-style="italic">주의: 각 메시지는 한번 삽입되면 인덱스 위치가 바뀌지 않으며 새 콘텐츠는 array 끝에만 추가됩니다.</text>
+</svg>

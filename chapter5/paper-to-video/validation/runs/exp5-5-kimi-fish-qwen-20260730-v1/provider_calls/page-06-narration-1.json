@@ -1,0 +1,67 @@
+{
+  "signature": "944b1cfa89ea65233949079cdf07e0aafd87ff28e3f544430030c62be3757601",
+  "parsed": {
+    "narration": "上一页我们学会了单个注意力怎么算，可只从一个角度看句子，难免片面。所以这一页的标题 Multi-Head Attention，就是把它升级成多头。请看屏幕下方的公式：我们不再只算一次，而是把 Q、K、V 分别乘上各自学出的投影矩阵，投到不同子空间，并行地算出 h 个 head，每个 head 正是上页那个 Attention；然后按公式里的 Concat 把它们拼接，再乘输出矩阵 W 的 O 次方那个 W^O 做融合。上方这张 Transformer 架构图里反复出现的 Multi-Head Attention 方块，说的就是这个模块。这样模型能同时从多种表示角度捕捉依赖，为后面堆叠成完整网络做好准备。",
+    "visual_references": [
+      "标题 Multi-Head Attention",
+      "上方 Transformer 架构图（paper_figure_1_transformer.png）中的 Multi-Head Attention 模块",
+      "公式 MultiHead(Q,K,V)=Concat(head_1,...,head_h)W^O",
+      "公式 head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 6/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n## Multi-Head Attention\n\n<img src=\"/paper_figure_1_transformer.png\" class=\"h-40 mx-auto\" />\n\n- Projects queries, keys, values $h$ times with different learned projections\n- Performs attention in parallel on projected versions\n- Concatenates results and projects again\n\n$$\\text{MultiHead}(Q, K, V) = \\text{Concat}(\\text{head}_1, ..., \\text{head}_h)W^O$$\nwhere $\\text{head}_i = \\text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6a7f116dbb98be644ca4d6",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"上一页我们学会了单个注意力怎么算，可只从一个角度看句子，难免片面。所以这一页的标题 Multi-Head Attention，就是把它升级成多头。请看屏幕下方的公式：我们不再只算一次，而是把 Q、K、V 分别乘上各自学出的投影矩阵，投到不同子空间，并行地算出 h 个 head，每个 head 正是上页那个 Attention；然后按公式里的 Concat 把它们拼接，再乘输出矩阵 W 的 O 次方那个 W^O 做融合。上方这张 Transformer 架构图里反复出现的 Multi-Head Attention 方块，说的就是这个模块。这样模型能同时从多种表示角度捕捉依赖，为后面堆叠成完整网络做好准备。\",\"visual_references\":[\"标题 Multi-Head Attention\",\"上方 Transformer 架构图（paper_figure_1_transformer.png）中的 Multi-Head Attention 模块\",\"公式 MultiHead(Q,K,V)=Concat(head_1,...,head_h)W^O\",\"公式 head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "The user wants a narration for slide 6/12 about Multi-Head Attention in the Transformer paper. Previous page was likely about Scaled Dot-Product Attention (single attention). This page extends it to multi-head. Need 180-240 Chinese characters, oral style, guiding narrative, pointing at visible elements (title, formula, image of transformer figure), no fabricated numbers... wait, \"h times\" — the paper uses h=8, but the slide doesn't mention 8. So I shouldn't say 8 unless... the slide says \"h times\". Better not fabricate. Actually the figure is the full transformer architecture. I can point at the formula and the image.\n\nMust return only JSON.\n\nLet me draft:\n\n\"上一页我们讲了单个注意力怎么算，但只盯着一个角度看句子，难免片面。所以这一页，标题 Multi-Head Attention，就是把它做'多头'。请大家看屏幕下方的公式：我们不再只算一次注意力，而是把 Q、K、V 用各自学到的投影矩阵 W_i^Q、W_i^K、W_i^V 投到不同子空间，并行地算出 h 个 head，每个 head 就是前面刚讲过的那个 Attention。最后把这 h 个结果拼接起来，再乘一个输出矩阵 W^O 融合信息。上方这张架构图里，编码器、解码器中反复出现的 Multi-Head Attention 模块，就是这一步。它的好处是让模型同时从多种表示角度捕捉关系，为后面堆叠成完整网络打基础。\"\n\nCount characters roughly. Should be 180-240 Chinese chars. Let me count approximately.\n\nLet me count: I'll estimate. The draft seems around 230-250. Let me count more carefully.\n\n\"上一页我们讲了单个注意力怎么算，但只盯着一个角度看句子，难免片面。\"(29)\n\"所以这一页，标题 Multi-Head Attention，就是把它做成'多头'。\"(~28 counting English as chars; Chinese char count rules... just approximate)\nHmm, English words count ambiguously. Aim ~200 Chinese chars.\n\nLet me finalize:\n\n\"上一页我们学会了单个注意力怎么算，可只从一个角度看句子，难免片面。所以这一页的标题 Multi-Head Attention，就是把它升级成'多头'。请看屏幕下方的公式：我们不再只算一次，而是把 Q、K、V 分别乘上各自学出的投影矩阵 W_i^Q、W_i^K、W_i^V，投影 h 次，并行地算出 h 个 head；每个 head 正是上页那个 Attention。然后把它们拼接，再乘输出矩阵 W^O 做融合。上方这张 Transformer 架构图里反复出现的 Multi-Head Attention 方块，说的就是这个模块。这样模型能同时从多种表示角度捕捉依赖，也为下一页把它堆进完整网络做好准备。\"\n\nCount Chinese chars roughly: Let me count by segments:\n上一页我们学会了单个注意力怎么算(15)，可只从一个角度看句子(10)，难免片面(4)。~29+2 punct\n所以这一页的标题(8)Multi-Head Attention，就是把它升级成多头(9+2)。~19\n请看屏幕下方的公式(9)：我们不再只算一次(8)，而是把QKV分别乘上各自学出的投影矩阵(16)，投影h次(4)，并行地算出h个head(8)；每个head正是上页那个Attention(11)。~56\n然后把它们拼接(7)，再乘输出矩阵做融合(10)。~17\n上方这张架构图里反复出现的Multi-Head Attention方块(15)，说的就是这个模块(7)。~22\n这样模型能同时从多种表示角度捕捉依赖(17)，也为下一页把它堆进完整网络做好准备(17)。~34\n\nTotal ≈ 29+19+56+17+22+34 = 177 + punctuation. Slightly low; add a bit. Maybe add \"concat\" reference. Add: \"也就是公式里的 Concat\" etc.\n\nAdd: \"然后把它们按公式里的 Concat 拼接起来\" — adds ~8. And mention \"不同子空间\" — add \"投到不同的子空间\" ~8. That brings to ~195. Good, within 180-240.\n\nvisual_references: [\"标题 Multi-Head Attention\", \"公式 MultiHead(Q,K,V)=Concat(head_1,...,head_h)W^O\", \"head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)\", \"Transformer 架构图（paper_figure_1）\"]\n\nReturn only JSON."
+          }
+        }
+      ],
+      "created": 1785364242,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 1195,
+        "prompt_tokens": 421,
+        "total_tokens": 1616,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 947,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 37204.807
+  }
+}

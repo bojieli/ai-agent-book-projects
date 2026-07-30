@@ -1,0 +1,25 @@
+{
+  "experiment_id": "9-10",
+  "repository": "https://github.com/StoneT2000/lerobot-sim2real.git",
+  "commit": "87d6c1d969f6e0ca4dc5697940804e231118a63a",
+  "guide": {
+    "published_url": "https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md",
+    "path": "docs/zero_shot_rgb_sim2real.md",
+    "git_blob": "844d113a726d7c3c8494700496591a2604f742e0"
+  },
+  "files": {
+    "env_config.json": "e32727956fc9dbf64336b53b77bc1a6044e2f5ef",
+    "system_id_so100.npy": "047b0110496f15f3a78a41b59c9f041cbbbbfd91",
+    "docs/assets/camera_alignment_step_1.2.png": "688f0089c4a99bb2f608a805cbbb9fd96fb80830",
+    "docs/assets/camera_alignment_step_1.3.png": "20943d0a0eff5b64afaafb04dab3522791e3bcf2",
+    "docs/assets/eval_return_success_curves.png": "7185d982e165081ec0ad5ded4eb21dc9f172bac9",
+    "docs/assets/tutorial_result_video.mp4": "d15f57adfd8b889ed8bb4d44d073f0cf7ba96c4a",
+    "lerobot_sim2real/config/real_robot.py": "f522e6d1dab0ef4ff4a0204497c1616995346ad7",
+    "lerobot_sim2real/scripts/record_reset_distribution.py": "ff20e1c3ea34b6d75f646c325f6fe49e1d83903c",
+    "lerobot_sim2real/scripts/camera_alignment.py": "5d7a323075e43ba5c0a24bd2ce6c910f89e4a9c6",
+    "lerobot_sim2real/scripts/capture_background_image.py": "f30d97cd7ead0cdfe9b38ea6c9523a5f38b404aa",
+    "lerobot_sim2real/scripts/train_ppo_rgb.py": "af900d1e247349b61b707b4a63d30e0d297c9ea9",
+    "lerobot_sim2real/scripts/eval_ppo_rgb.py": "506a4c190eb99b7cd2691562edb78f6f0dd748e3"
+  },
+  "verified_at": "2026-07-29"
+}

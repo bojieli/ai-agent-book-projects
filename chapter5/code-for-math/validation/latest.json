@@ -1,0 +1,8 @@
+{
+  "experiment": "5-1",
+  "run_id": "exp5-1-ark-doubao-flash-aime2024-20260730-v1",
+  "manifest": "validation/runs/exp5-1-ark-doubao-flash-aime2024-20260730-v1/manifest.json",
+  "manifest_sha256": "3f4508457ae620efdb8864ed52ef150d3e584da128f2249ca18553904d6f571a",
+  "official_complete": true,
+  "hypothesis_supported": false
+}

@@ -9,6 +9,28 @@
 
 ## English
 
+### Canonical matched campaign
+
+The preview and interactive demo below illustrate the mechanism, but the
+manuscript-grade Experiment 2-8 evidence comes from the frozen matched campaign:
+
+```bash
+python run_experiment_2_8.py \
+  --output runs/exp2-8-kimi-k3-$(date +%Y%m%d-%H%M%S)
+```
+
+It runs five real Moonshot `kimi-k3` cases for every preregistered contrast:
+disabled vs raw timestamps, guided timestamps, tool counter, TODO list,
+detailed errors, system state, and all features combined. Arms alternate order
+within each case. Every run uses an isolated local sandbox and is scored from
+tool actions and filesystem state, not from the model's self-report. The runner
+checkpoints after each accepted response and tool event, resumes without
+regenerating completed cases, retains response IDs/usage/raw protocol, prices
+usage in native CNY, hashes all evidence, and scans it for credentials. See
+`experiment_protocol.json` for the frozen cases and claim policy; the historical
+15-vs-21, 60%-vs-95%, and six-model time-sense figures are not relabeled as
+results from this smaller suite.
+
 ### Overview
 
 Corresponds to the book’s **Agent Status Bar** section. This directory is the `agent-status-bar` experiment framework—**system hint** and **Agent status bar** are two names for the same idea: inject a dynamic state summary as a temporary `role=user` message at the end of the context.

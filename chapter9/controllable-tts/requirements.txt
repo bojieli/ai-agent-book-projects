@@ -1,5 +1,4 @@
-openai>=1.40.0
-python-dotenv>=1.0.0
-# 另需系统级 ffmpeg / ffprobe（用于生成静音、拼接与验证音频）：
-#   macOS:  brew install ffmpeg
-#   Ubuntu: apt-get install ffmpeg
+fish-audio-sdk>=2025.6.3
+python-dotenv>=1.0
+pytest>=7.4
+# System dependency: ffmpeg / ffprobe

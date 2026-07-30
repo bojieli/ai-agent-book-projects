@@ -1,0 +1,10 @@
+Delivery Token: CHARLIE-639
+
+Scope:
+This delivery covers the creation of exactly four artifacts: scope.txt, plan.txt, verification.txt, and result.txt.
+Requirements:
+1. Each of the four artifacts must exist in the sandbox.
+2. Each artifact must contain the required delivery token exactly once.
+3. All artifacts must be verified before submission.
+4. The complete artifact list must be submitted upon successful verification.
+Out of scope: any additional files, formats, or tokens beyond those specified.

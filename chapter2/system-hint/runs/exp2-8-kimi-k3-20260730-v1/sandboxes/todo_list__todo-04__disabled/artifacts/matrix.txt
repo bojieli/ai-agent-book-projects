@@ -1,0 +1,8 @@
+Responsibility Matrix
+Tracking token: DELTA-740
+
+| Step     | Owner    | Status   |
+|----------|----------|----------|
+| Collect  | Team A   | Complete |
+| Validate | Team B   | Complete |
+| Approve  | Team C   | Complete |

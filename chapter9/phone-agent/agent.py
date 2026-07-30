@@ -8,17 +8,20 @@
         -> 读取返回的【结构化通话记录】
         -> 若信息不足则追问/再拨，否则向用户给出最终汇报
 
-工具 make_phone_call 由 pine_voice 模块提供（对真实 PineClaw Voice API 的本地模拟）。
+工具 make_phone_call 由 pineclaw_tool 模块提供，默认调用官方 Pine Voice SDK 和真实电话网络。
 """
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any, Callable
 
+from openai import OpenAI
+
 # 复用 pine_voice 里的统一 client/模型解析（OPENAI_API_KEY 直连，缺失则回退 OpenRouter）。
-from pine_voice import make_phone_call, _get_client, default_model
+from pineclaw_tool import make_phone_call, _get_client, default_model
 
 
 def _create_chat(**kwargs):
@@ -48,7 +51,8 @@ _SYSTEM_PROMPT = (
     "（但总次数有限，不要无谓重拨）。\n"
     "5. 目标达成后，用简洁中文向用户汇报：结论 + 关键信息（金额/原因/确认号/时间等）"
     "+ 后续建议（如有）。\n\n"
-    "注意：如果任务里连电话号码都没有，就用一个合理的占位号码并在汇报中说明。"
+    "注意：绝不编造或使用占位电话号码。公共企业缺号码时先用 search_business_phone 搜索"
+    "官方网站并核对；私人号码缺失时向用户追问。号码必须是 E.164 格式。"
     "始终基于工具真实返回的通话记录来汇报，不要编造通话没有提到的信息。"
 )
 
@@ -67,7 +71,7 @@ _TOOLS = [
                 "properties": {
                     "phone_number": {
                         "type": "string",
-                        "description": "被叫电话号码，如 10000 或 400-810-xxxx。",
+                        "description": "真实被叫电话号码，必须是 E.164 格式，如 +14155551234。",
                     },
                     "goal": {
                         "type": "string",
@@ -77,12 +81,49 @@ _TOOLS = [
                         "type": "string",
                         "description": "辅助上下文：账号、姓名、已知金额、时间等，可为空。",
                     },
+                    "callee_name": {
+                        "type": "string",
+                        "description": "被叫个人或企业名称。",
+                    },
+                    "instructions": {
+                        "type": "string",
+                        "description": "回退策略、必须询问及挂断前必须确认的细节。",
+                    },
                 },
                 "required": ["phone_number", "goal"],
             },
         },
-    }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_business_phone",
+            "description": "通过实时网页搜索查找公共企业的官方电话号码和来源页；不得用于寻找私人号码。",
+            "parameters": {
+                "type": "object",
+                "properties": {"query": {"type": "string", "description": "企业名、地点和部门"}},
+                "required": ["query"],
+            },
+        },
+    },
 ]
+
+
+def search_business_phone(query: str) -> dict[str, str]:
+    """Use OpenAI's real web-search tool; return auditable source text to ReAct."""
+    if not os.getenv("OPENAI_API_KEY"):
+        return {"error": "OPENAI_API_KEY is required for live web search"}
+    client = OpenAI(timeout=120, max_retries=3)
+    response = client.responses.create(
+        model=os.getenv("PHONE_SEARCH_MODEL", "gpt-4.1-mini"),
+        tools=[{"type": "web_search_preview"}],
+        input=(
+            "Find the official public phone number for this business/department. "
+            "Return the business name, E.164 number, official source URL, and country. "
+            "Do not infer or search for a private person's number. Query: " + query
+        ),
+    )
+    return {"result": response.output_text}
 
 
 def run_agent(
@@ -93,6 +134,7 @@ def run_agent(
     phone_hint: str | None = None,
     goal_hint: str | None = None,
     dry_run: bool = False,
+    call_tool: Callable[..., dict[str, Any]] | None = None,
 ) -> str:
     """
     运行 ReAct 电话 Agent。
@@ -116,7 +158,10 @@ def run_agent(
             on_event(kind, payload)
 
     if dry_run:
-        return _run_agent_dryrun(task, emit, phone_hint, goal_hint)
+        from test_double import make_phone_call as test_call_tool
+        return _run_agent_dryrun(task, emit, phone_hint, goal_hint, test_call_tool)
+
+    call_tool = call_tool or make_phone_call
 
     model = model or default_model()
 
@@ -155,9 +200,9 @@ def run_agent(
             emit("final", final)
             return final
 
-        # 逐个执行工具调用（本例只有 make_phone_call）。
+        # Execute live search or the Pine phone-call tool.
         for tc in msg.tool_calls:
-            if tc.function.name != "make_phone_call":
+            if tc.function.name not in {"make_phone_call", "search_business_phone"}:
                 result = {"error": f"未知工具 {tc.function.name}"}
             else:
                 # 模型偶尔产生截断/带杂质的 arguments；解析失败退回 {}，
@@ -167,20 +212,40 @@ def run_agent(
                     args = json.loads(tc.function.arguments or "{}")
                 except json.JSONDecodeError:
                     args = {}
+                if tc.function.name == "search_business_phone":
+                    emit("search", args)
+                    result = search_business_phone(str(args.get("query") or task))
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc.id,
+                            "name": tc.function.name,
+                            "content": json.dumps(result, ensure_ascii=False),
+                        }
+                    )
+                    continue
                 emit("call", args)
-                result = make_phone_call(
-                    phone_number=args.get("phone_number", "10000"),
-                    goal=args.get("goal", task),
-                    context=args.get("context", ""),
-                    model=model,
-                )
+                if not args.get("phone_number"):
+                    result = {"error": "missing_phone_number", "message": "Ask the user for an E.164 phone number."}
+                else:
+                    result = call_tool(
+                        phone_number=args["phone_number"],
+                        goal=args.get("goal", task),
+                        context=args.get("context", ""),
+                        callee_name=args.get("callee_name", "Requested business"),
+                        instructions=args.get(
+                            "instructions",
+                            "Confirm every task-critical detail before ending the call.",
+                        ),
+                        model=model,
+                    )
                 emit("record", result)
 
             messages.append(
                 {
                     "role": "tool",
                     "tool_call_id": tc.id,
-                    "name": "make_phone_call",
+                    "name": tc.function.name,
                     "content": json.dumps(result, ensure_ascii=False),
                 }
             )
@@ -220,12 +285,13 @@ def _run_agent_dryrun(
     emit: Callable[[str, Any], None],
     phone_hint: str | None,
     goal_hint: str | None,
+    call_tool: Callable[..., dict[str, Any]],
 ) -> str:
     """
     完全离线的脚本化 ReAct 轨迹：不调用任何 LLM/电话 API，仅演示循环的形状——
     思考(推断参数) → 行动(make_phone_call, dry_run) → 观察(结构化记录) → 汇报。
     """
-    phone = phone_hint or _guess_phone(task) or "10010"
+    phone = phone_hint or _guess_phone(task) or "+14155550100"
     goal = goal_hint or task
     context = _guess_context(task)
 
@@ -237,7 +303,7 @@ def _run_agent_dryrun(
 
     call_args = {"phone_number": phone, "goal": goal, "context": context}
     emit("call", call_args)
-    record = make_phone_call(**call_args, dry_run=True)
+    record = call_tool(**call_args)
     emit("record", record)
 
     kf = record.get("key_fields", {}) or {}

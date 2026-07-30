@@ -1,0 +1,204 @@
+{
+  "workflow_id": "local-mail-send-v1",
+  "intent": "send message",
+  "steps": [
+    {
+      "action_type": "input_text",
+      "xpath": "/html[1]/body[1]/main[1]/label[1]/input[1]",
+      "css_selector": "#recipient",
+      "parameters": {
+        "text": "{recipient}",
+        "clear_existing": true
+      },
+      "element_attributes": {
+        "id": "recipient",
+        "name": "recipient",
+        "type": "email",
+        "data-testid": "recipient"
+      },
+      "description": "fill recipient",
+      "wait_before": 0.0,
+      "timeout": 15.0,
+      "expected_outcome": null,
+      "preconditions": [
+        {
+          "predicate_type": "url_contains",
+          "expected": "/app",
+          "selector": null,
+          "state_key": null,
+          "description": "workflow is on the captured application route"
+        },
+        {
+          "predicate_type": "element_visible",
+          "expected": true,
+          "selector": "#recipient",
+          "state_key": null,
+          "description": "recipient field is visible"
+        }
+      ],
+      "postconditions": [
+        {
+          "predicate_type": "element_value_equals",
+          "expected": "{recipient}",
+          "selector": "#recipient",
+          "state_key": null,
+          "description": "recipient field contains this run's value"
+        }
+      ]
+    },
+    {
+      "action_type": "input_text",
+      "xpath": "/html[1]/body[1]/main[1]/label[2]/input[1]",
+      "css_selector": "#subject",
+      "parameters": {
+        "text": "{subject}",
+        "clear_existing": true
+      },
+      "element_attributes": {
+        "id": "subject",
+        "name": "subject",
+        "type": "text",
+        "data-testid": "subject"
+      },
+      "description": "fill subject",
+      "wait_before": 0.0,
+      "timeout": 15.0,
+      "expected_outcome": null,
+      "preconditions": [
+        {
+          "predicate_type": "element_visible",
+          "expected": true,
+          "selector": "#subject",
+          "state_key": null,
+          "description": "subject field is visible"
+        }
+      ],
+      "postconditions": [
+        {
+          "predicate_type": "element_value_equals",
+          "expected": "{subject}",
+          "selector": "#subject",
+          "state_key": null,
+          "description": "subject field contains this run's value"
+        }
+      ]
+    },
+    {
+      "action_type": "input_text",
+      "xpath": "/html[1]/body[1]/main[1]/label[3]/textarea[1]",
+      "css_selector": "#content",
+      "parameters": {
+        "text": "{content}",
+        "clear_existing": true
+      },
+      "element_attributes": {
+        "id": "content",
+        "name": "content",
+        "type": "textarea",
+        "data-testid": "content"
+      },
+      "description": "fill content",
+      "wait_before": 0.0,
+      "timeout": 15.0,
+      "expected_outcome": null,
+      "preconditions": [
+        {
+          "predicate_type": "element_visible",
+          "expected": true,
+          "selector": "#content",
+          "state_key": null,
+          "description": "content field is visible"
+        }
+      ],
+      "postconditions": [
+        {
+          "predicate_type": "element_value_equals",
+          "expected": "{content}",
+          "selector": "#content",
+          "state_key": null,
+          "description": "content field contains this run's value"
+        }
+      ]
+    },
+    {
+      "action_type": "click",
+      "xpath": "/html[1]/body[1]/main[1]/button[1]",
+      "css_selector": "#send",
+      "parameters": {},
+      "element_attributes": {
+        "id": "send",
+        "name": "",
+        "type": "button",
+        "data-testid": "send"
+      },
+      "description": "submit message",
+      "wait_before": 0.0,
+      "timeout": 15.0,
+      "expected_outcome": null,
+      "preconditions": [
+        {
+          "predicate_type": "element_visible",
+          "expected": true,
+          "selector": "#send",
+          "state_key": null,
+          "description": "send button is visible before the side effect"
+        }
+      ],
+      "postconditions": [
+        {
+          "predicate_type": "element_text_contains",
+          "expected": "Message sent",
+          "selector": "#status",
+          "state_key": null,
+          "description": "server-confirmed send status is visible"
+        },
+        {
+          "predicate_type": "page_state_equals",
+          "expected": true,
+          "selector": null,
+          "state_key": "sent",
+          "description": "page state confirms persistence"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-07-30T01:12:38.363635",
+  "last_used_at": null,
+  "success_count": 0,
+  "failure_count": 0,
+  "initial_url": "http://127.0.0.1:63425/app",
+  "example_parameters": {
+    "recipient": "test@example.com",
+    "subject": "\u6d4b\u8bd5\u90ae\u4ef6",
+    "content": "\u7b2c\u4e00\u6b21\u63a2\u7d22\u6b63\u6587"
+  },
+  "description": "Model-explored localhost mail workflow",
+  "average_execution_time": 0.0,
+  "model_calls_saved": 0,
+  "validation_status": "candidate",
+  "final_predicates": [
+    {
+      "predicate_type": "element_text_contains",
+      "expected": "{recipient}",
+      "selector": "#sent-list",
+      "state_key": null,
+      "description": "sent-list contains current recipient"
+    },
+    {
+      "predicate_type": "element_text_contains",
+      "expected": "{subject}",
+      "selector": "#sent-list",
+      "state_key": null,
+      "description": "sent-list contains current subject"
+    },
+    {
+      "predicate_type": "element_text_contains",
+      "expected": "{content}",
+      "selector": "#sent-list",
+      "state_key": null,
+      "description": "sent-list contains current content"
+    }
+  ],
+  "validated_at": null,
+  "invalid_reason": null
+}

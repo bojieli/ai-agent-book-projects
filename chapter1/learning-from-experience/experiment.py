@@ -32,7 +32,7 @@ class ExperimentRunner:
     def __init__(self, results_dir: str = "results"):
         """Initialize experiment runner."""
         self.results_dir = Path(results_dir)
-        self.results_dir.mkdir(exist_ok=True)
+        self.results_dir.mkdir(parents=True, exist_ok=True)
         
         # Create timestamp for this experiment run
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -220,11 +220,21 @@ class ExperimentRunner:
         # Compile results
         results = {
             "method": "LLM In-Context Learning",
+            "provider": agent.provider,
+            "base_url": agent.base_url,
+            "model": agent.model,
+            "using_openrouter": agent.using_openrouter,
             "training_episodes": num_training_episodes,
+            "evaluation_episodes": num_eval_episodes,
             "training_time": training_time,
             "experiences_collected": train_results["experiences_collected"],
-            "api_calls": train_results["total_api_calls"],
-            "total_tokens": train_results["total_tokens"],
+            "api_calls": agent.api_calls,
+            "api_attempts": len(agent.api_records),
+            "api_errors": sum(1 for item in agent.api_records if item.get("error")),
+            "fallback_actions": sum(
+                1 for item in agent.api_records if item.get("fallback_used")
+            ),
+            "total_tokens": agent.total_tokens,
             "training_victories": train_results["total_victories"],
             "training_victory_rate": train_results["victory_rate"],
             "eval_victories": eval_results["victories"],
@@ -232,7 +242,11 @@ class ExperimentRunner:
             "eval_avg_reward": eval_results["avg_reward"],
             "eval_avg_steps": eval_results["avg_length"],
             "episode_rewards": train_results["episode_rewards"],
-            "episode_lengths": train_results["episode_lengths"]
+            "episode_lengths": train_results["episode_lengths"],
+            "training_trajectories": [
+                item for item in agent.episode_trajectories
+                if item["phase"] == "training"
+            ],
         }
         
         # Save experiences

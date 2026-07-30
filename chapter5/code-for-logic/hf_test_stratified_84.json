@@ -1,0 +1,7324 @@
+[
+  {
+    "id": "perturbed_leaf-p2-r006",
+    "num_people": 2,
+    "names": [
+      "James",
+      "Sophia"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: James, and Sophia. \"Sophia is not a knight\" - James. Sophia stated, \"James is a knight if and only if James is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "James": "knight",
+      "Sophia": "knave"
+    },
+    "statements_struct": {
+      "James": [
+        "not",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ]
+      ],
+      "Sophia": [
+        "iff",
+        [
+          "is",
+          "James",
+          "knight"
+        ],
+        [
+          "is",
+          "James",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people2_num100.jsonl",
+      "file_sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+      "row": 6,
+      "dataset_index": 9
+    }
+  },
+  {
+    "id": "perturbed_leaf-p2-r011",
+    "num_people": 2,
+    "names": [
+      "Aiden",
+      "Lucas"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Aiden, and Lucas. As Aiden put it, \"If Aiden is a knight then Lucas is a knave\". According to Lucas, \"Lucas is a knight and Aiden is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Aiden": "knight",
+      "Lucas": "knave"
+    },
+    "statements_struct": {
+      "Aiden": [
+        "implies",
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Lucas": [
+        "and",
+        [
+          "is",
+          "Lucas",
+          "knight"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people2_num100.jsonl",
+      "file_sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+      "row": 11,
+      "dataset_index": 17
+    }
+  },
+  {
+    "id": "perturbed_leaf-p3-r006",
+    "num_people": 3,
+    "names": [
+      "Olivia",
+      "Amelia",
+      "James"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Olivia, Amelia, and James. \"James is a knave\" - Olivia. Amelia expressed that Olivia is a knave. James stated, \"James is a knight if and only if Amelia is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Olivia": "knight",
+      "Amelia": "knave",
+      "James": "knave"
+    },
+    "statements_struct": {
+      "Olivia": [
+        "is",
+        "James",
+        "knave"
+      ],
+      "Amelia": [
+        "is",
+        "Olivia",
+        "knave"
+      ],
+      "James": [
+        "iff",
+        [
+          "is",
+          "James",
+          "knight"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people3_num100.jsonl",
+      "file_sha256": "4c3d767065edb62d19728da7a4e4e4c63f550c1719c3600c868f50f48715711e",
+      "row": 6,
+      "dataset_index": 6
+    }
+  },
+  {
+    "id": "perturbed_leaf-p3-r092",
+    "num_people": 3,
+    "names": [
+      "William",
+      "Isabella",
+      "David"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: William, Isabella, and David. \"David is not a knight,\" William mentioned. Isabella was heard saying, \"William is not a knight\". In a statement by David: \"David is a knight and William is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "William": "knight",
+      "Isabella": "knave",
+      "David": "knave"
+    },
+    "statements_struct": {
+      "William": [
+        "not",
+        [
+          "is",
+          "David",
+          "knight"
+        ]
+      ],
+      "Isabella": [
+        "not",
+        [
+          "is",
+          "William",
+          "knight"
+        ]
+      ],
+      "David": [
+        "and",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "William",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people3_num100.jsonl",
+      "file_sha256": "4c3d767065edb62d19728da7a4e4e4c63f550c1719c3600c868f50f48715711e",
+      "row": 92,
+      "dataset_index": 98
+    }
+  },
+  {
+    "id": "perturbed_leaf-p4-r066",
+    "num_people": 4,
+    "names": [
+      "Scarlett",
+      "Sophia",
+      "Logan",
+      "Victoria"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Scarlett, Sophia, Logan, and Victoria. According to Scarlett, \"Victoria is a knave\". Sophia remarked, \"Scarlett is a knight\". \"Victoria is a knight\" - Logan. In a statement by Victoria: \"Logan is a knave or Logan is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Scarlett": "knave",
+      "Sophia": "knave",
+      "Logan": "knight",
+      "Victoria": "knight"
+    },
+    "statements_struct": {
+      "Scarlett": [
+        "is",
+        "Victoria",
+        "knave"
+      ],
+      "Sophia": [
+        "is",
+        "Scarlett",
+        "knight"
+      ],
+      "Logan": [
+        "is",
+        "Victoria",
+        "knight"
+      ],
+      "Victoria": [
+        "or",
+        [
+          "is",
+          "Logan",
+          "knave"
+        ],
+        [
+          "is",
+          "Logan",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people4_num100.jsonl",
+      "file_sha256": "b3811d1ea4bbdb2ade55dde240361470516e0541c58b5c526609f99ad6a038d7",
+      "row": 66,
+      "dataset_index": 69
+    }
+  },
+  {
+    "id": "perturbed_leaf-p4-r082",
+    "num_people": 4,
+    "names": [
+      "Amelia",
+      "Riley",
+      "Victoria",
+      "Elizabeth"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Amelia, Riley, Victoria, and Elizabeth. Amelia told you that Elizabeth is a knight. Riley remarked, \"Elizabeth is not a knight\". Victoria stated, \"Elizabeth is a knight or Amelia is a knight\". \"Amelia is a knave and Amelia is a knight,\" Elizabeth claimed. So who is a knight and who is a knave?",
+    "solution": {
+      "Amelia": "knave",
+      "Riley": "knight",
+      "Victoria": "knave",
+      "Elizabeth": "knave"
+    },
+    "statements_struct": {
+      "Amelia": [
+        "is",
+        "Elizabeth",
+        "knight"
+      ],
+      "Riley": [
+        "not",
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ]
+      ],
+      "Victoria": [
+        "or",
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ]
+      ],
+      "Elizabeth": [
+        "and",
+        [
+          "is",
+          "Amelia",
+          "knave"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people4_num100.jsonl",
+      "file_sha256": "b3811d1ea4bbdb2ade55dde240361470516e0541c58b5c526609f99ad6a038d7",
+      "row": 82,
+      "dataset_index": 88
+    }
+  },
+  {
+    "id": "perturbed_leaf-p5-r016",
+    "num_people": 5,
+    "names": [
+      "Penelope",
+      "Scarlett",
+      "Zoey",
+      "David",
+      "Logan"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Penelope, Scarlett, Zoey, David, and Logan. \"Penelope is a knight or Logan is a knight\" - Penelope. In Scarlett's words: \"Penelope is not a knight\". Zoey remarked, \"Scarlett is a knight or Logan is a knave\". David was heard saying, \"If Penelope is a knave then Zoey is a knight\". \"If David is a knave then Zoey is a knight,\" Logan mentioned. So who is a knight and who is a knave?",
+    "solution": {
+      "Penelope": "knight",
+      "Scarlett": "knave",
+      "Zoey": "knave",
+      "David": "knight",
+      "Logan": "knight"
+    },
+    "statements_struct": {
+      "Penelope": [
+        "or",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ],
+        [
+          "is",
+          "Logan",
+          "knight"
+        ]
+      ],
+      "Scarlett": [
+        "not",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ]
+      ],
+      "Zoey": [
+        "or",
+        [
+          "is",
+          "Scarlett",
+          "knight"
+        ],
+        [
+          "is",
+          "Logan",
+          "knave"
+        ]
+      ],
+      "David": [
+        "implies",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ],
+      "Logan": [
+        "implies",
+        [
+          "is",
+          "David",
+          "knave"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people5_num100.jsonl",
+      "file_sha256": "17529110798b0a659286983d0cf4e0d3b5a2b560dfb6ab3b3acb1b61ac9d7da7",
+      "row": 16,
+      "dataset_index": 16
+    }
+  },
+  {
+    "id": "perturbed_leaf-p5-r041",
+    "num_people": 5,
+    "names": [
+      "Henry",
+      "Aurora",
+      "Joseph",
+      "Jackson",
+      "Ava"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Henry, Aurora, Joseph, Jackson, and Ava. In a statement by Henry: \"Aurora is a knave or Ava is a knight\". Aurora told you that Henry is a knight or Henry is a knave. In Joseph's words: \"Jackson is not a knight\". Jackson noted, \"Aurora is not a knight\". Ava told you that Joseph is a knave or Jackson is a knight. So who is a knight and who is a knave?",
+    "solution": {
+      "Henry": "knave",
+      "Aurora": "knight",
+      "Joseph": "knight",
+      "Jackson": "knave",
+      "Ava": "knave"
+    },
+    "statements_struct": {
+      "Henry": [
+        "or",
+        [
+          "is",
+          "Aurora",
+          "knave"
+        ],
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ],
+      "Aurora": [
+        "or",
+        [
+          "is",
+          "Henry",
+          "knight"
+        ],
+        [
+          "is",
+          "Henry",
+          "knave"
+        ]
+      ],
+      "Joseph": [
+        "not",
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ]
+      ],
+      "Jackson": [
+        "not",
+        [
+          "is",
+          "Aurora",
+          "knight"
+        ]
+      ],
+      "Ava": [
+        "or",
+        [
+          "is",
+          "Joseph",
+          "knave"
+        ],
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people5_num100.jsonl",
+      "file_sha256": "17529110798b0a659286983d0cf4e0d3b5a2b560dfb6ab3b3acb1b61ac9d7da7",
+      "row": 41,
+      "dataset_index": 41
+    }
+  },
+  {
+    "id": "perturbed_leaf-p6-r017",
+    "num_people": 6,
+    "names": [
+      "Scarlett",
+      "Jacob",
+      "Benjamin",
+      "Charlotte",
+      "David",
+      "Zoey"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Scarlett, Jacob, Benjamin, Charlotte, David, and Zoey. In Scarlett's words: \"Jacob is a knight or Charlotte is a knight\". \"If Charlotte is a knight then Zoey is a knave,\" Jacob claimed. Benjamin remarked, \"Jacob is a knave if and only if Jacob is a knight\". In Charlotte's words: \"Jacob is a knight and David is a knave\". David told you that If Jacob is a knight then Zoey is a knave. As Zoey put it, \"Jacob is not a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Scarlett": "knight",
+      "Jacob": "knight",
+      "Benjamin": "knave",
+      "Charlotte": "knave",
+      "David": "knight",
+      "Zoey": "knave"
+    },
+    "statements_struct": {
+      "Scarlett": [
+        "or",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ]
+      ],
+      "Jacob": [
+        "implies",
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ]
+      ],
+      "Benjamin": [
+        "iff",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ]
+      ],
+      "Charlotte": [
+        "and",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "implies",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ]
+      ],
+      "Zoey": [
+        "not",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people6_num100.jsonl",
+      "file_sha256": "032c0c253bbe574335c741bb5ba7d07b48f622e217dc939f72a633ef9fbe46b0",
+      "row": 17,
+      "dataset_index": 17
+    }
+  },
+  {
+    "id": "perturbed_leaf-p6-r051",
+    "num_people": 6,
+    "names": [
+      "Ava",
+      "Liam",
+      "Jacob",
+      "James",
+      "Noah",
+      "Joseph"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Ava, Liam, Jacob, James, Noah, and Joseph. Ava said that Joseph is a knave. \"Jacob is a knave if and only if Joseph is a knight,\" Liam mentioned. In Jacob's words: \"James is a knight or Joseph is a knight\". James stated, \"If Noah is a knave then Jacob is a knight\". Noah told you that Jacob is a knight or Jacob is a knave. Joseph remarked, \"Noah is not a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Ava": "knight",
+      "Liam": "knight",
+      "Jacob": "knight",
+      "James": "knight",
+      "Noah": "knight",
+      "Joseph": "knave"
+    },
+    "statements_struct": {
+      "Ava": [
+        "is",
+        "Joseph",
+        "knave"
+      ],
+      "Liam": [
+        "iff",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Joseph",
+          "knight"
+        ]
+      ],
+      "Jacob": [
+        "or",
+        [
+          "is",
+          "James",
+          "knight"
+        ],
+        [
+          "is",
+          "Joseph",
+          "knight"
+        ]
+      ],
+      "James": [
+        "implies",
+        [
+          "is",
+          "Noah",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ]
+      ],
+      "Noah": [
+        "or",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ]
+      ],
+      "Joseph": [
+        "not",
+        [
+          "is",
+          "Noah",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people6_num100.jsonl",
+      "file_sha256": "032c0c253bbe574335c741bb5ba7d07b48f622e217dc939f72a633ef9fbe46b0",
+      "row": 51,
+      "dataset_index": 51
+    }
+  },
+  {
+    "id": "perturbed_leaf-p7-r079",
+    "num_people": 7,
+    "names": [
+      "Lucas",
+      "Isabella",
+      "James",
+      "Ella",
+      "Emma",
+      "Luke",
+      "Sofia"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Lucas, Isabella, James, Ella, Emma, Luke, and Sofia. In Lucas's words: \"Luke is a knave if and only if Luke is a knave\". In a statement by Isabella: \"Luke is a knave and Luke is a knight\". James remarked, \"If Sofia is a knave then Lucas is a knave\". Ella said that Isabella is a knight. Emma said, \"Lucas is a knave and Luke is a knight.\" Luke asserted: \"Lucas is a knight\". As Sofia put it, \"Ella is a knave if and only if Lucas is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Lucas": "knight",
+      "Isabella": "knave",
+      "James": "knave",
+      "Ella": "knave",
+      "Emma": "knave",
+      "Luke": "knight",
+      "Sofia": "knave"
+    },
+    "statements_struct": {
+      "Lucas": [
+        "iff",
+        [
+          "is",
+          "Luke",
+          "knave"
+        ],
+        [
+          "is",
+          "Luke",
+          "knave"
+        ]
+      ],
+      "Isabella": [
+        "and",
+        [
+          "is",
+          "Luke",
+          "knave"
+        ],
+        [
+          "is",
+          "Luke",
+          "knight"
+        ]
+      ],
+      "James": [
+        "implies",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Ella": [
+        "is",
+        "Isabella",
+        "knight"
+      ],
+      "Emma": [
+        "and",
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ],
+        [
+          "is",
+          "Luke",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "is",
+        "Lucas",
+        "knight"
+      ],
+      "Sofia": [
+        "iff",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people7_num100.jsonl",
+      "file_sha256": "f62b1f0c3c45e3a62660951fc12b9716679f1466bdc313066d85d08d6fe3c767",
+      "row": 79,
+      "dataset_index": 79
+    }
+  },
+  {
+    "id": "perturbed_leaf-p7-r080",
+    "num_people": 7,
+    "names": [
+      "Charlotte",
+      "Evelyn",
+      "Olivia",
+      "Oliver",
+      "Riley",
+      "Aria",
+      "Liam"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Charlotte, Evelyn, Olivia, Oliver, Riley, Aria, and Liam. Charlotte commented, \"If Olivia is a knave then Oliver is a knave\". \"Charlotte is a knight and Aria is a knave\" - Evelyn. Olivia noted, \"Oliver is not a knight\". Oliver was heard saying, \"Oliver is a knight and Evelyn is a knight\". Riley asserted: \"Charlotte is a knave if and only if Olivia is a knave\". \"Riley is not a knave,\" Aria declared. In Liam's words: \"Liam is a knight or Riley is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Charlotte": "knight",
+      "Evelyn": "knave",
+      "Olivia": "knight",
+      "Oliver": "knave",
+      "Riley": "knight",
+      "Aria": "knight",
+      "Liam": "knight"
+    },
+    "statements_struct": {
+      "Charlotte": [
+        "implies",
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ]
+      ],
+      "Evelyn": [
+        "and",
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ],
+        [
+          "is",
+          "Aria",
+          "knave"
+        ]
+      ],
+      "Olivia": [
+        "not",
+        [
+          "is",
+          "Oliver",
+          "knight"
+        ]
+      ],
+      "Oliver": [
+        "and",
+        [
+          "is",
+          "Oliver",
+          "knight"
+        ],
+        [
+          "is",
+          "Evelyn",
+          "knight"
+        ]
+      ],
+      "Riley": [
+        "iff",
+        [
+          "is",
+          "Charlotte",
+          "knave"
+        ],
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ]
+      ],
+      "Aria": [
+        "not",
+        [
+          "is",
+          "Riley",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "or",
+        [
+          "is",
+          "Liam",
+          "knight"
+        ],
+        [
+          "is",
+          "Riley",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people7_num100.jsonl",
+      "file_sha256": "f62b1f0c3c45e3a62660951fc12b9716679f1466bdc313066d85d08d6fe3c767",
+      "row": 80,
+      "dataset_index": 80
+    }
+  },
+  {
+    "id": "perturbed_leaf-p8-r011",
+    "num_people": 8,
+    "names": [
+      "Zoey",
+      "Chloe",
+      "Matthew",
+      "Aurora",
+      "Ethan",
+      "Aiden",
+      "Emily",
+      "Lily"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Zoey, Chloe, Matthew, Aurora, Ethan, Aiden, Emily, and Lily. Zoey commented, \"Aiden is a knight and Zoey is a knight\". According to Chloe, \"If Matthew is a knight then Aiden is a knave\". Matthew told you that Chloe is a knight. As Aurora put it, \"If Matthew is a knight then Matthew is a knave\". Ethan said, \"Aurora is a knave.\" \"Matthew is a knave,\" Aiden mentioned. Emily asserted: \"Zoey is a knave\". Lily remarked, \"Emily is a knave if and only if Aurora is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Zoey": "knave",
+      "Chloe": "knight",
+      "Matthew": "knight",
+      "Aurora": "knave",
+      "Ethan": "knight",
+      "Aiden": "knave",
+      "Emily": "knight",
+      "Lily": "knight"
+    },
+    "statements_struct": {
+      "Zoey": [
+        "and",
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ],
+      "Chloe": [
+        "implies",
+        [
+          "is",
+          "Matthew",
+          "knight"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knave"
+        ]
+      ],
+      "Matthew": [
+        "is",
+        "Chloe",
+        "knight"
+      ],
+      "Aurora": [
+        "implies",
+        [
+          "is",
+          "Matthew",
+          "knight"
+        ],
+        [
+          "is",
+          "Matthew",
+          "knave"
+        ]
+      ],
+      "Ethan": [
+        "is",
+        "Aurora",
+        "knave"
+      ],
+      "Aiden": [
+        "is",
+        "Matthew",
+        "knave"
+      ],
+      "Emily": [
+        "is",
+        "Zoey",
+        "knave"
+      ],
+      "Lily": [
+        "iff",
+        [
+          "is",
+          "Emily",
+          "knave"
+        ],
+        [
+          "is",
+          "Aurora",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people8_num100.jsonl",
+      "file_sha256": "01947375b3a16ce4fb340d6f0e1545d5aeadfc6f695c49cf2a6f436fcc5ba099",
+      "row": 11,
+      "dataset_index": 11
+    }
+  },
+  {
+    "id": "perturbed_leaf-p8-r069",
+    "num_people": 8,
+    "names": [
+      "Isabella",
+      "Jacob",
+      "Jackson",
+      "Benjamin",
+      "Sophia",
+      "Ava",
+      "Ella",
+      "Aiden"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Isabella, Jacob, Jackson, Benjamin, Sophia, Ava, Ella, and Aiden. Isabella was heard saying, \"Benjamin is a knave and Jacob is a knave\". As Jacob put it, \"Sophia is a knight\". Jackson remarked, \"Isabella is a knight if and only if Isabella is a knight\". \"Sophia is a knave,\" Benjamin claimed. Sophia said, \"If Jackson is a knight then Aiden is a knave.\" Ava stated, \"Isabella is a knave or Jacob is a knave\". In Ella's words: \"If Ava is a knave then Jacob is a knave\". Aiden told you that Isabella is not a knave. So who is a knight and who is a knave?",
+    "solution": {
+      "Isabella": "knave",
+      "Jacob": "knight",
+      "Jackson": "knight",
+      "Benjamin": "knave",
+      "Sophia": "knight",
+      "Ava": "knight",
+      "Ella": "knight",
+      "Aiden": "knave"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "and",
+        [
+          "is",
+          "Benjamin",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ]
+      ],
+      "Jacob": [
+        "is",
+        "Sophia",
+        "knight"
+      ],
+      "Jackson": [
+        "iff",
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ]
+      ],
+      "Benjamin": [
+        "is",
+        "Sophia",
+        "knave"
+      ],
+      "Sophia": [
+        "implies",
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knave"
+        ]
+      ],
+      "Ava": [
+        "or",
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ]
+      ],
+      "Ella": [
+        "implies",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ]
+      ],
+      "Aiden": [
+        "not",
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_leaf",
+      "path": "test/perturbed_leaf/people8_num100.jsonl",
+      "file_sha256": "01947375b3a16ce4fb340d6f0e1545d5aeadfc6f695c49cf2a6f436fcc5ba099",
+      "row": 69,
+      "dataset_index": 69
+    }
+  },
+  {
+    "id": "perturbed_statement-p2-r008",
+    "num_people": 2,
+    "names": [
+      "Daniel",
+      "Mia"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Daniel, and Mia. Daniel stated, \"Mia is a knight if and only if Daniel is a knight\". In Mia's words: \"Mia is a knight if and only if Daniel is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Daniel": "knight",
+      "Mia": "knight"
+    },
+    "statements_struct": {
+      "Daniel": [
+        "iff",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ],
+        [
+          "is",
+          "Daniel",
+          "knight"
+        ]
+      ],
+      "Mia": [
+        "iff",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ],
+        [
+          "is",
+          "Daniel",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people2_num100.jsonl",
+      "file_sha256": "18479f9b2c327e9ce51e901479e9e7ffcd4397094e91fdca430871a3fc131fc3",
+      "row": 8,
+      "dataset_index": 8
+    }
+  },
+  {
+    "id": "perturbed_statement-p2-r094",
+    "num_people": 2,
+    "names": [
+      "Riley",
+      "Abigail"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Riley, and Abigail. Riley expressed that If Riley is a knight then Abigail is a knave. Abigail noted, \"Riley is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Riley": "knight",
+      "Abigail": "knave"
+    },
+    "statements_struct": {
+      "Riley": [
+        "implies",
+        [
+          "is",
+          "Riley",
+          "knight"
+        ],
+        [
+          "is",
+          "Abigail",
+          "knave"
+        ]
+      ],
+      "Abigail": [
+        "is",
+        "Riley",
+        "knave"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people2_num100.jsonl",
+      "file_sha256": "18479f9b2c327e9ce51e901479e9e7ffcd4397094e91fdca430871a3fc131fc3",
+      "row": 94,
+      "dataset_index": 94
+    }
+  },
+  {
+    "id": "perturbed_statement-p3-r000",
+    "num_people": 3,
+    "names": [
+      "Penelope",
+      "David",
+      "Zoey"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Penelope, David, and Zoey. Penelope noted, \"David is a knight if and only if David is a knave\". David told you that Zoey is a knave if and only if Zoey is a knight. According to Zoey, \"Penelope is not a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Penelope": "knave",
+      "David": "knave",
+      "Zoey": "knave"
+    },
+    "statements_struct": {
+      "Penelope": [
+        "iff",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "iff",
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ],
+      "Zoey": [
+        "not",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people3_num100.jsonl",
+      "file_sha256": "cb8832b4aae19426e10a039236f0e4fb7dad797598edb3850db8067ff7cda1a6",
+      "row": 0,
+      "dataset_index": 0
+    }
+  },
+  {
+    "id": "perturbed_statement-p3-r024",
+    "num_people": 3,
+    "names": [
+      "Aiden",
+      "Harper",
+      "Emma"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Aiden, Harper, and Emma. \"Harper is a knight if and only if Emma is a knave\" - Aiden. Harper was heard saying, \"Emma is a knight or Emma is a knave\". As Emma put it, \"Harper is a knight if and only if Harper is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Aiden": "knight",
+      "Harper": "knight",
+      "Emma": "knave"
+    },
+    "statements_struct": {
+      "Aiden": [
+        "iff",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Emma",
+          "knave"
+        ]
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Emma",
+          "knight"
+        ],
+        [
+          "is",
+          "Emma",
+          "knave"
+        ]
+      ],
+      "Emma": [
+        "iff",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Harper",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people3_num100.jsonl",
+      "file_sha256": "cb8832b4aae19426e10a039236f0e4fb7dad797598edb3850db8067ff7cda1a6",
+      "row": 24,
+      "dataset_index": 24
+    }
+  },
+  {
+    "id": "perturbed_statement-p4-r027",
+    "num_people": 4,
+    "names": [
+      "Victoria",
+      "Lucas",
+      "Oliver",
+      "Harper"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Victoria, Lucas, Oliver, and Harper. According to Victoria, \"Lucas is a knave and Harper is a knight\". Lucas said that Harper is a knave. Oliver said that Lucas is a knave or Victoria is a knight. Harper told you that Harper is a knight if and only if Oliver is a knave. So who is a knight and who is a knave?",
+    "solution": {
+      "Victoria": "knave",
+      "Lucas": "knight",
+      "Oliver": "knave",
+      "Harper": "knave"
+    },
+    "statements_struct": {
+      "Victoria": [
+        "and",
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Lucas": [
+        "is",
+        "Harper",
+        "knave"
+      ],
+      "Oliver": [
+        "or",
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ],
+        [
+          "is",
+          "Victoria",
+          "knight"
+        ]
+      ],
+      "Harper": [
+        "iff",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people4_num100.jsonl",
+      "file_sha256": "ec8821279ff09db70098b97c5b47f452f2b9a6059b3d32ff22c9fce8342e4c30",
+      "row": 27,
+      "dataset_index": 27
+    }
+  },
+  {
+    "id": "perturbed_statement-p4-r028",
+    "num_people": 4,
+    "names": [
+      "Daniel",
+      "David",
+      "Victoria",
+      "Mason"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Daniel, David, Victoria, and Mason. Daniel noted, \"Mason is a knave and David is a knave\". In a statement by David: \"Victoria is a knight and Victoria is a knave\". As Victoria put it, \"Daniel is a knight\". In Mason's words: \"Mason is a knight or Daniel is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Daniel": "knave",
+      "David": "knave",
+      "Victoria": "knave",
+      "Mason": "knight"
+    },
+    "statements_struct": {
+      "Daniel": [
+        "and",
+        [
+          "is",
+          "Mason",
+          "knave"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "and",
+        [
+          "is",
+          "Victoria",
+          "knight"
+        ],
+        [
+          "is",
+          "Victoria",
+          "knave"
+        ]
+      ],
+      "Victoria": [
+        "is",
+        "Daniel",
+        "knight"
+      ],
+      "Mason": [
+        "or",
+        [
+          "is",
+          "Mason",
+          "knight"
+        ],
+        [
+          "is",
+          "Daniel",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people4_num100.jsonl",
+      "file_sha256": "ec8821279ff09db70098b97c5b47f452f2b9a6059b3d32ff22c9fce8342e4c30",
+      "row": 28,
+      "dataset_index": 28
+    }
+  },
+  {
+    "id": "perturbed_statement-p5-r095",
+    "num_people": 5,
+    "names": [
+      "Jackson",
+      "Ella",
+      "Alexander",
+      "Chloe",
+      "Emma"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Jackson, Ella, Alexander, Chloe, and Emma. Jackson asserted: \"Chloe is not a knave\". According to Ella, \"Alexander is a knave or Ella is a knight\". \"Emma is a knight if and only if Jackson is a knave,\" Alexander declared. Chloe told you that If Jackson is a knave then Alexander is a knight. As Emma put it, \"If Ella is a knave then Alexander is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Jackson": "knight",
+      "Ella": "knight",
+      "Alexander": "knave",
+      "Chloe": "knight",
+      "Emma": "knight"
+    },
+    "statements_struct": {
+      "Jackson": [
+        "not",
+        [
+          "is",
+          "Chloe",
+          "knave"
+        ]
+      ],
+      "Ella": [
+        "or",
+        [
+          "is",
+          "Alexander",
+          "knave"
+        ],
+        [
+          "is",
+          "Ella",
+          "knight"
+        ]
+      ],
+      "Alexander": [
+        "iff",
+        [
+          "is",
+          "Emma",
+          "knight"
+        ],
+        [
+          "is",
+          "Jackson",
+          "knave"
+        ]
+      ],
+      "Chloe": [
+        "implies",
+        [
+          "is",
+          "Jackson",
+          "knave"
+        ],
+        [
+          "is",
+          "Alexander",
+          "knight"
+        ]
+      ],
+      "Emma": [
+        "implies",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ],
+        [
+          "is",
+          "Alexander",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people5_num100.jsonl",
+      "file_sha256": "791a14c3a7fea7713904786cdbd24ccc94901c0508c1ed3daf5abe3794857ed4",
+      "row": 95,
+      "dataset_index": 95
+    }
+  },
+  {
+    "id": "perturbed_statement-p5-r099",
+    "num_people": 5,
+    "names": [
+      "Alexander",
+      "Luke",
+      "Jackson",
+      "Charlotte",
+      "Harper"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Alexander, Luke, Jackson, Charlotte, and Harper. \"Harper is not a knight\" - Alexander. As Luke put it, \"If Luke is a knight then Charlotte is a knight\". \"Luke is a knight or Harper is a knave\" - Jackson. Charlotte was heard saying, \"Charlotte is a knight\". Harper expressed that Harper is a knight or Jackson is a knight. So who is a knight and who is a knave?",
+    "solution": {
+      "Alexander": "knave",
+      "Luke": "knight",
+      "Jackson": "knight",
+      "Charlotte": "knight",
+      "Harper": "knight"
+    },
+    "statements_struct": {
+      "Alexander": [
+        "not",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "implies",
+        [
+          "is",
+          "Luke",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ]
+      ],
+      "Jackson": [
+        "or",
+        [
+          "is",
+          "Luke",
+          "knight"
+        ],
+        [
+          "is",
+          "Harper",
+          "knave"
+        ]
+      ],
+      "Charlotte": [
+        "is",
+        "Charlotte",
+        "knight"
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people5_num100.jsonl",
+      "file_sha256": "791a14c3a7fea7713904786cdbd24ccc94901c0508c1ed3daf5abe3794857ed4",
+      "row": 99,
+      "dataset_index": 99
+    }
+  },
+  {
+    "id": "perturbed_statement-p6-r047",
+    "num_people": 6,
+    "names": [
+      "Noah",
+      "Charlotte",
+      "Lily",
+      "Samuel",
+      "Owen",
+      "Grace"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Noah, Charlotte, Lily, Samuel, Owen, and Grace. Noah expressed that Lily is a knight or Charlotte is a knave. Charlotte expressed that If Lily is a knight then Noah is a knight. \"If Samuel is a knight then Lily is a knight,\" Lily claimed. Samuel said, \"Lily is a knight.\" Owen told you that Noah is a knight or Lily is a knight. Grace commented, \"Lily is a knight and Samuel is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Noah": "knight",
+      "Charlotte": "knight",
+      "Lily": "knight",
+      "Samuel": "knight",
+      "Owen": "knight",
+      "Grace": "knave"
+    },
+    "statements_struct": {
+      "Noah": [
+        "or",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knave"
+        ]
+      ],
+      "Charlotte": [
+        "implies",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Noah",
+          "knight"
+        ]
+      ],
+      "Lily": [
+        "implies",
+        [
+          "is",
+          "Samuel",
+          "knight"
+        ],
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ],
+      "Samuel": [
+        "is",
+        "Lily",
+        "knight"
+      ],
+      "Owen": [
+        "or",
+        [
+          "is",
+          "Noah",
+          "knight"
+        ],
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ],
+      "Grace": [
+        "and",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Samuel",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people6_num100.jsonl",
+      "file_sha256": "afadf008aa8aba0753bb198baca07ea51ebd9879045b619861225eea56559134",
+      "row": 47,
+      "dataset_index": 47
+    }
+  },
+  {
+    "id": "perturbed_statement-p6-r052",
+    "num_people": 6,
+    "names": [
+      "Emily",
+      "Noah",
+      "Sophia",
+      "Olivia",
+      "Avery",
+      "Grace"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Emily, Noah, Sophia, Olivia, Avery, and Grace. In a statement by Emily: \"If Avery is a knave then Noah is a knight\". As Noah put it, \"Olivia is a knight and Grace is a knave\". Sophia told you that Grace is a knave and Olivia is a knight. \"Noah is not a knight\" - Olivia. Avery told you that Grace is not a knight. Grace told you that If Olivia is a knave then Avery is a knave. So who is a knight and who is a knave?",
+    "solution": {
+      "Emily": "knave",
+      "Noah": "knave",
+      "Sophia": "knave",
+      "Olivia": "knight",
+      "Avery": "knave",
+      "Grace": "knight"
+    },
+    "statements_struct": {
+      "Emily": [
+        "implies",
+        [
+          "is",
+          "Avery",
+          "knave"
+        ],
+        [
+          "is",
+          "Noah",
+          "knight"
+        ]
+      ],
+      "Noah": [
+        "and",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Sophia": [
+        "and",
+        [
+          "is",
+          "Grace",
+          "knave"
+        ],
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ]
+      ],
+      "Olivia": [
+        "not",
+        [
+          "is",
+          "Noah",
+          "knight"
+        ]
+      ],
+      "Avery": [
+        "not",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ],
+      "Grace": [
+        "implies",
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ],
+        [
+          "is",
+          "Avery",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people6_num100.jsonl",
+      "file_sha256": "afadf008aa8aba0753bb198baca07ea51ebd9879045b619861225eea56559134",
+      "row": 52,
+      "dataset_index": 52
+    }
+  },
+  {
+    "id": "perturbed_statement-p7-r015",
+    "num_people": 7,
+    "names": [
+      "Emma",
+      "Zoey",
+      "David",
+      "Jack",
+      "Amelia",
+      "Logan",
+      "Abigail"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Emma, Zoey, David, Jack, Amelia, Logan, and Abigail. \"David is not a knight\" - Emma. Zoey expressed that If Abigail is a knight then Jack is a knave. \"If Jack is a knave then Jack is a knight\" - David. Jack noted, \"If Zoey is a knave then David is a knave\". Amelia stated, \"Abigail is a knave if and only if Zoey is a knave\". In Logan's words: \"Jack is a knight if and only if Amelia is a knight\". According to Abigail, \"David is a knight and Abigail is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Emma": "knave",
+      "Zoey": "knight",
+      "David": "knight",
+      "Jack": "knight",
+      "Amelia": "knave",
+      "Logan": "knave",
+      "Abigail": "knave"
+    },
+    "statements_struct": {
+      "Emma": [
+        "not",
+        [
+          "is",
+          "David",
+          "knight"
+        ]
+      ],
+      "Zoey": [
+        "implies",
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ],
+        [
+          "is",
+          "Jack",
+          "knave"
+        ]
+      ],
+      "David": [
+        "implies",
+        [
+          "is",
+          "Jack",
+          "knave"
+        ],
+        [
+          "is",
+          "Jack",
+          "knight"
+        ]
+      ],
+      "Jack": [
+        "implies",
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "Amelia": [
+        "iff",
+        [
+          "is",
+          "Abigail",
+          "knave"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ]
+      ],
+      "Logan": [
+        "iff",
+        [
+          "is",
+          "Jack",
+          "knight"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ]
+      ],
+      "Abigail": [
+        "and",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people7_num100.jsonl",
+      "file_sha256": "bd3900ae3527887659a1a0da1146780e0a47e4d96ff301e1c2039f35bcfff849",
+      "row": 15,
+      "dataset_index": 15
+    }
+  },
+  {
+    "id": "perturbed_statement-p7-r028",
+    "num_people": 7,
+    "names": [
+      "Aria",
+      "Aiden",
+      "Emily",
+      "Lily",
+      "Mason",
+      "Sophia",
+      "Sebastian"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Aria, Aiden, Emily, Lily, Mason, Sophia, and Sebastian. Aria said that Lily is not a knave. In Aiden's words: \"Lily is a knight or Aria is a knight\". \"Lily is a knight and Aria is a knave,\" Emily declared. According to Lily, \"Sophia is a knight or Sebastian is a knight\". In Mason's words: \"Emily is a knight and Sophia is a knight\". \"Sebastian is not a knight,\" Sophia declared. As Sebastian put it, \"If Sophia is a knave then Aria is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Aria": "knight",
+      "Aiden": "knight",
+      "Emily": "knave",
+      "Lily": "knight",
+      "Mason": "knave",
+      "Sophia": "knave",
+      "Sebastian": "knight"
+    },
+    "statements_struct": {
+      "Aria": [
+        "not",
+        [
+          "is",
+          "Lily",
+          "knave"
+        ]
+      ],
+      "Aiden": [
+        "or",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Aria",
+          "knight"
+        ]
+      ],
+      "Emily": [
+        "and",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Aria",
+          "knave"
+        ]
+      ],
+      "Lily": [
+        "or",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ],
+      "Mason": [
+        "and",
+        [
+          "is",
+          "Emily",
+          "knight"
+        ],
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ]
+      ],
+      "Sophia": [
+        "not",
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ],
+      "Sebastian": [
+        "implies",
+        [
+          "is",
+          "Sophia",
+          "knave"
+        ],
+        [
+          "is",
+          "Aria",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people7_num100.jsonl",
+      "file_sha256": "bd3900ae3527887659a1a0da1146780e0a47e4d96ff301e1c2039f35bcfff849",
+      "row": 28,
+      "dataset_index": 28
+    }
+  },
+  {
+    "id": "perturbed_statement-p8-r037",
+    "num_people": 8,
+    "names": [
+      "Ava",
+      "Grace",
+      "Riley",
+      "James",
+      "Harper",
+      "Avery",
+      "Sofia",
+      "Noah"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Ava, Grace, Riley, James, Harper, Avery, Sofia, and Noah. In Ava's words: \"Avery is a knave if and only if Grace is a knave\". Grace expressed that James is a knight. Riley said that Ava is a knight if and only if Riley is a knight. James noted, \"If Ava is a knight then Riley is a knight\". As Harper put it, \"Ava is not a knight\". Avery noted, \"Grace is a knight if and only if Avery is a knight\". \"Avery is not a knight,\" Sofia mentioned. Noah noted, \"If Ava is a knave then Sofia is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Ava": "knight",
+      "Grace": "knight",
+      "Riley": "knight",
+      "James": "knight",
+      "Harper": "knave",
+      "Avery": "knight",
+      "Sofia": "knave",
+      "Noah": "knight"
+    },
+    "statements_struct": {
+      "Ava": [
+        "iff",
+        [
+          "is",
+          "Avery",
+          "knave"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Grace": [
+        "is",
+        "James",
+        "knight"
+      ],
+      "Riley": [
+        "iff",
+        [
+          "is",
+          "Ava",
+          "knight"
+        ],
+        [
+          "is",
+          "Riley",
+          "knight"
+        ]
+      ],
+      "James": [
+        "implies",
+        [
+          "is",
+          "Ava",
+          "knight"
+        ],
+        [
+          "is",
+          "Riley",
+          "knight"
+        ]
+      ],
+      "Harper": [
+        "not",
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ],
+      "Avery": [
+        "iff",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Avery",
+          "knight"
+        ]
+      ],
+      "Sofia": [
+        "not",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ]
+      ],
+      "Noah": [
+        "implies",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people8_num100.jsonl",
+      "file_sha256": "c3d91ba046bbeb5ec0d64c9147d3d2c76c1f631716da47d32b8379ebfcbe35a0",
+      "row": 37,
+      "dataset_index": 37
+    }
+  },
+  {
+    "id": "perturbed_statement-p8-r086",
+    "num_people": 8,
+    "names": [
+      "David",
+      "Ella",
+      "Matthew",
+      "Charlotte",
+      "Oliver",
+      "Samuel",
+      "Riley",
+      "Alexander"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: David, Ella, Matthew, Charlotte, Oliver, Samuel, Riley, and Alexander. David stated, \"Riley is not a knave\". \"If Samuel is a knave then Oliver is a knight,\" Ella claimed. \"Samuel is a knight or Riley is a knave,\" Matthew declared. Charlotte asserted: \"Riley is not a knight\". Oliver commented, \"David is a knave\". \"Charlotte is a knight and Riley is a knave,\" Samuel mentioned. Riley remarked, \"If Matthew is a knave then Samuel is a knave\". Alexander stated, \"If Samuel is a knave then Oliver is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "David": "knight",
+      "Ella": "knave",
+      "Matthew": "knave",
+      "Charlotte": "knave",
+      "Oliver": "knave",
+      "Samuel": "knave",
+      "Riley": "knight",
+      "Alexander": "knight"
+    },
+    "statements_struct": {
+      "David": [
+        "not",
+        [
+          "is",
+          "Riley",
+          "knave"
+        ]
+      ],
+      "Ella": [
+        "implies",
+        [
+          "is",
+          "Samuel",
+          "knave"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knight"
+        ]
+      ],
+      "Matthew": [
+        "or",
+        [
+          "is",
+          "Samuel",
+          "knight"
+        ],
+        [
+          "is",
+          "Riley",
+          "knave"
+        ]
+      ],
+      "Charlotte": [
+        "not",
+        [
+          "is",
+          "Riley",
+          "knight"
+        ]
+      ],
+      "Oliver": [
+        "is",
+        "David",
+        "knave"
+      ],
+      "Samuel": [
+        "and",
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ],
+        [
+          "is",
+          "Riley",
+          "knave"
+        ]
+      ],
+      "Riley": [
+        "implies",
+        [
+          "is",
+          "Matthew",
+          "knave"
+        ],
+        [
+          "is",
+          "Samuel",
+          "knave"
+        ]
+      ],
+      "Alexander": [
+        "implies",
+        [
+          "is",
+          "Samuel",
+          "knave"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "perturbed_statement",
+      "path": "test/perturbed_statement/people8_num100.jsonl",
+      "file_sha256": "c3d91ba046bbeb5ec0d64c9147d3d2c76c1f631716da47d32b8379ebfcbe35a0",
+      "row": 86,
+      "dataset_index": 86
+    }
+  },
+  {
+    "id": "reorder_statement-p2-r060",
+    "num_people": 2,
+    "names": [
+      "Isabella",
+      "Emma"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Isabella, and Emma. In Emma's words: \"Isabella is a knight if and only if Isabella is a knave\". \"Isabella is a knight and Emma is a knight\" - Isabella. So who is a knight and who is a knave?",
+    "solution": {
+      "Isabella": "knave",
+      "Emma": "knave"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "and",
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ],
+        [
+          "is",
+          "Emma",
+          "knight"
+        ]
+      ],
+      "Emma": [
+        "iff",
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people2_num100.jsonl",
+      "file_sha256": "c116f384f984150969554d783ccf7cecf4c6e56c59d2f5d326bfcfa722bb149c",
+      "row": 60,
+      "dataset_index": 60
+    }
+  },
+  {
+    "id": "reorder_statement-p2-r076",
+    "num_people": 2,
+    "names": [
+      "Isabella",
+      "Elizabeth"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Isabella, and Elizabeth. Elizabeth remarked, \"Isabella is a knave\". Isabella commented, \"Elizabeth is a knight if and only if Isabella is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Isabella": "knave",
+      "Elizabeth": "knight"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "iff",
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ]
+      ],
+      "Elizabeth": [
+        "is",
+        "Isabella",
+        "knave"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people2_num100.jsonl",
+      "file_sha256": "c116f384f984150969554d783ccf7cecf4c6e56c59d2f5d326bfcfa722bb149c",
+      "row": 76,
+      "dataset_index": 76
+    }
+  },
+  {
+    "id": "reorder_statement-p3-r000",
+    "num_people": 3,
+    "names": [
+      "Penelope",
+      "David",
+      "Zoey"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Penelope, David, and Zoey. David told you that Zoey is a knave if and only if Zoey is a knight. According to Zoey, \"If Penelope is a knave then David is a knave\". Penelope noted, \"David is a knight if and only if David is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Penelope": "knave",
+      "David": "knave",
+      "Zoey": "knight"
+    },
+    "statements_struct": {
+      "Penelope": [
+        "iff",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "iff",
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ],
+      "Zoey": [
+        "implies",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people3_num100.jsonl",
+      "file_sha256": "ff772d57162fb500e608ef28c59eaf57ba1d80f60cf3f73902162c3476f6b0a2",
+      "row": 0,
+      "dataset_index": 0
+    }
+  },
+  {
+    "id": "reorder_statement-p3-r064",
+    "num_people": 3,
+    "names": [
+      "Lucas",
+      "Evelyn",
+      "Grace"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Lucas, Evelyn, and Grace. Grace stated, \"Lucas is a knave\". Evelyn was heard saying, \"Grace is a knight\". Lucas expressed that If Lucas is a knight then Evelyn is a knave. So who is a knight and who is a knave?",
+    "solution": {
+      "Lucas": "knight",
+      "Evelyn": "knave",
+      "Grace": "knave"
+    },
+    "statements_struct": {
+      "Lucas": [
+        "implies",
+        [
+          "is",
+          "Lucas",
+          "knight"
+        ],
+        [
+          "is",
+          "Evelyn",
+          "knave"
+        ]
+      ],
+      "Evelyn": [
+        "is",
+        "Grace",
+        "knight"
+      ],
+      "Grace": [
+        "is",
+        "Lucas",
+        "knave"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people3_num100.jsonl",
+      "file_sha256": "ff772d57162fb500e608ef28c59eaf57ba1d80f60cf3f73902162c3476f6b0a2",
+      "row": 64,
+      "dataset_index": 64
+    }
+  },
+  {
+    "id": "reorder_statement-p4-r068",
+    "num_people": 4,
+    "names": [
+      "Aurora",
+      "Elizabeth",
+      "Grace",
+      "Daniel"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Aurora, Elizabeth, Grace, and Daniel. \"Grace is a knight and Grace is a knave,\" Elizabeth declared. \"Elizabeth is a knight if and only if Grace is a knave\" - Aurora. In Daniel's words: \"Aurora is a knight\". \"Daniel is a knave or Grace is a knight,\" Grace mentioned. So who is a knight and who is a knave?",
+    "solution": {
+      "Aurora": "knight",
+      "Elizabeth": "knave",
+      "Grace": "knight",
+      "Daniel": "knight"
+    },
+    "statements_struct": {
+      "Aurora": [
+        "iff",
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Elizabeth": [
+        "and",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Grace": [
+        "or",
+        [
+          "is",
+          "Daniel",
+          "knave"
+        ],
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ],
+      "Daniel": [
+        "is",
+        "Aurora",
+        "knight"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people4_num100.jsonl",
+      "file_sha256": "be12e4b5a38792785264c16c11117f7f10f955517e32c92ea37949017a4da0cb",
+      "row": 68,
+      "dataset_index": 68
+    }
+  },
+  {
+    "id": "reorder_statement-p4-r097",
+    "num_people": 4,
+    "names": [
+      "Lucas",
+      "Ava",
+      "Grace",
+      "Liam"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Lucas, Ava, Grace, and Liam. Lucas was heard saying, \"If Grace is a knight then Ava is a knight\". In a statement by Liam: \"Grace is a knave if and only if Grace is a knight\". Ava remarked, \"Grace is not a knight\". \"Ava is a knave if and only if Lucas is a knave,\" Grace mentioned. So who is a knight and who is a knave?",
+    "solution": {
+      "Lucas": "knave",
+      "Ava": "knave",
+      "Grace": "knight",
+      "Liam": "knave"
+    },
+    "statements_struct": {
+      "Lucas": [
+        "implies",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ],
+      "Ava": [
+        "not",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ],
+      "Grace": [
+        "iff",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "iff",
+        [
+          "is",
+          "Grace",
+          "knave"
+        ],
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people4_num100.jsonl",
+      "file_sha256": "be12e4b5a38792785264c16c11117f7f10f955517e32c92ea37949017a4da0cb",
+      "row": 97,
+      "dataset_index": 97
+    }
+  },
+  {
+    "id": "reorder_statement-p5-r055",
+    "num_people": 5,
+    "names": [
+      "Olivia",
+      "Victoria",
+      "Mason",
+      "Lily",
+      "Abigail"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Olivia, Victoria, Mason, Lily, and Abigail. Mason noted, \"If Olivia is a knave then Victoria is a knave\". Lily expressed that Abigail is not a knight. \"Abigail is a knave if and only if Lily is a knave\" - Victoria. Abigail commented, \"Olivia is a knight or Victoria is a knight\". Olivia said that Lily is a knight and Abigail is a knight. So who is a knight and who is a knave?",
+    "solution": {
+      "Olivia": "knave",
+      "Victoria": "knave",
+      "Mason": "knight",
+      "Lily": "knight",
+      "Abigail": "knave"
+    },
+    "statements_struct": {
+      "Olivia": [
+        "and",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ]
+      ],
+      "Victoria": [
+        "iff",
+        [
+          "is",
+          "Abigail",
+          "knave"
+        ],
+        [
+          "is",
+          "Lily",
+          "knave"
+        ]
+      ],
+      "Mason": [
+        "implies",
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ],
+        [
+          "is",
+          "Victoria",
+          "knave"
+        ]
+      ],
+      "Lily": [
+        "not",
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ]
+      ],
+      "Abigail": [
+        "or",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ],
+        [
+          "is",
+          "Victoria",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people5_num100.jsonl",
+      "file_sha256": "04a492522cdeb64a960632652b54e3fd27cc505fa8a1c48cf9c666cc8e7d6fb0",
+      "row": 55,
+      "dataset_index": 55
+    }
+  },
+  {
+    "id": "reorder_statement-p5-r092",
+    "num_people": 5,
+    "names": [
+      "Sophia",
+      "Avery",
+      "Michael",
+      "Chloe",
+      "Luke"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Sophia, Avery, Michael, Chloe, and Luke. Luke said that Avery is a knave if and only if Michael is a knave. \"Luke is a knave,\" Michael declared. \"If Michael is a knight then Michael is a knave,\" Chloe declared. \"Michael is a knave or Michael is a knight,\" Sophia mentioned. \"Sophia is a knight if and only if Chloe is a knight,\" Avery claimed. So who is a knight and who is a knave?",
+    "solution": {
+      "Sophia": "knight",
+      "Avery": "knave",
+      "Michael": "knight",
+      "Chloe": "knave",
+      "Luke": "knave"
+    },
+    "statements_struct": {
+      "Sophia": [
+        "or",
+        [
+          "is",
+          "Michael",
+          "knave"
+        ],
+        [
+          "is",
+          "Michael",
+          "knight"
+        ]
+      ],
+      "Avery": [
+        "iff",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ],
+        [
+          "is",
+          "Chloe",
+          "knight"
+        ]
+      ],
+      "Michael": [
+        "is",
+        "Luke",
+        "knave"
+      ],
+      "Chloe": [
+        "implies",
+        [
+          "is",
+          "Michael",
+          "knight"
+        ],
+        [
+          "is",
+          "Michael",
+          "knave"
+        ]
+      ],
+      "Luke": [
+        "iff",
+        [
+          "is",
+          "Avery",
+          "knave"
+        ],
+        [
+          "is",
+          "Michael",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people5_num100.jsonl",
+      "file_sha256": "04a492522cdeb64a960632652b54e3fd27cc505fa8a1c48cf9c666cc8e7d6fb0",
+      "row": 92,
+      "dataset_index": 92
+    }
+  },
+  {
+    "id": "reorder_statement-p6-r080",
+    "num_people": 6,
+    "names": [
+      "Olivia",
+      "Joseph",
+      "Matthew",
+      "Penelope",
+      "Charlotte",
+      "Liam"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Olivia, Joseph, Matthew, Penelope, Charlotte, and Liam. \"If Joseph is a knave then Liam is a knight\" - Penelope. Joseph said, \"Penelope is a knave and Liam is a knave.\" Charlotte noted, \"Matthew is a knight if and only if Olivia is a knave\". Olivia told you that Olivia is a knight or Charlotte is a knave. Matthew commented, \"Penelope is not a knave\". Liam was heard saying, \"Penelope is a knave or Olivia is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Olivia": "knave",
+      "Joseph": "knave",
+      "Matthew": "knight",
+      "Penelope": "knight",
+      "Charlotte": "knight",
+      "Liam": "knight"
+    },
+    "statements_struct": {
+      "Olivia": [
+        "or",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knave"
+        ]
+      ],
+      "Joseph": [
+        "and",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ],
+        [
+          "is",
+          "Liam",
+          "knave"
+        ]
+      ],
+      "Matthew": [
+        "not",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ],
+      "Penelope": [
+        "implies",
+        [
+          "is",
+          "Joseph",
+          "knave"
+        ],
+        [
+          "is",
+          "Liam",
+          "knight"
+        ]
+      ],
+      "Charlotte": [
+        "iff",
+        [
+          "is",
+          "Matthew",
+          "knight"
+        ],
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "or",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ],
+        [
+          "is",
+          "Olivia",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people6_num100.jsonl",
+      "file_sha256": "4b6131d749c47ce1580d0443e373112cc5f0e20f1b0245455b3df63b106580c5",
+      "row": 80,
+      "dataset_index": 80
+    }
+  },
+  {
+    "id": "reorder_statement-p6-r085",
+    "num_people": 6,
+    "names": [
+      "David",
+      "Ava",
+      "Riley",
+      "Aiden",
+      "Sebastian",
+      "Abigail"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: David, Ava, Riley, Aiden, Sebastian, and Abigail. In David's words: \"Riley is not a knave\". Abigail asserted: \"Riley is a knight or Sebastian is a knight\". Ava said that Sebastian is a knight and Abigail is a knight. Riley expressed that David is a knave and Aiden is a knight. Sebastian asserted: \"David is a knight\". Aiden noted, \"David is a knight and Sebastian is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "David": "knave",
+      "Ava": "knave",
+      "Riley": "knave",
+      "Aiden": "knave",
+      "Sebastian": "knave",
+      "Abigail": "knave"
+    },
+    "statements_struct": {
+      "David": [
+        "not",
+        [
+          "is",
+          "Riley",
+          "knave"
+        ]
+      ],
+      "Ava": [
+        "and",
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ],
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ]
+      ],
+      "Riley": [
+        "and",
+        [
+          "is",
+          "David",
+          "knave"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ]
+      ],
+      "Aiden": [
+        "and",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ],
+      "Sebastian": [
+        "is",
+        "David",
+        "knight"
+      ],
+      "Abigail": [
+        "or",
+        [
+          "is",
+          "Riley",
+          "knight"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people6_num100.jsonl",
+      "file_sha256": "4b6131d749c47ce1580d0443e373112cc5f0e20f1b0245455b3df63b106580c5",
+      "row": 85,
+      "dataset_index": 85
+    }
+  },
+  {
+    "id": "reorder_statement-p7-r067",
+    "num_people": 7,
+    "names": [
+      "Avery",
+      "Liam",
+      "William",
+      "James",
+      "Isabella",
+      "Riley",
+      "Ava"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Avery, Liam, William, James, Isabella, Riley, and Ava. In a statement by Avery: \"William is a knave or Isabella is a knave\". \"Liam is not a knave,\" James claimed. In Isabella's words: \"Liam is a knight if and only if Liam is a knave\". Riley stated, \"Isabella is a knight\". William commented, \"James is a knave and Ava is a knave\". Ava told you that Liam is a knave or Isabella is a knight. Liam commented, \"Avery is a knight or Isabella is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Avery": "knight",
+      "Liam": "knight",
+      "William": "knave",
+      "James": "knight",
+      "Isabella": "knave",
+      "Riley": "knave",
+      "Ava": "knave"
+    },
+    "statements_struct": {
+      "Avery": [
+        "or",
+        [
+          "is",
+          "William",
+          "knave"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "or",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ]
+      ],
+      "William": [
+        "and",
+        [
+          "is",
+          "James",
+          "knave"
+        ],
+        [
+          "is",
+          "Ava",
+          "knave"
+        ]
+      ],
+      "James": [
+        "not",
+        [
+          "is",
+          "Liam",
+          "knave"
+        ]
+      ],
+      "Isabella": [
+        "iff",
+        [
+          "is",
+          "Liam",
+          "knight"
+        ],
+        [
+          "is",
+          "Liam",
+          "knave"
+        ]
+      ],
+      "Riley": [
+        "is",
+        "Isabella",
+        "knight"
+      ],
+      "Ava": [
+        "or",
+        [
+          "is",
+          "Liam",
+          "knave"
+        ],
+        [
+          "is",
+          "Isabella",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people7_num100.jsonl",
+      "file_sha256": "d3051b151ef7e5c47a9cd69b09b52f1ec94c7f899821ec685e286e578c7932c5",
+      "row": 67,
+      "dataset_index": 67
+    }
+  },
+  {
+    "id": "reorder_statement-p7-r092",
+    "num_people": 7,
+    "names": [
+      "Abigail",
+      "Sophia",
+      "Logan",
+      "Owen",
+      "Joseph",
+      "Aiden",
+      "Matthew"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Abigail, Sophia, Logan, Owen, Joseph, Aiden, and Matthew. Aiden was heard saying, \"Owen is a knave\". According to Matthew, \"Joseph is a knave if and only if Sophia is a knight\". According to Logan, \"Abigail is not a knave\". Abigail said that Matthew is a knave or Logan is a knight. \"If Aiden is a knight then Matthew is a knight,\" Owen declared. Joseph said that Abigail is not a knight. Sophia stated, \"Owen is a knave if and only if Joseph is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Abigail": "knight",
+      "Sophia": "knave",
+      "Logan": "knight",
+      "Owen": "knight",
+      "Joseph": "knave",
+      "Aiden": "knave",
+      "Matthew": "knave"
+    },
+    "statements_struct": {
+      "Abigail": [
+        "or",
+        [
+          "is",
+          "Matthew",
+          "knave"
+        ],
+        [
+          "is",
+          "Logan",
+          "knight"
+        ]
+      ],
+      "Sophia": [
+        "iff",
+        [
+          "is",
+          "Owen",
+          "knave"
+        ],
+        [
+          "is",
+          "Joseph",
+          "knave"
+        ]
+      ],
+      "Logan": [
+        "not",
+        [
+          "is",
+          "Abigail",
+          "knave"
+        ]
+      ],
+      "Owen": [
+        "implies",
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ],
+        [
+          "is",
+          "Matthew",
+          "knight"
+        ]
+      ],
+      "Joseph": [
+        "not",
+        [
+          "is",
+          "Abigail",
+          "knight"
+        ]
+      ],
+      "Aiden": [
+        "is",
+        "Owen",
+        "knave"
+      ],
+      "Matthew": [
+        "iff",
+        [
+          "is",
+          "Joseph",
+          "knave"
+        ],
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people7_num100.jsonl",
+      "file_sha256": "d3051b151ef7e5c47a9cd69b09b52f1ec94c7f899821ec685e286e578c7932c5",
+      "row": 92,
+      "dataset_index": 92
+    }
+  },
+  {
+    "id": "reorder_statement-p8-r002",
+    "num_people": 8,
+    "names": [
+      "Isabella",
+      "Avery",
+      "Ella",
+      "Matthew",
+      "Luke",
+      "Mia",
+      "Scarlett",
+      "Benjamin"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Isabella, Avery, Ella, Matthew, Luke, Mia, Scarlett, and Benjamin. \"Mia is not a knave,\" Benjamin mentioned. \"If Ella is a knave then Matthew is a knave,\" Avery mentioned. Scarlett noted, \"Isabella is not a knave\". Ella asserted: \"Luke is a knight\". Mia said, \"If Ella is a knave then Benjamin is a knave.\" Matthew told you that Avery is a knight or Matthew is a knight. Luke said, \"If Avery is a knave then Luke is a knight.\" \"Matthew is a knight,\" Isabella mentioned. So who is a knight and who is a knave?",
+    "solution": {
+      "Isabella": "knight",
+      "Avery": "knight",
+      "Ella": "knight",
+      "Matthew": "knight",
+      "Luke": "knight",
+      "Mia": "knight",
+      "Scarlett": "knight",
+      "Benjamin": "knight"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "is",
+        "Matthew",
+        "knight"
+      ],
+      "Avery": [
+        "implies",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ],
+        [
+          "is",
+          "Matthew",
+          "knave"
+        ]
+      ],
+      "Ella": [
+        "is",
+        "Luke",
+        "knight"
+      ],
+      "Matthew": [
+        "or",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ],
+        [
+          "is",
+          "Matthew",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "implies",
+        [
+          "is",
+          "Avery",
+          "knave"
+        ],
+        [
+          "is",
+          "Luke",
+          "knight"
+        ]
+      ],
+      "Mia": [
+        "implies",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ],
+        [
+          "is",
+          "Benjamin",
+          "knave"
+        ]
+      ],
+      "Scarlett": [
+        "not",
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ]
+      ],
+      "Benjamin": [
+        "not",
+        [
+          "is",
+          "Mia",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people8_num100.jsonl",
+      "file_sha256": "3710c66680d201ebf3d6d243fa9f54ee7e5ce35570ed44f87cd5111b05dc1d9b",
+      "row": 2,
+      "dataset_index": 2
+    }
+  },
+  {
+    "id": "reorder_statement-p8-r014",
+    "num_people": 8,
+    "names": [
+      "Avery",
+      "Sophia",
+      "Lily",
+      "Penelope",
+      "Oliver",
+      "Jackson",
+      "Sebastian",
+      "Samuel"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Avery, Sophia, Lily, Penelope, Oliver, Jackson, Sebastian, and Samuel. Lily stated, \"Avery is a knight if and only if Samuel is a knave\". According to Sophia, \"Lily is a knight and Sophia is a knight\". \"Sebastian is not a knight\" - Penelope. \"Lily is a knave,\" Oliver claimed. Samuel asserted: \"Lily is a knave if and only if Sebastian is a knight\". Jackson said that Sophia is a knave and Samuel is a knight. Sebastian remarked, \"Avery is a knave or Sophia is a knight\". In a statement by Avery: \"If Penelope is a knight then Lily is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Avery": "knight",
+      "Sophia": "knight",
+      "Lily": "knight",
+      "Penelope": "knave",
+      "Oliver": "knave",
+      "Jackson": "knave",
+      "Sebastian": "knight",
+      "Samuel": "knave"
+    },
+    "statements_struct": {
+      "Avery": [
+        "implies",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ],
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ],
+      "Sophia": [
+        "and",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ],
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ]
+      ],
+      "Lily": [
+        "iff",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ],
+        [
+          "is",
+          "Samuel",
+          "knave"
+        ]
+      ],
+      "Penelope": [
+        "not",
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ],
+      "Oliver": [
+        "is",
+        "Lily",
+        "knave"
+      ],
+      "Jackson": [
+        "and",
+        [
+          "is",
+          "Sophia",
+          "knave"
+        ],
+        [
+          "is",
+          "Samuel",
+          "knight"
+        ]
+      ],
+      "Sebastian": [
+        "or",
+        [
+          "is",
+          "Avery",
+          "knave"
+        ],
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ]
+      ],
+      "Samuel": [
+        "iff",
+        [
+          "is",
+          "Lily",
+          "knave"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "reorder_statement",
+      "path": "test/reorder_statement/people8_num100.jsonl",
+      "file_sha256": "3710c66680d201ebf3d6d243fa9f54ee7e5ce35570ed44f87cd5111b05dc1d9b",
+      "row": 14,
+      "dataset_index": 14
+    }
+  },
+  {
+    "id": "random_pair-p2-r013",
+    "num_people": 2,
+    "names": [
+      "Aria",
+      "Benjamin"
+    ],
+    "description": "A very special island is inhabited only by saints and sinners. Saints always tell the truth, and sinners always lie. You meet 2 inhabitants: Aria, and Benjamin. Aria remarked, \"Benjamin is a saint or Aria is a saint\". As Benjamin put it, \"Aria is a sinner\". So who is a saint and who is a sinner?",
+    "solution": {
+      "Aria": "knight",
+      "Benjamin": "knave"
+    },
+    "statements_struct": {
+      "Aria": [
+        "or",
+        [
+          "is",
+          "Benjamin",
+          "knight"
+        ],
+        [
+          "is",
+          "Aria",
+          "knight"
+        ]
+      ],
+      "Benjamin": [
+        "is",
+        "Aria",
+        "knave"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people2_num100.jsonl",
+      "file_sha256": "92b9d18d12ea3eaaa0a49daa03f519b5c5f66614bf724e541e9c00e1b9be24ae",
+      "row": 13,
+      "dataset_index": 13
+    }
+  },
+  {
+    "id": "random_pair-p2-r014",
+    "num_people": 2,
+    "names": [
+      "Jack",
+      "Mason"
+    ],
+    "description": "A very special island is inhabited only by angels and devils. Angels always tell the truth, and devils always lie. You meet 2 inhabitants: Jack, and Mason. As Jack put it, \"Mason is a devil and Jack is an angel\". Mason noted, \"Jack is an angel\". So who is an angel and who is a devil?",
+    "solution": {
+      "Jack": "knave",
+      "Mason": "knave"
+    },
+    "statements_struct": {
+      "Jack": [
+        "and",
+        [
+          "is",
+          "Mason",
+          "knave"
+        ],
+        [
+          "is",
+          "Jack",
+          "knight"
+        ]
+      ],
+      "Mason": [
+        "is",
+        "Jack",
+        "knight"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people2_num100.jsonl",
+      "file_sha256": "92b9d18d12ea3eaaa0a49daa03f519b5c5f66614bf724e541e9c00e1b9be24ae",
+      "row": 14,
+      "dataset_index": 14
+    }
+  },
+  {
+    "id": "random_pair-p3-r054",
+    "num_people": 3,
+    "names": [
+      "Jackson",
+      "Henry",
+      "Liam"
+    ],
+    "description": "A very special island is inhabited only by heros and villains. Heros always tell the truth, and villains always lie. You meet 3 inhabitants: Jackson, Henry, and Liam. Jackson commented, \"Liam is a hero or Liam is a villain\". Henry was heard saying, \"Liam is a villain and Jackson is a villain\". Liam said that Henry is a hero. So who is a hero and who is a villain?",
+    "solution": {
+      "Jackson": "knight",
+      "Henry": "knave",
+      "Liam": "knave"
+    },
+    "statements_struct": {
+      "Jackson": [
+        "or",
+        [
+          "is",
+          "Liam",
+          "knight"
+        ],
+        [
+          "is",
+          "Liam",
+          "knave"
+        ]
+      ],
+      "Henry": [
+        "and",
+        [
+          "is",
+          "Liam",
+          "knave"
+        ],
+        [
+          "is",
+          "Jackson",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "is",
+        "Henry",
+        "knight"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people3_num100.jsonl",
+      "file_sha256": "6eb60022244be6fa25d372d1580eb8dddfb06914d7290dbe1d64c9cb57c1f612",
+      "row": 54,
+      "dataset_index": 54
+    }
+  },
+  {
+    "id": "random_pair-p3-r075",
+    "num_people": 3,
+    "names": [
+      "Mason",
+      "Jack",
+      "Harper"
+    ],
+    "description": "A very special island is inhabited only by saints and sinners. Saints always tell the truth, and sinners always lie. You meet 3 inhabitants: Mason, Jack, and Harper. In Mason's words: \"Harper is not a sinner\". Jack said, \"If Jack is a saint then Harper is a saint.\" As Harper put it, \"Jack is a saint or Mason is a sinner\". So who is a saint and who is a sinner?",
+    "solution": {
+      "Mason": "knight",
+      "Jack": "knight",
+      "Harper": "knight"
+    },
+    "statements_struct": {
+      "Mason": [
+        "not",
+        [
+          "is",
+          "Harper",
+          "knave"
+        ]
+      ],
+      "Jack": [
+        "implies",
+        [
+          "is",
+          "Jack",
+          "knight"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Jack",
+          "knight"
+        ],
+        [
+          "is",
+          "Mason",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people3_num100.jsonl",
+      "file_sha256": "6eb60022244be6fa25d372d1580eb8dddfb06914d7290dbe1d64c9cb57c1f612",
+      "row": 75,
+      "dataset_index": 75
+    }
+  },
+  {
+    "id": "random_pair-p4-r068",
+    "num_people": 4,
+    "names": [
+      "Aurora",
+      "Elizabeth",
+      "Grace",
+      "Daniel"
+    ],
+    "description": "A very special island is inhabited only by angels and devils. Angels always tell the truth, and devils always lie. You meet 4 inhabitants: Aurora, Elizabeth, Grace, and Daniel. \"Elizabeth is an angel if and only if Grace is a devil,\" Aurora declared. \"Grace is an angel and Grace is a devil,\" Elizabeth mentioned. In Grace's words: \"Daniel is a devil or Grace is an angel\". According to Daniel, \"Aurora is an angel\". So who is an angel and who is a devil?",
+    "solution": {
+      "Aurora": "knight",
+      "Elizabeth": "knave",
+      "Grace": "knight",
+      "Daniel": "knight"
+    },
+    "statements_struct": {
+      "Aurora": [
+        "iff",
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Elizabeth": [
+        "and",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Grace",
+          "knave"
+        ]
+      ],
+      "Grace": [
+        "or",
+        [
+          "is",
+          "Daniel",
+          "knave"
+        ],
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ],
+      "Daniel": [
+        "is",
+        "Aurora",
+        "knight"
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people4_num100.jsonl",
+      "file_sha256": "1cafedf8ea1c5bf393d2366a6d798e66730059fdd5290c8b2a8cca35de6c4589",
+      "row": 68,
+      "dataset_index": 68
+    }
+  },
+  {
+    "id": "random_pair-p4-r090",
+    "num_people": 4,
+    "names": [
+      "Jackson",
+      "Isabella",
+      "Olivia",
+      "Mia"
+    ],
+    "description": "A very special island is inhabited only by altruists and egoists. Altruists always tell the truth, and egoists always lie. You meet 4 inhabitants: Jackson, Isabella, Olivia, and Mia. According to Jackson, \"Isabella is an egoist or Olivia is an altruist\". \"Jackson is an egoist or Mia is an altruist,\" Isabella declared. Olivia told you that If Olivia is an altruist then Mia is an altruist. Mia commented, \"Mia is an altruist and Jackson is an altruist\". So who is an altruist and who is an egoist?",
+    "solution": {
+      "Jackson": "knight",
+      "Isabella": "knight",
+      "Olivia": "knight",
+      "Mia": "knight"
+    },
+    "statements_struct": {
+      "Jackson": [
+        "or",
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ],
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ]
+      ],
+      "Isabella": [
+        "or",
+        [
+          "is",
+          "Jackson",
+          "knave"
+        ],
+        [
+          "is",
+          "Mia",
+          "knight"
+        ]
+      ],
+      "Olivia": [
+        "implies",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ],
+        [
+          "is",
+          "Mia",
+          "knight"
+        ]
+      ],
+      "Mia": [
+        "and",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ],
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people4_num100.jsonl",
+      "file_sha256": "1cafedf8ea1c5bf393d2366a6d798e66730059fdd5290c8b2a8cca35de6c4589",
+      "row": 90,
+      "dataset_index": 90
+    }
+  },
+  {
+    "id": "random_pair-p5-r062",
+    "num_people": 5,
+    "names": [
+      "Ella",
+      "Jacob",
+      "Sebastian",
+      "Logan",
+      "James"
+    ],
+    "description": "A very special island is inhabited only by heros and villains. Heros always tell the truth, and villains always lie. You meet 5 inhabitants: Ella, Jacob, Sebastian, Logan, and James. Ella said, \"Sebastian is a villain and Logan is a villain.\" \"James is a hero,\" Jacob declared. \"If Jacob is a hero then Ella is a hero,\" Sebastian claimed. Logan remarked, \"Ella is a villain\". James commented, \"Ella is not a villain\". So who is a hero and who is a villain?",
+    "solution": {
+      "Ella": "knave",
+      "Jacob": "knave",
+      "Sebastian": "knight",
+      "Logan": "knight",
+      "James": "knave"
+    },
+    "statements_struct": {
+      "Ella": [
+        "and",
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ],
+        [
+          "is",
+          "Logan",
+          "knave"
+        ]
+      ],
+      "Jacob": [
+        "is",
+        "James",
+        "knight"
+      ],
+      "Sebastian": [
+        "implies",
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ],
+        [
+          "is",
+          "Ella",
+          "knight"
+        ]
+      ],
+      "Logan": [
+        "is",
+        "Ella",
+        "knave"
+      ],
+      "James": [
+        "not",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people5_num100.jsonl",
+      "file_sha256": "9036535b0ace7b3cfe1b8cf94fbb898b0c07e8d88d23cbc914707ed6d0221ebc",
+      "row": 62,
+      "dataset_index": 62
+    }
+  },
+  {
+    "id": "random_pair-p5-r079",
+    "num_people": 5,
+    "names": [
+      "Emma",
+      "Harper",
+      "Aurora",
+      "Sebastian",
+      "James"
+    ],
+    "description": "A very special island is inhabited only by altruists and egoists. Altruists always tell the truth, and egoists always lie. You meet 5 inhabitants: Emma, Harper, Aurora, Sebastian, and James. Emma said that Sebastian is an egoist. Harper asserted: \"Aurora is an altruist or Harper is an altruist\". Aurora told you that If Sebastian is an egoist then Harper is an altruist. In Sebastian's words: \"Aurora is an egoist if and only if Emma is an egoist\". In a statement by James: \"Harper is an altruist and Aurora is an altruist\". So who is an altruist and who is an egoist?",
+    "solution": {
+      "Emma": "knight",
+      "Harper": "knave",
+      "Aurora": "knave",
+      "Sebastian": "knave",
+      "James": "knave"
+    },
+    "statements_struct": {
+      "Emma": [
+        "is",
+        "Sebastian",
+        "knave"
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Aurora",
+          "knight"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Aurora": [
+        "implies",
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Sebastian": [
+        "iff",
+        [
+          "is",
+          "Aurora",
+          "knave"
+        ],
+        [
+          "is",
+          "Emma",
+          "knave"
+        ]
+      ],
+      "James": [
+        "and",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Aurora",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people5_num100.jsonl",
+      "file_sha256": "9036535b0ace7b3cfe1b8cf94fbb898b0c07e8d88d23cbc914707ed6d0221ebc",
+      "row": 79,
+      "dataset_index": 79
+    }
+  },
+  {
+    "id": "random_pair-p6-r022",
+    "num_people": 6,
+    "names": [
+      "Ethan",
+      "Oliver",
+      "Amelia",
+      "Charlotte",
+      "Michael",
+      "David"
+    ],
+    "description": "A very special island is inhabited only by pioneers and laggards. Pioneers always tell the truth, and laggards always lie. You meet 6 inhabitants: Ethan, Oliver, Amelia, Charlotte, Michael, and David. Ethan told you that Oliver is a laggard and David is a pioneer. Oliver said that David is a laggard or Amelia is a pioneer. Amelia said that David is a pioneer. Charlotte was heard saying, \"Amelia is a pioneer or Oliver is a laggard\". Michael expressed that David is not a laggard. David noted, \"Amelia is a pioneer if and only if Charlotte is a pioneer\". So who is a pioneer and who is a laggard?",
+    "solution": {
+      "Ethan": "knave",
+      "Oliver": "knight",
+      "Amelia": "knight",
+      "Charlotte": "knight",
+      "Michael": "knight",
+      "David": "knight"
+    },
+    "statements_struct": {
+      "Ethan": [
+        "and",
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ],
+        [
+          "is",
+          "David",
+          "knight"
+        ]
+      ],
+      "Oliver": [
+        "or",
+        [
+          "is",
+          "David",
+          "knave"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ]
+      ],
+      "Amelia": [
+        "is",
+        "David",
+        "knight"
+      ],
+      "Charlotte": [
+        "or",
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ]
+      ],
+      "Michael": [
+        "not",
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "iff",
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people6_num100.jsonl",
+      "file_sha256": "9d3a4bcd28f465b311bd5cdc96958b69529240f05e00a79d80ea7a54b8d53002",
+      "row": 22,
+      "dataset_index": 22
+    }
+  },
+  {
+    "id": "random_pair-p6-r045",
+    "num_people": 6,
+    "names": [
+      "Aria",
+      "Penelope",
+      "Ella",
+      "Lily",
+      "Ethan",
+      "Grace"
+    ],
+    "description": "A very special island is inhabited only by altruists and egoists. Altruists always tell the truth, and egoists always lie. You meet 6 inhabitants: Aria, Penelope, Ella, Lily, Ethan, and Grace. \"If Grace is an altruist then Lily is an altruist,\" Aria mentioned. Penelope remarked, \"If Aria is an egoist then Ella is an altruist\". Ella was heard saying, \"Grace is an altruist if and only if Ethan is an egoist\". \"If Ella is an egoist then Aria is an altruist,\" Lily claimed. Ethan was heard saying, \"Lily is not an altruist\". \"If Aria is an egoist then Ella is an altruist,\" Grace declared. So who is an altruist and who is an egoist?",
+    "solution": {
+      "Aria": "knight",
+      "Penelope": "knight",
+      "Ella": "knight",
+      "Lily": "knight",
+      "Ethan": "knave",
+      "Grace": "knight"
+    },
+    "statements_struct": {
+      "Aria": [
+        "implies",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ],
+      "Penelope": [
+        "implies",
+        [
+          "is",
+          "Aria",
+          "knave"
+        ],
+        [
+          "is",
+          "Ella",
+          "knight"
+        ]
+      ],
+      "Ella": [
+        "iff",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Ethan",
+          "knave"
+        ]
+      ],
+      "Lily": [
+        "implies",
+        [
+          "is",
+          "Ella",
+          "knave"
+        ],
+        [
+          "is",
+          "Aria",
+          "knight"
+        ]
+      ],
+      "Ethan": [
+        "not",
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ],
+      "Grace": [
+        "implies",
+        [
+          "is",
+          "Aria",
+          "knave"
+        ],
+        [
+          "is",
+          "Ella",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people6_num100.jsonl",
+      "file_sha256": "9d3a4bcd28f465b311bd5cdc96958b69529240f05e00a79d80ea7a54b8d53002",
+      "row": 45,
+      "dataset_index": 45
+    }
+  },
+  {
+    "id": "random_pair-p7-r064",
+    "num_people": 7,
+    "names": [
+      "Penelope",
+      "Elizabeth",
+      "Amelia",
+      "Sofia",
+      "James",
+      "Sebastian",
+      "Harper"
+    ],
+    "description": "A very special island is inhabited only by sages and fools. Sages always tell the truth, and fools always lie. You meet 7 inhabitants: Penelope, Elizabeth, Amelia, Sofia, James, Sebastian, and Harper. Penelope said, \"Elizabeth is a fool.\" \"Sebastian is a fool and Sofia is a sage,\" Elizabeth declared. According to Amelia, \"Sofia is a sage if and only if Sebastian is a sage\". Sofia asserted: \"Penelope is a sage or Sofia is a sage\". In a statement by James: \"Sebastian is not a fool\". Sebastian asserted: \"Sebastian is a sage and Sofia is a fool\". \"If Elizabeth is a fool then Sebastian is a fool,\" Harper mentioned. So who is a sage and who is a fool?",
+    "solution": {
+      "Penelope": "knave",
+      "Elizabeth": "knight",
+      "Amelia": "knave",
+      "Sofia": "knight",
+      "James": "knave",
+      "Sebastian": "knave",
+      "Harper": "knight"
+    },
+    "statements_struct": {
+      "Penelope": [
+        "is",
+        "Elizabeth",
+        "knave"
+      ],
+      "Elizabeth": [
+        "and",
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knight"
+        ]
+      ],
+      "Amelia": [
+        "iff",
+        [
+          "is",
+          "Sofia",
+          "knight"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ]
+      ],
+      "Sofia": [
+        "or",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knight"
+        ]
+      ],
+      "James": [
+        "not",
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ]
+      ],
+      "Sebastian": [
+        "and",
+        [
+          "is",
+          "Sebastian",
+          "knight"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ]
+      ],
+      "Harper": [
+        "implies",
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people7_num100.jsonl",
+      "file_sha256": "389713889ec22d14bf64d1bb9b846d1fb7a4adba44004b6ce9db1e0ac3d54190",
+      "row": 64,
+      "dataset_index": 64
+    }
+  },
+  {
+    "id": "random_pair-p7-r091",
+    "num_people": 7,
+    "names": [
+      "Olivia",
+      "Charlotte",
+      "Aiden",
+      "Avery",
+      "Luke",
+      "Harper",
+      "Sofia"
+    ],
+    "description": "A very special island is inhabited only by saints and sinners. Saints always tell the truth, and sinners always lie. You meet 7 inhabitants: Olivia, Charlotte, Aiden, Avery, Luke, Harper, and Sofia. Olivia said that Sofia is a sinner and Harper is a saint. In Charlotte's words: \"Sofia is a sinner and Harper is a sinner\". Aiden asserted: \"If Sofia is a saint then Charlotte is a saint\". According to Avery, \"Olivia is not a saint\". Luke said that Harper is a saint. Harper said that Avery is a saint or Aiden is a saint. Sofia said that Harper is a sinner and Avery is a saint. So who is a saint and who is a sinner?",
+    "solution": {
+      "Olivia": "knight",
+      "Charlotte": "knave",
+      "Aiden": "knight",
+      "Avery": "knave",
+      "Luke": "knight",
+      "Harper": "knight",
+      "Sofia": "knave"
+    },
+    "statements_struct": {
+      "Olivia": [
+        "and",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Charlotte": [
+        "and",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knave"
+        ]
+      ],
+      "Aiden": [
+        "implies",
+        [
+          "is",
+          "Sofia",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ]
+      ],
+      "Avery": [
+        "not",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "is",
+        "Harper",
+        "knight"
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ]
+      ],
+      "Sofia": [
+        "and",
+        [
+          "is",
+          "Harper",
+          "knave"
+        ],
+        [
+          "is",
+          "Avery",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people7_num100.jsonl",
+      "file_sha256": "389713889ec22d14bf64d1bb9b846d1fb7a4adba44004b6ce9db1e0ac3d54190",
+      "row": 91,
+      "dataset_index": 91
+    }
+  },
+  {
+    "id": "random_pair-p8-r068",
+    "num_people": 8,
+    "names": [
+      "Jackson",
+      "Ava",
+      "Michael",
+      "Aria",
+      "Lily",
+      "Emily",
+      "James",
+      "Sebastian"
+    ],
+    "description": "A very special island is inhabited only by pioneers and laggards. Pioneers always tell the truth, and laggards always lie. You meet 8 inhabitants: Jackson, Ava, Michael, Aria, Lily, Emily, James, and Sebastian. Jackson remarked, \"Sebastian is not a laggard\". Ava told you that James is a laggard or Emily is a pioneer. According to Michael, \"If Aria is a laggard then Sebastian is a laggard\". In Aria's words: \"Michael is not a pioneer\". Lily remarked, \"Jackson is a pioneer\". \"If Ava is a laggard then Emily is a pioneer,\" Emily claimed. According to James, \"If Jackson is a pioneer then James is a pioneer\". Sebastian stated, \"If Emily is a laggard then James is a laggard\". So who is a pioneer and who is a laggard?",
+    "solution": {
+      "Jackson": "knave",
+      "Ava": "knave",
+      "Michael": "knight",
+      "Aria": "knave",
+      "Lily": "knave",
+      "Emily": "knave",
+      "James": "knight",
+      "Sebastian": "knave"
+    },
+    "statements_struct": {
+      "Jackson": [
+        "not",
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ]
+      ],
+      "Ava": [
+        "or",
+        [
+          "is",
+          "James",
+          "knave"
+        ],
+        [
+          "is",
+          "Emily",
+          "knight"
+        ]
+      ],
+      "Michael": [
+        "implies",
+        [
+          "is",
+          "Aria",
+          "knave"
+        ],
+        [
+          "is",
+          "Sebastian",
+          "knave"
+        ]
+      ],
+      "Aria": [
+        "not",
+        [
+          "is",
+          "Michael",
+          "knight"
+        ]
+      ],
+      "Lily": [
+        "is",
+        "Jackson",
+        "knight"
+      ],
+      "Emily": [
+        "implies",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ],
+        [
+          "is",
+          "Emily",
+          "knight"
+        ]
+      ],
+      "James": [
+        "implies",
+        [
+          "is",
+          "Jackson",
+          "knight"
+        ],
+        [
+          "is",
+          "James",
+          "knight"
+        ]
+      ],
+      "Sebastian": [
+        "implies",
+        [
+          "is",
+          "Emily",
+          "knave"
+        ],
+        [
+          "is",
+          "James",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people8_num100.jsonl",
+      "file_sha256": "8885fe0d63bfe5910617bd84e6be646f7b62a26978a649b4173889601d0f9229",
+      "row": 68,
+      "dataset_index": 68
+    }
+  },
+  {
+    "id": "random_pair-p8-r071",
+    "num_people": 8,
+    "names": [
+      "Riley",
+      "James",
+      "Benjamin",
+      "Noah",
+      "Lily",
+      "Sofia",
+      "Luke",
+      "Michael"
+    ],
+    "description": "A very special island is inhabited only by altruists and egoists. Altruists always tell the truth, and egoists always lie. You meet 8 inhabitants: Riley, James, Benjamin, Noah, Lily, Sofia, Luke, and Michael. \"Noah is not an altruist,\" Riley declared. James said, \"Luke is an egoist.\" Benjamin noted, \"Sofia is an egoist\". Noah stated, \"Riley is an altruist and Sofia is an egoist\". \"If James is an egoist then Sofia is an egoist,\" Lily declared. \"If Michael is an egoist then Michael is an altruist,\" Sofia declared. In Luke's words: \"Riley is an altruist\". Michael asserted: \"Sofia is an egoist if and only if Lily is an altruist\". So who is an altruist and who is an egoist?",
+    "solution": {
+      "Riley": "knight",
+      "James": "knave",
+      "Benjamin": "knave",
+      "Noah": "knave",
+      "Lily": "knave",
+      "Sofia": "knight",
+      "Luke": "knight",
+      "Michael": "knight"
+    },
+    "statements_struct": {
+      "Riley": [
+        "not",
+        [
+          "is",
+          "Noah",
+          "knight"
+        ]
+      ],
+      "James": [
+        "is",
+        "Luke",
+        "knave"
+      ],
+      "Benjamin": [
+        "is",
+        "Sofia",
+        "knave"
+      ],
+      "Noah": [
+        "and",
+        [
+          "is",
+          "Riley",
+          "knight"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ]
+      ],
+      "Lily": [
+        "implies",
+        [
+          "is",
+          "James",
+          "knave"
+        ],
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ]
+      ],
+      "Sofia": [
+        "implies",
+        [
+          "is",
+          "Michael",
+          "knave"
+        ],
+        [
+          "is",
+          "Michael",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "is",
+        "Riley",
+        "knight"
+      ],
+      "Michael": [
+        "iff",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Lily",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "random_pair",
+      "path": "test/random_pair/people8_num100.jsonl",
+      "file_sha256": "8885fe0d63bfe5910617bd84e6be646f7b62a26978a649b4173889601d0f9229",
+      "row": 71,
+      "dataset_index": 71
+    }
+  },
+  {
+    "id": "uncommon_name-p2-r016",
+    "num_people": 2,
+    "names": [
+      "Amaryllis",
+      "Balthazar"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Amaryllis, and Balthazar. \"Balthazar is a knave if and only if Amaryllis is a knight,\" Amaryllis claimed. As Balthazar put it, \"Amaryllis is not a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Amaryllis": "knave",
+      "Balthazar": "knave"
+    },
+    "statements_struct": {
+      "Amaryllis": [
+        "iff",
+        [
+          "is",
+          "Balthazar",
+          "knave"
+        ],
+        [
+          "is",
+          "Amaryllis",
+          "knight"
+        ]
+      ],
+      "Balthazar": [
+        "not",
+        [
+          "is",
+          "Amaryllis",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people2_num100.jsonl",
+      "file_sha256": "25437adfc79438934dbaa113f4a2b06378d3f899a3cc9d8193202a3e0d746f29",
+      "row": 16,
+      "dataset_index": 16
+    }
+  },
+  {
+    "id": "uncommon_name-p2-r082",
+    "num_people": 2,
+    "names": [
+      "Percival",
+      "Caius"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 2 inhabitants: Percival, and Caius. As Percival put it, \"If Percival is a knight then Caius is a knight\". Caius remarked, \"If Percival is a knight then Caius is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Percival": "knight",
+      "Caius": "knight"
+    },
+    "statements_struct": {
+      "Percival": [
+        "implies",
+        [
+          "is",
+          "Percival",
+          "knight"
+        ],
+        [
+          "is",
+          "Caius",
+          "knight"
+        ]
+      ],
+      "Caius": [
+        "implies",
+        [
+          "is",
+          "Percival",
+          "knight"
+        ],
+        [
+          "is",
+          "Caius",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people2_num100.jsonl",
+      "file_sha256": "25437adfc79438934dbaa113f4a2b06378d3f899a3cc9d8193202a3e0d746f29",
+      "row": 82,
+      "dataset_index": 82
+    }
+  },
+  {
+    "id": "uncommon_name-p3-r037",
+    "num_people": 3,
+    "names": [
+      "Peregrine",
+      "Cosima",
+      "Quillan"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Peregrine, Cosima, and Quillan. According to Peregrine, \"Peregrine is a knight if and only if Cosima is a knight\". Cosima told you that If Quillan is a knight then Quillan is a knave. Quillan told you that Peregrine is a knight if and only if Quillan is a knight. So who is a knight and who is a knave?",
+    "solution": {
+      "Peregrine": "knight",
+      "Cosima": "knight",
+      "Quillan": "knave"
+    },
+    "statements_struct": {
+      "Peregrine": [
+        "iff",
+        [
+          "is",
+          "Peregrine",
+          "knight"
+        ],
+        [
+          "is",
+          "Cosima",
+          "knight"
+        ]
+      ],
+      "Cosima": [
+        "implies",
+        [
+          "is",
+          "Quillan",
+          "knight"
+        ],
+        [
+          "is",
+          "Quillan",
+          "knave"
+        ]
+      ],
+      "Quillan": [
+        "iff",
+        [
+          "is",
+          "Peregrine",
+          "knight"
+        ],
+        [
+          "is",
+          "Quillan",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people3_num100.jsonl",
+      "file_sha256": "087b47837520c8da31d78deac08781c3a62ad7961bae246d68f81843b3795ab0",
+      "row": 37,
+      "dataset_index": 37
+    }
+  },
+  {
+    "id": "uncommon_name-p3-r040",
+    "num_people": 3,
+    "names": [
+      "Vesper",
+      "Oberon",
+      "Cillian"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 3 inhabitants: Vesper, Oberon, and Cillian. Vesper expressed that Cillian is a knight and Oberon is a knight. \"Cillian is not a knave,\" Oberon declared. According to Cillian, \"Oberon is a knave if and only if Cillian is a knight\". So who is a knight and who is a knave?",
+    "solution": {
+      "Vesper": "knave",
+      "Oberon": "knave",
+      "Cillian": "knave"
+    },
+    "statements_struct": {
+      "Vesper": [
+        "and",
+        [
+          "is",
+          "Cillian",
+          "knight"
+        ],
+        [
+          "is",
+          "Oberon",
+          "knight"
+        ]
+      ],
+      "Oberon": [
+        "not",
+        [
+          "is",
+          "Cillian",
+          "knave"
+        ]
+      ],
+      "Cillian": [
+        "iff",
+        [
+          "is",
+          "Oberon",
+          "knave"
+        ],
+        [
+          "is",
+          "Cillian",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people3_num100.jsonl",
+      "file_sha256": "087b47837520c8da31d78deac08781c3a62ad7961bae246d68f81843b3795ab0",
+      "row": 40,
+      "dataset_index": 40
+    }
+  },
+  {
+    "id": "uncommon_name-p4-r044",
+    "num_people": 4,
+    "names": [
+      "Cyprian",
+      "Caius",
+      "Zephyrine",
+      "Zephyr"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Cyprian, Caius, Zephyrine, and Zephyr. \"Zephyr is a knight and Zephyrine is a knave,\" Cyprian claimed. According to Caius, \"Cyprian is a knight\". Zephyrine told you that Zephyr is a knave or Cyprian is a knave. \"If Zephyrine is a knave then Cyprian is a knave\" - Zephyr. So who is a knight and who is a knave?",
+    "solution": {
+      "Cyprian": "knave",
+      "Caius": "knave",
+      "Zephyrine": "knight",
+      "Zephyr": "knight"
+    },
+    "statements_struct": {
+      "Cyprian": [
+        "and",
+        [
+          "is",
+          "Zephyr",
+          "knight"
+        ],
+        [
+          "is",
+          "Zephyrine",
+          "knave"
+        ]
+      ],
+      "Caius": [
+        "is",
+        "Cyprian",
+        "knight"
+      ],
+      "Zephyrine": [
+        "or",
+        [
+          "is",
+          "Zephyr",
+          "knave"
+        ],
+        [
+          "is",
+          "Cyprian",
+          "knave"
+        ]
+      ],
+      "Zephyr": [
+        "implies",
+        [
+          "is",
+          "Zephyrine",
+          "knave"
+        ],
+        [
+          "is",
+          "Cyprian",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people4_num100.jsonl",
+      "file_sha256": "8e0edc42da3d5739a4e24f82725c6332e71189016391810b5e80d549c71d1004",
+      "row": 44,
+      "dataset_index": 44
+    }
+  },
+  {
+    "id": "uncommon_name-p4-r057",
+    "num_people": 4,
+    "names": [
+      "Eulalia",
+      "Xiomara",
+      "Amaryllis",
+      "Calliope"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 4 inhabitants: Eulalia, Xiomara, Amaryllis, and Calliope. Eulalia was heard saying, \"Amaryllis is a knave or Calliope is a knave\". Xiomara commented, \"If Calliope is a knight then Eulalia is a knave\". As Amaryllis put it, \"Amaryllis is a knight and Xiomara is a knave\". Calliope said that Calliope is a knight and Amaryllis is a knight. So who is a knight and who is a knave?",
+    "solution": {
+      "Eulalia": "knight",
+      "Xiomara": "knight",
+      "Amaryllis": "knave",
+      "Calliope": "knave"
+    },
+    "statements_struct": {
+      "Eulalia": [
+        "or",
+        [
+          "is",
+          "Amaryllis",
+          "knave"
+        ],
+        [
+          "is",
+          "Calliope",
+          "knave"
+        ]
+      ],
+      "Xiomara": [
+        "implies",
+        [
+          "is",
+          "Calliope",
+          "knight"
+        ],
+        [
+          "is",
+          "Eulalia",
+          "knave"
+        ]
+      ],
+      "Amaryllis": [
+        "and",
+        [
+          "is",
+          "Amaryllis",
+          "knight"
+        ],
+        [
+          "is",
+          "Xiomara",
+          "knave"
+        ]
+      ],
+      "Calliope": [
+        "and",
+        [
+          "is",
+          "Calliope",
+          "knight"
+        ],
+        [
+          "is",
+          "Amaryllis",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people4_num100.jsonl",
+      "file_sha256": "8e0edc42da3d5739a4e24f82725c6332e71189016391810b5e80d549c71d1004",
+      "row": 57,
+      "dataset_index": 57
+    }
+  },
+  {
+    "id": "uncommon_name-p5-r005",
+    "num_people": 5,
+    "names": [
+      "Saffron",
+      "Zora",
+      "Cosima",
+      "Xiomara",
+      "Perdita"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Saffron, Zora, Cosima, Xiomara, and Perdita. In a statement by Saffron: \"If Xiomara is a knave then Perdita is a knight\". Zora was heard saying, \"Xiomara is not a knight\". Cosima said that Perdita is a knight or Cosima is a knight. Xiomara was heard saying, \"Cosima is a knave\". Perdita was heard saying, \"Xiomara is not a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Saffron": "knave",
+      "Zora": "knight",
+      "Cosima": "knight",
+      "Xiomara": "knave",
+      "Perdita": "knave"
+    },
+    "statements_struct": {
+      "Saffron": [
+        "implies",
+        [
+          "is",
+          "Xiomara",
+          "knave"
+        ],
+        [
+          "is",
+          "Perdita",
+          "knight"
+        ]
+      ],
+      "Zora": [
+        "not",
+        [
+          "is",
+          "Xiomara",
+          "knight"
+        ]
+      ],
+      "Cosima": [
+        "or",
+        [
+          "is",
+          "Perdita",
+          "knight"
+        ],
+        [
+          "is",
+          "Cosima",
+          "knight"
+        ]
+      ],
+      "Xiomara": [
+        "is",
+        "Cosima",
+        "knave"
+      ],
+      "Perdita": [
+        "not",
+        [
+          "is",
+          "Xiomara",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people5_num100.jsonl",
+      "file_sha256": "c1e7ade7a1791ab17a1d951f7548ce8c54767190f0402e4e6785889810694f3f",
+      "row": 5,
+      "dataset_index": 5
+    }
+  },
+  {
+    "id": "uncommon_name-p5-r047",
+    "num_people": 5,
+    "names": [
+      "Melisande",
+      "Isolde",
+      "Leander",
+      "Percival",
+      "Quillan"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 5 inhabitants: Melisande, Isolde, Leander, Percival, and Quillan. Melisande expressed that Percival is a knave if and only if Quillan is a knave. Isolde asserted: \"Percival is a knight if and only if Percival is a knave\". Leander expressed that Percival is a knave and Quillan is a knave. Percival expressed that Isolde is a knight and Quillan is a knave. \"Melisande is a knight if and only if Leander is a knight,\" Quillan claimed. So who is a knight and who is a knave?",
+    "solution": {
+      "Melisande": "knave",
+      "Isolde": "knave",
+      "Leander": "knave",
+      "Percival": "knave",
+      "Quillan": "knight"
+    },
+    "statements_struct": {
+      "Melisande": [
+        "iff",
+        [
+          "is",
+          "Percival",
+          "knave"
+        ],
+        [
+          "is",
+          "Quillan",
+          "knave"
+        ]
+      ],
+      "Isolde": [
+        "iff",
+        [
+          "is",
+          "Percival",
+          "knight"
+        ],
+        [
+          "is",
+          "Percival",
+          "knave"
+        ]
+      ],
+      "Leander": [
+        "and",
+        [
+          "is",
+          "Percival",
+          "knave"
+        ],
+        [
+          "is",
+          "Quillan",
+          "knave"
+        ]
+      ],
+      "Percival": [
+        "and",
+        [
+          "is",
+          "Isolde",
+          "knight"
+        ],
+        [
+          "is",
+          "Quillan",
+          "knave"
+        ]
+      ],
+      "Quillan": [
+        "iff",
+        [
+          "is",
+          "Melisande",
+          "knight"
+        ],
+        [
+          "is",
+          "Leander",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people5_num100.jsonl",
+      "file_sha256": "c1e7ade7a1791ab17a1d951f7548ce8c54767190f0402e4e6785889810694f3f",
+      "row": 47,
+      "dataset_index": 47
+    }
+  },
+  {
+    "id": "uncommon_name-p6-r008",
+    "num_people": 6,
+    "names": [
+      "Oberon",
+      "Vesper",
+      "Cillian",
+      "Xanthe",
+      "Florian",
+      "Cyprian"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Oberon, Vesper, Cillian, Xanthe, Florian, and Cyprian. In a statement by Oberon: \"Xanthe is not a knave\". \"Florian is a knave and Cillian is a knave,\" Vesper mentioned. As Cillian put it, \"Xanthe is a knave or Cyprian is a knave\". Xanthe noted, \"Oberon is a knave and Oberon is a knight\". Florian expressed that Xanthe is a knave and Xanthe is a knight. \"Florian is a knave if and only if Oberon is a knight,\" Cyprian claimed. So who is a knight and who is a knave?",
+    "solution": {
+      "Oberon": "knave",
+      "Vesper": "knave",
+      "Cillian": "knight",
+      "Xanthe": "knave",
+      "Florian": "knave",
+      "Cyprian": "knave"
+    },
+    "statements_struct": {
+      "Oberon": [
+        "not",
+        [
+          "is",
+          "Xanthe",
+          "knave"
+        ]
+      ],
+      "Vesper": [
+        "and",
+        [
+          "is",
+          "Florian",
+          "knave"
+        ],
+        [
+          "is",
+          "Cillian",
+          "knave"
+        ]
+      ],
+      "Cillian": [
+        "or",
+        [
+          "is",
+          "Xanthe",
+          "knave"
+        ],
+        [
+          "is",
+          "Cyprian",
+          "knave"
+        ]
+      ],
+      "Xanthe": [
+        "and",
+        [
+          "is",
+          "Oberon",
+          "knave"
+        ],
+        [
+          "is",
+          "Oberon",
+          "knight"
+        ]
+      ],
+      "Florian": [
+        "and",
+        [
+          "is",
+          "Xanthe",
+          "knave"
+        ],
+        [
+          "is",
+          "Xanthe",
+          "knight"
+        ]
+      ],
+      "Cyprian": [
+        "iff",
+        [
+          "is",
+          "Florian",
+          "knave"
+        ],
+        [
+          "is",
+          "Oberon",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people6_num100.jsonl",
+      "file_sha256": "4046b49fe876c7f4eab6eddc35ff0a9f01ad487faf59e9edb5605a39b3e56530",
+      "row": 8,
+      "dataset_index": 8
+    }
+  },
+  {
+    "id": "uncommon_name-p6-r056",
+    "num_people": 6,
+    "names": [
+      "Zora",
+      "Leocadio",
+      "Xiomara",
+      "Theron",
+      "Lysander",
+      "Ottoline"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 6 inhabitants: Zora, Leocadio, Xiomara, Theron, Lysander, and Ottoline. Zora noted, \"Lysander is a knight if and only if Ottoline is a knight\". Leocadio told you that Theron is a knight. \"If Lysander is a knight then Zora is a knave,\" Xiomara claimed. Theron told you that Zora is a knight or Lysander is a knave. Lysander was heard saying, \"Theron is a knight\". Ottoline expressed that Lysander is not a knave. So who is a knight and who is a knave?",
+    "solution": {
+      "Zora": "knight",
+      "Leocadio": "knight",
+      "Xiomara": "knave",
+      "Theron": "knight",
+      "Lysander": "knight",
+      "Ottoline": "knight"
+    },
+    "statements_struct": {
+      "Zora": [
+        "iff",
+        [
+          "is",
+          "Lysander",
+          "knight"
+        ],
+        [
+          "is",
+          "Ottoline",
+          "knight"
+        ]
+      ],
+      "Leocadio": [
+        "is",
+        "Theron",
+        "knight"
+      ],
+      "Xiomara": [
+        "implies",
+        [
+          "is",
+          "Lysander",
+          "knight"
+        ],
+        [
+          "is",
+          "Zora",
+          "knave"
+        ]
+      ],
+      "Theron": [
+        "or",
+        [
+          "is",
+          "Zora",
+          "knight"
+        ],
+        [
+          "is",
+          "Lysander",
+          "knave"
+        ]
+      ],
+      "Lysander": [
+        "is",
+        "Theron",
+        "knight"
+      ],
+      "Ottoline": [
+        "not",
+        [
+          "is",
+          "Lysander",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people6_num100.jsonl",
+      "file_sha256": "4046b49fe876c7f4eab6eddc35ff0a9f01ad487faf59e9edb5605a39b3e56530",
+      "row": 56,
+      "dataset_index": 56
+    }
+  },
+  {
+    "id": "uncommon_name-p7-r034",
+    "num_people": 7,
+    "names": [
+      "Eulalia",
+      "Ondine",
+      "Perdita",
+      "Zinnia",
+      "Evander",
+      "Sylvester",
+      "Evanthe"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Eulalia, Ondine, Perdita, Zinnia, Evander, Sylvester, and Evanthe. Eulalia expressed that Ondine is not a knight. Ondine expressed that Perdita is a knight if and only if Evander is a knave. Perdita was heard saying, \"Evander is a knave and Evander is a knight\". Zinnia commented, \"Evanthe is a knight and Eulalia is a knave\". Evander told you that Evanthe is a knight or Evanthe is a knave. \"If Zinnia is a knight then Perdita is a knave,\" Sylvester mentioned. \"Zinnia is a knave and Perdita is a knight,\" Evanthe mentioned. So who is a knight and who is a knave?",
+    "solution": {
+      "Eulalia": "knave",
+      "Ondine": "knight",
+      "Perdita": "knave",
+      "Zinnia": "knave",
+      "Evander": "knight",
+      "Sylvester": "knight",
+      "Evanthe": "knave"
+    },
+    "statements_struct": {
+      "Eulalia": [
+        "not",
+        [
+          "is",
+          "Ondine",
+          "knight"
+        ]
+      ],
+      "Ondine": [
+        "iff",
+        [
+          "is",
+          "Perdita",
+          "knight"
+        ],
+        [
+          "is",
+          "Evander",
+          "knave"
+        ]
+      ],
+      "Perdita": [
+        "and",
+        [
+          "is",
+          "Evander",
+          "knave"
+        ],
+        [
+          "is",
+          "Evander",
+          "knight"
+        ]
+      ],
+      "Zinnia": [
+        "and",
+        [
+          "is",
+          "Evanthe",
+          "knight"
+        ],
+        [
+          "is",
+          "Eulalia",
+          "knave"
+        ]
+      ],
+      "Evander": [
+        "or",
+        [
+          "is",
+          "Evanthe",
+          "knight"
+        ],
+        [
+          "is",
+          "Evanthe",
+          "knave"
+        ]
+      ],
+      "Sylvester": [
+        "implies",
+        [
+          "is",
+          "Zinnia",
+          "knight"
+        ],
+        [
+          "is",
+          "Perdita",
+          "knave"
+        ]
+      ],
+      "Evanthe": [
+        "and",
+        [
+          "is",
+          "Zinnia",
+          "knave"
+        ],
+        [
+          "is",
+          "Perdita",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people7_num100.jsonl",
+      "file_sha256": "752a97113d999fcff5f2910c78fca761133822b99b5ae6ec9070421e0e51b2dc",
+      "row": 34,
+      "dataset_index": 34
+    }
+  },
+  {
+    "id": "uncommon_name-p7-r069",
+    "num_people": 7,
+    "names": [
+      "Caius",
+      "Perdita",
+      "Lysander",
+      "Thaddeus",
+      "Osiris",
+      "Zinnia",
+      "Theron"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 7 inhabitants: Caius, Perdita, Lysander, Thaddeus, Osiris, Zinnia, and Theron. Caius remarked, \"Zinnia is not a knight\". \"If Caius is a knave then Thaddeus is a knight,\" Perdita declared. Lysander was heard saying, \"Caius is a knight and Perdita is a knave\". As Thaddeus put it, \"If Zinnia is a knave then Osiris is a knave\". Osiris remarked, \"If Lysander is a knave then Thaddeus is a knave\". \"If Theron is a knight then Osiris is a knight,\" Zinnia claimed. Theron said, \"Perdita is not a knave.\" So who is a knight and who is a knave?",
+    "solution": {
+      "Caius": "knight",
+      "Perdita": "knight",
+      "Lysander": "knave",
+      "Thaddeus": "knight",
+      "Osiris": "knave",
+      "Zinnia": "knave",
+      "Theron": "knight"
+    },
+    "statements_struct": {
+      "Caius": [
+        "not",
+        [
+          "is",
+          "Zinnia",
+          "knight"
+        ]
+      ],
+      "Perdita": [
+        "implies",
+        [
+          "is",
+          "Caius",
+          "knave"
+        ],
+        [
+          "is",
+          "Thaddeus",
+          "knight"
+        ]
+      ],
+      "Lysander": [
+        "and",
+        [
+          "is",
+          "Caius",
+          "knight"
+        ],
+        [
+          "is",
+          "Perdita",
+          "knave"
+        ]
+      ],
+      "Thaddeus": [
+        "implies",
+        [
+          "is",
+          "Zinnia",
+          "knave"
+        ],
+        [
+          "is",
+          "Osiris",
+          "knave"
+        ]
+      ],
+      "Osiris": [
+        "implies",
+        [
+          "is",
+          "Lysander",
+          "knave"
+        ],
+        [
+          "is",
+          "Thaddeus",
+          "knave"
+        ]
+      ],
+      "Zinnia": [
+        "implies",
+        [
+          "is",
+          "Theron",
+          "knight"
+        ],
+        [
+          "is",
+          "Osiris",
+          "knight"
+        ]
+      ],
+      "Theron": [
+        "not",
+        [
+          "is",
+          "Perdita",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people7_num100.jsonl",
+      "file_sha256": "752a97113d999fcff5f2910c78fca761133822b99b5ae6ec9070421e0e51b2dc",
+      "row": 69,
+      "dataset_index": 69
+    }
+  },
+  {
+    "id": "uncommon_name-p8-r012",
+    "num_people": 8,
+    "names": [
+      "Vesper",
+      "Zephyrus",
+      "Eulalia",
+      "Xanthe",
+      "Zinnia",
+      "Cyprian",
+      "Caius",
+      "Sylvester"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Vesper, Zephyrus, Eulalia, Xanthe, Zinnia, Cyprian, Caius, and Sylvester. Vesper was heard saying, \"Zinnia is a knight and Cyprian is a knave\". Zephyrus said that Caius is a knave. Eulalia stated, \"Cyprian is a knight if and only if Eulalia is a knight\". In a statement by Xanthe: \"If Vesper is a knave then Cyprian is a knight\". Zinnia asserted: \"Xanthe is a knight\". Cyprian was heard saying, \"If Vesper is a knave then Eulalia is a knight\". \"Zinnia is not a knight,\" Caius mentioned. In Sylvester's words: \"If Zinnia is a knight then Xanthe is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Vesper": "knave",
+      "Zephyrus": "knight",
+      "Eulalia": "knight",
+      "Xanthe": "knight",
+      "Zinnia": "knight",
+      "Cyprian": "knight",
+      "Caius": "knave",
+      "Sylvester": "knave"
+    },
+    "statements_struct": {
+      "Vesper": [
+        "and",
+        [
+          "is",
+          "Zinnia",
+          "knight"
+        ],
+        [
+          "is",
+          "Cyprian",
+          "knave"
+        ]
+      ],
+      "Zephyrus": [
+        "is",
+        "Caius",
+        "knave"
+      ],
+      "Eulalia": [
+        "iff",
+        [
+          "is",
+          "Cyprian",
+          "knight"
+        ],
+        [
+          "is",
+          "Eulalia",
+          "knight"
+        ]
+      ],
+      "Xanthe": [
+        "implies",
+        [
+          "is",
+          "Vesper",
+          "knave"
+        ],
+        [
+          "is",
+          "Cyprian",
+          "knight"
+        ]
+      ],
+      "Zinnia": [
+        "is",
+        "Xanthe",
+        "knight"
+      ],
+      "Cyprian": [
+        "implies",
+        [
+          "is",
+          "Vesper",
+          "knave"
+        ],
+        [
+          "is",
+          "Eulalia",
+          "knight"
+        ]
+      ],
+      "Caius": [
+        "not",
+        [
+          "is",
+          "Zinnia",
+          "knight"
+        ]
+      ],
+      "Sylvester": [
+        "implies",
+        [
+          "is",
+          "Zinnia",
+          "knight"
+        ],
+        [
+          "is",
+          "Xanthe",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people8_num100.jsonl",
+      "file_sha256": "951228b33ff7b4afffcbd247eeb67390d9af5ff2def9f9cdb0f8433564fffc15",
+      "row": 12,
+      "dataset_index": 12
+    }
+  },
+  {
+    "id": "uncommon_name-p8-r068",
+    "num_people": 8,
+    "names": [
+      "Amaryllis",
+      "Osiris",
+      "Cillian",
+      "Zenobia",
+      "Eurydice",
+      "Ottoline",
+      "Calliope",
+      "Ignatius"
+    ],
+    "description": "A very special island is inhabited only by knights and knaves. Knights always tell the truth, and knaves always lie. You meet 8 inhabitants: Amaryllis, Osiris, Cillian, Zenobia, Eurydice, Ottoline, Calliope, and Ignatius. Amaryllis said, \"Ignatius is not a knave.\" Osiris remarked, \"Calliope is a knave or Ottoline is a knight\". Cillian told you that If Zenobia is a knave then Ignatius is a knave. According to Zenobia, \"Cillian is not a knight\". In Eurydice's words: \"Amaryllis is a knight\". Ottoline remarked, \"If Osiris is a knave then Ottoline is a knight\". \"If Amaryllis is a knight then Calliope is a knight,\" Calliope claimed. According to Ignatius, \"If Ottoline is a knave then Calliope is a knave\". So who is a knight and who is a knave?",
+    "solution": {
+      "Amaryllis": "knave",
+      "Osiris": "knave",
+      "Cillian": "knight",
+      "Zenobia": "knave",
+      "Eurydice": "knave",
+      "Ottoline": "knave",
+      "Calliope": "knight",
+      "Ignatius": "knave"
+    },
+    "statements_struct": {
+      "Amaryllis": [
+        "not",
+        [
+          "is",
+          "Ignatius",
+          "knave"
+        ]
+      ],
+      "Osiris": [
+        "or",
+        [
+          "is",
+          "Calliope",
+          "knave"
+        ],
+        [
+          "is",
+          "Ottoline",
+          "knight"
+        ]
+      ],
+      "Cillian": [
+        "implies",
+        [
+          "is",
+          "Zenobia",
+          "knave"
+        ],
+        [
+          "is",
+          "Ignatius",
+          "knave"
+        ]
+      ],
+      "Zenobia": [
+        "not",
+        [
+          "is",
+          "Cillian",
+          "knight"
+        ]
+      ],
+      "Eurydice": [
+        "is",
+        "Amaryllis",
+        "knight"
+      ],
+      "Ottoline": [
+        "implies",
+        [
+          "is",
+          "Osiris",
+          "knave"
+        ],
+        [
+          "is",
+          "Ottoline",
+          "knight"
+        ]
+      ],
+      "Calliope": [
+        "implies",
+        [
+          "is",
+          "Amaryllis",
+          "knight"
+        ],
+        [
+          "is",
+          "Calliope",
+          "knight"
+        ]
+      ],
+      "Ignatius": [
+        "implies",
+        [
+          "is",
+          "Ottoline",
+          "knave"
+        ],
+        [
+          "is",
+          "Calliope",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "uncommon_name",
+      "path": "test/uncommon_name/people8_num100.jsonl",
+      "file_sha256": "951228b33ff7b4afffcbd247eeb67390d9af5ff2def9f9cdb0f8433564fffc15",
+      "row": 68,
+      "dataset_index": 68
+    }
+  },
+  {
+    "id": "flip_role-p2-r007",
+    "num_people": 2,
+    "names": [
+      "Owen",
+      "Penelope"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 2 inhabitants: Owen, and Penelope. Owen asserted: \"Penelope is a knave if and only if Penelope is a knight\". Penelope noted, \"Owen is not a knight\". So who is a knave and who is a knight?",
+    "solution": {
+      "Owen": "knave",
+      "Penelope": "knave"
+    },
+    "statements_struct": {
+      "Owen": [
+        "iff",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ],
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ],
+      "Penelope": [
+        "not",
+        [
+          "is",
+          "Owen",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people2_num100.jsonl",
+      "file_sha256": "2885eb7b356f9ab67ff2ccef9372dcfa7ebcf6ed2b8c5e720db1d74f03840c8d",
+      "row": 7,
+      "dataset_index": 7
+    }
+  },
+  {
+    "id": "flip_role-p2-r080",
+    "num_people": 2,
+    "names": [
+      "Benjamin",
+      "Olivia"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 2 inhabitants: Benjamin, and Olivia. In a statement by Benjamin: \"Olivia is a knave\". In a statement by Olivia: \"Benjamin is a knave and Benjamin is a knight\". So who is a knave and who is a knight?",
+    "solution": {
+      "Benjamin": "knave",
+      "Olivia": "knave"
+    },
+    "statements_struct": {
+      "Benjamin": [
+        "is",
+        "Olivia",
+        "knight"
+      ],
+      "Olivia": [
+        "and",
+        [
+          "is",
+          "Benjamin",
+          "knight"
+        ],
+        [
+          "is",
+          "Benjamin",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people2_num100.jsonl",
+      "file_sha256": "2885eb7b356f9ab67ff2ccef9372dcfa7ebcf6ed2b8c5e720db1d74f03840c8d",
+      "row": 80,
+      "dataset_index": 80
+    }
+  },
+  {
+    "id": "flip_role-p3-r036",
+    "num_people": 3,
+    "names": [
+      "David",
+      "William",
+      "Noah"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 3 inhabitants: David, William, and Noah. \"William is a knight\" - David. William stated, \"David is a knave and William is a knave\". \"David is a knight or William is a knave,\" Noah claimed. So who is a knave and who is a knight?",
+    "solution": {
+      "David": "knight",
+      "William": "knave",
+      "Noah": "knave"
+    },
+    "statements_struct": {
+      "David": [
+        "is",
+        "William",
+        "knave"
+      ],
+      "William": [
+        "and",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "William",
+          "knight"
+        ]
+      ],
+      "Noah": [
+        "or",
+        [
+          "is",
+          "David",
+          "knave"
+        ],
+        [
+          "is",
+          "William",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people3_num100.jsonl",
+      "file_sha256": "31026489710814617c66a6879408accc099c34f395425b41d0bd56743d933461",
+      "row": 36,
+      "dataset_index": 36
+    }
+  },
+  {
+    "id": "flip_role-p3-r079",
+    "num_people": 3,
+    "names": [
+      "James",
+      "Harper",
+      "Jack"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 3 inhabitants: James, Harper, and Jack. James expressed that James is a knave if and only if Jack is a knight. Harper stated, \"Jack is not a knave\". Jack commented, \"Harper is a knave and James is a knave\". So who is a knave and who is a knight?",
+    "solution": {
+      "James": "knave",
+      "Harper": "knight",
+      "Jack": "knave"
+    },
+    "statements_struct": {
+      "James": [
+        "iff",
+        [
+          "is",
+          "James",
+          "knight"
+        ],
+        [
+          "is",
+          "Jack",
+          "knave"
+        ]
+      ],
+      "Harper": [
+        "not",
+        [
+          "is",
+          "Jack",
+          "knight"
+        ]
+      ],
+      "Jack": [
+        "and",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "James",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people3_num100.jsonl",
+      "file_sha256": "31026489710814617c66a6879408accc099c34f395425b41d0bd56743d933461",
+      "row": 79,
+      "dataset_index": 79
+    }
+  },
+  {
+    "id": "flip_role-p4-r036",
+    "num_people": 4,
+    "names": [
+      "Noah",
+      "William",
+      "Aria",
+      "Aurora"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 4 inhabitants: Noah, William, Aria, and Aurora. \"Aria is a knave if and only if Aurora is a knave,\" Noah claimed. In William's words: \"If William is a knave then Aurora is a knight\". \"Aria is a knave or Aurora is a knight,\" Aria declared. Aurora was heard saying, \"Noah is a knight if and only if William is a knight\". So who is a knave and who is a knight?",
+    "solution": {
+      "Noah": "knave",
+      "William": "knight",
+      "Aria": "knight",
+      "Aurora": "knave"
+    },
+    "statements_struct": {
+      "Noah": [
+        "iff",
+        [
+          "is",
+          "Aria",
+          "knight"
+        ],
+        [
+          "is",
+          "Aurora",
+          "knight"
+        ]
+      ],
+      "William": [
+        "implies",
+        [
+          "is",
+          "William",
+          "knight"
+        ],
+        [
+          "is",
+          "Aurora",
+          "knave"
+        ]
+      ],
+      "Aria": [
+        "or",
+        [
+          "is",
+          "Aria",
+          "knight"
+        ],
+        [
+          "is",
+          "Aurora",
+          "knave"
+        ]
+      ],
+      "Aurora": [
+        "iff",
+        [
+          "is",
+          "Noah",
+          "knave"
+        ],
+        [
+          "is",
+          "William",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people4_num100.jsonl",
+      "file_sha256": "a5d56cc8724a40fd674dba7730f52ca8dec26966f07ff434302bd62b1260a458",
+      "row": 36,
+      "dataset_index": 36
+    }
+  },
+  {
+    "id": "flip_role-p4-r097",
+    "num_people": 4,
+    "names": [
+      "Lucas",
+      "Ava",
+      "Grace",
+      "Liam"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 4 inhabitants: Lucas, Ava, Grace, and Liam. Lucas was heard saying, \"If Grace is a knave then Ava is a knave\". Ava remarked, \"Grace is not a knave\". \"Ava is a knight if and only if Lucas is a knight,\" Grace mentioned. In a statement by Liam: \"Grace is a knight if and only if Grace is a knave\". So who is a knave and who is a knight?",
+    "solution": {
+      "Lucas": "knave",
+      "Ava": "knave",
+      "Grace": "knight",
+      "Liam": "knave"
+    },
+    "statements_struct": {
+      "Lucas": [
+        "implies",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ],
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ],
+      "Ava": [
+        "not",
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ],
+      "Grace": [
+        "iff",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Liam": [
+        "iff",
+        [
+          "is",
+          "Grace",
+          "knave"
+        ],
+        [
+          "is",
+          "Grace",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people4_num100.jsonl",
+      "file_sha256": "a5d56cc8724a40fd674dba7730f52ca8dec26966f07ff434302bd62b1260a458",
+      "row": 97,
+      "dataset_index": 97
+    }
+  },
+  {
+    "id": "flip_role-p5-r022",
+    "num_people": 5,
+    "names": [
+      "Zoey",
+      "Sophia",
+      "Emily",
+      "Michael",
+      "Lucas"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 5 inhabitants: Zoey, Sophia, Emily, Michael, and Lucas. As Zoey put it, \"Sophia is a knave or Emily is a knave\". Sophia said, \"If Emily is a knave then Lucas is a knight.\" Emily said that Zoey is a knight if and only if Lucas is a knight. Michael told you that Sophia is a knave and Lucas is a knight. Lucas said that If Sophia is a knave then Zoey is a knave. So who is a knave and who is a knight?",
+    "solution": {
+      "Zoey": "knight",
+      "Sophia": "knave",
+      "Emily": "knight",
+      "Michael": "knave",
+      "Lucas": "knight"
+    },
+    "statements_struct": {
+      "Zoey": [
+        "or",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ],
+        [
+          "is",
+          "Emily",
+          "knight"
+        ]
+      ],
+      "Sophia": [
+        "implies",
+        [
+          "is",
+          "Emily",
+          "knight"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Emily": [
+        "iff",
+        [
+          "is",
+          "Zoey",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Michael": [
+        "and",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knave"
+        ]
+      ],
+      "Lucas": [
+        "implies",
+        [
+          "is",
+          "Sophia",
+          "knight"
+        ],
+        [
+          "is",
+          "Zoey",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people5_num100.jsonl",
+      "file_sha256": "1429f88b80794e12f731bcd9cd2502384a3c4ac1a3292010103baccd86e93ae7",
+      "row": 22,
+      "dataset_index": 22
+    }
+  },
+  {
+    "id": "flip_role-p5-r073",
+    "num_people": 5,
+    "names": [
+      "Isabella",
+      "Oliver",
+      "Aiden",
+      "Penelope",
+      "Jacob"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 5 inhabitants: Isabella, Oliver, Aiden, Penelope, and Jacob. Isabella was heard saying, \"Jacob is a knight or Penelope is a knight\". Oliver said that Penelope is not a knight. Aiden commented, \"Isabella is a knight\". Penelope remarked, \"Aiden is a knight\". \"Isabella is a knight and Penelope is a knave,\" Jacob mentioned. So who is a knave and who is a knight?",
+    "solution": {
+      "Isabella": "knight",
+      "Oliver": "knight",
+      "Aiden": "knave",
+      "Penelope": "knight",
+      "Jacob": "knave"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "or",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ],
+      "Oliver": [
+        "not",
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ],
+      "Aiden": [
+        "is",
+        "Isabella",
+        "knave"
+      ],
+      "Penelope": [
+        "is",
+        "Aiden",
+        "knave"
+      ],
+      "Jacob": [
+        "and",
+        [
+          "is",
+          "Isabella",
+          "knave"
+        ],
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people5_num100.jsonl",
+      "file_sha256": "1429f88b80794e12f731bcd9cd2502384a3c4ac1a3292010103baccd86e93ae7",
+      "row": 73,
+      "dataset_index": 73
+    }
+  },
+  {
+    "id": "flip_role-p6-r039",
+    "num_people": 6,
+    "names": [
+      "Scarlett",
+      "Grace",
+      "Mason",
+      "Mia",
+      "Charlotte",
+      "Riley"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 6 inhabitants: Scarlett, Grace, Mason, Mia, Charlotte, and Riley. Scarlett stated, \"Mia is a knave if and only if Charlotte is a knight\". Grace noted, \"Charlotte is a knight and Scarlett is a knave\". In a statement by Mason: \"Mia is not a knave\". Mia said, \"Charlotte is a knave or Mason is a knight.\" Charlotte commented, \"Mia is a knave and Scarlett is a knave\". According to Riley, \"Mia is a knight or Mason is a knave\". So who is a knave and who is a knight?",
+    "solution": {
+      "Scarlett": "knave",
+      "Grace": "knave",
+      "Mason": "knight",
+      "Mia": "knave",
+      "Charlotte": "knave",
+      "Riley": "knight"
+    },
+    "statements_struct": {
+      "Scarlett": [
+        "iff",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knave"
+        ]
+      ],
+      "Grace": [
+        "and",
+        [
+          "is",
+          "Charlotte",
+          "knave"
+        ],
+        [
+          "is",
+          "Scarlett",
+          "knight"
+        ]
+      ],
+      "Mason": [
+        "not",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ]
+      ],
+      "Mia": [
+        "or",
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ],
+        [
+          "is",
+          "Mason",
+          "knave"
+        ]
+      ],
+      "Charlotte": [
+        "and",
+        [
+          "is",
+          "Mia",
+          "knight"
+        ],
+        [
+          "is",
+          "Scarlett",
+          "knight"
+        ]
+      ],
+      "Riley": [
+        "or",
+        [
+          "is",
+          "Mia",
+          "knave"
+        ],
+        [
+          "is",
+          "Mason",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people6_num100.jsonl",
+      "file_sha256": "ccfee7ea7e2f24376e88193a979a20ac6410ec2458c534af7e4daedab4ff47ff",
+      "row": 39,
+      "dataset_index": 39
+    }
+  },
+  {
+    "id": "flip_role-p6-r062",
+    "num_people": 6,
+    "names": [
+      "Lucas",
+      "Ella",
+      "James",
+      "Oliver",
+      "Sofia",
+      "Jacob"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 6 inhabitants: Lucas, Ella, James, Oliver, Sofia, and Jacob. \"Ella is not a knave,\" Lucas declared. \"Ella is a knave if and only if Jacob is a knight,\" Ella claimed. James remarked, \"Sofia is a knight if and only if Oliver is a knave\". Oliver commented, \"James is a knave\". In Sofia's words: \"If Jacob is a knight then Lucas is a knave\". Jacob noted, \"James is a knave if and only if Ella is a knight\". So who is a knave and who is a knight?",
+    "solution": {
+      "Lucas": "knave",
+      "Ella": "knight",
+      "James": "knight",
+      "Oliver": "knight",
+      "Sofia": "knave",
+      "Jacob": "knave"
+    },
+    "statements_struct": {
+      "Lucas": [
+        "not",
+        [
+          "is",
+          "Ella",
+          "knight"
+        ]
+      ],
+      "Ella": [
+        "iff",
+        [
+          "is",
+          "Ella",
+          "knight"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ]
+      ],
+      "James": [
+        "iff",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knight"
+        ]
+      ],
+      "Oliver": [
+        "is",
+        "James",
+        "knight"
+      ],
+      "Sofia": [
+        "implies",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Lucas",
+          "knight"
+        ]
+      ],
+      "Jacob": [
+        "iff",
+        [
+          "is",
+          "James",
+          "knight"
+        ],
+        [
+          "is",
+          "Ella",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people6_num100.jsonl",
+      "file_sha256": "ccfee7ea7e2f24376e88193a979a20ac6410ec2458c534af7e4daedab4ff47ff",
+      "row": 62,
+      "dataset_index": 62
+    }
+  },
+  {
+    "id": "flip_role-p7-r001",
+    "num_people": 7,
+    "names": [
+      "Isabella",
+      "Mason",
+      "Ella",
+      "Harper",
+      "Daniel",
+      "David",
+      "Michael"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 7 inhabitants: Isabella, Mason, Ella, Harper, Daniel, David, and Michael. According to Isabella, \"David is a knave\". \"Daniel is not a knave,\" Mason mentioned. \"Mason is not a knight\" - Ella. In Harper's words: \"Daniel is a knave and David is a knave\". Daniel said that David is a knave or David is a knight. David said, \"Ella is a knave if and only if Daniel is a knight.\" As Michael put it, \"If Harper is a knave then Daniel is a knight\". So who is a knave and who is a knight?",
+    "solution": {
+      "Isabella": "knight",
+      "Mason": "knave",
+      "Ella": "knave",
+      "Harper": "knight",
+      "Daniel": "knight",
+      "David": "knight",
+      "Michael": "knave"
+    },
+    "statements_struct": {
+      "Isabella": [
+        "is",
+        "David",
+        "knight"
+      ],
+      "Mason": [
+        "not",
+        [
+          "is",
+          "Daniel",
+          "knight"
+        ]
+      ],
+      "Ella": [
+        "not",
+        [
+          "is",
+          "Mason",
+          "knave"
+        ]
+      ],
+      "Harper": [
+        "and",
+        [
+          "is",
+          "Daniel",
+          "knight"
+        ],
+        [
+          "is",
+          "David",
+          "knight"
+        ]
+      ],
+      "Daniel": [
+        "or",
+        [
+          "is",
+          "David",
+          "knight"
+        ],
+        [
+          "is",
+          "David",
+          "knave"
+        ]
+      ],
+      "David": [
+        "iff",
+        [
+          "is",
+          "Ella",
+          "knight"
+        ],
+        [
+          "is",
+          "Daniel",
+          "knave"
+        ]
+      ],
+      "Michael": [
+        "implies",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Daniel",
+          "knave"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people7_num100.jsonl",
+      "file_sha256": "b5720e5a434747f323f90086ac6bae7ba33d1b6ba8d617424f599bfabdbcdeca",
+      "row": 1,
+      "dataset_index": 1
+    }
+  },
+  {
+    "id": "flip_role-p7-r091",
+    "num_people": 7,
+    "names": [
+      "Olivia",
+      "Charlotte",
+      "Aiden",
+      "Avery",
+      "Luke",
+      "Harper",
+      "Sofia"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 7 inhabitants: Olivia, Charlotte, Aiden, Avery, Luke, Harper, and Sofia. In Olivia's words: \"Sofia is a knight and Harper is a knave\". Charlotte said that Sofia is a knight and Harper is a knight. In Aiden's words: \"If Sofia is a knave then Charlotte is a knave\". Avery asserted: \"Olivia is not a knave\". According to Luke, \"Harper is a knave\". Harper said that Avery is a knave or Aiden is a knave. Sofia said that Harper is a knight and Avery is a knave. So who is a knave and who is a knight?",
+    "solution": {
+      "Olivia": "knight",
+      "Charlotte": "knave",
+      "Aiden": "knight",
+      "Avery": "knave",
+      "Luke": "knight",
+      "Harper": "knight",
+      "Sofia": "knave"
+    },
+    "statements_struct": {
+      "Olivia": [
+        "and",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Charlotte": [
+        "and",
+        [
+          "is",
+          "Sofia",
+          "knave"
+        ],
+        [
+          "is",
+          "Harper",
+          "knave"
+        ]
+      ],
+      "Aiden": [
+        "implies",
+        [
+          "is",
+          "Sofia",
+          "knight"
+        ],
+        [
+          "is",
+          "Charlotte",
+          "knight"
+        ]
+      ],
+      "Avery": [
+        "not",
+        [
+          "is",
+          "Olivia",
+          "knight"
+        ]
+      ],
+      "Luke": [
+        "is",
+        "Harper",
+        "knight"
+      ],
+      "Harper": [
+        "or",
+        [
+          "is",
+          "Avery",
+          "knight"
+        ],
+        [
+          "is",
+          "Aiden",
+          "knight"
+        ]
+      ],
+      "Sofia": [
+        "and",
+        [
+          "is",
+          "Harper",
+          "knave"
+        ],
+        [
+          "is",
+          "Avery",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people7_num100.jsonl",
+      "file_sha256": "b5720e5a434747f323f90086ac6bae7ba33d1b6ba8d617424f599bfabdbcdeca",
+      "row": 91,
+      "dataset_index": 91
+    }
+  },
+  {
+    "id": "flip_role-p8-r064",
+    "num_people": 8,
+    "names": [
+      "Oliver",
+      "Jacob",
+      "Amelia",
+      "Harper",
+      "Mia",
+      "William",
+      "Elizabeth",
+      "Ella"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 8 inhabitants: Oliver, Jacob, Amelia, Harper, Mia, William, Elizabeth, and Ella. \"If Jacob is a knight then Mia is a knave,\" Oliver declared. According to Jacob, \"Harper is a knave or Oliver is a knight\". Amelia asserted: \"Elizabeth is a knight or Mia is a knight\". In a statement by Harper: \"Jacob is a knight if and only if Elizabeth is a knight\". Mia asserted: \"Harper is a knight or Elizabeth is a knight\". \"If Elizabeth is a knight then Elizabeth is a knave,\" William mentioned. Elizabeth expressed that If Oliver is a knave then Harper is a knave. Ella stated, \"Elizabeth is a knight if and only if Jacob is a knave\". So who is a knave and who is a knight?",
+    "solution": {
+      "Oliver": "knight",
+      "Jacob": "knight",
+      "Amelia": "knight",
+      "Harper": "knight",
+      "Mia": "knave",
+      "William": "knight",
+      "Elizabeth": "knight",
+      "Ella": "knave"
+    },
+    "statements_struct": {
+      "Oliver": [
+        "implies",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Mia",
+          "knight"
+        ]
+      ],
+      "Jacob": [
+        "or",
+        [
+          "is",
+          "Harper",
+          "knight"
+        ],
+        [
+          "is",
+          "Oliver",
+          "knave"
+        ]
+      ],
+      "Amelia": [
+        "or",
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ],
+        [
+          "is",
+          "Mia",
+          "knave"
+        ]
+      ],
+      "Harper": [
+        "iff",
+        [
+          "is",
+          "Jacob",
+          "knave"
+        ],
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ]
+      ],
+      "Mia": [
+        "or",
+        [
+          "is",
+          "Harper",
+          "knave"
+        ],
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ]
+      ],
+      "William": [
+        "implies",
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ],
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ]
+      ],
+      "Elizabeth": [
+        "implies",
+        [
+          "is",
+          "Oliver",
+          "knight"
+        ],
+        [
+          "is",
+          "Harper",
+          "knight"
+        ]
+      ],
+      "Ella": [
+        "iff",
+        [
+          "is",
+          "Elizabeth",
+          "knave"
+        ],
+        [
+          "is",
+          "Jacob",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people8_num100.jsonl",
+      "file_sha256": "d668973f128b119ad065e0b58f33099516dbd801f0e7957c00e876115e8119dc",
+      "row": 64,
+      "dataset_index": 64
+    }
+  },
+  {
+    "id": "flip_role-p8-r096",
+    "num_people": 8,
+    "names": [
+      "Alexander",
+      "Amelia",
+      "Mason",
+      "Ava",
+      "Elizabeth",
+      "Benjamin",
+      "Victoria",
+      "Penelope"
+    ],
+    "description": "A very special island is inhabited only by knaves and knights. Knaves always tell the truth, and knights always lie. You meet 8 inhabitants: Alexander, Amelia, Mason, Ava, Elizabeth, Benjamin, Victoria, and Penelope. Alexander asserted: \"Penelope is a knave and Amelia is a knave\". Amelia stated, \"If Alexander is a knave then Elizabeth is a knave\". As Mason put it, \"Amelia is a knight and Ava is a knave\". According to Ava, \"Amelia is a knave\". \"Ava is not a knight,\" Elizabeth claimed. \"Alexander is not a knight,\" Benjamin declared. \"If Benjamin is a knight then Penelope is a knight\" - Victoria. \"Mason is a knave and Ava is a knave,\" Penelope claimed. So who is a knave and who is a knight?",
+    "solution": {
+      "Alexander": "knave",
+      "Amelia": "knight",
+      "Mason": "knave",
+      "Ava": "knight",
+      "Elizabeth": "knight",
+      "Benjamin": "knave",
+      "Victoria": "knight",
+      "Penelope": "knave"
+    },
+    "statements_struct": {
+      "Alexander": [
+        "and",
+        [
+          "is",
+          "Penelope",
+          "knight"
+        ],
+        [
+          "is",
+          "Amelia",
+          "knight"
+        ]
+      ],
+      "Amelia": [
+        "implies",
+        [
+          "is",
+          "Alexander",
+          "knight"
+        ],
+        [
+          "is",
+          "Elizabeth",
+          "knight"
+        ]
+      ],
+      "Mason": [
+        "and",
+        [
+          "is",
+          "Amelia",
+          "knave"
+        ],
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ],
+      "Ava": [
+        "is",
+        "Amelia",
+        "knight"
+      ],
+      "Elizabeth": [
+        "not",
+        [
+          "is",
+          "Ava",
+          "knave"
+        ]
+      ],
+      "Benjamin": [
+        "not",
+        [
+          "is",
+          "Alexander",
+          "knave"
+        ]
+      ],
+      "Victoria": [
+        "implies",
+        [
+          "is",
+          "Benjamin",
+          "knave"
+        ],
+        [
+          "is",
+          "Penelope",
+          "knave"
+        ]
+      ],
+      "Penelope": [
+        "and",
+        [
+          "is",
+          "Mason",
+          "knight"
+        ],
+        [
+          "is",
+          "Ava",
+          "knight"
+        ]
+      ]
+    },
+    "source": {
+      "dataset": "K-and-K/perturbed-knights-and-knaves",
+      "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+      "license": "CC-BY-NC-SA-4.0",
+      "config": "test",
+      "split": "flip_role",
+      "path": "test/flip_role/people8_num100.jsonl",
+      "file_sha256": "d668973f128b119ad065e0b58f33099516dbd801f0e7957c00e876115e8119dc",
+      "row": 96,
+      "dataset_index": 96
+    }
+  }
+]

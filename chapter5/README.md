@@ -19,7 +19,7 @@
 | 5-9 | [dynamic-form](dynamic-form/) | ✅ | 信息不全时动态生成含级联逻辑的 HTML 表单让用户一次性补全，汇总 JSON 交回 Agent |
 | 5-10 | [erp-agent](erp-agent/) | ✅ | 中文自然语言转 SQL 由 DB 执行，artifact 模式让 LLM 只生成 SQL 制品不搬运数据，省 token 又防错 |
 | 5-11 | [conversational-ui](conversational-ui/) | ✅ | 自然语言提 UI 定制需求（颜色/字体/文案/布局），Agent 改 React 源码借 Vite HMR 即时生效 |
-| 5-12 | [coding-agent](coding-agent/) | ✅ | 基于 Claude 的生产级编码助手，纯 Python 实现全部 17 个工具（含纯 Python Grep 兼容 ripgrep），无命令行依赖 |
+| 5-12 | [agent-creator](agent-creator/) | ✅ | 模板/从零双臂均已通过结构、编译、测试、真实 Kimi K3 任务和语义门禁；[正式对照](agent-creator/runs/exp5-12-kimi-k3-20260730-v1/comparison.json)完整结束。模板质量非劣且创建更高效，但正文预期的“质量与效率同时严格占优”未出现——这是已完成实验的诚实负结果，不是未完成状态 |
 
 ## 项目类型说明
 
@@ -27,4 +27,4 @@
 | :--: | --- | --- |
 | ✅ | **可独立运行** | 本仓库自带完整代码，配置好 API Key 即可运行 |
 | 📖 | **复现指南** | 依赖需自行 `git clone` 的**外部仓库**（训练框架、评测基准等） |
-| 🚧 | **设计文档** | 仅包含架构与实现方案，可运行代码仍在完善中 |
+| 🚧 | **进行中** | 已有实现，但实验范围或验收证据尚未满足正文全部要求 |

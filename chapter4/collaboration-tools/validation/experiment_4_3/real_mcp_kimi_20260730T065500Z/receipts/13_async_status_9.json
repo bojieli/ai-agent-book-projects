@@ -1,0 +1,21 @@
+{
+  "case": "async_status_9",
+  "tool": "mcp_get_subagent_status",
+  "arguments": {
+    "subagent_id": "a4e603e5-948c-4945-b5f9-484d7a187163"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "a4e603e5-948c-4945-b5f9-484d7a187163",
+    "status": "running",
+    "mode": "async",
+    "context_strategy": "minimal",
+    "context_tokens": 24,
+    "prep_tokens": 0,
+    "result": null,
+    "created_at": "2026-07-30T06:25:30.288608"
+  },
+  "latency_seconds": 0.002
+}

@@ -33,6 +33,16 @@ class LongitudinalEvaluationTest(unittest.TestCase):
         self.assertEqual({"learning", "transfer", "change", "retention"}, set(report["phase_accuracy"]))
         self.assertEqual(6, len(report["learning_curve"]))
 
+    def test_replacement_and_update_activation_are_separate_metrics(self):
+        evolving = LongitudinalEvaluator().run(ReferenceAgent("evolving"), TASKS)
+        append_only = LongitudinalEvaluator().run(ReferenceAgent("append_only"), TASKS)
+        self.assertEqual(1.0, evolving["replacement"]["rule_replacement_accuracy"])
+        self.assertEqual(0.0, evolving["replacement"]["obsolete_rule_reference_rate"])
+        self.assertEqual(0.0, append_only["replacement"]["rule_replacement_accuracy"])
+        self.assertEqual(1.0, append_only["replacement"]["obsolete_rule_reference_rate"])
+        self.assertEqual(1.0, evolving["update_metrics"]["artifact_activation_rate"])
+        self.assertEqual(1.0, evolving["update_metrics"]["memory_adherence_rate"])
+
 
 if __name__ == "__main__":
     unittest.main()

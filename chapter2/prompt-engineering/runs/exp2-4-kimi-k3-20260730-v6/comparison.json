@@ -1,0 +1,467 @@
+{
+  "experiment_id": "2-4",
+  "created_at": "2026-07-30T06:52:16.667084+08:00",
+  "protocol_sha256": "ec1ec36d5a6ee21b5185295a7a4447f4e0173f1681a9fe471b240dda1e7cf32a",
+  "protocol_copy": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/experiment_protocol.json",
+  "provider": "openai",
+  "model": "kimi-k3",
+  "user_model": "kimi-k3",
+  "objective_scoring": "vendored tau-bench environment reward",
+  "arms": {
+    "baseline": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-baseline_0730062910.json",
+        "sha256": "33dfed80028e3c0fe8ec1984e4441cbfe54b90ac7cd5f4a88dd3caaedb1016b8"
+      },
+      "rewards": [
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 70.0,
+      "total": 10,
+      "successes": 7,
+      "failures": 3,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        14,
+        10,
+        30,
+        18,
+        15,
+        14,
+        11,
+        14,
+        16,
+        24
+      ],
+      "tool_calls": [
+        6,
+        5,
+        28,
+        14,
+        12,
+        11,
+        7,
+        11,
+        12,
+        17
+      ],
+      "tool_errors": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 221,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1599454,
+        "completion_tokens": 88017,
+        "total_tokens": 1687471
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 40.79078,
+      "arm_complete": true
+    },
+    "tone_trump": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-tone_trump_0730062910.json",
+        "sha256": "19f63afb3c31963a857181bc177917b3382eb900296518e69a5d0ac36078e0b9"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 60.0,
+      "total": 10,
+      "successes": 6,
+      "failures": 4,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        13,
+        11,
+        16,
+        18,
+        12,
+        15,
+        10,
+        12,
+        14,
+        23
+      ],
+      "tool_calls": [
+        7,
+        7,
+        14,
+        14,
+        9,
+        12,
+        6,
+        8,
+        10,
+        17
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 194,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1425756,
+        "completion_tokens": 94297,
+        "total_tokens": 1520053
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 37.94482,
+      "arm_complete": true
+    },
+    "tone_casual": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-tone_casual_0730063807.json",
+        "sha256": "f5c8b66b3de895d2d9dc5d514ccc1ba28400ac6ef7b97ded605e23d247d9b84e"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 90.0,
+      "total": 10,
+      "successes": 9,
+      "failures": 1,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        14,
+        10,
+        16,
+        15,
+        15,
+        14,
+        12,
+        15,
+        16,
+        19
+      ],
+      "tool_calls": [
+        9,
+        5,
+        13,
+        11,
+        11,
+        11,
+        8,
+        9,
+        13,
+        12
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 200,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1435720,
+        "completion_tokens": 93507,
+        "total_tokens": 1529227
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 38.0651,
+      "arm_complete": true
+    },
+    "wiki_random": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-wiki_random_0730064805.json",
+        "sha256": "ce1f89c6f23f627a075edaf56a3302698507e4051dfd8e38aaa82e8c3af30a8a"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 80.0,
+      "total": 10,
+      "successes": 8,
+      "failures": 2,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        14,
+        9,
+        14,
+        15,
+        13,
+        10,
+        14,
+        30,
+        15,
+        23
+      ],
+      "tool_calls": [
+        7,
+        5,
+        10,
+        13,
+        10,
+        7,
+        10,
+        28,
+        11,
+        15
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 209,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1446738,
+        "completion_tokens": 89732,
+        "total_tokens": 1536470
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 37.90796,
+      "arm_complete": true
+    },
+    "no_tool_desc": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-no_tool_desc_0730064805.json",
+        "sha256": "2fa1536d6df839390ed201995d9ae517c168e1659ebaaa7ee26c9a26028c30a6"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 90.0,
+      "total": 10,
+      "successes": 9,
+      "failures": 1,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.BadRequestError: OpenAIException - Invalid request: the message at position 9 with role 'user' must not be empty"
+        }
+      ],
+      "agent_steps": [
+        14,
+        9,
+        15,
+        12,
+        15,
+        11,
+        13,
+        13,
+        17,
+        null
+      ],
+      "tool_calls": [
+        9,
+        5,
+        11,
+        9,
+        12,
+        7,
+        10,
+        8,
+        14,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 166,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 947675,
+        "completion_tokens": 75364,
+        "total_tokens": 1023039
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 26.4899,
+      "arm_complete": false
+    },
+    "all_ablations": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v6/tool-calling-kimi-k3-tone_casual_wiki_random_no_tool_desc_0730065215.json",
+        "sha256": "734fedd1db14660de097ac20b028808e12f4033c1fec1db64ac66948789f55a1"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 80.0,
+      "total": 10,
+      "successes": 8,
+      "failures": 2,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        13,
+        10,
+        16,
+        16,
+        9,
+        12,
+        15,
+        12,
+        15,
+        21
+      ],
+      "tool_calls": [
+        7,
+        5,
+        13,
+        12,
+        8,
+        6,
+        10,
+        8,
+        10,
+        14
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 196,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1247279,
+        "completion_tokens": 97489,
+        "total_tokens": 1344768
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 34.69448,
+      "arm_complete": true
+    }
+  },
+  "credential_scan_passed": true,
+  "credential_findings": [],
+  "usage_and_cost": {
+    "total_real_api_calls": 1186,
+    "prompt_tokens": 8102622,
+    "completion_tokens": 538406,
+    "total_tokens": 8641028,
+    "observed_litellm_cost_usd": 0,
+    "all_calls_priced": false,
+    "native_cost_cny": 215.89304,
+    "native_cost_complete": true,
+    "qualification": "Prompt cache detail is unavailable in these responses, so every prompt token is conservatively priced as uncached."
+  },
+  "campaign_complete": false,
+  "hypothesis_results": {
+    "historical_percentages_reproduced": false,
+    "qualification": "Current fixed ten-task campaign only; compare arm metrics directly."
+  }
+}

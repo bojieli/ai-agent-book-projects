@@ -1,0 +1,18 @@
+{
+  "overall_score": 85,
+  "pass": false,
+  "issues": [
+    {
+      "page": 23,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "原图彩色注意力可视化转为黑白后对比度差，不同注意力头难以区分。建议添加灰度区分或图案填充来标识不同注意力头，或增加图例说明关键颜色对应的含义。"
+    },
+    {
+      "page": 24,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "原图彩色注意力可视化转为黑白后线条区分度低。建议使用不同线型（实线/虚线/点线）或线宽来区分不同注意力头，确保黑白打印下仍能清晰识别关键依赖关系。"
+    }
+  ]
+}

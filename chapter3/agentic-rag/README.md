@@ -9,6 +9,16 @@
 
 ## English
 
+### Canonical live campaign
+
+`python campaign.py` runs the acceptance experiment, not just the offline
+mechanism demo. It keeps the 288-file law corpus, labeled questions, BM25
+depth, answer model, and external judge identical while changing only one-shot
+retrieval versus live ReAct search. Exact chunks, citations, generated search
+queries, latency/usage, ARK/Moonshot request-response receipts, and corpus file
+hashes are written under `validation/runs/<run-id>/`; the auditable pointer is
+`validation/latest.json`.
+
 ### Features
 
 - **Agentic RAG (ReAct)**: iterative reason + tool search  

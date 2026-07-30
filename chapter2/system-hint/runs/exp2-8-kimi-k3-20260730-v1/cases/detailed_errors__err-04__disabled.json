@@ -1,0 +1,850 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "detailed_errors__err-04__disabled",
+  "suite": "detailed_errors",
+  "case_id": "err-04",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "73f6f9e3a7f4afcbf6e74bcfff1b62f7f198862905e4c64b106c6fbc98b2c42a",
+  "current_sandbox_sha256": "dade36207c88806936b432ff96f465c28fc399af071fcbb6c2eb0b1ee83b29b3",
+  "created_at": "2026-07-29T19:47:58.194210+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Read brief.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_0",
+          "function": {
+            "arguments": "{\"file\":\"brief.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The user wants me to read brief.txt, but it may have been renamed. Let me first try to read brief.txt, and if that fails, list available documents."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "content": "Error: document not found"
+    },
+    {
+      "content": "The file `brief.txt` was not found directly. Let me list the available documents to locate the renamed file.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "list_documents_1",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The file brief.txt was not found. Let me list the available documents to find the actual filename."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "content": "[\"brief_revised.txt\"]"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_2",
+          "function": {
+            "arguments": "{\"file\":\"brief_revised.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "There's only one document: \"brief_revised.txt\". Let me read it."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "content": "BRF-5374"
+    },
+    {
+      "content": "I found the renamed document and its contents. The file `brief.txt` was renamed to `brief_revised.txt`, and it contains the token `BRF-5374`.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"document\":\"brief_revised.txt\",\"token\":\"BRF-5374\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The document \"brief_revised.txt\" contains the token \"BRF-5374\". Now I need to submit the result with the actual filename and the exact token."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:47:58.194531+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read brief.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3499.718,
+      "response": {
+        "id": "chatcmpl-6a6a58ee80beffa1ad574e2d",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_0",
+                  "function": {
+                    "arguments": "{\"file\":\"brief.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The user wants me to read brief.txt, but it may have been renamed. Let me first try to read brief.txt, and if that fails, list available documents."
+            }
+          }
+        ],
+        "created": 1785354479,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 87,
+          "prompt_tokens": 367,
+          "total_tokens": 454,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 35,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:48:01.698415+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read brief.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"brief.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read brief.txt, but it may have been renamed. Let me first try to read brief.txt, and if that fails, list available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 8900.753,
+      "response": {
+        "id": "chatcmpl-6a6a58f20b8d682056dbabbe",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The file `brief.txt` was not found directly. Let me list the available documents to locate the renamed file.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "list_documents_1",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The file brief.txt was not found. Let me list the available documents to find the actual filename."
+            }
+          }
+        ],
+        "created": 1785354488,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 80,
+          "prompt_tokens": 486,
+          "total_tokens": 566,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 21,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:48:10.601271+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read brief.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"brief.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read brief.txt, but it may have been renamed. Let me first try to read brief.txt, and if that fails, list available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "The file `brief.txt` was not found directly. Let me list the available documents to locate the renamed file.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file brief.txt was not found. Let me list the available documents to find the actual filename."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"brief_revised.txt\"]"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 2630.576,
+      "response": {
+        "id": "chatcmpl-6a6a58fa80beffa1ad574e3d",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_2",
+                  "function": {
+                    "arguments": "{\"file\":\"brief_revised.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "There's only one document: \"brief_revised.txt\". Let me read it."
+            }
+          }
+        ],
+        "created": 1785354491,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 71,
+          "prompt_tokens": 599,
+          "total_tokens": 670,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 17,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:48:13.234292+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read brief.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"brief.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read brief.txt, but it may have been renamed. Let me first try to read brief.txt, and if that fails, list available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "The file `brief.txt` was not found directly. Let me list the available documents to locate the renamed file.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file brief.txt was not found. Let me list the available documents to find the actual filename."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"brief_revised.txt\"]"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_2",
+                "function": {
+                  "arguments": "{\"file\":\"brief_revised.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "There's only one document: \"brief_revised.txt\". Let me read it."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_2",
+            "name": "read_document",
+            "content": "BRF-5374"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4692.406,
+      "response": {
+        "id": "chatcmpl-6a6a58fd208aeed3bfa1b39c",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I found the renamed document and its contents. The file `brief.txt` was renamed to `brief_revised.txt`, and it contains the token `BRF-5374`.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"document\":\"brief_revised.txt\",\"token\":\"BRF-5374\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The document \"brief_revised.txt\" contains the token \"BRF-5374\". Now I need to submit the result with the actual filename and the exact token."
+            }
+          }
+        ],
+        "created": 1785354494,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 144,
+          "prompt_tokens": 702,
+          "total_tokens": 846,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 35,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:48:01.696576+00:00",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "arguments": {
+        "file": "brief.txt"
+      },
+      "content": "Error: document not found",
+      "ok": false,
+      "sandbox_sha256_after": "dade36207c88806936b432ff96f465c28fc399af071fcbb6c2eb0b1ee83b29b3"
+    },
+    {
+      "at": "2026-07-29T19:48:10.600366+00:00",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"brief_revised.txt\"]",
+      "ok": true,
+      "sandbox_sha256_after": "dade36207c88806936b432ff96f465c28fc399af071fcbb6c2eb0b1ee83b29b3"
+    },
+    {
+      "at": "2026-07-29T19:48:13.233156+00:00",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "arguments": {
+        "file": "brief_revised.txt"
+      },
+      "content": "BRF-5374",
+      "ok": true,
+      "sandbox_sha256_after": "dade36207c88806936b432ff96f465c28fc399af071fcbb6c2eb0b1ee83b29b3"
+    },
+    {
+      "at": "2026-07-29T19:48:17.928201+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "document": "brief_revised.txt",
+        "token": "BRF-5374"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "dade36207c88806936b432ff96f465c28fc399af071fcbb6c2eb0b1ee83b29b3"
+    }
+  ],
+  "tool_counters": {
+    "read_document": 2,
+    "list_documents": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "detailed_errors": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 2154,
+    "completion_tokens": 382,
+    "total_tokens": 2536
+  },
+  "cost": {
+    "amount": 0.08127999999999999,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:48:17.929573+00:00",
+  "case_condition_order": [
+    "disabled",
+    "detailed_errors"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

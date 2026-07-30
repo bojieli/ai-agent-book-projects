@@ -1,0 +1,733 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_03_medical_appointment",
+  "mode": "notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "medical_intake_001",
+      "memory": [
+        {
+          "conversation_id": "medical_intake_001"
+        },
+        {
+          "timestamp": "2024-11-12 09:00:00"
+        },
+        {
+          "business": "Mountain View Medical Center"
+        },
+        {
+          "department": "Patient Services"
+        },
+        {
+          "call_duration": "43 minutes"
+        },
+        {
+          "patient_name": "David Christopher Thompson"
+        },
+        {
+          "patient_dob": "August 9th, 1979"
+        },
+        {
+          "patient_address": "4521 Pine Valley Road, Denver, Colorado, 80203"
+        },
+        {
+          "patient_phone": "303-555-7621"
+        },
+        {
+          "patient_email": "dthompson79@email.com"
+        },
+        {
+          "insurance_type": "Blue Cross Blue Shield"
+        },
+        {
+          "insurance_member_id": "BCB447829563"
+        },
+        {
+          "insurance_group_number": "78845-001"
+        },
+        {
+          "patient_employer": "Meridian Software Solutions"
+        },
+        {
+          "insurance_primary_holder": "yes"
+        },
+        {
+          "secondary_insurance": "no"
+        },
+        {
+          "previous_pcp": "Dr. Sarah Mitchell"
+        },
+        {
+          "previous_pcp_clinic": "Denver General"
+        },
+        {
+          "previous_pcp_duration": "about five years"
+        },
+        {
+          "previous_pcp_reason_for_leaving": "retiring"
+        },
+        {
+          "appointment_concerns": "new primary doctor, high blood pressure monitoring, back pain"
+        },
+        {
+          "medical_condition": "high blood pressure (diagnosed about three years ago)"
+        },
+        {
+          "medical_condition": "back pain (lately, lower back, worse when sitting, duration about six weeks)"
+        },
+        {
+          "medication": "Lisinopril 10 milligrams once daily"
+        },
+        {
+          "medication": "atorvastatin 20 milligrams at night"
+        },
+        {
+          "medication": "omeprazole 20 milligrams once in the morning"
+        },
+        {
+          "vitamin_supplement": "daily multivitamin"
+        },
+        {
+          "vitamin_supplement": "vitamin D 2000 units"
+        },
+        {
+          "allergy": "penicillin (breaks out in hives)"
+        },
+        {
+          "allergy": "seasonal allergies (tree pollen in spring)"
+        },
+        {
+          "allergy": "lactose intolerant"
+        },
+        {
+          "surgery": "appendectomy (2010, no complications)"
+        },
+        {
+          "surgery": "left knee ACL repair (2018, no complications)"
+        },
+        {
+          "hospitalization": "pneumonia (2021, 2 days)"
+        },
+        {
+          "family_medical_history": "father: deceased (68, heart attack, diabetes, high blood pressure)"
+        },
+        {
+          "family_medical_history": "mother: 72, arthritis, high cholesterol"
+        },
+        {
+          "family_medical_history": "sister: 45, thyroid issues"
+        },
+        {
+          "family_medical_history": "maternal grandmother: breast cancer"
+        },
+        {
+          "family_medical_history": "paternal grandfather: prostate cancer"
+        },
+        {
+          "tobacco_use": "no"
+        },
+        {
+          "alcohol_consumption": "glass of wine 1-2 times on weekends"
+        },
+        {
+          "recreational_drug_use": "no"
+        },
+        {
+          "exercise_habits": "gym three times a week (cardio, light weights; limited by back pain)"
+        },
+        {
+          "last_physical_exam": "about 14 months ago (Dr. Sarah Mitchell)"
+        },
+        {
+          "last_blood_work": "about 14 months ago"
+        },
+        {
+          "last_eye_exam": "about two years ago"
+        },
+        {
+          "last_dental_exam": "last month"
+        },
+        {
+          "current_weight": "195 pounds (gained 10 pounds past year)"
+        },
+        {
+          "height": "5 feet 11 inches"
+        },
+        {
+          "sleep_issue": "trouble falling asleep (due to back pain)"
+        },
+        {
+          "snoring": "yes (reported by wife)"
+        },
+        {
+          "emergency_contact_name": "Emily Thompson"
+        },
+        {
+          "emergency_contact_address": "4521 Pine Valley Road, Denver, Colorado, 80203"
+        },
+        {
+          "emergency_contact_phone": "303-555-7622"
+        },
+        {
+          "covid_vaccination_status": "fully vaccinated with two boosters (last booster in September)"
+        },
+        {
+          "flu_shot_status": "received in October"
+        },
+        {
+          "tetanus_booster": "about two years ago (after stepping on a nail)"
+        },
+        {
+          "scheduled_provider": "Dr. Robert Chen"
+        },
+        {
+          "appointment_date": "Thursday, November 21st"
+        },
+        {
+          "appointment_time": "2:30 PM"
+        },
+        {
+          "appointment_location": "Medical Arts Building, 750 Broadway, Suite 200, Denver (near Denver Library)"
+        },
+        {
+          "parking_info": "parking garage attached, validate parking"
+        },
+        {
+          "arrival_instructions": "arrive 15 minutes early to complete paperwork"
+        },
+        {
+          "appointment_confirmation_number": "MV-789234"
+        },
+        {
+          "reminder_preference": "text message to cell phone"
+        },
+        {
+          "items_to_bring": "insurance card, photo ID, list of current medications with dosages, medical records from Dr. Mitchell"
+        },
+        {
+          "blood_work_prep": "fast for 12 hours (nothing except water after 2:30 AM); take morning medications with water"
+        },
+        {
+          "medication_refill_status": "about two weeks of medication left (Dr. Chen to handle refills)"
+        }
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "medical_intake_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_03_medical_appointment notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:11:09.812625+00:00",
+      "latency_ms": 52954.915,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of minimal standalone factual notes. Split a complex statement into atomic facts; keep exact names, identifiers and dates."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=medical_intake_001\ntimestamp=2024-11-12 09:00:00\nmetadata={\"business\": \"Mountain View Medical Center\", \"department\": \"Patient Services\", \"call_duration\": \"43 minutes\"}\nUSER: Hi, I'm a new patient and need to schedule an appointment with a primary care doctor.\nASSISTANT: Good morning! Welcome to Mountain View Medical Center. I'm Rachel from patient services. I'll help you get registered and scheduled. First, may I have your full name?\nUSER: It's David Christopher Thompson.\nASSISTANT: Thank you, Mr. Thompson. And your date of birth?\nUSER: August 9th, 1979.\nASSISTANT: Perfect. What's your current address?\nUSER: 4521 Pine Valley Road, Denver, Colorado, 80203.\nASSISTANT: And the best phone number to reach you?\nUSER: My cell is 303-555-7621.\nASSISTANT: Do you have an email address for appointment reminders and patient portal access?\nUSER: Yes, it's dthompson79@email.com\nASSISTANT: Excellent. Now, what type of insurance do you have?\nUSER: I have Blue Cross Blue Shield through my employer.\nASSISTANT: Great. Can you provide your member ID number?\nUSER: It's BCB447829563.\nASSISTANT: And the group number?\nUSER: Group number is 78845-001.\nASSISTANT: Perfect. Who is your employer?\nUSER: I work for Meridian Software Solutions.\nASSISTANT: Thank you. Now, are you the primary insurance holder?\nUSER: Yes, I am.\nASSISTANT: Do you have any secondary insurance?\nUSER: No, just the one.\nASSISTANT: Alright. Now I need to gather some medical history. Who was your previous primary care physician?\nUSER: Dr. Sarah Mitchell at Denver General. I've been seeing her for about five years but she's retiring.\nASSISTANT: I see. We can request your records from Dr. Mitchell's office. Now, what brings you in for this appointment? Any specific concerns?\nUSER: Well, I need a new primary doctor obviously, but I also have high blood pressure that needs monitoring, and I've been having some back pain lately.\nASSISTANT: I understand. How long have you had high blood pressure?\nUSER: It was diagnosed about three years ago. I'm on medication for it.\nASSISTANT: What medication are you taking?\nUSER: Lisinopril, 10 milligrams once daily.\nASSISTANT: Any other medications?\nUSER: I take atorvastatin for cholesterol, 20 milligrams at night, and I just started taking omeprazole for acid reflux about a month ago.\nASSISTANT: What dosage of omeprazole?\nUSER: 20 milligrams, once in the morning.\nASSISTANT: Thank you. Do you take any vitamins or supplements?\nUSER: Just a daily multivitamin and vitamin D, 2000 units.\nASSISTANT: Good. Any allergies to medications?\nUSER: Yes, I'm allergic to penicillin. I break out in hives.\nASSISTANT: That's important to note. Any other allergies, including food or environmental?\nUSER: I have seasonal allergies, mainly tree pollen in the spring. And I'm lactose intolerant.\nASSISTANT: Understood. Have you had any surgeries?\nUSER: I had my appendix removed in 2010 and knee surgery - ACL repair on my left knee in 2018.\nASSISTANT: Any complications with those surgeries?\nUSER: No, both went smoothly.\nASSISTANT: Good. Any hospitalizations besides those surgeries?\nUSER: I was hospitalized for pneumonia in 2021, just for two days.\nASSISTANT: I see. Now, let me ask about family medical history. Are your parents living?\nUSER: My mother is, she's 72. My father passed away five years ago from a heart attack. He was 68.\nASSISTANT: I'm sorry for your loss. Did your father have any other health conditions?\nUSER: He had diabetes and high blood pressure too.\nASSISTANT: And your mother's health?\nUSER: She has arthritis and high cholesterol, but she's doing okay.\nASSISTANT: Any siblings?\nUSER: One sister, she's 45 and healthy. Oh, but she was just diagnosed with thyroid issues.\nASSISTANT: Any history of cancer in the family?\nUSER: My maternal grandmother had breast cancer, and my paternal grandfather had prostate cancer.\nASSISTANT: Thank you for that information. Now, do you smoke or use tobacco products?\nUSER: No, never have.\nASSISTANT: How about alcohol consumption?\nUSER: Maybe a glass of wine or two on weekends. Nothing excessive.\nASSISTANT: Any recreational drug use?\nUSER: No, none.\nASSISTANT: Good. How would you describe your exercise habits?\nUSER: I try to go to the gym three times a week, mostly cardio and some light weights. Though the back pain has limited me lately.\nASSISTANT: How long have you been experiencing the back pain?\nUSER: About six weeks now. It's lower back, gets worse when I sit for long periods.\nASSISTANT: On a scale of 1 to 10, how would you rate the pain?\nUSER: Usually around a 4 or 5, but sometimes it spikes to a 7.\nASSISTANT: Have you tried anything for the pain?\nUSER: Just ibuprofen and heating pads. They help a little.\nASSISTANT: I see. Now, when was your last physical exam?\nUSER: About 14 months ago with Dr. Mitchell.\nASSISTANT: And your last blood work?\nUSER: Same time, during that physical.\nASSISTANT: When was your last eye exam?\nUSER: Oh, it's been a while. Maybe two years ago? My vision is fine though.\nASSISTANT: And dental?\nUSER: I just went to the dentist last month actually.\nASSISTANT: Good. Have you had any recent weight changes?\nUSER: I've gained about 10 pounds over the past year. I'm at 195 now.\nASSISTANT: And your height?\nUSER: 5 feet 11 inches.\nASSISTANT: Any issues with sleep?\nUSER: Sometimes I have trouble falling asleep, especially when my back is bothering me.\nASSISTANT: Do you snore or has anyone told you that you stop breathing during sleep?\nUSER: My wife says I snore sometimes, but no breathing issues that she's noticed.\nASSISTANT: Speaking of which, for emergency contact, would that be your wife?\nUSER: Yes, her name is Emily Thompson. Same address, and her cell is 303-555-7622.\nASSISTANT: Perfect. Now, have you had your COVID vaccinations?\nUSER: Yes, fully vaccinated with two boosters. Last one was in September.\nASSISTANT: Flu shot?\nUSER: Got that in October.\nASSISTANT: Great. Any other immunizations we should know about?\nUSER: I got a tetanus booster about two years ago after I stepped on a nail.\nASSISTANT: Good to know. Now, let's look at scheduling. We have Dr. Robert Chen or Dr. Lisa Wang available for primary care. Do you have a preference for a male or female doctor?\nUSER: No preference really. Who has the earlier availability?\nASSISTANT: Dr. Chen can see you next Thursday, November 21st at 2:30 PM, or Dr. Wang has an opening on Monday, November 25th at 10:00 AM.\nUSER: Thursday the 21st works better for me.\nASSISTANT: Perfect. I'll schedule you with Dr. Chen for Thursday, November 21st at 2:30 PM. Since you're a new patient, please arrive 15 minutes early to complete any remaining paperwork.\nUSER: Where exactly is the office?\nASSISTANT: We're in the Medical Arts Building, 750 Broadway, Suite 200, Denver. There's a parking garage attached, and we validate parking.\nUSER: Is that the building near the Denver Library?\nASSISTANT: Yes, exactly! We're just two blocks south of the main library.\nUSER: Great, I know where that is. What should I bring?\nASSISTANT: Please bring your insurance card, photo ID, a list of your current medications with dosages, and any medical records you have from Dr. Mitchell.\nUSER: Should I fast for blood work?\nASSISTANT: Since it's been over a year since your last labs, Dr. Chen will likely order blood work. It's best to fast for 12 hours just in case he wants a fasting glucose and lipid panel.\nUSER: Okay, so nothing after 2:30 AM that day?\nASSISTANT: Correct, nothing except water after 2:30 AM. Also, take your morning medications as usual with water.\nUSER: Should I still take the blood pressure medication that morning?\nASSISTANT: Yes, definitely continue your lisinopril. Never skip blood pressure medication.\nUSER: Got it. Will this be a full physical?\nASSISTANT: Since you're a new patient and it's been over a year, Dr. Chen will likely do a comprehensive exam. Plan for about 45 minutes.\nUSER: Perfect. Oh, do you have my prescription history? I'll need refills soon.\nASSISTANT: Dr. Chen can handle refills during your visit. How many days of medication do you have left?\nUSER: About two weeks' worth for everything.\nASSISTANT: That's perfect timing then. Dr. Chen will review everything and set up your refills. Your confirmation number for this appointment is MV-789234.\nUSER: Let me write that down... MV-789234?\nASSISTANT: Correct. You'll receive a reminder call the day before and a text message if you'd like.\nUSER: Text would be great.\nASSISTANT: I've set that up for your cell phone. Is there anything else you need to know about your appointment?\nUSER: I think that covers everything. Thank you so much for being so thorough.\nASSISTANT: You're very welcome, Mr. Thompson. We'll see you Thursday, November 21st at 2:30 PM with Dr. Chen. Remember to fast 12 hours before and arrive 15 minutes early. Have a great day!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 3000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785352269990d7474cfa702fd7fc3234b385bd39455f91e5c6",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\n  {\"conversation_id\": \"medical_intake_001\"},\n  {\"timestamp\": \"2024-11-12 09:00:00\"},\n  {\"business\": \"Mountain View Medical Center\"},\n  {\"department\": \"Patient Services\"},\n  {\"call_duration\": \"43 minutes\"},\n  {\"patient_name\": \"David Christopher Thompson\"},\n  {\"patient_dob\": \"August 9th, 1979\"},\n  {\"patient_address\": \"4521 Pine Valley Road, Denver, Colorado, 80203\"},\n  {\"patient_phone\": \"303-555-7621\"},\n  {\"patient_email\": \"dthompson79@email.com\"},\n  {\"insurance_type\": \"Blue Cross Blue Shield\"},\n  {\"insurance_member_id\": \"BCB447829563\"},\n  {\"insurance_group_number\": \"78845-001\"},\n  {\"patient_employer\": \"Meridian Software Solutions\"},\n  {\"insurance_primary_holder\": \"yes\"},\n  {\"secondary_insurance\": \"no\"},\n  {\"previous_pcp\": \"Dr. Sarah Mitchell\"},\n  {\"previous_pcp_clinic\": \"Denver General\"},\n  {\"previous_pcp_duration\": \"about five years\"},\n  {\"previous_pcp_reason_for_leaving\": \"retiring\"},\n  {\"appointment_concerns\": \"new primary doctor, high blood pressure monitoring, back pain\"},\n  {\"medical_condition\": \"high blood pressure (diagnosed about three years ago)\"},\n  {\"medical_condition\": \"back pain (lately, lower back, worse when sitting, duration about six weeks)\"},\n  {\"medication\": \"Lisinopril 10 milligrams once daily\"},\n  {\"medication\": \"atorvastatin 20 milligrams at night\"},\n  {\"medication\": \"omeprazole 20 milligrams once in the morning\"},\n  {\"vitamin_supplement\": \"daily multivitamin\"},\n  {\"vitamin_supplement\": \"vitamin D 2000 units\"},\n  {\"allergy\": \"penicillin (breaks out in hives)\"},\n  {\"allergy\": \"seasonal allergies (tree pollen in spring)\"},\n  {\"allergy\": \"lactose intolerant\"},\n  {\"surgery\": \"appendectomy (2010, no complications)\"},\n  {\"surgery\": \"left knee ACL repair (2018, no complications)\"},\n  {\"hospitalization\": \"pneumonia (2021, 2 days)\"},\n  {\"family_medical_history\": \"father: deceased (68, heart attack, diabetes, high blood pressure)\"},\n  {\"family_medical_history\": \"mother: 72, arthritis, high cholesterol\"},\n  {\"family_medical_history\": \"sister: 45, thyroid issues\"},\n  {\"family_medical_history\": \"maternal grandmother: breast cancer\"},\n  {\"family_medical_history\": \"paternal grandfather: prostate cancer\"},\n  {\"tobacco_use\": \"no\"},\n  {\"alcohol_consumption\": \"glass of wine 1-2 times on weekends\"},\n  {\"recreational_drug_use\": \"no\"},\n  {\"exercise_habits\": \"gym three times a week (cardio, light weights; limited by back pain)\"},\n  {\"last_physical_exam\": \"about 14 months ago (Dr. Sarah Mitchell)\"},\n  {\"last_blood_work\": \"about 14 months ago\"},\n  {\"last_eye_exam\": \"about two years ago\"},\n  {\"last_dental_exam\": \"last month\"},\n  {\"current_weight\": \"195 pounds (gained 10 pounds past year)\"},\n  {\"height\": \"5 feet 11 inches\"},\n  {\"sleep_issue\": \"trouble falling asleep (due to back pain)\"},\n  {\"snoring\": \"yes (reported by wife)\"},\n  {\"emergency_contact_name\": \"Emily Thompson\"},\n  {\"emergency_contact_address\": \"4521 Pine Valley Road, Denver, Colorado, 80203\"},\n  {\"emergency_contact_phone\": \"303-555-7622\"},\n  {\"covid_vaccination_status\": \"fully vaccinated with two boosters (last booster in September)\"},\n  {\"flu_shot_status\": \"received in October\"},\n  {\"tetanus_booster\": \"about two years ago (after stepping on a nail)\"},\n  {\"scheduled_provider\": \"Dr. Robert Chen\"},\n  {\"appointment_date\": \"Thursday, November 21st\"},\n  {\"appointment_time\": \"2:30 PM\"},\n  {\"appointment_location\": \"Medical Arts Building, 750 Broadway, Suite 200, Denver (near Denver Library)\"},\n  {\"parking_info\": \"parking garage attached, validate parking\"},\n  {\"arrival_instructions\": \"arrive 15 minutes early to complete paperwork\"},\n  {\"appointment_confirmation_number\": \"MV-789234\"},\n  {\"reminder_preference\": \"text message to cell phone\"},\n  {\"items_to_bring\": \"insurance card, photo ID, list of current medications with dosages, medical records from Dr. Mitchell\"},\n  {\"blood_work_prep\": \"fast for 12 hours (nothing except water after 2:30 AM); take morning medications with water\"},\n  {\"medication_refill_status\": \"about two weeks of medication left (Dr. Chen to handle refills)\"}\n]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract atomic facts from the conversation and store them in the memory array. Let's go through the conversation step by step, identifying key details with exact values, dates, ownership, etc.\n\nFirst, the conversation metadata: conversation_id=medical_intake_001, timestamp=2024-11-12 09:00:00, business=Mountain View Medical Center, department=Patient Services, call_duration=43 minutes. These are all standalone facts.\n\nNext, patient information: David Christopher Thompson is the new patient. His DOB is August 9th, 1979. Address: 4521 Pine Valley Road, Denver, Colorado, 80203. Phone: 303-555-7621. Email: dthompson79@email.com.\n\nInsurance details: Insurance type is Blue Cross Blue Shield. Member ID: BCB447829563. Group number: 78845-001. Employer: Meridian Software Solutions. Primary insurance holder: yes. Secondary insurance: no.\n\nPrevious PCP: Dr. Sarah Mitchell at Denver General. Duration with previous PCP: about five years. Reason for new PCP: previous PCP retiring.\n\nMedical concerns: High blood pressure (needs monitoring), back pain (lately, lower back, worse when sitting, duration ~6 weeks, pain level 4-5, spikes to 7, treated with ibuprofen and heating pads).\n\nMedications: Lisinopril 10mg once daily, atorvastatin 20mg at night, omeprazole 20mg once in the morning. Vitamins/supplements: daily multivitamin, vitamin D 2000 units.\n\nAllergies: Penicillin (breaks out in hives), seasonal allergies (tree pollen in spring), lactose intolerant.\n\nMedical history: Surgeries - appendectomy 2010, left knee ACL repair 2018 (no complications). Hospitalization: pneumonia 2021 (2 days).\n\nFamily medical history: Father (deceased, 68, heart attack, diabetes, high blood pressure). Mother (72, arthritis, high cholesterol). Sister (45, thyroid issues). Maternal grandmother (breast cancer). Paternal grandfather (prostate cancer).\n\nLifestyle: No smoking/tobacco. Alcohol: glass of wine 1-2x/week. No recreational drugs. Exercise: gym 3x/week (cardio, light weights; limited by back pain). Last physical: 14 months ago (Dr. Mitchell). Last blood work: 14 months ago. Last eye exam: ~2 years ago. Last dental exam: last month. Weight: 195 pounds (gained 10 pounds past year). Height: 5 feet 11 inches. Sleep issues: trouble falling asleep (back pain). Snoring: yes (wife reports).\n\nEmergency contact: Emily Thompson (same address, phone 303-555-7622).\n\nImmunizations: COVID vaccinated (fully, 2 boosters; last booster September). Flu shot: October. Tetanus booster: ~2 years ago (after stepping on nail).\n\nAppointment details: Scheduled with Dr. Robert Chen on Thursday, November 21st, 2:30 PM. Location: Medical Arts Building, 750 Broadway, Suite 200, Denver (near Denver Library, parking garage attached, validate parking). Arrival: 15 minutes early. Confirmation number: MV-789234. Reminder: text to cell phone.\n\nWhat to bring: Insurance card, photo ID, current medications list (with dosages), medical records from Dr. Mitchell.\n\nBlood work prep: Fast 12 hours (nothing except water after 2:30 AM; take morning medications with water, including lisinopril).\n\nPrescription refills: ~2 weeks left; Dr. Chen to handle during visit.\n\nI need to split all these into minimal standalone facts, keeping exact values, dates, etc. Avoid combining multiple facts in one note. Make sure each note is atomic."
+            }
+          }
+        ],
+        "created": 1785352322,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2144,
+          "prompt_tokens": 2627,
+          "total_tokens": 4771,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 903,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2144,
+        "prompt_tokens": 2627,
+        "total_tokens": 4771,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 903,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785352269990d7474cfa702fd7fc3234b385bd39455f91e5c6"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_03_medical_appointment notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:12:02.771647+00:00",
+      "latency_ms": 4719.554,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: notes\nLONG-TERM MEMORY:\n[{\"conversation_id\": \"medical_intake_001\"}, {\"timestamp\": \"2024-11-12 09:00:00\"}, {\"business\": \"Mountain View Medical Center\"}, {\"department\": \"Patient Services\"}, {\"call_duration\": \"43 minutes\"}, {\"patient_name\": \"David Christopher Thompson\"}, {\"patient_dob\": \"August 9th, 1979\"}, {\"patient_address\": \"4521 Pine Valley Road, Denver, Colorado, 80203\"}, {\"patient_phone\": \"303-555-7621\"}, {\"patient_email\": \"dthompson79@email.com\"}, {\"insurance_type\": \"Blue Cross Blue Shield\"}, {\"insurance_member_id\": \"BCB447829563\"}, {\"insurance_group_number\": \"78845-001\"}, {\"patient_employer\": \"Meridian Software Solutions\"}, {\"insurance_primary_holder\": \"yes\"}, {\"secondary_insurance\": \"no\"}, {\"previous_pcp\": \"Dr. Sarah Mitchell\"}, {\"previous_pcp_clinic\": \"Denver General\"}, {\"previous_pcp_duration\": \"about five years\"}, {\"previous_pcp_reason_for_leaving\": \"retiring\"}, {\"appointment_concerns\": \"new primary doctor, high blood pressure monitoring, back pain\"}, {\"medical_condition\": \"high blood pressure (diagnosed about three years ago)\"}, {\"medical_condition\": \"back pain (lately, lower back, worse when sitting, duration about six weeks)\"}, {\"medication\": \"Lisinopril 10 milligrams once daily\"}, {\"medication\": \"atorvastatin 20 milligrams at night\"}, {\"medication\": \"omeprazole 20 milligrams once in the morning\"}, {\"vitamin_supplement\": \"daily multivitamin\"}, {\"vitamin_supplement\": \"vitamin D 2000 units\"}, {\"allergy\": \"penicillin (breaks out in hives)\"}, {\"allergy\": \"seasonal allergies (tree pollen in spring)\"}, {\"allergy\": \"lactose intolerant\"}, {\"surgery\": \"appendectomy (2010, no complications)\"}, {\"surgery\": \"left knee ACL repair (2018, no complications)\"}, {\"hospitalization\": \"pneumonia (2021, 2 days)\"}, {\"family_medical_history\": \"father: deceased (68, heart attack, diabetes, high blood pressure)\"}, {\"family_medical_history\": \"mother: 72, arthritis, high cholesterol\"}, {\"family_medical_history\": \"sister: 45, thyroid issues\"}, {\"family_medical_history\": \"maternal grandmother: breast cancer\"}, {\"family_medical_history\": \"paternal grandfather: prostate cancer\"}, {\"tobacco_use\": \"no\"}, {\"alcohol_consumption\": \"glass of wine 1-2 times on weekends\"}, {\"recreational_drug_use\": \"no\"}, {\"exercise_habits\": \"gym three times a week (cardio, light weights; limited by back pain)\"}, {\"last_physical_exam\": \"about 14 months ago (Dr. Sarah Mitchell)\"}, {\"last_blood_work\": \"about 14 months ago\"}, {\"last_eye_exam\": \"about two years ago\"}, {\"last_dental_exam\": \"last month\"}, {\"current_weight\": \"195 pounds (gained 10 pounds past year)\"}, {\"height\": \"5 feet 11 inches\"}, {\"sleep_issue\": \"trouble falling asleep (due to back pain)\"}, {\"snoring\": \"yes (reported by wife)\"}, {\"emergency_contact_name\": \"Emily Thompson\"}, {\"emergency_contact_address\": \"4521 Pine Valley Road, Denver, Colorado, 80203\"}, {\"emergency_contact_phone\": \"303-555-7622\"}, {\"covid_vaccination_status\": \"fully vaccinated with two boosters (last booster in September)\"}, {\"flu_shot_status\": \"received in October\"}, {\"tetanus_booster\": \"about two years ago (after stepping on a nail)\"}, {\"scheduled_provider\": \"Dr. Robert Chen\"}, {\"appointment_date\": \"Thursday, November 21st\"}, {\"appointment_time\": \"2:30 PM\"}, {\"appointment_location\": \"Medical Arts Building, 750 Broadway, Suite 200, Denver (near Denver Library)\"}, {\"parking_info\": \"parking garage attached, validate parking\"}, {\"arrival_instructions\": \"arrive 15 minutes early to complete paperwork\"}, {\"appointment_confirmation_number\": \"MV-789234\"}, {\"reminder_preference\": \"text message to cell phone\"}, {\"items_to_bring\": \"insurance card, photo ID, list of current medications with dosages, medical records from Dr. Mitchell\"}, {\"blood_work_prep\": \"fast for 12 hours (nothing except water after 2:30 AM); take morning medications with water\"}, {\"medication_refill_status\": \"about two weeks of medication left (Dr. Chen to handle refills)\"}]\n\nUSER QUESTION:\nI need to confirm my upcoming doctor's appointment. What day and time was it scheduled for, and which doctor am I seeing?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "021785352322950d7474cfa702fd7fc3234b385bd39455f9ebb63",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's see. The user wants to confirm their upcoming doctor's appointment, specifically the day, time, and which doctor. I need to check the long-term memory provided.\n\nLooking through the memory, there's an entry for \"scheduled_provider\": \"Dr. Robert Chen\". Then \"appointment_date\": \"Thursday, November 21st\" and \"appointment_time\": \"2:30 PM\". That should be the information they need. I should make sure to include all three details: day, time, and doctor. Let me double-check to make sure I didn't miss anything. Yep, those are the exact entries. So the answer should state the date, time, and provider."
+            }
+          }
+        ],
+        "created": 1785352327,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 184,
+          "prompt_tokens": 1287,
+          "total_tokens": 1471,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 149,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 184,
+        "prompt_tokens": 1287,
+        "total_tokens": 1471,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 149,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785352322950d7474cfa702fd7fc3234b385bd39455f9ebb63"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_03_medical_appointment notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:12:07.493619+00:00",
+      "latency_ms": 6982.384,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=medical_intake_001\ntimestamp=2024-11-12 09:00:00\nmetadata={\"business\": \"Mountain View Medical Center\", \"department\": \"Patient Services\", \"call_duration\": \"43 minutes\"}\nUSER: Hi, I'm a new patient and need to schedule an appointment with a primary care doctor.\nASSISTANT: Good morning! Welcome to Mountain View Medical Center. I'm Rachel from patient services. I'll help you get registered and scheduled. First, may I have your full name?\nUSER: It's David Christopher Thompson.\nASSISTANT: Thank you, Mr. Thompson. And your date of birth?\nUSER: August 9th, 1979.\nASSISTANT: Perfect. What's your current address?\nUSER: 4521 Pine Valley Road, Denver, Colorado, 80203.\nASSISTANT: And the best phone number to reach you?\nUSER: My cell is 303-555-7621.\nASSISTANT: Do you have an email address for appointment reminders and patient portal access?\nUSER: Yes, it's dthompson79@email.com\nASSISTANT: Excellent. Now, what type of insurance do you have?\nUSER: I have Blue Cross Blue Shield through my employer.\nASSISTANT: Great. Can you provide your member ID number?\nUSER: It's BCB447829563.\nASSISTANT: And the group number?\nUSER: Group number is 78845-001.\nASSISTANT: Perfect. Who is your employer?\nUSER: I work for Meridian Software Solutions.\nASSISTANT: Thank you. Now, are you the primary insurance holder?\nUSER: Yes, I am.\nASSISTANT: Do you have any secondary insurance?\nUSER: No, just the one.\nASSISTANT: Alright. Now I need to gather some medical history. Who was your previous primary care physician?\nUSER: Dr. Sarah Mitchell at Denver General. I've been seeing her for about five years but she's retiring.\nASSISTANT: I see. We can request your records from Dr. Mitchell's office. Now, what brings you in for this appointment? Any specific concerns?\nUSER: Well, I need a new primary doctor obviously, but I also have high blood pressure that needs monitoring, and I've been having some back pain lately.\nASSISTANT: I understand. How long have you had high blood pressure?\nUSER: It was diagnosed about three years ago. I'm on medication for it.\nASSISTANT: What medication are you taking?\nUSER: Lisinopril, 10 milligrams once daily.\nASSISTANT: Any other medications?\nUSER: I take atorvastatin for cholesterol, 20 milligrams at night, and I just started taking omeprazole for acid reflux about a month ago.\nASSISTANT: What dosage of omeprazole?\nUSER: 20 milligrams, once in the morning.\nASSISTANT: Thank you. Do you take any vitamins or supplements?\nUSER: Just a daily multivitamin and vitamin D, 2000 units.\nASSISTANT: Good. Any allergies to medications?\nUSER: Yes, I'm allergic to penicillin. I break out in hives.\nASSISTANT: That's important to note. Any other allergies, including food or environmental?\nUSER: I have seasonal allergies, mainly tree pollen in the spring. And I'm lactose intolerant.\nASSISTANT: Understood. Have you had any surgeries?\nUSER: I had my appendix removed in 2010 and knee surgery - ACL repair on my left knee in 2018.\nASSISTANT: Any complications with those surgeries?\nUSER: No, both went smoothly.\nASSISTANT: Good. Any hospitalizations besides those surgeries?\nUSER: I was hospitalized for pneumonia in 2021, just for two days.\nASSISTANT: I see. Now, let me ask about family medical history. Are your parents living?\nUSER: My mother is, she's 72. My father passed away five years ago from a heart attack. He was 68.\nASSISTANT: I'm sorry for your loss. Did your father have any other health conditions?\nUSER: He had diabetes and high blood pressure too.\nASSISTANT: And your mother's health?\nUSER: She has arthritis and high cholesterol, but she's doing okay.\nASSISTANT: Any siblings?\nUSER: One sister, she's 45 and healthy. Oh, but she was just diagnosed with thyroid issues.\nASSISTANT: Any history of cancer in the family?\nUSER: My maternal grandmother had breast cancer, and my paternal grandfather had prostate cancer.\nASSISTANT: Thank you for that information. Now, do you smoke or use tobacco products?\nUSER: No, never have.\nASSISTANT: How about alcohol consumption?\nUSER: Maybe a glass of wine or two on weekends. Nothing excessive.\nASSISTANT: Any recreational drug use?\nUSER: No, none.\nASSISTANT: Good. How would you describe your exercise habits?\nUSER: I try to go to the gym three times a week, mostly cardio and some light weights. Though the back pain has limited me lately.\nASSISTANT: How long have you been experiencing the back pain?\nUSER: About six weeks now. It's lower back, gets worse when I sit for long periods.\nASSISTANT: On a scale of 1 to 10, how would you rate the pain?\nUSER: Usually around a 4 or 5, but sometimes it spikes to a 7.\nASSISTANT: Have you tried anything for the pain?\nUSER: Just ibuprofen and heating pads. They help a little.\nASSISTANT: I see. Now, when was your last physical exam?\nUSER: About 14 months ago with Dr. Mitchell.\nASSISTANT: And your last blood work?\nUSER: Same time, during that physical.\nASSISTANT: When was your last eye exam?\nUSER: Oh, it's been a while. Maybe two years ago? My vision is fine though.\nASSISTANT: And dental?\nUSER: I just went to the dentist last month actually.\nASSISTANT: Good. Have you had any recent weight changes?\nUSER: I've gained about 10 pounds over the past year. I'm at 195 now.\nASSISTANT: And your height?\nUSER: 5 feet 11 inches.\nASSISTANT: Any issues with sleep?\nUSER: Sometimes I have trouble falling asleep, especially when my back is bothering me.\nASSISTANT: Do you snore or has anyone told you that you stop breathing during sleep?\nUSER: My wife says I snore sometimes, but no breathing issues that she's noticed.\nASSISTANT: Speaking of which, for emergency contact, would that be your wife?\nUSER: Yes, her name is Emily Thompson. Same address, and her cell is 303-555-7622.\nASSISTANT: Perfect. Now, have you had your COVID vaccinations?\nUSER: Yes, fully vaccinated with two boosters. Last one was in September.\nASSISTANT: Flu shot?\nUSER: Got that in October.\nASSISTANT: Great. Any other immunizations we should know about?\nUSER: I got a tetanus booster about two years ago after I stepped on a nail.\nASSISTANT: Good to know. Now, let's look at scheduling. We have Dr. Robert Chen or Dr. Lisa Wang available for primary care. Do you have a preference for a male or female doctor?\nUSER: No preference really. Who has the earlier availability?\nASSISTANT: Dr. Chen can see you next Thursday, November 21st at 2:30 PM, or Dr. Wang has an opening on Monday, November 25th at 10:00 AM.\nUSER: Thursday the 21st works better for me.\nASSISTANT: Perfect. I'll schedule you with Dr. Chen for Thursday, November 21st at 2:30 PM. Since you're a new patient, please arrive 15 minutes early to complete any remaining paperwork.\nUSER: Where exactly is the office?\nASSISTANT: We're in the Medical Arts Building, 750 Broadway, Suite 200, Denver. There's a parking garage attached, and we validate parking.\nUSER: Is that the building near the Denver Library?\nASSISTANT: Yes, exactly! We're just two blocks south of the main library.\nUSER: Great, I know where that is. What should I bring?\nASSISTANT: Please bring your insurance card, photo ID, a list of your current medications with dosages, and any medical records you have from Dr. Mitchell.\nUSER: Should I fast for blood work?\nASSISTANT: Since it's been over a year since your last labs, Dr. Chen will likely order blood work. It's best to fast for 12 hours just in case he wants a fasting glucose and lipid panel.\nUSER: Okay, so nothing after 2:30 AM that day?\nASSISTANT: Correct, nothing except water after 2:30 AM. Also, take your morning medications as usual with water.\nUSER: Should I still take the blood pressure medication that morning?\nASSISTANT: Yes, definitely continue your lisinopril. Never skip blood pressure medication.\nUSER: Got it. Will this be a full physical?\nASSISTANT: Since you're a new patient and it's been over a year, Dr. Chen will likely do a comprehensive exam. Plan for about 45 minutes.\nUSER: Perfect. Oh, do you have my prescription history? I'll need refills soon.\nASSISTANT: Dr. Chen can handle refills during your visit. How many days of medication do you have left?\nUSER: About two weeks' worth for everything.\nASSISTANT: That's perfect timing then. Dr. Chen will review everything and set up your refills. Your confirmation number for this appointment is MV-789234.\nUSER: Let me write that down... MV-789234?\nASSISTANT: Correct. You'll receive a reminder call the day before and a text message if you'd like.\nUSER: Text would be great.\nASSISTANT: I've set that up for your cell phone. Is there anything else you need to know about your appointment?\nUSER: I think that covers everything. Thank you so much for being so thorough.\nASSISTANT: You're very welcome, Mr. Thompson. We'll see you Thursday, November 21st at 2:30 PM with Dr. Chen. Remember to fast 12 hours before and arrive 15 minutes early. Have a great day!\n\nQUESTION: I need to confirm my upcoming doctor's appointment. What day and time was it scheduled for, and which doctor am I seeing?\nANSWER: Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.\nEVALUATION CRITERIA: The agent should accurately retrieve and provide the appointment scheduled for Thursday, November 21st at 2:30 PM with Dr. Robert Chen. The response must include both the correct date and time as well as the physician's name, demonstrating clear recall from the medical intake conversation. The agent should ideally also mention the confirmation number MV-789234 to show thorough memory retention. Additional helpful details might include the reminder to arrive 15 minutes early as a new patient or the 12-hour fasting requirement for potential blood work. The agent must not confuse Dr. Chen with Dr. Wang who was also mentioned as an option but not selected.\n\nEXPECTED BEHAVIOR: The agent should clearly state the appointment is on Thursday, November 21st at 2:30 PM with Dr. Robert Chen, possibly mentioning the confirmation number MV-789234\n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a5088f5e22e43d6b0510c",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 4,\n      \"reasoning\": \"The assistant accurately provided the specific date and time of the appointment, as well as the name of the doctor, which matches the information given in the conversation.\",\n      \"evidence\": [\n        \"Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.\"\n      ]\n    },\n    \"recall\": {\n      \"score\": 4,\n      \"reasoning\": \"The assistant successfully recalled the key details of the appointment, including the date, time, and doctor's name, without missing any crucial information.\",\n      \"evidence\": [\n        \"Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.\"\n      ]\n    },\n    \"reasoning\": {\n      \"score\": 4,\n      \"reasoning\": \"The assistant demonstrated a clear understanding of the information provided during the medical intake conversation and accurately applied it to confirm the user's appointment details.\"\n    },\n    \"proactivity\": {\n      \"score\": 1,\n      \"reasoning\": \"While the assistant provided the correct information, there was no additional proactive behavior, such as offering to send a calendar invite or providing directions to the office.\"\n    }\n  },\n  \"hallucination\": {\n    \"detected\": false,\n    \"claims\": [],\n    \"reasoning\": \"The assistant's response is fully supported by the conversation and does not include any information that was not mentioned.\"\n  },\n  \"overall_reasoning\": \"The assistant performed well in recalling and providing the specific details of the user's upcoming doctor's appointment, including the date, time, and doctor's name. The response was accurate and directly addressed the user's request without any unsupported claims or omissions.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785352328,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 425,
+          "prompt_tokens": 2745,
+          "total_tokens": 3170,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 425,
+        "prompt_tokens": 2745,
+        "total_tokens": 3170,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a5088f5e22e43d6b0510c"
+    }
+  ],
+  "updated_at_epoch": 1785352334.478438,
+  "answer": "Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.",
+  "result": {
+    "test_id": "layer1_03_medical_appointment",
+    "layer": "layer1",
+    "title": "Healthcare Provider - Medical History and Appointment Scheduling",
+    "mode": "notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "medical_intake_001",
+        "memory": [
+          {
+            "conversation_id": "medical_intake_001"
+          },
+          {
+            "timestamp": "2024-11-12 09:00:00"
+          },
+          {
+            "business": "Mountain View Medical Center"
+          },
+          {
+            "department": "Patient Services"
+          },
+          {
+            "call_duration": "43 minutes"
+          },
+          {
+            "patient_name": "David Christopher Thompson"
+          },
+          {
+            "patient_dob": "August 9th, 1979"
+          },
+          {
+            "patient_address": "4521 Pine Valley Road, Denver, Colorado, 80203"
+          },
+          {
+            "patient_phone": "303-555-7621"
+          },
+          {
+            "patient_email": "dthompson79@email.com"
+          },
+          {
+            "insurance_type": "Blue Cross Blue Shield"
+          },
+          {
+            "insurance_member_id": "BCB447829563"
+          },
+          {
+            "insurance_group_number": "78845-001"
+          },
+          {
+            "patient_employer": "Meridian Software Solutions"
+          },
+          {
+            "insurance_primary_holder": "yes"
+          },
+          {
+            "secondary_insurance": "no"
+          },
+          {
+            "previous_pcp": "Dr. Sarah Mitchell"
+          },
+          {
+            "previous_pcp_clinic": "Denver General"
+          },
+          {
+            "previous_pcp_duration": "about five years"
+          },
+          {
+            "previous_pcp_reason_for_leaving": "retiring"
+          },
+          {
+            "appointment_concerns": "new primary doctor, high blood pressure monitoring, back pain"
+          },
+          {
+            "medical_condition": "high blood pressure (diagnosed about three years ago)"
+          },
+          {
+            "medical_condition": "back pain (lately, lower back, worse when sitting, duration about six weeks)"
+          },
+          {
+            "medication": "Lisinopril 10 milligrams once daily"
+          },
+          {
+            "medication": "atorvastatin 20 milligrams at night"
+          },
+          {
+            "medication": "omeprazole 20 milligrams once in the morning"
+          },
+          {
+            "vitamin_supplement": "daily multivitamin"
+          },
+          {
+            "vitamin_supplement": "vitamin D 2000 units"
+          },
+          {
+            "allergy": "penicillin (breaks out in hives)"
+          },
+          {
+            "allergy": "seasonal allergies (tree pollen in spring)"
+          },
+          {
+            "allergy": "lactose intolerant"
+          },
+          {
+            "surgery": "appendectomy (2010, no complications)"
+          },
+          {
+            "surgery": "left knee ACL repair (2018, no complications)"
+          },
+          {
+            "hospitalization": "pneumonia (2021, 2 days)"
+          },
+          {
+            "family_medical_history": "father: deceased (68, heart attack, diabetes, high blood pressure)"
+          },
+          {
+            "family_medical_history": "mother: 72, arthritis, high cholesterol"
+          },
+          {
+            "family_medical_history": "sister: 45, thyroid issues"
+          },
+          {
+            "family_medical_history": "maternal grandmother: breast cancer"
+          },
+          {
+            "family_medical_history": "paternal grandfather: prostate cancer"
+          },
+          {
+            "tobacco_use": "no"
+          },
+          {
+            "alcohol_consumption": "glass of wine 1-2 times on weekends"
+          },
+          {
+            "recreational_drug_use": "no"
+          },
+          {
+            "exercise_habits": "gym three times a week (cardio, light weights; limited by back pain)"
+          },
+          {
+            "last_physical_exam": "about 14 months ago (Dr. Sarah Mitchell)"
+          },
+          {
+            "last_blood_work": "about 14 months ago"
+          },
+          {
+            "last_eye_exam": "about two years ago"
+          },
+          {
+            "last_dental_exam": "last month"
+          },
+          {
+            "current_weight": "195 pounds (gained 10 pounds past year)"
+          },
+          {
+            "height": "5 feet 11 inches"
+          },
+          {
+            "sleep_issue": "trouble falling asleep (due to back pain)"
+          },
+          {
+            "snoring": "yes (reported by wife)"
+          },
+          {
+            "emergency_contact_name": "Emily Thompson"
+          },
+          {
+            "emergency_contact_address": "4521 Pine Valley Road, Denver, Colorado, 80203"
+          },
+          {
+            "emergency_contact_phone": "303-555-7622"
+          },
+          {
+            "covid_vaccination_status": "fully vaccinated with two boosters (last booster in September)"
+          },
+          {
+            "flu_shot_status": "received in October"
+          },
+          {
+            "tetanus_booster": "about two years ago (after stepping on a nail)"
+          },
+          {
+            "scheduled_provider": "Dr. Robert Chen"
+          },
+          {
+            "appointment_date": "Thursday, November 21st"
+          },
+          {
+            "appointment_time": "2:30 PM"
+          },
+          {
+            "appointment_location": "Medical Arts Building, 750 Broadway, Suite 200, Denver (near Denver Library)"
+          },
+          {
+            "parking_info": "parking garage attached, validate parking"
+          },
+          {
+            "arrival_instructions": "arrive 15 minutes early to complete paperwork"
+          },
+          {
+            "appointment_confirmation_number": "MV-789234"
+          },
+          {
+            "reminder_preference": "text message to cell phone"
+          },
+          {
+            "items_to_bring": "insurance card, photo ID, list of current medications with dosages, medical records from Dr. Mitchell"
+          },
+          {
+            "blood_work_prep": "fast for 12 hours (nothing except water after 2:30 AM); take morning medications with water"
+          },
+          {
+            "medication_refill_status": "about two weeks of medication left (Dr. Chen to handle refills)"
+          }
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "medical_intake_001"
+        }
+      }
+    ],
+    "answer": "Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**.",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 0.8125
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The assistant accurately provided the specific date and time of the appointment, as well as the name of the doctor, which matches the information given in the conversation.",
+          "evidence": [
+            "Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The assistant successfully recalled the key details of the appointment, including the date, time, and doctor's name, without missing any crucial information.",
+          "evidence": [
+            "Your upcoming doctor's appointment is scheduled for **Thursday, November 21st at 2:30 PM**, and you will be seeing **Dr. Robert Chen**."
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The assistant demonstrated a clear understanding of the information provided during the medical intake conversation and accurately applied it to confirm the user's appointment details."
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "While the assistant provided the correct information, there was no additional proactive behavior, such as offering to send a calendar invite or providing directions to the office."
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The assistant's response is fully supported by the conversation and does not include any information that was not mentioned."
+      },
+      "overall_reasoning": "The assistant performed well in recalling and providing the specific details of the user's upcoming doctor's appointment, including the date, time, and doctor's name. The response was accurate and directly addressed the user's request without any unsupported claims or omissions."
+    }
+  }
+}

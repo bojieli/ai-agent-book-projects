@@ -1,0 +1,853 @@
+{
+  "signature": "e69b6a3d4d22e46d99ca8a1105ba6c8a6ad8f7eaf64ed31e90b995112f393dd6",
+  "parsed": {
+    "core": [
+      {
+        "key": "surrender",
+        "name_cn": "自首",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "mitigating",
+        "question": "被告人是否具有自首情节？"
+      },
+      {
+        "key": "truthful_confession",
+        "name_cn": "如实供述",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "mitigating",
+        "question": "被告人是否如实供述罪行？"
+      },
+      {
+        "key": "compensation_to_victim",
+        "name_cn": "赔偿被害人损失",
+        "kind": "categorical",
+        "values": [
+          "未赔偿",
+          "部分赔偿",
+          "全额赔偿"
+        ],
+        "direction": "mitigating",
+        "question": "被告人对被害人损失的赔偿情况如何？"
+      },
+      {
+        "key": "victim_forgiveness",
+        "name_cn": "被害人谅解",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "mitigating",
+        "question": "被害人是否对被告人表示谅解？"
+      },
+      {
+        "key": "joint_crime",
+        "name_cn": "共同犯罪",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "neutral",
+        "question": "是否属于共同犯罪？"
+      },
+      {
+        "key": "criminal_record",
+        "name_cn": "前科情况",
+        "kind": "bool",
+        "values": [
+          "有",
+          "无"
+        ],
+        "direction": "aggravating",
+        "question": "被告人是否有犯罪前科？"
+      },
+      {
+        "key": "arrest_method",
+        "name_cn": "到案方式",
+        "kind": "categorical",
+        "values": [
+          "被抓获",
+          "传唤到案",
+          "自首",
+          "现场等待"
+        ],
+        "direction": "neutral",
+        "question": "被告人的到案方式是什么？"
+      },
+      {
+        "key": "return_of_stolen_property",
+        "name_cn": "退赃情况",
+        "kind": "categorical",
+        "values": [
+          "全部退赃",
+          "部分退赃",
+          "未退赃",
+          "亲属代为退赃"
+        ],
+        "direction": "mitigating",
+        "question": "被告人的退赃情况如何？"
+      },
+      {
+        "key": "crime_count",
+        "name_cn": "犯罪次数",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "被告人的犯罪次数是多少？"
+      },
+      {
+        "key": "crime_amount",
+        "name_cn": "犯罪金额",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "犯罪涉及的金额是多少？"
+      },
+      {
+        "key": "guilty_plea",
+        "name_cn": "认罪态度",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "mitigating",
+        "question": "被告人是否自愿认罪？"
+      },
+      {
+        "key": "first_offense",
+        "name_cn": "初犯",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "mitigating",
+        "question": "被告人是否为初犯？"
+      },
+      {
+        "key": "recidivism",
+        "name_cn": "累犯",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "aggravating",
+        "question": "被告人是否构成累犯？"
+      },
+      {
+        "key": "criminal_form",
+        "name_cn": "犯罪形态",
+        "kind": "categorical",
+        "values": [
+          "既遂",
+          "未遂",
+          "既遂+未遂"
+        ],
+        "direction": "neutral",
+        "question": "犯罪形态是既遂还是未遂？"
+      },
+      {
+        "key": "disposal_of_stolen_property",
+        "name_cn": "赃款赃物处理情况",
+        "kind": "categorical",
+        "values": [
+          "挥霍",
+          "销赃牟利",
+          "部分发还",
+          "全部发还"
+        ],
+        "direction": "neutral",
+        "question": "赃款赃物的处理情况如何？"
+      },
+      {
+        "key": "victim_count",
+        "name_cn": "被害人数量",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "本案涉及的被害人数量是多少？"
+      }
+    ],
+    "extensions": {
+      "盗窃罪": [
+        {
+          "key": "theft_count",
+          "name_cn": "盗窃次数",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "盗窃次数是多少？"
+        },
+        {
+          "key": "theft_amount",
+          "name_cn": "盗窃数额",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "盗窃数额是多少？"
+        },
+        {
+          "key": "household_theft",
+          "name_cn": "入户盗窃",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "是否属于入户盗窃？"
+        },
+        {
+          "key": "stolen_property_recovery",
+          "name_cn": "赃物追回情况",
+          "kind": "categorical",
+          "values": [
+            "全部追回",
+            "部分追回",
+            "未追回"
+          ],
+          "direction": "mitigating",
+          "question": "赃物追回情况如何？"
+        },
+        {
+          "key": "destructive_means",
+          "name_cn": "破坏性手段",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "是否采用破坏性手段盗窃？"
+        },
+        {
+          "key": "use_special_convenience",
+          "name_cn": "利用特殊便利",
+          "kind": "categorical",
+          "values": [
+            "钥匙",
+            "工作便利",
+            "无"
+          ],
+          "direction": "aggravating",
+          "question": "是否利用特殊便利实施盗窃？"
+        },
+        {
+          "key": "theft_method",
+          "name_cn": "盗窃方式",
+          "kind": "categorical",
+          "values": [
+            "扒窃",
+            "入户盗窃",
+            "趁人不备",
+            "撬锁",
+            "爬窗",
+            "顺手牵羊"
+          ],
+          "direction": "aggravating",
+          "question": "盗窃方式是什么？"
+        },
+        {
+          "key": "theft_target",
+          "name_cn": "盗窃对象",
+          "kind": "categorical",
+          "values": [
+            "手机",
+            "现金",
+            "电脑",
+            "电动车",
+            "首饰",
+            "食品"
+          ],
+          "direction": "neutral",
+          "question": "盗窃对象是什么？"
+        },
+        {
+          "key": "theft_tool",
+          "name_cn": "盗窃工具",
+          "kind": "categorical",
+          "values": [
+            "螺丝刀",
+            "老虎钳",
+            "撬棍",
+            "镊子",
+            "钥匙",
+            "徒手"
+          ],
+          "direction": "aggravating",
+          "question": "使用的盗窃工具是什么？"
+        },
+        {
+          "key": "theft_location",
+          "name_cn": "盗窃场所",
+          "kind": "categorical",
+          "values": [
+            "户内",
+            "公共场所",
+            "网吧",
+            "超市",
+            "户外"
+          ],
+          "direction": "neutral",
+          "question": "盗窃场所是什么？"
+        },
+        {
+          "key": "stolen_property_disposal",
+          "name_cn": "赃物处理方式",
+          "kind": "categorical",
+          "values": [
+            "变卖挥霍",
+            "藏匿",
+            "返还被害人"
+          ],
+          "direction": "aggravating",
+          "question": "赃物处理方式是什么？"
+        },
+        {
+          "key": "drug_user_identity",
+          "name_cn": "吸毒人员身份",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "被告人是否为吸毒人员？"
+        }
+      ],
+      "故意伤害罪": [
+        {
+          "key": "injury_degree",
+          "name_cn": "损伤程度",
+          "kind": "categorical",
+          "values": [
+            "轻伤一级",
+            "轻伤二级",
+            "重伤二级",
+            "轻微伤",
+            "重伤一级"
+          ],
+          "direction": "aggravating",
+          "question": "被害人损伤程度是什么？"
+        },
+        {
+          "key": "weapon_type",
+          "name_cn": "伤害工具",
+          "kind": "categorical",
+          "values": [
+            "菜刀",
+            "木棍",
+            "尖刀",
+            "拳头",
+            "铁棍",
+            "U型锁",
+            "铁锹",
+            "酒瓶"
+          ],
+          "direction": "aggravating",
+          "question": "使用的伤害工具是什么？"
+        },
+        {
+          "key": "criminal_cause",
+          "name_cn": "犯罪起因",
+          "kind": "categorical",
+          "values": [
+            "琐事争执",
+            "债务纠纷",
+            "感情纠纷",
+            "邻里矛盾",
+            "被害人过错",
+            "工作纠纷"
+          ],
+          "direction": "neutral",
+          "question": "犯罪起因是什么？"
+        },
+        {
+          "key": "community_correction_eligibility",
+          "name_cn": "社区矫正评估",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "mitigating",
+          "question": "是否具备社区矫正条件？"
+        },
+        {
+          "key": "victim_fault",
+          "name_cn": "被害人过错",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "mitigating",
+          "question": "被害人是否存在过错？"
+        },
+        {
+          "key": "compensation_status",
+          "name_cn": "赔偿情况",
+          "kind": "categorical",
+          "values": [
+            "未赔偿",
+            "部分赔偿",
+            "全额赔偿"
+          ],
+          "direction": "mitigating",
+          "question": "赔偿情况如何？"
+        },
+        {
+          "key": "mutual_fight",
+          "name_cn": "互殴情节",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "neutral",
+          "question": "是否存在互殴情节？"
+        },
+        {
+          "key": "injury_result",
+          "name_cn": "伤害后果",
+          "kind": "categorical",
+          "values": [
+            "轻伤",
+            "重伤",
+            "轻微伤",
+            "死亡"
+          ],
+          "direction": "aggravating",
+          "question": "伤害后果是什么？"
+        },
+        {
+          "key": "criminal_motive",
+          "name_cn": "犯罪动机",
+          "kind": "categorical",
+          "values": [
+            "报复",
+            "琐事",
+            "感情纠纷",
+            "债务纠纷",
+            "征地纠纷"
+          ],
+          "direction": "neutral",
+          "question": "犯罪动机是什么？"
+        },
+        {
+          "key": "drunk_crime",
+          "name_cn": "酒后犯罪",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "是否酒后犯罪？"
+        },
+        {
+          "key": "minor_injury_count",
+          "name_cn": "轻伤人数",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "轻伤人数是多少？"
+        },
+        {
+          "key": "serious_injury_count",
+          "name_cn": "重伤人数",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "重伤人数是多少？"
+        }
+      ],
+      "诈骗罪": [
+        {
+          "key": "fraud_count",
+          "name_cn": "诈骗次数",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "诈骗次数是多少？"
+        },
+        {
+          "key": "fraud_amount",
+          "name_cn": "诈骗数额",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "诈骗数额是多少？"
+        },
+        {
+          "key": "fraud_method",
+          "name_cn": "诈骗手段",
+          "kind": "categorical",
+          "values": [
+            "虚构事实",
+            "伪造证件",
+            "冒充身份",
+            "网络诈骗",
+            "代还信用卡",
+            "虚构投资"
+          ],
+          "direction": "aggravating",
+          "question": "诈骗手段是什么？"
+        },
+        {
+          "key": "restitution_situation",
+          "name_cn": "退赃情况",
+          "kind": "categorical",
+          "values": [
+            "全部退赃",
+            "部分退赃",
+            "未退赃",
+            "亲属代为退赃"
+          ],
+          "direction": "mitigating",
+          "question": "退赃情况如何？"
+        },
+        {
+          "key": "criminal_form",
+          "name_cn": "犯罪形态",
+          "kind": "categorical",
+          "values": [
+            "既遂",
+            "未遂",
+            "既遂+未遂"
+          ],
+          "direction": "neutral",
+          "question": "犯罪形态是什么？"
+        },
+        {
+          "key": "fraud_target",
+          "name_cn": "诈骗对象",
+          "kind": "categorical",
+          "values": [
+            "个人",
+            "老年人",
+            "国家财产",
+            "金融机构",
+            "亲友"
+          ],
+          "direction": "aggravating",
+          "question": "诈骗对象是什么？"
+        },
+        {
+          "key": "proceeds_use",
+          "name_cn": "赃款用途",
+          "kind": "categorical",
+          "values": [
+            "挥霍",
+            "偿还赌债",
+            "日常生活",
+            "业务经营"
+          ],
+          "direction": "aggravating",
+          "question": "赃款用途是什么？"
+        },
+        {
+          "key": "impersonate_identity",
+          "name_cn": "冒充身份",
+          "kind": "categorical",
+          "values": [
+            "国家机关工作人员",
+            "公司经理",
+            "驾校人员",
+            "民警"
+          ],
+          "direction": "aggravating",
+          "question": "冒充的身份是什么？"
+        },
+        {
+          "key": "fraud_means",
+          "name_cn": "诈骗方式",
+          "kind": "categorical",
+          "values": [
+            "虚构交易平台",
+            "伪造合同",
+            "虚假贷款",
+            "代还信用卡报酬",
+            "丢包诈骗"
+          ],
+          "direction": "aggravating",
+          "question": "具体诈骗方式是什么？"
+        },
+        {
+          "key": "fraud_victim_count",
+          "name_cn": "诈骗被害人人数",
+          "kind": "numeric",
+          "values": [],
+          "direction": "aggravating",
+          "question": "诈骗被害人人数是多少？"
+        },
+        {
+          "key": "booty_squandered",
+          "name_cn": "赃款挥霍",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "赃款是否被挥霍？"
+        },
+        {
+          "key": "fraud_middleman",
+          "name_cn": "存在中间人",
+          "kind": "bool",
+          "values": [
+            "是",
+            "否"
+          ],
+          "direction": "aggravating",
+          "question": "是否存在中间人？"
+        }
+      ]
+    },
+    "诈骗罪": [
+      {
+        "key": "fraud_count",
+        "name_cn": "诈骗次数",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "诈骗次数是多少？"
+      },
+      {
+        "key": "fraud_amount",
+        "name_cn": "诈骗数额",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "诈骗数额是多少？"
+      },
+      {
+        "key": "fraud_method",
+        "name_cn": "诈骗手段",
+        "kind": "categorical",
+        "values": [
+          "虚构事实隐瞒真相",
+          "伪造国家机关证件",
+          "网络诈骗",
+          "假冒身份",
+          "冒充国家机关工作人员",
+          "以借贷为名抵押诈骗",
+          "保健品虚假宣传",
+          "虚假贷款材料"
+        ],
+        "direction": "aggravating",
+        "question": "诈骗手段是什么？"
+      },
+      {
+        "key": "restitution_situation",
+        "name_cn": "退赃情况",
+        "kind": "categorical",
+        "values": [
+          "全部退赃",
+          "部分退赃",
+          "未退赃",
+          "亲属代为退赃"
+        ],
+        "direction": "mitigating",
+        "question": "退赃情况如何？"
+      },
+      {
+        "key": "criminal_form",
+        "name_cn": "犯罪形态",
+        "kind": "categorical",
+        "values": [
+          "既遂",
+          "未遂",
+          "既遂+未遂"
+        ],
+        "direction": "neutral",
+        "question": "犯罪形态是既遂还是未遂？"
+      },
+      {
+        "key": "fraud_target",
+        "name_cn": "诈骗对象",
+        "kind": "categorical",
+        "values": [
+          "普通个人",
+          "境外人员",
+          "老年人",
+          "政府部门",
+          "金融机构",
+          "亲友"
+        ],
+        "direction": "aggravating",
+        "question": "诈骗对象是什么？"
+      },
+      {
+        "key": "proceeds_use",
+        "name_cn": "赃款用途",
+        "kind": "categorical",
+        "values": [
+          "挥霍",
+          "偿还赌债",
+          "日常生活",
+          "业务经营",
+          "偿还个人债务"
+        ],
+        "direction": "aggravating",
+        "question": "赃款用途是什么？"
+      },
+      {
+        "key": "impersonate_identity",
+        "name_cn": "冒充身份",
+        "kind": "categorical",
+        "values": [
+          "押运公司副队长",
+          "学校工作人员",
+          "派出所警员、民警",
+          "完美公司经理"
+        ],
+        "direction": "aggravating",
+        "question": "冒充的身份是什么？"
+      },
+      {
+        "key": "fraud_means",
+        "name_cn": "诈骗方式",
+        "kind": "categorical",
+        "values": [
+          "虚构交易平台",
+          "虚构身份及公司资质",
+          "以办理工作/取保候审为名",
+          "发送诈骗短信",
+          "代还信用卡报酬",
+          "抢栽树苗",
+          "虚构驾校名额",
+          "虚构销分",
+          "虚构购房优惠",
+          "冒充领导借钱"
+        ],
+        "direction": "aggravating",
+        "question": "具体诈骗方式是什么？"
+      },
+      {
+        "key": "fraud_victim_count",
+        "name_cn": "诈骗被害人人数",
+        "kind": "numeric",
+        "values": [],
+        "direction": "aggravating",
+        "question": "诈骗被害人人数是多少？"
+      },
+      {
+        "key": "booty_squandered",
+        "name_cn": "赃款挥霍",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "aggravating",
+        "question": "赃款是否被挥霍？"
+      },
+      {
+        "key": "fraud_middleman",
+        "name_cn": "存在中间人",
+        "kind": "bool",
+        "values": [
+          "是",
+          "否"
+        ],
+        "direction": "aggravating",
+        "question": "是否存在中间人？"
+      }
+    ]
+  },
+  "receipt": {
+    "purpose": "3-13 consolidate bottom-up factors",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-29T20:51:14.949098+00:00",
+    "latency_ms": 123761.282,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据建模专家。下面是从 360 条真实 CAIL2018 训练案件分批自由发现的原始因素。\n仅根据这些发现归并同义项，形成模块化 schema。core 最多 16 个跨罪名通用因素；extensions 必须且只能有\n['盗窃罪', '故意伤害罪', '诈骗罪'] 三个键，每个最多 12 个罪名特有因素。不要引入原始发现中没有的因素。每项字段：\nkey,name_cn,kind(numeric|bool|categorical),values,direction(aggravating|mitigating|neutral),question。\n只返回 JSON：{\"core\":[],\"extensions\":{\"盗窃罪\":[],\"故意伤害罪\":[],\"诈骗罪\":[]}}。"
+        },
+        {
+          "role": "user",
+          "content": "[{\"key\": \"general_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如被告人林某某到公安机关投案，并如实交代事实；被告人谢某到公安机关投案\"}, {\"key\": \"confession_truthfully\", \"name_cn\": \"如实供述\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如被告人彭某到案后如实供述犯罪事实；被告人郝某能如实供述自己的罪行\"}, {\"key\": \"compensation_to_victim\", \"name_cn\": \"赔偿被害人损失\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"20000元\", \"18000元\", \"是\", \"否\"], \"evidence\": \"如林某某与被害人达成调解协议，赔偿20000元；聂某某赔偿张某X18000元\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如林某某取得被害人喻某某谅解；于某获得被害人谅解\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如黄某伙同赵某盗窃；王某某伙同“小杨”、“小牛”殴打许某某\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"有\", \"无\"], \"evidence\": \"如郝某有释放证明；曲1某有四平市铁西区人民法院刑事判决书\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"重伤二级\", \"轻微伤\"], \"evidence\": \"如黎某1损伤程度为轻伤一级；喻某某损伤程度为轻伤二级；韦某1损伤程度为重伤二级\"}, {\"key\": \"weapon_type\", \"name_cn\": \"持械类型\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"菜刀\", \"柴刀\", \"木棍\", \"尖刀\", \"卡刀\", \"拳头\"], \"evidence\": \"如黎某某拿菜刀；林某某持柴刀；张某甲携木棍；包某甲用尖刀；谢某用卡刀；王×2使用拳头\"}, {\"key\": \"criminal_cause\", \"name_cn\": \"犯罪起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"因琐事\", \"传销被骗索赔\", \"债务问题\", \"征地款分配纠纷\"], \"evidence\": \"如林某某因传销被骗索赔；聂某某因债务问题；黎某某因征地款分配争吵；王×2因琐事\"}, {\"key\": \"community_correction_eligibility\", \"name_cn\": \"社区矫正评估\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如浏阳市司法局评估林某某具备社区矫正条件\"}, {\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [\"1\", \"2\", \"3\", \"4\", \"5\"], \"evidence\": \"如彭某盗窃2起；黄某盗窃3起；郝某作案5起；无某先后四次盗窃；吴1某盗窃3起\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [\"975\", \"1805\", \"3100\", \"8466\", \"9504\"], \"evidence\": \"如吴1某窃得975元电动自行车；郝某窃得8466元；姜某盗割电缆价值9504元；彭某盗走3100元\"}, {\"key\": \"theft_in_residence\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如彭某攀爬进入陈某某卧室；杨某进入王某生活起居住所；丁某进入李某租房\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"部分追回并发还\", \"全部追回并发还\", \"未追回\"], \"evidence\": \"如黄某追回部分手机并发还；丁某赃物已追回发还；曲1某金项链和手表遗失未追回\"}, {\"key\": \"destructive_means\", \"name_cn\": \"破坏性手段\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如吴1某撬锁；无某撬别卷闸门；郝某撬油箱盖、撬窗；李某破坏储物柜\"}, {\"key\": \"use_special_convenience\", \"name_cn\": \"利用特殊便利\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"钥匙\", \"工作便利\", \"无\"], \"evidence\": \"如彭某利用留有钥匙；李某利用同公司员工身份；其他案件无特殊便利\"}, {\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [\"1\", \"3\", \"6\"], \"evidence\": \"如王某诈骗3起；赵某某参与作案6起；马某某诈骗1起\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [\"6375\", \"17455\", \"20000\", \"38700\", \"89075\"], \"evidence\": \"如赵某某诈骗89075元；钟某某诈骗38700元；曾某骗取2万元；马某某骗取17455元；赵某某某起未刷出6375元\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"代还信用卡后改密码\", \"伪造住院病历骗低保\", \"冒充出租车租车骗押金\", \"虚假贷款信息\", \"冒充六合彩公司\"], \"evidence\": \"如赵某某代还信用卡后改密码；马某某伪造病历骗低保；曾某冒充出租车租车骗押金；苏某发布虚假贷款信息、冒充六合彩公司\"}, {\"key\": \"restitution_situation\", \"name_cn\": \"退赃情况\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"赃款追回\"], \"evidence\": \"如马某某案发后退还；曾某追回2万元；陈某甲母亲返还44000元；赵某某某起退还给侯某6375元\"}, {\"key\": \"criminal_form\", \"name_cn\": \"犯罪形态\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"既遂\", \"未遂\", \"既遂+未遂\"], \"evidence\": \"如钟某某既遂34200元、未遂4500元；其他案件多为既遂\"}, {\"key\": \"drunk_crime\", \"name_cn\": \"酒后犯罪\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"被告人覃某甲酒后想起与被害人纠纷而发气并实施伤害行为\"}, {\"key\": \"weapon_type\", \"name_cn\": \"作案工具类型\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"菜刀\", \"西瓜刀\", \"拳脚\", \"牙齿\", \"拳头\"], \"证据说明\": \"如覃某甲持菜刀砍伤被害人，欧某持西瓜刀砍伤被害人，刘×用拳脚击打被害人等\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"重伤二级\", \"轻微伤\"], \"证据说明\": \"如覃某左面部创口8.0厘米构成轻伤一级，刘××左桡骨粉碎性骨折构成轻伤一级，兰某某外伤性肝破裂构成重伤二级等\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"被抓获\", \"传唤到案\", \"自首\", \"现场等待\"], \"证据说明\": \"如覃某甲被民警抓获，朱某某接通知后接受调查，刘×主动投案，毕某甲未逃匿到案等\"}, {\"key\": \"compensation_status\", \"name_cn\": \"赔偿情况\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"证据说明\": \"如刘×赔偿被害人八万元，朱某某与被害人达成赔偿协议\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"如毕某甲与毕某丙互相厮打，被害人存在互殴行为\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如吉克某伙同约某某某盗窃，欧某纠集他人共同伤害，荆某甲与多人共谋盗窃等\"}, {\"key\": \"gather_others\", \"name_cn\": \"纠集他人\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"如欧某纠集“十八”等3人共同实施伤害行为\"}, {\"key\": \"criminal_capacity\", \"name_cn\": \"刑事责任能力\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"限定刑事责任能力\"], \"证据说明\": \"被告人宋某甲经鉴定为精神发育迟滞-中度，限定刑事责任能力\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"如朱某某如实交待事发经过，毕某甲到案后如实供述，张1某归案后如实供述等\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗金额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [418500, 13800, 30000, 9522, 41200.9, 66500, 9600, 54500, 19500, 300000, 8300, 15000, 10300, 5000, 20000, 70000], \"证据说明\": \"如刘某骗取15人共计418500元，杨1某骗取13800元，董某骗取30000元及9522元等\"}, {\"key\": \"crime_count\", \"name_cn\": \"作案次数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 2, 3, 4, 5, 14], \"证据说明\": \"如牛某实施诈骗5次，高某诈骗作案14起，荆某甲盗窃作案3次等\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构办事\", \"伪造证件\", \"冒充身份\", \"虚构投资项目\", \"设立虚假机构\", \"丢包诈骗\", \"兑换外币诈骗\", \"提供虚假材料\", \"赊账骗取\"], \"证据说明\": \"如杨1某虚构安排工作，李2某伪造机动车登记证书，孙某冒充驾校教练，汤某虚构共同做建材生意等\"}, {\"key\": \"restitution_status\", \"name_cn\": \"退赃情况\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"未退赃\", \"部分退赃\", \"全额退赃\", \"家属退赃\"], \"证据说明\": \"如刘某偿还81500元（部分退赃），范某退还全部赃款（全额退赃），郝某某家属退还全部钱款（家属退赃）等\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解情况\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"如董某赔偿后获得冀某2谅解，孙某退还赃款后取得被害人谅解，郝某某家属退赃后获得谅解等\"}, {\"key\": \"fraud_target\", \"name_cn\": \"诈骗对象\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"个人\", \"国家财产\", \"老年人\"], \"证据说明\": \"如马某某套取国家家电下乡补贴资金（国家财产），张1某诈骗老年被害人曾某、周某（老年人）等\"}, {\"key\": \"criminal_identity\", \"name_cn\": \"犯罪主体身份\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"有职务便利\"], \"证据说明\": \"马某某利用受委托审核家电下乡资料的职务之便套取补贴资金\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"李2某曾因故意犯罪被判处有期徒刑以上刑罚，刑罚执行完毕五年内再犯应判有期徒刑以上刑罚之罪；杨1某系累犯\"}, {\"key\": \"evasion_behavior\", \"name_cn\": \"逃避行为\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"董某骗取款项后将被害人微信拉黑并更换手机号，徐某收取费用后逃匿等\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃金额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [1500, 5300, 1740, 21895.47, 12507.3, 26075.7, 7800, 12400], \"证据说明\": \"如吉克某盗窃1500元，时某盗窃5300元，黄某盗窃手机价值1740元等\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"入户盗窃\", \"入室盗窃\", \"扒窃\", \"共同盗窃\"], \"证据说明\": \"如吉克某爬窗入户盗窃，时某爬窗进入办公室盗窃，黄某扒窃手机，荆某甲与他人共同盗窃油管等\"}, {\"key\": \"fencing_status\", \"name_cn\": \"销赃情况\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"证据说明\": \"荆某甲等人将盗窃的油管销赃至济南军区相关单位，陈某某与王某共谋盗车后处置等\"}, {\"key\": \"theft_means\", \"name_cn\": \"盗窃作案手段\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"剪窗入室\", \"趁被害人不备\", \"利用工作便利（安装橱柜时）\", \"爬墙进入\", \"拽坏门锁\", \"携带工具撬锁砸玻璃\", \"丢钱吸引注意力\", \"多次撬破车窗玻璃\"], \"证据说明\": \"如“剪窗入室”（cail2018-679a22ffad265eb5）、“趁被害人刘某不备”（cail2018-0991c4221fdfdd07）、“安装橱柜时趁邢某打电话不注意”（cail2018-e748f51dffab0a83）等\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [1970, 3400, 400, 2800, 1581.2, 2936, 20500, 11525, 2200, 400, 600, 2175, 177.08, 1116, 338, 1791.42, 1275.2]}, {\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [1, 4, 9, 2]}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"全部追回发还\", \"部分追回发还\", \"当场追回\", \"未追回\"], \"证据说明\": \"如“被盗物品均已被扣押并发还”（cail2018-679a22ffad265eb5）、“追缴手机29部、平板电脑1部已发还”（cail2018-9dabb6366cee3aba）、“当场人赃并获”（cail2018-aa63d1d374222e5d）等\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科劣迹\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“前科劣迹”（cail2018-0991c4221fdfdd07）、“因犯抢劫罪、抢夺罪被判处有期徒刑”（cail2018-aa63d1d374222e5d）等\"}, {\"key\": \"recidivism\", \"name_cn\": \"是否累犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“2008年被判有期徒刑，2012年刑满释放后再犯”（cail2018-aa63d1d374222e5d）\"}, {\"key\": \"confession\", \"name_cn\": \"如实供述罪行\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“如实供述罪行”（cail2018-0991c4221fdfdd07）、“归案后如实供述”（cail2018-7b50cc64a8193eff）等\"}, {\"key\": \"surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“自动到公安机关投案”（cail2018-0741181d55823f6a）、“主动投案”（cail2018-d24c094687895c91）等\"}, {\"key\": \"injury_tool\", \"name_cn\": \"伤害工具\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"U型摩托车车锁\", \"菜刀\", \"麻将牌\", \"铁棍（夺对方）\", \"十字锹\", \"铲锄\", \"安全帽\", \"木质棒球棍\", \"拳击\"], \"证据说明\": \"如“手持U型摩托车车锁、王1某手持菜刀”（cail2018-9d8b233ca0406bea）、“拿菜刀回到理发店将郭某甲右手砍伤”（cail2018-71d4c0370291377e）等\"}, {\"key\": \"minor_injury_count\", \"name_cn\": \"轻伤人数\", \"charge\": \"故意伤害罪\", \"kind\": \"numeric\", \"values\": [1, 2]}, {\"key\": \"minor_injury_degree\", \"name_cn\": \"轻伤等级\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级\", \"轻伤一级\"], \"证据说明\": \"如“农某1、许某的损伤构成轻伤二级”（cail2018-9d8b233ca0406bea）、“路某身体所受损伤程度构成轻伤一级”（cail2018-d99b92d1fdd090d0）等\"}, {\"key\": \"serious_injury_count\", \"name_cn\": \"重伤人数\", \"charge\": \"故意伤害罪\", \"kind\": \"numeric\", \"values\": [1]}, {\"key\": \"death_consequence\", \"name_cn\": \"是否致死亡\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“张某已经死亡”（cail2018-9b8753daaa3efe4b）\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“农某2见状便对王2某下逐客令”（cail2018-9d8b233ca0406bea）、“曾某某酒后到拉面馆与朱某甲等人发生争执”（cail2018-09ba941a919173e5）等\"}, {\"key\": \"compensation_understanding\", \"name_cn\": \"赔偿谅解情况\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"达成赔偿协议并谅解\", \"刑事和解\", \"赔偿部分损失\"], \"证据说明\": \"如“达成赔偿协议，并取得了被害人谅解”（cail2018-d24c094687895c91）、“达成刑事和解协议，朱某甲赔偿55000元，曾某某谅解”（cail2018-09ba941a919173e5）等\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构交易平台\", \"虚构身份及公司资质\", \"以办理工作/取保候审为名\", \"发送诈骗短信\", \"代还信用卡报酬\"], \"证据说明\": \"如“虚构‘天瑞大宗商品’交易平台”（cail2018-0741181d55823f6a）、“谎称自己名叫徐某乙，是河南成全倚源环保科技有限公司总经理”（cail2018-768471ed7cf48842）等\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [53230, 3000, 16110, 56636.75, 230000, 47600, 48450, 387000]}, {\"key\": \"refund_amount\", \"name_cn\": \"退赃金额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [32000, 19110, 20000]}, {\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [1, 2, 7]}, {\"key\": \"accessory_status\", \"name_cn\": \"是否从犯\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“在‘刘某’（在逃）的指使下”（cail2018-7b50cc64a8193eff）\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如杨某伙同邓某盗窃手机（true），覃某单独在餐厅门口盗窃（false）\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [539, 5568, 750, 4800, 1000, 5850, 300, 4000, 4471, 949, 1000, 3100, 30, 3780, 2020, 300, 569, 1008, 591, 53, 2960, 450], \"evidence\": \"如覃某窃得酷派手机539元、苹果手机5568元；魏某盗窃手机价值750元\"}, {\"key\": \"theft_location\", \"name_cn\": \"盗窃场所\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"户内/入室\", \"公共场所（餐厅）\", \"网吧\", \"超市\", \"户外\", \"被害人住所\"], \"evidence\": \"如汪1某进入李某家盗窃（户内/入室）；魏某在网吧大厅盗窃（网吧）\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"扒窃\", \"趁人不备\", \"趁人睡着\", \"入室（开锁）\", \"入室（翻窗）\", \"撬门\", \"多次盗窃\"], \"evidence\": \"如覃某趁被害人不备扒窃（扒窃、趁人不备）；黄某翻窗入室盗窃（入室（翻窗））\"}, {\"key\": \"criminal_record\", \"name_cn\": \"犯罪前科\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如汪1某有犯罪前科（true）；魏某无犯罪前科记录（false）\"}, {\"truthful_confession\": \"如实供述罪行\", \"key\": \"truthful_confession\", \"name_cn\": \"如实供述罪行\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如汪1某到案后如实供述（true）；部分案件未提及则视为未如实供述（false）\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"全部追回\", \"部分追回\", \"未追回\", \"已发还被害人\"], \"evidence\": \"如李某盗窃后被当场捉获，全部物品追回发还（全部追回、已发还被害人）；魏某变卖手机未追回（未追回）\"}, {\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [1, 2, 3, 6, 16, 20], \"evidence\": \"如蒋某盗窃6辆车辆（6）；姜某在药店先后二十多次盗窃天麻（20+）\"}, {\"key\": \"attempted_crime\", \"name_cn\": \"犯罪未遂\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如黄某第二次入户盗窃被发现后逃跑（true）；覃某盗窃既遂（false）\"}, {\"key\": \"drug_abuse\", \"name_cn\": \"吸食毒品\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如汪1某吸食毒品（true）；其他盗窃案未提及（false）\"}, {\"key\": \"injury_cause\", \"name_cn\": \"伤害起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"琐事争吵\", \"收麦顺序纠纷\", \"挖塘纠纷\", \"索要工钱\", \"工作纠纷\", \"工资纠纷\"], \"evidence\": \"如刘某因琐事与王某2争吵（琐事争吵）；刘2某因收麦顺序与刘某4纠纷（收麦顺序纠纷）\"}, {\"key\": \"injury_tool\", \"name_cn\": \"伤害工具\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"折叠刀\", \"徒手\", \"锤子\", \"铁棍\", \"拳头\"], \"evidence\": \"如刘某用折叠刀刺伤被害人（折叠刀）；刘2某用手打面部（徒手/拳头）\"}, {\"key\": \"injury_consequence\", \"name_cn\": \"伤害后果\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"重伤\", \"轻伤二级\", \"轻微伤\", \"轻伤\"], \"evidence\": \"如王某2构成重伤；刘某4构成轻伤二级；张某构成轻微伤\"}, {\"key\": \"compensation_and_understanding\", \"name_cn\": \"赔偿谅解\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如刘某与被害人达成调解协议并取得谅解（true）；刘2某案件未提及赔偿谅解（false）\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如刘某主动投案并如实供述（true）；魏某被抓获（false）\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构关系/能力\", \"虚构身份/职业\", \"虚构办事事项（办驾照/升学）\", \"伪造记录\", \"隐瞒真相\"], \"evidence\": \"如刘某某谎称法院有关系（虚构关系/能力）；李2某虚构驾校校长身份（虚构身份/职业）\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [3000, 6000, 46000, 2022150, 70000, 30000, 2500, 5525, 26332], \"evidence\": \"如娄某诈骗8000元（3000+6000-1000）；李2某诈骗2022150元\"}, {\"key\": \"fraud_proceeds_return\", \"name_cn\": \"赃款返还情况\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"全部返还\", \"部分返还\", \"案发前返还\", \"未返还\"], \"evidence\": \"如刘某某案发后全部返还（全部返还）；娄某案发前退还余某1000元（案发前返还）\"}, {\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [1, 2, 3, 18], \"evidence\": \"如娄某诈骗2次（2）；张某诈骗18次（18）\"}, {\"key\": \"fraud_middleman\", \"name_cn\": \"存在中间人\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如李2某通过六名中间人诈骗（true）；刘某某直接对被害人诈骗（false）\"}, {\"key\": \"theft_target\", \"name_cn\": \"盗窃对象\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"手机\", \"现金\", \"电脑\", \"纪念币\", \"电动车\", \"自行车\", \"首饰\", \"食品（天麻）\"], \"evidence\": \"如覃某盗窃手机（手机）；汪1某盗窃纪念币、现金、电脑（纪念币、现金、电脑）\"}, {\"key\": \"drunk_crime\", \"name_cn\": \"酒后作案\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如侯某酒后掰伤程某手指（true）；其他故意伤害案未提及酒后（false）\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物处理方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"变卖挥霍\", \"藏匿\", \"返还被害人\"], \"evidence\": \"如魏某变卖手机挥霍（变卖挥霍）；曹某某将电动自行车藏匿门市被找回（藏匿）\"}, {\"key\": \"division_of_labor\", \"name_cn\": \"共同犯罪分工\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"望风/引开注意力\", \"直接实施\", \"协助控制被害人\"], \"evidence\": \"如邓某引开注意力，杨某实施盗窃（望风/引开注意力）；刘某乙摁住被害人（协助控制）\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如李1某被指控为累犯（true）；梅某有前科但未明确为累犯（false）\"}, {\"key\": \"crime_amount\", \"name_cn\": \"犯罪金额\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [\"6670元\", \"4256元\", \"8500元\", \"190000元\", \"26000元\", \"28700元\", \"167800元\", \"53432元\", \"3318元\", \"280000元\", \"4276元\", \"10736元\", \"4050元\", \"23201.10元\", \"22000元\", \"4126元+现金\", \"1320元\", \"3400元\"], \"evidence\": \"各案中被盗、被骗财物价值或涉案金额，如黄某盗窃摩托车价值6670元，金某诈骗19万元等\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 3, 4, 9, 15, 5]}, {\"evidence\": \"多次实施犯罪的次数，如王某盗窃4次，沈某诈骗15次，郑某盗窃9次等\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如黄某向戒毒所投案，金某委托亲属联系投案后被抓获，毕某某主动投案等\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如郭某某案发当日如实供述，许某某归案后如实供述，沈某甲归案后如实供述等\"}, {\"key\": \"compensation_status\", \"name_cn\": \"赔偿损失情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"全部赔偿\", \"部分赔偿\", \"未赔偿\"], \"evidence\": \"如金某家属退赔19万元（全部），许某某家属赔偿3000元（部分），马某某赃物未追回（未赔偿）等\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如金某已获得被害人谅解，毕某某与被害人达成调解取得谅解，吴某赔偿后取得谅解等\"}, {\"key\": \"criminal_record\", \"name_cn\": \"犯罪前科\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如叶某具有犯罪前科，马某某有前科材料，周某某系累犯等\"}, {\"key\": \"housebreaking_theft\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如王某攀爬围墙入院进入屋内盗窃，崔1某跳墙进入杜某家中盗窃等\"}, {\"key\": \"theft_tool\", \"name_cn\": \"盗窃工具\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"螺丝刀、老虎钳\", \"羊角锤\", \"摩托车钥匙\", \"套锁工具\", \"徒手\"], \"evidence\": \"如黄某携带螺丝刀、老虎钳，王某使用羊角锤，李某用摩托车钥匙等\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"冒用身份\", \"伪造证件\", \"虚构办丧事\", \"代还信用卡为由\", \"虚构土地承包\", \"虚构工作/门路\", \"虚构工程/财产\", \"冒领货物\"], \"evidence\": \"如叶某冒用身份租车并办假证，沈某虚构家中办丧事，韩某以代还信用卡为由等\"}, {\"key\": \"injury_tool\", \"name_cn\": \"伤害工具\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"铁锤\", \"套筒扳手\", \"塑料椅\", \"拳头\"], \"evidence\": \"如郭某某用铁锤，程某甲用套筒扳手，吴某持塑料椅，商某用拳头等\"}, {\"key\": \"victim_injury_level\", \"name_cn\": \"被害人伤情等级\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\"], \"evidence\": \"如郭某某致周某某轻伤一级，毕某某致程某某轻伤二级等\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如郭某某案中周某某先殴打郭某甲，周某某案中被害人误敲家门引发冲突等\"}, {\"key\": \"drug_user_identity\", \"name_cn\": \"吸毒人员身份\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [\"是\", \"否\"], \"evidence\": \"如黄某因吸毒被强制戒毒，李某某系吸毒人员等\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物处理情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"全部发还\", \"部分发还\", \"未追回\"], \"evidence\": \"如李某盗窃摩托车被发还（全部），王某部分被盗物品发还（部分），马某某赃物未追回等\"}, {\"key\": \"return_of_stolen_property\", \"name_cn\": \"退赃情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"案发前全部退还\", \"全部退赃\", \"部分退赃\", \"亲属代为退赃\", \"追缴返还\"], \"证据说明\": \"如“案发前所骗钱款全部退还”“亲属代其退出全部赃款”“陆续返还135700元，仍拖欠26300元”“25800元已经追缴返还被害人”\"}, {\"key\": \"compensation_and_understanding\", \"name_cn\": \"赔偿谅解情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"赔偿并取得谅解\", \"亲属代为赔偿\"], \"证据说明\": \"如“积极赔偿被害人的经济损失，取得了被害人的谅解”“赔偿全部经济损失共计人民币100000元”“其亲属代为赔偿了被害人”\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“被告人李某在刑罚执行完毕以后，在五年内再犯应当判处××以上刑罚之罪，系累犯”“曾因犯××被判处××，刑法执行完毕后五年内再犯”\"}, {\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [6, 10, 7], \"证据说明\": \"如“先后10次盗窃”“涉嫌盗窃犯罪6起”“7起盗窃行为（含未遂）”\"}, {\"key\": \"injury_result\", \"name_cn\": \"伤害结果\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级\", \"轻伤一级\", \"轻伤偏重\", \"重伤二级\"], \"证据说明\": \"如“构成轻伤二级”“损伤程度属轻伤一级”“损伤属轻伤（偏重）”“损伤程度鉴定为重伤二级”\"}, {\"key\": \"apprehension_method\", \"name_cn\": \"到案方式\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"被抓获\", \"自动投案\", \"口头传唤\", \"家人陪同投案\"], \"证据说明\": \"如“公安机关将被告人陈某抓获”“主动到公安机关投案”“被口头传唤到案”“在家人陪同下到公安机关投案”\"}, {\"key\": \"criminal_tool\", \"name_cn\": \"作案工具\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"金属镊子\", \"铁丝\", \"钢锯\", \"铁棒\", \"木棍\", \"水杯\", \"砍刀\", \"拳头\", \"刀\"], \"证据说明\": \"如“用铁丝勾拉”“钢锯切割”“携带作案工具金属镊子”“用木棍将被害人打伤”“用水杯将刘×1打伤”“掏出砍刀砍伤”\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“伙同马某、刘某等人（均另案处理）”“伙同黄某（另案处理）经密谋”“伙同韦某等人（另案处理）”\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“主动到公安机关投案”“犯罪以后自动投案，如实供述自己罪行，系自首”“主动到公安机关投案自首”\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“爬墙入内用自制工具撬开房间门锁进入三间睡房”“翻墙进入本社村民袁XX家院内，撬开堂屋门锁进入室内”\"}, {\"key\": \"confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“被告人雷某归案后如实供述了上述事实”“如实供述自己的罪行”“归案后如实供述了上述犯罪事实”\"}, {\"key\": \"disposal_of_stolen_property\", \"name_cn\": \"赃款赃物处理\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"销赃牟利\", \"部分发还\", \"全部发还\"], \"证据说明\": \"如“销赃获款人民币1300元并挥霍”“销赃牟利”“所盗赃款被其全部挥霍，部分赃物发还”“赃物已起获并发还被害人”\"}, {\"key\": \"absconding_behavior\", \"name_cn\": \"逃匿行为\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“关闭手机逃匿”“关闭手机逃匿”\"}, {\"key\": \"first_offense\", \"name_cn\": \"初犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“被告人系初犯”\"}, {\"key\": \"mutual_fight\", \"name_cn\": \"互殴情节\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“在双方互殴的过程中”\"}, {\"key\": \"cause_of_injury\", \"name_cn\": \"伤害起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"工作纠纷\", \"行车问题\", \"挪车问题\", \"吊车费用纠纷\", \"琐事\"], \"证据说明\": \"如“因工作纠纷与被害人罗某某发生争执”“因行车问题与被害人陈某发生争执”“因挪车问题与被害人唐某的舅舅发生冲突”“因吊车费用问题发生口角并打架”“因琐事与被害人刘×1发生口角”\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃手段\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"以购物为名趁人不备\", \"扒窃\", \"入户盗窃\", \"秘密窃取\"], \"证据说明\": \"如“多次以购买东西为由，趁被害人取货不注意之机盗窃”“扒窃得其上衣右口袋内手机”“入户盗窃”“采取秘密手段盗窃他人财物”\"}, {\"key\": \"stolen_property_returned\", \"name_cn\": \"赃物发还情况\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“U盘、平板电脑、手机被公安机关查获并发还被害人”“赃物已起获并发还被害人”“当场从其处查扣莫曼顿牌自行车并将该车发还于被害人”\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"感情纠纷\"], \"evidence\": \"因与蒋某感情纠纷，持刀捅伤蒋某的女儿胡某\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"重伤二级\"], \"evidence\": \"损伤造成肝、胃破裂，其损伤程度为重伤二级\"}, {\"key\": \"use_weapon\", \"name_cn\": \"持械情况\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"持刀捅伤蒋某的女儿胡某\"}, {\"key\": \"voluntary_confession\", \"name_cn\": \"如实供述罪行\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"杜某明犯罪后如实供述自己罪行\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"报复\"], \"evidence\": \"因双方当时未能协商达成赔偿协议，谢某甲遂伺机报复\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级\"], \"evidence\": \"被害人王某乙头部损伤程度属轻伤二级\"}, {\"key\": \"weapon_type\", \"name_cn\": \"作案工具类型\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"菜刀\"], \"evidence\": \"从厨房拿出一把菜刀装进一个黑色手提袋后...持刀朝其头部砍了五、六刀\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人谢某甲经其父亲劝说后，在其父亲的陪同下到公安机关投案\"}, {\"key\": \"compensation_understanding\", \"name_cn\": \"赔偿谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人亲属与被害人王某乙自行协商达成了赔偿协议...取得了被害人的谅解\"}, {\"key\": \"dispute_type\", \"name_cn\": \"纠纷类型\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"占地纠纷\"], \"evidence\": \"因与被害人毋某有占地纠纷，而与指使贾某某在北海街*号的地基卸砖的被害人毋某发生打斗\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级、轻微伤\"], \"evidence\": \"被害人毋某之损伤为轻伤二级、轻微伤\"}, {\"key\": \"assault_method\", \"name_cn\": \"殴打方式\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"拳头击打\"], \"evidence\": \"被告人毋某某用拳头击打被害人毋某头面部\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"拉车门\"], \"evidence\": \"采用拉车门的方式在被害人林某浙Ｅ×××××的白色越野车内窃得...\"}, {\"key\": \"stolen_property_value\", \"name_cn\": \"盗窃财物价值\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [12159.44], \"evidence\": \"涉案财物共计价值人民币12159.44元\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"部分追回\"], \"evidence\": \"部分赃物已被公安机关追回并发还被害人林某\"}, {\"key\": \"impersonate_identity\", \"name_cn\": \"冒充身份\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"派出所警员、民警\"], \"evidence\": \"时任宝安分局XX派出所警员的被告人周某...周某冒充XX派出所民警的身份\"}, {\"key\": \"fraud_frequency\", \"name_cn\": \"诈骗次数\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [4], \"evidence\": \"先后骗取苏某法等人10万某、10万某、30万某，骗取王XX等人18万某+1.5万某+8万某+3万某+0.5万某，骗取李XXXX1.07万某\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗金额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [640700], \"evidence\": \"累计骗取人民币10万+10万+30万+18万+1.5万+8万+3万+0.5万+1.07万=64.07万某\"}, {\"key\": \"赃款用途\", \"name_cn\": \"赃款用途\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"偿还个人债务\"], \"evidence\": \"周某将30万某用于偿还其个人债务...用于偿还个人债务\"}, {\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\"], \"evidence\": \"被害人方某文外伤致两处以上不同眶壁骨折，其伤情为轻伤一级\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人海1某遂上前殴打被害人方某文，刘某龙、“唐笔”等人见状也一同上前殴打被害人\"}, {\"key\": \"co_actor_compensation\", \"name_cn\": \"同案人赔偿\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"同案人李某芬赔偿被害人方某文经济损失人民币8000元\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"趁人不备\"], \"evidence\": \"趁被害人刘X不备将其放置在电脑桌旁一部三星I9500型手机及手机内一个闪迪牌8G内存卡盗走\"}, {\"key\": \"theft_attempt\", \"name_cn\": \"盗窃未遂\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"在实施盗窃时被被害人赵某某抓获并移交公安机关\"}, {\"key\": \"dispute_settlement\", \"name_cn\": \"纠纷和解\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人尤某乙及其母亲荣某乙同被害人苏某及儿子张某丙达成和解协议...分别对尤某乙、张某丙的行为予以谅解\"}, {\"key\": \"fraud_identity\", \"name_cn\": \"诈骗身份冒充\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"完美公司经理\"], \"evidence\": \"冒充自己是完美公司扬州地区经理级别销售员的身份\"}, {\"key\": \"fraud_restitution\", \"name_cn\": \"赃款退赔\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"案发后，被告人吴某退出全部赃款，并发还给被害人王某\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"利用不正当关系获取钥匙\"], \"evidence\": \"利用与被害人黄某某妻子曾某的不正当男女关系进入黄某某家，从黄某某家客厅的茶几抽屉里盗窃了黄某某的小车备用钥匙\"}, {\"key\": \"theft_location\", \"name_cn\": \"盗窃地点\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"入户\"], \"evidence\": \"翻窗进入B9T7102室被害人许某的家中\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构合伙生意、伪造合同收据\"], \"evidence\": \"以合伙作药品生意为由，通过虚构...采用伪造虚假的医疗用品“采购合同”、“补充协议”及“收款收据”等手段\"}, {\"key\": \"pluralistic_theft\", \"name_cn\": \"多次盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"2015年3月25日...2015年3月30日...2015年4月5日...2015年4月11日...共四次盗窃\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [2947], \"evidence\": \"共计价值2947元\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人系累犯，应从重处罚\"}, {\"key\": \"housebreaking\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"非法进入他人房屋内，盗窃他人财物...进入位于昆明市盘龙区金刀营村390号1楼102室内...入户将被害人夏某乙家中四块腊肉、一节猪蹄盗走\"}, {\"key\": \"render_meritorious_service\", \"name_cn\": \"立功\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"被告人乐某在侦查期间检举揭发他人犯罪行为，经查证属实\"}, {\"key\": \"dispute_cause\", \"name_cn\": \"纠纷起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"琐事\"], \"evidence\": \"因琐事和孙某乙发生争执、厮打\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 2, 3, 70, 9], \"证据说明\": \"如“多次骗取”“实施盗窃作案3起”“共骗取价值共计103695.46元人民币的购物卡（多起）”“已发现涉案被害人70人”等\"}, {\"key\": \"crime_amount\", \"name_cn\": \"犯罪金额（元）\", \"charge\": \"通用（财产犯罪）\", \"kind\": \"numeric\", \"values\": [50000, 48000, 11800, 82936, 100000, 200000, 2880, 171360, 103695.46, 315465, 10655, 1564, 2977.5, 378, 800, 30000, 1230, 5200, 1500, 4000, 99.7, 160, 2300, 74288, 76000, 300, 4800, 20000, 38700, 28500], \"证据说明\": \"如“诈骗黄某1人民币5万元”“窃得价值人民币2880元的华硕牌笔记本电脑”“共计人民币315465元”等财产犯罪中的具体金额\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“与罗某、李某（二人均已判刑）”“伙同郭某1”“被告人彭某、符1某有经事先商量”等表明存在共同犯罪行为\"}, {\"key\": \"guilty_plea\", \"name_cn\": \"认罪态度\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“对指控的事实与罪名均无异议”“在开庭审理过程中亦无异议”等表明被告人认罪\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物/赃款处理情况\", \"charge\": \"通用（财产犯罪）\", \"kind\": \"categorical\", \"values\": [\"赃物追回并发还\", \"赃款挥霍\", \"赃物出售\", \"赃物部分返还\", \"赃物被收回\", \"未退赃\", \"赃款用于还赌债\", \"赃款用于日常生活及经营\", \"赃物被扣押\"], \"证据说明\": \"如“案发后，赃物已追回并归还被害人”“赃款挥霍”“手机被聂2某卖掉”“2015年5月13日，经被告人吕1某申请...收回上述还建房屋”“本金及剩余利息至今未还”等\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“2016年7月29日，被告人李某来主动到公安机关投案”“被告人朱某案发后主动投案”“案件发生后，被告人刘某...在医院等候，并如实供述其犯罪事实”等\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“被告人尹某到案后，如实供述了自己的上述罪行”“如实供述其犯罪事实”等表明被告人如实供述罪行\"}, {\"key\": \"compensation_and_understanding\", \"name_cn\": \"赔偿被害人经济损失并获得谅解\", \"charge\": \"通用（侵犯人身/财产）\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“达成调解协议，共赔偿被害人唐某明人民币60000元，并取得被害人谅解”“被告人亲属与被害人邢某达成和解协议并履行，被害人邢某对被告人刘某的行为予以谅解”等\"}, {\"key\": \"attempted_crime\", \"name_cn\": \"犯罪未遂\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“欲诈骗被害人傅某甲时，被傅某甲当场抓获”“被告人孙1某欲离开时被陈某发现...手提包内有人民币5200余元（未遂）”等表明犯罪未得逞\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构事实隐瞒真相\", \"伪造国家机关证件\", \"网络诈骗\", \"假冒身份\", \"冒充国家机关工作人员\", \"以借贷为名抵押诈骗\", \"保健品虚假宣传\", \"虚假贷款材料\"], \"证据说明\": \"如“伪造了一份其与费某甲2010年4月15日离婚的离婚证”“假冒在海外留学的女大学生的身份”“冒充乐山市教育局主任”“以‘学习雷某健康讲座宣传...’的方式”“提供虚假结婚证、房产信息等资料”等\"}, {\"key\": \"fraud_target\", \"name_cn\": \"诈骗对象\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"普通个人\", \"境外人员\", \"老年人\", \"政府部门\", \"金融机构\", \"亲友\"], \"证据说明\": \"如“诈骗关某等现金（老年人）”“添加了微信昵称为‘Kelvin’的一名香港男子（境外人员）”“骗取襄阳国际物流园建设指挥部（政府部门）”“骗取温州翼龙贷经济信息咨询有限公司（金融机构）”“与被害人高某志系战友（亲友）”等\"}, {\"key\": \"proceeds_use\", \"name_cn\": \"赃款用途\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"偿还赌债\", \"日常生活\", \"业务经营\", \"偿还个人债务\"], \"证据说明\": \"如“赃款挥霍”“将诈骗所得赃款共计100000元全部用于清还赌债”“将所骗取款项用于还债、日常生活、业务经营等”“刘1某将骗取的钱...归还个人债务1000元”等\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"入户盗窃\", \"扒窃\", \"乘人不备\", \"溜门入室\", \"盗窃后敲诈\", \"破解密码取款\"], \"证据说明\": \"如“推门进入被害人朱某的暂住房内（入户盗窃）”“在公交车上扒窃”“采用乘人不备、溜门入室等手段”“要求被害人吴某支付人民币800元后再将手机还给被害人（盗窃后敲诈）”“破解银行卡密码后取款”等\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“被告人赵某在刑罚执行完毕后五年内再犯应判处有期徒刑以上刑罚之罪，是累犯”\"}, {\"key\": \"injury_result\", \"name_cn\": \"被害人损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻微伤\", \"轻伤二级\", \"轻伤一级\", \"轻伤一级+二级\", \"重伤二级\", \"两处重伤二级+轻微伤\"], \"证据说明\": \"如“损伤程度为轻伤二级”“伤情为重伤二级”“唐某明所受损伤为轻伤二级；被告人李某来所受损伤为轻微伤”“赵某左眼眶内侧壁、上壁骨折，属轻伤一级；双侧鼻骨骨折，属轻伤二级（轻伤一级+二级）”“被害人赵某1两处重伤二级，两处轻微伤”等\"}, {\"key\": \"injury_cause\", \"name_cn\": \"伤害起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"琐事争执\", \"经济纠纷（工资）\", \"家庭纠纷（离婚）\", \"邻里纠纷（羊吃秧苗）\", \"被害人过错（酒后闹事）\", \"互殴\"], \"证据说明\": \"如“因琐事和一起玩麻将的孙某某和发生口角”“被害人王某因向被告人周某甲讨要工资未果（经济纠纷）”“贺某来到周某家门外不停敲门...将周某某往门外拖（家庭纠纷/被害人过错）”“唐某明家养的羊吃了被告人李某来家责任田里的秧苗（邻里纠纷）”“李某来与唐某明持椅子对打（互殴）”等\"}, {\"key\": \"injury_tool\", \"name_cn\": \"伤害工具\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"拳打脚踢\", \"椅子\", \"水果刀\", \"菜刀\", \"匕首\", \"木凳\"], \"证据说明\": \"如“用拳打脚踢的方式”“持椅子对打”“使用水果刀将被害人周某刺伤”“从厨房拿了一把菜刀向贺某砍去”“掏出匕首捅伤邢某的腹部”“用木凳打雷某某的头部”等\"}, {\"key\": \"community_correction_conditions\", \"name_cn\": \"社区矫正条件\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“经社情民意及监管环境考察...对其具有监管帮教条件”“可以对被告人周某实行社区矫正管理”等\"}, {\"key\": \"criminal_amount\", \"name_cn\": \"犯罪金额\", \"charge\": \"诈骗罪,盗窃罪\", \"kind\": \"numeric\", \"values\": [111234, 11800, 18810, 5625, 3352, 200000, 1230000, 1128, 563, 49300, 9800, 4810, 2550, 2349, 8034, 1920, 1690, 1200, 600], \"evidence\": \"如“被告人马某骗取国家地上物补偿款共计为111234.00元”“被告人许某盗走收银台抽屉内的现金11800元”等各案具体金额\"}, {\"key\": \"criminal_count\", \"name_cn\": \"犯罪次数\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [2, 3, 1, 3, 2], \"evidence\": \"如“被告人徐某盗窃作案共2起”“被告人位某盗窃作案3起”“被告人杨1某伙同王某振实施多起盗窃”\"}, {\"key\": \"injury_consequence\", \"name_cn\": \"伤害后果\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"轻微伤\", \"重伤二级\"], \"evidence\": \"如“经鉴定，李某甲伤情属轻伤一级”“鲁某某左第2掌骨骨折为轻伤二级”“肖某丙的损伤程度为重伤二级”“斯某乙伤情为轻微伤”\"}, {\"key\": \"criminal_tool\", \"name_cn\": \"犯罪工具\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"私配钥匙\", \"镊子\", \"菜刀\", \"厨师刀\", \"铁棍\", \"木棍\", \"撬棍\", \"螺丝刀\", \"手电筒\", \"刀片\", \"铁锹\", \"酒瓶\", \"塑料凳\", \"铁扦子\", \"砍柴刀\", \"木椅\", \"手机\", \"电话\"], \"evidence\": \"如“利用之前在该处工作时私配的钥匙”“用事先准备好的镊子”“持携带的厨师刀”“携一根铁棍”\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"传唤到案\", \"抓获\", \"自动投案\"], \"evidence\": \"如“被告人马某经传唤到案”“许某被公安机关抓获归案”“被告人王2某于2016年11月1日主动到公安机关投案”\"}, {\"key\": \"compensation_and_understanding\", \"name_cn\": \"赔偿谅解\", \"charge\": \"故意伤害罪,诈骗罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人李某甲具有赔偿被害人全部损失，取得被害人谅解”“被告王某取得了被害人黄某的谅解”\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人李某伙同本村高某（已判刑）、李2某（已判刑）盗窃”“被告人王2某伙同黄某、王1某实施电信诈骗”\"}, {\"key\": \"attempted_crime\", \"name_cn\": \"犯罪未遂\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“2003年4月26日夜间...盗窃未遂”“因未能撬开ATM机的保险箱且被人发现，盗窃ATM机内现金未遂”\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“至义乌市某街道某小区某栋503室被害人蒋某家中盗得”\"}, {\"key\": \"pickpocketing\", \"name_cn\": \"扒窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“在黄石市黄石港区永安里菜场...用事先准备好的镊子将张某的手机盗走”“趁马某某醉酒之机，用刀片划破其裤包盗走手机”\"}, {\"key\": \"telecom_fraud\", \"name_cn\": \"电信诈骗\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人王2某伙同黄某、王1某实施电信诈骗”\"}, {\"key\": \"drunken_crime\", \"name_cn\": \"酒后犯罪\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人李某酒后到鲁某某娘家劝鲁某某回家发生争执”\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人许1某系累犯”“前科刑事判决书”\"}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人黄某自动到中江县公安局投案，并如实供述自己的犯罪事实”“被告人王某主动到公安机关投案，并如实供述盗窃事实”\"}, {\"key\": \"confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人周某甲如实供述自己的罪行，属坦白”“何某某对盗窃事实供认不讳”\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"全部追回\", \"部分追回\", \"未追回\"], \"evidence\": \"如“公安机关将9800元现金全部发还给被害人杨某某”“公安机关从许某处扣押被盗现金11365元发还”“窃后，予以销赃”\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪起因\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"口角\", \"邻里矛盾\", \"感情纠纷\", \"债务纠纷\", \"交通事故赔偿争执\", \"被谩骂\", \"琐事\"], \"evidence\": \"如“因行车与被害人李某乙发生口角”“因邻里矛盾发生口角”“因感情纠纷用拳头等将曾某打伤”\"}, {\"key\": \"voluntary_confession\", \"name_cn\": \"自愿认罪\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“被告人李某甲对指控的犯罪事实供认，并表示认罪”\"}, {\"key\": \"community_correction_applicable\", \"name_cn\": \"社区矫正适用\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true, false], \"evidence\": \"如“经调查评估被告人侯某甲符合社区矫正条件”\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"抢栽树苗\", \"虚构驾校名额\", \"虚构销分\", \"虚构购房优惠\", \"冒充领导借钱\"], \"evidence\": \"如“被告人马某在被征用土地里抢栽树苗骗取补偿款”“王某声称在驾校有优惠名额骗取报名费”\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"charge\": \"盗窃罪\", \"kind\": \"categorical\", \"values\": [\"插片开锁\", \"顺手牵羊\", \"私配钥匙开门\", \"撬锁\", \"预谋撬ATM机\"], \"evidence\": \"如“被告人徐某采用插片开锁等手段进入”“被告人位某采用顺手牵羊的手段窃得助力车”\"}, {\"key\": \"criminal_amount\", \"name_cn\": \"犯罪金额\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [30000, 5020, 8400, 1987300, 1658100, 8000, 5602, 600, 7710.16, 12700, 260900, 125100, 11200, 1800, 69100, 4000, 58000, 56000, 3700, 694, 1035, 517.5, 115, 3700]}, {\"key\": \"criminal_count\", \"name_cn\": \"犯罪次数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 3, 4, 2, 5]}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"stolen_property_returned\", \"name_cn\": \"赃款赃物退还情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"全部退还\", \"部分退还\", \"未退还\"]}, {\"key\": \"compensation_paid\", \"name_cn\": \"退赔情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"全部退赔\", \"部分退赔\"]}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"取得被害人谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"voluntary_surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"attempted_crime\", \"name_cn\": \"犯罪未遂\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"deaf_mute\", \"name_cn\": \"聋哑人\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"gang_crime\", \"name_cn\": \"结伙作案\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"为吸毒\", \"报复泄愤\"]}, {\"key\": \"criminal_method\", \"name_cn\": \"犯罪手段/方式\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"虚构重金求子广告\", \"虚构找工作\", \"虚构办理驾驶证\", \"扒窃\", \"入户\", \"搭梯攀爬\", \"溜门\", \"趁人熟睡\", \"网上虚假招聘\"]}, {\"key\": \"injury_severity\", \"name_cn\": \"故意伤害伤情等级\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤\", \"轻伤一级\", \"轻伤二级\", \"重伤二级\"]}, {\"key\": \"meritorious_service\", \"name_cn\": \"立功\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"truthful_confession\", \"name_cn\": \"如实供述\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"stolen_money_use\", \"name_cn\": \"赃款用途\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"个人投资\", \"偿还高利贷\"]}, {\"key\": \"victim_count\", \"name_cn\": \"被害人数量\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 3, 35]}, {\"key\": \"impersonated_identity\", \"name_cn\": \"冒充身份\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"押运公司副队长\", \"学校工作人员\"]}, {\"key\": \"stolen_property_recovered\", \"name_cn\": \"赃物发还情况\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"fraud_amount_level\", \"name_cn\": \"诈骗数额等级\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"数额巨大\", \"数额特别巨大\", \"数额较大\"]}, {\"key\": \"criminal_tool\", \"name_cn\": \"作案工具\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"剔骨刀\", \"水果刀\", \"折叠刀\"]}, {\"key\": \"theft_for_drug\", \"name_cn\": \"为吸毒盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"criminal_record\", \"name_cn\": \"犯罪前科\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"victim_plea_for_mercy\", \"name_cn\": \"被害人请求从轻处理\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true]}, {\"key\": \"victim_injury_degree\", \"name_cn\": \"被害人损伤程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级\", \"轻伤一级\", \"轻微伤\", \"重伤\", \"重伤二级\"], \"evidence\": \"如“熊某甲、熊某乙鼻部损伤均构成轻伤二级”“赵某甲左眼部损伤程度为轻伤一级”“程某4所受的伤为重伤”“王某的左面部损伤为重伤二级”\"}, {\"key\": \"number_of_victims\", \"name_cn\": \"被害人数量\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 2, 3], \"evidence\": \"如“致张某2、李某2伤情均为轻伤二级，谢某为轻微伤”（3人）“用拳头将熊某甲、熊某乙鼻部打伤”（2人）\"}, {\"key\": \"use_of_weapon\", \"name_cn\": \"持械情况\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"拳头\", \"刀具\", \"棍\", \"剪刀\", \"铁锄\", \"防暴叉\", \"砖头\", \"西瓜刀\", \"铁锹\", \"菜刀\"], \"evidence\": \"如“持棍打伤林某3的鼻部”“用尖刀将刘某乙的双腿捅伤”“手持砖头将傅某乙头部打伤”\"}, {\"key\": \"surrender\", \"name_cn\": \"自首\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被告人徐某于2016年1月17日主动到公安机关投案”“被告人陈某至仙临派出所投案，并如实供述”\"}, {\"key\": \"frank_confession\", \"name_cn\": \"坦白\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被告人冯某被采取强制措施后，如实供述了自己的犯罪事实”“被告人陈2某归案后如实供述上述涉案事实”\"}, {\"key\": \"compensation_agreement\", \"name_cn\": \"民事赔偿协议\", \"charge\": \"故意伤害罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被告人赵某某与被害人赵某甲经本院调解达成民事赔偿协议”“被告人栾某某与被害人于某某就民事赔偿自行达成和解协议”\"}, {\"key\": \"compensation_amount\", \"name_cn\": \"赔偿金额\", \"charge\": \"故意伤害罪\", \"kind\": \"numeric\", \"values\": [30000, 35000, 22000, 280000, 40000, 38000, 4200], \"evidence\": \"如“共计赔偿被害人赵某甲人民币30,000.00元”“赔偿被害人刘某乙人民币4万元”\"}, {\"key\": \"victim_understanding\", \"name_cn\": \"被害人谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被害人赵某甲对被告人赵某某的伤害行为表示谅解”“三被害人出具书面谅解书对被告人徐某的行为表示谅解”\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗金额\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [141000, 4500, 109785, 14974.52, 50000, 590000, 7000, 7400, 10186.67], \"evidence\": \"如“先后骗取孟某某、许某现金共计12万元...再次骗取2.1万元”（14.1万）“骗取被害人李某人民币5万元”\"}, {\"key\": \"booty_squandered\", \"name_cn\": \"赃款挥霍\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“诈骗得逞后所得赃款已挥霍”“向杨某收取10万某，后挥霍”\"}, {\"key\": \"restitution_amount\", \"name_cn\": \"退赃金额\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [9000, 4500, 50000, 2800, 10186.67], \"evidence\": \"如“案发前，被告人齐某岭退还被害人现金9000元”“案发后，被告人陈某已退出赃款人民币4500元”\"}, {\"key\": \"booty_returned\", \"name_cn\": \"赃物发还\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被盗电动车价值1589元...该摩托车已发还被害人曾某某”“被骗车辆已被追回并发还给陆某聪”\"}, {\"key\": \"voluntary_confession_in_court\", \"name_cn\": \"当庭自愿认罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被告人齐某岭当庭自愿认罪，对公诉机关指控的犯罪事实无异议”“被告人王某在开庭审理过程中无异议”\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃金额\", \"charge\": \"盗窃罪\", \"kind\": \"numeric\", \"values\": [1589, 2768, 1993], \"evidence\": \"如“经鉴定，被盗电动车价值1589元”“被盗鲫鱼价值人民币564元，被盗渔具价值人民币1429元，合计1993元”\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"有\", \"无\"], \"evidence\": \"如“无前科证明”“相关刑事判决书、释放证明书”\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“与张某、赖某、伍某（均已判刑）等人先后赶至海中洲大酒店”“被告人关某某与何某、赵某（均未满十六周岁）在富顺县新街子一巷道内盗走”\"}, {\"key\": \"first_offense\", \"name_cn\": \"初犯\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“没有违法犯罪记录和前科，系初犯”\"}, {\"key\": \"injury_disability\", \"name_cn\": \"被害人伤残等级\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"十级\"], \"evidence\": \"如“被害人王某的损伤构成十级伤残”\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗手段\", \"charge\": \"诈骗罪\", \"kind\": \"categorical\", \"values\": [\"虚构合伙经营\", \"编造办理证件理由\", \"介绍工作为名\", \"假冒身份\", \"冒用农户信息虚报\"], \"evidence\": \"如“以合伙经营旅游大巴为由”“谎称有能力为被害人李某办理中国石化物资采购电子商务网站入网资格”“冒用17户农户的户口信息，先后虚报了22台太阳能热水器”\"}, {\"key\": \"accomplice_minor\", \"name_cn\": \"未成年人共犯\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true], \"evidence\": \"如“被告人关某某与何某、赵某（均未满十六周岁）在富顺县新街子一巷道内盗走”\"}, {\"key\": \"criminal_amount\", \"name_cn\": \"犯罪金额\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [3723, 121500, 75500, 3228, 7745, 6100, 16820, 3456, 71797.67, 11000, 500000, 100000, 32800, 70000, 35000, 25000, 38000, 30000, 240000, 20000], \"证据说明\": \"如盗窃罪中“盗走人民币3723元”，诈骗罪中“共计46500元...共计75000元”等案件事实中明确的涉案金额\"}, {\"key\": \"returned_stolen_property\", \"name_cn\": \"退赃情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\"], \"证据说明\": \"如“家属已赔偿被害人全部损失”（全部退赃），“已退还40000元...已退还6000元”（部分退赃），“未退还受害人的75500元用于个人挥霍”（未退赃）\"}, {\"key\": \"obtained_understanding\", \"name_cn\": \"取得谅解\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“取得被害人的谅解”（true），未提及谅解的案件（false）\"}, {\"key\": \"voluntary_confession\", \"name_cn\": \"自愿认罪/如实供述\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“自愿认罪”“如实供述上述主要罪行”（true），未提及认罪供述情况的案件（false）\"}, {\"key\": \"victim_count\", \"name_cn\": \"被害人人数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 2, 3], \"证据说明\": \"如“致一人轻伤”（1人），“打伤席某甲及其儿子席某丙、席某丁”（3人）\"}, {\"key\": \"injury_degree\", \"name_cn\": \"被害人伤情程度\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"轻伤二级\", \"轻伤一级\", \"轻微伤\", \"重伤二级\"], \"证据说明\": \"如“席某甲的伤情为轻伤二级，席某丙、席某丁的伤情为轻微伤”“贺某损伤程度属重伤二级”\"}, {\"key\": \"crime_tool\", \"name_cn\": \"作案工具\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"撬杠\", \"钥匙\", \"刀\", \"掌掴\", \"拳头\", \"棍\", \"空酒瓶\", \"菜刀\"], \"证据说明\": \"如“用撬杠将...打伤”“用随身携带的钥匙捅开”“持刀砍伤”“掌掴朱某左耳廓”\"}, {\"key\": \"crime_form\", \"name_cn\": \"犯罪形态\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"既遂\", \"未遂\"], \"证据说明\": \"如“盗得1500元现金及...手机”（既遂），“实施盗窃时被安某发现...被当场抓获”（未遂）\"}, {\"key\": \"fraud_victim_count\", \"name_cn\": \"诈骗被害人人数\", \"charge\": \"诈骗罪\", \"kind\": \"numeric\", \"values\": [78, 1, 10, 3], \"证据说明\": \"如“通过庞某收款31人...由朱某本人收款47人”（78人），“诈骗作案10起”（10人）\"}, {\"key\": \"stolen_money_squandered\", \"name_cn\": \"赃款挥霍情况\", \"charge\": \"诈骗罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“未退还受害人的75500元用于个人挥霍”（true），未提及挥霍的案件（false）\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“伙同多名男子”“协同马某，丑小”（true），单独作案案件（false）\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"charge\": \"通用\", \"kind\": \"numeric\", \"values\": [1, 2, 8, 10, 3], \"证据说明\": \"如“盗窃作案2起”“实施盗窃8起”“诈骗作案10起”\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"charge\": \"盗窃罪\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“开锁进入李1某家中”“翻窗入室”（true），非入户盗窃案件（false）\"}, {\"key\": \"stolen_property_returned\", \"name_cn\": \"赃物发还情况\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"部分发还\", \"全部发还\"], \"证据说明\": \"如“部分财物已由公安机关发还给各被害人”（部分发还），“将被盗汽车配件发还给被害人”（全部发还）\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"自动投案\", \"被抓获\", \"群众挡获\"], \"证据说明\": \"如“经电话传唤后自动到案”“被公安机关抓获归案”“被群众挡获”\"}, {\"key\": \"crime_method\", \"name_cn\": \"作案手段\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"支付宝小额免密支付\", \"虚构招工\", \"拾得存折猜配密码\", \"伪基站发送短信\"], \"证据说明\": \"如“通过支付宝小额免密支付功能...盗走”“谎称给中交四航局二公司办理招工”“拾得存折猜配密码取走”“利用‘伪基站’设备冒充建设银行发送诈骗短信”\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“有前科材料”“本院（2014）滨刑二初字第0213号刑事判决书”（true），无相关记录案件（false）\"}, {\"key\": \"crime_motive\", \"name_cn\": \"犯罪动机\", \"charge\": \"通用\", \"kind\": \"categorical\", \"values\": [\"购买毒品\", \"琐事争执\", \"索债纠纷\"], \"证据说明\": \"如“因缺钱购买毒品吸食”“因琐事争执”“因货款问题产生纠纷”\"}, {\"key\": \"injury_victim_count\", \"name_cn\": \"受伤被害人人数\", \"charge\": \"故意伤害罪\", \"kind\": \"numeric\", \"values\": [1, 2, 3], \"证据说明\": \"如“致一人轻伤，一人轻微伤”（2人），“打伤席某甲及其儿子席某丙、席某丁”（3人）\"}, {\"key\": \"crime_state\", \"name_cn\": \"作案时状态\", \"charge\": \"故意伤害罪\", \"kind\": \"categorical\", \"values\": [\"酒后\"], \"证据说明\": \"如“成某酒后一时激愤持菜刀...”\"}, {\"key\": \"fled\", \"name_cn\": \"逃匿情况\", \"charge\": \"通用\", \"kind\": \"bool\", \"values\": [true, false], \"证据说明\": \"如“案发后逃匿”（true），当场抓获或主动投案案件（false）\"}]"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 5000,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "0217853582751815c53bb980d0b91addac92a88f9eb9598be8ba8",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"core\":[{\"key\":\"surrender\",\"name_cn\":\"自首\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被告人是否具有自首情节？\"},{\"key\":\"truthful_confession\",\"name_cn\":\"如实供述\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被告人是否如实供述罪行？\"},{\"key\":\"compensation_to_victim\",\"name_cn\":\"赔偿被害人损失\",\"kind\":\"categorical\",\"values\":[\"未赔偿\",\"部分赔偿\",\"全额赔偿\"],\"direction\":\"mitigating\",\"question\":\"被告人对被害人损失的赔偿情况如何？\"},{\"key\":\"victim_forgiveness\",\"name_cn\":\"被害人谅解\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被害人是否对被告人表示谅解？\"},{\"key\":\"joint_crime\",\"name_cn\":\"共同犯罪\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"neutral\",\"question\":\"是否属于共同犯罪？\"},{\"key\":\"criminal_record\",\"name_cn\":\"前科情况\",\"kind\":\"bool\",\"values\":[\"有\",\"无\"],\"direction\":\"aggravating\",\"question\":\"被告人是否有犯罪前科？\"},{\"key\":\"arrest_method\",\"name_cn\":\"到案方式\",\"kind\":\"categorical\",\"values\":[\"被抓获\",\"传唤到案\",\"自首\",\"现场等待\"],\"direction\":\"neutral\",\"question\":\"被告人的到案方式是什么？\"},{\"key\":\"return_of_stolen_property\",\"name_cn\":\"退赃情况\",\"kind\":\"categorical\",\"values\":[\"全部退赃\",\"部分退赃\",\"未退赃\",\"亲属代为退赃\"],\"direction\":\"mitigating\",\"question\":\"被告人的退赃情况如何？\"},{\"key\":\"crime_count\",\"name_cn\":\"犯罪次数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"被告人的犯罪次数是多少？\"},{\"key\":\"crime_amount\",\"name_cn\":\"犯罪金额\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"犯罪涉及的金额是多少？\"},{\"key\":\"guilty_plea\",\"name_cn\":\"认罪态度\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被告人是否自愿认罪？\"},{\"key\":\"first_offense\",\"name_cn\":\"初犯\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被告人是否为初犯？\"},{\"key\":\"recidivism\",\"name_cn\":\"累犯\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"被告人是否构成累犯？\"},{\"key\":\"criminal_form\",\"name_cn\":\"犯罪形态\",\"kind\":\"categorical\",\"values\":[\"既遂\",\"未遂\",\"既遂+未遂\"],\"direction\":\"neutral\",\"question\":\"犯罪形态是既遂还是未遂？\"},{\"key\":\"disposal_of_stolen_property\",\"name_cn\":\"赃款赃物处理情况\",\"kind\":\"categorical\",\"values\":[\"挥霍\",\"销赃牟利\",\"部分发还\",\"全部发还\"],\"direction\":\"neutral\",\"question\":\"赃款赃物的处理情况如何？\"},{\"key\":\"victim_count\",\"name_cn\":\"被害人数量\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"本案涉及的被害人数量是多少？\"}],\"extensions\":{\"盗窃罪\":[{\"key\":\"theft_count\",\"name_cn\":\"盗窃次数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"盗窃次数是多少？\"},{\"key\":\"theft_amount\",\"name_cn\":\"盗窃数额\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"盗窃数额是多少？\"},{\"key\":\"household_theft\",\"name_cn\":\"入户盗窃\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"是否属于入户盗窃？\"},{\"key\":\"stolen_property_recovery\",\"name_cn\":\"赃物追回情况\",\"kind\":\"categorical\",\"values\":[\"全部追回\",\"部分追回\",\"未追回\"],\"direction\":\"mitigating\",\"question\":\"赃物追回情况如何？\"},{\"key\":\"destructive_means\",\"name_cn\":\"破坏性手段\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"是否采用破坏性手段盗窃？\"},{\"key\":\"use_special_convenience\",\"name_cn\":\"利用特殊便利\",\"kind\":\"categorical\",\"values\":[\"钥匙\",\"工作便利\",\"无\"],\"direction\":\"aggravating\",\"question\":\"是否利用特殊便利实施盗窃？\"},{\"key\":\"theft_method\",\"name_cn\":\"盗窃方式\",\"kind\":\"categorical\",\"values\":[\"扒窃\",\"入户盗窃\",\"趁人不备\",\"撬锁\",\"爬窗\",\"顺手牵羊\"],\"direction\":\"aggravating\",\"question\":\"盗窃方式是什么？\"},{\"key\":\"theft_target\",\"name_cn\":\"盗窃对象\",\"kind\":\"categorical\",\"values\":[\"手机\",\"现金\",\"电脑\",\"电动车\",\"首饰\",\"食品\"],\"direction\":\"neutral\",\"question\":\"盗窃对象是什么？\"},{\"key\":\"theft_tool\",\"name_cn\":\"盗窃工具\",\"kind\":\"categorical\",\"values\":[\"螺丝刀\",\"老虎钳\",\"撬棍\",\"镊子\",\"钥匙\",\"徒手\"],\"direction\":\"aggravating\",\"question\":\"使用的盗窃工具是什么？\"},{\"key\":\"theft_location\",\"name_cn\":\"盗窃场所\",\"kind\":\"categorical\",\"values\":[\"户内\",\"公共场所\",\"网吧\",\"超市\",\"户外\"],\"direction\":\"neutral\",\"question\":\"盗窃场所是什么？\"},{\"key\":\"stolen_property_disposal\",\"name_cn\":\"赃物处理方式\",\"kind\":\"categorical\",\"values\":[\"变卖挥霍\",\"藏匿\",\"返还被害人\"],\"direction\":\"aggravating\",\"question\":\"赃物处理方式是什么？\"},{\"key\":\"drug_user_identity\",\"name_cn\":\"吸毒人员身份\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"被告人是否为吸毒人员？\"}],\"故意伤害罪\":[{\"key\":\"injury_degree\",\"name_cn\":\"损伤程度\",\"kind\":\"categorical\",\"values\":[\"轻伤一级\",\"轻伤二级\",\"重伤二级\",\"轻微伤\",\"重伤一级\"],\"direction\":\"aggravating\",\"question\":\"被害人损伤程度是什么？\"},{\"key\":\"weapon_type\",\"name_cn\":\"伤害工具\",\"kind\":\"categorical\",\"values\":[\"菜刀\",\"木棍\",\"尖刀\",\"拳头\",\"铁棍\",\"U型锁\",\"铁锹\",\"酒瓶\"],\"direction\":\"aggravating\",\"question\":\"使用的伤害工具是什么？\"},{\"key\":\"criminal_cause\",\"name_cn\":\"犯罪起因\",\"kind\":\"categorical\",\"values\":[\"琐事争执\",\"债务纠纷\",\"感情纠纷\",\"邻里矛盾\",\"被害人过错\",\"工作纠纷\"],\"direction\":\"neutral\",\"question\":\"犯罪起因是什么？\"},{\"key\":\"community_correction_eligibility\",\"name_cn\":\"社区矫正评估\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"是否具备社区矫正条件？\"},{\"key\":\"victim_fault\",\"name_cn\":\"被害人过错\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"mitigating\",\"question\":\"被害人是否存在过错？\"},{\"key\":\"compensation_status\",\"name_cn\":\"赔偿情况\",\"kind\":\"categorical\",\"values\":[\"未赔偿\",\"部分赔偿\",\"全额赔偿\"],\"direction\":\"mitigating\",\"question\":\"赔偿情况如何？\"},{\"key\":\"mutual_fight\",\"name_cn\":\"互殴情节\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"neutral\",\"question\":\"是否存在互殴情节？\"},{\"key\":\"injury_result\",\"name_cn\":\"伤害后果\",\"kind\":\"categorical\",\"values\":[\"轻伤\",\"重伤\",\"轻微伤\",\"死亡\"],\"direction\":\"aggravating\",\"question\":\"伤害后果是什么？\"},{\"key\":\"criminal_motive\",\"name_cn\":\"犯罪动机\",\"kind\":\"categorical\",\"values\":[\"报复\",\"琐事\",\"感情纠纷\",\"债务纠纷\",\"征地纠纷\"],\"direction\":\"neutral\",\"question\":\"犯罪动机是什么？\"},{\"key\":\"drunk_crime\",\"name_cn\":\"酒后犯罪\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"是否酒后犯罪？\"},{\"key\":\"minor_injury_count\",\"name_cn\":\"轻伤人数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"轻伤人数是多少？\"},{\"key\":\"serious_injury_count\",\"name_cn\":\"重伤人数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"重伤人数是多少？\"}],\"诈骗罪\":[{\"key\":\"fraud_count\",\"name_cn\":\"诈骗次数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗次数是多少？\"},{\"key\":\"fraud_amount\",\"name_cn\":\"诈骗数额\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗数额是多少？\"},{\"key\":\"fraud_method\",\"name_cn\":\"诈骗手段\",\"kind\":\"categorical\",\"values\":[\"虚构事实\",\"伪造证件\",\"冒充身份\",\"网络诈骗\",\"代还信用卡\",\"虚构投资\"],\"direction\":\"aggravating\",\"question\":\"诈骗手段是什么？\"},{\"key\":\"restitution_situation\",\"name_cn\":\"退赃情况\",\"kind\":\"categorical\",\"values\":[\"全部退赃\",\"部分退赃\",\"未退赃\",\"亲属代为退赃\"],\"direction\":\"mitigating\",\"question\":\"退赃情况如何？\"},{\"key\":\"criminal_form\",\"name_cn\":\"犯罪形态\",\"kind\":\"categorical\",\"values\":[\"既遂\",\"未遂\",\"既遂+未遂\"],\"direction\":\"neutral\",\"question\":\"犯罪形态是什么？\"},{\"key\":\"fraud_target\",\"name_cn\":\"诈骗对象\",\"kind\":\"categorical\",\"values\":[\"个人\",\"老年人\",\"国家财产\",\"金融机构\",\"亲友\"],\"direction\":\"aggravating\",\"question\":\"诈骗对象是什么？\"},{\"key\":\"proceeds_use\",\"name_cn\":\"赃款用途\",\"kind\":\"categorical\",\"values\":[\"挥霍\",\"偿还赌债\",\"日常生活\",\"业务经营\"],\"direction\":\"aggravating\",\"question\":\"赃款用途是什么？\"},{\"key\":\"impersonate_identity\",\"name_cn\":\"冒充身份\",\"kind\":\"categorical\",\"values\":[\"国家机关工作人员\",\"公司经理\",\"驾校人员\",\"民警\"],\"direction\":\"aggravating\",\"question\":\"冒充的身份是什么？\"},{\"key\":\"fraud_means\",\"name_cn\":\"诈骗方式\",\"kind\":\"categorical\",\"values\":[\"虚构交易平台\",\"伪造合同\",\"虚假贷款\",\"代还信用卡报酬\",\"丢包诈骗\"],\"direction\":\"aggravating\",\"question\":\"具体诈骗方式是什么？\"},{\"key\":\"fraud_victim_count\",\"name_cn\":\"诈骗被害人人数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗被害人人数是多少？\"},{\"key\":\"booty_squandered\",\"name_cn\":\"赃款挥霍\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"赃款是否被挥霍？\"},{\"key\":\"fraud_middleman\",\"name_cn\":\"存在中间人\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"是否存在中间人？\"}]},\"诈骗罪\":[{\"key\":\"fraud_count\",\"name_cn\":\"诈骗次数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗次数是多少？\"},{\"key\":\"fraud_amount\",\"name_cn\":\"诈骗数额\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗数额是多少？\"},{\"key\":\"fraud_method\",\"name_cn\":\"诈骗手段\",\"kind\":\"categorical\",\"values\":[\"虚构事实隐瞒真相\",\"伪造国家机关证件\",\"网络诈骗\",\"假冒身份\",\"冒充国家机关工作人员\",\"以借贷为名抵押诈骗\",\"保健品虚假宣传\",\"虚假贷款材料\"],\"direction\":\"aggravating\",\"question\":\"诈骗手段是什么？\"},{\"key\":\"restitution_situation\",\"name_cn\":\"退赃情况\",\"kind\":\"categorical\",\"values\":[\"全部退赃\",\"部分退赃\",\"未退赃\",\"亲属代为退赃\"],\"direction\":\"mitigating\",\"question\":\"退赃情况如何？\"},{\"key\":\"criminal_form\",\"name_cn\":\"犯罪形态\",\"kind\":\"categorical\",\"values\":[\"既遂\",\"未遂\",\"既遂+未遂\"],\"direction\":\"neutral\",\"question\":\"犯罪形态是既遂还是未遂？\"},{\"key\":\"fraud_target\",\"name_cn\":\"诈骗对象\",\"kind\":\"categorical\",\"values\":[\"普通个人\",\"境外人员\",\"老年人\",\"政府部门\",\"金融机构\",\"亲友\"],\"direction\":\"aggravating\",\"question\":\"诈骗对象是什么？\"},{\"key\":\"proceeds_use\",\"name_cn\":\"赃款用途\",\"kind\":\"categorical\",\"values\":[\"挥霍\",\"偿还赌债\",\"日常生活\",\"业务经营\",\"偿还个人债务\"],\"direction\":\"aggravating\",\"question\":\"赃款用途是什么？\"},{\"key\":\"impersonate_identity\",\"name_cn\":\"冒充身份\",\"kind\":\"categorical\",\"values\":[\"押运公司副队长\",\"学校工作人员\",\"派出所警员、民警\",\"完美公司经理\"],\"direction\":\"aggravating\",\"question\":\"冒充的身份是什么？\"},{\"key\":\"fraud_means\",\"name_cn\":\"诈骗方式\",\"kind\":\"categorical\",\"values\":[\"虚构交易平台\",\"虚构身份及公司资质\",\"以办理工作/取保候审为名\",\"发送诈骗短信\",\"代还信用卡报酬\",\"抢栽树苗\",\"虚构驾校名额\",\"虚构销分\",\"虚构购房优惠\",\"冒充领导借钱\"],\"direction\":\"aggravating\",\"question\":\"具体诈骗方式是什么？\"},{\"key\":\"fraud_victim_count\",\"name_cn\":\"诈骗被害人人数\",\"kind\":\"numeric\",\"values\":[],\"direction\":\"aggravating\",\"question\":\"诈骗被害人人数是多少？\"},{\"key\":\"booty_squandered\",\"name_cn\":\"赃款挥霍\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"赃款是否被挥霍？\"},{\"key\":\"fraud_middleman\",\"name_cn\":\"存在中间人\",\"kind\":\"bool\",\"values\":[\"是\",\"否\"],\"direction\":\"aggravating\",\"question\":\"是否存在中间人？\"}]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "我现在需要处理用户提供的大量司法案件因素数据，目标是构建一个模块化的schema，分为core和extensions两部分。core部分最多16个跨罪名通用因素，extensions则必须包含盗窃罪、故意伤害罪、诈骗罪三个键，每个最多12个罪名特有因素。同时，不能引入原始数据中没有的因素，每个字段需要包含key、name_cn、kind、values、direction和question。\n\n首先，我需要仔细分析用户提供的原始数据，找出所有的因素，并进行同义项归并。用户提供的数据是一个包含多个JSON对象的列表，每个对象代表一个因素，有key、name_cn、charge、kind、values、evidence等字段。有些字段可能重复或同义，需要合并。\n\n首先处理core部分，即跨罪名通用的因素。根据数据中的\"charge\": \"通用\"的条目，以及可能被归为通用的因素。例如，自首、如实供述、赔偿被害人损失、被害人谅解、共同犯罪、前科情况、到案方式、退赃情况、犯罪次数、犯罪金额、认罪态度、初犯、累犯、犯罪形态、赃款赃物处理情况、被害人数量等。需要检查这些是否在数据中存在，并且合并同义项。\n\n例如，\"general_surrender\"和\"surrender\"、\"voluntary_surrender\"都是自首，应该合并为一个key。同样，\"confession_truthfully\"、\"truthful_confession\"、\"confession\"、\"voluntary_confession\"都是如实供述，合并为一个。\"compensation_to_victim\"和\"compensation_status\"、\"compensation_and_understanding\"中的赔偿部分可能需要合并。\"victim_forgiveness\"多次出现，保持不变。\"joint_crime\"多次出现，保持。\"criminal_record\"和\"前科劣迹\"、\"犯罪前科\"合并。\"arrest_method\"是到案方式，包含自首、被抓获等。\"return_of_stolen_property\"、\"stolen_property_recovery\"、\"退赃情况\"等涉及退赃，可能合并为\"return_of_stolen_property\"。\"crime_count\"是犯罪次数，\"crime_amount\"是犯罪金额。\"guilty_plea\"或\"自愿认罪\"是认罪态度。\"first_offense\"初犯，\"recidivism\"累犯。\"attempted_crime\"犯罪形态（既遂/未遂）。\"disposal_of_stolen_property\"赃款赃物处理。\"victim_count\"被害人数量。\n\n需要注意core最多16个，所以需要筛选最常见的16个。可能的通用因素包括：\n\n1. 自首（surrender）\n2. 如实供述（truthful_confession）\n3. 赔偿被害人损失（compensation_to_victim）\n4. 被害人谅解（victim_forgiveness）\n5. 共同犯罪（joint_crime）\n6. 前科情况（criminal_record）\n7. 到案方式（arrest_method）\n8. 退赃情况（return_of_stolen_property）\n9. 犯罪次数（crime_count）\n10. 犯罪金额（crime_amount）\n11. 认罪态度（guilty_plea）\n12. 初犯（first_offense）\n13. 累犯（recidivism）\n14. 犯罪形态（criminal_form）\n15. 赃款赃物处理情况（disposal_of_stolen_property）\n16. 被害人数量（victim_count）\n\n但需要检查这些是否都在原始数据中存在，并且没有超过16个。例如，\"arrest_method\"在数据中有，values包括被抓获、传唤到案、自首、现场等待等。\"return_of_stolen_property\"包括全部退赃、部分退赃等。\"criminal_form\"包括既遂、未遂。\"disposal_of_stolen_property\"包括挥霍、销赃等。\"victim_count\"有被害人数量。\n\n接下来处理每个罪名的特有因素：\n\n盗窃罪：需要找出charge为\"盗窃罪\"的因素，如盗窃次数、盗窃数额、入户盗窃、赃物追回情况、破坏性手段、利用特殊便利、盗窃方式、盗窃对象、盗窃工具、盗窃场所、赃物处理方式、吸毒人员身份等。每个最多12个，需要筛选。\n\n故意伤害罪：损伤程度、持械类型、犯罪起因、社区矫正评估、伤害工具、被害人过错、赔偿情况、互殴情节、伤害后果、犯罪动机、酒后犯罪、伤情等级等。\n\n诈骗罪：诈骗次数、诈骗数额、诈骗手段、退赃情况、犯罪形态、诈骗对象、赃款用途、冒充身份、诈骗方式、被害人人数、赃款挥霍情况、是否有中间人等。\n\n需要注意同义项合并，例如盗窃罪中的\"theft_count\"多次出现，保持一个。\"theft_amount\"和\"stolen_property_value\"都是盗窃数额。\"theft_in_residence\"和\"housebreaking_theft\"、\"household_theft\"都是入户盗窃。\"destructive_means\"破坏性手段。\"use_special_convenience\"利用特殊便利。\"theft_method\"盗窃方式，包括扒窃、入户、趁人不备等。\"theft_target\"盗窃对象（手机、现金等）。\"theft_tool\"盗窃工具。\"theft_location\"盗窃场所。\"stolen_property_disposal\"赃物处理。\"drug_user_identity\"吸毒人员身份。\n\n故意伤害罪中，\"injury_degree\"损伤程度，多次出现，合并。\"weapon_type\"、\"injury_tool\"、\"criminal_tool\"中的伤害工具合并。\"criminal_cause\"、\"cause_of_injury\"犯罪起因。\"community_correction_eligibility\"社区矫正。\"victim_fault\"被害人过错。\"compensation_status\"赔偿情况。\"mutual_fight\"互殴。\"injury_result\"伤害后果。\"criminal_motive\"犯罪动机。\"drunk_crime\"酒后犯罪。\"injury_severity\"伤情等级可能和injury_degree重复，需合并。\n\n诈骗罪中，\"fraud_count\"诈骗次数。\"fraud_amount\"诈骗数额。\"fraud_method\"诈骗手段。\"restitution_situation\"退赃情况。\"criminal_form\"犯罪形态。\"fraud_target\"诈骗对象。\"proceeds_use\"赃款用途。\"impersonate_identity\"冒充身份。\"fraud_means\"诈骗方式。\"victim_count\"被害人人数。\"booty_squandered\"赃款挥霍。\"fraud_middleman\"中间人。\n\n现在需要为每个因素确定direction（aggravating/mitigating/neutral），例如自首是mitigating，前科是aggravating，共同犯罪可能根据情况，但通常neutral或aggravating。赔偿和谅解是mitigating，累犯aggravating，初犯mitigating等。\n\nquestion部分需要根据name_cn生成，例如“被告人是否有自首情节？”“被害人是否对被告人表示谅解？”等。\n\n需要检查每个因素的values是否正确合并，例如自首的values是[\"是\", \"否\"]，如实供述同样。前科情况values是[\"有\", \"无\"]。到案方式values包括[\"被抓获\", \"传唤到案\", \"自首\", \"现场等待\"]等。\n\n可能遇到的问题：有些因素是否属于通用还是特有。例如，犯罪金额（crime_amount）在财产犯罪中通用，但用户数据中有\"charge\": \"通用（财产犯罪）\"，但core是跨所有罪名，可能不包括，所以可能将犯罪金额放在各财产犯罪的特有因素中？但原始数据中有\"charge\": \"通用\"的\"crime_amount\"，所以应纳入core。\n\n需要确保core中的因素确实跨所有三个罪名，例如犯罪金额在盗窃罪、诈骗罪中常见，但故意伤害罪可能没有，但用户数据中\"crime_amount\"的charge是\"通用\"，所以可能作为通用。但故意伤害罪可能涉及赔偿金额，而非犯罪金额，所以可能犯罪金额属于财产犯罪通用，但core要求跨所有罪名，可能需要调整。或者，原始数据中\"crime_amount\"的charge是\"通用\"，所以必须纳入core，即使故意伤害罪可能不涉及，但根据用户数据，可能存在，所以保留。\n\n现在开始逐一列出core和extensions的因素，并确保不超过数量限制，不引入新因素，合并同义项。\n\n最后，生成JSON结构，确保每个字段正确，direction根据因素的性质判断，例如自首是mitigating，前科是aggravating，共同犯罪可能neutral，赔偿谅解mitigating等。question部分根据name_cn生成对应的问题。"
+          }
+        }
+      ],
+      "created": 1785358398,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 4773,
+        "prompt_tokens": 21718,
+        "total_tokens": 26491,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1856,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 4773,
+      "prompt_tokens": 21718,
+      "total_tokens": 26491,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1856,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "0217853582751815c53bb980d0b91addac92a88f9eb9598be8ba8"
+  }
+}

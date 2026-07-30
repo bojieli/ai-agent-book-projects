@@ -1,0 +1,379 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-5",
+  "run_id": "20260729T183232Z-3_5-f9f70b37",
+  "provenance": {
+    "captured_at": "2026-07-29T18:32:32.564511+00:00",
+    "git_revision": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "credential_presence": {
+      "ARK_API_KEY": true,
+      "MOONSHOT_API_KEY": true,
+      "OPENAI_API_KEY": true,
+      "GEMINI_API_KEY": true,
+      "SILICONFLOW_API_KEY": true
+    }
+  },
+  "status": "passed",
+  "method": {
+    "implementation": "chapter3/sparse-embedding/bm25_engine.py",
+    "algorithm": "from-scratch inverted index + Robertson/Sparck Jones BM25",
+    "third_party_retrieval_library": null
+  },
+  "hand_calculation": {
+    "corpus": [
+      "rare rare common",
+      "common common",
+      "common filler filler filler",
+      "filler"
+    ],
+    "term": "rare",
+    "doc_id": 0,
+    "parameters": {
+      "N": 4,
+      "df": 1,
+      "tf": 2,
+      "dl": 3,
+      "avgdl": 2.5,
+      "k1": 1.5,
+      "b": 0.75
+    },
+    "formula": "ln((N-df+0.5)/(df+0.5)) * tf*(k1+1) / (tf+k1*(1-b+b*dl/avgdl))",
+    "intermediate": {
+      "independent_raw_idf": 0.8472978603872037,
+      "engine_raw_idf": 0.8472978603872037,
+      "scoring_idf": 0.8472978603872037,
+      "numerator": 5.0,
+      "denominator": 3.7249999999999996
+    },
+    "expected_score": 1.1373125642781259,
+    "engine_score": 1.1373125642781259,
+    "absolute_error": 0.0,
+    "tolerance": 1e-12,
+    "posting_list": [
+      0
+    ],
+    "recorded_document_frequency": 1,
+    "passed": true
+  },
+  "benchmark": {
+    "corpus": [
+      {
+        "doc_id": "doc_1",
+        "title": "Python Language",
+        "text": "Python is a high-level programming language known for readability and a simple syntax."
+      },
+      {
+        "doc_id": "doc_2",
+        "title": "JavaScript Runtime",
+        "text": "JavaScript runs in the browser and on servers via Node.js for full-stack web development."
+      },
+      {
+        "doc_id": "doc_3",
+        "title": "Model Distillation",
+        "text": "Model distillation compresses a large teacher model into a smaller student model while preserving accuracy."
+      },
+      {
+        "doc_id": "doc_4",
+        "title": "Knowledge Distillation",
+        "text": "Knowledge distillation transfers knowledge from a big neural network to a compact model for efficient inference."
+      },
+      {
+        "doc_id": "doc_5",
+        "title": "BM25 Ranking",
+        "text": "BM25 is a probabilistic ranking function using term frequency and inverse document frequency."
+      },
+      {
+        "doc_id": "doc_6",
+        "title": "HTTP Errors",
+        "text": "The HTTP 404 error code means the requested resource was not found on the web server."
+      },
+      {
+        "doc_id": "doc_7",
+        "title": "A Playful Kitten",
+        "text": "A cute kitten chased a ball of yarn across the living room floor all afternoon."
+      },
+      {
+        "doc_id": "doc_8",
+        "title": "Silent Hunter",
+        "text": "The feline predator stalked its prey silently through the tall grass at dusk."
+      },
+      {
+        "doc_id": "doc_9",
+        "title": "Hardware Fault",
+        "text": "Error code XK9-2B4-7Q1 indicates a hardware fault in the storage controller board."
+      },
+      {
+        "doc_id": "doc_10",
+        "title": "Transformers",
+        "text": "Transformer models use self-attention to process input sequences in parallel efficiently."
+      }
+    ],
+    "labels": {
+      "model distillation": [
+        "doc_3",
+        "doc_4"
+      ],
+      "HTTP 404 error": [
+        "doc_6"
+      ],
+      "XK9-2B4-7Q1": [
+        "doc_9"
+      ],
+      "BM25 ranking function": [
+        "doc_5"
+      ],
+      "cat": [
+        "doc_7",
+        "doc_8"
+      ]
+    },
+    "parameters": {
+      "k1": 1.5,
+      "b": 0.75,
+      "top_k": 5
+    },
+    "index_statistics": {
+      "total_documents": 10,
+      "unique_terms": 98,
+      "total_terms": 114,
+      "average_document_length": 11.4,
+      "terms_by_frequency": [
+        [
+          "model",
+          4
+        ],
+        [
+          "for",
+          3
+        ],
+        [
+          "and",
+          3
+        ],
+        [
+          "in",
+          3
+        ],
+        [
+          "web",
+          2
+        ],
+        [
+          "distillation",
+          2
+        ],
+        [
+          "knowledge",
+          2
+        ],
+        [
+          "to",
+          2
+        ],
+        [
+          "frequency",
+          2
+        ],
+        [
+          "error",
+          2
+        ]
+      ]
+    },
+    "build_latency_ms": 1.668,
+    "queries": [
+      {
+        "query": "model distillation",
+        "category": "exact-keyword",
+        "relevant": [
+          "doc_3",
+          "doc_4"
+        ],
+        "retrieved": [
+          "doc_3",
+          "doc_4"
+        ],
+        "hits": [
+          "doc_3",
+          "doc_4"
+        ],
+        "recall_at_5": 1.0,
+        "reciprocal_rank": 1.0,
+        "latency_ms": 0.276,
+        "results": [
+          {
+            "rank": 1,
+            "doc_id": "doc_3",
+            "score": 3.121561765506991,
+            "matched_terms": [
+              "model",
+              "distillation"
+            ],
+            "term_frequencies": {
+              "model": 3,
+              "distillation": 1
+            }
+          },
+          {
+            "rank": 2,
+            "doc_id": "doc_4",
+            "score": 2.219735866426749,
+            "matched_terms": [
+              "model",
+              "distillation"
+            ],
+            "term_frequencies": {
+              "model": 1,
+              "distillation": 1
+            }
+          }
+        ]
+      },
+      {
+        "query": "HTTP 404 error",
+        "category": "exact-keyword",
+        "relevant": [
+          "doc_6"
+        ],
+        "retrieved": [
+          "doc_6",
+          "doc_9"
+        ],
+        "hits": [
+          "doc_6"
+        ],
+        "recall_at_5": 1.0,
+        "reciprocal_rank": 1.0,
+        "latency_ms": 0.269,
+        "results": [
+          {
+            "rank": 1,
+            "doc_id": "doc_6",
+            "score": 4.994285959345282,
+            "matched_terms": [
+              "HTTP",
+              "404",
+              "error"
+            ],
+            "term_frequencies": {
+              "HTTP": 1,
+              "404": 1,
+              "error": 1
+            }
+          },
+          {
+            "rank": 2,
+            "doc_id": "doc_9",
+            "score": 1.2953611811041896,
+            "matched_terms": [
+              "error"
+            ],
+            "term_frequencies": {
+              "HTTP": 0,
+              "404": 0,
+              "error": 1
+            }
+          }
+        ]
+      },
+      {
+        "query": "XK9-2B4-7Q1",
+        "category": "exact-keyword",
+        "relevant": [
+          "doc_9"
+        ],
+        "retrieved": [
+          "doc_9"
+        ],
+        "hits": [
+          "doc_9"
+        ],
+        "recall_at_5": 1.0,
+        "reciprocal_rank": 1.0,
+        "latency_ms": 0.129,
+        "results": [
+          {
+            "rank": 1,
+            "doc_id": "doc_9",
+            "score": 1.9537998395246958,
+            "matched_terms": [
+              "XK9-2B4-7Q1"
+            ],
+            "term_frequencies": {
+              "XK9-2B4-7Q1": 1
+            }
+          }
+        ]
+      },
+      {
+        "query": "BM25 ranking function",
+        "category": "exact-keyword",
+        "relevant": [
+          "doc_5"
+        ],
+        "retrieved": [
+          "doc_5"
+        ],
+        "hits": [
+          "doc_5"
+        ],
+        "recall_at_5": 1.0,
+        "reciprocal_rank": 1.0,
+        "latency_ms": 0.261,
+        "results": [
+          {
+            "rank": 1,
+            "doc_id": "doc_5",
+            "score": 5.626316650182078,
+            "matched_terms": [
+              "BM25",
+              "ranking",
+              "function"
+            ],
+            "term_frequencies": {
+              "BM25": 1,
+              "ranking": 1,
+              "function": 1
+            }
+          }
+        ]
+      },
+      {
+        "query": "cat",
+        "category": "synonym-only",
+        "relevant": [
+          "doc_7",
+          "doc_8"
+        ],
+        "retrieved": [],
+        "hits": [],
+        "recall_at_5": 0.0,
+        "reciprocal_rank": 0.0,
+        "latency_ms": 0.095,
+        "results": []
+      }
+    ],
+    "metrics": {
+      "exact_keyword_recall_at_5": 1.0,
+      "exact_keyword_mrr": 1.0,
+      "synonym_only_recall_at_5": 0.0,
+      "synonym_only_mrr": 0.0
+    }
+  },
+  "summary": {
+    "exact_keyword_recall_at_5": 1.0,
+    "exact_keyword_mrr": 1.0,
+    "synonym_only_recall_at_5": 0.0,
+    "synonym_only_mrr": 0.0
+  },
+  "acceptance": {
+    "uses_from_scratch_engine": true,
+    "hand_score_matches": true,
+    "inverted_index_df_matches": true,
+    "all_exact_keyword_queries_recalled": true,
+    "synonym_only_failure_observed": true,
+    "transparent_tf_idf_scores_retained": true
+  }
+}

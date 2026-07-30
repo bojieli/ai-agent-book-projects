@@ -1,0 +1,42 @@
+{
+  "overall_score": 65,
+  "pass": false,
+  "issues": [
+    {
+      "page": 7,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "缩小架构图尺寸，确保下方说明文字有足够空间，避免图片挤压文字区域"
+    },
+    {
+      "page": 8,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将5个要点拆分为两页，建议将\"每个层包含两个子层\"及其子要点单独成页"
+    },
+    {
+      "page": 12,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "调整多头注意力架构图大小，确保图片下方的文字说明完整可见且易于阅读"
+    },
+    {
+      "page": 13,
+      "issue_type": "overcrowded",
+      "severity": "low",
+      "suggestion": "将三个注意力应用拆分为单独页面，或简化每个应用的子要点描述"
+    },
+    {
+      "page": 21,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "大幅放大注意力可视化图，确保图中文字和颜色编码清晰可辨，必要时单独成页展示"
+    },
+    {
+      "page": 22,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大指代消解可视化图，增加图片分辨率，确保线条和文字清晰可读"
+    }
+  ]
+}

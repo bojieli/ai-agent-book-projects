@@ -1,0 +1,44 @@
+{
+  "case": "weather",
+  "tool": "weather",
+  "arguments": {
+    "location": "Singapore"
+  },
+  "arguments_sha256": "6b05a9aa723d910bd7a8a6b4579e099e8fcbb826fac7ee89cd347f9c274ce035",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "open-meteo",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "location": "Singapore",
+      "country": "Singapore",
+      "latitude": 1.28967,
+      "longitude": 103.85007,
+      "temperature": 26.3,
+      "feels_like": 31.3,
+      "humidity": 87,
+      "precipitation": 0.0,
+      "weather_code": 3,
+      "description": "Overcast",
+      "wind_speed": 7.0,
+      "wind_direction": 167,
+      "units": "metric",
+      "timestamp": "2026-07-30T05:45",
+      "provider": "Open-Meteo"
+    },
+    "metadata": {
+      "location": "Singapore",
+      "provider": "Open-Meteo",
+      "api_key_required": false
+    }
+  },
+  "elapsed_seconds": 4.541
+}

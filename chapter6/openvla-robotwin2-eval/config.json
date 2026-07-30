@@ -1,0 +1,32 @@
+{
+  "experiment": "6-11",
+  "upstream_path": "../../chapter7/SimpleVLA-RL/SimpleVLA-RL",
+  "expected_upstream_commit": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9",
+  "task": "move_can_pot",
+  "task_suite": "robotwin2_move_can_pot",
+  "task_config": "exp6_11_three_view",
+  "checkpoint_env": "OPENVLA_CHECKPOINT",
+  "robotwin2_env": "ROBOTWIN2_PATH",
+  "align_path_env": "SIMPLEVLA_ALIGN_PATH",
+  "model_family": "openvla",
+  "vla": "openvla-oft",
+  "action_dimension": 14,
+  "action_token_length": 14,
+  "action_chunks": [1, 25],
+  "rgb_views": 3,
+  "proprio_dimension": 14,
+  "control_hz": 50,
+  "iid_validation_seeds": 128,
+  "ood_validation_seeds": 128,
+  "gpus_required": 8,
+  "failure_modes": [
+    "grasp_failure",
+    "transport_collision",
+    "placement_position_error",
+    "placement_orientation_error",
+    "gripper_release_failure",
+    "timeout",
+    "environment_error",
+    "other_observed_failure"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "case": "web_search",
+  "tool": "web_search",
+  "arguments": {
+    "query": "Model Context Protocol official specification",
+    "num_results": 3
+  },
+  "arguments_sha256": "f5d475b1c7202a0c7c2a0eba3e63e569ee6a65f46929b097a30983506ac9ebe7",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "duckduckgo-live-search",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "query": "Model Context Protocol official specification",
+      "results": [
+        {
+          "id": "tavily-0",
+          "title": "Specification",
+          "url": "https://modelcontextprotocol.io/specification/2025-06-18",
+          "snippet": "Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you’re building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need. This specification defines the authoritative protocol requirements, based on the TypeScript schema in schema.ts. For implementation guides and examples, visit [...] Configuration\n Progress tracking\n Cancellation\n Error reporting\n Logging\n\n## ​ Security and Trust & Safety\n\nThe Model Context Protocol enables powerful capabilities through arbitrary data access and code execution paths. With this power comes important security and trust considerations that all implementors must carefully address.\n\n### ​ Key Principles [...] ## ​ Overview\n\nMCP provides a standardized way for applications to:\n\n Share contextual information with language models\n Expose tools and capabilities to AI systems\n Build composable integrations and workflows\n\nThe protocol uses JSON-RPC 2.0 messages to establish communication between:\n\n Hosts: LLM applications that initiate connections\n Clients: Connectors within the host application\n Servers: Services that provide context and capabilities",
+          "source": "tavily"
+        },
+        {
+          "id": "tavily-1",
+          "title": "Model Context Protocol Specification",
+          "url": "https://modelcontextprotocol.info/specification",
+          "snippet": "# Specification\n\n# Model Context Protocol Specification\n\nThe Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. This section contains the detailed technical specifications for implementing the protocol.\n\n## Available Versions\n\nMCP is under active development. The following specifications are available:\n\nSpecification (Latest) Specification (Stable) Specification (Legacy) Specification (Draft) [...] + Removed JSON-RPC batching support\n  + Structured tool output\n  + OAuth Resource Server classification\n  + Resource Indicators (RFC 8707)\n  + Elicitation feature support\n  + Resource links support\n 2024-11-05 - Legacy\n\n  + Initial stable version\n\nFor implementation guides, examples, and more information, visit modelcontextprotocol.info.",
+          "source": "tavily"
+        },
+        {
+          "id": "tavily-2",
+          "title": "Model Context Protocol",
+          "url": "https://github.com/modelcontextprotocol",
+          "snippet": "README.md\n\n# Model Context Protocol\n\nA protocol for seamless integration between LLM applications and external data sources\n\nDocumentation | Specification | Discussions\n\nThe Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need. [...] Specification and documentation for the Model Context Protocol\n\n   TypeScript   8.7k   1.7k\n2. servers servers Public\n\n   Model Context Protocol Servers\n\n   TypeScript   88.9k   11.3k\n3. python-sdk python-sdk Public\n\n   The official Python SDK for Model Context Protocol servers and clients\n\n   Python   23.7k   3.7k\n4. typescript-sdk typescript-sdk Public\n\n   The official TypeScript SDK for Model Context Protocol servers and clients\n\n   TypeScript   12.9k   2k\n5. csharp-sdk csharp-sdk Public [...] ### Uh oh!\n\nThere was an error while loading. Please reload this page.\n\n \n\n### Uh oh!\n\nThere was an error while loading. Please reload this page.\n\n# Model Context Protocol\n\nAn open protocol that enables seamless integration between LLM applications and external data sources and tools.\n\n Verified \n\n  We've verified that the organization modelcontextprotocol controls the domain:\n\n  + modelcontextprotocol.io\n\n  Learn more about verified organizations\n\n 49.1k followers\n \n\nREADME.md",
+          "source": "tavily"
+        }
+      ],
+      "count": 3
+    },
+    "metadata": {
+      "query": "Model Context Protocol official specification",
+      "search_engine": "tavily",
+      "total_results": 3,
+      "search_time": 5.191438913345337,
+      "language": "en",
+      "country": "wt-wt"
+    }
+  },
+  "elapsed_seconds": 5.199
+}

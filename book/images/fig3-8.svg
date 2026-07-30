@@ -7,8 +7,8 @@
 <line x1="60" y1="163" x2="240" y2="163" stroke="#999999" stroke-width="2"/>
 <text x="150" y="190" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">k₁ 控制饱和速度</text>
 <text x="150" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">词频 ↑ 但贡献递减</text>
-<text x="150" y="246" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">例: 出现 5→10 次</text>
-<text x="150" y="274" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">得分仅增 ~20%</text>
+<text x="150" y="246" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">出现次数翻倍</text>
+<text x="150" y="274" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">得分不会线性翻倍</text>
 <rect x="290" y="120" width="220" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="400" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">逆文档频率 (IDF)</text>
 <line x1="310" y1="163" x2="490" y2="163" stroke="#999999" stroke-width="2"/>
@@ -27,5 +27,5 @@
 <line x1="400" y1="290" x2="400" y2="315" stroke="#999999" stroke-width="2"/>
 <line x1="650" y1="290" x2="650" y2="315" stroke="#999999" stroke-width="2"/>
 <rect x="40" y="315" width="720" height="48" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="400.0" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">最终得分 = Σ  (TF饱和 × IDF加权 × 长度归一化)</text>
+<text x="400.0" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">最终得分 = Σ [IDF × 经长度归一化的饱和 TF]</text>
 </svg>
