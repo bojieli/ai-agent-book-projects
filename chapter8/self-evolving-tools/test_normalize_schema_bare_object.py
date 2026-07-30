@@ -1,4 +1,4 @@
-"""normalize_schema must keep bare {"type":"object"} as an empty-object schema."""
+"""normalize_schema must keep bare {"type":"object"} as an empty-object schema while preserving extra metadata."""
 
 from tool_manager import normalize_schema
 
@@ -39,3 +39,20 @@ def test_plain_property_map_still_wrapped():
         "type": "object",
         "properties": {"z": {"type": "boolean"}},
     }
+
+
+def test_object_retains_extra_metadata():
+    schema = {
+        "type": "object",
+        "description": "Tool parameters",
+        "additionalProperties": False,
+        "$defs": {"Item": {"type": "string"}},
+    }
+    expected = {
+        "type": "object",
+        "properties": {},
+        "description": "Tool parameters",
+        "additionalProperties": False,
+        "$defs": {"Item": {"type": "string"}},
+    }
+    assert normalize_schema(schema) == expected

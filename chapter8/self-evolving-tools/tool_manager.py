@@ -28,14 +28,13 @@ def normalize_schema(params) -> dict:
     if not isinstance(params, dict):
         return {"type": "object", "properties": {}}
     if params.get("type") == "object":
-        out = {"type": "object", "properties": params.get("properties") or {}}
-        if "required" in params:
-            out["required"] = params["required"]
+        out = dict(params)
+        out["properties"] = params.get("properties") or {}
         return out
     if "properties" in params:  # 有 properties 但 type 缺失/错误
-        out = {"type": "object", "properties": params["properties"]}
-        if "required" in params:
-            out["required"] = params["required"]
+        out = dict(params)
+        out["type"] = "object"
+        out["properties"] = params.get("properties") or {}
         return out
     # 整个 dict 视为 properties 映射
     return {"type": "object", "properties": params}
