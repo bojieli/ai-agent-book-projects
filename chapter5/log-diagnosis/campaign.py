@@ -42,6 +42,9 @@ PRD = """# Live diagnosis experiment PRD
   observed turn where the violation is visible.
 """
 
+INVENTORY_DEADLINE_SECONDS = 0.250
+INVENTORY_ORIGIN_HEDGE_SECONDS = 0.100
+
 
 def _utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -203,7 +206,19 @@ def _http_call(
         }
 
 
-def _trajectory(base: str, task_input: dict[str, Any], fixed: bool, source_id: str) -> dict[str, Any]:
+def _trajectory(
+    base: str,
+    task_input: dict[str, Any],
+    source_id: str,
+    *,
+    inject_regressions: bool = False,
+) -> dict[str, Any]:
+    """Run the HTTP orchestrator and return its measured trajectory.
+
+    Correct behavior is the default.  The acceptance campaign can explicitly
+    inject the historical issue #502 behavior to prove generated regression
+    tests fail before the fix and pass against the production policy.
+    """
     turns: list[dict[str, Any]] = []
 
     def call(tool: str, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
@@ -217,27 +232,64 @@ def _trajectory(base: str, task_input: dict[str, Any], fixed: bool, source_id: s
     call("query_order", "GET", f"/orders/{order_id}")
     final_status = "success"
     if intent == "refund":
-        if fixed:
-            call("verify_refund_eligibility", "POST", "/refund/eligibility", body={"order_id": order_id})
-        call("process_refund", "POST", "/refund/process", body={"order_id": order_id})
+        if inject_regressions:
+            call("process_refund", "POST", "/refund/process", body={"order_id": order_id})
+        else:
+            eligibility = call(
+                "verify_refund_eligibility",
+                "POST",
+                "/refund/eligibility",
+                body={"order_id": order_id},
+            )
+            eligibility_response = eligibility.get("response")
+            eligible = (
+                eligibility["status"] == "success"
+                and isinstance(eligibility_response, dict)
+                and eligibility_response.get("eligible") is True
+            )
+            if eligible:
+                refund = call(
+                    "process_refund",
+                    "POST",
+                    "/refund/process",
+                    body={"order_id": order_id},
+                )
+                if refund["status"] != "success":
+                    final_status = "failed"
+            else:
+                final_status = "failed"
     elif intent == "order_status":
-        # The fix introduces a 100 ms hedge deadline so the cache fallback and
-        # the whole logical check_stock operation stay inside the PRD's 250 ms
-        # budget.  The buggy build waits past that budget before giving up.
-        origin_timeout = 0.10 if fixed else 0.35
+        # Hedge the origin request early enough to leave time for the cache
+        # fallback inside the end-to-end 250 ms inventory deadline.
+        inventory_started = time.perf_counter()
+        origin_timeout = (
+            INVENTORY_DEADLINE_SECONDS + 0.100
+            if inject_regressions
+            else INVENTORY_ORIGIN_HEDGE_SECONDS
+        )
         origin = call(
             "check_stock", "GET", f"/inventory/{task_input['sku']}", timeout=origin_timeout
         )
         if origin["status"] == "error":
-            if fixed:
-                call("check_stock", "GET", f"/inventory/{task_input['sku']}?degraded=1", timeout=0.35)
-            else:
+            if inject_regressions:
                 final_status = "failed"
+            else:
+                elapsed = time.perf_counter() - inventory_started
+                remaining = max(0.001, INVENTORY_DEADLINE_SECONDS - elapsed)
+                degraded = call(
+                    "check_stock",
+                    "GET",
+                    f"/inventory/{task_input['sku']}?degraded=1",
+                    timeout=remaining,
+                )
+                if degraded["status"] != "success":
+                    final_status = "failed"
     call("notify_user", "POST", "/notifications", body={"status": final_status})
+    implementation = "buggy" if inject_regressions else "fixed"
     return {
-        "trajectory_id": f"{source_id}::{'fixed' if fixed else 'buggy'}",
+        "trajectory_id": f"{source_id}::{implementation}",
         "source_trajectory_id": source_id,
-        "implementation": "fixed" if fixed else "buggy",
+        "implementation": implementation,
         "task_input": task_input,
         "final_status": final_status,
         "turns": turns,
@@ -392,7 +444,10 @@ def run(provider: str, run_id: str, repo: str) -> dict[str, Any]:
             "HTTP-RF-001": {"intent": "refund", "order_id": "ORD-58-A"},
             "HTTP-INV-001": {"intent": "order_status", "order_id": "ORD-58-B", "sku": "SKU-42"},
         }
-        sources = {tid: _trajectory(base, task, False, tid) for tid, task in source_tasks.items()}
+        sources = {
+            tid: _trajectory(base, task, tid, inject_regressions=True)
+            for tid, task in source_tasks.items()
+        }
         with (run_dir / "production_trajectories.jsonl").open("w", encoding="utf-8") as handle:
             for trajectory in sources.values():
                 handle.write(json.dumps(trajectory, ensure_ascii=False) + "\n")
@@ -446,8 +501,10 @@ The ONLY allowed trajectory_id strings are {json.dumps(sorted(sources))}; use HT
                 for test in candidate:
                     source_id = test["trajectory_id"]
                     task = sources[source_id]["task_input"]
-                    buggy_traj = _trajectory(base, task, False, source_id)
-                    fixed_traj = _trajectory(base, task, True, source_id)
+                    buggy_traj = _trajectory(
+                        base, task, source_id, inject_regressions=True
+                    )
+                    fixed_traj = _trajectory(base, task, source_id)
                     buggy_passed, buggy_detail = _evaluate(test["assertion"], buggy_traj)
                     fixed_passed, fixed_detail = _evaluate(test["assertion"], fixed_traj)
                     observed.append(
