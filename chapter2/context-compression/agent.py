@@ -197,7 +197,12 @@ TODAY'S DATE: {date_string}"""
         Returns:
             Tuple of (tool result, compressed content if applicable)
         """
+        if not isinstance(arguments, dict):
+            arguments = {}
+
         if tool_name == "search_web":
+            if "query" not in arguments:
+                return {"error": "Missing required argument 'query' for search_web"}, None
             result = self.web_tools.search_web(**arguments)
             
             # Apply compression strategy
@@ -212,11 +217,12 @@ TODAY'S DATE: {date_string}"""
             return result, compressed
             
         elif tool_name == "fetch_webpage":
+            if "url" not in arguments:
+                return {"error": "Missing required argument 'url' for fetch_webpage"}, None
             result = self.web_tools.fetch_webpage(**arguments)
             
             # For fetch, we typically don't compress (used for follow-ups)
             return result, None
-            
         else:
             return {"error": f"Unknown tool: {tool_name}"}, None
     
@@ -566,6 +572,8 @@ TODAY'S DATE: {date_string}"""
                         raw_args = tool_call['function'].get('arguments') or "{}"
                         try:
                             function_args = json.loads(raw_args)
+                            if not isinstance(function_args, dict):
+                                function_args = {}
                         except json.JSONDecodeError:
                             # Tolerate bad tool-arg JSON; keep the loop alive.
                             function_args = {}
