@@ -8,11 +8,13 @@
 
 | التجربة | المشروع | النوع | الوصف |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
 | 7-3، 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | التدريب المسبق لنموذج لغة صغير من البداية لفهم عملية التدريب المسبق الكاملة والتقنيات الأساسية. |
 | 7-5 | [تابع التدريب المسبق](continued-pretraining/) | ✅ | ينفذ تدريبًا مسبقًا مستمرًا على البيانات الخاصة بالمجال لتحسين أداء النموذج في المجال المستهدف. |
 | 7-6 | [السمسم](sesame/) | ✅ | خطاب Sesame CSM SFT: ضبط LoRA لنموذج 1B TTS، والتحكم في التعبير باستخدام العلامات غير اللغوية مثل `<laugh>` و`<sigh>` |
 | 7-6 | [أورفيوس](orpheus/) | ✅ | خطاب Orpheus 3B SFT: ضبط LoRA الدقيق لنموذج TTS، واستنساخ الصوت عبر الصوت المرجعي من أجل تناسق الصوت عبر الجمل |
 | 7-7 | [استدلال متعدد اللغات](MultilingualReasoning/) | ✅ | يدرب القدرة الاستدلالية للنماذج في بيئات متعددة اللغات، مما يحسن الأداء في المهام متعددة اللغات. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [التقطير في المهد](cot-distillation/) | ✅ | يقطر مسارات CoT من النماذج الحدودية مثل Claude عبر OpenRouter؛ تم التحقق من القاعدة وتحويلها إلى بيانات SFT (مصاحب للتجربة 7-9). |
 | 7-10 | [أدابت ثينك](AdaptThink/) | 📖 | يعلم نماذج الاستدلال كيفية اختيار وضع الاستدلال الخاص بهم بشكل تكيفي (التفكير مقابل عدم التفكير) بناءً على صعوبة المشكلة. من خلال التحسين المقيد وأخذ العينات المهمة، فإنه يقلل بشكل كبير من تكاليف الاستدلال (45-69%) مع تحسين الدقة. استنادًا إلى نموذج DeepSeek-R1-Distill-Qwen، والذي تم تدريبه باستخدام خوارزمية DAPO. |
 | 7-11 | `SFTvsRL/` | 📖 | يقارن بشكل منهجي فعالية الضبط الدقيق الخاضع للإشراف (SFT) والتعلم المعزز (RL) في المهام المختلفة، ويحلل نقاط القوة والضعف وسيناريوهات التطبيق المناسبة لكلتا الطريقتين. |

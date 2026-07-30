@@ -8,11 +8,13 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 小型言語モデルをゼロから事前学習し、事前学習の完全なプロセスと主要技術を理解する。 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | ドメイン固有のデータで継続事前学習を行い、対象ドメインにおけるモデルの性能を向上させる。 |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 音声 SFT：LoRA で 1B TTS モデルを微調整し、`<laugh>`・`<sigh>` などのパラ言語タグで表現を制御 |
 | 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B 音声 SFT：LoRA で TTS モデルを微調整し、参照音声の連結で文をまたいだ音色の一貫した声の複製を実現 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | 複数の言語環境におけるモデルの推論能力を訓練し、言語横断タスクの性能を向上させる。 |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | OpenRouter 経由で Claude などの最先端モデルから CoT 軌跡を蒸留し、ルール検証器でフィルタリングして SFT データを生成する（実験 7-9 対応） |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | 推論モデルに、問題の難易度に基づいて推論モード（Thinking と NoThinking）を適応的に選択させる。制約付き最適化と重要度サンプリングを通じて、精度を向上させながら推論コストを大幅に削減する（45〜69%）。DeepSeek-R1-Distill-Qwen モデルに基づき、DAPO アルゴリズムを用いて訓練する。 |
 | 7-11 | `SFTvsRL/` | 📖 | 教師ありファインチューニング（SFT）と強化学習（RL）が異なるタスクで持つ有効性を体系的に比較し、両手法の長所、短所、適した適用シナリオを分析する。 |

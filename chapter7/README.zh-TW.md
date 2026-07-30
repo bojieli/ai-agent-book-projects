@@ -8,11 +8,13 @@
 
 | 編號 | 專案 | 型別 | 一句話說明 |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 從零預訓練小型 LLM/VLM，理解完整預訓練流程與關鍵技術 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | 在特定領域資料上持續預訓練，提升目標領域表現 |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 語音 SFT：LoRA 微調 1B TTS 模型，用 `<laugh>`、`<sigh>` 等副語言標記控制表達 |
 | 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B 語音 SFT：LoRA 微調 TTS 模型，拼接參考音訊實現跨句音色一致的聲音複刻 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | 訓練模型在多語言環境下的推理能力，提升跨語言任務表現 |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | 經 OpenRouter 呼叫 Claude 等前沿模型蒸餾 CoT 軌跡，規則驗證器過濾後生成 SFT 資料（實驗 7-9 配套） |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | 讓推理模型按問題難度自適應選 Thinking/NoThinking，約束最佳化 + 重要性取樣降成本 45–69% 同時提升準確率 |
 | 7-11 | `SFTvsRL/` | 📖 | 系統性對比監督微調與強化學習在不同任務上的效果與適用場景 |
