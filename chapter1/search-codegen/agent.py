@@ -1,169 +1,138 @@
+"""Exact GPT-5.6 Responses API agent for Experiment 1-3.
+
+The previous companion sent Responses-style hosted tools to Chat Completions
+through a proxy and then reported an empty ``tool_calls`` list.  This module
+uses the actual ``/v1/responses`` protocol and preserves its typed output items
+(``web_search_call``, ``code_interpreter_call``, messages, and citations).
 """
-GPT-5 Native Tools Agent
-An advanced agent leveraging GPT-5's native web_search and code_interpreter tools via OpenRouter API.
-"""
+
+from __future__ import annotations
 
 import json
-import os
-from typing import List, Dict, Any, Optional, Literal
-from openai import OpenAI
 import logging
-from dataclasses import dataclass
-from enum import Enum
+import time
+from typing import Any, Dict, List, Literal, Optional
+
 import requests
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
-def _reasoning_safe_temperature(model, requested=1.0):
-    """Reasoning models (Kimi K3, GPT-5, ...) only accept temperature=1.
-    Return 1 for those; otherwise the requested value so non-reasoning
-    providers (Doubao, DeepSeek, older Moonshot) are unchanged."""
-    m = str(model or "").lower().replace("/", "-")
-    return 1 if ("kimi-k3" in m or "gpt-5" in m) else requested
-
-
-class ToolType(Enum):
-    """Enum for GPT-5 native tool types"""
-    WEB_SEARCH = "web_search"
-    CODE_INTERPRETER = "code_interpreter"
-
-
-@dataclass
-class ToolResult:
-    """Container for tool execution results"""
-    tool_type: ToolType
-    success: bool
-    result: Any
-    error: Optional[str] = None
-
-
 class GPT5NativeAgent:
-    """
-    GPT-5 Agent with Native Tool Support
-    
-    This agent uses GPT-5's native web_search and code_interpreter capabilities
-    through the OpenRouter API. These tools are built into GPT-5 and don't require
-    manual implementation.
-    
-    Based on OpenAI's native tool support:
-    - web_search: Native internet search capability
-    - code_interpreter: Built-in code execution environment
-    """
-    
+    """GPT-5.6 Sol with OpenAI-hosted web search and Python tools."""
+
     def __init__(
-        self, 
-        api_key: str, 
-        base_url: str = "https://openrouter.ai/api/v1",
-        model: str = "openai/gpt-5.6-sol"
+        self,
+        api_key: str,
+        base_url: str = "https://api.openai.com/v1",
+        model: str = "gpt-5.6-sol",
     ):
-        """
-        Initialize the GPT-5 agent with OpenRouter API
-        
-        Args:
-            api_key: OpenRouter API key
-            base_url: OpenRouter API base URL
-            model: Model identifier (default: openai/gpt-5.6-sol)
-        """
+        if not api_key:
+            raise ValueError("An API key is required")
         self.api_key = api_key
-        self.base_url = base_url
+        self.base_url = base_url.rstrip("/")
         self.model = model
+        self.provider = (
+            "openai" if self.base_url == "https://api.openai.com/v1" else
+            "openrouter" if "openrouter.ai" in self.base_url else
+            "custom"
+        )
         self.conversation_history: List[Dict[str, Any]] = []
         self.system_prompt = self._create_system_prompt()
-        
-    def _create_system_prompt(self) -> str:
-        """
-        Create the system prompt for the agent
-        
-        Returns:
-            System prompt string
-        """
-        return """You are an advanced AI assistant powered by GPT-5 with native tool capabilities.
+        self.previous_response_id: Optional[str] = None
+        self.api_turns: List[Dict[str, Any]] = []
 
-You have access to two powerful native tools:
+    @staticmethod
+    def _create_system_prompt() -> str:
+        return """You are a deep-research assistant. Use hosted web search for
+current facts and cite sources. Use the hosted Python/code-interpreter tool for
+quantitative analysis; do not claim a calculation was run unless the response
+contains a completed code_interpreter_call. Ask a concise clarifying question
+before research when a material user preference is genuinely ambiguous."""
 
-1. **web_search**: Use this to search the internet for real-time information, current events, 
-   documentation, or any information not in your training data.
-   
-2. **code_interpreter**: Use this to execute Python code, perform calculations, data analysis,
-   generate visualizations, or solve computational problems.
+    @staticmethod
+    def _tools() -> List[Dict[str, Any]]:
+        # Exact structures from the official OpenAI Responses API guides.
+        return [
+            {"type": "web_search", "search_context_size": "medium"},
+            {
+                "type": "code_interpreter",
+                "container": {"type": "auto", "memory_limit": "4g"},
+            },
+        ]
 
-Guidelines:
-- Analyze the user's request carefully to determine which tools to use
-- You can use multiple tools in sequence or combination to provide comprehensive answers
-- When using code_interpreter, write clear, well-commented code
-- When using web_search, search for authoritative and recent sources
-- Always synthesize information from tools into clear, actionable responses
-- Be proactive in using tools when they would enhance your answer quality
-
-Remember: These are native tools built into your capabilities, use them naturally as part of your reasoning process."""
-    
-    def _build_openrouter_request(
+    def _build_responses_request(
         self,
-        messages: List[Dict[str, Any]],
+        input_text: str,
+        *,
         use_tools: bool = True,
+        tool_choice: Literal["auto", "none", "required"] = "auto",
         reasoning_effort: str = "low",
-        stream: bool = False,
-        verbosity: Optional[str] = None
+        verbosity: Optional[str] = None,
+        max_output_tokens: Optional[int] = None,
+        background: bool = False,
     ) -> Dict[str, Any]:
-        """
-        Build the OpenRouter-specific request format matching the Go implementation
-
-        Args:
-            messages: Conversation messages
-            use_tools: Whether to enable tools
-            reasoning_effort: Reasoning effort level (low, medium, high)
-            stream: Whether to stream the response
-            verbosity: Output verbosity level (low, medium, high). GPT-5's native
-                parameter controlling how detailed the answer is. None keeps the
-                model default.
-
-        Returns:
-            Request dictionary
-        """
-        request = {
+        if reasoning_effort not in {"none", "low", "medium", "high", "xhigh", "max"}:
+            raise ValueError("Unsupported GPT-5.6 reasoning effort")
+        if verbosity not in {None, "low", "medium", "high"}:
+            raise ValueError("verbosity must be low, medium, or high")
+        request: Dict[str, Any] = {
             "model": self.model,
-            "messages": messages,
-            "stream": stream
+            "instructions": self.system_prompt,
+            "input": input_text,
+            "reasoning": {"effort": reasoning_effort},
+            "background": background,
+            "store": True,
         }
-        
-        if use_tools:
-            # Match the exact Go implementation structure
-            request["tools"] = [
-                {
-                    "type": "web_search",
-                    "search_context_size": "medium",
-                    "user_location": {
-                        "type": "approximate",
-                        "country": "US"
-                    }
-                },
-                {
-                    "type": "code_interpreter",
-                    "container": {"type": "auto"}
-                },
-            ]
-            request["tool_choice"] = "auto"
-            request["parallel_tool_calls"] = True
-        
-        # Add reasoning configuration
-        request["reasoning"] = {
-            "effort": reasoning_effort,
-            "generate_summary": False
-        }
-
-        # Add verbosity configuration (GPT-5 native parameter, only when set)
         if verbosity:
-            request["verbosity"] = verbosity
-
-        request["background"] = False
-
+            request["text"] = {"verbosity": verbosity}
+        if max_output_tokens:
+            request["max_output_tokens"] = max_output_tokens
+        if use_tools:
+            request["tools"] = self._tools()
+            request["tool_choice"] = tool_choice
+        if self.previous_response_id:
+            request["previous_response_id"] = self.previous_response_id
         return request
-    
+
+    @staticmethod
+    def _output_text(response: Dict[str, Any]) -> str:
+        chunks: List[str] = []
+        for item in response.get("output") or []:
+            if item.get("type") != "message":
+                continue
+            for content in item.get("content") or []:
+                if content.get("type") == "output_text" and content.get("text"):
+                    chunks.append(content["text"])
+        return "\n".join(chunks).strip()
+
+    @staticmethod
+    def _tool_items(response: Dict[str, Any]) -> List[Dict[str, Any]]:
+        return [
+            item
+            for item in response.get("output") or []
+            if item.get("type") in {
+                "web_search_call",
+                "code_interpreter_call",
+                "hosted_tool_call",
+            }
+        ]
+
+    @staticmethod
+    def _citations(response: Dict[str, Any]) -> List[Dict[str, Any]]:
+        citations = []
+        for item in response.get("output") or []:
+            for content in item.get("content") or []:
+                for annotation in content.get("annotations") or []:
+                    if annotation.get("type") in {
+                        "url_citation",
+                        "container_file_citation",
+                    }:
+                        citations.append(annotation)
+        return citations
+
     def process_request(
-        self, 
+        self,
         user_request: str,
         use_tools: bool = True,
         tool_choice: Literal["auto", "none", "required"] = "auto",
@@ -171,240 +140,168 @@ Remember: These are native tools built into your capabilities, use them naturall
         max_tokens: Optional[int] = None,
         reasoning_effort: str = "low",
         verbosity: Optional[str] = None,
-        dry_run: bool = False
+        dry_run: bool = False,
+        background: bool = False,
     ) -> Dict[str, Any]:
+        """Create one Responses API turn and retain its complete trace.
+
+        ``temperature`` remains in the signature for legacy callers, but is not
+        sent: GPT-5.6 reasoning requests use ``reasoning.effort`` instead.
         """
-        Process a user request with optional tool usage (OpenRouter format)
-
-        Args:
-            user_request: The user's request or question
-            use_tools: Whether to enable native tools
-            tool_choice: Tool selection strategy (for compatibility, internally uses "auto")
-            temperature: Response temperature (0-1)
-            max_tokens: Maximum tokens in response
-            reasoning_effort: Reasoning effort level (low, medium, high)
-            verbosity: Output verbosity level (low, medium, high); None keeps default
-            dry_run: If True, build and return the request body WITHOUT calling the
-                API. Useful for inspecting the native-tool request offline.
-
-        Returns:
-            Dictionary containing the response and metadata
-        """
-        # Add system prompt if this is the first message
-        if not self.conversation_history:
-            self.conversation_history.append({
-                "role": "system",
-                "content": self.system_prompt
-            })
-        
-        # Add user message to history
-        self.conversation_history.append({
-            "role": "user",
-            "content": user_request
-        })
-        
-        logger.info(f"Processing request: {user_request[:100]}...")
-        logger.info(f"Using OpenRouter format with reasoning effort: {reasoning_effort}")
-        
-        try:
-            # Build the OpenRouter-specific request
-            request_body = self._build_openrouter_request(
-                messages=self.conversation_history,
-                use_tools=use_tools,
-                reasoning_effort=reasoning_effort,
-                stream=False,
-                verbosity=verbosity
-            )
-
-            # Add temperature and max_tokens if specified
-            if temperature is not None:
-                request_body["temperature"] = _reasoning_safe_temperature(self.model, temperature)
-            if max_tokens:
-                request_body["max_tokens"] = max_tokens
-
-            logger.info(f"Request body: {json.dumps(request_body, indent=2)}")
-
-            # Dry-run: return the assembled request without hitting the network
-            if dry_run:
-                logger.info("Dry-run mode: returning request body without calling the API")
-                return {
-                    "success": True,
-                    "dry_run": True,
-                    "response": None,
-                    "request": request_body,
-                    "tool_calls": [],
-                    "model": self.model
-                }
-            
-            # Make the API call directly using requests (matching Go implementation)
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.api_key}"
+        request = self._build_responses_request(
+            user_request,
+            use_tools=use_tools,
+            tool_choice=tool_choice,
+            reasoning_effort=reasoning_effort,
+            verbosity=verbosity,
+            max_output_tokens=max_tokens,
+            background=background,
+        )
+        if dry_run:
+            return {
+                "success": True,
+                "dry_run": True,
+                "request": request,
+                "response": None,
+                "tool_calls": [],
+                "model": self.model,
+                "provider": self.provider,
             }
-            
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=request_body,
-                timeout=600
+
+        started = time.monotonic()
+        try:
+            http_response = requests.post(
+                f"{self.base_url}/responses",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=request,
+                timeout=900,
             )
-            
-            logger.info(f"Response status: {response.status_code}")
-            
-            if response.status_code != 200:
-                error_msg = f"API error (status {response.status_code}): {response.text}"
-                logger.error(error_msg)
+            elapsed = round(time.monotonic() - started, 6)
+            try:
+                response = http_response.json()
+            except ValueError:
+                response = {"raw_text": http_response.text}
+            turn = {
+                "request": json.loads(json.dumps(request, ensure_ascii=False)),
+                "http_status": http_response.status_code,
+                "response": response,
+                "elapsed_seconds": elapsed,
+            }
+            self.api_turns.append(turn)
+            if not http_response.ok or response.get("error"):
+                error = response.get("error") or {
+                    "type": "http_error",
+                    "message": http_response.text,
+                }
                 return {
                     "success": False,
-                    "error": error_msg,
+                    "error": error,
                     "response": None,
-                    "tool_calls": []
+                    "request": request,
+                    "raw_response": response,
+                    "tool_calls": [],
+                    "citations": [],
+                    "usage": response.get("usage") or {},
+                    "model": self.model,
+                    "provider": self.provider,
+                    "base_url": self.base_url,
+                    "elapsed_seconds": elapsed,
                 }
-            
-            response_data = response.json()
-            
-            # Log usage information
-            if "usage" in response_data:
-                usage = response_data["usage"]
-                logger.info(f"GPT-5 OpenRouter Usage - Input: {usage.get('input_tokens', 0)} tokens "
-                          f"(cached: {usage.get('input_tokens_details', {}).get('cached_tokens', 0)}), "
-                          f"Output: {usage.get('output_tokens', 0)} tokens "
-                          f"(reasoning: {usage.get('output_tokens_details', {}).get('reasoning_tokens', 0)}), "
-                          f"Total: {usage.get('total_tokens', 0)}")
-            
-            # Extract the message
-            message_content = None
-            if response_data.get("choices") and len(response_data["choices"]) > 0:
-                message = response_data["choices"][0].get("message", {})
-                message_content = message.get("content", "")
-                
-                # Add assistant response to history
-                if message_content:
-                    self.conversation_history.append({
-                        "role": "assistant",
-                        "content": message_content
-                    })
-            
-            # Prepare the result
-            result = {
-                "success": True,
-                "response": message_content or "No response generated",
-                "tool_calls": [],  # GPT-5 handles tools internally
-                "usage": response_data.get("usage", {}),
-                "model": self.model
+
+            self.previous_response_id = response.get("id")
+            text = self._output_text(response)
+            self.conversation_history.extend(
+                [
+                    {"role": "user", "content": user_request},
+                    {"role": "assistant", "content": text},
+                ]
+            )
+            return {
+                "success": response.get("status") == "completed" and bool(text),
+                "error": response.get("error"),
+                "response": text,
+                "request": request,
+                "raw_response": response,
+                "output_items": response.get("output") or [],
+                "tool_calls": self._tool_items(response),
+                "citations": self._citations(response),
+                "usage": response.get("usage") or {},
+                "model": response.get("model") or self.model,
+                "requested_model": self.model,
+                "provider": self.provider,
+                "base_url": self.base_url,
+                "response_id": response.get("id"),
+                "status": response.get("status"),
+                "elapsed_seconds": elapsed,
+                "temperature_omitted_for_reasoning_model": temperature is not None,
             }
-            
-            logger.info("Request processed successfully")
-            return result
-            
-        except Exception as e:
-            logger.error(f"Error processing request: {str(e)}")
+        except Exception as exc:
+            elapsed = round(time.monotonic() - started, 6)
+            self.api_turns.append(
+                {
+                    "request": request,
+                    "elapsed_seconds": elapsed,
+                    "error": {"class": type(exc).__name__, "message": str(exc)},
+                }
+            )
             return {
                 "success": False,
-                "error": str(e),
+                "error": {"class": type(exc).__name__, "message": str(exc)},
                 "response": None,
-                "tool_calls": []
+                "request": request,
+                "tool_calls": [],
+                "citations": [],
+                "model": self.model,
+                "provider": self.provider,
+                "base_url": self.base_url,
+                "elapsed_seconds": elapsed,
             }
-    
-    def search_and_analyze(self, topic: str, analysis_code: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Combine web search with code analysis
-        
-        This method demonstrates using both native tools together:
-        1. Search for information on a topic
-        2. Optionally analyze the results with code
-        
-        Args:
-            topic: Topic to search and analyze
-            analysis_code: Optional Python code to analyze the search results
-            
-        Returns:
-            Combined results from both tools
-        """
-        # Construct a request that uses both tools
-        if analysis_code:
-            request = f"""Please help me with the following task:
 
-1. First, search the web for current information about: {topic}
-2. Then, analyze the findings using this code:
+    def search_and_analyze(
+        self, topic: str, analysis_code: Optional[str] = None
+    ) -> Dict[str, Any]:
+        code_requirement = (
+            f"Run this supplied Python in the hosted tool and inspect its output:\n{analysis_code}"
+            if analysis_code
+            else "Use the hosted Python tool for all quantitative processing."
+        )
+        return self.process_request(
+            f"Research current information about {topic}. {code_requirement} "
+            "Cite web sources and distinguish searched facts from computed results.",
+            use_tools=True,
+            reasoning_effort="medium",
+        )
 
-```python
-{analysis_code}
-```
-
-Provide a comprehensive response combining the search results and code analysis."""
-        else:
-            request = f"""Search for current information about: {topic}
-
-Then provide a data-driven analysis of the findings, using code to process or visualize 
-any quantitative information if relevant."""
-        
-        return self.process_request(request, use_tools=True, reasoning_effort="medium")
-    
-    def clear_history(self):
-        """Clear the conversation history"""
+    def clear_history(self) -> None:
         self.conversation_history = []
-        logger.info("Conversation history cleared")
-    
+        self.previous_response_id = None
+        self.api_turns = []
+
     def get_history(self) -> List[Dict[str, Any]]:
-        """Get the current conversation history"""
-        return self.conversation_history.copy()
-    
-    def set_system_prompt(self, prompt: str):
-        """
-        Update the system prompt
-        
-        Args:
-            prompt: New system prompt
-        """
+        return json.loads(json.dumps(self.conversation_history, ensure_ascii=False))
+
+    def set_system_prompt(self, prompt: str) -> None:
         self.system_prompt = prompt
-        if self.conversation_history and self.conversation_history[0]["role"] == "system":
-            self.conversation_history[0]["content"] = prompt
-        logger.info("System prompt updated")
 
 
 class GPT5AgentChain:
-    """
-    Chain multiple GPT-5 agent calls for complex workflows
-    """
-    
+    """Sequential Responses turns linked with ``previous_response_id``."""
+
     def __init__(self, agent: GPT5NativeAgent):
-        """
-        Initialize the agent chain
-        
-        Args:
-            agent: GPT5NativeAgent instance
-        """
         self.agent = agent
-        self.chain_results = []
-    
-    def add_step(self, request: str, **kwargs) -> 'GPT5AgentChain':
-        """
-        Add a step to the chain
-        
-        Args:
-            request: Request for this step
-            **kwargs: Additional parameters for process_request
-            
-        Returns:
-            Self for chaining
-        """
-        result = self.agent.process_request(request, **kwargs)
-        self.chain_results.append({
-            "request": request,
-            "result": result
-        })
+        self.chain_results: List[Dict[str, Any]] = []
+
+    def add_step(self, request: str, **kwargs: Any) -> "GPT5AgentChain":
+        self.chain_results.append(
+            {"request": request, "result": self.agent.process_request(request, **kwargs)}
+        )
         return self
-    
+
     def execute(self) -> List[Dict[str, Any]]:
-        """
-        Execute the chain and return all results
-        
-        Returns:
-            List of all chain results
-        """
         return self.chain_results
-    
-    def clear(self):
-        """Clear the chain results"""
+
+    def clear(self) -> None:
         self.chain_results = []

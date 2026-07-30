@@ -7,7 +7,9 @@ Default model is Kimi K3 (matching 实验 7-2 in the book); override via the
 
 import os
 import json
+import re
 import time
+from datetime import datetime, timezone
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass, asdict
 import openai
@@ -110,6 +112,8 @@ class LLMAgent:
         primary_key = api_key or os.getenv("MOONSHOT_API_KEY")
         self.api_key, resolved_base_url, self.model, self.using_openrouter = \
             resolve_llm_backend(primary_key, base_url, model)
+        self.base_url = resolved_base_url
+        self.provider = "openrouter" if self.using_openrouter else "moonshot"
         if self.using_openrouter:
             print(f"ℹ️  MOONSHOT_API_KEY not set; routing via OpenRouter (model: {self.model})")
 
@@ -130,6 +134,9 @@ class LLMAgent:
         self.total_episodes = 0
         self.api_calls = 0
         self.total_tokens = 0
+        # Retain canonical real-run evidence without ever serializing the API key.
+        self.api_records: List[Dict[str, Any]] = []
+        self.episode_trajectories: List[Dict[str, Any]] = []
     
     def _build_context(self, current_state: str, available_actions: List[str]) -> str:
         """
@@ -232,78 +239,137 @@ ACTION: take red key
                 for exp in successful[-3:]:
                     print(f"   • {exp.action} → +{exp.reward:.1f} reward")
         
+        request_messages = [
+            {
+                "role": "system",
+                "content": "You are an intelligent game-playing agent that learns from experience.",
+            },
+            {"role": "user", "content": prompt},
+        ]
+        requested_temperature = _reasoning_safe_temperature(
+            self.model, self.temperature
+        )
+        started = time.perf_counter()
+        api_record: Dict[str, Any] = {
+            "requested_at": datetime.now(timezone.utc).isoformat(),
+            "provider": self.provider,
+            "base_url": self.base_url,
+            "model": self.model,
+            "request": {
+                "messages": request_messages,
+                "temperature": requested_temperature,
+                "max_tokens": 2048,
+            },
+            "available_actions": list(available_actions),
+        }
+
         try:
             print("\n🤔 LLM is thinking...")
-            
-            # Call Kimi K3 API.
-            # Kimi K3 is a REASONING model: its chain-of-thought is billed as
-            # completion tokens (returned separately in message.reasoning_content),
-            # and the final answer in message.content is only emitted AFTER the
-            # reasoning finishes. A small max_tokens can therefore be consumed
-            # entirely by reasoning, truncating content to empty and breaking the
-            # ACTION parse. Keep a generous budget so the ACTION line survives.
+
+            # Kimi K3 is a reasoning model: completion tokens can be consumed
+            # by reasoning_content before message.content is emitted. Keep a
+            # generous budget so the required ACTION line is not truncated.
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an intelligent game-playing agent that learns from experience."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=_reasoning_safe_temperature(self.model, self.temperature),
-                max_tokens=2048
+                messages=request_messages,
+                temperature=requested_temperature,
+                max_tokens=2048,
             )
-            
+
             self.api_calls += 1
-            if hasattr(response.usage, 'total_tokens'):
-                self.total_tokens += response.usage.total_tokens
-            
-            # Extract action from response (final answer lives in .content;
-            # reasoning models expose their thinking separately in
-            # .reasoning_content, which we don't need for action parsing).
-            response_text = response.choices[0].message.content or ""
-            
+            usage = getattr(response, "usage", None)
+            if usage is not None and getattr(usage, "total_tokens", None) is not None:
+                self.total_tokens += usage.total_tokens
+
+            choice = response.choices[0]
+            response_text = choice.message.content or ""
+            reasoning_text = getattr(choice.message, "reasoning_content", None)
+            if usage is not None and hasattr(usage, "model_dump"):
+                usage_payload = usage.model_dump()
+            elif usage is not None:
+                usage_payload = {
+                    key: getattr(usage, key, None)
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                }
+            else:
+                usage_payload = None
+            api_record["response"] = {
+                "id": getattr(response, "id", None),
+                "created": getattr(response, "created", None),
+                "model": getattr(response, "model", None),
+                "finish_reason": getattr(choice, "finish_reason", None),
+                "content": response_text,
+                "reasoning_content": reasoning_text,
+                "usage": usage_payload,
+            }
+
             if verbose:
                 print("\n📝 LLM Reasoning:")
                 print("-" * 40)
-                # Show the reasoning part (before ACTION:)
                 reasoning_lines = []
                 for line in response_text.split('\n'):
                     if line.startswith("ACTION:"):
                         break
                     if line.strip():
                         reasoning_lines.append(line)
-                
-                # Show last few lines of reasoning
                 for line in reasoning_lines[-5:]:
-                    print(f"  {line[:100]}...")  # Truncate long lines
+                    print(f"  {line[:100]}...")
                 print("-" * 40)
-            
-            # Parse action from response
-            lines = response_text.strip().split('\n')
-            for line in reversed(lines):
-                if line.startswith("ACTION:"):
-                    action = line[7:].strip()
-                    
-                    # Validate action
-                    if action in available_actions:
+
+            action_line = re.compile(
+                r"^\s*(?:[-*]\s*)?(?:\*\*)?ACTION(?:\*\*)?\s*:\s*(.*?)\s*(?:\*\*)?\s*$",
+                re.IGNORECASE,
+            )
+            for line in reversed(response_text.strip().split('\n')):
+                match = action_line.match(line)
+                if not match:
+                    continue
+                action = match.group(1).strip().strip("`* ")
+                if action in available_actions:
+                    api_record.update({
+                        "parsed_action": action,
+                        "fallback_used": False,
+                        "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+                    })
+                    self.api_records.append(api_record)
+                    if verbose:
+                        print(f"\n✅ Chosen action: {action}")
+                    return action
+
+                action_lower = action.lower()
+                for available in available_actions:
+                    if available.lower() == action_lower:
+                        api_record.update({
+                            "parsed_action": available,
+                            "fallback_used": False,
+                            "case_normalized": True,
+                            "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+                        })
+                        self.api_records.append(api_record)
                         if verbose:
-                            print(f"\n✅ Chosen action: {action}")
-                        return action
-                    else:
-                        # Try to find closest matching action
-                        action_lower = action.lower()
-                        for available in available_actions:
-                            if available.lower() == action_lower:
-                                if verbose:
-                                    print(f"\n✅ Chosen action (corrected): {available}")
-                                return available
-            
-            # Fallback if no valid action found
-            print(f"⚠️ Warning: Could not parse valid action from LLM response. Using fallback.")
+                            print(f"\n✅ Chosen action (corrected): {available}")
+                        return available
+
+            print("⚠️ Warning: Could not parse valid action from LLM response. Using fallback.")
+            api_record.update({
+                "parsed_action": available_actions[0],
+                "fallback_used": True,
+                "fallback_reason": "missing_or_invalid_ACTION_line",
+                "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+            })
+            self.api_records.append(api_record)
             return available_actions[0]
-            
+
         except Exception as e:
             print(f"❌ Error calling LLM API: {e}")
-            # Fallback to first available action
+            api_record.update({
+                "error": {"type": type(e).__name__, "message": str(e)},
+                "parsed_action": available_actions[0],
+                "fallback_used": True,
+                "fallback_reason": "api_error",
+                "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+            })
+            self.api_records.append(api_record)
             return available_actions[0]
     
     def update_experience(self, state: str, action: str, feedback: str, reward: float):
@@ -335,7 +401,8 @@ ACTION: take red key
                 failed[-self.max_experiences//2:]
             )[-self.max_experiences:]
     
-    def play_episode(self, game: TreasureHuntGame, verbose: bool = True) -> Tuple[float, int, bool]:
+    def play_episode(self, game: TreasureHuntGame, verbose: bool = True,
+                     phase: str = "unspecified") -> Tuple[float, int, bool]:
         """
         Play one episode of the game.
         """
@@ -364,6 +431,8 @@ ACTION: take red key
             
             # Get state before action
             state_before = game.get_state_description()
+            available_actions = game.get_available_actions()
+            api_record_index = len(self.api_records)
             
             # Choose action using LLM
             action = self.choose_action(game, verbose=verbose)
@@ -377,9 +446,16 @@ ACTION: take red key
             # Record trajectory
             trajectory.append({
                 "step": steps + 1,
+                "state_before": state_before,
+                "available_actions": available_actions,
                 "action": action,
                 "reward": reward,
-                "feedback": feedback
+                "feedback": feedback,
+                "api_record_index": (
+                    api_record_index
+                    if len(self.api_records) > api_record_index
+                    else None
+                ),
             })
             
             total_reward += reward
@@ -404,6 +480,17 @@ ACTION: take red key
         if game.victory:
             self.victories += 1
         self.total_episodes += 1
+        self.episode_trajectories.append({
+            "phase": phase,
+            "episode": (
+                sum(1 for item in self.episode_trajectories
+                    if item["phase"] == phase) + 1
+            ),
+            "victory": game.victory,
+            "total_reward": total_reward,
+            "steps": steps,
+            "trajectory": trajectory,
+        })
         
         if verbose:
             print("\n" + "🏁"*30)
@@ -449,7 +536,9 @@ ACTION: take red key
             if not show_full and verbose:
                 print("\n(Reducing verbosity for middle episodes to save space...)")
             
-            reward, steps, victory = self.play_episode(game, verbose=show_full)
+            reward, steps, victory = self.play_episode(
+                game, verbose=show_full, phase="training"
+            )
             
             if not show_full:
                 # Still show summary even when not fully verbose
@@ -498,7 +587,9 @@ ACTION: take red key
         eval_victories = 0
         
         for episode in range(num_episodes):
-            reward, steps, victory = self.play_episode(game, verbose=verbose)
+            reward, steps, victory = self.play_episode(
+                game, verbose=verbose, phase="evaluation"
+            )
             
             eval_rewards.append(reward)
             eval_lengths.append(steps)
@@ -521,7 +612,15 @@ ACTION: take red key
     def save_experiences(self, filepath: str):
         """Save experiences to file for analysis."""
         data = {
+            "backend": {
+                "provider": self.provider,
+                "base_url": self.base_url,
+                "model": self.model,
+                "using_openrouter": self.using_openrouter,
+            },
             "experiences": [asdict(exp) for exp in self.experiences],
+            "episode_trajectories": self.episode_trajectories,
+            "api_records": self.api_records,
             "statistics": {
                 "total_episodes": self.total_episodes,
                 "victories": self.victories,

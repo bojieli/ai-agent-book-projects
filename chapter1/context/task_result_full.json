@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "iterations": 5,
+  "final_answer": "105",
+  "error": null,
+  "context_mode": "full",
+  "tool_calls": [
+    {
+      "tool_name": "calculate",
+      "arguments": {
+        "expression": "15 * 7"
+      },
+      "result": {
+        "expression": "15 * 7",
+        "result": 105,
+        "type": "int"
+      },
+      "timestamp": "2026-07-18T10:47:01.599198"
+    },
+    {
+      "tool_name": "calculate",
+      "arguments": {
+        "expression": "15 * 7"
+      },
+      "result": {
+        "expression": "15 * 7",
+        "result": 105,
+        "type": "int"
+      },
+      "timestamp": "2026-07-18T10:47:03.704963"
+    }
+  ],
+  "reasoning_steps": []
+}
