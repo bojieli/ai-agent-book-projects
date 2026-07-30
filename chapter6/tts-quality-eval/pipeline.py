@@ -178,24 +178,51 @@ def _synth_fishaudio(cfg: config.TTSConfig, text: str) -> bytes:
     return b"".join(Session(key).tts(request, backend=cfg.model or "s1"))
 
 
+# Minimax /v1/t2a_v2 uses Bearer auth and no longer takes a GroupId query
+# parameter.  The global and mainland-China deployments live on separate hosts;
+# pick one via MINIMAX_REGION (defaults to the global api.minimax.io host).
+_MINIMAX_T2A_ENDPOINTS = {
+    "global": "https://api.minimax.io/v1/t2a_v2",
+    "cn": "https://api.minimaxi.com/v1/t2a_v2",
+}
+# Success criteria for the non-streaming t2a_v2 call: base_resp.status_code == 0
+# (request accepted) and data.status == 2 (synthesis finished).
+_MINIMAX_SUCCESS_CODE = 0
+_MINIMAX_STATUS_DONE = 2
+
+
+def _minimax_endpoint() -> str:
+    """Return the t2a_v2 endpoint for MINIMAX_REGION: cn -> api.minimaxi.com,
+    otherwise the global api.minimax.io host."""
+    region = os.environ.get("MINIMAX_REGION", "").strip().lower()
+    if region in ("cn", "cn_zh", "china", "minimaxi"):
+        return _MINIMAX_T2A_ENDPOINTS["cn"]
+    return _MINIMAX_T2A_ENDPOINTS["global"]
+
+
 def _synth_minimax(cfg: config.TTSConfig, text: str) -> bytes:
     key = _require_env("MINIMAX_API_KEY")
-    group = _require_env("MINIMAX_GROUP_ID")
-    url = f"https://api.minimax.chat/v1/t2a_v2?GroupId={group}"
     body = {
-        "model": cfg.model or "speech-01-turbo",
+        "model": cfg.model or "speech-2.8-hd",
         "text": text,
         "stream": False,
         "voice_setting": {"voice_id": cfg.voice, "speed": cfg.speed},
         "audio_setting": {"format": "mp3", "sample_rate": 32000},
     }
-    raw = _http_post(url, body, {"Authorization": f"Bearer {key}"})
+    raw = _http_post(_minimax_endpoint(), body, {"Authorization": f"Bearer {key}"})
     data = json.loads(raw)
-    # 返回 JSON，音频为 data.audio（hex 编码）。
-    hexstr = (data.get("data") or {}).get("audio")
-    if not hexstr:
-        err = data.get("base_resp", {})
-        raise RuntimeError(f"Minimax 无音频返回：{err or data}")
+    # Validate the request-level return code first, then the synthesis status.
+    base_resp = data.get("base_resp") or {}
+    if base_resp.get("status_code") != _MINIMAX_SUCCESS_CODE:
+        raise RuntimeError(f"Minimax t2a_v2 failed: base_resp={base_resp or data}")
+    payload = data.get("data") or {}
+    status = payload.get("status")
+    hexstr = payload.get("audio")
+    if status != _MINIMAX_STATUS_DONE or not hexstr:
+        raise RuntimeError(
+            f"Minimax returned no finished audio: status={status} base_resp={base_resp}"
+        )
+    # data.audio is a hex-encoded mp3 payload.
     return bytes.fromhex(hexstr)
 
 

@@ -101,8 +101,9 @@ PROVIDERS = {
         "voice=reference_id（留空用默认音色），走 /v1/tts；key 亦可用别名 FISHAUDIO_API_KEY。",
     ),
     "minimax": ProviderInfo(
-        "minimax", "Minimax", ("MINIMAX_API_KEY", "MINIMAX_GROUP_ID"),
-        "voice=voice_id，model 默认 speech-01-turbo；需额外 GroupId。",
+        "minimax", "Minimax", ("MINIMAX_API_KEY",),
+        "voice=voice_id，model 默认 speech-2.8-hd（另有 speech-2.8-turbo）；Bearer 鉴权，"
+        "MINIMAX_REGION 选 global(api.minimax.io)/cn(api.minimaxi.com)。",
     ),
     "doubao": ProviderInfo(
         "doubao", "豆包（火山引擎）", ("DOUBAO_APP_ID", "DOUBAO_ACCESS_TOKEN"),
@@ -126,8 +127,8 @@ PROVIDER_CONFIGS = {
         model="s1",
         voice=os.getenv("FISH_REFERENCE_ID", "6df3c1e14c9440e9ac978556536bf116"),
     ),
-    "minimax": TTSConfig("minimax-turbo", provider="minimax",
-                        model="speech-01-turbo", voice="male-qn-qingse"),
+    "minimax": TTSConfig("minimax-hd", provider="minimax",
+                        model="speech-2.8-hd", voice="male-qn-qingse"),
     "doubao": TTSConfig("doubao-tts", provider="doubao",
                        model="volcano_tts", voice="zh_female_qingxin"),
 }

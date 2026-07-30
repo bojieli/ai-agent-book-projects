@@ -136,7 +136,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
   | `openai` | `OPENAI_API_KEY` | alloy/nova…；model=tts-1 / tts-1-hd / gpt-4o-mini-tts |
   | `elevenlabs` | `ELEVENLABS_API_KEY` | voice_id；model 默认 eleven_multilingual_v2 |
   | `fishaudio` | `FISH_API_KEY`（别名 `FISHAUDIO_API_KEY`） | reference_id（留空用默认音色） |
-  | `minimax` | `MINIMAX_API_KEY` + `MINIMAX_GROUP_ID` | voice_id；model 默认 speech-01-turbo |
+  | `minimax` | `MINIMAX_API_KEY`（可选 `MINIMAX_REGION`） | voice_id；model 默认 speech-2.8-hd（另有 speech-2.8-turbo） |
   | `doubao` | `DOUBAO_APP_ID` + `DOUBAO_ACCESS_TOKEN` | voice_type |
 
   > 说明：本仓库仅 **OpenAI** 路径经端到端验证；其余四家按各自公开 REST 文档实现，请用自己
