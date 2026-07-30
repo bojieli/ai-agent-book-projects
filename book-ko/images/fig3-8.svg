@@ -7,8 +7,8 @@
 <line x1="60" y1="163" x2="240" y2="163" stroke="#999999" stroke-width="2"/>
 <text x="150" y="190" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">k₁이 포화 속도 제어</text>
 <text x="150" y="218" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">단어 빈도 ↑, 기여도는 감소</text>
-<text x="150" y="246" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">예: 5회→10회 출현</text>
-<text x="150" y="274" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">점수는 약 20%만 증가</text>
+<text x="150" y="246" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">등장 횟수가 두 배여도</text>
+<text x="150" y="274" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">점수는 두 배로 늘지 않음</text>
 <rect x="290" y="120" width="220" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="400" y="148" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">역문서 빈도(IDF)</text>
 <line x1="310" y1="163" x2="490" y2="163" stroke="#999999" stroke-width="2"/>
@@ -27,5 +27,5 @@
 <line x1="400" y1="290" x2="400" y2="315" stroke="#999999" stroke-width="2"/>
 <line x1="650" y1="290" x2="650" y2="315" stroke="#999999" stroke-width="2"/>
 <rect x="40" y="315" width="720" height="48" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="400.0" y="339" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">최종 점수 = Σ (TF 포화 × IDF 가중치 × 길이 정규화)</text>
+<text x="400.0" y="339" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">최종 점수 = Σ [IDF × 길이 정규화를 거친 포화 TF]</text>
 </svg>
