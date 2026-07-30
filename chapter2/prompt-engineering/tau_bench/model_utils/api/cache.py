@@ -29,18 +29,18 @@ def enable_cache():
         USE_CACHE = True
 
 
-def hash_item(item: Any) -> int:
+def hash_item(item: Any) -> Any:
     if isinstance(item, dict):
-        return hash(tuple((k, hash_item(v)) for k, v in sorted(item.items())))
+        return tuple((k, hash_item(v)) for k, v in sorted(item.items()))
     elif isinstance(item, list):
-        return hash(tuple([hash_item(x) for x in item]))
+        return tuple(hash_item(x) for x in item)
     elif isinstance(item, set):
-        return hash(frozenset([hash_item(x) for x in item]))
+        return tuple(sorted((hash_item(x) for x in item), key=lambda x: str(x)))
     elif isinstance(item, tuple):
-        return hash(tuple([hash_item(x) for x in item]))
+        return tuple(hash_item(x) for x in item)
     elif isinstance(item, BaseModel):
-        return hash_item(item.model_json_schema())
-    return hash(item)
+        return hash_item(item.model_dump() if hasattr(item, "model_dump") else item.dict())
+    return item
 
 
 def hash_func_call(func: Callable[..., Any], args: tuple[Any], kwargs: dict[str, Any]) -> str:
