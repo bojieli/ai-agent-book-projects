@@ -26,7 +26,11 @@ def _stub_graphrag_deps():
     )
 
     class STStub:
+        def __init__(self, *args, **kwargs):
+            self.encode_calls = 0
+
         def encode(self, texts, **kwargs):
+            self.encode_calls += 1
             return np.array([[0.1, 0.2, 0.3]])
 
     sys.modules["sentence_transformers"].SentenceTransformer = STStub
@@ -96,6 +100,7 @@ def test_search_nonpositive_top_k_returns_empty():
     assert indexer.search("intel", top_k=0) == []
     assert indexer.search("intel", top_k=-1) == []
     assert indexer.search("intel", top_k=-5) == []
+    assert indexer.embedding_model.encode_calls == 0
 
 
 def test_search_positive_top_k_returns_results():
