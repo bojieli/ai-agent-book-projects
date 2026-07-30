@@ -1,0 +1,404 @@
+{
+  "schema_version": 3,
+  "experiment": "9-5",
+  "timestamp_utc": "2026-07-30T05:30:13.308665+00:00",
+  "artifact_generation": {
+    "recorded_timestamp_utc": "2026-07-29T10:19:56.497167+00:00",
+    "provider": "Fish Audio",
+    "backend": "s1",
+    "source_reference_id_sha256": "bb2ec197d6276bfad81bbdbcec4473040861e6bc20caf53cf4d1f8184a7416be",
+    "source_reference_value_saved_in_manifest": true,
+    "estimated_paid_api_requests": 30,
+    "request_count_basis": "24 reference renders + A(1) + B(1) + C(4 speech segments); local silence is not an API call",
+    "provider_reported_cost_usd": null,
+    "cost_note": "Fish SDK responses did not expose monetary charges; consult the provider billing ledger."
+  },
+  "validation_provenance": {
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "python": "3.11.4",
+    "manifest_sha256": "24f6e1399376665f7f5c0282dbb77d81aa5e124cfb9df944b46b73692e4b5ad1",
+    "run_evidence_sha256": "de0e787c940cf387ac7dabb03125893deffb9eedb2c5f25d72654fe6829815c1",
+    "implementation_sha256": {
+      "demo.py": "73a87e6020910cc3b43a6ae7291defe39d9c715a964a04e8a674c4d0e4d02fe9",
+      "tts.py": "e7ce66c0aa2fc3b7a78530001623e5c68b78a5bf37aa97eb77203312f5a4b0c9",
+      "markup.py": "5230a2a178cedfe9b5b8d79e80912ce8aa6326a8e2e7d7fdda1b670c49c843ad",
+      "voice_library.py": "c1fb6720742ae49677226dab85ad2bf580e137ee040ba17c8730399fc6a5fd70",
+      "evaluate_audio_quality.py": "4fedd536432702c7d4eec9360fb3671461648ee5f316a494f55fafdc29fcafa1"
+    }
+  },
+  "reference_statistics": {
+    "count": 24,
+    "minimum_duration_seconds": 3.604813,
+    "maximum_duration_seconds": 6.7395,
+    "mean_duration_seconds": 4.858690416666666
+  },
+  "reference_checks": [
+    {
+      "profile": "frustrated_fast_casual",
+      "path": "reference_audio/frustrated_fast_casual.mp3",
+      "exists": true,
+      "sha256": "6d427ddd6874b1b80b18e0129712ca100865e3592efa0e142904f160305686da",
+      "manifest_sha256": "6d427ddd6874b1b80b18e0129712ca100865e3592efa0e142904f160305686da",
+      "hash_matches": true,
+      "duration_seconds": 5.355,
+      "size_bytes": 85680,
+      "format": "mp3"
+    },
+    {
+      "profile": "frustrated_fast_formal",
+      "path": "reference_audio/frustrated_fast_formal.mp3",
+      "exists": true,
+      "sha256": "3c64faf47685da3e3ba08b93b48baf32249dbf074421f577ebb3b3da16d815f2",
+      "manifest_sha256": "3c64faf47685da3e3ba08b93b48baf32249dbf074421f577ebb3b3da16d815f2",
+      "hash_matches": true,
+      "duration_seconds": 5.61625,
+      "size_bytes": 89860,
+      "format": "mp3"
+    },
+    {
+      "profile": "frustrated_normal_casual",
+      "path": "reference_audio/frustrated_normal_casual.mp3",
+      "exists": true,
+      "sha256": "23cefb4913ba3a3a8ea78a9b221b3e88754e0d10166d382e947dcfa16aef9c2c",
+      "manifest_sha256": "23cefb4913ba3a3a8ea78a9b221b3e88754e0d10166d382e947dcfa16aef9c2c",
+      "hash_matches": true,
+      "duration_seconds": 4.701938,
+      "size_bytes": 75231,
+      "format": "mp3"
+    },
+    {
+      "profile": "frustrated_normal_formal",
+      "path": "reference_audio/frustrated_normal_formal.mp3",
+      "exists": true,
+      "sha256": "8f510ebb97a2e31315029934015a109a438041870d651e7b078e9165746f4b6a",
+      "manifest_sha256": "8f510ebb97a2e31315029934015a109a438041870d651e7b078e9165746f4b6a",
+      "hash_matches": true,
+      "duration_seconds": 4.858688,
+      "size_bytes": 77739,
+      "format": "mp3"
+    },
+    {
+      "profile": "frustrated_slow_casual",
+      "path": "reference_audio/frustrated_slow_casual.mp3",
+      "exists": true,
+      "sha256": "490c56a2dbc01f08380693173af76e0fcb48dfb24e29f5f828f7709cbc67faf2",
+      "manifest_sha256": "490c56a2dbc01f08380693173af76e0fcb48dfb24e29f5f828f7709cbc67faf2",
+      "hash_matches": true,
+      "duration_seconds": 3.604813,
+      "size_bytes": 57677,
+      "format": "mp3"
+    },
+    {
+      "profile": "frustrated_slow_formal",
+      "path": "reference_audio/frustrated_slow_formal.mp3",
+      "exists": true,
+      "sha256": "aab5806b6b7bfb17d9d2a069b8b1fb19f01cdc026e04f2e28dc92be94940b575",
+      "manifest_sha256": "aab5806b6b7bfb17d9d2a069b8b1fb19f01cdc026e04f2e28dc92be94940b575",
+      "hash_matches": true,
+      "duration_seconds": 4.545188,
+      "size_bytes": 72723,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_fast_casual",
+      "path": "reference_audio/happy_fast_casual.mp3",
+      "exists": true,
+      "sha256": "0e96b8c6abe891c6292e6c7037aac67979ac407c3125301f5421afe35ce256d5",
+      "manifest_sha256": "0e96b8c6abe891c6292e6c7037aac67979ac407c3125301f5421afe35ce256d5",
+      "hash_matches": true,
+      "duration_seconds": 4.963188,
+      "size_bytes": 79411,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_fast_formal",
+      "path": "reference_audio/happy_fast_formal.mp3",
+      "exists": true,
+      "sha256": "d3993a35b54c843c3a8d6470d8754f1b3344c60b460b9d11b6141761de31f987",
+      "manifest_sha256": "d3993a35b54c843c3a8d6470d8754f1b3344c60b460b9d11b6141761de31f987",
+      "hash_matches": true,
+      "duration_seconds": 6.7395,
+      "size_bytes": 107832,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_normal_casual",
+      "path": "reference_audio/happy_normal_casual.mp3",
+      "exists": true,
+      "sha256": "c374978ccaf9947ffc1b52a17ecf29cc904e8753e4fe0336b7c2aefee1b0af1e",
+      "manifest_sha256": "c374978ccaf9947ffc1b52a17ecf29cc904e8753e4fe0336b7c2aefee1b0af1e",
+      "hash_matches": true,
+      "duration_seconds": 5.067688,
+      "size_bytes": 81083,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_normal_formal",
+      "path": "reference_audio/happy_normal_formal.mp3",
+      "exists": true,
+      "sha256": "e0c6d9b5402d9ed7cc1375411951c22f09bd118a88e5abfc96bf67a3b1d76ba1",
+      "manifest_sha256": "e0c6d9b5402d9ed7cc1375411951c22f09bd118a88e5abfc96bf67a3b1d76ba1",
+      "hash_matches": true,
+      "duration_seconds": 5.119938,
+      "size_bytes": 81919,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_slow_casual",
+      "path": "reference_audio/happy_slow_casual.mp3",
+      "exists": true,
+      "sha256": "014864a698f1da3988895936238f0e538215d0fe4b0140c17d0eb339f0b23c02",
+      "manifest_sha256": "014864a698f1da3988895936238f0e538215d0fe4b0140c17d0eb339f0b23c02",
+      "hash_matches": true,
+      "duration_seconds": 4.310125,
+      "size_bytes": 68962,
+      "format": "mp3"
+    },
+    {
+      "profile": "happy_slow_formal",
+      "path": "reference_audio/happy_slow_formal.mp3",
+      "exists": true,
+      "sha256": "29545d9cc2fc4bba11dd9d4567569acdc96486317d86c665940833df333a2696",
+      "manifest_sha256": "29545d9cc2fc4bba11dd9d4567569acdc96486317d86c665940833df333a2696",
+      "hash_matches": true,
+      "duration_seconds": 5.067688,
+      "size_bytes": 81083,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_fast_casual",
+      "path": "reference_audio/neutral_fast_casual.mp3",
+      "exists": true,
+      "sha256": "961886b92e69da009d07e9ea9a0c0f8d67050d378fb2ffd50850876ebcd6ba16",
+      "manifest_sha256": "961886b92e69da009d07e9ea9a0c0f8d67050d378fb2ffd50850876ebcd6ba16",
+      "hash_matches": true,
+      "duration_seconds": 5.172125,
+      "size_bytes": 82754,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_fast_formal",
+      "path": "reference_audio/neutral_fast_formal.mp3",
+      "exists": true,
+      "sha256": "58870daca86d21ca7f8a785342ade7212358537cc67bc7168d4f9cb82df1465a",
+      "manifest_sha256": "58870daca86d21ca7f8a785342ade7212358537cc67bc7168d4f9cb82df1465a",
+      "hash_matches": true,
+      "duration_seconds": 5.146063,
+      "size_bytes": 82337,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_normal_casual",
+      "path": "reference_audio/neutral_normal_casual.mp3",
+      "exists": true,
+      "sha256": "5849473deb7f0415a57fa96e5365e76e5850a9c5c598c3926c9f4feba77d1ce5",
+      "manifest_sha256": "5849473deb7f0415a57fa96e5365e76e5850a9c5c598c3926c9f4feba77d1ce5",
+      "hash_matches": true,
+      "duration_seconds": 4.205625,
+      "size_bytes": 67290,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_normal_formal",
+      "path": "reference_audio/neutral_normal_formal.mp3",
+      "exists": true,
+      "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0",
+      "manifest_sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0",
+      "hash_matches": true,
+      "duration_seconds": 4.623563,
+      "size_bytes": 73977,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_slow_casual",
+      "path": "reference_audio/neutral_slow_casual.mp3",
+      "exists": true,
+      "sha256": "6599f401b009ad55c5c17b4509d21a7ca4c83af50bf9e1c036ad496d015a966f",
+      "manifest_sha256": "6599f401b009ad55c5c17b4509d21a7ca4c83af50bf9e1c036ad496d015a966f",
+      "hash_matches": true,
+      "duration_seconds": 4.545188,
+      "size_bytes": 72723,
+      "format": "mp3"
+    },
+    {
+      "profile": "neutral_slow_formal",
+      "path": "reference_audio/neutral_slow_formal.mp3",
+      "exists": true,
+      "sha256": "fd775e92e16733b8ac90885505293d20c64dcb6f421fec3aaf1eb380561aaf06",
+      "manifest_sha256": "fd775e92e16733b8ac90885505293d20c64dcb6f421fec3aaf1eb380561aaf06",
+      "hash_matches": true,
+      "duration_seconds": 4.466875,
+      "size_bytes": 71470,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_fast_casual",
+      "path": "reference_audio/thinking_fast_casual.mp3",
+      "exists": true,
+      "sha256": "72de0d846bf47a7754afb2c2bb66e20047d0ca62575d605df63546589a5f2260",
+      "manifest_sha256": "72de0d846bf47a7754afb2c2bb66e20047d0ca62575d605df63546589a5f2260",
+      "hash_matches": true,
+      "duration_seconds": 5.067688,
+      "size_bytes": 81083,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_fast_formal",
+      "path": "reference_audio/thinking_fast_formal.mp3",
+      "exists": true,
+      "sha256": "5efd200c837b20b123ba019b893fd5d5ad2671188f94478dc66db512455d85ae",
+      "manifest_sha256": "5efd200c837b20b123ba019b893fd5d5ad2671188f94478dc66db512455d85ae",
+      "hash_matches": true,
+      "duration_seconds": 5.146063,
+      "size_bytes": 82337,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_normal_casual",
+      "path": "reference_audio/thinking_normal_casual.mp3",
+      "exists": true,
+      "sha256": "49f77a6fc84657dbb45498d49aae40a0020fbf615622fcdacee686ff19231f5b",
+      "manifest_sha256": "49f77a6fc84657dbb45498d49aae40a0020fbf615622fcdacee686ff19231f5b",
+      "hash_matches": true,
+      "duration_seconds": 4.754188,
+      "size_bytes": 76067,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_normal_formal",
+      "path": "reference_audio/thinking_normal_formal.mp3",
+      "exists": true,
+      "sha256": "9637338fcf8cb6d17febbe01b4eedbb06423637163681ca864748ebd29e289de",
+      "manifest_sha256": "9637338fcf8cb6d17febbe01b4eedbb06423637163681ca864748ebd29e289de",
+      "hash_matches": true,
+      "duration_seconds": 4.754188,
+      "size_bytes": 76067,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_slow_casual",
+      "path": "reference_audio/thinking_slow_casual.mp3",
+      "exists": true,
+      "sha256": "4c1d61c92b4eebc2c050e7b21d138ffac4d7e0ba6449e0f4215db5e93c61d992",
+      "manifest_sha256": "4c1d61c92b4eebc2c050e7b21d138ffac4d7e0ba6449e0f4215db5e93c61d992",
+      "hash_matches": true,
+      "duration_seconds": 4.310125,
+      "size_bytes": 68962,
+      "format": "mp3"
+    },
+    {
+      "profile": "thinking_slow_formal",
+      "path": "reference_audio/thinking_slow_formal.mp3",
+      "exists": true,
+      "sha256": "abef0a802382dad67b37e3447de08401a1d1cdb451420759853f4af9df234ac9",
+      "manifest_sha256": "abef0a802382dad67b37e3447de08401a1d1cdb451420759853f4af9df234ac9",
+      "hash_matches": true,
+      "duration_seconds": 4.466875,
+      "size_bytes": 71470,
+      "format": "mp3"
+    }
+  ],
+  "outputs": {
+    "A_no_control_markers": {
+      "path": "output/A_no_control_markers.mp3",
+      "sha256": "b477ff767fcf7dc01b62bf8f445f79f2445fa204f8b365b437bcdf2e64b647e5",
+      "duration_seconds": 5.355,
+      "size_bytes": 85680,
+      "format": "mp3"
+    },
+    "B_single_reference": {
+      "path": "output/B_single_reference.mp3",
+      "sha256": "29148f5b08806b12e0a993366e97b172acaa3f754c171eea700f8e03aced58a6",
+      "duration_seconds": 5.903563,
+      "size_bytes": 94457,
+      "format": "mp3"
+    },
+    "C_24_reference_library": {
+      "path": "output/C_24_reference_library.mp3",
+      "sha256": "5182f816524ebd92150d7ce01bd4be8e3baee2b51479ce64d6b9363140e33f04",
+      "duration_seconds": 8.305306,
+      "size_bytes": 133790,
+      "format": "mp3"
+    }
+  },
+  "qualitative_study": {
+    "path": "validation/audio_quality_study.json",
+    "present": true,
+    "valid": true,
+    "error": null,
+    "judge_type": "multimodal_llm_not_human_mos",
+    "provider": "Mistral Voxtral API",
+    "model": "voxtral-small-latest",
+    "aggregate": {
+      "configurations": {
+        "A_no_control_markers": {
+          "dimension_means": {
+            "naturalness": 4.0,
+            "expressive_fit": 4.0,
+            "thinking_behavior": 3.6666666666666665,
+            "speaker_consistency": 4.0,
+            "human_customer_service": 4.0
+          },
+          "overall_mean": 3.9333333333333327,
+          "rank_points": 6
+        },
+        "B_single_reference": {
+          "dimension_means": {
+            "naturalness": 3.3333333333333335,
+            "expressive_fit": 3.3333333333333335,
+            "thinking_behavior": 2.6666666666666665,
+            "speaker_consistency": 3.3333333333333335,
+            "human_customer_service": 3.3333333333333335
+          },
+          "overall_mean": 3.2,
+          "rank_points": 4
+        },
+        "C_24_reference_library": {
+          "dimension_means": {
+            "naturalness": 4.666666666666667,
+            "expressive_fit": 4.666666666666667,
+            "thinking_behavior": 4.333333333333333,
+            "speaker_consistency": 4.666666666666667,
+            "human_customer_service": 4.666666666666667
+          },
+          "overall_mean": 4.6000000000000005,
+          "rank_points": 8
+        }
+      },
+      "aggregate_ranking": [
+        "C_24_reference_library",
+        "A_no_control_markers",
+        "B_single_reference"
+      ],
+      "expected_manuscript_ranking": [
+        "C_24_reference_library",
+        "B_single_reference",
+        "A_no_control_markers"
+      ],
+      "manuscript_quality_ordering_reproduced": false,
+      "near_human_customer_service_supported": true,
+      "manuscript_quality_claim_reproduced": false
+    },
+    "sha256": "8ef0917a2cf801590242fa4a670446835048ccb44a522516f2e0dc879de6e0cb"
+  },
+  "acceptance": {
+    "structural_and_media_gates": {
+      "fish_s1_provider_recorded": true,
+      "same_authorized_source_reference": true,
+      "exact_4x3x2_reference_library": true,
+      "all_reference_hashes_match": true,
+      "references_approximately_five_seconds": true,
+      "three_real_comparison_outputs": true,
+      "required_marker_routes_exercised": true,
+      "thinking_pause_1_to_2_seconds": true,
+      "thinking_native_filler_exercised": true
+    },
+    "structural_and_media_passed": true,
+    "qualitative_listening_study_present": true,
+    "qualitative_judge_is_human_mos": false,
+    "near_human_customer_service_claim_evaluated": true,
+    "manuscript_quality_claim_reproduced": false,
+    "experiment_execution_complete": true,
+    "statement": "Real Fish S1 media and a schema-checked, position-balanced multimodal listening study complete the A/B/C experiment. The saved result reports independently whether the manuscript's subjective ordering reproduced; this is not a human MOS panel."
+  }
+}

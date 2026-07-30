@@ -367,13 +367,23 @@ Ancak, statik kelime vektörlerinin temel bir sınırlaması vardır: çok anlam
 
 Semantik benzerliği yakalayan dense embedding'lerden farklı olarak, sparse embedding'ler geleneksel bilgi getirmede köklenir: özlerinde tam anahtar kelime eşleştirmesi vardır. Bir sparse embedding, bir dokümanı, çoğu boyutu sıfır olan son derece yüksek boyutlu bir vektör olarak temsil eder—yalnızca dokümanda görünen kelimelere karşılık gelen boyutlar sıfırdan farklıdır. Teorik temel, bir metin parçasını yalnızca hangi kelimelerin göründüğüne ve ne sıklıkta göründüğüne önem veren, kelime sırasını tamamen göz ardı eden klasik Bag of Words (BoW) modelidir: "kedi köpeği kovalar" ve "köpek kediyi kovalar" BoW'da özdeştir. Bu temelden giderek daha sofistike terim ağırlıklandırma ve sıralama algoritmaları evrildi.
 
-![Şekil 3-8: BM25 Puanlama Mekanizması](images/fig3-8.svg)
-
 #### TF-IDF'den BM25'e
 
-Somut bir örnekle sezgi geliştirelim. Bir bilgi tabanının 100 teknik makale içerdiğini ve bir kullanıcının "model damıtma" araması yaptığını varsayalım. "Model" kelimesi 60 makalede görünür (çok yaygın, düşük ayırt edicilik), "damıtma" ise yalnızca 3 makalede görünür (çok nadir, yüksek ayırt edicilik). İyi bir retrieval algoritması "damıtma" kelimesine daha yüksek ağırlık vermelidir—"damıtma" içeren makaleler kullanıcının gerçekte aradığı şey olma olasılığı daha yüksektir. Bu, TF-IDF ve BM25'in ardındaki temel fikirdir.
+TF-IDF'nin (Term Frequency–Inverse Document Frequency, terim frekansı–ters belge frekansı) temel sezgisi şudur: bir terim geçerli belgede ne kadar sık, tüm külliyatta ise ne kadar seyrek görünürse retrieval için o kadar önemlidir. 100 makalenin 60'ı “model”, yalnızca 3'ü “damıtma” sözcüğünü içeriyorsa, “damıtma” gerçekten “model damıtma” ile ilgili makaleleri ayırt etmede daha etkilidir.
 
-TF-IDF basit bir sezgiye dayanır: bir kelime bir dokümanda ne kadar sık görünürse (TF, Term Frequency) ve tüm doküman koleksiyonu genelinde ne kadar az sık görünürse (IDF, Inverse Document Frequency), kelime o kadar önemlidir. Yukarıdaki örnekte, "model" dokümanların %60'ında görünür, bu yüzden IDF değeri düşüktür; "damıtma" yalnızca dokümanların %3'ünde görünür, bu yüzden IDF değeri yüksektir—bu yüzden "damıtma", sıralamaya "model"den çok daha fazla katkıda bulunur. Ancak, TF-IDF doküman uzunluğunu hesaba katmaz (daha uzun dokümanlar doğal olarak daha yüksek terim sıklığına sahiptir) ve terim sıklığı büyümesi doğrusaldır (bir kelimenin 10 kez görünmesi gerçekten 5 kez görünmesinden iki kat mı önemlidir?). BM25, bu sorunları düzeltmek için iki kilit parametre tanıtır. `k1`, terim sıklığının "doygunluğunu" kontrol eder: sezgisel olarak, "damıtma"dan 20 kez bahseden bir makale, 10 kez bahseden bir makaleden gerçekten iki kat daha ilgili değildir. `k1`, terim sıklığının katkısının arttıkça kademeli olarak düzleşmesine neden olur, uzun dokümanların terim sıklığı birikimi nedeniyle haksız yere baskın olmasını önler. `b`, doküman uzunluğu normalizasyonunu kontrol eder, algoritmanın farklı uzunluktaki dokümanları daha adil biçimde ele almasını sağlar. Bu, BM25'i daha sağlam ve etkili bir sıralama fonksiyonu yapar ve günümüzde büyük arama motorlarında hâlâ vazgeçilmez bir temel bileşendir.
+$$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t), \qquad \text{IDF}(t) = \ln\frac{N}{\text{DF}(t)}$$
+
+Burada `TF(t,d)`, $t$ teriminin $d$ belgesinde kaç kez geçtiğini; `DF(t)`, bu terimi içeren belge sayısını; $N$ ise toplam belge sayısını gösterir. Yukarıdaki en basit uygulamada ham terim frekansı doğrusal büyür ve belge uzunluğu normalize edilmez: 10 kez geçen bir terim, 5 kez geçene göre iki kat TF alır; uzun belgeler de yalnızca daha fazla sözcük içerdikleri için daha yüksek puan alabilir.
+
+BM25 (Okapi BM25), bu iki sınırlamaya yönelik klasik bir düzeltme olarak görülebilir. Nadir terimler için IDF ağırlığını korurken terim frekansı doygunluğu ve belge uzunluğu normalizasyonu ekler:
+
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+
+Burada $q_i$ sorgudaki bir terim, $|D|$ belge uzunluğu ve $\text{avgdl}$ külliyattaki ortalama belge uzunluğudur. Şekil 3-8'de gösterildiği gibi, $k_1$ terim frekansının ne kadar hızlı doygunluğa ulaştığını kontrol eder; böylece her ek tekrarın marjinal katkısı azalır. $b$ ise uzunluk normalizasyonunun gücünü belirleyerek farklı uzunluktaki belgelerin daha adil karşılaştırılmasını sağlar. Bu nedenle 10 tekrar genellikle 5 tekrarın tam iki katından az katkı verir ve aynı TF daha uzun bir belgede daha düşük ağırlık alır. Belirli parametreler ve hesaplama Deney 3-5'te ele alınır.
+
+
+![Şekil 3-8: BM25 Puanlama Mekanizması](images/fig3-8.svg)
+
 
 > **Deney 3-5 ★★: Sparse Retrieval'ı Keşfetmek: Sıfırdan Bir BM25 Arama Motoru Uygulamak**
 >

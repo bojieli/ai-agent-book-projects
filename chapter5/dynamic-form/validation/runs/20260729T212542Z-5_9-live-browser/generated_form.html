@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>机票预订澄清表单</title>
+    <style>
+        #return_date_field { display: none; }
+    </style>
+</head>
+<body>
+    <form id="bookingForm">
+        <label for="departure_city">出发城市：</label>
+        <input type="text" id="departure_city" name="departure_city" required><br>
+
+        <label for="departure_date">出发日期：</label>
+        <input type="date" id="departure_date" name="departure_date" required><br>
+
+        <label>旅行类型：</label>
+        <input type="radio" id="one_way" name="trip_type" value="one_way" checked>单程
+        <input type="radio" id="round_trip" name="trip_type" value="round_trip">往返<br>
+
+        <div id="return_date_field">
+            <label for="return_date">返程日期：</label>
+            <input type="date" id="return_date" name="return_date">
+        </div><br>
+
+        <input type="submit" value="提交">
+    </form>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById('round_trip').addEventListener('change', function() {
+            document.getElementById('return_date_field').style.display = this.checked ? 'block' : 'none';
+        });
+        document.getElementById('one_way').addEventListener('change', function() {
+            document.getElementById('return_date_field').style.display = this.checked ? 'none' : 'block';
+        });
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                departure_city: document.getElementById('departure_city').value,
+                departure_date: document.getElementById('departure_date').value,
+                trip_type: document.querySelector('input[name="trip_type"]:checked').value,
+                return_date: document.getElementById('return_date').value
+            };
+            document.getElementById('result').textContent = JSON.stringify(formData, null, 2);
+        });
+    </script>
+</body>
+</html>

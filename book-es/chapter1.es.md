@@ -78,7 +78,7 @@ La llamada a herramientas procede en cuatro pasos: primero, el contexto informa 
 
 Para una consulta meteorológica, la representación simplificada del proceso de cuatro pasos a nivel de API es la siguiente:
 
-```
+```text
 Paso 1: Declarar herramientas             Paso 2: El modelo decide llamar
 tools: [{                             assistant: {
   name: "get_weather",                  tool_calls: [{
@@ -164,7 +164,7 @@ Consideremos la **trayectoria**: el historial de mensajes que se acumula a medid
 
 Estructura de una trayectoria en pseudocódigo:
 
-```python
+```text
 trajectory = [
   {role: "user", content: "Basándote en los ingresos trimestrales de la empresa: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calcula los ingresos anuales totales y el promedio trimestral en USD"},
   

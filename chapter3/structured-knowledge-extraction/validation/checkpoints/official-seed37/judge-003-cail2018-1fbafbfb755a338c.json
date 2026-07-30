@@ -1,0 +1,78 @@
+{
+  "signature": "1fbd9a010dadd825a09781430bee15b708c0594651ed42fa9e27381a5d9cfc28",
+  "parsed": {
+    "prototype_grounding": 1,
+    "numeric_fidelity": 1,
+    "uncertainty_and_caution": 1,
+    "heldout_usefulness": 1,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议与原型统计特征高度匹配，并且明确指出刑期统计区间，体现了对统计数据的忠实性。同时，建议中提到具体刑期可能因案件未纳入统计的其他因素存在波动，具有不确定性，符合将统计数据作为不确定参考的要求。对留出案件具有实际参考价值。此外，包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-1fbafbfb755a338c",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:55.393117+00:00",
+    "latency_ms": 3277.56,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：经审理查明，2016年5月2日14时40分许，被告人付某在本市江汉区解放大道武汉国际广场负一楼喷泉处，乘被害人朱某不备，将被害人朱某置于身旁的一部价值人民币1600元的苹果牌iPhone5S（16G）移动电话机盗走。2016年5月18日，公安机关将被告人付某抓获。上述赃物已追回并发还给被害人。\r\n上述事实，被告人付某在开庭审理过程中亦无异议，且有视频截图照片、现场指认照片、物证照片、公安机关的抓获及破案经过、扣押笔录、扣押清单、发还清单、公民身份信息、全国违法犯罪人员信息、刑事判决书等书证，被害人朱某的陈述，证人刘某、王某、李某的证言、被告人付某的供述，价格认定意见书等证据证实，足以认定。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：7个月\n匹配原型：{\"prototype_id\": \"盗窃罪-prototype-4\", \"charge\": \"盗窃罪\", \"prototype_size\": 53, \"sentence_months\": {\"median\": 7.0, \"q25\": 6.0, \"q75\": 9.0, \"min\": 2.0, \"max\": 72.0}, \"defining_features\": [{\"feature\": \"cat:theft_method=趁人不备\", \"z\": 1.6014813672139347}, {\"feature\": \"cat:theft_target=手机\", \"z\": 1.4372243817878076}, {\"feature\": \"cat:use_special_convenience=无\", \"z\": 1.433980681035021}, {\"feature\": \"num:theft_amount\", \"z\": 1.4051072801892825}, {\"feature\": \"num:theft_count\", \"z\": 1.186314536087199}, {\"feature\": \"cat:theft_tool=徒手\", \"z\": 1.1302013658008716}, {\"feature\": \"cat:theft_location=户外\", \"z\": 1.1116513579865053}, {\"feature\": \"cat:stolen_property_disposal=变卖挥霍\", \"z\": 1.0391716890512863}], \"match_distance\": 0.10723022373168277}\n生成建议：匹配依据：待匹配案件的盗窃方法“趁人不备”、盗窃目标“手机”、使用特殊便利“无”、盗窃工具“徒手”、盗窃金额及盗窃次数等关键特征，与训练集原型“盗窃罪-prototype-4”的定义特征高度匹配。该原型样本量为53，刑期统计区间为：中位数7个月，四分位25%为6个月，四分位75%为9个月，最小值2个月，最大值72个月。具体刑期可能因案件未纳入统计的其他因素存在波动，具有不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6500efb1450ac9da906",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 1,\n  \"numeric_fidelity\": 1,\n  \"uncertainty_and_caution\": 1,\n  \"heldout_usefulness\": 1,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议与原型统计特征高度匹配，并且明确指出刑期统计区间，体现了对统计数据的忠实性。同时，建议中提到具体刑期可能因案件未纳入统计的其他因素存在波动，具有不确定性，符合将统计数据作为不确定参考的要求。对留出案件具有实际参考价值。此外，包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386576,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 146,
+        "prompt_tokens": 861,
+        "total_tokens": 1007,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 146,
+      "prompt_tokens": 861,
+      "total_tokens": 1007,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6500efb1450ac9da906"
+  }
+}

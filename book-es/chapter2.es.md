@@ -289,11 +289,11 @@ messages = [
 ]
 
 # ── Agent core loop ──
-# Production code needs a max_iterations cap here: as discussed later in
-# this chapter, Agents can get stuck repeating the same tool calls forever
-while True:
+MAX_ITERATIONS = 8
+
+for _ in range(MAX_ITERATIONS):
     response = client.chat.completions.create(
-        model="Qwen3-0.6B", messages=messages, tools=tools
+        model="Qwen3-0.6B", messages=messages, tools=tools, timeout=30.0
     )
     assistant_message = response.choices[0].message
 
@@ -305,7 +305,8 @@ while True:
         print(assistant_message.content)
         break
 
-    # Execute each tool requested by the model, append results to message list
+    # This compact example runs tools serially; production frameworks can
+    # execute independent calls concurrently.
     for tool_call in assistant_message.tool_calls:
         result = execute_tool(tool_call.function.name, tool_call.function.arguments)
         messages.append({
@@ -313,10 +314,11 @@ while True:
             "tool_call_id": tool_call.id,
             "content": result,
         })
-    # Return to top of loop, call model again with updated message list
+else:
+    raise RuntimeError("Agent exceeded the maximum number of tool-call rounds")
 ```
 
-La lógica central de este código consta únicamente de un bucle `while` y una condición: **si el modelo devuelve `tool_calls`, se ejecutan las herramientas y se continúa el bucle; si no devuelve ninguna, se imprime el resultado y se sale**. Durante todo el proceso, la lista `messages` crece continuamente: en cada ronda se añaden la respuesta del modelo y los resultados de ejecución de las herramientas.
+La lógica central de este código consta únicamente de un bucle `for` acotado y una condición: **si el modelo devuelve `tool_calls`, se ejecutan las herramientas y se continúa el bucle; si no devuelve ninguna, se imprime el resultado y se sale**. Cada solicitud a la API tiene un tiempo límite, los errores no recuperables detienen la ejecución y, si el modelo agota las ocho rondas, el ejemplo genera un error explícito. Durante todo el proceso, la lista `messages` crece continuamente: en cada ronda se añaden la respuesta del modelo y los resultados de ejecución de las herramientas.
 
 Sigamos la evolución de la lista `messages` en cada ronda:
 
@@ -387,7 +389,7 @@ Las secciones siguientes del capítulo se desarrollarán en torno a cada nivel d
 >
 > **Estructura secuencial de la salida**: Los tokens de salida del modelo se generan en un orden fijo: primero el pensamiento interno (dentro de las etiquetas `<think>`), luego la respuesta de texto para el usuario y finalmente la solicitud de llamada a herramientas. Comprender este orden es clave para implementar respuestas en streaming: cuando aparece la etiqueta `<think>`, se puede cambiar al estado "pensando"; una vez generados y validados por completo los parámetros de la primera llamada a herramienta, se puede iniciar su ejecución de inmediato sin esperar a que el modelo genere llamadas posteriores.
 >
-> **Llamadas a herramientas en paralelo**: En el ejemplo de la hora y el clima de Vancouver de esta sección, el modelo descubrió que no había dependencia entre ambos subproblemas, por lo que generó simultáneamente dos solicitudes de llamada a herramientas en una sola salida. Tras detectar esto, el framework del Agente puede ejecutar ambas herramientas en paralelo, logrando una aceleración en pipeline.
+> **Llamadas a herramientas en paralelo**: En el ejemplo de la hora y el clima de Vancouver de esta sección, el modelo descubrió que no había dependencia entre ambos subproblemas, por lo que generó simultáneamente dos solicitudes de llamada a herramientas en una sola salida. El fragmento didáctico anterior las ejecuta en serie para mantener visible el flujo de mensajes; un framework de producción puede ejecutar ambas herramientas en paralelo y conservar cada resultado asociado a su `tool_call_id`, logrando una aceleración en pipeline.
 >
 > **Juicio de terminación del modelo**: Una vez que el framework del Agente devuelve los resultados de las herramientas, el modelo evalúa si ya dispone de suficiente información para responder al usuario. Si es así, emite directamente la respuesta final (sin llamadas a herramientas); si no es suficiente, genera nuevas solicitudes de llamada a herramientas, desencadenando la siguiente ronda del bucle ReAct.
 >

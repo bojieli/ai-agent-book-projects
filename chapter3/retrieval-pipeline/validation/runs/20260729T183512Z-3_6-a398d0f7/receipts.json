@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "local-model-execution",
+    "models": {
+      "dense": {
+        "provider": "local Hugging Face transformers",
+        "model": "Qwen/Qwen3-Embedding-0.6B",
+        "cached_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "class": "Qwen3Model",
+        "pooling": "last",
+        "parameters": 595776512,
+        "device": "cpu"
+      },
+      "reranker": {
+        "provider": "local Hugging Face transformers",
+        "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+        "cached_revision": "c5ee24cb16019beea0893ab7796b1df96625c6b8",
+        "class": "BertForSequenceClassification",
+        "parameters": 22713601,
+        "device": "cpu"
+      },
+      "sparse": {
+        "implementation": "rank_bm25.BM25Okapi"
+      }
+    },
+    "note": "No remote API or credential was used; complete rankings and timings are in evidence.json."
+  }
+]

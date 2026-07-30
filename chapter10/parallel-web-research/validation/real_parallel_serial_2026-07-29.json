@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "experiment": "10-6",
+  "run_type": "real_parallel_and_serial_same_sites",
+  "measured_at": "2026-07-29T17:57:11+0800",
+  "target": "Andrew Ng",
+  "browser": "Playwright Chromium",
+  "llm_provider": "Volcengine ARK",
+  "llm_model": "doubao-seed-1-6-250615",
+  "sites": [
+    "https://med.stanford.edu/profiles/browse",
+    "https://law.stanford.edu/directory/?tax_and_terms=1067",
+    "https://ed.stanford.edu/faculty",
+    "https://www.gsb.stanford.edu/faculty-research/faculty",
+    "https://sustainability.stanford.edu/people/faculty",
+    "https://humsci.stanford.edu/about/leadership-and-administration/deans-office",
+    "https://engineering.stanford.edu/faculty-research/faculty",
+    "https://www.cs.stanford.edu/people/faculty",
+    "https://profiles.stanford.edu/andrew-ng",
+    "https://hai.stanford.edu/people/andrew-ng"
+  ],
+  "parallel": {
+    "seconds": 18.542,
+    "winner": "agent-09",
+    "errors": {},
+    "contexts_created": 10,
+    "contexts_closed": 10,
+    "terminate_broadcasts": 1,
+    "result": {
+      "name": "Andrew Ng",
+      "college": "Stanford HAI",
+      "position": "Adjunct Professor at Stanford University",
+      "research": "machine learning with an emphasis on deep learning, applications to computer vision and speech, autonomous driving",
+      "evidence": "Founder of DeepLearning.AI and Adjunct Professor at Stanford University",
+      "url": "https://hai.stanford.edu/people/andrew-ng"
+    }
+  },
+  "serial": {
+    "seconds": 58.264,
+    "sites_visited": 10,
+    "contexts_created": 10,
+    "contexts_closed": 10,
+    "winner_site": "human-ai"
+  },
+  "measured_speedup": 3.142,
+  "gates": {
+    "real_websites": {"status": "pass", "count": 10},
+    "independent_browser_sessions": {"status": "pass", "count": 10},
+    "real_llm_grounded_extraction": {"status": "pass"},
+    "parallel_serial_same_site_comparison": {"status": "pass"},
+    "all_browser_resources_closed": {"status": "pass", "created": 20, "closed": 20},
+    "measured_parallel_improvement": {"status": "pass", "speedup": 3.142}
+  },
+  "overall_status": "pass"
+}

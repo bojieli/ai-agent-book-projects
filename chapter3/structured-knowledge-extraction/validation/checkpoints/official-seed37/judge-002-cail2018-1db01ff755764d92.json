@@ -1,0 +1,78 @@
+{
+  "signature": "8e7b089222f485bda2c395c6db5b0fca888a2130bc7e953fdbf38582d9fdad8d",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 3,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 3,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议与原型匹配依据合理，指出了共享的关键特征及其在原型定义特征中的高z值，显示了与原型的关联性。统计区间的描述准确，反映了原型的样本量和刑期分布情况。不确定性部分合理地指出了待匹配案件与原型之间的差异，包括原型未包含的因素和关键特征的缺失，同时提醒了原型样本量小可能导致的刑期参考偏差。免责声明明确，符合要求。然而，生成建议在描述原型统计区间时，将刑期中位数、四分位距、最小值及最大值均描述为4.0个月，这与原型实际的刑期中位数4个月相符，但四分位距、最小值及最大值的描述可能造成误解，因为原型样本量为1，实际上不存在四分位距，最小值及最大值也均为4个月。因此，在描述统计区间时存在不准确之处，影响了对原型统计的忠实度评分。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-1db01ff755764d92",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:55.392298+00:00",
+    "latency_ms": 5177.559,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：鞍山市铁东区人民检察院起诉指控：2013年7月28日13时50分许，被告人蒋某伙同肖东某（已判决）来到鞍山市铁东区光荣街4号水晶宫游泳馆三楼，肖东某趁办公室无人之机，进入办公室内，将办公桌上的2个玉石手把件盗走。在逃离现场时被工作人员郭某发现，郭某将肖东某拽住，肖东某从兜内拿出1个玉石手把件还给郭某后继续向楼下逃跑。郭某追上去与其撕扯在一起，这时蒋某过来将郭某推开，肖东某趁机跑往地下室。郭某回到一楼大厅拿了一个板凳继续追赶肖东某，肖东某发现地下室没有出口后，继续往楼上跑，当跑至三楼缓步台时被郭某追上，肖东某用卡簧刀将郭某左臂划伤后趁机逃跑。经鉴定，肖东某返回的翡翠手把件价值人民币4500元。另一块被肖东某带走的玉石手把件系被害人侯某以2200元购入。\r\n2013年7月18日14时许，肖东某（已判决）伙同被告人蒋某、“小某”（身份不明）在鞍山市铁东区景子街东侧快乐芒果饮品店内，趁被害人孟某弯腰捡笔之机，将其放在桌子上的苹果5手机盗走。经鉴定，被盗手机价值人民币4604元。\r\n公诉机关为上述指控向法庭提交了相应的证据。公诉机关认为，被告人蒋某盗窃他人财物，数额较大，其行为触犯了《中华人民共和国刑法》××，应当以××追究其刑事责任。提请本院依法惩处。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：10个月\n匹配原型：{\"prototype_id\": \"盗窃罪-prototype-1\", \"charge\": \"盗窃罪\", \"prototype_size\": 1, \"sentence_months\": {\"median\": 4.0, \"q25\": 4.0, \"q75\": 4.0, \"min\": 4.0, \"max\": 4.0}, \"defining_features\": [{\"feature\": \"cat:theft_tool=筷子\", \"z\": 18.947295321496338}, {\"feature\": \"cat:disposal_of_stolen_property=全部发还\", \"z\": 6.633249580710821}, {\"feature\": \"cat:stolen_property_disposal=返还被害人\", \"z\": 5.916079783099585}, {\"feature\": \"cat:theft_target=现金\", \"z\": 3.6606010435446397}, {\"feature\": \"cat:stolen_property_recovery=全部追回\", \"z\": 3.584153156068214}, {\"feature\": \"cat:return_of_stolen_property=全部退赃\", \"z\": 3.2015621187164305}, {\"feature\": \"cat:theft_location=公共场所\", \"z\": 3.0964875737063133}, {\"feature\": \"cat:theft_method=趁人不备\", \"z\": 2.789352578086535}], \"match_distance\": 0.04937220605779228}\n生成建议：匹配依据：待匹配案件与训练集原型“盗窃罪-prototype-1”共享“theft_location=公共场所”“theft_method=趁人不备”两个关键特征，这两个特征在原型定义特征中具有较高z值（分别为3.096、2.789），表明与原型关联性较强。统计区间：该原型样本量为1，刑期中位数、四分位距（q25、q75）、最小值及最大值均为4.0个月。不确定性：待匹配案件存在“joint_crime=true”“crime_count=2.0”“crime_amount=11304.0”等原型未包含的因素，且原型关键特征如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等在待匹配案件中缺失或未提及，同时原型样本量较小，可能导致刑期参考存在偏差。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6504240f92a2620f3c2",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 3,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 3,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议与原型匹配依据合理，指出了共享的关键特征及其在原型定义特征中的高z值，显示了与原型的关联性。统计区间的描述准确，反映了原型的样本量和刑期分布情况。不确定性部分合理地指出了待匹配案件与原型之间的差异，包括原型未包含的因素和关键特征的缺失，同时提醒了原型样本量小可能导致的刑期参考偏差。免责声明明确，符合要求。然而，生成建议在描述原型统计区间时，将刑期中位数、四分位距、最小值及最大值均描述为4.0个月，这与原型实际的刑期中位数4个月相符，但四分位距、最小值及最大值的描述可能造成误解，因为原型样本量为1，实际上不存在四分位距，最小值及最大值也均为4个月。因此，在描述统计区间时存在不准确之处，影响了对原型统计的忠实度评分。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386576,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 273,
+        "prompt_tokens": 1110,
+        "total_tokens": 1383,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 273,
+      "prompt_tokens": 1110,
+      "total_tokens": 1383,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6504240f92a2620f3c2"
+  }
+}

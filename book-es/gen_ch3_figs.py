@@ -199,7 +199,7 @@ def fig3_4():
     svg.text(w / 2 + 60, 263, "Se refina capa por capa hacia abajo", size=FS_SMALL, fill='text_light')
 
     svg.rect(50, h - 45, 300, 32, fill='light')
-    svg.text(200, h - 29, "Soporta updates incrementales · Alto recall", size=FS_SMALL, bold=True)
+    svg.text(200, h - 29, "Admite actualizaciones incrementales · Alto recall", size=FS_SMALL, bold=True)
     svg.rect(400, h - 45, 300, 32, fill='code_bg', stroke='dark', rx=4)
     svg.text(550, h - 29, "Complejidad de consulta O(log N)", size=FS_SMALL)
 

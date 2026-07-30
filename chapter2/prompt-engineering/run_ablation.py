@@ -8,10 +8,14 @@ Demonstrates the importance of prompt engineering by testing different variation
 """
 
 import argparse
+import copy
+import hashlib
 import random
 import os
 import json
+import shutil
 from datetime import datetime
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -116,6 +120,18 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=10)
     parser.add_argument("--shuffle", type=int, default=0)
     parser.add_argument(
+        "--max-agent-steps",
+        type=int,
+        default=30,
+        help="每个任务允许的最大 Agent 步数（默认：30）",
+    )
+    parser.add_argument(
+        "--protocol",
+        type=str,
+        default=str(Path(__file__).resolve().parent / "experiment_protocol.json"),
+        help="冻结实验协议；--all 会复制并哈希到结果目录",
+    )
+    parser.add_argument(
         "--user-strategy", 
         type=str, 
         default="llm", 
@@ -163,6 +179,16 @@ def parse_args():
         type=str,
         default=None,
         help="（仅 --all 模式）将套件汇总统计写入该 JSON 文件路径（默认写入 log-dir/ablation_summary_<时间戳>.json）"
+    )
+
+    parser.add_argument(
+        "--resume-from",
+        type=str,
+        default=None,
+        help=(
+            "Import only hash-valid, completed task receipts from a previous --all run directory. "
+            "Accepted tasks are never regenerated; missing/error tasks run in the new log directory."
+        ),
     )
 
     parser.add_argument(
@@ -262,6 +288,81 @@ def run_with_ablation(args):
     
     if not os.path.exists(config.log_dir):
         os.makedirs(config.log_dir)
+
+    imported_results = []
+    resume_receipt = None
+    if args.resume_from:
+        resume_dir = Path(args.resume_from).resolve()
+        source_protocol = resume_dir / "experiment_protocol.json"
+        current_protocol = Path(args.protocol).resolve()
+        if not source_protocol.is_file() or source_protocol.read_bytes() != current_protocol.read_bytes():
+            raise RuntimeError("resume source protocol does not match the frozen protocol")
+        pattern = f"{config.agent_strategy}-{config.model.split('/')[-1]}-{ablation_str}_*.json"
+        candidates = []
+        expected_ablation = {
+            "tone_style": args.tone_style,
+            "randomize_wiki": args.randomize_wiki,
+            "remove_tool_descriptions": args.remove_tool_descriptions,
+        }
+        for path in resume_dir.glob(pattern):
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(payload, dict):
+                source_config = payload.get("run_config", {})
+                if any(source_config.get(key) != value for key, value in {
+                    "model": config.model,
+                    "user_model": config.user_model,
+                    "model_provider": config.model_provider,
+                    "user_model_provider": config.user_model_provider,
+                    "env": config.env,
+                    "seed": config.seed,
+                    "task_ids": list(config.task_ids or []),
+                }.items()):
+                    continue
+                if payload.get("ablation_config") != expected_ablation:
+                    continue
+                rows = payload.get("results", [])
+            elif isinstance(payload, list):
+                # A crash can leave the append-only per-task checkpoint before
+                # final metadata is wrapped around it.  Validate every receipt
+                # directly against the frozen command instead of regenerating
+                # already accepted provider calls.
+                rows = payload
+            else:
+                continue
+            accepted = []
+            for row in rows:
+                info = row.get("info", {})
+                if row.get("task_id") not in list(config.task_ids or []) or not (
+                    0 <= int(row.get("trial", -1)) < config.num_trials
+                ):
+                    continue
+                calls = [
+                    record
+                    for source in ("agent_api_records", "user_api_records")
+                    for record in (info.get(source) or [])
+                ]
+                successful = [record for record in calls if record.get("response")]
+                receipt_ok = bool(successful) and all(
+                    record["response"].get("id") and record["response"].get("usage")
+                    and record.get("model") in {config.model, config.user_model}
+                    and record.get("provider") in {
+                        config.model_provider, config.user_model_provider
+                    }
+                    for record in successful
+                ) and not info.get("error")
+                if receipt_ok:
+                    accepted.append(row)
+            candidates.append((len(accepted), path.stat().st_mtime, path, accepted))
+        if candidates:
+            _count, _mtime, source_path, accepted = max(candidates)
+            imported_results = [EnvRunResult.model_validate(row) for row in accepted]
+            resume_receipt = {
+                "source_path": str(source_path),
+                "source_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                "imported_task_trials": sorted(
+                    [[row.task_id, row.trial] for row in imported_results]
+                ),
+            }
     
     print(f"🔬 Running Ablation Study: {ablation_str}")
     print(f"  - Tone Style: {args.tone_style}")
@@ -277,6 +378,7 @@ def run_with_ablation(args):
         user_model=config.user_model,
         user_provider=config.user_model_provider,
         task_split=config.task_split,
+        user_seed=config.seed,
     )
     
     # Apply ablation modifications
@@ -308,14 +410,15 @@ def run_with_ablation(args):
         model=config.model,
         provider=config.model_provider,
         temperature=config.temperature,
-        verbose=args.verbose
+        verbose=args.verbose,
+        seed=config.seed,
     )
     
     # Run tasks
     end_index = (
         len(env.tasks) if config.end_index == -1 else min(config.end_index, len(env.tasks))
     )
-    results: List[EnvRunResult] = []
+    results: List[EnvRunResult] = list(imported_results)
     lock = multiprocessing.Lock()
     
     if config.task_ids and len(config.task_ids) > 0:
@@ -324,10 +427,14 @@ def run_with_ablation(args):
         print(f"Running tasks {config.start_index} to {end_index}")
     
     for i in range(config.num_trials):
+        accepted_keys = {(row.task_id, row.trial) for row in imported_results}
         if config.task_ids and len(config.task_ids) > 0:
-            idxs = config.task_ids
+            idxs = [idx for idx in config.task_ids if (idx, i) not in accepted_keys]
         else:
-            idxs = list(range(config.start_index, end_index))
+            idxs = [
+                idx for idx in range(config.start_index, end_index)
+                if (idx, i) not in accepted_keys
+            ]
         if config.shuffle:
             random.shuffle(idxs)
         
@@ -339,6 +446,7 @@ def run_with_ablation(args):
                 task_split=config.task_split,
                 user_provider=config.user_model_provider,
                 task_index=idx,
+                user_seed=config.seed + i * 100000 + idx * 1000,
             )
             
             # Apply same modifications to isolated env
@@ -357,6 +465,7 @@ def run_with_ablation(args):
                 res = agent.solve(
                     env=isolated_env,
                     task_index=idx,
+                    max_num_steps=args.max_agent_steps,
                 )
                 result = EnvRunResult(
                     task_id=idx,
@@ -370,7 +479,14 @@ def run_with_ablation(args):
                 result = EnvRunResult(
                     task_id=idx,
                     reward=0.0,
-                    info={"error": str(e), "traceback": traceback.format_exc()},
+                    info={
+                        "error": str(e),
+                        "traceback": traceback.format_exc(),
+                        "user_api_records": (
+                            isolated_env.user.get_api_records()
+                            if hasattr(isolated_env.user, "get_api_records") else []
+                        ),
+                    },
                     traj=[],
                     trial=i,
                 )
@@ -378,12 +494,16 @@ def run_with_ablation(args):
             print(
                 "✅" if result.reward == 1 else "❌",
                 f"task_id={idx}",
-                result.info,
+                {
+                    "reward": result.reward,
+                    "metrics": result.info.get("experiment_metrics", {}),
+                    "error": result.info.get("error"),
+                },
             )
             print("-----")
             
             with lock:
-                data = []
+                data = [row.model_dump() for row in imported_results]
                 if os.path.exists(ckpt_path):
                     with open(ckpt_path, "r") as f:
                         data = json.load(f)
@@ -399,11 +519,15 @@ def run_with_ablation(args):
     
     # Save final results with ablation metadata
     final_results = {
+        "experiment_id": "2-4",
+        "created_at": datetime.now().astimezone().isoformat(),
+        "run_config": config.model_dump(),
         "ablation_config": {
             "tone_style": args.tone_style,
             "randomize_wiki": args.randomize_wiki,
             "remove_tool_descriptions": args.remove_tool_descriptions,
         },
+        "resume_receipt": resume_receipt,
         "results": [result.model_dump() for result in results]
     }
     
@@ -411,6 +535,7 @@ def run_with_ablation(args):
         json.dump(final_results, f, indent=2)
         print(f"\n📄 Results saved to {ckpt_path}\n")
     
+    args._last_checkpoint_path = ckpt_path
     return results
 
 
@@ -436,7 +561,35 @@ def run_full_suite(args):
         analyze_ablation_impact,
     )
 
+    protocol_path = Path(args.protocol).resolve()
+    protocol_bytes = protocol_path.read_bytes()
+    protocol = json.loads(protocol_bytes)
+    protocol_sha256 = hashlib.sha256(protocol_bytes).hexdigest()
+    expected_task_ids = protocol["task_ids"]
+    configured_task_ids = (
+        list(args.task_ids)
+        if args.task_ids
+        else list(range(args.start_index, args.end_index))
+    )
+    if configured_task_ids != expected_task_ids:
+        raise ValueError(
+            f"Frozen protocol requires task IDs {expected_task_ids}; got {configured_task_ids}."
+        )
+    if args.model != protocol["model"] or args.user_model != protocol["user_model"]:
+        raise ValueError("Model/user-model do not match the frozen protocol")
+    if args.temperature != protocol["temperature"] or args.seed != protocol["seed"]:
+        raise ValueError("Temperature/seed do not match the frozen protocol")
+    if args.num_trials != protocol["trials_per_task"]:
+        raise ValueError("Trial count does not match the frozen protocol")
+    if args.max_agent_steps != protocol["max_agent_steps"]:
+        raise ValueError("Agent step limit does not match the frozen protocol")
+
+    Path(args.log_dir).mkdir(parents=True, exist_ok=True)
+    copied_protocol = Path(args.log_dir) / "experiment_protocol.json"
+    copied_protocol.write_bytes(protocol_bytes)
+
     suite_results = {}
+    arm_artifacts = {}
     for name, mods in ABLATION_SUITE:
         args.tone_style = mods["tone_style"]
         args.randomize_wiki = mods["randomize_wiki"]
@@ -454,6 +607,11 @@ def run_full_suite(args):
 
         results = run_with_ablation(args)
         suite_results[name] = [float(r.reward) for r in results]
+        checkpoint = Path(args._last_checkpoint_path)
+        arm_artifacts[name] = {
+            "path": str(checkpoint.resolve()),
+            "sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+        }
 
     # Final comparison across all techniques
     print_results_table(suite_results)
@@ -466,12 +624,141 @@ def run_full_suite(args):
         output_path = f"{args.log_dir}/ablation_summary_{time_str}.json"
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
+    arms = {}
+    all_calls = []
+    expected_results_per_arm = len(expected_task_ids) * args.num_trials
+    for name, artifact in arm_artifacts.items():
+        payload = json.loads(Path(artifact["path"]).read_text(encoding="utf-8"))
+        results = payload["results"]
+        calls = []
+        metrics = []
+        task_errors = []
+        for result in results:
+            info = result.get("info", {})
+            if info.get("error"):
+                task_errors.append({"task_id": result.get("task_id"), "error": info["error"]})
+            metrics.append(info.get("experiment_metrics", {}))
+            for source in ("agent_api_records", "user_api_records"):
+                for record in info.get(source, []):
+                    item = copy.deepcopy(record)
+                    item["source"] = source
+                    item["arm"] = name
+                    item["task_id"] = result.get("task_id")
+                    calls.append(item)
+                    all_calls.append(item)
+
+        successful_calls = [call for call in calls if call.get("response")]
+        usage_complete = bool(successful_calls) and all(
+            call["response"].get("id") and call["response"].get("usage")
+            for call in successful_calls
+        )
+        no_transport_errors = all(not call.get("error") for call in calls)
+        token_totals = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        costs = []
+        for call in successful_calls:
+            usage = call["response"].get("usage") or {}
+            for key in token_totals:
+                token_totals[key] += int(usage.get(key) or 0)
+            cost = call["response"].get("litellm_estimated_cost")
+            if cost is not None:
+                costs.append(float(cost))
+        native_cost_cny = None
+        if args.model == "kimi-k3" and usage_complete:
+            pricing = protocol["pricing"]
+            native_cost_cny = (
+                token_totals["prompt_tokens"]
+                * pricing["uncached_input_per_million_tokens"]
+                / 1_000_000
+                + token_totals["completion_tokens"]
+                * pricing["output_per_million_tokens"]
+                / 1_000_000
+            )
+        rewards = suite_results[name]
+        arms[name] = {
+            "artifact": artifact,
+            "rewards": rewards,
+            **calculate_statistics(rewards),
+            "tasks_completed": len(results),
+            "expected_tasks": expected_results_per_arm,
+            "task_errors": task_errors,
+            "agent_steps": [m.get("agent_steps") for m in metrics],
+            "tool_calls": [m.get("tool_calls") for m in metrics],
+            "tool_errors": [m.get("tool_errors") for m in metrics],
+            "real_api_calls": len(successful_calls),
+            "response_ids_present": usage_complete,
+            "usage": token_totals,
+            "observed_litellm_cost_usd": sum(costs),
+            "all_calls_priced": len(costs) == len(successful_calls),
+            "native_cost_cny": native_cost_cny,
+            "arm_complete": (
+                len(results) == expected_results_per_arm
+                and not task_errors
+                and no_transport_errors
+                and usage_complete
+            ),
+        }
+
+    configured_secrets = [
+        os.environ.get(name)
+        for name in ("OPENAI_API_KEY", "OPENROUTER_API_KEY")
+        if os.environ.get(name)
+    ]
+    credential_findings = []
+    for artifact in arm_artifacts.values():
+        raw = Path(artifact["path"]).read_text(encoding="utf-8")
+        if any(secret in raw for secret in configured_secrets):
+            credential_findings.append(artifact["path"])
+
+    campaign_complete = all(arm["arm_complete"] for arm in arms.values())
     summary = {
-        name: {"rewards": rewards, **calculate_statistics(rewards)}
-        for name, rewards in suite_results.items()
+        "experiment_id": "2-4",
+        "created_at": datetime.now().astimezone().isoformat(),
+        "protocol_sha256": protocol_sha256,
+        "protocol_copy": str(copied_protocol.resolve()),
+        "provider": args.model_provider,
+        "model": args.model,
+        "user_model": args.user_model,
+        "objective_scoring": "vendored tau-bench environment reward",
+        "arms": arms,
+        "credential_scan_passed": not credential_findings,
+        "credential_findings": credential_findings,
+        "usage_and_cost": {
+            "total_real_api_calls": sum(arm["real_api_calls"] for arm in arms.values()),
+            "prompt_tokens": sum(arm["usage"]["prompt_tokens"] for arm in arms.values()),
+            "completion_tokens": sum(arm["usage"]["completion_tokens"] for arm in arms.values()),
+            "total_tokens": sum(arm["usage"]["total_tokens"] for arm in arms.values()),
+            "observed_litellm_cost_usd": sum(arm["observed_litellm_cost_usd"] for arm in arms.values()),
+            "all_calls_priced": all(arm["all_calls_priced"] for arm in arms.values()),
+            "native_cost_cny": sum(
+                arm["native_cost_cny"] or 0 for arm in arms.values()
+            ),
+            "native_cost_complete": all(
+                arm["native_cost_cny"] is not None for arm in arms.values()
+            ),
+            "qualification": protocol.get("pricing", {}).get(
+                "qualification", "provider usage with LiteLLM response-cost estimate"
+            ),
+        },
+        "campaign_complete": campaign_complete and not credential_findings,
+        "hypothesis_results": {
+            "historical_percentages_reproduced": False,
+            "qualification": "Current fixed ten-task campaign only; compare arm metrics directly.",
+        },
     }
+    output_path = str(Path(output_path).resolve())
     with open(output_path, "w") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
+    summary_hash = hashlib.sha256(Path(output_path).read_bytes()).hexdigest()
+    manifest = {
+        "experiment_id": "2-4",
+        "campaign_complete": summary["campaign_complete"],
+        "protocol_sha256": protocol_sha256,
+        "summary_path": output_path,
+        "summary_sha256": summary_hash,
+        "arm_artifacts": arm_artifacts,
+    }
+    manifest_path = Path(args.log_dir) / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(f"\n📄 Suite summary saved to {output_path}\n")
 
     return suite_results

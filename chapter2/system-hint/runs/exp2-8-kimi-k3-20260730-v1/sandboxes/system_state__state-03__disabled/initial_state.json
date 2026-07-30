@@ -1,0 +1,12 @@
+{
+  "suite": "system_state",
+  "case_id": "state-03",
+  "system": {
+    "os": "Windows",
+    "shell": "PowerShell",
+    "python": "3.11.8",
+    "cwd": "workspace/gamma",
+    "manager": "winget",
+    "package": "Git.Git"
+  }
+}

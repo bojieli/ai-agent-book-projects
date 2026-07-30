@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 525" width="820" height="525" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="40" y="70" width="740" height="90" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="90" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">1계층: 메타데이터(시작 시 로드, 약 300 tokens)</text>
+<rect x="60" y="108" width="700" height="48" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="130" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">skills: [{name: &quot;PPTX&quot;, desc: &quot;콘텐츠로 PowerPoint 프레젠테이션 생성&quot;}</text>
+<text x="70" y="145" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">        {name: &quot;PDF&quot;,  desc: &quot;PDF 문서 추출 및 분석&quot;}, ...]</text>
+<line x1="410" y1="162" x2="410" y2="185" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="173" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">업무 트리거: &quot;논문으로 PPT 만들어 줘&quot;</text>
+<rect x="40" y="190" width="740" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="210" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">2계층: SKILL.md 핵심 절차(필요할 때 로드, 약 2K tokens)</text>
+<rect x="60" y="230" width="700" height="100" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="70" y="250" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">PPTX Skill 핵심 절차:</text>
+<text x="70" y="272" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">1. markitdown으로 텍스트 추출 → 2. PPTX 압축 해제 후 XML 접근</text>
+<text x="70" y="294" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">3. slide{N}.xml 콘텐츠 수정 → 4. .pptx로 다시 패키징</text>
+<text x="70" y="316" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">참조: → html2pptx.md | → reference.md | → scripts/</text>
+<line x1="410" y1="342" x2="410" y2="365" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="430" y="353" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">세부 방법 필요: &quot;HTML 템플릿으로 PPT 만들어 줘&quot;</text>
+<rect x="40" y="370" width="740" height="140" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="60" y="390" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">3계층: 하위 문서(선택적으로 탐색, 필요할 때 로드)</text>
+<rect x="60" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="167.5" y="433" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">html2pptx.md</text>
+<text x="167.5" y="455" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">HTML 템플릿 → PPT</text>
+<text x="167.5" y="473" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">전체 워크플로</text>
+<rect x="295" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="402.5" y="433" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">reference.md</text>
+<text x="402.5" y="455" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">XML 형식 규칙과</text>
+<text x="402.5" y="473" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">기술 세부 사항</text>
+<rect x="530" y="415" width="215" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="637.5" y="433" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">scripts/*.py</text>
+<text x="637.5" y="455" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">실행 가능한 도구:</text>
+<text x="637.5" y="473" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">thumbnail.py 등</text>
+<rect x="100" y="520" width="620" height="35" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="410" y="538" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">메타데이터 고정 → KV Cache에 유리 | 동적 콘텐츠 추가 → 캐시 유지</text>
+</svg>

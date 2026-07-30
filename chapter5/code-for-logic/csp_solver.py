@@ -15,6 +15,8 @@
     ["and",  s1, s2]                       # 合取
     ["or",   s1, s2]                       # 析取
     ["not",  s1]                           # 否定
+    ["implies", s1, s2]                    # 蕴含 s1 -> s2
+    ["iff", s1, s2]                        # 双条件 s1 <-> s2
 
 关键建模规则：对每位说话者 X 加一条【双条件约束】 `t[X] == eval_stmt(X 的话)`——
 X 是骑士当且仅当他的话为真。绝不能把话本身当作硬约束。
@@ -47,6 +49,10 @@ def eval_stmt(node, t):
         return eval_stmt(node[1], t) or eval_stmt(node[2], t)
     if tag == "not":
         return not eval_stmt(node[1], t)
+    if tag == "implies":
+        return (not eval_stmt(node[1], t)) or eval_stmt(node[2], t)
+    if tag == "iff":
+        return eval_stmt(node[1], t) == eval_stmt(node[2], t)
     raise ValueError(f"未知的陈述节点: {node!r}")
 
 
@@ -103,6 +109,10 @@ def render_nl(node):
         return f"{render_nl(node[1])[:-1]}，或者 {render_nl(node[2])}"
     if tag == "not":
         return f"以下说法不成立：{render_nl(node[1])}"
+    if tag == "implies":
+        return f"如果 {render_nl(node[1])[:-1]}，那么 {render_nl(node[2])}"
+    if tag == "iff":
+        return f"{render_nl(node[1])[:-1]}，当且仅当 {render_nl(node[2])}"
     raise ValueError(f"未知的陈述节点: {node!r}")
 
 

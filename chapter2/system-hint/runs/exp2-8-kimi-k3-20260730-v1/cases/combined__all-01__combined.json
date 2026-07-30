@@ -1,0 +1,2734 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "combined__all-01__combined",
+  "suite": "combined",
+  "case_id": "all-01",
+  "condition": "combined",
+  "features": [
+    "detailed_errors",
+    "system_state",
+    "timestamp_guidance",
+    "timestamps",
+    "todo_list",
+    "tool_counter"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "a9dcd1a0a1de6945bf8e261ac3ede544c831113d043b3d39240b8819516f90db",
+  "current_sandbox_sha256": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9",
+  "created_at": "2026-07-29T19:50:01.714785+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "[2025-09-19 09:00:00] Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+    },
+    {
+      "content": "I'll start by setting up a checklist and gathering the initial information in parallel.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "rewrite_todo_list_0",
+          "function": {
+            "arguments": "{\"items\":[\"Read records oak and pine, select the later one\",\"Retrieve core-a or fallback backup-a if unavailable\",\"Create observe.txt with exactly CFG-711\",\"Create recover.txt with exactly CFG-711\",\"Create deliver.txt with exactly CFG-711\",\"Read document config.txt (possibly renamed) and recover exact token\",\"Install jq with native package manager\",\"Verify all components and submit combined result\"]}",
+            "name": "rewrite_todo_list"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_record_1",
+          "function": {
+            "arguments": "{\"name\":\"oak\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "read_record_2",
+          "function": {
+            "arguments": "{\"name\":\"pine\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "probe_resource_3",
+          "function": {
+            "arguments": "{\"name\":\"core-a\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "inspect_system_4",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 4
+        }
+      ],
+      "reasoning_content": "Let me break down the task:\n\n1. Read records oak and pine, select the later one\n2. Retrieve core-a or, if unavailable, fallback backup-a\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager (apt based on system state)\n\nLet me start by creating a todo list, then reading records oak and pine, probing core-a, and inspecting the system state.\n\nLet me first create the todo list and start reading things. I can do independent calls in parallel:\n- rewrite_todo_list\n- read_record oak\n- read_record pine\n- probe_resource core-a\n- inspect_system (to confirm manager)\n\nLet me do these in parallel."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "rewrite_todo_list_0",
+      "name": "rewrite_todo_list",
+      "content": "TODO list now has 8 items\nTool call #1 for 'rewrite_todo_list'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "content": "[2025-09-13 08:00:00] payload-for-oak\nTool call #1 for 'read_record'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_2",
+      "name": "read_record",
+      "content": "[2025-09-14 08:00:00] payload-for-pine\nTool call #2 for 'read_record'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_3",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_4",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}\nTool call #1 for 'inspect_system'."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "update_todo_status_5",
+          "function": {
+            "arguments": "{\"item\":\"Read records oak and pine, select the later one\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "update_todo_status_6",
+          "function": {
+            "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"in_progress\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "probe_resource_7",
+          "function": {
+            "arguments": "{\"name\":\"backup-a\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "write_artifact_8",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "write_artifact_9",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 4
+        },
+        {
+          "id": "write_artifact_10",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 5
+        },
+        {
+          "id": "read_document_11",
+          "function": {
+            "arguments": "{\"file\":\"config.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 6
+        },
+        {
+          "id": "install_package_12",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 7
+        }
+      ],
+      "reasoning_content": "Let me analyze what I have so far:\n\n1. Records: oak = [2025-09-13 08:00:00] payload-for-oak; pine = [2025-09-14 08:00:00] payload-for-pine. Pine is later (2025-09-14 > 2025-09-13). So selected_record = pine. core-a is unavailable (error: primary resource is temporarily unavailable). So I need to probe backup-a. System state: manager = apt, package = jq.\n\nNext steps in parallel:\n- probe_resource backup-a\n- write_artifact observe.txt, recover.txt, deliver.txt with content CFG-711\n- read_document config.txt (may fail if renamed; then list_documents)\n- install_package jq with apt\n\nLet me do all these independent calls in one block. The read_document might fail since it's \"possibly-renamed\" — if so, I'll list documents. But I can attempt read_document config.txt first; if it fails, list documents.\n\nActually, I can do read_document and list_documents both? That would be wasteful but fine. Better: attempt read_document config.txt; if error, list_documents. Let me just try read_document first alongside the others.\n\nLet me update the todo list statuses too. I'll mark items as I go. First update: records selection completed, core-a retrieval in progress.\n\nLet me batch:\n- update_todo_status for records item = completed\n- update_todo_status for retrieve item = in_progress\n- probe_resource backup-a\n- write_artifact observe.txt\n- write_artifact recover.txt\n- write_artifact deliver.txt\n- read_document config.txt\n- install_package apt jq\n\nThat's a lot but they're independent. The read_document may fail; that's fine, I'll follow up with list_documents."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_5",
+      "name": "update_todo_status",
+      "content": "Updated Read records oak and pine, select the later one to completed\nTool call #1 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_6",
+      "name": "update_todo_status",
+      "content": "Updated Retrieve core-a or fallback backup-a if unavailable to in_progress\nTool call #2 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_7",
+      "name": "probe_resource",
+      "content": "verified-payload-all-01\nTool call #2 for 'probe_resource'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_8",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/observe.txt\nTool call #1 for 'write_artifact'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_9",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/recover.txt\nTool call #2 for 'write_artifact'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_10",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/deliver.txt\nTool call #3 for 'write_artifact'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_11",
+      "name": "read_document",
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'config.txt' does not exist\", \"arguments\": {\"file\": \"config.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"config_live.txt\"]}\nTool call #1 for 'read_document'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_12",
+      "name": "install_package",
+      "content": "Simulated install succeeded\nTool call #1 for 'install_package'."
+    },
+    {
+      "content": "The document was renamed to `config_live.txt`. I'll read it now and update the checklist for the completed components.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_13",
+          "function": {
+            "arguments": "{\"file\":\"config_live.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "update_todo_status_14",
+          "function": {
+            "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "update_todo_status_15",
+          "function": {
+            "arguments": "{\"item\":\"Create observe.txt with exactly CFG-711\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "update_todo_status_16",
+          "function": {
+            "arguments": "{\"item\":\"Create recover.txt with exactly CFG-711\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "update_todo_status_17",
+          "function": {
+            "arguments": "{\"item\":\"Create deliver.txt with exactly CFG-711\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 4
+        },
+        {
+          "id": "update_todo_status_18",
+          "function": {
+            "arguments": "{\"item\":\"Install jq with native package manager\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 5
+        }
+      ],
+      "reasoning_content": "Progress so far:\n- Records: oak [2025-09-13 08:00:00], pine [2025-09-14 08:00:00] → pine is later. ✓\n- core-a unavailable → backup-a returned \"verified-payload-all-01\". ✓\n- Artifacts written: observe.txt, recover.txt, deliver.txt with CFG-711. ✓\n- config.txt not found; available_documents shows \"config_live.txt\" — the renamed document. Need to read it.\n- jq installed via apt. ✓\n\nRemaining: read config_live.txt to recover exact token. Then update todos and submit.\n\nLet me read config_live.txt and update todo statuses in parallel. The artifact items are done, install done, retrieve done. I'll mark those completed and read the document."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_13",
+      "name": "read_document",
+      "content": "CFG-711\nTool call #2 for 'read_document'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_14",
+      "name": "update_todo_status",
+      "content": "Updated Retrieve core-a or fallback backup-a if unavailable to completed\nTool call #3 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_15",
+      "name": "update_todo_status",
+      "content": "Updated Create observe.txt with exactly CFG-711 to completed\nTool call #4 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_16",
+      "name": "update_todo_status",
+      "content": "Updated Create recover.txt with exactly CFG-711 to completed\nTool call #5 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_17",
+      "name": "update_todo_status",
+      "content": "Updated Create deliver.txt with exactly CFG-711 to completed\nTool call #6 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_18",
+      "name": "update_todo_status",
+      "content": "Updated Install jq with native package manager to completed\nTool call #7 for 'update_todo_status'."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "update_todo_status_19",
+          "function": {
+            "arguments": "{\"item\":\"Read document config.txt (possibly renamed) and recover exact token\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "update_todo_status_20",
+          "function": {
+            "arguments": "{\"item\":\"Verify all components and submit combined result\",\"status\":\"completed\"}",
+            "name": "update_todo_status"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "submit_result_21",
+          "function": {
+            "arguments": "{\"artifacts\":[\"observe.txt\",\"recover.txt\",\"deliver.txt\"],\"document\":\"config_live.txt\",\"fallback\":\"backup-a\",\"manager\":\"apt\",\"package\":\"jq\",\"selected_record\":\"pine\",\"token\":\"CFG-711\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 2
+        }
+      ],
+      "reasoning_content": "The document config_live.txt returned \"CFG-711\" — that's the exact token. All components are done:\n\n1. Records: oak [2025-09-13 08:00:00], pine [2025-09-14 08:00:00] → pine is later (2025-09-14 > 2025-09-13). selected_record = pine. ✓\n2. core-a unavailable → backup-a returned payload \"verified-payload-all-01\". fallback = backup-a. ✓\n3. Artifacts observe.txt, recover.txt, deliver.txt written with exactly CFG-711. ✓\n4. Document config.txt renamed to config_live.txt, token = CFG-711. ✓\n5. Installed jq via apt (native manager per system state). ✓\n\nNow update the remaining two todos to completed and submit_result exactly once with:\n- selected_record: pine\n- fallback: backup-a\n- artifacts: [\"observe.txt\", \"recover.txt\", \"deliver.txt\"]\n- document: config_live.txt\n- token: CFG-711\n- manager: apt\n- package: jq\n\nI can do the todo updates and submit_result in the same block? The submit should come after verification — I've verified everything via tool outputs. Updating todos and submitting are independent of each other. But to be safe and ordered, I could do the updates first then submit. They're independent, so I can batch them. But it's cleaner to mark todos complete first, then submit. Actually the instruction says submit_result exactly once after verification. Verification is done. I'll batch the two todo updates and the submit together — but there's a dependency in spirit (checklist should be complete before submit). There's no actual data dependency. I'll do them in one block to be efficient; order within block isn't guaranteed though. To be safe, let me do the two updates first, then submit in the next turn. Actually the guidance says batch independent calls. The submit doesn't depend on todo updates' outputs. I'll batch all three.\n\nHmm, but if submit happens before todo updates complete, does it matter? The submit is the final action. Probably fine either way. I'll batch them."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_19",
+      "name": "update_todo_status",
+      "content": "Updated Read document config.txt (possibly renamed) and recover exact token to completed\nTool call #8 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "update_todo_status_20",
+      "name": "update_todo_status",
+      "content": "Updated Verify all components and submit combined result to completed\nTool call #9 for 'update_todo_status'."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_21",
+      "name": "submit_result",
+      "content": "Submission recorded\nTool call #1 for 'submit_result'."
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:50:01.715133+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\nTOOL COUNTS: none. After repeated failure, diagnose and switch to a viable fallback.\nTODO LIST: not created. Keep every required deliverable visible until verified.\nSYSTEM STATE: os=Linux, shell=bash, python=3.11.9, cwd=workspace/one, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "rewrite_todo_list",
+              "description": "Create or replace the explicit task checklist.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "update_todo_status",
+              "description": "Update one checklist item after verifying it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "description": "Exact checklist item"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed",
+                      "cancelled"
+                    ]
+                  }
+                },
+                "required": [
+                  "item",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 11345.971,
+      "response": {
+        "id": "chatcmpl-6a6a596a2ee123acbef376ae",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by setting up a checklist and gathering the initial information in parallel.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "rewrite_todo_list_0",
+                  "function": {
+                    "arguments": "{\"items\":[\"Read records oak and pine, select the later one\",\"Retrieve core-a or fallback backup-a if unavailable\",\"Create observe.txt with exactly CFG-711\",\"Create recover.txt with exactly CFG-711\",\"Create deliver.txt with exactly CFG-711\",\"Read document config.txt (possibly renamed) and recover exact token\",\"Install jq with native package manager\",\"Verify all components and submit combined result\"]}",
+                    "name": "rewrite_todo_list"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_record_1",
+                  "function": {
+                    "arguments": "{\"name\":\"oak\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "read_record_2",
+                  "function": {
+                    "arguments": "{\"name\":\"pine\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "probe_resource_3",
+                  "function": {
+                    "arguments": "{\"name\":\"core-a\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "inspect_system_4",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 4
+                }
+              ],
+              "reasoning_content": "Let me break down the task:\n\n1. Read records oak and pine, select the later one\n2. Retrieve core-a or, if unavailable, fallback backup-a\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager (apt based on system state)\n\nLet me start by creating a todo list, then reading records oak and pine, probing core-a, and inspecting the system state.\n\nLet me first create the todo list and start reading things. I can do independent calls in parallel:\n- rewrite_todo_list\n- read_record oak\n- read_record pine\n- probe_resource core-a\n- inspect_system (to confirm manager)\n\nLet me do these in parallel."
+            }
+          }
+        ],
+        "created": 1785354603,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 423,
+          "prompt_tokens": 1040,
+          "total_tokens": 1463,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 173,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:50:13.075819+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by setting up a checklist and gathering the initial information in parallel.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "rewrite_todo_list_0",
+                "function": {
+                  "arguments": "{\"items\":[\"Read records oak and pine, select the later one\",\"Retrieve core-a or fallback backup-a if unavailable\",\"Create observe.txt with exactly CFG-711\",\"Create recover.txt with exactly CFG-711\",\"Create deliver.txt with exactly CFG-711\",\"Read document config.txt (possibly renamed) and recover exact token\",\"Install jq with native package manager\",\"Verify all components and submit combined result\"]}",
+                  "name": "rewrite_todo_list"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "read_record_2",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "inspect_system_4",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records oak and pine, select the later one\n2. Retrieve core-a or, if unavailable, fallback backup-a\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager (apt based on system state)\n\nLet me start by creating a todo list, then reading records oak and pine, probing core-a, and inspecting the system state.\n\nLet me first create the todo list and start reading things. I can do independent calls in parallel:\n- rewrite_todo_list\n- read_record oak\n- read_record pine\n- probe_resource core-a\n- inspect_system (to confirm manager)\n\nLet me do these in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "rewrite_todo_list_0",
+            "name": "rewrite_todo_list",
+            "content": "TODO list now has 8 items\nTool call #1 for 'rewrite_todo_list'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "[2025-09-13 08:00:00] payload-for-oak\nTool call #1 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_2",
+            "name": "read_record",
+            "content": "[2025-09-14 08:00:00] payload-for-pine\nTool call #2 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_4",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}\nTool call #1 for 'inspect_system'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\nTOOL COUNTS: inspect_system=1, probe_resource=1, read_record=2, rewrite_todo_list=1. After repeated failure, diagnose and switch to a viable fallback.\nTODO LIST: Read records oak and pine, select the later one: pending; Retrieve core-a or fallback backup-a if unavailable: pending; Create observe.txt with exactly CFG-711: pending; Create recover.txt with exactly CFG-711: pending; Create deliver.txt with exactly CFG-711: pending; Read document config.txt (possibly renamed) and recover exact token: pending; Install jq with native package manager: pending; Verify all components and submit combined result: pending. Keep every required deliverable visible until verified.\nSYSTEM STATE: os=Linux, shell=bash, python=3.11.9, cwd=workspace/one, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "rewrite_todo_list",
+              "description": "Create or replace the explicit task checklist.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "update_todo_status",
+              "description": "Update one checklist item after verifying it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "description": "Exact checklist item"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed",
+                      "cancelled"
+                    ]
+                  }
+                },
+                "required": [
+                  "item",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 24729.11,
+      "response": {
+        "id": "chatcmpl-6a6a5975b59b297c3ae6118b",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "update_todo_status_5",
+                  "function": {
+                    "arguments": "{\"item\":\"Read records oak and pine, select the later one\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "update_todo_status_6",
+                  "function": {
+                    "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"in_progress\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "probe_resource_7",
+                  "function": {
+                    "arguments": "{\"name\":\"backup-a\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "write_artifact_8",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "write_artifact_9",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 4
+                },
+                {
+                  "id": "write_artifact_10",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 5
+                },
+                {
+                  "id": "read_document_11",
+                  "function": {
+                    "arguments": "{\"file\":\"config.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 6
+                },
+                {
+                  "id": "install_package_12",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 7
+                }
+              ],
+              "reasoning_content": "Let me analyze what I have so far:\n\n1. Records: oak = [2025-09-13 08:00:00] payload-for-oak; pine = [2025-09-14 08:00:00] payload-for-pine. Pine is later (2025-09-14 > 2025-09-13). So selected_record = pine. core-a is unavailable (error: primary resource is temporarily unavailable). So I need to probe backup-a. System state: manager = apt, package = jq.\n\nNext steps in parallel:\n- probe_resource backup-a\n- write_artifact observe.txt, recover.txt, deliver.txt with content CFG-711\n- read_document config.txt (may fail if renamed; then list_documents)\n- install_package jq with apt\n\nLet me do all these independent calls in one block. The read_document might fail since it's \"possibly-renamed\" — if so, I'll list documents. But I can attempt read_document config.txt first; if it fails, list documents.\n\nActually, I can do read_document and list_documents both? That would be wasteful but fine. Better: attempt read_document config.txt; if error, list_documents. Let me just try read_document first alongside the others.\n\nLet me update the todo list statuses too. I'll mark items as I go. First update: records selection completed, core-a retrieval in progress.\n\nLet me batch:\n- update_todo_status for records item = completed\n- update_todo_status for retrieve item = in_progress\n- probe_resource backup-a\n- write_artifact observe.txt\n- write_artifact recover.txt\n- write_artifact deliver.txt\n- read_document config.txt\n- install_package apt jq\n\nThat's a lot but they're independent. The read_document may fail; that's fine, I'll follow up with list_documents."
+            }
+          }
+        ],
+        "created": 1785354615,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 763,
+          "prompt_tokens": 1824,
+          "total_tokens": 2587,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 375,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:50:37.828760+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by setting up a checklist and gathering the initial information in parallel.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "rewrite_todo_list_0",
+                "function": {
+                  "arguments": "{\"items\":[\"Read records oak and pine, select the later one\",\"Retrieve core-a or fallback backup-a if unavailable\",\"Create observe.txt with exactly CFG-711\",\"Create recover.txt with exactly CFG-711\",\"Create deliver.txt with exactly CFG-711\",\"Read document config.txt (possibly renamed) and recover exact token\",\"Install jq with native package manager\",\"Verify all components and submit combined result\"]}",
+                  "name": "rewrite_todo_list"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "read_record_2",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "inspect_system_4",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records oak and pine, select the later one\n2. Retrieve core-a or, if unavailable, fallback backup-a\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager (apt based on system state)\n\nLet me start by creating a todo list, then reading records oak and pine, probing core-a, and inspecting the system state.\n\nLet me first create the todo list and start reading things. I can do independent calls in parallel:\n- rewrite_todo_list\n- read_record oak\n- read_record pine\n- probe_resource core-a\n- inspect_system (to confirm manager)\n\nLet me do these in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "rewrite_todo_list_0",
+            "name": "rewrite_todo_list",
+            "content": "TODO list now has 8 items\nTool call #1 for 'rewrite_todo_list'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "[2025-09-13 08:00:00] payload-for-oak\nTool call #1 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_2",
+            "name": "read_record",
+            "content": "[2025-09-14 08:00:00] payload-for-pine\nTool call #2 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_4",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}\nTool call #1 for 'inspect_system'."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "update_todo_status_5",
+                "function": {
+                  "arguments": "{\"item\":\"Read records oak and pine, select the later one\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "update_todo_status_6",
+                "function": {
+                  "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"in_progress\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "probe_resource_7",
+                "function": {
+                  "arguments": "{\"name\":\"backup-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_8",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_9",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              },
+              {
+                "id": "write_artifact_10",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 5
+              },
+              {
+                "id": "read_document_11",
+                "function": {
+                  "arguments": "{\"file\":\"config.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 6
+              },
+              {
+                "id": "install_package_12",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 7
+              }
+            ],
+            "reasoning_content": "Let me analyze what I have so far:\n\n1. Records: oak = [2025-09-13 08:00:00] payload-for-oak; pine = [2025-09-14 08:00:00] payload-for-pine. Pine is later (2025-09-14 > 2025-09-13). So selected_record = pine. core-a is unavailable (error: primary resource is temporarily unavailable). So I need to probe backup-a. System state: manager = apt, package = jq.\n\nNext steps in parallel:\n- probe_resource backup-a\n- write_artifact observe.txt, recover.txt, deliver.txt with content CFG-711\n- read_document config.txt (may fail if renamed; then list_documents)\n- install_package jq with apt\n\nLet me do all these independent calls in one block. The read_document might fail since it's \"possibly-renamed\" — if so, I'll list documents. But I can attempt read_document config.txt first; if it fails, list documents.\n\nActually, I can do read_document and list_documents both? That would be wasteful but fine. Better: attempt read_document config.txt; if error, list_documents. Let me just try read_document first alongside the others.\n\nLet me update the todo list statuses too. I'll mark items as I go. First update: records selection completed, core-a retrieval in progress.\n\nLet me batch:\n- update_todo_status for records item = completed\n- update_todo_status for retrieve item = in_progress\n- probe_resource backup-a\n- write_artifact observe.txt\n- write_artifact recover.txt\n- write_artifact deliver.txt\n- read_document config.txt\n- install_package apt jq\n\nThat's a lot but they're independent. The read_document may fail; that's fine, I'll follow up with list_documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_5",
+            "name": "update_todo_status",
+            "content": "Updated Read records oak and pine, select the later one to completed\nTool call #1 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_6",
+            "name": "update_todo_status",
+            "content": "Updated Retrieve core-a or fallback backup-a if unavailable to in_progress\nTool call #2 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_7",
+            "name": "probe_resource",
+            "content": "verified-payload-all-01\nTool call #2 for 'probe_resource'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_8",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/observe.txt\nTool call #1 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_9",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/recover.txt\nTool call #2 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_10",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/deliver.txt\nTool call #3 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_11",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'config.txt' does not exist\", \"arguments\": {\"file\": \"config.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"config_live.txt\"]}\nTool call #1 for 'read_document'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_12",
+            "name": "install_package",
+            "content": "Simulated install succeeded\nTool call #1 for 'install_package'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\nTOOL COUNTS: inspect_system=1, install_package=1, probe_resource=2, read_document=1, read_record=2, rewrite_todo_list=1, update_todo_status=2, write_artifact=3. After repeated failure, diagnose and switch to a viable fallback.\nTODO LIST: Read records oak and pine, select the later one: completed; Retrieve core-a or fallback backup-a if unavailable: in_progress; Create observe.txt with exactly CFG-711: pending; Create recover.txt with exactly CFG-711: pending; Create deliver.txt with exactly CFG-711: pending; Read document config.txt (possibly renamed) and recover exact token: pending; Install jq with native package manager: pending; Verify all components and submit combined result: pending. Keep every required deliverable visible until verified.\nSYSTEM STATE: os=Linux, shell=bash, python=3.11.9, cwd=workspace/one, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "rewrite_todo_list",
+              "description": "Create or replace the explicit task checklist.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "update_todo_status",
+              "description": "Update one checklist item after verifying it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "description": "Exact checklist item"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed",
+                      "cancelled"
+                    ]
+                  }
+                },
+                "required": [
+                  "item",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 15772.028,
+      "response": {
+        "id": "chatcmpl-6a6a598e01c438c1be938ce4",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The document was renamed to `config_live.txt`. I'll read it now and update the checklist for the completed components.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_13",
+                  "function": {
+                    "arguments": "{\"file\":\"config_live.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "update_todo_status_14",
+                  "function": {
+                    "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "update_todo_status_15",
+                  "function": {
+                    "arguments": "{\"item\":\"Create observe.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "update_todo_status_16",
+                  "function": {
+                    "arguments": "{\"item\":\"Create recover.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "update_todo_status_17",
+                  "function": {
+                    "arguments": "{\"item\":\"Create deliver.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 4
+                },
+                {
+                  "id": "update_todo_status_18",
+                  "function": {
+                    "arguments": "{\"item\":\"Install jq with native package manager\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 5
+                }
+              ],
+              "reasoning_content": "Progress so far:\n- Records: oak [2025-09-13 08:00:00], pine [2025-09-14 08:00:00] → pine is later. ✓\n- core-a unavailable → backup-a returned \"verified-payload-all-01\". ✓\n- Artifacts written: observe.txt, recover.txt, deliver.txt with CFG-711. ✓\n- config.txt not found; available_documents shows \"config_live.txt\" — the renamed document. Need to read it.\n- jq installed via apt. ✓\n\nRemaining: read config_live.txt to recover exact token. Then update todos and submit.\n\nLet me read config_live.txt and update todo statuses in parallel. The artifact items are done, install done, retrieve done. I'll mark those completed and read the document."
+            }
+          }
+        ],
+        "created": 1785354638,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 515,
+          "prompt_tokens": 2993,
+          "total_tokens": 3508,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 170,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:50:53.624890+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by setting up a checklist and gathering the initial information in parallel.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "rewrite_todo_list_0",
+                "function": {
+                  "arguments": "{\"items\":[\"Read records oak and pine, select the later one\",\"Retrieve core-a or fallback backup-a if unavailable\",\"Create observe.txt with exactly CFG-711\",\"Create recover.txt with exactly CFG-711\",\"Create deliver.txt with exactly CFG-711\",\"Read document config.txt (possibly renamed) and recover exact token\",\"Install jq with native package manager\",\"Verify all components and submit combined result\"]}",
+                  "name": "rewrite_todo_list"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "read_record_2",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "inspect_system_4",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records oak and pine, select the later one\n2. Retrieve core-a or, if unavailable, fallback backup-a\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager (apt based on system state)\n\nLet me start by creating a todo list, then reading records oak and pine, probing core-a, and inspecting the system state.\n\nLet me first create the todo list and start reading things. I can do independent calls in parallel:\n- rewrite_todo_list\n- read_record oak\n- read_record pine\n- probe_resource core-a\n- inspect_system (to confirm manager)\n\nLet me do these in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "rewrite_todo_list_0",
+            "name": "rewrite_todo_list",
+            "content": "TODO list now has 8 items\nTool call #1 for 'rewrite_todo_list'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "[2025-09-13 08:00:00] payload-for-oak\nTool call #1 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_2",
+            "name": "read_record",
+            "content": "[2025-09-14 08:00:00] payload-for-pine\nTool call #2 for 'read_record'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_4",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}\nTool call #1 for 'inspect_system'."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "update_todo_status_5",
+                "function": {
+                  "arguments": "{\"item\":\"Read records oak and pine, select the later one\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "update_todo_status_6",
+                "function": {
+                  "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"in_progress\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "probe_resource_7",
+                "function": {
+                  "arguments": "{\"name\":\"backup-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_8",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_9",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              },
+              {
+                "id": "write_artifact_10",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 5
+              },
+              {
+                "id": "read_document_11",
+                "function": {
+                  "arguments": "{\"file\":\"config.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 6
+              },
+              {
+                "id": "install_package_12",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 7
+              }
+            ],
+            "reasoning_content": "Let me analyze what I have so far:\n\n1. Records: oak = [2025-09-13 08:00:00] payload-for-oak; pine = [2025-09-14 08:00:00] payload-for-pine. Pine is later (2025-09-14 > 2025-09-13). So selected_record = pine. core-a is unavailable (error: primary resource is temporarily unavailable). So I need to probe backup-a. System state: manager = apt, package = jq.\n\nNext steps in parallel:\n- probe_resource backup-a\n- write_artifact observe.txt, recover.txt, deliver.txt with content CFG-711\n- read_document config.txt (may fail if renamed; then list_documents)\n- install_package jq with apt\n\nLet me do all these independent calls in one block. The read_document might fail since it's \"possibly-renamed\" — if so, I'll list documents. But I can attempt read_document config.txt first; if it fails, list documents.\n\nActually, I can do read_document and list_documents both? That would be wasteful but fine. Better: attempt read_document config.txt; if error, list_documents. Let me just try read_document first alongside the others.\n\nLet me update the todo list statuses too. I'll mark items as I go. First update: records selection completed, core-a retrieval in progress.\n\nLet me batch:\n- update_todo_status for records item = completed\n- update_todo_status for retrieve item = in_progress\n- probe_resource backup-a\n- write_artifact observe.txt\n- write_artifact recover.txt\n- write_artifact deliver.txt\n- read_document config.txt\n- install_package apt jq\n\nThat's a lot but they're independent. The read_document may fail; that's fine, I'll follow up with list_documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_5",
+            "name": "update_todo_status",
+            "content": "Updated Read records oak and pine, select the later one to completed\nTool call #1 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_6",
+            "name": "update_todo_status",
+            "content": "Updated Retrieve core-a or fallback backup-a if unavailable to in_progress\nTool call #2 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_7",
+            "name": "probe_resource",
+            "content": "verified-payload-all-01\nTool call #2 for 'probe_resource'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_8",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/observe.txt\nTool call #1 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_9",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/recover.txt\nTool call #2 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_10",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/deliver.txt\nTool call #3 for 'write_artifact'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_11",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'config.txt' does not exist\", \"arguments\": {\"file\": \"config.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"config_live.txt\"]}\nTool call #1 for 'read_document'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_12",
+            "name": "install_package",
+            "content": "Simulated install succeeded\nTool call #1 for 'install_package'."
+          },
+          {
+            "content": "The document was renamed to `config_live.txt`. I'll read it now and update the checklist for the completed components.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_13",
+                "function": {
+                  "arguments": "{\"file\":\"config_live.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "update_todo_status_14",
+                "function": {
+                  "arguments": "{\"item\":\"Retrieve core-a or fallback backup-a if unavailable\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "update_todo_status_15",
+                "function": {
+                  "arguments": "{\"item\":\"Create observe.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "update_todo_status_16",
+                "function": {
+                  "arguments": "{\"item\":\"Create recover.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "update_todo_status_17",
+                "function": {
+                  "arguments": "{\"item\":\"Create deliver.txt with exactly CFG-711\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 4
+              },
+              {
+                "id": "update_todo_status_18",
+                "function": {
+                  "arguments": "{\"item\":\"Install jq with native package manager\",\"status\":\"completed\"}",
+                  "name": "update_todo_status"
+                },
+                "type": "function",
+                "index": 5
+              }
+            ],
+            "reasoning_content": "Progress so far:\n- Records: oak [2025-09-13 08:00:00], pine [2025-09-14 08:00:00] → pine is later. ✓\n- core-a unavailable → backup-a returned \"verified-payload-all-01\". ✓\n- Artifacts written: observe.txt, recover.txt, deliver.txt with CFG-711. ✓\n- config.txt not found; available_documents shows \"config_live.txt\" — the renamed document. Need to read it.\n- jq installed via apt. ✓\n\nRemaining: read config_live.txt to recover exact token. Then update todos and submit.\n\nLet me read config_live.txt and update todo statuses in parallel. The artifact items are done, install done, retrieve done. I'll mark those completed and read the document."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_13",
+            "name": "read_document",
+            "content": "CFG-711\nTool call #2 for 'read_document'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_14",
+            "name": "update_todo_status",
+            "content": "Updated Retrieve core-a or fallback backup-a if unavailable to completed\nTool call #3 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_15",
+            "name": "update_todo_status",
+            "content": "Updated Create observe.txt with exactly CFG-711 to completed\nTool call #4 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_16",
+            "name": "update_todo_status",
+            "content": "Updated Create recover.txt with exactly CFG-711 to completed\nTool call #5 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_17",
+            "name": "update_todo_status",
+            "content": "Updated Create deliver.txt with exactly CFG-711 to completed\nTool call #6 for 'update_todo_status'."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "update_todo_status_18",
+            "name": "update_todo_status",
+            "content": "Updated Install jq with native package manager to completed\nTool call #7 for 'update_todo_status'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\nTOOL COUNTS: inspect_system=1, install_package=1, probe_resource=2, read_document=2, read_record=2, rewrite_todo_list=1, update_todo_status=7, write_artifact=3. After repeated failure, diagnose and switch to a viable fallback.\nTODO LIST: Read records oak and pine, select the later one: completed; Retrieve core-a or fallback backup-a if unavailable: completed; Create observe.txt with exactly CFG-711: completed; Create recover.txt with exactly CFG-711: completed; Create deliver.txt with exactly CFG-711: completed; Read document config.txt (possibly renamed) and recover exact token: pending; Install jq with native package manager: completed; Verify all components and submit combined result: pending. Keep every required deliverable visible until verified.\nSYSTEM STATE: os=Linux, shell=bash, python=3.11.9, cwd=workspace/one, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "rewrite_todo_list",
+              "description": "Create or replace the explicit task checklist.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "update_todo_status",
+              "description": "Update one checklist item after verifying it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "description": "Exact checklist item"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed",
+                      "cancelled"
+                    ]
+                  }
+                },
+                "required": [
+                  "item",
+                  "status"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 23163.546,
+      "response": {
+        "id": "chatcmpl-6a6a599e76106b94c9eb2f96",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "update_todo_status_19",
+                  "function": {
+                    "arguments": "{\"item\":\"Read document config.txt (possibly renamed) and recover exact token\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "update_todo_status_20",
+                  "function": {
+                    "arguments": "{\"item\":\"Verify all components and submit combined result\",\"status\":\"completed\"}",
+                    "name": "update_todo_status"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "submit_result_21",
+                  "function": {
+                    "arguments": "{\"artifacts\":[\"observe.txt\",\"recover.txt\",\"deliver.txt\"],\"document\":\"config_live.txt\",\"fallback\":\"backup-a\",\"manager\":\"apt\",\"package\":\"jq\",\"selected_record\":\"pine\",\"token\":\"CFG-711\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 2
+                }
+              ],
+              "reasoning_content": "The document config_live.txt returned \"CFG-711\" — that's the exact token. All components are done:\n\n1. Records: oak [2025-09-13 08:00:00], pine [2025-09-14 08:00:00] → pine is later (2025-09-14 > 2025-09-13). selected_record = pine. ✓\n2. core-a unavailable → backup-a returned payload \"verified-payload-all-01\". fallback = backup-a. ✓\n3. Artifacts observe.txt, recover.txt, deliver.txt written with exactly CFG-711. ✓\n4. Document config.txt renamed to config_live.txt, token = CFG-711. ✓\n5. Installed jq via apt (native manager per system state). ✓\n\nNow update the remaining two todos to completed and submit_result exactly once with:\n- selected_record: pine\n- fallback: backup-a\n- artifacts: [\"observe.txt\", \"recover.txt\", \"deliver.txt\"]\n- document: config_live.txt\n- token: CFG-711\n- manager: apt\n- package: jq\n\nI can do the todo updates and submit_result in the same block? The submit should come after verification — I've verified everything via tool outputs. Updating todos and submitting are independent of each other. But to be safe and ordered, I could do the updates first then submit. They're independent, so I can batch them. But it's cleaner to mark todos complete first, then submit. Actually the instruction says submit_result exactly once after verification. Verification is done. I'll batch the two todo updates and the submit together — but there's a dependency in spirit (checklist should be complete before submit). There's no actual data dependency. I'll do them in one block to be efficient; order within block isn't guaranteed though. To be safe, let me do the two updates first, then submit in the next turn. Actually the guidance says batch independent calls. The submit doesn't depend on todo updates' outputs. I'll batch all three.\n\nHmm, but if submit happens before todo updates complete, does it matter? The submit is the final action. Probably fine either way. I'll batch them."
+            }
+          }
+        ],
+        "created": 1785354655,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 717,
+          "prompt_tokens": 3771,
+          "total_tokens": 4488,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 449,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 1536
+          },
+          "cached_tokens": 1536
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:50:13.065175+00:00",
+      "tool_call_id": "rewrite_todo_list_0",
+      "name": "rewrite_todo_list",
+      "arguments": {
+        "items": [
+          "Read records oak and pine, select the later one",
+          "Retrieve core-a or fallback backup-a if unavailable",
+          "Create observe.txt with exactly CFG-711",
+          "Create recover.txt with exactly CFG-711",
+          "Create deliver.txt with exactly CFG-711",
+          "Read document config.txt (possibly renamed) and recover exact token",
+          "Install jq with native package manager",
+          "Verify all components and submit combined result"
+        ]
+      },
+      "content": "TODO list now has 8 items\nTool call #1 for 'rewrite_todo_list'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:13.068992+00:00",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "arguments": {
+        "name": "oak"
+      },
+      "content": "[2025-09-13 08:00:00] payload-for-oak\nTool call #1 for 'read_record'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:13.070958+00:00",
+      "tool_call_id": "read_record_2",
+      "name": "read_record",
+      "arguments": {
+        "name": "pine"
+      },
+      "content": "[2025-09-14 08:00:00] payload-for-pine\nTool call #2 for 'read_record'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:13.072535+00:00",
+      "tool_call_id": "probe_resource_3",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "core-a"
+      },
+      "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'.",
+      "ok": false,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:13.074397+00:00",
+      "tool_call_id": "inspect_system_4",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}\nTool call #1 for 'inspect_system'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:37.809616+00:00",
+      "tool_call_id": "update_todo_status_5",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Read records oak and pine, select the later one",
+        "status": "completed"
+      },
+      "content": "Updated Read records oak and pine, select the later one to completed\nTool call #1 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:37.814186+00:00",
+      "tool_call_id": "update_todo_status_6",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Retrieve core-a or fallback backup-a if unavailable",
+        "status": "in_progress"
+      },
+      "content": "Updated Retrieve core-a or fallback backup-a if unavailable to in_progress\nTool call #2 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:37.816659+00:00",
+      "tool_call_id": "probe_resource_7",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "backup-a"
+      },
+      "content": "verified-payload-all-01\nTool call #2 for 'probe_resource'.",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:50:37.818536+00:00",
+      "tool_call_id": "write_artifact_8",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "observe.txt"
+      },
+      "content": "Wrote artifacts/observe.txt\nTool call #1 for 'write_artifact'.",
+      "ok": true,
+      "sandbox_sha256_after": "4452b1935b7fa3c65041f9dee18538867c2f482f8a7334648ff28084c83d3bcc"
+    },
+    {
+      "at": "2026-07-29T19:50:37.820425+00:00",
+      "tool_call_id": "write_artifact_9",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "recover.txt"
+      },
+      "content": "Wrote artifacts/recover.txt\nTool call #2 for 'write_artifact'.",
+      "ok": true,
+      "sandbox_sha256_after": "0447ddf132114bc12f859affd5b7d1b56151cbae3c19f3956362f22a548ca50d"
+    },
+    {
+      "at": "2026-07-29T19:50:37.822297+00:00",
+      "tool_call_id": "write_artifact_10",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "deliver.txt"
+      },
+      "content": "Wrote artifacts/deliver.txt\nTool call #3 for 'write_artifact'.",
+      "ok": true,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:50:37.824226+00:00",
+      "tool_call_id": "read_document_11",
+      "name": "read_document",
+      "arguments": {
+        "file": "config.txt"
+      },
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'config.txt' does not exist\", \"arguments\": {\"file\": \"config.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"config_live.txt\"]}\nTool call #1 for 'read_document'.",
+      "ok": false,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:50:37.826337+00:00",
+      "tool_call_id": "install_package_12",
+      "name": "install_package",
+      "arguments": {
+        "manager": "apt",
+        "package": "jq"
+      },
+      "content": "Simulated install succeeded\nTool call #1 for 'install_package'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.606997+00:00",
+      "tool_call_id": "read_document_13",
+      "name": "read_document",
+      "arguments": {
+        "file": "config_live.txt"
+      },
+      "content": "CFG-711\nTool call #2 for 'read_document'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.611691+00:00",
+      "tool_call_id": "update_todo_status_14",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Retrieve core-a or fallback backup-a if unavailable",
+        "status": "completed"
+      },
+      "content": "Updated Retrieve core-a or fallback backup-a if unavailable to completed\nTool call #3 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.614429+00:00",
+      "tool_call_id": "update_todo_status_15",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Create observe.txt with exactly CFG-711",
+        "status": "completed"
+      },
+      "content": "Updated Create observe.txt with exactly CFG-711 to completed\nTool call #4 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.616971+00:00",
+      "tool_call_id": "update_todo_status_16",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Create recover.txt with exactly CFG-711",
+        "status": "completed"
+      },
+      "content": "Updated Create recover.txt with exactly CFG-711 to completed\nTool call #5 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.619592+00:00",
+      "tool_call_id": "update_todo_status_17",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Create deliver.txt with exactly CFG-711",
+        "status": "completed"
+      },
+      "content": "Updated Create deliver.txt with exactly CFG-711 to completed\nTool call #6 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:50:53.622172+00:00",
+      "tool_call_id": "update_todo_status_18",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Install jq with native package manager",
+        "status": "completed"
+      },
+      "content": "Updated Install jq with native package manager to completed\nTool call #7 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:51:16.796404+00:00",
+      "tool_call_id": "update_todo_status_19",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Read document config.txt (possibly renamed) and recover exact token",
+        "status": "completed"
+      },
+      "content": "Updated Read document config.txt (possibly renamed) and recover exact token to completed\nTool call #8 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:51:16.800821+00:00",
+      "tool_call_id": "update_todo_status_20",
+      "name": "update_todo_status",
+      "arguments": {
+        "item": "Verify all components and submit combined result",
+        "status": "completed"
+      },
+      "content": "Updated Verify all components and submit combined result to completed\nTool call #9 for 'update_todo_status'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:51:16.803836+00:00",
+      "tool_call_id": "submit_result_21",
+      "name": "submit_result",
+      "arguments": {
+        "artifacts": [
+          "observe.txt",
+          "recover.txt",
+          "deliver.txt"
+        ],
+        "document": "config_live.txt",
+        "fallback": "backup-a",
+        "manager": "apt",
+        "package": "jq",
+        "selected_record": "pine",
+        "token": "CFG-711"
+      },
+      "content": "Submission recorded\nTool call #1 for 'submit_result'.",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    }
+  ],
+  "tool_counters": {
+    "rewrite_todo_list": 1,
+    "read_record": 2,
+    "probe_resource": 2,
+    "inspect_system": 1,
+    "update_todo_status": 9,
+    "write_artifact": 3,
+    "read_document": 2,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {
+    "Read records oak and pine, select the later one": "completed",
+    "Retrieve core-a or fallback backup-a if unavailable": "completed",
+    "Create observe.txt with exactly CFG-711": "completed",
+    "Create recover.txt with exactly CFG-711": "completed",
+    "Create deliver.txt with exactly CFG-711": "completed",
+    "Read document config.txt (possibly renamed) and recover exact token": "completed",
+    "Install jq with native package manager": "completed",
+    "Verify all components and submit combined result": "completed"
+  },
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "timestamps": true,
+    "tool_counter": true,
+    "todo_list": true,
+    "detailed_errors": true,
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 9628,
+    "completion_tokens": 2418,
+    "total_tokens": 12046
+  },
+  "cost": {
+    "amount": 0.43435999999999997,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:51:16.807376+00:00",
+  "case_condition_order": [
+    "combined",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

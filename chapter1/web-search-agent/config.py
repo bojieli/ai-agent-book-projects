@@ -77,7 +77,7 @@ class Config:
 
     # 搜索配置
     MAX_SEARCH_ITERATIONS: int = 5  # 最大搜索迭代次数（与 agent 默认值保持一致）
-    SEARCH_TIMEOUT: int = 30  # 搜索超时时间（秒）
+    SEARCH_TIMEOUT: float = float(os.getenv("SEARCH_TIMEOUT", "30"))
     
     # 日志配置
     LOG_LEVEL: str = "INFO"

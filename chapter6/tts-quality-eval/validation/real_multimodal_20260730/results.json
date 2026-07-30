@@ -1,0 +1,280 @@
+{
+  "schema_version": "2.0",
+  "experiment": "6-5",
+  "generated_at_utc": "2026-07-30T04:32:04.726815+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio",
+      "openai"
+    ],
+    "configurations": [
+      {
+        "name": "tts1-alloy-1.0",
+        "provider": "openai",
+        "model": "tts-1",
+        "voice": "alloy",
+        "speed": 1.0
+      },
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone",
+      "long",
+      "emotion",
+      "sad",
+      "question"
+    ],
+    "expected_records": 12,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 0,
+    "direct_audio_four_dimension_records": 0,
+    "expected_records": 12,
+    "all_cells_complete": false,
+    "multi_provider": true,
+    "manuscript_core_complete": false
+  },
+  "records": [
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__num.mp3",
+      "audio_sha256": "15936f94727239ab9aadbc3814d70375fad93c89efd9b8562605d62790860898",
+      "audio_bytes": 99055,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__polyphone.mp3",
+      "audio_sha256": "4f8c45b00455a9dbda4b1feebbda9f09de50ec9458d367ea701798ec05972a88",
+      "audio_bytes": 97801,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__long.mp3",
+      "audio_sha256": "d0947fc60450d4668e75376eb56a714d80a99e3148ee76219c59133d7364eb12",
+      "audio_bytes": 203127,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__emotion.mp3",
+      "audio_sha256": "4eca80508f1d6f7a5b50b87de0e329e700097fc01a092e38e47fb70d7dc3675a",
+      "audio_bytes": 102817,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__sad.mp3",
+      "audio_sha256": "295161d6fc7a169fc28ebd3fd07e2acaac6fca2f0cc24db6a51c3dc431310cf9",
+      "audio_bytes": 80665,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__question.mp3",
+      "audio_sha256": "c48dfadf2f1eaa6b01a924e1de5ebf728cfbfad9df14234a70629e0e5890800a",
+      "audio_bytes": 75231,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "config": "tts1-alloy-1.0",
+      "n_ok": 0,
+      "n": 6
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 0,
+      "n": 6
+    }
+  ]
+}

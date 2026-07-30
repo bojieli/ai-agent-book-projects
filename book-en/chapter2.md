@@ -44,6 +44,8 @@ In Chat Completions-style APIs, the core input is a **message list**, usually na
 
 Tool definitions are not messages. They are provided in a separate `tools` field, which declares the tools available to the model and specifies the parameters each tool accepts.
 
+This is the same API request structure as the “five components of context” introduced in Chapter 1, classified from a different angle: the four `system`, `user`, `assistant`, and `tool` message roles correspond to the system prompt, user messages, assistant messages, and tool results, respectively. The remaining component—tool definitions—is passed through the top-level `tools` field rather than a message role. Thus, “four message roles + the `tools` field” exactly covers Chapter 1’s five context components.
+
 ### Single-Turn Request: The Simplest API Call
 
 ![Figure 2-2: Request and Response Structure of a Single-Turn API Call](images/fig2-2.svg)

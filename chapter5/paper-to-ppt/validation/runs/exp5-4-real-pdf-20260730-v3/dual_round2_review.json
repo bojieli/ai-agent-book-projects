@@ -1,0 +1,30 @@
+{
+  "overall_score": 85,
+  "pass": false,
+  "issues": [
+    {
+      "page": 4,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将6个要点拆分为两页，Recurrent Models和Convolutional Models各占一页，或删减次要内容使每页不超过5个要点"
+    },
+    {
+      "page": 6,
+      "issue_type": "overcrowded",
+      "severity": "high",
+      "suggestion": "移除图片下方的大段文字说明，仅保留模型图；文字内容应拆分到后续页面详细讲解"
+    },
+    {
+      "page": 7,
+      "issue_type": "overcrowded",
+      "severity": "low",
+      "suggestion": "将\"Each layer contains two sub-layers\"的两个子要点合并为一条，或调整字号增大留白"
+    },
+    {
+      "page": 9,
+      "issue_type": "overcrowded",
+      "severity": "low",
+      "suggestion": "将三个子要点简化为更简短的表述，或拆分到新页面单独说明Decoder的子层结构"
+    }
+  ]
+}

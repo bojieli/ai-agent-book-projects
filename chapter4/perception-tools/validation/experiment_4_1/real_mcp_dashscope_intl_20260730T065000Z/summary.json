@@ -1,0 +1,144 @@
+{
+  "experiment": "4-1",
+  "campaign_id": "real_mcp_dashscope_intl_20260730T065000Z",
+  "status": "blocked",
+  "acceptance": {
+    "status": "blocked",
+    "gates": {
+      "catalog_from_real_mcp": true,
+      "catalog_contains_all_required_tools": true,
+      "search_category_passed": true,
+      "multimodal_category_passed": true,
+      "filesystem_category_passed": true,
+      "public_data_category_passed": true,
+      "private_data_category_passed": false,
+      "filesystem_pre_post_hashes_verified": true,
+      "filesystem_isolation_probes_rejected": true,
+      "all_successes_substantive_and_non_simulated": true,
+      "exact_case_set_recorded": true
+    },
+    "categories": {
+      "search": {
+        "status": "passed",
+        "required_cases": [
+          "web_search",
+          "knowledge_base_search",
+          "download"
+        ],
+        "missing_cases": [],
+        "invalid_cases": []
+      },
+      "multimodal": {
+        "status": "passed",
+        "required_cases": [
+          "webpage_reader",
+          "document_reader_pdf",
+          "document_reader_docx",
+          "document_reader_pptx",
+          "image_ocr",
+          "image_analyze",
+          "audio_transcribe",
+          "video_parser",
+          "video_analyze"
+        ],
+        "missing_cases": [],
+        "invalid_cases": []
+      },
+      "filesystem": {
+        "status": "passed",
+        "required_cases": [
+          "file_reader",
+          "grep",
+          "directory_list",
+          "filesystem_copy",
+          "filesystem_move",
+          "filesystem_delete"
+        ],
+        "missing_cases": [],
+        "invalid_cases": []
+      },
+      "public_data": {
+        "status": "passed",
+        "required_cases": [
+          "weather",
+          "yfinance_quote",
+          "currency_converter",
+          "wikipedia_search",
+          "arxiv_search"
+        ],
+        "missing_cases": [],
+        "invalid_cases": []
+      },
+      "private_data": {
+        "status": "blocked",
+        "required_cases": [
+          "calendar_events",
+          "notion_search"
+        ],
+        "missing_cases": [],
+        "invalid_cases": [
+          "calendar_events",
+          "notion_search"
+        ]
+      }
+    }
+  },
+  "receipt_count": 28,
+  "successful_cases": [
+    "web_search",
+    "knowledge_base_search",
+    "download",
+    "webpage_reader",
+    "document_reader_pdf",
+    "document_reader_docx",
+    "document_reader_pptx",
+    "image_ocr",
+    "image_analyze",
+    "audio_transcribe",
+    "video_parser",
+    "video_analyze",
+    "file_reader",
+    "grep",
+    "directory_list",
+    "filesystem_copy",
+    "filesystem_move",
+    "filesystem_delete",
+    "weather",
+    "yfinance_quote",
+    "currency_converter",
+    "wikipedia_search",
+    "arxiv_search"
+  ],
+  "failed_or_blocked_cases": [
+    "reject_parent_traversal",
+    "reject_absolute_path",
+    "reject_escaping_symlink",
+    "calendar_events",
+    "notion_search"
+  ],
+  "outside_witness_unchanged": true,
+  "credential_preflight": {
+    "secret_values_recorded": false,
+    "google_calendar": {
+      "token_file_exists": false,
+      "token_file_bytes": 0,
+      "oauth_credentials_sdk_importable": true,
+      "calendar_sdk_importable": true
+    },
+    "notion": {
+      "api_key_present": false,
+      "sdk_importable": true
+    },
+    "multimodal": {
+      "openai_key_present": true,
+      "openrouter_key_present": true,
+      "gemini_key_present": true,
+      "dashscope_key_present": true,
+      "local_whisper_importable": true,
+      "pytesseract_importable": true,
+      "tesseract_executable_present": true,
+      "ffmpeg_executable_present": true
+    }
+  },
+  "generated_at": "2026-07-29T22:24:57.089914+00:00"
+}

@@ -1,3 +1,36 @@
+# Experiment 7-13 reproduction anchor
+
+This directory is the book-owned guide and analysis. The primary source is the [SimpleVLA-RL paper](https://arxiv.org/abs/2509.09674); executable code is the nested external checkout [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9) at `chapter7/SimpleVLA-RL/SimpleVLA-RL`, verified at commit `7c51662df27b586f9e8a1ab35fcf849f2b8852f9`.
+
+```bash
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter7/SimpleVLA-RL/SimpleVLA-RL
+git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+test "$(git -C chapter7/SimpleVLA-RL/SimpleVLA-RL rev-parse HEAD)" = "7c51662df27b586f9e8a1ab35fcf849f2b8852f9"
+cd chapter7/SimpleVLA-RL/SimpleVLA-RL
+bash examples/run_openvla_oft_rl_libero.sh
+# RoboTwin2 track: bash examples/run_openvla_oft_rl_twin2.sh
+```
+
+The two exact upstream entrypoints are `examples/run_openvla_oft_rl_libero.sh` and `examples/run_openvla_oft_rl_twin2.sh`. Both still contain `SFT_MODEL_PATH="YOUR SFT_MODEL_PATH"`, so neither fixes a checkpoint. The commands were inspected, not run, during this audit.
+
+## Dependency contract and lock state
+
+The upstream [`SETUP.md`](https://github.com/PRIME-RL/SimpleVLA-RL/blob/7c51662df27b586f9e8a1ab35fcf849f2b8852f9/SETUP.md) is an acquisition guide, not a complete launch lock. A real reproduction must distinguish what is covered by the main repository commit from mutable or unspecified inputs:
+
+| Component | Upstream contract at the fixed commit | Reproduction status |
+| --- | --- | --- |
+| SimpleVLA-RL source and embedded `verl/` | Main repository fixed at `7c51662df27b586f9e8a1ab35fcf849f2b8852f9`; both entrypoints launch `python -m verl.trainer.main_ppo` from this source tree | **Pinned by the main commit** |
+| Python / PyTorch | Python 3.10; `torch==2.4.0` from the CUDA 12.4 wheel index | Versions stated, but exact wheel hashes, OS, CUDA toolkit and NVIDIA driver are not fixed |
+| External veRL mentioned by setup guide | Mutable clone of branch `v0.2.x`, even though the launch tree also embeds `verl/` | Import/path precedence must be captured at launch. [`v0.2.0.post2` at `fb532783ad3176b4f2a1acbe4f75a5d695b4e0b4`](https://github.com/volcengine/verl/tree/fb532783ad3176b4f2a1acbe4f75a5d695b4e0b4) is an immutable source-inspection snapshot, **not a verified compatible external environment** |
+| OpenVLA-OFT | Default-branch clone; no compatible SHA recorded by the SimpleVLA-RL authors | Missing locally and unresolved. Audit-time [`e4287e94541f459edc4feabc4e181f537cd569a8`](https://github.com/moojink/openvla-oft/tree/e4287e94541f459edc4feabc4e181f537cd569a8) is for immutable source inspection only; compatibility is untested |
+| LIBERO | Default-branch clone; installed editable for the LIBERO track | Missing locally and unresolved. Audit-time [`8f1084e3132a39270c3a13ebe37270a43ece2a01`](https://github.com/Lifelong-Robot-Learning/LIBERO/tree/8f1084e3132a39270c3a13ebe37270a43ece2a01) is for immutable source inspection only; compatibility is untested |
+| RoboTwin2 | Default-branch clone plus mutable simulator/assets installation and SimpleVLA overwrite script | Missing locally and unresolved. Audit-time [`13c3c47ff4312dd62484bcd51be034af55c062d1`](https://github.com/RoboTwin-Platform/RoboTwin/tree/13c3c47ff4312dd62484bcd51be034af55c062d1) is for immutable source inspection only; compatibility is untested |
+| Flash Attention | `pip3 install flash-attn --no-build-isolation` without a version or hash | Mutable build dependency; wheel/source identity and compiler environment unresolved |
+| Starting checkpoint | Shell placeholder `SFT_MODEL_PATH`; the guide links a model collection but does not select a model revision or artifact hash | Unresolved; record repository/model ID, revision and every consumed file hash |
+| Runtime | Simulator assets/system packages, EGL/Vulkan state, GPU model/count, CUDA and driver | Unresolved; upstream examples request eight GPUs and a real launch manifest must record the complete state |
+
+The three audit-time dependency HEADs above make later source inspection possible; they must not be presented as a tested OpenVLA-OFT + LIBERO/RoboTwin compatibility set. Until a successful launch manifest records every unresolved row, only the primary SimpleVLA-RL source and its embedded code are immutable.
+
 ## English
 
 ## Scaling Vision-Language-Action Model Training via Reinforcement Learning
@@ -340,8 +373,9 @@ cd ..
 Apply the necessary RoboTwin modifications:
 
 ```bash
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git
-cd SimpleVLA-RL
+# Reuse the canonical checkout created by the reproduction-anchor commands.
+git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+cd chapter7/SimpleVLA-RL/SimpleVLA-RL
 
 # Apply RoboTwin modifications
 bash copy_overwrite_robotwin2.sh <your_robotwin_path> <your_simplevlarl_path>
@@ -1344,12 +1378,13 @@ cd ..
 应用必要的 RoboTwin 修改:
 
 ```bash
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git
-cd SimpleVLA-RL
+# 复用本指南开头命令创建的规范 checkout。
+git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+cd chapter7/SimpleVLA-RL/SimpleVLA-RL
 
 # 应用 RoboTwin 修改
 bash copy_overwrite_robotwin2.sh <your_robotwin_path> <your_simplevlarl_path>
-# 示例: bash copy_overwrite_robotwin2.sh /mnt/petrelfs/SimpleVLA-RL /mnt/petrelfs/RoboTwin
+# 示例: bash copy_overwrite_robotwin2.sh /mnt/petrelfs/RoboTwin /mnt/petrelfs/SimpleVLA-RL
 ```
 
 ---

@@ -1,0 +1,40 @@
+{
+  "case": "minimal_sync",
+  "tool": "mcp_spawn_subagent",
+  "arguments": {
+    "task": "Decide whether the refund meets the supplied policy and explain.",
+    "context_strategy": "minimal",
+    "mode": "sync",
+    "parent_context": {
+      "customer": "Ada",
+      "request": "Refund an item bought 3 days ago for SGD 80",
+      "policy": "Refunds within 7 days and below SGD 100 may be approved",
+      "irrelevant_history": [
+        "weather chat",
+        "shipping FAQ",
+        "newsletter"
+      ],
+      "private_note": "PRIVATE-MARKER-MUST-BE-FILTERED"
+    },
+    "role": "refund policy specialist",
+    "minimal_slice": [
+      "policy"
+    ]
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "e4d40402-5f68-462a-9884-8d89a8fe516f",
+    "mode": "sync",
+    "status": "completed",
+    "context_strategy": "minimal",
+    "context_tokens": 56,
+    "prep_tokens": 0,
+    "prompt_tokens": 328,
+    "prepared_context": "[FROM_MAIN_AGENT] 子任务：Decide whether the refund meets the supplied policy and explain.\n[FROM_MAIN_AGENT] 手动挑选的必要信息：{\"policy\": \"Refunds within 7 days and below SGD 100 may be approved\"}",
+    "context_notes": "只传任务参数与手动挑选的最小切片，不转发主 Agent 完整轨迹",
+    "result": "{\"status\": \"need_info\", \"result\": \"I have the policy ('Refunds within 7 days and below SGD 100 may be approved') but no details about the actual refund request, so I cannot make a determination. To decide, I need to verify two conditions: (1) the refund amount must be below SGD 100, and (2) the request must be made within 7 days of the purchase/transaction date.\", \"missing\": \"Refund amount; purchase/transaction date; refund request date (or number of days elapsed since purchase)\"}"
+  },
+  "latency_seconds": 11.13
+}

@@ -1,0 +1,1511 @@
+{
+  "campaign_fingerprint": "b385866866eeddd875fd767d5736b53dbdd86e6933b105d3d724e3bd61e2a9b0",
+  "value": [
+    {
+      "chapter": "Getting Started with AI Agents [Part 1/9]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "No omissions or inventions found. Key claims like 'Agent = LLM + Context + Tools' and the RL component mapping are preserved. Example: '现代代理 = 大语言模型 + 上下文 + 工具' matches the source formula exactly."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Natural phrasing throughout, e.g., '逐步深入到人工智能代理的核心组件' (progresses inward to the core components) flows naturally. Technical terms are integrated smoothly."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent use of key terms: '大语言模型' (LLM), '上下文' (context), '工具' (tools), '观测空间' (observation space), '行动空间' (action space) are uniformly translated and maintained across the text."
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Headings mostly preserved (e.g., '# 人工智能代理入门' for the main title, '## 现代代理 = 大语言模型 + 上下文 + 工具' for the section). However, an extraneous '### 与人工智能代理入门 [第1/9部分]' prefix is added at the very start, which is not in the source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "No critical omissions or inventions. Core concepts like the Agent formula and RL mapping are retained. Example: '代理 = 大语言模型（LLM） + 上下文 + 工具' correctly translates the source formula."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent, with clear phrasing such as '逐步回溯到人工智能代理的核心组件' (works back toward the core components). Minor awkwardness in '着眼于大局' (aim for the big picture) which is slightly less natural than X's '把握大局'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent translation of technical terms: '大语言模型' (LLM), '上下文' (context), '工具' (tools), '观测空间' (observation space), '行动空间' (action space) are used consistently throughout."
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "Major heading level errors: The main title is demoted from '#' to '### 人工智能代理入门', and the section '## 现代代理 = 大语言模型 + 上下文 + 工具' is incorrectly set as '###' instead of '##'. An extraneous '### 人工智能代理入门[第1/9部分]' prefix is also added."
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X has better markdown_code_fidelity, correctly using '#' for the main title and '##' for the major section heading, whereas Y demotes these to '###', disrupting the document structure. Both have similar accuracy, fluency, and terminology scores, but X's superior heading hierarchy preservation makes it preferable."
+      },
+      "usage": {
+        "prompt_tokens": 6056,
+        "completion_tokens": 613,
+        "latency_milliseconds": 17421,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-01.json",
+      "receipt_sha256": "7a88d741ca4831380d3858aa4d1774bf5f52e115777ec636d0c7387d53c004c6"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 2/9]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All table content, feature descriptions, tool classifications, and technical details are accurately translated without omissions or inventions. For example, the core principle of tool design is correctly rendered as '使用通用基础能力进行组合和探索；使用专门工具约束高风险操作并强制执行严格业务规则'."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences are fluent, but phrases like '主动询问' (X) for 'proactive check-in' are slightly less natural compared to Y's '主动签到'. The term '迭代深化' is consistent but slightly rigid."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent use of technical terms: '开放式行动空间' (open-ended action space), '内部推理' (internal reasoning), '工具调用' (tool calling), and 'MCP (模型上下文协议)' (Model Context Protocol)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Table structure, headings (###), code blocks (```), and formatting (**bold**) are fully preserved. The code example for weather query steps is identical to the source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All critical information is accurately translated, including the three shared features of agents and tool design principles. The phrase '端到端可审计性' (end-to-end auditability) is precisely rendered."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "More natural phrasing: '主动签到' (proactive check-in) instead of '主动询问', and '委派给子代理' (delegating to sub-agents) flows better than '委托给子代理'. Sentences like '意图理解+应用控制' are idiomatic."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent terminology matching X, e.g., '开放式动作空间' (open-ended action space), '沙盒' (sandbox), and '路径遍历' (path traversal). 'MCP (模型上下文协议)' is correctly retained."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown elements are fully preserved, including table alignment, heading levels (###), code blocks, and bolded terms like '内部推理' (internal reasoning)."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y demonstrates slightly better fluency with more natural expressions such as '主动签到' (proactive check-in) and '委派给子代理' (delegating to sub-agents), while maintaining equal accuracy, terminology consistency, and markdown fidelity as X."
+      },
+      "usage": {
+        "prompt_tokens": 5650,
+        "completion_tokens": 533,
+        "latency_milliseconds": 16790,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-02.json",
+      "receipt_sha256": "90aa57a5ceffcd803141cc38508bb27fc4a339576978e9a2440b01926dbd2880"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 3/9]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, 'the model may never have been explicitly taught to write a poem about quantum physics, yet it can produce a reasonable one from its existing knowledge of language and physics' is accurately translated as '模型可能从未被明确教导过写关于量子物理的诗歌，但它可以根据现有的语言和物理知识创作出合理的诗歌'."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent, but 'endorse the direction, stay pragmatic about the pace' is translated as '认可方向，务实节奏' which is slightly awkward; a more natural phrasing could be '认可方向，务实看待节奏'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and technically correct. Key terms like 'Zero-shot Generalization'→'零样本泛化', 'Few-shot Adaptation'→'少样本适配', 'Harness'→'框架', 'context window'→'上下文窗口' are consistently used."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements preserved: headings (####, ###), figure links (![图1-1：智能体能力更新的三个层次](images/fig1-1.svg)), footnotes ([^ch1-1]), and code-like elements (e.g., `reasoning`, `content`) are correctly retained."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, 'the real advantage of model providers is not \"making the framework thinner\" but being able to co-optimize the model and its surrounding Harness' is accurately translated as '模型提供商的真正优势不是“让框架更薄”，而是能够共同优化模型及其周围的框架'."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Highly fluent throughout. For example, 'endorse the direction, stay pragmatic about the pace' is translated as '认可方向，务实节奏' which is concise and natural; 'the Harness is the engineering infrastructure that channels model capability into reliable task execution' becomes '框架是将模型能力转化为可靠任务执行的工程基础设施' with smooth flow."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Mostly consistent, but 'Few-shot Adaptation' is translated as '少样本适应' (Y) vs. '少样本适配' (X); 'native ability' is translated as '本地能力' (Y) vs. '原生能力' (X), where '原生能力' (X) is more technically precise."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements preserved: headings, figure links (![图1-1：代理能力更新的三个层次](images/fig1-1.svg)), footnotes, and code-like elements (e.g., `reasoning`, `content`) are correctly retained."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher fluency (5 vs. 4) with more natural phrasing (e.g., handling of 'endorse the direction, stay pragmatic about the pace'), while both have perfect accuracy and markdown fidelity. X has slightly better terminology consistency, but Y's fluency advantage is more impactful for readability."
+      },
+      "usage": {
+        "prompt_tokens": 23830,
+        "completion_tokens": 2685,
+        "latency_milliseconds": 66532,
+        "attempt_count": 4
+      },
+      "receipt": "judge_receipts/unit-03.json",
+      "receipt_sha256": "255d39af9081350eaeba545860d698c45a400f0763ea533e19561fcd82045b10"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 4/9]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Omission of 'LLM' expansion in first occurrence; 'token' mistranslated as '标记' instead of '词元' in '1 million token context window'"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Slightly awkward phrasing: '从头重新开始整个任务' (redundant '重新') vs. Y's '从头开始重新执行整个任务'"
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Inconsistent translation of 'trajectory' as '轨迹' (correct) but 'token' as '标记' (should be '词元')"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Fenced code block content (e.g., 'role: \"user\"') preserved unchanged; headings, images, and formatting consistent with source"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All technical claims preserved, e.g., '2.8 trillion parameters' accurately translated; 'token' correctly rendered as '词元'"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural phrasing: '结果一目了然' (idiomatic) vs. X's '结果直接明了'; '内化成本地能力' (smooth) vs. X's identical phrasing but overall flow better"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent use of '词元' (token), '决策策略' (decision policy), and '轨迹' (trajectory); technical terms like 'MoE' translated as '混合专家' consistently"
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Code block keys translated (e.g., 'role' → '角色') altering original structure; trailing comma added in final code line"
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher accuracy (no critical mistranslations like '标记' for 'token'), superior fluency (more idiomatic expressions), and consistent terminology. While Y modified code block keys, X's accuracy issues in technical terms are more impactful for a technical book.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 26618,
+        "completion_tokens": 2012,
+        "latency_milliseconds": 51622,
+        "attempt_count": 4
+      },
+      "receipt": "judge_receipts/unit-04.json",
+      "receipt_sha256": "501e4096efb6a22fad69ea25be70257f5953281b642babeafd031e4705f76d0b"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 5/9]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Omitted the original text's opening 'Three observations matter here.' and added spaces in 'GPT - 5.6' and 'Figure 1 - 4' which may affect accuracy."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "The added spaces in technical terms like 'GPT - 5.6' cause slight reading interruptions, but overall sentence flow is maintained."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistently uses 'Agent' (代理), 'ReAct loop' (ReAct循环), 'Harness Engineering' (框架工程) with correct technical correspondence."
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "Incorrectly added spaces in the figure title 'Figure 1 - 4:"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "Completely preserves the original content including the opening 'Three observations matter here.' and maintains correct technical term formatting."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural and smooth expression without redundant spaces, e.g., correct 'GPT-5.6' instead of 'GPT - 5.6'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistently uses '原生' for 'native' (e.g., '原生深度研究能力' for 'Native Deep Research Capability') and maintains uniform technical term translation."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Correctly preserves figure title 'Figure 1-4:"
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher accuracy (no omitted opening sentence), better markdown fidelity (correct technical term formatting without extra spaces), and more consistent terminology (uniform '本地' for 'native')."
+      },
+      "usage": {
+        "prompt_tokens": 5827,
+        "completion_tokens": 461,
+        "latency_milliseconds": 17730,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-05.json",
+      "receipt_sha256": "8963aa7f784d019c2a9a8f2f8b75a8f5265172598e0c0ea997ff0cbc283f7028"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 6/9]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Minor omission: In the table under 'Core Principles of the Five Harness Functions', X translates 'Sidecar bypass queries' as 'Sidecar旁路查询' (retaining 'Sidecar'), while Y translates it as '辅助程序绕过查询' (explaining 'Sidecar' as '辅助程序'). The original uses 'Sidecar' as a technical term, so X is accurate here, but Y's explanation is not an error. However, X has no critical omissions/inventions, hence 4."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences flow naturally, e.g., '上下文和工具让代理完成任务——理解任务并采取行动' (Context and Tools let the Agent complete tasks—understand the task and act on it). Occasional awkward phrasing: '不是作为与上下文和工具分离的东西' (not as something apart from Context and Tools) is slightly rigid compared to Y's '不是与上下文和工具分离的东西' (same meaning but smoother in Y)."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent use of key terms: 'Harness'译为'框架' (Framework) consistently; 'Constrain'译为'约束', 'Verify'译为'验证', 'Correct'译为'纠正' throughout. Technical terms like '断路器' (Circuit Breaker), 'MCP tools'保留原样 are accurate and consistent."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Tables, headings (e.g., '### 从提示工程到循环工程：工程范式的演进'), code blocks (e.g., `query_order`), footnotes ([^ch1-graph-engineering]), and links are preserved exactly as in the source. No formatting errors in tables or markdown structure."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Minor addition: In 'OpenAI's engineering team has shared a similar experience', Y adds '也' (also) in 'OpenAI的工程团队也分享了类似的经验', which is not in the original but does not change meaning. No critical inaccuracies, hence 4."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Superior flow in complex sentences: '生产级系统已将重心转移到约束、验证和纠正上：确保工具调用安全、上下文得到管理、错误可恢复' (Production-grade systems have shifted their center of gravity to Constrain, Verify, and Correct: making sure tool calls are safe, context is managed, and errors are recoverable) is more idiomatic than X's '生产级系统已将重心转移到约束、验证和纠正：确保工具调用安全、上下文得到管理、错误可恢复' (missing '上' for natural flow)."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Mostly consistent, but 'Sidecar bypass queries'译为'辅助程序绕过查询' (explaining 'Sidecar' as '辅助程序') deviates from the original's technical term 'Sidecar'. 'PRs'译为'拉取请求' (Pull Requests) is accurate, but less consistent than X's retention of 'PR' in some contexts (though X also uses 'PRs' as 'PR')."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown elements fully preserved: tables with correct alignment, headings, code fences (e.g., `process_refund`), footnotes, and links. The table under 'Core Principles' has identical structure to the source, with no missing rows/columns."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y demonstrates superior fluency with more natural phrasing (e.g., adding '上' in '重心转移到...上' for idiomatic flow) and accurate handling of technical terms with appropriate explanations (e.g., 'PRs'译为'拉取请求' for clarity). While X is strong in terminology consistency, Y's fluency edge makes it more readable without sacrificing accuracy."
+      },
+      "usage": {
+        "prompt_tokens": 6096,
+        "completion_tokens": 830,
+        "latency_milliseconds": 30423,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-06.json",
+      "receipt_sha256": "d3c4fea9d78316c816d7aa1d36002232d1311f611a11f79e0f290c4a12148f08"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 7/9]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, 'Poka-yoke' is correctly translated as '防错法（Poka-yoke）' with the original explanation preserved; 'output token speed' is accurately rendered as '输出词元速度' without altering meaning."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural and idiomatic Chinese. Examples: '保持简单' (Keep it simple), '代理智能的基础' (the foundation of the Agent's intelligence) flow smoothly; complex sentences like '每一层额外的抽象在调试时都是新的盲点' (every extra layer of abstraction is a new blind spot during debugging) are well-structured."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and correct technical terms. 'Agent' is uniformly '代理', 'workflow' is '工作流', 'orchestration patterns' is '编排模式'; 'Poka-yoke' is consistently '防错法（Poka-yoke）'; 'ReAct loop' is 'ReAct 循环'."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements preserved: headings (### 如何选择模型), bold text (**保持简单**), list items (1. **验证用户身份**), and image link ![图 1-5：自主式代理的执行循环](images/fig1-5.svg) are correctly retained."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions or inventions. Key claims like 'evaluate it on your own tasks' are translated as '在自己的任务上评估它'; 'Chinese Models' section details are fully preserved."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Slightly less natural in some phrases. For example, '人工智能代理入门[第7/9部分]' uses brackets instead of the more standard '（第7/9部分）'; '护栏和安全' (guardrails and safety) is less idiomatic than X's '防护措施和安全性'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent terminology: 'Agent' as '代理', 'closed-source' as '闭源', 'multimodal capabilities' as '多模态能力'; 'LLM' is retained as 'LLM' consistently."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown structure intact: headings, bold, lists, and image link ![图1-5：自主代理的执行循环](images/fig1-5.svg) are correctly preserved."
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X has slightly better fluency with more idiomatic expressions (e.g., '防护措施和安全性' vs. '护栏和安全') and consistent use of standard punctuation (parentheses for section numbers: '（第7/9部分）' vs. '[第7/9部分]'). Both are accurate, but X's fluency edge makes it preferable."
+      },
+      "usage": {
+        "prompt_tokens": 5683,
+        "completion_tokens": 630,
+        "latency_milliseconds": 14693,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-07.json",
+      "receipt_sha256": "4c67f0a539f23bb80e0927e509872da1886cfb27ba10002f31cfc815e18b5dab"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 8/9]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, the definition of 'SWE-bench' is accurately translated as '软件工程基准，评估代理自动修复真实GitHub问题能力的基准' (matches the original). The table rows and technical details like 'MCP standards' are preserved."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent, e.g., '自主性也成本更高，且会让错误累积' flows naturally. Minor awkwardness: '代理状态栏' (Agent Status Bar) is less intuitive but technically correct."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and correct technical terms: 'guardrails' consistently translated as '护栏', 'Harness' as '框架', 'RAG' retained, 'prompt injection' as '提示注入' throughout."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements preserved: headings (####), image syntax, table structure, list formatting, and citation [^ch1-3] with correct URL and paper title in English."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Incorrect translation of the citation: the original English title 'Next-generation Constitutional Classifiers: More efficient protection against universal jailbreaks' is mistranslated to Chinese as '下一代宪法分类器：更高效地抵御通用越狱' instead of retaining the original English title. This changes the reference's presentation."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Smoother phrasing in some sections, e.g., '解决开放式问题' (solving open-ended problems) and '大语言模型' (LLM) for clarity. Natural flow in '防护措施是框架中“约束、验证和纠正”层的主要实现方式'."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Inconsistent 'guardrails' translation: mostly '防护措施' but '护栏' in the table (e.g., '安全关注点' column). 'LLM' translated as '大语言模型' which is acceptable but less technical than X's retention of 'LLM'."
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Image syntax and table structure preserved, but the citation [^ch1-3] incorrectly translates the paper title into Chinese instead of keeping the original English, violating markdown code fidelity for references."
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X has higher accuracy (no mistranslated citation), consistent terminology ('guardrails' as '护栏'), and full markdown_code_fidelity (original English citation preserved). Y's fluency is slightly better but is outweighed by X's superior accuracy, terminology consistency, and markdown fidelity."
+      },
+      "usage": {
+        "prompt_tokens": 5921,
+        "completion_tokens": 565,
+        "latency_milliseconds": 15807,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-08.json",
+      "receipt_sha256": "b803490938b66781b9d6fb8573c8d88637c3b077d4e630847ac6d64b384ee05b"
+    },
+    {
+      "chapter": "Getting Started with AI Agents [Part 9/9]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Accurately translates technical content with minor omissions. For example, the English source's opening line 'Seen through the lens of Harness engineering' is correctly translated as '从Harness工程的角度来看' in X, preserving the technical perspective. However, X adds an unnecessary section title '[第9/9部分]AI代理入门' which is not present in the original Markdown."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent with natural phrasing. For instance, 'cross-cutting concern' is translated as '跨领域关注点' with the explanatory clause '就像软件工程中的日志必须贯穿每个模块一样' smoothly integrated. Minor awkwardness in '代理式RAG' (vs. Y's '代理式RAG' which is identical here)."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and correct technical term usage. 'Harness' is retained as 'Harness' throughout (e.g., 'Harness工程', 'Harness组件'), 'ReAct loop' as 'ReAct循环', 'ablation' as '消融实验'. Terms like '提示注入' (prompt injection) and '身份冒充' (identity impersonation) are accurately translated and consistent."
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "Table structure and basic Markdown elements are preserved, but heading levels are incorrect. Original uses '## Chapter Summary' and '## Thought Questions', while X demotes these to '### 章节总结' and '### 思考问题'. Additionally, X adds an extraneous top-level heading '### 从Harness工程视角看[第9/9部分]AI代理入门' not in the source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 3,
+              "evidence": "Significant terminology inconsistency undermines accuracy. 'Harness' is incorrectly translated as '框架' (framework) throughout, altering the core concept (e.g., '框架工程' instead of 'Harness工程'). This changes the author's intended meaning, as 'Harness' specifically refers to constrain/verify/correct mechanisms, not a general 'framework'. Other content is mostly accurate but marred by this critical mistranslation."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Fluent and natural phrasing overall. 'cross-cutting concern' is translated as '横切关注点' with the explanatory example smoothly rendered. Sentences like '安全必须从第一行代码开始设计，而不是在发布前修补' flow well. Comparable to X in fluency, with minor differences in style (e.g., '可逆转操作' vs. X's '不可逆操作'—both correct)."
+            },
+            "terminology": {
+              "score": 2,
+              "evidence": "Critical mistranslation of 'Harness' as '框架' (framework) throughout, which is technically incorrect and inconsistent with the source's definition of 'Harness' as constrain/verify/correct mechanisms. Other terms are mostly consistent but this single error invalidates key technical claims."
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Heading levels are mostly correct: '## 章节总结' and '## 思考问题' match the original's '## Chapter Summary' and '## Thought Questions'. Table structure, list items, and ★ symbols are preserved. No extraneous headings added, unlike X. Minor issue: loss of the italicized '(Supervised Fine-Tuning)' in 'SFT (Supervised Fine-Tuning)' (translated as 'SFT（监督微调）' in both X and Y, which is acceptable)."
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X is preferred because it accurately preserves the critical term 'Harness' and maintains the author's intended meaning, whereas Y's mistranslation of 'Harness' as '框架' (framework) fundamentally alters the core technical concept. X has better terminology consistency and higher accuracy despite minor Markdown heading errors, while Y's critical terminology error undermines its technical validity.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 4975,
+        "completion_tokens": 918,
+        "latency_milliseconds": 23526,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-09.json",
+      "receipt_sha256": "9e7b6351d3031b2bbdfa62c3bc30d687000e3553686570a06e933f060968ff46"
+    },
+    {
+      "chapter": "Context Engineering [Part 1/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Omission: 'Context Engineering' heading in X is demoted to '###' instead of '#'. Inconsistency: 'Jiayi Weng' is translated as '翁佳怡' in X but '翁佳怡' in Y (same), but X retains 'LLM' untranslated in some places while Y translates it as '大语言模型（LLM）' consistently."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Slightly awkward phrasing: '该上下文' (the context) is overused in X, e.g., '设计和管理该上下文' vs. Y's '设计和管理该上下文' (similar, but Y uses '该' more naturally). '产出高质量的工作' in X is less idiomatic than Y's '产生高质量的工作'."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Inconsistent translation: 'Agent' is sometimes '代理' (correct) but '人工智能代理' (redundant) in X; Y consistently uses '代理'. 'Context window' in Figure 2-1 caption is translated as '上下文窗口' in X, which is correct, same as Y."
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "Heading level error: X uses '### 上下文工程' for the main title instead of '# 上下文工程' as in source. Code blocks and figures are preserved correctly, e.g., JavaScript code and image links like 'images/fig2-1.svg' are intact."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All headings, figures, and key claims are preserved. 'Jiayi Weng' is correctly translated as '翁佳怡', and 'LLM' is consistently translated as '大语言模型（LLM）' with parenthetical acronym. No omissions in tool role descriptions (e.g., 'tool_call_id' is retained correctly)."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural phrasing: '产生高质量的工作' (produce high-quality work) is more idiomatic than X's '产出高质量的工作'. '对AI友好的环境' (AI-friendly environment) flows better than X's '对人工智能友好的环境'. Sentence structure in '上下文设定了代理能力的上限' is smoother than X's identical phrase (but Y's overall flow is superior)."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent translation: 'Agent' → '代理', 'Context Engineering' → '上下文工程', 'tool_call_id' → 'tool_call_id' (correctly untranslated). 'Git branching strategy' → 'Git分支策略' (consistent with tech standards). 'API-level context structure' → 'API级上下文结构' (accurate)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings match source levels: '# 上下文工程' (main title), '## 上下文：代理能力的上限' (correct level 2). Code blocks with JavaScript and comments are preserved exactly, e.g., '// ═══ 代理框架构造的请求 ═══' is identical. Figure links like 'images/fig2-2.svg' are unchanged."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher accuracy (no heading level errors), superior fluency (more idiomatic phrasing), consistent terminology, and perfect markdown fidelity (correct heading hierarchy), whereas X has heading level mistakes and inconsistent terminology.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5741,
+        "completion_tokens": 786,
+        "latency_milliseconds": 21587,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-10.json",
+      "receipt_sha256": "9c79e70dedf8166c5a980dd4e4927dfba87632e6eac2231a10ebda6c7646e8ae"
+    },
+    {
+      "chapter": "Context Engineering [Part 2/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All technical claims, such as 'the Agent framework can execute them in parallel' and 'the model decides which tool to call', are accurately translated without omissions or inventions. The key concept of 'ReAct loop' is correctly rendered as 'ReAct循环'."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences are fluent, e.g., '这种责任划分是代理架构的核心' (This division of responsibility is central to Agent architecture). However, '代理框架执行实际的执行' (the Agent framework performs the actual execution) is slightly redundant with repeated '执行' (execution)."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent use of technical terms: 'tool call requests' → '工具调用请求', 'API-level implementation' → 'API级实现', 'stub' → '存根', 'max_iterations' → 'max_iterations' (retained as is, standard practice)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements are preserved: JavaScript/Python code blocks with correct syntax highlighting, headings (###), comments in code (e.g., // ← 由开发者编写), and code section labels like '// ═══ 由代理框架构造的请求（第一次调用） ═══'."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All technical content is accurately translated, including the description of the Agent loop: '请求→工具调用→执行→返回结果→下一次请求' (request→tool call→execution→return results→next request) matches the source exactly."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "More natural phrasing than X in key sentences, e.g., '代理框架执行实际的调用' (the Agent framework performs the actual calls) avoids redundancy compared to X's '执行实际的执行' (performs the actual execution). Sentences like '循环有一个主要分支' (The loop has one main branch) flow smoothly."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent terminology identical to X: 'tool_calls' → 'tool_calls' (retained), 'stateless nature' → '无状态性质', 'ReAct loop' → 'ReAct循环'. No inconsistent term usage."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown structure is fully preserved, including code blocks, headings, comments, and special characters like '// ═══' and '// ──'. Code syntax and formatting (e.g., Python indentation) are unchanged."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y demonstrates slightly better fluency by resolving redundant phrasing in X (e.g., '执行实际的执行' vs. '执行实际的调用') while maintaining identical accuracy, terminology consistency, and markdown fidelity. This makes Y more readable without sacrificing technical precision.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 7855,
+        "completion_tokens": 617,
+        "latency_milliseconds": 19063,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-11.json",
+      "receipt_sha256": "886c93f4d84c1098b8d02763dd775b9c868c2a1ff39f320fe88b7b682f7b20d0"
+    },
+    {
+      "chapter": "Context Engineering [Part 3/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, '首字节时间' (TTFT) is accurately translated, and technical details like '0.6B参数模型' are preserved."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Mostly fluent, but '首字节时间' (TTFT) is slightly awkward; '首词元时延' in Y is more natural for technical context."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Consistent but '标记' (token) is less precise than '词元' in Y, which is the standard technical term for 'token' in LLM contexts."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings, figures (e.g., ![图2-4...]), code blocks, and equations are preserved exactly."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. All technical details like '0.6B参数模型' and 'TTFT' impact are accurately translated."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "More natural phrasing, e.g., '首词元时延' (TTFT) instead of '首字节时间' in X, and '您' for formal address in instructions."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and precise technical terms: '词元' (token), '首词元时延' (TTFT), and '专业知识' (specialized knowledge) align with LLM technical standards."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings, figures (e.g., ![图2-5...]), code blocks, and formatting are preserved exactly."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has superior fluency ('首词元时延' vs. '首字节时间') and more precise terminology ('词元' for 'token' vs. '标记'), which are critical for technical documentation. Both X and Y are accurate and preserve markdown, but Y's terminology and fluency better serve technical readers."
+      },
+      "usage": {
+        "prompt_tokens": 6197,
+        "completion_tokens": 441,
+        "latency_milliseconds": 11053,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-12.json",
+      "receipt_sha256": "bd85c07af71e9eeb9b7726725a242d6affb2b2c8a97c6b8c5fc635fe972792ae"
+    },
+    {
+      "chapter": "Context Engineering [Part 4/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, '键值缓存（KV Cache）' retains the original term with parentheses, and '智能体（Agent）' is consistently translated with clarification. The technical note's three conclusions are fully preserved, including details like '字节完全相同' (byte-for-byte identical)."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent, but some phrases are slightly verbose, e.g., '大语言模型（LLM）会缓存已处理前缀的计算' (LLM caches computation for the prefix it has already processed) is accurate but longer than necessary. '智能体' (Agent) is natural in context."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and correct technical terms: '键值缓存（KV Cache）', '注意力机制', '词元（token）', '热力图', '上下文长度' are used consistently. '智能体（Agent）' is properly clarified on first use."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings, blockquotes, tables, images (e.g., ![图2-6：注意力机制直观理解](images/fig2-6.svg)), code fences (`attention_visualization`), and footnotes ([^lost-in-the-middle]) are all preserved correctly."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions or inventions. Key technical claims like '字节完全相同' (byte-for-byte identical) and '前缀更改时缓存失效' are accurately translated. The three core conclusions are fully preserved."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "More concise and natural phrasing: '使延迟和成本成倍增加' (multiply latency and increase costs) flows better than X's '成倍增加时延和成本'. '可以跳过详细原理' (you can skip) is more natural than X's '您可以跳过'. Consistent use of '你' instead of '您' maintains a coherent tone."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Most terms are correct, but '代理' (Agent) lacks clarification on first use, potentially confusing non-technical readers. '标记（token）' is used consistently, but '连接' (concatenate) is less precise than X's '拼接' (splice/concatenate) for message assembly."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown elements are fully preserved: headings, blockquotes, tables, images (e.g., ![图2-7：注意力热力图可视化](images/fig2-7.png)), code fences (`\"USER: ... ASSISTANT: ...\"`), and footnotes ([^lost-in-the-middle]) are all correctly maintained."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher fluency with more natural phrasing (e.g., '使延迟和成本成倍增加' vs. X's '成倍增加时延和成本') and maintains consistent tone. While X has slightly better terminology clarification ('智能体（Agent）'), Y's concise expression makes it more readable without sacrificing accuracy or technical fidelity.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 13326,
+        "completion_tokens": 1515,
+        "latency_milliseconds": 36069,
+        "attempt_count": 2
+      },
+      "receipt": "judge_receipts/unit-13.json",
+      "receipt_sha256": "596fe7125ebd43b164bfc093a8af14e71988fd3c0f72fd59ae6bd1bba96cea5a"
+    },
+    {
+      "chapter": "Context Engineering [Part 5/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Omitted 'Key-Value' in 'KV Cache' on first mention; retained technical terms like 'token' consistently but missed explicit expansion of acronym initially."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally smooth, but phrases like '远程计划' (remote plan) for 'long-range plans' are slightly awkward compared to Y's '长期计划' (long-term plans)."
+            },
+            "terminology": {
+              "score": 3,
+              "evidence": "Inconsistently uses '标记' (token) without expanding 'KV Cache' until later; Y consistently uses '键值缓存' (KV Cache) and '词元' (token) with clear expansions."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements (headings, images, bold text) are preserved identically to source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "Accurately translates all content including technical details like 'distribution out-of-input' and model-specific behaviors (DeepSeek R1/V4, Claude)."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural phrasing such as '长期计划' (long-term plans) and '时延' (latency) improves readability over X's '远程计划' and '延迟'. Terminology expansions like '键值缓存 (KV Cache)' aid clarity."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistently uses '键值缓存' (KV Cache) with acronym expansion, '词元' (token), and maintains technical consistency (e.g., '分布外输入' for 'out-of-distribution input')."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown structure, images (e.g., 'images/fig2-10.svg'), and bold text (e.g., '**对于代理场景，思维不是浪费而是状态**') are fully preserved."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y outperforms X in accuracy (complete technical details), fluency (natural phrasing), and terminology (consistent expansions like '键值缓存 (KV Cache)' and '词元' for 'token'). Both maintain perfect markdown fidelity, but Y's superior technical translation makes it preferred.",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5038,
+        "completion_tokens": 540,
+        "latency_milliseconds": 14435,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-14.json",
+      "receipt_sha256": "47d199fff3fc434993b0553ef8907012ca1ec92fc647edf4d39d8ed04887de08"
+    },
+    {
+      "chapter": "Context Engineering [Part 6/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, 'the correct approach is to append time information as part of a user message at the end of the conversation, or only obtain it through a tool call when truly needed' is accurately translated as '正确的方法是在对话末尾将时间信息作为用户消息的一部分附加，或者仅在真正需要时通过工具调用获取它'."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Natural and smooth Chinese expression. For instance, 'This means prompt ordering is driven primarily by caching economics and only secondarily by semantic logic' is translated as '这意味着提示顺序主要由缓存经济性驱动，其次才是语义逻辑' with proper word order and collocation."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and technically correct terminology. 'KV Cache' is consistently 'KV缓存', 'Prompt Cache' as '提示缓存', 'token' as '词元' throughout."
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Headings, code blocks (e.g., `kv-cache`), and equations are preserved. However, the blockquote formatting for the experiment section in the original English is not retained in X; X uses '####' heading instead of blockquote for 'Experiment 2-3 ★★: Common but Harmful Context Management Patterns'."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, 'the model must infer role boundaries and dialogue structure from weaker signals, leading to problems such as repeated operations...' is accurately translated as '模型必须从较弱的信号中推断角色边界和对话结构，导致重复操作...等问题'."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally fluent but has minor awkwardness. For example, 'sub-agents must be byte-aligned with the parent Agent' is translated as '子代理必须与父代理字节对齐' which is correct but slightly less natural than X's '子代理必须与父代理字节对齐' (same wording here, but other instances like '旁查询' for 'side query' in Y is less standard than X's '辅助查询')."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent terminology. 'KV Cache' as 'KV缓存', 'Prompt Cache' as '提示缓存', 'token' as '标记' (consistent choice, though different from X's '词元', both are technically acceptable)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Blockquote formatting for the experiment section is preserved with '> ' prefixes, headings (###), code blocks (e.g., `kv-cache`), and footnotes ([^ch2-2]) are all correctly maintained."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher markdown_code_fidelity (5 vs. 4) by preserving the original blockquote formatting for the experiment section, while both have equal accuracy and terminology scores. Y's fluency is slightly lower than X's but still acceptable, and the markdown fidelity advantage makes Y preferred."
+      },
+      "usage": {
+        "prompt_tokens": 5594,
+        "completion_tokens": 656,
+        "latency_milliseconds": 16581,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-15.json",
+      "receipt_sha256": "6312b5b43cd3922e8be0a44c281bc023e50a13b684e79aabcdb30ff398cd9478"
+    },
+    {
+      "chapter": "Context Engineering [Part 7/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "遗漏了原文开头的章节标题标识'### 上下文工程[第7/17部分]'后的空行；将'logit cosine similarity'译为'对数似然余弦相似度'，存在术语偏差（应为'logit余弦相似度'）。"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "部分句子稍显生硬，如'仅用约1%的计算量就能产生接近完全重新计算的结果'可优化为'计算量仅需约1%即可产生接近完全重新计算的结果'；整体表达通顺，符合技术文本风格。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "关键术语如'思维链（CoT）'、'旋转位置嵌入（RoPE）'、'标准操作程序（SOP）'等翻译准确且一致；'Agent'统一译为'代理'，符合上下文。"
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "正确保留了代码块、列表、引用等Markdown元素；但将二级标题'## Prompt Engineering: Optimizing the System Prompt'错误转换为三级标题'### 提示工程：优化系统提示'，层级混乱。"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "完整翻译了原文所有内容，无遗漏或增删；'logit cosine similarity'准确译为'logit余弦相似度'，技术细节保留完整。"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "语句流畅自然，如'产生接近完全重新计算的结果，且计算量约为1%'比X的对应表述更通顺；整体行文符合中文表达习惯，可读性强。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "术语翻译准确一致，'Agent'译为'智能体'符合技术文献常见译法；'Standard Operating Procedure (SOP)'译为'标准操作程序（SOP）'正确；其他专业术语如'RoPE'、'CoT'等处理规范。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "严格保留了原文的Markdown结构，包括标题层级（二级标题'##'正确对应）、代码块、列表、引用格式；章节标题后的空行、代码缩进等细节均与原文一致。"
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y在准确性（无术语偏差和内容遗漏）、流畅性（语句更自然）和Markdown格式保真度（标题层级正确）上均优于X；X存在标题层级错误和术语翻译偏差，而Y完全符合技术翻译的严格要求。",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 5954,
+        "completion_tokens": 550,
+        "latency_milliseconds": 16790,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-16.json",
+      "receipt_sha256": "936a01c30d38de70f51d002a34696c84e65c1feb7c00eb15c83bf6fe9e7503bc"
+    },
+    {
+      "chapter": "Context Engineering [Part 8/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "完整保留了英文原文的所有信息，包括技术细节如\"键值缓存的前缀属性\"、\"因果注意力\"等，无遗漏或篡改。例如对\"the model must have been trained on the pattern of 'tool definitions appearing mid-conversation'\"的翻译准确无误。"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "整体流畅，但部分句子稍显生硬，如\"诸如此类的细节决定了系统行为的一致性\"可优化为更自然的表达。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "技术术语翻译一致且准确，如\"few-shot examples\"译为\"少样本示例\"，\"KV Cache\"译为\"键值缓存\"，\"token\"译为\"词元\"，全文保持统一。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown格式完全保留，包括三级标题、代码块（如`timezone: 'America/New_York'`）、引用标记（[^ch2-toolsearch-oai]）及链接，结构与原文一致。"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "准确传达了原文所有核心信息，技术概念如\"progressive disclosure\"译为\"渐进披露\"，\"cache invalidation\"译为\"缓存失效\"等均正确，无信息增减。"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "语言表达更自然流畅，如将\"details like these determine the consistency\"译为\"诸如此类的细节决定了系统行为的一致性\"比X更通顺，符合中文表达习惯。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "术语翻译准确且一致，如\"token\"统一译为\"标记\"，\"KV Cache\"译为\"KV缓存\"，\"tool definition\"译为\"工具定义\"，与行业标准一致。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown结构完整，标题层级、代码块（如`defer_loading: true`）、脚注及链接格式均与原文一致，未出现格式错误。"
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y在保持与X同等准确性、术语一致性和格式保真度的基础上，语言表达更流畅自然，如对复杂句式的处理（如\"the model can adapt to these patterns within the current context\"的翻译）更符合中文阅读习惯，提升了可读性。"
+      },
+      "usage": {
+        "prompt_tokens": 4944,
+        "completion_tokens": 508,
+        "latency_milliseconds": 14920,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-17.json",
+      "receipt_sha256": "78115a9303b01e7a71f6a8811639d5c01b93ab8232a4b2cda88ef3ef8b1a0c42"
+    },
+    {
+      "chapter": "Context Engineering [Part 9/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "完整保留了英文源的所有内容，包括实验描述、技术细节（如“Tau-Bench框架”“消融研究方法”）、防御策略（如“来源标记”“结构化角色”）等，无遗漏或篡改。例如，“当规则没有结构地呈现时，模型难以识别优先级和依赖关系”准确对应英文原文。"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "语言表达流畅自然，符合中文技术文档规范。如“代理需要处理航班变更、退款处理、库存查询等复杂多步任务”语句通顺，专业术语与自然语言衔接得当。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "术语一致且准确。“消融研究”“提示注入”“结构化角色”“源标记”等关键术语翻译统一，技术术语如“function signatures”译为“函数签名”准确无误。"
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "保留了大部分Markdown元素，如标题层级（###、##）、引用块（>）、代码块（`prompt-engineering`）、图片链接（![图2-11：技能渐进披露机制](images/fig2-11.svg)）。但开头“### 上下文工程[第9/17部分]”为英文源不存在的额外内容，影响完整性。"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "完整覆盖英文源内容，未出现信息丢失或错误。例如，“当规则没有结构地呈现时，模型难以识别优先级和依赖关系”准确翻译，实验步骤和结论完整保留。"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "整体流畅，但部分语句存在生硬感。如“我们实施了三种不同的风格”中“实施”不如X的“实现”自然；“去除了层级结构”比X的“移除了层级结构”稍显口语化。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "术语翻译准确且一致。“ablation study”译为“消融研究”，“prompt injection”译为“提示注入”，“source tagging”译为“源标记”，与X保持一致，技术术语无歧义。"
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "存在多处Markdown格式错误：1. 实验标题“**实验2-4 ★★：提示工程中的消融研究**”和“**实验2-5 ★★：提示注入攻击与防御实验**”错误使用####（四级标题）而非引用块内加粗；2. 图片链接“![图2 - 11：技能渐进披露机制](images/fig2 - 11.svg)”中文件名和标题的空格导致格式错误；3. 部分列表项缺少缩进，如“- **源标记**：...”前无缩进。"
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X在markdown_code_fidelity上表现更优（4分 vs Y的3分），仅存在一处无关紧要的额外标题，而Y存在多处关键Markdown格式错误（如标题层级错误、图片链接空格问题），影响文档结构完整性。两者在accuracy、terminology上持平，X的fluency略优于Y。",
+        "schema_repairs": [
+          "lifted duplicated preference fields out of variants"
+        ]
+      },
+      "usage": {
+        "prompt_tokens": 12064,
+        "completion_tokens": 1376,
+        "latency_milliseconds": 30214,
+        "attempt_count": 2
+      },
+      "receipt": "judge_receipts/unit-18.json",
+      "receipt_sha256": "e027c6ad4ac31df8c3b8afdd017754c9db0e1ae36396fc8acc3d3e18ddb7eef4"
+    },
+    {
+      "chapter": "Context Engineering [Part 10/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "准确翻译了所有关键概念，如“context rot”译为“上下文老化”（符合技术文档规范），“Progressive Disclosure”译为“逐步披露”，未出现遗漏或误译。例如，“Negative examples are not optional; they are essential to accurate Skill routing.”译为“负面示例不是可选的；它们对于准确的技能路由至关重要。”完全忠实原文。"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "语言流畅自然，符合中文技术文档表达习惯。例如，“the model's instruction-following ability is strongest for content in the system position”译为“模型在系统位置的内容的指令遵循能力最强”，语句通顺，无语法错误。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "术语一致且准确，如“Agent”统一译为“智能体”，“KV Cache”译为“键值缓存（KV Cache）”并保持一致，“token”译为“词元”，“instruction-following”译为“指令遵循”，符合技术翻译规范。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "所有Markdown元素保留完整，包括标题层级（###）、列表项（-）、引用块（**...**）、图片链接（![Figure...](images/...)）、脚注（[^ch2-3]）及代码格式（`SKILL.md`），未出现格式丢失或错乱。"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "存在少量术语误译，如“context rot”译为“上下文腐烂”（非标准技术术语，应为“上下文老化”或“上下文衰退”），“token”译为“标记”（技术文档中更常用“词元”）。“Negative examples”译为“否定示例”（应为“负面示例”更准确）。"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "整体流畅，但部分表达略显生硬。例如，“the model needs to accurately identify and follow the instructions within the Skill in the middle of a long context”译为“模型需要在长上下文中准确识别并遵循技能中的指令”，“长上下文”表述稍显冗余，可优化为“上下文中间”。"
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "部分术语不一致或不规范，如“Agent”译为“代理”（技术文档中“智能体”更通用），“KV Cache”译为“KV缓存”（缺少括号标注原文），“instruction-following”译为“指令遵循”（正确），但“token”译为“标记”（不标准）。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown格式保留完整，标题、列表、图片、脚注、代码格式等均未丢失，与原文结构一致。"
+            }
+          }
+        },
+        "preferred": "X",
+        "preference_evidence": "X在准确性（无关键术语误译）、术语规范性（“词元”“负面示例”“智能体”等标准译法）和流畅度（更自然的中文表达）上优于Y，且Markdown格式保真度相同。Y存在“上下文腐烂”“标记”等不规范术语，影响技术文档的专业性。"
+      },
+      "usage": {
+        "prompt_tokens": 12632,
+        "completion_tokens": 1369,
+        "latency_milliseconds": 31875,
+        "attempt_count": 2
+      },
+      "receipt": "judge_receipts/unit-19.json",
+      "receipt_sha256": "91ebfe6a5c103cc8c8f0cb4a158cc7e790cc272a8be3d007d837057c7b47fb55"
+    },
+    {
+      "chapter": "Context Engineering [Part 11/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims. For example, '写入一次，反复受益' accurately translates 'write once, benefit repeatedly'; '技能机制对KV缓存非常友好' correctly reflects 'the Skills mechanism is highly KV Cache-friendly'."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences are smooth, e.g., '这才是真正对缓存不友好的情况' flows naturally. Minor awkwardness: '技能内容通过上述渐进披露机制按需加载，不影响缓存的前缀' could be more polished, but still understandable."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Consistent use of '技能' (Skill), 'KV缓存' (KV Cache), '系统提示' (System Prompt). Inconsistency: '代理' vs. '智能体' (both translate 'Agent'; X uses '代理' consistently, which is acceptable but Y uses '智能体' consistently as well)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings (###, ##), figures (![图2-14...]), blockquotes (>), code fences (```xml), and experiment formatting are all preserved correctly."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All key claims are retained, e.g., '写入一次，重复受益' matches 'write once, benefit repeatedly'; '技能+通用执行器模型下，工具集保持很小' accurately reflects the source."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Smoother phrasing overall, e.g., '这才是真正不友好于缓存的情况' is more natural than X's version. '智能体状态栏通过故意将关键元信息以结构化格式放置在上下文末尾来解决这个问题' is highly readable."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Strictly consistent use of '智能体' (Agent), '词元' (token), '技能' (Skill), '工具集' (tool set). No internal inconsistencies; technical terms like '注意力衰减' (attention decay) are correctly translated."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown elements are fully preserved: headings, figure links, blockquotes, code blocks (e.g., the XML snippet in Experiment 2-7), and experiment structure are identical to the source."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher fluency with more natural phrasing (e.g., '不友好于缓存' vs. X's '对缓存不友好') and stricter terminology consistency (consistently using '智能体' for 'Agent' instead of X's '代理'). Both have perfect accuracy and markdown fidelity, but Y's superior fluency and terminology consistency make it preferable."
+      },
+      "usage": {
+        "prompt_tokens": 5838,
+        "completion_tokens": 585,
+        "latency_milliseconds": 15547,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-20.json",
+      "receipt_sha256": "d000f14155f2689952d11aba54f3a7ffc5b8d24f04b0b48be2e0164898318a20"
+    },
+    {
+      "chapter": "Context Engineering [Part 12/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Minor omission: '2B model' in English is translated as '20亿参数模型' (accurate) but '2B' is not retained as an abbreviation; 'reasoning tokens' translated as '推理词元' (correct) but 'tokens' is sometimes '词元' vs Y's '标记' (both acceptable). No major factual errors."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Generally smooth, e.g., '上下文蒸馏' (Context Distillation) is consistently rendered; sentences like '注意力分布变得更稀疏' flow naturally. Slight awkwardness in '旁通信息' (side-channel information) compared to Y's '旁道信息'."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Consistent use of '上下文蒸馏' (Context Distillation), '状态栏' (status bar), '推理词元' (reasoning tokens). '20亿参数模型' is accurate for '2B model' but less concise than Y's '2B模型'."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings, list items, code blocks (e.g., `Clothes: 9 items...`), footnotes ([^ch2-7], [^ch2-5]), and bold text (**上下文蒸馏**) are all preserved correctly."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Minor omission: '2B model' retained as '2B模型' (good) but 'ground-truth-level accuracy' translated as '真实水平的准确率' (missing 'ground-truth' specificity); 'lossy projection' translated as '有损投影' (correct). No major factual errors."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Very smooth, e.g., '上下文提炼' (Context Distillation) flows naturally; '推理标记' (reasoning tokens) is concise; '旁道信息' (side-channel information) is more idiomatic than X's '旁通信息'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and precise: '上下文提炼' (Context Distillation), '2B模型' (2B model, retains abbreviation), '推理标记' (reasoning tokens), '有损投影' (lossy projection). '验证者' (verifier) is accurate for 'verifier'."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings, list items, code blocks, footnotes, and bold text are all preserved correctly, identical to X in structure."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher fluency (more idiomatic '旁道信息', smoother phrasing) and superior terminology conciseness ('2B模型' vs X's '20亿参数模型') without sacrificing accuracy. Both have minor issues, but Y's terminology and fluency edge make it preferable."
+      },
+      "usage": {
+        "prompt_tokens": 5841,
+        "completion_tokens": 612,
+        "latency_milliseconds": 17243,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-21.json",
+      "receipt_sha256": "9515a1e3b705493f4bb3ab8ea9c9b9a9c5063119c39f9a6626088d73c5f72bc7"
+    },
+    {
+      "chapter": "Context Engineering [Part 13/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "Omission of the section title prefix '上下文工程[第13/17部分]' in the original English source. All technical content is accurately translated without additions or distortions."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Minor awkwardness in phrases like '框架借用' (X) vs. 'Agent框架借用' (Y), where Y adds clarity by retaining 'Agent'. Overall, sentences flow naturally with correct grammar."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Inconsistent translation of 'token' as '标记' (X) instead of '词元' (Y), which is the more technically precise term in NLP contexts. Other terms like 'KV Cache' and 'CLI/GUI' are consistently translated."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "All Markdown elements (headings, image links, code blocks, bold text) are preserved exactly. The code block formatting and <agent_status> tags are identical to the source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, additions, or changes to technical claims. All content, including the section title prefix, is fully translated."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Smoother phrasing with explicit references like 'Agent框架' and natural expressions such as '新词元' (new tokens) instead of '标记' (markers), enhancing readability."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and technically correct terminology: 'KV Cache' translated as '键值缓存', 'token' as '词元', and 'Agent framework' explicitly retained as 'Agent框架'."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Perfect preservation of Markdown structure, including headings, image syntax, code fences, and bolded terms. Code block content and formatting are identical to the source."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y demonstrates higher accuracy by including the section title prefix, superior fluency with natural phrasing, and more precise terminology (e.g., '词元' for 'token'). Both maintain full markdown_code_fidelity, but Y's consistent technical terminology and complete content translation make it preferable."
+      },
+      "usage": {
+        "prompt_tokens": 4012,
+        "completion_tokens": 470,
+        "latency_milliseconds": 13819,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-22.json",
+      "receipt_sha256": "b4b2f6a294a27f9da91c24deebfeb234f41ad9a6d0826f8a2c6d7dcc2925699d"
+    },
+    {
+      "chapter": "Context Engineering [Part 14/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "No omissions, inventions, or changed claims found. For example, 'timestamp tracking' is accurately translated as '时间戳跟踪', and technical details like 'FileNotFoundError' are preserved. The experimental data '15 iterations vs 21 iterations' is correctly retained."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences are fluent, e.g., '从认知负荷理论角度看，待办事项列表充当外部记忆——就像人类处理复杂项目时写清单一样，Agent也需要记录“已做之事和待做之事”的地方。' However, '这使Agent能够理解时间关系' could be more natural as '这让智能体能够理解时间关系' (using '智能体' instead of 'Agent' for consistency)."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent and correct technical terms: 'KV Cache' (键值缓存), 'call stack' (调用栈), 'cognitive load theory' (认知负荷理论), 'emergent effect' (涌现效应). 'TODO List Management' is consistently translated as '待办事项列表管理'."
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "Headings are demoted (e.g., original '## Context Compression Strategies' becomes '### 上下文压缩策略' in X). Fenced code blocks and equations are preserved, but heading hierarchy is altered, reducing structural fidelity."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All content is accurately translated without omissions or inventions. For instance, 'error-recovery success rate from 60% to 95%' is correctly translated, and 'Manus' is retained as 'Manus'. The citation '[^ch2-8]' is properly preserved."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Highly fluent and natural, e.g., '当文件未找到时，它首先检查目录，然后列出可用文件，如果仍未找到，将任务标记为已取消并添加替代任务。' '代理' (instead of 'Agent') is consistently used, enhancing readability."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Most terms are correct, but 'persistence' is translated as '持久性' (accurate), while 'vigilance' is '警觉性' (correct). However, 'TODO item status 'pending'' is translated as '待办' instead of '待处理' (inconsistent with X's '待处理', though both are acceptable)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown structure is fully preserved: headings (e.g., '## 上下文压缩策略'), lists, code blocks (e.g., `rewrite_todo_list`), and citations ([^ch2-8]) maintain original hierarchy and formatting."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y has higher fluency (consistently using '代理' instead of mixing 'Agent' and '智能体') and perfect markdown_code_fidelity (preserving heading hierarchy), while matching X in accuracy and terminology. X's heading demotion reduces structural clarity compared to Y's faithful markdown preservation."
+      },
+      "usage": {
+        "prompt_tokens": 6080,
+        "completion_tokens": 668,
+        "latency_milliseconds": 14972,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-23.json",
+      "receipt_sha256": "9d93d369ba9f837137fd565e334287817765ace1ef097bd9ab7730878f96dd8f"
+    },
+    {
+      "chapter": "Context Engineering [Part 15/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "X accurately translates most content, but misrenders 'Context Rot' as '上下文腐烂' (context rot) instead of the correct technical term '上下文旋转' (context rotation)."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "X uses natural phrasing like '注意力变得分散' (attention becomes diffuse) and '精炼的知识表示' (refined knowledge representation), but '上下文中学习' (in-context learning) is slightly awkward compared to Y's '上下文学习'."
+            },
+            "terminology": {
+              "score": 3,
+              "evidence": "X uses inconsistent terms: '代理' (agent) vs. Y's consistent '智能体' (agent); '上下文中学习' (in-context learning) vs. Y's '上下文学习'; mistranslates 'Context Rot' as '上下文腐烂' (context rot) instead of '上下文旋转' (context rotation)."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "X preserves all Markdown elements: headings (###), bold text, blockquotes, list items, and the image link ![图2-16：上下文压缩策略比较](images/fig2-16.svg) are correctly maintained."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "Y accurately translates all technical terms, including 'Context Rot' as '上下文旋转' (context rotation), and preserves original meaning without omissions or inventions."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Y uses smooth, natural phrasing: '智能体' (agent) consistently, '上下文学习' (in-context learning) flows better, and '逐一计数' (counting one by one) is more idiomatic than X's '逐个计数'."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Y uses consistent technical terms: '智能体' (agent), '上下文学习' (in-context learning), '上下文旋转' (context rotation), '键值缓存' (KV cache), and '词元' (token) are all accurate and consistent."
+            },
+            "markdown_code_fidelity": {
+              "score": 4,
+              "evidence": "Y incorrectly changes the second-level heading '### The Internal Mechanism...' to '####' (four hashes) instead of '###' (three hashes), breaking heading hierarchy; other elements like bold, images, and lists are preserved."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y outperforms X in accuracy (correct '上下文旋转' for Context Rot), fluency (more natural phrasing), and terminology (consistent '智能体' and correct technical terms). Despite a minor Markdown heading error (#### instead of ###), Y's overall quality is higher than X's inconsistent terminology and misrendering of 'Context Rot'."
+      },
+      "usage": {
+        "prompt_tokens": 23151,
+        "completion_tokens": 2955,
+        "latency_milliseconds": 66281,
+        "attempt_count": 5
+      },
+      "receipt": "judge_receipts/unit-24.json",
+      "receipt_sha256": "caa0c123bb5aad077100a3a1e90dd77c06f43fdb2a6cfefa38086f019e281ebe"
+    },
+    {
+      "chapter": "Context Engineering [Part 16/17]",
+      "alias_to_mode": {
+        "X": "orchestration",
+        "Y": "single_agent"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 4,
+              "evidence": "遗漏了英文原文中实验2-9标题前的引用块格式，但核心内容完整；将\"token\"统一译为\"词元\"，虽非最佳但未改变技术含义；\"fallback\"保留英文未译，略有不规范但不影响理解。"
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "整体行文流畅自然，如\"上下文感知压缩通过动态调整压缩焦点最大化信息价值\"符合中文表达习惯；专业术语与普通表述衔接顺畅，无生硬翻译感。"
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "\"token\"译为\"词元\"（Y译为\"标记\"），虽技术上可接受但非行业主流译法；\"Agent\"译为\"Agent\"（Y译为\"代理\"），保持一致性但未本地化；其他术语如\"压缩比\"\"阈值触发\"等翻译准确一致。"
+            },
+            "markdown_code_fidelity": {
+              "score": 3,
+              "evidence": "实验2-9标题及内容未保留英文原文的引用块（>）格式，错误转换为普通段落；图片链接格式正确，但整体Markdown结构还原度低于Y。"
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "完整保留实验2-9的引用块格式，内容无遗漏或增改；\"token\"译为\"标记\"更符合技术文档惯例；关键数据如\"128K窗口\"\"75%词元节省\"等准确无误。"
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "部分句子略显直译生硬，如\"上下文即将溢出且无论如何必须支付重建缓存成本的情况\"；\"fallback\"保留英文未译，与X一致。"
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "\"token\"译为\"标记\"（行业常用）、\"Agent\"译为\"代理\"（本地化处理）、\"LLM\"译为\"大语言模型\"，术语选择专业且一致；\"压缩比\"\"阈值触发\"等技术词汇翻译准确。"
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "准确保留实验2-9的引用块（>）格式，标题层级（###、####）、图片链接（![图2-17...](images/fig2-17.svg)）及代码标记（`git log`）均与原文一致。"
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y在准确性（完整保留引用块格式、术语更规范）和markdown_code_fidelity（严格还原原文格式）上优于X；术语翻译（如\"标记\"\"代理\"）更符合技术文档标准，整体质量更接近专业技术书籍的翻译要求。"
+      },
+      "usage": {
+        "prompt_tokens": 5795,
+        "completion_tokens": 566,
+        "latency_milliseconds": 15325,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-25.json",
+      "receipt_sha256": "23bd7a02279367410d5371e5dcbb9f033c14aaad789541f8f9b9f3c3bf295119"
+    },
+    {
+      "chapter": "Context Engineering [Part 17/17]",
+      "alias_to_mode": {
+        "X": "single_agent",
+        "Y": "orchestration"
+      },
+      "result": {
+        "variants": {
+          "X": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "All key technical claims are preserved, e.g., '上下文设定能力上限' (context sets the capability ceiling) and '用隔离代替压缩' (replacing compression with isolation) are accurately translated without omissions or inventions."
+            },
+            "fluency": {
+              "score": 4,
+              "evidence": "Most sentences are fluent, but '大语言模型' (LLM) is not consistently expanded as '大型语言模型' for readability; e.g., '需要额外的大语言模型调用' could be smoother as '需要额外的大型语言模型调用'."
+            },
+            "terminology": {
+              "score": 4,
+              "evidence": "Technical terms like 'KV缓存' (KV Cache) and '子代理' (sub-agent) are consistent, but 'Agent' is untranslated in headings (e.g., '子代理上下文隔离') while Y uses '智能体' (intelligent agent), creating inconsistency."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Headings (###, ##), code blocks (e.g., `handle_callback`), lists, and equations are preserved exactly as in the source."
+            }
+          },
+          "Y": {
+            "accuracy": {
+              "score": 5,
+              "evidence": "Core arguments such as '上下文设定能力上限' (context sets the capability ceiling) and '用隔离代替压缩' (replacing compression with isolation) are fully retained with no distortions."
+            },
+            "fluency": {
+              "score": 5,
+              "evidence": "Sentences flow naturally with expanded terms for clarity, e.g., '键值缓存（KV Cache）' and '提示工程（Prompt Engineering）' improve readability without altering meaning."
+            },
+            "terminology": {
+              "score": 5,
+              "evidence": "Consistent translation of 'Agent' as '智能体' (intelligent agent) throughout, and technical terms like 'KV缓存' (KV Cache) and '元认知' (metacognition) are uniformly applied."
+            },
+            "markdown_code_fidelity": {
+              "score": 5,
+              "evidence": "Markdown elements including headings, code snippets (e.g., `src/payment/callbacks.py`), lists, and bold text are perfectly preserved."
+            }
+          }
+        },
+        "preferred": "Y",
+        "preference_evidence": "Y demonstrates superior fluency through expanded term clarifications (e.g., '键值缓存（KV Cache）') and consistent terminology ('智能体' for 'Agent'), enhancing readability while maintaining full accuracy and markdown fidelity. X's inconsistent 'Agent' translation and less expanded technical terms slightly reduce clarity."
+      },
+      "usage": {
+        "prompt_tokens": 5226,
+        "completion_tokens": 514,
+        "latency_milliseconds": 12786,
+        "attempt_count": 1
+      },
+      "receipt": "judge_receipts/unit-26.json",
+      "receipt_sha256": "c997c30b88de131d0496c9987fd7f85c62e6ce7909419e83a50f98c7c1ab2cdd"
+    }
+  ]
+}

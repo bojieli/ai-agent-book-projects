@@ -19,6 +19,7 @@ import asyncio
 import json
 import os
 import re
+from pathlib import Path
 from typing import Optional
 
 from openai import AsyncOpenAI
@@ -33,6 +34,38 @@ def load_problems(path: str) -> list[dict]:
             if line:
                 problems.append(json.loads(line))
     return problems
+
+
+def load_jsonl(path: str | Path) -> list[dict]:
+    path = Path(path)
+    if not path.is_file():
+        return []
+    with path.open("r", encoding="utf-8") as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def write_jsonl_atomic(path: str | Path, rows: list[dict]) -> None:
+    """Replace a JSONL file without exposing a partially rewritten dataset."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        with temporary.open("w", encoding="utf-8") as f:
+            for row in rows:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def records_in_problem_order(problems: list[dict], records_by_id: dict[str, dict]) -> list[dict]:
+    """Return canonical problem order while retaining any legacy extra records."""
+    known_ids = [str(problem["id"]) for problem in problems]
+    rows = [records_by_id[problem_id] for problem_id in known_ids if problem_id in records_by_id]
+    rows.extend(record for problem_id, record in records_by_id.items() if problem_id not in known_ids)
+    return rows
 
 
 def extract_predicted_number(text: str) -> Optional[float]:
@@ -90,6 +123,7 @@ async def distill_one(client: AsyncOpenAI, problem: dict, args, semaphore) -> di
         "verified": False,
         "usage": None,
         "error": None,
+        "attempts": [],
     }
     async with semaphore:
         for attempt in range(args.max_retries + 1):
@@ -117,9 +151,27 @@ async def distill_one(client: AsyncOpenAI, problem: dict, args, semaphore) -> di
                 record["reasoning"] = get_reasoning(msg)
                 record["usage"] = resp.usage.model_dump() if resp.usage else None
                 record["verified"] = verify(record["content"], problem["answer"])
-                break
+                record["error"] = None
+                record["attempts"].append({
+                    "attempt": attempt,
+                    "content": record["content"],
+                    "reasoning": record["reasoning"],
+                    "usage": record["usage"],
+                    "verified": record["verified"],
+                    "error": None,
+                })
+                if record["verified"]:
+                    break
             except Exception as e:
                 record["error"] = f"attempt {attempt}: {type(e).__name__}: {e}"
+                record["attempts"].append({
+                    "attempt": attempt,
+                    "content": None,
+                    "reasoning": None,
+                    "usage": None,
+                    "verified": False,
+                    "error": record["error"],
+                })
         status = "OK" if record["verified"] else ("ERR" if record["error"] else "WRONG")
         print(f"  [{status}] {record['id']}", flush=True)
         return record
@@ -157,6 +209,17 @@ async def main():
                         help="思维链最大 token 数（OpenRouter 风格 reasoning 参数；0 = 不传该参数，"
                              "用于 Moonshot/DeepSeek 等默认返回 reasoning_content 的原生 API）")
     parser.add_argument("--max_problems", type=int, default=0, help="最多处理多少题（0 = 全部，调试用）")
+    parser.add_argument(
+        "--problem-id",
+        action="append",
+        default=[],
+        help="只运行指定题目 ID；可重复传入。用于定点重试而不重跑整套题",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="保留 raw_output 中已验证记录，只重试缺失或未验证题目，并原子更新数据集",
+    )
     parser.add_argument("--concurrency", type=int, default=8, help="并发请求数")
     parser.add_argument("--temperature", type=float, default=0.3, help="采样温度")
     parser.add_argument("--max_tokens", type=int, default=8192, help="单条回复最大 token 数（须大于 reasoning tokens）")
@@ -169,41 +232,74 @@ async def main():
     if not api_key:
         raise SystemExit(f"请先设置环境变量 {args.api_key_env}")
 
-    problems = load_problems(args.input)
+    all_problems = load_problems(args.input)
+    problem_ids = {str(problem["id"]) for problem in all_problems}
+    requested_ids = set(args.problem_id)
+    unknown_ids = sorted(requested_ids - problem_ids)
+    if unknown_ids:
+        raise SystemExit(f"未知题目 ID: {', '.join(unknown_ids)}")
+    problems = [
+        problem for problem in all_problems
+        if not requested_ids or str(problem["id"]) in requested_ids
+    ]
     if args.max_problems:
         problems = problems[: args.max_problems]
-    print(f"共 {len(problems)} 道题，教师模型：{args.model} @ {args.base_url}")
+
+    existing_rows = load_jsonl(args.raw_output) if args.resume else []
+    records_by_id = {
+        str(record["id"]): record for record in existing_rows if record.get("id") is not None
+    }
+    pending = [
+        problem for problem in problems
+        if not records_by_id.get(str(problem["id"]), {}).get("verified", False)
+    ]
+    print(
+        f"选中 {len(problems)} 道题，待运行 {len(pending)} 道，"
+        f"教师模型：{args.model} @ {args.base_url}"
+    )
 
     client = AsyncOpenAI(base_url=args.base_url, api_key=api_key, timeout=args.request_timeout)
     semaphore = asyncio.Semaphore(args.concurrency)
 
-    os.makedirs(os.path.dirname(args.raw_output), exist_ok=True)
-    os.makedirs(os.path.dirname(args.sft_output), exist_ok=True)
+    # 每题完成后原子替换：中断最多损失当前请求，不会破坏已有数据集。
+    run_records = []
+    tasks = [distill_one(client, p, args, semaphore) for p in pending]
+    for coro in asyncio.as_completed(tasks):
+        record = await coro
+        previous = records_by_id.get(str(record["id"]))
+        if previous and not previous.get("verified", False):
+            prior_failures = list(previous.get("prior_failures") or [])
+            prior_failures.append({
+                "model": previous.get("model"),
+                "verified": False,
+                "error": previous.get("error"),
+                "usage": previous.get("usage"),
+            })
+            record["prior_failures"] = prior_failures
+        records_by_id[str(record["id"])] = record
+        run_records.append(record)
+        write_jsonl_atomic(
+            args.raw_output,
+            records_in_problem_order(all_problems, records_by_id),
+        )
 
-    # 增量落盘：每题完成立即写入原始轨迹，进程被挂死/中断也不丢已完成的结果
-    records = []
-    tasks = [distill_one(client, p, args, semaphore) for p in problems]
-    with open(args.raw_output, "w", encoding="utf-8") as f:
-        for coro in asyncio.as_completed(tasks):
-            record = await coro
-            records.append(record)
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-            f.flush()
+    records = records_in_problem_order(all_problems, records_by_id)
+    write_jsonl_atomic(args.raw_output, records)
+    passed = [record for record in records if record.get("verified", False)]
+    write_jsonl_atomic(args.sft_output, [to_sft_sample(record) for record in passed])
 
-    passed = [r for r in records if r["verified"]]
-    with open(args.sft_output, "w", encoding="utf-8") as f:
-        for r in passed:
-            f.write(json.dumps(to_sft_sample(r), ensure_ascii=False) + "\n")
-
-    total_in = sum((r["usage"] or {}).get("prompt_tokens", 0) for r in records)
-    total_out = sum((r["usage"] or {}).get("completion_tokens", 0) for r in records)
-    n_err = sum(1 for r in records if r["error"])
+    total_in = sum((r["usage"] or {}).get("prompt_tokens", 0) for r in run_records)
+    total_out = sum((r["usage"] or {}).get("completion_tokens", 0) for r in run_records)
+    n_err = sum(1 for r in run_records if r["error"])
     print(f"\n{'=' * 50}")
     # Empty problems JSONL yields zero records; avoid ZeroDivisionError on the rate.
     pass_rate = (len(passed) / len(records) * 100) if records else 0.0
-    print(f"验证通过：{len(passed)}/{len(records)}（{pass_rate:.1f}%）")
-    print(f"API 出错：{n_err}  无思维链返回：{sum(1 for r in records if not r['reasoning'])}")
-    print(f"Token 消耗：输入 {total_in}，输出 {total_out}")
+    print(f"数据集验证通过：{len(passed)}/{len(records)}（{pass_rate:.1f}%）")
+    print(
+        f"本次请求：{len(run_records)}  API 最终出错：{n_err}  "
+        f"无思维链返回：{sum(1 for r in run_records if not r['reasoning'])}"
+    )
+    print(f"本次 Token 消耗：输入 {total_in}，输出 {total_out}")
     print(f"SFT 数据已写入：{args.sft_output}")
     print(f"原始轨迹已写入：{args.raw_output}")
 

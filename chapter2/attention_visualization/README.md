@@ -65,6 +65,23 @@ Run `python attention_cli.py --help` for the full flag list. Key flags:
 
 > First run downloads model weights (~1–2 GB). GPU/MPS recommended; CPU works for short prompts.
 
+### Canonical Experiment 2-2 evidence
+
+The acceptance campaign captures more than a display-only heatmap: it pins the
+real Qwen3-0.6B revision, retains lossless first/middle/last-layer matrices for
+the exact `北京 的 天气 怎么样` prompt, generates a sequence with distinct
+`<think>` and final-answer regions, verifies the causal upper triangle
+numerically, and reports attention-sink plus beginning/middle/end position
+measurements. Observed magnitudes are results, not favorable-result gates.
+
+```bash
+python run_attention_experiment.py \
+  --output runs/exp2-2-qwen3-0.6b-$(date +%Y%m%d-%H%M%S)
+```
+
+The latest completed real run is summarized by `validation/latest.json`; its
+manifest hashes the evidence JSON, lossless NPZ tensors, and both heatmaps.
+
 ### Interactive frontend workflow
 
 #### Step 1: Generate trajectories
@@ -90,6 +107,24 @@ npm run dev
 #### Step 3: View
 
 Open http://localhost:3000. Keep the frontend running; new trajectories appear automatically.
+
+### Experiment 2-7: status-bar comparison
+
+The manuscript's Xfinity control is a separate matched campaign, not the older
+tool-vs-no-tool demo. It runs the same complete trajectory in two arms, adds
+the exact `<agent_status>` 3/3 block only to the intervention arm, samples
+three real Qwen3-0.6B decisions per arm, and captures the final layer's true
+eager-attention tensor for the first matched pair.
+
+```bash
+python run_status_bar_experiment.py \
+  --output runs/exp2-7-qwen3-0.6b-$(date +%Y%m%d-%H%M%S)
+```
+
+The output retains raw prompts, token IDs/text, behavior classifications,
+region-level response attention, lossless matrices, a side-by-side heatmap,
+model revision, hashes, and a completion receipt. The preregistered design is
+`status_bar_protocol.json`; completion does not depend on a favorable result.
 
 ### Project structure
 

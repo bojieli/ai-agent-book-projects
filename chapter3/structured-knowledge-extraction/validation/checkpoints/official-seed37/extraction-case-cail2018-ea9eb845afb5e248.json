@@ -1,0 +1,123 @@
+{
+  "signature": "8542711c66cb85bbc3c5cdd21e70ca821a172a40844153ec9a4098d0a24865b2",
+  "parsed": {
+    "cases": [
+      {
+        "id": "cail2018-ea9eb845afb5e248",
+        "charge": "诈骗罪",
+        "factors": {
+          "surrender": null,
+          "truthful_confession": true,
+          "compensation_to_victim": "全额赔偿",
+          "victim_forgiveness": true,
+          "joint_crime": null,
+          "criminal_record": null,
+          "arrest_method": "被抓获",
+          "return_of_stolen_property": "亲属代为退赃",
+          "crime_count": 1,
+          "crime_amount": 70000,
+          "guilty_plea": true,
+          "first_offense": null,
+          "recidivism": null,
+          "criminal_form": "既遂",
+          "disposal_of_stolen_property": null,
+          "victim_count": 1,
+          "fraud_count": 1,
+          "fraud_amount": 70000,
+          "fraud_method": "虚构事实",
+          "restitution_situation": "亲属代为退赃",
+          "fraud_target": "个人",
+          "proceeds_use": null,
+          "impersonate_identity": null,
+          "fraud_means": null,
+          "fraud_victim_count": 1,
+          "booty_squandered": null,
+          "fraud_middleman": null
+        }
+      }
+    ]
+  },
+  "receipt": {
+    "purpose": "3-13 modular extraction case cail2018-ea9eb845afb5e248",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:32:36.098098+00:00",
+    "latency_ms": 47938.079,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法判例结构化抽取器。严格按给定的、由训练数据自下而上发现的 schema 抽取。numeric 输出数值，bool 输出 true/false，categorical 取 schema 值；文本未提及必须为 null，不得推断。保持 id 与 charge。只返回 JSON：{\"cases\":[{\"id\":\"...\",\"charge\":\"...\",\"factors\":{...}}]}。"
+        },
+        {
+          "role": "user",
+          "content": "DISCOVERED SCHEMA:\n{\"core\": [{\"key\": \"surrender\", \"name_cn\": \"自首\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否具有自首情节？\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"如实供述\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否如实供述罪行？\"}, {\"key\": \"compensation_to_victim\", \"name_cn\": \"赔偿被害人损失\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"被告人对被害人损失的赔偿情况如何？\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否对被告人表示谅解？\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否属于共同犯罪？\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否有犯罪前科？\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"kind\": \"categorical\", \"values\": [\"被抓获\", \"传唤到案\", \"自首\", \"现场等待\"], \"direction\": \"neutral\", \"question\": \"被告人的到案方式是什么？\"}, {\"key\": \"return_of_stolen_property\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"被告人的退赃情况如何？\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人的犯罪次数是多少？\"}, {\"key\": \"crime_amount\", \"name_cn\": \"犯罪金额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"犯罪涉及的金额是多少？\"}, {\"key\": \"guilty_plea\", \"name_cn\": \"认罪态度\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否自愿认罪？\"}, {\"key\": \"first_offense\", \"name_cn\": \"初犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否为初犯？\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否构成累犯？\"}, {\"key\": \"criminal_form\", \"name_cn\": \"犯罪形态\", \"kind\": \"categorical\", \"values\": [\"既遂\", \"未遂\", \"既遂+未遂\"], \"direction\": \"neutral\", \"question\": \"犯罪形态是既遂还是未遂？\"}, {\"key\": \"disposal_of_stolen_property\", \"name_cn\": \"赃款赃物处理情况\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"销赃牟利\", \"部分发还\", \"全部发还\"], \"direction\": \"neutral\", \"question\": \"赃款赃物的处理情况如何？\"}, {\"key\": \"victim_count\", \"name_cn\": \"被害人数量\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"本案涉及的被害人数量是多少？\"}], \"extensions\": {\"盗窃罪\": [{\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃次数是多少？\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃数额是多少？\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否属于入户盗窃？\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"kind\": \"categorical\", \"values\": [\"全部追回\", \"部分追回\", \"未追回\"], \"direction\": \"mitigating\", \"question\": \"赃物追回情况如何？\"}, {\"key\": \"destructive_means\", \"name_cn\": \"破坏性手段\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否采用破坏性手段盗窃？\"}, {\"key\": \"use_special_convenience\", \"name_cn\": \"利用特殊便利\", \"kind\": \"categorical\", \"values\": [\"钥匙\", \"工作便利\", \"无\"], \"direction\": \"aggravating\", \"question\": \"是否利用特殊便利实施盗窃？\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"kind\": \"categorical\", \"values\": [\"扒窃\", \"入户盗窃\", \"趁人不备\", \"撬锁\", \"爬窗\", \"顺手牵羊\"], \"direction\": \"aggravating\", \"question\": \"盗窃方式是什么？\"}, {\"key\": \"theft_target\", \"name_cn\": \"盗窃对象\", \"kind\": \"categorical\", \"values\": [\"手机\", \"现金\", \"电脑\", \"电动车\", \"首饰\", \"食品\"], \"direction\": \"neutral\", \"question\": \"盗窃对象是什么？\"}, {\"key\": \"theft_tool\", \"name_cn\": \"盗窃工具\", \"kind\": \"categorical\", \"values\": [\"螺丝刀\", \"老虎钳\", \"撬棍\", \"镊子\", \"钥匙\", \"徒手\"], \"direction\": \"aggravating\", \"question\": \"使用的盗窃工具是什么？\"}, {\"key\": \"theft_location\", \"name_cn\": \"盗窃场所\", \"kind\": \"categorical\", \"values\": [\"户内\", \"公共场所\", \"网吧\", \"超市\", \"户外\"], \"direction\": \"neutral\", \"question\": \"盗窃场所是什么？\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物处理方式\", \"kind\": \"categorical\", \"values\": [\"变卖挥霍\", \"藏匿\", \"返还被害人\"], \"direction\": \"aggravating\", \"question\": \"赃物处理方式是什么？\"}, {\"key\": \"drug_user_identity\", \"name_cn\": \"吸毒人员身份\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否为吸毒人员？\"}], \"故意伤害罪\": [{\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"重伤二级\", \"轻微伤\", \"重伤一级\"], \"direction\": \"aggravating\", \"question\": \"被害人损伤程度是什么？\"}, {\"key\": \"weapon_type\", \"name_cn\": \"伤害工具\", \"kind\": \"categorical\", \"values\": [\"菜刀\", \"木棍\", \"尖刀\", \"拳头\", \"铁棍\", \"U型锁\", \"铁锹\", \"酒瓶\"], \"direction\": \"aggravating\", \"question\": \"使用的伤害工具是什么？\"}, {\"key\": \"criminal_cause\", \"name_cn\": \"犯罪起因\", \"kind\": \"categorical\", \"values\": [\"琐事争执\", \"债务纠纷\", \"感情纠纷\", \"邻里矛盾\", \"被害人过错\", \"工作纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪起因是什么？\"}, {\"key\": \"community_correction_eligibility\", \"name_cn\": \"社区矫正评估\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"是否具备社区矫正条件？\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否存在过错？\"}, {\"key\": \"compensation_status\", \"name_cn\": \"赔偿情况\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"赔偿情况如何？\"}, {\"key\": \"mutual_fight\", \"name_cn\": \"互殴情节\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否存在互殴情节？\"}, {\"key\": \"injury_result\", \"name_cn\": \"伤害后果\", \"kind\": \"categorical\", \"values\": [\"轻伤\", \"重伤\", \"轻微伤\", \"死亡\"], \"direction\": \"aggravating\", \"question\": \"伤害后果是什么？\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"kind\": \"categorical\", \"values\": [\"报复\", \"琐事\", \"感情纠纷\", \"债务纠纷\", \"征地纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪动机是什么？\"}, {\"key\": \"drunk_crime\", \"name_cn\": \"酒后犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否酒后犯罪？\"}, {\"key\": \"minor_injury_count\", \"name_cn\": \"轻伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"轻伤人数是多少？\"}, {\"key\": \"serious_injury_count\", \"name_cn\": \"重伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"重伤人数是多少？\"}], \"诈骗罪\": [{\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗次数是多少？\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗数额是多少？\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"kind\": \"categorical\", \"values\": [\"虚构事实\", \"伪造证件\", \"冒充身份\", \"网络诈骗\", \"代还信用卡\", \"虚构投资\"], \"direction\": \"aggravating\", \"question\": \"诈骗手段是什么？\"}, {\"key\": \"restitution_situation\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"退赃情况如何？\"}, {\"key\": \"fraud_target\", \"name_cn\": \"诈骗对象\", \"kind\": \"categorical\", \"values\": [\"个人\", \"老年人\", \"国家财产\", \"金融机构\", \"亲友\"], \"direction\": \"aggravating\", \"question\": \"诈骗对象是什么？\"}, {\"key\": \"proceeds_use\", \"name_cn\": \"赃款用途\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"偿还赌债\", \"日常生活\", \"业务经营\"], \"direction\": \"aggravating\", \"question\": \"赃款用途是什么？\"}, {\"key\": \"impersonate_identity\", \"name_cn\": \"冒充身份\", \"kind\": \"categorical\", \"values\": [\"国家机关工作人员\", \"公司经理\", \"驾校人员\", \"民警\"], \"direction\": \"aggravating\", \"question\": \"冒充的身份是什么？\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗方式\", \"kind\": \"categorical\", \"values\": [\"虚构交易平台\", \"伪造合同\", \"虚假贷款\", \"代还信用卡报酬\", \"丢包诈骗\"], \"direction\": \"aggravating\", \"question\": \"具体诈骗方式是什么？\"}, {\"key\": \"fraud_victim_count\", \"name_cn\": \"诈骗被害人人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗被害人人数是多少？\"}, {\"key\": \"booty_squandered\", \"name_cn\": \"赃款挥霍\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"赃款是否被挥霍？\"}, {\"key\": \"fraud_middleman\", \"name_cn\": \"存在中间人\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否存在中间人？\"}]}}\n\nCASE:\n{\"id\": \"cail2018-ea9eb845afb5e248\", \"charge\": \"诈骗罪\", \"fact\": \"经审理查明：\\r\\n2011年10月份，被告人郝某某从中恒国际租赁有限公司租赁车牌号为鲁V70000起重机车一台，租期为36个月。2013年10月29日，被告人郝某某委托其妻子至王某某处，谎称上述起重机车系郝某某贷款购买所得，骗取王某某信任后，以该车作抵押诈骗王某某现金70000元。\\r\\n案发后，被告人郝某某家属已将被骗钱款全部退还被害人并取得了被害人谅解。\\r\\n上述事实，被告人郝某某在开庭审理过程中亦无异议，并有被害人王某某陈述，证人吴某某、谭某证言，书证人口信息、抓获证明、破案经过、融资租赁合同、民事判决书、收到条、谅解书等证据证实，足以认定。\"}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 2000,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785385956338cbe31712b8a2594f4e458beea699b0fab33585",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"cases\":[{\"id\":\"cail2018-ea9eb845afb5e248\",\"charge\":\"诈骗罪\",\"factors\":{\"surrender\":null,\"truthful_confession\":true,\"compensation_to_victim\":\"全额赔偿\",\"victim_forgiveness\":true,\"joint_crime\":null,\"criminal_record\":null,\"arrest_method\":\"被抓获\",\"return_of_stolen_property\":\"亲属代为退赃\",\"crime_count\":1,\"crime_amount\":70000,\"guilty_plea\":true,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":\"既遂\",\"disposal_of_stolen_property\":null,\"victim_count\":1,\"fraud_count\":1,\"fraud_amount\":70000,\"fraud_method\":\"虚构事实\",\"restitution_situation\":\"亲属代为退赃\",\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":1,\"booty_squandered\":null,\"fraud_middleman\":null}}]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "我现在需要处理用户提供的司法判例结构化抽取任务。首先，我得仔细阅读用户提供的schema和案例内容，确保正确理解每个字段的要求。\n\n首先，schema分为core和extensions，extensions下有不同的罪名，比如盗窃罪、故意伤害罪、诈骗罪等。当前案例的charge是诈骗罪，所以需要同时考虑core和extensions中的诈骗罪相关字段。\n\n接下来，我需要逐一检查core中的每个key，然后是extensions中诈骗罪的每个key，根据案例事实判断是否存在相关信息，如果没有则设为null。\n\n先看core部分：\n\n1. surrender（自首）：案例中提到“案发后，被告人郝某某家属已将被骗钱款全部退还被害人并取得了谅解”，但没有提到自首，所以surrender是false还是null？根据规则，文本未提及必须为null，所以这里应该是null？\n\n2. truthful_confession（如实供述）：案例中说“被告人郝某某在开庭审理过程中亦无异议”，这可能表示如实供述，但需要确认。无异议可能意味着认罪，但如实供述是否等同？可能需要判断，但根据问题“是否如实供述罪行？”，如果被告人无异议，可能视为如实供述，所以truthful_confession是true？\n\n3. compensation_to_victim（赔偿被害人损失）：案例提到“家属已将被骗钱款全部退还被害人”，退还钱款属于赔偿，所以应该是“全额赔偿”。\n\n4. victim_forgiveness（被害人谅解）：明确提到“取得了被害人谅解”，所以是true。\n\n5. joint_crime（共同犯罪）：案例中只提到被告人郝某某一人，没有共同犯罪的信息，所以null。\n\n6. criminal_record（前科情况）：案例未提及前科，所以null。\n\n7. arrest_method（到案方式）：案例中有“抓获证明”，所以到案方式应该是“被抓获”。\n\n8. return_of_stolen_property（退赃情况）：core中的退赃情况，案例中家属退还全部钱款，属于“全部退赃”还是“亲属代为退赃”？core的return_of_stolen_property的values包括“亲属代为退赃”，所以这里应该是“亲属代为退赃”。\n\n9. crime_count（犯罪次数）：案例中只描述了一次诈骗行为，所以犯罪次数是1。\n\n10. crime_amount（犯罪金额）：诈骗金额是70000元，所以数值70000。\n\n11. guilty_plea（认罪态度）：被告人无异议，自愿认罪，所以true。\n\n12. first_offense（初犯）：案例未提及初犯，所以null。\n\n13. recidivism（累犯）：未提及，null。\n\n14. criminal_form（犯罪形态）：案例中诈骗已经完成，骗取了70000元，所以是“既遂”。\n\n15. disposal_of_stolen_property（赃款赃物处理情况）：core中的这个字段，案例中没有提到被告人如何处理赃款，只提到家属退还，所以处理情况未提及，null。\n\n16. victim_count（被害人数量）：案例中只有被害人王某某一人，所以1。\n\n接下来是extensions中的诈骗罪部分：\n\n1. fraud_count（诈骗次数）：案例中描述的是一次诈骗行为，所以1。\n\n2. fraud_amount（诈骗数额）：70000元，数值70000。\n\n3. fraud_method（诈骗手段）：案例中提到“谎称上述起重机车系郝某某贷款购买所得，骗取王某某信任后，以该车作抵押”，这属于虚构事实，所以诈骗手段是“虚构事实”。\n\n4. restitution_situation（退赃情况）：extensions中的诈骗罪有restitution_situation，values包括“全部退赃”、“部分退赃”等，案例中家属全部退还，所以是“亲属代为退赃”？因为是家属退还，所以对应core中的return_of_stolen_property和extensions中的restitution_situation可能都需要填“亲属代为退赃”？\n\ncore的return_of_stolen_property的values有“亲属代为退赃”，而extensions的restitution_situation同样有这个选项。案例中是家属退还，所以两者都应选“亲属代为退赃”。\n\n5. fraud_target（诈骗对象）：被害人是王某某，属于个人，所以“个人”。\n\n6. proceeds_use（赃款用途）：案例未提及赃款如何使用，所以null。\n\n7. impersonate_identity（冒充身份）：案例中没有提到冒充身份，只是谎称车辆是贷款购买，所以null。\n\n8. fraud_means（诈骗方式）：案例中是以车辆抵押诈骗，属于“虚构事实”中的抵押诈骗？但extensions的fraud_means的values包括“虚构交易平台”、“伪造合同”等，案例中的情况是“以该车作抵押”，可能属于“伪造合同”？或者是否属于现有选项中的一种？原案例中提到“谎称系贷款购买，以该车作抵押”，可能属于虚构事实，但fraud_method已经选了“虚构事实”，而fraud_means是更具体的方式。现有的fraud_means选项有“虚构交易平台”、“伪造合同”、“虚假贷款”、“代还信用卡报酬”、“丢包诈骗”。这里是否属于“伪造合同”？因为抵押可能涉及合同，但案例中没有提到伪造合同，只是谎称车辆是贷款购买，然后抵押。可能没有对应的选项，所以fraud_means是null？\n\n9. fraud_victim_count（诈骗被害人人数）：1人，所以1。\n\n10. booty_squandered（赃款挥霍）：未提及赃款是否被挥霍，所以null。\n\n11. fraud_middleman（存在中间人）：案例中没有提到中间人，所以null。\n\n现在需要再次检查每个字段是否正确：\n\ncore中的return_of_stolen_property：家属代为退赃，所以选“亲属代为退赃”。\n\nextensions中的restitution_situation同样是“亲属代为退赃”。\n\ncompensation_to_victim是“全额赔偿”，因为全部退还。\n\narrest_method：抓获证明，所以“被抓获”。\n\ncrime_count是1，因为一次犯罪。\n\nfraud_count也是1，诈骗次数1。\n\nfraud_amount是70000，crime_amount也是70000，因为犯罪金额就是诈骗数额。\n\nguilty_plea：被告人无异议，自愿认罪，所以true。\n\ntruthful_confession：无异议可能表示如实供述，所以true。\n\n现在确认是否有遗漏或错误：\n\n比如，core中的“guilty_plea”是“是否自愿认罪？”，被告人无异议，应该是自愿认罪，所以true。\n\n“criminal_form”是既遂，因为已经骗取了钱款，所以既遂。\n\n“disposal_of_stolen_property”案例中没有提到被告人如何处理赃款，所以null。\n\n“theft_count”等属于盗窃罪，这里是诈骗罪，所以不需要考虑。\n\n现在整理所有字段：\n\ncore factors：\n\nsurrender: null\n\ntruthful_confession: true（因为无异议可能表示如实供述）\n\ncompensation_to_victim: \"全额赔偿\"\n\nvictim_forgiveness: true\n\njoint_crime: null\n\ncriminal_record: null\n\narrest_method: \"被抓获\"（因为有抓获证明）\n\nreturn_of_stolen_property: \"亲属代为退赃\"（家属退还）\n\ncrime_count: 1\n\ncrime_amount: 70000\n\nguilty_plea: true\n\nfirst_offense: null\n\nrecidivism: null\n\ncriminal_form: \"既遂\"\n\ndisposal_of_stolen_property: null\n\nvictim_count: 1\n\nextensions 诈骗罪：\n\nfraud_count: 1\n\nfraud_amount: 70000\n\nfraud_method: \"虚构事实\"（谎称车辆是贷款购买）\n\nrestitution_situation: \"亲属代为退赃\"\n\nfraud_target: \"个人\"\n\nproceeds_use: null\n\nimpersonate_identity: null\n\nfraud_means: null（案例中的抵押行为不在给定选项中）\n\nfraud_victim_count: 1\n\nbooty_squandered: null\n\nfraud_middleman: null\n\n现在检查是否所有字段都正确，没有遗漏。例如，core中的“return_of_stolen_property”和extensions中的“restitution_situation”都是“亲属代为退赃”，因为家属退还。compensation_to_victim是“全额赔偿”，因为全部退还即全额赔偿。\n\n确认无误后，构建JSON结构，确保id和charge正确，factors包含core和extensions的所有字段，未提及的为null。"
+          }
+        }
+      ],
+      "created": 1785386004,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 2115,
+        "prompt_tokens": 3192,
+        "total_tokens": 5307,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1882,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 2115,
+      "prompt_tokens": 3192,
+      "total_tokens": 5307,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1882,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785385956338cbe31712b8a2594f4e458beea699b0fab33585"
+  }
+}

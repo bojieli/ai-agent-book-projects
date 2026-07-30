@@ -19,6 +19,8 @@
 """
 
 import os
+import time
+from typing import Any
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -44,7 +46,24 @@ _PROVIDERS = {
         # ARK 需要用推理接入点(endpoint id) 作为 model，请通过 ARK_MODEL 指定
         "default_model": os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
     },
+    "openrouter": {
+        "base_url": OPENROUTER_BASE_URL,
+        "key_env": "OPENROUTER_API_KEY",
+        "default_model": "openai/gpt-4o-mini",
+    },
 }
+
+API_TURNS = []
+
+
+def _jsonable(value: Any) -> Any:
+    if hasattr(value, "model_dump"):
+        return _jsonable(value.model_dump(mode="json", exclude_none=True))
+    if isinstance(value, dict):
+        return {str(key): _jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(item) for item in value]
+    return value
 
 
 def get_provider() -> str:
@@ -115,6 +134,75 @@ def get_client() -> OpenAI:
     if cfg["base_url"]:
         kwargs["base_url"] = cfg["base_url"]
     return OpenAI(**kwargs)
+
+
+def record_completion(client: OpenAI, *, kind: str, **request: Any):
+    """Execute and retain a credential-free raw request/response receipt."""
+    started = time.time()
+    response = client.chat.completions.create(**request)
+    API_TURNS.append({
+        "kind": kind,
+        "provider": get_provider(),
+        "endpoint": get_backend_metadata()["endpoint"],
+        "request": _jsonable(request),
+        "response": response.model_dump(mode="json", exclude_none=True),
+        "elapsed_seconds": round(time.time() - started, 6),
+    })
+    return response
+
+
+def reset_api_turns() -> None:
+    API_TURNS.clear()
+
+
+def get_api_turns() -> list[dict]:
+    return list(API_TURNS)
+
+
+def get_backend_metadata() -> dict[str, Any]:
+    provider = get_provider()
+    cfg = _PROVIDERS[provider]
+    if _use_openrouter(cfg):
+        base_url = OPENROUTER_BASE_URL
+        key_env = "OPENROUTER_API_KEY"
+        routed_provider = "openrouter"
+    else:
+        base_url = cfg["base_url"] or "https://api.openai.com/v1"
+        key_env = cfg["key_env"]
+        routed_provider = provider
+    return {
+        "configured_provider": provider,
+        "routed_provider": routed_provider,
+        "model": get_model(),
+        "endpoint": f"{base_url}/chat/completions",
+        "credential_source_env": key_env,
+        "credential_value_recorded": False,
+    }
+
+
+def usage_summary() -> dict[str, Any]:
+    prompt = completion = total = 0
+    native_cost = 0.0
+    native_cost_count = 0
+    for turn in API_TURNS:
+        usage = turn.get("response", {}).get("usage") or {}
+        prompt += int(usage.get("prompt_tokens") or 0)
+        completion += int(usage.get("completion_tokens") or 0)
+        total += int(usage.get("total_tokens") or 0)
+        if usage.get("cost") is not None:
+            native_cost += float(usage["cost"])
+            native_cost_count += 1
+    return {
+        "prompt_tokens": prompt,
+        "completion_tokens": completion,
+        "total_tokens": total or prompt + completion,
+        "provider_reported_cost_usd": round(native_cost, 9) if native_cost_count else None,
+        "provider_reported_cost_observations": native_cost_count,
+        "cost_qualification": (
+            "provider-native usage.cost summed across calls"
+            if native_cost_count else "provider did not expose monetary cost; no price was guessed"
+        ),
+    }
 
 
 # 全部 LLM 调用统一使用低温度，保证结果可复现；

@@ -3,3 +3,4 @@ sympy>=1.12
 numpy>=1.26
 scipy>=1.11
 python-dotenv>=1.0.0
+pyarrow>=20.0.0

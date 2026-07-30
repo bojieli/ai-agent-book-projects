@@ -7,6 +7,8 @@ import logging
 import traceback
 import subprocess
 import base64
+import os
+import time
 from pathlib import Path
 from typing import Union, Dict, Any
 
@@ -46,6 +48,38 @@ def _make_vision_client(default_model: str = "gpt-5.6-luna"):
     import os
     from openai import OpenAI
 
+    provider = os.getenv("PERCEPTION_VISION_PROVIDER", "").strip().lower()
+    if provider == "dashscope":
+        dashscope_key = os.getenv("DASHSCOPE_API_KEY")
+        if not dashscope_key:
+            raise ValueError(
+                "PERCEPTION_VISION_PROVIDER=dashscope requires DASHSCOPE_API_KEY"
+            )
+        client = OpenAI(
+            api_key=dashscope_key,
+            # The provided project credential is issued for the international
+            # Model Studio region; regional keys are not interchangeable.
+            base_url=os.getenv(
+                "DASHSCOPE_BASE_URL",
+                "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+            ),
+            timeout=120.0,
+            max_retries=0,
+        )
+        return client, os.getenv("PERCEPTION_VISION_MODEL", "qwen-vl-max")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if provider == "gemini":
+        if not gemini_key:
+            raise ValueError(
+                "PERCEPTION_VISION_PROVIDER=gemini requires GEMINI_API_KEY"
+            )
+        client = OpenAI(
+            api_key=gemini_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+        model = os.getenv("PERCEPTION_VISION_MODEL", "gemini-2.5-flash")
+        return client, model
+
     model = os.getenv("PERCEPTION_VISION_MODEL", default_model)
     or_key = os.getenv("OPENROUTER_API_KEY")
     # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct API;
@@ -64,8 +98,15 @@ def _make_vision_client(default_model: str = "gpt-5.6-luna"):
         client = OpenAI(api_key=or_key, base_url="https://openrouter.ai/api/v1")
         return client, _map_model_for_openrouter(model)
 
+    if gemini_key:
+        client = OpenAI(
+            api_key=gemini_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+        return client, os.getenv("PERCEPTION_VISION_MODEL", "gemini-2.5-flash")
+
     raise ValueError(
-        "No LLM key configured. Set OPENAI_API_KEY or OPENROUTER_API_KEY (universal fallback)."
+        "No vision key configured. Set OPENAI_API_KEY, OPENROUTER_API_KEY, or GEMINI_API_KEY."
     )
 
 
@@ -345,6 +386,7 @@ async def analyze_image_ai(
             img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
 
         # Call Vision API
+        started = time.perf_counter()
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -363,14 +405,28 @@ async def analyze_image_ai(
             ],
             max_tokens=500
         )
+        latency_seconds = round(time.perf_counter() - started, 3)
 
         analysis = response.choices[0].message.content
 
+        usage = getattr(response, "usage", None)
         result = {
             "file_name": path.name,
             "prompt": prompt,
             "analysis": analysis,
-            "model": model
+            "model": model,
+            "provider_receipt": {
+                "provider": os.getenv("PERCEPTION_VISION_PROVIDER", "auto"),
+                "response_id": getattr(response, "id", None),
+                "response_model": getattr(response, "model", model),
+                "finish_reason": getattr(response.choices[0], "finish_reason", None),
+                "usage": {
+                    "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                    "completion_tokens": getattr(usage, "completion_tokens", None),
+                    "total_tokens": getattr(usage, "total_tokens", None),
+                },
+                "latency_seconds": latency_seconds,
+            },
         }
         
         logging.info(f"✅ AI analysis completed")
@@ -538,6 +594,7 @@ async def analyze_video_ai(
                 img_base64 = base64.b64encode(buffer).decode('utf-8')
                 
                 # Analyze with GPT-4 Vision
+                started = time.perf_counter()
                 response = client.chat.completions.create(
                     model=model,
                     messages=[
@@ -554,14 +611,28 @@ async def analyze_video_ai(
                     ],
                     max_tokens=300
                 )
+                latency_seconds = round(time.perf_counter() - started, 3)
                 
                 timestamp = frame_num / fps if fps > 0 else 0
                 analysis = response.choices[0].message.content
                 
+                usage = getattr(response, "usage", None)
                 frame_analyses.append({
                     "frame_number": frame_num,
                     "timestamp": round(timestamp, 2),
-                    "analysis": analysis
+                    "analysis": analysis,
+                    "provider_receipt": {
+                        "provider": os.getenv("PERCEPTION_VISION_PROVIDER", "auto"),
+                        "response_id": getattr(response, "id", None),
+                        "response_model": getattr(response, "model", model),
+                        "finish_reason": getattr(response.choices[0], "finish_reason", None),
+                        "usage": {
+                            "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                            "completion_tokens": getattr(usage, "completion_tokens", None),
+                            "total_tokens": getattr(usage, "total_tokens", None),
+                        },
+                        "latency_seconds": latency_seconds,
+                    },
                 })
                 
                 frames_analyzed += 1

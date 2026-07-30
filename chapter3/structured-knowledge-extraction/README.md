@@ -9,7 +9,29 @@
 
 ## English
 
-### What this experiment is
+### Canonical official-data campaign
+
+`python campaign.py` is the acceptance run. It reads the official CAIL2018
+archive (cache-only), deterministically materializes a bounded 420-case sample
+(360 train/60 held out across three charges), performs live bottom-up discovery
+and live modular extraction, selects per-charge clusters with silhouette
+diagnostics, and independently judges prototype-only held-out advice. The
+official URL/repository revision/archive SHA-256 and bytes, split, raw receipts,
+prototype statistics, leakage checks, and legal disclaimer gate are recorded
+under `validation/runs/<run-id>/`; `validation/latest.json` is canonical.
+
+The large `data/official/CAIL2018_ALL_DATA.zip` is intentionally ignored. Only
+the deterministic sample and validation evidence are versionable.
+
+### Legacy synthetic teaching path (not acceptance evidence)
+
+The files described below predate the canonical official-data campaign. They
+remain useful for a fast local walkthrough, but their synthetic cases and
+hand-sized run are mechanism illustrations only; they do not satisfy
+Experiment 3-13. Only `campaign.py` and `validation/latest.json` can close the
+manuscript experiment.
+
+### What this legacy demo is
 
 This lab shows how an Agent can treat a knowledge base not as a “static warehouse you only retrieve from,” but as data to **read, understand, and turn into structured decision logic**—then answer questions using that logic.
 
@@ -105,7 +127,13 @@ The **intended real dataset is CAIL2018** (Chinese criminal judgments, millions 
 
 ## 中文
 
-### 本实验是什么
+### 旧版合成教学路径（不属于验收证据）
+
+以下文件早于本页开头的正式 CAIL2018 campaign，仅保留用于快速本地教学。
+合成案例与小规模运行只能说明机制，不能验收实验 3-13；正文验收只认
+`campaign.py` 及 `validation/latest.json`。
+
+### 这个旧版 demo 是什么
 
 演示如何让 Agent 不把知识库当成“只能检索的静态仓库”，而是**先把数据读懂、从数据本身归纳出结构化的决策逻辑，再基于这套逻辑回答问题**。
 

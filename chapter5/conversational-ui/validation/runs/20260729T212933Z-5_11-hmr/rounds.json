@@ -1,0 +1,65 @@
+[
+  {
+    "round": 1,
+    "requirement": "把发送按钮和用户消息气泡的主题色从绿色改成蓝色，必须使用 #2563eb。",
+    "kind": "color",
+    "expected": "rgb(37, 99, 235)",
+    "observed": "rgb(37, 99, 235)",
+    "changed_files": [
+      {
+        "path": "src/App.jsx",
+        "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+        "after_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545"
+      },
+      {
+        "path": "src/theme.css",
+        "before_sha256": "499a1d01a5dfe83bb8496349a51a9a9abd8c49df94afcb7d9615920c5653ff16",
+        "after_sha256": "c494cac4e0c0eb23b5b7f91925cb0997ab7eceae5e3d517736b8a71b61338a3b"
+      }
+    ],
+    "chat_state_retained": true,
+    "screenshot": "round-1.png"
+  },
+  {
+    "round": 2,
+    "requirement": "把整个界面的字体换成等宽字体（monospace），保留上一轮蓝色主题。",
+    "kind": "font",
+    "expected": "monospace",
+    "observed": "monospace",
+    "changed_files": [
+      {
+        "path": "src/App.jsx",
+        "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+        "after_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545"
+      },
+      {
+        "path": "src/theme.css",
+        "before_sha256": "c494cac4e0c0eb23b5b7f91925cb0997ab7eceae5e3d517736b8a71b61338a3b",
+        "after_sha256": "ab503f9f2821a97af18c0386893bf93cba4d9da92debad5cd740e37614a1eb68"
+      }
+    ],
+    "chat_state_retained": true,
+    "screenshot": "round-2.png"
+  },
+  {
+    "round": 3,
+    "requirement": "把顶部标题改成“我的专属客服”，保留前两轮的蓝色和等宽字体。",
+    "kind": "title",
+    "expected": "我的专属客服",
+    "observed": "我的专属客服",
+    "changed_files": [
+      {
+        "path": "src/App.jsx",
+        "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+        "after_sha256": "76af82f286e3a6affb85a7c2835e78d5c97708aa5eb9088ae5693256aac76e11"
+      },
+      {
+        "path": "src/theme.css",
+        "before_sha256": "ab503f9f2821a97af18c0386893bf93cba4d9da92debad5cd740e37614a1eb68",
+        "after_sha256": "4b217ab0f2c33dda062217f7090b1c0da9d3cc4192add8ca8acb72a70b649e3b"
+      }
+    ],
+    "chat_state_retained": true,
+    "screenshot": "round-3.png"
+  }
+]

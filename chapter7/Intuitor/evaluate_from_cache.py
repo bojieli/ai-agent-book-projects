@@ -81,13 +81,14 @@ def normalize_number(text: str) -> Optional[str]:
     text = str(text)
 
     # Evaluate \frac{a}{b} before brace stripping (else "\frac{6}{2}" becomes "frac62").
-    frac = re.search(r'\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', text)
+    frac = re.search(r'(-)?\s*\\(?:d)?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}', text)
     if frac:
         try:
-            num = float(frac.group(1).replace(",", "").strip())
-            den = float(frac.group(2).replace(",", "").strip())
+            sign = -1.0 if frac.group(1) else 1.0
+            num = float(frac.group(2).replace(",", "").replace("$", "").replace("\\$", "").strip())
+            den = float(frac.group(3).replace(",", "").replace("$", "").replace("\\$", "").strip())
             if den != 0:
-                return _format_normalized_number(num / den)
+                return _format_normalized_number(sign * (num / den))
         except ValueError:
             pass
 
@@ -102,7 +103,9 @@ def normalize_number(text: str) -> Optional[str]:
         except ValueError:
             pass
     
-    # 去除 LaTeX 符号
+    # 去除 LaTeX 及货币符号
+    text = text.replace("\\$", "")
+    text = text.replace("$", "")
     text = text.replace("\\,", "")
     text = text.replace("\\text", "")
     text = text.replace("{", "").replace("}", "")

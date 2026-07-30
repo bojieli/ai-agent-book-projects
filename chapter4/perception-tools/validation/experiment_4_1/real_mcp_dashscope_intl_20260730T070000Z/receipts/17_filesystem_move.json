@@ -1,0 +1,46 @@
+{
+  "case": "filesystem_move",
+  "tool": "filesystem_move",
+  "arguments": {
+    "source_path": "copied.txt",
+    "destination_path": "moved.txt"
+  },
+  "arguments_sha256": "57260877dce1942e47de6c09e86bf0e2c74aac0f83d2eb41ef4f2abd7f16638e",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "workspace-confined-rename",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "operation": "move",
+      "source": "copied.txt",
+      "destination": "moved.txt",
+      "source_exists_after": false,
+      "destination_fingerprint": {
+        "kind": "file",
+        "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc",
+        "bytes": 35,
+        "entries": 1
+      },
+      "replaced_path_quarantine": null
+    },
+    "metadata": {
+      "mutation_root": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/mutation_workspace",
+      "pre_operation_fingerprint": {
+        "kind": "file",
+        "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc",
+        "bytes": 35,
+        "entries": 1
+      },
+      "verification": "source absent and destination fingerprint matches"
+    }
+  },
+  "elapsed_seconds": 0.001
+}

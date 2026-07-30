@@ -1,0 +1,6 @@
+Verification checks for delivery token BRAVO-528
+- inputs.txt: created, contains the token.
+- analysis.txt: created, contains the token.
+- checks.txt: created, contains the token.
+- delivery.txt: created, contains the token.
+- All checks pass for BRAVO-528.

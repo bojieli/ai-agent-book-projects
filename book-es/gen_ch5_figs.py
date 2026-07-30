@@ -267,7 +267,7 @@ def fig5_4():
           "+ def foo(x, y=0):",
           "+   return x + y",
           "→ Modelo pequeño ubica y aplica"],
-         "Pros: Separación de responsabilidades",
+         "Ventajas: Separación de responsabilidades",
          "Contras: Pequeña desviación rompe alineación"),
         ("Cadena antigua → Cadena nueva", "medium",
          ['old: "def foo(x):\\n',
@@ -275,7 +275,7 @@ def fig5_4():
           'new: "def foo(x, y=0):\\n',
           '       return x + y"',
           "→ Reemplazo por coincidencia exacta"],
-         "Pros: Predecible, sin ambigüedad",
+         "Ventajas: Predecible, sin ambigüedad",
          "Contras: Grandes eliminaciones requieren salida completa"),
         ("Ubicación por num. línea", "light",
          ["Eliminar líneas 42-43, agregar:",
@@ -283,7 +283,7 @@ def fig5_4():
           "    return x + y",
           "",
           "→ El núm. de línea especifica el rango exacto"],
-         "Pros: Eficiente para operaciones grandes",
+         "Ventajas: Eficiente para operaciones grandes",
          "Contras: Propensa a errores en archivos largos"),
         ("Comandos estilo Vim", "light",
          ["42G  (ir a línea 42)",
@@ -291,7 +291,7 @@ def fig5_4():
           "dd   (eliminar línea)",
           "yy/p (copiar/pegar)",
           "→ Semántica de edición rica"],
-         "Pros: Mover/reorganizar eficientemente",
+         "Ventajas: Mover/reorganizar eficientemente",
          "Contras: Modelos débiles generan más errores"),
         ("Coincidencia inicio-fin", "medium",
          ['start: "def foo(x):"',
@@ -299,7 +299,7 @@ def fig5_4():
           'new: "def foo(x, y=0):',
           '       return x + y"',
           "→ Bastan los límites para ubicar"],
-         "Pros: Gran eliminación sin salida completa",
+         "Ventajas: Gran eliminación sin salida completa",
          "Contras: La combinación de límites debe ser única"),
     ]
 
@@ -747,11 +747,11 @@ def fig5_9():
     _pill(svg, w - 110, 65, 80, 24, "✗ Ineficiente", fill='dark', font_size=12, bold=True)
 
     trad_steps = [
-        ("User", 'medium', '"¿Personal por departamento?"'),
+        ("Usuario", 'medium', '"¿Personal por departamento?"'),
         ("LLM", 'light', "Generar SQL"),
         ("DB", 'medium', "Ejecutar\\nconsulta"),
         ("LLM", 'light', "Leer 5000\\nlíneas"),
-        ("User", 'medium', "Explicación\\nen texto"),
+        ("Usuario", 'medium', "Explicación\\nen texto"),
     ]
     tsx = 60
     for i, (name, fill, desc) in enumerate(trad_steps):

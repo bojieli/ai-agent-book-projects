@@ -5,35 +5,16 @@ Tests command execution with directory navigation and file operations.
 import asyncio
 import json
 import pytest
-import tempfile
-import shutil
-from pathlib import Path
-import sys
 
-# Mock Config for testing
-class Config:
-    WORKSPACE_DIR = Path(tempfile.mkdtemp())
-    AUTO_VERIFY_CODE = False
-    REQUIRE_APPROVAL_FOR_DANGEROUS_OPS = False
-
-sys.modules['config'] = type(sys)('config')
-sys.modules['config'].Config = Config
-
+from config import Config
 from terminal_controller import TerminalController
 
 
 @pytest.fixture(scope="function")
-def tc():
+def tc(tmp_path, monkeypatch):
     """Create terminal controller with temp workspace."""
-    Config.WORKSPACE_DIR = Path(tempfile.mkdtemp())
-    controller = TerminalController()
-    yield controller
-    # Cleanup
-    if Config.WORKSPACE_DIR.exists():
-        try:
-            shutil.rmtree(Config.WORKSPACE_DIR)
-        except Exception:
-            pass
+    monkeypatch.setattr(Config, "WORKSPACE_DIR", tmp_path)
+    return TerminalController()
 
 
 class TestTerminalBasics:

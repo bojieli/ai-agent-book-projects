@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "experiment": "10-2",
+  "run_id": "exp10-2-kimi-k2.5-tavily-receipts-20260730-v3",
+  "generated_at": "2026-07-30T05:15:57.477Z",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "runtime_source_sha256": {
+    "run_official_experiment.py": "241b6f37a959305fc26dce8f9e65e9fbdcf56e51c5ec99a58323f36e613d112c",
+    "demo.py": "08750569705e454776e9bbb6710550a2eb5573d7cfdabe4a7f7d857b4b1b9ac0",
+    "orchestrator.py": "e073eef197c75ce3b3de080200286ea157060362a2eb213d1951598ffcb7bf33",
+    "roles.py": "cc970ea4383f0328ed666825dffd86843346e95c04b60a27fcefab9bd39cf79f",
+    "tools.py": "258bc553a4a25bdec97552daec9f36b77f6d74d20f900a08c4bc731d1aa75be6"
+  },
+  "artifact_sha256": {
+    "evidence.json": "8b9d2df806291ec228411a516f8f11d54815daedddac79239986a46efbfb9e8f",
+    "moonshot_receipts.json": "88d83a1b025a92506b43e41a9bb5d5977e2b8ec0b4eeb00b85f0f8fda64c5d18",
+    "tavily_receipts.json": "ea08891676b6afaf3c0480e8267b689aef5e4624765037983b524e325b03f4b6",
+    "acceptance.json": "06c94e5224cebeb9f09cea7964fa5937d78a23768654d6e343096f0f8a0857a8"
+  },
+  "acceptance": {
+    "overall_status": "pass",
+    "passed_gates": 15,
+    "total_gates": 15
+  }
+}

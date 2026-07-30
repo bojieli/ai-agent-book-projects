@@ -3,6 +3,10 @@
 data/schema.json
 data/extracted.jsonl
 data/archetypes.json
+# Official CAIL archives are large, immutable upstream cache inputs.  The
+# bounded deterministic sample and validation evidence remain versionable.
+data/official/*.zip
+data/official/extracted/
 .env
 __pycache__/
 *.pyc

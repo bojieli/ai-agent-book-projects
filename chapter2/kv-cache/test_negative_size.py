@@ -5,11 +5,11 @@ from pathlib import Path
 
 
 def _stub():
-    sys.modules.setdefault("openai", types.ModuleType("openai"))
-    sys.modules["openai"].OpenAI = object
-    # other optional deps
-    for name in ["openrouter_fallback"]:
-        sys.modules.setdefault(name, types.ModuleType(name))
+    try:
+        import openai  # noqa: F401
+    except ImportError:
+        sys.modules.setdefault("openai", types.ModuleType("openai"))
+        sys.modules["openai"].OpenAI = object
 
 
 _stub()

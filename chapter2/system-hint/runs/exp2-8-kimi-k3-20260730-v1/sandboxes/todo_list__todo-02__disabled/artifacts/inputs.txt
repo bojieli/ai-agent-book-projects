@@ -1,0 +1,3 @@
+Delivery identifier: BRAVO-528
+Required artifacts: inputs.txt, analysis.txt, checks.txt, delivery.txt
+Constraint: every artifact must contain the delivery identifier token.

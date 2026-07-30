@@ -1,0 +1,30 @@
+{
+  "overall_score": 85,
+  "pass": false,
+  "issues": [
+    {
+      "page": 16,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "放大注意力可视化图中的文字，确保观众能清晰辨认词语和连接线；可适当简化图例说明文字"
+    },
+    {
+      "page": 16,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "增大可视化图表尺寸，占据更多页面空间以提升细节可见度，避免文字挤压"
+    },
+    {
+      "page": 17,
+      "issue_type": "readability",
+      "severity": "high",
+      "suggestion": "重新生成高分辨率的注意力可视化图，确保所有词语清晰可辨；考虑使用更大字号的文本标注"
+    },
+    {
+      "page": 17,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "显著放大图表至页面70%以上空间，或拆分图表为单独页面展示；添加简洁标题说明图表内容"
+    }
+  ]
+}

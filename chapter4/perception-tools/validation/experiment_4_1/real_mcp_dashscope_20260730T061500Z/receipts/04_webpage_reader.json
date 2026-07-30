@@ -1,0 +1,39 @@
+{
+  "case": "webpage_reader",
+  "tool": "webpage_reader",
+  "arguments": {
+    "url": "https://example.com",
+    "extract_text": true,
+    "extract_links": true
+  },
+  "arguments_sha256": "8e00a9ee1bbd11c9194efa2e61a4f1d6e01c603ab2a0feed14620c5663a70d8a",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "tls-http-beautifulsoup",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "url": "https://example.com",
+      "title": "Example Domain",
+      "text": "Example DomainExample DomainThis domain is for use in documentation examples without needing permission. Avoid use in operations.Learn more",
+      "text_length": 139,
+      "links": [
+        {
+          "text": "Learn more",
+          "href": "https://iana.org/domains/example"
+        }
+      ]
+    },
+    "metadata": {
+      "url": "https://example.com"
+    }
+  },
+  "elapsed_seconds": 0.93
+}

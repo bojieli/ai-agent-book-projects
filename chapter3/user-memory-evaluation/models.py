@@ -12,6 +12,34 @@ class MessageRole(str, Enum):
     SYSTEM = "system"
 
 
+class RubricGrade(str, Enum):
+    """The four concrete grades used by Experiment 6-3."""
+
+    EXCELLENT = "excellent"
+    GOOD = "good"
+    PASS = "pass"
+    FAIL = "fail"
+
+
+class RubricDimensionResult(BaseModel):
+    """Auditable score and cited evidence for one rubric dimension."""
+
+    grade: RubricGrade
+    score: int = Field(ge=1, le=4)
+    reasoning: str
+    evidence: List[str] = Field(default_factory=list)
+    boundary_case: Optional[str] = None
+
+
+class HallucinationResult(BaseModel):
+    """Grounding verdict. ``detected`` is an unconditional score veto."""
+
+    detected: bool
+    claims: List[str] = Field(default_factory=list)
+    evidence: List[str] = Field(default_factory=list)
+    reasoning: str
+
+
 class ConversationMessage(BaseModel):
     """A single message in a conversation."""
     role: MessageRole
@@ -79,6 +107,15 @@ class EvaluationResult(BaseModel):
     reasoning: str = Field(description="Detailed reasoning for the evaluation")
     required_info_found: Dict[str, float] = Field(description="Score for each required information piece (0.0-1.0)")
     suggestions: Optional[str] = Field(default=None, description="Suggestions for improvement")
+    dimensions: Dict[str, RubricDimensionResult] = Field(
+        default_factory=dict,
+        description="Experiment 6-3 rubric results: precision, recall, reasoning, and proactivity",
+    )
+    hallucination: Optional[HallucinationResult] = Field(
+        default=None,
+        description="Grounding verdict; detected hallucination forces reward to zero",
+    )
+    veto_applied: bool = Field(default=False, description="Whether the hallucination veto was applied")
     
     def to_summary(self) -> str:
         """Generate a summary of the evaluation result."""

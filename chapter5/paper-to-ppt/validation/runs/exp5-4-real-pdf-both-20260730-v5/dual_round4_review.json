@@ -1,0 +1,18 @@
+{
+  "overall_score": 90,
+  "pass": false,
+  "issues": [
+    {
+      "page": 14,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "放大注意力可视化图，确保文字标签清晰可辨，避免因图片过小影响观众理解长距离依赖关系的展示效果"
+    },
+    {
+      "page": 15,
+      "issue_type": "image_size",
+      "severity": "medium",
+      "suggestion": "增大指代消解注意力可视化图的尺寸，确保文本标签和连接线清晰可见，提升观众对注意力模式的识别能力"
+    }
+  ]
+}

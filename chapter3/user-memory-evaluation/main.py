@@ -226,6 +226,19 @@ class InteractiveEvaluator:
         console.print(f"[{status_color}]Status: {'PASSED' if is_passed else 'FAILED'}[/{status_color}]")
         console.print(f"Reward: {result.reward:.3f}/1.000")
         console.print(f"Reasoning: {result.reasoning}")
+
+        if result.dimensions:
+            console.print("[bold]Structured Rubric:[/bold]")
+            for name, dimension in result.dimensions.items():
+                console.print(
+                    f"  {name}: {dimension.score}/4 ({dimension.grade.value}) — {dimension.reasoning}"
+                )
+        if result.hallucination:
+            color = "red" if result.veto_applied else "green"
+            console.print(
+                f"[{color}]Hallucination veto: {'APPLIED' if result.veto_applied else 'clear'}"
+                f" — {result.hallucination.reasoning}[/{color}]"
+            )
         
         if result.required_info_found:
             console.print("Required Information Found:")

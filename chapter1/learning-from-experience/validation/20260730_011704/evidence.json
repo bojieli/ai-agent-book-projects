@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "experiment_id": "7-2",
+  "title": "Traditional RL versus Kimi K3 in the same treasure-hunt environment",
+  "campaign_started_at": "2026-07-29T17:17:06.773342+00:00",
+  "evidence_finalized_at": "2026-07-29T17:26:40.328179+00:00",
+  "git_revision": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+  "runtime": {
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit"
+  },
+  "execution_manifest": {
+    "experiment_id": "7-2",
+    "campaign_started_at_local": "2026-07-30T01:17:04+08:00",
+    "command": [
+      "python",
+      "run_experiment_7_2.py"
+    ],
+    "execution_source_sha256": {
+      "game_environment.py": "4af75d35cd609e1ee4d163c37c637c3f559365eb47eda1e562e805a6c62f3105",
+      "rl_agent.py": "3821f04679ad4c9d021e3e0557b39b94d43348ef63192f05f077be79ff3442a0",
+      "llm_agent.py": "28579c10cc4ba71eb3ac232e1538172dad78d2ca9733d24fc7bf63fb26385783",
+      "experiment.py": "c8e2890271ba12583d955b1d418d5b171b1becdbcd27b1614d790ac81dee6d96",
+      "run_experiment_7_2.py": "9e988e96fb7d9bc5b16d15a30782e78db14ab3ea10d702fdb7aed3e992b870a1"
+    },
+    "post_run_status": "The campaign and all raw artifacts completed; evidence.json serialization then failed because numpy.bool_ is not handled by the standard JSON encoder. No API rerun is required.",
+    "captured_before_source_repair": true
+  },
+  "backend": {
+    "provider": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3",
+    "using_openrouter": false
+  },
+  "provider_response_models": [
+    "kimi-k3"
+  ],
+  "usage": {
+    "successful_api_calls": 17,
+    "api_attempts": 17,
+    "total_tokens": 28242,
+    "provider_cost": null,
+    "provider_cost_note": "The provider exposed token usage but no authoritative billed cost; unknown is not zero."
+  },
+  "q_learning": {
+    "training_episodes": 10000,
+    "training_time_seconds": 2.124420166015625,
+    "training_victory_rate": 0.451,
+    "evaluation_episodes": 100,
+    "evaluation_victory_rate": 1.0,
+    "evaluation_average_steps": 12.0,
+    "q_table_states": 142,
+    "learning_curve": [
+      {
+        "episode": 1000,
+        "victory_rate": 0.003,
+        "q_table_size": 123,
+        "epsilon": 0.606454822840097
+      },
+      {
+        "episode": 2000,
+        "victory_rate": 0.0,
+        "q_table_size": 123,
+        "epsilon": 0.3677874521460121
+      },
+      {
+        "episode": 3000,
+        "victory_rate": 0.001,
+        "q_table_size": 126,
+        "epsilon": 0.22304647413401948
+      },
+      {
+        "episode": 4000,
+        "victory_rate": 0.001,
+        "q_table_size": 127,
+        "epsilon": 0.13526760995605422
+      },
+      {
+        "episode": 5000,
+        "victory_rate": 0.001,
+        "q_table_size": 128,
+        "epsilon": 0.1
+      },
+      {
+        "episode": 6000,
+        "victory_rate": 0.559,
+        "q_table_size": 137,
+        "epsilon": 0.1
+      },
+      {
+        "episode": 7000,
+        "victory_rate": 0.97,
+        "q_table_size": 138,
+        "epsilon": 0.1
+      },
+      {
+        "episode": 8000,
+        "victory_rate": 0.996,
+        "q_table_size": 138,
+        "epsilon": 0.1
+      },
+      {
+        "episode": 9000,
+        "victory_rate": 0.998,
+        "q_table_size": 139,
+        "epsilon": 0.1
+      },
+      {
+        "episode": 10000,
+        "victory_rate": 0.981,
+        "q_table_size": 142,
+        "epsilon": 0.1
+      }
+    ]
+  },
+  "k3_first_attempt": {
+    "victory": true,
+    "steps": 17,
+    "reward": 241.5,
+    "api_calls": 17,
+    "actions": [
+      "take rusty sword",
+      "go north",
+      "look around",
+      "use rusty sword",
+      "go south",
+      "go east",
+      "take red key",
+      "take magic crystal",
+      "try crafting",
+      "go west",
+      "go north",
+      "use red key",
+      "go north",
+      "attack with silver sword",
+      "use silver sword",
+      "go east",
+      "take dragon's treasure"
+    ]
+  },
+  "protocol_gates": {
+    "same_deterministic_environment": true,
+    "q_learning_10000_training_episodes": true,
+    "q_learning_100_evaluation_episodes": true,
+    "q_learning_reached_full_evaluation_success": true,
+    "one_kimi_first_attempt_recorded": true,
+    "direct_official_moonshot_kimi_k3": true,
+    "one_real_response_per_first_attempt_action": true,
+    "provider_response_ids_retained": true,
+    "provider_response_content_retained": true,
+    "all_provider_responses_finished_normally": true,
+    "zero_api_errors": true,
+    "zero_fallback_actions": true
+  },
+  "acceptance_complete": true,
+  "manuscript_observation_matches": {
+    "first_attempt_victory": true,
+    "exactly_18_steps": false,
+    "q_learning_11_step_greedy_solution": false
+  },
+  "result_mismatches": [
+    "Kimi K3 used 17 rather than the historical 18 steps",
+    "Q-learning greedy evaluation averaged 12 rather than 11 steps"
+  ],
+  "interpretation": "Protocol acceptance is independent of whether stochastic model behavior reproduces historical point estimates.",
+  "artifacts": {
+    "experiment_results": "experiment_results.json",
+    "raw_llm_calls_and_trajectories": "llm_experiences.json",
+    "q_learning_checkpoint": "rl_agent.pkl",
+    "execution_manifest": "execution_manifest.json"
+  },
+  "artifact_sha256": {
+    "experiment_results.json": "63b30603836b8dce4da8b3748159f727b7d66d362be37a7d5eb75d778e1600d1",
+    "llm_experiences.json": "535a5977cab93a151f977c45f91f4582989d7d3710ca7e460017c5bb64a581d9",
+    "rl_agent.pkl": "75ee5ff04f3100480fd8f62005b004ec395528110d7c2dd273aefad3e8ab3ed5",
+    "execution_manifest.json": "29da01f59cfa41464345f9a292352359d8153a13ed623b58d4b93959c020fda6"
+  },
+  "postprocessor_source_sha256": {
+    "run_experiment_7_2.py": "f68cbe62ce4dcdbe11750317ed8e506a6ca6534cba20eaf75352286f4ace5e33",
+    "finalize_experiment_7_2.py": "80766be8fd3da3ebb2da1aa096ee32431e682dc1e3caf513052111a24b4995d5"
+  },
+  "llm_result_summary": {
+    "provider": "moonshot",
+    "model": "kimi-k3",
+    "using_openrouter": false,
+    "training_time": 416.1074731349945,
+    "api_calls": 17,
+    "api_attempts": 17,
+    "api_errors": 0,
+    "fallback_actions": 0,
+    "total_tokens": 28242,
+    "training_victory_rate": 1.0
+  }
+}

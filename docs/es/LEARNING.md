@@ -15,7 +15,7 @@ El marco central de este libro es **Agente = LLM + Contexto + Herramientas**. Es
 
 La ruta de aprendizaje se corresponde capítulo por capítulo con todo el libro, desplegándose capa por capa alrededor de los tres pilares:
 
-- **Capítulo 1 · Fundamentos**: Establecer un marco cognitivo completo para los sistemas de agentes — comprender la definición de un agente en RL, comparar las diferencias de eficiencia de muestra entre el RL tradicional y el paradigma LLM+RL, captar el nuevo paradigma de "modelo como agente" y dominar el marco central de **Agente = Modelo + Contexto + Herramientas**. **Idea clave**: La importancia del conocimiento previo supera a los algoritmos y entornos.
+- **Capítulo 1 · Fundamentos**: Establecer un marco cognitivo completo para los sistemas de agentes — comprender la definición de un agente en RL, comparar las diferencias de eficiencia de muestra entre el RL tradicional y el paradigma LLM+RL, captar el nuevo paradigma de "modelo como agente" y dominar el marco central de **Agente = LLM + Contexto + Herramientas**. **Idea clave**: La importancia del conocimiento previo supera a los algoritmos y entornos.
 
 - **Capítulos 2–3 · Contexto**: El contexto es el sistema operativo del agente. El Capítulo 2 cubre prompts del sistema, diseño optimizado para KV Cache, compresión de contexto y ablación de ingeniería de prompts. El Capítulo 3 cubre memoria de usuario, recuperación densa/dispersa/híbrida, Agentic RAG, recuperación consciente del contexto y extracción de conocimiento estructurado. **Idea clave**: El contexto completo incluye instrucciones del sistema, historial de diálogo, procesos de razonamiento, registros de interacción con herramientas, memoria de usuario y conocimiento externo.
 

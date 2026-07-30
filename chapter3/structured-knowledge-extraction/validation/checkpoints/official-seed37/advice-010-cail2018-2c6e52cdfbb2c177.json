@@ -1,0 +1,89 @@
+{
+  "signature": "0b07d52ed7b1455d3fcac43d68278287862bba4276ab0eaffbfb53cb17b2bab1",
+  "parsed": {
+    "advice": "匹配依据为本案诈骗金额（130000元）、诈骗目标（个人）、诈骗次数（1次）、诈骗被害人数量（1人）、犯罪金额（130000元）等因素与训练原型“诈骗罪-prototype-1”的高权重特征（z值较高）存在关联。该原型包含98个案件，其刑期统计区间为：中位数18个月，四分位区间8-37.5个月，最小值4个月，最大值180个月。需注意，本案退赃情况、坦白、赔偿谅解等情节未知，且诈骗方法（伪造证件）与原型定义特征中的“虚构事实”不完全一致，刑期存在不确定性。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-2c6e52cdfbb2c177",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:30.206458+00:00",
+    "latency_ms": 25060.362,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"诈骗罪\", \"surrender\": null, \"truthful_confession\": null, \"compensation_to_victim\": null, \"victim_forgiveness\": null, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": \"被抓获\", \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": 130000.0, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": null, \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"fraud_count\": 1.0, \"fraud_amount\": 130000.0, \"fraud_method\": \"伪造证件\", \"restitution_situation\": null, \"fraud_target\": \"个人\", \"proceeds_use\": null, \"impersonate_identity\": null, \"fraud_means\": \"伪造合同\", \"fraud_victim_count\": 1.0, \"booty_squandered\": null, \"fraud_middleman\": null}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"诈骗罪-prototype-1\", \"charge\": \"诈骗罪\", \"prototype_size\": 98, \"sentence_months\": {\"median\": 18.0, \"q25\": 8.0, \"q75\": 37.5, \"min\": 4.0, \"max\": 180.0}, \"defining_features\": [{\"feature\": \"num:fraud_amount\", \"z\": 1.2307636843371674}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.0781858944170049}, {\"feature\": \"cat:fraud_method=虚构事实\", \"z\": 1.023056629094547}, {\"feature\": \"num:fraud_count\", \"z\": 0.9259512058187134}, {\"feature\": \"num:fraud_victim_count\", \"z\": 0.7729058128215746}, {\"feature\": \"num:crime_amount\", \"z\": 0.7680126997226981}, {\"feature\": \"cat:restitution_situation=全部退赃\", \"z\": 0.6567069704900581}, {\"feature\": \"num:theft_amount\", \"z\": -0.6458056132900002}], \"match_distance\": 0.43279151303600627}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386550444081222809c6b24dcd35df0bef1acd71d22a061",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据为本案诈骗金额（130000元）、诈骗目标（个人）、诈骗次数（1次）、诈骗被害人数量（1人）、犯罪金额（130000元）等因素与训练原型“诈骗罪-prototype-1”的高权重特征（z值较高）存在关联。该原型包含98个案件，其刑期统计区间为：中位数18个月，四分位区间8-37.5个月，最小值4个月，最大值180个月。需注意，本案退赃情况、坦白、赔偿谅解等情节未知，且诈骗方法（伪造证件）与原型定义特征中的“虚构事实”不完全一致，刑期存在不确定性。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，作为司法数据分析助手，只使用给出的训练集案件原型统计与已抽取因素，不能用外部知识或自行给刑期数字。首先，我要仔细看用户提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE ONLY。\n\n首先，HELDOUT的因素是诈骗罪，犯罪金额130000，诈骗金额130000，诈骗目标个人，诈骗方法伪造证件，诈骗手段伪造合同，诈骗次数1，诈骗被害人1人，其他很多因素都是null，比如退赃情况、自首、坦白等都没有。\n\n然后看匹配的训练原型：prototype_id是诈骗罪-prototype-1，原型大小98个案件，刑期的中位数18个月，四分位25%是8，75%是37.5，最小4，最大180。定义特征里有几个z值，比如诈骗金额z=1.23，诈骗目标个人z=1.08，诈骗方法虚构事实z=1.02，诈骗次数z=0.93，诈骗被害人数量z=0.77，犯罪金额z=0.77，退赃情况全部退赃z=0.66，盗窃金额z=-0.65。匹配距离0.43。\n\n接下来要解释匹配依据和统计区间，强调不确定性。匹配依据应该是HELDOUT中的因素与原型的定义特征的匹配，比如诈骗金额、诈骗目标个人、诈骗次数、诈骗被害人数量、犯罪金额这些在HELDOUT中存在且与原型的高z值特征相关。但要注意HELDOUT的诈骗方法是“伪造证件”，而原型的诈骗方法是“虚构事实”，这可能有差异，但可能“伪造证件”属于“虚构事实”的一种？不过用户提供的HELDOUT明确写的是“伪造证件”，而原型是“虚构事实”，这里可能存在不匹配，但原型的定义特征里诈骗方法是虚构事实，z值1.02，而HELDOUT的诈骗方法是伪造证件，可能这是一个差异点，但匹配距离0.43，说明有一定匹配度。\n\n统计区间就是原型的刑期统计：中位数18个月，四分位区间Q25=8，Q75=37.5，即8-37.5个月，最小值4，最大值180。需要说明这是基于匹配原型的统计结果，且HELDOUT中缺乏原型里的“全部退赃”等有利因素（HELDOUT的restitution_situation是null），可能影响刑期，所以存在不确定性。\n\n需要组织语言，只返回JSON，advice里包含匹配依据（关键因素如诈骗金额、目标个人、次数、被害人数量与原型高z值特征匹配）、统计区间（中位数18，四分位8-37.5，min4，max180），强调不确定性（如HELDOUT缺乏退赃等因素，诈骗方法与原型不完全一致等）。\n\n注意不能使用外部知识，只基于给出的信息。所以最终的advice应该是：匹配依据为本案诈骗金额、诈骗目标（个人）、诈骗次数、诈骗被害人数量、犯罪金额等因素与训练原型“诈骗罪-prototype-1”的高权重特征（z值较高）存在关联。该原型包含98个案件，其刑期统计区间为：中位数18个月，四分位区间8-37.5个月，最小值4个月，最大值180个月。需注意，本案缺乏原型中“全部退赃”等有利情节（本案退赃情况未知），且诈骗方法（伪造证件）与原型定义特征中的“虚构事实”不完全一致，刑期可能存在不确定性。"
+          }
+        }
+      ],
+      "created": 1785386575,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 979,
+        "prompt_tokens": 813,
+        "total_tokens": 1792,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 824,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 979,
+      "prompt_tokens": 813,
+      "total_tokens": 1792,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 824,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386550444081222809c6b24dcd35df0bef1acd71d22a061"
+  }
+}

@@ -31,7 +31,7 @@
 <!-- Annotation A -->
 <line x1="600" y1="230" x2="555" y2="230" stroke="#e6a817" stroke-width="2" marker-end="url(#ah-y)"/>
 <text x="608" y="214" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold">ⓐ Listado de habilidades</text>
-<text x="608" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central">Harness emit-once</text>
+<text x="608" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central">Harness de emisión única</text>
 <text x="608" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central">~300 tokens</text>
 
 <!-- Row 5: assistant Skill tool_use -->
@@ -77,7 +77,7 @@
 <text x="590" y="514" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">añadir al final</text>
 
 <!-- Ellipsis -->
-<text x="300" y="580" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#999999" text-anchor="middle" dominant-baseline="central">... subsequent rounds ...</text>
+<text x="300" y="580" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#999999" text-anchor="middle" dominant-baseline="central">... rondas posteriores ...</text>
 
 <!-- Closing bracket -->
 <text x="40" y="604" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">]</text>

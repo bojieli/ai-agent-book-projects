@@ -498,25 +498,25 @@ def fig2_9_memory_comparison():
             '"Cargo: Ing. Sénior"',
             '"Equipo: 5 personas"',
             '"Especialidad: Rec Sys"',
-        ], 'Pros: O(1), muy bajo costo\nContras: Pierde contexto relacional'),
+        ], 'Ventajas: O(1), muy bajo costo\nContras: Pierde contexto relacional'),
         ('Notas avanzadas', 'Párrafo completo', [
             '"Ingeniero sénior en',
             'TechCorp, lidera equipo de',
             '5 personas en rec sys,',
             '3 años en ML."',
-        ], 'Pros: Integridad semántica\nContras: Redundancia + actualización compleja'),
+        ], 'Ventajas: Integridad semántica\nContras: Redundancia + actualización compleja'),
         ('Fichas JSON', 'Estructura jerárquica', [
             'work:',
             '  company: "TechCorp"',
             '  title: "Ing. Sénior"',
             '  team_size: 5',
-        ], 'Pros: Actualización parcial\nContras: Clasificación rígida'),
+        ], 'Ventajas: Actualización parcial\nContras: Clasificación rígida'),
         ('Fichas JSON avanz.', 'Info contextualizada', [
             '{category: "work",',
             ' title: "Ing. Sénior",',
             ' backstory: "Autopresentación",',
             ' ts: "09-14"}',
-        ], 'Pros: Desambiguación + trazabilidad\nContras: Alto costo de generación'),
+        ], 'Ventajas: Desambiguación + trazabilidad\nContras: Alto costo de generación'),
     ]
 
     col_w = 185

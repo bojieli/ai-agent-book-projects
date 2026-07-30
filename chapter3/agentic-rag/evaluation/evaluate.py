@@ -7,7 +7,15 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ``evaluation`` is intentionally runnable both as a script directory and via
+# pytest from the repository root.  Put this experiment's directory first so
+# the unqualified educational imports below cannot resolve a sibling
+# experiment's ``config.py``/``agent.py`` from an earlier sys.path entry.
+_PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PROJECT_DIR in sys.path:
+    sys.path.remove(_PROJECT_DIR)
+sys.path.insert(0, _PROJECT_DIR)
 
 from config import Config
 from agent import AgenticRAG

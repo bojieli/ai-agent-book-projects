@@ -1,0 +1,5 @@
+Inventory Record
+Item token: ALPHA-417
+Description: Tracked item for the multi-step delivery.
+Quantity: 1
+Status: In stock

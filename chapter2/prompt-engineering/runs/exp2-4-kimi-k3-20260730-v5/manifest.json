@@ -1,0 +1,33 @@
+{
+  "experiment_id": "2-4",
+  "campaign_complete": false,
+  "protocol_sha256": "ec1ec36d5a6ee21b5185295a7a4447f4e0173f1681a9fe471b240dda1e7cf32a",
+  "summary_path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/comparison.json",
+  "summary_sha256": "eb1dc1dc1bec466f6815fc08093d555e18e31491c3ce8a74fbaec7745c7987ff",
+  "arm_artifacts": {
+    "baseline": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-baseline_0730062324.json",
+      "sha256": "c2bcc6260fe07b8c427131aed29a16c7c23f0351d0a1db4ce85bdd66b9a6bf38"
+    },
+    "tone_trump": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_trump_0730062324.json",
+      "sha256": "e5b2328f6e49c8959cd45bbd9fb30fbdd9e2ab1df7bfffb6c7e20ed83c1b1ac2"
+    },
+    "tone_casual": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_casual_0730062326.json",
+      "sha256": "3bb24ed4bc8ce8fec1808dad703c922235cbfa2972ad4b54c5c76da378204038"
+    },
+    "wiki_random": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-wiki_random_0730062327.json",
+      "sha256": "db1d386704fca08b55d8a3f4cca46976e23ec97950702c63de5d443bd2354820"
+    },
+    "no_tool_desc": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-no_tool_desc_0730062327.json",
+      "sha256": "fa003ae5dccfbc58d338d7973434de7a2ca4e3bc436dac6970031c5d925d20ed"
+    },
+    "all_ablations": {
+      "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_casual_wiki_random_no_tool_desc_0730062328.json",
+      "sha256": "98733b43f7c1d41932bcceebd47dca3c0b9257da0cb6affdc3205273eb464d13"
+    }
+  }
+}

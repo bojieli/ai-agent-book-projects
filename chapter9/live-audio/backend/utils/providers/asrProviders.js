@@ -110,6 +110,8 @@ class OpenAIASRProvider extends BaseASRProvider {
           language: response.data.language || 'unknown',
           duration: response.data.duration || 0,
           confidence: response.data.confidence || 1.0,
+          requestId: response.headers?.['x-request-id'] || response.headers?.['request-id'] || null,
+          responseModel: response.data.model || this.config.model,
           timestamp: Date.now(),
           provider: 'openai'
         };
@@ -202,6 +204,8 @@ class SiliconflowASRProvider extends BaseASRProvider {
           language: response.data.language || 'unknown',
           duration: response.data.duration || 0,
           confidence: response.data.confidence || 1.0,
+          requestId: response.headers?.['x-request-id'] || response.headers?.['request-id'] || null,
+          responseModel: response.data.model || this.config.model,
           timestamp: Date.now(),
           provider: 'siliconflow'
         };
@@ -269,4 +273,4 @@ module.exports = {
   OpenAIASRProvider,
   SiliconflowASRProvider,
   ASRProviderFactory
-}; 
+};

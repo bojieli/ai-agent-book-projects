@@ -1,4 +1,11 @@
-# 实验 9-3 依赖
-# 另需本机安装 ffmpeg / ffprobe（brew install ffmpeg）
-openai>=1.40.0
-python-dotenv>=1.0.0
+torch>=2.2
+transformers>=4.45
+accelerate>=0.34
+librosa>=0.10
+soundfile>=0.12
+openai>=1.40
+python-dotenv>=1.0
+pytest>=7.4
+mlx-audio>=0.4.6; platform_machine == "arm64"
+openai-whisper>=20240930
+opencc-python-reimplemented>=0.1.7

@@ -1,0 +1,683 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "detailed_errors__err-01__detailed_errors",
+  "suite": "detailed_errors",
+  "case_id": "err-01",
+  "condition": "detailed_errors",
+  "features": [
+    "detailed_errors"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "3e17afdd0b6821d1befe11b6f468155ee34904428c515486a00377273e0a4064",
+  "current_sandbox_sha256": "4506f97541fac6dd0ac6331125d5740cabd21e3776b4cf1acd222713d3b012c3",
+  "created_at": "2026-07-29T19:46:46.388632+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Read invoice.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_0",
+          "function": {
+            "arguments": "{\"file\":\"invoice.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "list_documents_1",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "The user wants me to read invoice.txt, but it may have been renamed. Let me first try to read invoice.txt, and if that fails, list documents to find the actual file.\n\nLet me start by trying to read invoice.txt and also listing documents in parallel since they're independent."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'invoice.txt' does not exist\", \"arguments\": {\"file\": \"invoice.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"invoice_2025.txt\"]}"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "content": "[\"invoice_2025.txt\"]"
+    },
+    {
+      "content": "The file was renamed to `invoice_2025.txt`. Let me read it to recover the token.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_2",
+          "function": {
+            "arguments": "{\"file\":\"invoice_2025.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The file invoice.txt doesn't exist. It was renamed to invoice_2025.txt. Let me read that file to find the token."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "content": "INV-2041"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"document\":\"invoice_2025.txt\",\"token\":\"INV-2041\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The actual document is invoice_2025.txt and it contains the token \"INV-2041\". Now I should submit the result with the actual filename and the exact token."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:46:46.388902+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read invoice.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6032.309,
+      "response": {
+        "id": "chatcmpl-6a6a58a6124dbf4a23c9413c",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_0",
+                  "function": {
+                    "arguments": "{\"file\":\"invoice.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "list_documents_1",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "The user wants me to read invoice.txt, but it may have been renamed. Let me first try to read invoice.txt, and if that fails, list documents to find the actual file.\n\nLet me start by trying to read invoice.txt and also listing documents in parallel since they're independent."
+            }
+          }
+        ],
+        "created": 1785354407,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 125,
+          "prompt_tokens": 367,
+          "total_tokens": 492,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 58,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:46:52.428529+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read invoice.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"invoice.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "The user wants me to read invoice.txt, but it may have been renamed. Let me first try to read invoice.txt, and if that fails, list documents to find the actual file.\n\nLet me start by trying to read invoice.txt and also listing documents in parallel since they're independent."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'invoice.txt' does not exist\", \"arguments\": {\"file\": \"invoice.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"invoice_2025.txt\"]}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"invoice_2025.txt\"]"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4119.889,
+      "response": {
+        "id": "chatcmpl-6a6a58ac124dbf4a23c94148",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The file was renamed to `invoice_2025.txt`. Let me read it to recover the token.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_2",
+                  "function": {
+                    "arguments": "{\"file\":\"invoice_2025.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The file invoice.txt doesn't exist. It was renamed to invoice_2025.txt. Let me read that file to find the token."
+            }
+          }
+        ],
+        "created": 1785354413,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 104,
+          "prompt_tokens": 615,
+          "total_tokens": 719,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 28,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:46:56.554095+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read invoice.txt. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"invoice.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "The user wants me to read invoice.txt, but it may have been renamed. Let me first try to read invoice.txt, and if that fails, list documents to find the actual file.\n\nLet me start by trying to read invoice.txt and also listing documents in parallel since they're independent."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'invoice.txt' does not exist\", \"arguments\": {\"file\": \"invoice.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"invoice_2025.txt\"]}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"invoice_2025.txt\"]"
+          },
+          {
+            "content": "The file was renamed to `invoice_2025.txt`. Let me read it to recover the token.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_2",
+                "function": {
+                  "arguments": "{\"file\":\"invoice_2025.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file invoice.txt doesn't exist. It was renamed to invoice_2025.txt. Let me read that file to find the token."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_2",
+            "name": "read_document",
+            "content": "INV-2041"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4683.704,
+      "response": {
+        "id": "chatcmpl-6a6a58b16a87287a70e80c96",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"document\":\"invoice_2025.txt\",\"token\":\"INV-2041\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The actual document is invoice_2025.txt and it contains the token \"INV-2041\". Now I should submit the result with the actual filename and the exact token."
+            }
+          }
+        ],
+        "created": 1785354418,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 109,
+          "prompt_tokens": 750,
+          "total_tokens": 859,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 36,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:46:52.424123+00:00",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "arguments": {
+        "file": "invoice.txt"
+      },
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'invoice.txt' does not exist\", \"arguments\": {\"file\": \"invoice.txt\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"invoice_2025.txt\"]}",
+      "ok": false,
+      "sandbox_sha256_after": "4506f97541fac6dd0ac6331125d5740cabd21e3776b4cf1acd222713d3b012c3"
+    },
+    {
+      "at": "2026-07-29T19:46:52.426406+00:00",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"invoice_2025.txt\"]",
+      "ok": true,
+      "sandbox_sha256_after": "4506f97541fac6dd0ac6331125d5740cabd21e3776b4cf1acd222713d3b012c3"
+    },
+    {
+      "at": "2026-07-29T19:46:56.551318+00:00",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "arguments": {
+        "file": "invoice_2025.txt"
+      },
+      "content": "INV-2041",
+      "ok": true,
+      "sandbox_sha256_after": "4506f97541fac6dd0ac6331125d5740cabd21e3776b4cf1acd222713d3b012c3"
+    },
+    {
+      "at": "2026-07-29T19:47:01.241100+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "document": "invoice_2025.txt",
+        "token": "INV-2041"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "4506f97541fac6dd0ac6331125d5740cabd21e3776b4cf1acd222713d3b012c3"
+    }
+  ],
+  "tool_counters": {
+    "read_document": 2,
+    "list_documents": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "detailed_errors": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1732,
+    "completion_tokens": 338,
+    "total_tokens": 2070
+  },
+  "cost": {
+    "amount": 0.06844,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:47:01.244131+00:00",
+  "case_condition_order": [
+    "detailed_errors",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

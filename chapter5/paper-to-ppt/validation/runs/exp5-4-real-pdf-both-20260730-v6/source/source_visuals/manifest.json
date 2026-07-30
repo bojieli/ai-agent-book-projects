@@ -1,0 +1,62 @@
+{
+  "paper": {
+    "title": "Attention Is All You Need",
+    "authors": "Ashish Vaswani et al.",
+    "arxiv_id": "1706.03762",
+    "pdf_url": "https://arxiv.org/pdf/1706.03762",
+    "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+    "observed_pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+  },
+  "paper_text": {
+    "path": "/Users/boj/book/ai-agent-book/chapter5/paper-to-ppt/validation/runs/exp5-4-real-pdf-both-20260730-v6/source/paper_text.md",
+    "sha256": "4da5f2a1da38bad8149832b5ada3c94f0619188db8fed5cdca8ff63405587eb8",
+    "characters": 39819
+  },
+  "visuals": [
+    {
+      "filename": "paper_figure_1_transformer.png",
+      "pdf_page": 3,
+      "source_label": "Figure 1",
+      "caption": "The Transformer model architecture.",
+      "rect": [
+        92,
+        60,
+        520,
+        405
+      ],
+      "sha256": "09364ee993caf62234733a5aaacc31bc0472b8db4b6107455f898e3a7a020597",
+      "bytes": 94487,
+      "public_copy_sha256": "09364ee993caf62234733a5aaacc31bc0472b8db4b6107455f898e3a7a020597"
+    },
+    {
+      "filename": "paper_figure_3_long_distance.png",
+      "pdf_page": 13,
+      "source_label": "Figure 3",
+      "caption": "Encoder self-attention following long-distance dependencies.",
+      "rect": [
+        92,
+        88,
+        525,
+        311
+      ],
+      "sha256": "40bfb903dbadbcb20d3243defced540f9dc9d777e4de4061698865fb13878207",
+      "bytes": 57364,
+      "public_copy_sha256": "40bfb903dbadbcb20d3243defced540f9dc9d777e4de4061698865fb13878207"
+    },
+    {
+      "filename": "paper_figure_4_anaphora.png",
+      "pdf_page": 14,
+      "source_label": "Figure 4 (lower attention panel)",
+      "caption": "A published attention head involved in anaphora resolution.",
+      "rect": [
+        92,
+        360,
+        525,
+        610
+      ],
+      "sha256": "677e0c16942c3fab738b1ba34d8b205f04a71b842c372e32f6fbd795d2222e1e",
+      "bytes": 48423,
+      "public_copy_sha256": "677e0c16942c3fab738b1ba34d8b205f04a71b842c372e32f6fbd795d2222e1e"
+    }
+  ]
+}

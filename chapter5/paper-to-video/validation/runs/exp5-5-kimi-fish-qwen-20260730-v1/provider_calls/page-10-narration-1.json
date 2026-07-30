@@ -1,0 +1,67 @@
+{
+  "signature": "ca63c262f538d79e6aa5057385782315042b464816023e0f181c47dcb0583655",
+  "parsed": {
+    "narration": "前面我们从机制上讲清了自注意力怎么算，这一页就来看它真正学到的效果。请大家看屏幕中间这张可视化图：这是编码器第五层的自注意力，句子中词与词之间的连线代表注意力强弱。重点请关注动词 making——它没有只盯着相邻的词，而是把注意力投向了距离很远的句首，指向它真正的依赖对象。这就是标题说的长距离依赖：传统循环网络要一步步传递信息，距离一远信号就衰减，而自注意力一步到位，直接建立连接，代价和距离无关。这也回应了我们前面反复强调的并行化与全局感受野。下一页，我们再看一个更有挑战性的指代消歧例子。",
+    "visual_references": [
+      "标题 Attention Visualization: Long-Distance Dependencies",
+      "屏幕中间的注意力连线可视化图",
+      "图中动词 making 的注意力分布",
+      "图注：encoder self-attention in layer 5"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 10/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n## Attention Visualization: Long-Distance Dependencies\n\n<img src=\"/paper_figure_3_long_distance.png\" class=\"h-70 mx-auto\" />\n\n*Encoder self-attention in layer 5 showing attention to distant dependency of the verb \"making\"*\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6acf696ff171b3d8c3411c",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"前面我们从机制上讲清了自注意力怎么算，这一页就来看它真正学到的效果。请大家看屏幕中间这张可视化图：这是编码器第五层的自注意力，句子中词与词之间的连线代表注意力强弱。重点请关注动词 making——它没有只盯着相邻的词，而是把注意力投向了距离很远的句首，指向它真正的依赖对象。这就是标题说的长距离依赖：传统循环网络要一步步传递信息，距离一远信号就衰减，而自注意力一步到位，直接建立连接，代价和距离无关。这也回应了我们前面反复强调的并行化与全局感受野。下一页，我们再看一个更有挑战性的指代消歧例子。\",\"visual_references\":[\"标题 Attention Visualization: Long-Distance Dependencies\",\"屏幕中间的注意力连线可视化图\",\"图中动词 making 的注意力分布\",\"图注：encoder self-attention in layer 5\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "This is page 10 of 12. Need 180-240 Chinese characters narration, JSON output only. The slide shows attention visualization, encoder self-attention layer 5, long-distance dependency of verb \"making\". Must reference visible image. Connect to previous pages (multi-head attention) and next (remaining visualizations/conclusion). Don't fabricate numbers. Paper figure 3 shows the word \"making\" attending to distant words.\n\nWrite ~180-240 chars. Let me draft:\n\n\"前面我们从机制上讲了自注意力怎么算，现在看看它实际学到了什么。请大家看屏幕中间这张图：这是编码器第五层的自注意力可视化，一句话里每个词与其他词的连线，颜色越深代表注意力越强。重点看动词 making——它并没有只盯着旁边的词，而是把目光投向了句首远处的 it，也就是它真正的主语。这正是长距离依赖：传统 RNN 要一步步传信息，距离远了就容易丢，而自注意力一步直达。下一页我们再看另一个更难的指代例子。\"\n\nCount characters roughly: that's about 200 chars. Good. Visual references: 标题, 中间可视化图, making 的注意力连线, layer 5 caption.\n\nEnsure no fabricated numbers beyond \"第五层\" which is in slide. Good. JSON only."
+          }
+        }
+      ],
+      "created": 1785384811,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 460,
+        "prompt_tokens": 346,
+        "total_tokens": 806,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 262,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 21099.258
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "providers": [
+    {
+      "name": "OpenAI/gpt-5.6-luna",
+      "model": "gpt-5.6-luna",
+      "api_key_env": "OPENAI_API_KEY",
+      "base_url": "https://api.openai.com/v1",
+      "protocol": "openai",
+      "model_family": "GPT",
+      "access_class": "closed",
+      "max_output_field": "max_completion_tokens",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": 1.0,
+        "cached_input_per_million": 0.1,
+        "output_per_million": 6.0,
+        "currency": "USD",
+        "source_url": "https://openai.com/api/pricing/",
+        "as_of": "2026-07-29",
+        "status": "verified"
+      }
+    },
+    {
+      "name": "Anthropic/claude-opus-4.8",
+      "model": "claude-opus-4-8",
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "protocol": "anthropic",
+      "model_family": "Claude",
+      "access_class": "closed",
+      "thinking_budget_tokens": 1024,
+      "pricing": {
+        "input_per_million": 5.0,
+        "cached_input_per_million": 0.5,
+        "output_per_million": 25.0,
+        "currency": "USD",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "as_of": "2026-07-29",
+        "status": "verified"
+      }
+    },
+    {
+      "name": "Google/gemini-3.5-flash",
+      "model": "gemini-3.5-flash",
+      "api_key_env": "GEMINI_API_KEY",
+      "protocol": "gemini",
+      "model_family": "Gemini",
+      "access_class": "closed",
+      "thinking_budget_tokens": 1024,
+      "pricing": {
+        "input_per_million": 1.5,
+        "cached_input_per_million": 0.15,
+        "output_per_million": 9.0,
+        "currency": "USD",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "as_of": "2026-07-29",
+        "status": "verified"
+      }
+    },
+    {
+      "name": "Moonshot/kimi-k3",
+      "model": "kimi-k3",
+      "api_key_env": "MOONSHOT_API_KEY",
+      "base_url": "https://api.moonshot.cn/v1",
+      "protocol": "openai",
+      "model_family": "Kimi",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 1024,
+      "extra_body": {"reasoning_effort": "low"},
+      "pricing": {
+        "input_per_million": 20.0,
+        "cached_input_per_million": 2.0,
+        "output_per_million": 100.0,
+        "currency": "CNY",
+        "source_url": "https://platform.kimi.com/docs/pricing/chat-k3.md",
+        "as_of": "2026-07-29",
+        "usd_per_currency_unit": 0.1477922077922078,
+        "fx_source_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+        "fx_as_of": "2026-07-29",
+        "status": "verified_with_fx"
+      }
+    },
+    {
+      "name": "Ark/doubao-seed-1.6",
+      "model": "doubao-seed-1-6-250615",
+      "api_key_env": "ARK_API_KEY",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "protocol": "openai",
+      "model_family": "Doubao",
+      "access_class": "closed",
+      "thinking_budget_tokens": 0,
+      "extra_body": {"thinking": {"type": "disabled"}},
+      "pricing": {
+        "input_per_million": null,
+        "cached_input_per_million": null,
+        "output_per_million": null,
+        "currency": "CNY",
+        "source_url": "https://www.volcengine.com/docs/82379/1099320",
+        "as_of": "2026-07-29",
+        "status": "unresolved",
+        "blocker": "The exact public cached-input and output price for endpoint doubao-seed-1-6-250615 has not been extracted from an authoritative model row."
+      }
+    },
+    {
+      "name": "Ark/Qwen3-32B",
+      "model": "qwen3-32b-20250429",
+      "api_key_env": "ARK_API_KEY",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "protocol": "openai",
+      "model_family": "Qwen",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": null,
+        "cached_input_per_million": null,
+        "output_per_million": null,
+        "currency": "CNY",
+        "source_url": "https://www.volcengine.com/docs/82379/1099320",
+        "as_of": "2026-07-29",
+        "status": "unresolved",
+        "blocker": "The exact public price for Ark endpoint qwen3-32b-20250429 has not been matched to an authoritative model row."
+      }
+    },
+    {
+      "name": "Ark/DeepSeek-V4-Flash",
+      "model": "deepseek-v4-flash-260425",
+      "api_key_env": "ARK_API_KEY",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "protocol": "openai",
+      "model_family": "DeepSeek",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": null,
+        "cached_input_per_million": null,
+        "output_per_million": null,
+        "currency": "CNY",
+        "source_url": "https://www.volcengine.com/docs/82379/1099320",
+        "as_of": "2026-07-29",
+        "status": "unresolved",
+        "blocker": "The exact public price for Ark endpoint deepseek-v4-flash-260425 has not been matched to an authoritative model row."
+      }
+    },
+    {
+      "name": "DeepSeek official/DeepSeek-V4-Flash",
+      "model": "deepseek-v4-flash",
+      "api_key_env": "DEEPSEEK_API_KEY",
+      "base_url": "https://api.deepseek.com/v1",
+      "protocol": "openai",
+      "model_family": "DeepSeek",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": 0.14,
+        "cached_input_per_million": 0.0028,
+        "output_per_million": 0.28,
+        "currency": "USD",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "as_of": "2026-07-29",
+        "status": "verified"
+      }
+    },
+    {
+      "name": "SiliconFlow/Qwen3-32B",
+      "model": "Qwen/Qwen3-32B",
+      "api_key_env": "SILICONFLOW_API_KEY",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "protocol": "openai",
+      "model_family": "Qwen",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": null,
+        "cached_input_per_million": null,
+        "output_per_million": null,
+        "currency": "CNY",
+        "source_url": "https://siliconflow.cn/pricing",
+        "as_of": "2026-07-29",
+        "status": "unresolved",
+        "blocker": "The exact Qwen/Qwen3-32B cached-input and output price has not been extracted from an authoritative public row."
+      }
+    },
+    {
+      "name": "SiliconFlow/DeepSeek-V4-Flash",
+      "model": "deepseek-ai/DeepSeek-V4-Flash",
+      "api_key_env": "SILICONFLOW_API_KEY",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "protocol": "openai",
+      "model_family": "DeepSeek",
+      "access_class": "open-weight",
+      "thinking_budget_tokens": 0,
+      "pricing": {
+        "input_per_million": 1.0,
+        "cached_input_per_million": 0.02,
+        "output_per_million": 2.0,
+        "currency": "CNY",
+        "source_url": "https://siliconflow.cn/pricing",
+        "as_of": "2026-07-29",
+        "usd_per_currency_unit": 0.1477922077922078,
+        "fx_source_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+        "fx_as_of": "2026-07-29",
+        "status": "verified_with_fx"
+      }
+    }
+  ],
+  "required_model_families": ["GPT", "Claude", "Gemini", "Doubao", "Qwen", "Kimi", "DeepSeek"],
+  "external_benchmark_references": [],
+  "same_model_provider_groups": [
+    {
+      "logical_model": "DeepSeek-V4-Flash",
+      "providers": [
+        "DeepSeek official/DeepSeek-V4-Flash",
+        "SiliconFlow/DeepSeek-V4-Flash"
+      ]
+    }
+  ],
+  "workload": {
+    "context_tokens": [8192, 32768, 131072],
+    "output_tokens": [512, 2048],
+    "requests_per_cell": 100,
+    "concurrency": 4,
+    "minimum_output_attainment_rate": 0.95
+  },
+  "availability": {
+    "duration_hours": 168,
+    "interval_seconds": 3600,
+    "requests_per_probe": 1,
+    "context_tokens": 1024,
+    "output_tokens": 64
+  },
+  "rate_limit": {
+    "concurrency_levels": [1, 2, 4, 8, 16, 32],
+    "requests_per_level": 100,
+    "context_tokens": 8192,
+    "output_tokens": 512
+  },
+  "agent_cost": {
+    "rounds": 6,
+    "initial_context_tokens": 8192,
+    "tokens_added_per_round": 2048,
+    "output_tokens": 512
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "case": "directory_list",
+  "tool": "directory_list",
+  "arguments": {
+    "query": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/mutation_workspace",
+    "options_json": "{\"limit\": 20}"
+  },
+  "arguments_sha256": "b932d77e63aa3cbbe1d1c4918de43829b787f0aadd84d8ed9789411d02967724",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "local-filesystem",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "tool": "directory_list",
+    "backend": "filesystem",
+    "data": [
+      {
+        "name": "escape-link",
+        "type": "file",
+        "size": 28
+      },
+      {
+        "name": "nested",
+        "type": "directory",
+        "size": 96
+      },
+      {
+        "name": "seed.txt",
+        "type": "file",
+        "size": 35
+      }
+    ]
+  },
+  "elapsed_seconds": 0.002
+}

@@ -15,7 +15,7 @@ StagedAgent：根据“执行阶段”切换系统提示词与工具集的 Codin
 from __future__ import annotations
 
 import json
-from typing import Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
@@ -45,7 +45,8 @@ STAGE_PROMPTS: Dict[str, str] = {
         "工作方式：\n"
         "1. 用 write_file 写出高质量、可读、带模块与函数 docstring 的 Python 代码，"
         "避免裸 except，注意异常处理。\n"
-        "2. 可用 execute_code 做自测，确认逻辑正确、能运行。\n"
+        "2. 可用 execute_code 做自测；执行临时目录已包含 write_file 写入的工作区文件，"
+        "请直接用相对路径读取或运行它们，不要猜测 /tmp 等宿主机路径。\n"
         "3. 代码完成并自测通过后，调用 submit_for_review 提交审查。\n"
         "如果是被审查阶段退回来的（历史里会有问题清单），"
         "请针对每一条问题逐个修复后再重新 submit_for_review。"
@@ -135,11 +136,14 @@ class StagedAgent:
     def __init__(
         self,
         max_revisions: int = 2,
+        max_total_steps: int = 40,
         verbose: bool = True,
         interactive: bool = False,
+        client: Any = None,
+        inject_first_review_fault: bool = False,
     ) -> None:
         Config.validate()
-        self.client = OpenAI(api_key=Config.API_KEY, base_url=Config.BASE_URL)
+        self.client = client or OpenAI(api_key=Config.API_KEY, base_url=Config.BASE_URL)
         self.model = Config.MODEL
 
         self.workspace = T.Workspace()
@@ -153,10 +157,18 @@ class StagedAgent:
         self.stage = "requirements"
         self.revision_count = 0
         self.max_revisions = max_revisions
+        self.max_total_steps = max_total_steps
         self.verbose = verbose
         # interactive=True 时，需求澄清阶段的问题改由真人从标准输入回答；
         # 默认 False 走 SimulatedUser 预设答案，可无人值守跑通全流程。
         self.interactive = interactive
+        self.steps = 0
+        self.approved = False
+        self.completion_reason = "not_started"
+        self.stage_entries: List[dict] = []
+        self.transition_events: List[dict] = []
+        self.inject_first_review_fault = inject_first_review_fault
+        self.review_fault_events: List[dict] = []
 
     # --- 日志与打印 ------------------------------------------------------
     def _log(self, action: str, detail: str) -> None:
@@ -222,15 +234,14 @@ class StagedAgent:
         return f"未知工具：{name}"
 
     # --- 主流程 ----------------------------------------------------------
-    def run(self, user_task: str, start_stage: str = "requirements") -> None:
+    def run(self, user_task: str, start_stage: str = "requirements") -> dict:
         # 用户的初始任务，作为共享上下文的第一条消息
         self.history.append({"role": "user", "content": user_task})
         self._banner(f"用户任务：{user_task}")
 
         # 阶段状态机：一直跑到 approve_code 或超过安全上限
-        max_total_steps = 40
-        steps = 0
         done = False
+        self.completion_reason = "running"
 
         if start_stage == "implementation":
             # 跳过需求澄清，直接从实现阶段起步：预置一份等价于需求澄清产物的
@@ -240,12 +251,21 @@ class StagedAgent:
         else:
             self._enter_stage("requirements")
 
-        while not done and steps < max_total_steps:
-            steps += 1
+        while not done and self.steps < self.max_total_steps:
+            self.steps += 1
             done = self._run_one_model_turn()
 
         if not done:
+            self.completion_reason = "step_limit"
             self._banner("达到步数上限，演示结束（未收到 approve_code）。")
+        return {
+            "approved": self.approved,
+            "completion_reason": self.completion_reason,
+            "steps": self.steps,
+            "revision_count": self.revision_count,
+            "stage_entries": list(self.stage_entries),
+            "transition_events": list(self.transition_events),
+        }
 
     def _seed_requirements(self) -> None:
         """从 requirements 之后的阶段起步时，预置一份已确认需求并注入交接消息。"""
@@ -267,6 +287,11 @@ class StagedAgent:
 
     def _enter_stage(self, stage: str) -> None:
         self.stage = stage
+        self.stage_entries.append({
+            "stage": stage,
+            "history_length": len(self.history),
+            "step": self.steps,
+        })
         self._banner(
             f"进入阶段：{stage}  |  角色：{STAGE_ROLE[stage]}  |  "
             f"可用工具：{[t['function']['name'] for t in STAGE_TOOLS[stage]]}"
@@ -279,6 +304,12 @@ class StagedAgent:
         阶段转换工具会切换 self.stage 并立刻返回，让下一轮用新提示词+新工具。
         """
         messages = [{"role": "system", "content": STAGE_PROMPTS[self.stage]}] + self.history
+        if hasattr(self.client, "set_context"):
+            self.client.set_context(
+                stage=self.stage,
+                step=self.steps,
+                history_length=len(self.history),
+            )
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -403,6 +434,12 @@ class StagedAgent:
         返回 True 表示整个任务结束。
         """
         kind = descriptor["kind"]
+        self.transition_events.append({
+            "kind": kind,
+            "from_stage": self.stage,
+            "step": self.steps,
+            "history_length": len(self.history),
+        })
 
         if kind == "to_implementation":
             reqs = "\n".join(f"- {k}: {v}" for k, v in self.workspace.requirements.items())
@@ -418,6 +455,13 @@ class StagedAgent:
 
         if kind == "to_review":
             file = descriptor.get("file", "")
+            if self.inject_first_review_fault and not self.review_fault_events:
+                event = self.workspace.inject_review_fault(file)
+                event.update({
+                    "injected_after_step": self.steps,
+                    "purpose": "exercise the manuscript-required review-to-implementation fallback",
+                })
+                self.review_fault_events.append(event)
             self.history.append({
                 "role": "user",
                 "content": (
@@ -436,6 +480,7 @@ class StagedAgent:
                     "role": "user",
                     "content": "【系统】回退次数已达上限，演示到此结束。",
                 })
+                self.completion_reason = "revision_limit"
                 return True
             issue_text = "\n".join(f"- {x}" for x in (descriptor.get("issues") or []))
             self.history.append({
@@ -449,6 +494,8 @@ class StagedAgent:
             return False
 
         if kind == "approve":
+            self.approved = True
+            self.completion_reason = "approved"
             return True
 
         return False

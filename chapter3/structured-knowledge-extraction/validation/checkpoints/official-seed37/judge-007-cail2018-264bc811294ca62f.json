@@ -1,0 +1,78 @@
+{
+  "signature": "827ac4389e8abbdb695b87b38161d60fc6d65751b269e235ee775f0fc6be95ff",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议忠实于给定原型统计，明确指出待预测案件与原型案件在核心特征上的不匹配，如伤害结果、伤害程度和抓捕方式等，这些特征在原型中对刑期影响显著。同时，建议中也把统计区间作为不确定参考而非承诺，对留出案件的预测结果存在较大不确定性进行了说明，这符合对留出案件的有用性。此外，包含了明确的法律免责声明，指出本结果不构成法律意见或量刑承诺。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-264bc811294ca62f",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:43:00.584663+00:00",
+    "latency_ms": 3604.51,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：黑龙江省红兴隆农垦区人民检察院指控，2013年3月10日15时许，在黑龙江省友谊农场八分场“幸福家园”小区的××超市门前，因玩扑克一事被告人刘××与兰××发生争执，兰××之子被害人兰××1得知此事后，找到刘××，二人发生争执并厮打在一起，在厮打过程中刘××将兰××1摔倒在地，致兰××1腰部受伤，经法医鉴定：兰××1因外伤致T某、T12右侧横突骨折，L1侧横突骨折，属轻伤达九级伤残。被告人刘××于2013年8月1日被公安机关在黑龙江省友谊农场抓获。公诉机关就指控的犯罪事实提供了相关证据。公诉机关认为，被告人刘××的行为已构成××，如实供述犯罪事实，应依照《中华人民共和国刑法》××××、××××的规定判处。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：21个月\n匹配原型：{\"prototype_id\": \"故意伤害罪-prototype-0\", \"charge\": \"故意伤害罪\", \"prototype_size\": 18, \"sentence_months\": {\"median\": 36.0, \"q25\": 24.0, \"q75\": 38.25, \"min\": 9.0, \"max\": 96.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=重伤\", \"z\": 4.229908779144486}, {\"feature\": \"num:serious_injury_count\", \"z\": 4.229908779144443}, {\"feature\": \"cat:injury_degree=重伤二级\", \"z\": 3.8219021986682136}, {\"feature\": \"cat:injury_degree=重伤\", \"z\": 1.4201266762286806}, {\"feature\": \"num:crime_amount\", \"z\": -1.181082234467661}, {\"feature\": \"cat:arrest_method=自首\", \"z\": 1.0441851275732448}, {\"feature\": \"bool:surrender\", \"z\": 1.011423265985623}, {\"feature\": \"cat:weapon_type=卡刀\", \"z\": 1.0027816465415866}], \"match_distance\": 0.13492562791224796}\n生成建议：匹配依据：待预测案件罪名“故意伤害罪”与训练集原型“故意伤害罪-prototype-0”罪名一致。但待预测案件缺失该原型的核心定义特征，包括“injury_result=重伤”“serious_injury_count”“injury_degree=重伤二级”“injury_degree=重伤”“weapon_type=卡刀”等（上述特征在原型中z值均较高，对刑期影响显著），且待预测案件的“arrest_method=被抓获”与原型中具有正向影响的“arrest_method=自首”特征不匹配。统计区间：该原型案件的刑期中位数为36.0个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：由于待预测案件缺失对刑期影响显著的核心伤害结果及程度相关特征，且关键情节特征（如抓捕方式）与原型存在差异，上述统计区间可能无法准确反映其实际刑期，预测结果存在较大不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad655d5eda9c29ac17a35",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议忠实于给定原型统计，明确指出待预测案件与原型案件在核心特征上的不匹配，如伤害结果、伤害程度和抓捕方式等，这些特征在原型中对刑期影响显著。同时，建议中也把统计区间作为不确定参考而非承诺，对留出案件的预测结果存在较大不确定性进行了说明，这符合对留出案件的有用性。此外，包含了明确的法律免责声明，指出本结果不构成法律意见或量刑承诺。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386581,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 173,
+        "prompt_tokens": 968,
+        "total_tokens": 1141,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 173,
+      "prompt_tokens": 968,
+      "total_tokens": 1141,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad655d5eda9c29ac17a35"
+  }
+}

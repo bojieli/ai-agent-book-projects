@@ -378,14 +378,23 @@ Tuy nhiên, vectơ từ tĩnh có một hạn chế cơ bản: chúng không th�
 Khác với phương pháp nhúng dày đặc nắm bắt được sự tương đồng về ngữ nghĩa, phương pháp nhúng thưa thớt bắt nguồn từ việc truy xuất thông tin truyền thống và cốt lõi của nó là kết hợp từ khóa chính xác. Nó biểu diễn tài liệu dưới dạng vectơ có chiều cực cao, với phần lớn các kích thước bằng 0 và chỉ các kích thước tương ứng với các từ xuất hiện trong tài liệu có giá trị khác 0. Nền tảng của lý thuyết này là mô hình Bag of Words (BoW) cổ điển - nó coi một đoạn văn bản như một "túi chứa đầy từ" và chỉ quan tâm đến những từ nào xuất hiện và chúng xuất hiện bao nhiêu lần, hoàn toàn bỏ qua thứ tự từ. Ví dụ: "mèo đuổi chó" và "chó đuổi mèo" hoàn toàn giống nhau trong mô hình túi từ. Trên cơ sở này, các thuật toán trọng số thuật ngữ và xếp hạng phức tạp hơn đang dần được phát triển.
 
 
-![Hình 3-8 Cơ chế tính điểm BM25 ](images/fig3-8.svg)
-
-
 #### Từ TF-IDF đến BM25
 
-Hãy bắt đầu bằng cách xây dựng trực giác của bạn bằng một ví dụ cụ thể. Giả sử cơ sở kiến thức có 100 bài viết kỹ thuật và người dùng tìm kiếm "chưng cất mô hình". Từ “model” xuất hiện trong 60 bài viết (quá phổ biến, độ phân biệt thấp), trong khi từ “chưng cất” chỉ xuất hiện trong 3 bài viết (rất hiếm, độ phân biệt cao). Thuật toán tìm kiếm tốt sẽ mang lại trọng số cao hơn cho từ "chưng cất" - các bài viết có chứa "chưng cất" có nhiều khả năng là những gì người dùng thực sự đang tìm kiếm. Đây là ý tưởng cốt lõi của TF-IDF và BM25.
+Trực giác cốt lõi của TF-IDF (Term Frequency–Inverse Document Frequency, tần suất thuật ngữ–tần suất tài liệu nghịch đảo) là: một từ càng xuất hiện nhiều trong tài liệu hiện tại nhưng càng hiếm trong toàn bộ kho ngữ liệu thì càng quan trọng đối với truy xuất. Nếu 60 trong số 100 bài viết chứa “mô hình” nhưng chỉ 3 bài chứa “chưng cất”, thì “chưng cất” giúp phân biệt tốt hơn những bài thực sự nói về “chưng cất mô hình”.
 
-TF-IDF dựa trên một trực giác đơn giản: một từ xuất hiện trong một tài liệu càng thường xuyên (TF, tần suất thuật ngữ, Term Frequency), và số tài liệu chứa từ đó trong toàn bộ tập tài liệu càng ít (DF, tần suất tài liệu, Document Frequency)—tức là tần suất tài liệu nghịch đảo của nó càng cao (IDF, Inverse Document Frequency)—thì từ đó càng quan trọng. Trong ví dụ trên, "mô hình" có `df/N = 60%` nên giá trị IDF thấp; "chưng cất" có `df/N = 3%` nên giá trị IDF cao - vì vậy "chưng cất" góp phần xếp hạng nhiều hơn so với "mô hình". Tuy nhiên, TF-IDF không tính đến độ dài tài liệu (tài liệu dài đương nhiên có tần suất từ cao hơn) và tốc độ tăng tần số từ là tuyến tính (tầm quan trọng của một từ xuất hiện 10 lần có thực sự quan trọng gấp 2 lần so với 5 lần không?). BM25 giới thiệu hai tham số chính để khắc phục những vấn đề này. `k1` Kiểm soát tần số từ “bão hòa”: Theo trực giác, một bài viết nhắc đến “chưng cất” 20 lần thực ra không thực sự liên quan gấp đôi đến “chưng cất” như 10 lần. `k1` cho phép mức đóng góp của tần số từ giảm dần khi tăng lên, giúp các tài liệu dài không bị thống trị một cách không công bằng bởi việc xếp chồng tần số từ; `b` kiểm soát việc chuẩn hóa độ dài tài liệu để thuật toán có thể xử lý các tài liệu có độ dài khác nhau một cách công bằng hơn. Điều này làm cho BM25 trở thành một chức năng xếp hạng mạnh mẽ và hiệu quả hơn và nó vẫn là thành phần cốt lõi không thể thiếu trong các công cụ tìm kiếm chính.
+$$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t), \qquad \text{IDF}(t) = \ln\frac{N}{\text{DF}(t)}$$
+
+Trong đó, `TF(t,d)` là số lần thuật ngữ $t$ xuất hiện trong tài liệu $d$, `DF(t)` là số tài liệu chứa thuật ngữ đó và $N$ là tổng số tài liệu. Ở dạng đơn giản nhất nêu trên, tần suất thô tăng tuyến tính và độ dài tài liệu không được chuẩn hóa: một từ xuất hiện 10 lần có TF gấp đôi khi xuất hiện 5 lần, còn tài liệu dài có thể đạt điểm cao hơn chỉ vì chứa nhiều từ hơn.
+
+Có thể xem BM25 (Okapi BM25) là cách sửa kinh điển cho hai hạn chế này. Nó giữ trọng số IDF dành cho các từ hiếm, đồng thời bổ sung cơ chế bão hòa tần suất và chuẩn hóa độ dài tài liệu:
+
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+
+Trong đó, $q_i$ là một từ trong truy vấn, $|D|$ là độ dài tài liệu và $\text{avgdl}$ là độ dài tài liệu trung bình của kho ngữ liệu. Như Hình 3-8 minh họa, $k_1$ kiểm soát tốc độ bão hòa của tần suất, khiến mỗi lần lặp thêm mang lại mức tăng nhỏ dần; $b$ kiểm soát cường độ chuẩn hóa độ dài, giúp so sánh công bằng hơn giữa các tài liệu dài ngắn khác nhau. Vì vậy, 10 lần xuất hiện thường đóng góp ít hơn gấp đôi so với 5 lần, và cùng một TF sẽ nhận trọng số thấp hơn trong tài liệu dài hơn. Các giá trị tham số và phép tính cụ thể được trình bày trong Thử nghiệm 3-5.
+
+
+![Hình 3-8 Cơ chế tính điểm BM25](images/fig3-8.svg)
+
 
 > **Thử nghiệm 3-5 ★★: Khám phá truy xuất thưa thớt: Triển khai Công cụ tìm kiếm BM25 từ đầu**
 >
@@ -428,7 +437,7 @@ Ví dụ: Người tìm việc gửi hồ sơ của họ cho các công ty săn 
 
 Cơ chế "chú ý chung" này cho phép các bộ mã hóa chéo nắm bắt được các liên kết ngữ nghĩa tinh tế mà các bộ mã hóa kép không thể nhận biết được, đưa ra thứ hạng cuối cùng chính xác hơn nhiều so với một phương pháp truy xuất duy nhất.
 
-[^ch3-cross-encoder]: BERT, đầu vào được tổng hợp sẽ được phân tách bằng các dấu đặc biệt (chẳng hạn như `[CLS] Văn bản truy vấn [SEP] Văn bản tài liệu [SEP]`, [CLS] đánh dấu sự bắt đầu của chuỗi, [SEP] đánh dấu ranh giới phân tách). Đây là chi tiết phát triển được khai báo ở mức độ thấp và không cần thiết để hiểu quá trình xuất dữ liệu.
+[^ch3-cross-encoder]: BERT, đầu vào được tổng hợp sẽ được phân tách bằng các dấu đặc biệt (chẳng hạn như `[CLS] Văn bản truy vấn [SEP] Văn bản tài liệu [SEP]`, trong đó, `[CLS]` đánh dấu sự bắt đầu của chuỗi, `[SEP]` đánh dấu ranh giới phân tách). Đây là chi tiết phát triển được khai báo ở mức độ thấp và không cần thiết để hiểu quá trình xuất dữ liệu.
 
 **Làm thế nào để đo lường chất lượng tìm kiếm?** Việc điều chỉnh quy trình nhiều giai đoạn như vậy đòi hỏi các số liệu khách quan. Có ba chỉ số cốt lõi (tất cả đều được tính toán trên bộ truy vấn kiểm tra có câu trả lời được chú thích):
 

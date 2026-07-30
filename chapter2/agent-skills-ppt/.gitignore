@@ -1,4 +1,5 @@
 output/
+external/
 __pycache__/
 *.pyc
 .env

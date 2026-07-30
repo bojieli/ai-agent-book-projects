@@ -1,0 +1,531 @@
+{
+  "schema_version": "2.0",
+  "experiment": "5-2",
+  "generated_at_utc": "2026-07-29T18:34:11.952867+00:00",
+  "provider": "ollama",
+  "model": "qwen3:1.7b",
+  "mode": "both",
+  "tasks": 1,
+  "dataset_manifest": {
+    "schema_version": "1.0",
+    "experiment": "5-2",
+    "dataset": "K-and-K/perturbed-knights-and-knaves",
+    "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+    "license": "CC-BY-NC-SA-4.0",
+    "sampling": {
+      "split": "test",
+      "perturbations": [
+        "perturbed_leaf",
+        "perturbed_statement",
+        "reorder_statement",
+        "random_pair",
+        "uncommon_name",
+        "flip_role"
+      ],
+      "people": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "per_cell": 2,
+      "seed": 512,
+      "cells": 42,
+      "total": 84
+    },
+    "source_files": [
+      {
+        "path": "test/perturbed_leaf/people2_num100.jsonl",
+        "sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+        "published_rows": 76,
+        "sampled_rows": [
+          6,
+          11
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people3_num100.jsonl",
+        "sha256": "4c3d767065edb62d19728da7a4e4e4c63f550c1719c3600c868f50f48715711e",
+        "published_rows": 93,
+        "sampled_rows": [
+          6,
+          92
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people4_num100.jsonl",
+        "sha256": "b3811d1ea4bbdb2ade55dde240361470516e0541c58b5c526609f99ad6a038d7",
+        "published_rows": 94,
+        "sampled_rows": [
+          66,
+          82
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people5_num100.jsonl",
+        "sha256": "17529110798b0a659286983d0cf4e0d3b5a2b560dfb6ab3b3acb1b61ac9d7da7",
+        "published_rows": 98,
+        "sampled_rows": [
+          16,
+          41
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people6_num100.jsonl",
+        "sha256": "032c0c253bbe574335c741bb5ba7d07b48f622e217dc939f72a633ef9fbe46b0",
+        "published_rows": 100,
+        "sampled_rows": [
+          17,
+          51
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people7_num100.jsonl",
+        "sha256": "f62b1f0c3c45e3a62660951fc12b9716679f1466bdc313066d85d08d6fe3c767",
+        "published_rows": 100,
+        "sampled_rows": [
+          79,
+          80
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people8_num100.jsonl",
+        "sha256": "01947375b3a16ce4fb340d6f0e1545d5aeadfc6f695c49cf2a6f436fcc5ba099",
+        "published_rows": 100,
+        "sampled_rows": [
+          11,
+          69
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people2_num100.jsonl",
+        "sha256": "18479f9b2c327e9ce51e901479e9e7ffcd4397094e91fdca430871a3fc131fc3",
+        "published_rows": 100,
+        "sampled_rows": [
+          8,
+          94
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people3_num100.jsonl",
+        "sha256": "cb8832b4aae19426e10a039236f0e4fb7dad797598edb3850db8067ff7cda1a6",
+        "published_rows": 100,
+        "sampled_rows": [
+          0,
+          24
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people4_num100.jsonl",
+        "sha256": "ec8821279ff09db70098b97c5b47f452f2b9a6059b3d32ff22c9fce8342e4c30",
+        "published_rows": 100,
+        "sampled_rows": [
+          27,
+          28
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people5_num100.jsonl",
+        "sha256": "791a14c3a7fea7713904786cdbd24ccc94901c0508c1ed3daf5abe3794857ed4",
+        "published_rows": 100,
+        "sampled_rows": [
+          95,
+          99
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people6_num100.jsonl",
+        "sha256": "afadf008aa8aba0753bb198baca07ea51ebd9879045b619861225eea56559134",
+        "published_rows": 100,
+        "sampled_rows": [
+          47,
+          52
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people7_num100.jsonl",
+        "sha256": "bd3900ae3527887659a1a0da1146780e0a47e4d96ff301e1c2039f35bcfff849",
+        "published_rows": 100,
+        "sampled_rows": [
+          15,
+          28
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people8_num100.jsonl",
+        "sha256": "c3d91ba046bbeb5ec0d64c9147d3d2c76c1f631716da47d32b8379ebfcbe35a0",
+        "published_rows": 100,
+        "sampled_rows": [
+          37,
+          86
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people2_num100.jsonl",
+        "sha256": "c116f384f984150969554d783ccf7cecf4c6e56c59d2f5d326bfcfa722bb149c",
+        "published_rows": 100,
+        "sampled_rows": [
+          60,
+          76
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people3_num100.jsonl",
+        "sha256": "ff772d57162fb500e608ef28c59eaf57ba1d80f60cf3f73902162c3476f6b0a2",
+        "published_rows": 100,
+        "sampled_rows": [
+          0,
+          64
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people4_num100.jsonl",
+        "sha256": "be12e4b5a38792785264c16c11117f7f10f955517e32c92ea37949017a4da0cb",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          97
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people5_num100.jsonl",
+        "sha256": "04a492522cdeb64a960632652b54e3fd27cc505fa8a1c48cf9c666cc8e7d6fb0",
+        "published_rows": 100,
+        "sampled_rows": [
+          55,
+          92
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people6_num100.jsonl",
+        "sha256": "4b6131d749c47ce1580d0443e373112cc5f0e20f1b0245455b3df63b106580c5",
+        "published_rows": 100,
+        "sampled_rows": [
+          80,
+          85
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people7_num100.jsonl",
+        "sha256": "d3051b151ef7e5c47a9cd69b09b52f1ec94c7f899821ec685e286e578c7932c5",
+        "published_rows": 100,
+        "sampled_rows": [
+          67,
+          92
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people8_num100.jsonl",
+        "sha256": "3710c66680d201ebf3d6d243fa9f54ee7e5ce35570ed44f87cd5111b05dc1d9b",
+        "published_rows": 100,
+        "sampled_rows": [
+          2,
+          14
+        ]
+      },
+      {
+        "path": "test/random_pair/people2_num100.jsonl",
+        "sha256": "92b9d18d12ea3eaaa0a49daa03f519b5c5f66614bf724e541e9c00e1b9be24ae",
+        "published_rows": 100,
+        "sampled_rows": [
+          13,
+          14
+        ]
+      },
+      {
+        "path": "test/random_pair/people3_num100.jsonl",
+        "sha256": "6eb60022244be6fa25d372d1580eb8dddfb06914d7290dbe1d64c9cb57c1f612",
+        "published_rows": 100,
+        "sampled_rows": [
+          54,
+          75
+        ]
+      },
+      {
+        "path": "test/random_pair/people4_num100.jsonl",
+        "sha256": "1cafedf8ea1c5bf393d2366a6d798e66730059fdd5290c8b2a8cca35de6c4589",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          90
+        ]
+      },
+      {
+        "path": "test/random_pair/people5_num100.jsonl",
+        "sha256": "9036535b0ace7b3cfe1b8cf94fbb898b0c07e8d88d23cbc914707ed6d0221ebc",
+        "published_rows": 100,
+        "sampled_rows": [
+          62,
+          79
+        ]
+      },
+      {
+        "path": "test/random_pair/people6_num100.jsonl",
+        "sha256": "9d3a4bcd28f465b311bd5cdc96958b69529240f05e00a79d80ea7a54b8d53002",
+        "published_rows": 100,
+        "sampled_rows": [
+          22,
+          45
+        ]
+      },
+      {
+        "path": "test/random_pair/people7_num100.jsonl",
+        "sha256": "389713889ec22d14bf64d1bb9b846d1fb7a4adba44004b6ce9db1e0ac3d54190",
+        "published_rows": 100,
+        "sampled_rows": [
+          64,
+          91
+        ]
+      },
+      {
+        "path": "test/random_pair/people8_num100.jsonl",
+        "sha256": "8885fe0d63bfe5910617bd84e6be646f7b62a26978a649b4173889601d0f9229",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          71
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people2_num100.jsonl",
+        "sha256": "25437adfc79438934dbaa113f4a2b06378d3f899a3cc9d8193202a3e0d746f29",
+        "published_rows": 100,
+        "sampled_rows": [
+          16,
+          82
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people3_num100.jsonl",
+        "sha256": "087b47837520c8da31d78deac08781c3a62ad7961bae246d68f81843b3795ab0",
+        "published_rows": 100,
+        "sampled_rows": [
+          37,
+          40
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people4_num100.jsonl",
+        "sha256": "8e0edc42da3d5739a4e24f82725c6332e71189016391810b5e80d549c71d1004",
+        "published_rows": 100,
+        "sampled_rows": [
+          44,
+          57
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people5_num100.jsonl",
+        "sha256": "c1e7ade7a1791ab17a1d951f7548ce8c54767190f0402e4e6785889810694f3f",
+        "published_rows": 100,
+        "sampled_rows": [
+          5,
+          47
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people6_num100.jsonl",
+        "sha256": "4046b49fe876c7f4eab6eddc35ff0a9f01ad487faf59e9edb5605a39b3e56530",
+        "published_rows": 100,
+        "sampled_rows": [
+          8,
+          56
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people7_num100.jsonl",
+        "sha256": "752a97113d999fcff5f2910c78fca761133822b99b5ae6ec9070421e0e51b2dc",
+        "published_rows": 100,
+        "sampled_rows": [
+          34,
+          69
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people8_num100.jsonl",
+        "sha256": "951228b33ff7b4afffcbd247eeb67390d9af5ff2def9f9cdb0f8433564fffc15",
+        "published_rows": 100,
+        "sampled_rows": [
+          12,
+          68
+        ]
+      },
+      {
+        "path": "test/flip_role/people2_num100.jsonl",
+        "sha256": "2885eb7b356f9ab67ff2ccef9372dcfa7ebcf6ed2b8c5e720db1d74f03840c8d",
+        "published_rows": 100,
+        "sampled_rows": [
+          7,
+          80
+        ]
+      },
+      {
+        "path": "test/flip_role/people3_num100.jsonl",
+        "sha256": "31026489710814617c66a6879408accc099c34f395425b41d0bd56743d933461",
+        "published_rows": 100,
+        "sampled_rows": [
+          36,
+          79
+        ]
+      },
+      {
+        "path": "test/flip_role/people4_num100.jsonl",
+        "sha256": "a5d56cc8724a40fd674dba7730f52ca8dec26966f07ff434302bd62b1260a458",
+        "published_rows": 100,
+        "sampled_rows": [
+          36,
+          97
+        ]
+      },
+      {
+        "path": "test/flip_role/people5_num100.jsonl",
+        "sha256": "1429f88b80794e12f731bcd9cd2502384a3c4ac1a3292010103baccd86e93ae7",
+        "published_rows": 100,
+        "sampled_rows": [
+          22,
+          73
+        ]
+      },
+      {
+        "path": "test/flip_role/people6_num100.jsonl",
+        "sha256": "ccfee7ea7e2f24376e88193a979a20ac6410ec2458c534af7e4daedab4ff47ff",
+        "published_rows": 100,
+        "sampled_rows": [
+          39,
+          62
+        ]
+      },
+      {
+        "path": "test/flip_role/people7_num100.jsonl",
+        "sha256": "b5720e5a434747f323f90086ac6bae7ba33d1b6ba8d617424f599bfabdbcdeca",
+        "published_rows": 100,
+        "sampled_rows": [
+          1,
+          91
+        ]
+      },
+      {
+        "path": "test/flip_role/people8_num100.jsonl",
+        "sha256": "d668973f128b119ad065e0b58f33099516dbd801f0e7957c00e876115e8119dc",
+        "published_rows": 100,
+        "sampled_rows": [
+          64,
+          96
+        ]
+      }
+    ],
+    "label_validation": "all rows independently solved with python-constraint"
+  },
+  "dataset_manifest_sha256": "2e55a7d8b07e55b035a8129889b11dff186589bcad97c02c0ce553f38249212f",
+  "pure": [
+    {
+      "id": "perturbed_leaf-p2-r006",
+      "num": 2,
+      "pred": null,
+      "gold": {
+        "James": "knight",
+        "Sophia": "knave"
+      },
+      "correct": false,
+      "source": {
+        "dataset": "K-and-K/perturbed-knights-and-knaves",
+        "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+        "license": "CC-BY-NC-SA-4.0",
+        "config": "test",
+        "split": "perturbed_leaf",
+        "path": "test/perturbed_leaf/people2_num100.jsonl",
+        "file_sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+        "row": 6,
+        "dataset_index": 9
+      },
+      "codes": [],
+      "text": "{\"A\": \"knight\", \"B\": \"knave\"}",
+      "used_python_constraint": false,
+      "duration_s": 7.214,
+      "provider_receipts": [
+        {
+          "turn": 1,
+          "response_id": "chatcmpl-321",
+          "response_model": "qwen3:1.7b",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 191,
+            "completion_tokens": 702,
+            "total_tokens": 893,
+            "cached_prompt_tokens": null
+          },
+          "tool_calls": 0
+        }
+      ]
+    }
+  ],
+  "pure_acc": 0.0,
+  "code": [
+    {
+      "id": "perturbed_leaf-p2-r006",
+      "num": 2,
+      "pred": null,
+      "gold": {
+        "James": "knight",
+        "Sophia": "knave"
+      },
+      "correct": false,
+      "source": {
+        "dataset": "K-and-K/perturbed-knights-and-knaves",
+        "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+        "license": "CC-BY-NC-SA-4.0",
+        "config": "test",
+        "split": "perturbed_leaf",
+        "path": "test/perturbed_leaf/people2_num100.jsonl",
+        "file_sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+        "row": 6,
+        "dataset_index": 9
+      },
+      "codes": [],
+      "text": "{\"A\": \"knight\", \"B\": \"knave\"}\n\n```python\nfrom constraint import Problem\np = Problem()\n\n# Add variables for James and Sophia\np.addVariable(\"James\", [True, False])\np.addVariable(\"Sophia\", [True, False])\n\n# James says \"Sophia is not a knight\"\np.addConstraint(lambda j, s: j == (not s), [\"James\", \"Sophia\"])\n\n# Sophia says \"James is a knight if and only if James is a knave\"\np.addConstraint(lambda j: j == (j == not j), [\"James\"])\n\nfor solution in p.getSolutions():\n    print({k: 'knight' if v else 'knave' for k, v in solution.items()})\n```\n\nThe solution shows James is a knight (truth-teller) and Sophia is a knave (liar). The constraints are satisfied:\n- James's statement \"Sophia is not a knight\" is true (she's a knave).\n- Sophia's statement \"James is a knight iff James is a knave\" is false (since James is a knight, the statement is \"True iff False\", which is false, consistent with her being a knave.\n\nThe code returns:\n{\"A\": \"knight\", \"B\": \"knave\"}",
+      "used_python_constraint": false,
+      "duration_s": 7.145,
+      "provider_receipts": [
+        {
+          "turn": 1,
+          "response_id": "chatcmpl-732",
+          "response_model": "qwen3:1.7b",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 831,
+            "completion_tokens": 863,
+            "total_tokens": 1694,
+            "cached_prompt_tokens": null
+          },
+          "tool_calls": 0
+        }
+      ]
+    }
+  ],
+  "code_acc": 0.0,
+  "paired_analysis": {
+    "test": "two-sided exact McNemar/binomial test on discordant pairs",
+    "n": 1,
+    "contingency": {
+      "pure_only": 0,
+      "code_only": 0,
+      "discordant": 0
+    },
+    "pure_accuracy": 0.0,
+    "code_accuracy": 0.0,
+    "accuracy_delta": 0.0,
+    "code_accuracy_wilson_95": [
+      0.0,
+      0.7934506856227626
+    ],
+    "p_value": 1.0,
+    "python_constraint_tool_use_rate": 0.0,
+    "acceptance": {
+      "code_accuracy_over_90_percent": false,
+      "code_significantly_higher_than_pure": false,
+      "all_code_trajectories_used_python_constraint": false
+    }
+  }
+}

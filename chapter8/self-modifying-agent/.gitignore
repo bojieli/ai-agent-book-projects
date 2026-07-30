@@ -1,1 +1,4 @@
-output/
+!output/
+output/*
+!output/release_manifest.json
+!output/rejected_manifest.json

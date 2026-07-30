@@ -7,9 +7,76 @@
 
 ---
 
+## Canonical manuscript reproduction / 正式复现实验
+
+Experiment 2-6 is specifically **Claude Code + Anthropic's official PPTX
+Skill + a real academic PDF**. The canonical runner now performs exactly that
+workflow. It pins the official repository to revision
+`69c0b1a0674149f27b61b2635f935524b6add202`, the revision containing the
+`html2pptx.md` flow named in the manuscript, and uses Vaswani et al.'s real
+*Attention Is All You Need* PDF (arXiv:1706.03762, SHA-256
+`bdfaa68d...82df697`).
+
+```bash
+cd chapter2/agent-skills-ppt
+python run_official_experiment.py \
+  --output runs/exp2-6-claude-pptx-$(date +%Y%m%d-%H%M%S)
+```
+
+Requirements are Claude Code with either a valid `ANTHROPIC_API_KEY` or enabled
+Claude Code login access, Node.js, Python, and LibreOffice's `soffice` plus
+`pdftoppm` for the official thumbnail script. The
+runner fetches and verifies the pinned external Skill; it does not copy or
+reimplement it. Raw Claude stream events prove Skill selection, full
+`SKILL.md`/`html2pptx.md` disclosure, official script use, thumbnail inspection,
+model usage/cost, and artifact creation. The validator requires 10–15 slides,
+all manuscript sections, and three PDF-extracted visuals that are byte-identical
+to media embedded in the deck. See `experiment_protocol.json` for all frozen
+gates.
+
+### Current canonical evidence status (2026-07-30)
+
+The official repository is prepared at the pinned revision and all four required
+Skill-file hashes match the frozen receipt. Claude Code, LibreOffice, Node.js,
+and `pdftoppm` are installed. The live generation itself is currently externally
+blocked before any model token or Skill invocation:
+
+- `runs/exp2-6-claude-pptx-20260730-v2` used the configured
+  `ANTHROPIC_API_KEY`; Claude returned `401 API key is invalid` after its retry
+  sequence, with zero usage.
+- `runs/exp2-6-claude-pptx-20260730-v3` explicitly removed that environment key
+  and used the authenticated Claude Code login; the service returned `Your
+  organization has disabled Claude subscription access for Claude Code`, again
+  with zero usage.
+- `runs/exp2-6-claude-pptx-20260730-v4` retried the credential exposed to the
+  current validation session; Anthropic again returned `401 API key is invalid`
+  before any model token or Skill invocation. Its fail-closed manifest and
+  credential-free stream are retained.
+
+Both credential-free streams and fail-closed manifests are retained. Neither is
+accepted as Experiment 2-6. Completion requires a valid Anthropic API key or an
+organization that enables Claude Code subscription access, followed by a fresh
+canonical run. The existing `output/presentation.pptx` belongs to the legacy
+demo (nine slides and no embedded media) and is not substituted for this result.
+
+正式复现必须使用 Claude Code、Anthropic 官方 PPTX Skill 和真实论文 PDF。
+上述命令会固定外部仓库版本、保存完整的渐进式披露轨迹，并对页数、章节、三张
+论文原图、PPTX 有效性、缩略图和凭证泄漏逐项验收。
+
+## Legacy mechanism illustration (not acceptance evidence)
+
+The older `demo.py` and bundled `skills/pptx` tree below are retained as an
+offline teaching aid. They use a local isomorphic loader and a prewritten short
+outline, so neither online nor offline mode counts as fulfillment of the
+manuscript experiment.
+
+以下旧 demo 仅用于离线讲解机制，不属于实验 2-6 的正式验收证据。
+
+---
+
 ## English
 
-### Purpose
+### Legacy demo purpose
 
 Validates a core claim from the book: **an Agent can complete complex work by loading domain Skills on demand via progressive disclosure**, without stuffing all knowledge into the system prompt at once.
 

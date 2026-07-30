@@ -36,13 +36,14 @@ def generate_openai(prompt, out):
         print("Cover page will use default TikZ vector art in cover.tex.")
         return False
     from openai import OpenAI
-    import base64, urllib.request
+    import base64, urllib.parse, urllib.request
     client = OpenAI()
     try:
         r = client.images.generate(model="gpt-image-1", prompt=prompt,
                                     size="1024x1536", quality="high", n=1)
         data = base64.b64decode(r.data[0].b64_json)
-        open(out, "wb").write(data)
+        with open(out, "wb") as f:
+            f.write(data)
         return True
     except Exception as e:
         print(f"gpt-image-1 unavailable ({e}); falling back to dall-e-3 …")

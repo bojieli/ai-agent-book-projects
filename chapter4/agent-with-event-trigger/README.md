@@ -92,6 +92,41 @@ python event_loop_demo.py --trigger timer --provider kimi
 
 Full flags: `python event_loop_demo.py --help`.
 
+### Exact Experiment 4-4: real mailbox listener
+
+`unipile_mailbox_experiment.py` implements the manuscript's complete
+three-email acceptance scenario against Unipile's real Email and Calendar
+APIs. It uses documented mailbox polling (`GET /api/v1/emails`) as the event
+source, converts provider email objects into a FIFO queue, and then performs:
+
+1. meeting invitation → live calendar/event query → hashed accept/decline draft;
+2. customer complaint → order extraction → durable high-priority notification;
+3. marketing email → provider `PUT` archive operation → provider `GET` verification.
+
+The runner sends three uniquely tagged messages through Unipile before waiting
+for their inbound mailbox objects. A local file or synthetic event can never
+satisfy its acceptance gates. Configure a real project first:
+
+```bash
+export UNIPILE_DSN='apiN.unipile.com:PORT'
+export UNIPILE_ACCESS_TOKEN='...'
+
+# Read-only authentication/account check
+python unipile_mailbox_experiment.py --preflight-only
+
+# Full unattended workflow; the listener address is normally inferred
+python unipile_mailbox_experiment.py
+
+# If account metadata does not expose the mailbox address
+python unipile_mailbox_experiment.py --recipient 'test-mailbox@example.com'
+```
+
+Every run writes a redacted, hash-manifested bundle under
+`validation/experiment_4_4/`. Invalid credentials produce `status: blocked`
+with the observed HTTP receipt; they are never treated as experiment evidence.
+The official endpoint versions used by the implementation are pinned in
+`experiment_protocol.json`.
+
 ### Quick Start
 
 #### Installation

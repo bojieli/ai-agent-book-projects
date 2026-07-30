@@ -1,0 +1,34 @@
+{
+  "problems": [
+    {
+      "title": "Refund flow missing verify_refund_eligibility check",
+      "priority": "P0",
+      "module": "http_order_system",
+      "description": "Refund flow did not call `verify_refund_eligibility` before `process_refund`, violating the policy requirement that every refund must include this check.",
+      "suggestion": "Add a call to the `verify_refund_eligibility` tool prior to the `process_refund` step in the refund workflow.",
+      "prd_ref": "R1",
+      "trajectory_ids": [
+        "HTTP-RF-001"
+      ],
+      "focus_turns": [
+        2
+      ],
+      "suggested_assignee": "order-service-team"
+    },
+    {
+      "title": "check_stock origin timeout not handled via degraded cache route",
+      "priority": "P1",
+      "module": "http_order_system",
+      "description": "check_stock call timed out (latency 350.414 ms exceeds 250 ms client deadline) but orchestrator failed to use the degraded cache route, resulting in flow failure.",
+      "suggestion": "Implement logic to invoke `check_stock` through the degraded cache route when the origin call times out, ensuring the flow completes normally.",
+      "prd_ref": "R2",
+      "trajectory_ids": [
+        "HTTP-INV-001"
+      ],
+      "focus_turns": [
+        2
+      ],
+      "suggested_assignee": "inventory-service-team"
+    }
+  ]
+}

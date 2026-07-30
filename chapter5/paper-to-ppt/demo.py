@@ -17,9 +17,11 @@
 依赖：Node/Slidev（渲染）、OPENAI_API_KEY（gpt-5.6-luna 视觉 + 文本；未配置时可用 OPENROUTER_API_KEY 兜底）。
 """
 import argparse
+import hashlib
 import json
 import os
 import re
+import shutil
 import sys
 
 from dotenv import load_dotenv
@@ -31,6 +33,7 @@ from agents import (  # noqa: E402
     Proposer, Reviewer, SelfReviewAgent, TokenMeter, independent_judge,
 )
 from make_figures import generate_all  # noqa: E402
+from paper_source import PAPER, prepare_real_paper  # noqa: E402
 from renderer import render_slides  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -52,6 +55,26 @@ def save_text(name, text):
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
     return path
+
+
+def retain_rendered(pngs, subdir):
+    """Copy rendered pixels into the immutable output tree used as evidence."""
+    destination = os.path.join(OUT_DIR, "rendered", subdir)
+    os.makedirs(destination, exist_ok=True)
+    retained = []
+    for source in pngs:
+        target = os.path.join(destination, os.path.basename(source))
+        shutil.copyfile(source, target)
+        retained.append(target)
+    return retained
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _review_issues(review: dict) -> list:
@@ -90,7 +113,9 @@ def run_proposer_reviewer(paper_md, figures, max_rounds=MAX_ROUNDS):
     for rnd in range(1, max_rounds + 1):
         print(f"\n[双 Agent] 第 {rnd} 轮：Proposer 产出 slides.md（{slides.count(chr(10) + '---' + chr(10)) + 1} 段分隔）")
         md_path = save_text(f"dual_round{rnd}_slides.md", slides)
-        pngs = render_slides(slides, f"dual_round{rnd}")
+        pngs = retain_rendered(
+            render_slides(slides, f"dual_round{rnd}"), f"dual_round{rnd}"
+        )
         final_pngs = pngs
         print(f"  渲染出 {len(pngs)} 页 PNG，例如：{pngs[0]}")
 
@@ -137,7 +162,9 @@ def run_single_agent(paper_md, figures, max_rounds=MAX_ROUNDS):
     for rnd in range(1, max_rounds + 1):
         print(f"\n[单 Agent] 第 {rnd} 轮：生成/修订 slides.md")
         save_text(f"single_round{rnd}_slides.md", slides)
-        pngs = render_slides(slides, f"single_round{rnd}")
+        pngs = retain_rendered(
+            render_slides(slides, f"single_round{rnd}"), f"single_round{rnd}"
+        )
         final_pngs = pngs
         print(f"  渲染出 {len(pngs)} 页 PNG")
         print(f"  当前上下文峰值 prompt token = {meter.peak_prompt_tokens}")
@@ -315,9 +342,9 @@ def parse_args(argv=None):
             "--vision-model 优先级更高：OPENAI_API_KEY / OPENAI_BASE_URL / TEXT_MODEL / VISION_MODEL"
         ),
     )
-    p.add_argument("--paper", metavar="PATH", default=DEFAULT_PAPER_PATH,
-                   help="输入论文的 Markdown 路径（默认 paper/sample_paper.md）。"
-                        "替换为你自己的论文即可；保留章节结构即可被 Proposer 解析。")
+    p.add_argument("--paper", metavar="PATH", default=None,
+                   help="非正式兼容入口：使用本地 Markdown。省略时使用固定哈希的真实 arXiv PDF；"
+                        "本地 Markdown 运行永远不会通过正式实验门禁。")
     p.add_argument("--out-dir", metavar="DIR", default=DEFAULT_OUT_DIR,
                    help="产物输出目录：各轮 slides.md / review.json / comparison_summary.json "
                         "（默认 output/）。渲染 PNG 始终位于 slidev_workspace/exports/。")
@@ -327,6 +354,10 @@ def parse_args(argv=None):
     p.add_argument("--vision-model", metavar="NAME", default=None,
                    help="Reviewer / 独立评委看图用的模型，必须支持图像输入，覆盖 VISION_MODEL "
                         f"环境变量（默认 {agents.VISION_MODEL}）。")
+    p.add_argument(
+        "--provider", choices=["auto", "openai", "openrouter", "moonshot", "ark"],
+        default="auto", help="文本与 Vision 调用的真实 API 提供商",
+    )
     p.add_argument("--mode", choices=["both", "dual", "single"], default="both",
                    help="运行哪种方案：both=两种都跑并对比（默认）；dual=仅提议者-审核者；"
                         "single=仅单 Agent 自审。只跑一种可显著省时省钱。")
@@ -342,9 +373,17 @@ def parse_args(argv=None):
     return p.parse_args(argv)
 
 
-def _save_partial_summary(dual, dual_final, single, single_final):
+def _save_partial_summary(dual, dual_final, single, single_final, source_info, args, judge_meter):
     """单方案运行（--mode dual/single）时，落盘该方案自身的质量与 token 结果。"""
-    summary = {"models": {"text": agents.TEXT_MODEL, "vision": agents.VISION_MODEL}}
+    summary = {
+        "experiment": "5-4",
+        "official_complete": False,
+        "completion": {"campaign_complete": False, "reason": "both comparison arms are required"},
+        "provider": args.provider,
+        "models": {"text": agents.TEXT_MODEL, "vision": agents.VISION_MODEL},
+        "source": source_info,
+        "independent_judge": judge_meter.__dict__,
+    }
     if dual:
         pm, rm = dual["proposer_meter"], dual["reviewer_meter"]
         summary["dual_agent"] = {
@@ -352,6 +391,8 @@ def _save_partial_summary(dual, dual_final, single, single_final):
             "final_quality": dual_final,
             "total_tokens": pm.total_tokens + rm.total_tokens,
             "peak_context_prompt_tokens": max(pm.peak_prompt_tokens, rm.peak_prompt_tokens),
+            "proposer_receipts": pm.receipts,
+            "reviewer_receipts": rm.receipts,
         }
     if single:
         sm = single["meter"]
@@ -359,6 +400,7 @@ def _save_partial_summary(dual, dual_final, single, single_final):
             "final_quality": single_final,
             "total_tokens": sm.total_tokens,
             "peak_context_prompt_tokens": sm.peak_prompt_tokens,
+            "receipts": sm.receipts,
         }
     p = save_text("comparison_summary.json", json.dumps(summary, ensure_ascii=False, indent=2))
     print(f"\n结果已保存：{p}")
@@ -371,33 +413,68 @@ def main(argv=None):
 
     # 输出目录（--out-dir）：所有 save_text 都写到这里
     OUT_DIR = os.path.abspath(args.out_dir)
+    os.makedirs(OUT_DIR, exist_ok=True)
+    os.environ["PPT_RECEIPT_CHECKPOINT"] = os.path.join(
+        OUT_DIR, "receipts.checkpoint.json"
+    )
     # 模型覆盖（--text-model / --vision-model 优先于环境变量）
     if args.text_model:
         agents.TEXT_MODEL = args.text_model
     if args.vision_model:
         agents.VISION_MODEL = args.vision_model
+    agents.configure_provider(args.provider)
 
     if args.smoke:
         smoke_test()
         return
     if args.dry_run:
-        dry_run(args.paper)
+        dry_run(args.paper or DEFAULT_PAPER_PATH)
         return
     if args.max_rounds < 1:
         print("--max-rounds 至少为 1")
         sys.exit(1)
-    if not os.path.exists(args.paper):
+    if args.paper and not os.path.exists(args.paper):
         print(f"找不到论文文件：{args.paper}（用 --paper 指定，或参考默认 paper/sample_paper.md）")
         sys.exit(1)
-    if not (os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")):
-        print("请先设置 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底，可参考 env.example）")
+    provider_keys = {
+        "ark": "ARK_API_KEY", "moonshot": "MOONSHOT_API_KEY",
+        "openrouter": "OPENROUTER_API_KEY", "openai": "OPENAI_API_KEY",
+    }
+    required_key = provider_keys.get(args.provider)
+    if required_key and not os.environ.get(required_key):
+        print(f"请先设置 {required_key}（可参考 env.example）")
+        sys.exit(1)
+    if args.provider == "auto" and not any(os.environ.get(key) for key in (
+        "OPENAI_API_KEY", "OPENROUTER_API_KEY"
+    )):
+        print("auto provider 需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY")
         sys.exit(1)
 
-    banner("准备：论文 + 程序化复现的图表")
-    with open(args.paper, encoding="utf-8") as f:
-        paper_md = f.read()
-    figures = generate_all()
-    print(f"论文：{args.paper}（{len(paper_md)} 字符）")
+    banner("准备：固定真实论文 PDF + 原论文图")
+    if args.paper:
+        with open(args.paper, encoding="utf-8") as f:
+            paper_md = f.read()
+        figures = generate_all()
+        source_info = {
+            "canonical": False,
+            "reason": "legacy local Markdown and programmatic figures",
+            "paper_path": os.path.abspath(args.paper),
+        }
+    else:
+        prepared = prepare_real_paper(
+            OUT_DIR, os.path.join(HERE, "slidev_workspace", "public")
+        )
+        paper_md = prepared["paper_text"]
+        figures = prepared["figures"]
+        source_info = {
+            "canonical": True,
+            "paper": prepared["manifest"]["paper"],
+            "paper_text": prepared["manifest"]["paper_text"],
+            "visuals": prepared["manifest"]["visuals"],
+            "manifest_path": prepared["manifest_path"],
+            "pdf_path": prepared["pdf_path"],
+        }
+    print(f"论文：{PAPER['title']}（提取文本 {len(paper_md)} 字符）")
     print(f"输出目录：{OUT_DIR}")
     print(f"文本模型：{agents.TEXT_MODEL}   视觉模型：{agents.VISION_MODEL}")
     print(f"运行模式：{args.mode}   最大轮数：{args.max_rounds}")
@@ -423,7 +500,9 @@ def main(argv=None):
 
     if not (dual and single):
         # 单方案运行：跳过跨方案的 token 对比，仅落盘已有结果
-        _save_partial_summary(dual, dual_final, single, single_final)
+        _save_partial_summary(
+            dual, dual_final, single, single_final, source_info, args, judge_meter
+        )
         return
 
     # ------- 迭代改善情况（双 Agent） -------
@@ -467,7 +546,59 @@ def main(argv=None):
     print(f"  · 方案 B 因图片在同一上下文累积，峰值最高；页数越多、迭代越多，差距越大。")
 
     # 汇总落盘
+    visual_names = [visual["filename"] for visual in source_info.get("visuals", [])]
+    receipts = pm.receipts + rm.receipts + sm.receipts + judge_meter.receipts
+    receipts_path = save_text(
+        "receipts.json", json.dumps(receipts, ensure_ascii=False, indent=2)
+    )
+    gates = {
+        "pinned_real_academic_pdf": bool(
+            source_info.get("canonical")
+            and source_info.get("paper", {}).get("observed_pdf_sha256") == PAPER["pdf_sha256"]
+        ),
+        "three_original_pdf_visuals": bool(
+            len(visual_names) >= 3
+            and all(v["sha256"] == v["public_copy_sha256"] for v in source_info.get("visuals", []))
+        ),
+        "both_final_decks_reference_every_source_visual": bool(
+            visual_names
+            and all(name in dual["slides"] and name in single["slides"] for name in visual_names)
+        ),
+        "both_final_decks_have_10_to_20_rendered_pages": bool(
+            10 <= len(dual["final_pngs"]) <= 20
+            and 10 <= len(single["final_pngs"]) <= 20
+        ),
+        "real_slidev_rendered_every_final_page": bool(
+            all(os.path.exists(path) and os.path.getsize(path) > 0
+                for path in dual["final_pngs"] + single["final_pngs"])
+        ),
+        "proposer_reviewer_and_self_review_both_run": bool(
+            dual["history"] and sm.calls >= 2
+        ),
+        "same_independent_vision_judge_scored_both": bool(
+            dual_final and single_final and judge_meter.calls == 2
+        ),
+        # The manuscript acceptance criterion is about the rendered result,
+        # not merely about having exercised the review mechanism.  A run with
+        # 10--20 pages and real Vision receipts is still incomplete when the
+        # independent pixel-level judge reports blocking layout/overflow
+        # defects in the proposer--reviewer deck.
+        "dual_final_deck_passes_visual_acceptance": bool(
+            dual_final and dual_final.get("pass") is True
+        ),
+        "real_api_receipts_complete": bool(
+            receipts
+            and all(r.get("response", {}).get("id")
+                    and r.get("usage", {}).get("total_tokens")
+                    and r.get("latency_s") is not None
+                    for r in receipts)
+        ),
+    }
     summary = {
+        "schema_version": "2.0",
+        "experiment": "5-4",
+        "provider": args.provider,
+        "source": source_info,
         "models": {"text": agents.TEXT_MODEL, "vision": agents.VISION_MODEL},
         "dual_agent": {
             "iteration_scores": scores,
@@ -482,6 +613,22 @@ def main(argv=None):
             "tokens": sm.__dict__,
             "total_tokens": sm.total_tokens,
             "peak_context_prompt_tokens": sm.peak_prompt_tokens,
+        },
+        "independent_judge": judge_meter.__dict__,
+        "artifact_hashes": {
+            "dual_final_pngs": {os.path.basename(p): file_sha256(p) for p in dual["final_pngs"]},
+            "single_final_pngs": {os.path.basename(p): file_sha256(p) for p in single["final_pngs"]},
+            "raw_receipts": file_sha256(receipts_path),
+        },
+        "completion": {"gates": gates, "campaign_complete": all(gates.values())},
+        "official_complete": all(gates.values()),
+        "observed_hypothesis": {
+            "dual_quality_minus_single": (
+                dual_final.get("overall_score", 0) - single_final.get("overall_score", 0)
+            ),
+            "dual_peak_context": dual_peak,
+            "single_peak_context": sm.peak_prompt_tokens,
+            "note": "Hypothesis outcome is reported separately from execution completion.",
         },
     }
     p = save_text("comparison_summary.json", json.dumps(summary, ensure_ascii=False, indent=2))

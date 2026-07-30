@@ -1,0 +1,51 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-3",
+  "run_id": "20260729T181925Z-3_3-cd097048",
+  "created_at": "2026-07-29T18:19:25.261714+00:00",
+  "status": "partial",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/log-sanitization/validation/runs/20260729T181925Z-3_3-cd097048",
+  "artifacts": {
+    "evidence.json": "7eea7d8235ca381b2cc0354b857968bc08c735443d843f641d95d491fd8e203c",
+    "receipts.json": "6ea59a988a86a659fbb83032d8f7c6df5ffb1120e70e86538251b78cd2281c56"
+  },
+  "inputs": [],
+  "summary": {
+    "regex": {
+      "cases": 1,
+      "mean_precision": 1.0,
+      "mean_recall": 0.5,
+      "mean_typed_exact": 0.5,
+      "residual_leaks": 1,
+      "mean_utility": 1.0,
+      "mean_latency_ms": 0.037
+    },
+    "llm": {
+      "cases": 1,
+      "mean_precision": 1.0,
+      "mean_recall": 1.0,
+      "mean_typed_exact": 0.0,
+      "residual_leaks": 0,
+      "mean_utility": 1.0,
+      "mean_latency_ms": 3959.616
+    },
+    "hybrid": {
+      "cases": 1,
+      "mean_precision": 1.0,
+      "mean_recall": 1.0,
+      "mean_typed_exact": 1.0,
+      "residual_leaks": 0,
+      "mean_utility": 1.0,
+      "mean_latency_ms": 4287.079
+    }
+  },
+  "acceptance": {
+    "local_model": true,
+    "qwen3_model": true,
+    "structured_type_location_confidence": true,
+    "structured_semistructured_natural_language_cases": false,
+    "regex_llm_hybrid_compared": true,
+    "leakage_utility_latency_measured": true,
+    "passed": false
+  }
+}

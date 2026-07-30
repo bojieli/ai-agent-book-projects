@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "experiment": "6-5",
+  "status": "incomplete",
+  "generated_at_utc": "2026-07-30T04:32:15.010689+00:00",
+  "run_dir": "chapter6/tts-quality-eval/validation/real_multimodal_20260730",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "command": "python demo.py --providers openai,fishaudio --gemini --output validation/real_multimodal_20260730",
+  "provider_receipt_count": 6,
+  "status_reasons": [
+    "Six content-hashed Fish Audio MP3 artifacts were available and re-evaluated, but both the Google Gemini API and exact OpenRouter two-input_audio route rejected their configured credentials; zero direct-audio four-dimension judge cells completed.",
+    "The OpenAI account returned insufficient_quota before synthesis for all six requested cross-provider cells."
+  ],
+  "inputs": [
+    {
+      "path": "chapter6/tts-quality-eval/config.py",
+      "bytes": 8642,
+      "sha256": "891396771cd7beb32ab8e4b316f9a6f73683951e0327dcae6504d858ffd92ba1"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/demo.py",
+      "bytes": 17225,
+      "sha256": "c2da1f44b3ac3ec9e9b6648ee535e57c8fa757a14a45028f1e125ed9cb8f1938"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/pipeline.py",
+      "bytes": 27511,
+      "sha256": "db62ac8058561ae22b9a2dacd67aec42176f181a401e162009e1a3be7360ed54"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__emotion.mp3",
+      "bytes": 102817,
+      "sha256": "4eca80508f1d6f7a5b50b87de0e329e700097fc01a092e38e47fb70d7dc3675a"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__long.mp3",
+      "bytes": 203127,
+      "sha256": "d0947fc60450d4668e75376eb56a714d80a99e3148ee76219c59133d7364eb12"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__num.mp3",
+      "bytes": 99055,
+      "sha256": "15936f94727239ab9aadbc3814d70375fad93c89efd9b8562605d62790860898"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__polyphone.mp3",
+      "bytes": 97801,
+      "sha256": "4f8c45b00455a9dbda4b1feebbda9f09de50ec9458d367ea701798ec05972a88"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__question.mp3",
+      "bytes": 75231,
+      "sha256": "c48dfadf2f1eaa6b01a924e1de5ebf728cfbfad9df14234a70629e0e5890800a"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/fishaudio-s1-clone__sad.mp3",
+      "bytes": 80665,
+      "sha256": "295161d6fc7a169fc28ebd3fd07e2acaac6fca2f0cc24db6a51c3dc431310cf9"
+    },
+    {
+      "path": "chapter6/tts-quality-eval/validation/real_multimodal_20260730/results.json",
+      "bytes": 14278,
+      "sha256": "be1b2ea6fc585eceeacc7ba0d8f2552b41bfb8a245419063c69aa538775ef46d"
+    }
+  ]
+}

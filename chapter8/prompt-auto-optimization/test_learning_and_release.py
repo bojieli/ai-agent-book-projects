@@ -32,7 +32,10 @@ class LearningAndReleaseTest(unittest.TestCase):
 
     def test_release_requires_improvement_and_no_regression(self):
         signal = diagnose_failures(evaluation())
-        manifest = build_candidate_manifest({"diff": "+ new rule", "rationale": "narrow transfer"}, signal)
+        manifest = build_candidate_manifest({
+            "diff": "+ new rule", "rationale": "narrow transfer",
+            "edits": [{"old_str": "old rule", "new_str": "new rule"}],
+        }, signal)
         accepted = evaluate_release_gate(evaluation(), evaluation(boundary=(1, 2)), manifest)
         self.assertTrue(accepted["accepted"])
         self.assertEqual("release_to_canary", accepted["decision"])
@@ -45,7 +48,7 @@ class LearningAndReleaseTest(unittest.TestCase):
 
     def test_empty_patch_is_rejected(self):
         signal = diagnose_failures(evaluation())
-        manifest = build_candidate_manifest({"diff": "", "rationale": "none"}, signal)
+        manifest = build_candidate_manifest({"diff": "", "rationale": "none", "edits": []}, signal)
         decision = evaluate_release_gate(evaluation(), evaluation(boundary=(1, 2)), manifest)
         self.assertEqual("reject_candidate", decision["decision"])
 

@@ -37,7 +37,7 @@ def test_null_language_code_interpreter_defaults(monkeypatch):
     import config as cfg
     monkeypatch.setattr(cfg.Config, "AUTO_VERIFY_CODE", False, raising=False)
     monkeypatch.setattr(cfg.Config, "REQUIRE_APPROVAL_FOR_DANGEROUS_OPS", False, raising=False)
-    monkeypatch.setattr(cfg.Config, "AUTO_SUMMARIZE_OUTPUT", False, raising=False)
+    monkeypatch.setattr(cfg.Config, "AUTO_SUMMARIZE_COMPLEX_OUTPUT", False, raising=False)
 
     out = asyncio.run(et.code_interpreter("print(1)", language=None))
     assert seen["language"] == "python"

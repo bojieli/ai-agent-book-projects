@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "experiment": "9-3",
+  "run_id": "exp9-3-qwen2audio-whisper-provenance-20260730-v3",
+  "generated_at": "2026-07-30T05:24:59.463Z",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "runtime_source_sha256": {
+    "run_official_experiment.py": "a1d95ed2fbd9405678a146898201c7e1082fd2620f6528268a7ee8943f22e5b1",
+    "demo.py": "bf132207426606a38c4e487ed59ff7832cfa2468f5c6e2bab87394086a049d92",
+    "qwen2_streaming.py": "7744acd4c134c9f861d207ff400d5effa32d17d400ca4973da589d8d74782c76",
+    "whisper_baseline.py": "dc0554b4085e806bc18e8a81fe5c0af55d34bfbe43107b66632afd461c7b5483",
+    "prepare_scenarios.py": "a0b01392d19a4c0463d33c7b56af323131cf7a42213410537109a6698f1e15b0"
+  },
+  "audio_sha256": {
+    "audio/sentence.wav": "51b77857cb9d859ca37dc6ba95680fb675b8e2690257f00f69a46a11febbd4a2",
+    "validation/scenarios/normal.wav": "22cbbff9df0ec0efc9a09b5d250b8d63c1876363716b8a1d7aa9f85f16e8a410",
+    "validation/scenarios/long_pause.wav": "7b4b9975d58c71c50cdb81ff9578a0b04192aeb3cbea634384a804ea4e3dc48d",
+    "validation/scenarios/background_noise.wav": "034f4e9d4f5c2b69407e1e9813b4544792764a7e2e7340af410945b5c90c48b1"
+  },
+  "whisper_checkpoint": {
+    "path": "/Users/boj/.cache/whisper/tiny.pt",
+    "size_bytes": 75572083,
+    "sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9"
+  },
+  "qwen2_audio_snapshot": {
+    "repository": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
+    "revision": "c65570002626f41b4dc08b7b54f42f99f3e82e7f",
+    "path": "/Users/boj/.cache/huggingface/hub/models--mlx-community--Qwen2-Audio-7B-Instruct-4bit/snapshots/c65570002626f41b4dc08b7b54f42f99f3e82e7f",
+    "files": {
+      ".gitattributes": {
+        "size_bytes": 1519,
+        "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+      },
+      "README.md": {
+        "size_bytes": 1716,
+        "sha256": "1cddc760431c9c2c043ed4d17d9c17716a1f81978e6093389420cd46e7f2ce6d"
+      },
+      "config.json": {
+        "size_bytes": 913,
+        "sha256": "39493dad1678533cc2a7ba2de0a573cc926a78ef4c7abef72a6b660159de94b7"
+      },
+      "merges.txt": {
+        "size_bytes": 1671839,
+        "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+      },
+      "preprocessor_config.json": {
+        "size_bytes": 342,
+        "sha256": "4cd7c6c061fe79244c57b0c320b2873f3ee5acce2277f7cc3aced042725680f2"
+      },
+      "tokenizer.json": {
+        "size_bytes": 7028015,
+        "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8"
+      },
+      "tokenizer_config.json": {
+        "size_bytes": 638335,
+        "sha256": "c738158e70eeecf25736a6c4d8e5f34cfce683079980757edfb0665a7b2457ed"
+      },
+      "vocab.json": {
+        "size_bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      },
+      "weights.safetensors": {
+        "size_bytes": 6562540479,
+        "sha256": "0967cde270ad62aa4824f0bbce283d0a2a6da2825ccf587640753c527d4174da"
+      }
+    }
+  },
+  "artifact_sha256": {
+    "evidence.json": "e6d084a0a41885c6285b6c6b3085fb2b78dc730c9410d411634fbdd473ede0f5",
+    "run.log": "d1b29fffbf023ad11535277b209f11520318e2f73f1e7f2f2c6d3da8901bed2d",
+    "acceptance.json": "c84993c7a4081a82a00db6b49b2531865bdbed7350cad6a34c5bd51bab0c1c08"
+  },
+  "acceptance": {
+    "execution_status": "pass",
+    "passed_gates": 8,
+    "total_gates": 8,
+    "manuscript_results_reproduced": false
+  }
+}

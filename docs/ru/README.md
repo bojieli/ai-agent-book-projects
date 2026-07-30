@@ -3,13 +3,13 @@
 [![PDF](https://img.shields.io/badge/PDF-%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-success.svg)](#-электронная-книга) [![Читать онлайн](https://img.shields.io/badge/🌐_Читать_онлайн-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/переводов-10%20языков-informational.svg)](#-электронная-книга)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · Русский ← текущий · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · Русский ← текущий · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > 📥 **[Скачать PDF / EPUB](#-электронная-книга)** (рекомендуется) — рекомендуем читать книгу в PDF / EPUB, там лучшая вёрстка; также доступно [чтение онлайн](https://bojieli.github.io/ai-agent-book/) (переключатель языков, сворачиваемое оглавление, полнотекстовый поиск; сайт автоматически перестраивается при каждом пуше в main).
 
 **Агент = LLM + Контекст + Инструменты** — книга строится вокруг этой базовой формулы и за 10 глав ведёт AI Agent от принципов к инженерной практике. Весь текст, иллюстрации и **93 сопутствующих эксперимента** открыты. Приглашаем прогнать эксперименты своими руками.
 
-| 📚 **10 глав** текста, от основ к продакшену | 📂 **93** сопутствующих проектов (70+ автономных) | 🌐 **10 языков**: CN / EN / ES / AR / zh-TW / **RU** / TA / VI / JA / TR |
+| 📚 **10 глав** текста, от основ к продакшену | 📂 **93** сопутствующих проектов (70+ автономных) | 🌐 **11 языков**: CN / EN / ES / AR / zh-TW / **RU** / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 Электронная книга
@@ -25,12 +25,13 @@
 > - **Вьетнамский** (перевод сообщества, [@toanalien](https://github.com/toanalien)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
 > - **Японский** (перевод сообщества, [@eltociear](https://github.com/eltociear)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
 > - **Турецкий** (перевод сообщества, [@memisemre](https://github.com/memisemre)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+> - **Корейский** (перевод сообщества, [@JeongJaeSoon](https://github.com/JeongJaeSoon)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.epub)
 >
 > 🌐 Также доступно [чтение онлайн](https://bojieli.github.io/ai-agent-book/) — переключатель языков, сворачиваемое оглавление, полнотекстовый поиск и прямые ссылки на сопутствующие эксперименты. Сайт автоматически перестраивается при каждом пуше в main.
 
-Исходник китайского текста — в [`book/`](../../book/); версии на английском/испанском/арабском/традиционном китайском (Тайвань)/русском/тамильском/вьетнамском/японском/турецком — вклад сообщества (могут отставать от китайского оригинала), расположены в [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/) соответственно.
+Исходник китайского текста — в [`book/`](../../book/); версии на английском/испанском/арабском/традиционном китайском (Тайвань)/русском/тамильском/вьетнамском/японском/турецком/корейском — вклад сообщества (могут отставать от китайского оригинала), расположены в [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) соответственно.
 
-Общий сборщик собирает издания EPUB 3 для упрощённого китайского, английского, испанского, арабского, традиционного китайского (Тайвань), русского, тамильского, вьетнамского, японского и турецкого. См. [инструкцию по сборке EPUB](../../EPUB.md). Арабский PDF можно собрать командой `cd book-ar && bash build_pdf.sh`.
+Общий сборщик собирает издания EPUB 3 для упрощённого китайского, английского, испанского, арабского, традиционного китайского (Тайвань), русского, тамильского, вьетнамского, японского, турецкого и корейского. См. [инструкцию по сборке EPUB](../../EPUB.md). Арабский PDF можно собрать командой `cd book-ar && bash build_pdf.sh`.
 
 <details>
 <summary><b>🔧 Собрать PDF самому?</b> (нужны pandoc / xelatex / ElegantBook)</summary>
@@ -152,7 +153,7 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 | 🐛 **Улучшения кода и багфиксы** | Сделать сопутствующие проекты надёжнее, удобнее и ближе к продакшену |
 | 🧪 **Новые практические проекты** | Добавить/заменить лучшими реализациями эксперименты или предложить новые примеры |
 | 🎨 **Дизайн иллюстраций** | Напрямую улучшать сохранённые в репозитории SVG-схемы из `book/images/` |
-| 🌐 **Новые переводы** | Переводы на другие языки приветствуются; за образец возьмите английский (`book-en/`), арабский (`book-ar/`), традиционный китайский/Тайвань (`book-zhtw/`), русский (`book-ru/`), тамильский (`book-ta/`), вьетнамский (`book-vi/`), японский (`book-ja/`), турецкий (`book-tr/`) |
+| 🌐 **Новые переводы** | Переводы на другие языки приветствуются; за образец возьмите английский (`book-en/`), арабский (`book-ar/`), традиционный китайский/Тайвань (`book-zhtw/`), русский (`book-ru/`), тамильский (`book-ta/`), вьетнамский (`book-vi/`), японский (`book-ja/`), турецкий (`book-tr/`) и корейский (`book-ko/`) |
 
 Перед отправкой прогоните соответствующие эксперименты для подтверждения воспроизводимости; идеи можно предварительно обсудить в issue.
 

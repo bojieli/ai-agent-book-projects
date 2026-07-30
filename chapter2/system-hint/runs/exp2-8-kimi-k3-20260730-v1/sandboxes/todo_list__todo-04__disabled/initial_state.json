@@ -1,0 +1,11 @@
+{
+  "suite": "todo_list",
+  "case_id": "todo-04",
+  "token": "DELTA-740",
+  "artifacts": [
+    "sources.txt",
+    "matrix.txt",
+    "review.txt",
+    "report.txt"
+  ]
+}

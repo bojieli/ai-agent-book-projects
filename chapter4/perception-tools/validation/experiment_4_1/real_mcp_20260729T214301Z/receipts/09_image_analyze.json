@@ -1,0 +1,27 @@
+{
+  "case": "image_analyze",
+  "tool": "image_analyze",
+  "arguments": {
+    "image_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/media/ocr-source.png",
+    "prompt": "Read the prominent text and describe the simple image."
+  },
+  "arguments_sha256": "cc76995033d16f6bdbfaf935706b1a7b3a7b7ea22ee192292b87847ede388bc3",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": "ai_analysis_error",
+  "payload": {
+    "success": false,
+    "message": "AI image analysis failed: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}",
+    "metadata": {
+      "error_type": "ai_analysis_error"
+    }
+  },
+  "elapsed_seconds": 5.524
+}

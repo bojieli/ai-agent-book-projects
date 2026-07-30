@@ -1,0 +1,263 @@
+{
+  "backend": "s1",
+  "source_reference_id": "6df3c1e14c9440e9ac978556536bf116",
+  "dimensions": {
+    "emotion": [
+      "neutral",
+      "happy",
+      "frustrated",
+      "thinking"
+    ],
+    "speed": [
+      "normal",
+      "fast",
+      "slow"
+    ],
+    "style": [
+      "formal",
+      "casual"
+    ]
+  },
+  "profiles": {
+    "neutral_normal_formal": {
+      "emotion": "neutral",
+      "speed": "normal",
+      "style": "formal",
+      "path": "neutral_normal_formal.mp3",
+      "transcript": "您好，我已收到您的请求，现在为您核对详细信息。",
+      "s1_reference_prompt": "(calm)(confident)您好，我已收到您的请求，现在为您核对详细信息。",
+      "duration_seconds": 4.624,
+      "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+    },
+    "neutral_normal_casual": {
+      "emotion": "neutral",
+      "speed": "normal",
+      "style": "casual",
+      "path": "neutral_normal_casual.mp3",
+      "transcript": "你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "s1_reference_prompt": "(calm)(relaxed)你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "duration_seconds": 4.206,
+      "sha256": "5849473deb7f0415a57fa96e5365e76e5850a9c5c598c3926c9f4feba77d1ce5"
+    },
+    "neutral_fast_formal": {
+      "emotion": "neutral",
+      "speed": "fast",
+      "style": "formal",
+      "path": "neutral_fast_formal.mp3",
+      "transcript": "您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "s1_reference_prompt": "(calm)(confident)您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "duration_seconds": 5.146,
+      "sha256": "58870daca86d21ca7f8a785342ade7212358537cc67bc7168d4f9cb82df1465a"
+    },
+    "neutral_fast_casual": {
+      "emotion": "neutral",
+      "speed": "fast",
+      "style": "casual",
+      "path": "neutral_fast_casual.mp3",
+      "transcript": "你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "s1_reference_prompt": "(calm)(relaxed)你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "duration_seconds": 5.172,
+      "sha256": "961886b92e69da009d07e9ea9a0c0f8d67050d378fb2ffd50850876ebcd6ba16"
+    },
+    "neutral_slow_formal": {
+      "emotion": "neutral",
+      "speed": "slow",
+      "style": "formal",
+      "path": "neutral_slow_formal.mp3",
+      "transcript": "您好，我正在核对信息，请稍等。",
+      "s1_reference_prompt": "(calm)(confident)您好，我正在核对信息，请稍等。",
+      "duration_seconds": 4.467,
+      "sha256": "fd775e92e16733b8ac90885505293d20c64dcb6f421fec3aaf1eb380561aaf06"
+    },
+    "neutral_slow_casual": {
+      "emotion": "neutral",
+      "speed": "slow",
+      "style": "casual",
+      "path": "neutral_slow_casual.mp3",
+      "transcript": "你好呀，我正在帮你看看，稍等。",
+      "s1_reference_prompt": "(calm)(relaxed)你好呀，我正在帮你看看，稍等。",
+      "duration_seconds": 4.545,
+      "sha256": "6599f401b009ad55c5c17b4509d21a7ca4c83af50bf9e1c036ad496d015a966f"
+    },
+    "happy_normal_formal": {
+      "emotion": "happy",
+      "speed": "normal",
+      "style": "formal",
+      "path": "happy_normal_formal.mp3",
+      "transcript": "您好，我已收到您的请求，现在为您核对详细信息。",
+      "s1_reference_prompt": "(happy)(confident)您好，我已收到您的请求，现在为您核对详细信息。",
+      "duration_seconds": 5.12,
+      "sha256": "e0c6d9b5402d9ed7cc1375411951c22f09bd118a88e5abfc96bf67a3b1d76ba1"
+    },
+    "happy_normal_casual": {
+      "emotion": "happy",
+      "speed": "normal",
+      "style": "casual",
+      "path": "happy_normal_casual.mp3",
+      "transcript": "你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "s1_reference_prompt": "(happy)(relaxed)你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "duration_seconds": 5.068,
+      "sha256": "c374978ccaf9947ffc1b52a17ecf29cc904e8753e4fe0336b7c2aefee1b0af1e"
+    },
+    "happy_fast_formal": {
+      "emotion": "happy",
+      "speed": "fast",
+      "style": "formal",
+      "path": "happy_fast_formal.mp3",
+      "transcript": "您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "s1_reference_prompt": "(happy)(confident)您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "duration_seconds": 6.739,
+      "sha256": "d3993a35b54c843c3a8d6470d8754f1b3344c60b460b9d11b6141761de31f987"
+    },
+    "happy_fast_casual": {
+      "emotion": "happy",
+      "speed": "fast",
+      "style": "casual",
+      "path": "happy_fast_casual.mp3",
+      "transcript": "你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "s1_reference_prompt": "(happy)(relaxed)你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "duration_seconds": 4.963,
+      "sha256": "0e96b8c6abe891c6292e6c7037aac67979ac407c3125301f5421afe35ce256d5"
+    },
+    "happy_slow_formal": {
+      "emotion": "happy",
+      "speed": "slow",
+      "style": "formal",
+      "path": "happy_slow_formal.mp3",
+      "transcript": "您好，我正在核对信息，请稍等。",
+      "s1_reference_prompt": "(happy)(confident)您好，我正在核对信息，请稍等。",
+      "duration_seconds": 5.068,
+      "sha256": "29545d9cc2fc4bba11dd9d4567569acdc96486317d86c665940833df333a2696"
+    },
+    "happy_slow_casual": {
+      "emotion": "happy",
+      "speed": "slow",
+      "style": "casual",
+      "path": "happy_slow_casual.mp3",
+      "transcript": "你好呀，我正在帮你看看，稍等。",
+      "s1_reference_prompt": "(happy)(relaxed)你好呀，我正在帮你看看，稍等。",
+      "duration_seconds": 4.31,
+      "sha256": "014864a698f1da3988895936238f0e538215d0fe4b0140c17d0eb339f0b23c02"
+    },
+    "frustrated_normal_formal": {
+      "emotion": "frustrated",
+      "speed": "normal",
+      "style": "formal",
+      "path": "frustrated_normal_formal.mp3",
+      "transcript": "您好，我已收到您的请求，现在为您核对详细信息。",
+      "s1_reference_prompt": "(frustrated)(confident)您好，我已收到您的请求，现在为您核对详细信息。",
+      "duration_seconds": 4.859,
+      "sha256": "8f510ebb97a2e31315029934015a109a438041870d651e7b078e9165746f4b6a"
+    },
+    "frustrated_normal_casual": {
+      "emotion": "frustrated",
+      "speed": "normal",
+      "style": "casual",
+      "path": "frustrated_normal_casual.mp3",
+      "transcript": "你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "s1_reference_prompt": "(frustrated)(relaxed)你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "duration_seconds": 4.702,
+      "sha256": "23cefb4913ba3a3a8ea78a9b221b3e88754e0d10166d382e947dcfa16aef9c2c"
+    },
+    "frustrated_fast_formal": {
+      "emotion": "frustrated",
+      "speed": "fast",
+      "style": "formal",
+      "path": "frustrated_fast_formal.mp3",
+      "transcript": "您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "s1_reference_prompt": "(frustrated)(confident)您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "duration_seconds": 5.616,
+      "sha256": "3c64faf47685da3e3ba08b93b48baf32249dbf074421f577ebb3b3da16d815f2"
+    },
+    "frustrated_fast_casual": {
+      "emotion": "frustrated",
+      "speed": "fast",
+      "style": "casual",
+      "path": "frustrated_fast_casual.mp3",
+      "transcript": "你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "s1_reference_prompt": "(frustrated)(relaxed)你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "duration_seconds": 5.355,
+      "sha256": "6d427ddd6874b1b80b18e0129712ca100865e3592efa0e142904f160305686da"
+    },
+    "frustrated_slow_formal": {
+      "emotion": "frustrated",
+      "speed": "slow",
+      "style": "formal",
+      "path": "frustrated_slow_formal.mp3",
+      "transcript": "您好，我正在核对信息，请稍等。",
+      "s1_reference_prompt": "(frustrated)(confident)您好，我正在核对信息，请稍等。",
+      "duration_seconds": 4.545,
+      "sha256": "aab5806b6b7bfb17d9d2a069b8b1fb19f01cdc026e04f2e28dc92be94940b575"
+    },
+    "frustrated_slow_casual": {
+      "emotion": "frustrated",
+      "speed": "slow",
+      "style": "casual",
+      "path": "frustrated_slow_casual.mp3",
+      "transcript": "你好呀，我正在帮你看看，稍等。",
+      "s1_reference_prompt": "(frustrated)(relaxed)你好呀，我正在帮你看看，稍等。",
+      "duration_seconds": 3.605,
+      "sha256": "490c56a2dbc01f08380693173af76e0fcb48dfb24e29f5f828f7709cbc67faf2"
+    },
+    "thinking_normal_formal": {
+      "emotion": "thinking",
+      "speed": "normal",
+      "style": "formal",
+      "path": "thinking_normal_formal.mp3",
+      "transcript": "您好，我已收到您的请求，现在为您核对详细信息。",
+      "s1_reference_prompt": "(uncertain)(confident)您好，我已收到您的请求，现在为您核对详细信息。",
+      "duration_seconds": 4.754,
+      "sha256": "9637338fcf8cb6d17febbe01b4eedbb06423637163681ca864748ebd29e289de"
+    },
+    "thinking_normal_casual": {
+      "emotion": "thinking",
+      "speed": "normal",
+      "style": "casual",
+      "path": "thinking_normal_casual.mp3",
+      "transcript": "你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "s1_reference_prompt": "(uncertain)(relaxed)你好呀，我收到你的请求啦，现在帮你看看具体情况。",
+      "duration_seconds": 4.754,
+      "sha256": "49f77a6fc84657dbb45498d49aae40a0020fbf615622fcdacee686ff19231f5b"
+    },
+    "thinking_fast_formal": {
+      "emotion": "thinking",
+      "speed": "fast",
+      "style": "formal",
+      "path": "thinking_fast_formal.mp3",
+      "transcript": "您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "s1_reference_prompt": "(uncertain)(confident)您好，我已经收到您的请求，现在马上为您核对所有详细信息，请稍等片刻。",
+      "duration_seconds": 5.146,
+      "sha256": "5efd200c837b20b123ba019b893fd5d5ad2671188f94478dc66db512455d85ae"
+    },
+    "thinking_fast_casual": {
+      "emotion": "thinking",
+      "speed": "fast",
+      "style": "casual",
+      "path": "thinking_fast_casual.mp3",
+      "transcript": "你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "s1_reference_prompt": "(uncertain)(relaxed)你好呀，我已经收到你的请求啦，现在马上帮你看看全部具体情况，稍等一下。",
+      "duration_seconds": 5.068,
+      "sha256": "72de0d846bf47a7754afb2c2bb66e20047d0ca62575d605df63546589a5f2260"
+    },
+    "thinking_slow_formal": {
+      "emotion": "thinking",
+      "speed": "slow",
+      "style": "formal",
+      "path": "thinking_slow_formal.mp3",
+      "transcript": "您好，我正在核对信息，请稍等。",
+      "s1_reference_prompt": "(uncertain)(confident)您好，我正在核对信息，请稍等。",
+      "duration_seconds": 4.467,
+      "sha256": "abef0a802382dad67b37e3447de08401a1d1cdb451420759853f4af9df234ac9"
+    },
+    "thinking_slow_casual": {
+      "emotion": "thinking",
+      "speed": "slow",
+      "style": "casual",
+      "path": "thinking_slow_casual.mp3",
+      "transcript": "你好呀，我正在帮你看看，稍等。",
+      "s1_reference_prompt": "(uncertain)(relaxed)你好呀，我正在帮你看看，稍等。",
+      "duration_seconds": 4.31,
+      "sha256": "4c1d61c92b4eebc2c050e7b21d138ffac4d7e0ba6449e0f4215db5e93c61d992"
+    }
+  }
+}

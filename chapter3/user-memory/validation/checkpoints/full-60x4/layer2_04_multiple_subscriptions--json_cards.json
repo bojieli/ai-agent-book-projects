@@ -1,0 +1,1209 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer2_04_multiple_subscriptions",
+  "mode": "json_cards",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "netflix_support_001",
+      "memory": {
+        "session_metadata": {
+          "conversation_id": "netflix_support_001",
+          "timestamp": "2024-09-15 14:00:00",
+          "business": "Netflix Support",
+          "department": "Account Management",
+          "call_duration": "55 minutes"
+        },
+        "accounts": {
+          "user": {
+            "name": "Mark Johnson",
+            "email": "markjohnson88@email.com"
+          },
+          "plan_history": {
+            "current_plan": "Premium",
+            "current_plan_start_date": "2024-03-03",
+            "previous_plan": "Standard",
+            "previous_plan_start_year": "2019",
+            "upgrade_reason": "Called about getting 4K quality for new TV"
+          }
+        },
+        "plans": {
+          "Premium": {
+            "cost": "$22.99 per month",
+            "features": [
+              "4K Ultra HD streaming",
+              "Watch on 4 screens simultaneously",
+              "Downloads on up to 6 devices"
+            ]
+          },
+          "Standard": {
+            "cost": "$15.49 per month",
+            "features": [
+              "HD quality",
+              "Watch on 2 screens simultaneously",
+              "Downloads on up to 2 devices"
+            ],
+            "ad_status": "No ads"
+          },
+          "Basic with ads": {
+            "cost": "$6.99 per month",
+            "features": [
+              "HD quality",
+              "Watch on 2 screens simultaneously",
+              "No downloads"
+            ]
+          }
+        },
+        "billing": {
+          "cycle": {
+            "renewal_date": "18th of each month",
+            "next_billing_date": "2024-09-18"
+          },
+          "payment_methods": {
+            "current": "Visa ending in 4782 (old card)",
+            "alternative_inquired": "PayPal (can be linked through account settings online)"
+          },
+          "downgrade_info": {
+            "effect_date": "Next billing cycle (September 18th)",
+            "premium_features_retained_until": "Next billing cycle"
+          }
+        },
+        "account_access": {
+          "household_verification": {
+            "requirement": "Account verification when streaming from a different household",
+            "verification_method": "Enter code emailed to primary user",
+            "frequency": "Usually once a month when accessing from a different location consistently"
+          },
+          "extra_members": {
+            "cost": "$7.99/month",
+            "benefits": "Own profile and password, no verification hassles",
+            "total_cost_with_Premium": "$30.98",
+            "total_cost_with_Standard": "$23.48"
+          },
+          "password_sharing": {
+            "policy": "Not permitted outside household; requires own account or extra member"
+          }
+        },
+        "content": {
+          "availability": {
+            "The Office": {
+              "status": "Left Netflix",
+              "departure_year": "2021",
+              "current_platform": "Peacock"
+            },
+            "Friends": {
+              "status": "No longer on Netflix",
+              "current_platform": "Max (formerly HBO Max)"
+            },
+            "Parks and Recreation": {
+              "status": "Still on Netflix"
+            },
+            "The Crown": {
+              "status": "Concluded with Season 6",
+              "similar_shows": [
+                "The Empress"
+              ]
+            },
+            "leaving_soon_info": {
+              "source": "'Last Chance' section in the app"
+            }
+          },
+          "downloads": {
+            "device_limit": "Up to 6 devices (Premium plan)",
+            "expiry": {
+              "general": "Most downloads expire after 7 days",
+              "after_watching_start": "48 hours after starting to watch"
+            },
+            "expiry_reason": "Due to licensing agreements; can re-download with internet"
+          }
+        },
+        "third_party_billing": {
+          "T-Mobile_plan": {
+            "inclusion": "Netflix free through T-Mobile plan",
+            "current_usage": "Not using T-Mobile billing (paying directly)",
+            "switch_process": "Cancel with Netflix and sign up through T-Mobile",
+            "covered_plan": "Usually Standard with ads (not Premium)",
+            "limitations": [
+              "Lose 4K quality",
+              "May have advertisements unless T-Mobile updated offering"
+            ]
+          }
+        },
+        "downloads": {
+          "device_limit": "Up to 6 devices (Premium plan)",
+          "expiry": {
+            "general": "Most downloads expire after 7 days",
+            "after_watching_start": "48 hours after starting to watch"
+          },
+          "expiry_reason": "Due to licensing agreements; can re-download with internet"
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "netflix_support_001"
+      }
+    },
+    {
+      "session_index": 2,
+      "conversation_id": "disney_support_001",
+      "memory": {
+        "session_metadata": {
+          "conversation_id": "disney_support_001",
+          "timestamp": "2024-10-22 10:30:00",
+          "business": "Disney+ Customer Service",
+          "department": "Billing Support",
+          "call_duration": "52 minutes"
+        },
+        "accounts": {
+          "user": {
+            "name": "Mark Johnson",
+            "email": "markjohnson88@email.com"
+          }
+        },
+        "plans": {
+          "Disney Bundle Trio Premium": {
+            "cost": "$19.99 per month",
+            "includes": [
+              "Disney+",
+              "Hulu",
+              "ESPN+"
+            ],
+            "hulu_ad_status": "Ad-free",
+            "espn_ad_status": "With ads"
+          }
+        },
+        "billing": {
+          "cycle": {
+            "renewal_date": "5th of each month",
+            "next_billing_date": "2024-11-05"
+          },
+          "payment_methods": {
+            "current": "Mastercard ending in 9023"
+          }
+        },
+        "account_access": {
+          "concurrent_streams": {
+            "Disney+": "4 concurrent streams",
+            "Hulu": "2 concurrent streams"
+          },
+          "profiles": {
+            "total_limit": "up to 7 profiles",
+            "existing_profiles": [
+              "Kids",
+              "Teen",
+              "Dad"
+            ]
+          }
+        },
+        "downloads": {
+          "device_limits": {
+            "Disney+": "up to 10 devices",
+            "Hulu": "5 devices"
+          }
+        },
+        "content": {
+          "marvel": {
+            "upcoming_shows": {
+              "Daredevil: Born Again": "2025"
+            },
+            "available_shows": {
+              "Agatha All Along": "Available now"
+            },
+            "movie_availability": {
+              "most": "On Disney+",
+              "exceptions": "Spider-Man movies (Sony rights)",
+              "spider_man_current_platforms": "Rotate between platforms (some on Netflix, others digital rental)"
+            }
+          },
+          "star_wars": {
+            "exclusivity": "All exclusive to Disney+",
+            "shows": [
+              "Ahsoka",
+              "Mandalorian",
+              "Andor"
+            ],
+            "mandalorian_season_4": {
+              "status": "In production",
+              "expected_release": "2025"
+            }
+          },
+          "parental_controls": {
+            "maturity_ratings": "Per profile",
+            "kids_profile_setting": "TV-PG"
+          },
+          "hulu_integration": {
+            "status": "Not yet integrated into Disney+ app; working on it"
+          },
+          "4k_content": {
+            "disney_plus": "Most originals and movies",
+            "hulu": "Select content"
+          },
+          "international_use": {
+            "disney_plus": "Works in many countries (content varies by region)",
+            "hulu": "Only in US; VPN use against terms of service"
+          }
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "disney_support_001"
+      }
+    },
+    {
+      "session_index": 3,
+      "conversation_id": "hbo_support_001",
+      "memory": {
+        "session_metadata": {
+          "conversation_id": "hbo_support_001",
+          "timestamp": "2024-11-10 16:15:00",
+          "business": "Max Customer Support",
+          "department": "Account Services",
+          "call_duration": "53 minutes"
+        },
+        "accounts": {
+          "user": {
+            "name": "Mark Johnson",
+            "email": "markjohnson88@email.com"
+          }
+        },
+        "plans": {
+          "current": {
+            "name": "Ultimate Ad-Free",
+            "cost": "$19.99 per month",
+            "includes": [
+              "4K streaming",
+              "4 concurrent streams",
+              "100 downloads"
+            ]
+          },
+          "other_plans": {
+            "Standard": {
+              "cost": "$15.99 per month",
+              "includes": [
+                "HD streaming",
+                "2 concurrent streams",
+                "30 downloads"
+              ]
+            },
+            "With Ads": {
+              "cost": "$9.99 per month",
+              "includes": [
+                "HD streaming",
+                "2 concurrent streams",
+                "no downloads"
+              ]
+            }
+          }
+        },
+        "content": {
+          "house_of_the_dragon": {
+            "season_2_status": "Finished August 2024",
+            "season_3_expected": "summer 2026"
+          },
+          "game_of_thrones_universe": {
+            "a_knight_of_the_seven_kingdoms": {
+              "status": "Coming 2025",
+              "based_on": "Dunk and Egg novellas",
+              "setting": "90 years before Game of Thrones"
+            }
+          },
+          "current_popular": [
+            "The Last of Us",
+            "True Detective: Night Country",
+            "The Penguin"
+          ],
+          "the_penguin": {
+            "connection": "Set after The Batman (Robert Pattinson)"
+          },
+          "warner_bros_films": {
+            "availability": "45 days after theatrical release"
+          },
+          "classic_hbo_content": [
+            "The Sopranos",
+            "The Wire",
+            "Game of Thrones"
+          ]
+        },
+        "billing": {
+          "payment_methods": {
+            "current": "American Express ending in 1005"
+          },
+          "price_history": {
+            "original_cost": "$15.99 per month (old Ad-Free plan)",
+            "current_cost": "$19.99 per month (Ultimate Ad-Free)",
+            "price_increase": "$4"
+          }
+        },
+        "account_features": {
+          "concurrent_streams": {
+            "max": "4",
+            "household_policy": "Within household (college considered extended)"
+          },
+          "downloads": {
+            "limit": "100",
+            "device_limit": "up to 5 devices",
+            "duration": "30 days (or 48 hours after starting to watch)"
+          },
+          "streaming_quality": "4K"
+        },
+        "subscription_history": {
+          "start_date": "April 2023 (HBO Max)",
+          "rebranding": "Upgraded to Max",
+          "plan_change": "Old Ad-Free → Ultimate Ad-Free"
+        },
+        "add_ons_services": {
+          "cnn_max": {
+            "included": "true",
+            "description": "Curated CNN content (not full live channel)"
+          },
+          "bleacher_report_sports": {
+            "type": "Add-on",
+            "content": "Mainly soccer"
+          },
+          "verizon_partnership": {
+            "eligibility": "Verizon unlimited plans may include Max Standard (possible discount)"
+          }
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "hbo_support_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer2_04_multiple_subscriptions json_cards session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:43:44.835852+00:00",
+      "latency_ms": 40899.955,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=netflix_support_001\ntimestamp=2024-09-15 14:00:00\nmetadata={\"business\": \"Netflix Support\", \"department\": \"Account Management\", \"call_duration\": \"55 minutes\"}\nUSER: Hi, I need help with my Netflix account billing.\nASSISTANT: Hello! I'm David from Netflix Support. I'll help you with your billing. May I have the email address on your account?\nUSER: It's markjohnson88@email.com\nASSISTANT: Thank you, Mr. Johnson. I see your account here. You're on our Premium plan at $22.99 per month.\nUSER: That seems high. What does Premium include again?\nASSISTANT: Premium includes 4K Ultra HD streaming, ability to watch on 4 screens simultaneously, and downloads on up to 6 devices.\nUSER: I don't think I need all that. What are my other options?\nASSISTANT: We have Standard at $15.49 - HD quality, 2 screens, 2 download devices. Or Basic with ads at $6.99 - HD quality, 2 screens, no downloads.\nUSER: What about the Standard without ads?\nASSISTANT: Standard without ads is the $15.49 plan I mentioned. Only our Basic tier has an ad-supported option.\nUSER: I see. When did I sign up for Premium?\nASSISTANT: You upgraded to Premium on March 3rd, 2024. Before that, you had Standard since 2019.\nUSER: Why did I upgrade?\nASSISTANT: According to the notes, you called about getting 4K quality for your new TV.\nUSER: Oh right, the living room TV. But honestly, I can't tell much difference.\nASSISTANT: That's not uncommon. Would you like to downgrade back to Standard?\nUSER: What's my billing date?\nASSISTANT: Your account renews on the 18th of each month. Next billing is September 18th.\nUSER: If I downgrade now, when does it take effect?\nASSISTANT: The change would take effect on your next billing cycle, September 18th. You'd keep Premium features until then.\nUSER: Let me think about it. What payment method do I have on file?\nASSISTANT: You're using a Visa ending in 4782.\nUSER: That's my old card. I need to update it.\nASSISTANT: I can help with that. What's the new card number?\nUSER: Actually, can I use PayPal instead?\nASSISTANT: Yes, we accept PayPal. You can link it through your account settings online.\nUSER: I'll do that later. One more thing - my daughter is away at college. Can she use my account?\nASSISTANT: Yes, with Premium you can have up to 4 simultaneous streams. Has she been having any issues?\nUSER: She said something about needing to verify the account.\nASSISTANT: We now require account verification when streaming from a different household. She'll need to enter a code we email to you.\nUSER: How often?\nASSISTANT: Usually once a month when accessing from a different location consistently.\nUSER: That's annoying but manageable.\nASSISTANT: You could also add her as an extra member for $7.99/month. She'd have her own profile and password.\nUSER: So that would be $22.99 plus $7.99?\nASSISTANT: Correct, $30.98 total. Or if you downgrade to Standard, it would be $15.49 plus $7.99, so $23.48 total.\nUSER: That's actually barely more than Premium alone.\nASSISTANT: True, and she'd have her own account without verification hassles.\nUSER: Let me discuss with her first. What shows are leaving Netflix soon?\nASSISTANT: I don't have that information readily available, but you can check the 'Last Chance' section in the app.\nUSER: Oh, I've been watching The Office. Is that still on Netflix?\nASSISTANT: The Office left Netflix in 2021. It's now on Peacock.\nUSER: Really? I could have sworn I watched it recently.\nASSISTANT: You might be thinking of another platform, or perhaps you watched Parks and Recreation? That's still on Netflix.\nUSER: Maybe that's it. What about Friends?\nASSISTANT: Friends is no longer on Netflix either. It moved to HBO Max, now just Max.\nUSER: Netflix is losing everything good!\nASSISTANT: We've added a lot of original content though - Stranger Things, Wednesday, The Crown.\nUSER: True, my wife loves The Crown. Is there a new season coming?\nASSISTANT: The Crown concluded with Season 6. But there are similar shows like The Empress you might enjoy.\nUSER: I'll check it out. Can I download shows to watch on planes?\nASSISTANT: Yes, with Premium you can download on up to 6 devices.\nUSER: How long do downloads last?\nASSISTANT: Most downloads expire after 7 days, or 48 hours after you start watching.\nUSER: That's pretty restrictive.\nASSISTANT: It's due to licensing agreements. You can always re-download if you have internet.\nUSER: What about sharing my password with my parents?\nASSISTANT: Password sharing outside your household isn't permitted. They'd need their own account or be added as extra members.\nUSER: Even my parents?\nASSISTANT: If they don't live with you, yes. But the extra member option is just $7.99.\nUSER: So I'd be paying for three accounts essentially?\nASSISTANT: You'd be the primary account holder, they'd be extra members on your account.\nUSER: This is getting complicated. Let me think about all this.\nASSISTANT: Take your time. You can make changes anytime through your account settings.\nUSER: Actually, wait. I just remembered I get Netflix free through my T-Mobile plan.\nASSISTANT: Oh! Are you using the T-Mobile billing?\nUSER: No, I'm paying you directly. How do I switch?\nASSISTANT: You'd need to cancel with us and sign up through T-Mobile. But check which plan they cover first.\nUSER: What do you mean?\nASSISTANT: T-Mobile usually covers Standard with ads, not Premium.\nUSER: Oh, so I'd lose 4K?\nASSISTANT: Yes, and you'd have advertisements unless T-Mobile has updated their offering.\nUSER: Hmm, maybe I'll keep paying directly then.\nASSISTANT: You could also downgrade to Standard and pay the difference if T-Mobile covers Basic.\nUSER: Too confusing. I'll just leave it as is for now.\nASSISTANT: Understood. Is there anything else I can help you with today?\nUSER: No, I think that's everything. Thanks David!\nASSISTANT: You're welcome, Mr. Johnson! Enjoy your Netflix viewing!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853542250664d276ae6b5ce6fd767138ff54dc0bd26c6e55c",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\n  \"session_metadata\": {\n    \"conversation_id\": \"netflix_support_001\",\n    \"timestamp\": \"2024-09-15 14:00:00\",\n    \"business\": \"Netflix Support\",\n    \"department\": \"Account Management\",\n    \"call_duration\": \"55 minutes\"\n  },\n  \"accounts\": {\n    \"user\": {\n      \"name\": \"Mark Johnson\",\n      \"email\": \"markjohnson88@email.com\"\n    },\n    \"plan_history\": {\n      \"current_plan\": \"Premium\",\n      \"current_plan_start_date\": \"2024-03-03\",\n      \"previous_plan\": \"Standard\",\n      \"previous_plan_start_year\": \"2019\",\n      \"upgrade_reason\": \"Called about getting 4K quality for new TV\"\n    }\n  },\n  \"plans\": {\n    \"Premium\": {\n      \"cost\": \"$22.99 per month\",\n      \"features\": [\"4K Ultra HD streaming\", \"Watch on 4 screens simultaneously\", \"Downloads on up to 6 devices\"]\n    },\n    \"Standard\": {\n      \"cost\": \"$15.49 per month\",\n      \"features\": [\"HD quality\", \"Watch on 2 screens simultaneously\", \"Downloads on up to 2 devices\"],\n      \"ad_status\": \"No ads\"\n    },\n    \"Basic with ads\": {\n      \"cost\": \"$6.99 per month\",\n      \"features\": [\"HD quality\", \"Watch on 2 screens simultaneously\", \"No downloads\"]\n    }\n  },\n  \"billing\": {\n    \"cycle\": {\n      \"renewal_date\": \"18th of each month\",\n      \"next_billing_date\": \"2024-09-18\"\n    },\n    \"payment_methods\": {\n      \"current\": \"Visa ending in 4782 (old card)\",\n      \"alternative_inquired\": \"PayPal (can be linked through account settings online)\"\n    },\n    \"downgrade_info\": {\n      \"effect_date\": \"Next billing cycle (September 18th)\",\n      \"premium_features_retained_until\": \"Next billing cycle\"\n    }\n  },\n  \"account_access\": {\n    \"household_verification\": {\n      \"requirement\": \"Account verification when streaming from a different household\",\n      \"verification_method\": \"Enter code emailed to primary user\",\n      \"frequency\": \"Usually once a month when accessing from a different location consistently\"\n    },\n    \"extra_members\": {\n      \"cost\": \"$7.99/month\",\n      \"benefits\": \"Own profile and password, no verification hassles\",\n      \"total_cost_with_Premium\": \"$30.98\",\n      \"total_cost_with_Standard\": \"$23.48\"\n    },\n    \"password_sharing\": {\n      \"policy\": \"Not permitted outside household; requires own account or extra member\"\n    }\n  },\n  \"content\": {\n    \"availability\": {\n      \"The Office\": {\n        \"status\": \"Left Netflix\",\n        \"departure_year\": \"2021\",\n        \"current_platform\": \"Peacock\"\n      },\n      \"Friends\": {\n        \"status\": \"No longer on Netflix\",\n        \"current_platform\": \"Max (formerly HBO Max)\"\n      },\n      \"Parks and Recreation\": {\n        \"status\": \"Still on Netflix\"\n      },\n      \"The Crown\": {\n        \"status\": \"Concluded with Season 6\",\n        \"similar_shows\": [\"The Empress\"]\n      },\n      \"leaving_soon_info\": {\n        \"source\": \"'Last Chance' section in the app\"\n      }\n    },\n    \"downloads\": {\n      \"device_limit\": \"Up to 6 devices (Premium plan)\",\n      \"expiry\": {\n        \"general\": \"Most downloads expire after 7 days\",\n        \"after_watching_start\": \"48 hours after starting to watch\"\n      },\n      \"expiry_reason\": \"Due to licensing agreements; can re-download with internet\"\n    }\n  },\n  \"third_party_billing\": {\n    \"T-Mobile_plan\": {\n      \"inclusion\": \"Netflix free through T-Mobile plan\",\n      \"current_usage\": \"Not using T-Mobile billing (paying directly)\",\n      \"switch_process\": \"Cancel with Netflix and sign up through T-Mobile\",\n      \"covered_plan\": \"Usually Standard with ads (not Premium)\",\n      \"limitations\": [\"Lose 4K quality\", \"May have advertisements unless T-Mobile updated offering\"]\n    }\n  },\n  \"downloads\": {\n    \"device_limit\": \"Up to 6 devices (Premium plan)\",\n    \"expiry\": {\n      \"general\": \"Most downloads expire after 7 days\",\n      \"after_watching_start\": \"48 hours after starting to watch\"\n    },\n    \"expiry_reason\": \"Due to licensing agreements; can re-download with internet\"\n  }\n}}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create a hierarchical JSON memory object based on the conversation. Let's start by identifying the main categories. The conversation is about a Netflix support session, so categories might include \"accounts\", \"plans\", \"billing\", \"payment_methods\", \"account_verification\", \"extra_members\", \"content\", \"downloads\", \"password_sharing\", \"third_party_billing\", and \"session_metadata\".\n\nFirst, \"session_metadata\" should include details about the conversation itself: conversation_id, timestamp, business, department, call_duration.\n\nUnder \"accounts\", the user is Mark Johnson with email markjohnson88@email.com. His account history includes upgrading to Premium on 2024-03-03, previously on Standard since 2019. The reason for upgrade was to get 4K for a new TV.\n\n\"plans\" will have details about the current plan (Premium, $22.99/month) and other options (Standard $15.49, Basic with ads $6.99). Also, plan features: Premium includes 4K, 4 screens, 6 downloads; Standard includes HD, 2 screens, 2 downloads; Basic with ads includes HD, 2 screens, no downloads.\n\n\"billing\" has renewal date (18th of each month), next billing date (2024-09-18), current payment method (Visa ending in 4782, old card), and user inquired about PayPal as alternative.\n\n\"account_verification\" for different households: requires code emailed to primary user, usually once a month for consistent different location access.\n\n\"extra_members\" option: $7.99/month, own profile/password. Cost with Premium: $30.98 total; with Standard: $23.48 total.\n\n\"content\" details: The Office left Netflix in 2021 (now on Peacock), Friends left (now on Max), Parks and Recreation still on Netflix, The Crown concluded with Season 6, similar show The Empress available. \"Last Chance\" section in app for leaving shows.\n\n\"downloads\": Premium allows 6 devices, most expire after 7 days or 48 hours after starting to watch.\n\n\"password_sharing\": Not permitted outside household; extra member option required.\n\n\"third_party_billing\": User has T-Mobile plan that includes Netflix (likely Standard with ads), switching requires canceling direct billing and signing up through T-Mobile, which may lose 4K and add ads.\n\nNow, organize all these into a hierarchical JSON with categories, subcategories, keys, and values, preserving exact details, dates, etc."
+            }
+          }
+        ],
+        "created": 1785354265,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1734,
+          "prompt_tokens": 1798,
+          "total_tokens": 3532,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 572,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1734,
+        "prompt_tokens": 1798,
+        "total_tokens": 3532,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 572,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853542250664d276ae6b5ce6fd767138ff54dc0bd26c6e55c"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer2_04_multiple_subscriptions json_cards session 2",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:44:25.735062+00:00",
+      "latency_ms": 52225.139,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 2\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{\"session_metadata\": {\"conversation_id\": \"netflix_support_001\", \"timestamp\": \"2024-09-15 14:00:00\", \"business\": \"Netflix Support\", \"department\": \"Account Management\", \"call_duration\": \"55 minutes\"}, \"accounts\": {\"user\": {\"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\"}, \"plan_history\": {\"current_plan\": \"Premium\", \"current_plan_start_date\": \"2024-03-03\", \"previous_plan\": \"Standard\", \"previous_plan_start_year\": \"2019\", \"upgrade_reason\": \"Called about getting 4K quality for new TV\"}}, \"plans\": {\"Premium\": {\"cost\": \"$22.99 per month\", \"features\": [\"4K Ultra HD streaming\", \"Watch on 4 screens simultaneously\", \"Downloads on up to 6 devices\"]}, \"Standard\": {\"cost\": \"$15.49 per month\", \"features\": [\"HD quality\", \"Watch on 2 screens simultaneously\", \"Downloads on up to 2 devices\"], \"ad_status\": \"No ads\"}, \"Basic with ads\": {\"cost\": \"$6.99 per month\", \"features\": [\"HD quality\", \"Watch on 2 screens simultaneously\", \"No downloads\"]}}, \"billing\": {\"cycle\": {\"renewal_date\": \"18th of each month\", \"next_billing_date\": \"2024-09-18\"}, \"payment_methods\": {\"current\": \"Visa ending in 4782 (old card)\", \"alternative_inquired\": \"PayPal (can be linked through account settings online)\"}, \"downgrade_info\": {\"effect_date\": \"Next billing cycle (September 18th)\", \"premium_features_retained_until\": \"Next billing cycle\"}}, \"account_access\": {\"household_verification\": {\"requirement\": \"Account verification when streaming from a different household\", \"verification_method\": \"Enter code emailed to primary user\", \"frequency\": \"Usually once a month when accessing from a different location consistently\"}, \"extra_members\": {\"cost\": \"$7.99/month\", \"benefits\": \"Own profile and password, no verification hassles\", \"total_cost_with_Premium\": \"$30.98\", \"total_cost_with_Standard\": \"$23.48\"}, \"password_sharing\": {\"policy\": \"Not permitted outside household; requires own account or extra member\"}}, \"content\": {\"availability\": {\"The Office\": {\"status\": \"Left Netflix\", \"departure_year\": \"2021\", \"current_platform\": \"Peacock\"}, \"Friends\": {\"status\": \"No longer on Netflix\", \"current_platform\": \"Max (formerly HBO Max)\"}, \"Parks and Recreation\": {\"status\": \"Still on Netflix\"}, \"The Crown\": {\"status\": \"Concluded with Season 6\", \"similar_shows\": [\"The Empress\"]}, \"leaving_soon_info\": {\"source\": \"'Last Chance' section in the app\"}}, \"downloads\": {\"device_limit\": \"Up to 6 devices (Premium plan)\", \"expiry\": {\"general\": \"Most downloads expire after 7 days\", \"after_watching_start\": \"48 hours after starting to watch\"}, \"expiry_reason\": \"Due to licensing agreements; can re-download with internet\"}}, \"third_party_billing\": {\"T-Mobile_plan\": {\"inclusion\": \"Netflix free through T-Mobile plan\", \"current_usage\": \"Not using T-Mobile billing (paying directly)\", \"switch_process\": \"Cancel with Netflix and sign up through T-Mobile\", \"covered_plan\": \"Usually Standard with ads (not Premium)\", \"limitations\": [\"Lose 4K quality\", \"May have advertisements unless T-Mobile updated offering\"]}}, \"downloads\": {\"device_limit\": \"Up to 6 devices (Premium plan)\", \"expiry\": {\"general\": \"Most downloads expire after 7 days\", \"after_watching_start\": \"48 hours after starting to watch\"}, \"expiry_reason\": \"Due to licensing agreements; can re-download with internet\"}}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=disney_support_001\ntimestamp=2024-10-22 10:30:00\nmetadata={\"business\": \"Disney+ Customer Service\", \"department\": \"Billing Support\", \"call_duration\": \"52 minutes\"}\nUSER: Hi, I want to check on my Disney+ subscription.\nASSISTANT: Hello! This is Maria from Disney+ Customer Service. I'd be happy to help. Can I get the email on your account?\nUSER: It's the same as my other accounts, markjohnson88@email.com\nASSISTANT: Perfect, I found your account Mr. Johnson. You have the Disney Bundle with Disney+, Hulu, and ESPN+.\nUSER: How much am I paying for that?\nASSISTANT: You're on the Disney Bundle Trio Premium at $19.99 per month. That's the ad-free version of Disney+ and Hulu, plus ESPN+ with ads.\nUSER: ESPN+ doesn't have an ad-free option?\nASSISTANT: Correct, ESPN+ only comes with ads currently.\nUSER: I honestly never watch ESPN. Can I remove it?\nASSISTANT: You could switch to the Disney+ and Hulu bundle only, which is $19.99 - the same price actually.\nUSER: Wait, it's the same price without ESPN?\nASSISTANT: Yes, the bundle pricing makes the full trio the better value. Disney+ alone is $13.99 and Hulu alone is $17.99.\nUSER: So separately they'd be $31.98?\nASSISTANT: Exactly. The bundle saves you about $12 per month.\nUSER: That's significant. When did I sign up for this?\nASSISTANT: You started with just Disney+ in January 2024, then upgraded to the bundle in June 2024.\nUSER: What made me upgrade?\nASSISTANT: The notes show you called about adding Hulu for The Bear season 3.\nUSER: Oh yeah, great show! What's my billing date?\nASSISTANT: You're billed on the 5th of each month. Next payment is November 5th.\nUSER: And payment method?\nASSISTANT: You have a Mastercard ending in 9023 on file.\nUSER: That's the right card. How many people can use my account?\nASSISTANT: Disney+ allows 4 concurrent streams and up to 7 profiles. Hulu allows 2 concurrent streams.\nUSER: My kids each have their own profile, right?\nASSISTANT: Yes, I see profiles for Kids, Teen, and one called Dad - that's yours?\nUSER: Yes, very creative naming! Can I download shows?\nASSISTANT: Yes, Disney+ allows downloads on up to 10 devices. Hulu allows downloads on 5 devices with your plan.\nUSER: Good to know. What new Marvel shows are coming?\nASSISTANT: Daredevil: Born Again is coming in 2025, and there's Agatha All Along available now.\nUSER: I haven't watched Agatha yet. Is it good?\nASSISTANT: It's getting positive reviews. It's a WandaVision spinoff.\nUSER: Oh, I loved WandaVision! Speaking of which, are all Marvel movies on Disney+?\nASSISTANT: Most are, but Spider-Man movies aren't due to Sony's rights.\nUSER: That's annoying. Where can I watch those?\nASSISTANT: They rotate between different platforms. Currently some are on Netflix, others on digital rental.\nUSER: What about Star Wars content?\nASSISTANT: All Star Wars content is exclusive to Disney+. Ahsoka, Mandalorian, Andor, all here.\nUSER: Good. My son loves Mandalorian. Is season 4 coming?\nASSISTANT: Yes, The Mandalorian season 4 is in production, expected in 2025.\nUSER: What about parental controls?\nASSISTANT: Each profile can have different maturity ratings set. Your Kids profile is already set to TV-PG.\nUSER: Perfect. Can I watch Hulu content through the Disney+ app?\nASSISTANT: Not yet, but they're working on integrating everything into one app.\nUSER: That would be convenient. How's the 4K content?\nASSISTANT: Most Disney+ originals and movies are in 4K. Hulu has select content in 4K.\nUSER: Do I need special equipment?\nASSISTANT: You need a 4K TV and compatible streaming device, plus internet speed of at least 25 Mbps.\nUSER: I have all that. Oh, can I use this internationally?\nASSISTANT: Disney+ works in many countries, but content varies by region. Hulu only works in the US.\nUSER: So Hulu won't work when I travel?\nASSISTANT: Correct, unless you use a VPN, though that's against terms of service.\nUSER: Got it. Is there a discount for annual payment?\nASSISTANT: Yes, if you pay annually, the bundle is $219.99, saving you about $20 per year.\nUSER: Not a huge saving.\nASSISTANT: True, monthly gives more flexibility to change or cancel.\nUSER: I'll stick with monthly. Can I pause my subscription?\nASSISTANT: We don't offer pause, but you can cancel and resubscribe anytime without losing your profiles.\nUSER: Good to know. Any price increases coming?\nASSISTANT: Nothing announced currently. We typically give 30 days notice of any price changes.\nUSER: Fair enough. Thanks for all the info Maria!\nASSISTANT: You're welcome! Enjoy your streaming, Mr. Johnson!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853542659336fdba12e18648ff4577e64dddd76d2e7cb7c95",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\"session_metadata\": {\"conversation_id\": \"disney_support_001\", \"timestamp\": \"2024-10-22 10:30:00\", \"business\": \"Disney+ Customer Service\", \"department\": \"Billing Support\", \"call_duration\": \"52 minutes\"}, \"accounts\": {\"user\": {\"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\"}}, \"plans\": {\"Disney Bundle Trio Premium\": {\"cost\": \"$19.99 per month\", \"includes\": [\"Disney+\", \"Hulu\", \"ESPN+\"], \"hulu_ad_status\": \"Ad-free\", \"espn_ad_status\": \"With ads\"}}, \"billing\": {\"cycle\": {\"renewal_date\": \"5th of each month\", \"next_billing_date\": \"2024-11-05\"}, \"payment_methods\": {\"current\": \"Mastercard ending in 9023\"}}, \"account_access\": {\"concurrent_streams\": {\"Disney+\": \"4 concurrent streams\", \"Hulu\": \"2 concurrent streams\"}, \"profiles\": {\"total_limit\": \"up to 7 profiles\", \"existing_profiles\": [\"Kids\", \"Teen\", \"Dad\"]}}, \"downloads\": {\"device_limits\": {\"Disney+\": \"up to 10 devices\", \"Hulu\": \"5 devices\"}}, \"content\": {\"marvel\": {\"upcoming_shows\": {\"Daredevil: Born Again\": \"2025\"}, \"available_shows\": {\"Agatha All Along\": \"Available now\"}, \"movie_availability\": {\"most\": \"On Disney+\", \"exceptions\": \"Spider-Man movies (Sony rights)\", \"spider_man_current_platforms\": \"Rotate between platforms (some on Netflix, others digital rental)\"}}, \"star_wars\": {\"exclusivity\": \"All exclusive to Disney+\", \"shows\": [\"Ahsoka\", \"Mandalorian\", \"Andor\"], \"mandalorian_season_4\": {\"status\": \"In production\", \"expected_release\": \"2025\"}}, \"parental_controls\": {\"maturity_ratings\": \"Per profile\", \"kids_profile_setting\": \"TV-PG\"}, \"hulu_integration\": {\"status\": \"Not yet integrated into Disney+ app; working on it\"}, \"4k_content\": {\"disney_plus\": \"Most originals and movies\", \"hulu\": \"Select content\"}, \"international_use\": {\"disney_plus\": \"Works in many countries (content varies by region)\", \"hulu\": \"Only in US; VPN use against terms of service\"}}}, \"subscription_management\": {\"annual_payment\": {\"cost\": \"$219.99/year\", \"savings\": \"~$20 per year\"}, \"pause_option\": \"Not offered; can cancel and resubscribe anytime without losing profiles\", \"price_increase_policy\": \"Nothing announced currently; 30 days notice given for changes\" } }",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create a hierarchical JSON object for the new session, following the user's instructions. Let's start by analyzing the new session data and organizing it into categories and subcategories.\n\nFirst, the session metadata: conversation_id is \"disney_support_001\", timestamp is \"2024-10-22 10:30:00\", business is \"Disney+ Customer Service\", department is \"Billing Support\", call_duration is \"52 minutes\". So that goes under \"session_metadata\".\n\nNext, the user account info: the user is Mark Johnson (from previous, but confirmed here with email \"markjohnson88@email.com\"), so \"accounts\" with \"user\" subcategory having \"name\" and \"email\".\n\nSubscription plan: The user has the \"Disney Bundle Trio Premium\" at \"$19.99 per month\". The bundle includes Disney+, Hulu, ESPN+. So \"plans\" with \"Disney Bundle Trio Premium\" as a key, containing \"cost\", \"includes\" (Disney+, Hulu, ESPN+), and maybe details on each included service.\n\nBilling info: Billing date is \"5th of each month\", next payment is \"2024-11-05\". Payment method is \"Mastercard ending in 9023\". So \"billing\" with \"cycle\" (renewal_date, next_billing_date) and \"payment_methods\" (current).\n\nAccount access: Concurrent streams: Disney+ allows \"4 concurrent streams\", Hulu allows \"2 concurrent streams\". Profiles: \"up to 7 profiles\" (with specific profiles: Kids, Teen, Dad). So \"account_access\" with \"concurrent_streams\" (Disney+, Hulu), \"profiles\" (total_limit, existing_profiles).\n\nDownloads: Disney+ allows \"downloads on up to 10 devices\", Hulu allows \"downloads on 5 devices\". So \"downloads\" with \"device_limits\" (Disney+, Hulu).\n\nContent: Marvel shows: \"Daredevil: Born Again (2025)\", \"Agatha All Along (available now)\". Marvel movies: \"Most on Disney+; Spider-Man movies not (Sony rights)\". Star Wars: \"All exclusive to Disney+ (Ahsoka, Mandalorian, Andor)\". Mandalorian season 4: \"In production, expected 2025\". Parental controls: \"Each profile can have different maturity ratings; Kids profile set to TV-PG\". Hulu integration: \"Not yet integrated into Disney+ app; working on it\". 4K content: \"Most Disney+ originals and movies in 4K; Hulu select content in 4K\". International use: \"Disney+ works in many countries (content varies by region); Hulu only in US\". So \"content\" with \"marvel\" (upcoming_shows, available_shows, movie_availability), \"star_wars\" (exclusivity, shows), \"parental_controls\" (maturity_ratings, kids_profile_setting), \"hulu_integration\" (status), \"4k_content\" (availability), \"international_use\" (disney_plus, hulu).\n\nOther details: Annual payment discount: \"Bundle annual cost $219.99 (saves ~$20/year)\". Pause subscription: \"Not offered; can cancel and resubscribe\". Price increases: \"None announced; 30 days notice given\". So maybe \"subscription_management\" with \"annual_payment\", \"pause_option\", \"price_increase_policy\".\n\nNow, need to structure all this hierarchically without losing exact values, ownership, dates, etc. Also, since it's a new session, we replace the previous memory state, so we don't include Netflix info anymore.\n\nLet me build the JSON step by step:\n\n- \"session_metadata\": { \"conversation_id\": \"disney_support_001\", \"timestamp\": \"2024-10-22 10:30:00\", \"business\": \"Disney+ Customer Service\", \"department\": \"Billing Support\", \"call_duration\": \"52 minutes\" }\n\n- \"accounts\": { \"user\": { \"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\" } }\n\n- \"plans\": { \"Disney Bundle Trio Premium\": { \"cost\": \"$19.99 per month\", \"includes\": [\"Disney+\", \"Hulu\", \"ESPN+\"], \"hulu_details\": \"Ad-free\", \"espn_details\": \"With ads\" } } (since assistant mentioned ESPN+ with ads)\n\n- \"billing\": { \"cycle\": { \"renewal_date\": \"5th of each month\", \"next_billing_date\": \"2024-11-05\" }, \"payment_methods\": { \"current\": \"Mastercard ending in 9023\" } }\n\n- \"account_access\": { \"concurrent_streams\": { \"Disney+\": \"4 streams\", \"Hulu\": \"2 streams\" }, \"profiles\": { \"total_limit\": \"up to 7 profiles\", \"existing_profiles\": [\"Kids\", \"Teen\", \"Dad\"] } }\n\n- \"downloads\": { \"device_limits\": { \"Disney+\": \"up to 10 devices\", \"Hulu\": \"5 devices\" } }\n\n- \"content\": { \"marvel\": { \"upcoming_shows\": { \"Daredevil: Born Again\": \"2025\" }, \"available_shows\": { \"Agatha All Along\": \"Available now\" }, \"movie_availability\": { \"most\": \"On Disney+\", \"exceptions\": \"Spider-Man movies (Sony rights)\", \"spider_man_current_platforms\": \"Rotate between platforms (some on Netflix, others digital rental)\" } }, \"star_wars\": { \"exclusivity\": \"All exclusive to Disney+\", \"shows\": [\"Ahsoka\", \"Mandalorian\", \"Andor\"], \"mandalorian_season_4\": \"In production, expected 2025\" }, \"parental_controls\": { \"maturity_ratings\": \"Per profile\", \"kids_profile_setting\": \"TV-PG\" }, \"hulu_integration\": { \"status\": \"Not yet integrated into Disney+ app; working on it\" }, \"4k_content\": { \"disney_plus\": \"Most originals and movies\", \"hulu\": \"Select content\" }, \"international_use\": { \"disney_plus\": \"Works in many countries (content varies by region)\", \"hulu\": \"Only in US; VPN use against terms of service\" } }\n\n- \"subscription_management\": { \"annual_payment\": { \"cost\": \"$219.99/year\", \"savings\": \"~$20 per year\" }, \"pause_option\": \"Not offered; can cancel and resubscribe anytime without losing profiles\", \"price_increase_policy\": \"Nothing announced currently; 30 days notice given for changes\" }\n\nNeed to check if all key info is included: user email, plan details, billing date, payment method, concurrent streams, profiles, downloads, Marvel/Star Wars content, parental controls, Hulu integration, 4K, international use, annual payment, pause, price increases.\n\nYes, that covers the new session data. Now structure this into the JSON memory object."
+            }
+          }
+        ],
+        "created": 1785354318,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2225,
+          "prompt_tokens": 2366,
+          "total_tokens": 4591,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1582,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2225,
+        "prompt_tokens": 2366,
+        "total_tokens": 4591,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1582,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853542659336fdba12e18648ff4577e64dddd76d2e7cb7c95"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer2_04_multiple_subscriptions json_cards session 3",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:14:37.775441+00:00",
+      "latency_ms": 48973.385,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 3\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{\"session_metadata\": {\"conversation_id\": \"disney_support_001\", \"timestamp\": \"2024-10-22 10:30:00\", \"business\": \"Disney+ Customer Service\", \"department\": \"Billing Support\", \"call_duration\": \"52 minutes\"}, \"accounts\": {\"user\": {\"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\"}}, \"plans\": {\"Disney Bundle Trio Premium\": {\"cost\": \"$19.99 per month\", \"includes\": [\"Disney+\", \"Hulu\", \"ESPN+\"], \"hulu_ad_status\": \"Ad-free\", \"espn_ad_status\": \"With ads\"}}, \"billing\": {\"cycle\": {\"renewal_date\": \"5th of each month\", \"next_billing_date\": \"2024-11-05\"}, \"payment_methods\": {\"current\": \"Mastercard ending in 9023\"}}, \"account_access\": {\"concurrent_streams\": {\"Disney+\": \"4 concurrent streams\", \"Hulu\": \"2 concurrent streams\"}, \"profiles\": {\"total_limit\": \"up to 7 profiles\", \"existing_profiles\": [\"Kids\", \"Teen\", \"Dad\"]}}, \"downloads\": {\"device_limits\": {\"Disney+\": \"up to 10 devices\", \"Hulu\": \"5 devices\"}}, \"content\": {\"marvel\": {\"upcoming_shows\": {\"Daredevil: Born Again\": \"2025\"}, \"available_shows\": {\"Agatha All Along\": \"Available now\"}, \"movie_availability\": {\"most\": \"On Disney+\", \"exceptions\": \"Spider-Man movies (Sony rights)\", \"spider_man_current_platforms\": \"Rotate between platforms (some on Netflix, others digital rental)\"}}, \"star_wars\": {\"exclusivity\": \"All exclusive to Disney+\", \"shows\": [\"Ahsoka\", \"Mandalorian\", \"Andor\"], \"mandalorian_season_4\": {\"status\": \"In production\", \"expected_release\": \"2025\"}}, \"parental_controls\": {\"maturity_ratings\": \"Per profile\", \"kids_profile_setting\": \"TV-PG\"}, \"hulu_integration\": {\"status\": \"Not yet integrated into Disney+ app; working on it\"}, \"4k_content\": {\"disney_plus\": \"Most originals and movies\", \"hulu\": \"Select content\"}, \"international_use\": {\"disney_plus\": \"Works in many countries (content varies by region)\", \"hulu\": \"Only in US; VPN use against terms of service\"}}}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=hbo_support_001\ntimestamp=2024-11-10 16:15:00\nmetadata={\"business\": \"Max Customer Support\", \"department\": \"Account Services\", \"call_duration\": \"53 minutes\"}\nUSER: Hi, I need to ask about my HBO Max, or I guess it's just Max now?\nASSISTANT: Hello! Yes, we're now Max. I'm Kevin from Customer Support. How can I help you today?\nUSER: I'm confused about my subscription. Can you tell me what I have?\nASSISTANT: Of course! Can I get your email address?\nUSER: markjohnson88@email.com\nASSISTANT: Thank you Mr. Johnson. You have our Ultimate Ad-Free plan at $19.99 per month.\nUSER: Ultimate? What's the difference between the plans?\nASSISTANT: Ultimate includes 4K streaming, 4 concurrent streams, and 100 downloads. Our Standard plan is $15.99 with HD only, 2 streams, and 30 downloads.\nUSER: And there's one with ads too?\nASSISTANT: Yes, our With Ads plan is $9.99, HD quality, 2 streams, but no downloads.\nUSER: I mainly got this for House of the Dragon. When's the new season?\nASSISTANT: Season 3 is expected in summer 2026. Season 2 just finished in August.\nUSER: 2026? That's so far away!\nASSISTANT: I know, the production is extensive. But we have other Game of Thrones content coming sooner.\nUSER: Like what?\nASSISTANT: A Knight of the Seven Kingdoms is coming in 2025.\nUSER: Never heard of it.\nASSISTANT: It's based on the Dunk and Egg novellas, set 90 years before Game of Thrones.\nUSER: Interesting. What else is good on Max right now?\nASSISTANT: The Last of Us, True Detective: Night Country, The Penguin - all getting great reviews.\nUSER: Oh yeah, I've been meaning to watch The Penguin. Is it connected to the Batman movie?\nASSISTANT: Yes! It's set right after The Batman with Robert Pattinson, though Batman doesn't appear in the show.\nUSER: That movie is on Max too?\nASSISTANT: Yes, all Warner Bros films come to Max, usually 45 days after theatrical release.\nUSER: That's pretty quick. What about the old HBO shows?\nASSISTANT: All classic HBO content is here - The Sopranos, The Wire, Game of Thrones, everything.\nUSER: Good. I've been rewatching The Sopranos. When's my billing date?\nASSISTANT: You're billed on the 12th of each month. Your next charge is November 12th.\nUSER: That's in two days! If I cancel now?\nASSISTANT: You'd keep access through December 11th, the end of your current billing period.\nUSER: Oh, so I've already paid through December 11th?\nASSISTANT: No, you'll be charged on November 12th for the period of November 12th through December 11th.\nUSER: So I should cancel before November 12th to avoid that charge?\nASSISTANT: Correct. Cancel by November 11th to avoid the next charge.\nUSER: I'm not canceling, just wanted to understand. What payment method is on file?\nASSISTANT: You have an American Express ending in 1005.\nUSER: That's right. How long have I been subscribed?\nASSISTANT: You first subscribed in April 2023 when we were still HBO Max.\nUSER: Has the price changed since then?\nASSISTANT: You were paying $15.99 for the old Ad-Free plan. When we became Max, you were upgraded to Ultimate at $19.99 to keep 4K access.\nUSER: So a $4 increase. Are there any bundles with other services?\nASSISTANT: We partner with some providers. Do you have Verizon, AT&T, or Cricket?\nUSER: I have Verizon for my cell phone.\nASSISTANT: Some Verizon unlimited plans include Max Standard. You might already be eligible for a discount.\nUSER: Really? How do I check?\nASSISTANT: Log into your Verizon account and check your plan perks, or call Verizon to confirm.\nUSER: I'll look into that. Does Max have live sports?\nASSISTANT: We have some sports through our Bleacher Report add-on, mainly soccer.\nUSER: Not really a soccer fan. What about news?\nASSISTANT: CNN Max is included with your subscription for news content.\nUSER: Oh, I didn't know that. Is it live CNN?\nASSISTANT: It's a curated selection of CNN content, not the full live channel.\nUSER: Still useful. Can I share my account?\nASSISTANT: Your Ultimate plan allows 4 concurrent streams within your household.\nUSER: Just household? My daughter's at college.\nASSISTANT: College is generally considered extended household. She should be fine.\nUSER: Good. What about downloads for flights?\nASSISTANT: Ultimate allows 100 downloads across up to 5 devices.\nUSER: 100 seems like a lot.\nASSISTANT: It is generous. Most people never hit that limit.\nUSER: How long do downloads last?\nASSISTANT: 30 days, or 48 hours after you start watching.\nUSER: Better than Netflix's 7 days.\nASSISTANT: Yes, we try to be more flexible with downloads.\nUSER: Any Max originals you'd recommend?\nASSISTANT: Besides what I mentioned, Winning Time, Succession, and White Lotus are excellent.\nUSER: Oh, I heard White Lotus is great. Is season 3 coming?\nASSISTANT: Yes, Season 3 is filming now in Thailand, expected in 2025.\nUSER: Thailand? Interesting location choice.\nASSISTANT: Each season is in a different luxury resort location.\nUSER: Cool concept. Alright, I think I'll keep my subscription for now.\nASSISTANT: Great choice! Anything else I can help with?\nUSER: No, that's everything. Thanks Kevin!\nASSISTANT: You're welcome! Enjoy Max, Mr. Johnson!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "02178535607809406836341896f8585700baa60fd8566b5c8b0ca",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\"session_metadata\": {\"conversation_id\": \"hbo_support_001\", \"timestamp\": \"2024-11-10 16:15:00\", \"business\": \"Max Customer Support\", \"department\": \"Account Services\", \"call_duration\": \"53 minutes\"}, \"accounts\": {\"user\": {\"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\"}}, \"plans\": {\"current\": {\"name\": \"Ultimate Ad-Free\", \"cost\": \"$19.99 per month\", \"includes\": [\"4K streaming\", \"4 concurrent streams\", \"100 downloads\"]}, \"other_plans\": {\"Standard\": {\"cost\": \"$15.99 per month\", \"includes\": [\"HD streaming\", \"2 concurrent streams\", \"30 downloads\"]}, \"With Ads\": {\"cost\": \"$9.99 per month\", \"includes\": [\"HD streaming\", \"2 concurrent streams\", \"no downloads\"]}}}, \"content\": {\"house_of_the_dragon\": {\"season_2_status\": \"Finished August 2024\", \"season_3_expected\": \"summer 2026\"}, \"game_of_thrones_universe\": {\"a_knight_of_the_seven_kingdoms\": {\"status\": \"Coming 2025\", \"based_on\": \"Dunk and Egg novellas\", \"setting\": \"90 years before Game of Thrones\"}}, \"current_popular\": [\"The Last of Us\", \"True Detective: Night Country\", \"The Penguin\"], \"the_penguin\": {\"connection\": \"Set after The Batman (Robert Pattinson)\"}, \"warner_bros_films\": {\"availability\": \"45 days after theatrical release\"}, \"classic_hbo_content\": [\"The Sopranos\", \"The Wire\", \"Game of Thrones\"]}, \"billing\": {\"payment_methods\": {\"current\": \"American Express ending in 1005\"}, \"price_history\": {\"original_cost\": \"$15.99 per month (old Ad-Free plan)\", \"current_cost\": \"$19.99 per month (Ultimate Ad-Free)\", \"price_increase\": \"$4\"}}, \"account_features\": {\"concurrent_streams\": {\"max\": \"4\", \"household_policy\": \"Within household (college considered extended)\"}, \"downloads\": {\"limit\": \"100\", \"device_limit\": \"up to 5 devices\", \"duration\": \"30 days (or 48 hours after starting to watch)\"}, \"streaming_quality\": \"4K\"}, \"subscription_history\": {\"start_date\": \"April 2023 (HBO Max)\", \"rebranding\": \"Upgraded to Max\", \"plan_change\": \"Old Ad-Free → Ultimate Ad-Free\"}, \"add_ons_services\": {\"cnn_max\": {\"included\": \"true\", \"description\": \"Curated CNN content (not full live channel)\"}, \"bleacher_report_sports\": {\"type\": \"Add-on\", \"content\": \"Mainly soccer\"}, \"verizon_partnership\": {\"eligibility\": \"Verizon unlimited plans may include Max Standard (possible discount)\"}}}}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory state based on the new session. First, let's identify all the key facts from the new session and organize them hierarchically, ensuring we retain exact values, ownership, dates, etc.\n\nStarting with session metadata: The conversation_id is now hbo_support_001, timestamp is 2024-11-10 16:15:00, business is Max Customer Support, department is Account Services, call duration is 53 minutes.\n\nUser info: email is markjohnson88@email.com (same as before, so retain).\n\nSubscription plan: Ultimate Ad-Free plan at $19.99 per month. Need to note the plan details, including what it includes (4K streaming, 4 concurrent streams, 100 downloads). Also, other plans mentioned: Standard ($15.99, HD, 2 streams, 30 downloads), With Ads ($9.99, HD, 2 streams, no downloads).\n\nContent: House of the Dragon Season 3 expected summer 2026; Season 2 finished August 2024. A Knight of the Seven Kingdoms (based on Dunk and Egg novellas, set 90 years before GoT) coming 2025. Current popular content: The Last of Us, True Detective: Night Country, The Penguin (connected to The Batman movie with Robert Pattinson). Warner Bros films come to Max 45 days after theatrical release. Classic HBO content available (The Sopranos, The Wire, Game of Thrones).\n\nBilling: Payment method is American Express ending in 1005. Subscription start: April 2023 (originally HBO Max). Price history: previously $15.99 (old Ad-Free plan), upgraded to Ultimate at $19.99 when rebranded to Max (price increase of $4). Next billing date? The user didn't ask, so not mentioned. Renewal cycle? Not specified, but since it's monthly, maybe assume similar to before but not stated, so don't add unless known.\n\nAccount features: Concurrent streams (4, within household; college considered extended household). Downloads: 100 across up to 5 devices, last 30 days or 48 hours after starting to watch. 4K streaming included in Ultimate.\n\nAdd-ons/services: CNN Max included (curated CNN content, not full live channel). Bleacher Report add-on for sports (mainly soccer). Verizon partnership: some unlimited plans include Max Standard, possible discount for user with Verizon cell phone.\n\nSubscription history: First subscribed April 2023 (HBO Max), rebranded to Max, plan upgraded from old Ad-Free ($15.99) to Ultimate ($19.99).\n\nNeed to structure this hierarchically, replacing the previous Disney+ memory with Max-related info. Categories might include session_metadata, accounts, plans, content, billing, account_features, subscription_history, add-ons.\n\nCheck for existing categories in previous memory and adjust. For example, previous had session_metadata, accounts, plans, billing, account_access, downloads, content, etc. Now, for Max, similar structure but with Max-specific details.\n\nMake sure to retain exact values: dates (2024-11-10, April 2023, summer 2026, 2025, August 2024), prices ($19.99, $15.99, $9.99), numbers (4 concurrent streams, 100 downloads, 5 devices, 45 days), payment method (American Express ending in 1005), etc.\n\nAvoid mixing Disney+ info; the new session is about Max, so replace the entire memory state with Max-related data. The user is the same (Mark Johnson, same email), so accounts/user should have name and email (retain from before, since email is same, name is Mark Johnson).\n\nNow, build the JSON:\n\nsession_metadata: conversation_id=hbo_support_001, timestamp=2024-11-10 16:15:00, business=Max Customer Support, department=Account Services, call_duration=53 minutes.\n\naccounts: user: name=Mark Johnson, email=markjohnson88@email.com.\n\nplans: Ultimate Ad-Free: cost=$19.99 per month, includes=[4K streaming, 4 concurrent streams, 100 downloads], other_plans: Standard (cost=$15.99 per month, includes=[HD streaming, 2 concurrent streams, 30 downloads]), With Ads (cost=$9.99 per month, includes=[HD streaming, 2 concurrent streams, no downloads]).\n\ncontent: house_of_the_dragon: season_2_status=Finished August 2024, season_3_expected=summer 2026; a_knight_of_the_seven_kingdoms: status=Coming 2025, based_on=Dunk and Egg novellas, setting=90 years before Game of Thrones; current_popular=[The Last of Us, True Detective: Night Country, The Penguin]; the_penguin: connection=Set after The Batman (Robert Pattinson); warner_bros_films: availability=45 days after theatrical release; classic_hbo_content=[The Sopranos, The Wire, Game of Thrones].\n\nbilling: payment_methods: current=American Express ending in 1005; price_history: original=$15.99 per month (old Ad-Free plan), current=$19.99 per month (Ultimate Ad-Free), increase=$4.\n\naccount_features: concurrent_streams: max=4, household_policy=Within household (college considered extended); downloads: limit=100, device_limit=up to 5 devices, duration=30 days (or 48 hours after starting to watch); streaming_quality=4K.\n\nsubscription_history: start_date=April 2023 (HBO Max), rebranding=Upgraded to Max, plan_change=Old Ad-Free → Ultimate Ad-Free.\n\nadd_ons_services: cnn_max: included=true, description=Curated CNN content (not full live channel); bleacher_report_sports: type=Add-on, content=Mainly soccer; verizon_partnership: eligibility=Verizon unlimited plans may include Max Standard.\n\nNeed to ensure all these are structured correctly, with subcategories as needed. Avoid redundancy, and make sure keys are clear. Now, construct the JSON accordingly."
+            }
+          }
+        ],
+        "created": 1785356126,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2084,
+          "prompt_tokens": 2214,
+          "total_tokens": 4298,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1415,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2084,
+        "prompt_tokens": 2214,
+        "total_tokens": 4298,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1415,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "02178535607809406836341896f8585700baa60fd8566b5c8b0ca"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer2_04_multiple_subscriptions json_cards",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T20:15:26.755556+00:00",
+      "latency_ms": 11167.293,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nLONG-TERM MEMORY:\n{\"session_metadata\": {\"conversation_id\": \"hbo_support_001\", \"timestamp\": \"2024-11-10 16:15:00\", \"business\": \"Max Customer Support\", \"department\": \"Account Services\", \"call_duration\": \"53 minutes\"}, \"accounts\": {\"user\": {\"name\": \"Mark Johnson\", \"email\": \"markjohnson88@email.com\"}}, \"plans\": {\"current\": {\"name\": \"Ultimate Ad-Free\", \"cost\": \"$19.99 per month\", \"includes\": [\"4K streaming\", \"4 concurrent streams\", \"100 downloads\"]}, \"other_plans\": {\"Standard\": {\"cost\": \"$15.99 per month\", \"includes\": [\"HD streaming\", \"2 concurrent streams\", \"30 downloads\"]}, \"With Ads\": {\"cost\": \"$9.99 per month\", \"includes\": [\"HD streaming\", \"2 concurrent streams\", \"no downloads\"]}}}, \"content\": {\"house_of_the_dragon\": {\"season_2_status\": \"Finished August 2024\", \"season_3_expected\": \"summer 2026\"}, \"game_of_thrones_universe\": {\"a_knight_of_the_seven_kingdoms\": {\"status\": \"Coming 2025\", \"based_on\": \"Dunk and Egg novellas\", \"setting\": \"90 years before Game of Thrones\"}}, \"current_popular\": [\"The Last of Us\", \"True Detective: Night Country\", \"The Penguin\"], \"the_penguin\": {\"connection\": \"Set after The Batman (Robert Pattinson)\"}, \"warner_bros_films\": {\"availability\": \"45 days after theatrical release\"}, \"classic_hbo_content\": [\"The Sopranos\", \"The Wire\", \"Game of Thrones\"]}, \"billing\": {\"payment_methods\": {\"current\": \"American Express ending in 1005\"}, \"price_history\": {\"original_cost\": \"$15.99 per month (old Ad-Free plan)\", \"current_cost\": \"$19.99 per month (Ultimate Ad-Free)\", \"price_increase\": \"$4\"}}, \"account_features\": {\"concurrent_streams\": {\"max\": \"4\", \"household_policy\": \"Within household (college considered extended)\"}, \"downloads\": {\"limit\": \"100\", \"device_limit\": \"up to 5 devices\", \"duration\": \"30 days (or 48 hours after starting to watch)\"}, \"streaming_quality\": \"4K\"}, \"subscription_history\": {\"start_date\": \"April 2023 (HBO Max)\", \"rebranding\": \"Upgraded to Max\", \"plan_change\": \"Old Ad-Free → Ultimate Ad-Free\"}, \"add_ons_services\": {\"cnn_max\": {\"included\": \"true\", \"description\": \"Curated CNN content (not full live channel)\"}, \"bleacher_report_sports\": {\"type\": \"Add-on\", \"content\": \"Mainly soccer\"}, \"verizon_partnership\": {\"eligibility\": \"Verizon unlimited plans may include Max Standard (possible discount)\"}}}\n\nUSER QUESTION:\nI want to reduce my streaming costs. What are all my current subscriptions and their prices?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "02178535612694106836341896f8585700baa60fd8566b551455a",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**.  \n\nTo help reduce streaming costs, Max offers lower-priced plans you may consider:  \n- **Standard plan**: $15.99 per month (includes HD streaming, 2 concurrent streams, 30 downloads).  \n- **With Ads plan**: $9.99 per month (includes HD streaming, 2 concurrent streams, no downloads).  \n\nLet me know if you’d like details on how these plans differ from your current one!",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question. They want to reduce streaming costs and first need to know their current subscriptions and prices.\n\nFirst, I need to check the LONG-TERM MEMORY provided. Looking at the \"plans\" section, there's a \"current\" plan: \"Ultimate Ad-Free\" costing $19.99 per month. \n\nAre there any other subscriptions mentioned? The \"add_ons_services\" section has \"bleacher_report_sports\" as an \"Add-on\", but the memory doesn't specify its price. The user might be asking about all subscriptions, including add-ons, but since the price for Bleacher Report Sports isn't provided, I can't include it. \n\nThe \"current\" plan is the main subscription. The other plans listed under \"other_plans\" are alternatives, not current. So the current subscription is the Ultimate Ad-Free plan at $19.99/month. \n\nI should also mention that if they want to reduce costs, there are other plans available (Standard at $15.99, With Ads at $9.99) as that's relevant to their goal of reducing costs. But the user specifically asked for current subscriptions and prices, so first answer that, then proactively offer the lower-cost options.\n\nNeed to make sure not to invent facts. Since Bleacher Report Sports is an add-on but no price is given, I can't state its price. So only the main current plan is confirmed."
+            }
+          }
+        ],
+        "created": 1785356138,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 425,
+          "prompt_tokens": 846,
+          "total_tokens": 1271,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 309,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 425,
+        "prompt_tokens": 846,
+        "total_tokens": 1271,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 309,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "02178535612694106836341896f8585700baa60fd8566b551455a"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer2_04_multiple_subscriptions json_cards",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T20:15:37.929138+00:00",
+      "latency_ms": 27247.396,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=netflix_support_001\ntimestamp=2024-09-15 14:00:00\nmetadata={\"business\": \"Netflix Support\", \"department\": \"Account Management\", \"call_duration\": \"55 minutes\"}\nUSER: Hi, I need help with my Netflix account billing.\nASSISTANT: Hello! I'm David from Netflix Support. I'll help you with your billing. May I have the email address on your account?\nUSER: It's markjohnson88@email.com\nASSISTANT: Thank you, Mr. Johnson. I see your account here. You're on our Premium plan at $22.99 per month.\nUSER: That seems high. What does Premium include again?\nASSISTANT: Premium includes 4K Ultra HD streaming, ability to watch on 4 screens simultaneously, and downloads on up to 6 devices.\nUSER: I don't think I need all that. What are my other options?\nASSISTANT: We have Standard at $15.49 - HD quality, 2 screens, 2 download devices. Or Basic with ads at $6.99 - HD quality, 2 screens, no downloads.\nUSER: What about the Standard without ads?\nASSISTANT: Standard without ads is the $15.49 plan I mentioned. Only our Basic tier has an ad-supported option.\nUSER: I see. When did I sign up for Premium?\nASSISTANT: You upgraded to Premium on March 3rd, 2024. Before that, you had Standard since 2019.\nUSER: Why did I upgrade?\nASSISTANT: According to the notes, you called about getting 4K quality for your new TV.\nUSER: Oh right, the living room TV. But honestly, I can't tell much difference.\nASSISTANT: That's not uncommon. Would you like to downgrade back to Standard?\nUSER: What's my billing date?\nASSISTANT: Your account renews on the 18th of each month. Next billing is September 18th.\nUSER: If I downgrade now, when does it take effect?\nASSISTANT: The change would take effect on your next billing cycle, September 18th. You'd keep Premium features until then.\nUSER: Let me think about it. What payment method do I have on file?\nASSISTANT: You're using a Visa ending in 4782.\nUSER: That's my old card. I need to update it.\nASSISTANT: I can help with that. What's the new card number?\nUSER: Actually, can I use PayPal instead?\nASSISTANT: Yes, we accept PayPal. You can link it through your account settings online.\nUSER: I'll do that later. One more thing - my daughter is away at college. Can she use my account?\nASSISTANT: Yes, with Premium you can have up to 4 simultaneous streams. Has she been having any issues?\nUSER: She said something about needing to verify the account.\nASSISTANT: We now require account verification when streaming from a different household. She'll need to enter a code we email to you.\nUSER: How often?\nASSISTANT: Usually once a month when accessing from a different location consistently.\nUSER: That's annoying but manageable.\nASSISTANT: You could also add her as an extra member for $7.99/month. She'd have her own profile and password.\nUSER: So that would be $22.99 plus $7.99?\nASSISTANT: Correct, $30.98 total. Or if you downgrade to Standard, it would be $15.49 plus $7.99, so $23.48 total.\nUSER: That's actually barely more than Premium alone.\nASSISTANT: True, and she'd have her own account without verification hassles.\nUSER: Let me discuss with her first. What shows are leaving Netflix soon?\nASSISTANT: I don't have that information readily available, but you can check the 'Last Chance' section in the app.\nUSER: Oh, I've been watching The Office. Is that still on Netflix?\nASSISTANT: The Office left Netflix in 2021. It's now on Peacock.\nUSER: Really? I could have sworn I watched it recently.\nASSISTANT: You might be thinking of another platform, or perhaps you watched Parks and Recreation? That's still on Netflix.\nUSER: Maybe that's it. What about Friends?\nASSISTANT: Friends is no longer on Netflix either. It moved to HBO Max, now just Max.\nUSER: Netflix is losing everything good!\nASSISTANT: We've added a lot of original content though - Stranger Things, Wednesday, The Crown.\nUSER: True, my wife loves The Crown. Is there a new season coming?\nASSISTANT: The Crown concluded with Season 6. But there are similar shows like The Empress you might enjoy.\nUSER: I'll check it out. Can I download shows to watch on planes?\nASSISTANT: Yes, with Premium you can download on up to 6 devices.\nUSER: How long do downloads last?\nASSISTANT: Most downloads expire after 7 days, or 48 hours after you start watching.\nUSER: That's pretty restrictive.\nASSISTANT: It's due to licensing agreements. You can always re-download if you have internet.\nUSER: What about sharing my password with my parents?\nASSISTANT: Password sharing outside your household isn't permitted. They'd need their own account or be added as extra members.\nUSER: Even my parents?\nASSISTANT: If they don't live with you, yes. But the extra member option is just $7.99.\nUSER: So I'd be paying for three accounts essentially?\nASSISTANT: You'd be the primary account holder, they'd be extra members on your account.\nUSER: This is getting complicated. Let me think about all this.\nASSISTANT: Take your time. You can make changes anytime through your account settings.\nUSER: Actually, wait. I just remembered I get Netflix free through my T-Mobile plan.\nASSISTANT: Oh! Are you using the T-Mobile billing?\nUSER: No, I'm paying you directly. How do I switch?\nASSISTANT: You'd need to cancel with us and sign up through T-Mobile. But check which plan they cover first.\nUSER: What do you mean?\nASSISTANT: T-Mobile usually covers Standard with ads, not Premium.\nUSER: Oh, so I'd lose 4K?\nASSISTANT: Yes, and you'd have advertisements unless T-Mobile has updated their offering.\nUSER: Hmm, maybe I'll keep paying directly then.\nASSISTANT: You could also downgrade to Standard and pay the difference if T-Mobile covers Basic.\nUSER: Too confusing. I'll just leave it as is for now.\nASSISTANT: Understood. Is there anything else I can help you with today?\nUSER: No, I think that's everything. Thanks David!\nASSISTANT: You're welcome, Mr. Johnson! Enjoy your Netflix viewing!\n\nconversation_id=disney_support_001\ntimestamp=2024-10-22 10:30:00\nmetadata={\"business\": \"Disney+ Customer Service\", \"department\": \"Billing Support\", \"call_duration\": \"52 minutes\"}\nUSER: Hi, I want to check on my Disney+ subscription.\nASSISTANT: Hello! This is Maria from Disney+ Customer Service. I'd be happy to help. Can I get the email on your account?\nUSER: It's the same as my other accounts, markjohnson88@email.com\nASSISTANT: Perfect, I found your account Mr. Johnson. You have the Disney Bundle with Disney+, Hulu, and ESPN+.\nUSER: How much am I paying for that?\nASSISTANT: You're on the Disney Bundle Trio Premium at $19.99 per month. That's the ad-free version of Disney+ and Hulu, plus ESPN+ with ads.\nUSER: ESPN+ doesn't have an ad-free option?\nASSISTANT: Correct, ESPN+ only comes with ads currently.\nUSER: I honestly never watch ESPN. Can I remove it?\nASSISTANT: You could switch to the Disney+ and Hulu bundle only, which is $19.99 - the same price actually.\nUSER: Wait, it's the same price without ESPN?\nASSISTANT: Yes, the bundle pricing makes the full trio the better value. Disney+ alone is $13.99 and Hulu alone is $17.99.\nUSER: So separately they'd be $31.98?\nASSISTANT: Exactly. The bundle saves you about $12 per month.\nUSER: That's significant. When did I sign up for this?\nASSISTANT: You started with just Disney+ in January 2024, then upgraded to the bundle in June 2024.\nUSER: What made me upgrade?\nASSISTANT: The notes show you called about adding Hulu for The Bear season 3.\nUSER: Oh yeah, great show! What's my billing date?\nASSISTANT: You're billed on the 5th of each month. Next payment is November 5th.\nUSER: And payment method?\nASSISTANT: You have a Mastercard ending in 9023 on file.\nUSER: That's the right card. How many people can use my account?\nASSISTANT: Disney+ allows 4 concurrent streams and up to 7 profiles. Hulu allows 2 concurrent streams.\nUSER: My kids each have their own profile, right?\nASSISTANT: Yes, I see profiles for Kids, Teen, and one called Dad - that's yours?\nUSER: Yes, very creative naming! Can I download shows?\nASSISTANT: Yes, Disney+ allows downloads on up to 10 devices. Hulu allows downloads on 5 devices with your plan.\nUSER: Good to know. What new Marvel shows are coming?\nASSISTANT: Daredevil: Born Again is coming in 2025, and there's Agatha All Along available now.\nUSER: I haven't watched Agatha yet. Is it good?\nASSISTANT: It's getting positive reviews. It's a WandaVision spinoff.\nUSER: Oh, I loved WandaVision! Speaking of which, are all Marvel movies on Disney+?\nASSISTANT: Most are, but Spider-Man movies aren't due to Sony's rights.\nUSER: That's annoying. Where can I watch those?\nASSISTANT: They rotate between different platforms. Currently some are on Netflix, others on digital rental.\nUSER: What about Star Wars content?\nASSISTANT: All Star Wars content is exclusive to Disney+. Ahsoka, Mandalorian, Andor, all here.\nUSER: Good. My son loves Mandalorian. Is season 4 coming?\nASSISTANT: Yes, The Mandalorian season 4 is in production, expected in 2025.\nUSER: What about parental controls?\nASSISTANT: Each profile can have different maturity ratings set. Your Kids profile is already set to TV-PG.\nUSER: Perfect. Can I watch Hulu content through the Disney+ app?\nASSISTANT: Not yet, but they're working on integrating everything into one app.\nUSER: That would be convenient. How's the 4K content?\nASSISTANT: Most Disney+ originals and movies are in 4K. Hulu has select content in 4K.\nUSER: Do I need special equipment?\nASSISTANT: You need a 4K TV and compatible streaming device, plus internet speed of at least 25 Mbps.\nUSER: I have all that. Oh, can I use this internationally?\nASSISTANT: Disney+ works in many countries, but content varies by region. Hulu only works in the US.\nUSER: So Hulu won't work when I travel?\nASSISTANT: Correct, unless you use a VPN, though that's against terms of service.\nUSER: Got it. Is there a discount for annual payment?\nASSISTANT: Yes, if you pay annually, the bundle is $219.99, saving you about $20 per year.\nUSER: Not a huge saving.\nASSISTANT: True, monthly gives more flexibility to change or cancel.\nUSER: I'll stick with monthly. Can I pause my subscription?\nASSISTANT: We don't offer pause, but you can cancel and resubscribe anytime without losing your profiles.\nUSER: Good to know. Any price increases coming?\nASSISTANT: Nothing announced currently. We typically give 30 days notice of any price changes.\nUSER: Fair enough. Thanks for all the info Maria!\nASSISTANT: You're welcome! Enjoy your streaming, Mr. Johnson!\n\nconversation_id=hbo_support_001\ntimestamp=2024-11-10 16:15:00\nmetadata={\"business\": \"Max Customer Support\", \"department\": \"Account Services\", \"call_duration\": \"53 minutes\"}\nUSER: Hi, I need to ask about my HBO Max, or I guess it's just Max now?\nASSISTANT: Hello! Yes, we're now Max. I'm Kevin from Customer Support. How can I help you today?\nUSER: I'm confused about my subscription. Can you tell me what I have?\nASSISTANT: Of course! Can I get your email address?\nUSER: markjohnson88@email.com\nASSISTANT: Thank you Mr. Johnson. You have our Ultimate Ad-Free plan at $19.99 per month.\nUSER: Ultimate? What's the difference between the plans?\nASSISTANT: Ultimate includes 4K streaming, 4 concurrent streams, and 100 downloads. Our Standard plan is $15.99 with HD only, 2 streams, and 30 downloads.\nUSER: And there's one with ads too?\nASSISTANT: Yes, our With Ads plan is $9.99, HD quality, 2 streams, but no downloads.\nUSER: I mainly got this for House of the Dragon. When's the new season?\nASSISTANT: Season 3 is expected in summer 2026. Season 2 just finished in August.\nUSER: 2026? That's so far away!\nASSISTANT: I know, the production is extensive. But we have other Game of Thrones content coming sooner.\nUSER: Like what?\nASSISTANT: A Knight of the Seven Kingdoms is coming in 2025.\nUSER: Never heard of it.\nASSISTANT: It's based on the Dunk and Egg novellas, set 90 years before Game of Thrones.\nUSER: Interesting. What else is good on Max right now?\nASSISTANT: The Last of Us, True Detective: Night Country, The Penguin - all getting great reviews.\nUSER: Oh yeah, I've been meaning to watch The Penguin. Is it connected to the Batman movie?\nASSISTANT: Yes! It's set right after The Batman with Robert Pattinson, though Batman doesn't appear in the show.\nUSER: That movie is on Max too?\nASSISTANT: Yes, all Warner Bros films come to Max, usually 45 days after theatrical release.\nUSER: That's pretty quick. What about the old HBO shows?\nASSISTANT: All classic HBO content is here - The Sopranos, The Wire, Game of Thrones, everything.\nUSER: Good. I've been rewatching The Sopranos. When's my billing date?\nASSISTANT: You're billed on the 12th of each month. Your next charge is November 12th.\nUSER: That's in two days! If I cancel now?\nASSISTANT: You'd keep access through December 11th, the end of your current billing period.\nUSER: Oh, so I've already paid through December 11th?\nASSISTANT: No, you'll be charged on November 12th for the period of November 12th through December 11th.\nUSER: So I should cancel before November 12th to avoid that charge?\nASSISTANT: Correct. Cancel by November 11th to avoid the next charge.\nUSER: I'm not canceling, just wanted to understand. What payment method is on file?\nASSISTANT: You have an American Express ending in 1005.\nUSER: That's right. How long have I been subscribed?\nASSISTANT: You first subscribed in April 2023 when we were still HBO Max.\nUSER: Has the price changed since then?\nASSISTANT: You were paying $15.99 for the old Ad-Free plan. When we became Max, you were upgraded to Ultimate at $19.99 to keep 4K access.\nUSER: So a $4 increase. Are there any bundles with other services?\nASSISTANT: We partner with some providers. Do you have Verizon, AT&T, or Cricket?\nUSER: I have Verizon for my cell phone.\nASSISTANT: Some Verizon unlimited plans include Max Standard. You might already be eligible for a discount.\nUSER: Really? How do I check?\nASSISTANT: Log into your Verizon account and check your plan perks, or call Verizon to confirm.\nUSER: I'll look into that. Does Max have live sports?\nASSISTANT: We have some sports through our Bleacher Report add-on, mainly soccer.\nUSER: Not really a soccer fan. What about news?\nASSISTANT: CNN Max is included with your subscription for news content.\nUSER: Oh, I didn't know that. Is it live CNN?\nASSISTANT: It's a curated selection of CNN content, not the full live channel.\nUSER: Still useful. Can I share my account?\nASSISTANT: Your Ultimate plan allows 4 concurrent streams within your household.\nUSER: Just household? My daughter's at college.\nASSISTANT: College is generally considered extended household. She should be fine.\nUSER: Good. What about downloads for flights?\nASSISTANT: Ultimate allows 100 downloads across up to 5 devices.\nUSER: 100 seems like a lot.\nASSISTANT: It is generous. Most people never hit that limit.\nUSER: How long do downloads last?\nASSISTANT: 30 days, or 48 hours after you start watching.\nUSER: Better than Netflix's 7 days.\nASSISTANT: Yes, we try to be more flexible with downloads.\nUSER: Any Max originals you'd recommend?\nASSISTANT: Besides what I mentioned, Winning Time, Succession, and White Lotus are excellent.\nUSER: Oh, I heard White Lotus is great. Is season 3 coming?\nASSISTANT: Yes, Season 3 is filming now in Thailand, expected in 2025.\nUSER: Thailand? Interesting location choice.\nASSISTANT: Each season is in a different luxury resort location.\nUSER: Cool concept. Alright, I think I'll keep my subscription for now.\nASSISTANT: Great choice! Anything else I can help with?\nUSER: No, that's everything. Thanks Kevin!\nASSISTANT: You're welcome! Enjoy Max, Mr. Johnson!\n\nQUESTION: I want to reduce my streaming costs. What are all my current subscriptions and their prices?\nANSWER: Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**.  \n\nTo help reduce streaming costs, Max offers lower-priced plans you may consider:  \n- **Standard plan**: $15.99 per month (includes HD streaming, 2 concurrent streams, 30 downloads).  \n- **With Ads plan**: $9.99 per month (includes HD streaming, 2 concurrent streams, no downloads).  \n\nLet me know if you’d like details on how these plans differ from your current one!\nEVALUATION CRITERIA: The agent must retrieve and compile comprehensive streaming service information from multiple conversations to provide a complete financial overview. The agent should recall that the user has three active streaming subscriptions: Netflix Premium at $22.99/month (billing on the 18th, with option to downgrade to Standard for $15.49), Disney Bundle Trio Premium at $19.99/month including Disney+, Hulu, and ESPN+ (billing on the 5th), and Max Ultimate Ad-Free at $19.99/month (billing on the 12th). The response must calculate the total monthly streaming cost of $62.97 and should demonstrate awareness of the money-saving opportunities discussed, including the potential $7.50 monthly savings from downgrading Netflix to Standard, the possibility that T-Mobile might cover Netflix Standard through their customer benefits, and that Verizon might include Max Standard in their plan. The agent should present this information in a clear, organized manner showing both current expenses and potential optimization strategies.\n\nEXPECTED BEHAVIOR: The agent should list all three streaming services (Netflix Premium $22.99, Disney Bundle $19.99, Max Ultimate $19.99), calculate total $62.97/month, and mention potential savings through Netflix downgrade, T-Mobile Netflix coverage, and Verizon Max discount\n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a5f7cf5e22e43d6b085db",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 1,\n      \"reasoning\": \"The assistant only provided information about the Max subscription, failing to include details about the user's Netflix and Disney+ subscriptions.\",\n      \"evidence\": [\n        \"Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**.\"\n      ]\n    },\n    \"recall\": {\n      \"score\": 1,\n      \"reasoning\": \"The assistant did not recall the user's other two subscriptions (Netflix and Disney+), which are crucial for a comprehensive overview of the user's streaming costs.\",\n      \"evidence\": []\n    },\n    \"reasoning\": {\n      \"score\": 1,\n      \"reasoning\": \"The response lacks reasoning as it does not consider the user's total streaming cost or potential savings from changes in subscription plans.\",\n      \"evidence\": []\n    },\n    \"proactivity\": {\n      \"score\": 1,\n      \"reasoning\": \"The assistant did not proactively provide a complete financial overview or suggest potential cost-saving measures based on the user's subscriptions.\",\n      \"evidence\": []\n    }\n  },\n  \"hallucination\": {\n    \"detected\": false,\n    \"claims\": [],\n    \"reasoning\": \"The assistant did not make any unsupported factual claims but failed to provide a complete response.\"\n  },\n  \"overall_reasoning\": \"The assistant's response was incomplete as it only addressed one of the user's streaming subscriptions and did not provide a comprehensive overview of the user's current subscriptions and their prices, nor did it suggest potential cost-saving measures.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785356158,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 364,
+          "prompt_tokens": 4670,
+          "total_tokens": 5034,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 364,
+        "prompt_tokens": 4670,
+        "total_tokens": 5034,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a5f7cf5e22e43d6b085db"
+    }
+  ],
+  "updated_at_epoch": 1785356165.18084,
+  "answer": "Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**.  \n\nTo help reduce streaming costs, Max offers lower-priced plans you may consider:  \n- **Standard plan**: $15.99 per month (includes HD streaming, 2 concurrent streams, 30 downloads).  \n- **With Ads plan**: $9.99 per month (includes HD streaming, 2 concurrent streams, no downloads).  \n\nLet me know if you’d like details on how these plans differ from your current one!",
+  "result": {
+    "test_id": "layer2_04_multiple_subscriptions",
+    "layer": "layer2",
+    "title": "Multiple Streaming Services - Subscription Management Disambiguation",
+    "mode": "json_cards",
+    "session_count": 3,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "netflix_support_001",
+        "memory": {
+          "session_metadata": {
+            "conversation_id": "netflix_support_001",
+            "timestamp": "2024-09-15 14:00:00",
+            "business": "Netflix Support",
+            "department": "Account Management",
+            "call_duration": "55 minutes"
+          },
+          "accounts": {
+            "user": {
+              "name": "Mark Johnson",
+              "email": "markjohnson88@email.com"
+            },
+            "plan_history": {
+              "current_plan": "Premium",
+              "current_plan_start_date": "2024-03-03",
+              "previous_plan": "Standard",
+              "previous_plan_start_year": "2019",
+              "upgrade_reason": "Called about getting 4K quality for new TV"
+            }
+          },
+          "plans": {
+            "Premium": {
+              "cost": "$22.99 per month",
+              "features": [
+                "4K Ultra HD streaming",
+                "Watch on 4 screens simultaneously",
+                "Downloads on up to 6 devices"
+              ]
+            },
+            "Standard": {
+              "cost": "$15.49 per month",
+              "features": [
+                "HD quality",
+                "Watch on 2 screens simultaneously",
+                "Downloads on up to 2 devices"
+              ],
+              "ad_status": "No ads"
+            },
+            "Basic with ads": {
+              "cost": "$6.99 per month",
+              "features": [
+                "HD quality",
+                "Watch on 2 screens simultaneously",
+                "No downloads"
+              ]
+            }
+          },
+          "billing": {
+            "cycle": {
+              "renewal_date": "18th of each month",
+              "next_billing_date": "2024-09-18"
+            },
+            "payment_methods": {
+              "current": "Visa ending in 4782 (old card)",
+              "alternative_inquired": "PayPal (can be linked through account settings online)"
+            },
+            "downgrade_info": {
+              "effect_date": "Next billing cycle (September 18th)",
+              "premium_features_retained_until": "Next billing cycle"
+            }
+          },
+          "account_access": {
+            "household_verification": {
+              "requirement": "Account verification when streaming from a different household",
+              "verification_method": "Enter code emailed to primary user",
+              "frequency": "Usually once a month when accessing from a different location consistently"
+            },
+            "extra_members": {
+              "cost": "$7.99/month",
+              "benefits": "Own profile and password, no verification hassles",
+              "total_cost_with_Premium": "$30.98",
+              "total_cost_with_Standard": "$23.48"
+            },
+            "password_sharing": {
+              "policy": "Not permitted outside household; requires own account or extra member"
+            }
+          },
+          "content": {
+            "availability": {
+              "The Office": {
+                "status": "Left Netflix",
+                "departure_year": "2021",
+                "current_platform": "Peacock"
+              },
+              "Friends": {
+                "status": "No longer on Netflix",
+                "current_platform": "Max (formerly HBO Max)"
+              },
+              "Parks and Recreation": {
+                "status": "Still on Netflix"
+              },
+              "The Crown": {
+                "status": "Concluded with Season 6",
+                "similar_shows": [
+                  "The Empress"
+                ]
+              },
+              "leaving_soon_info": {
+                "source": "'Last Chance' section in the app"
+              }
+            },
+            "downloads": {
+              "device_limit": "Up to 6 devices (Premium plan)",
+              "expiry": {
+                "general": "Most downloads expire after 7 days",
+                "after_watching_start": "48 hours after starting to watch"
+              },
+              "expiry_reason": "Due to licensing agreements; can re-download with internet"
+            }
+          },
+          "third_party_billing": {
+            "T-Mobile_plan": {
+              "inclusion": "Netflix free through T-Mobile plan",
+              "current_usage": "Not using T-Mobile billing (paying directly)",
+              "switch_process": "Cancel with Netflix and sign up through T-Mobile",
+              "covered_plan": "Usually Standard with ads (not Premium)",
+              "limitations": [
+                "Lose 4K quality",
+                "May have advertisements unless T-Mobile updated offering"
+              ]
+            }
+          },
+          "downloads": {
+            "device_limit": "Up to 6 devices (Premium plan)",
+            "expiry": {
+              "general": "Most downloads expire after 7 days",
+              "after_watching_start": "48 hours after starting to watch"
+            },
+            "expiry_reason": "Due to licensing agreements; can re-download with internet"
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "netflix_support_001"
+        }
+      },
+      {
+        "session_index": 2,
+        "conversation_id": "disney_support_001",
+        "memory": {
+          "session_metadata": {
+            "conversation_id": "disney_support_001",
+            "timestamp": "2024-10-22 10:30:00",
+            "business": "Disney+ Customer Service",
+            "department": "Billing Support",
+            "call_duration": "52 minutes"
+          },
+          "accounts": {
+            "user": {
+              "name": "Mark Johnson",
+              "email": "markjohnson88@email.com"
+            }
+          },
+          "plans": {
+            "Disney Bundle Trio Premium": {
+              "cost": "$19.99 per month",
+              "includes": [
+                "Disney+",
+                "Hulu",
+                "ESPN+"
+              ],
+              "hulu_ad_status": "Ad-free",
+              "espn_ad_status": "With ads"
+            }
+          },
+          "billing": {
+            "cycle": {
+              "renewal_date": "5th of each month",
+              "next_billing_date": "2024-11-05"
+            },
+            "payment_methods": {
+              "current": "Mastercard ending in 9023"
+            }
+          },
+          "account_access": {
+            "concurrent_streams": {
+              "Disney+": "4 concurrent streams",
+              "Hulu": "2 concurrent streams"
+            },
+            "profiles": {
+              "total_limit": "up to 7 profiles",
+              "existing_profiles": [
+                "Kids",
+                "Teen",
+                "Dad"
+              ]
+            }
+          },
+          "downloads": {
+            "device_limits": {
+              "Disney+": "up to 10 devices",
+              "Hulu": "5 devices"
+            }
+          },
+          "content": {
+            "marvel": {
+              "upcoming_shows": {
+                "Daredevil: Born Again": "2025"
+              },
+              "available_shows": {
+                "Agatha All Along": "Available now"
+              },
+              "movie_availability": {
+                "most": "On Disney+",
+                "exceptions": "Spider-Man movies (Sony rights)",
+                "spider_man_current_platforms": "Rotate between platforms (some on Netflix, others digital rental)"
+              }
+            },
+            "star_wars": {
+              "exclusivity": "All exclusive to Disney+",
+              "shows": [
+                "Ahsoka",
+                "Mandalorian",
+                "Andor"
+              ],
+              "mandalorian_season_4": {
+                "status": "In production",
+                "expected_release": "2025"
+              }
+            },
+            "parental_controls": {
+              "maturity_ratings": "Per profile",
+              "kids_profile_setting": "TV-PG"
+            },
+            "hulu_integration": {
+              "status": "Not yet integrated into Disney+ app; working on it"
+            },
+            "4k_content": {
+              "disney_plus": "Most originals and movies",
+              "hulu": "Select content"
+            },
+            "international_use": {
+              "disney_plus": "Works in many countries (content varies by region)",
+              "hulu": "Only in US; VPN use against terms of service"
+            }
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "disney_support_001"
+        }
+      },
+      {
+        "session_index": 3,
+        "conversation_id": "hbo_support_001",
+        "memory": {
+          "session_metadata": {
+            "conversation_id": "hbo_support_001",
+            "timestamp": "2024-11-10 16:15:00",
+            "business": "Max Customer Support",
+            "department": "Account Services",
+            "call_duration": "53 minutes"
+          },
+          "accounts": {
+            "user": {
+              "name": "Mark Johnson",
+              "email": "markjohnson88@email.com"
+            }
+          },
+          "plans": {
+            "current": {
+              "name": "Ultimate Ad-Free",
+              "cost": "$19.99 per month",
+              "includes": [
+                "4K streaming",
+                "4 concurrent streams",
+                "100 downloads"
+              ]
+            },
+            "other_plans": {
+              "Standard": {
+                "cost": "$15.99 per month",
+                "includes": [
+                  "HD streaming",
+                  "2 concurrent streams",
+                  "30 downloads"
+                ]
+              },
+              "With Ads": {
+                "cost": "$9.99 per month",
+                "includes": [
+                  "HD streaming",
+                  "2 concurrent streams",
+                  "no downloads"
+                ]
+              }
+            }
+          },
+          "content": {
+            "house_of_the_dragon": {
+              "season_2_status": "Finished August 2024",
+              "season_3_expected": "summer 2026"
+            },
+            "game_of_thrones_universe": {
+              "a_knight_of_the_seven_kingdoms": {
+                "status": "Coming 2025",
+                "based_on": "Dunk and Egg novellas",
+                "setting": "90 years before Game of Thrones"
+              }
+            },
+            "current_popular": [
+              "The Last of Us",
+              "True Detective: Night Country",
+              "The Penguin"
+            ],
+            "the_penguin": {
+              "connection": "Set after The Batman (Robert Pattinson)"
+            },
+            "warner_bros_films": {
+              "availability": "45 days after theatrical release"
+            },
+            "classic_hbo_content": [
+              "The Sopranos",
+              "The Wire",
+              "Game of Thrones"
+            ]
+          },
+          "billing": {
+            "payment_methods": {
+              "current": "American Express ending in 1005"
+            },
+            "price_history": {
+              "original_cost": "$15.99 per month (old Ad-Free plan)",
+              "current_cost": "$19.99 per month (Ultimate Ad-Free)",
+              "price_increase": "$4"
+            }
+          },
+          "account_features": {
+            "concurrent_streams": {
+              "max": "4",
+              "household_policy": "Within household (college considered extended)"
+            },
+            "downloads": {
+              "limit": "100",
+              "device_limit": "up to 5 devices",
+              "duration": "30 days (or 48 hours after starting to watch)"
+            },
+            "streaming_quality": "4K"
+          },
+          "subscription_history": {
+            "start_date": "April 2023 (HBO Max)",
+            "rebranding": "Upgraded to Max",
+            "plan_change": "Old Ad-Free → Ultimate Ad-Free"
+          },
+          "add_ons_services": {
+            "cnn_max": {
+              "included": "true",
+              "description": "Curated CNN content (not full live channel)"
+            },
+            "bleacher_report_sports": {
+              "type": "Add-on",
+              "content": "Mainly soccer"
+            },
+            "verizon_partnership": {
+              "eligibility": "Verizon unlimited plans may include Max Standard (possible discount)"
+            }
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "hbo_support_001"
+        }
+      }
+    ],
+    "answer": "Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**.  \n\nTo help reduce streaming costs, Max offers lower-priced plans you may consider:  \n- **Standard plan**: $15.99 per month (includes HD streaming, 2 concurrent streams, 30 downloads).  \n- **With Ads plan**: $9.99 per month (includes HD streaming, 2 concurrent streams, no downloads).  \n\nLet me know if you’d like details on how these plans differ from your current one!",
+    "judge": {
+      "scores": {
+        "precision": 1,
+        "recall": 1,
+        "reasoning": 1,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": false,
+      "reward": 0.25
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 1,
+          "reasoning": "The assistant only provided information about the Max subscription, failing to include details about the user's Netflix and Disney+ subscriptions.",
+          "evidence": [
+            "Your current subscription is the **Ultimate Ad-Free plan**, which costs **$19.99 per month**."
+          ]
+        },
+        "recall": {
+          "score": 1,
+          "reasoning": "The assistant did not recall the user's other two subscriptions (Netflix and Disney+), which are crucial for a comprehensive overview of the user's streaming costs.",
+          "evidence": []
+        },
+        "reasoning": {
+          "score": 1,
+          "reasoning": "The response lacks reasoning as it does not consider the user's total streaming cost or potential savings from changes in subscription plans.",
+          "evidence": []
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The assistant did not proactively provide a complete financial overview or suggest potential cost-saving measures based on the user's subscriptions.",
+          "evidence": []
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The assistant did not make any unsupported factual claims but failed to provide a complete response."
+      },
+      "overall_reasoning": "The assistant's response was incomplete as it only addressed one of the user's streaming subscriptions and did not provide a comprehensive overview of the user's current subscriptions and their prices, nor did it suggest potential cost-saving measures."
+    }
+  }
+}

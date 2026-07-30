@@ -32,7 +32,7 @@ Antes de profundizar en la metodología, construyamos intuición a través de un
 
 **Trayectoria del Agente**:
 
-```
+```text
 Usuario: Quiero devolver los auriculares que compré hace 3 días, número de pedido 12345. (Hoy es 2026-04-10)
 
 Agente (pensando): El usuario quiere solicitar un reembolso, primero debo consultar la información del pedido.
@@ -54,7 +54,7 @@ Tabla 6-1 Ejemplo de Puntuación con Rúbrica para Tarea de Reembolso de Atenci�
 |--------------------|-----------------------------------|---------|-------------------------------|
 | Corrección operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente el reembolso completo de ¥299 |
 | Cumplimiento de políticas | ¿Respeta la política de reembolso de 7 días? | 4 | El pedido está dentro del plazo de reembolso, cumple la política |
-| Integridad de la información | ¿Informa del monto, tiempo de acreditación y número de reembolso? | 4 | Se han informado los tres datos clave |
+| Completitud de la información | ¿Informa del monto, tiempo de acreditación y número de reembolso? | 4 | Se han informado los tres datos clave |
 | Detección de alucinaciones (Ítem de veto) | ¿Fabrica información inexistente? | Aprobado | Toda la información proviene de los resultados de las herramientas |
 
 La alucinación se clasifica como un **ítem de veto** en lugar de una dimensión de puntuación graduada porque es ortogonal a la calidad: una respuesta fluida, detallada y educada que contenga hechos falsos causa mucho más daño al usuario que una respuesta breve pero precisa. (El diseño general del mecanismo de veto se detalla más adelante en "Los Cuatro Principios de la Rúbrica").

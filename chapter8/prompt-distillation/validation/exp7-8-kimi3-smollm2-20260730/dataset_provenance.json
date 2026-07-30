@@ -1,0 +1,18 @@
+{
+  "dataset": "papluca/language-identification",
+  "revision": "aa56583bf2bc52b0565770607d6fc3faebecf9e2",
+  "train_source_split": "train",
+  "test_source_split": "test",
+  "train_fingerprint": "f45582c1a8dc5a98",
+  "test_fingerprint": "24705149585614f9",
+  "seed": 78,
+  "train_per_source_language": 8,
+  "test_per_source_language": 4,
+  "train_rows": 160,
+  "test_rows": 80,
+  "train_unique_texts": 160,
+  "test_unique_texts": 75,
+  "exact_text_overlap": 0,
+  "train_rows_sha256": "47b06a13660737187da7e8dede85daffcb4920a57734c2f8a4b20eaa31d20b31",
+  "test_rows_sha256": "b99d21173e89f8d37de4c4a11a32ae8aca0f5e8de6b384d366114a62afb757c1"
+}

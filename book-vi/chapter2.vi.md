@@ -44,6 +44,8 @@ Cốt lõi của API mô hình lớn là danh sách tin nhắn. Mỗi tin nhắn
 
 Ngoài ra, định nghĩa công cụ (công cụ) được sử dụng như một trường độc lập của yêu cầu (chứ không phải là một thông báo), cho mô hình biết công cụ nào có thể được sử dụng và mỗi công cụ chấp nhận tham số nào.
 
+Đây là cùng một cấu trúc yêu cầu API với “năm thành phần của ngữ cảnh” được giới thiệu trong Chương 1, chỉ được phân loại theo một góc nhìn khác: bốn vai trò tin nhắn `system`, `user`, `assistant` và `tool` lần lượt tương ứng với lời nhắc hệ thống, tin nhắn của người dùng, trả lời của mô hình và kết quả công cụ. Thành phần còn lại—định nghĩa công cụ—được truyền qua trường `tools` cấp cao nhất của yêu cầu, chứ không phải một vai trò tin nhắn. Vì vậy, “bốn vai trò tin nhắn + trường `tools`” bao quát chính xác năm thành phần ngữ cảnh của Chương 1.
+
 ### Đối thoại một vòng: lệnh gọi API đơn giản nhất
 
 ![Hình 2-2 Cấu trúc yêu cầu và phản hồi của một vòng lệnh gọi API ](images/fig2-2.svg)

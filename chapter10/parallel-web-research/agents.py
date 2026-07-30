@@ -1,20 +1,4 @@
-"""
-主协调器（Coordinator）与子 Agent（Worker）
-===========================================
-
-实现实验 10-6 的核心协调机制：
-
-1. 并行派发：Coordinator 同时启动 N 个同构 Worker，各搜一个"网站/来源"。
-2. 消息总线：Worker 与 Coordinator 全部通过 ``MessageBus`` 用信封通信。
-3. 实时监控（push 范式）：Worker 执行中主动 ``status_update`` 上报，
-   Coordinator 维护任务状态表并实时刷新打印。
-4. 级联终止：某 Worker 命中目标后，Coordinator 广播 ``terminate``，
-   其余 Worker 在循环安全点检查到信号后 ack 并优雅退出。
-5. 竞态处理：多个 Worker 可能几乎同时命中，Coordinator 用 ``asyncio.Lock``
-   + 幂等标志保证**只结算一次、只广播一轮终止**。
-
-状态机：submitted -> running -> (needs_input) -> succeeded / failed / terminated
-"""
+"""Real-browser workers and central coordinator for Experiment 10-6."""
 
 from __future__ import annotations
 
@@ -22,17 +6,16 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
-from llm import judge_answer, llm_available
-from message_bus import BROADCAST, MessageBus, _now
-from sources import Source
+from llm import extract_profile
+from message_bus import BROADCAST, MessageBus
+from sources import Website
 
 
 class TaskState(str, Enum):
     SUBMITTED = "已提交"
     RUNNING = "执行中"
-    NEEDS_INPUT = "需要输入"
     SUCCEEDED = "已完成"
     FAILED = "失败"
     TERMINATED = "已终止"
@@ -40,269 +23,360 @@ class TaskState(str, Enum):
 
 @dataclass
 class TaskRecord:
-    """Coordinator 状态表里的一行：一个 Worker 的实时状态。"""
-
     worker_id: str
     source_name: str
     state: TaskState = TaskState.SUBMITTED
     note: str = ""
-    updated: float = field(default_factory=_now)
+    updated: float = field(default_factory=time.monotonic)
 
 
-# ————————————————————————————— 子 Agent —————————————————————————————
+class BrowserPool:
+    """One Chromium process, one fully isolated browser context per worker."""
+
+    def __init__(self, headless: bool = True):
+        self.headless = headless
+        self._pw = None
+        self.browser = None
+        self.contexts_created = 0
+        self.contexts_closed = 0
+
+    async def start(self):
+        from playwright.async_api import async_playwright
+        self._pw = await async_playwright().start()
+        self.browser = await self._pw.chromium.launch(headless=self.headless)
+
+    async def new_context(self):
+        if not self.browser:
+            raise RuntimeError("BrowserPool not started")
+        context = await self.browser.new_context()
+        self.contexts_created += 1
+        return context
+
+    async def mark_closed(self):
+        self.contexts_closed += 1
+
+    async def close(self):
+        if self.browser:
+            await self.browser.close()
+        if self._pw:
+            await self._pw.stop()
+
+
 class WorkerAgent:
-    """
-    一个同构子 Agent：负责抓取并搜索单个来源。
-    通过消息总线接收 task_assigned / terminate，上报 status_update / result / ack。
-    """
-
-    def __init__(self, worker_id: str, source: Source, bus: MessageBus, question: str):
-        self.id = worker_id
-        self.source = source
-        self.bus = bus
-        self.question = question
-        # 订阅：只关心发给自己或广播的 task_assigned 与 terminate
+    def __init__(self, worker_id: str, site: Website, bus: MessageBus, target: str,
+                 browsers: BrowserPool, timeout: float = 120,
+                 browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+                 llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+                 run_phase: str = "parallel"):
+        self.id, self.site, self.bus, self.target = worker_id, site, bus, target
+        self.browsers, self.timeout = browsers, timeout
         self.sub = bus.subscribe(worker_id, types=["task_assigned", "terminate"])
-        self._terminated = asyncio.Event()
+        self.terminate = asyncio.Event()
+        self._termination_reason = ""
+        self.context = None
+        self.browser_receipt_sink = browser_receipt_sink
+        self.llm_receipt_sink = llm_receipt_sink
+        self.run_phase = run_phase
 
-    async def _report(self, state: TaskState, note: str = "", type: str = "status_update"):
-        """向 Coordinator 推送一条状态更新（实时监控的 push 范式）。"""
-        await self.bus.send(
-            self.id,
-            "coordinator",
-            type,
-            {"state": state.value, "note": note, "source": self.source.name},
-        )
+    async def report(self, state: TaskState, note: str):
+        await self.bus.send(self.id, "coordinator", "status_update", {
+            "state": state.value, "note": note, "source": self.site.name,
+        })
 
-    async def _drain_signals(self) -> bool:
-        """
-        在安全点检查是否收到 terminate 信号（非阻塞）。
-        收到则 ack 并返回 True，调用方据此优雅退出。
-        """
-        while not self.sub.inbox.empty():
-            env = self.sub.inbox.get_nowait()
-            if env.type == "terminate":
-                self._terminated.set()
-        if self._terminated.is_set():
-            await self.bus.send(
-                self.id, "coordinator", "ack",
-                {"acked": "terminate", "source": self.source.name},
+    async def _signals(self):
+        while True:
+            message = await self.sub.get()
+            if message.type == "terminate":
+                self._termination_reason = message.payload.get("reason", "cascade")
+                self.terminate.set()
+                return
+
+    async def _await_interruptibly(self, awaitable):
+        operation = asyncio.create_task(awaitable)
+        stopping = asyncio.create_task(self.terminate.wait())
+        try:
+            done, _ = await asyncio.wait(
+                {operation, stopping}, return_when=asyncio.FIRST_COMPLETED
             )
-            await self._report(TaskState.TERMINATED, "收到终止信号，安全退出")
-            return True
-        return False
+        except BaseException:
+            operation.cancel()
+            stopping.cancel()
+            await asyncio.gather(operation, stopping, return_exceptions=True)
+            raise
+        if stopping in done and self.terminate.is_set():
+            operation.cancel()
+            await asyncio.gather(operation, return_exceptions=True)
+            raise asyncio.CancelledError
+        stopping.cancel()
+        await asyncio.gather(stopping, return_exceptions=True)
+        return await operation
+
+    async def _navigate_interruptibly(self, page):
+        return await self._await_interruptibly(page.goto(
+            self.site.url, wait_until="domcontentloaded", timeout=int(self.timeout * 1000)
+        ))
 
     async def run(self):
-        """
-        Worker 主循环：分多步"抓取 + 搜索"，每步之间都检查终止信号。
-        把单次抓取切成多步，是为了模拟真实 Computer Use Agent 的多轮操作，
-        也给级联终止提供"安全检查点"。
-        """
-        # 等待 Coordinator 派发任务（task_assigned）
-        env = await self.sub.get()
-        while env.type != "task_assigned":
-            env = await self.sub.get()
-        await self._report(TaskState.RUNNING, "开始抓取来源")
-
-        steps = 3  # 把抓取拆成 3 步，制造可被中断的检查点
-        per_step = max(self.source.latency / steps, 0.05)
-        collected = ""
-        for i in range(1, steps + 1):
-            # —— 安全检查点：先看有没有被要求终止 ——
-            if await self._drain_signals():
-                return
-            # —— 执行一步抓取（模拟 Computer Use 的一轮操作耗时）——
-            await asyncio.sleep(per_step)
-            collected = self.source.content  # 抓到的文本，最后一步再判断是否命中
-            await self._report(TaskState.RUNNING, f"抓取进度 {i}/{steps}")
-
-        # 再次检查终止（可能在最后一步耗时里收到）
-        if await self._drain_signals():
-            return
-
-        # —— 用（可选）LLM 或关键词判断是否命中答案 ——
-        answer = await judge_answer(self.question, collected)
-        if answer:
-            # 命中：把结果发回 Coordinator（可能与别的 Worker 竞态）
-            await self.bus.send(
-                self.id, "coordinator", "result",
-                {"found": True, "answer": answer, "source": self.source.name},
+        assigned = await self.sub.get()
+        while assigned.type != "task_assigned":
+            assigned = await self.sub.get()
+        signal_task = asyncio.create_task(self._signals())
+        try:
+            await self.report(TaskState.RUNNING, "创建独立 Chromium context")
+            self.context = await self.browsers.new_context()
+            page = await self.context.new_page()
+            await self.report(TaskState.RUNNING, f"正在加载 {self.site.url}")
+            navigation = await self._navigate_interruptibly(page)
+            if self.terminate.is_set():
+                raise asyncio.CancelledError
+            await self.report(TaskState.RUNNING, "正在读取渲染后的教师页面")
+            text = await self._await_interruptibly(
+                page.locator("body").inner_text(timeout=20_000)
             )
-            await self._report(TaskState.SUCCEEDED, f"命中：{answer}")
-        else:
-            await self.bus.send(
-                self.id, "coordinator", "result",
-                {"found": False, "source": self.source.name},
+            if self.browser_receipt_sink:
+                self.browser_receipt_sink({
+                    "kind": "rendered_browser_observation",
+                    "phase": self.run_phase,
+                    "worker_id": self.id,
+                    "site": self.site.name,
+                    "college": self.site.college,
+                    "requested_url": self.site.url,
+                    "final_url": page.url,
+                    "http_status": navigation.status if navigation else None,
+                    "rendered_body_text": text,
+                })
+            if self.terminate.is_set():
+                raise asyncio.CancelledError
+            await self.report(TaskState.RUNNING, "正在做证据约束的教师信息抽取")
+            profile = await self._await_interruptibly(
+                extract_profile(
+                    self.target,
+                    self.site.college,
+                    self.site.url,
+                    text,
+                    receipt_sink=self.llm_receipt_sink,
+                    call_context={
+                        "phase": self.run_phase,
+                        "worker_id": self.id,
+                        "site": self.site.name,
+                    },
+                )
             )
-            await self._report(TaskState.FAILED, "该来源未找到答案")
+            if profile.get("found"):
+                await self.bus.send(self.id, "coordinator", "target_found", {
+                    "data": profile, "source": self.site.name,
+                })
+                await self.report(TaskState.SUCCEEDED, "找到目标教师")
+            else:
+                await self.bus.send(self.id, "coordinator", "not_found", {
+                    "reason": profile.get("reason", "not found"), "source": self.site.name,
+                })
+                await self.report(TaskState.SUCCEEDED, "页面中未找到目标")
+        except asyncio.CancelledError:
+            if self.terminate.is_set():
+                await self.report(TaskState.TERMINATED, f"安全点响应终止：{self._termination_reason}")
+                await self.bus.send(self.id, "coordinator", "ack", {
+                    "acked": "terminate", "source": self.site.name,
+                })
+            else:
+                await self.bus.send(self.id, "coordinator", "worker_error", {
+                    "error": f"TimeoutError: exceeded {self.timeout + 15:.0f}s worker deadline",
+                    "source": self.site.name,
+                })
+                await self.report(TaskState.FAILED, "任务超时，已关闭独立浏览器会话")
+        except Exception as exc:
+            await self.bus.send(self.id, "coordinator", "worker_error", {
+                "error": f"{type(exc).__name__}: {exc}", "source": self.site.name,
+            })
+            await self.report(TaskState.FAILED, f"{type(exc).__name__}: {exc}")
+        finally:
+            signal_task.cancel()
+            await asyncio.gather(signal_task, return_exceptions=True)
+            context_closed = self.context is None
+            if self.context:
+                try:
+                    await self.context.close()
+                    await self.browsers.mark_closed()
+                    context_closed = True
+                except Exception as exc:
+                    await self.bus.send(self.id, "coordinator", "worker_error", {
+                        "error": f"ContextCloseError: {exc}", "source": self.site.name,
+                    })
+            await self.bus.send(self.id, "coordinator", "resource_closed", {
+                "browser_context_closed": context_closed, "source": self.site.name,
+            })
 
 
-# ————————————————————————————— 主协调器 —————————————————————————————
 class Coordinator:
-    """
-    中心协调器：并行派发子 Agent、维护状态表、结算首个命中、广播级联终止。
-    """
-
-    def __init__(self, bus: MessageBus, question: str):
-        self.bus = bus
-        self.question = question
-        # 订阅所有子 Agent 上报的消息类型
-        self.sub = bus.subscribe("coordinator", types=["status_update", "result", "ack"])
-        self.table: Dict[str, TaskRecord] = {}
+    def __init__(self, bus: MessageBus, target: str):
+        self.bus, self.target = bus, target
+        self.sub = bus.subscribe("coordinator", types=None)
         self.workers: List[WorkerAgent] = []
-
-        # —— 竞态处理的关键状态 ——
-        self._settle_lock = asyncio.Lock()   # 保证结算与终止广播互斥
-        self._settled = False                # 幂等标志：是否已结算过
-        self.winner: Optional[str] = None    # 第一个命中的 Worker
-        self.answer: Optional[str] = None
-        self.duplicate_hits: List[str] = []  # 记录"迟到的命中"，证明竞态被正确忽略
-
-        self._acks: set[str] = set()
-        self._expected_workers = 0
+        self.table: Dict[str, TaskRecord] = {}
+        self._lock = asyncio.Lock()
+        self._settled = False
+        self.winner: Optional[str] = None
+        self.profile: Optional[dict] = None
+        self.duplicate_hits: List[str] = []
+        self.acks: set[str] = set()
+        self.errors: Dict[str, str] = {}
+        self.not_found: Dict[str, str] = {}
+        self.closed: set[str] = set()
+        self.resource_failures: Dict[str, str] = {}
 
     def add_worker(self, worker: WorkerAgent):
         self.workers.append(worker)
-        self.table[worker.id] = TaskRecord(worker.id, worker.source.name)
+        self.table[worker.id] = TaskRecord(worker.id, worker.site.name)
 
-    def _print_table(self, reason: str):
-        """实时刷新并打印任务状态表。"""
-        print(f"\n  ── 任务状态表（{reason}） ──")
-        for rec in self.table.values():
-            print(
-                f"     {rec.worker_id:<10} 源={rec.source_name:<12} "
-                f"状态={rec.state.value:<5} {('| ' + rec.note) if rec.note else ''}"
-            )
-        print()
-
-    async def _dispatch(self):
-        """并行派发：给每个 Worker 发 task_assigned。"""
-        self._expected_workers = len(self.workers)
-        for w in self.workers:
-            self.table[w.id].state = TaskState.SUBMITTED
-            await self.bus.send(
-                "coordinator", w.id, "task_assigned",
-                {"question": self.question, "source": w.source.name},
-            )
-        self._print_table("已派发全部子 Agent")
-
-    async def _settle_if_first(self, worker_id: str, answer: str) -> bool:
-        """
-        竞态处理核心：用锁 + 幂等标志保证只结算一次、只广播一轮终止。
-        返回 True 表示本次是"首个有效命中"。
-        """
-        async with self._settle_lock:
+    async def _settle(self, worker_id: str, profile: dict):
+        async with self._lock:
             if self._settled:
-                # 迟到的命中：已结算过，直接忽略（幂等）
                 self.duplicate_hits.append(worker_id)
-                print(
-                    f"  [竞态] {worker_id} 也命中，但已由 {self.winner} 结算 —— "
-                    f"忽略此次命中，不重复广播终止。"
-                )
-                return False
-            # 首个命中：结算并广播一轮终止
-            self._settled = True
-            self.winner = worker_id
-            self.answer = answer
-            print(f"  [结算] 首个命中来自 {worker_id} —— 加锁结算，广播一轮 terminate。")
-            await self.bus.send(
-                "coordinator", BROADCAST, "terminate",
-                {"reason": "answer_found", "winner": worker_id},
-            )
-            return True
+                return
+            self._settled, self.winner, self.profile = True, worker_id, profile
+            await self.bus.send("coordinator", BROADCAST, "terminate", {
+                "reason": f"target_found_by_{worker_id}", "winner": worker_id,
+            })
 
-    async def run(self, quiet_period: float = 2.5) -> dict:
-        """
-        协调主循环：派发 -> 监听上报 -> 结算首个命中 -> 收集 ack -> 汇总。
-        """
-        mode = "LLM 判断" if llm_available() else "关键词判断（离线可复现）"
-        print(f"  [协调器] 判断模式：{mode}\n")
-        t0 = time.monotonic()  # 记录并行执行的墙钟起点
-        await self._dispatch()
-
-        # 启动所有 Worker 协程
-        worker_tasks = [asyncio.create_task(w.run()) for w in self.workers]
-
-        done_states = {TaskState.SUCCEEDED, TaskState.FAILED, TaskState.TERMINATED}
-        last_terminate_time: Optional[float] = None
-
-        while True:
-            env = await self.sub.get_nowait_or_wait(timeout=0.5)
-            if env is None:
-                # 没有新消息：若已结算且过了静默期，认为收敛，退出
-                if self._settled and last_terminate_time is not None:
-                    if _now() - last_terminate_time > quiet_period:
-                        break
-                # 全部 Worker 进入终态也退出
-                if all(r.state in done_states for r in self.table.values()):
+    async def run(self) -> dict:
+        started = time.monotonic()
+        for w in self.workers:
+            await self.bus.send("coordinator", w.id, "task_assigned", {
+                "target": self.target, "url": w.site.url, "task_id": w.id,
+            })
+        tasks = [asyncio.create_task(asyncio.wait_for(w.run(), timeout=w.timeout + 15)) for w in self.workers]
+        while len(self.closed) < len(self.workers):
+            try:
+                env = await asyncio.wait_for(self.sub.get(), timeout=0.5)
+            except asyncio.TimeoutError:
+                if all(t.done() for t in tasks):
                     break
                 continue
-
             rec = self.table.get(env.sender_id)
-
             if env.type == "status_update" and rec:
-                prev = rec.state
                 rec.state = TaskState(env.payload["state"])
                 rec.note = env.payload.get("note", "")
-                rec.updated = _now()
-                # 仅在"状态机跳变"时刷新状态表，避免每一步抓取都刷屏
-                if rec.state != prev:
-                    self._print_table(f"{env.sender_id} -> {rec.state.value}")
-
-            elif env.type == "result":
-                if env.payload.get("found"):
-                    is_first = await self._settle_if_first(
-                        env.sender_id, env.payload["answer"]
-                    )
-                    if is_first:
-                        last_terminate_time = _now()
-
+                rec.updated = time.monotonic()
+            elif env.type == "target_found":
+                await self._settle(env.sender_id, env.payload["data"])
             elif env.type == "ack":
-                self._acks.add(env.sender_id)
-                print(f"  [ack] {env.sender_id} 已确认终止（{len(self._acks)} 个已 ack）")
-
-        # 等待所有 Worker 协程收尾
-        await asyncio.gather(*worker_tasks, return_exceptions=True)
-        elapsed = time.monotonic() - t0  # 并行执行的墙钟耗时（含收敛静默期）
-        self._print_table("最终状态")
-
+                self.acks.add(env.sender_id)
+            elif env.type == "worker_error":
+                self.errors[env.sender_id] = env.payload["error"]
+            elif env.type == "not_found":
+                self.not_found[env.sender_id] = env.payload.get("reason", "not found")
+            elif env.type == "resource_closed":
+                self.closed.add(env.sender_id)
+                if not env.payload.get("browser_context_closed", False):
+                    self.resource_failures[env.sender_id] = "browser context did not close"
+        await asyncio.gather(*tasks, return_exceptions=True)
+        failure_types: Dict[str, int] = {}
+        for error in self.errors.values():
+            kind = error.split(":", 1)[0]
+            failure_types[kind] = failure_types.get(kind, 0) + 1
+        expected_acks = {worker.id for worker in self.workers}
+        if self.winner:
+            expected_acks.discard(self.winner)
+        else:
+            expected_acks.clear()
+        missing_acks = expected_acks - self.acks
         return {
+            "outcome": "found" if self.winner else "not_found",
             "winner": self.winner,
-            "answer": self.answer,
+            "profile": self.profile,
             "duplicate_hits": self.duplicate_hits,
-            "acks": sorted(self._acks),
-            "settled_once": self._settled,
-            "terminate_broadcasts": sum(
-                1 for e in self.bus.history if e.type == "terminate"
-            ),
-            "parallel_seconds": elapsed,
+            "acks": sorted(self.acks),
+            "expected_loser_acks": sorted(expected_acks),
+            "missing_loser_acks": sorted(missing_acks),
+            "errors": self.errors,
+            "failure_summary": {
+                "count": len(self.errors),
+                "by_type": failure_types,
+            },
+            "not_found_reasons": self.not_found,
+            "status_table": {
+                worker_id: {
+                    "source": record.source_name,
+                    "state": record.state.value,
+                    "note": record.note,
+                }
+                for worker_id, record in self.table.items()
+            },
+            "terminate_broadcasts": sum(1 for e in self.bus.history if e.type == "terminate"),
+            "parallel_seconds": round(time.monotonic() - started, 3),
+            "contexts_closed": len(self.closed),
+            "resource_failures": self.resource_failures,
         }
 
 
-# ————————————————————————— 串行基线（性能对比） —————————————————————————
-async def run_sequential(sources: List[Source], question: str) -> dict:
-    """
-    串行基线：逐个来源"抓取 + 判断"，命中即止。
+async def search_one(
+    site: Website,
+    target: str,
+    browsers: BrowserPool,
+    timeout: float,
+    browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+    llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+    worker_id: str = "serial",
+    run_phase: str = "serial",
+) -> dict:
+    context = await browsers.new_context()
+    started = time.monotonic()
+    try:
+        page = await context.new_page()
+        navigation = await page.goto(site.url, wait_until="domcontentloaded", timeout=int(timeout * 1000))
+        text = await page.locator("body").inner_text(timeout=20_000)
+        if browser_receipt_sink:
+            browser_receipt_sink({
+                "kind": "rendered_browser_observation",
+                "phase": run_phase,
+                "worker_id": worker_id,
+                "site": site.name,
+                "college": site.college,
+                "requested_url": site.url,
+                "final_url": page.url,
+                "http_status": navigation.status if navigation else None,
+                "rendered_body_text": text,
+            })
+        profile = await extract_profile(
+            target,
+            site.college,
+            site.url,
+            text,
+            receipt_sink=llm_receipt_sink,
+            call_context={"phase": run_phase, "worker_id": worker_id, "site": site.name},
+        )
+        return {"site": site.name, "profile": profile, "seconds": time.monotonic() - started}
+    finally:
+        await context.close()
+        await browsers.mark_closed()
 
-    用于对照并行执行的墙钟收益（对应书中实验要求"记录并对比并行/串行时间差异"）。
-    这里真实地一个接一个 ``await source.fetch()``，因此耗时是**实测**而非估算——
-    绝不伪造数据；命中判断复用与并行版本相同的 :func:`judge_answer`。
-    """
-    t0 = time.monotonic()
-    winner: Optional[str] = None
-    answer: Optional[str] = None
-    fetched = 0
-    for src in sources:
-        fetched += 1
-        text = await src.fetch()
-        ans = await judge_answer(question, text)
-        if ans:
-            winner, answer = src.name, ans
-            break
-    return {
-        "seconds": time.monotonic() - t0,
-        "winner": winner,
-        "answer": answer,
-        "fetched": fetched,
-        "total": len(sources),
-    }
+
+async def run_sequential(
+    sites: List[Website],
+    target: str,
+    browsers: BrowserPool,
+    timeout: float,
+    browser_receipt_sink: Optional[Callable[[dict], None]] = None,
+    llm_receipt_sink: Optional[Callable[[dict], None]] = None,
+    run_phase: str = "serial",
+) -> dict:
+    started = time.monotonic()
+    results = []
+    for site in sites:
+        try:
+            item = await search_one(
+                site,
+                target,
+                browsers,
+                timeout,
+                browser_receipt_sink=browser_receipt_sink,
+                llm_receipt_sink=llm_receipt_sink,
+                worker_id=f"serial-{len(results):02d}",
+                run_phase=run_phase,
+            )
+            results.append(item)
+            if item["profile"].get("found"):
+                break
+        except Exception as exc:
+            results.append({"site": site.name, "error": f"{type(exc).__name__}: {exc}"})
+    return {"seconds": round(time.monotonic() - started, 3), "visited": len(results), "results": results}

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 520" width="880" height="520" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="220" y="65" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">단순 방식(캐시 무효화)</text>
+<rect x="30" y="85" width="380" height="120" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="220" y="107" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">System Prompt</text>
+<text x="220" y="129" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">당신은 AI 어시스턴트입니다...</text>
+<text x="220" y="149" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">+ 모든 도구 schema</text>
+<text x="390" y="107" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">~50K tokens</text>
+<rect x="30" y="213" width="380" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220" y="235" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">User Message</text>
+<text x="220" y="257" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">NVDA 주가 조회</text>
+<rect x="30" y="321" width="380" height="80" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220" y="343" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Assistant</text>
+<text x="220" y="365" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_call: ...</text>
+<rect x="30" y="414" width="380" height="40" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="220" y="434" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">새 도구를 로드할 때마다 → 전체 캐시 무효화!</text>
+<text x="660" y="65" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">최적화 방식(캐시 안정)</text>
+<rect x="460" y="85" width="400" height="75" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="101" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">System Prompt(고정)</text>
+<text x="660" y="117" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">당신은 AI 어시스턴트입니다...</text>
+<text x="660" y="133" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">역할 + 규칙 + 기본 도구</text>
+<text x="850" y="101" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">~2K tokens | KV 캐시</text>
+<rect x="460" y="165" width="400" height="45" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="660" y="181" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">에이전트 상태 표시줄(경량)</text>
+<text x="660" y="197" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">사용 가능한 도구: web_search, get_weather...</text>
+<text x="850" y="181" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">~200 tokens</text>
+<rect x="460" y="215" width="400" height="40" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="231" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">User: discover_tools</text>
+<text x="660" y="247" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;주가를 조회해야 해&quot;</text>
+<rect x="460" y="260" width="400" height="55" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="276" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Tool Result</text>
+<text x="660" y="292" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_stock_quote schema 반환</text>
+<text x="850" y="276" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">도구 정의 위치</text>
+<rect x="460" y="320" width="400" height="40" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="336" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">User Message</text>
+<text x="660" y="352" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">NVDA 주가 조회</text>
+<rect x="460" y="365" width="400" height="45" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="660" y="381" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">에이전트 상태 표시줄(갱신)</text>
+<text x="660" y="397" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">+get_stock_quote 추가됨</text>
+<text x="850" y="381" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">~220 tokens</text>
+<rect x="460" y="420" width="400" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="660" y="440" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">System Prompt 유지 → KV Cache 완전 재사용</text>
+<line x1="30" y1="475" x2="850" y2="475" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="250" y="495" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">비교 항목</text>
+<text x="500" y="495" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">단순 방식</text>
+<text x="740" y="495" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">최적화 방식</text>
+<text x="250" y="523" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">캐시 적중률</text>
+<text x="500" y="523" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~0%(도구가 바뀔 때마다 무효화)</text>
+<text x="740" y="523" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">~95%(hint만 소폭 변경)</text>
+<text x="250" y="551" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">첫 토큰 지연</text>
+<text x="500" y="551" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">높음(매번 50K tokens 재계산)</text>
+<text x="740" y="551" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">낮음(약 200 tokens 증분 계산)</text>
+</svg>

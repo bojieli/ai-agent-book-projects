@@ -1,0 +1,89 @@
+{
+  "signature": "e076f0ecb946316a3c191bd1cb2de039d1b125ab5ae0c825080974ce6253370e",
+  "parsed": {
+    "advice": "匹配依据：待预测案件罪名“故意伤害罪”与训练集原型“故意伤害罪-prototype-0”罪名一致。但待预测案件缺失该原型的核心定义特征，包括“injury_result=重伤”“serious_injury_count”“injury_degree=重伤二级”“injury_degree=重伤”“weapon_type=卡刀”等（上述特征在原型中z值均较高，对刑期影响显著），且待预测案件的“arrest_method=被抓获”与原型中具有正向影响的“arrest_method=自首”特征不匹配。统计区间：该原型案件的刑期中位数为36.0个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：由于待预测案件缺失对刑期影响显著的核心伤害结果及程度相关特征，且关键情节特征（如抓捕方式）与原型存在差异，上述统计区间可能无法准确反映其实际刑期，预测结果存在较大不确定性。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-264bc811294ca62f",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:10.235103+00:00",
+    "latency_ms": 25672.718,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"故意伤害罪\", \"surrender\": null, \"truthful_confession\": true, \"compensation_to_victim\": null, \"victim_forgiveness\": null, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": \"被抓获\", \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": null, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"injury_degree\": null, \"weapon_type\": null, \"criminal_cause\": \"琐事争执\", \"community_correction_eligibility\": null, \"victim_fault\": null, \"compensation_status\": null, \"mutual_fight\": null, \"injury_result\": null, \"criminal_motive\": null, \"drunk_crime\": null, \"minor_injury_count\": null, \"serious_injury_count\": null}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"故意伤害罪-prototype-0\", \"charge\": \"故意伤害罪\", \"prototype_size\": 18, \"sentence_months\": {\"median\": 36.0, \"q25\": 24.0, \"q75\": 38.25, \"min\": 9.0, \"max\": 96.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=重伤\", \"z\": 4.229908779144486}, {\"feature\": \"num:serious_injury_count\", \"z\": 4.229908779144443}, {\"feature\": \"cat:injury_degree=重伤二级\", \"z\": 3.8219021986682136}, {\"feature\": \"cat:injury_degree=重伤\", \"z\": 1.4201266762286806}, {\"feature\": \"num:crime_amount\", \"z\": -1.181082234467661}, {\"feature\": \"cat:arrest_method=自首\", \"z\": 1.0441851275732448}, {\"feature\": \"bool:surrender\", \"z\": 1.011423265985623}, {\"feature\": \"cat:weapon_type=卡刀\", \"z\": 1.0027816465415866}], \"match_distance\": 0.13492562791224796}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "0217853865304671c17ef9c173e8babb4a0658490f0169ed398e3",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：待预测案件罪名“故意伤害罪”与训练集原型“故意伤害罪-prototype-0”罪名一致。但待预测案件缺失该原型的核心定义特征，包括“injury_result=重伤”“serious_injury_count”“injury_degree=重伤二级”“injury_degree=重伤”“weapon_type=卡刀”等（上述特征在原型中z值均较高，对刑期影响显著），且待预测案件的“arrest_method=被抓获”与原型中具有正向影响的“arrest_method=自首”特征不匹配。统计区间：该原型案件的刑期中位数为36.0个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：由于待预测案件缺失对刑期影响显著的核心伤害结果及程度相关特征，且关键情节特征（如抓捕方式）与原型存在差异，上述统计区间可能无法准确反映其实际刑期，预测结果存在较大不确定性。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，根据提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE来生成建议。首先，我要仔细看一下这两个部分的内容。\n\n首先，HELDOUT EXTRACTED FACTORS里的罪名是“故意伤害罪”，其他因素包括：surrender为null，truthful_confession为true，compensation_to_victim为null，victim_forgiveness为null，joint_crime为null，criminal_record为null，arrest_method是“被抓获”，return_of_stolen_property为null，crime_count为null，crime_amount为null，guilty_plea为null，first_offense为null，recidivism为null，criminal_form是“既遂”，disposal_of_stolen_property为null，victim_count是1.0，injury_degree为null，weapon_type为null，criminal_cause是“琐事争执”，community_correction_eligibility为null，victim_fault为null，compensation_status为null，mutual_fight为null，injury_result为null，criminal_motive为null，drunk_crime为null，minor_injury_count为null，serious_injury_count为null。\n\n然后看MATCHED TRAINING PROTOTYPE，原型ID是“故意伤害罪-prototype-0”，罪名也是故意伤害罪，原型大小18个案件，刑期的中位数是36.0个月，Q25是24.0，Q75是38.25，min9.0，max96.0。定义特征里有几个关键的z值较高的特征，比如injury_result=重伤、serious_injury_count、injury_degree=重伤二级等，这些是原型的主要定义特征。匹配距离是0.1349，看起来匹配度还可以，但需要注意的是，HELDOUT里很多关键特征是缺失的，比如injury_result、serious_injury_count、injury_degree、weapon_type等，而这些正是原型的核心定义特征（比如injury_result=重伤、serious_injury_count、injury_degree=重伤二级等z值很高）。\n\n接下来，用户要求只使用给出的训练集案件原型统计与已抽取因素，不能用外部知识或自行给刑期数字。需要解释匹配依据和统计区间，强调不确定性。\n\n首先，匹配依据：HELDOUT的罪名是“故意伤害罪”，与原型罪名一致。但HELDOUT中多个关键定义特征缺失，如injury_result（原型z值最高的特征）、serious_injury_count（原型第二高z值）、injury_degree（原型第三、四高z值）、weapon_type（原型第七高z值）等。同时，HELDOUT的arrest_method是“被抓获”，而原型中“arrest_method=自首”是正z值特征，可能存在不匹配。\n\n统计区间：原型的sentence_months中位数36.0，Q25 24.0，Q75 38.25，min9.0，max96.0。\n\n不确定性：由于HELDOUT缺失原型的核心定义特征（如伤害结果、重伤数量、伤害程度等），这些特征对刑期影响显著（z值高），且arrest_method与原型中的自首特征不匹配，可能导致匹配结果存在较大不确定性，实际刑期可能偏离原型统计区间。\n\n需要把这些整合到advice里，用中文，结构清晰，说明匹配依据（罪名一致但关键特征缺失、arrest_method不匹配），统计区间（原型的四分位和中位数等），强调不确定性（核心特征缺失导致影响显著）。"
+          }
+        }
+      ],
+      "created": 1785386556,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 1047,
+        "prompt_tokens": 797,
+        "total_tokens": 1844,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 813,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 1047,
+      "prompt_tokens": 797,
+      "total_tokens": 1844,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 813,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "0217853865304671c17ef9c173e8babb4a0658490f0169ed398e3"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "signature": "f617ba509df58a15ddfc766c0a82b4b5bf4c173c9b9170563efbd7f7301319a5",
+  "parsed": {
+    "advice": "匹配依据：待匹配案件的“disposal_of_stolen_property=挥霍”“booty_squandered=true”“fraud_target=个人”及“fraud_amount”等特征与匹配原型“诈骗罪-prototype-0”的定义特征相符。该原型包含22个案件，刑期统计区间为：中位数45.0个月，四分位25%为11.25个月，四分位75%为58.5个月，最小值3.0个月，最大值168.0个月。不确定性：待匹配案件中“restitution_situation”“return_of_stolen_property”等原型定义特征为null，可能影响匹配准确性，刑期存在波动可能。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-00d660cf28f916f3",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:42:25.131371+00:00",
+    "latency_ms": 18902.945,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"诈骗罪\", \"surrender\": null, \"truthful_confession\": null, \"compensation_to_victim\": null, \"victim_forgiveness\": null, \"joint_crime\": null, \"criminal_record\": null, \"arrest_method\": null, \"return_of_stolen_property\": null, \"crime_count\": null, \"crime_amount\": 163800.0, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": null, \"disposal_of_stolen_property\": \"挥霍\", \"victim_count\": null, \"fraud_count\": null, \"fraud_amount\": 163800.0, \"fraud_method\": \"虚构事实\", \"restitution_situation\": null, \"fraud_target\": \"个人\", \"proceeds_use\": \"挥霍\", \"impersonate_identity\": null, \"fraud_means\": null, \"fraud_victim_count\": null, \"booty_squandered\": true, \"fraud_middleman\": null}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"诈骗罪-prototype-0\", \"charge\": \"诈骗罪\", \"prototype_size\": 22, \"sentence_months\": {\"median\": 45.0, \"q25\": 11.25, \"q75\": 58.5, \"min\": 3.0, \"max\": 168.0}, \"defining_features\": [{\"feature\": \"cat:proceeds_use=挥霍\", \"z\": 3.726229148285477}, {\"feature\": \"bool:booty_squandered\", \"z\": 3.629934841284343}, {\"feature\": \"cat:disposal_of_stolen_property=挥霍\", \"z\": 2.823242590137243}, {\"feature\": \"cat:restitution_situation=部分退赃\", \"z\": 2.149983260084719}, {\"feature\": \"num:fraud_victim_count\", \"z\": 1.7078406967199085}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.6821971448205932}, {\"feature\": \"num:fraud_amount\", \"z\": 1.6088028147438735}, {\"feature\": \"cat:return_of_stolen_property=部分退赃\", \"z\": 1.5149027385089702}], \"match_distance\": 0.05566992861242549}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "02178538654535828a04e35a69bbadd2802274f74f3d7f07cd2a4",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：待匹配案件的“disposal_of_stolen_property=挥霍”“booty_squandered=true”“fraud_target=个人”及“fraud_amount”等特征与匹配原型“诈骗罪-prototype-0”的定义特征相符。该原型包含22个案件，刑期统计区间为：中位数45.0个月，四分位25%为11.25个月，四分位75%为58.5个月，最小值3.0个月，最大值168.0个月。不确定性：待匹配案件中“restitution_situation”“return_of_stolen_property”等原型定义特征为null，可能影响匹配准确性，刑期存在波动可能。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，根据提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE来生成建议。首先，我要仔细分析这两个部分的内容。\n\n首先看HELDOUT EXTRACTED FACTORS，里面的罪名是诈骗罪，犯罪金额（fraud_amount）是163800.0元，处置赃物方式（disposal_of_stolen_property）是“挥霍”，赃款挥霍（booty_squandered）是true，诈骗对象（fraud_target）是“个人”，其他很多因素如自首、坦白、赔偿、谅解等都是null。\n\n然后看MATCHED TRAINING PROTOTYPE，原型ID是“诈骗罪-prototype-0”，样本量22个，刑期的中位数是45.0个月，四分位25%是11.25，75%是58.5，最小值3.0，最大值168.0。定义特征里有几个关键的，比如“proceeds_use=挥霍”、“booty_squandered”、“disposal_of_stolen_property=挥霍”、“fraud_target=个人”、“fraud_amount”这些，而待匹配案件中正好有“disposal_of_stolen_property=挥霍”、“booty_squandered=true”、“fraud_target=个人”、“fraud_amount=163800.0”，这些特征是匹配的。不过定义特征里还有“restitution_situation=部分退赃”和“return_of_stolen_property=部分退赃”，但待匹配案件中这两个因素是null，可能存在不匹配的地方。\n\n接下来需要解释匹配依据，就是待匹配案件的“disposal_of_stolen_property=挥霍”、“booty_squandered=true”、“fraud_target=个人”、“fraud_amount”等特征与原型的定义特征相匹配。统计区间就是原型的刑期统计，中位数45.0，q25=11.25，q75=58.5，min=3.0，max=168.0。同时要强调不确定性，因为待匹配案件中缺少“restitution_situation”和“return_of_stolen_property”等原型中的特征，可能影响匹配准确性。\n\n最后按照要求，只返回JSON，格式是{\"advice\":\"...\"}，里面要包含匹配依据、统计区间和不确定性说明。需要注意不能使用外部法律知识，只能基于给出的训练集原型统计和抽取因素。"
+          }
+        }
+      ],
+      "created": 1785386564,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 715,
+        "prompt_tokens": 815,
+        "total_tokens": 1530,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 560,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 715,
+      "prompt_tokens": 815,
+      "total_tokens": 1530,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 560,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "02178538654535828a04e35a69bbadd2802274f74f3d7f07cd2a4"
+  }
+}

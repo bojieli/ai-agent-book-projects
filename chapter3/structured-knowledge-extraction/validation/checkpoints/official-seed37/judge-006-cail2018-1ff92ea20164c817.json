@@ -1,0 +1,78 @@
+{
+  "signature": "ed30b0b5e17ddc146b88066539f6d9582f8d212c6ce5c38823984f1fe69057f6",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议中明确指出了待分析案件与训练集原型之间的匹配依据，包括核心特征的匹配和匹配距离，显示了高度的匹配度。同时，提供了原型的统计区间，包括刑期中位数、四分位区间和刑期范围，这有助于理解可能的刑期分布。此外，建议中也提到了待分析案件中存在的其他因素，如全额赔偿、被害人谅解和被害人过错，这些因素在原型定义特征中未被突出体现，因此提出了实际刑期可能与原型统计区间存在差异的不确定性。最后，建议包含了明确的法律免责声明，强调了结果的分析教学用途，不构成法律意见或量刑承诺。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-1ff92ea20164c817",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:58.525520+00:00",
+    "latency_ms": 4353.829,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：经审理查明，2015年3月8日21时许，被告人王某某在同村王某甲家打牌，因被害人王某乙酒后在一旁说话，影响打牌，被告人王某某便与王某乙发生口角。尔后，被告人王某某回到家中，将王某乙影响打牌并骂了自己及岳父母的情况告诉了其妻子李某某，李某某闻讯后感到气愤，随即赶往王某甲家，与王某乙发生争吵。争吵中王某乙冲向李某某，并挥拳击打了李某某的头部两下，同时用手抓住了李某某的头发。被告人王某某见此情形，上去从后面抱住王某乙的颈部，将王某乙摔倒在地。王某乙倒地后仍抓住李某某的头发不放，当被告人王某某用手未能将王某乙的手掰开，便用左脚对着王某乙的背部踢了几下。经鉴定，被害人王某乙的伤情为重伤二级。\r\n案发后，被告人王某某于2014年8月4日被临湘市公安局抓获归案，并赔偿了被害人王某乙医药费等经济损失共计人民币50000元，被害人王某乙对被告人王某某表示谅解。\r\n上述事实，被告人王某某在开庭审理过程中亦无异议，并有证人李某某、王某丙、黄某某的证言、被害人王某乙的陈述、被告人王某某的供述和辩解、临湘市公安局法医鉴定意见书、线索来源及抓获经过、现场勘验、检查笔录及现场照片、调解协议书、临湘市忠防镇木形村委会出具的证明、被害人王某乙的谅解意见、收款收条、视听资料、户籍证明等证据证实，足以认定。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：36个月\n匹配原型：{\"prototype_id\": \"故意伤害罪-prototype-0\", \"charge\": \"故意伤害罪\", \"prototype_size\": 18, \"sentence_months\": {\"median\": 36.0, \"q25\": 24.0, \"q75\": 38.25, \"min\": 9.0, \"max\": 96.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=重伤\", \"z\": 4.229908779144486}, {\"feature\": \"num:serious_injury_count\", \"z\": 4.229908779144443}, {\"feature\": \"cat:injury_degree=重伤二级\", \"z\": 3.8219021986682136}, {\"feature\": \"cat:injury_degree=重伤\", \"z\": 1.4201266762286806}, {\"feature\": \"num:crime_amount\", \"z\": -1.181082234467661}, {\"feature\": \"cat:arrest_method=自首\", \"z\": 1.0441851275732448}, {\"feature\": \"bool:surrender\", \"z\": 1.011423265985623}, {\"feature\": \"cat:weapon_type=卡刀\", \"z\": 1.0027816465415866}], \"match_distance\": 0.2090534943522655}\n生成建议：匹配依据：待分析案件的核心特征“injury_result=重伤”“serious_injury_count=1.0”“injury_degree=重伤二级”与训练集原型“故意伤害罪-prototype-0”的关键定义特征（z值较高的伤情相关特征）高度匹配，匹配距离为0.209，表明两者特征相似度较高。统计区间：该原型包含18个案件，刑期中位数为36个月，四分位区间（Q25-Q75）为24.0-38.25个月，刑期范围为9.0-96.0个月。不确定性：待分析案件存在“全额赔偿”“被害人谅解”“被害人过错”等因素，但原型的定义特征中未突出体现这些因素的影响，可能导致实际刑期与原型统计区间存在差异。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad653d5eda9c29ac17a25",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议中明确指出了待分析案件与训练集原型之间的匹配依据，包括核心特征的匹配和匹配距离，显示了高度的匹配度。同时，提供了原型的统计区间，包括刑期中位数、四分位区间和刑期范围，这有助于理解可能的刑期分布。此外，建议中也提到了待分析案件中存在的其他因素，如全额赔偿、被害人谅解和被害人过错，这些因素在原型定义特征中未被突出体现，因此提出了实际刑期可能与原型统计区间存在差异的不确定性。最后，建议包含了明确的法律免责声明，强调了结果的分析教学用途，不构成法律意见或量刑承诺。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386579,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 213,
+        "prompt_tokens": 1056,
+        "total_tokens": 1269,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 213,
+      "prompt_tokens": 1056,
+      "total_tokens": 1269,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad653d5eda9c29ac17a25"
+  }
+}

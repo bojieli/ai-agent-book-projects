@@ -1,0 +1,149 @@
+{
+  "user_id": "default_user",
+  "type": "advanced_json_cards",
+  "updated_at": "2025-09-18T21:53:57.922717",
+  "categories": {
+    "financial": {
+      "bank_account_first_national_checking": {
+        "backstory": "User opened a Premium Checking account with First National Bank during a phone conversation",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "bank_name": "First National Bank",
+        "account_type": "Premium Checking",
+        "account_number": "4429853327",
+        "routing_number": "123006800",
+        "minimum_balance": 2500,
+        "interest_rate": "0.5% APY",
+        "benefits": [
+          "no monthly fees with minimum balance",
+          "free checks",
+          "free domestic wire transfers",
+          "0.5% APY on balance"
+        ],
+        "initial_deposit": 5000,
+        "debit_card": true,
+        "debit_card_pin": "4827",
+        "online_banking_username": "MRobertson503",
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.920563",
+          "updated_at": "2025-09-18T21:53:57.920569",
+          "source": "session-54cf7c3c"
+        }
+      },
+      "bank_account_first_national_savings": {
+        "backstory": "User opened a Basic Savings account alongside Premium Checking during the same conversation",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "bank_name": "First National Bank",
+        "account_type": "Basic Savings",
+        "account_number": "4429853328",
+        "minimum_balance": 100,
+        "initial_deposit": 500,
+        "auto_transfer": {
+          "amount": 200,
+          "frequency": "monthly",
+          "day": 15,
+          "from": "checking",
+          "to": "savings"
+        },
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.921206",
+          "updated_at": "2025-09-18T21:53:57.921208",
+          "source": "session-54cf7c3c"
+        }
+      },
+      "bank_account_wells_fargo": {
+        "backstory": "User provided Wells Fargo account details for initial deposit transfer",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "bank_name": "Wells Fargo",
+        "account_number": "8847293001",
+        "routing_number": "121000248",
+        "purpose": "funding new First National Bank accounts",
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.922292",
+          "updated_at": "2025-09-18T21:53:57.922293",
+          "source": "session-54cf7c3c"
+        }
+      }
+    },
+    "personal": {
+      "personal_info_michael": {
+        "backstory": "User provided personal information while opening bank accounts",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "full_name": "Michael James Robertson",
+        "date_of_birth": "1985-03-15",
+        "ssn": "547-82-9163",
+        "drivers_license": {
+          "state": "Oregon",
+          "number": "D758392"
+        },
+        "address": {
+          "street": "1847 Maple Street, Apartment 3B",
+          "city": "Portland",
+          "state": "Oregon",
+          "zip": "97205",
+          "years_at_address": 2.5
+        },
+        "phone": "503-555-8924",
+        "email": "mrobertson85@email.com",
+        "birth_city": "Denver, Colorado",
+        "mother_maiden_name": "Harrison",
+        "first_pet": "Buddy (golden retriever)",
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.921694",
+          "updated_at": "2025-09-18T21:53:57.921695",
+          "source": "session-54cf7c3c"
+        }
+      }
+    },
+    "employment": {
+      "employment_techcorp": {
+        "backstory": "User shared employment details during bank account opening process",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "employer": "TechCorp Industries",
+        "position": "Software Engineer",
+        "employment_status": "full-time",
+        "years_employed": 4,
+        "annual_income": 125000,
+        "direct_deposit_setup": true,
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.922018",
+          "updated_at": "2025-09-18T21:53:57.922019",
+          "source": "session-54cf7c3c"
+        }
+      }
+    },
+    "preferences": {
+      "banking_preferences": {
+        "backstory": "User expressed preferences during bank account setup conversation",
+        "date_created": "2024-12-19 10:00:00",
+        "person": "Michael James Robertson (primary)",
+        "relationship": "primary account holder",
+        "statement_preference": "electronic",
+        "check_design": "standard",
+        "international_travel": true,
+        "overdraft_protection": "linked to savings",
+        "atm_fee_reimbursement": true,
+        "foreign_transaction_fee": "3%",
+        "security_questions": [
+          "first pet name",
+          "birth city",
+          "mother's maiden name"
+        ],
+        "_metadata": {
+          "created_at": "2025-09-18T21:53:57.922667",
+          "updated_at": "2025-09-18T21:53:57.922668",
+          "source": "session-54cf7c3c"
+        }
+      }
+    }
+  }
+}

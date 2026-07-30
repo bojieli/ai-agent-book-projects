@@ -1,0 +1,463 @@
+{
+  "signature": "2f4a471edd75672f6e0b4036f78939757fb5466fda0ea1f2cae82dd7ff50ae8e",
+  "parsed": {
+    "cases": [
+      {
+        "id": "cail2018-03ec1fd756d00c80",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": true,
+            "criminal_record": null,
+            "arrest_method": null,
+            "return_of_stolen_property": "部分退赃",
+            "crime_count": 6,
+            "crime_amount": 89075,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 6
+          },
+          "extensions": {
+            "fraud_count": 6,
+            "fraud_amount": 89075,
+            "fraud_method": "代还信用卡",
+            "restitution_situation": "部分退赃",
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": "代还信用卡报酬",
+            "fraud_victim_count": 6,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-03f3d1fdc38a2ff8",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": "全额赔偿",
+            "victim_forgiveness": true,
+            "joint_crime": false,
+            "criminal_record": null,
+            "arrest_method": "被抓获",
+            "return_of_stolen_property": "全部退赃",
+            "crime_count": 2,
+            "crime_amount": 39522,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 2
+          },
+          "extensions": {
+            "fraud_count": 2,
+            "fraud_amount": 39522,
+            "fraud_method": "虚构事实",
+            "restitution_situation": "全部退赃",
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": 2,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-04d403558a8ae235",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": true,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": true,
+            "criminal_record": null,
+            "arrest_method": "自首",
+            "return_of_stolen_property": "全部退赃",
+            "crime_count": null,
+            "crime_amount": 10186.67,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": null
+          },
+          "extensions": {
+            "fraud_count": null,
+            "fraud_amount": 10186.67,
+            "fraud_method": "虚构事实",
+            "restitution_situation": "全部退赃",
+            "fraud_target": "国家财产",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": null,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-06c648918a2ddec4",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": false,
+            "criminal_record": null,
+            "arrest_method": null,
+            "return_of_stolen_property": null,
+            "crime_count": 18,
+            "crime_amount": 26332,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": null
+          },
+          "extensions": {
+            "fraud_count": 18,
+            "fraud_amount": 26332,
+            "fraud_method": "虚构事实",
+            "restitution_situation": null,
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": null,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-0741181d55823f6a",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": true,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": true,
+            "criminal_record": null,
+            "arrest_method": "自首",
+            "return_of_stolen_property": "部分退赃",
+            "crime_count": 1,
+            "crime_amount": 53230,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 1
+          },
+          "extensions": {
+            "fraud_count": 1,
+            "fraud_amount": 53230,
+            "fraud_method": "虚构投资",
+            "restitution_situation": "部分退赃",
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": "虚构交易平台",
+            "fraud_victim_count": 1,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-0d9b83ec668f8c35",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": true,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": false,
+            "criminal_record": true,
+            "arrest_method": "被抓获",
+            "return_of_stolen_property": null,
+            "crime_count": 1,
+            "crime_amount": 26000,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 1
+          },
+          "extensions": {
+            "fraud_count": 1,
+            "fraud_amount": 26000,
+            "fraud_method": "冒充身份",
+            "restitution_situation": null,
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": 1,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-0fe37342f76089b9",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": "全额赔偿",
+            "victim_forgiveness": true,
+            "joint_crime": true,
+            "criminal_record": null,
+            "arrest_method": "被抓获",
+            "return_of_stolen_property": "亲属代为退赃",
+            "crime_count": 3,
+            "crime_amount": 5100,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": "既遂+未遂",
+            "disposal_of_stolen_property": null,
+            "victim_count": 2
+          },
+          "extensions": {
+            "fraud_count": 3,
+            "fraud_amount": 5100,
+            "fraud_method": "虚构事实",
+            "restitution_situation": "全部退赃",
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": 2,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-11973519afc1ca9d",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": false,
+            "criminal_record": null,
+            "arrest_method": "被抓获",
+            "return_of_stolen_property": null,
+            "crime_count": 2,
+            "crime_amount": 18900,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 2
+          },
+          "extensions": {
+            "fraud_count": 2,
+            "fraud_amount": 18900,
+            "fraud_method": "虚构事实",
+            "restitution_situation": null,
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": 2,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-12035f27a4e1ff8f",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": false,
+            "criminal_record": null,
+            "arrest_method": null,
+            "return_of_stolen_property": null,
+            "crime_count": null,
+            "crime_amount": 41200.9,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": null
+          },
+          "extensions": {
+            "fraud_count": null,
+            "fraud_amount": 41200.9,
+            "fraud_method": "虚构事实",
+            "restitution_situation": null,
+            "fraud_target": "国家财产",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": null,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      },
+      {
+        "id": "cail2018-1551d12e12bdd920",
+        "charge": "诈骗罪",
+        "factors": {
+          "core": {
+            "surrender": null,
+            "truthful_confession": null,
+            "compensation_to_victim": null,
+            "victim_forgiveness": null,
+            "joint_crime": false,
+            "criminal_record": null,
+            "arrest_method": null,
+            "return_of_stolen_property": null,
+            "crime_count": 1,
+            "crime_amount": 22000,
+            "guilty_plea": null,
+            "first_offense": null,
+            "recidivism": null,
+            "criminal_form": null,
+            "disposal_of_stolen_property": null,
+            "victim_count": 2
+          },
+          "extensions": {
+            "fraud_count": 1,
+            "fraud_amount": 22000,
+            "fraud_method": "虚构事实",
+            "restitution_situation": null,
+            "fraud_target": "个人",
+            "proceeds_use": null,
+            "impersonate_identity": null,
+            "fraud_means": null,
+            "fraud_victim_count": 2,
+            "booty_squandered": null,
+            "fraud_middleman": null
+          }
+        }
+      }
+    ],
+    "extensions": {
+      "诈骗罪": {}
+    }
+  },
+  "receipt": {
+    "purpose": "3-13 modular extraction batch 30",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-29T21:43:42.376002+00:00",
+    "latency_ms": 154002.26,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法判例结构化抽取器。严格按给定的、由训练数据自下而上发现的 schema 抽取。\nnumeric 输出数值，bool 输出 true/false，categorical 取 schema 值；文本未提及必须为 null，不得推断。\n保持每个 id 与 charge。只返回 JSON：{\"cases\":[{\"id\":\"...\",\"charge\":\"...\",\"factors\":{...}},...]}。"
+        },
+        {
+          "role": "user",
+          "content": "DISCOVERED SCHEMA:\n{\"core\": [{\"key\": \"surrender\", \"name_cn\": \"自首\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否具有自首情节？\"}, {\"key\": \"truthful_confession\", \"name_cn\": \"如实供述\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否如实供述罪行？\"}, {\"key\": \"compensation_to_victim\", \"name_cn\": \"赔偿被害人损失\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"被告人对被害人损失的赔偿情况如何？\"}, {\"key\": \"victim_forgiveness\", \"name_cn\": \"被害人谅解\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否对被告人表示谅解？\"}, {\"key\": \"joint_crime\", \"name_cn\": \"共同犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否属于共同犯罪？\"}, {\"key\": \"criminal_record\", \"name_cn\": \"前科情况\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否有犯罪前科？\"}, {\"key\": \"arrest_method\", \"name_cn\": \"到案方式\", \"kind\": \"categorical\", \"values\": [\"被抓获\", \"传唤到案\", \"自首\", \"现场等待\"], \"direction\": \"neutral\", \"question\": \"被告人的到案方式是什么？\"}, {\"key\": \"return_of_stolen_property\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"被告人的退赃情况如何？\"}, {\"key\": \"crime_count\", \"name_cn\": \"犯罪次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人的犯罪次数是多少？\"}, {\"key\": \"crime_amount\", \"name_cn\": \"犯罪金额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"犯罪涉及的金额是多少？\"}, {\"key\": \"guilty_plea\", \"name_cn\": \"认罪态度\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否自愿认罪？\"}, {\"key\": \"first_offense\", \"name_cn\": \"初犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被告人是否为初犯？\"}, {\"key\": \"recidivism\", \"name_cn\": \"累犯\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否构成累犯？\"}, {\"key\": \"criminal_form\", \"name_cn\": \"犯罪形态\", \"kind\": \"categorical\", \"values\": [\"既遂\", \"未遂\", \"既遂+未遂\"], \"direction\": \"neutral\", \"question\": \"犯罪形态是既遂还是未遂？\"}, {\"key\": \"disposal_of_stolen_property\", \"name_cn\": \"赃款赃物处理情况\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"销赃牟利\", \"部分发还\", \"全部发还\"], \"direction\": \"neutral\", \"question\": \"赃款赃物的处理情况如何？\"}, {\"key\": \"victim_count\", \"name_cn\": \"被害人数量\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"本案涉及的被害人数量是多少？\"}], \"extensions\": {\"盗窃罪\": [{\"key\": \"theft_count\", \"name_cn\": \"盗窃次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃次数是多少？\"}, {\"key\": \"theft_amount\", \"name_cn\": \"盗窃数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"盗窃数额是多少？\"}, {\"key\": \"household_theft\", \"name_cn\": \"入户盗窃\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否属于入户盗窃？\"}, {\"key\": \"stolen_property_recovery\", \"name_cn\": \"赃物追回情况\", \"kind\": \"categorical\", \"values\": [\"全部追回\", \"部分追回\", \"未追回\"], \"direction\": \"mitigating\", \"question\": \"赃物追回情况如何？\"}, {\"key\": \"destructive_means\", \"name_cn\": \"破坏性手段\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否采用破坏性手段盗窃？\"}, {\"key\": \"use_special_convenience\", \"name_cn\": \"利用特殊便利\", \"kind\": \"categorical\", \"values\": [\"钥匙\", \"工作便利\", \"无\"], \"direction\": \"aggravating\", \"question\": \"是否利用特殊便利实施盗窃？\"}, {\"key\": \"theft_method\", \"name_cn\": \"盗窃方式\", \"kind\": \"categorical\", \"values\": [\"扒窃\", \"入户盗窃\", \"趁人不备\", \"撬锁\", \"爬窗\", \"顺手牵羊\"], \"direction\": \"aggravating\", \"question\": \"盗窃方式是什么？\"}, {\"key\": \"theft_target\", \"name_cn\": \"盗窃对象\", \"kind\": \"categorical\", \"values\": [\"手机\", \"现金\", \"电脑\", \"电动车\", \"首饰\", \"食品\"], \"direction\": \"neutral\", \"question\": \"盗窃对象是什么？\"}, {\"key\": \"theft_tool\", \"name_cn\": \"盗窃工具\", \"kind\": \"categorical\", \"values\": [\"螺丝刀\", \"老虎钳\", \"撬棍\", \"镊子\", \"钥匙\", \"徒手\"], \"direction\": \"aggravating\", \"question\": \"使用的盗窃工具是什么？\"}, {\"key\": \"theft_location\", \"name_cn\": \"盗窃场所\", \"kind\": \"categorical\", \"values\": [\"户内\", \"公共场所\", \"网吧\", \"超市\", \"户外\"], \"direction\": \"neutral\", \"question\": \"盗窃场所是什么？\"}, {\"key\": \"stolen_property_disposal\", \"name_cn\": \"赃物处理方式\", \"kind\": \"categorical\", \"values\": [\"变卖挥霍\", \"藏匿\", \"返还被害人\"], \"direction\": \"aggravating\", \"question\": \"赃物处理方式是什么？\"}, {\"key\": \"drug_user_identity\", \"name_cn\": \"吸毒人员身份\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"被告人是否为吸毒人员？\"}], \"故意伤害罪\": [{\"key\": \"injury_degree\", \"name_cn\": \"损伤程度\", \"kind\": \"categorical\", \"values\": [\"轻伤一级\", \"轻伤二级\", \"重伤二级\", \"轻微伤\", \"重伤一级\"], \"direction\": \"aggravating\", \"question\": \"被害人损伤程度是什么？\"}, {\"key\": \"weapon_type\", \"name_cn\": \"伤害工具\", \"kind\": \"categorical\", \"values\": [\"菜刀\", \"木棍\", \"尖刀\", \"拳头\", \"铁棍\", \"U型锁\", \"铁锹\", \"酒瓶\"], \"direction\": \"aggravating\", \"question\": \"使用的伤害工具是什么？\"}, {\"key\": \"criminal_cause\", \"name_cn\": \"犯罪起因\", \"kind\": \"categorical\", \"values\": [\"琐事争执\", \"债务纠纷\", \"感情纠纷\", \"邻里矛盾\", \"被害人过错\", \"工作纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪起因是什么？\"}, {\"key\": \"community_correction_eligibility\", \"name_cn\": \"社区矫正评估\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"是否具备社区矫正条件？\"}, {\"key\": \"victim_fault\", \"name_cn\": \"被害人过错\", \"kind\": \"bool\", \"values\": [], \"direction\": \"mitigating\", \"question\": \"被害人是否存在过错？\"}, {\"key\": \"compensation_status\", \"name_cn\": \"赔偿情况\", \"kind\": \"categorical\", \"values\": [\"未赔偿\", \"部分赔偿\", \"全额赔偿\"], \"direction\": \"mitigating\", \"question\": \"赔偿情况如何？\"}, {\"key\": \"mutual_fight\", \"name_cn\": \"互殴情节\", \"kind\": \"bool\", \"values\": [], \"direction\": \"neutral\", \"question\": \"是否存在互殴情节？\"}, {\"key\": \"injury_result\", \"name_cn\": \"伤害后果\", \"kind\": \"categorical\", \"values\": [\"轻伤\", \"重伤\", \"轻微伤\", \"死亡\"], \"direction\": \"aggravating\", \"question\": \"伤害后果是什么？\"}, {\"key\": \"criminal_motive\", \"name_cn\": \"犯罪动机\", \"kind\": \"categorical\", \"values\": [\"报复\", \"琐事\", \"感情纠纷\", \"债务纠纷\", \"征地纠纷\"], \"direction\": \"neutral\", \"question\": \"犯罪动机是什么？\"}, {\"key\": \"drunk_crime\", \"name_cn\": \"酒后犯罪\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否酒后犯罪？\"}, {\"key\": \"minor_injury_count\", \"name_cn\": \"轻伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"轻伤人数是多少？\"}, {\"key\": \"serious_injury_count\", \"name_cn\": \"重伤人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"重伤人数是多少？\"}], \"诈骗罪\": [{\"key\": \"fraud_count\", \"name_cn\": \"诈骗次数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗次数是多少？\"}, {\"key\": \"fraud_amount\", \"name_cn\": \"诈骗数额\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗数额是多少？\"}, {\"key\": \"fraud_method\", \"name_cn\": \"诈骗手段\", \"kind\": \"categorical\", \"values\": [\"虚构事实\", \"伪造证件\", \"冒充身份\", \"网络诈骗\", \"代还信用卡\", \"虚构投资\"], \"direction\": \"aggravating\", \"question\": \"诈骗手段是什么？\"}, {\"key\": \"restitution_situation\", \"name_cn\": \"退赃情况\", \"kind\": \"categorical\", \"values\": [\"全部退赃\", \"部分退赃\", \"未退赃\", \"亲属代为退赃\"], \"direction\": \"mitigating\", \"question\": \"退赃情况如何？\"}, {\"key\": \"fraud_target\", \"name_cn\": \"诈骗对象\", \"kind\": \"categorical\", \"values\": [\"个人\", \"老年人\", \"国家财产\", \"金融机构\", \"亲友\"], \"direction\": \"aggravating\", \"question\": \"诈骗对象是什么？\"}, {\"key\": \"proceeds_use\", \"name_cn\": \"赃款用途\", \"kind\": \"categorical\", \"values\": [\"挥霍\", \"偿还赌债\", \"日常生活\", \"业务经营\"], \"direction\": \"aggravating\", \"question\": \"赃款用途是什么？\"}, {\"key\": \"impersonate_identity\", \"name_cn\": \"冒充身份\", \"kind\": \"categorical\", \"values\": [\"国家机关工作人员\", \"公司经理\", \"驾校人员\", \"民警\"], \"direction\": \"aggravating\", \"question\": \"冒充的身份是什么？\"}, {\"key\": \"fraud_means\", \"name_cn\": \"诈骗方式\", \"kind\": \"categorical\", \"values\": [\"虚构交易平台\", \"伪造合同\", \"虚假贷款\", \"代还信用卡报酬\", \"丢包诈骗\"], \"direction\": \"aggravating\", \"question\": \"具体诈骗方式是什么？\"}, {\"key\": \"fraud_victim_count\", \"name_cn\": \"诈骗被害人人数\", \"kind\": \"numeric\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"诈骗被害人人数是多少？\"}, {\"key\": \"booty_squandered\", \"name_cn\": \"赃款挥霍\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"赃款是否被挥霍？\"}, {\"key\": \"fraud_middleman\", \"name_cn\": \"存在中间人\", \"kind\": \"bool\", \"values\": [], \"direction\": \"aggravating\", \"question\": \"是否存在中间人？\"}]}}\n\nCASES:\n[{\"id\": \"cail2018-03ec1fd756d00c80\", \"charge\": \"诈骗罪\", \"fact\": \"焦作市马村区人民检察院指控：\\r\\n1、2014年1月份的一天中午12时许，被告人赵某某同李某某（别案处理）经预谋，由赵某某联系到被害人王某代还信用卡的20000余元，并有好处费，由赵某某将信用卡交给王某，次日王某给该卡代还了20000元后，随即将20000元刷出时，李某某立即将该卡密码修改，致使王某有13800元未能刷出。事后赵某某分得1000元。\\r\\n2、2014年4月22日下午2时许，被告人赵某某同李某某经预谋，由赵某某联系到被害人牛某甲代还信用卡的16000元，并有好处费，二人一起将信用卡交给牛某甲，次日牛某甲给该卡代还了16000元后，李某某立即将该卡密码修改，致使牛某甲未能将16000元刷出。事后赵某某分得2800元。\\r\\n3、2014年6月20日14时许，被告人赵某某同李某某经预谋，由李某某联系到被害人刘某代还信用卡的20000元，并有好处费，由赵某某将信用卡交给刘某，当日刘某给该卡代还了20000元后，李某某立即将该卡密码修改，致使刘某未能将20000元刷出。事后赵某某分得10000元。\\r\\n4、被告人赵某某为了还秦某的7000元钱，就提议让秦某拿一张透支的信用卡，然后找人代还，等对方将钱代还上后，让秦某将密码修改，再把钱取出还给秦某。2014年5月28日下午，赵某某将秦某提供的信用卡交给被害人侯某代还信用卡的20000元，并有好处费，侯某给该卡代还了20000元后，随即将20000元刷出时，秦某立即将信用卡密码修改，致使侯某有6375元未能刷出。事后因侯某向赵某某追要剩下的6375元，赵某某和秦某已全部退还给了侯某。\\r\\n5、2014年9月18日15时许，被告人赵某某同李某某经预谋，由赵某某联系到被害人牛某乙代还信用卡的20000元，并有好处费，由赵某某将信用卡交给牛某乙，次日牛某乙给该卡代还了20000元后，李某某立即将该卡密码修改，致使牛某乙未能将20000元刷出。事后赵某某分得10000元。\\r\\n6、2014年9月份的一天下午，被告人赵某某同李某某经预谋，由赵某某联系到被害人方某代还信用卡的15000元，并有好处费，由赵某某将信用卡交给方某，当日方中华给该卡代还了15000元后，随即将15000元刷出时，李某某立即将该卡密码修改，致使方某有12900元未能刷出。事后赵某某分得1000元。\\r\\n综上，被告人赵某某共参与作案6起，诈骗金额89075元，分得赃款31175元。\"}, {\"id\": \"cail2018-03f3d1fdc38a2ff8\", \"charge\": \"诈骗罪\", \"fact\": \"温州市龙湾区人民检察院指控：1、2017年1月13日17时许，被告人董某以非法占有为目的，以出售维卡币激活码为由，骗取被害人冀某2通过微信及支付宝转账的人民币30000元，随后董某将冀某2的微信拉黑并更换自己的手机号码。\\r\\n2、2017年2月26日22时许，被告人董某以非法占有为目的，以出售维卡币激活码为由，采用发送失效的维卡币激活码的方式，骗取被害人徐某通过微信转账的人民币9522元，随后董某将徐某的微信拉黑。\\r\\n同年3月21日，公安机关将被告人董某抓获归案，并扣押作案工具手机一部。案发后，董某已赔偿被害人冀某2、徐某的全部经济损失，并与冀某2达成调解协议，冀某2对董某的行为表示谅解。\"}, {\"id\": \"cail2018-04d403558a8ae235\", \"charge\": \"诈骗罪\", \"fact\": \"瑞丽市人民检察院指控，被告人王某某与其丈夫朱某某在瑞丽市畹町镇经营原“畹町某某百货店”（现为畹町某某专卖店），主营日用百货、家用电器等，于2009年3月份向原瑞丽市畹町经济开发区商务局（现为瑞丽市畹町经济开发区招商引资和对外经济合作办公室）进行备案登记后，取得家电下乡产品销售资格，成为畹町片区家电下乡产品销售网点××，主要销售家电下乡产品“英科玛”、“长虹”“海尔”品牌太阳能热水器。根据云南省财政厅云某（2009）324号文件规定，云南省家电下乡补贴方式原则上采取第（三）种方式，即销售网点代办申领、乡镇财政所审核确认并兑付的方式。又根据国家财政部财建（2009）458号文件规定，在该种方式下销售网点需履行审核农民身份，并将相关信息录入计算机专门系统，而后将相关申领补贴资料整理汇总提交给乡镇财政所的职责。在与瑞丽市畹町经济开发区财政局签订的协议中，明确约定畹町某某百货店代办补贴资金申领手续，审核购买人身份，并先行垫付补贴资金，后再到财政部门办理结算手续。自2011年11月份至2013年1月份期间，被告人王某某在销售家电下乡产品过程中，冒用17户农户的户口信息，先后虚报了22台太阳能热水器的销售数量，共骗取国家家电下乡补贴资金10186.67元人民币。公诉机关并向法庭提交了书证，证人证言，被告人供述和辩解等证据，据此认为被告人王某某的行为触犯了《中华人民共和国刑法》××、三百八十三条××第三项的规定，应当以贪污罪追究其刑事责任。鉴于被告人王某某在未被采取强制措施前，主动交代自己的犯罪事实，是自首，并积极退赃，可以从轻或减轻处罚。提请本院依法判处。\"}, {\"id\": \"cail2018-06c648918a2ddec4\", \"charge\": \"诈骗罪\", \"fact\": \"武宁县人民检察院指控：2016年8月至2017年2月19日，被告人张某在武某县、永修县等地，以电子转账换取现金为由，通过制作假转账记录并截图的方式，诈骗18次，骗取财物价值共计26332元。\\r\\n公诉机关针对指控事实，向法庭出示了物证、书证、证人证言、被害人陈述、被告人供述、鉴定意见、现场指认笔录及照片、辨认笔录及照片等证据。\\r\\n公诉机关认为，被告人张某以非法占有为目的，骗取他人财物，数额较大，其行为已触犯《中华人民共和国刑法》××，犯罪事实清楚，证据确实、充分，应当以××追究其刑事责任。提请本院依法判处。\"}, {\"id\": \"cail2018-0741181d55823f6a\", \"charge\": \"诈骗罪\", \"fact\": \"公诉机关指控：\\r\\n樊某、秦某（均已判刑）于2013年12月20日在深圳市注册成立深圳市银兴通投资咨询有限公司，后联系潘某（已判刑）公司租用MT4交易软件及相关插件，由潘某安排人员帮助制作网站和搭建第三方支付接口等服务，虚构“天瑞大宗商品”交易平台。2014年5、6月份，被告人刘1某通过周某（已判刑）介绍成为天瑞平台代理商，并约定刘1某拿客户亏损金和手续费的65%，周某拿5%，樊某、秦某拿30%。同年6月份，被告人刘1某通过电话联系到被害人林某，让其入金炒黑茶，先让其在前期操作赢利，骗取其的信任。同年7月底，被告人刘1某在周某的指令下，对林某谎称有大行情让其满仓炒黑茶，后樊某、秦某通过后台人为控制，将林某所购的黑茶强制平仓，从而骗得林某人民币53230元。按约定比例，被告人刘1某分得人民币34600元。\\r\\n2016年9月12日，被告人刘1某自动到公安机关投案，并如实供述自己的犯罪事实，并退回赃款32000元。\"}, {\"id\": \"cail2018-0d9b83ec668f8c35\", \"charge\": \"诈骗罪\", \"fact\": \"公诉机关指控：2016年10月15日，被告人叶某冒用汪某身份信息在安顺市“A汽车租赁公司”租得一辆车牌号为贵Ｇ×××××雪弗兰轿车，后又冒用汪某身份信息办理该车行驶证、发票等假证，同月17日，被告人以急用钱为由，将该车质押给被害人徐某，骗得徐某人民币26000元。2017年1月9日，被告人叶某在镇宁自治县城关镇被公安民警抓获归案。认为被告人叶某具有坦白、犯罪前科等量刑情节。认定的证据有：借条，机动车行驶证、销售发票、注册登记信息，公安人口信息，判决书及释放证明，到案经过，证人王某、魏某等证言，被害人徐某陈述，被告人叶某供述等。建议以××对被告人叶某在××至一年半内判处。\"}, {\"id\": \"cail2018-0fe37342f76089b9\", \"charge\": \"诈骗罪\", \"fact\": \"仙游县人民检察院指控：\\r\\n1、2013年6月28日上午，被告人陈某伙同“小严”、“红坤”（主体身份不清）在仙游县赖店镇翁母石利用“买卖蛇胆”的方式骗走被害人陈某某300元（人民币，下同）。案发后，被告人陈某家属退还该300元给被害人陈某某，并取得谅解。\\r\\n2、2013年6月初的一天上午，被告人陈某伙同“小严”、“红坤”在仙游县鲤城街道大济法庭附近利用“买卖蛇胆”的方式骗走被害人郑某甲4800元。案发后，被告人陈某家属退还该4800元给被害人郑某甲，并取得谅解。\\r\\n3、2013年7月7日上午，被告人陈某伙同“小严”、“红坤”在仙游县赖店镇锦田村柴桥头利用“买卖蛇胆”的方式欲诈骗被害人傅某甲时，被傅某甲当场抓获并扭送到赖店镇派出所。\"}, {\"id\": \"cail2018-11973519afc1ca9d\", \"charge\": \"诈骗罪\", \"fact\": \"公诉机关指控：2013年4月10日，被告人陈某到福安市城南街道南湖花园被害人冯某经营的闽东农特产店，谎称替老板购买中华香烟，以赊账的形式，先后三次从冯某处骗取软盒中华香烟13条，共计价值8900元。2013年6月27日，被告人陈某被冯某遇到，因无力偿还上述烟款，其遂通过电话联系被害人郑某，谎称原先协议合作的二手车转让生意已经谈妥，又从郑某处骗取投资款10000元，而后，被告人陈某将其中的8900元偿还给被害人冯某。\\r\\n2014年4月11日，被告人陈某在福安市城南后巷被福安市公安局抓获归案。\"}, {\"id\": \"cail2018-12035f27a4e1ff8f\", \"charge\": \"诈骗罪\", \"fact\": \"公诉机关指控，2009年底至2012年2月，被告人马某某利用受宝鸡市渭滨区家电下乡工作领导小组办公室委托，审核家电下乡产品农户资料的职务之便，套取国家家电下乡补贴资金41200.9元。\\r\\n对指控事实，公诉机关提供案件来源、到案经过、户籍证明、超浦太阳能经营部工商资料、家电下乡代理审核协议书及相关文件、实施方案、情况说明、资金汇划凭证、汇总表、已兑付补贴资金申报表、扣押物品清单、相关证明及立案决定书等书证，证人马某生、白某某等114名证人的证言，被告人马某某的供述与辩解等证据予以证明。故依据《中华人民共和国刑法》××××之规定，指控被告人马某某犯贪污罪，并认定其有立功情节，提请本院依法惩处。\"}, {\"id\": \"cail2018-1551d12e12bdd920\", \"charge\": \"诈骗罪\", \"fact\": \"浙江省象山县人民检察院指控，2011年12月24日晚，被告人余某利用担任象山县丹东街道的四季佳丽酒店前台经理的职务便利，挪用了该酒店的备用金人民币20000元。同年12月26日，该酒店发现了被告人余某挪用备用金人民币20000元，并要求被告人余某归还该备用金，但被告人余某无力归还。后被告人余某为归还所挪用的备用金而向被害人施某谎称该酒店某客人欲以人民币22000元的价格转让价值人民币24000元的该酒店消费卡1张，被告人余某欲将该张消费卡转让给被害人施某，并表示愿意向被害人施某支付好处费人民币1000元。被害人施某信以为真将此事告知被害人顾某并询问被害人顾某是否购买，被害人顾某表示愿意购买，被害人施某、顾某遂将人民币22000元交给被告人余某用于购买该张消费卡。被告人余某收取上述款项后将其中人民币1000元作为好处费支付给被害人施某、其中人民币20000元用于归还该酒店，并于次日逃离象山。\"}]"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 6000,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785361422606ee491e000af4266cf5087875543b3cd6ae0230",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"cases\":[{\"id\":\"cail2018-03ec1fd756d00c80\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":true,\"criminal_record\":null,\"arrest_method\":null,\"return_of_stolen_property\":\"部分退赃\",\"crime_count\":6,\"crime_amount\":89075,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":6},\"extensions\":{\"fraud_count\":6,\"fraud_amount\":89075,\"fraud_method\":\"代还信用卡\",\"restitution_situation\":\"部分退赃\",\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":\"代还信用卡报酬\",\"fraud_victim_count\":6,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-03f3d1fdc38a2ff8\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":\"全额赔偿\",\"victim_forgiveness\":true,\"joint_crime\":false,\"criminal_record\":null,\"arrest_method\":\"被抓获\",\"return_of_stolen_property\":\"全部退赃\",\"crime_count\":2,\"crime_amount\":39522,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":2},\"extensions\":{\"fraud_count\":2,\"fraud_amount\":39522,\"fraud_method\":\"虚构事实\",\"restitution_situation\":\"全部退赃\",\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":2,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-04d403558a8ae235\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":true,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":true,\"criminal_record\":null,\"arrest_method\":\"自首\",\"return_of_stolen_property\":\"全部退赃\",\"crime_count\":null,\"crime_amount\":10186.67,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":null},\"extensions\":{\"fraud_count\":null,\"fraud_amount\":10186.67,\"fraud_method\":\"虚构事实\",\"restitution_situation\":\"全部退赃\",\"fraud_target\":\"国家财产\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":null,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-06c648918a2ddec4\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":false,\"criminal_record\":null,\"arrest_method\":null,\"return_of_stolen_property\":null,\"crime_count\":18,\"crime_amount\":26332,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":null},\"extensions\":{\"fraud_count\":18,\"fraud_amount\":26332,\"fraud_method\":\"虚构事实\",\"restitution_situation\":null,\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":null,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-0741181d55823f6a\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":true,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":true,\"criminal_record\":null,\"arrest_method\":\"自首\",\"return_of_stolen_property\":\"部分退赃\",\"crime_count\":1,\"crime_amount\":53230,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":1},\"extensions\":{\"fraud_count\":1,\"fraud_amount\":53230,\"fraud_method\":\"虚构投资\",\"restitution_situation\":\"部分退赃\",\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":\"虚构交易平台\",\"fraud_victim_count\":1,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-0d9b83ec668f8c35\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":true,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":false,\"criminal_record\":true,\"arrest_method\":\"被抓获\",\"return_of_stolen_property\":null,\"crime_count\":1,\"crime_amount\":26000,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":1},\"extensions\":{\"fraud_count\":1,\"fraud_amount\":26000,\"fraud_method\":\"冒充身份\",\"restitution_situation\":null,\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":1,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-0fe37342f76089b9\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":\"全额赔偿\",\"victim_forgiveness\":true,\"joint_crime\":true,\"criminal_record\":null,\"arrest_method\":\"被抓获\",\"return_of_stolen_property\":\"亲属代为退赃\",\"crime_count\":3,\"crime_amount\":5100,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":\"既遂+未遂\",\"disposal_of_stolen_property\":null,\"victim_count\":2},\"extensions\":{\"fraud_count\":3,\"fraud_amount\":5100,\"fraud_method\":\"虚构事实\",\"restitution_situation\":\"全部退赃\",\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":2,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-11973519afc1ca9d\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":false,\"criminal_record\":null,\"arrest_method\":\"被抓获\",\"return_of_stolen_property\":null,\"crime_count\":2,\"crime_amount\":18900,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":2},\"extensions\":{\"fraud_count\":2,\"fraud_amount\":18900,\"fraud_method\":\"虚构事实\",\"restitution_situation\":null,\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":2,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-12035f27a4e1ff8f\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":false,\"criminal_record\":null,\"arrest_method\":null,\"return_of_stolen_property\":null,\"crime_count\":null,\"crime_amount\":41200.9,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":null},\"extensions\":{\"fraud_count\":null,\"fraud_amount\":41200.9,\"fraud_method\":\"虚构事实\",\"restitution_situation\":null,\"fraud_target\":\"国家财产\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":null,\"booty_squandered\":null,\"fraud_middleman\":null}}},{\"id\":\"cail2018-1551d12e12bdd920\",\"charge\":\"诈骗罪\",\"factors\":{\"core\":{\"surrender\":null,\"truthful_confession\":null,\"compensation_to_victim\":null,\"victim_forgiveness\":null,\"joint_crime\":false,\"criminal_record\":null,\"arrest_method\":null,\"return_of_stolen_property\":null,\"crime_count\":1,\"crime_amount\":22000,\"guilty_plea\":null,\"first_offense\":null,\"recidivism\":null,\"criminal_form\":null,\"disposal_of_stolen_property\":null,\"victim_count\":2},\"extensions\":{\"fraud_count\":1,\"fraud_amount\":22000,\"fraud_method\":\"虚构事实\",\"restitution_situation\":null,\"fraud_target\":\"个人\",\"proceeds_use\":null,\"impersonate_identity\":null,\"fraud_means\":null,\"fraud_victim_count\":2,\"booty_squandered\":null,\"fraud_middleman\":null}}}],\"extensions\":{\"诈骗罪\":{}}}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户提供的司法判例结构化抽取任务。首先，我需要仔细理解用户的要求：严格按照给定的schema抽取，每个字段如果文本未提及必须为null，不能推断，并且只返回指定格式的JSON。schema分为core和extensions，extensions下有不同罪名的特定字段，这里所有case的charge都是“诈骗罪”，所以需要关注core和extensions中的“诈骗罪”部分。\n\n首先，逐个处理每个case，先看id和charge，然后针对每个case的fact部分，对照schema中的core和诈骗罪extensions的字段进行抽取。\n\n第一个case：id是cail2018-03ec1fd756d00c80，charge是诈骗罪。fact部分描述了6起作案，诈骗金额89075元。\n\n先处理core部分的字段：\n\n- surrender（自首）：fact中未提及自首，null。\n- truthful_confession（如实供述）：未提及，null。\n- compensation_to_victim（赔偿被害人损失）：未提及赔偿，null。\n- victim_forgiveness（被害人谅解）：未提及，null。\n- joint_crime（共同犯罪）：fact中提到“同李某某（别案处理）经预谋”，“伙同”表明是共同犯罪，所以joint_crime为true。\n- criminal_record（前科情况）：未提及前科，null。\n- arrest_method（到案方式）：未提及到案方式，null。\n- return_of_stolen_property（退赃情况）：core中的退赃情况，fact中第4起提到“赵某某和秦某已全部退还给了侯某”，但core的return_of_stolen_property是categorical，values包括“全部退赃”等，但这里是部分退赃还是全部？整个案件共诈骗89075元，第4起退了6375元，其他未提，所以整体退赃情况可能是部分退赃？但需要看是否明确。fact中“综上，被告人赵某某共参与作案6起，诈骗金额89075元，分得赃款31175元。”只提到第4起退了6375元，其他未退，所以return_of_stolen_property应为“部分退赃”？\n- crime_count（犯罪次数）：fact明确“共参与作案6起”，所以crime_count是6（numeric）。\n- crime_amount（犯罪金额）：“诈骗金额89075元”，所以crime_amount是89075。\n- guilty_plea（认罪态度）：未提及是否自愿认罪，null。\n- first_offense（初犯）：未提及，null。\n- recidivism（累犯）：未提及，null。\n- criminal_form（犯罪形态）：未提及既遂未遂，null。\n- disposal_of_stolen_property（赃款赃物处理情况）：core中的这个字段values是“挥霍”等，fact中未提及处理情况，null。\n- victim_count（被害人数量）：每起作案有一个被害人（王某、牛某甲、刘某、侯某、牛某乙、方某），共6个，所以victim_count是6。\n\n然后是extensions中的诈骗罪字段：\n\n- fraud_count（诈骗次数）：core中的crime_count已经是6，诈骗罪的fraud_count也是次数，这里fact明确6起，所以fraud_count是6。\n- fraud_amount（诈骗数额）：core中的crime_amount是89075，诈骗罪的fraud_amount也是诈骗数额，所以fraud_amount是89075。\n- fraud_method（诈骗手段）：诈骗罪extensions中的fraud_method是categorical，values包括“代还信用卡”等，fact中每次作案都是“联系到被害人...代还信用卡...修改密码致使未能刷出”，属于“代还信用卡”，所以fraud_method是“代还信用卡”。\n- restitution_situation（退赃情况）：诈骗罪extensions中的restitution_situation，values包括“全部退赃”等，和core的return_of_stolen_property可能重复，但需要看schema，core的return_of_stolen_property是“退赃情况”，诈骗罪的restitution_situation也是“退赃情况”，可能需要确认是否都要填。fact中第4起退了6375元，整体是部分退赃，所以restitution_situation应为“部分退赃”。\n- fraud_target（诈骗对象）：values是“个人”等，fact中的被害人都是王某、牛某甲等人，属于个人，所以fraud_target是“个人”。\n- proceeds_use（赃款用途）：未提及赃款用途，null。\n- impersonate_identity（冒充身份）：未提及冒充身份，null。\n- fraud_means（诈骗方式）：诈骗罪extensions的fraud_means，values包括“代还信用卡报酬”等，fact中作案方式是让人代还信用卡，有好处费，所以属于“代还信用卡报酬”？fact中提到“并有好处费”，所以fraud_means是“代还信用卡报酬”。\n- fraud_victim_count（诈骗被害人人数）：每起一个被害人，共6人，所以是6。\n- booty_squandered（赃款挥霍）：未提及是否挥霍，null。\n- fraud_middleman（存在中间人）：fact中提到“同李某某”，但李某某是共犯，不是中间人，未提及中间人，所以null。\n\n接下来第二个case：id=cail2018-03f3d1fdc38a2ff8，charge=诈骗罪。fact中两起作案，骗了冀某2 30000元，徐某9522元，“公安机关将被告人董某抓获归案”，“董某已赔偿被害人冀某2、徐某的全部经济损失，并与冀某2达成调解协议，冀某2对董某的行为表示谅解。”\n\ncore部分：\n\n- joint_crime：fact中未提及伙同他人，都是“被告人董某以...”，所以joint_crime是false？\n- arrest_method：“公安机关将被告人董某抓获归案”，所以arrest_method是“被抓获”（categorical values中的“被抓获”）。\n- return_of_stolen_property：core的退赃情况，fact中“已赔偿全部经济损失”，赔偿是否等于退赃？core的return_of_stolen_property是“退赃情况”，而compensation_to_victim是“赔偿被害人损失”。这里赔偿了全部经济损失，所以compensation_to_victim应为“全额赔偿”（core的compensation_to_victim values是“未赔偿”“部分赔偿”“全额赔偿”）。return_of_stolen_property可能也是“全部退赃”？但需要看是否是退赃还是赔偿。诈骗的话，赔偿损失可能等同于退赃，所以return_of_stolen_property是“全部退赃”，compensation_to_victim是“全额赔偿”。\n- victim_forgiveness：“冀某2对董某的行为表示谅解”，所以victim_forgiveness是true。\n- crime_count：作案2起，crime_count=2。\n- crime_amount：30000+9522=39522元，crime_amount=39522。\n- joint_crime：未提及伙同，所以false。\n-其他core字段如surrender等未提及，null。\n\n诈骗罪extensions：\n\n- fraud_count：作案2起，所以2。\n- fraud_amount：39522。\n- fraud_method：“以出售维卡币激活码为由”，属于“虚构事实”（fraud_method的values有“虚构事实”）。\n- restitution_situation：“已赔偿全部经济损失”，所以“全部退赃”。\n- fraud_target：被害人是冀某2、徐某，属于个人，所以“个人”。\n- fraud_victim_count：2人。\n-其他如proceeds_use等未提及，null。\n\n第三个case：id=cail2018-04d403558a8ae235，charge=诈骗罪。fact中被告人王某某与其丈夫朱某某经营商店，取得家电下乡资格，虚报骗取补贴10186.67元。“鉴于被告人王某某在未被采取强制措施前，主动交代自己的犯罪事实，是自首，并积极退赃”。\n\ncore部分：\n\n- surrender：明确“是自首”，所以surrender=true。\n- return_of_stolen_property：“积极退赃”，core的退赃情况values有“全部退赃”等，这里未明确是否全部，但“积极退赃”可能视为全部退赃？或者需要明确。fact中诈骗金额10186.67元，“积极退赃”可能是全部，所以return_of_stolen_property=“全部退赃”。\n- joint_crime：“与其丈夫朱某某”经营，共同作案？fact中“被告人王某某与其丈夫朱某某在瑞丽市畹町镇经营”，并共同实施虚报行为，所以joint_crime=true。\n- crime_count：未提及作案次数，只说“自2011年11月份至2013年1月份期间，冒用17户农户的户口信息，先后虚报了22台”，这里犯罪次数是1次还是多次？core的crime_count是犯罪次数，这里可能是多次虚报，但fact未明确“作案X起”，只说期间虚报22台，可能crime_count视为1次（持续行为）？或者需要看是否明确次数，fact中没有“作案X起”，所以crime_count可能无法确定，null？\n- crime_amount：“骗取国家家电下乡补贴资金10186.67元人民币”，所以crime_amount=10186.67（numeric，保留原数值）。\n- arrest_method：未提及到案方式，但提到“未被采取强制措施前，主动交代”，可能到案方式是自首？但arrest_method的values有“自首”，所以arrest_method=“自首”。\n-其他字段如compensation_to_victim：国家是被害人？这里赔偿对象是国家，compensation_to_victim可能不适用，null；victim_forgiveness：国家作为被害人，不存在谅解，null。\n\n诈骗罪extensions：\n\n- fraud_count：未明确作案次数，只说期间虚报22台，可能次数不明确，null。\n- fraud_amount：10186.67。\n- fraud_method：虚报补贴，属于“虚构事实”（fraud_method values有“虚构事实”）。\n- restitution_situation：“积极退赃”，所以“全部退赃”。\n- fraud_target：“国家财产”（fraud_target values有“国家财产”）。\n-其他字段如proceeds_use等未提及，null。\n\n第四个case：id=cail2018-06c648918a2ddec4，charge=诈骗罪。fact：“2016年8月至2017年2月19日，被告人张某在武某县、永修县等地，以电子转账换取现金为由，通过制作假转账记录并截图的方式，诈骗18次，骗取财物价值共计26332元。”\n\ncore部分：\n\n- joint_crime：未提及伙同，false。\n- crime_count：“诈骗18次”，所以crime_count=18。\n- crime_amount：26332。\n-其他如arrest_method等未提及，null。\n\n诈骗罪extensions：\n\n- fraud_count：18。\n- fraud_amount：26332。\n- fraud_method：“制作假转账记录并截图的方式”，属于“虚构事实”。\n- fraud_victim_count：未提及被害人数量，只说18次，可能每个次一个被害人？但未明确人数，null。\n-其他未提及，null。\n\n第五个case：id=cail2018-0741181d55823f6a，charge=诈骗罪。fact：刘1某通过周某介绍成为代理商，骗林某53230元，“2016年9月12日，被告人刘1某自动到公安机关投案，并如实供述自己的犯罪事实，并退回赃款32000元。”\n\ncore部分：\n\n- surrender：“自动到公安机关投案，并如实供述”，所以surrender=true。\n- truthful_confession：“如实供述”，所以true。\n- joint_crime：“通过周某（已判刑）介绍成为天瑞平台代理商”，“在周某的指令下”，可能存在共同犯罪？fact中“樊某、秦某（均已判刑）...刘1某通过周某（已判刑）介绍...樊某、秦某通过后台人为控制”，所以刘1某与樊某、秦某、周某是共同犯罪，joint_crime=true。\n- arrest_method：“自动到公安机关投案”，所以arrest_method=“自首”。\n- return_of_stolen_property：“退回赃款32000元”，诈骗金额是53230元，退了32000，属于部分退赃，所以return_of_stolen_property=“部分退赃”。\n- crime_count：1次作案（骗林某一次），所以crime_count=1。\n- crime_amount：53230。\n-其他字段如compensation_to_victim：退赃给被害人？未提及赔偿，退赃是return_of_stolen_property，compensation_to_victim null。\n\n诈骗罪extensions：\n\n- fraud_count：1。\n- fraud_amount：53230。\n- fraud_method：“虚构‘天瑞大宗商品’交易平台”，“谎称有大行情”，属于“虚构事实”或“虚构投资”（fraud_method values有“虚构投资”），fact中“让其入金炒黑茶”“虚构投资”更合适，所以fraud_method=“虚构投资”。\n- restitution_situation：“退回赃款32000元”，部分退赃，所以“部分退赃”。\n- fraud_target：“个人”（被害人林某）。\n- fraud_means：“虚构交易平台”（fraud_means values有“虚构交易平台”），所以fraud_means=“虚构交易平台”。\n-其他字段如booty_squandered：未提及，null。\n\n第六个case：id=cail2018-0d9b83ec668f8c35，charge=诈骗罪。fact：叶某冒用身份租车，办假证质押骗徐某26000元，“被公安民警抓获归案”，“具有坦白、犯罪前科等量刑情节”。\n\ncore部分：\n\n- truthful_confession：“坦白”，所以truthful_confession=true。\n- criminal_record：“犯罪前科”，所以criminal_record=true。\n- arrest_method：“被公安民警抓获归案”，所以arrest_method=“被抓获”。\n- joint_crime：未提及伙同，false。\n- crime_count：1次。\n- crime_amount：26000。\n-其他字段如surrender：未提及自首，null。\n\n诈骗罪extensions：\n\n- fraud_count：1。\n- fraud_amount：26000。\n- fraud_method：“冒用汪某身份信息”“办理该车行驶证、发票等假证”，属于“伪造证件”（fraud_method values有“伪造证件”）和“冒充身份”，但fraud_method是categorical，选最符合的，“伪造证件”或“冒充身份”，fact中既有冒用身份又有伪造证件，fraud_method的values包括“伪造证件”和“冒充身份”，这里可能“冒充身份”更主要？或者两者都是，但只能选一个。看fact开头“冒用汪某身份信息在安顺市“A汽车租赁公司”租得...”，然后“冒用汪某身份信息办理该车行驶证、发票等假证”，所以既有冒充身份又有伪造证件，fraud_method的values中两者都是选项，需要看哪个更贴切。可能“伪造证件”是手段之一，“冒充身份”是整体方式，这里fraud_method可能选“冒充身份”。\n- fraud_target：“个人”（徐某）。\n-其他字段如restitution_situation：未提及退赃，null。\n\n第七个case：id=cail2018-0fe37342f76089b9，charge=诈骗罪。fact：陈某伙同他人3起作案，第1起骗300元，家属退还并取得谅解；第2起骗4800元，家属退还并取得谅解；第3起未遂。\n\ncore部分：\n\n- joint_crime：“伙同‘小严’、‘红坤’”，所以joint_crime=true。\n- compensation_to_victim：“家属退还该300元”“退还该4800元”，全部赔偿了这两起的损失，所以compensation_to_victim=“全额赔偿”（针对已遂的两起，全部赔偿）。\n- victim_forgiveness：“取得谅解”，所以victim_forgiveness=true。\n- crime_count：3起（其中第3起未遂），core的crime_count是犯罪次数，包括未遂，所以3。\n- crime_amount：300+4800=5100元（第3起未遂不计入金额）。\n- criminal_form：“欲诈骗...被当场抓获”，所以有既遂和未遂，core的criminal_form values有“既遂+未遂”，所以criminal_form=“既遂+未遂”。\n-其他字段如arrest_method：第3起被扭送派出所，所以到案方式可能是“现场等待”？fact中“被傅某甲当场抓获并扭送到赖店镇派出所”，arrest_method的values有“被抓获”，所以arrest_method=“被抓获”。\n\n诈骗罪extensions：\n\n- fraud_count：3。\n- fraud_amount：5100。\n- fraud_method：“利用‘买卖蛇胆’的方式”，属于“虚构事实”。\n- restitution_situation：家属退还，core的return_of_stolen_property values有“亲属代为退赃”，所以return_of_stolen_property=“亲属代为退赃”。\n- fraud_target：“个人”。\n-其他字段如stolen_property_recovery：不适用，这是盗窃罪的；fraud_means：未明确属于哪个values，fact中“买卖蛇胆”可能属于“虚构事实”，fraud_means可能不明确，null。\n\n第八个case：id=cail2018-11973519afc1ca9d，charge=诈骗罪。fact：陈某两次诈骗，第一次骗8900元，第二次骗10000元（用于还第一次的），“被福安市公安局抓获归案”。\n\ncore部分：\n\n- joint_crime：未提及伙同，false。\n- arrest_method：“被福安市公安局抓获归案”，“被抓获”。\n- crime_count：2起。\n- crime_amount：8900+10000=18900。\n-其他字段如退赃：未提及退赃，return_of_stolen_property=“未退赃”？\n\n诈骗罪extensions：\n\n- fraud_count：2。\n- fraud_amount：18900。\n- fraud_method：“谎称替老板购买中华香烟”“谎称原先协议合作的二手车转让生意已经谈妥”，属于“虚构事实”。\n-其他未提及，null。\n\n第九个case：id=cail2018-12035f27a4e1ff8f，charge=诈骗罪。fact：马某某利用职务之便套取补贴41200.9元，“有立功情节”。\n\ncore部分：\n\n- crime_amount：41200.9。\n- joint_crime：未提及伙同，false。\n-其他如surrender：未提及，null；arrest_method：未提及，null。\n\n诈骗罪extensions：\n\n- fraud_amount：41200.9。\n- fraud_method：套取补贴，“虚构事实”。\n- fraud_target：“国家财产”。\n\n第十个case：id=cail2018-1551d12e12bdd920，charge=诈骗罪。fact：余某挪用备用金后，谎称转让消费卡骗施某、顾某22000元。\n\ncore部分：\n\n- crime_count：1起。\n- crime_amount：22000。\n- joint_crime：未提及伙同，false。\n-其他未提及，null。\n\n现在需要注意每个字段必须严格按文本提及，未提及则null，不能推断。例如，是否有坦白，只有第六个case提到“坦白”，所以truthful_confession=true，其他未提则null。\n\n需要逐个检查每个字段，确保没有遗漏，并且符合schema的要求。例如，core中的“guilty_plea”是是否自愿认罪，只有明确提到自愿认罪才为true，未提则null。\n\n现在开始整理成JSON格式，每个case对应一个对象，包含id、charge、factors，factors包含core和extensions中的诈骗罪字段。"
+          }
+        }
+      ],
+      "created": 1785361576,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 7055,
+        "prompt_tokens": 6337,
+        "total_tokens": 13392,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 4721,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 7055,
+      "prompt_tokens": 6337,
+      "total_tokens": 13392,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 4721,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785361422606ee491e000af4266cf5087875543b3cd6ae0230"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "9-10",
+  "status": "blocked",
+  "upstream": {
+    "repository": "https://github.com/StoneT2000/lerobot-sim2real.git",
+    "commit": "87d6c1d969f6e0ca4dc5697940804e231118a63a",
+    "guide_path": "docs/zero_shot_rgb_sim2real.md",
+    "guide_blob": "844d113a726d7c3c8494700496591a2604f742e0"
+  },
+  "run": {
+    "started_at": null,
+    "ended_at": null,
+    "operator": null,
+    "host": "documentation-only-host",
+    "gpu": null,
+    "robot_actuation_authorized": false
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "name": "environment_alignment",
+      "status": "not_run",
+      "robot_actuation_required": true,
+      "simulation_config_sha256": null,
+      "real_frame_sha256": null,
+      "overlay_sha256": null,
+      "alignment_error_px": null
+    },
+    {
+      "stage": 2,
+      "name": "background_replacement",
+      "status": "not_run",
+      "robot_actuation_required": false,
+      "background_sha256": null,
+      "config_sha256": null,
+      "composite_sha256": null
+    },
+    {
+      "stage": 3,
+      "name": "domain_randomization",
+      "status": "not_run",
+      "robot_actuation_required": false,
+      "parameters": [],
+      "real_measurements_sha256": null,
+      "reset_distribution_sha256": null
+    },
+    {
+      "stage": 4,
+      "name": "ppo_training",
+      "status": "blocked",
+      "robot_actuation_required": false,
+      "algorithm": "PPO",
+      "rgb_only": true,
+      "timesteps": 0,
+      "evaluation_episodes": 0,
+      "simulation_success_rate": null,
+      "checkpoint_sha256": null,
+      "metrics_sha256": null
+    },
+    {
+      "stage": 5,
+      "name": "real_world_deployment",
+      "status": "blocked",
+      "robot_actuation_required": true,
+      "executed": false,
+      "zero_shot": true,
+      "fine_tuning_steps": 0,
+      "control_frequency_hz": null,
+      "step_confirmation_enabled": false,
+      "trials": 0,
+      "successes": 0,
+      "video_sha256": null,
+      "safety": {
+        "robot_calibrated": false,
+        "clear_workspace": false,
+        "emergency_stop_ready": false,
+        "human_observer_present": false
+      }
+    }
+  ],
+  "artifacts": [],
+  "blockers": [
+    "This host has no verified NVIDIA training runtime, aligned real-scene inputs, trained checkpoint, SO-100, or robot-actuation authorization. No stage was claimed complete and no hardware action was attempted."
+  ]
+}
