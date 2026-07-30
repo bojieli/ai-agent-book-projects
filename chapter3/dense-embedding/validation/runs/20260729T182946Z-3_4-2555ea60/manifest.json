@@ -1,0 +1,73 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-4",
+  "run_id": "20260729T182946Z-3_4-2555ea60",
+  "created_at": "2026-07-29T18:29:46.110155+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/validation/runs/20260729T182946Z-3_4-2555ea60",
+  "artifacts": {
+    "evidence.json": "0670be3c6fe6e203dbacc926ac0a4cecc6b4902d49db2bc4205bc0d14d3b171f",
+    "receipts.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/indexing.py",
+      "sha256": "80ca520a78f044b367edfe71ff4e4bb22fa80f00d4803831d17b2b8c14ba1f57",
+      "bytes": 14977
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/benchmark.py",
+      "sha256": "d5d72267ca683ec513acd422287ff6f7cd65c54c6eaad5d636b67b983dda7904",
+      "bytes": 13883
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/docker_annoy_runner.py",
+      "sha256": "f75ee2f5f81365143a6f8ad68c6706933f8012ca4792a643d8ae79bfc9621c70",
+      "bytes": 2980
+    }
+  ],
+  "summary": {
+    "embedding_latency_ms": 55429.937,
+    "annoy": {
+      "build_ms": 13.203,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.2336004702374339,
+        "p50": 0.22620847448706627,
+        "p95": 0.2634833101183176
+      },
+      "serialized_bytes": 1396720,
+      "incremental_update": {
+        "items_added": 60,
+        "latency_ms": 8.274,
+        "requires_full_rebuild": true,
+        "recall_at_k_after_update": 1.0
+      }
+    },
+    "hnsw": {
+      "build_ms": 77.682,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.25732293259352446,
+        "p50": 0.2595204859972,
+        "p95": 0.2800690243020654
+      },
+      "serialized_bytes": 1018716,
+      "incremental_update": {
+        "items_added": 60,
+        "latency_ms": 33.833,
+        "requires_full_rebuild": false,
+        "recall_at_k_after_update": 1.0
+      }
+    }
+  },
+  "acceptance": {
+    "real_embedding_model": true,
+    "same_vectors_and_queries": true,
+    "exact_search_ground_truth": true,
+    "recall_latency_build_size_measured": true,
+    "incremental_behavior_measured": true,
+    "both_backends_recall_at_least_0_8": true,
+    "passed": true
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "9-10",
+  "kind": "non_actuating_preflight",
+  "generated_at": "2026-07-29T15:36:54.758593+00:00",
+  "host": "bojMacBook-Pro.local",
+  "upstream_path": "/private/tmp/lerobot-sim2real-audit-20260729",
+  "stage_readiness": {
+    "1": {
+      "preflight": "blocked",
+      "blockers": [
+        "python_module:mani_skill",
+        "camera_path",
+        "robot_port",
+        "hardware_authorization",
+        "safety_checklist"
+      ]
+    },
+    "2": {
+      "preflight": "blocked",
+      "blockers": [
+        "python_module:mani_skill",
+        "camera_path",
+        "robot_port",
+        "hardware_authorization",
+        "safety_checklist"
+      ]
+    },
+    "3": {
+      "preflight": "blocked",
+      "blockers": [
+        "python_module:mani_skill",
+        "nvidia_gpu",
+        "greenscreen"
+      ]
+    },
+    "4": {
+      "preflight": "blocked",
+      "blockers": [
+        "python_module:mani_skill",
+        "nvidia_gpu",
+        "greenscreen"
+      ]
+    },
+    "5": {
+      "preflight": "blocked",
+      "blockers": [
+        "checkpoint",
+        "robot_port",
+        "hardware_authorization",
+        "safety_checklist"
+      ]
+    }
+  },
+  "status": "blocked",
+  "checks": [
+    {
+      "id": "pinned_commit",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected 87d6c1d969f6e0ca4dc5697940804e231118a63a; found 87d6c1d969f6e0ca4dc5697940804e231118a63a"
+    },
+    {
+      "id": "blob:docs/zero_shot_rgb_sim2real.md",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected 844d113a726d7c3c8494700496591a2604f742e0; found 844d113a726d7c3c8494700496591a2604f742e0"
+    },
+    {
+      "id": "blob:env_config.json",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected e32727956fc9dbf64336b53b77bc1a6044e2f5ef; found e32727956fc9dbf64336b53b77bc1a6044e2f5ef"
+    },
+    {
+      "id": "blob:lerobot_sim2real/config/real_robot.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected f522e6d1dab0ef4ff4a0204497c1616995346ad7; found f522e6d1dab0ef4ff4a0204497c1616995346ad7"
+    },
+    {
+      "id": "blob:lerobot_sim2real/scripts/record_reset_distribution.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected ff20e1c3ea34b6d75f646c325f6fe49e1d83903c; found ff20e1c3ea34b6d75f646c325f6fe49e1d83903c"
+    },
+    {
+      "id": "blob:lerobot_sim2real/scripts/camera_alignment.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected 5d7a323075e43ba5c0a24bd2ce6c910f89e4a9c6; found 5d7a323075e43ba5c0a24bd2ce6c910f89e4a9c6"
+    },
+    {
+      "id": "blob:lerobot_sim2real/scripts/capture_background_image.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected f30d97cd7ead0cdfe9b38ea6c9523a5f38b404aa; found f30d97cd7ead0cdfe9b38ea6c9523a5f38b404aa"
+    },
+    {
+      "id": "blob:lerobot_sim2real/scripts/train_ppo_rgb.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected af900d1e247349b61b707b4a63d30e0d297c9ea9; found af900d1e247349b61b707b4a63d30e0d297c9ea9"
+    },
+    {
+      "id": "blob:lerobot_sim2real/scripts/eval_ppo_rgb.py",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "expected 506a4c190eb99b7cd2691562edb78f6f0dd748e3; found 506a4c190eb99b7cd2691562edb78f6f0dd748e3"
+    },
+    {
+      "id": "python_module:torch",
+      "passed": true,
+      "stages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "detail": "installed"
+    },
+    {
+      "id": "python_module:mani_skill",
+      "passed": false,
+      "stages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "detail": "not importable"
+    },
+    {
+      "id": "nvidia_gpu",
+      "passed": false,
+      "stages": [
+        3,
+        4
+      ],
+      "detail": "nvidia-smi not found"
+    },
+    {
+      "id": "offline_real_frame",
+      "passed": false,
+      "stages": [],
+      "detail": "not supplied; optional and not equivalent to the live upstream script"
+    },
+    {
+      "id": "camera_path",
+      "passed": false,
+      "stages": [
+        1,
+        2
+      ],
+      "detail": "not supplied"
+    },
+    {
+      "id": "greenscreen",
+      "passed": false,
+      "stages": [
+        3,
+        4
+      ],
+      "detail": "not supplied"
+    },
+    {
+      "id": "checkpoint",
+      "passed": false,
+      "stages": [
+        5
+      ],
+      "detail": "not supplied"
+    },
+    {
+      "id": "robot_port",
+      "passed": false,
+      "stages": [
+        1,
+        2,
+        5
+      ],
+      "detail": "not supplied"
+    },
+    {
+      "id": "hardware_authorization",
+      "passed": false,
+      "stages": [
+        1,
+        2,
+        5
+      ],
+      "detail": "not granted"
+    },
+    {
+      "id": "safety_checklist",
+      "passed": false,
+      "stages": [
+        1,
+        2,
+        5
+      ],
+      "detail": "not attested"
+    }
+  ],
+  "hardware_boundary": "Pinned stage 1 can actuate during real_env.reset; stage 2 connects hardware and disables torque; stages 3-4 are GPU-only; stage 5 actuates the policy.",
+  "actuation_attempted": false
+}

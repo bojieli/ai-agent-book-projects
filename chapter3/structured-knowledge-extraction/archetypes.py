@@ -170,7 +170,7 @@ def fit(schema, results, k_range=range(2, 5), save=True, verbose=True):
         "scaler_mean": scaler.mean_.tolist(),
         "scaler_scale": scaler.scale_.tolist(),
         "n_archetypes": len(archetypes),
-        "silhouette_mean": float(np.mean(sils)),
+        "silhouette_mean": float(np.mean(sils)) if sils else 0.0,
         "global_importance": global_importance,
         "archetypes": archetypes,
         "n_samples": int(len(results)),

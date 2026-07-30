@@ -42,6 +42,14 @@
   --md-accent-fg-color:         #42b983;
 }
 
+/* Prefer Korean glyph forms only while viewing the Korean edition. Keeping
+   this override language-scoped avoids changing Chinese glyphs site-wide. */
+html[lang="ko"] {
+  --md-text-font: "Noto Sans CJK KR", "Apple SD Gothic Neo", "Malgun Gothic",
+                  "Noto Sans SC", "PingFang SC", -apple-system,
+                  blinkmacsystemfont, "Segoe UI", helvetica, arial, sans-serif;
+}
+
 /* ── 1. 关掉 Material 的卡片化、阴影、圆角 ────────────────────── */
 
 /* 全局去掉 box-shadow —— 这是 Material 最显眼的装饰 */

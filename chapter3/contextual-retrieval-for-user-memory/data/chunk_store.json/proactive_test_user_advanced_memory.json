@@ -1,0 +1,71 @@
+{
+  "user_id": "proactive_test_user",
+  "type": "advanced_json_cards",
+  "updated_at": "2026-07-30T06:02:48.852948",
+  "categories": {
+    "travel": {
+      "passport_info": {
+        "backstory": "User mentioned passport details when booking international travel",
+        "date_created": "2026-07-30 06:02:48",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "passport_number": "XXXXX1234",
+        "expiration_date": "2026-09-13",
+        "issuing_country": "USA",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:48.852354",
+          "updated_at": "2026-07-30T06:02:48.852357"
+        }
+      },
+      "tokyo_trip_jan_2025": {
+        "backstory": "User booked a trip to Tokyo for late January",
+        "date_created": "2026-07-30 06:02:48",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "destination": "Tokyo, Japan",
+        "departure_date": "2026-08-29",
+        "return_date": "2026-09-05",
+        "airline": "United Airlines",
+        "booking_reference": "UA1234567",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:48.852619",
+          "updated_at": "2026-07-30T06:02:48.852620"
+        }
+      }
+    },
+    "medical": {
+      "annual_checkup_2025": {
+        "backstory": "User scheduled annual physical exam",
+        "date_created": "2026-07-30 06:02:48",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "appointment_type": "Annual Physical",
+        "doctor": "Dr. Sarah Chen",
+        "clinic": "Portland Medical Center",
+        "date": "2026-08-04",
+        "time": "09:00 AM",
+        "fasting_required": true,
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:48.852791",
+          "updated_at": "2026-07-30T06:02:48.852793"
+        }
+      }
+    },
+    "insurance": {
+      "travel_insurance_2024": {
+        "backstory": "User has annual travel insurance that needs renewal",
+        "date_created": "2026-07-30 06:02:48",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "provider": "SafeTravel Insurance",
+        "policy_number": "ST-2024-789456",
+        "expiration_date": "2026-08-19",
+        "coverage": "International travel medical and trip cancellation",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:48.852946",
+          "updated_at": "2026-07-30T06:02:48.852947"
+        }
+      }
+    }
+  }
+}

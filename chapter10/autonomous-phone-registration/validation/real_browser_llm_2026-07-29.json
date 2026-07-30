@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "generated_at": "2026-07-29T18:39:03+0800",
+  "command_profile": "real Playwright + real LLM + synthetic scripted phone answers",
+  "transport": "scripted",
+  "synthetic_values_used": true,
+  "values_persisted": false,
+  "decision_provider": "Volcengine ARK",
+  "decision_model": "doubao-seed-1-6-250615",
+  "page_url": "https://demoqa.com/automation-practice-form",
+  "fields_discovered": 13,
+  "tool_called": "initiate_phone_call_agent",
+  "required_fields": ["firstName", "lastName", "gender", "userNumber"],
+  "result": {
+    "filled": ["firstName", "lastName", "gender", "userNumber"],
+    "submitted": false,
+    "errors": [],
+    "browser_closed": true
+  },
+  "timing_evidence": {
+    "question_times": {
+      "firstName": 19.711714,
+      "lastName": 22.43812,
+      "gender": 25.793196,
+      "userNumber": 29.854119
+    },
+    "collection_times": {
+      "firstName": 22.437785,
+      "lastName": 25.792242,
+      "gender": 29.852781,
+      "userNumber": 32.229468
+    },
+    "fill_times": {
+      "firstName": 22.520051,
+      "lastName": 25.874117,
+      "gender": 29.965478,
+      "userNumber": 32.258196
+    },
+    "overlap_checks": [
+      {
+        "field_being_filled": "firstName",
+        "next_question": "lastName",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 22.43812,
+        "fill_completed_at": 22.520051
+      },
+      {
+        "field_being_filled": "lastName",
+        "next_question": "gender",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 25.793196,
+        "fill_completed_at": 25.874117
+      },
+      {
+        "field_being_filled": "gender",
+        "next_question": "userNumber",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 29.854119,
+        "fill_completed_at": 29.965478
+      }
+    ],
+    "independent_tasks": ["phone-agent-react-loop", "computer-agent-react-loop"]
+  },
+  "gates": {
+    "real_playwright_page_and_fill": {"status": "pass"},
+    "autonomous_real_llm_tool_call": {"status": "pass"},
+    "ask_one_fill_one_concurrency": {"status": "pass"},
+    "browser_resource_cleanup": {"status": "pass"},
+    "real_form_submission": {
+      "status": "not_run",
+      "reason": "submission was intentionally disabled; no external form side effect was authorized"
+    },
+    "real_pstn_call": {
+      "status": "not_run",
+      "reason": "no authorized consenting endpoint and Twilio configuration was supplied"
+    },
+    "real_audio_asr_tts": {
+      "status": "not_run",
+      "reason": "scripted transport is explicitly non-acceptance"
+    }
+  },
+  "overall_status": "incomplete"
+}

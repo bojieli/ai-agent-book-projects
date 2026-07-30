@@ -1,0 +1,18 @@
+{
+  "case": "hitl_operator_response",
+  "tool": "mcp_respond_to_request",
+  "arguments": {
+    "request_id": "a4e9ce1c-5483-44ea-bf01-94f410963b85",
+    "approved": true,
+    "admin_notes": "Approved by the automated validation operator; not a claimed human judgment."
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "request_id": "a4e9ce1c-5483-44ea-bf01-94f410963b85",
+    "approved": true,
+    "message": "Request approved successfully"
+  },
+  "latency_seconds": 0.003
+}

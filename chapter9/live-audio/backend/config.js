@@ -5,6 +5,7 @@ const config = {
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || 'your-anthropic-api-key-here',
   ARK_API_KEY: process.env.ARK_API_KEY || 'your-ark-api-key-here',
   SILICONFLOW_API_KEY: process.env.SILICONFLOW_API_KEY || 'your-siliconflow-api-key-here',
+  FISH_API_KEY: process.env.FISH_API_KEY || 'your-fish-api-key-here',
   
   // Provider Selection
   ASR_PROVIDER: 'siliconflow', // 'openai' (whisper-1) or 'siliconflow' (SenseVoice)
@@ -63,6 +64,10 @@ const config = {
       model: 'FunAudioLLM/CosyVoice2-0.5B',
       voice: 'FunAudioLLM/CosyVoice2-0.5B:diana',
       apiKey: 'SILICONFLOW_API_KEY'
+    },
+    fish: {
+      model: 's1',
+      apiKey: 'FISH_API_KEY'
     }
   },
   

@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "experiment": "9-5",
+  "timestamp_utc": "2026-07-30T04:17:59.570927+00:00",
+  "provider": "Mistral Voxtral API",
+  "model": "voxtral-small-latest",
+  "provider_attempts": [],
+  "study_design": {
+    "judge_type": "multimodal_llm_not_human_mos",
+    "blinded_configuration_labels": true,
+    "position_balanced": true,
+    "passes": 3,
+    "temperature": 0.0,
+    "dimensions": [
+      "naturalness",
+      "expressive_fit",
+      "thinking_behavior",
+      "speaker_consistency",
+      "human_customer_service"
+    ]
+  },
+  "audio_sha256": {
+    "A_no_control_markers": "b477ff767fcf7dc01b62bf8f445f79f2445fa204f8b365b437bcdf2e64b647e5",
+    "B_single_reference": "29148f5b08806b12e0a993366e97b172acaa3f754c171eea700f8e03aced58a6",
+    "C_24_reference_library": "5182f816524ebd92150d7ce01bd4be8e3baee2b51479ce64d6b9363140e33f04"
+  },
+  "passes": [
+    {
+      "alias_to_configuration": {
+        "X": "A_no_control_markers",
+        "Y": "B_single_reference",
+        "Z": "C_24_reference_library"
+      },
+      "response": {
+        "clips": {
+          "X": {
+            "naturalness": {
+              "score": 4,
+              "reason": "The speech flows smoothly with natural intonation and pacing."
+            },
+            "expressive_fit": {
+              "score": 4,
+              "reason": "The speaker conveys happiness in confirmation and thoughtful consideration in checking the shipping time."
+            },
+            "thinking_behavior": {
+              "score": 4,
+              "reason": "The pause before checking the shipping time is natural and appropriate."
+            },
+            "speaker_consistency": {
+              "score": 4,
+              "reason": "The speaker maintains a consistent tone and style throughout the message."
+            },
+            "human_customer_service": {
+              "score": 4,
+              "reason": "The speech sounds like a genuine human interaction with appropriate emotional cues."
+            }
+          },
+          "Y": {
+            "naturalness": {
+              "score": 3,
+              "reason": "The speech is somewhat robotic with unnatural pauses and intonation."
+            },
+            "expressive_fit": {
+              "score": 3,
+              "reason": "The speaker lacks emotional variation, making the message sound flat."
+            },
+            "thinking_behavior": {
+              "score": 3,
+              "reason": "The pause is unnatural and does not add to the thinking process."
+            },
+            "speaker_consistency": {
+              "score": 3,
+              "reason": "The speaker's tone and style are inconsistent, switching abruptly."
+            },
+            "human_customer_service": {
+              "score": 3,
+              "reason": "The speech sounds more like a machine-generated response than a human interaction."
+            }
+          },
+          "Z": {
+            "naturalness": {
+              "score": 5,
+              "reason": "The speech is very natural with smooth intonation and pacing."
+            },
+            "expressive_fit": {
+              "score": 5,
+              "reason": "The speaker effectively conveys happiness in confirmation and thoughtful consideration in checking the shipping time."
+            },
+            "thinking_behavior": {
+              "score": 5,
+              "reason": "The pause before checking the shipping time is natural and adds to the thinking process."
+            },
+            "speaker_consistency": {
+              "score": 5,
+              "reason": "The speaker maintains a consistent tone and style throughout the message."
+            },
+            "human_customer_service": {
+              "score": 5,
+              "reason": "The speech sounds like a genuine human interaction with appropriate emotional cues."
+            }
+          }
+        },
+        "ranking": [
+          "Z",
+          "X",
+          "Y"
+        ],
+        "ranking_reason": "Clip Z has the most natural and expressive speech, followed by X, while Y has the least natural and expressive speech."
+      }
+    },
+    {
+      "alias_to_configuration": {
+        "X": "B_single_reference",
+        "Y": "C_24_reference_library",
+        "Z": "A_no_control_markers"
+      },
+      "response": {
+        "clips": {
+          "X": {
+            "naturalness": {
+              "score": 4,
+              "reason": "The speech is mostly natural, but the tone is slightly robotic."
+            },
+            "expressive_fit": {
+              "score": 4,
+              "reason": "The speaker conveys happiness and thoughtfulness, but the delivery is a bit monotonous."
+            },
+            "thinking_behavior": {
+              "score": 3,
+              "reason": "There is a slight pause, but it does not effectively convey thinking."
+            },
+            "speaker_consistency": {
+              "score": 4,
+              "reason": "The speaker maintains a consistent tone throughout."
+            },
+            "human_customer_service": {
+              "score": 4,
+              "reason": "The speech is clear and professional, but lacks some human-like nuances."
+            }
+          },
+          "Y": {
+            "naturalness": {
+              "score": 5,
+              "reason": "The speech is very natural and flows smoothly."
+            },
+            "expressive_fit": {
+              "score": 5,
+              "reason": "The speaker effectively conveys happiness and thoughtfulness with a natural pause."
+            },
+            "thinking_behavior": {
+              "score": 5,
+              "reason": "The pause is natural and effectively conveys thinking."
+            },
+            "speaker_consistency": {
+              "score": 5,
+              "reason": "The speaker maintains a consistent and natural tone throughout."
+            },
+            "human_customer_service": {
+              "score": 5,
+              "reason": "The speech is clear, professional, and has human-like nuances."
+            }
+          },
+          "Z": {
+            "naturalness": {
+              "score": 3,
+              "reason": "The speech is somewhat robotic and lacks natural flow."
+            },
+            "expressive_fit": {
+              "score": 3,
+              "reason": "The speaker conveys happiness and thoughtfulness, but the delivery is monotonous."
+            },
+            "thinking_behavior": {
+              "score": 2,
+              "reason": "There is no effective pause to convey thinking."
+            },
+            "speaker_consistency": {
+              "score": 3,
+              "reason": "The speaker maintains a consistent tone, but it is robotic."
+            },
+            "human_customer_service": {
+              "score": 3,
+              "reason": "The speech is clear but lacks human-like nuances."
+            }
+          }
+        },
+        "ranking": [
+          "Y",
+          "X",
+          "Z"
+        ],
+        "ranking_reason": "Clip Y has the most natural flow, effective pauses, and human-like nuances, making it the best. Clip X is slightly robotic but maintains consistency. Clip Z is the least natural and lacks effective pauses."
+      }
+    },
+    {
+      "alias_to_configuration": {
+        "X": "C_24_reference_library",
+        "Y": "A_no_control_markers",
+        "Z": "B_single_reference"
+      },
+      "response": {
+        "clips": {
+          "X": {
+            "naturalness": {
+              "score": 4,
+              "reason": "The speech is mostly natural, but the pause before '让我查一下发货时间' is slightly abrupt."
+            },
+            "expressive_fit": {
+              "score": 4,
+              "reason": "The speaker conveys happiness and thoughtfulness well, but the transition between emotions could be smoother."
+            },
+            "thinking_behavior": {
+              "score": 3,
+              "reason": "The pause is present but feels a bit forced rather than natural."
+            },
+            "speaker_consistency": {
+              "score": 4,
+              "reason": "The speaker maintains a consistent tone throughout, but there is a slight variation in pace."
+            },
+            "human_customer_service": {
+              "score": 4,
+              "reason": "The speech sounds mostly human-like, but the pause is a bit robotic."
+            }
+          },
+          "Y": {
+            "naturalness": {
+              "score": 5,
+              "reason": "The speech flows naturally with no abrupt pauses or unnatural cadences."
+            },
+            "expressive_fit": {
+              "score": 5,
+              "reason": "The speaker effectively conveys happiness and thoughtfulness, with a smooth transition between emotions."
+            },
+            "thinking_behavior": {
+              "score": 5,
+              "reason": "The pause is natural and adds to the authenticity of the thinking process."
+            },
+            "speaker_consistency": {
+              "score": 5,
+              "reason": "The speaker maintains a consistent tone and pace throughout."
+            },
+            "human_customer_service": {
+              "score": 5,
+              "reason": "The speech sounds very human-like, with natural pauses and expressions."
+            }
+          },
+          "Z": {
+            "naturalness": {
+              "score": 3,
+              "reason": "The speech is somewhat robotic, with a lack of natural pauses and variations in tone."
+            },
+            "expressive_fit": {
+              "score": 3,
+              "reason": "The speaker conveys the emotions, but the delivery is flat and lacks natural expressiveness."
+            },
+            "thinking_behavior": {
+              "score": 2,
+              "reason": "There is no natural pause or thinking behavior, making the speech sound rushed."
+            },
+            "speaker_consistency": {
+              "score": 3,
+              "reason": "The speaker maintains a consistent tone, but it is monotonous and lacks variation."
+            },
+            "human_customer_service": {
+              "score": 3,
+              "reason": "The speech sounds somewhat robotic, with a lack of natural pauses and expressions."
+            }
+          }
+        },
+        "ranking": [
+          "Y",
+          "X",
+          "Z"
+        ],
+        "ranking_reason": "Clip Y has the most natural flow, expressive fit, and human-like qualities. Clip X is close but has a slightly abrupt pause. Clip Z is the least natural and expressive."
+      }
+    }
+  ],
+  "aggregate": {
+    "configurations": {
+      "A_no_control_markers": {
+        "dimension_means": {
+          "naturalness": 4.0,
+          "expressive_fit": 4.0,
+          "thinking_behavior": 3.6666666666666665,
+          "speaker_consistency": 4.0,
+          "human_customer_service": 4.0
+        },
+        "overall_mean": 3.9333333333333327,
+        "rank_points": 6
+      },
+      "B_single_reference": {
+        "dimension_means": {
+          "naturalness": 3.3333333333333335,
+          "expressive_fit": 3.3333333333333335,
+          "thinking_behavior": 2.6666666666666665,
+          "speaker_consistency": 3.3333333333333335,
+          "human_customer_service": 3.3333333333333335
+        },
+        "overall_mean": 3.2,
+        "rank_points": 4
+      },
+      "C_24_reference_library": {
+        "dimension_means": {
+          "naturalness": 4.666666666666667,
+          "expressive_fit": 4.666666666666667,
+          "thinking_behavior": 4.333333333333333,
+          "speaker_consistency": 4.666666666666667,
+          "human_customer_service": 4.666666666666667
+        },
+        "overall_mean": 4.6000000000000005,
+        "rank_points": 8
+      }
+    },
+    "aggregate_ranking": [
+      "C_24_reference_library",
+      "A_no_control_markers",
+      "B_single_reference"
+    ],
+    "expected_manuscript_ranking": [
+      "C_24_reference_library",
+      "B_single_reference",
+      "A_no_control_markers"
+    ],
+    "manuscript_quality_ordering_reproduced": false,
+    "near_human_customer_service_supported": true,
+    "manuscript_quality_claim_reproduced": false
+  },
+  "limitations": [
+    "This is a real multimodal-model listening study, not a human MOS panel.",
+    "Three position-balanced passes reduce order bias but share one judge model."
+  ]
+}

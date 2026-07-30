@@ -2,13 +2,78 @@
 
 ## English
 
-This directory implements a practical benchmarking harness for comparing multiple OpenAI-compatible LLM providers. One command can produce a table including **TTFT, end-to-end latency, throughput, std, p50/p95/p99, and success rate**.
+This directory contains two layers. `demo.py` is the short interactive sampler;
+`campaign.py` is the **complete, resumable Experiment 6-8 campaign**. The latter
+supports OpenAI-compatible, native Anthropic, and native Gemini APIs and records
+every real request in SQLite.
 
-It supports:
+The complete campaign supports:
+- the 8K / 32K / 128K input × 512 / 2048 output workload matrix;
+- at least 100 requests per provider/model/cell;
+- exact TTFT, end-to-end latency, thinking TTFT, reported reasoning length,
+  token usage, cache hits, and error classification;
+- a 168-hour hourly availability monitor with outage duration, MTTR, and longest
+  continuous availability analysis;
+- a measured concurrency ramp with RPM and input/output TPM saturation;
+- cached/input/output pricing and a six-round Agent cost trace;
+- an explicit same-model/different-provider comparison group (DeepSeek V4 Flash on the official DeepSeek API and SiliconFlow);
+- resumability through unique request cells in SQLite and a strict completion audit.
+
+The quick sampler still supports:
 - **Concurrency stress testing**: sweep concurrency to identify rate limits and observe metric curves.
 - **Offline mock mode** (`--mock`): synthetic data pipeline for verifying aggregation logic without API keys/network.
 
-The original chapter workflow describes hourly probes, multiple context windows, and threshold checks. This project focuses on the core locally reproducible piece: measure TTFT precisely via streaming, evaluate percentile latency under concurrency, and use success rate as availability signal.
+Synthetic mode is never accepted by `campaign.py` and cannot populate the
+official evidence database.
+
+## Full campaign
+
+Review `campaign_config.json` before a cost-sensitive run. Pricing fields are
+deliberately explicit; `analysis.py` refuses to declare the campaign complete
+while any cached/input/output rate is missing.
+
+```bash
+# Real API integration smoke (small scope is visibly labelled)
+python campaign.py workload --smoke --requests 1 \
+  --context-tokens 256 --output-tokens 128 \
+  --provider 'Ark/doubao-seed-1.6' \
+  --campaign-id integration-smoke --db results/integration-smoke.sqlite3
+
+# Official standardized workload: defaults are 3 contexts × 2 outputs × N=100
+python campaign.py workload --campaign-id release-2026-07
+
+# Actual RPM/TPM ramp
+python campaign.py rate-limit --campaign-id release-2026-07
+
+# Six-turn stable-prefix Agent cost/cache trace
+python campaign.py agent-cost --campaign-id release-2026-07
+
+# Keep this process alive for one week; every hourly cell is resumable
+python campaign.py availability --duration-hours 168 --interval-seconds 3600 \
+  --campaign-id release-2026-07
+
+python analysis.py --campaign-id release-2026-07
+```
+
+`analysis.py` writes JSON and Markdown reports and prints
+`Official completion: True` only after every manuscript requirement has direct
+database evidence. A smoke run is useful validation, but it can never satisfy
+the 100-request or 168-hour gates.
+
+The completion audit requires every configured provider—not merely one working
+provider—to have the complete workload, 169 hourly boundary probes spanning 168
+hours, rate ramp, and six-round cost trace. Pricing is accepted only when input,
+cached-input, and output rates are all pinned together with an authoritative
+`source_url` and `as_of` date. Prices remain in the provider's published native
+currency. A non-USD price also requires `usd_per_currency_unit`, `fx_source_url`,
+and `fx_as_of` before the cross-provider USD cost gate can pass; CNY values are
+never copied into USD-labelled fields. A null rate cannot pass simply because a
+smoke run reported zero tokens in that category. The same-model provider group must also
+have successful official workload cells on both endpoints. The configured
+identifiers are `deepseek-v4-flash` on the official API and
+`deepseek-ai/DeepSeek-V4-Flash` on SiliconFlow. Ark's
+`deepseek-v4-flash-260425` remains a third independent deployment in the wider
+provider matrix, but it is not substituted for either comparison arm.
 
 ## Metric definitions
 
@@ -109,13 +174,19 @@ OpenRouter fallback behavior:
 |---|---|
 | `benchmark.py` | core benchmark core: provider config, streaming measure, concurrency scheduling, aggregation |
 | `demo.py` | CLI, parameter parsing, reporting and mock mode |
+| `campaign.py` | full provider adapters, exact workloads, scheduler, rate ramp, cache trace, SQLite persistence |
+| `analysis.py` | p50/p95/p99/std, outages/MTTR, RPM/TPM, cost, and completion audit |
+| `campaign_config.json` | provider/model/workload/pricing inputs; no credentials |
+| `test_campaign.py` | deterministic native/OpenAI adapter, persistence, and analysis tests |
 | `requirements.txt` | dependencies |
 | `env.example` | env templates |
 
-## Limitations
+## Operational boundaries
 
-- Default parameters are low-cost defaults (`N=10`, `concurrency=3`, `max_tokens=64`).
-- Larger requests increase cost and rate-limit risk.
+- `demo.py` retains low-cost defaults; it is not the full experiment.
+- The official campaign is intentionally expensive and takes at least seven days.
+- Provider pricing changes over time. Pin the rates used for a decision in
+  `campaign_config.json`; missing prices remain visible as an incomplete gate.
 - TTFT depends heavily on geography/network.
 - Offline mock is for method validation only, not production decisions.
 
@@ -134,12 +205,42 @@ OpenRouter fallback behavior:
 
 ## 目的
 
-书中实验 6-8 的完整版要求"一周内每小时探测、8K/32K/128K 上下文、
-100+ 请求、MTTR/限流阈值/综合成本"等。本配套代码聚焦其中**最核心、
-可低成本本地复现**的一环：用**流式接口**精确测量首 token 延迟，
-在**并发**下测出延迟分位数与吞吐，并以**成功率**刻画可用性——
-让读者用几分钟、几分钱就能得到一张真实的多提供商对比表，
-理解"选型是多维权衡而非单看排行榜"。
+本目录现在分为两层：`demo.py` 保留几分钟即可运行的低成本抽样；
+`campaign.py` 则完整实现正文要求的长期实验。完整路径包含
+**8K/32K/128K × 512/2048、每格至少 100 次请求、一周逐小时探测、
+故障分组与 MTTR、并发爬坡实测 RPM/TPM、思考长度/延迟、缓存/输入/输出
+三类价格与典型多轮 Agent 成本**。每次真实请求写入 SQLite，进程中断后可继续。
+`analysis.py` 会逐项审计证据；只跑小样本或留下未填写的价格时不会误报完成。
+
+### 完整实验命令
+
+```bash
+# 小规模真实 API 集成验证（不会被当成正式结果）
+python campaign.py workload --smoke --requests 1 \
+  --context-tokens 256 --output-tokens 128 \
+  --provider 'Ark/doubao-seed-1.6' \
+  --campaign-id integration-smoke --db results/integration-smoke.sqlite3
+
+# 正式负载矩阵（默认每格 N=100）
+python campaign.py workload --campaign-id release-2026-07
+
+# 逐级并发实测 RPM / TPM 上限
+python campaign.py rate-limit --campaign-id release-2026-07
+
+# 多轮 Agent 缓存与成本轨迹
+python campaign.py agent-cost --campaign-id release-2026-07
+
+# 正式一周可用性监控
+python campaign.py availability --duration-hours 168 --interval-seconds 3600 \
+  --campaign-id release-2026-07
+
+python analysis.py --campaign-id release-2026-07
+```
+
+正式运行前必须在 `campaign_config.json` 中固定本次决策采用的公开价格。
+价格保留提供商发布的原始币种；非美元价格还必须固定带日期和来源的汇率，才能进入
+跨提供商美元成本比较。程序不会把人民币数字直接写入美元字段。任何 input /
+cached input / output 单价为空，完成审计都会明确失败，而不会用猜测价格填补。
 
 ## 指标定义
 

@@ -1,3 +1,7 @@
 openai>=1.30.0
+anthropic>=0.59.0
+google-genai>=1.30.0
+tiktoken>=0.7.0
+pytest>=8.0.0
 # 可选：自动加载 .env 文件（demo.py 里做了软依赖，未安装也能跑）
 python-dotenv>=1.0.0

@@ -1,0 +1,434 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "timestamps__ts-01__timestamps_guided",
+  "suite": "timestamps",
+  "case_id": "ts-01",
+  "condition": "timestamps_guided",
+  "features": [
+    "timestamp_guidance",
+    "timestamps"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "5b6f97325245dee0ff27c624e6defdd437635e23a59a3c24009fd410228b6685",
+  "current_sandbox_sha256": "8aae9f931c196b8c54e7ffa56442c2bff7a5022788f3ff3244fd0c6fbc671c3e",
+  "created_at": "2026-07-29T19:37:57.484109+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "[2025-09-19 09:00:00] Read both records cedar and maple. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+    },
+    {
+      "content": "I'll read both records to compare their timestamps.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_record_0",
+          "function": {
+            "arguments": "{\"name\":\"cedar\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_record_1",
+          "function": {
+            "arguments": "{\"name\":\"maple\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "The user wants me to read both records \"cedar\" and \"maple\", compare their recorded timestamps, and submit the name of the one with the later timestamp. Let me read both records."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "content": "[2025-09-13 22:10:00] payload-for-cedar"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "content": "[2025-09-14 09:05:00] payload-for-maple"
+    },
+    {
+      "content": "Comparing the timestamps:\n- **cedar**: 2025-09-13 22:10:00\n- **maple**: 2025-09-14 09:05:00\n\nMaple's timestamp (2025-09-14 09:05:00) is later than cedar's (2025-09-13 22:10:00), so maple is the record with the later recorded timestamp.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"selected_record\":\"maple\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The records:\n- cedar: [2025-09-13 22:10:00]\n- maple: [2025-09-14 09:05:00]\n\nComparing: 2025-09-14 09:05:00 is later than 2025-09-13 22:10:00. So maple is the later record. Submit \"maple\"."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:37:57.484461+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Read both records cedar and maple. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  }
+                },
+                "required": [
+                  "selected_record"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4827.074,
+      "response": {
+        "id": "chatcmpl-6a6a5696bcc40607e9f881b7",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll read both records to compare their timestamps.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_record_0",
+                  "function": {
+                    "arguments": "{\"name\":\"cedar\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_record_1",
+                  "function": {
+                    "arguments": "{\"name\":\"maple\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "The user wants me to read both records \"cedar\" and \"maple\", compare their recorded timestamps, and submit the name of the one with the later timestamp. Let me read both records."
+            }
+          }
+        ],
+        "created": 1785353878,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 133,
+          "prompt_tokens": 373,
+          "total_tokens": 506,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 41,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:38:02.316087+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Read both records cedar and maple. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+          },
+          {
+            "content": "I'll read both records to compare their timestamps.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"cedar\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"maple\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "The user wants me to read both records \"cedar\" and \"maple\", compare their recorded timestamps, and submit the name of the one with the later timestamp. Let me read both records."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "[2025-09-13 22:10:00] payload-for-cedar"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "[2025-09-14 09:05:00] payload-for-maple"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTIME GUIDANCE: Treat explicit timestamps as decision evidence. Compare them directly; raw readings do not help unless you translate them into an action.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  }
+                },
+                "required": [
+                  "selected_record"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 8050.059,
+      "response": {
+        "id": "chatcmpl-6a6a569b6d94e02177569363",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Comparing the timestamps:\n- **cedar**: 2025-09-13 22:10:00\n- **maple**: 2025-09-14 09:05:00\n\nMaple's timestamp (2025-09-14 09:05:00) is later than cedar's (2025-09-13 22:10:00), so maple is the record with the later recorded timestamp.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"selected_record\":\"maple\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The records:\n- cedar: [2025-09-13 22:10:00]\n- maple: [2025-09-14 09:05:00]\n\nComparing: 2025-09-14 09:05:00 is later than 2025-09-13 22:10:00. So maple is the later record. Submit \"maple\"."
+            }
+          }
+        ],
+        "created": 1785353884,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 227,
+          "prompt_tokens": 589,
+          "total_tokens": 816,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 83,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:38:02.313814+00:00",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "arguments": {
+        "name": "cedar"
+      },
+      "content": "[2025-09-13 22:10:00] payload-for-cedar",
+      "ok": true,
+      "sandbox_sha256_after": "8aae9f931c196b8c54e7ffa56442c2bff7a5022788f3ff3244fd0c6fbc671c3e"
+    },
+    {
+      "at": "2026-07-29T19:38:02.315160+00:00",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "arguments": {
+        "name": "maple"
+      },
+      "content": "[2025-09-14 09:05:00] payload-for-maple",
+      "ok": true,
+      "sandbox_sha256_after": "8aae9f931c196b8c54e7ffa56442c2bff7a5022788f3ff3244fd0c6fbc671c3e"
+    },
+    {
+      "at": "2026-07-29T19:38:10.369063+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "selected_record": "maple"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "8aae9f931c196b8c54e7ffa56442c2bff7a5022788f3ff3244fd0c6fbc671c3e"
+    }
+  ],
+  "tool_counters": {
+    "read_record": 2,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "timestamps": true
+  },
+  "objective_pass": true,
+  "llm_turns": 2,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 962,
+    "completion_tokens": 360,
+    "total_tokens": 1322
+  },
+  "cost": {
+    "amount": 0.05524,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:38:10.371956+00:00",
+  "case_condition_order": [
+    "timestamps_guided",
+    "timestamps_raw",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

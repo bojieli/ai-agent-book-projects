@@ -1,0 +1,44 @@
+{
+  "case": "image_analyze",
+  "tool": "image_analyze",
+  "arguments": {
+    "image_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/ocr-source.png",
+    "prompt": "Read the prominent text and describe the simple image."
+  },
+  "arguments_sha256": "c3c4c141dbc10e201ed018ca541e4ba9ffb1ab6be129a93981d3c2418caf4cd8",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "ocr-source.png",
+      "prompt": "Read the prominent text and describe the simple image.",
+      "analysis": "The image contains a simple, clean text layout on a plain white background. The text is in black, uppercase, sans-serif font and is centered horizontally. It reads:\n\n**EXPERIMENT 4-1**  \n**PERCEPTION TOOLS VERIFIED**\n\nThere are no additional graphics, colors, or visual elements—just the two lines of text. The message suggests a conclusion or status update from an experiment, indicating that perception tools have been successfully verified.",
+      "model": "qwen-vl-max",
+      "provider_receipt": {
+        "provider": "dashscope",
+        "response_id": "chatcmpl-d1480658-2790-916a-99b3-586da5ba47f0",
+        "response_model": "qwen-vl-max",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 438,
+          "completion_tokens": 93,
+          "total_tokens": 531
+        },
+        "latency_seconds": 4.26
+      }
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/ocr-source.png"
+    }
+  },
+  "elapsed_seconds": 4.464
+}

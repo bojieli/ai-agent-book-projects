@@ -1,668 +1,146 @@
-# GPT-5 Native Tools Agent / GPT-5 原生工具 Agent
+# GPT-5.6 Sol Deep Research / GPT-5.6 Sol 深度研究
 
-> GPT-5 native `web_search` + `code_interpreter` via OpenRouter — Deep Research loop: search → read → analyze → search again.  
-> 配套《深入理解 AI Agent》第 1 章 **实验 1-3 ★：GPT-5.6 原生 Deep Research 能力**。
+> Exact OpenAI Responses API companion for Chapter 1, Experiment 1-3: hosted
+> `web_search` + hosted `code_interpreter`, typed tool traces, citations, and an
+> intent-clarification continuation.
 
-← [Chapter 1 index / 返回第 1 章目录](../README.md) · 📖 [Read the chapter / 读本章正文](../../book/chapter1.md)（[EN](../../book-en/chapter1.md)）
+← [Chapter 1 index / 返回第 1 章目录](../README.md) ·
+📖 [Book experiment / 正文实验](../../book/chapter1.md)
 
----
+## What this companion implements
 
-## English
+The canonical path is the OpenAI **Responses API**, not a Chat Completions
+request that merely contains similarly named tool objects. The active agent in
+`agent.py` sends:
 
-### Overview
+```json
+{
+  "model": "gpt-5.6-sol",
+  "tools": [
+    {"type": "web_search", "search_context_size": "medium"},
+    {
+      "type": "code_interpreter",
+      "container": {"type": "auto", "memory_limit": "4g"}
+    }
+  ],
+  "reasoning": {"effort": "high"},
+  "text": {"verbosity": "high"}
+}
+```
 
-An advanced AI agent leveraging GPT-5's native `web_search` and `code_interpreter` tools through the OpenRouter API, matching the exact implementation pattern from production Go code. This agent can search the internet for real-time information and run code for deep analysis using GPT-5's built-in capabilities, realizing the “search → read → analyze → search again” Deep Research loop.
+Acceptance is based on provider output items. A successful ASEAN-capitals run
+must contain completed `web_search_call` and `code_interpreter_call` items,
+clickable URL citations, and the computed closest pair. A text answer that says
+it used Python does not pass without the provider tool receipt.
 
-### Features
+The second scenario sends the deliberately ambiguous Bitcoin request used in
+the chapter, requires the first response to clarify material preferences before
+using tools, then continues with `previous_response_id` after the user supplies
+the data source and indicators.
 
-- **Native Tool Support**: Utilizes GPT-5's built-in `web_search` and `code_interpreter` tools with OpenRouter-specific format
-- **OpenRouter Integration**: Exact API format matching production Go implementation
-- **Web Search Capability**:
-  - Real-time internet search for current information
-  - Configurable search context size and user location
-- **Reasoning Levels**: Support for low, medium, and high reasoning effort
-- **Interactive CLI**: User-friendly command-line interface with reasoning controls
-- **Agent Chaining**: Chain multiple requests for complex workflows
-- **Manual Live Cases**: OpenRouter-backed case suite demonstrating common workflows
+## Current evidence status
 
-### Prerequisites
-
-- Python 3.10 or higher
-- OpenRouter API key (get one at [https://openrouter.ai/keys](https://openrouter.ai/keys))
-- Internet connection for web search functionality
-
-### Quick Start
-
-#### 1. Installation
+Run the complete validator with:
 
 ```bash
-# Recommended from the repository root: use the shared Chapter 1 environment
+cd chapter1/search-codegen
+python run_experiment_1_3.py --backends openai openrouter --reasoning high
+```
+
+The latest evidence is [validation/latest.json](validation/latest.json).
+
+Current result after a fresh official-OpenAI retry on 2026-07-30:
+
+- The configured OpenAI key authenticates and can retrieve the
+  `gpt-5.6-sol` model, but `/v1/responses` returns `insufficient_quota` before
+  either hosted tool runs.
+- The OpenRouter route is retained strictly as a diagnostic. It can proxy a
+  real `openai/gpt-5.6-sol` Responses web-search call, but it does not establish
+  the canonical OpenAI account execution and its hosted Python/container path
+  currently fails. It is therefore not accepted as Experiment 1-3 evidence.
+- No fallback model, local Python replacement, fabricated tool trace, or
+  Chat-Completions approximation is counted as fulfillment.
+
+The credential-free failed-transport receipt is retained at
+`validation/real_20260730T033800Z/evidence.json`: both official Responses calls
+returned HTTP 429 with `code=insufficient_quota` before a model response or
+hosted-tool event, and provider usage remained zero.
+
+Experiment 1-3 remains externally blocked until the official OpenAI account has
+inference quota and both provider-hosted tool receipts can be saved.
+
+## Setup and CLI
+
+Python 3.9+ is required.
+
+```bash
+# From the repository root: use the shared Chapter 1 environment
 uv sync --locked --extra ch1
 
 # Activate it before changing directories:
-# macOS/Linux:
 source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch1]"
 
-# Enter this experiment directory for the commands below
 cd chapter1/search-codegen
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
 
-# Copy environment template
-cp env.example .env
+export OPENAI_API_KEY=your-openai-api-key
 
-# Edit .env and add your OpenRouter API key
-# OPENROUTER_API_KEY=your-openrouter-api-key
+# Exact official path
+python main.py --backend openai --mode single \
+  --request "东盟 10 国首都之间最近的一对是哪两个？请搜索并用 Python 计算" \
+  --reasoning high --verbosity high --output result.json
+
+# Inspect the exact request without an API call
+python main.py --backend openai --dry-run \
+  --request "东盟 10 国首都之间最近的一对？" \
+  --reasoning max --verbosity high
+
+# Proxy diagnostic only; not canonical acceptance
+export OPENROUTER_API_KEY=your-openrouter-api-key
+python main.py --backend openrouter --mode single --request "Search current news"
 ```
 
-#### 2. Configuration
+Important options:
 
-Edit `.env` file with your settings:
+| Option | Meaning |
+|---|---|
+| `--backend openai` | Canonical `https://api.openai.com/v1/responses` path |
+| `--backend openrouter` | Explicit proxy diagnostic; never silently substituted |
+| `--reasoning` | `none`, `low`, `medium`, `high`, `xhigh`, or GPT-5.6 `max` |
+| `--verbosity` | Responses `text.verbosity`: `low`, `medium`, or `high` |
+| `--output` | Saves request, typed output items, citations, usage, and raw response |
 
-```env
-OPENROUTER_API_KEY=your-openrouter-api-key
-MODEL_NAME=openai/gpt-5.6-sol
-DEFAULT_TEMPERATURE=0.3
-DEFAULT_MAX_TOKENS=4000
-```
-
-> This experiment uses OpenRouter as its **primary** backend, so no fallback is needed. The same `OPENROUTER_API_KEY` doubles as the **universal fallback** for the other chapter1 experiments (`context`, `learning-from-experience`, `web-search-agent`) when their direct provider key is missing.
-
-#### 3. Run the Agent
-
-**Interactive mode (recommended):**
+## Verification
 
 ```bash
-python main.py
+python -m pytest -q test_responses_agent.py
+python -m py_compile agent.py config.py main.py run_experiment_1_3.py
 ```
 
-**Single request mode:**
-
-```bash
-python main.py --mode single --request "Search for latest AI news and analyze the trends"
-```
-
-**Run live manual cases:**
-
-```bash
-python main.py --mode test
-```
-
-These cases call OpenRouter and require `OPENROUTER_API_KEY`. Use the dry-run command below for an offline/no-key validation path.
-
-### CLI Arguments
-
-Run `python main.py --help` for the full (Chinese) help text.
-
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--mode` | Run mode: `interactive` / `single` / `test` live manual cases | `interactive` |
-| `--request` | Task or query for `single` / `--dry-run` | — |
-| `--model` | Override model name | `MODEL_NAME` from config |
-| `--reasoning` | Reasoning effort (`low` / `medium` / `high`) | `low` |
-| `--verbosity` | Output verbosity (`low` / `medium` / `high`) | model default |
-| `--no-tools` | Disable native tools | tools enabled |
-| `--output` | Save full result (trace / request body) as JSON | — |
-| `--dry-run` | Offline assemble and print request body; no network, no API key | off |
-| `--test` | In `test` mode, run a named case | all tests |
-
-**Reasoning Effort** and **Verbosity** are the two GPT-5 native knobs highlighted in the book: the former controls thinking depth, the latter answer detail. Both are exposed on the CLI and injected into the request body as-is.
-
-Examples:
-
-```bash
-# Book example: closest pair among ASEAN 10 capitals (search coords + code great-circle distance)
-python main.py --mode single --request "东盟 10 国首都之间距离最近的两个首都是？给出详细分析推理过程。" --reasoning high
-
-# Book example: Bitcoin technical analysis (multi-source live data + indicators)
-python main.py --mode single --request "搜索比特币最近一个月走势，计算 MA、RSI、MACD 等技术指标" --verbosity high --output btc.json
-```
-
-### Offline Request Body (dry-run)
-
-Inspect the real request under the “model as Agent” paradigm—including both native tool definitions plus `reasoning` and `verbosity`—without an API key:
-
-```bash
-python main.py --dry-run --request "东盟 10 国首都之间距离最近的两个首都是？" --reasoning high --verbosity high
-```
-
-In the printed body, the `tools` array includes both `web_search` and `code_interpreter`, and `reasoning.effort` / `verbosity` reflect the chosen levels—the native tools + reasoning/verbosity combination described in the book.
-
-### Usage Examples
-
-#### Example 1: Web Search Only
-
-```python
-from agent import GPT5NativeAgent
-from config import Config
-
-agent = GPT5NativeAgent(
-    api_key=Config.OPENROUTER_API_KEY,
-    base_url=Config.OPENROUTER_BASE_URL
-)
-
-result = agent.process_request(
-    "What are the latest developments in quantum computing?",
-    use_tools=True
-)
-print(result["response"])
-```
-
-#### Example 2: Web Search with High Reasoning
-
-```python
-result = agent.process_request(
-    "Analyze the implications of quantum computing on encryption",
-    use_tools=True,
-    reasoning_effort="high"
-)
-```
-
-#### Example 3: Web Search with Analysis
-
-```python
-result = agent.process_request(
-    """Search for current Bitcoin price and market data, 
-    then analyze the volatility and predict trends""",
-    use_tools=True,
-    reasoning_effort="medium"
-)
-```
-
-#### Example 4: Search and Analyze Method
-
-```python
-analysis_code = """
-import statistics
-# Process search results
-prices = [45000, 46000, 45500, 47000, 46500]
-volatility = statistics.stdev(prices)
-print(f"Volatility: ${volatility:.2f}")
-"""
-
-result = agent.search_and_analyze(
-    topic="Current cryptocurrency market conditions",
-    analysis_code=analysis_code
-)
-```
-
-### Project Structure
-
-```
-search-codegen/
-├── agent.py          # Core GPT-5 agent implementation
-├── config.py         # Configuration management
-├── main.py           # Interactive CLI and entry point
-├── tests/
-│   └── manual/
-│       └── agent_cases.py  # Live OpenRouter manual cases
-├── env.example       # Environment variables template
-├── requirements.txt  # Python dependencies
-└── README.md         # This file
-```
-
-### OpenRouter Tool Format
-
-#### web_search Tool Structure
-
-The web_search tool uses OpenRouter's specific format:
-
-```python
-{
-    "type": "web_search",
-    "search_context_size": "medium",
-    "user_location": {
-        "type": "approximate",
-        "country": "US"
-    }
-}
-```
-
-#### Reasoning Configuration
-
-Supports configurable reasoning effort:
-
-- **low**: Fast responses with basic reasoning
-- **medium**: Balanced reasoning and response time
-- **high**: Deep reasoning for complex queries
-
-### Manual Live Cases
-
-The manual case suite includes comprehensive live OpenRouter cases:
-
-1. **Basic Web Search**: Test internet search capabilities
-2. **Web Search with Analysis**: Search with analytical insights
-3. **Complex Research**: Deep research with high reasoning
-4. **Search and Code**: Search with code generation
-5. **Reasoning Comparison**: Compare different reasoning levels
-6. **Search and Analyze Method**: Convenience method testing
-7. **Agent Chain**: Multi-step workflow
-
-```bash
-# Run all live manual cases
-python tests/manual/agent_cases.py
-
-# Run a specific live manual case through the main CLI
-python main.py --mode test --test basic
-```
-
-Available case names: `basic`, `analysis`, `complex`, `code`, `reasoning`, `search_analyze`, `chain`
-
-There are no default offline pytest tests for this experiment yet. Use `python main.py --dry-run --request "..."` to validate request-body assembly without an API key.
-
-### Interactive CLI Commands
-
-When running in interactive mode:
-
-- `/help` — Show help message
-- `/clear` — Clear conversation history
-- `/history` — Show conversation history
-- `/tools` — Toggle tools on/off
-- `/search` — Enter web search mode
-- `/code` — Enter code generation mode
-- `/analyze` — Combined search + analysis mode
-- `/config` — Show current configuration
-- `/reasoning` — Set reasoning effort level
-- `/exit` — Exit the application
-
-### Configuration Options
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `OPENROUTER_API_KEY` | Your OpenRouter API key | Required |
-| `MODEL_NAME` | GPT-5 model identifier | `openai/gpt-5.6-sol` |
-| `DEFAULT_TEMPERATURE` | Response randomness (0-1) | `0.3` |
-| `DEFAULT_MAX_TOKENS` | Maximum response length | `4000` |
-| `DEFAULT_TOOL_CHOICE` | Tool selection strategy | `auto` |
-| `LOG_LEVEL` | Logging verbosity | `INFO` |
-
-### API Integration
-
-This agent uses the OpenRouter API to access GPT-5. OpenRouter provides:
-
-- Unified API for multiple models
-- Automatic fallbacks for reliability
-- Usage tracking and analytics
-- Competitive pricing
-
-Learn more at [OpenRouter Documentation](https://openrouter.ai/docs).
-
-### Token Usage
-
-The agent tracks token usage for each request:
-
-- Prompt tokens: Input token count
-- Completion tokens: Output token count
-- Total tokens: Combined usage
-
-Monitor costs based on OpenRouter's pricing for `openai/gpt-5.6-sol` (verified 2026-07-24; check the [model page](https://openrouter.ai/openai/gpt-5.6-sol) for current rates):
-
-- Input: $5 per million tokens
-- Output: $30 per million tokens
-
-### Troubleshooting
-
-#### API Key Issues
-
-```bash
-# Verify your API key starts with 'sk-or-'
-echo $OPENROUTER_API_KEY
-```
-
-#### Rate Limiting
-
-Adjust `RATE_LIMIT_RPM` in `.env` if encountering rate limits.
-
-#### Tool Errors
-
-- Ensure `use_tools=True` when calling `process_request`
-- Set `tool_choice="required"` to force tool usage
-
-### Resources
-
-- [OpenRouter GPT-5 API](https://openrouter.ai/openai/gpt-5.6-sol)
-- [OpenAI Native Tools Documentation](https://platform.openai.com/docs/guides/tools)
-- [OpenRouter Documentation](https://openrouter.ai/docs)
-- [API Keys](https://openrouter.ai/keys)
-
----
-
-## 中文
-
-### 概述
-
-本项目通过 OpenRouter API 调用 GPT-5 原生 `web_search` 与 `code_interpreter` 工具，API 形态对齐生产环境 Go 实现。Agent 可联网检索实时信息，并写代码做深度分析，实现“搜索 → 阅读 → 分析 → 再搜索”的 Deep Research 循环。对应书中**实验 1-3 ★：GPT-5.6 原生 Deep Research 能力**。
-
-### 特性
-
-- **原生工具支持**：以 OpenRouter 特定格式使用 GPT-5 内置 `web_search` 与 `code_interpreter`
-- **OpenRouter 集成**：请求格式与生产 Go 实现一致
-- **网络搜索**：
-  - 实时检索当前信息
-  - 可配置搜索上下文大小与用户位置
-- **推理档位**：支持 low / medium / high 推理力度
-- **交互式 CLI**：带推理控制的命令行界面
-- **Agent 串联**：多请求链式工作流
-- **联网手动用例**：基于 OpenRouter 的常见工作流演示用例
-
-### 前置条件
-
-- Python 3.10 或更高
-- OpenRouter API Key（[https://openrouter.ai/keys](https://openrouter.ai/keys)）  
-- 需要联网才能使用搜索功能  
-
-### 快速开始
-
-#### 1. 安装
-
-```bash
-# 推荐在仓库根目录使用统一的第 1 章环境
-uv sync --locked --extra ch1
-
-# 切换目录前先激活环境：
-# macOS/Linux：
-source .venv/bin/activate
-# Windows PowerShell：.venv\Scripts\Activate.ps1
-# Windows cmd：.venv\Scripts\activate.bat
-
-# 未安装 uv 时可用 pip 兜底：
-# python -m pip install -e ".[ch1]"
-
-# 进入本实验目录，后续命令都在这里运行
-cd chapter1/search-codegen
-
-# 迁移期间仍支持单项目兼容路径：
-# python -m pip install -r requirements.txt
-
-# 复制环境变量模板
-cp env.example .env
-
-# Edit .env and add your OpenRouter API key
-# OPENROUTER_API_KEY=your-openrouter-api-key
-```
-
-#### 2. 配置
-
-编辑 `.env`：
-
-```env
-OPENROUTER_API_KEY=your-openrouter-api-key
-MODEL_NAME=openai/gpt-5.6-sol
-DEFAULT_TEMPERATURE=0.3
-DEFAULT_MAX_TOKENS=4000
-```
-
-> 本实验以 OpenRouter 为**主后端**，无需再配其他兜底。同一 `OPENROUTER_API_KEY` 也是其他第 1 章实验（`context`、`learning-from-experience`、`web-search-agent`）在直连 Key 缺失时的**通用兜底**。
-
-#### 3. 运行 Agent
-
-**交互模式（推荐）：**
-
-```bash
-python main.py
-```
-
-**单次请求：**
-
-```bash
-python main.py --mode single --request "Search for latest AI news and analyze the trends"
-```
-
-**运行联网手动用例：**
-
-```bash
-python main.py --mode test
-```
-
-这些用例会调用 OpenRouter，需要 `OPENROUTER_API_KEY`。如需离线、无 Key 校验，请使用下面的 dry-run 命令。
-
-### 命令行参数（CLI）
-
-运行 `python main.py --help` 查看完整中文帮助。
-
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `--mode` | 运行模式：`interactive` 交互 / `single` 单次 / `test` 联网手动用例 | `interactive` |
-| `--request` | `single` / `--dry-run` 模式下的任务或查询内容 | — |
-| `--model` | 覆盖模型名称 | 配置中的 `MODEL_NAME` |
-| `--reasoning` | 推理力度 Reasoning Effort（`low`/`medium`/`high`） | `low` |
-| `--verbosity` | 输出详略程度 Verbosity（`low`/`medium`/`high`） | 跟随模型 |
-| `--no-tools` | 禁用原生工具 | 启用 |
-| `--output` | 将完整结果（含轨迹 / 请求体）保存为 JSON | — |
-| `--dry-run` | 离线组装并打印请求体，不联网、无需 API Key | 关闭 |
-| `--test` | `test` 模式下运行指定用例 | 运行全部 |
-
-**Reasoning Effort** 与 **Verbosity** 是书中强调的两个 GPT-5 原生参数：前者调节思考深度，后者控制回答详略。二者都已通过 CLI 暴露，并原样注入到发送给模型的请求体中。
-
-示例：
-
-```bash
-# 书中示例任务：东盟 10 国首都最近的一对（搜索坐标 + 代码计算大圆距离）
-python main.py --mode single --request "东盟 10 国首都之间距离最近的两个首都是？给出详细分析推理过程。" --reasoning high
-
-# 书中示例任务：比特币技术分析（多源实时数据 + 指标计算）
-python main.py --mode single --request "搜索比特币最近一个月走势，计算 MA、RSI、MACD 等技术指标" --verbosity high --output btc.json
-```
-
-### 离线查看请求体（dry-run）
-
-无需 API Key 即可查看“模型即 Agent”范式下真正发送给模型的请求——包括两个原生工具的定义、`reasoning` 与 `verbosity` 参数：
-
-```bash
-python main.py --dry-run --request "东盟 10 国首都之间距离最近的两个首都是？" --reasoning high --verbosity high
-```
-
-输出的请求体中，`tools` 数组同时包含 `web_search` 和 `code_interpreter`，`reasoning.effort` 与 `verbosity` 反映所选档位——正是书中所述的原生工具 + 推理/详略参数的组合。
-
-### 使用示例
-
-#### 示例 1：仅网络搜索
-
-```python
-from agent import GPT5NativeAgent
-from config import Config
-
-agent = GPT5NativeAgent(
-    api_key=Config.OPENROUTER_API_KEY,
-    base_url=Config.OPENROUTER_BASE_URL
-)
-
-result = agent.process_request(
-    "What are the latest developments in quantum computing?",
-    use_tools=True
-)
-print(result["response"])
-```
-
-#### 示例 2：高推理力度搜索
-
-```python
-result = agent.process_request(
-    "Analyze the implications of quantum computing on encryption",
-    use_tools=True,
-    reasoning_effort="high"
-)
-```
-
-#### 示例 3：搜索 + 分析
-
-```python
-result = agent.process_request(
-    """Search for current Bitcoin price and market data, 
-    then analyze the volatility and predict trends""",
-    use_tools=True,
-    reasoning_effort="medium"
-)
-```
-
-#### 示例 4：search_and_analyze 方法
-
-```python
-analysis_code = """
-import statistics
-# Process search results
-prices = [45000, 46000, 45500, 47000, 46500]
-volatility = statistics.stdev(prices)
-print(f"Volatility: ${volatility:.2f}")
-"""
-
-result = agent.search_and_analyze(
-    topic="Current cryptocurrency market conditions",
-    analysis_code=analysis_code
-)
-```
-
-### 项目结构
-
-```
-search-codegen/
-├── agent.py          # Core GPT-5 agent implementation
-├── config.py         # Configuration management
-├── main.py           # Interactive CLI and entry point
-├── tests/
-│   └── manual/
-│       └── agent_cases.py  # Live OpenRouter manual cases
-├── env.example       # Environment variables template
-├── requirements.txt  # Python dependencies
-└── README.md         # This file
-```
-
-### OpenRouter 工具格式
-
-#### web_search 结构
-
-web_search 使用 OpenRouter 特定格式：
-
-```python
-{
-    "type": "web_search",
-    "search_context_size": "medium",
-    "user_location": {
-        "type": "approximate",
-        "country": "US"
-    }
-}
-```
-
-#### 推理配置
-
-可配置推理力度：
-
-- **low**：快速响应、基础推理  
-- **medium**：推理深度与响应时间平衡  
-- **high**：复杂查询的深度推理  
-
-### 联网手动用例
-
-手动用例套件覆盖以下 OpenRouter 联网场景：
-
-1. **Basic Web Search**：基础联网搜索  
-2. **Web Search with Analysis**：搜索 + 分析  
-3. **Complex Research**：高推理深度研究  
-4. **Search and Code**：搜索 + 代码生成  
-5. **Reasoning Comparison**：对比不同推理档位  
-6. **Search and Analyze Method**：便捷方法测试  
-7. **Agent Chain**：多步工作流  
-
-```bash
-# Run all live manual cases
-python tests/manual/agent_cases.py
-
-# Run a specific live manual case through the main CLI
-python main.py --mode test --test basic
-```
-
-可用用例名：`basic`、`analysis`、`complex`、`code`、`reasoning`、`search_analyze`、`chain`
-
-本实验暂未提供默认离线 pytest 测试。可使用 `python main.py --dry-run --request "..."` 在无 API Key 情况下验证请求体组装。
-
-### 交互式 CLI 命令
-
-交互模式下可用：
-
-- `/help` — 显示帮助  
-- `/clear` — 清空对话历史  
-- `/history` — 显示对话历史  
-- `/tools` — 开关工具  
-- `/search` — 进入网络搜索模式  
-- `/code` — 进入代码生成模式  
-- `/analyze` — 搜索 + 分析模式  
-- `/config` — 显示当前配置  
-- `/reasoning` — 设置推理力度  
-- `/exit` — 退出  
-
-### 配置项
-
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `OPENROUTER_API_KEY` | OpenRouter API 密钥 | 必填 |
-| `MODEL_NAME` | GPT-5 模型标识 | `openai/gpt-5.6-sol` |
-| `DEFAULT_TEMPERATURE` | 随机性（0–1） | `0.3` |
-| `DEFAULT_MAX_TOKENS` | 最大回复长度 | `4000` |
-| `DEFAULT_TOOL_CHOICE` | 工具选择策略 | `auto` |
-| `LOG_LEVEL` | 日志级别 | `INFO` |
-
-### API 集成
-
-通过 OpenRouter 访问 GPT-5。OpenRouter 提供：
-
-- 多模型统一 API  
-- 可靠性自动回退  
-- 用量追踪与分析  
-- 有竞争力的定价  
-
-详见 [OpenRouter Documentation](https://openrouter.ai/docs)。
-
-### Token 用量
-
-每次请求会统计：
-
-- Prompt tokens：输入  
-- Completion tokens：输出  
-- Total tokens：合计  
-
-可参考 OpenRouter 上 `openai/gpt-5.6-sol` 的定价监控成本（2026-07-24 核对；最新价格见[模型页](https://openrouter.ai/openai/gpt-5.6-sol)）：
-
-- 输入：$5 / 百万 tokens  
-- 输出：$30 / 百万 tokens  
-
-### 故障排查
-
-#### API Key 问题
-
-```bash
-# Verify your API key starts with 'sk-or-'
-echo $OPENROUTER_API_KEY
-```
-
-#### 限流
-
-若遇限流，可在 `.env` 中调整 `RATE_LIMIT_RPM`。
-
-#### 工具错误
-
-- 调用 `process_request` 时确保 `use_tools=True`  
-- 可设 `tool_choice="required"` 强制使用工具  
-
-### 相关链接
-
-- [OpenRouter GPT-5 API](https://openrouter.ai/openai/gpt-5.6-sol)
-- [OpenAI Native Tools Documentation](https://platform.openai.com/docs/guides/tools)
-- [OpenRouter Documentation](https://openrouter.ai/docs)
-- [API Keys](https://openrouter.ai/keys)
-
----
-
-## Notes / 说明
-
-- Part of the AI Agent curriculum / 属于 AI Agent 实战训练营课程材料。  
-- Prefer interactive mode for exploration; use `--dry-run` to inspect request shape without spending tokens.  
-  探索时优先用交互模式；用 `--dry-run` 可在不消耗 token 的情况下查看请求结构。  
-- Built with GPT-5 native capabilities via OpenRouter.  
-  基于 OpenRouter 上的 GPT-5 原生能力构建。  
+The validator checks exact model identity, direct-vs-proxy provenance, both
+hosted tool types, citations, clarification order, continuation linkage, token
+usage, reported provider cost when available, and credential-free raw evidence.
+
+## Official sources
+
+- [GPT-5.6 Sol model](https://developers.openai.com/api/docs/models/gpt-5.6-sol)
+- [Web search](https://developers.openai.com/api/docs/guides/tools-web-search)
+- [Code Interpreter](https://developers.openai.com/api/docs/guides/tools-code-interpreter)
+- [GPT-5.6 model guidance](https://developers.openai.com/api/docs/guides/model-guidance?model=gpt-5.6-sol)
+
+## 中文说明
+
+本项目已改为正文所述的**精确协议**：官方 OpenAI Responses API、
+`gpt-5.6-sol`、托管 `web_search` 与托管 `code_interpreter`。验收依据是服务端
+返回的 `web_search_call` / `code_interpreter_call` 和 URL 引用，而不是代码里
+“声明了工具”或答案里“声称用过 Python”。
+
+当前官方 Key 能通过模型查询，但推理返回 `insufficient_quota`，所以实验尚未完成。
+OpenRouter 只作为诊断路径明确保留，不会被包装成官方托管 Python 的替代品。额度恢复后，
+运行上面的 `run_experiment_1_3.py`；只有东盟搜索计算与“先澄清、再研究”两个场景都通过，
+`acceptance.passed` 才会变为 `true`。

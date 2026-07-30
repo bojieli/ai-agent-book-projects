@@ -1,0 +1,87 @@
+{
+  "experiment_id": "2-6",
+  "protocol_sha256": "2990c8ef624edc12a06fb1b622de33b0fe8842cc5b42faf85788850111265eba",
+  "official_skill_receipt": {
+    "repository": "https://github.com/anthropics/skills.git",
+    "revision": "69c0b1a0674149f27b61b2635f935524b6add202",
+    "skill_path": "/Users/boj/book/ai-agent-book/chapter2/agent-skills-ppt/external/anthropics-skills/skills/pptx",
+    "required_file_hashes": {
+      "skills/pptx/SKILL.md": "b6f25545bfb358739f1532f793458b5dbc87ee009933cb7c306b2d951ab6617f",
+      "skills/pptx/html2pptx.md": "f08ed7580969b796d9cd5ade93e2cdee981dcaf13cc5eb12e8d4a3700c2d6047",
+      "skills/pptx/scripts/html2pptx.js": "c675d09a54d6a002e8ca5917b9d24a6568aa8d455bb7abeb212d4f564dd07a34",
+      "skills/pptx/scripts/thumbnail.py": "c21fd950b6ada7bd2f029885d3e56bc66b7ff061cc8404c492eb301664aa9e5d"
+    }
+  },
+  "claude_result": {
+    "subtype": "success",
+    "is_error": true,
+    "duration_ms": 186850,
+    "duration_api_ms": 0,
+    "num_turns": 1,
+    "result": "Failed to authenticate. API Error: 401 API key is invalid.",
+    "total_cost_usd": 0,
+    "usage": {
+      "input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 0,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {},
+    "session_id": "8ab46948-d96e-4312-ad33-4c572984fe68"
+  },
+  "slide_count": 0,
+  "section_checks": {
+    "title": false,
+    "background": false,
+    "method": false,
+    "results": false,
+    "conclusion": false
+  },
+  "source_visuals": [],
+  "embedded_media": {},
+  "thumbnail_files": [],
+  "gates": {
+    "source_pdf_hash_matches": true,
+    "claude_run_succeeded": false,
+    "pptx_skill_invoked": false,
+    "skill_md_loaded": false,
+    "html2pptx_guide_loaded": false,
+    "official_html2pptx_used": false,
+    "official_thumbnail_used": false,
+    "thumbnail_visually_inspected": false,
+    "pptx_zip_valid": false,
+    "pptx_reopens": false,
+    "slide_count_in_range": false,
+    "required_sections_present": false,
+    "three_source_visuals_embedded_and_documented": false,
+    "thumbnail_grid_present": false,
+    "credential_scan_passed": true
+  },
+  "official_complete": false,
+  "artifacts": {
+    "experiment_protocol.json": {
+      "sha256": "2990c8ef624edc12a06fb1b622de33b0fe8842cc5b42faf85788850111265eba",
+      "bytes": 2582
+    },
+    "claude_stream.jsonl": {
+      "sha256": "531ee0e7a5ffcdbd4060108ed809e8576b13604f29a3cc3fbd259afac3cf9afb",
+      "bytes": 5725
+    },
+    "workspace/attention-is-all-you-need.pdf": {
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "bytes": 2215244
+    }
+  }
+}

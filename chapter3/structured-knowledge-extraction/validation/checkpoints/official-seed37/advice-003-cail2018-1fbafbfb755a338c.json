@@ -1,0 +1,89 @@
+{
+  "signature": "cbe9a3b6c15b79998935e79fefdbd53421f84180542fd08a4d08a8e9c11f1fa0",
+  "parsed": {
+    "advice": "匹配依据：待匹配案件的盗窃方法“趁人不备”、盗窃目标“手机”、使用特殊便利“无”、盗窃工具“徒手”、盗窃金额及盗窃次数等关键特征，与训练集原型“盗窃罪-prototype-4”的定义特征高度匹配。该原型样本量为53，刑期统计区间为：中位数7个月，四分位25%为6个月，四分位75%为9个月，最小值2个月，最大值72个月。具体刑期可能因案件未纳入统计的其他因素存在波动，具有不确定性。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-1fbafbfb755a338c",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:41:43.940524+00:00",
+    "latency_ms": 19800.814,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"盗窃罪\", \"surrender\": null, \"truthful_confession\": null, \"compensation_to_victim\": null, \"victim_forgiveness\": null, \"joint_crime\": false, \"criminal_record\": null, \"arrest_method\": \"被抓获\", \"return_of_stolen_property\": \"全部退赃\", \"crime_count\": 1.0, \"crime_amount\": 1600.0, \"guilty_plea\": true, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": 1.0, \"theft_count\": 1.0, \"theft_amount\": 1600.0, \"household_theft\": false, \"stolen_property_recovery\": \"全部追回\", \"destructive_means\": false, \"use_special_convenience\": \"无\", \"theft_method\": \"趁人不备\", \"theft_target\": \"手机\", \"theft_tool\": \"徒手\", \"theft_location\": \"公共场所\", \"stolen_property_disposal\": null, \"drug_user_identity\": null}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"盗窃罪-prototype-4\", \"charge\": \"盗窃罪\", \"prototype_size\": 53, \"sentence_months\": {\"median\": 7.0, \"q25\": 6.0, \"q75\": 9.0, \"min\": 2.0, \"max\": 72.0}, \"defining_features\": [{\"feature\": \"cat:theft_method=趁人不备\", \"z\": 1.6014813672139347}, {\"feature\": \"cat:theft_target=手机\", \"z\": 1.4372243817878076}, {\"feature\": \"cat:use_special_convenience=无\", \"z\": 1.433980681035021}, {\"feature\": \"num:theft_amount\", \"z\": 1.4051072801892825}, {\"feature\": \"num:theft_count\", \"z\": 1.186314536087199}, {\"feature\": \"cat:theft_tool=徒手\", \"z\": 1.1302013658008716}, {\"feature\": \"cat:theft_location=户外\", \"z\": 1.1116513579865053}, {\"feature\": \"cat:stolen_property_disposal=变卖挥霍\", \"z\": 1.0391716890512863}], \"match_distance\": 0.10723022373168277}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386504178a3a08778c75214a0d2bb1c008b2d20ec70c495",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：待匹配案件的盗窃方法“趁人不备”、盗窃目标“手机”、使用特殊便利“无”、盗窃工具“徒手”、盗窃金额及盗窃次数等关键特征，与训练集原型“盗窃罪-prototype-4”的定义特征高度匹配。该原型样本量为53，刑期统计区间为：中位数7个月，四分位25%为6个月，四分位75%为9个月，最小值2个月，最大值72个月。具体刑期可能因案件未纳入统计的其他因素存在波动，具有不确定性。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户的请求，根据提供的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE来生成JSON格式的建议。首先，我要仔细分析这两个部分的内容。\n\n首先看HELDOUT EXTRACTED FACTORS，里面的罪名是盗窃罪，具体因素包括盗窃方法是“趁人不备”，盗窃目标是“手机”，使用特殊便利是“无”，盗窃金额1600元，盗窃次数1次，盗窃工具“徒手”，盗窃地点“公共场所”，全部退赃，全部追回，犯罪形态既遂，认罪认罚等。\n\n然后是MATCHED TRAINING PROTOTYPE，原型ID是“盗窃罪-prototype-4”，样本量53，刑期的中位数是7个月，四分位25%是6个月，75%是9个月，最小值2个月，最大值72个月。定义特征里有几个关键的分类特征，比如盗窃方法=趁人不备，盗窃目标=手机，使用特殊便利=无，盗窃工具=徒手，还有数值特征盗窃金额和盗窃次数。不过这里有一个定义特征是“cat:theft_location=户外”，而待匹配案件的盗窃地点是“公共场所”，可能存在一定差异，但整体匹配距离0.107，比较低，说明匹配度较高。\n\n接下来，我需要根据这些信息生成建议。根据规则，只能使用训练集案件原型统计与已抽取因素，不能用外部知识或自行给刑期数字。要解释匹配依据和统计区间，强调不确定性。\n\n匹配依据应该是待匹配案件的关键特征与原型的定义特征高度匹配，比如盗窃方法趁人不备、目标手机、无特殊便利、徒手、盗窃金额和次数等，这些都是原型中z值较高的定义特征。统计区间就是原型的刑期统计，中位数7个月，q25=6，q75=9，min=2，max=72。需要说明这些统计值，并指出刑期可能在该区间内，但存在不确定性，因为实际案件可能有未纳入的因素等。\n\n需要注意不要使用原始训练案件或外部法律知识，只基于给出的原型统计。还要强调不确定性，比如“刑期可能存在一定波动”之类的表述。\n\n现在组织语言，先说明匹配依据是关键特征匹配，然后列出统计区间（中位数、四分位、 min、max），最后强调不确定性。确保用中文，并且只返回JSON格式的advice字段。\n\n检查是否有遗漏：是否提到了匹配依据（关键特征如趁人不备、手机、无特殊便利、徒手、盗窃金额和次数等与原型定义特征匹配），统计区间（中位数7个月，q25 6个月，q75 9个月，最小值2个月，最大值72个月），强调不确定性（如“具体刑期可能因案件具体情况存在波动”）。\n\n确认无误后，生成JSON。"
+          }
+        }
+      ],
+      "created": 1785386523,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 756,
+        "prompt_tokens": 827,
+        "total_tokens": 1583,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 631,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 756,
+      "prompt_tokens": 827,
+      "total_tokens": 1583,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 631,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386504178a3a08778c75214a0d2bb1c008b2d20ec70c495"
+  }
+}

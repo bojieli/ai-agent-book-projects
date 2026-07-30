@@ -240,9 +240,22 @@ def run_scenario(client, kv_cache: bool, compress: bool, name: str = None,
     for idx, (step, tool, result) in enumerate(TOOL_RESULTS):
         messages, tool_ctx = build_messages(
             idx, step, tool, result, turns, kv_cache, compress)
-        resp = tracer.chat(step=step, tool=tool, tool_ctx_tokens=tool_ctx,
-                           model=MODEL, messages=messages, temperature=0,
-                           max_tokens=MAX_OUTPUT_TOKENS)
+        model_name = MODEL.lower()
+        if model_name.startswith("kimi-k2.5"):
+            temperature = 0.6
+        elif any(tag in model_name for tag in ("kimi-k3", "gpt-5")):
+            temperature = 1
+        else:
+            temperature = 0
+        request = {
+            "model": MODEL,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": MAX_OUTPUT_TOKENS,
+        }
+        if MODEL.lower().startswith("kimi-k2.5"):
+            request["extra_body"] = {"thinking": {"type": "disabled"}}
+        resp = tracer.chat(step=step, tool=tool, tool_ctx_tokens=tool_ctx, **request)
         assistant_text = resp.choices[0].message.content or ""
         turns.append((step, assistant_text, tool, result))
     return tracer

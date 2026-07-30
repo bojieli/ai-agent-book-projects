@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "experiment": "10-6",
+  "run_type": "real_browser_cascade_stress",
+  "measured_at": "2026-07-29T17:58:19+0800",
+  "target": "Andrew Ng",
+  "browser": "Playwright Chromium",
+  "llm_provider": "Volcengine ARK",
+  "source": "live Stanford HAI profile repeated with distinct query URLs to expose cancellation timing",
+  "workers": 4,
+  "winner": "agent-03",
+  "winner_url": "https://hai.stanford.edu/people/andrew-ng?worker=d",
+  "parallel_seconds": 16.313,
+  "terminate_broadcasts": 1,
+  "loser_acknowledgements": ["agent-00", "agent-01", "agent-02"],
+  "duplicate_hits": [],
+  "errors": {},
+  "contexts_created": 4,
+  "contexts_closed": 4,
+  "gates": {
+    "real_browser_sessions": {"status": "pass", "count": 4},
+    "single_locked_settlement": {"status": "pass"},
+    "single_terminate_broadcast": {"status": "pass", "count": 1},
+    "all_losing_workers_acknowledged": {"status": "pass", "count": 3},
+    "all_browser_resources_closed": {"status": "pass", "created": 4, "closed": 4}
+  },
+  "overall_status": "pass"
+}

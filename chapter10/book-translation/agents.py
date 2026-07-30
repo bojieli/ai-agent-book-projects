@@ -15,6 +15,8 @@
 
 import os
 import json
+import time
+import hashlib
 
 import tiktoken
 from openai import OpenAI
@@ -25,6 +27,8 @@ from openai import OpenAI
 # ----------------------------------------------------------------------------
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 BASE_URL = os.environ.get("OPENAI_BASE_URL")  # 可选，兼容自建/代理端点
+PROVIDER = os.environ.get("LLM_PROVIDER", "auto").strip().lower()
+ACTIVE_PROVIDER = ""
 
 
 def _report_issues(report: dict) -> list:
@@ -58,16 +62,42 @@ def get_client() -> OpenAI:
          映射到 OpenRouter 命名空间（如 gpt-5.6-luna -> openai/gpt-5.6-luna）；
       3) 都没有则报清晰错误。
     """
-    global MODEL
+    global MODEL, ACTIVE_PROVIDER
+    if PROVIDER == "mistral":
+        key = os.environ.get("MISTRAL_API_KEY")
+        if not key:
+            raise RuntimeError("LLM_PROVIDER=mistral requires MISTRAL_API_KEY")
+        if MODEL.startswith("gpt-") or "/" in MODEL:
+            MODEL = "mistral-medium-latest"
+        ACTIVE_PROVIDER = "Mistral API"
+        return OpenAI(
+            api_key=key, base_url="https://api.mistral.ai/v1",
+            timeout=240.0, max_retries=0,
+        )
+    if PROVIDER == "ark":
+        key = os.environ.get("ARK_API_KEY")
+        if not key:
+            raise RuntimeError("LLM_PROVIDER=ark requires ARK_API_KEY")
+        if MODEL.startswith("gpt-") or "/" in MODEL:
+            MODEL = os.environ.get("ARK_MODEL", "doubao-seed-1-6-250615")
+        ACTIVE_PROVIDER = "Volcengine ARK"
+        return OpenAI(
+            api_key=key, base_url="https://ark.cn-beijing.volces.com/api/v3",
+            timeout=240.0, max_retries=0,
+        )
+    if PROVIDER not in ("auto", "openai", "openrouter"):
+        raise RuntimeError(f"Unsupported LLM_PROVIDER={PROVIDER!r}")
     api_key = os.environ.get("OPENAI_API_KEY")
-    if api_key:
+    if api_key and PROVIDER in ("auto", "openai"):
         kwargs = {"api_key": api_key}
         if BASE_URL:
             kwargs["base_url"] = BASE_URL
+        ACTIVE_PROVIDER = "OpenAI-compatible custom endpoint" if BASE_URL else "OpenAI API"
         return OpenAI(**kwargs)
     or_key = os.environ.get("OPENROUTER_API_KEY")
-    if or_key:
+    if or_key and PROVIDER in ("auto", "openrouter"):
         MODEL = _to_openrouter_model(MODEL)
+        ACTIVE_PROVIDER = "OpenRouter"
         return OpenAI(api_key=or_key, base_url="https://openrouter.ai/api/v1")
     raise RuntimeError(
         "未设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请参考 env.example 配置。"
@@ -86,7 +116,8 @@ def _slug(name: str) -> str:
     import re
     m = re.search(r"chapter\s*0*(\d+)", name, re.IGNORECASE)
     if m:
-        return f"chapter{m.group(1)}"
+        part = re.search(r"part\s*0*(\d+)", name, re.IGNORECASE)
+        return f"chapter{m.group(1)}" + (f"_part{part.group(1)}" if part else "")
     return re.sub(r"[^0-9a-zA-Z]+", "_", name).strip("_").lower() or "chapter"
 
 
@@ -119,6 +150,28 @@ def count_messages_tokens(messages) -> int:
     return total
 
 
+def _single_progress_fingerprint(chapters: dict) -> str:
+    contract = {
+        "provider": ACTIVE_PROVIDER,
+        "model": MODEL,
+        "thinking": "disabled" if ACTIVE_PROVIDER == "Volcengine ARK" else "provider_default",
+        "chapters": [
+            [name, hashlib.sha256(text.encode("utf-8")).hexdigest()]
+            for name, text in chapters.items()
+        ],
+    }
+    raw = json.dumps(contract, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _write_json_atomic(path: str, value: dict) -> None:
+    temporary = path + ".tmp"
+    with open(temporary, "w", encoding="utf-8") as handle:
+        json.dump(value, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    os.replace(temporary, path)
+
+
 # ----------------------------------------------------------------------------
 # Token 追踪器：记录每一次 LLM 调用的上下文规模，并按 Agent 聚合
 # ----------------------------------------------------------------------------
@@ -134,13 +187,21 @@ class TokenTracker:
     def __init__(self):
         self.calls = []  # 每次调用一条记录
 
-    def record(self, agent, prompt_tokens, completion_tokens, note=""):
+    def record(
+        self, agent, prompt_tokens, completion_tokens, note="", latency_seconds=0.0,
+        outcome="success",
+    ):
         self.calls.append(
             {
                 "agent": agent,
                 "prompt_tokens": prompt_tokens,
                 "completion_tokens": completion_tokens,
                 "note": note,
+                "latency_seconds": latency_seconds,
+                "provider": ACTIVE_PROVIDER,
+                "model": MODEL,
+                "thinking": "disabled" if ACTIVE_PROVIDER == "Volcengine ARK" else "provider_default",
+                "outcome": outcome,
             }
         )
 
@@ -156,6 +217,7 @@ class TokenTracker:
             a["in"] += c["prompt_tokens"]
             a["out"] += c["completion_tokens"]
             a["peak_context"] = max(a["peak_context"], c["prompt_tokens"])
+            a["latency_seconds"] = a.get("latency_seconds", 0.0) + c.get("latency_seconds", 0.0)
         return agg
 
     def total_tokens(self):
@@ -165,6 +227,18 @@ class TokenTracker:
 # ----------------------------------------------------------------------------
 # LLM 调用封装：每次调用都带上 agent 名字，便于按 Agent 记账
 # ----------------------------------------------------------------------------
+def _provider_request_options(provider: str) -> dict:
+    options = {}
+    if provider in ("Mistral API", "Volcengine ARK"):
+        options["max_tokens"] = 12_000
+    if provider == "Volcengine ARK":
+        # Seed 1.6 Flash may spend the full completion on reasoning and return
+        # empty content for long-form translation. ARK's supported switch makes
+        # the requested translation the actual response body.
+        options["extra_body"] = {"thinking": {"type": "disabled"}}
+    return options
+
+
 def llm_chat(client, tracker, agent, messages, json_mode=False, note=""):
     """
     发起一次 chat completion，并把真实 token usage 记入 tracker。
@@ -173,22 +247,51 @@ def llm_chat(client, tracker, agent, messages, json_mode=False, note=""):
     因此各 Agent 的上下文天然隔离，互不污染。
     """
     kwargs = {"model": MODEL, "messages": messages, "temperature": 0.2}
+    kwargs.update(_provider_request_options(ACTIVE_PROVIDER))
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
 
-    try:
-        resp = client.chat.completions.create(**kwargs)
-    except Exception as e:
-        # 推理模型（如 gpt-5.x）只接受默认 temperature，会拒绝自定义值；
-        # 此时去掉 temperature 重试一次，保持其余参数不变。
-        if "temperature" in str(e).lower():
-            kwargs.pop("temperature", None)
+    started = time.perf_counter()
+    resp = None
+    for attempt in range(1, 5):
+        attempt_started = time.perf_counter()
+        try:
             resp = client.chat.completions.create(**kwargs)
-        else:
-            raise
-    usage = resp.usage
-    tracker.record(agent, usage.prompt_tokens, usage.completion_tokens, note)
-    return resp.choices[0].message.content
+        except Exception as e:
+            # 推理模型（如 gpt-5.x）只接受默认 temperature，会拒绝自定义值。
+            if "temperature" in str(e).lower() and "temperature" in kwargs:
+                kwargs.pop("temperature", None)
+                continue
+            transient = type(e).__name__ in {
+                "APIConnectionError", "APITimeoutError", "RateLimitError", "InternalServerError"
+            }
+            if not transient or attempt == 4:
+                raise
+            time.sleep(min(8, 2 ** (attempt - 1)))
+            continue
+        usage = resp.usage
+        content = resp.choices[0].message.content
+        if not isinstance(content, str) or not content.strip():
+            # Empty successful responses are a transient provider failure too.
+            # Record their billed usage, then retry instead of losing a long
+            # campaign after otherwise valid earlier units.
+            tracker.record(
+                agent, usage.prompt_tokens, usage.completion_tokens,
+                f"{note} [empty response attempt {attempt}]",
+                latency_seconds=time.perf_counter() - attempt_started,
+                outcome="empty_response",
+            )
+            if attempt == 4:
+                raise RuntimeError(f"{agent} returned empty content on all retry attempts")
+            time.sleep(min(8, 2 ** (attempt - 1)))
+            resp = None
+            continue
+        tracker.record(
+            agent, usage.prompt_tokens, usage.completion_tokens, note,
+            latency_seconds=time.perf_counter() - attempt_started,
+        )
+        return content
+    raise RuntimeError("LLM request exhausted retries without a usable response")
 
 
 # ============================================================================
@@ -574,6 +677,8 @@ def run_single_agent(chapters, out_dir, *, source_lang="英文", target_lang="�
     os.makedirs(out_dir, exist_ok=True)
     client = get_client()
     tracker = TokenTracker()
+    fingerprint = _single_progress_fingerprint(chapters)
+    progress_path = os.path.join(out_dir, "progress.json")
 
     system = (
         f"你是专业技术翻译。我会逐章给你一本{source_lang}技术书，请把每一章翻译成"
@@ -583,16 +688,48 @@ def run_single_agent(chapters, out_dir, *, source_lang="英文", target_lang="�
     messages = [{"role": "system", "content": system}]
 
     translations = {}
+    if os.path.exists(progress_path):
+        with open(progress_path, encoding="utf-8") as handle:
+            progress = json.load(handle)
+        if progress.get("fingerprint") != fingerprint:
+            raise RuntimeError("single-Agent progress does not match provider/model/source units")
+        translations = progress.get("translations") or {}
+        tracker.calls = progress.get("tracker_calls") or []
+        names = list(chapters)
+        completed = list(translations)
+        if completed != names[:len(completed)]:
+            raise RuntimeError("single-Agent progress must be a contiguous source-unit prefix")
+
+    def save_progress():
+        _write_json_atomic(progress_path, {
+            "schema_version": 1,
+            "fingerprint": fingerprint,
+            "provider": ACTIVE_PROVIDER,
+            "model": MODEL,
+            "thinking": "disabled" if ACTIVE_PROVIDER == "Volcengine ARK" else "provider_default",
+            "translations": translations,
+            "tracker_calls": tracker.calls,
+        })
+
     for name, text in chapters.items():
-        messages.append(
-            {
-                "role": "user",
-                "content": f"请翻译下面这一章，直接输出中文译文：\n\n# {name}\n{text}",
-            }
-        )
-        content = llm_chat(
-            client, tracker, "SingleAgent", messages, note=f"翻译 {name}"
-        )
+        user_message = {
+            "role": "user",
+            "content": f"请翻译下面这一章，直接输出中文译文：\n\n# {name}\n{text}",
+        }
+        messages.append(user_message)
+        if name in translations:
+            # Rebuild the exact accumulated conversation from the immutable
+            # sources and saved model outputs, then continue at the first
+            # missing unit without replaying successful paid calls.
+            messages.append({"role": "assistant", "content": translations[name]})
+            continue
+        try:
+            content = llm_chat(
+                client, tracker, "SingleAgent", messages, note=f"翻译 {name}"
+            )
+        except Exception:
+            save_progress()
+            raise
         # 译文继续留在对话里 —— 这正是上下文膨胀的来源
         messages.append({"role": "assistant", "content": content})
         translations[name] = content
@@ -600,6 +737,7 @@ def run_single_agent(chapters, out_dir, *, source_lang="英文", target_lang="�
         out_file = os.path.join(out_dir, f"{base}_zh.md")
         with open(out_file, "w", encoding="utf-8") as f:
             f.write(content)
+        save_progress()
 
     return {
         "mode": "single_agent",

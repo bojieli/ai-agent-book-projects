@@ -1,0 +1,47 @@
+{
+  "experiment_id": "2-1",
+  "protocol_version": "1.0.0",
+  "frozen_on": "2026-07-30",
+  "authority": "book/chapter2.md:363",
+  "runtime": {
+    "server": "Ollama native /api/generate",
+    "model": "qwen3:0.6b",
+    "reference_model": "Qwen/Qwen3-0.6B",
+    "raw_mode": true,
+    "temperature": 0,
+    "num_predict": 512
+  },
+  "tool_case": {
+    "prompt": "What are the current time and weather in Vancouver? Call both tools.",
+    "required_tools": [
+      "get_current_time",
+      "get_current_temperature"
+    ],
+    "required_timezone": "America/Vancouver",
+    "required_location": "Vancouver, Canada",
+    "execution": "parallel"
+  },
+  "cache_case": {
+    "approximate_prefix_tokens": 4096,
+    "warmups": 2,
+    "matched_repeats": 5,
+    "hit": "byte-identical rendered prompt",
+    "miss": "same-length unique mutation at the first bytes of the system prompt"
+  },
+  "acceptance_gates": [
+    "the running server reports qwen3:0.6b with a nonempty immutable model digest",
+    "the rendered prompt retains chat-template special tokens and tool schema",
+    "the first raw response contains exactly the two required tool calls",
+    "both tools execute concurrently and return auditable results",
+    "the second model turn consumes both tool results and terminates without another tool call",
+    "stream chunks, request prompts, timings, token counts, server durations, and hashes are retained",
+    "matched hit and miss TTFT samples are retained without requiring a favorable outcome",
+    "all execution is local except the read-only Open-Meteo weather lookup",
+    "no credential is sent to or retained by the experiment"
+  ],
+  "claim_policy": {
+    "tool_calling": "complete only when every tool/termination gate passes",
+    "throughput": "report measured decode throughput; do not claim the manuscript's M2 >100 tok/s observation unless this run exceeds it on identified hardware",
+    "kv_cache": "report the matched TTFT distribution even if the hit arm is not faster"
+  }
+}

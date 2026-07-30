@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 390" width="860" height="390" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="185" width="110" height="56" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="85.0" y="213.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">사용자</text>
+<rect x="250" y="95" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="114.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Dr. Zhang-A</text>
+<text x="334.0" y="135.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">진료과: 치과</text>
+<rect x="470" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="545.0" y="123.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">런아이 치과병원</text>
+<rect x="680" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="755.0" y="114.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">주소</text>
+<text x="755.0" y="135.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">쉬후이구 XX로</text>
+<rect x="250" y="280" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="299.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Dr. Zhang-B</text>
+<text x="334.0" y="320.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">진료과: 심장내과</text>
+<rect x="470" y="280" width="180" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="560.0" y="299.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">화산병원</text>
+<text x="560.0" y="320.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">심혈관센터</text>
+<line x1="140" y1="205" x2="250" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="156.5" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle">내 치과 의사</text>
+<line x1="140" y1="222" x2="250" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="251.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">내 심장 전문의</text>
+<line x1="418" y1="123" x2="470" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="113.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">근무처</text>
+<line x1="620" y1="123" x2="680" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="650.0" y="113.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">주소</text>
+<line x1="418" y1="308" x2="470" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="298.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle">근무처</text>
+<text x="40" y="372" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· 멀티홉 추론: “내 치과 의사 병원 주소” = 사용자 → Dr. Zhang-A → 런아이 치과병원 → 주소. 관계 간선을 순서대로 탐색</text>
+<text x="40" y="398" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· 엔터티 명확화: 동명이인 “Dr. Zhang”은 별도 노드이며 관계 간선(치과 / 심장내과)으로 구분. 간선 하나가 삼중항(주어-관계-목적어)</text>
+</svg>

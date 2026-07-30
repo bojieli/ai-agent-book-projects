@@ -1,0 +1,461 @@
+{
+  "schema_version": 2,
+  "experiment": "10-6",
+  "run_id": "exp10-6-real-receipts-20260730-v2",
+  "run_type": "real_parallel_serial_and_cascade_with_raw_receipts",
+  "started_at": "2026-07-30T05:08:35.893Z",
+  "completed_at": "2026-07-30T05:09:57.065Z",
+  "duration_seconds": 81.172,
+  "target": "Andrew Ng",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "environment": {
+    "python": "3.11.4",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "playwright": "1.54.0",
+    "parallel_chromium": "139.0.7258.5",
+    "serial_chromium": "139.0.7258.5",
+    "cascade_chromium": "139.0.7258.5"
+  },
+  "inputs": {
+    "default_sites": [
+      {
+        "name": "medicine-profiles",
+        "college": "School of Medicine",
+        "url": "https://med.stanford.edu/profiles/browse"
+      },
+      {
+        "name": "law-faculty",
+        "college": "Stanford Law School",
+        "url": "https://law.stanford.edu/directory/?tax_and_terms=1067"
+      },
+      {
+        "name": "education-faculty",
+        "college": "Graduate School of Education",
+        "url": "https://ed.stanford.edu/faculty"
+      },
+      {
+        "name": "business-faculty",
+        "college": "Graduate School of Business",
+        "url": "https://www.gsb.stanford.edu/faculty-research/faculty"
+      },
+      {
+        "name": "sustainability-faculty",
+        "college": "Doerr School of Sustainability",
+        "url": "https://sustainability.stanford.edu/people/faculty"
+      },
+      {
+        "name": "humanities-faculty",
+        "college": "School of Humanities and Sciences",
+        "url": "https://humsci.stanford.edu/about/leadership-and-administration/deans-office"
+      },
+      {
+        "name": "engineering-faculty",
+        "college": "School of Engineering",
+        "url": "https://engineering.stanford.edu/faculty-research/faculty"
+      },
+      {
+        "name": "computer-science",
+        "college": "School of Engineering / Computer Science",
+        "url": "https://www.cs.stanford.edu/people/faculty"
+      },
+      {
+        "name": "stanford-profiles",
+        "college": "Stanford Profiles",
+        "url": "https://profiles.stanford.edu/andrew-ng"
+      },
+      {
+        "name": "human-ai",
+        "college": "Stanford HAI",
+        "url": "https://hai.stanford.edu/people/andrew-ng"
+      }
+    ],
+    "cascade_sites": [
+      {
+        "name": "hai-a",
+        "college": "Stanford HAI",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=a"
+      },
+      {
+        "name": "hai-b",
+        "college": "Stanford HAI",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=b"
+      },
+      {
+        "name": "hai-c",
+        "college": "Stanford HAI",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=c"
+      },
+      {
+        "name": "hai-d",
+        "college": "Stanford HAI",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=d"
+      }
+    ],
+    "timeout_seconds": 120.0
+  },
+  "default_parallel": {
+    "result": {
+      "outcome": "found",
+      "winner": "agent-09",
+      "profile": {
+        "found": true,
+        "name": "Andrew Ng",
+        "college": "Stanford HAI",
+        "position": "Adjunct Professor at Stanford University",
+        "research": "machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms... including such applications as autonomous driving",
+        "evidence": "PEOPLE\nFACULTY\nAndrew Ng\n\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University",
+        "provider": "ark",
+        "url": "https://hai.stanford.edu/people/andrew-ng"
+      },
+      "duplicate_hits": [],
+      "acks": [],
+      "expected_loser_acks": [
+        "agent-00",
+        "agent-01",
+        "agent-02",
+        "agent-03",
+        "agent-04",
+        "agent-05",
+        "agent-06",
+        "agent-07",
+        "agent-08"
+      ],
+      "missing_loser_acks": [
+        "agent-00",
+        "agent-01",
+        "agent-02",
+        "agent-03",
+        "agent-04",
+        "agent-05",
+        "agent-06",
+        "agent-07",
+        "agent-08"
+      ],
+      "errors": {},
+      "failure_summary": {
+        "count": 0,
+        "by_type": {}
+      },
+      "not_found_reasons": {
+        "agent-07": "target name absent from rendered page",
+        "agent-06": "target name absent from rendered page",
+        "agent-02": "target name absent from rendered page",
+        "agent-00": "target name absent from rendered page",
+        "agent-04": "target name absent from rendered page",
+        "agent-03": "target name absent from rendered page",
+        "agent-08": "target name absent from rendered page",
+        "agent-05": "target name absent from rendered page",
+        "agent-01": "target name absent from rendered page"
+      },
+      "status_table": {
+        "agent-00": {
+          "source": "medicine-profiles",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-01": {
+          "source": "law-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-02": {
+          "source": "education-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-03": {
+          "source": "business-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-04": {
+          "source": "sustainability-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-05": {
+          "source": "humanities-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-06": {
+          "source": "engineering-faculty",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-07": {
+          "source": "computer-science",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-08": {
+          "source": "stanford-profiles",
+          "state": "已完成",
+          "note": "页面中未找到目标"
+        },
+        "agent-09": {
+          "source": "human-ai",
+          "state": "已完成",
+          "note": "找到目标教师"
+        }
+      },
+      "terminate_broadcasts": 1,
+      "parallel_seconds": 24.022,
+      "contexts_closed": 10,
+      "resource_failures": {}
+    },
+    "contexts_created": 10,
+    "contexts_closed": 10,
+    "chromium_version": "139.0.7258.5"
+  },
+  "default_serial": {
+    "result": {
+      "seconds": 44.971,
+      "visited": 10,
+      "results": [
+        {
+          "site": "medicine-profiles",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 3.14453391591087
+        },
+        {
+          "site": "law-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 3.242926917038858
+        },
+        {
+          "site": "education-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.353850208222866
+        },
+        {
+          "site": "business-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.5877689169719815
+        },
+        {
+          "site": "sustainability-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.4759700000286102
+        },
+        {
+          "site": "humanities-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.9777685422450304
+        },
+        {
+          "site": "engineering-faculty",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.225629042368382
+        },
+        {
+          "site": "computer-science",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.5532497079111636
+        },
+        {
+          "site": "stanford-profiles",
+          "profile": {
+            "found": false,
+            "reason": "target name absent from rendered page"
+          },
+          "seconds": 2.9755149162374437
+        },
+        {
+          "site": "human-ai",
+          "profile": {
+            "found": true,
+            "name": "Andrew Ng",
+            "college": "Stanford HAI",
+            "position": "Adjunct Professor at Stanford University",
+            "research": "machine learning with an emphasis on deep learning, including applications to computer vision, speech, and autonomous driving",
+            "evidence": "Andrew Ng\n\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University",
+            "provider": "ark",
+            "url": "https://hai.stanford.edu/people/andrew-ng"
+          },
+          "seconds": 20.37298774998635
+        }
+      ]
+    },
+    "contexts_created": 10,
+    "contexts_closed": 10,
+    "chromium_version": "139.0.7258.5"
+  },
+  "measured_speedup": 1.872,
+  "cascade_stress": {
+    "result": {
+      "outcome": "found",
+      "winner": "agent-02",
+      "profile": {
+        "found": true,
+        "name": "Andrew Ng",
+        "college": "Stanford HAI",
+        "position": "Adjunct Professor at Stanford University",
+        "research": "machine learning with an emphasis on deep learning, applications to computer vision and speech, including autonomous driving",
+        "evidence": "Andrew Ng\n\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University",
+        "provider": "ark",
+        "url": "https://hai.stanford.edu/people/andrew-ng?worker=c"
+      },
+      "duplicate_hits": [],
+      "acks": [
+        "agent-00",
+        "agent-01",
+        "agent-03"
+      ],
+      "expected_loser_acks": [
+        "agent-00",
+        "agent-01",
+        "agent-03"
+      ],
+      "missing_loser_acks": [],
+      "errors": {},
+      "failure_summary": {
+        "count": 0,
+        "by_type": {}
+      },
+      "not_found_reasons": {},
+      "status_table": {
+        "agent-00": {
+          "source": "hai-a",
+          "state": "已终止",
+          "note": "安全点响应终止：target_found_by_agent-02"
+        },
+        "agent-01": {
+          "source": "hai-b",
+          "state": "已终止",
+          "note": "安全点响应终止：target_found_by_agent-02"
+        },
+        "agent-02": {
+          "source": "hai-c",
+          "state": "已完成",
+          "note": "找到目标教师"
+        },
+        "agent-03": {
+          "source": "hai-d",
+          "state": "已终止",
+          "note": "安全点响应终止：target_found_by_agent-02"
+        }
+      },
+      "terminate_broadcasts": 1,
+      "parallel_seconds": 10.878,
+      "contexts_closed": 4,
+      "resource_failures": {}
+    },
+    "contexts_created": 4,
+    "contexts_closed": 4,
+    "chromium_version": "139.0.7258.5"
+  },
+  "receipt_counts": {
+    "browser": 24,
+    "llm_all_attempts": 3,
+    "llm_successful": 3,
+    "message_bus": 114
+  },
+  "gates": {
+    "ten_real_default_sites": {
+      "status": "pass",
+      "count": 10
+    },
+    "same_sites_parallel_and_serial": {
+      "status": "pass",
+      "configured_count": 10,
+      "serial_visited": 10
+    },
+    "default_target_found_both_modes": {
+      "status": "pass",
+      "parallel_winner": "agent-09"
+    },
+    "default_resources_closed": {
+      "status": "pass",
+      "parallel_created": 10,
+      "parallel_closed": 10,
+      "serial_created": 10,
+      "serial_closed": 10
+    },
+    "measured_parallel_speedup": {
+      "status": "pass",
+      "speedup": 1.872
+    },
+    "raw_browser_receipts": {
+      "status": "pass",
+      "count": 24,
+      "phases": [
+        "cascade_stress",
+        "default_parallel",
+        "default_serial"
+      ]
+    },
+    "raw_llm_provider_receipts": {
+      "status": "pass",
+      "successful_count": 3,
+      "response_ids": [
+        "021785388119659a5cf16cfa3c4ebff37e7c43914719d1a235950",
+        "021785388168110fc13f77dd38da39bcdb33ad9bd57064028fde0",
+        "0217853881892313749365b55318faa75db47eb4778acb39034a4"
+      ],
+      "phases": [
+        "cascade_stress",
+        "default_parallel",
+        "default_serial"
+      ]
+    },
+    "single_cascade_settlement": {
+      "status": "pass",
+      "winner": "agent-02",
+      "terminate_broadcasts": 1,
+      "duplicate_hits": []
+    },
+    "cascade_loser_acknowledgements": {
+      "status": "pass",
+      "expected": [
+        "agent-00",
+        "agent-01",
+        "agent-03"
+      ],
+      "actual": [
+        "agent-00",
+        "agent-01",
+        "agent-03"
+      ]
+    },
+    "cascade_resources_closed": {
+      "status": "pass",
+      "created": 4,
+      "closed": 4
+    },
+    "runtime_source_hashes": {
+      "status": "pass",
+      "count": 7
+    },
+    "credential_free_artifacts": {
+      "status": "pass",
+      "actual_secret_hits": 0,
+      "credential_pattern_hits": 0
+    }
+  },
+  "overall_status": "pass"
+}

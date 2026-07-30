@@ -1,5 +1,15 @@
 const axios = require('axios');
 
+function providerErrorMessage(error) {
+  const data = error.response?.data;
+  if (data && typeof data === 'object' && !data.readable) {
+    return data.error?.message || data.message || error.message;
+  }
+  return error.response?.status
+    ? `HTTP ${error.response.status}: ${error.response.statusText || error.message}`
+    : error.message;
+}
+
 /**
  * Base LLM Provider class
  */
@@ -73,10 +83,11 @@ class OpenAILLMProvider extends BaseLLMProvider {
       };
 
     } catch (error) {
-      console.error('OpenAI LLM error:', error.response?.data || error.message);
+      const message = providerErrorMessage(error);
+      console.error('OpenAI LLM error:', message);
       return {
         success: false,
-        error: error.response?.data?.error?.message || error.message,
+        error: message,
         provider: 'openai'
       };
     }
@@ -124,10 +135,11 @@ class OpenRouterLLMProvider extends BaseLLMProvider {
       };
 
     } catch (error) {
-      console.error('OpenRouter LLM error:', error.response?.data || error.message);
+      const message = providerErrorMessage(error);
+      console.error('OpenRouter LLM error:', message);
       return {
         success: false,
-        error: error.response?.data?.error?.message || error.message,
+        error: message,
         provider: 'openrouter'
       };
     }
@@ -185,10 +197,11 @@ class ARKLLMProvider extends BaseLLMProvider {
       };
 
     } catch (error) {
-      console.error('ARK (Doubao) LLM error:', error.response?.data || error.message);
+      const message = providerErrorMessage(error);
+      console.error('ARK (Doubao) LLM error:', message);
       return {
         success: false,
-        error: error.response?.data?.error?.message || error.message,
+        error: message,
         provider: 'ark'
       };
     }
@@ -232,4 +245,4 @@ module.exports = {
   OpenRouterLLMProvider,
   ARKLLMProvider,
   LLMProviderFactory
-}; 
+};

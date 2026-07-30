@@ -1,0 +1,592 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer2_15_employment_negotiation",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "initial_offer_001",
+      "memory": [
+        "On 2024-09-05 at 14:00:00, Sarah (candidate) had a 51-minute call with Jennifer (TechVision Corp Human Resources) regarding her Senior Software Engineer job offer (conversation_id=initial_offer_001). The initial offer included a base salary of $145,000 (Senior I level), 5,000 stock options (strike price $22, vesting over 4 years with 1-year cliff then monthly), 15 vacation days + 5 sick days PTO, $2,000 annual professional development budget, health insurance with 80% company coverage ($200/month employee contribution for family plan), and a start date of October 1st.",
+        "Sarah, with 8 years of experience and 3 years leading an architecture team at her current job, noted the base salary was below the $150,000-$165,000 range mentioned by the hiring manager (Senior II level, which typically requires 10+ years or specific domain expertise). Jennifer agreed to discuss Sarah's Senior II qualification with the hiring manager.",
+        "Sarah inquired about a signing bonus (not standard for Senior I) as she is walking away from a $15,000 year-end bonus at her current job; Jennifer stated TechVision may offer something to offset this. The equity package was clarified as 5,000 options (potential $110,000 value at flat $22 share price) with TechVision targeting an IPO in 18-24 months (not guaranteed).",
+        "Regarding remote work, the initial hybrid model (3 days in office, 2 remote) was discussed; Sarah, living 90 minutes from the office, preferred fully remote with quarterly visits. Jennifer proposed a modified schedule (2 days in office, 3 remote). Sarah also requested matching her current 20 PTO days (vs. standard 15+5), a higher professional development budget ($5,000 for 2-3 conferences vs. $2,000), and a stipend to offset health insurance costs (current employer covers 100% vs. TechVision's 80%).",
+        "Sarah requested a start date of October 15th (to finish her current project), which Jennifer approved. Jennifer agreed to discuss revisions with leadership and provide a revised offer within 48 hours (by September 7th); Sarah noted she has another offer deadline of September 12th."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "initial_offer_001"
+      }
+    },
+    {
+      "session_index": 2,
+      "conversation_id": "counter_offer_001",
+      "memory": [
+        "On 2024-09-07 at 15:30:00, Sarah (candidate) had a 47-minute call with Jennifer (TechVision Corp Human Resources) regarding the revised job offer (conversation_id=counter_offer_001). The offer was updated to Senior II level with a base salary of $155,000, a $10,000 signing bonus (to offset her current $15,000 year-end bonus), and 7,500 stock options (potential $165,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed).",
+        "Regarding remote work, the modified arrangement (2 days in office, 3 days remote) was confirmed with Tuesday and Thursday as preferred in-office days (for team meetings). Sarah, living 90 minutes from the office (180 miles round trip twice weekly), requested commute cost coverage; Jennifer proposed a $500 monthly commute stipend (requires VP approval).",
+        "PTO was updated to 20 days vacation (available immediately, no waiting period) plus 11 federal holidays and company closure December 24-31 (replacing the initial 15 vacation + 5 sick days). The professional development budget was increased to $4,000 annually (Senior II level); Sarah requested $5,000 (to cover conference registration, travel, hotels), which Jennifer agreed to check on.",
+        "The start date of October 15th (to finish Sarah's current project) was confirmed. Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend added (to offset the employee portion). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.",
+        "Performance reviews will occur annually in March with merit increases typically 3-8% (higher for top performers). Jennifer stated the revised offer will be emailed today pending approval of the $500 commute stipend and $5,000 professional development budget (Jennifer has a 4 PM meeting with the VP, decision expected by end of day September 7th). Sarah noted she has another offer deadline of September 12th."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "counter_offer_001"
+      }
+    },
+    {
+      "session_index": 3,
+      "conversation_id": "final_agreement_001",
+      "memory": [
+        "On 2024-09-08 at 11:00:00, Sarah (candidate) had a 44-minute call with Jennifer (TechVision Corp Human Resources) regarding the final job offer (conversation_id=final_agreement_001). The offer was confirmed with the title 'Senior Software Engineer II' (updated from 'Senior II' for clarity), base salary of $155,000, a $10,000 signing bonus (split: $5,000 upfront before start date, $5,000 in first paycheck), and 10,000 stock options (CEO increased from 7,500 due to Sarah's architecture experience; potential $220,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed). The $500 monthly commute stipend (tax-free transportation benefit, up to IRS limits) and $5,000 annual professional development budget were approved.",
+        "The remote work arrangement is specified as 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). TechVision provides a $1,500 one-time home office setup stipend (automatic for hybrid employees) plus $50 monthly for internet.",
+        "PTO is 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation days roll over up to 5 annually or can be cashed out at 100% of daily rate based on salary. The professional development budget is $5,000 annually (approved as requested).",
+        "Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend covering gym, fitness classes, sports equipment, massage therapy, and mental health services (therapy copays, meditation apps, wellness retreats). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.",
+        "Stock options include anti-dilution provisions protecting percentage ownership through Series B funding. TechVision's Series A funding was last year at $500M valuation; current valuation is approaching $800M based on recent 409A. Vested options can be exercised after the 1-year cliff, with 90 days post-departure to exercise; strike price is fixed at $22.",
+        "The start date of October 15th (to finish Sarah's current project) was confirmed. Upon Sarah's acceptance, Jennifer will send the final offer within an hour with corrections. Next steps after signing: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews occur annually in March with merit increases typically 3-8% (higher for top performers). Sarah previously noted another offer deadline of September 12th."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "final_agreement_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer2_15_employment_negotiation enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:08:59.896637+00:00",
+      "latency_ms": 31074.55,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=initial_offer_001\ntimestamp=2024-09-05 14:00:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"51 minutes\"}\nUSER: Hi, I received your job offer letter and wanted to discuss the terms.\nASSISTANT: Hello Sarah! This is Jennifer from TechVision HR. Congratulations on the Senior Software Engineer offer! What would you like to discuss?\nUSER: Thank you! I'm excited about the opportunity but have some questions about the package.\nASSISTANT: Of course. Let me pull up your offer. Base salary $145,000, standard benefits, start date October 1st.\nUSER: Right. The base salary is lower than I expected based on our interviews.\nASSISTANT: What range were you expecting?\nUSER: The hiring manager mentioned $150,000 to $165,000 for this level.\nASSISTANT: That range is for Senior II level. Your offer is for Senior I.\nUSER: But I have 8 years experience. Doesn't that qualify for Senior II?\nASSISTANT: Typically Senior II requires 10+ years or specific domain expertise.\nUSER: I led the architecture team at my current company for 3 years.\nASSISTANT: That's valuable experience. Let me discuss with the hiring manager.\nUSER: Also, what about signing bonus? There's none mentioned.\nASSISTANT: Signing bonuses aren't standard for this level, but we can explore it.\nUSER: I'm walking away from a $15,000 year-end bonus at my current job.\nASSISTANT: That's significant. We might be able to offer something to offset that.\nUSER: What about equity?\nASSISTANT: The offer includes 5,000 stock options vesting over 4 years.\nUSER: What's the strike price?\nASSISTANT: Current fair market value is $22 per share, so that would be your strike price.\nUSER: So potentially $110,000 value if the price stays flat?\nASSISTANT: Correct, though we expect significant growth. We're pre-IPO.\nUSER: When is IPO planned?\nASSISTANT: Targeting 18-24 months, though not guaranteed.\nUSER: What's the vesting schedule?\nASSISTANT: Standard 1-year cliff, then monthly vesting over remaining 3 years.\nUSER: Can we accelerate that?\nASSISTANT: Vesting schedules are typically non-negotiable, but I can ask.\nUSER: What about remote work? The posting said flexible.\nASSISTANT: We expect 3 days in office, 2 days remote weekly.\nUSER: I was hoping for fully remote with quarterly office visits.\nASSISTANT: That's a significant deviation from our hybrid model.\nUSER: I live 90 minutes from the office. Daily commuting isn't sustainable.\nASSISTANT: Would you consider relocating? We offer relocation assistance.\nUSER: How much assistance?\nASSISTANT: Up to $10,000 for moving expenses.\nUSER: My kids are in school. Moving isn't ideal right now.\nASSISTANT: Understood. Maybe we can work out a modified schedule.\nUSER: Like what?\nASSISTANT: Perhaps 2 days in office with longer hours, 3 days remote?\nUSER: That could work. What about PTO?\nASSISTANT: Standard is 15 days vacation, 5 sick days.\nUSER: I currently have 20 days PTO plus unlimited sick.\nASSISTANT: We could potentially match your current PTO.\nUSER: That would help. What about professional development?\nASSISTANT: Annual $2,000 budget for conferences and training.\nUSER: I typically attend 2-3 conferences yearly, costing about $5,000 total.\nASSISTANT: We might increase that for senior roles.\nUSER: Also, the health insurance - what's the employee contribution?\nASSISTANT: We cover 80% of premiums. Employee pays about $200 monthly for family plan.\nUSER: My current employer covers 100%.\nASSISTANT: That's generous of them. We could explore a monthly stipend to offset.\nUSER: How flexible is the October 1st start date?\nASSISTANT: Do you need more time?\nUSER: I'd prefer October 15th to finish my current project.\nASSISTANT: That should be fine. Shows good professional ethics.\nUSER: Can you put together a revised offer with these points?\nASSISTANT: I'll discuss with leadership and get back to you within 48 hours.\nUSER: Please emphasize the Senior II level consideration and salary adjustment.\nASSISTANT: Noted. To summarize your requests: Senior II level, $150-165k salary range, signing bonus, remote flexibility, 20 days PTO, higher professional development budget.\nUSER: Exactly. And October 15th start date.\nASSISTANT: I'll advocate for these changes. What's your deadline for deciding?\nUSER: I have another offer to respond to by September 12th.\nASSISTANT: Good to know. We'll work quickly.\nUSER: I really want to join TechVision, but need a competitive package.\nASSISTANT: Understood. We want you on the team too.\nUSER: Thanks Jennifer. Looking forward to your response.\nASSISTANT: I'll call you by September 7th with updates."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853593401306ccf9412c566ef0a3e60cd40e0464675e21b3c",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-09-05 at 14:00:00, Sarah (candidate) had a 51-minute call with Jennifer (TechVision Corp Human Resources) regarding her Senior Software Engineer job offer (conversation_id=initial_offer_001). The initial offer included a base salary of $145,000 (Senior I level), 5,000 stock options (strike price $22, vesting over 4 years with 1-year cliff then monthly), 15 vacation days + 5 sick days PTO, $2,000 annual professional development budget, health insurance with 80% company coverage ($200/month employee contribution for family plan), and a start date of October 1st.\", \"Sarah, with 8 years of experience and 3 years leading an architecture team at her current job, noted the base salary was below the $150,000-$165,000 range mentioned by the hiring manager (Senior II level, which typically requires 10+ years or specific domain expertise). Jennifer agreed to discuss Sarah's Senior II qualification with the hiring manager.\", \"Sarah inquired about a signing bonus (not standard for Senior I) as she is walking away from a $15,000 year-end bonus at her current job; Jennifer stated TechVision may offer something to offset this. The equity package was clarified as 5,000 options (potential $110,000 value at flat $22 share price) with TechVision targeting an IPO in 18-24 months (not guaranteed).\", \"Regarding remote work, the initial hybrid model (3 days in office, 2 remote) was discussed; Sarah, living 90 minutes from the office, preferred fully remote with quarterly visits. Jennifer proposed a modified schedule (2 days in office, 3 remote). Sarah also requested matching her current 20 PTO days (vs. standard 15+5), a higher professional development budget ($5,000 for 2-3 conferences vs. $2,000), and a stipend to offset health insurance costs (current employer covers 100% vs. TechVision's 80%).\", \"Sarah requested a start date of October 15th (to finish her current project), which Jennifer approved. Jennifer agreed to discuss revisions with leadership and provide a revised offer within 48 hours (by September 7th); Sarah noted she has another offer deadline of September 12th.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract facts from the new session that would help a future assistant, retaining exact values, ownership, event status, dates, provenance, and relationships. Let's go through the conversation step by step.\n\nFirst, the session details: conversation_id=initial_offer_001, timestamp=2024-09-05 14:00:00, metadata with business=TechVision Corp, department=Human Resources, call_duration=51 minutes.\n\nParticipants: Sarah (user, candidate) and Jennifer (assistant, TechVision HR).\n\nKey points:\n\n1. Job offer details: Senior Software Engineer (Senior I level), initial base salary $145,000, start date October 1st. Sarah expected $150k-$165k (Senior II range, which requires 10+ years or specific domain expertise; Sarah has 8 years and led architecture team for 3 years). Jennifer to discuss Senior II level with hiring manager.\n\n2. Signing bonus: Not standard for Senior I, but Sarah is walking away from $15k year-end bonus at current job; TechVision may offer something to offset.\n\n3. Equity: 5,000 stock options, vesting over 4 years (1-year cliff, then monthly over 3 years), strike price $22 (current FMV), pre-IPO (targeting 18-24 months, not guaranteed). Potential value $110k if price stays flat.\n\n4. Remote work: Initial hybrid (3 days in office, 2 remote). Sarah lives 90 mins away, prefers fully remote with quarterly visits. Jennifer suggests modified schedule (2 days in office, 3 remote).\n\n5. PTO: Initial 15 vacation + 5 sick days. Sarah has 20 PTO + unlimited sick; TechVision may match current PTO.\n\n6. Professional development: Initial $2k/year budget. Sarah needs $5k for 2-3 conferences; TechVision may increase for senior roles.\n\n7. Health insurance: TechVision covers 80% (employee pays ~$200/month for family plan); Sarah's current employer covers 100%. TechVision may explore stipend to offset.\n\n8. Start date: Sarah prefers October 15th (to finish current project); Jennifer agrees it's fine.\n\n9. Next steps: Jennifer to discuss with leadership, provide revised offer within 48 hours (by September 7th). Sarah has another offer deadline September 12th.\n\nNeed to structure these as contextual paragraphs with entities, events, time, status, relationships."
+            }
+          }
+        ],
+        "created": 1785359371,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1115,
+          "prompt_tokens": 1463,
+          "total_tokens": 2578,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 568,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1115,
+        "prompt_tokens": 1463,
+        "total_tokens": 2578,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 568,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853593401306ccf9412c566ef0a3e60cd40e0464675e21b3c"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer2_15_employment_negotiation enhanced_notes session 2",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:09:30.974139+00:00",
+      "latency_ms": 40043.019,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 2\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[\"On 2024-09-05 at 14:00:00, Sarah (candidate) had a 51-minute call with Jennifer (TechVision Corp Human Resources) regarding her Senior Software Engineer job offer (conversation_id=initial_offer_001). The initial offer included a base salary of $145,000 (Senior I level), 5,000 stock options (strike price $22, vesting over 4 years with 1-year cliff then monthly), 15 vacation days + 5 sick days PTO, $2,000 annual professional development budget, health insurance with 80% company coverage ($200/month employee contribution for family plan), and a start date of October 1st.\", \"Sarah, with 8 years of experience and 3 years leading an architecture team at her current job, noted the base salary was below the $150,000-$165,000 range mentioned by the hiring manager (Senior II level, which typically requires 10+ years or specific domain expertise). Jennifer agreed to discuss Sarah's Senior II qualification with the hiring manager.\", \"Sarah inquired about a signing bonus (not standard for Senior I) as she is walking away from a $15,000 year-end bonus at her current job; Jennifer stated TechVision may offer something to offset this. The equity package was clarified as 5,000 options (potential $110,000 value at flat $22 share price) with TechVision targeting an IPO in 18-24 months (not guaranteed).\", \"Regarding remote work, the initial hybrid model (3 days in office, 2 remote) was discussed; Sarah, living 90 minutes from the office, preferred fully remote with quarterly visits. Jennifer proposed a modified schedule (2 days in office, 3 remote). Sarah also requested matching her current 20 PTO days (vs. standard 15+5), a higher professional development budget ($5,000 for 2-3 conferences vs. $2,000), and a stipend to offset health insurance costs (current employer covers 100% vs. TechVision's 80%).\", \"Sarah requested a start date of October 15th (to finish her current project), which Jennifer approved. Jennifer agreed to discuss revisions with leadership and provide a revised offer within 48 hours (by September 7th); Sarah noted she has another offer deadline of September 12th.\"]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=counter_offer_001\ntimestamp=2024-09-07 15:30:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"47 minutes\"}\nUSER: Hi Jennifer, calling about the revised offer?\nASSISTANT: Hi Sarah! Yes, I have good news. Leadership approved several of your requests.\nUSER: Great! What did they approve?\nASSISTANT: First, we're offering Senior II level with adjusted compensation.\nUSER: That's wonderful! What's the new salary?\nASSISTANT: We can offer $155,000 base salary.\nUSER: That's in the range but still on the lower end.\nASSISTANT: We're also adding a $10,000 signing bonus to help with your foregone bonus.\nUSER: I appreciate that, though I'm walking away from $15,000.\nASSISTANT: We increased the equity grant to 7,500 options to make up the difference.\nUSER: So 50% more equity? That helps long-term.\nASSISTANT: Exactly. At current valuation, that's $165,000 potential value.\nUSER: What about the remote work arrangement?\nASSISTANT: We can offer 2 days in office, 3 days remote.\nUSER: Which days in office?\nASSISTANT: Tuesday and Thursday are preferred for team meetings.\nUSER: That works. What about the commute? Can I expense mileage?\nASSISTANT: We don't typically cover commute costs.\nUSER: But 180 miles round trip twice weekly adds up.\nASSISTANT: Let me propose a commute stipend of $500 monthly.\nUSER: That would cover gas and wear. Thank you.\nASSISTANT: I'll need VP approval but I think it's reasonable.\nUSER: What about PTO?\nASSISTANT: We're approving 20 days vacation from day one.\nUSER: No waiting period? That's great.\nASSISTANT: Correct, available immediately. Plus our standard holidays.\nUSER: How many holidays?\nASSISTANT: 11 federal holidays plus we close December 24-31.\nUSER: Oh wow, that's generous.\nASSISTANT: It's our way of ensuring work-life balance.\nUSER: Professional development budget?\nASSISTANT: Increased to $4,000 annually for Senior II level.\nUSER: Almost there. Can we do $5,000?\nASSISTANT: I'll need to check. Conferences are expensive these days.\nUSER: Exactly. Registration, travel, hotels add up quickly.\nASSISTANT: Fair point. What about the October 15th start date?\nUSER: Yes, I need that to transition properly.\nASSISTANT: Already approved. October 15th is confirmed.\nUSER: The health insurance contribution?\nASSISTANT: We can't change the 80/20 split, but we're adding a $150 monthly wellness stipend.\nUSER: So that essentially covers my portion?\nASSISTANT: Almost entirely, yes.\nUSER: That's creative. I like it.\nASSISTANT: We try to find solutions that work.\nUSER: What about retirement matching?\nASSISTANT: Standard 4% match, vested immediately.\nUSER: My current is 6% match.\nASSISTANT: Our 4% is company policy, but the equity upside compensates.\nUSER: True. Pre-IPO equity could be valuable.\nASSISTANT: Many employees have seen 10x returns post-IPO.\nUSER: No guarantees though.\nASSISTANT: Of course not, but our growth trajectory is strong.\nUSER: Can I get the revised offer in writing?\nASSISTANT: I'll email it today, pending the commute stipend and $5k development budget approval.\nUSER: When will you know about those?\nASSISTANT: I'm meeting with the VP at 4 PM. Will know by end of day.\nUSER: This is sounding much better overall.\nASSISTANT: We really want you to join the team.\nUSER: One more thing - is there a performance review cycle?\nASSISTANT: Annual reviews in March with merit increases.\nUSER: Typical increase range?\nASSISTANT: 3-8% based on performance. High performers can get more.\nUSER: Good to know. I think we're close to a deal.\nASSISTANT: Excellent! I'll confirm those final items and send the revised offer.\nUSER: Looking forward to it.\nASSISTANT: Talk to you soon, Sarah!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853593711646ccf9412c566ef0a3e60cd40e046467570e3ac",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-09-07 at 15:30:00, Sarah (candidate) had a 47-minute call with Jennifer (TechVision Corp Human Resources) regarding the revised job offer (conversation_id=counter_offer_001). The offer was updated to Senior II level with a base salary of $155,000, a $10,000 signing bonus (to offset her current $15,000 year-end bonus), and 7,500 stock options (potential $165,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed).\", \"Regarding remote work, the modified arrangement (2 days in office, 3 days remote) was confirmed with Tuesday and Thursday as preferred in-office days (for team meetings). Sarah, living 90 minutes from the office (180 miles round trip twice weekly), requested commute cost coverage; Jennifer proposed a $500 monthly commute stipend (requires VP approval).\", \"PTO was updated to 20 days vacation (available immediately, no waiting period) plus 11 federal holidays and company closure December 24-31 (replacing the initial 15 vacation + 5 sick days). The professional development budget was increased to $4,000 annually (Senior II level); Sarah requested $5,000 (to cover conference registration, travel, hotels), which Jennifer agreed to check on.\", \"The start date of October 15th (to finish Sarah's current project) was confirmed. Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend added (to offset the employee portion). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.\", \"Performance reviews will occur annually in March with merit increases typically 3-8% (higher for top performers). Jennifer stated the revised offer will be emailed today pending approval of the $500 commute stipend and $5,000 professional development budget (Jennifer has a 4 PM meeting with the VP, decision expected by end of day September 7th). Sarah noted she has another offer deadline of September 12th.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory state by incorporating the new information from the counter offer session while retaining still-valid facts from the initial memory. Let me start by analyzing the new session details and identifying key updates and new facts.\n\nFirst, the new session is a counter offer conversation with conversation_id=counter_offer_001, timestamp=2024-09-07 15:30:00. Let's go through each topic discussed and update the existing memory points.\n\n1. **Job Level and Base Salary**: The initial offer was Senior I with $145k. Now, it's Senior II level with base salary $155k. Need to update this.\n\n2. **Signing Bonus**: Sarah requested $15k to offset her current year-end bonus; the counter offer includes $10k signing bonus.\n\n3. **Equity**: Initial was 5,000 options ($110k value). Now increased to 7,500 options, potential value $165k at $22 share price.\n\n4. **Remote Work**: Initial modified proposal was 2 days in office, 3 remote. Now specified as Tuesday and Thursday in office. Also, a proposed $500 monthly commute stipend (needs VP approval).\n\n5. **PTO**: Initial request was 20 days. Now approved 20 days vacation immediately, plus 11 federal holidays and December 24-31 closure.\n\n6. **Professional Development Budget**: Initial request $5k, counter offer increased to $4k, Sarah asked for $5k (pending check).\n\n7. **Start Date**: Confirmed October 15th.\n\n8. **Health Insurance**: 80% company coverage remains, but added $150 monthly wellness stipend (to offset employee contribution).\n\n9. **Retirement Matching**: Standard 4% match, vested immediately (Sarah's current is 6%).\n\n10. **Performance Review**: Annual in March, 3-8% merit increases (high performers more).\n\n11. **Revised Offer Status**: Will be emailed today pending commute stipend and $5k development budget approval; VP meeting at 4 PM, decision by end of day (September 7th).\n\nNow, I need to integrate these into the memory, replacing outdated info but keeping still-valid facts. Let's structure each paragraph with entity, event, time, status, relationships.\n\nParagraph 1: Update job level, base salary, signing bonus, equity. Mention conversation_id=counter_offer_001, timestamp=2024-09-07 15:30:00, 47-minute call between Sarah and Jennifer (TechVision HR).\n\nParagraph 2: Remote work arrangement (2 days in office: Tuesday/Thursday, 3 remote), proposed $500 monthly commute stipend (needs VP approval).\n\nParagraph 3: PTO: 20 days vacation (immediately available), 11 federal holidays, December 24-31 closure. Professional development budget: increased to $4k (Sarah requested $5k, pending check).\n\nParagraph 4: Start date confirmed October 15th. Health insurance: 80% company coverage, $150 monthly wellness stipend (offsets employee contribution). Retirement matching: 4% match, vested immediately (Sarah's current is 6%).\n\nParagraph 5: Performance reviews: annual in March, 3-8% merit increases (high performers more). Revised offer to be emailed today pending commute stipend and $5k development budget approval; VP meeting at 4 PM, decision by end of day (September 7th). Sarah has another offer deadline of September 12th (still valid from initial).\n\nNeed to ensure all exact values, dates, statuses (pending, confirmed) are retained. Remove outdated info like initial Senior I salary, original PTO (15+5), original equity (5k), etc. Keep relationships like Sarah's current benefits for context."
+            }
+          }
+        ],
+        "created": 1785359411,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1388,
+          "prompt_tokens": 1806,
+          "total_tokens": 3194,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 869,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1388,
+        "prompt_tokens": 1806,
+        "total_tokens": 3194,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 869,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853593711646ccf9412c566ef0a3e60cd40e046467570e3ac"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer2_15_employment_negotiation enhanced_notes session 3",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:10:11.019154+00:00",
+      "latency_ms": 64182.472,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 3\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[\"On 2024-09-07 at 15:30:00, Sarah (candidate) had a 47-minute call with Jennifer (TechVision Corp Human Resources) regarding the revised job offer (conversation_id=counter_offer_001). The offer was updated to Senior II level with a base salary of $155,000, a $10,000 signing bonus (to offset her current $15,000 year-end bonus), and 7,500 stock options (potential $165,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed).\", \"Regarding remote work, the modified arrangement (2 days in office, 3 days remote) was confirmed with Tuesday and Thursday as preferred in-office days (for team meetings). Sarah, living 90 minutes from the office (180 miles round trip twice weekly), requested commute cost coverage; Jennifer proposed a $500 monthly commute stipend (requires VP approval).\", \"PTO was updated to 20 days vacation (available immediately, no waiting period) plus 11 federal holidays and company closure December 24-31 (replacing the initial 15 vacation + 5 sick days). The professional development budget was increased to $4,000 annually (Senior II level); Sarah requested $5,000 (to cover conference registration, travel, hotels), which Jennifer agreed to check on.\", \"The start date of October 15th (to finish Sarah's current project) was confirmed. Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend added (to offset the employee portion). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.\", \"Performance reviews will occur annually in March with merit increases typically 3-8% (higher for top performers). Jennifer stated the revised offer will be emailed today pending approval of the $500 commute stipend and $5,000 professional development budget (Jennifer has a 4 PM meeting with the VP, decision expected by end of day September 7th). Sarah noted she has another offer deadline of September 12th.\"]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=final_agreement_001\ntimestamp=2024-09-08 11:00:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"44 minutes\"}\nUSER: Hi Jennifer, I reviewed the revised offer letter you sent.\nASSISTANT: Hi Sarah! Great. I have good news - both the commute stipend and $5,000 development budget were approved.\nUSER: Fantastic! But I noticed something different in the written offer.\nASSISTANT: What did you notice?\nUSER: The equity vesting shows 10,000 options, not 7,500.\nASSISTANT: Oh! The CEO personally increased it after hearing about your architecture experience.\nUSER: That's amazing! So $220,000 potential value?\nASSISTANT: At current valuation, yes. He's excited about your joining.\nUSER: That definitely sweetens the deal. But the title shows 'Senior Engineer II' not 'Senior Software Engineer II'.\nASSISTANT: That's our internal naming. 'Software' is implied in the engineering org.\nUSER: Can we add 'Software' for clarity? It matters for future roles.\nASSISTANT: Absolutely, I'll update that. Good catch.\nUSER: Also, the remote schedule says 'hybrid' but doesn't specify days.\nASSISTANT: I'll add 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'.\nUSER: Perfect. And confirm the $500 monthly commute stipend is tax-free?\nASSISTANT: It's structured as a transportation benefit, so yes, tax-free up to IRS limits.\nUSER: Excellent. Now, about the signing bonus...\nASSISTANT: The $10,000? Is there an issue?\nUSER: It says payable in first paycheck. Can I get half upfront?\nASSISTANT: You mean before starting?\nUSER: Yes, I have moving expenses even though I'm not relocating.\nASSISTANT: What expenses?\nUSER: Setting up a proper home office for remote days, ergonomic chair, monitor, etc.\nASSISTANT: We provide a $1,500 home office stipend separately.\nUSER: That wasn't mentioned before!\nASSISTANT: It's automatic for hybrid employees. One-time setup plus $50 monthly for internet.\nUSER: Even better. So the signing bonus timing?\nASSISTANT: I can arrange $5,000 within a week of signing, $5,000 in first paycheck.\nUSER: That works perfectly.\nASSISTANT: Any other concerns?\nUSER: The PTO accrual - does it start immediately?\nASSISTANT: Your 20 days are available in full on day one, no accrual needed.\nUSER: Great. And unused days?\nASSISTANT: Roll over up to 5 days annually, or cash out at year-end.\nUSER: Cash out at what rate?\nASSISTANT: 100% of daily rate based on salary.\nUSER: Fair enough. Oh, the wellness stipend - what does it cover?\nASSISTANT: Gym, fitness classes, sports equipment, even massage therapy.\nUSER: Mental health services?\nASSISTANT: Yes, therapy copays, meditation apps, wellness retreats.\nUSER: Very comprehensive. Stock option details - when can I exercise?\nASSISTANT: After the one-year cliff, you can exercise vested portions anytime.\nUSER: Even if I leave the company?\nASSISTANT: You have 90 days post-departure to exercise vested options.\nUSER: Standard terms. What about anti-dilution provisions?\nASSISTANT: Your percentage ownership is protected through Series B funding.\nUSER: When was Series A?\nASSISTANT: Last year at $500M valuation. We're growing fast.\nUSER: Current valuation?\nASSISTANT: Approaching $800M based on recent 409A.\nUSER: So my options are already worth more potentially?\nASSISTANT: The strike price is fixed at $22, so yes, upside is building.\nUSER: This all sounds good. I'm ready to accept.\nASSISTANT: Wonderful! I'll send the final offer with corrections within an hour.\nUSER: Once I sign, what's next?\nASSISTANT: Background check, then onboarding paperwork. IT will ship your equipment.\nUSER: What equipment exactly?\nASSISTANT: MacBook Pro 16-inch, monitor, keyboard, mouse, headset. Your choice of specs.\nUSER: Maxed out specs for development work?\nASSISTANT: Of course. M3 Max, 64GB RAM, whatever you need.\nUSER: Perfect. Send that final offer!\nASSISTANT: Will do! Welcome to TechVision, Sarah!\nUSER: Thanks for working with me on everything, Jennifer.\nASSISTANT: My pleasure. Successful negotiations mean happy employees."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853594112086ccf9412c566ef0a3e60cd40e0464675d45cf8",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-09-08 at 11:00:00, Sarah (candidate) had a 44-minute call with Jennifer (TechVision Corp Human Resources) regarding the final job offer (conversation_id=final_agreement_001). The offer was confirmed with the title 'Senior Software Engineer II' (updated from 'Senior II' for clarity), base salary of $155,000, a $10,000 signing bonus (split: $5,000 upfront before start date, $5,000 in first paycheck), and 10,000 stock options (CEO increased from 7,500 due to Sarah's architecture experience; potential $220,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed). The $500 monthly commute stipend (tax-free transportation benefit, up to IRS limits) and $5,000 annual professional development budget were approved.\", \"The remote work arrangement is specified as 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). TechVision provides a $1,500 one-time home office setup stipend (automatic for hybrid employees) plus $50 monthly for internet.\", \"PTO is 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation days roll over up to 5 annually or can be cashed out at 100% of daily rate based on salary. The professional development budget is $5,000 annually (approved as requested).\", \"Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend covering gym, fitness classes, sports equipment, massage therapy, and mental health services (therapy copays, meditation apps, wellness retreats). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.\", \"Stock options include anti-dilution provisions protecting percentage ownership through Series B funding. TechVision's Series A funding was last year at $500M valuation; current valuation is approaching $800M based on recent 409A. Vested options can be exercised after the 1-year cliff, with 90 days post-departure to exercise; strike price is fixed at $22.\", \"The start date of October 15th (to finish Sarah's current project) was confirmed. Upon Sarah's acceptance, Jennifer will send the final offer within an hour with corrections. Next steps after signing: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews occur annually in March with merit increases typically 3-8% (higher for top performers). Sarah previously noted another offer deadline of September 12th.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory state by incorporating the new information from the session while retaining still-valid facts. Let's start by reviewing the current memory and then the new session details.\n\nFirst, current memory has details about the 2024-09-07 call with Jennifer (TechVision HR) and Sarah (candidate) regarding the revised job offer. Key points include: Senior II level, $155k base, $10k signing bonus, 7,500 stock options, hybrid (2 days in office, 3 remote, Tues/Thurs preferred), $500 commute stipend (pending VP approval), 20 days PTO, $4k professional development (Sarah asked for $5k, pending), start date Oct 15, health insurance 80% coverage, $150 wellness stipend, 4% retirement match, performance reviews in March, revised offer pending approval of commute stipend and $5k dev budget, Sarah's other offer deadline Sep 12.\n\nNew session is 2024-09-08 11:00:00, conversation_id=final_agreement_001. Key updates:\n\n1. Commute stipend ($500/month) and $5k professional development budget approved.\n2. Stock options increased from 7,500 to 10,000 (CEO decision due to architecture experience), potential value now $220k at $22 share price.\n3. Job title updated from \"Senior II\" to \"Senior Software Engineer II\" (internal naming, \"Software\" added for clarity).\n4. Remote schedule specified: Tuesday/Thursday in-office, Monday/Wednesday/Friday remote.\n5. Commute stipend is tax-free (transportation benefit, up to IRS limits).\n6. Home office stipend: $1,500 one-time setup + $50 monthly internet (automatic for hybrid employees, not previously mentioned).\n7. Signing bonus: $10k, originally payable in first paycheck; now half ($5k) upfront (before start) for home office setup expenses, half in first paycheck.\n8. PTO: 20 days available immediately (no accrual), unused days roll over up to 5 annually or cash out at 100% daily rate.\n9. Wellness stipend coverage: gym, fitness classes, sports equipment, massage therapy, mental health services (therapy copays, meditation apps, wellness retreats).\n10. Stock options: vesting over 4 years with 1-year cliff (same as before), can exercise vested portions after cliff; 90 days post-departure to exercise; anti-dilution provisions protect percentage ownership through Series B funding; Series A was last year at $500M valuation, current valuation approaching $800M (409A), strike price fixed at $22.\n11. Equipment: MacBook Pro 16-inch (M3 Max, 64GB RAM, max specs), monitor, keyboard, mouse, headset (IT ships equipment).\n12. Final offer to be sent within an hour with corrections; next steps after signing: background check, onboarding paperwork, IT equipment shipment.\n\nNow, I need to update the memory array, replacing outdated info and adding new details while keeping exact values, dates, relationships, etc. Let's structure each paragraph contextually, ensuring entities (Sarah, Jennifer, TechVision Corp), events, times, status, and relationships are clear.\n\nParagraph 1: Update the job offer details (title, stock options, approval of stipends/budget) from the 2024-09-08 call.\nParagraph 2: Remote work details (specific days added).\nParagraph 3: Financial details (commute stipend tax-free, signing bonus split, home office stipend, PTO rollover/cash out).\nParagraph 4: Benefits details (wellness stipend coverage, PTO specifics, retirement unchanged, equipment, home office stipend).\nParagraph 5: Stock options and valuation info (increased options, anti-dilution, Series A/B, current valuation).\nParagraph 6: Next steps and final agreement.\n\nNeed to ensure all exact values (salary, bonuses, stipends, dates, quantities) are retained, and relationships (Sarah as candidate, Jennifer as HR, TechVision as employer) are clear. Remove pending approvals since they're now approved. Update stock options from 7,500 to 10,000. Add home office stipend, equipment details, signing bonus split, etc.\n\nLet me draft the updated memory paragraphs:\n\n1. On 2024-09-08 at 11:00:00, Sarah (candidate) had a 44-minute call with Jennifer (TechVision Corp Human Resources) regarding the final job offer (conversation_id=final_agreement_001). The offer was confirmed with the title \"Senior Software Engineer II\" (updated from \"Senior II\" for clarity), base salary of $155,000, a $10,000 signing bonus (split: $5,000 upfront before start date, $5,000 in first paycheck), and 10,000 stock options (CEO increased from 7,500 due to Sarah's architecture experience; potential $220,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed). The $500 monthly commute stipend (tax-free transportation benefit, up to IRS limits) and $5,000 annual professional development budget were approved.\n\n2. The remote work arrangement is specified as hybrid: Tuesday and Thursday in-office, Monday/Wednesday/Friday remote. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). TechVision provides a $1,500 one-time home office setup stipend (automatic for hybrid employees) plus $50 monthly for internet.\n\n3. PTO is 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation days roll over up to 5 annually or can be cashed out at 100% of daily rate based on salary. The professional development budget is $5,000 annually (approved as requested).\n\n4. Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend covering gym, fitness classes, sports equipment, massage therapy, and mental health services (therapy copays, meditation apps, wellness retreats). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.\n\n5. Stock options include anti-dilution provisions protecting percentage ownership through Series B funding. TechVision's Series A funding was last year at $500M valuation; current valuation is approaching $800M based on recent 409A. Vested options can be exercised after the 1-year cliff, with 90 days post-departure to exercise; strike price is fixed at $22.\n\n6. The start date of October 15th (to finish Sarah's current project) was confirmed. Upon Sarah's acceptance, Jennifer will send the final offer within an hour with corrections. Next steps after signing: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews occur annually in March with merit increases typically 3-8% (higher for top performers). Sarah previously noted another offer deadline of September 12th.\n\nI need to check if all new info is included and outdated info is replaced (e.g., 7,500 → 10,000 options, title update, remote days specified, signing bonus split, home office stipend, equipment details, stock anti-dilution/valuation, PTO rollover, wellness coverage, etc.). This should cover all key points from the new session while retaining still-valid facts from the current memory."
+            }
+          }
+        ],
+        "created": 1785359475,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2512,
+          "prompt_tokens": 1841,
+          "total_tokens": 4353,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1808,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2512,
+        "prompt_tokens": 1841,
+        "total_tokens": 4353,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1808,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853594112086ccf9412c566ef0a3e60cd40e0464675d45cf8"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer2_15_employment_negotiation enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:11:15.206344+00:00",
+      "latency_ms": 29012.747,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"On 2024-09-08 at 11:00:00, Sarah (candidate) had a 44-minute call with Jennifer (TechVision Corp Human Resources) regarding the final job offer (conversation_id=final_agreement_001). The offer was confirmed with the title 'Senior Software Engineer II' (updated from 'Senior II' for clarity), base salary of $155,000, a $10,000 signing bonus (split: $5,000 upfront before start date, $5,000 in first paycheck), and 10,000 stock options (CEO increased from 7,500 due to Sarah's architecture experience; potential $220,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed). The $500 monthly commute stipend (tax-free transportation benefit, up to IRS limits) and $5,000 annual professional development budget were approved.\", \"The remote work arrangement is specified as 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). TechVision provides a $1,500 one-time home office setup stipend (automatic for hybrid employees) plus $50 monthly for internet.\", \"PTO is 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation days roll over up to 5 annually or can be cashed out at 100% of daily rate based on salary. The professional development budget is $5,000 annually (approved as requested).\", \"Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend covering gym, fitness classes, sports equipment, massage therapy, and mental health services (therapy copays, meditation apps, wellness retreats). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.\", \"Stock options include anti-dilution provisions protecting percentage ownership through Series B funding. TechVision's Series A funding was last year at $500M valuation; current valuation is approaching $800M based on recent 409A. Vested options can be exercised after the 1-year cliff, with 90 days post-departure to exercise; strike price is fixed at $22.\", \"The start date of October 15th (to finish Sarah's current project) was confirmed. Upon Sarah's acceptance, Jennifer will send the final offer within an hour with corrections. Next steps after signing: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews occur annually in March with merit increases typically 3-8% (higher for top performers). Sarah previously noted another offer deadline of September 12th.\"]\n\nUSER QUESTION:\nWhat are the final terms of my TechVision job offer after all negotiations?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "0217853594753966ccf9412c566ef0a3e60cd40e04646755fc3fc",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The final terms of your TechVision job offer, after negotiations, are as follows:  \n\n\n### **Role & Compensation**  \n- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).  \n- **Base Salary**: $155,000.  \n- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).  \n- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).  \n  - Potential value: ~$220,000 at a $22 share price.  \n  - Vesting: 4-year schedule with a 1-year cliff, then monthly vesting.  \n  - Key details: Anti-dilution provisions (protects ownership through Series B funding); strike price fixed at $22; exercisable after the 1-year cliff, with 90 days post-departure to exercise. TechVision targets an IPO in 18–24 months (not guaranteed).  \n\n\n### **Work Arrangement & Stipends**  \n- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.  \n- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).  \n  - **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).  \n- **Home Office**: $1,500 one-time setup stipend (automatic for hybrid employees) + $50/month internet reimbursement.  \n\n\n### **Benefits**  \n- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days). Unused vacation rolls over up to 5 days annually or can be cashed out at 100% of your daily rate.  \n- **Professional Development**: $5,000 annual budget (approved as requested).  \n- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.  \n- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).  \n- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).  \n\n\n### **Start Date & Next Steps**  \n- **Start Date**: October 15th (to finish your current project).  \n- **Post-Acceptance**: Jennifer will send the final offer within an hour of acceptance. Next steps: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset).  \n\n\n### **Performance & Growth**  \n- **Reviews**: Annual performance reviews in March, with merit increases typically 3–8% (higher for top performers).  \n\n\nLet me know if you need clarification on any details!",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle this question. The user is asking about the final terms of their TechVision job offer after negotiations. I need to refer to the provided long-term memory to extract all the relevant details.\n\nFirst, the title: \"Senior Software Engineer II\" (updated from \"Senior II\" for clarity). Then the base salary is $155,000. Signing bonus is $10,000, split into $5,000 upfront before start date and $5,000 in the first paycheck. Stock options: 10,000, increased from 7,500 due to architecture experience. Potential value at $22 share price is $220,000, vesting over 4 years with a 1-year cliff then monthly. TechVision targets IPO in 18-24 months, but not guaranteed.\n\nRemote work arrangement: Tuesday and Thursday in-office, Monday/Wednesday/Friday remote. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). Commute stipend: $500 monthly, tax-free transportation benefit up to IRS limits. Home office setup: $1,500 one-time stipend (automatic for hybrid employees) plus $50 monthly for internet.\n\nPTO: 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation rolls over up to 5 annually or can be cashed out at 100% daily rate.\n\nProfessional development budget: $5,000 annually, approved as requested.\n\nHealth insurance: 80% company coverage, $200/month employee contribution for family plan. Wellness stipend: $150 monthly covering gym, fitness classes, sports equipment, massage therapy, mental health services (therapy copays, meditation apps, wellness retreats).\n\nRetirement benefits: 4% match, vested immediately (current employer has 6% match).\n\nStock options details: anti-dilution provisions protecting percentage ownership through Series B. Series A was last year at $500M valuation; current valuation approaching $800M based on 409A. Vested options exercisable after 1-year cliff, 90 days post-departure to exercise; strike price fixed at $22.\n\nStart date: October 15th (to finish current project). Next steps after acceptance: Jennifer sends final offer within an hour, then background check, onboarding paperwork, IT ships equipment (MacBook Pro 16-inch M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews annually in March, merit increases 3-8% (higher for top performers).\n\nI need to organize all these points clearly, making sure to include all negotiated terms. Avoid missing any key details like the split signing bonus, vesting schedule, remote days, stipends, PTO structure, etc. Also, note the stock option specifics and the start date. Make sure it's comprehensive but not redundant."
+            }
+          }
+        ],
+        "created": 1785359504,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1363,
+          "prompt_tokens": 879,
+          "total_tokens": 2242,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 674,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1363,
+        "prompt_tokens": 879,
+        "total_tokens": 2242,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 674,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853594753966ccf9412c566ef0a3e60cd40e04646755fc3fc"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer2_15_employment_negotiation enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T21:11:44.223718+00:00",
+      "latency_ms": 16633.265,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=initial_offer_001\ntimestamp=2024-09-05 14:00:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"51 minutes\"}\nUSER: Hi, I received your job offer letter and wanted to discuss the terms.\nASSISTANT: Hello Sarah! This is Jennifer from TechVision HR. Congratulations on the Senior Software Engineer offer! What would you like to discuss?\nUSER: Thank you! I'm excited about the opportunity but have some questions about the package.\nASSISTANT: Of course. Let me pull up your offer. Base salary $145,000, standard benefits, start date October 1st.\nUSER: Right. The base salary is lower than I expected based on our interviews.\nASSISTANT: What range were you expecting?\nUSER: The hiring manager mentioned $150,000 to $165,000 for this level.\nASSISTANT: That range is for Senior II level. Your offer is for Senior I.\nUSER: But I have 8 years experience. Doesn't that qualify for Senior II?\nASSISTANT: Typically Senior II requires 10+ years or specific domain expertise.\nUSER: I led the architecture team at my current company for 3 years.\nASSISTANT: That's valuable experience. Let me discuss with the hiring manager.\nUSER: Also, what about signing bonus? There's none mentioned.\nASSISTANT: Signing bonuses aren't standard for this level, but we can explore it.\nUSER: I'm walking away from a $15,000 year-end bonus at my current job.\nASSISTANT: That's significant. We might be able to offer something to offset that.\nUSER: What about equity?\nASSISTANT: The offer includes 5,000 stock options vesting over 4 years.\nUSER: What's the strike price?\nASSISTANT: Current fair market value is $22 per share, so that would be your strike price.\nUSER: So potentially $110,000 value if the price stays flat?\nASSISTANT: Correct, though we expect significant growth. We're pre-IPO.\nUSER: When is IPO planned?\nASSISTANT: Targeting 18-24 months, though not guaranteed.\nUSER: What's the vesting schedule?\nASSISTANT: Standard 1-year cliff, then monthly vesting over remaining 3 years.\nUSER: Can we accelerate that?\nASSISTANT: Vesting schedules are typically non-negotiable, but I can ask.\nUSER: What about remote work? The posting said flexible.\nASSISTANT: We expect 3 days in office, 2 days remote weekly.\nUSER: I was hoping for fully remote with quarterly office visits.\nASSISTANT: That's a significant deviation from our hybrid model.\nUSER: I live 90 minutes from the office. Daily commuting isn't sustainable.\nASSISTANT: Would you consider relocating? We offer relocation assistance.\nUSER: How much assistance?\nASSISTANT: Up to $10,000 for moving expenses.\nUSER: My kids are in school. Moving isn't ideal right now.\nASSISTANT: Understood. Maybe we can work out a modified schedule.\nUSER: Like what?\nASSISTANT: Perhaps 2 days in office with longer hours, 3 days remote?\nUSER: That could work. What about PTO?\nASSISTANT: Standard is 15 days vacation, 5 sick days.\nUSER: I currently have 20 days PTO plus unlimited sick.\nASSISTANT: We could potentially match your current PTO.\nUSER: That would help. What about professional development?\nASSISTANT: Annual $2,000 budget for conferences and training.\nUSER: I typically attend 2-3 conferences yearly, costing about $5,000 total.\nASSISTANT: We might increase that for senior roles.\nUSER: Also, the health insurance - what's the employee contribution?\nASSISTANT: We cover 80% of premiums. Employee pays about $200 monthly for family plan.\nUSER: My current employer covers 100%.\nASSISTANT: That's generous of them. We could explore a monthly stipend to offset.\nUSER: How flexible is the October 1st start date?\nASSISTANT: Do you need more time?\nUSER: I'd prefer October 15th to finish my current project.\nASSISTANT: That should be fine. Shows good professional ethics.\nUSER: Can you put together a revised offer with these points?\nASSISTANT: I'll discuss with leadership and get back to you within 48 hours.\nUSER: Please emphasize the Senior II level consideration and salary adjustment.\nASSISTANT: Noted. To summarize your requests: Senior II level, $150-165k salary range, signing bonus, remote flexibility, 20 days PTO, higher professional development budget.\nUSER: Exactly. And October 15th start date.\nASSISTANT: I'll advocate for these changes. What's your deadline for deciding?\nUSER: I have another offer to respond to by September 12th.\nASSISTANT: Good to know. We'll work quickly.\nUSER: I really want to join TechVision, but need a competitive package.\nASSISTANT: Understood. We want you on the team too.\nUSER: Thanks Jennifer. Looking forward to your response.\nASSISTANT: I'll call you by September 7th with updates.\n\nconversation_id=counter_offer_001\ntimestamp=2024-09-07 15:30:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"47 minutes\"}\nUSER: Hi Jennifer, calling about the revised offer?\nASSISTANT: Hi Sarah! Yes, I have good news. Leadership approved several of your requests.\nUSER: Great! What did they approve?\nASSISTANT: First, we're offering Senior II level with adjusted compensation.\nUSER: That's wonderful! What's the new salary?\nASSISTANT: We can offer $155,000 base salary.\nUSER: That's in the range but still on the lower end.\nASSISTANT: We're also adding a $10,000 signing bonus to help with your foregone bonus.\nUSER: I appreciate that, though I'm walking away from $15,000.\nASSISTANT: We increased the equity grant to 7,500 options to make up the difference.\nUSER: So 50% more equity? That helps long-term.\nASSISTANT: Exactly. At current valuation, that's $165,000 potential value.\nUSER: What about the remote work arrangement?\nASSISTANT: We can offer 2 days in office, 3 days remote.\nUSER: Which days in office?\nASSISTANT: Tuesday and Thursday are preferred for team meetings.\nUSER: That works. What about the commute? Can I expense mileage?\nASSISTANT: We don't typically cover commute costs.\nUSER: But 180 miles round trip twice weekly adds up.\nASSISTANT: Let me propose a commute stipend of $500 monthly.\nUSER: That would cover gas and wear. Thank you.\nASSISTANT: I'll need VP approval but I think it's reasonable.\nUSER: What about PTO?\nASSISTANT: We're approving 20 days vacation from day one.\nUSER: No waiting period? That's great.\nASSISTANT: Correct, available immediately. Plus our standard holidays.\nUSER: How many holidays?\nASSISTANT: 11 federal holidays plus we close December 24-31.\nUSER: Oh wow, that's generous.\nASSISTANT: It's our way of ensuring work-life balance.\nUSER: Professional development budget?\nASSISTANT: Increased to $4,000 annually for Senior II level.\nUSER: Almost there. Can we do $5,000?\nASSISTANT: I'll need to check. Conferences are expensive these days.\nUSER: Exactly. Registration, travel, hotels add up quickly.\nASSISTANT: Fair point. What about the October 15th start date?\nUSER: Yes, I need that to transition properly.\nASSISTANT: Already approved. October 15th is confirmed.\nUSER: The health insurance contribution?\nASSISTANT: We can't change the 80/20 split, but we're adding a $150 monthly wellness stipend.\nUSER: So that essentially covers my portion?\nASSISTANT: Almost entirely, yes.\nUSER: That's creative. I like it.\nASSISTANT: We try to find solutions that work.\nUSER: What about retirement matching?\nASSISTANT: Standard 4% match, vested immediately.\nUSER: My current is 6% match.\nASSISTANT: Our 4% is company policy, but the equity upside compensates.\nUSER: True. Pre-IPO equity could be valuable.\nASSISTANT: Many employees have seen 10x returns post-IPO.\nUSER: No guarantees though.\nASSISTANT: Of course not, but our growth trajectory is strong.\nUSER: Can I get the revised offer in writing?\nASSISTANT: I'll email it today, pending the commute stipend and $5k development budget approval.\nUSER: When will you know about those?\nASSISTANT: I'm meeting with the VP at 4 PM. Will know by end of day.\nUSER: This is sounding much better overall.\nASSISTANT: We really want you to join the team.\nUSER: One more thing - is there a performance review cycle?\nASSISTANT: Annual reviews in March with merit increases.\nUSER: Typical increase range?\nASSISTANT: 3-8% based on performance. High performers can get more.\nUSER: Good to know. I think we're close to a deal.\nASSISTANT: Excellent! I'll confirm those final items and send the revised offer.\nUSER: Looking forward to it.\nASSISTANT: Talk to you soon, Sarah!\n\nconversation_id=final_agreement_001\ntimestamp=2024-09-08 11:00:00\nmetadata={\"business\": \"TechVision Corp\", \"department\": \"Human Resources\", \"call_duration\": \"44 minutes\"}\nUSER: Hi Jennifer, I reviewed the revised offer letter you sent.\nASSISTANT: Hi Sarah! Great. I have good news - both the commute stipend and $5,000 development budget were approved.\nUSER: Fantastic! But I noticed something different in the written offer.\nASSISTANT: What did you notice?\nUSER: The equity vesting shows 10,000 options, not 7,500.\nASSISTANT: Oh! The CEO personally increased it after hearing about your architecture experience.\nUSER: That's amazing! So $220,000 potential value?\nASSISTANT: At current valuation, yes. He's excited about your joining.\nUSER: That definitely sweetens the deal. But the title shows 'Senior Engineer II' not 'Senior Software Engineer II'.\nASSISTANT: That's our internal naming. 'Software' is implied in the engineering org.\nUSER: Can we add 'Software' for clarity? It matters for future roles.\nASSISTANT: Absolutely, I'll update that. Good catch.\nUSER: Also, the remote schedule says 'hybrid' but doesn't specify days.\nASSISTANT: I'll add 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'.\nUSER: Perfect. And confirm the $500 monthly commute stipend is tax-free?\nASSISTANT: It's structured as a transportation benefit, so yes, tax-free up to IRS limits.\nUSER: Excellent. Now, about the signing bonus...\nASSISTANT: The $10,000? Is there an issue?\nUSER: It says payable in first paycheck. Can I get half upfront?\nASSISTANT: You mean before starting?\nUSER: Yes, I have moving expenses even though I'm not relocating.\nASSISTANT: What expenses?\nUSER: Setting up a proper home office for remote days, ergonomic chair, monitor, etc.\nASSISTANT: We provide a $1,500 home office stipend separately.\nUSER: That wasn't mentioned before!\nASSISTANT: It's automatic for hybrid employees. One-time setup plus $50 monthly for internet.\nUSER: Even better. So the signing bonus timing?\nASSISTANT: I can arrange $5,000 within a week of signing, $5,000 in first paycheck.\nUSER: That works perfectly.\nASSISTANT: Any other concerns?\nUSER: The PTO accrual - does it start immediately?\nASSISTANT: Your 20 days are available in full on day one, no accrual needed.\nUSER: Great. And unused days?\nASSISTANT: Roll over up to 5 days annually, or cash out at year-end.\nUSER: Cash out at what rate?\nASSISTANT: 100% of daily rate based on salary.\nUSER: Fair enough. Oh, the wellness stipend - what does it cover?\nASSISTANT: Gym, fitness classes, sports equipment, even massage therapy.\nUSER: Mental health services?\nASSISTANT: Yes, therapy copays, meditation apps, wellness retreats.\nUSER: Very comprehensive. Stock option details - when can I exercise?\nASSISTANT: After the one-year cliff, you can exercise vested portions anytime.\nUSER: Even if I leave the company?\nASSISTANT: You have 90 days post-departure to exercise vested options.\nUSER: Standard terms. What about anti-dilution provisions?\nASSISTANT: Your percentage ownership is protected through Series B funding.\nUSER: When was Series A?\nASSISTANT: Last year at $500M valuation. We're growing fast.\nUSER: Current valuation?\nASSISTANT: Approaching $800M based on recent 409A.\nUSER: So my options are already worth more potentially?\nASSISTANT: The strike price is fixed at $22, so yes, upside is building.\nUSER: This all sounds good. I'm ready to accept.\nASSISTANT: Wonderful! I'll send the final offer with corrections within an hour.\nUSER: Once I sign, what's next?\nASSISTANT: Background check, then onboarding paperwork. IT will ship your equipment.\nUSER: What equipment exactly?\nASSISTANT: MacBook Pro 16-inch, monitor, keyboard, mouse, headset. Your choice of specs.\nUSER: Maxed out specs for development work?\nASSISTANT: Of course. M3 Max, 64GB RAM, whatever you need.\nUSER: Perfect. Send that final offer!\nASSISTANT: Will do! Welcome to TechVision, Sarah!\nUSER: Thanks for working with me on everything, Jennifer.\nASSISTANT: My pleasure. Successful negotiations mean happy employees.\n\nQUESTION: What are the final terms of my TechVision job offer after all negotiations?\nANSWER: The final terms of your TechVision job offer, after negotiations, are as follows:  \n\n\n### **Role & Compensation**  \n- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).  \n- **Base Salary**: $155,000.  \n- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).  \n- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).  \n  - Potential value: ~$220,000 at a $22 share price.  \n  - Vesting: 4-year schedule with a 1-year cliff, then monthly vesting.  \n  - Key details: Anti-dilution provisions (protects ownership through Series B funding); strike price fixed at $22; exercisable after the 1-year cliff, with 90 days post-departure to exercise. TechVision targets an IPO in 18–24 months (not guaranteed).  \n\n\n### **Work Arrangement & Stipends**  \n- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.  \n- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).  \n  - **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).  \n- **Home Office**: $1,500 one-time setup stipend (automatic for hybrid employees) + $50/month internet reimbursement.  \n\n\n### **Benefits**  \n- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days). Unused vacation rolls over up to 5 days annually or can be cashed out at 100% of your daily rate.  \n- **Professional Development**: $5,000 annual budget (approved as requested).  \n- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.  \n- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).  \n- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).  \n\n\n### **Start Date & Next Steps**  \n- **Start Date**: October 15th (to finish your current project).  \n- **Post-Acceptance**: Jennifer will send the final offer within an hour of acceptance. Next steps: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset).  \n\n\n### **Performance & Growth**  \n- **Reviews**: Annual performance reviews in March, with merit increases typically 3–8% (higher for top performers).  \n\n\nLet me know if you need clarification on any details!\nEVALUATION CRITERIA: The agent must track the evolution across all negotiations to provide FINAL terms:\n\n**FINAL ACCEPTED OFFER TERMS:**\n\n**Position & Compensation:**\n- Title: Senior Software Engineer II (not just Senior Engineer II)\n- Base Salary: $155,000\n- Signing Bonus: $10,000 ($5k on signing, $5k first paycheck)\n- Equity: 10,000 stock options (increased from 5,000→7,500→10,000)\n- Strike Price: $22/share\n- Potential Value: $220,000 at current valuation\n- Vesting: 1-year cliff, then monthly over 3 years\n\n**Work Arrangement:**\n- Schedule: Hybrid - Tuesday/Thursday in office, M/W/F remote\n- Commute Stipend: $500/month tax-free\n- Start Date: October 15, 2024 (changed from October 1)\n\n**Benefits:**\n- PTO: 20 days vacation immediately available (no waiting period)\n- Holidays: 11 federal + December 24-31 closure\n- Health: 80% company paid + $150/month wellness stipend\n- Retirement: 4% match, immediately vested\n- Professional Development: $5,000 annual budget\n\n**Additional Perks:**\n- Home Office Setup: $1,500 one-time + $50/month internet\n- Equipment: MacBook Pro 16\" M3 Max, 64GB RAM, monitor, peripherals\n- Wellness Stipend Uses: Gym, therapy, fitness, massage, wellness retreats\n\n**Key Negotiation Wins:**\n- Promoted from Senior I to Senior II level\n- Salary increased from $145k to $155k\n- Equity doubled from 5,000 to 10,000 options\n- Remote work increased from 2 to 3 days per week\n- PTO increased from 15 to 20 days\n- Added commute and wellness stipends\n- Professional development budget increased from $2k to $5k\n\n**Company Info:**\n- Current Valuation: ~$800M (up from $500M Series A)\n- IPO Target: 18-24 months\n- Anti-dilution protection through Series B\n\nThe agent must recognize that the final offer supersedes all previous discussions and includes unexpected improvements like the CEO's equity increase.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a6c90f5e22e43d6b0b59a",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n    \"dimensions\": {\n        \"precision\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant provided a detailed and accurate summary of the final terms of the TechVision job offer, matching the information provided in the authoritative source.\",\n            \"evidence\": [\n                \"The final terms of your TechVision job offer, after negotiations, are as follows:\",\n                \"### **Role & Compensation**\",\n                \"- **Title**: Senior Software Engineer II (updated from \\\"Senior II\\\" for clarity).\",\n                \"- **Base Salary**: $155,000.\",\n                \"- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).\",\n                \"- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).\",\n                \"### **Work Arrangement & Stipends**\",\n                \"- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.\",\n                \"- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).\",\n                \"### **Benefits**\",\n                \"- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days).\",\n                \"- **Professional Development**: $5,000 annual budget (approved as requested).\",\n                \"- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.\",\n                \"- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).\",\n                \"- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).\"\n            ]\n        },\n        \"recall\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant recalled all the key points from the final agreement, including the role, compensation, work arrangement, stipends, benefits, and start date.\",\n            \"evidence\": [\n                \"- **Title**: Senior Software Engineer II (updated from \\\"Senior II\\\" for clarity).\",\n                \"- **Base Salary**: $155,000.\",\n                \"- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).\",\n                \"- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).\",\n                \"- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.\",\n                \"- **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).\",\n                \"- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31.\",\n                \"- **Professional Development**: $5,000 annual budget (approved as requested).\",\n                \"- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.\",\n                \"- **Wellness Stipend**: $150/month.\",\n                \"- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).\",\n                \"- **Start Date**: October 15th (to finish your current project).\"\n            ]\n        },\n        \"reasoning\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant logically structured the final terms, grouping similar information and providing clear explanations for each term, which aligns with the details discussed in the authoritative source.\"\n        },\n        \"proactivity\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant was proactive in summarizing the final terms and providing additional context where necessary, such as explaining the potential value of stock options and the conditions of the signing bonus.\"\n        }\n    },\n    \"hallucination\": {\n        \"detected\": false,\n        \"claims\": [],\n        \"reasoning\": \"The assistant's response is consistent with the information provided in the authoritative source and does not include any unsupported or contradictory claims.\"\n    },\n    \"overall_reasoning\": \"The assistant provided a comprehensive and accurate summary of the final terms of the TechVision job offer, demonstrating a clear understanding of the details discussed in the authoritative source. The response is well-structured, includes all relevant information, and is free from any unsupported claims.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785359505,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1013,
+          "prompt_tokens": 4542,
+          "total_tokens": 5555,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 1013,
+        "prompt_tokens": 4542,
+        "total_tokens": 5555,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a6c90f5e22e43d6b0b59a"
+    }
+  ],
+  "updated_at_epoch": 1785359520.860273,
+  "answer": "The final terms of your TechVision job offer, after negotiations, are as follows:  \n\n\n### **Role & Compensation**  \n- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).  \n- **Base Salary**: $155,000.  \n- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).  \n- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).  \n  - Potential value: ~$220,000 at a $22 share price.  \n  - Vesting: 4-year schedule with a 1-year cliff, then monthly vesting.  \n  - Key details: Anti-dilution provisions (protects ownership through Series B funding); strike price fixed at $22; exercisable after the 1-year cliff, with 90 days post-departure to exercise. TechVision targets an IPO in 18–24 months (not guaranteed).  \n\n\n### **Work Arrangement & Stipends**  \n- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.  \n- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).  \n  - **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).  \n- **Home Office**: $1,500 one-time setup stipend (automatic for hybrid employees) + $50/month internet reimbursement.  \n\n\n### **Benefits**  \n- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days). Unused vacation rolls over up to 5 days annually or can be cashed out at 100% of your daily rate.  \n- **Professional Development**: $5,000 annual budget (approved as requested).  \n- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.  \n- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).  \n- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).  \n\n\n### **Start Date & Next Steps**  \n- **Start Date**: October 15th (to finish your current project).  \n- **Post-Acceptance**: Jennifer will send the final offer within an hour of acceptance. Next steps: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset).  \n\n\n### **Performance & Growth**  \n- **Reviews**: Annual performance reviews in March, with merit increases typically 3–8% (higher for top performers).  \n\n\nLet me know if you need clarification on any details!",
+  "result": {
+    "test_id": "layer2_15_employment_negotiation",
+    "layer": "layer2",
+    "title": "Job Offer Negotiation with Evolving Terms",
+    "mode": "enhanced_notes",
+    "session_count": 3,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "initial_offer_001",
+        "memory": [
+          "On 2024-09-05 at 14:00:00, Sarah (candidate) had a 51-minute call with Jennifer (TechVision Corp Human Resources) regarding her Senior Software Engineer job offer (conversation_id=initial_offer_001). The initial offer included a base salary of $145,000 (Senior I level), 5,000 stock options (strike price $22, vesting over 4 years with 1-year cliff then monthly), 15 vacation days + 5 sick days PTO, $2,000 annual professional development budget, health insurance with 80% company coverage ($200/month employee contribution for family plan), and a start date of October 1st.",
+          "Sarah, with 8 years of experience and 3 years leading an architecture team at her current job, noted the base salary was below the $150,000-$165,000 range mentioned by the hiring manager (Senior II level, which typically requires 10+ years or specific domain expertise). Jennifer agreed to discuss Sarah's Senior II qualification with the hiring manager.",
+          "Sarah inquired about a signing bonus (not standard for Senior I) as she is walking away from a $15,000 year-end bonus at her current job; Jennifer stated TechVision may offer something to offset this. The equity package was clarified as 5,000 options (potential $110,000 value at flat $22 share price) with TechVision targeting an IPO in 18-24 months (not guaranteed).",
+          "Regarding remote work, the initial hybrid model (3 days in office, 2 remote) was discussed; Sarah, living 90 minutes from the office, preferred fully remote with quarterly visits. Jennifer proposed a modified schedule (2 days in office, 3 remote). Sarah also requested matching her current 20 PTO days (vs. standard 15+5), a higher professional development budget ($5,000 for 2-3 conferences vs. $2,000), and a stipend to offset health insurance costs (current employer covers 100% vs. TechVision's 80%).",
+          "Sarah requested a start date of October 15th (to finish her current project), which Jennifer approved. Jennifer agreed to discuss revisions with leadership and provide a revised offer within 48 hours (by September 7th); Sarah noted she has another offer deadline of September 12th."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "initial_offer_001"
+        }
+      },
+      {
+        "session_index": 2,
+        "conversation_id": "counter_offer_001",
+        "memory": [
+          "On 2024-09-07 at 15:30:00, Sarah (candidate) had a 47-minute call with Jennifer (TechVision Corp Human Resources) regarding the revised job offer (conversation_id=counter_offer_001). The offer was updated to Senior II level with a base salary of $155,000, a $10,000 signing bonus (to offset her current $15,000 year-end bonus), and 7,500 stock options (potential $165,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed).",
+          "Regarding remote work, the modified arrangement (2 days in office, 3 days remote) was confirmed with Tuesday and Thursday as preferred in-office days (for team meetings). Sarah, living 90 minutes from the office (180 miles round trip twice weekly), requested commute cost coverage; Jennifer proposed a $500 monthly commute stipend (requires VP approval).",
+          "PTO was updated to 20 days vacation (available immediately, no waiting period) plus 11 federal holidays and company closure December 24-31 (replacing the initial 15 vacation + 5 sick days). The professional development budget was increased to $4,000 annually (Senior II level); Sarah requested $5,000 (to cover conference registration, travel, hotels), which Jennifer agreed to check on.",
+          "The start date of October 15th (to finish Sarah's current project) was confirmed. Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend added (to offset the employee portion). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.",
+          "Performance reviews will occur annually in March with merit increases typically 3-8% (higher for top performers). Jennifer stated the revised offer will be emailed today pending approval of the $500 commute stipend and $5,000 professional development budget (Jennifer has a 4 PM meeting with the VP, decision expected by end of day September 7th). Sarah noted she has another offer deadline of September 12th."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "counter_offer_001"
+        }
+      },
+      {
+        "session_index": 3,
+        "conversation_id": "final_agreement_001",
+        "memory": [
+          "On 2024-09-08 at 11:00:00, Sarah (candidate) had a 44-minute call with Jennifer (TechVision Corp Human Resources) regarding the final job offer (conversation_id=final_agreement_001). The offer was confirmed with the title 'Senior Software Engineer II' (updated from 'Senior II' for clarity), base salary of $155,000, a $10,000 signing bonus (split: $5,000 upfront before start date, $5,000 in first paycheck), and 10,000 stock options (CEO increased from 7,500 due to Sarah's architecture experience; potential $220,000 value at $22 share price, vesting over 4 years with 1-year cliff then monthly; TechVision targets IPO in 18-24 months, not guaranteed). The $500 monthly commute stipend (tax-free transportation benefit, up to IRS limits) and $5,000 annual professional development budget were approved.",
+          "The remote work arrangement is specified as 'Tuesday and Thursday in-office, Monday/Wednesday/Friday remote'. Sarah lives 90 minutes from the office (180 miles round trip twice weekly). TechVision provides a $1,500 one-time home office setup stipend (automatic for hybrid employees) plus $50 monthly for internet.",
+          "PTO is 20 days vacation (available immediately, no accrual) plus 11 federal holidays and company closure December 24-31 (replacing initial 15 vacation + 5 sick days). Unused vacation days roll over up to 5 annually or can be cashed out at 100% of daily rate based on salary. The professional development budget is $5,000 annually (approved as requested).",
+          "Health insurance remains at 80% company coverage ($200/month employee contribution for family plan), with a $150 monthly wellness stipend covering gym, fitness classes, sports equipment, massage therapy, and mental health services (therapy copays, meditation apps, wellness retreats). Retirement benefits include a standard 4% match (vested immediately), compared to Sarah's current employer's 6% match.",
+          "Stock options include anti-dilution provisions protecting percentage ownership through Series B funding. TechVision's Series A funding was last year at $500M valuation; current valuation is approaching $800M based on recent 409A. Vested options can be exercised after the 1-year cliff, with 90 days post-departure to exercise; strike price is fixed at $22.",
+          "The start date of October 15th (to finish Sarah's current project) was confirmed. Upon Sarah's acceptance, Jennifer will send the final offer within an hour with corrections. Next steps after signing: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset). Performance reviews occur annually in March with merit increases typically 3-8% (higher for top performers). Sarah previously noted another offer deadline of September 12th."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "final_agreement_001"
+        }
+      }
+    ],
+    "answer": "The final terms of your TechVision job offer, after negotiations, are as follows:  \n\n\n### **Role & Compensation**  \n- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).  \n- **Base Salary**: $155,000.  \n- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).  \n- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).  \n  - Potential value: ~$220,000 at a $22 share price.  \n  - Vesting: 4-year schedule with a 1-year cliff, then monthly vesting.  \n  - Key details: Anti-dilution provisions (protects ownership through Series B funding); strike price fixed at $22; exercisable after the 1-year cliff, with 90 days post-departure to exercise. TechVision targets an IPO in 18–24 months (not guaranteed).  \n\n\n### **Work Arrangement & Stipends**  \n- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.  \n- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).  \n  - **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).  \n- **Home Office**: $1,500 one-time setup stipend (automatic for hybrid employees) + $50/month internet reimbursement.  \n\n\n### **Benefits**  \n- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days). Unused vacation rolls over up to 5 days annually or can be cashed out at 100% of your daily rate.  \n- **Professional Development**: $5,000 annual budget (approved as requested).  \n- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.  \n- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).  \n- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).  \n\n\n### **Start Date & Next Steps**  \n- **Start Date**: October 15th (to finish your current project).  \n- **Post-Acceptance**: Jennifer will send the final offer within an hour of acceptance. Next steps: background check, onboarding paperwork, and IT will ship equipment (MacBook Pro 16-inch with M3 Max, 64GB RAM, max specs; monitor, keyboard, mouse, headset).  \n\n\n### **Performance & Growth**  \n- **Reviews**: Annual performance reviews in March, with merit increases typically 3–8% (higher for top performers).  \n\n\nLet me know if you need clarification on any details!",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 4
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 1.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The assistant provided a detailed and accurate summary of the final terms of the TechVision job offer, matching the information provided in the authoritative source.",
+          "evidence": [
+            "The final terms of your TechVision job offer, after negotiations, are as follows:",
+            "### **Role & Compensation**",
+            "- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).",
+            "- **Base Salary**: $155,000.",
+            "- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).",
+            "- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).",
+            "### **Work Arrangement & Stipends**",
+            "- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.",
+            "- **Commute**: You live 90 minutes from the office (180-mile round trip twice weekly).",
+            "### **Benefits**",
+            "- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31 (replaces initial 15 vacation + 5 sick days).",
+            "- **Professional Development**: $5,000 annual budget (approved as requested).",
+            "- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.",
+            "- **Wellness Stipend**: $150/month (covers gym, fitness classes, sports equipment, massage therapy, mental health services like therapy copays, meditation apps, or wellness retreats).",
+            "- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match)."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The assistant recalled all the key points from the final agreement, including the role, compensation, work arrangement, stipends, benefits, and start date.",
+          "evidence": [
+            "- **Title**: Senior Software Engineer II (updated from \"Senior II\" for clarity).",
+            "- **Base Salary**: $155,000.",
+            "- **Signing Bonus**: $10,000 (split: $5,000 upfront before start date; $5,000 in first paycheck).",
+            "- **Stock Options**: 10,000 options (increased from 7,500 due to your architecture experience).",
+            "- **Remote/Hybrid**: Tuesday/Thursday in-office; Monday/Wednesday/Friday remote.",
+            "- **Commute Stipend**: $500/month (tax-free transportation benefit, up to IRS limits).",
+            "- **PTO**: 20 days vacation (available immediately, no accrual) + 11 federal holidays + company closure December 24–31.",
+            "- **Professional Development**: $5,000 annual budget (approved as requested).",
+            "- **Health Insurance**: 80% company coverage; $200/month employee contribution for family plan.",
+            "- **Wellness Stipend**: $150/month.",
+            "- **Retirement**: 4% company match (vested immediately; your current employer offers a 6% match).",
+            "- **Start Date**: October 15th (to finish your current project)."
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The assistant logically structured the final terms, grouping similar information and providing clear explanations for each term, which aligns with the details discussed in the authoritative source."
+        },
+        "proactivity": {
+          "score": 4,
+          "reasoning": "The assistant was proactive in summarizing the final terms and providing additional context where necessary, such as explaining the potential value of stock options and the conditions of the signing bonus."
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The assistant's response is consistent with the information provided in the authoritative source and does not include any unsupported or contradictory claims."
+      },
+      "overall_reasoning": "The assistant provided a comprehensive and accurate summary of the final terms of the TechVision job offer, demonstrating a clear understanding of the details discussed in the authoritative source. The response is well-structured, includes all relevant information, and is free from any unsupported claims."
+    }
+  }
+}

@@ -16,8 +16,9 @@ orchestrator.py —— 多角色移交（handoff）编排器。
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from openai import OpenAI
 
@@ -53,6 +54,8 @@ class MultiRoleOrchestrator:
         max_steps: int = 20,
         verbose: bool = True,
         start_role: str = DEFAULT_ROLE,
+        provider_receipt_sink: Optional[Callable[[dict], None]] = None,
+        tool_receipt_sink: Optional[Callable[[dict], None]] = None,
     ):
         if start_role not in ROLES:
             raise ValueError(f"未知的起始角色 {start_role!r}，可选：{list(ROLES.keys())}")
@@ -68,6 +71,11 @@ class MultiRoleOrchestrator:
         # 分工记录：(role, kind, detail)，kind ∈ {"tool", "transfer", "final"}，
         # 用于运行结束后打印「哪个角色做了什么」的分工总览。
         self.activity: List[tuple] = []
+        self.api_calls: List[dict] = []
+        self.steps_used: int = 0
+        self.terminated_by_limit: bool = False
+        self.provider_receipt_sink = provider_receipt_sink
+        self.tool_receipt_sink = tool_receipt_sink
 
     # -------------------------------------------------------------- 工具装配
     def _tools_for_current_role(self) -> List[dict]:
@@ -110,6 +118,7 @@ class MultiRoleOrchestrator:
             tools=self._tools_for_current_role(),
             temperature=0,
         )
+        started = time.monotonic()
         try:
             response = self.client.chat.completions.create(**kwargs)
         except Exception as e:
@@ -119,7 +128,27 @@ class MultiRoleOrchestrator:
                 raise
             kwargs.pop("temperature", None)
             response = self.client.chat.completions.create(**kwargs)
+        if self.provider_receipt_sink:
+            self.provider_receipt_sink({
+                "kind": "chat_completion",
+                "role": self.current_role,
+                "request": kwargs,
+                "response": response.model_dump(mode="json"),
+                "response_id": getattr(response, "id", None),
+                "response_model": getattr(response, "model", None),
+                "duration_seconds": round(time.monotonic() - started, 3),
+            })
         msg = response.choices[0].message
+        usage = getattr(response, "usage", None)
+        self.api_calls.append({
+            "role": self.current_role,
+            "response_id": getattr(response, "id", None),
+            "history_messages_visible": len(self.history),
+            "tools_visible": [
+                tool["function"]["name"] for tool in self._tools_for_current_role()
+            ],
+            "usage": usage.model_dump(mode="json") if usage is not None else None,
+        })
 
         # 没有工具调用 => 最终回复
         if not msg.tool_calls:
@@ -183,8 +212,11 @@ class MultiRoleOrchestrator:
                     result = f"工具 {name} 不存在。"
                 else:
                     try:
-                        result = impl(**args)
-                    except (TypeError, ValueError) as exc:
+                        if name == "web_search" and self.tool_receipt_sink:
+                            result = impl(**args, receipt_sink=self.tool_receipt_sink)
+                        else:
+                            result = impl(**args)
+                    except (TypeError, ValueError, RuntimeError) as exc:
                         # 模型偶尔会传错/漏参数（如 {"q": ...} 而非 {"query": ...}）
                         # 或给出无法转换的值；把错误作为工具结果回给模型让它自行纠正，
                         # 而不是让整个移交流程崩溃。
@@ -223,11 +255,13 @@ class MultiRoleOrchestrator:
 
         final_answer = ""
         for step in range(self.max_steps):
+            self.steps_used = step + 1
             result = self._run_one_llm_turn()
             if result is not None:
                 final_answer = result
                 break
         else:
+            self.terminated_by_limit = True
             final_answer = "（达到最大步数上限，流程终止）"
             self._log(f"{C.RED}{final_answer}{C.RESET}")
 

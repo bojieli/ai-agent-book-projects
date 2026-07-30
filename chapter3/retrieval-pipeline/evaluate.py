@@ -64,6 +64,11 @@ DEFAULT_CORPUS: List[Dict[str, Any]] = [
     {"doc_id": "sem_gc", "text": "Automatic memory management frees developers from manually releasing objects."},
     {"doc_id": "sem_photo", "text": "Green plants convert sunlight into chemical energy stored as sugars."},
     {"doc_id": "sem_crypto", "text": "Encryption scrambles a message so that only the intended recipient can read it."},
+    # Exact proper-name cluster: sparse matching should preserve the complete
+    # name while dense retrieval sees several near-duplicates.
+    {"doc_id": "name_alexander_humphrey", "text": "Alexander Humphrey designed the Aurora scheduling protocol in 2019."},
+    {"doc_id": "name_alexander_hughes", "text": "Alexander Hughes designed the Borealis scheduling protocol in 2019."},
+    {"doc_id": "name_amelia_humphrey", "text": "Amelia Humphrey designed the Celeste scheduling protocol in 2020."},
     # 较长文档：话题彼此独立，用于演示分块阶段（会被切成多个 chunk 后再检索）
     {"doc_id": "doc_watercycle", "text": (
         "The water cycle describes how water moves continuously between the ocean, the atmosphere and the land. "
@@ -82,18 +87,22 @@ DEFAULT_CORPUS: List[Dict[str, Any]] = [
 
 DEFAULT_QUERIES: List[Dict[str, Any]] = [
     # 精确代码查询：稀疏一击命中，稠密难辨近似型号（expected 为唯一正确答案）
-    {"query": "XR-7003", "expected": ["xr_7003"]},
-    {"query": "XR-7005", "expected": ["xr_7005"]},
-    {"query": "HTTP-403", "expected": ["http_403"]},
-    {"query": "HTTP-400", "expected": ["http_400"]},
+    {"query": "XR-7003", "expected": ["xr_7003"], "category": "technical-code"},
+    {"query": "XR-7005", "expected": ["xr_7005"], "category": "technical-code"},
+    {"query": "HTTP-403", "expected": ["http_403"], "category": "technical-code"},
+    {"query": "HTTP-400", "expected": ["http_400"], "category": "technical-code"},
+    {"query": "Alexander Humphrey", "expected": ["name_alexander_humphrey"], "category": "exact-name"},
     # 语义改写查询：与文档几乎无共同词，稠密靠语义命中，稀疏无从匹配
-    {"query": "a beginner friendly language with tidy syntax", "expected": ["sem_readable"]},
-    {"query": "reclaiming unused heap space without programmer effort", "expected": ["sem_gc"]},
-    {"query": "how vegetation turns light into food", "expected": ["sem_photo"]},
-    {"query": "hiding a note so eavesdroppers cannot understand it", "expected": ["sem_crypto"]},
+    {"query": "a beginner friendly language with tidy syntax", "expected": ["sem_readable"], "category": "semantic"},
+    {"query": "reclaiming unused heap space without programmer effort", "expected": ["sem_gc"], "category": "semantic"},
+    {"query": "how vegetation turns light into food", "expected": ["sem_photo"], "category": "semantic"},
+    {"query": "hiding a note so eavesdroppers cannot understand it", "expected": ["sem_crypto"], "category": "semantic"},
+    # Cross-lingual query with no shared lexical terms; the answer remains the
+    # same English photosynthesis passage used by the semantic query above.
+    {"query": "植物如何把阳光转化为食物", "expected": ["sem_photo"], "category": "multilingual"},
     # 长文档语义查询：命中的长文档会先被分块，再由某个 chunk 召回、重排
-    {"query": "how does water move between the ocean and the sky", "expected": ["doc_watercycle"]},
-    {"query": "how are volcanoes formed from molten rock", "expected": ["doc_volcano"]},
+    {"query": "how does water move between the ocean and the sky", "expected": ["doc_watercycle"], "category": "semantic"},
+    {"query": "how are volcanoes formed from molten rock", "expected": ["doc_volcano"], "category": "semantic"},
 ]
 
 
@@ -408,20 +417,31 @@ class Pipeline:
     def run_query(self, query: str) -> Dict[str, List[Tuple[str, float]]]:
         """返回各方法的 doc 级排名 {method: [(doc_id, score)]}。"""
         top_k = self.args.top_k
+        sparse_started = time.perf_counter()
         sparse_chunks = self.bm25.search(query, top_k)
         sparse_docs = chunks_to_docs(sparse_chunks, self.chunk_to_doc)
+        sparse_ms = (time.perf_counter() - sparse_started) * 1000
 
         out: Dict[str, List[Tuple[str, float]]] = {"sparse": sparse_docs}
+        component_ms = {"sparse": sparse_ms}
 
         if self.dense is not None:
+            dense_started = time.perf_counter()
             dense_chunks = self.dense.search(query, top_k)
             dense_docs = chunks_to_docs(dense_chunks, self.chunk_to_doc)
+            dense_ms = (time.perf_counter() - dense_started) * 1000
+            component_ms["dense"] = dense_ms
             out["dense"] = dense_docs
 
             ranked_lists = {"dense": dense_docs, "sparse": sparse_docs}
             weights = {"dense": self.args.dense_weight, "sparse": self.args.sparse_weight}
+            rrf_started = time.perf_counter()
             rrf = fuse(ranked_lists, method="rrf", k=self.args.k_rrf, weights=weights)
+            rrf_ms = (time.perf_counter() - rrf_started) * 1000
+            weighted_started = time.perf_counter()
             weighted = fuse(ranked_lists, method="weighted", weights=weights)
+            weighted_ms = (time.perf_counter() - weighted_started) * 1000
+            component_ms.update({"rrf_fusion": rrf_ms, "weighted_fusion": weighted_ms})
             out["rrf"] = rrf
             out["weighted"] = weighted
 
@@ -429,8 +449,47 @@ class Pipeline:
                 # 对 RRF 融合的候选池 top-N 精排
                 pool = [doc_id for doc_id, _ in rrf[: self.args.rerank_pool]]
                 candidates = [(doc_id, self.doc_text[doc_id]) for doc_id in pool]
+                rerank_started = time.perf_counter()
                 reranked = self.reranker.rerank(query, candidates, self.args.rerank_top_k)
+                component_ms["rerank"] = (time.perf_counter() - rerank_started) * 1000
                 out["rerank"] = reranked
+
+        end_to_end_ms = {"sparse": sparse_ms}
+        if "dense" in component_ms:
+            retrieval_ms = sparse_ms + component_ms["dense"]
+            end_to_end_ms.update(
+                {
+                    "dense": component_ms["dense"],
+                    "rrf": retrieval_ms + component_ms["rrf_fusion"],
+                    "weighted": retrieval_ms + component_ms["weighted_fusion"],
+                }
+            )
+            if "rerank" in component_ms:
+                end_to_end_ms["rerank"] = (
+                    retrieval_ms + component_ms["rrf_fusion"] + component_ms["rerank"]
+                )
+        rank_changes = []
+        if "rerank" in out:
+            before = {doc_id: rank for rank, (doc_id, _) in enumerate(out["rrf"], 1)}
+            after = {doc_id: rank for rank, (doc_id, _) in enumerate(out["rerank"], 1)}
+            for doc_id in sorted(set(before) | set(after)):
+                rank_changes.append(
+                    {
+                        "doc_id": doc_id,
+                        "rrf_rank": before.get(doc_id),
+                        "rerank_rank": after.get(doc_id),
+                        "delta": (
+                            before[doc_id] - after[doc_id]
+                            if doc_id in before and doc_id in after
+                            else None
+                        ),
+                    }
+                )
+        self.last_trace = {
+            "component_latency_ms": component_ms,
+            "end_to_end_latency_ms": end_to_end_ms,
+            "rank_changes": rank_changes,
+        }
 
         return out
 
@@ -451,18 +510,26 @@ def run_evaluation(pipeline: Pipeline, queries, args) -> Dict[str, Any]:
     k = args.eval_k
     per_method: Dict[str, List[Tuple[List[str], Sequence[str]]]] = {m: [] for m, _ in METHOD_LABELS}
     per_query_records = []
+    latency_by_method: Dict[str, List[float]] = {m: [] for m, _ in METHOD_LABELS}
 
     t0 = time.time()
     for spec in queries:
         query = spec["query"]
         gold = spec.get("expected", [])
         results = pipeline.run_query(query)
-        record = {"query": query, "expected": gold, "methods": {}}
+        record = {
+            "query": query,
+            "expected": gold,
+            "category": spec.get("category", "unspecified"),
+            "methods": {},
+            "trace": pipeline.last_trace,
+        }
         for method, _ in METHOD_LABELS:
             if method not in results:
                 continue
             ranked_ids = [doc_id for doc_id, _ in results[method]]
             per_method[method].append((ranked_ids, gold))
+            latency_by_method[method].append(pipeline.last_trace["end_to_end_latency_ms"][method])
             record["methods"][method] = {
                 "top": [{"doc_id": d, "score": round(s, 4)} for d, s in results[method][:5]],
                 "recall@k": round(recall_at_k(ranked_ids, gold, k), 4),
@@ -476,6 +543,13 @@ def run_evaluation(pipeline: Pipeline, queries, args) -> Dict[str, Any]:
     for method, _ in METHOD_LABELS:
         if per_method[method]:
             summary[method] = aggregate_metrics(per_method[method], k)
+            values = sorted(latency_by_method[method])
+            p95_index = min(len(values) - 1, math.ceil(0.95 * len(values)) - 1)
+            summary[method]["latency_ms"] = {
+                "mean": sum(values) / len(values),
+                "p50": values[len(values) // 2],
+                "p95": values[p95_index],
+            }
 
     return {
         "summary": summary,

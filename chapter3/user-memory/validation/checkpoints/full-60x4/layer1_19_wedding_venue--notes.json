@@ -1,0 +1,819 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_19_wedding_venue",
+  "mode": "notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "wedding_venue_001",
+      "memory": [
+        {
+          "conversation_id": "wedding_venue_001",
+          "timestamp": "2024-11-05 16:00:00",
+          "metadata": {
+            "business": "Grand Oak Manor",
+            "department": "Event Planning",
+            "call_duration": "52 minutes"
+          }
+        },
+        {
+          "user": "Jennifer Park",
+          "fiancé": "Daniel Kim",
+          "event_type": "wedding"
+        },
+        {
+          "wedding_date": "2025-09-14",
+          "day_of_week": "Sunday"
+        },
+        {
+          "assistant": "Amanda",
+          "department": "Event Planning",
+          "business": "Grand Oak Manor"
+        },
+        {
+          "venue_space": "Ballroom",
+          "cost": 4500,
+          "includes": [
+            "6 hours",
+            "tables",
+            "chairs",
+            "white linens",
+            "setup/breakdown"
+          ]
+        },
+        {
+          "venue_space": "Garden Terrace",
+          "cost": 1500,
+          "purpose": "ceremony",
+          "notes": "weather permitting, indoor backup in Conservatory"
+        },
+        {
+          "total_venue_cost": 6000,
+          "spaces": [
+            "Ballroom",
+            "Garden Terrace"
+          ]
+        },
+        {
+          "guest_count": 150
+        },
+        {
+          "catering_package": "Signature Package",
+          "cost_per_person": 125,
+          "includes": [
+            "cocktail hour with 5 appetizers",
+            "three-course plated dinner",
+            "wedding cake"
+          ]
+        },
+        {
+          "appetizer_options": [
+            "shrimp cocktail",
+            "bruschetta",
+            "stuffed mushrooms",
+            "cheese display",
+            "crudités",
+            "mini quiches",
+            "spring rolls",
+            "meatballs"
+          ],
+          "quantity_to_choose": 5
+        },
+        {
+          "entrée_choice": [
+            "filet mignon",
+            "salmon"
+          ],
+          "filet_details": "8oz with garlic mashed potatoes",
+          "salmon_details": "herb-crusted with rice pilaf",
+          "sides": "seasonal vegetables"
+        },
+        {
+          "bar_package": "beer and wine only",
+          "cost_per_person": 28
+        },
+        {
+          "bar_cost_per_person": 28,
+          "food_cost_per_person": 125,
+          "food_and_beverage_per_person": 153
+        },
+        {
+          "food_and_beverage_total": 22950,
+          "guest_count": 150,
+          "cost_per_person": 153
+        },
+        {
+          "bar_service": "beer and wine only",
+          "selected_by": "Jennifer Park"
+        },
+        {
+          "sales_tax_rate": 8.5,
+          "taxable_items": "food and beverage",
+          "tax_amount": 1951
+        },
+        {
+          "service_charge_rate": 22,
+          "chargeable_items": "food and beverage",
+          "service_charge_amount": 5049
+        },
+        {
+          "food_beverage_tax": 1951,
+          "food_beverage_service_charge": 5049
+        },
+        {
+          "decor_item": "basic centerpieces",
+          "cost_per_item": 35,
+          "quantity": 15,
+          "total_cost": 525
+        },
+        {
+          "decor_item": "bridal bouquet",
+          "cost": 250
+        },
+        {
+          "decor_item": "bridesmaids' bouquets",
+          "quantity": 5,
+          "cost_per_item": 75,
+          "total_cost": 375
+        },
+        {
+          "total_bouquet_cost": 625,
+          "items": [
+            "bridal bouquet (250)",
+            "5 bridesmaids' bouquets (375)"
+          ]
+        },
+        {
+          "dj_service": "preferred DJ",
+          "cost": 1200,
+          "includes": [
+            "ceremony",
+            "reception",
+            "equipment",
+            "lighting"
+          ]
+        },
+        {
+          "photography_package": "budgeted",
+          "cost": 3500,
+          "includes": [
+            "two photographers",
+            "edited digital images"
+          ]
+        },
+        {
+          "food_beverage_total": 22950,
+          "venue_cost": 6000,
+          "tax": 1951,
+          "service_charge": 5049,
+          "subtotal": 35950
+        },
+        {
+          "additional_charges": [
+            "centerpieces (525)",
+            "bouquets (625)",
+            "DJ (1200)",
+            "photography (3500)"
+          ],
+          "total_additional": 5850
+        },
+        {
+          "grand_total": 41800,
+          "components": [
+            "venue (6000)",
+            "food/beverage (22950)",
+            "tax (1951)",
+            "service charge (5049)",
+            "decorations (525+625)",
+            "DJ (1200)",
+            "photography (3500)"
+          ]
+        },
+        {
+          "payment_schedule": [
+            {
+              "amount": 5000,
+              "due": "immediately",
+              "purpose": "hold date"
+            },
+            {
+              "amount": 18400,
+              "due_date": "2025-03-14",
+              "description": "50% of remaining balance"
+            },
+            {
+              "amount": 18400,
+              "due_date": "2025-08-31",
+              "description": "final balance"
+            }
+          ]
+        },
+        {
+          "deposit_refundable": true,
+          "refund_condition": "cancelled before 2024-09-14"
+        },
+        {
+          "tasting_details": "complimentary for up to 4 people",
+          "scheduled": "3-4 months before wedding"
+        },
+        {
+          "menu_deadline": "60 days before wedding",
+          "headcount_deadline": "14 days before wedding"
+        },
+        {
+          "user_email": "jpark.wedding@email.com",
+          "proposal_status": "to be sent within 2 hours",
+          "proposal_validity": "14 days"
+        },
+        {
+          "bar_package_selected": "beer and wine only",
+          "cost_per_person": 28
+        },
+        {
+          "main_entrées_selected": [
+            "filet mignon",
+            "salmon"
+          ],
+          "filet_details": "8oz with garlic mashed potatoes",
+          "salmon_details": "herb-crusted with rice pilaf",
+          "sides": "seasonal vegetables"
+        },
+        {
+          "cake_details": "three tiers",
+          "serves": 150,
+          "flavor_options": [
+            "vanilla",
+            "chocolate",
+            "red velvet"
+          ],
+          "frosting": "buttercream",
+          "note": "different flavors per tier allowed"
+        },
+        {
+          "Sunday_rates": "20% less than Saturday rates",
+          "venue": "Grand Oak Manor"
+        }
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "wedding_venue_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_19_wedding_venue notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:37:52.544081+00:00",
+      "latency_ms": 51436.536,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of minimal standalone factual notes. Split a complex statement into atomic facts; keep exact names, identifiers and dates."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=wedding_venue_001\ntimestamp=2024-11-05 16:00:00\nmetadata={\"business\": \"Grand Oak Manor\", \"department\": \"Event Planning\", \"call_duration\": \"52 minutes\"}\nUSER: Hi, I'm calling about booking your venue for my wedding next year.\nASSISTANT: Hello! This is Amanda from Grand Oak Manor. Congratulations on your engagement! I'd love to help you plan your special day. What's your name?\nUSER: I'm Jennifer Park, and my fiancé is Daniel Kim.\nASSISTANT: Lovely to meet you, Jennifer. When are you planning to get married?\nUSER: We're looking at September 14th, 2025.\nASSISTANT: Let me check... Yes, September 14th is available! It's a Sunday. Is that okay?\nUSER: Perfect, we specifically wanted a Sunday for the lower rates.\nASSISTANT: Smart choice! Sunday rates are 20% less than Saturday. How many guests are you expecting?\nUSER: About 150 people.\nASSISTANT: Wonderful size for our Ballroom. That holds up to 200 guests comfortably.\nUSER: What does the venue rental include?\nASSISTANT: The Ballroom rental is $4,500 for Sunday, includes 6 hours, tables, chairs, white linens, and setup/breakdown.\nUSER: What about ceremony space?\nASSISTANT: Our Garden Terrace for ceremonies is an additional $1,500, weather permitting, with indoor backup in the Conservatory.\nUSER: So $6,000 total for spaces?\nASSISTANT: Correct. Now, do you want us to handle catering?\nUSER: Yes, we'd like to keep everything in one place.\nASSISTANT: Perfect. For 150 guests, our packages range from $95 to $165 per person.\nUSER: What does the middle package include?\nASSISTANT: Our Signature Package at $125 per person includes cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake.\nUSER: What appetizer options?\nASSISTANT: You choose 5 from our list: shrimp cocktail, bruschetta, stuffed mushrooms, cheese display, crudités, mini quiches, spring rolls, or meatballs.\nUSER: And for the main dinner?\nASSISTANT: Guests choose between two entrées you pre-select. Popular combinations are filet mignon with salmon, or chicken marsala with vegetarian lasagna.\nUSER: Let's go with the filet and salmon option.\nASSISTANT: Excellent choices. The filet is 8oz with garlic mashed potatoes, the salmon is herb-crusted with rice pilaf. Both include seasonal vegetables.\nUSER: What about bar service?\nASSISTANT: Bar packages are separate. Premium open bar is $45 per person, beer and wine only is $28, or cash bar is free setup with guest purchases.\nUSER: We'll do beer and wine. So that's $28 per person on top of the $125?\nASSISTANT: Yes, total $153 per person for food and beverage, which is $22,950 for 150 guests.\nUSER: Plus the $6,000 venue fee?\nASSISTANT: Correct, running total of $28,950. There's also 8.5% sales tax and 22% service charge on food and beverage.\nUSER: How much does that add?\nASSISTANT: Tax is $1,951, service charge is $5,049, bringing your estimated total to $35,950.\nUSER: That's higher than I expected. Any way to reduce it?\nASSISTANT: You could do buffet instead of plated service, that's $108 per person, saves $17 per guest.\nUSER: How much would that save total?\nASSISTANT: That would save $2,550 on food, plus reduce tax and service charges. New total would be about $33,000.\nUSER: Let's stick with plated service but maybe adjust appetizers?\nASSISTANT: We could do 3 appetizers instead of 5, saves $8 per person, $1,200 total.\nUSER: That helps. What about the cake?\nASSISTANT: Included cake serves 150, three tiers, choice of vanilla, chocolate, or red velvet with buttercream.\nUSER: Can we do different flavors per tier?\nASSISTANT: Absolutely! Many couples do vanilla, chocolate, and red velvet, one per tier.\nUSER: Perfect. What about decorations?\nASSISTANT: Basic centerpieces are $35 each, premium are $75. You'd need 15 tables for 150 guests.\nUSER: So $525 for basic centerpieces?\nASSISTANT: Correct. Our florist can also do bridal bouquet for $250, bridesmaids for $75 each.\nUSER: I have 5 bridesmaids, so that would be $625 total for bouquets?\nASSISTANT: Yes, $250 for yours plus $375 for bridesmaids.\nUSER: What about music and DJ?\nASSISTANT: Our preferred DJ is $1,200 for ceremony and reception, includes all equipment and lighting.\nUSER: And photography?\nASSISTANT: We partner with several photographers. Packages range from $2,500 to $5,000 for 8 hours coverage.\nUSER: Let's budget $3,500 for photography.\nASSISTANT: Good choice. That typically includes two photographers and edited digital images.\nUSER: So with everything we've discussed?\nASSISTANT: Venue $6,000, food/beverage for 150 at $145 per person ($125 food + $28 bar - $8 appetizer reduction) is $21,750...\nUSER: Wait, I want to keep the 5 appetizers. Let's not reduce those.\nASSISTANT: Okay, back to $153 per person, that's $22,950 for food and beverage.\nUSER: Plus tax and service?\nASSISTANT: Right, food/beverage $22,950, tax $1,951, service $5,049, venue $6,000, total $35,950.\nUSER: Then add decorations, DJ, and photography?\nASSISTANT: Centerpieces $525, bouquets $625, DJ $1,200, photography $3,500, adds $5,850.\nUSER: So grand total around $41,800?\nASSISTANT: Yes, $41,800 for everything we've discussed.\nUSER: What's your payment schedule?\nASSISTANT: $5,000 deposit to hold the date, 50% due 6 months before, final balance 2 weeks before.\nUSER: So $5,000 now, how much in March 2025?\nASSISTANT: 50% of remaining balance after deposit. $41,800 minus $5,000 is $36,800, half is $18,400 due March 14th.\nUSER: And the rest two weeks before?\nASSISTANT: Yes, final $18,400 due August 31st, 2025.\nUSER: Is the deposit refundable?\nASSISTANT: Refundable if cancelled more than 12 months out. After that, it becomes non-refundable.\nUSER: So I have until September 2024 to cancel with refund?\nASSISTANT: Correct, until September 14th, 2024.\nUSER: What about tastings?\nASSISTANT: Complimentary tasting for up to 4 people included once you book, scheduled 3-4 months before your wedding.\nUSER: When would we need to finalize menu choices?\nASSISTANT: Menu selections due 60 days before, final headcount 14 days before.\nUSER: Perfect. Can you email me this quote?\nASSISTANT: Of course! What's your email?\nUSER: jpark.wedding@email.com\nASSISTANT: I'll send a detailed proposal within 2 hours. It's valid for 14 days.\nUSER: Wonderful. Thank you so much, Amanda!\nASSISTANT: My pleasure, Jennifer! I hope we can be part of your special day. Feel free to call with any questions!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785353872735cd483641bd2945773645203cda9eaa132b7930",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\n  {\"conversation_id\": \"wedding_venue_001\", \"timestamp\": \"2024-11-05 16:00:00\", \"metadata\": {\"business\": \"Grand Oak Manor\", \"department\": \"Event Planning\", \"call_duration\": \"52 minutes\"}},\n  {\"user\": \"Jennifer Park\", \"fiancé\": \"Daniel Kim\", \"event_type\": \"wedding\"},\n  {\"wedding_date\": \"2025-09-14\", \"day_of_week\": \"Sunday\"},\n  {\"assistant\": \"Amanda\", \"department\": \"Event Planning\", \"business\": \"Grand Oak Manor\"},\n  {\"venue_space\": \"Ballroom\", \"cost\": 4500, \"includes\": [\"6 hours\", \"tables\", \"chairs\", \"white linens\", \"setup/breakdown\"]},\n  {\"venue_space\": \"Garden Terrace\", \"cost\": 1500, \"purpose\": \"ceremony\", \"notes\": \"weather permitting, indoor backup in Conservatory\"},\n  {\"total_venue_cost\": 6000, \"spaces\": [\"Ballroom\", \"Garden Terrace\"]},\n  {\"guest_count\": 150},\n  {\"catering_package\": \"Signature Package\", \"cost_per_person\": 125, \"includes\": [\"cocktail hour with 5 appetizers\", \"three-course plated dinner\", \"wedding cake\"]},\n  {\"appetizer_options\": [\"shrimp cocktail\", \"bruschetta\", \"stuffed mushrooms\", \"cheese display\", \"crudités\", \"mini quiches\", \"spring rolls\", \"meatballs\"], \"quantity_to_choose\": 5},\n  {\"entrée_choice\": [\"filet mignon\", \"salmon\"], \"filet_details\": \"8oz with garlic mashed potatoes\", \"salmon_details\": \"herb-crusted with rice pilaf\", \"sides\": \"seasonal vegetables\"},\n  {\"bar_package\": \"beer and wine only\", \"cost_per_person\": 28},\n  {\"bar_cost_per_person\": 28, \"food_cost_per_person\": 125, \"food_and_beverage_per_person\": 153},\n  {\"food_and_beverage_total\": 22950, \"guest_count\": 150, \"cost_per_person\": 153},\n  {\"bar_service\": \"beer and wine only\", \"selected_by\": \"Jennifer Park\"},\n  {\"sales_tax_rate\": 8.5, \"taxable_items\": \"food and beverage\", \"tax_amount\": 1951},\n  {\"service_charge_rate\": 22, \"chargeable_items\": \"food and beverage\", \"service_charge_amount\": 5049},\n  {\"food_beverage_tax\": 1951, \"food_beverage_service_charge\": 5049},\n  {\"decor_item\": \"basic centerpieces\", \"cost_per_item\": 35, \"quantity\": 15, \"total_cost\": 525},\n  {\"decor_item\": \"bridal bouquet\", \"cost\": 250},\n  {\"decor_item\": \"bridesmaids' bouquets\", \"quantity\": 5, \"cost_per_item\": 75, \"total_cost\": 375},\n  {\"total_bouquet_cost\": 625, \"items\": [\"bridal bouquet (250)\", \"5 bridesmaids' bouquets (375)\"]},\n  {\"dj_service\": \"preferred DJ\", \"cost\": 1200, \"includes\": [\"ceremony\", \"reception\", \"equipment\", \"lighting\"]},\n  {\"photography_package\": \"budgeted\", \"cost\": 3500, \"includes\": [\"two photographers\", \"edited digital images\"]},\n  {\"food_beverage_total\": 22950, \"venue_cost\": 6000, \"tax\": 1951, \"service_charge\": 5049, \"subtotal\": 35950},\n  {\"additional_charges\": [\"centerpieces (525)\", \"bouquets (625)\", \"DJ (1200)\", \"photography (3500)\"], \"total_additional\": 5850},\n  {\"grand_total\": 41800, \"components\": [\"venue (6000)\", \"food/beverage (22950)\", \"tax (1951)\", \"service charge (5049)\", \"decorations (525+625)\", \"DJ (1200)\", \"photography (3500)\"]},\n  {\"payment_schedule\": [{\"amount\": 5000, \"due\": \"immediately\", \"purpose\": \"hold date\"}, {\"amount\": 18400, \"due_date\": \"2025-03-14\", \"description\": \"50% of remaining balance\"}, {\"amount\": 18400, \"due_date\": \"2025-08-31\", \"description\": \"final balance\"}]},\n  {\"deposit_refundable\": true, \"refund_condition\": \"cancelled before 2024-09-14\"},\n  {\"tasting_details\": \"complimentary for up to 4 people\", \"scheduled\": \"3-4 months before wedding\"},\n  {\"menu_deadline\": \"60 days before wedding\", \"headcount_deadline\": \"14 days before wedding\"},\n  {\"user_email\": \"jpark.wedding@email.com\", \"proposal_status\": \"to be sent within 2 hours\", \"proposal_validity\": \"14 days\"},\n  {\"bar_package_selected\": \"beer and wine only\", \"cost_per_person\": 28},\n  {\"main_entrées_selected\": [\"filet mignon\", \"salmon\"], \"filet_details\": \"8oz with garlic mashed potatoes\", \"salmon_details\": \"herb-crusted with rice pilaf\", \"sides\": \"seasonal vegetables\"},\n  {\"cake_details\": \"three tiers\", \"serves\": 150, \"flavor_options\": [\"vanilla\", \"chocolate\", \"red velvet\"], \"frosting\": \"buttercream\", \"note\": \"different flavors per tier allowed\"},\n  {\"Sunday_rates\": \"20% less than Saturday rates\", \"venue\": \"Grand Oak Manor\"}\n]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract atomic facts from the conversation and store them in the memory array. Let's go through the conversation step by step.\n\nFirst, the conversation details: conversation_id=wedding_venue_001, timestamp=2024-11-05 16:00:00, metadata with business=Grand Oak Manor, department=Event Planning, call_duration=52 minutes. These are key facts.\n\nUser is Jennifer Park, fiancé is Daniel Kim. They're planning a wedding on September 14th, 2025 (Sunday). The venue is Grand Oak Manor, Amanda from Event Planning assisted.\n\nVenue details: Ballroom rental is $4,500 (Sunday, 6 hours, includes tables, chairs, white linens, setup/breakdown). Garden Terrace ceremony is additional $1,500 (weather permitting, indoor backup in Conservatory). Total venue spaces: $6,000.\n\nCatering: Jennifer chose the Signature Package at $125 per person (150 guests). Includes cocktail hour (5 appetizers), three-course plated dinner, wedding cake. Appetizers to choose from: shrimp cocktail, bruschetta, stuffed mushrooms, cheese display, crudités, mini quiches, spring rolls, meatballs. Main entrées: filet mignon (8oz, garlic mashed potatoes) and salmon (herb-crusted, rice pilaf), both with seasonal vegetables.\n\nBar service: Beer and wine only at $28 per person. Total food and beverage per person: $153 ($125 + $28). For 150 guests: $22,950.\n\nAdditional charges: 8.5% sales tax on food and beverage ($1,951), 22% service charge on food and beverage ($5,049). Venue fee + food/beverage + tax + service: $6,000 + $22,950 + $1,951 + $5,049 = $35,950.\n\nDecorations: Basic centerpieces $35 each, 15 tables needed (total $525). Bridal bouquet $250, 5 bridesmaids' bouquets $75 each (total $625).\n\nDJ: Preferred DJ $1,200 (ceremony and reception, includes equipment and lighting).\n\nPhotography: Budgeted $3,500 (includes two photographers, edited digital images).\n\nGrand total: $35,950 (venue, food/beverage, tax, service) + $525 (centerpieces) + $625 (bouquets) + $1,200 (DJ) + $3,500 (photography) = $41,800.\n\nPayment schedule: $5,000 deposit to hold date, 50% of remaining balance ($18,400) due March 14th, 2025, final $18,400 due August 31st, 2025. Deposit refundable if cancelled before September 14th, 2024; non-refundable after.\n\nTasting: Complimentary for up to 4 people, scheduled 3-4 months before wedding. Menu selections due 60 days before, final headcount due 14 days before.\n\nEmail: jpark.wedding@email.com, proposal to be sent within 2 hours, valid for 14 days.\n\nNow, split all these into atomic facts, ensuring exact values, dates, ownership, etc. Avoid complex statements, keep each note standalone."
+            }
+          }
+        ],
+        "created": 1785353924,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2242,
+          "prompt_tokens": 2168,
+          "total_tokens": 4410,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 802,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2242,
+        "prompt_tokens": 2168,
+        "total_tokens": 4410,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 802,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785353872735cd483641bd2945773645203cda9eaa132b7930"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_19_wedding_venue notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:38:43.983935+00:00",
+      "latency_ms": 15259.182,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: notes\nLONG-TERM MEMORY:\n[{\"conversation_id\": \"wedding_venue_001\", \"timestamp\": \"2024-11-05 16:00:00\", \"metadata\": {\"business\": \"Grand Oak Manor\", \"department\": \"Event Planning\", \"call_duration\": \"52 minutes\"}}, {\"user\": \"Jennifer Park\", \"fiancé\": \"Daniel Kim\", \"event_type\": \"wedding\"}, {\"wedding_date\": \"2025-09-14\", \"day_of_week\": \"Sunday\"}, {\"assistant\": \"Amanda\", \"department\": \"Event Planning\", \"business\": \"Grand Oak Manor\"}, {\"venue_space\": \"Ballroom\", \"cost\": 4500, \"includes\": [\"6 hours\", \"tables\", \"chairs\", \"white linens\", \"setup/breakdown\"]}, {\"venue_space\": \"Garden Terrace\", \"cost\": 1500, \"purpose\": \"ceremony\", \"notes\": \"weather permitting, indoor backup in Conservatory\"}, {\"total_venue_cost\": 6000, \"spaces\": [\"Ballroom\", \"Garden Terrace\"]}, {\"guest_count\": 150}, {\"catering_package\": \"Signature Package\", \"cost_per_person\": 125, \"includes\": [\"cocktail hour with 5 appetizers\", \"three-course plated dinner\", \"wedding cake\"]}, {\"appetizer_options\": [\"shrimp cocktail\", \"bruschetta\", \"stuffed mushrooms\", \"cheese display\", \"crudités\", \"mini quiches\", \"spring rolls\", \"meatballs\"], \"quantity_to_choose\": 5}, {\"entrée_choice\": [\"filet mignon\", \"salmon\"], \"filet_details\": \"8oz with garlic mashed potatoes\", \"salmon_details\": \"herb-crusted with rice pilaf\", \"sides\": \"seasonal vegetables\"}, {\"bar_package\": \"beer and wine only\", \"cost_per_person\": 28}, {\"bar_cost_per_person\": 28, \"food_cost_per_person\": 125, \"food_and_beverage_per_person\": 153}, {\"food_and_beverage_total\": 22950, \"guest_count\": 150, \"cost_per_person\": 153}, {\"bar_service\": \"beer and wine only\", \"selected_by\": \"Jennifer Park\"}, {\"sales_tax_rate\": 8.5, \"taxable_items\": \"food and beverage\", \"tax_amount\": 1951}, {\"service_charge_rate\": 22, \"chargeable_items\": \"food and beverage\", \"service_charge_amount\": 5049}, {\"food_beverage_tax\": 1951, \"food_beverage_service_charge\": 5049}, {\"decor_item\": \"basic centerpieces\", \"cost_per_item\": 35, \"quantity\": 15, \"total_cost\": 525}, {\"decor_item\": \"bridal bouquet\", \"cost\": 250}, {\"decor_item\": \"bridesmaids' bouquets\", \"quantity\": 5, \"cost_per_item\": 75, \"total_cost\": 375}, {\"total_bouquet_cost\": 625, \"items\": [\"bridal bouquet (250)\", \"5 bridesmaids' bouquets (375)\"]}, {\"dj_service\": \"preferred DJ\", \"cost\": 1200, \"includes\": [\"ceremony\", \"reception\", \"equipment\", \"lighting\"]}, {\"photography_package\": \"budgeted\", \"cost\": 3500, \"includes\": [\"two photographers\", \"edited digital images\"]}, {\"food_beverage_total\": 22950, \"venue_cost\": 6000, \"tax\": 1951, \"service_charge\": 5049, \"subtotal\": 35950}, {\"additional_charges\": [\"centerpieces (525)\", \"bouquets (625)\", \"DJ (1200)\", \"photography (3500)\"], \"total_additional\": 5850}, {\"grand_total\": 41800, \"components\": [\"venue (6000)\", \"food/beverage (22950)\", \"tax (1951)\", \"service charge (5049)\", \"decorations (525+625)\", \"DJ (1200)\", \"photography (3500)\"]}, {\"payment_schedule\": [{\"amount\": 5000, \"due\": \"immediately\", \"purpose\": \"hold date\"}, {\"amount\": 18400, \"due_date\": \"2025-03-14\", \"description\": \"50% of remaining balance\"}, {\"amount\": 18400, \"due_date\": \"2025-08-31\", \"description\": \"final balance\"}]}, {\"deposit_refundable\": true, \"refund_condition\": \"cancelled before 2024-09-14\"}, {\"tasting_details\": \"complimentary for up to 4 people\", \"scheduled\": \"3-4 months before wedding\"}, {\"menu_deadline\": \"60 days before wedding\", \"headcount_deadline\": \"14 days before wedding\"}, {\"user_email\": \"jpark.wedding@email.com\", \"proposal_status\": \"to be sent within 2 hours\", \"proposal_validity\": \"14 days\"}, {\"bar_package_selected\": \"beer and wine only\", \"cost_per_person\": 28}, {\"main_entrées_selected\": [\"filet mignon\", \"salmon\"], \"filet_details\": \"8oz with garlic mashed potatoes\", \"salmon_details\": \"herb-crusted with rice pilaf\", \"sides\": \"seasonal vegetables\"}, {\"cake_details\": \"three tiers\", \"serves\": 150, \"flavor_options\": [\"vanilla\", \"chocolate\", \"red velvet\"], \"frosting\": \"buttercream\", \"note\": \"different flavors per tier allowed\"}, {\"Sunday_rates\": \"20% less than Saturday rates\", \"venue\": \"Grand Oak Manor\"}]\n\nUSER QUESTION:\nWhat was the per-person cost breakdown and the three payment installments for my wedding?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "021785353924174cd483641bd2945773645203cda9eaa13792b99",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "### Per-Person Cost Breakdown:  \nThe per-person cost for food and beverage is **$153**, broken down as:  \n- **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake).  \n- **Bar**: $28 per person (beer and wine only).  \n\n\n### Three Payment Installments:  \n1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date).  \n2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit).  \n3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).  \n\n*Total payments sum to the grand total of $41,800.*",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question step by step. The user is asking for the per-person cost breakdown and the three payment installments for their wedding. \n\nFirst, I need to find the per-person cost breakdown. Looking at the long-term memory, there are entries related to food and beverage per person. Let me check: \"food_and_beverage_per_person\": 153. But wait, that's the total for food and beverage. Let me verify the components. The \"food_cost_per_person\" is 125, and \"bar_cost_per_person\" is 28. Adding those together: 125 + 28 = 153, which matches \"food_and_beverage_per_person\": 153. So that's the per-person breakdown for food and beverage. Are there other per-person costs? The venue cost is a total of 6000, but that's not per person. The additional charges like centerpieces, bouquets, DJ, photography are total amounts, not per person. So the per-person cost mentioned is specifically food and beverage, which is $153 per person, broken down into $125 for food (Signature Package) and $28 for the beer and wine bar.\n\nNext, the three payment installments. The \"payment_schedule\" entry has three parts: first, \"amount\": 5000, \"due\": \"immediately\", \"purpose\": \"hold date\"; second, \"amount\": 18400, \"due_date\": \"2025-03-14\", \"description\": \"50% of remaining balance\"; third, \"amount\": 18400, \"due_date\": \"2025-08-31\", \"description\": \"final balance\". Let me confirm the total: 5000 + 18400 + 18400 = 41800, which matches the \"grand_total\": 41800. So that's correct.\n\nI need to make sure I don't miss any other per-person costs. The memory doesn't mention other per-person charges beyond food and beverage, so that's the breakdown. The payment installments are the three listed in the payment schedule. I should present this clearly, making sure to connect the per-person breakdown to the components (food and bar) and list each payment with amount, due date, and purpose."
+            }
+          }
+        ],
+        "created": 1785353939,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 724,
+          "prompt_tokens": 1541,
+          "total_tokens": 2265,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 523,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 724,
+        "prompt_tokens": 1541,
+        "total_tokens": 2265,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 523,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785353924174cd483641bd2945773645203cda9eaa13792b99"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_19_wedding_venue notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:38:59.248459+00:00",
+      "latency_ms": 10429.335,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=wedding_venue_001\ntimestamp=2024-11-05 16:00:00\nmetadata={\"business\": \"Grand Oak Manor\", \"department\": \"Event Planning\", \"call_duration\": \"52 minutes\"}\nUSER: Hi, I'm calling about booking your venue for my wedding next year.\nASSISTANT: Hello! This is Amanda from Grand Oak Manor. Congratulations on your engagement! I'd love to help you plan your special day. What's your name?\nUSER: I'm Jennifer Park, and my fiancé is Daniel Kim.\nASSISTANT: Lovely to meet you, Jennifer. When are you planning to get married?\nUSER: We're looking at September 14th, 2025.\nASSISTANT: Let me check... Yes, September 14th is available! It's a Sunday. Is that okay?\nUSER: Perfect, we specifically wanted a Sunday for the lower rates.\nASSISTANT: Smart choice! Sunday rates are 20% less than Saturday. How many guests are you expecting?\nUSER: About 150 people.\nASSISTANT: Wonderful size for our Ballroom. That holds up to 200 guests comfortably.\nUSER: What does the venue rental include?\nASSISTANT: The Ballroom rental is $4,500 for Sunday, includes 6 hours, tables, chairs, white linens, and setup/breakdown.\nUSER: What about ceremony space?\nASSISTANT: Our Garden Terrace for ceremonies is an additional $1,500, weather permitting, with indoor backup in the Conservatory.\nUSER: So $6,000 total for spaces?\nASSISTANT: Correct. Now, do you want us to handle catering?\nUSER: Yes, we'd like to keep everything in one place.\nASSISTANT: Perfect. For 150 guests, our packages range from $95 to $165 per person.\nUSER: What does the middle package include?\nASSISTANT: Our Signature Package at $125 per person includes cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake.\nUSER: What appetizer options?\nASSISTANT: You choose 5 from our list: shrimp cocktail, bruschetta, stuffed mushrooms, cheese display, crudités, mini quiches, spring rolls, or meatballs.\nUSER: And for the main dinner?\nASSISTANT: Guests choose between two entrées you pre-select. Popular combinations are filet mignon with salmon, or chicken marsala with vegetarian lasagna.\nUSER: Let's go with the filet and salmon option.\nASSISTANT: Excellent choices. The filet is 8oz with garlic mashed potatoes, the salmon is herb-crusted with rice pilaf. Both include seasonal vegetables.\nUSER: What about bar service?\nASSISTANT: Bar packages are separate. Premium open bar is $45 per person, beer and wine only is $28, or cash bar is free setup with guest purchases.\nUSER: We'll do beer and wine. So that's $28 per person on top of the $125?\nASSISTANT: Yes, total $153 per person for food and beverage, which is $22,950 for 150 guests.\nUSER: Plus the $6,000 venue fee?\nASSISTANT: Correct, running total of $28,950. There's also 8.5% sales tax and 22% service charge on food and beverage.\nUSER: How much does that add?\nASSISTANT: Tax is $1,951, service charge is $5,049, bringing your estimated total to $35,950.\nUSER: That's higher than I expected. Any way to reduce it?\nASSISTANT: You could do buffet instead of plated service, that's $108 per person, saves $17 per guest.\nUSER: How much would that save total?\nASSISTANT: That would save $2,550 on food, plus reduce tax and service charges. New total would be about $33,000.\nUSER: Let's stick with plated service but maybe adjust appetizers?\nASSISTANT: We could do 3 appetizers instead of 5, saves $8 per person, $1,200 total.\nUSER: That helps. What about the cake?\nASSISTANT: Included cake serves 150, three tiers, choice of vanilla, chocolate, or red velvet with buttercream.\nUSER: Can we do different flavors per tier?\nASSISTANT: Absolutely! Many couples do vanilla, chocolate, and red velvet, one per tier.\nUSER: Perfect. What about decorations?\nASSISTANT: Basic centerpieces are $35 each, premium are $75. You'd need 15 tables for 150 guests.\nUSER: So $525 for basic centerpieces?\nASSISTANT: Correct. Our florist can also do bridal bouquet for $250, bridesmaids for $75 each.\nUSER: I have 5 bridesmaids, so that would be $625 total for bouquets?\nASSISTANT: Yes, $250 for yours plus $375 for bridesmaids.\nUSER: What about music and DJ?\nASSISTANT: Our preferred DJ is $1,200 for ceremony and reception, includes all equipment and lighting.\nUSER: And photography?\nASSISTANT: We partner with several photographers. Packages range from $2,500 to $5,000 for 8 hours coverage.\nUSER: Let's budget $3,500 for photography.\nASSISTANT: Good choice. That typically includes two photographers and edited digital images.\nUSER: So with everything we've discussed?\nASSISTANT: Venue $6,000, food/beverage for 150 at $145 per person ($125 food + $28 bar - $8 appetizer reduction) is $21,750...\nUSER: Wait, I want to keep the 5 appetizers. Let's not reduce those.\nASSISTANT: Okay, back to $153 per person, that's $22,950 for food and beverage.\nUSER: Plus tax and service?\nASSISTANT: Right, food/beverage $22,950, tax $1,951, service $5,049, venue $6,000, total $35,950.\nUSER: Then add decorations, DJ, and photography?\nASSISTANT: Centerpieces $525, bouquets $625, DJ $1,200, photography $3,500, adds $5,850.\nUSER: So grand total around $41,800?\nASSISTANT: Yes, $41,800 for everything we've discussed.\nUSER: What's your payment schedule?\nASSISTANT: $5,000 deposit to hold the date, 50% due 6 months before, final balance 2 weeks before.\nUSER: So $5,000 now, how much in March 2025?\nASSISTANT: 50% of remaining balance after deposit. $41,800 minus $5,000 is $36,800, half is $18,400 due March 14th.\nUSER: And the rest two weeks before?\nASSISTANT: Yes, final $18,400 due August 31st, 2025.\nUSER: Is the deposit refundable?\nASSISTANT: Refundable if cancelled more than 12 months out. After that, it becomes non-refundable.\nUSER: So I have until September 2024 to cancel with refund?\nASSISTANT: Correct, until September 14th, 2024.\nUSER: What about tastings?\nASSISTANT: Complimentary tasting for up to 4 people included once you book, scheduled 3-4 months before your wedding.\nUSER: When would we need to finalize menu choices?\nASSISTANT: Menu selections due 60 days before, final headcount 14 days before.\nUSER: Perfect. Can you email me this quote?\nASSISTANT: Of course! What's your email?\nUSER: jpark.wedding@email.com\nASSISTANT: I'll send a detailed proposal within 2 hours. It's valid for 14 days.\nUSER: Wonderful. Thank you so much, Amanda!\nASSISTANT: My pleasure, Jennifer! I hope we can be part of your special day. Feel free to call with any questions!\n\nQUESTION: What was the per-person cost breakdown and the three payment installments for my wedding?\nANSWER: ### Per-Person Cost Breakdown:  \nThe per-person cost for food and beverage is **$153**, broken down as:  \n- **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake).  \n- **Bar**: $28 per person (beer and wine only).  \n\n\n### Three Payment Installments:  \n1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date).  \n2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit).  \n3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).  \n\n*Total payments sum to the grand total of $41,800.*\nEVALUATION CRITERIA: The agent should accurately recall:\n\nPer-person cost ($153 total):\n- Food (Signature Package): $125\n- Beer and wine bar: $28\n- Total: $153 per person\n\nFor 150 guests: $22,950\n\nPayment schedule:\n- Deposit (upon booking): $5,000\n- 50% of remaining (March 14, 2025): $18,400\n- Final balance (August 31, 2025): $18,400\n- Total: $41,800\n\nAdditional charges on food/beverage:\n- Sales tax (8.5%): $1,951\n- Service charge (22%): $5,049\n\nThe response should include the per-person breakdown and all three payment amounts with dates.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a56d3f5e22e43d6b068d2",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n    \"dimensions\": {\n        \"precision\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant accurately recalled the per-person cost breakdown and the three payment installments for the wedding.\",\n            \"evidence\": [\n                \"The per-person cost for food and beverage is **$153**, broken down as: - **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake). - **Bar**: $28 per person (beer and wine only).\",\n                \"### Three Payment Installments: 1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date). 2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit). 3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).\"\n            ]\n        },\n        \"recall\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant successfully recalled all the necessary details regarding the per-person cost and payment schedule.\",\n            \"evidence\": [\n                \"The per-person cost for food and beverage is **$153**, broken down as: - **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake). - **Bar**: $28 per person (beer and wine only).\",\n                \"### Three Payment Installments: 1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date). 2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit). 3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).\"\n            ]\n        },\n        \"reasoning\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant provided a clear and logical breakdown of the costs and payment schedule, which aligns with the information provided in the conversation.\"\n        },\n        \"proactivity\": {\n            \"score\": 1,\n            \"reasoning\": \"The assistant did not demonstrate any proactive behavior as it was focused on responding to the user's specific question about the cost breakdown and payment installments.\"\n        }\n    },\n    \"hallucination\": {\n        \"detected\": false,\n        \"claims\": [],\n        \"reasoning\": \"The assistant's response is consistent with the information provided in the conversation and does not contain any unsupported or contradicted factual claims.\"\n    },\n    \"overall_reasoning\": \"The assistant accurately and completely recalled the per-person cost breakdown and the three payment installments for the wedding, demonstrating a high level of precision and recall. The response was clear, logical, and directly addressed the user's question.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785353939,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 659,
+          "prompt_tokens": 2391,
+          "total_tokens": 3050,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 659,
+        "prompt_tokens": 2391,
+        "total_tokens": 3050,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a56d3f5e22e43d6b068d2"
+    }
+  ],
+  "updated_at_epoch": 1785353949.6809201,
+  "answer": "### Per-Person Cost Breakdown:  \nThe per-person cost for food and beverage is **$153**, broken down as:  \n- **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake).  \n- **Bar**: $28 per person (beer and wine only).  \n\n\n### Three Payment Installments:  \n1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date).  \n2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit).  \n3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).  \n\n*Total payments sum to the grand total of $41,800.*",
+  "result": {
+    "test_id": "layer1_19_wedding_venue",
+    "layer": "layer1",
+    "title": "Wedding Venue Booking - Event Package Details and Pricing",
+    "mode": "notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "wedding_venue_001",
+        "memory": [
+          {
+            "conversation_id": "wedding_venue_001",
+            "timestamp": "2024-11-05 16:00:00",
+            "metadata": {
+              "business": "Grand Oak Manor",
+              "department": "Event Planning",
+              "call_duration": "52 minutes"
+            }
+          },
+          {
+            "user": "Jennifer Park",
+            "fiancé": "Daniel Kim",
+            "event_type": "wedding"
+          },
+          {
+            "wedding_date": "2025-09-14",
+            "day_of_week": "Sunday"
+          },
+          {
+            "assistant": "Amanda",
+            "department": "Event Planning",
+            "business": "Grand Oak Manor"
+          },
+          {
+            "venue_space": "Ballroom",
+            "cost": 4500,
+            "includes": [
+              "6 hours",
+              "tables",
+              "chairs",
+              "white linens",
+              "setup/breakdown"
+            ]
+          },
+          {
+            "venue_space": "Garden Terrace",
+            "cost": 1500,
+            "purpose": "ceremony",
+            "notes": "weather permitting, indoor backup in Conservatory"
+          },
+          {
+            "total_venue_cost": 6000,
+            "spaces": [
+              "Ballroom",
+              "Garden Terrace"
+            ]
+          },
+          {
+            "guest_count": 150
+          },
+          {
+            "catering_package": "Signature Package",
+            "cost_per_person": 125,
+            "includes": [
+              "cocktail hour with 5 appetizers",
+              "three-course plated dinner",
+              "wedding cake"
+            ]
+          },
+          {
+            "appetizer_options": [
+              "shrimp cocktail",
+              "bruschetta",
+              "stuffed mushrooms",
+              "cheese display",
+              "crudités",
+              "mini quiches",
+              "spring rolls",
+              "meatballs"
+            ],
+            "quantity_to_choose": 5
+          },
+          {
+            "entrée_choice": [
+              "filet mignon",
+              "salmon"
+            ],
+            "filet_details": "8oz with garlic mashed potatoes",
+            "salmon_details": "herb-crusted with rice pilaf",
+            "sides": "seasonal vegetables"
+          },
+          {
+            "bar_package": "beer and wine only",
+            "cost_per_person": 28
+          },
+          {
+            "bar_cost_per_person": 28,
+            "food_cost_per_person": 125,
+            "food_and_beverage_per_person": 153
+          },
+          {
+            "food_and_beverage_total": 22950,
+            "guest_count": 150,
+            "cost_per_person": 153
+          },
+          {
+            "bar_service": "beer and wine only",
+            "selected_by": "Jennifer Park"
+          },
+          {
+            "sales_tax_rate": 8.5,
+            "taxable_items": "food and beverage",
+            "tax_amount": 1951
+          },
+          {
+            "service_charge_rate": 22,
+            "chargeable_items": "food and beverage",
+            "service_charge_amount": 5049
+          },
+          {
+            "food_beverage_tax": 1951,
+            "food_beverage_service_charge": 5049
+          },
+          {
+            "decor_item": "basic centerpieces",
+            "cost_per_item": 35,
+            "quantity": 15,
+            "total_cost": 525
+          },
+          {
+            "decor_item": "bridal bouquet",
+            "cost": 250
+          },
+          {
+            "decor_item": "bridesmaids' bouquets",
+            "quantity": 5,
+            "cost_per_item": 75,
+            "total_cost": 375
+          },
+          {
+            "total_bouquet_cost": 625,
+            "items": [
+              "bridal bouquet (250)",
+              "5 bridesmaids' bouquets (375)"
+            ]
+          },
+          {
+            "dj_service": "preferred DJ",
+            "cost": 1200,
+            "includes": [
+              "ceremony",
+              "reception",
+              "equipment",
+              "lighting"
+            ]
+          },
+          {
+            "photography_package": "budgeted",
+            "cost": 3500,
+            "includes": [
+              "two photographers",
+              "edited digital images"
+            ]
+          },
+          {
+            "food_beverage_total": 22950,
+            "venue_cost": 6000,
+            "tax": 1951,
+            "service_charge": 5049,
+            "subtotal": 35950
+          },
+          {
+            "additional_charges": [
+              "centerpieces (525)",
+              "bouquets (625)",
+              "DJ (1200)",
+              "photography (3500)"
+            ],
+            "total_additional": 5850
+          },
+          {
+            "grand_total": 41800,
+            "components": [
+              "venue (6000)",
+              "food/beverage (22950)",
+              "tax (1951)",
+              "service charge (5049)",
+              "decorations (525+625)",
+              "DJ (1200)",
+              "photography (3500)"
+            ]
+          },
+          {
+            "payment_schedule": [
+              {
+                "amount": 5000,
+                "due": "immediately",
+                "purpose": "hold date"
+              },
+              {
+                "amount": 18400,
+                "due_date": "2025-03-14",
+                "description": "50% of remaining balance"
+              },
+              {
+                "amount": 18400,
+                "due_date": "2025-08-31",
+                "description": "final balance"
+              }
+            ]
+          },
+          {
+            "deposit_refundable": true,
+            "refund_condition": "cancelled before 2024-09-14"
+          },
+          {
+            "tasting_details": "complimentary for up to 4 people",
+            "scheduled": "3-4 months before wedding"
+          },
+          {
+            "menu_deadline": "60 days before wedding",
+            "headcount_deadline": "14 days before wedding"
+          },
+          {
+            "user_email": "jpark.wedding@email.com",
+            "proposal_status": "to be sent within 2 hours",
+            "proposal_validity": "14 days"
+          },
+          {
+            "bar_package_selected": "beer and wine only",
+            "cost_per_person": 28
+          },
+          {
+            "main_entrées_selected": [
+              "filet mignon",
+              "salmon"
+            ],
+            "filet_details": "8oz with garlic mashed potatoes",
+            "salmon_details": "herb-crusted with rice pilaf",
+            "sides": "seasonal vegetables"
+          },
+          {
+            "cake_details": "three tiers",
+            "serves": 150,
+            "flavor_options": [
+              "vanilla",
+              "chocolate",
+              "red velvet"
+            ],
+            "frosting": "buttercream",
+            "note": "different flavors per tier allowed"
+          },
+          {
+            "Sunday_rates": "20% less than Saturday rates",
+            "venue": "Grand Oak Manor"
+          }
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "wedding_venue_001"
+        }
+      }
+    ],
+    "answer": "### Per-Person Cost Breakdown:  \nThe per-person cost for food and beverage is **$153**, broken down as:  \n- **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake).  \n- **Bar**: $28 per person (beer and wine only).  \n\n\n### Three Payment Installments:  \n1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date).  \n2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit).  \n3. **Final Installment**: $18,400, due by August 31, 2025 (final balance).  \n\n*Total payments sum to the grand total of $41,800.*",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 0.8125
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The assistant accurately recalled the per-person cost breakdown and the three payment installments for the wedding.",
+          "evidence": [
+            "The per-person cost for food and beverage is **$153**, broken down as: - **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake). - **Bar**: $28 per person (beer and wine only).",
+            "### Three Payment Installments: 1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date). 2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit). 3. **Final Installment**: $18,400, due by August 31, 2025 (final balance)."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The assistant successfully recalled all the necessary details regarding the per-person cost and payment schedule.",
+          "evidence": [
+            "The per-person cost for food and beverage is **$153**, broken down as: - **Food**: $125 per person (Signature Package, including cocktail hour with 5 appetizers, three-course plated dinner, and wedding cake). - **Bar**: $28 per person (beer and wine only).",
+            "### Three Payment Installments: 1. **First Installment**: $5,000, due immediately (purpose: hold the wedding date). 2. **Second Installment**: $18,400, due by March 14, 2025 (50% of the remaining balance after the initial deposit). 3. **Final Installment**: $18,400, due by August 31, 2025 (final balance)."
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The assistant provided a clear and logical breakdown of the costs and payment schedule, which aligns with the information provided in the conversation."
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The assistant did not demonstrate any proactive behavior as it was focused on responding to the user's specific question about the cost breakdown and payment installments."
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The assistant's response is consistent with the information provided in the conversation and does not contain any unsupported or contradicted factual claims."
+      },
+      "overall_reasoning": "The assistant accurately and completely recalled the per-person cost breakdown and the three payment installments for the wedding, demonstrating a high level of precision and recall. The response was clear, logical, and directly addressed the user's question."
+    }
+  }
+}

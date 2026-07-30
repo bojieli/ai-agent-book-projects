@@ -1,35 +1,9 @@
-"""User Memory Evaluation Framework Package."""
+"""User Memory Evaluation Framework.
 
-# Import Config first to avoid conflicts
-from .config import Config
+The companion is intentionally executed from this directory (``python main.py``)
+because the historical directory name contains a hyphen.  Keep this initializer
+free of eager relative imports so pytest and importlib can collect the directory
+without pretending it is a normally named Python package.
+"""
 
-# Then import models
-from .models import (
-    TestCase, 
-    ConversationHistory, 
-    ConversationMessage,
-    EvaluationResult, 
-    TestSuite, 
-    TestCaseExporter, 
-    MessageRole
-)
-
-# Then evaluator (which depends on config and models)
-from .evaluator import LLMEvaluator, BatchEvaluator
-
-# Finally framework (which depends on all above)
-from .framework import UserMemoryEvaluationFramework
-
-__all__ = [
-    'UserMemoryEvaluationFramework',
-    'TestCase',
-    'ConversationHistory', 
-    'ConversationMessage',
-    'EvaluationResult',
-    'TestSuite',
-    'TestCaseExporter',
-    'MessageRole',
-    'LLMEvaluator',
-    'BatchEvaluator',
-    'Config'
-]
+__all__ = []

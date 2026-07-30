@@ -1,0 +1,18 @@
+{
+  "overall_score": 85,
+  "pass": false,
+  "issues": [
+    {
+      "page": 13,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "放大图中文字尺寸，确保观众能清晰辨认注意力可视化图中的词语和连接关系"
+    },
+    {
+      "page": 14,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "增大指代注意力图中的文本字号，或局部放大关键区域以提升可读性"
+    }
+  ]
+}

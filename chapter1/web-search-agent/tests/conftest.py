@@ -41,7 +41,7 @@ def make_tool_call():
 
     def factory(
         *,
-        name="$web_search",
+        name="web_search",
         arguments=None,
         call_id="call-1",
     ):

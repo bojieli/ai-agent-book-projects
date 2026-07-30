@@ -1,0 +1,100 @@
+{
+  "marker": "PERCEPTION-EXPERIMENT-4-1-VERIFIED",
+  "paths": {
+    "fixtures": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures",
+    "knowledge": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/knowledge",
+    "note": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/knowledge/mcp-notes.md",
+    "pdf": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.pdf",
+    "docx": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.docx",
+    "pptx": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.pptx",
+    "image": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/ocr-source.png",
+    "audio": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/spoken-marker.aiff",
+    "video": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/visual-marker.mp4",
+    "downloads": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/downloads",
+    "mutation": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/mutation_workspace",
+    "outside_witness": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/outside-witness.txt"
+  },
+  "files": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/knowledge/mcp-notes.md",
+      "bytes": 117,
+      "sha256": "945c0c3c5db50871410a7e3fed03927d5d8756daab542a933ced7a34b38e9bd1"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.pdf",
+      "bytes": 1461,
+      "sha256": "ccc1621eaaaddb453630a099da564f505567d8fe5ddcbe97a3338e71c3d422ab"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.docx",
+      "bytes": 36652,
+      "sha256": "8020a5e7743e41f569d6045205c458a74b674e561e6dad6e665b619995182e93"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/documents/sample.pptx",
+      "bytes": 28277,
+      "sha256": "5b9f2a61ac22b1c21d007aaf5f73b35c167ae29514b44b82dde5f0488f410b4c"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/ocr-source.png",
+      "bytes": 15559,
+      "sha256": "c0d7cf1025cdafa6c9da51e0ab021f9a7fc192b874770c30f693c81ade651e6f"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/spoken-marker.aiff",
+      "bytes": 160516,
+      "sha256": "8d6b6aca4973239afafe0e42d576b8702f5fc6c008907dc75247923adfd0150f"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/visual-marker.mp4",
+      "bytes": 10089,
+      "sha256": "05ed43bb4e1b34e491bcad877137721ccbdbbd5a6c4b6ee0483b20176484ef99"
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/outside-witness.txt",
+      "bytes": 28,
+      "sha256": "59049c8e49e561bbe617bd612757e0c83d5623857aeb123338d573e01b4c9120"
+    }
+  ],
+  "generators": {
+    "say": {
+      "executable": "say",
+      "arguments": [
+        "-v",
+        "Samantha",
+        "-r",
+        "150",
+        "-o",
+        "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/spoken-marker.aiff",
+        "Experiment four one. Perception tools verified."
+      ],
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 1.103
+    },
+    "ffmpeg": {
+      "executable": "ffmpeg",
+      "arguments": [
+        "-y",
+        "-loglevel",
+        "error",
+        "-loop",
+        "1",
+        "-i",
+        "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/ocr-source.png",
+        "-t",
+        "1.5",
+        "-r",
+        "3",
+        "-pix_fmt",
+        "yuv420p",
+        "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/visual-marker.mp4"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_seconds": 0.071
+    }
+  }
+}

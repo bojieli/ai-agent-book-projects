@@ -55,6 +55,11 @@ class AgentTrajectory:
     """Tracks the agent's execution trajectory"""
     reasoning_steps: List[str] = field(default_factory=list)
     tool_calls: List[ToolCall] = field(default_factory=list)
+    # Exact, credential-free request/response evidence for every real model
+    # turn.  This is deliberately part of the trajectory: Experiment 1-1 is
+    # about what the model could see at decision time, so reconstructing the
+    # request after the fact is not acceptable evidence.
+    api_turns: List[Dict[str, Any]] = field(default_factory=list)
     context_mode: ContextMode = ContextMode.FULL
 
 
@@ -138,16 +143,6 @@ class ToolRegistry:
             Dictionary with conversion result
         """
         try:
-            # Normalize currency codes (handle S$ / $ notation). Must be
-            # unconditional: gated on startswith("S$"), the "$" -> USD
-            # replacement could never fire (no "$" survives the S$ replace).
-            from_currency = from_currency.upper().replace("S$", "SGD").replace("$", "USD")
-            to_currency = to_currency.upper().replace("S$", "SGD").replace("$", "USD")
-            
-            logger.info(f"Converting {amount} {from_currency} to {to_currency}")
-            
-            # For demonstration, using fixed rates (in production, use a real API)
-            # These are example rates - you would normally fetch from an API
             exchange_rates = {
                 "USD": 1.0,
                 "EUR": 0.92,
@@ -160,6 +155,47 @@ class ToolRegistry:
                 "INR": 83.12,
                 "SGD": 1.34
             }
+
+            def _normalize_code(code: str) -> str:
+                if not isinstance(code, str):
+                    return str(code or "")
+                c = code.strip().upper()
+                symbols = {
+                    "$": "USD",
+                    "US$": "USD",
+                    "U.S.$": "USD",
+                    "USD$": "USD",
+                    "S$": "SGD",
+                    "SG$": "SGD",
+                    "SGD$": "SGD",
+                    "A$": "AUD",
+                    "AU$": "AUD",
+                    "AUD$": "AUD",
+                    "C$": "CAD",
+                    "CA$": "CAD",
+                    "CAD$": "CAD",
+                    "€": "EUR",
+                    "£": "GBP",
+                    "₹": "INR",
+                }
+                if c in symbols:
+                    return symbols[c]
+                if c.endswith("$"):
+                    prefix = c[:-1].strip()
+                    if prefix in exchange_rates:
+                        return prefix
+                    if prefix in ("US", "U.S."):
+                        return "USD"
+                    if prefix in ("AU", "A"):
+                        return "AUD"
+                    if prefix in ("CA", "C"):
+                        return "CAD"
+                return c
+
+            from_currency = _normalize_code(from_currency)
+            to_currency = _normalize_code(to_currency)
+            
+            logger.info(f"Converting {amount} {from_currency} to {to_currency}")
             
             if from_currency not in exchange_rates or to_currency not in exchange_rates:
                 return {"error": f"Unsupported currency: {from_currency} or {to_currency}"}
@@ -356,6 +392,7 @@ class ContextAwareAgent:
             api_key=resolved_key,
             base_url=resolved_base_url
         )
+        self.base_url = resolved_base_url
         
         self.context_mode = context_mode
         self.trajectory = AgentTrajectory(context_mode=context_mode)
@@ -479,6 +516,23 @@ Important: When you have gathered all necessary information and computed the fin
             msg_dict.pop('reasoning_content')
             
         return msg_dict
+
+    @staticmethod
+    def _reasoning_content(message) -> Optional[str]:
+        """Return provider reasoning text without assuming one SDK shape."""
+        value = getattr(message, "reasoning_content", None)
+        if value:
+            return str(value)
+        extra = getattr(message, "model_extra", None) or {}
+        value = extra.get("reasoning_content") or extra.get("reasoning")
+        if isinstance(value, dict):
+            value = value.get("content") or value.get("text")
+        return str(value) if value else None
+
+    @staticmethod
+    def _json_snapshot(value: Any) -> Any:
+        """Detach an API evidence object from later in-memory mutations."""
+        return json.loads(json.dumps(value, ensure_ascii=False, default=str))
     
     def _build_context(self) -> str:
         """
@@ -576,16 +630,14 @@ Important: When you have gathered all necessary information and computed the fin
         iteration, applying the NO_HISTORY ablation.
 
         For every mode except NO_HISTORY the full conversation history (the
-        accumulated trajectory) is returned unchanged. For NO_HISTORY a sliding
-        window is returned that keeps only:
-          - the system prompt (static prefix), and
-          - the latest user task plus the MOST RECENT ReAct step (the last
-            assistant message together with the tool results that follow it).
-        All earlier steps are dropped, so the agent "forgets" what it already
-        did and tends to repeat tool calls -- exactly the failure mode the book
-        attributes to missing 历史消息 (history). Keeping the last assistant
-        message together with its trailing tool messages preserves API validity
-        (tool results stay paired with their assistant tool_calls).
+        accumulated trajectory) is returned unchanged. For NO_HISTORY the
+        request contains only the static system prompt and the current user
+        task.  No assistant decision, tool call, or tool result from a previous
+        round is retained. This is the literal Experiment 1-1 ablation: the
+        model restarts the task on every inference and therefore tends to issue
+        the same first action repeatedly. A one-step sliding window would still
+        be history and would materially narrow the experiment described in the
+        manuscript.
 
         Returns:
             The message list to send to the model for this iteration.
@@ -597,20 +649,13 @@ Important: When you have gathered all necessary information and computed the fin
         # System prompt(s) are always kept as the static prefix.
         windowed = [m for m in messages if m.get("role") == "system"]
 
-        # Anchor on the latest user task.
+        # Anchor on the latest user task. Nothing after it is retained: those
+        # messages are precisely the previous-round history being ablated.
         user_indices = [i for i, m in enumerate(messages) if m.get("role") == "user"]
         if not user_indices:
             return windowed
         last_user_idx = user_indices[-1]
         windowed.append(messages[last_user_idx])
-
-        # Keep only the most recent step after the task: from the last assistant
-        # message to the end. Its tool results follow it, so the pairing stays
-        # valid while every earlier step is dropped.
-        tail = messages[last_user_idx + 1:]
-        assistant_rel = [i for i, m in enumerate(tail) if m.get("role") == "assistant"]
-        if assistant_rel:
-            windowed.extend(tail[assistant_rel[-1]:])
         return windowed
 
     @staticmethod
@@ -698,6 +743,21 @@ Important: When you have gathered all necessary information and computed the fin
 
                 # Call the model with tools
                 response = self.client.chat.completions.create(**create_kwargs)
+
+                response_dict = (
+                    response.model_dump() if hasattr(response, "model_dump")
+                    else response.dict() if hasattr(response, "dict")
+                    else {"raw_response": str(response)}
+                )
+                self.trajectory.api_turns.append({
+                    "iteration": iteration,
+                    "provider": self.provider,
+                    "resolved_model": self.model,
+                    "base_url": self.base_url,
+                    "using_openrouter": bool(getattr(self, "using_openrouter", False)),
+                    "request": self._json_snapshot(request_data),
+                    "response": self._json_snapshot(response_dict),
+                })
                 
                 # Log response if verbose
                 if self.verbose:
@@ -705,6 +765,9 @@ Important: When you have gathered all necessary information and computed the fin
                 
                 message = response.choices[0].message
                 has_tool_calls = bool(getattr(message, "tool_calls", None))
+                reasoning_content = self._reasoning_content(message)
+                if reasoning_content:
+                    self.trajectory.reasoning_steps.append(reasoning_content)
 
                 # --- Terminal path: text reply with no tool calls ---
                 # A normal chat turn ("hi" -> "Hello!") or a task answer without
@@ -804,6 +867,14 @@ Important: When you have gathered all necessary information and computed the fin
                 }
             except Exception as e:
                 logger.error(f"Error during task execution: {str(e)}")
+                self.trajectory.api_turns.append({
+                    "iteration": iteration,
+                    "provider": self.provider,
+                    "resolved_model": self.model,
+                    "base_url": self.base_url,
+                    "using_openrouter": bool(getattr(self, "using_openrouter", False)),
+                    "error": {"class": type(e).__name__, "message": str(e)},
+                })
                 # Check if it's a timeout-related error
                 if "timeout" in str(e).lower() or "timed out" in str(e).lower():
                     return {
@@ -821,7 +892,11 @@ Important: When you have gathered all necessary information and computed the fin
             "final_answer": final_answer,
             "trajectory": self.trajectory,
             "iterations": iteration,
-            "success": final_answer is not None
+            "success": final_answer is not None,
+            "provider": self.provider,
+            "model": self.model,
+            "base_url": self.base_url,
+            "using_openrouter": bool(getattr(self, "using_openrouter", False)),
         }
     
     def reset(self):

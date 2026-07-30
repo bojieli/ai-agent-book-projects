@@ -1,4 +1,4 @@
-openai>=1.40.0
-python-dotenv>=1.0.0
-# 仅当配置了 STEP_AUDIO_ENDPOINT、真正调用端到端接口时才需要：
-requests>=2.31.0
+requests>=2.31
+openai>=1.40
+python-dotenv>=1.0
+pytest>=7.4

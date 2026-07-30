@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 760 570" width="760" height="570" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="40" y="78" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">① ‘어때’가 앞의 각 단어에 두는 어텐션 가중치</text>
+<rect x="60" y="96" width="150" height="66" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="135.0" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">서울</text>
+<text x="135.0" y="143" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Key · 가중치 0.35</text>
+<rect x="228" y="96" width="150" height="66" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="303.0" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">의</text>
+<text x="303.0" y="143" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Key · 가중치 0.05</text>
+<rect x="396" y="96" width="150" height="66" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="471.0" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">날씨</text>
+<text x="471.0" y="143" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Key · 가중치 0.55</text>
+<rect x="564" y="96" width="150" height="66" rx="6" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="639.0" y="118" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">어때</text>
+<text x="639.0" y="143" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Query(현재)</text>
+<text x="380" y="192" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Query와 각 Key의 점수 계산 → 가중치로 정규화 → Value의 가중합(‘날씨’ 중점 참조)</text>
+<text x="40" y="244" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">② 어텐션 히트맵: 각 단어는 자신과 앞의 단어만 볼 수 있음(인과 삼각형)</text>
+<text x="176" y="284" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Key →</text>
+<text x="232.0" y="284" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">서울</text>
+<text x="296.0" y="284" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">의</text>
+<text x="360.0" y="284" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">날씨</text>
+<text x="424.0" y="284" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">어때</text>
+<text x="110" y="428" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Query ↓</text>
+<text x="176" y="332.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">서울</text>
+<rect x="200" y="300" width="64" height="64" fill="#555555" stroke="#ffffff" stroke-width="2"/>
+<text x="232.0" y="332.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central">1.00</text>
+<rect x="264" y="300" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<rect x="328" y="300" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<rect x="392" y="300" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<text x="176" y="396.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">의</text>
+<rect x="200" y="364" width="64" height="64" fill="#b0b0b0" stroke="#ffffff" stroke-width="2"/>
+<text x="232.0" y="396.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.30</text>
+<rect x="264" y="364" width="64" height="64" fill="#555555" stroke="#ffffff" stroke-width="2"/>
+<text x="296.0" y="396.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central">0.70</text>
+<rect x="328" y="364" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<rect x="392" y="364" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<text x="176" y="460.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">날씨</text>
+<rect x="200" y="428" width="64" height="64" fill="#b0b0b0" stroke="#ffffff" stroke-width="2"/>
+<text x="232.0" y="460.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.20</text>
+<rect x="264" y="428" width="64" height="64" fill="#dcdcdc" stroke="#ffffff" stroke-width="2"/>
+<text x="296.0" y="460.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.10</text>
+<rect x="328" y="428" width="64" height="64" fill="#555555" stroke="#ffffff" stroke-width="2"/>
+<text x="360.0" y="460.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central">0.70</text>
+<rect x="392" y="428" width="64" height="64" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+<text x="176" y="524.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">어때</text>
+<rect x="200" y="492" width="64" height="64" fill="#b0b0b0" stroke="#ffffff" stroke-width="2"/>
+<text x="232.0" y="524.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.35</text>
+<rect x="264" y="492" width="64" height="64" fill="#dcdcdc" stroke="#ffffff" stroke-width="2"/>
+<text x="296.0" y="524.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.05</text>
+<rect x="328" y="492" width="64" height="64" fill="#888888" stroke="#ffffff" stroke-width="2"/>
+<text x="360.0" y="524.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central">0.55</text>
+<rect x="392" y="492" width="64" height="64" fill="#dcdcdc" stroke="#ffffff" stroke-width="2"/>
+<text x="424.0" y="524.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central">0.05</text>
+<text x="380" y="586" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">셀이 진할수록 어텐션이 집중됨 · 빈 상삼각형은 아직 생성되지 않은 단어를 볼 수 없음을 뜻함</text>
+</svg>

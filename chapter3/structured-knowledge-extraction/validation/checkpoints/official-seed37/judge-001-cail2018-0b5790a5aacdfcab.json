@@ -1,0 +1,78 @@
+{
+  "signature": "9b097db45ab8acd9fa8a62ac174e171064fe9d88eef9f5ac70fb09231725eae9",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议与原型统计特征高度匹配，并且明确指出了原型统计刑期区间和中位数，符合原型统计的忠实性。同时，建议中提到了坦白情节和盗窃地点与原型特征的差异，体现了对不确定性的考虑和谨慎态度。此外，建议对留出案件有用，因为它提供了与原型匹配的刑期评估参考。最后，包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-0b5790a5aacdfcab",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:55.391903+00:00",
+    "latency_ms": 3111.979,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：经审理查明：2015年8月30日凌晨，被告人李1某在泗洪县青阳镇富园广场“网客”网咖，窃得姬某白色苹果6手机1部、潘某白色苹果6PLUS手机1部。经鉴定，被盗的白色苹果6手机价值3607.2元、白色苹果6PLUS手机价值4320.8元，被盗手机价值共计7928元。\r\n另查明，被告人李1某归案后如实供述了自己的犯罪事实。\r\n上述事实，被告人李1某在开庭审理过程中亦不持异议，并有被害人姬某、潘某等人陈述，未到庭证人潘1某、李2某、石某等人的证言，现场勘查笔录及照片，图侦协查资料，辨认笔录及照片，价格鉴定意见书，监控视频资料，前科材料，案件查破案经过，归案情况说明，户籍证明等证据予以证实，足以认定。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：18个月\n匹配原型：{\"prototype_id\": \"盗窃罪-prototype-4\", \"charge\": \"盗窃罪\", \"prototype_size\": 53, \"sentence_months\": {\"median\": 7.0, \"q25\": 6.0, \"q75\": 9.0, \"min\": 2.0, \"max\": 72.0}, \"defining_features\": [{\"feature\": \"cat:theft_method=趁人不备\", \"z\": 1.6014813672139347}, {\"feature\": \"cat:theft_target=手机\", \"z\": 1.4372243817878076}, {\"feature\": \"cat:use_special_convenience=无\", \"z\": 1.433980681035021}, {\"feature\": \"num:theft_amount\", \"z\": 1.4051072801892825}, {\"feature\": \"num:theft_count\", \"z\": 1.186314536087199}, {\"feature\": \"cat:theft_tool=徒手\", \"z\": 1.1302013658008716}, {\"feature\": \"cat:theft_location=户外\", \"z\": 1.1116513579865053}, {\"feature\": \"cat:stolen_property_disposal=变卖挥霍\", \"z\": 1.0391716890512863}], \"match_distance\": 0.1838970299217689}\n生成建议：匹配依据为案件的盗窃方法（趁人不备）、盗窃目标（手机）、利用特殊便利情况（无）、盗窃金额及盗窃次数等关键特征与训练原型“盗窃罪-prototype-4”的核心定义特征高度匹配（匹配距离0.1839）。该原型包含53个案件，统计刑期区间为6个月（Q25）至9个月（Q75），中位数为7个月。需注意，案件中存在的坦白情节（truthful_confession=true）未被该原型的定义特征显著纳入，且盗窃地点（网吧）与原型部分特征（户外）存在差异，可能对刑期评估产生不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6500efb1450ac9da904",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议与原型统计特征高度匹配，并且明确指出了原型统计刑期区间和中位数，符合原型统计的忠实性。同时，建议中提到了坦白情节和盗窃地点与原型特征的差异，体现了对不确定性的考虑和谨慎态度。此外，建议对留出案件有用，因为它提供了与原型匹配的刑期评估参考。最后，包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386576,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 155,
+        "prompt_tokens": 879,
+        "total_tokens": 1034,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 155,
+      "prompt_tokens": 879,
+      "total_tokens": 1034,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6500efb1450ac9da904"
+  }
+}

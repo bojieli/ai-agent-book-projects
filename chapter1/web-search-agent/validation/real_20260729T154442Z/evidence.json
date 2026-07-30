@@ -1,0 +1,408 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-2",
+  "evidence_mode": "real_api",
+  "created_at": "2026-07-29T15:44:42.988928+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-2-kimi-k3-原生-agent-能力",
+  "credential_source_env": "MOONSHOT_API_KEY",
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+    "branch": "main",
+    "worktree_dirty": true
+  },
+  "transient_failed_attempts": [
+    {
+      "attempt": 1,
+      "answer": "抱歉，我无法获取足够的信息来回答您的问题。",
+      "validation": {
+        "checks": {
+          "direct_moonshot_api": true,
+          "exact_model": true,
+          "provider_response_each_turn": false,
+          "hosted_search_tool_declared_each_search_turn": true,
+          "multiple_hosted_searches": false,
+          "reasoning_observed": false,
+          "final_answer_observed": false,
+          "source_links_in_answer": false,
+          "distance_result_in_answer": false
+        },
+        "passed": false,
+        "search_ids": [
+          "bcfe63c76a6a1fe6680f160001863f8f"
+        ],
+        "usage": {
+          "prompt_tokens": 656,
+          "completion_tokens": 31,
+          "total_tokens": 687,
+          "cached_prompt_tokens": 0,
+          "reasoning_tokens": 15
+        }
+      },
+      "api_turns": [
+        {
+          "request": {
+            "model": "kimi-k3",
+            "messages": [
+              {
+                "role": "system",
+                "content": "你是 Kimi，一个智能搜索助手。\n\n请按照以下步骤处理：\n1. 分析用户问题，识别关键信息需求\n2. 使用 $web_search 工具搜索相关信息\n3. 如果需要更多信息，可以多次调用搜索工具\n4. 综合所有信息，生成准确、全面的答案\n\n注意：\n- 搜索时使用精准的关键词\n- 优先获取最新、最权威的信息\n- 答案要结构清晰，有理有据\n"
+              },
+              {
+                "role": "user",
+                "content": "截至 2026 年 7 月，东盟 10 个成员国的首都中，地理距离最近的一对是哪两个？\n请自主完成深度研究：先搜索成员国及官方首都的权威来源；检查还缺哪些坐标证据后，\n至少再执行一次不同的后续搜索来补齐可靠坐标；最后计算全部首都两两之间的大圆距离，\n给出最近一对、距离、计算方法、检索日期，并附可点击的来源链接。不要依赖记忆作答。"
+              }
+            ],
+            "temperature": 1,
+            "max_tokens": 4096,
+            "tools": [
+              {
+                "type": "builtin_function",
+                "function": {
+                  "name": "$web_search"
+                }
+              }
+            ]
+          },
+          "response": {
+            "id": "chatcmpl-6a6a1fe625464c0001d53f11",
+            "choices": [
+              {
+                "finish_reason": "tool_calls",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                  "content": "",
+                  "refusal": null,
+                  "role": "assistant",
+                  "annotations": null,
+                  "audio": null,
+                  "function_call": null,
+                  "tool_calls": [
+                    {
+                      "id": "t-web_search-6a6a1fe62546",
+                      "function": {
+                        "arguments": "{\"search_result\":{\"search_id\":\"bcfe63c76a6a1fe6680f160001863f8f\"},\"usage\":{\"total_tokens\":3120}}",
+                        "name": "$web_search"
+                      },
+                      "type": "builtin_function"
+                    }
+                  ]
+                }
+              }
+            ],
+            "created": 1785339878,
+            "model": "kimi-k3",
+            "object": "chat.completion",
+            "service_tier": null,
+            "system_fingerprint": null,
+            "usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 203,
+              "total_tokens": 204,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": null
+            }
+          },
+          "elapsed_seconds": 3.856849
+        },
+        {
+          "request": {
+            "model": "kimi-k3",
+            "messages": [
+              {
+                "role": "system",
+                "content": "你是 Kimi，一个智能搜索助手。\n\n请按照以下步骤处理：\n1. 分析用户问题，识别关键信息需求\n2. 使用 $web_search 工具搜索相关信息\n3. 如果需要更多信息，可以多次调用搜索工具\n4. 综合所有信息，生成准确、全面的答案\n\n注意：\n- 搜索时使用精准的关键词\n- 优先获取最新、最权威的信息\n- 答案要结构清晰，有理有据\n"
+              },
+              {
+                "role": "user",
+                "content": "截至 2026 年 7 月，东盟 10 个成员国的首都中，地理距离最近的一对是哪两个？\n请自主完成深度研究：先搜索成员国及官方首都的权威来源；检查还缺哪些坐标证据后，\n至少再执行一次不同的后续搜索来补齐可靠坐标；最后计算全部首都两两之间的大圆距离，\n给出最近一对、距离、计算方法、检索日期，并附可点击的来源链接。不要依赖记忆作答。"
+              },
+              {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "id": "t-web_search-6a6a1fe62546",
+                    "type": "function",
+                    "function": {
+                      "name": "$web_search",
+                      "arguments": "{\"search_result\":{\"search_id\":\"bcfe63c76a6a1fe6680f160001863f8f\"},\"usage\":{\"total_tokens\":3120}}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "t-web_search-6a6a1fe62546",
+                "name": "$web_search",
+                "content": "{\"search_result\": {\"search_id\": \"bcfe63c76a6a1fe6680f160001863f8f\"}, \"usage\": {\"total_tokens\": 3120}}"
+              }
+            ],
+            "temperature": 1,
+            "max_tokens": 4096,
+            "tools": [
+              {
+                "type": "builtin_function",
+                "function": {
+                  "name": "$web_search"
+                }
+              }
+            ]
+          },
+          "response": {
+            "id": "chatcmpl-6a6a1fe6f1ac6b519f46c5af",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "logprobs": null,
+                "message": {
+                  "content": "",
+                  "refusal": null,
+                  "role": "assistant",
+                  "annotations": null,
+                  "audio": null,
+                  "function_call": null,
+                  "tool_calls": null,
+                  "reasoning_content": "The search returned no results. Let me try a different search query."
+                }
+              }
+            ],
+            "created": 1785339881,
+            "model": "kimi-k3",
+            "object": "chat.completion",
+            "service_tier": null,
+            "system_fingerprint": null,
+            "usage": {
+              "completion_tokens": 30,
+              "prompt_tokens": 453,
+              "total_tokens": 483,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 15,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            }
+          },
+          "elapsed_seconds": 4.567783
+        }
+      ]
+    }
+  ],
+  "run": {
+    "provider": "moonshot",
+    "model": "kimi-k3",
+    "base_url": "https://api.moonshot.cn/v1",
+    "question": "截至 2026 年 7 月，东盟 10 个成员国的首都中，地理距离最近的一对是哪两个？\n请自主完成深度研究：先搜索成员国及官方首都的权威来源；检查还缺哪些坐标证据后，\n至少再执行一次不同的后续搜索来补齐可靠坐标；最后计算全部首都两两之间的大圆距离，\n给出最近一对、距离、计算方法、检索日期，并附可点击的来源链接。不要依赖记忆作答。",
+    "answer": "抱歉，我无法获取足够的信息来回答您的问题。",
+    "trace": [
+      {
+        "iteration": 1,
+        "type": "action",
+        "tool": "$web_search",
+        "args": {
+          "search_result": {
+            "search_id": "bcfe63c76a6a1fe6680f160001863f8f"
+          },
+          "usage": {
+            "total_tokens": 3120
+          }
+        }
+      },
+      {
+        "iteration": 1,
+        "type": "observation",
+        "tool": "$web_search",
+        "content": "{\"search_result\": {\"search_id\": \"bcfe63c76a6a1fe6680f160001863f8f\"}, \"usage\": {\"total_tokens\": 3120}}"
+      },
+      {
+        "iteration": 2,
+        "type": "thought",
+        "content": "The search returned no results. Let me try a different search query."
+      }
+    ],
+    "api_turns": [
+      {
+        "request": {
+          "model": "kimi-k3",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是 Kimi，一个智能搜索助手。\n\n请按照以下步骤处理：\n1. 分析用户问题，识别关键信息需求\n2. 使用 $web_search 工具搜索相关信息\n3. 如果需要更多信息，可以多次调用搜索工具\n4. 综合所有信息，生成准确、全面的答案\n\n注意：\n- 搜索时使用精准的关键词\n- 优先获取最新、最权威的信息\n- 答案要结构清晰，有理有据\n"
+            },
+            {
+              "role": "user",
+              "content": "截至 2026 年 7 月，东盟 10 个成员国的首都中，地理距离最近的一对是哪两个？\n请自主完成深度研究：先搜索成员国及官方首都的权威来源；检查还缺哪些坐标证据后，\n至少再执行一次不同的后续搜索来补齐可靠坐标；最后计算全部首都两两之间的大圆距离，\n给出最近一对、距离、计算方法、检索日期，并附可点击的来源链接。不要依赖记忆作答。"
+            }
+          ],
+          "temperature": 1,
+          "max_tokens": 4096,
+          "tools": [
+            {
+              "type": "builtin_function",
+              "function": {
+                "name": "$web_search"
+              }
+            }
+          ]
+        },
+        "response": {
+          "id": "chatcmpl-6a6a1fe625464c0001d53f11",
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "logprobs": null,
+              "message": {
+                "content": "",
+                "refusal": null,
+                "role": "assistant",
+                "annotations": null,
+                "audio": null,
+                "function_call": null,
+                "tool_calls": [
+                  {
+                    "id": "t-web_search-6a6a1fe62546",
+                    "function": {
+                      "arguments": "{\"search_result\":{\"search_id\":\"bcfe63c76a6a1fe6680f160001863f8f\"},\"usage\":{\"total_tokens\":3120}}",
+                      "name": "$web_search"
+                    },
+                    "type": "builtin_function"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1785339878,
+          "model": "kimi-k3",
+          "object": "chat.completion",
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 203,
+            "total_tokens": 204,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": null
+          }
+        },
+        "elapsed_seconds": 3.856849
+      },
+      {
+        "request": {
+          "model": "kimi-k3",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是 Kimi，一个智能搜索助手。\n\n请按照以下步骤处理：\n1. 分析用户问题，识别关键信息需求\n2. 使用 $web_search 工具搜索相关信息\n3. 如果需要更多信息，可以多次调用搜索工具\n4. 综合所有信息，生成准确、全面的答案\n\n注意：\n- 搜索时使用精准的关键词\n- 优先获取最新、最权威的信息\n- 答案要结构清晰，有理有据\n"
+            },
+            {
+              "role": "user",
+              "content": "截至 2026 年 7 月，东盟 10 个成员国的首都中，地理距离最近的一对是哪两个？\n请自主完成深度研究：先搜索成员国及官方首都的权威来源；检查还缺哪些坐标证据后，\n至少再执行一次不同的后续搜索来补齐可靠坐标；最后计算全部首都两两之间的大圆距离，\n给出最近一对、距离、计算方法、检索日期，并附可点击的来源链接。不要依赖记忆作答。"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "id": "t-web_search-6a6a1fe62546",
+                  "type": "function",
+                  "function": {
+                    "name": "$web_search",
+                    "arguments": "{\"search_result\":{\"search_id\":\"bcfe63c76a6a1fe6680f160001863f8f\"},\"usage\":{\"total_tokens\":3120}}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "t-web_search-6a6a1fe62546",
+              "name": "$web_search",
+              "content": "{\"search_result\": {\"search_id\": \"bcfe63c76a6a1fe6680f160001863f8f\"}, \"usage\": {\"total_tokens\": 3120}}"
+            }
+          ],
+          "temperature": 1,
+          "max_tokens": 4096,
+          "tools": [
+            {
+              "type": "builtin_function",
+              "function": {
+                "name": "$web_search"
+              }
+            }
+          ]
+        },
+        "response": {
+          "id": "chatcmpl-6a6a1fe6f1ac6b519f46c5af",
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "logprobs": null,
+              "message": {
+                "content": "",
+                "refusal": null,
+                "role": "assistant",
+                "annotations": null,
+                "audio": null,
+                "function_call": null,
+                "tool_calls": null,
+                "reasoning_content": "The search returned no results. Let me try a different search query."
+              }
+            }
+          ],
+          "created": 1785339881,
+          "model": "kimi-k3",
+          "object": "chat.completion",
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": {
+            "completion_tokens": 30,
+            "prompt_tokens": 453,
+            "total_tokens": 483,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 15,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": null
+          }
+        },
+        "elapsed_seconds": 4.567783
+      }
+    ]
+  },
+  "acceptance": {
+    "checks": {
+      "direct_moonshot_api": true,
+      "exact_model": true,
+      "provider_response_each_turn": false,
+      "hosted_search_tool_declared_each_search_turn": true,
+      "multiple_hosted_searches": false,
+      "reasoning_observed": false,
+      "final_answer_observed": false,
+      "source_links_in_answer": false,
+      "distance_result_in_answer": false
+    },
+    "passed": false,
+    "search_ids": [
+      "bcfe63c76a6a1fe6680f160001863f8f"
+    ],
+    "usage": {
+      "prompt_tokens": 656,
+      "completion_tokens": 31,
+      "total_tokens": 687,
+      "cached_prompt_tokens": 0,
+      "reasoning_tokens": 15
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 # 核心依赖
 openai>=1.12.0  # OpenAI Python 客户端，用于调用 Kimi API
+requests>=2.31.0  # Kimi Formula declarations and Fiber execution
 python-dotenv>=1.0.0  # 环境变量管理
 
 # 可选依赖（用于高级功能）

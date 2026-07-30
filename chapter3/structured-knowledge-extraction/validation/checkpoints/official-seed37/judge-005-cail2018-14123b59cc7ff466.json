@@ -1,0 +1,78 @@
+{
+  "signature": "8a916f3030365bc2adaff4c85f51483ea4801ef9a45b9e40cda28cac09d0f8ad",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议中明确指出了留出案件与原型统计特征的匹配依据，包括伤害结果、轻伤数量、伤害程度和犯罪原因等，这与原型定义特征高度匹配。同时，建议中提供了原型刑期的统计区间，包括中位数、四分位区间和刑期范围，符合原型统计的忠实性。建议中也提到了实际刑期存在不确定性，体现了对统计数据的不确定参考。此外，建议对留出案件有用，因为它提供了一个基于原型统计的刑期预测。最后，建议中包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-14123b59cc7ff466",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:58.706024+00:00",
+    "latency_ms": 4160.578,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：公诉机关指控，2016年2月9日15时许，在莒南县道口镇前道口村，被告人纪某和被害人刘某丙因调车问题发生争执，纪某持拳将刘某丙鼻部打伤，致刘某丙双侧鼻骨粉碎性骨折、双侧上颌鼻骨前棘骨折、右侧上颌骨额突骨折、鼻中隔骨折、面部皮肤软组织擦挫伤，左上肢皮肤擦伤，构成轻伤二级。2016年6月17日，被告人纪某赔偿被害人刘某丙各项损失共计60000元。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：9个月\n匹配原型：{\"prototype_id\": \"故意伤害罪-prototype-1\", \"charge\": \"故意伤害罪\", \"prototype_size\": 100, \"sentence_months\": {\"median\": 8.0, \"q25\": 6.0, \"q75\": 12.0, \"min\": 3.0, \"max\": 36.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=轻伤\", \"z\": 1.5568442135769593}, {\"feature\": \"num:minor_injury_count\", \"z\": 1.4868344442139674}, {\"feature\": \"num:crime_amount\", \"z\": -1.1597831108065333}, {\"feature\": \"cat:injury_degree=轻伤二级\", \"z\": 1.1511080895758883}, {\"feature\": \"cat:criminal_cause=琐事争执\", \"z\": 1.0373867906329766}, {\"feature\": \"bool:mutual_fight\", \"z\": 0.8262918864452846}, {\"feature\": \"cat:criminal_motive=琐事\", \"z\": 0.7564756876813216}, {\"feature\": \"num:crime_count\", \"z\": -0.7017513783529625}], \"match_distance\": 0.10249547587327176}\n生成建议：匹配依据：HELDOUT案件的伤害结果（轻伤）、轻伤数量（1.0）、伤害程度（轻伤二级）、犯罪原因（琐事争执）等特征与训练集原型“故意伤害罪-prototype-1”的关键定义特征（如cat:injury_result=轻伤、num:minor_injury_count、cat:injury_degree=轻伤二级、cat:criminal_cause=琐事争执）高度匹配。统计区间：该原型刑期中位数为8个月，四分位区间（Q25-Q75）为6-12个月，刑期范围3-36个月。因可能存在未纳入统计的其他影响因素，实际刑期存在不确定性。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad653d5eda9c29ac17a27",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议中明确指出了留出案件与原型统计特征的匹配依据，包括伤害结果、轻伤数量、伤害程度和犯罪原因等，这与原型定义特征高度匹配。同时，建议中提供了原型刑期的统计区间，包括中位数、四分位区间和刑期范围，符合原型统计的忠实性。建议中也提到了实际刑期存在不确定性，体现了对统计数据的不确定参考。此外，建议对留出案件有用，因为它提供了一个基于原型统计的刑期预测。最后，建议中包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386579,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 194,
+        "prompt_tokens": 801,
+        "total_tokens": 995,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 194,
+      "prompt_tokens": 801,
+      "total_tokens": 995,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad653d5eda9c29ac17a27"
+  }
+}

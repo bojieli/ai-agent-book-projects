@@ -25,10 +25,12 @@ Synthesize across sessions; surface critical connections; proactive help without
 ### Features
 
 - **60 test cases** (20 per layer; 50+ rounds each)  
-- **LLM-as-Judge** for semantic scoring  
-- Banking, insurance, healthcare, travel, retail, …  
-- Interactive, batch, programmatic modes  
-- Detailed reports  
+- **Experiment 6-3 structured LLM-as-Judge**: precision, recall, reasoning,
+  proactivity, plus a hallucination veto; every dimension includes evidence and
+  a concrete boundary-case decision
+- Banking, insurance, healthcare, travel, retail, …
+- Interactive, batch, programmatic modes
+- Detailed reports
 
 ### Quickstart: scored comparison (Experiment 3-1)
 
@@ -140,7 +142,28 @@ L3: passport vs travel, coverage vs procedures, cross-session tax/warranty.
 
 **`keyword-recall` (offline):** `reward = (# gold facts in answer) / (# gold facts)`, normalized substring match.
 
-**`llm-judge` (API):** scores retrieval completeness, accuracy, context, proactivity vs criteria.
+**`llm-judge` (API):** the Experiment 6-3 judge reads the authoritative
+conversation source and returns four 1-4 grades (`excellent/good/pass/fail`):
+factual precision, factual recall, reasoning correctness, and proactivity.
+Each grade includes cited evidence and an applied boundary case. A separate
+hallucination verdict is an unconditional zero-score veto. The legacy
+`reward` field is derived from those four grades for existing report callers.
+Task success is deliberately stricter than partial-credit reward: precision,
+recall, and reasoning must each be at least `good` (3/4), and no hallucination
+veto may fire. Proactivity remains diagnostic because a complete direct answer
+does not always need extra advice.
+
+Live structured-rubric check:
+
+```bash
+python validate_rubric.py \
+  --test-id layer1_01_bank_account \
+  --answer 'Your checking account is 4429853327. The direct-deposit routing number is 123006800.' \
+  --output results/live_6_3_layer1.json
+```
+
+Experiments 6-4 and 6-9 use this judge in the end-to-end runner at
+[`chapter6/user-memory-system-evaluation`](../../chapter6/user-memory-system-evaluation/).
 
 ### Configuration
 
@@ -239,7 +262,8 @@ python main.py --mode batch --responses agent_responses.json
 字段：`test_id`、`category`、`title`、`conversation_histories`、`user_question`、`evaluation_criteria`、`expected_behavior`。
 
 - **`keyword-recall`**：离线关键事实召回  
-- **`llm-judge`**：语义评分（需 API）  
+- **`llm-judge`**：实验 6-3 的结构化 Rubric（需 API）。逐维输出事实精确率、事实召回率、
+  思考正确性和主动性四档成绩、证据与边界案例；另设幻觉一票否决，触发后总分归零。
 
 通过阈值：`reward >= 0.6`。
 

@@ -90,7 +90,10 @@ def _apply_edit_ffmpeg(source: str, plan: dict, out_path: str) -> str:
                 opts.insert(0, f"fontfile={font}")
             vf_chain.append("drawtext=" + ":".join(opts))
         elif etype == "slowmo":
-            factor = float(eff.get("factor", 2.0))
+            raw = eff.get("factor", 2.0)
+            if raw is None:
+                continue
+            factor = float(raw)
             if factor <= 0:
                 continue
             vf_chain.append(f"setpts={factor}*PTS")

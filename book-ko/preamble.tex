@@ -1,0 +1,200 @@
+% ===== ElegantBook customizations for 《AI 에이전트를 깊이 이해하기》 =====
+
+% ── Unicode glyph fallback (Times/Courier lack these) ─────────────
+\usepackage{newunicodechar}
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\IfFontExistsTF{DejaVu Sans}{\newfontfamily\fallbackfont{DejaVu Sans}}{\newfontfamily\fallbackfont{Noto Sans CJK KR}}}
+\newunicodechar{★}{{\fallbackfont ★}}
+\newunicodechar{✓}{{\fallbackfont ✓}}
+\newunicodechar{✗}{{\fallbackfont ✗}}
+% Render U+2015 with a CJK-aware fallback because Latin Modern omits it.
+\newunicodechar{―}{{\fallbackfont ―}}
+\newunicodechar{₀}{{\fallbackfont ₀}}
+\newunicodechar{₁}{{\fallbackfont ₁}}
+\newunicodechar{₂}{{\fallbackfont ₂}}
+\newunicodechar{₃}{{\fallbackfont ₃}}
+\newunicodechar{₄}{{\fallbackfont ₄}}
+\newunicodechar{₅}{{\fallbackfont ₅}}
+\newunicodechar{₆}{{\fallbackfont ₆}}
+\newunicodechar{₇}{{\fallbackfont ₇}}
+\newunicodechar{₈}{{\fallbackfont ₈}}
+\newunicodechar{₉}{{\fallbackfont ₉}}
+\newunicodechar{ⓐ}{{\fallbackfont ⓐ}}
+\newunicodechar{ⓑ}{{\fallbackfont ⓑ}}
+\newunicodechar{ⓒ}{{\fallbackfont ⓒ}}
+\newunicodechar{ⓓ}{{\fallbackfont ⓓ}}
+\newunicodechar{ⓔ}{{\fallbackfont ⓔ}}
+% Math / symbols absent from the Latin text font
+\newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{♠}{{\fallbackfont ♠}}
+\newunicodechar{♣}{{\fallbackfont ♣}}
+\newunicodechar{♥}{{\fallbackfont ♥}}
+\newunicodechar{♦}{{\fallbackfont ♦}}
+% Greek letters used inline in body text (Latin Modern lacks them here)
+\newunicodechar{α}{{\fallbackfont α}}
+\newunicodechar{β}{{\fallbackfont β}}
+\newunicodechar{γ}{{\fallbackfont γ}}
+\newunicodechar{δ}{{\fallbackfont δ}}
+\newunicodechar{ε}{{\fallbackfont ε}}
+\newunicodechar{η}{{\fallbackfont η}}
+\newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{λ}{{\fallbackfont λ}}
+\newunicodechar{μ}{{\fallbackfont μ}}
+\newunicodechar{π}{{\fallbackfont π}}
+\newunicodechar{ρ}{{\fallbackfont ρ}}
+\newunicodechar{σ}{{\fallbackfont σ}}
+\newunicodechar{τ}{{\fallbackfont τ}}
+\newunicodechar{φ}{{\fallbackfont φ}}
+\newunicodechar{ω}{{\fallbackfont ω}}
+
+% ── Code/monospace font (covers box-drawing glyphs used in code) ──
+\IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}
+
+% Korean word boundaries are meaningful. xeCJK defaults to discarding spaces
+% between CJK characters and adding spacing at CJK/Latin boundaries because
+% that is conventional for Chinese text. Preserve only the source spacing.
+\xeCJKsetup{AutoFallBack=true,CJKspace=true,CJKecglue={},xCJKecglue=false}
+
+% ── tcolorbox (ElegantBook already loads it; just add libraries) ──
+\tcbuselibrary{skins,breakable}
+
+% ── TikZ (for the full-bleed image cover in cover.tex) ───────────
+\usepackage{tikz}
+
+% Theme accent color: use a deep navy
+% (classic, authoritative technical-book tone). Drives headings, rules, links,
+% code chrome and the cover. Tweak this one line to restyle the whole book.
+\definecolor{structurecolor}{RGB}{30,58,107}
+
+% Accent shade for code/figure chrome (follows the theme color above)
+\colorlet{accent}{structurecolor}
+
+% Internal cross-reference links (그림 N-M / 제N장) — clickable + subtle navy,
+% independent of the document class's global linkcolor. Used by crossref.lua.
+\newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Wrap long lines in code blocks ───────────────────────────────
+% pandoc emits fancyvrb's Verbatim (via `Highlighting` for ```lang blocks
+% and plain `verbatim` for un-tagged blocks); neither wraps by default, so
+% long lines overflow the page. fvextra adds breaklines; re-define both
+% environments to wrap, breaking mid-token when a chunk has no spaces (URLs,
+% long identifiers, CJK comments). An accent-colored ↳ marks each continued line.
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+% ── Code blocks: subtle O'Reilly-style framed box ────────────────
+% One shared box style for ALL code blocks so highlighted (```lang → Shaded)
+% and plain (``` → verbatim) blocks look identical. The plain verbatim nests
+% a fvextra Verbatim inside the box; \VerbatimEnvironment makes it end at
+% \end{verbatim} (the outer env name) rather than \end{Verbatim}.
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm,
+  before skip=0.7em, after skip=0.7em
+}
+\renewenvironment{Shaded}{\begin{codebox}}{\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{Verbatim}}%
+  {\end{Verbatim}\end{codebox}}
+
+% ── Experiment & question callouts (used by experiment_box.lua) ───
+\newtcolorbox{experimentbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em
+}
+
+\newtcolorbox{questionbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em
+}
+
+% ── Figures: force [H] so they can sit inside callout/quote boxes ─
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Figure captions: manual numbering in text, so suppress label ──
+\usepackage{caption}
+% Keep Korean glyphs at the nominal caption size and use a synthetic bold
+% where the installed CJK family does not provide one.
+\IfFontExistsTF{Noto Sans CJK KR}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{Noto Sans CJK KR}}{\IfFontExistsTF{Apple SD Gothic Neo}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{Apple SD Gothic Neo}}{\setCJKfamilyfont{capcjksf}[AutoFakeBold=2.5]{DejaVu Sans}}}
+\DeclareCaptionFont{cjkmatch}{\CJKfamily{capcjksf}}
+\captionsetup{font={normalsize,sf,bf,cjkmatch}, labelformat=empty, skip=4pt, justification=centering}
+
+% ── Blockquotes: accent left bar (experiments render as quotes) ──
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[
+    blanker, breakable,
+    borderline west={2.5pt}{0pt}{accent},
+    colback=accent!4,
+    left=1em, right=0.6em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Paragraph indentation ────────────────────────────────────────
+\setlength{\parindent}{2em}
+
+% Prefer the Korean Noto CJK families in CI. macOS system fonts provide a
+% local fallback for contributors who do not have the Noto casks installed.
+\IfFontExistsTF{Noto Serif CJK KR}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{Noto Serif CJK KR}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Noto Sans CJK KR}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Noto Sans CJK KR}%
+}{\IfFontExistsTF{Noto Sans CJK KR}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{Noto Sans CJK KR}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Noto Sans CJK KR}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Noto Sans CJK KR}%
+}{%
+  \setCJKmainfont[AutoFakeBold=2.5]{AppleMyungjo}%
+  \setCJKsansfont[AutoFakeBold=2.5]{Apple SD Gothic Neo}%
+  \setCJKmonofont[AutoFakeBold=2.5]{Apple SD Gothic Neo}%
+}}
+
+% The Korean text intentionally preserves Simplified Chinese in translation
+% examples and proper names. Korean-only macOS fonts omit some of those glyphs,
+% so register an SC family after the primary families instead of silently
+% dropping characters. CI installs Noto Sans CJK SC; Songti SC and PingFang SC
+% cover contributors using the macOS system-font fallback above.
+\IfFontExistsTF{Noto Sans CJK SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+}{\IfFontExistsTF{Songti SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{Songti SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{Songti SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{Songti SC}%
+}{\IfFontExistsTF{PingFang SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{PingFang SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{PingFang SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{PingFang SC}%
+}{}}}
+
+% ElegantBook has no Korean locale, so lang=cn supplies CJK typesetting.
+% Override its chapter wrapper directly; ctex heading keys are not enabled by
+% ElegantBook's scheme=plain setup.
+\renewcommand{\xchaptertitle}{제\thechapter 장}
+\AtBeginDocument{\renewcommand{\contentsname}{목차}}
+
+% ElegantBook empties the `plain` page style used on chapter-opening pages.
+% Keep those pages numbered, matching the centered footer on regular pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

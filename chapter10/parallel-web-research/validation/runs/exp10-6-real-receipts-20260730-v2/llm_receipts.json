@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "receipts": [
+    {
+      "kind": "llm_chat_completion",
+      "context": {
+        "phase": "default_parallel",
+        "worker_id": "agent-09",
+        "site": "human-ai"
+      },
+      "provider": "ark",
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "user",
+            "content": "{\"target\": \"Andrew Ng\", \"site_college\": \"Stanford HAI\", \"url\": \"https://hai.stanford.edu/people/andrew-ng\", \"rendered_page_text\": \"Skip to content\\nAbout\\nResearch\\nEducation\\nPolicy\\nAI Index\\nNews\\nEvents\\nIndustry\\nCenters & Labs\\nPEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\\n\\nAndrew Ng is Founder & CEO of Landing AI, Founder of deeplearning.ai, Co-Chairman and Co-Founder of Coursera, and is currently an Adjunct Professor at Stanford University. He was also Chief Scientist at Baidu Inc., and Founder & Lead for the Google Brain Project.\\n\\nIn 2011 he led the development of Stanford University’s main MOOC (Massive Open Online Courses) platform and also taught an online Machine Learning class to over 100,000 students, leading to the founding of Coursera. Ng’s goal is to give everyone in the world access to a great education, for free. Today, Coursera partners with some of the top universities in the world to offer high quality online courses, and is the largest MOOC platform in the world.\\n\\nNg also works on machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms. This resulted in the famous “Google cat” result, in which a massive neural network with 1 billion parameters learned from unlabeled YouTube videos to detect cats. More recently, he continues to work on deep learning and its applications to computer vision and speech, including such applications as autonomous driving.\\n\\nSHARE\\nNAVIGATE\\nAbout\\nEvents\\nAI Glossary\\nCareers\\nSearch\\nPARTICIPATE\\nGet Involved\\nSupport HAI\\nContact Us\\nStay Up To Date\\n\\nGet the latest news, advances in research, policy work, and education program updates from HAI in your inbox weekly.\\n\\nSign Up For Latest News\\n\\nStanford\\nUniversity\\nStanford HomeMaps & DirectionsSearch StanfordEmergency Info\\nTerms of UsePrivacyCopyrightTrademarksNon-DiscriminationAccessibility\\n© Stanford University.  Stanford, California 94305.\\nPause Media\", \"instruction\": \"Use only rendered_page_text. Decide whether it contains this exact person's faculty profile. Return JSON keys found, name, college, position, research, evidence. If the name is only a link/listing, found may be true but leave unsupported fields empty. evidence must be a short verbatim excerpt.\"}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785388119659a5cf16cfa3c4ebff37e7c43914719d1a235950",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"found\": true, \"name\": \"Andrew Ng\", \"college\": \"Stanford HAI\", \"position\": \"Adjunct Professor at Stanford University\", \"research\": \"machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms... including such applications as autonomous driving\", \"evidence\": \"PEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\"}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI now need to solve this problem. Let's start by carefully reading the user's instruction. The task is to use only the provided rendered_page_text to determine if it contains the exact person's faculty profile. Then, return a JSON with keys: found, name, college, position, research, evidence. \n\nFirst, the target person is Andrew Ng, and the site_college is Stanford HAI. Let's look at the rendered_page_text. \n\nLooking through the text, there's a section: \"PEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\\n\\nAndrew Ng is Founder & CEO of Landing AI, Founder of deeplearning.ai, Co-Chairman and Co-Founder of Coursera, and is currently an Adjunct Professor at Stanford University...\" \n\nSo, the name is clearly Andrew Ng. Now, check if it's a faculty profile. The text under \"PEOPLE\" and \"FACULTY\" lists Andrew Ng, so that's a faculty profile. \n\nFound: True, because it's a faculty profile for Andrew Ng.\n\nName: Andrew Ng (explicitly stated).\n\nCollege: The site_college is Stanford HAI, and the page is from Stanford HAI (url is https://hai.stanford.edu/people/andrew-ng), so the college should be Stanford HAI.\n\nPosition: The text says \"Adjunct Professor at Stanford University\".\n\nResearch: The text mentions \"Ng also works on machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms... including such applications as autonomous driving.\" So research is machine learning with an emphasis on deep learning, including applications like autonomous driving.\n\nEvidence: Need a short verbatim excerpt. The line \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\" is a good excerpt as it directly links the name and position.\n\nNow, check if all fields are supported. The name is present, college is Stanford HAI (since the page is from Stanford HAI), position is Adjunct Professor at Stanford University, research is mentioned, evidence is available.\n\nSo putting it all together:\n\nfound: true\n\nname: \"Andrew Ng\"\n\ncollege: \"Stanford HAI\"\n\nposition: \"Adjunct Professor at Stanford University\"\n\nresearch: \"machine learning with an emphasis on deep learning, including applications such as autonomous driving\"\n\nevidence: \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\"\n\nWait, but need to make sure research is directly from the text. The exact research part is \"machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms... including such applications as autonomous driving.\" So maybe more concise: \"machine learning with an emphasis on deep learning, including applications such as autonomous driving\" (verbatim parts: \"machine learning with an emphasis on deep learning\" and \"including such applications as autonomous driving\").\n\nEvidence should be verbatim. Let's pick the excerpt where it starts with \"Andrew Ng\" under FACULTY. The text has: \"PEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\" – that's a verbatim excerpt.\n\nNow, check if any fields are unsupported. All fields have support from the text. So the JSON should have all these filled."
+            }
+          }
+        ],
+        "created": 1785388140,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 839,
+          "prompt_tokens": 643,
+          "total_tokens": 1482,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 739,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "response_id": "021785388119659a5cf16cfa3c4ebff37e7c43914719d1a235950",
+      "response_model": "doubao-seed-1-6-250615",
+      "usage": {
+        "completion_tokens": 839,
+        "prompt_tokens": 643,
+        "total_tokens": 1482,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 739,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "duration_seconds": 21.299,
+      "request_sha256": "685ffe4d54aa05d0ba113de8d9768265eb9168d74198810e28121f9e9cd5f749",
+      "response_sha256": "399e874edaed8591ce68c7661f881afac2e097ad3d56e050cee3035c94c4df5f",
+      "captured_at": "2026-07-30T05:09:00.593Z"
+    },
+    {
+      "kind": "llm_chat_completion",
+      "context": {
+        "phase": "default_serial",
+        "worker_id": "serial-09",
+        "site": "human-ai"
+      },
+      "provider": "ark",
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "user",
+            "content": "{\"target\": \"Andrew Ng\", \"site_college\": \"Stanford HAI\", \"url\": \"https://hai.stanford.edu/people/andrew-ng\", \"rendered_page_text\": \"Skip to content\\nAbout\\nResearch\\nEducation\\nPolicy\\nAI Index\\nNews\\nEvents\\nIndustry\\nCenters & Labs\\nPEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\\n\\nAndrew Ng is Founder & CEO of Landing AI, Founder of deeplearning.ai, Co-Chairman and Co-Founder of Coursera, and is currently an Adjunct Professor at Stanford University. He was also Chief Scientist at Baidu Inc., and Founder & Lead for the Google Brain Project.\\n\\nIn 2011 he led the development of Stanford University’s main MOOC (Massive Open Online Courses) platform and also taught an online Machine Learning class to over 100,000 students, leading to the founding of Coursera. Ng’s goal is to give everyone in the world access to a great education, for free. Today, Coursera partners with some of the top universities in the world to offer high quality online courses, and is the largest MOOC platform in the world.\\n\\nNg also works on machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms. This resulted in the famous “Google cat” result, in which a massive neural network with 1 billion parameters learned from unlabeled YouTube videos to detect cats. More recently, he continues to work on deep learning and its applications to computer vision and speech, including such applications as autonomous driving.\\n\\nSHARE\\nNAVIGATE\\nAbout\\nEvents\\nAI Glossary\\nCareers\\nSearch\\nPARTICIPATE\\nGet Involved\\nSupport HAI\\nContact Us\\nStay Up To Date\\n\\nGet the latest news, advances in research, policy work, and education program updates from HAI in your inbox weekly.\\n\\nSign Up For Latest News\\n\\nStanford\\nUniversity\\nStanford HomeMaps & DirectionsSearch StanfordEmergency Info\\nTerms of UsePrivacyCopyrightTrademarksNon-DiscriminationAccessibility\\n© Stanford University.  Stanford, California 94305.\\nPause Media\", \"instruction\": \"Use only rendered_page_text. Decide whether it contains this exact person's faculty profile. Return JSON keys found, name, college, position, research, evidence. If the name is only a link/listing, found may be true but leave unsupported fields empty. evidence must be a short verbatim excerpt.\"}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785388168110fc13f77dd38da39bcdb33ad9bd57064028fde0",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"found\": true, \"name\": \"Andrew Ng\", \"college\": \"Stanford HAI\", \"position\": \"Adjunct Professor at Stanford University\", \"research\": \"machine learning with an emphasis on deep learning, including applications to computer vision, speech, and autonomous driving\", \"evidence\": \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\"}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI now need to solve this problem. The user provided a rendered_page_text, and the task is to determine if it contains the exact faculty profile of Andrew Ng. Then, return JSON with keys found, name, college, position, research, evidence. Let's start step by step.\n\nFirst, check if the rendered_page_text has Andrew Ng's faculty profile. The target is Andrew Ng, site_college is Stanford HAI. Looking at the rendered_page_text, there's a section under \"PEOPLE\" and \"FACULTY\" with \"Andrew Ng\" as a heading. Then it says \"Founder of DeepLearning.AI and Adjunct Professor at Stanford University\". So that's a faculty profile.\n\nNow, the keys: found should be true. Name is Andrew Ng. College: the site_college is Stanford HAI, and the page is from Stanford HAI, so college is Stanford HAI. Position: \"Adjunct Professor at Stanford University\" is mentioned, so position is \"Adjunct Professor at Stanford University\". Research: The text says \"Ng also works on machine learning with an emphasis on deep learning. He founded and led the 'Google Brain' project which developed massive-scale deep learning algorithms... continues to work on deep learning and its applications to computer vision and speech, including such applications as autonomous driving.\" So research is \"machine learning with an emphasis on deep learning, including applications to computer vision, speech, and autonomous driving\". Evidence needs to be a short verbatim excerpt. The relevant excerpt could be \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\" as that's the start of his profile.\n\nLet me verify each key:\n\nfound: true, because there's a faculty profile for Andrew Ng.\n\nname: Andrew Ng (exact name mentioned).\n\ncollege: Stanford HAI (since the site is Stanford HAI, and the profile is on Stanford HAI's page).\n\nposition: \"Adjunct Professor at Stanford University\" (verbatim from the text: \"Adjunct Professor at Stanford University\").\n\nresearch: The research section mentions machine learning with emphasis on deep learning, Google Brain project, applications to computer vision, speech, autonomous driving. So research is \"machine learning with an emphasis on deep learning, including applications to computer vision, speech, and autonomous driving\".\n\nevidence: verbatim excerpt. The text starts with \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\", which is a verbatim part.\n\nUnsupported fields: none, since all required fields are supported.\n\nSo putting it all together, the JSON should have these values."
+            }
+          }
+        ],
+        "created": 1785388186,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 627,
+          "prompt_tokens": 643,
+          "total_tokens": 1270,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 547,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "response_id": "021785388168110fc13f77dd38da39bcdb33ad9bd57064028fde0",
+      "response_model": "doubao-seed-1-6-250615",
+      "usage": {
+        "completion_tokens": 627,
+        "prompt_tokens": 643,
+        "total_tokens": 1270,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 547,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "duration_seconds": 18.008,
+      "request_sha256": "685ffe4d54aa05d0ba113de8d9768265eb9168d74198810e28121f9e9cd5f749",
+      "response_sha256": "3936add6e391127252cb2f79371ab5ffd114d16fa21e97d8ca4127eb5846de03",
+      "captured_at": "2026-07-30T05:09:45.877Z"
+    },
+    {
+      "kind": "llm_chat_completion",
+      "context": {
+        "phase": "cascade_stress",
+        "worker_id": "agent-02",
+        "site": "hai-c"
+      },
+      "provider": "ark",
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "user",
+            "content": "{\"target\": \"Andrew Ng\", \"site_college\": \"Stanford HAI\", \"url\": \"https://hai.stanford.edu/people/andrew-ng?worker=c\", \"rendered_page_text\": \"Skip to content\\nAbout\\nResearch\\nEducation\\nPolicy\\nAI Index\\nNews\\nEvents\\nIndustry\\nCenters & Labs\\nPEOPLE\\nFACULTY\\nAndrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\\n\\nAndrew Ng is Founder & CEO of Landing AI, Founder of deeplearning.ai, Co-Chairman and Co-Founder of Coursera, and is currently an Adjunct Professor at Stanford University. He was also Chief Scientist at Baidu Inc., and Founder & Lead for the Google Brain Project.\\n\\nIn 2011 he led the development of Stanford University’s main MOOC (Massive Open Online Courses) platform and also taught an online Machine Learning class to over 100,000 students, leading to the founding of Coursera. Ng’s goal is to give everyone in the world access to a great education, for free. Today, Coursera partners with some of the top universities in the world to offer high quality online courses, and is the largest MOOC platform in the world.\\n\\nNg also works on machine learning with an emphasis on deep learning. He founded and led the “Google Brain” project which developed massive-scale deep learning algorithms. This resulted in the famous “Google cat” result, in which a massive neural network with 1 billion parameters learned from unlabeled YouTube videos to detect cats. More recently, he continues to work on deep learning and its applications to computer vision and speech, including such applications as autonomous driving.\\n\\nSHARE\\nNAVIGATE\\nAbout\\nEvents\\nAI Glossary\\nCareers\\nSearch\\nPARTICIPATE\\nGet Involved\\nSupport HAI\\nContact Us\\nStay Up To Date\\n\\nGet the latest news, advances in research, policy work, and education program updates from HAI in your inbox weekly.\\n\\nSign Up For Latest News\\n\\nStanford\\nUniversity\\nStanford HomeMaps & DirectionsSearch StanfordEmergency Info\\nTerms of UsePrivacyCopyrightTrademarksNon-DiscriminationAccessibility\\n© Stanford University.  Stanford, California 94305.\\nPause Media\", \"instruction\": \"Use only rendered_page_text. Decide whether it contains this exact person's faculty profile. Return JSON keys found, name, college, position, research, evidence. If the name is only a link/listing, found may be true but leave unsupported fields empty. evidence must be a short verbatim excerpt.\"}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853881892313749365b55318faa75db47eb4778acb39034a4",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"found\": true, \"name\": \"Andrew Ng\", \"college\": \"Stanford HAI\", \"position\": \"Adjunct Professor at Stanford University\", \"research\": \"machine learning with an emphasis on deep learning, applications to computer vision and speech, including autonomous driving\", \"evidence\": \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\"}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to process the given query. Let's start by understanding the requirements. The user wants to use only the \"rendered_page_text\" to determine if it contains Andrew Ng's faculty profile. Then return JSON with keys: found, name, college, position, research, evidence.\n\nFirst, check if the name is present. The rendered_page_text has \"Andrew Ng\" under \"FACULTY\". So \"found\" should be true.\n\n\"name\" is clearly \"Andrew Ng\".\n\n\"college\": The \"site_college\" is \"Stanford HAI\", and in the text, it's part of Stanford University, so college would be \"Stanford HAI\".\n\n\"position\": The text states \"Adjunct Professor at Stanford University\".\n\n\"research\": It mentions \"machine learning with an emphasis on deep learning\" and applications to \"computer vision and speech, including such applications as autonomous driving\".\n\n\"evidence\" needs to be a short verbatim excerpt. A good excerpt is \"Andrew Ng\\n\\nFounder of DeepLearning.AI and Adjunct Professor at Stanford University\" as it directly identifies him and his position.\n\nNow, structure all these into the required JSON."
+            }
+          }
+        ],
+        "created": 1785388197,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 325,
+          "prompt_tokens": 646,
+          "total_tokens": 971,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 246,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "response_id": "0217853881892313749365b55318faa75db47eb4778acb39034a4",
+      "response_model": "doubao-seed-1-6-250615",
+      "usage": {
+        "completion_tokens": 325,
+        "prompt_tokens": 646,
+        "total_tokens": 971,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 246,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "duration_seconds": 8.026,
+      "request_sha256": "5b59d5243bb3dd829d888e5aa2f9baa0906662ad520ac7b73c4e3aa63ea42629",
+      "response_sha256": "2b82f2e8eb37313b43e5d655d72bb7a4d37fbc9082a07b22995d495a1e4e9454",
+      "captured_at": "2026-07-30T05:09:57.026Z"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "9-8",
+  "kind": "non_actuating_preflight",
+  "generated_at": "2026-07-29T15:32:08.929534+00:00",
+  "host": "bojMacBook-Pro.local",
+  "upstream_path": "/private/tmp/xlerobot-audit-20260729",
+  "status": "blocked",
+  "checks": [
+    {
+      "id": "pinned_commit",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected 3d14695e40c9c68229c0aacffca6053c75cd3eb6; found 3d14695e40c9c68229c0aacffca6053c75cd3eb6"
+    },
+    {
+      "id": "blob:docs/en/source/software/getting_started/XLeRobot_teleop.md",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected 3992358282ff54cfce8d90a525e784aedcf045f7; found 3992358282ff54cfce8d90a525e784aedcf045f7"
+    },
+    {
+      "id": "blob:software/examples/4_xlerobot_teleop_keyboard.py",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected efbe076dfbda3c6280fa54f0eb5bca1a12518a0d; found efbe076dfbda3c6280fa54f0eb5bca1a12518a0d"
+    },
+    {
+      "id": "blob:software/examples/5_xlerobot_teleop_xbox.py",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected de7bc17d570167e58b15e38c06c0fa23af74632a; found de7bc17d570167e58b15e38c06c0fa23af74632a"
+    },
+    {
+      "id": "blob:software/examples/7_xlerobot_teleop_joycon.py",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected 21a48258d22b1fc002f63555a2f3dc2950bdfb24; found 21a48258d22b1fc002f63555a2f3dc2950bdfb24"
+    },
+    {
+      "id": "blob:software/examples/8_xlerobot_teleop_vr.py",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "expected 315bb81f13a37746de0f329e3ba11240a2230806; found 315bb81f13a37746de0f329e3ba11240a2230806"
+    },
+    {
+      "id": "python_module:numpy",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "installed"
+    },
+    {
+      "id": "python_module:pygame",
+      "passed": true,
+      "required_for_hardware_run": true,
+      "detail": "installed"
+    },
+    {
+      "id": "python_module:lerobot",
+      "passed": false,
+      "required_for_hardware_run": true,
+      "detail": "not importable"
+    },
+    {
+      "id": "python_module:joyconrobotics",
+      "passed": false,
+      "required_for_hardware_run": true,
+      "detail": "not importable"
+    },
+    {
+      "id": "serial_ports_supplied",
+      "passed": false,
+      "required_for_hardware_run": true,
+      "detail": "no serial ports supplied"
+    },
+    {
+      "id": "safety_checklist",
+      "passed": false,
+      "required_for_hardware_run": true,
+      "detail": "not attested"
+    }
+  ],
+  "blockers": [
+    "python_module:lerobot",
+    "python_module:joyconrobotics",
+    "serial_ports_supplied",
+    "safety_checklist"
+  ],
+  "actuation_attempted": false
+}

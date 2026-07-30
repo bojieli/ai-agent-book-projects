@@ -10,11 +10,11 @@
 """
 
 import json
-from config import get_client, get_model, get_temperature
+from config import get_client, get_model, get_temperature, record_completion
 from airline_env import run_agent
 
 
-def _judge_handled(user_message: str, rubric: str, agent_reply: str) -> bool:
+def _judge_handled(user_message: str, rubric: str, agent_reply: str) -> dict:
     """LLM-as-judge：Agent 没转接的情况下，是否按 rubric 妥善处理了请求。"""
     client = get_client()
     model = get_model()
@@ -31,7 +31,7 @@ def _judge_handled(user_message: str, rubric: str, agent_reply: str) -> bool:
 
 请只输出一个 JSON：{{"handled": true 或 false, "reason": "简短理由"}}
 其中 handled=true 表示 Agent 的回复实质满足了合格标准。"""
-    resp = client.chat.completions.create(
+    resp = record_completion(client, kind="llm_judge",
         model=model,
         messages=[{"role": "user", "content": prompt}],
         temperature=get_temperature(),
@@ -39,9 +39,12 @@ def _judge_handled(user_message: str, rubric: str, agent_reply: str) -> bool:
     )
     try:
         verdict = json.loads(resp.choices[0].message.content)
-        return bool(verdict.get("handled", False))
+        return {
+            "handled": bool(verdict.get("handled", False)),
+            "reason": str(verdict.get("reason", "")),
+        }
     except (json.JSONDecodeError, TypeError):
-        return False
+        return {"handled": False, "reason": "judge returned invalid JSON"}
 
 
 def evaluate_case(system_prompt: str, case: dict, verbose: bool = False) -> dict:
@@ -59,7 +62,9 @@ def evaluate_case(system_prompt: str, case: dict, verbose: bool = False) -> dict
             correct = False
             note = "不应转接：却转接了 ✗（过度转接）"
         else:
-            handled = _judge_handled(case["user"], case["rubric"], result["final_text"])
+            judge = _judge_handled(case["user"], case["rubric"], result["final_text"])
+            handled = judge["handled"]
+            judge_reason = judge["reason"]
             correct = handled
             note = "不应转接：未转接且妥善处理 ✓" if handled else "不应转接：未转接但处理不当 ✗"
 
@@ -74,6 +79,9 @@ def evaluate_case(system_prompt: str, case: dict, verbose: bool = False) -> dict
         "transfer_reason": result["transfer_reason"],
         "tool_calls": result["tool_calls"],
         "handled": handled,
+        "judge_reason": locals().get("judge_reason"),
+        "rubric": case["rubric"],
+        "user": case["user"],
     }
     if verbose:
         icon = "✓" if correct else "✗"

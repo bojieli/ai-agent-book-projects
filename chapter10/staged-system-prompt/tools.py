@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import ast
+import hashlib
 import os
 import subprocess
 import sys
@@ -56,8 +57,8 @@ class Workspace:
         return self.files[path]
 
     def execute_code(self, code: str) -> str:
-        """在临时目录里真实执行一段 Python，返回 stdout/stderr（带超时）。"""
-        return _run_python_source(code)
+        """在含当前工作区文件的临时目录里真实执行代码（带超时）。"""
+        return _run_python_source(code, files=self.files)
 
     # --- 阶段3：代码审查员的工具实现 -------------------------------------
     def run_linter(self, path: str) -> str:
@@ -103,11 +104,14 @@ class Workspace:
             "d = tempfile.mkdtemp()\n"
             "for name in ['a.jpg','b.pdf','c.txt','d.mp3','readme']:\n"
             "    open(os.path.join(d, name), 'w').close()\n"
-            "sys.argv = ['script', d]\n"
+            f"sys.argv = [{path!r}, d]\n"
             "print('SMOKE_TEST target dir:', d)\n"
-            + self.files[path]
+            f"runpy.run_path({path!r}, run_name='__main__')\n"
         )
-        result, returncode = _run_python(harness)
+        # Keep the harness and submitted module as separate files.  Concatenating
+        # the harness before the module used to make a valid `from __future__`
+        # import fail solely because it was no longer at the start of its file.
+        result, returncode = _run_python(harness, files={path: self.files[path]})
         # 以退出码为准：超时（returncode 为 None）和非零退出都不能算 PASS；
         # Traceback/Error 子串检查作为额外防线保留。
         ok = returncode == 0 and "Traceback" not in result and "Error" not in result
@@ -140,11 +144,48 @@ class Workspace:
             % (len(funcs), total_branches, depth(tree))
         )
 
+    def inject_review_fault(self, path: str) -> dict:
+        """Insert one real, auditable lint defect for the rollback campaign.
 
-def _run_python(source: str, timeout: int = 10) -> tuple:
+        The normal demo never calls this method.  The strict acceptance runner
+        uses it once, after the first implementation submission, so that the
+        reviewer must observe a genuine tool failure and the implementation
+        Agent must remove the defect before approval.  This is fault injection,
+        not a fabricated linter response: ``run_linter`` inspects the mutated
+        source normally.
+        """
+        if path not in self.files:
+            raise KeyError(f"cannot inject review fault: {path!r} is not in the workspace")
+        marker = "EXPERIMENT_10_1_REVIEW_CANARY"
+        before = self.files[path]
+        if marker in before:
+            raise ValueError(f"review fault marker already exists in {path!r}")
+        # A tab plus trailing spaces is valid Python inside a comment, but it
+        # deterministically violates two independent checks in run_linter.
+        after = before.rstrip("\n") + f"\n\t# {marker}  \n"
+        self.files[path] = after
+        return {
+            "path": path,
+            "kind": "tab_and_trailing_whitespace_comment",
+            "marker": marker,
+            "before_sha256": hashlib.sha256(before.encode()).hexdigest(),
+            "after_sha256": hashlib.sha256(after.encode()).hexdigest(),
+            "source_changed": before != after,
+        }
+
+
+def _run_python(source: str, timeout: int = 10, files: Dict[str, str] | None = None) -> tuple:
     """执行源码，返回 (合并后的输出, 退出码)；超时时退出码为 None。"""
     with tempfile.TemporaryDirectory() as tmp:
-        script = os.path.join(tmp, "snippet.py")
+        for name, content in (files or {}).items():
+            relative = os.path.normpath(name)
+            if os.path.isabs(relative) or relative == ".." or relative.startswith(".." + os.sep):
+                return f"工作区文件路径越界：{name}", 1
+            destination = os.path.join(tmp, relative)
+            os.makedirs(os.path.dirname(destination), exist_ok=True)
+            with open(destination, "w", encoding="utf-8") as fh:
+                fh.write(content)
+        script = os.path.join(tmp, "_workspace_runner.py")
         with open(script, "w", encoding="utf-8") as fh:
             fh.write(source)
         try:
@@ -168,9 +209,11 @@ def _run_python(source: str, timeout: int = 10) -> tuple:
         return "\n".join(parts), proc.returncode
 
 
-def _run_python_source(source: str, timeout: int = 10) -> str:
+def _run_python_source(
+    source: str, timeout: int = 10, files: Dict[str, str] | None = None
+) -> str:
     """把源码写到临时文件并用子进程执行，返回合并后的输出。"""
-    return _run_python(source, timeout)[0]
+    return _run_python(source, timeout, files=files)[0]
 
 
 # ----------------------------------------------------------------------------

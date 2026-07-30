@@ -1,0 +1,78 @@
+{
+  "signature": "cf2615eae16fef7908ab01dfe2e6e10aae2a3a0e7513e5c6c6f876fd4aa1e176",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议与原型统计数据紧密对应，明确指出了案件事实与原型定义特征的匹配程度，并提供了原型的刑期统计区间。同时，建议中提到了自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，这显示了对统计数据局限性的认识，并提醒了不确定性。此外，建议包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-0317ae92dc821b04",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:42:58.706662+00:00",
+    "latency_ms": 3374.257,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：经审理查明，被告人赵某经营货车运输业务，雇佣靳某为货车司机。2015年1月5日15时许靳某提出辞职，在广宗县冯家寨乡孙庄路口与被告人赵某交接货车时，因靳某直接从运费中扣除工资与赵某发生争执，被告人赵某持撬棍将靳某右臂打伤，致其右侧尺骨鹰嘴骨折。经鉴定，其伤情为轻伤二级。2015年2月15日，被告人赵某主动投案自首并赔偿被害人靳某经济损失，取得谅解。\r\n上述事实被告人赵某在开庭审理中无异议，并有被告人赵某供述；被害人靳某陈述；证人张某、李某证言；书证，户籍证明、到案经过、轻伤案件和解书、赔偿协议书、谅解书、收据、办案说明、鉴定意见、现场勘查照片、情况说明等证据予以证实，足以认定。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：12个月\n匹配原型：{\"prototype_id\": \"故意伤害罪-prototype-1\", \"charge\": \"故意伤害罪\", \"prototype_size\": 100, \"sentence_months\": {\"median\": 8.0, \"q25\": 6.0, \"q75\": 12.0, \"min\": 3.0, \"max\": 36.0}, \"defining_features\": [{\"feature\": \"cat:injury_result=轻伤\", \"z\": 1.5568442135769593}, {\"feature\": \"num:minor_injury_count\", \"z\": 1.4868344442139674}, {\"feature\": \"num:crime_amount\", \"z\": -1.1597831108065333}, {\"feature\": \"cat:injury_degree=轻伤二级\", \"z\": 1.1511080895758883}, {\"feature\": \"cat:criminal_cause=琐事争执\", \"z\": 1.0373867906329766}, {\"feature\": \"bool:mutual_fight\", \"z\": 0.8262918864452846}, {\"feature\": \"cat:criminal_motive=琐事\", \"z\": 0.7564756876813216}, {\"feature\": \"num:crime_count\", \"z\": -0.7017513783529625}], \"match_distance\": 0.15484050438307592}\n生成建议：匹配训练集原型为“故意伤害罪-prototype-1”（样本量100），匹配依据为案件关键因素与原型定义特征高度重合，包括injury_result=轻伤、minor_injury_count=1.0、injury_degree=轻伤二级、criminal_motive=琐事等（对应原型中z值较高的特征）。该原型刑期统计区间：中位数8个月，四分位区间6-12个月（q25=6.0，q75=12.0），范围3-36个月。需注意，案件中自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，可能导致实际刑期与统计区间存在差异，不确定性较高。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6530efb1450ac9da916",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议与原型统计数据紧密对应，明确指出了案件事实与原型定义特征的匹配程度，并提供了原型的刑期统计区间。同时，建议中提到了自首、全额赔偿、被害人谅解、认罪认罚等从轻情节未被纳入原型定义特征，这显示了对统计数据局限性的认识，并提醒了不确定性。此外，建议包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386579,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 155,
+        "prompt_tokens": 891,
+        "total_tokens": 1046,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 155,
+      "prompt_tokens": 891,
+      "total_tokens": 1046,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6530efb1450ac9da916"
+  }
+}

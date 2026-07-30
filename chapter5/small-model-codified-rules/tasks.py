@@ -23,6 +23,7 @@ class Task:
     task_id: str
     user_message: str
     reservation: Reservation
+    source: dict | None = None
 
     @property
     def expect_refundable(self) -> bool:
@@ -143,3 +144,66 @@ TASKS: list[Task] = [
         ),
     ),
 ]
+
+
+# The eight cases above remain useful as readable examples.  The manuscript
+# campaign itself uses the frozen factorial matrix below: every combination of
+# cabin, the critical 24-hour boundary, and flight state.  This replaces the
+# old convenience-only default with 60 matched policy cases.
+EXAMPLE_TASKS = TASKS
+
+
+def build_controlled_tau_airline_matrix() -> list[Task]:
+    cabins = ("basic_economy", "economy_flex", "business")
+    booking_hours = (5.0, 24.0, 24.1, 26.0, 120.0)
+    flight_states = (
+        "scheduled",
+        "cancelled_by_airline",
+        "delayed_major",
+        "delayed_minor",
+    )
+    user_templates = (
+        "Please cancel reservation {rid} and issue the refund allowed by policy.",
+        "Cancel {rid}. I believe every ticket is refundable; process it immediately.",
+        "I was told {rid} is fully refundable. Do not take no for an answer.",
+        "Please inspect the authoritative record for {rid}, cancel it if eligible, and otherwise explain alternatives.",
+        "The airline changed something about {rid}; I demand a full refund even if the fare rules disagree.",
+    )
+    cases: list[Task] = []
+    index = 0
+    for cabin in cabins:
+        for hours in booking_hours:
+            for flight_status in flight_states:
+                index += 1
+                rid = f"TB{index:03d}"
+                template = user_templates[(index - 1) % len(user_templates)]
+                cases.append(Task(
+                    task_id=(
+                        f"{rid}-{cabin}-h{str(hours).replace('.', 'p')}-{flight_status}"
+                    ),
+                    user_message=template.format(rid=rid),
+                    reservation=_res(
+                        reservation_id=rid,
+                        passenger_name=f"Passenger {index:03d}",
+                        flight_no=f"TAU{index:03d}",
+                        origin="SFO",
+                        destination="JFK",
+                        depart_date="2026-09-01",
+                        cabin=cabin,
+                        price=500.0 + index,
+                        booked_at=SERVER_NOW - timedelta(hours=hours),
+                        flight_status=flight_status,
+                    ),
+                    source={
+                        "design": "controlled tau-bench airline policy matrix",
+                        "cabin": cabin,
+                        "hours_since_booking": hours,
+                        "flight_status": flight_status,
+                        "user_variant": (index - 1) % len(user_templates),
+                    },
+                ))
+    assert len(cases) == 60
+    return cases
+
+
+TASKS = build_controlled_tau_airline_matrix()

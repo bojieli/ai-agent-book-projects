@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-9",
+  "run_id": "20260729T212542Z-5_9-live-browser",
+  "started_at_utc": "2026-07-29T21:25:42.619262+00:00",
+  "completed_at_utc": "2026-07-29T21:25:47.868053+00:00",
+  "provider": "ark",
+  "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+  "model": "doubao-seed-1-6-flash-250615",
+  "temperature": 0,
+  "source": {
+    "manuscript": "book/chapter5.md#实验-5-9",
+    "campaign_sha256": "f1110f5b6b07ea6e8ba4a7a5270fcc85f25752fdc01056bb73f1abea9ee4a8cf"
+  },
+  "input": {
+    "request": "我想订一张去北京的机票",
+    "intended_submission": {
+      "departure_city": "上海",
+      "departure_date": "2026-08-11",
+      "trip_type": "round_trip",
+      "return_date": "2026-08-18"
+    }
+  },
+  "static_validation": {
+    "出发城市(文本输入)": true,
+    "出发日期(日期选择器)": true,
+    "旅行类型(单选:单程)": true,
+    "旅行类型(单选:往返)": true,
+    "返程日期(日期选择器)": true,
+    "返程字段级联逻辑(仅往返显示)": true
+  },
+  "browser_execution": {
+    "browser": "Chromium",
+    "browser_version": "139.0.7258.5",
+    "initial_return_visible": false,
+    "after_round_trip_visible": true,
+    "submit_count": 1,
+    "submitted_json": {
+      "departure_city": "上海",
+      "departure_date": "2026-08-11",
+      "trip_type": "round_trip",
+      "return_date": "2026-08-18"
+    }
+  },
+  "agent_continuation": "订上海至北京往返机票，去程日期2026-08-11，返程日期2026-08-18。正在为您检索航班...",
+  "usage": {
+    "calls": 2,
+    "prompt_tokens": 690,
+    "completion_tokens": 793,
+    "total_tokens": 1483,
+    "latency_s": 4.516
+  },
+  "artifacts": {
+    "html": {
+      "path": "generated_form.html",
+      "sha256": "676e39fc18181aeb8f2b851e65df281aef56c8e64e49f447b9ac928788ebadcf"
+    },
+    "screenshot": {
+      "path": "browser-submitted.png",
+      "sha256": "d404555c7699e8bc4474791dd147f0beb7222dfc36fce53472c479ba97b91bdd"
+    },
+    "receipts": {
+      "path": "receipts.json",
+      "sha256": "38d5160495f123f4a3847d11bf8ff8a16e0e2236b80c3d086f6d7691baac2532"
+    }
+  },
+  "acceptance_gates": {
+    "live_model_generated_complete_html": true,
+    "all_manuscript_fields_present": true,
+    "real_chromium_executed_javascript": true,
+    "return_date_hidden_before_round_trip": true,
+    "return_date_visible_after_round_trip": true,
+    "user_submitted_exactly_once": true,
+    "browser_submission_contains_all_values": true,
+    "agent_consumed_exact_browser_payload": true,
+    "agent_continued_booking_task": true,
+    "raw_provider_receipts_complete": true,
+    "rendered_browser_screenshot_retained": true
+  },
+  "official_complete": true,
+  "errors_during_repair": []
+}

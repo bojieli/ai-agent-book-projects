@@ -5,7 +5,23 @@ from typing import Dict, Any, Optional
 from tenacity import retry, stop_after_attempt, wait_exponential
 import openai
 from config import Config
-from models import TestCase, EvaluationResult
+from models import (
+    TestCase,
+    EvaluationResult,
+    RubricDimensionResult,
+    RubricGrade,
+    HallucinationResult,
+)
+
+
+DIMENSIONS = ("precision", "recall", "reasoning", "proactivity")
+CORE_SUCCESS_DIMENSIONS = ("precision", "recall", "reasoning")
+GRADE_BY_SCORE = {
+    4: RubricGrade.EXCELLENT,
+    3: RubricGrade.GOOD,
+    2: RubricGrade.PASS,
+    1: RubricGrade.FAIL,
+}
 
 
 class LLMEvaluator:
@@ -36,11 +52,23 @@ class LLMEvaluator:
     )
     def _call_llm(self, messages: list) -> str:
         """Call the LLM with retry logic."""
+        model = self.config["model"]
+        # Current reasoning models reject arbitrary temperatures.
+        model_lower = model.lower()
+        if "kimi-k2.5" in model_lower:
+            temperature = 0.6
+        else:
+            temperature = 1 if any(x in model_lower for x in ("gpt-5", "kimi-k3")) else 0
+        kwargs = {}
+        if "kimi-k2.5" in model_lower:
+            kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
         response = self.client.chat.completions.create(
-            model=self.config["model"],
+            model=model,
             messages=messages,
-            temperature=0,  # Use deterministic evaluation
-            timeout=Config.REQUEST_TIMEOUT
+            temperature=temperature,
+            timeout=Config.REQUEST_TIMEOUT,
+            response_format={"type": "json_object"},
+            **kwargs,
         )
         return response.choices[0].message.content
     
@@ -71,17 +99,11 @@ class LLMEvaluator:
             {
                 "role": "system",
                 "content": (
-                    "You are an expert evaluator for AI agent memory systems. "
-                    "Your task is to evaluate how well an agent's response demonstrates "
-                    "proper memory recall and utilization based on given criteria. "
-                    "Provide a nuanced continuous reward score from 0.0 to 1.0, where: \n"
-                    "- 0.0-0.2: Complete failure, no relevant memory recall\n"
-                    "- 0.2-0.4: Poor performance, minimal memory utilization without meeting any important requirements\n"
-                    "- 0.4-0.6: Partial success, some memory recall but missing the most important requirements\n"
-                    "- 0.6-0.8: Good performance, most key requirements met but missing some key requirements or many details\n"
-                    "- 0.8-1.0: Excellent performance, comprehensive memory utilization with only minor missing details\n"
-                    "Be objective, thorough, and provide clear reasoning. "
-                    "Output your evaluation as a JSON object."
+                    "You are a strict evidence-grounded evaluator of AI memory agents. "
+                    "Score every rubric dimension independently using only the supplied "
+                    "conversation source. Cite short source/answer excerpts as evidence. "
+                    "Any material factual claim in the answer that is unsupported or "
+                    "contradicted by the source is a hallucination. Output JSON only."
                 )
             },
             {
@@ -91,8 +113,13 @@ class LLMEvaluator:
         ]
         
         try:
-            response = self._call_llm(messages)
-            return self._parse_evaluation_response(response, test_case.test_id)
+            last_result = None
+            for _attempt in range(Config.MAX_RETRIES):
+                response = self._call_llm(messages)
+                last_result = self._parse_evaluation_response(response, test_case.test_id)
+                if set(last_result.dimensions) == set(DIMENSIONS) and last_result.hallucination is not None:
+                    return last_result
+            return last_result
         except Exception as e:
             # Return failed evaluation on error
             return EvaluationResult(
@@ -110,9 +137,19 @@ class LLMEvaluator:
         extracted_memory: Optional[str]
     ) -> str:
         """Build the evaluation prompt for the LLM."""
+        histories = []
+        for history in test_case.conversation_histories:
+            lines = [f"[Conversation {history.conversation_id} at {history.timestamp}]"]
+            lines.extend(f"{m.role.value}: {m.content}" for m in history.messages)
+            histories.append("\n".join(lines))
+        source = "\n\n".join(histories)
+
         prompt = f"""Test Case: {test_case.title}
 Category: {test_case.category}
 Description: {test_case.description}
+
+AUTHORITATIVE CONVERSATION SOURCE:
+{source}
 
 User Question: {test_case.user_question}
 
@@ -121,7 +158,7 @@ Agent Response:
 
 """
         if extracted_memory:
-            prompt += f"""Extracted Memory (if provided by agent):
+            prompt += f"""Extracted Memory (agent trace; NOT an authoritative source):
 {extracted_memory}
 
 """
@@ -134,12 +171,31 @@ Agent Response:
 Expected Behavior: {test_case.expected_behavior}
 """
         prompt += """
-Please evaluate the agent's response and assign a continuous reward score (0.0-1.0) based on:
-1. How well does the response demonstrate memory recall from conversation histories?
-2. What proportion of required information is present and correctly utilized?
-3. How comprehensive and accurate is the memory integration?
-4. Are there partial successes that deserve partial credit?
-5. For {test_case.category}:"""
+
+Use this four-grade scale for EACH of the first four dimensions:
+- 4 / excellent: fully meets the concrete criterion, with no material defect.
+- 3 / good: meets the core criterion; only a minor non-critical omission/clarity issue.
+- 2 / pass: partly meets the core criterion but has a material omission or weak linkage.
+- 1 / fail: misses or contradicts the core criterion.
+
+Dimension-specific criteria, examples, and boundaries:
+1. precision: Are all stated names, numbers, dates, ownership and relationships exact?
+   Excellent example: exact requested account and no confusion with a nearby savings account.
+   Boundary: paraphrase is allowed; a wrong digit, date, person, or unsupported specificity is not.
+2. recall: Is all information necessary for the question and evaluation criteria present?
+   Excellent example: answers the direct fact and a clearly relevant setup fact requested by the criteria.
+   Boundary: do not penalize omission of unrelated history; do penalize missing a required risk or qualifier.
+3. reasoning: Are cross-session links, temporal updates, ownership, ambiguity and conflicts resolved correctly?
+   Excellent example: links a daughter to that daughter's doctor across separate conversations.
+   Boundary: if several people/items plausibly match, asking a targeted clarification is correct.
+4. proactivity: Does it add useful, safe next-step help or risk warnings when appropriate?
+   Excellent example: includes the remembered routing number when direct-deposit setup makes it useful.
+   Boundary: concise direct answers may still be good/excellent when no additional action is useful;
+   irrelevant advice or invented detail is not proactivity.
+5. hallucination (VETO): mark detected=true if any material factual claim is absent from or
+   contradicted by the authoritative source. A detected hallucination forces the final reward to zero.
+   Boundary: general non-factual advice is allowed if clearly presented as advice, not remembered fact.
+"""
         
         if test_case.category == "layer1":
             prompt += """
@@ -158,25 +214,22 @@ Please evaluate the agent's response and assign a continuous reward score (0.0-1
         
         prompt += """
 
-Please provide your evaluation in the following JSON format:
+Return exactly this JSON shape (use evidence excerpts and name any applied boundary):
 {
-    "reward": 0.0-1.0,
-    "reasoning": "Detailed explanation of your reward score assignment",
-    "required_info_found": {
-        "info_piece_1": 0.0-1.0,
-        "info_piece_2": 0.0-1.0,
-        ...
+    "dimensions": {
+      "precision": {"score": 1-4, "grade": "fail|pass|good|excellent", "reasoning": "...", "evidence": ["..."], "boundary_case": null},
+      "recall": {"score": 1-4, "grade": "fail|pass|good|excellent", "reasoning": "...", "evidence": ["..."], "boundary_case": null},
+      "reasoning": {"score": 1-4, "grade": "fail|pass|good|excellent", "reasoning": "...", "evidence": ["..."], "boundary_case": null},
+      "proactivity": {"score": 1-4, "grade": "fail|pass|good|excellent", "reasoning": "...", "evidence": ["..."], "boundary_case": null}
     },
-    "partial_credit_details": "Explain any partial credit awarded",
-    "suggestions": "Optional suggestions for improvement"
+    "hallucination": {"detected": false, "claims": [], "evidence": ["..."], "reasoning": "..."},
+    "overall_reasoning": "...",
+    "required_info_found": {
+        "concrete information item": 0.0
+    },
+    "suggestions": "..."
 }
-
-IMPORTANT: 
-- Assign a continuous reward score from 0.0 to 1.0 based on the quality of memory recall
-- For required_info_found, assign partial scores (0.0-1.0) for each piece
-- Consider partial credit for incomplete but relevant responses
-- Focus on semantic understanding rather than exact string matching
-- Reward progressive improvement and partial successes"""
+Do not supply an overall numeric score; the evaluator computes it from the rubric."""
         
         return prompt
     
@@ -196,47 +249,74 @@ IMPORTANT:
             
             data = json.loads(json_str.strip())
             
-            # Handle both new reward format and old score/passed format for compatibility
-            reward = float(data.get("reward", data.get("score", 0.0)))
-            
-            # Convert old boolean required_info_found to float scores if needed
+            dimensions_data = data.get("dimensions")
+            if not isinstance(dimensions_data, dict):
+                raise ValueError("Missing structured rubric dimensions")
+            dimensions: Dict[str, RubricDimensionResult] = {}
+            for name in DIMENSIONS:
+                raw = dimensions_data.get(name)
+                if not isinstance(raw, dict):
+                    raise ValueError(f"Missing rubric dimension: {name}")
+                score = int(raw["score"])
+                if score not in GRADE_BY_SCORE:
+                    raise ValueError(f"Invalid score for {name}: {score}")
+                # The numeric grade is authoritative, preventing inconsistent model output.
+                dimensions[name] = RubricDimensionResult(
+                    score=score,
+                    grade=GRADE_BY_SCORE[score],
+                    reasoning=str(raw.get("reasoning", "")),
+                    evidence=[str(v) for v in raw.get("evidence", [])],
+                    boundary_case=raw.get("boundary_case"),
+                )
+
+            hallucination_raw = data.get("hallucination")
+            if not isinstance(hallucination_raw, dict) or "detected" not in hallucination_raw:
+                raise ValueError("Missing hallucination veto verdict")
+            hallucination = HallucinationResult(
+                detected=bool(hallucination_raw["detected"]),
+                claims=[str(v) for v in hallucination_raw.get("claims", [])],
+                evidence=[str(v) for v in hallucination_raw.get("evidence", [])],
+                reasoning=str(hallucination_raw.get("reasoning", "")),
+            )
+
+            # Map 1/2/3/4 to 0, 1/3, 2/3, 1. Hallucination is a hard veto.
+            reward = round(
+                sum((d.score - 1) / 3 for d in dimensions.values()) / len(DIMENSIONS),
+                6,
+            )
+            veto_applied = hallucination.detected
+            if veto_applied:
+                reward = 0.0
+
             required_info = data.get("required_info_found", {})
             if required_info and isinstance(next(iter(required_info.values()), None), bool):
-                # Convert boolean values to float (True=1.0, False=0.0)
                 required_info = {k: 1.0 if v else 0.0 for k, v in required_info.items()}
-            
-            # Determine passed status based on reward if not explicitly provided
-            passed = data.get("passed")
-            if passed is None:
-                passed = reward >= 0.8  # Default threshold
+            required_info = {str(k): max(0.0, min(1.0, float(v))) for k, v in required_info.items()}
             
             return EvaluationResult(
                 test_id=test_id,
                 reward=reward,
-                passed=bool(passed),  # Keep for backward compatibility
-                reasoning=data.get("reasoning", "No reasoning provided"),
+                # Task success is stricter than partial-credit reward: the answer
+                # must be at least "good" on every core correctness/completeness
+                # dimension. Proactivity remains diagnostic because a concise,
+                # fully correct direct answer can legitimately need no extra help.
+                passed=(
+                    not veto_applied
+                    and all(dimensions[name].score >= 3 for name in CORE_SUCCESS_DIMENSIONS)
+                ),
+                reasoning=data.get("overall_reasoning", "No overall reasoning provided"),
                 required_info_found=required_info,
-                suggestions=data.get("suggestions")
+                suggestions=data.get("suggestions"),
+                dimensions=dimensions,
+                hallucination=hallucination,
+                veto_applied=veto_applied,
             )
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
-            # Fallback parsing if JSON is malformed
-            # Try to extract reward/score from the response text
-            import re
-            reward_match = re.search(r'"reward"\s*:\s*([0-9.]+)', response)
-            score_match = re.search(r'"score"\s*:\s*([0-9.]+)', response)
-            
-            if reward_match:
-                reward = float(reward_match.group(1))
-            elif score_match:
-                reward = float(score_match.group(1))
-            else:
-                # Default to 0.5 if we can't parse any score
-                reward = 0.5
-            
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError) as e:
+            # Invalid judge output must never receive accidental partial credit.
             return EvaluationResult(
                 test_id=test_id,
-                reward=reward,
-                passed=reward >= 0.8,  # Default threshold
+                reward=0.0,
+                passed=False,
                 reasoning=f"Evaluation response parsing failed: {str(e)}. Raw response: {response[:500]}",
                 required_info_found={},
                 suggestions="Consider reviewing the evaluation format"
@@ -322,13 +402,21 @@ class BatchEvaluator:
                 report += "Cross-Session Synthesis & Proactive Assistance\n"
             report += "-" * 60 + "\n"
             
-            # Calculate pass count based on reward threshold (0.8)
+            # Structured rubric pass state already includes the hallucination veto.
             passed = sum(1 for _, result in items if (result.passed if result.passed is not None else result.reward >= 0.8))
             total = len(items)
             avg_reward = sum(result.reward for _, result in items) / total if total > 0 else 0
             
-            report += f"Pass Rate (≥0.8): {passed}/{total} ({100*passed/total:.1f}%)\n"
+            report += f"Structured Rubric Pass Rate: {passed}/{total} ({100*passed/total:.1f}%)\n"
             report += f"Average Reward: {avg_reward:.3f}/1.000\n\n"
+
+            dimension_names = ("precision", "recall", "reasoning", "proactivity")
+            for name in dimension_names:
+                scores = [result.dimensions[name].score for _, result in items if name in result.dimensions]
+                if scores:
+                    report += f"Average {name} grade: {sum(scores) / len(scores):.2f}/4.00\n"
+            vetoes = sum(bool(result.veto_applied) for _, result in items)
+            report += f"Hallucination vetoes: {vetoes}/{total}\n\n"
             
             # Individual test results
             for test_case, result in items:
@@ -352,7 +440,8 @@ class BatchEvaluator:
         report += f"Total Tests: {total_tests}\n"
         report += f"Passed: {total_passed}\n"
         report += f"Failed: {total_tests - total_passed}\n"
-        report += f"Pass Rate (≥0.8): {100*total_passed/total_tests:.1f}%\n"
+        report += f"Structured Rubric Pass Rate: {100*total_passed/total_tests:.1f}%\n"
         report += f"Average Reward: {overall_avg:.3f}/1.000\n"
+        report += f"Hallucination Vetoes: {sum(bool(r.veto_applied) for r in all_results)}\n"
         
         return report

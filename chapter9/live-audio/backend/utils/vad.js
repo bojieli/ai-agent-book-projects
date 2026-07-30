@@ -198,6 +198,8 @@ class VoiceActivityDetector {
                 type: 'speech_end',
                 audioData: this.speechBuffer,
                 duration: speechDuration,
+                observedSilenceDuration: silenceDuration,
+                endpointThreshold: this.maxSilenceDuration,
                 timestamp: currentTime
               });
             }
@@ -301,4 +303,4 @@ class VoiceActivityDetector {
   }
 }
 
-module.exports = VoiceActivityDetector; 
+module.exports = VoiceActivityDetector;

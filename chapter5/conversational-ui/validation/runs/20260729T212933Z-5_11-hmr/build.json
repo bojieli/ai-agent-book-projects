@@ -1,0 +1,6 @@
+{
+  "returncode": 0,
+  "latency_s": 0.819,
+  "stdout": "\n> conversational-ui-frontend@0.1.0 build\n> vite build\n\nvite v6.4.3 building for production...\ntransforming...\n✓ 27 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.42 kB │ gzip:  0.31 kB\ndist/assets/index-CCn-3TaK.css    1.35 kB │ gzip:  0.56 kB\ndist/assets/index-CvgOOKX3.js   145.07 kB │ gzip: 46.92 kB\n✓ built in 405ms\n",
+  "stderr": ""
+}

@@ -1,0 +1,66 @@
+{
+  "signature": "d4f8155173520ed8b869040026d6118529b486dbaaf1ee52484997c03b51edb9",
+  "parsed": {
+    "narration": "现在来到整篇论文最核心的部分。前面我们说过，Transformer 抛弃了循环和卷积，那它究竟靠什么建模序列之间的关系？答案就是屏幕中央这个公式：Scaled Dot-Product Attention。请大家看这里：Q、K、V 是三个矩阵，先用 Q 乘 K 的转置，算出各位置之间的相似度；再除以根号 d_k 这个缩放因子。为什么要缩放？因为 d_k 较大时点积的数值会很大，softmax 会进入梯度极小的区域，训练就困难了，所以用它把数值压回合理范围。最后再乘上 V，得到加权求和的输出。相比加性注意力，它只做矩阵乘法，更快也更省空间。理解了这个公式，下一页的多头注意力就是它的并行扩展。",
+    "visual_references": [
+      "标题 Scaled Dot-Product Attention",
+      "核心公式 softmax(QK^T/√d_k)V",
+      "公式中的缩放因子 1/√d_k"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 5/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n## Attention Mechanism\n\n### Scaled Dot-Product Attention\n$$\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$\n\n- $Q$ (queries), $K$ (keys), $V$ (values) are matrices\n- Scaling by $\\frac{1}{\\sqrt{d_k}}$ prevents gradients from becoming too small\n- Faster and more space-efficient than additive attention\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6a7f0e567e9c2404b6b5e9",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"现在来到整篇论文最核心的部分。前面我们说过，Transformer 抛弃了循环和卷积，那它究竟靠什么建模序列之间的关系？答案就是屏幕中央这个公式：Scaled Dot-Product Attention。请大家看这里：Q、K、V 是三个矩阵，先用 Q 乘 K 的转置，算出各位置之间的相似度；再除以根号 d_k 这个缩放因子。为什么要缩放？因为 d_k 较大时点积的数值会很大，softmax 会进入梯度极小的区域，训练就困难了，所以用它把数值压回合理范围。最后再乘上 V，得到加权求和的输出。相比加性注意力，它只做矩阵乘法，更快也更省空间。理解了这个公式，下一页的多头注意力就是它的并行扩展。\",\"visual_references\":[\"标题 Scaled Dot-Product Attention\",\"核心公式 softmax(QK^T/√d_k)V\",\"公式中的缩放因子 1/√d_k\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "The user wants me to write a narration for slide 5/12 of \"Attention Is All You Need\" paper explanation. The slide is about Scaled Dot-Product Attention.\n\nRequirements:\n1. 180-240 Chinese characters\n2. Guided narrative explaining \"why\" and relationship to previous/next pages\n3. Point to visible elements on screen (title, formula)\n4. No fabricated numbers/conclusions\n5. Match page order (5/12, so we're in the middle - previous pages likely introduced attention concept, this is the core mechanism)\n6. Return only JSON with narration and visual_references\n\nLet me draft the narration:\n\nWe're at page 5 of 12. Previous pages likely covered the Transformer architecture overview or motivation. This page introduces the core attention mechanism. Next pages likely cover multi-head attention.\n\nDraft:\n\"现在来到整篇论文最核心的一页——注意力机制本身。前面我们说了 Transformer 完全抛弃循环和卷积，那它靠什么建模序列关系？答案就是屏幕中央这个公式：Scaled Dot-Product Attention。请大家看这个公式：Q、K、V 三个矩阵，先把查询 Q 和键 K 的转置做矩阵乘法，得到每对位置之间的相似度；再除以一个缩放因子根号 d_k。为什么要缩放？因为维度 d_k 较大时，点积数值会很大，softmax 会进入梯度极小的区域，训练就困难了，所以用根号 d_k 把数值压回合理范围。最后乘上 V，得到加权的值。相比加性注意力，它只需矩阵乘法，更快也更省空间。掌握这个公式，下一页的多头注意力就是它的并行扩展。\"\n\nLet me count characters... This should be around 220-240. Let me check.\n\nLet me count roughly:\n\"现在来到整篇论文最核心的一页——注意力机制本身。\" ~23\n\"前面我们说了 Transformer 完全抛弃循环和卷积，那它靠什么建模序列关系？答案就是屏幕中央这个公式：Scaled Dot-Product Attention。\" ~55\n\"请大家看这个公式：Q、K、V 三个矩阵，先把查询 Q 和键 K 的转置做矩阵乘法，得到每对位置之间的相似度；\" ~48\n\"再除以一个缩放因子根号 d_k。为什么要缩放？因为维度 d_k 较大时，点积数值会很大，softmax 会进入梯度极小的区域，训练就困难了，所以用根号 d_k 把数值压回合理范围。\" ~73\n\"最后乘上 V，得到加权的值。相比加性注意力，它只需矩阵乘法，更快也更省空间。掌握这个公式，下一页的多头注意力就是它的并行扩展。\" ~57\n\nTotal roughly 256, slightly over. Let me trim.\n\nRevised:\n\"现在来到整篇论文最核心的部分。前面说 Transformer 抛弃循环和卷积，那它靠什么建模序列关系？答案就是屏幕上这个公式：Scaled Dot-Product Attention。请大家看公式：Q、K、V 三个矩阵，先用 Q 乘 K 的转置，算出各位置间的相似度；再除以根号 d_k 这个缩放因子。为什么要缩放？因为 d_k 较大时点积数值会很大，softmax 会进入梯度极小的区域，让训练变难，所以用它把数值压回合理范围。最后再乘 V，得到加权求和的结果。相比加性注意力，它只做矩阵乘法，更快也更省空间。理解了这个公式，下一页的多头注意力就是它的并行扩展。\"\n\nCount: approximately 230 characters. Good.\n\nVisual references: 公式 Attention(Q,K,V) = softmax(QK^T/√d_k)V, 缩放因子 1/√d_k, 标题 \"Scaled Dot-Product Attention\"\n\nJSON format:\n{\"narration\":\"...\",\"visual_references\":[\"标题 Scaled Dot-Product Attention\",\"核心公式 softmax(QK^T/√d_k)V\",\"缩放因子 1/√d_k\"]}"
+          }
+        }
+      ],
+      "created": 1785364239,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 1055,
+        "prompt_tokens": 392,
+        "total_tokens": 1447,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 835,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 32866.439
+  }
+}

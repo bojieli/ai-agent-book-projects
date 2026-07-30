@@ -17,6 +17,18 @@ This experiment uses a single "Coding Agent" to chain together three phases:
 | 2 Code Implementation | Software Engineer | Write high-quality Python based on confirmed requirements | `write_file` / `read_file` / `execute_code` / `submit_for_review` | `submit_for_review` → Phase 3 |
 | 3 Code Review | Code Reviewer | Critically evaluate quality | `run_linter` / `run_tests` / `analyze_complexity` / `request_revision` / `approve_code` | `request_revision` → **fallback to Phase 2**; `approve_code` → Complete |
 
+## Canonical real-provider result
+
+The strict Kimi K3 campaign is complete: [the v3 manifest](runs/exp10-1-kimi-k3-20260730-v3/manifest.json)
+records 30 real Moonshot calls, all three roles, the exact transition sequence
+requirements → implementation → review → implementation → review → approval,
+one controlled source-level lint defect, its real rejection and repair, clean final
+linter/smoke/complexity results, 171,001 total tokens, and all 13 acceptance checks
+passing. All seven runtime source hashes, 30 raw provider-receipt hashes, and the
+final workspace-file hash currently recompute with zero mismatches; credentials
+are absent from the retained receipts. The incomplete v1/v2 attempts remain as
+negative provenance and are not acceptance evidence.
+
 ## Architecture
 
 ```text
@@ -216,6 +228,15 @@ Two key points:
 | 1 需求澄清 | 需求分析师 | 只提问确认、**不写代码** | `ask_clarifying_question` / `save_requirement` / `complete_requirements_analysis` | `complete_requirements_analysis` → 阶段2 |
 | 2 代码实现 | 软件工程师 | 按已确认需求写高质量 Python | `write_file` / `read_file` / `execute_code` / `submit_for_review` | `submit_for_review` → 阶段3 |
 | 3 代码审查 | 代码审查员 | 批判性把关质量 | `run_linter` / `run_tests` / `analyze_complexity` / `request_revision` / `approve_code` | `request_revision` → **回退阶段2**；`approve_code` → 完成 |
+
+## 正式真实 API 结果
+
+严格 Kimi K3 campaign 已完整通过：[v3 manifest](runs/exp10-1-kimi-k3-20260730-v3/manifest.json)
+保留 30 次真实 Moonshot 调用、三个角色、完整的“需求 → 实现 → 审查 → 回退实现 →
+再次审查 → 批准”转换链，以及一次受控源码 lint 缺陷的真实拒绝和修复。最终 linter、
+冒烟测试、复杂度检查均通过，共使用 171,001 token，13 项验收门禁全真。当前复算
+7 个运行时源码 hash、30 个原始 provider 回执 hash 和最终工作区文件 hash 均无偏差，
+回执不含凭据。v1/v2 的不完整尝试继续作为负面 provenance 保留，不计入验收。
 
 ## 架构
 

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "experiment": "10-1",
+  "frozen_at_utc": "2026-07-30T00:00:00Z",
+  "task": "帮我写一个整理下载文件夹的 Python 脚本。",
+  "backend": {
+    "provider": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3",
+    "api_style": "OpenAI-compatible chat.completions with tool calls",
+    "pricing": {
+      "as_of": "2026-07-29",
+      "currency": "CNY",
+      "uncached_input_per_million": 20.0,
+      "cached_input_per_million": 2.0,
+      "output_per_million": 100.0,
+      "source_url": "https://platform.kimi.com/docs/pricing/chat-k3.md"
+    }
+  },
+  "limits": {
+    "max_total_steps": 90,
+    "max_revisions": 3
+  },
+  "review_fault_injection": {
+    "enabled": true,
+    "timing": "after the first submit_for_review and before the reviewer starts",
+    "kind": "real tab plus trailing-whitespace defect in the submitted source",
+    "acceptance_rule": "the real linter must expose the defect, the reviewer must request revision, and final approved source must remove it"
+  },
+  "required_stages": ["requirements", "implementation", "review"],
+  "required_transitions": [
+    "to_implementation",
+    "to_review",
+    "request_revision",
+    "to_review",
+    "approve"
+  ],
+  "acceptance": {
+    "real_provider_receipts": true,
+    "shared_history_prefix_preserved": true,
+    "phase_specific_prompts_and_tools": true,
+    "review_failure_and_implementation_reentry": true,
+    "final_review_approval": true,
+    "real_linter_test_and_complexity_outputs": true,
+    "controlled_real_defect_injection_and_repair": true,
+    "credential_free_evidence": true
+  }
+}

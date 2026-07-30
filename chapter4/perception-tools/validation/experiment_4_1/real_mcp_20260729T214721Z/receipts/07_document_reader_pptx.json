@@ -1,0 +1,33 @@
+{
+  "case": "document_reader_pptx",
+  "tool": "document_reader",
+  "arguments": {
+    "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214721Z/fixtures/documents/sample.pptx"
+  },
+  "arguments_sha256": "0782c7eea687c42ddb1fa7b163dae33ccf66f7a0a4434bc68a038e77be143c72",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "format-aware-local-parser",
+    "origin": "local-process"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "sample.pptx",
+      "file_type": "pptx",
+      "slide_count": 1,
+      "text": "Experiment 4-1 PPTX\nPERCEPTION-EXPERIMENT-4-1-VERIFIED\n",
+      "text_length": 55
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214721Z/fixtures/documents/sample.pptx",
+      "file_type": ".pptx"
+    }
+  },
+  "elapsed_seconds": 0.008
+}

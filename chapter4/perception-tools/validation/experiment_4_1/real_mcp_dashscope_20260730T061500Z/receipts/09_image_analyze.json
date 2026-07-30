@@ -1,0 +1,27 @@
+{
+  "case": "image_analyze",
+  "tool": "image_analyze",
+  "arguments": {
+    "image_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_20260730T061500Z/fixtures/media/ocr-source.png",
+    "prompt": "Read the prominent text and describe the simple image."
+  },
+  "arguments_sha256": "dd2bd87b9a044bf8cd0aba9cb1cefaf0c350734fa3f29b7742a95c5885480c04",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": "ai_analysis_error",
+  "payload": {
+    "success": false,
+    "message": "AI image analysis failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': 'e4b53d6d-7d4d-970c-b178-3653d6dab211'}",
+    "metadata": {
+      "error_type": "ai_analysis_error"
+    }
+  },
+  "elapsed_seconds": 0.434
+}

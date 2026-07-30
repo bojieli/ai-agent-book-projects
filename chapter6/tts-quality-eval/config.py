@@ -101,8 +101,9 @@ PROVIDERS = {
         "voice=reference_id（留空用默认音色），走 /v1/tts；key 亦可用别名 FISHAUDIO_API_KEY。",
     ),
     "minimax": ProviderInfo(
-        "minimax", "Minimax", ("MINIMAX_API_KEY", "MINIMAX_GROUP_ID"),
-        "voice=voice_id，model 默认 speech-01-turbo；需额外 GroupId。",
+        "minimax", "Minimax", ("MINIMAX_API_KEY",),
+        "voice=voice_id，model 默认 speech-2.8-hd（另有 speech-2.8-turbo）；Bearer 鉴权，"
+        "MINIMAX_REGION 选 global(api.minimax.io)/cn(api.minimaxi.com)。",
     ),
     "doubao": ProviderInfo(
         "doubao", "豆包（火山引擎）", ("DOUBAO_APP_ID", "DOUBAO_ACCESS_TOKEN"),
@@ -113,13 +114,23 @@ PROVIDERS = {
 # 各 provider 的代表性配置（--providers 选中时，每个 provider 取这一条参与对比）。
 # 非 OpenAI 的 voice/model 取各家常见默认值，可在此按账号可用音色调整。
 PROVIDER_CONFIGS = {
-    "openai": TTSConfig("openai-alloy", provider="openai", model="tts-1", voice="alloy"),
+    # Reuse the identical default-grid identity so a cross-provider campaign
+    # can audit an existing OpenAI artifact instead of synthesizing it twice.
+    "openai": TTSConfig("tts1-alloy-1.0", provider="openai", model="tts-1", voice="alloy"),
     "elevenlabs": TTSConfig("elevenlabs-multi", provider="elevenlabs",
                             model="eleven_multilingual_v2", voice="21m00Tcm4TlvDq8ikWAM"),
-    "fishaudio": TTSConfig("fishaudio-default", provider="fishaudio",
-                          model="speech-1.5", voice=""),
-    "minimax": TTSConfig("minimax-turbo", provider="minimax",
-                        model="speech-01-turbo", voice="male-qn-qingse"),
+    # This immutable reference ID is the same real source voice used to build
+    # Chapter 9's checked-in 24-clip Fish S1 library.  Accounts that cannot
+    # access it can supply FISH_REFERENCE_ID explicitly; an empty/default
+    # voice would make the voice-consistency arm scientifically meaningless.
+    "fishaudio": TTSConfig(
+        "fishaudio-s1-clone",
+        provider="fishaudio",
+        model="s1",
+        voice=os.getenv("FISH_REFERENCE_ID", "6df3c1e14c9440e9ac978556536bf116"),
+    ),
+    "minimax": TTSConfig("minimax-hd", provider="minimax",
+                        model="speech-2.8-hd", voice="male-qn-qingse"),
     "doubao": TTSConfig("doubao-tts", provider="doubao",
                        model="volcano_tts", voice="zh_female_qingxin"),
 }
@@ -176,5 +187,17 @@ CORPUS = [
         text="太棒了！OpenAI 刚刚发布的新模型在 GAIA 基准测试上表现惊人！",
         challenge="专有名词 + 感叹情感",
         emotion="兴奋",
+    ),
+    Sample(
+        id="sad",
+        text="很遗憾地通知您，救援队今天仍然没有找到失踪的登山者。",
+        challenge="悲伤情感/低语速低语调",
+        emotion="悲伤",
+    ),
+    Sample(
+        id="question",
+        text="请问您希望把明天下午三点的预约改到星期五上午吗？",
+        challenge="对话文体/疑问句升调",
+        emotion="礼貌询问",
     ),
 ]

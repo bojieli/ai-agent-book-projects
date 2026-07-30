@@ -1,11 +1,10 @@
 """
-实验 9-2 演示：用 ReAct Agent + PineClaw Voice（模拟）完成一个电话任务。
+实验 9-2：用 ReAct Agent + PineClaw Voice 完成一个真实电话任务。
 
 运行：
     python demo.py
 
-它会真实调用 OpenAI：一边驱动上层 ReAct Agent 决策，一边在 make_phone_call 内部
-用 OpenAI 扮演被叫方（IVR + 客服）完成一整段多轮通话，最后打印：
+默认路径调用 OpenAI 驱动上层 ReAct 决策，并调用官方 pine-voice SDK 拨打真实电话：
   (a) Agent 的 ReAct 轨迹（思考 + 发起 make_phone_call）
   (b) 返回的结构化通话记录（多轮 transcript + 是否达成目标 + 关键字段）
   (c) Agent 基于通话结果向用户的最终汇报
@@ -39,7 +38,7 @@ def _print_record(rec: dict) -> None:
     print(f"  call_id        : {rec['call_id']}")
     print(f"  被叫号码       : {rec['phone_number']}")
     print(f"  状态           : {rec['status']}  |  是否达成目标: {rec['goal_achieved']}")
-    print(f"  通话时长(模拟) : {rec['duration_seconds']} 秒")
+    print(f"  通话时长       : {rec['duration_seconds']} 秒")
     print(f"  摘要           : {rec['summary']}")
     print("  关键字段(key_fields):")
     if rec["key_fields"]:
@@ -57,21 +56,20 @@ def _print_record(rec: dict) -> None:
 
 
 _DEFAULT_TASK = (
-    "帮我打电话给宽带客服（客服热线 10010），查询本月账单为什么多扣了 50 元，"
-    "要求对方解释清楚原因，如果是误扣就请他们处理。我的宽带账号是 hz-88231。"
+    "帮我打电话给诊所预约明天下午 3 点的牙科检查。"
 )
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="实验 9-2：把 PineClaw Voice（make_phone_call）当工具的 ReAct 电话 Agent。"
-                    "给一个自然语言电话任务，Agent 自行决定号码/目标/上下文并（模拟）拨打，"
+                    "给一个自然语言电话任务，Agent 自行决定号码/目标/上下文并真实拨打，"
                     "读取结构化通话记录后向用户汇报。",
         epilog="示例：\n"
-               "  python demo.py                       # 书中默认的宽带账单任务（需 OPENAI_API_KEY）\n"
+               "  python demo.py --phone +14155551234 # 使用你获准测试的真实号码\n"
                "  python demo.py --dry-run             # 完全离线：脚本化 ReAct 轨迹，无需任何 API Key\n"
-               "  python demo.py --task \"帮我打电话给餐厅订今晚 7 点 4 人的位子\" --phone 021-8888\n"
-               "  python demo.py --model gpt-5.6-luna        # 覆盖模型",
+               "  python demo.py --task \"帮我打电话给餐厅订今晚 7 点 4 人的位子\" --phone +14155551234\n"
+               "  python demo.py --model gpt-4o-mini  # 覆盖 ReAct 模型",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument("--task", default=_DEFAULT_TASK,
@@ -89,9 +87,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if not args.dry_run and not all(os.getenv(k) for k in ("PINE_ACCESS_TOKEN", "PINE_USER_ID")):
+        print("错误：真实拨号默认路径需要 PINE_ACCESS_TOKEN 和 PINE_USER_ID。"
+              "请复制 env.example 为 .env；--dry-run 仅用于显式测试。")
+        sys.exit(1)
     if not args.dry_run and not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")):
-        print("错误：未检测到 OPENAI_API_KEY 或 OPENROUTER_API_KEY。请复制 env.example 为 .env "
-              "并至少填入其一，或改用 python demo.py --dry-run 走完全离线的脚本演示。")
+        print("错误：ReAct 决策和结构化提取需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY。")
         sys.exit(1)
 
     # 书中示例任务：注意这里只给了自然语言任务，Agent 需自行决定通话参数。

@@ -110,18 +110,18 @@ class TestMultimodalAgent(unittest.IsolatedAsyncioTestCase):
         history = agent.get_conversation_history()
         self.assertEqual(len(history), 0)
         
-    @patch('agent.genai.configure')
-    @patch('agent.genai.GenerativeModel')
-    async def test_extract_pdf_to_text(self, mock_model_class, mock_configure):
+    @patch('agent.genai.Client')
+    async def test_extract_pdf_to_text(self, mock_client_class):
         """Test PDF extraction to text"""
         agent = MultimodalAgent(mode=ExtractionMode.EXTRACT_TO_TEXT)
         
         # Mock Gemini response
-        mock_model = Mock()
         mock_response = Mock()
+        mock_response.candidates = []
         mock_response.text = "Extracted PDF text"
-        mock_model.generate_content.return_value = mock_response
-        mock_model_class.return_value = mock_model
+        mock_client = Mock()
+        mock_client.models.generate_content.return_value = mock_response
+        mock_client_class.return_value = mock_client
         
         content = MultimodalContent(
             type="pdf",
@@ -156,9 +156,8 @@ class TestMultimodalAgent(unittest.IsolatedAsyncioTestCase):
         result = await agent._extract_image_to_text(content)
         self.assertEqual(result, "Image description")
         
-    @patch('agent.genai.configure')
-    @patch('agent.genai.GenerativeModel')
-    async def test_process_native_gemini(self, mock_model_class, mock_configure):
+    @patch('agent.genai.Client')
+    async def test_process_native_gemini(self, mock_client_class):
         """Test native Gemini processing"""
         agent = MultimodalAgent(
             model="gemini-3.5-flash",
@@ -166,11 +165,12 @@ class TestMultimodalAgent(unittest.IsolatedAsyncioTestCase):
         )
         
         # Mock Gemini response
-        mock_model = Mock()
         mock_response = Mock()
+        mock_response.candidates = []
         mock_response.text = "Gemini analysis result"
-        mock_model.generate_content.return_value = mock_response
-        mock_model_class.return_value = mock_model
+        mock_client = Mock()
+        mock_client.models.generate_content.return_value = mock_response
+        mock_client_class.return_value = mock_client
         
         content = MultimodalContent(
             type="pdf",

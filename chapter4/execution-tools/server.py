@@ -13,6 +13,7 @@ from llm_helper import LLMHelper
 from file_tools import FileTools
 from execution_tools import ExecutionTools
 from external_tools import ExternalTools
+from extended_tools import ExtendedTools
 
 
 # Initialize server
@@ -23,6 +24,7 @@ llm_helper = LLMHelper()
 file_tools = FileTools(llm_helper)
 execution_tools = ExecutionTools(llm_helper)
 external_tools = ExternalTools(llm_helper)
+extended_tools = ExtendedTools()
 
 
 @server.list_tools()
@@ -186,6 +188,48 @@ async def handle_list_tools() -> list[types.Tool]:
                 },
                 "required": ["repo_name", "title", "body", "head_branch"]
             }
+        ),
+        types.Tool(
+            name="excel_create_with_formula_and_screenshot",
+            description="Create an XLSX workbook, apply formulas, and render a real screenshot with LibreOffice",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "output_path": {"type": "string"},
+                    "rows": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "item": {"type": "string"},
+                                "quantity": {"type": "number"},
+                                "unit_price": {"type": "number"},
+                            },
+                            "required": ["item", "quantity", "unit_price"],
+                        },
+                    },
+                },
+                "required": ["output_path", "rows"],
+            }
+        ),
+        types.Tool(
+            name="webhook_post",
+            description="POST JSON to a real HTTPS webhook endpoint",
+            inputSchema={"type": "object", "properties": {
+                "url": {"type": "string"}, "payload": {"type": "object"}},
+                "required": ["url", "payload"]}
+        ),
+        types.Tool(
+            name="browser_navigate",
+            description="Navigate with real headless Chromium, extract page content, and save a screenshot",
+            inputSchema={"type": "object", "properties": {
+                "url": {"type": "string"}, "screenshot_path": {"type": "string"}},
+                "required": ["url", "screenshot_path"]}
+        ),
+        types.Tool(
+            name="environment_capabilities",
+            description="Inspect real Computer Use container and Android device availability",
+            inputSchema={"type": "object", "properties": {}}
         )
     ]
 
@@ -242,6 +286,16 @@ async def handle_call_tool(
                 head_branch=arguments["head_branch"],
                 base_branch=arguments.get("base_branch", "main")
             )
+        elif name == "excel_create_with_formula_and_screenshot":
+            result = await extended_tools.excel_create_with_formula_and_screenshot(
+                arguments["output_path"], arguments["rows"])
+        elif name == "webhook_post":
+            result = await extended_tools.webhook_post(arguments["url"], arguments["payload"])
+        elif name == "browser_navigate":
+            result = await extended_tools.browser_navigate(
+                arguments["url"], arguments["screenshot_path"])
+        elif name == "environment_capabilities":
+            result = await extended_tools.environment_capabilities()
         else:
             raise ValueError(f"Unknown tool: {name}")
         

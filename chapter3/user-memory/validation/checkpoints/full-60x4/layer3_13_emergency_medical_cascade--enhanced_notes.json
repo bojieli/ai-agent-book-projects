@@ -1,0 +1,647 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer3_13_emergency_medical_cascade",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "emergency_room_001",
+      "memory": [
+        "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+        "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+        "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+        "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+        "Robert Mitchell was to be moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+        "Robert Mitchell has Blue Cross insurance through his employer, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "emergency_room_001"
+      }
+    },
+    {
+      "session_index": 2,
+      "conversation_id": "insurance_claim_001",
+      "memory": [
+        "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+        "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+        "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+        "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+        "Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+        "Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.",
+        "On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.",
+        "Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.",
+        "Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.",
+        "Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).",
+        "Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).",
+        "Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.",
+        "The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.",
+        "Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "insurance_claim_001"
+      }
+    },
+    {
+      "session_index": 3,
+      "conversation_id": "employer_benefits_001",
+      "memory": [
+        "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+        "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+        "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+        "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+        "Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+        "Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.",
+        "On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.",
+        "Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.",
+        "Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.",
+        "Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).",
+        "Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).",
+        "Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.",
+        "The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.",
+        "Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.",
+        "On 2024-10-20 at 14:00, a 49-minute employer benefits conversation (conversation_id=employer_benefits_001) occurred with TechCorp's Human Resources department (representative Linda) regarding Robert Mitchell's benefits during medical leave.",
+        "Robert Mitchell's position at TechCorp is protected under FMLA for 12 weeks; he has 18 accrued vacation days, 5 of which were used for October 15-21, 2024 to cover the short-term disability waiting period, ensuring continuous income.",
+        "Robert Mitchell's short-term disability (STD) through TechCorp starts October 22, 2024 (coinciding with his surgery date), pays 60% of his $95,000 annual base salary (~$1,100 weekly, $4,400 monthly) for up to 90 days, and is tax-free as premiums are paid with after-tax dollars; long-term disability (LTD) starts after 90 days, paying 60% of base salary until age 65 if needed.",
+        "Robert Mitchell's health insurance during medical leave continues normally, with TechCorp paying their portion; premiums ($450 monthly) are deducted from disability payments, leaving ~$3,950 monthly income.",
+        "Robert Mitchell's 401k contributions (10% of salary) and company match are suspended during disability, but vesting continues; his stock options continue vesting during approved medical leave, including 5,000 options vesting in December 2024 which will vest normally.",
+        "Required paperwork for Robert Mitchell's leave includes FMLA forms, disability claim, and doctor's certification (Dr. Harrison's office can complete); return to work requires a doctor's release, with possible phased return (part-time initially, partial disability plus partial salary) and accommodations available (modified duties, work from home, flexible hours).",
+        "Robert Mitchell's annual review (typically December) is suspended during medical leave, with promotion discussions to continue upon return; his usual $15,000 March bonus will be prorated for time worked, mostly preserved if he returns by January 2025.",
+        "TechCorp offers a hardship fund providing up to $5,000 grant for employees with major medical expenses; an application is available via email, and the committee meets monthly to review requests."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "employer_benefits_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer3_13_emergency_medical_cascade enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:36:00.120430+00:00",
+      "latency_ms": 22645.836,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=emergency_room_001\ntimestamp=2024-10-15 23:30:00\nmetadata={\"business\": \"St. Mary's Hospital\", \"department\": \"Emergency Department\", \"call_duration\": \"47 minutes\"}\nUSER: My husband was just brought in by ambulance after collapsing at home. I need information!\nASSISTANT: I'm Nurse Patricia in the ED. What's your husband's name?\nUSER: Robert Mitchell. He's 45. He just collapsed while watching TV.\nASSISTANT: He's with the doctors now. We're running tests. What happened exactly?\nUSER: He complained of chest pain, then just collapsed. I called 911.\nASSISTANT: You did the right thing. Did he have any warning signs earlier?\nUSER: He's been tired lately, some shortness of breath climbing stairs.\nASSISTANT: How long has that been going on?\nUSER: Maybe two weeks? He said it was work stress.\nASSISTANT: Does he have any medical conditions?\nUSER: High blood pressure, takes lisinopril. Cholesterol too, on statins.\nASSISTANT: Good to know. Any heart disease in the family?\nUSER: His father had a heart attack at 52.\nASSISTANT: I'll note that. Any allergies to medications?\nUSER: Penicillin gives him hives.\nASSISTANT: Noted. The cardiologist is with him now.\nUSER: Cardiologist? Is it his heart?\nASSISTANT: EKG showed irregularities. They're doing more tests.\nUSER: Oh god. Is he conscious?\nASSISTANT: He regained consciousness in the ambulance. He's stable but being monitored.\nUSER: Can I see him?\nASSISTANT: Once he's settled in the cardiac unit. Probably 30 minutes.\nUSER: Cardiac unit? How serious is this?\nASSISTANT: He needs monitoring. The doctor will explain everything.\nUSER: What tests are they running?\nASSISTANT: Blood work, chest X-ray, echocardiogram, possibly cardiac catheterization.\nUSER: Catheterization? That's the one with the tube?\nASSISTANT: Yes, to look at heart arteries. Only if needed.\nUSER: Does insurance cover all this?\nASSISTANT: Emergency care is covered. Our financial counselor can help with details.\nUSER: We have Blue Cross through his work.\nASSISTANT: Good coverage generally. Focus on Robert now, billing later.\nUSER: How long will he be here?\nASSISTANT: Depends on findings. Minimum overnight observation.\nUSER: I need to call his work.\nASSISTANT: They'll understand. Medical emergency.\nUSER: He's supposed to present tomorrow to the board.\nASSISTANT: He won't make that. He needs rest and treatment.\nUSER: Should I call his parents?\nASSISTANT: Family support helps, but maybe wait for more information?\nUSER: They're in Florida, elderly. I don't want to panic them.\nASSISTANT: Understandable. Call when you know more.\nUSER: What about our kids? They're with my sister.\nASSISTANT: How old?\nUSER: 14 and 16. They know dad went to hospital.\nASSISTANT: Teenagers understand. Be honest but reassuring.\nUSER: Dr. Johnson is coming out.\nASSISTANT: Good, he's the cardiologist. He'll have answers.\nUSER: Thank you for keeping me calm.\nASSISTANT: That's what we're here for. Robert's in good hands.\nUSER: One more thing - visiting hours?\nASSISTANT: Cardiac unit allows 24/7 for spouses.\nUSER: I'm not leaving.\nASSISTANT: We'll get you a chair that reclines.\nUSER: What should I bring from home?\nASSISTANT: His medications, insurance cards, comfortable clothes for later.\nUSER: His CPAP machine?\nASSISTANT: Yes, if he uses one. Sleep apnea affects heart.\nUSER: He was just diagnosed last month.\nASSISTANT: Untreated sleep apnea strains the heart. Bring it.\nUSER: Could that have caused this?\nASSISTANT: The doctor will discuss contributing factors.\nUSER: Here's Dr. Johnson now.\nASSISTANT: I'll give you privacy. Call if you need anything."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785360960345a78e4bf9e905a6c19d35dac8ed03e6be2b067f",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was to be moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract facts from the new session that would help a future assistant, retaining exact values, ownership, event status, dates, provenance, and relationships. Let's go through the conversation step by step.\n\nFirst, the session metadata: conversation_id=emergency_room_001, timestamp=2024-10-15 23:30:00, business=St. Mary's Hospital, department=Emergency Department, call_duration=47 minutes. These are key context.\n\nNext, the patient: Robert Mitchell, 45 years old. Brought in by ambulance after collapsing at home while watching TV. Complained of chest pain before collapsing. Wife (user) called 911. Recent symptoms: tiredness, shortness of breath climbing stairs for ~2 weeks (attributed to work stress by Robert). Medical conditions: high blood pressure (takes lisinopril), high cholesterol (on statins), sleep apnea (diagnosed last month, uses CPAP machine). Family history: father had heart attack at 52. Allergies: penicillin causes hives. Insurance: Blue Cross through his work.\n\nCurrent status: Regained consciousness in ambulance, stable but being monitored. EKG showed irregularities, cardiologist (Dr. Johnson) involved. Tests ordered: blood work, chest X-ray, echocardiogram, possible cardiac catheterization. Admitted to cardiac unit (to be settled in ~30 minutes), needs monitoring. Minimum overnight observation, likely longer depending on findings.\n\nUser (wife) details: Spouse of Robert Mitchell. Has children (14 and 16, with user's sister). Robert has parents in Florida (elderly). Robert's work: employed, has Blue Cross insurance through work, was supposed to present to the board tomorrow (2024-10-16), but will not attend due to medical emergency.\n\nOther details: Nurse Patricia assisted the user. Robert is allergic to penicillin (hives). Visiting hours for cardiac unit: 24/7 for spouses. User to bring Robert's medications, insurance cards, comfortable clothes, CPAP machine.\n\nNeed to structure these as contextual paragraphs, each with entity, event, time, status, relationships. Avoid opinions, focus on facts. Ensure all exact values (names, dates, ages, medications, tests, insurance, etc.) are included.\n\nCheck for relationships: Robert Mitchell (patient) - wife (user), children (14,16), parents (Florida, elderly), employer (Blue Cross insurance), medical providers (Nurse Patricia, Dr. Johnson cardiologist), conditions (hypertension, high cholesterol, sleep apnea), allergies (penicillin), medications (lisinopril, statins), tests (EKG, blood work, chest X-ray, echocardiogram, possible cardiac catheterization), location (St. Mary's Hospital Emergency Department, then cardiac unit), timeline (collapsed at home, brought by ambulance, timestamp 2024-10-15 23:30, to be in cardiac unit in 30 minutes, minimum overnight stay, missed board presentation 2024-10-16).\n\nNow, organize into paragraphs that retain these elements without extra info. Make sure each paragraph is contextual and includes necessary entities, events, times, status, relationships."
+            }
+          }
+        ],
+        "created": 1785360982,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1036,
+          "prompt_tokens": 1197,
+          "total_tokens": 2233,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 701,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1036,
+        "prompt_tokens": 1197,
+        "total_tokens": 2233,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 701,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785360960345a78e4bf9e905a6c19d35dac8ed03e6be2b067f"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_13_emergency_medical_cascade enhanced_notes session 2",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:36:22.768749+00:00",
+      "latency_ms": 30937.859,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 2\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was to be moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\"]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=insurance_claim_001\ntimestamp=2024-10-18 09:00:00\nmetadata={\"business\": \"Blue Cross Blue Shield\", \"department\": \"Major Medical Claims\", \"call_duration\": \"52 minutes\"}\nUSER: I need to understand coverage for my husband's heart attack and upcoming surgery.\nASSISTANT: I'm James from Blue Cross Major Medical. I see Robert Mitchell's recent admission. How is he?\nUSER: Stable, but needs triple bypass surgery next week.\nASSISTANT: I see the pre-authorization request. St. Mary's submitted it yesterday.\nUSER: Is it approved?\nASSISTANT: Yes, approved this morning. Surgery with Dr. Harrison, October 22nd.\nUSER: What will this cost us?\nASSISTANT: Let me review your plan. You have the Premier PPO?\nUSER: Yes, through TechCorp where Robert works.\nASSISTANT: Deductible is $1,500, you've met $800 this year.\nUSER: So $700 more deductible?\nASSISTANT: Yes, then 20% coinsurance up to out-of-pocket maximum.\nUSER: What's our maximum?\nASSISTANT: $6,000 per person, $12,000 family.\nUSER: So worst case $6,000?\nASSISTANT: For Robert's medical expenses, yes.\nUSER: The hospital estimates $180,000 total charges.\nASSISTANT: That's before insurance discounts. Contracted rate is probably $60,000.\nUSER: Still, 20% of that is $12,000.\nASSISTANT: But you're capped at $6,000 out-of-pocket maximum.\nUSER: That includes the emergency room visit?\nASSISTANT: Yes, all medical expenses count toward the maximum.\nUSER: ER bill was $15,000 already.\nASSISTANT: You'll pay deductible plus coinsurance up to $6,000 total.\nUSER: What about cardiac rehabilitation after?\nASSISTANT: Covered at 80% after deductible, 36 sessions annually.\nUSER: Is that enough?\nASSISTANT: Typical cardiac rehab is 3 sessions weekly for 12 weeks.\nUSER: So exactly 36 sessions.\nASSISTANT: Yes, fully covered program.\nUSER: What about home health care?\nASSISTANT: Covered if medically necessary, doctor ordered.\nUSER: He'll need help initially.\nASSISTANT: Post-surgical home care is typically approved for 2 weeks.\nUSER: The surgeon mentioned possible complications.\nASSISTANT: All complication treatment is covered under the same surgery authorization.\nUSER: Even if he needs ICU longer?\nASSISTANT: Yes, medically necessary care is covered.\nUSER: What about prescriptions?\nASSISTANT: Separate pharmacy benefit. Different deductible.\nUSER: He'll need blood thinners, beta blockers, more.\nASSISTANT: Most cardiac meds are Tier 2, $30 copay after $200 pharmacy deductible.\nUSER: Some might be expensive?\nASSISTANT: Newer blood thinners can be Tier 3, $80 copay.\nUSER: Monthly costs will add up.\nASSISTANT: Pharmacy out-of-pocket maximum is $3,000 annually.\nUSER: So $9,000 total possible medical plus pharmacy?\nASSISTANT: Correct, worst case for the year.\nUSER: We have $5,000 in FSA.\nASSISTANT: That helps significantly with out-of-pocket costs.\nUSER: Can I add more to FSA now?\nASSISTANT: Only during open enrollment unless qualifying event.\nUSER: Does heart attack qualify?\nASSISTANT: Check with HR, but medical leave sometimes qualifies.\nUSER: What if he can't return to work?\nASSISTANT: COBRA continues coverage for 18 months.\nUSER: How much is COBRA?\nASSISTANT: Typically 102% of full premium, about $2,200 monthly for family.\nUSER: That's huge without income!\nASSISTANT: Why disability insurance is important.\nUSER: He has that through work too.\nASSISTANT: Good. Coordinates with medical leave.\nUSER: I need to call HR about everything.\nASSISTANT: Yes, they'll explain leave and disability process.\nUSER: This is overwhelming.\nASSISTANT: Focus on Robert's recovery. Bills can be worked out.\nUSER: Payment plans available?\nASSISTANT: Most hospitals offer plans for large balances.\nUSER: Thank you for explaining everything.\nASSISTANT: Call back with any questions. Best wishes for Robert's surgery."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785360982984a78e4bf9e905a6c19d35dac8ed03e6becd9d64",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\", \"On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.\", \"Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.\", \"Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.\", \"Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).\", \"Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).\", \"Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.\", \"The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.\", \"Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory with the new information from the insurance claim conversation while retaining the existing valid facts. Let me start by identifying the key entities, events, times, statuses, and relationships from the new session.\n\nFirst, the new conversation details: conversation_id=insurance_claim_001, timestamp=2024-10-18 09:00:00, metadata includes business (Blue Cross Blue Shield), department (Major Medical Claims), call duration (52 minutes). Participants are the user (Robert Mitchell's wife) and James from Blue Cross.\n\nKey facts about Robert Mitchell's medical situation: He is stable, needs triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison. The pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved on 2024-10-18.\n\nInsurance details: Robert has Blue Cross Premier PPO through TechCorp. Deductible is $1,500, with $800 met this year (remaining $700). Coinsurance is 20% up to out-of-pocket maximum of $6,000 per person ($12,000 family). All medical expenses, including ER visit ($15,000), count toward the maximum. Total hospital charges estimated at $180,000, contracted rate ~$60,000.\n\nPost-surgery coverage: Cardiac rehabilitation is covered at 80% after deductible, 36 sessions annually (typical 3/week for 12 weeks). Home health care is covered if medically necessary, typically 2 weeks post-surgery. Complications, including extended ICU stay, are covered under the surgery authorization.\n\nPharmacy benefits: Separate from medical, with $200 deductible. Most cardiac meds are Tier 2 ($30 copay), newer blood thinners Tier 3 ($80 copay). Pharmacy out-of-pocket maximum is $3,000 annually.\n\nOther details: User has $5,000 in FSA. COBRA coverage is 102% of full premium (~$2,200/month for family). Robert has disability insurance through work.\n\nNow, I need to integrate this with the existing memory, ensuring no loss of still-valid facts. The existing memory includes info about the 2024-10-15 ER conversation, Robert's collapse, medical history, initial assessment, move to cardiac unit, insurance (Blue Cross through employer), missed board presentation, children staying with sister, parents in Florida.\n\nThe new info adds details about the insurance claim conversation (2024-10-18), surgery scheduling, insurance coverage specifics (deductible, coinsurance, OOP max, contracted rates), post-surgery care (rehab, home health), pharmacy benefits, FSA, COBRA, and disability insurance.\n\nI'll structure each paragraph to retain entity (Robert Mitchell, Blue Cross, etc.), event (insurance call, surgery), time (dates), status (approved, scheduled), and relationships (insurance through TechCorp, surgery with Dr. Harrison)."
+            }
+          }
+        ],
+        "created": 1785361013,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1564,
+          "prompt_tokens": 1625,
+          "total_tokens": 3189,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 687,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1564,
+        "prompt_tokens": 1625,
+        "total_tokens": 3189,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 687,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785360982984a78e4bf9e905a6c19d35dac8ed03e6becd9d64"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_13_emergency_medical_cascade enhanced_notes session 3",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:36:53.710801+00:00",
+      "latency_ms": 40703.954,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 3\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\", \"On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.\", \"Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.\", \"Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.\", \"Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).\", \"Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).\", \"Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.\", \"The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.\", \"Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.\"]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=employer_benefits_001\ntimestamp=2024-10-20 14:00:00\nmetadata={\"business\": \"TechCorp\", \"department\": \"Human Resources\", \"call_duration\": \"49 minutes\"}\nUSER: This is Sarah Mitchell. I need to understand my husband Robert's benefits during his medical leave.\nASSISTANT: Sarah, I'm Linda from HR. We heard about Robert's heart attack. How is he?\nUSER: Surgery scheduled for Monday. Triple bypass.\nASSISTANT: We're all thinking of him. Let me explain his benefits.\nUSER: He's worried about his job.\nASSISTANT: His position is protected under FMLA for 12 weeks.\nUSER: What about pay?\nASSISTANT: Short-term disability kicks in after 7-day waiting period.\nUSER: He's been out since October 15th.\nASSISTANT: So disability starts October 22nd, coincidentally his surgery date.\nUSER: How much does it pay?\nASSISTANT: 60% of base salary for up to 90 days.\nUSER: He makes $95,000 annually.\nASSISTANT: So about $1,100 weekly disability payment.\nUSER: That's $4,400 monthly versus normal $7,900.\nASSISTANT: Correct. But it's tax-free since he pays premiums with after-tax dollars.\nUSER: So closer to $4,400 versus $5,500 take-home?\nASSISTANT: Yes, less gap than appears.\nUSER: What if he needs more than 90 days?\nASSISTANT: Long-term disability starts after 90 days.\nUSER: Same payment?\nASSISTANT: Same 60% but can continue until age 65 if needed.\nUSER: God, I hope not that long.\nASSISTANT: Most bypass patients return in 8-12 weeks.\nUSER: What about his vacation time?\nASSISTANT: He has 18 days accrued.\nUSER: Can he use that for the waiting period?\nASSISTANT: Yes! Use 5 vacation days for October 15-21.\nUSER: So no pay gap?\nASSISTANT: Correct, continuous income.\nUSER: What about health insurance during leave?\nASSISTANT: Continues normally. Company pays their portion.\nUSER: Our premiums?\nASSISTANT: Still deducted from disability payments.\nUSER: That's $450 monthly.\nASSISTANT: Yes, leaving about $3,950 monthly income.\nUSER: His 401k contributions?\nASSISTANT: Suspended during disability. Can resume when he returns.\nUSER: He was contributing 10%.\nASSISTANT: Company match also suspended, but vesting continues.\nUSER: What about his stock options?\nASSISTANT: Continue vesting during approved medical leave.\nUSER: He has 5,000 options vesting in December.\nASSISTANT: Those will vest normally.\nUSER: What paperwork do we need?\nASSISTANT: FMLA forms, disability claim, doctor's certification.\nUSER: The cardiologist can complete those?\nASSISTANT: Yes, Dr. Harrison's office handles these regularly.\nUSER: Return to work process?\nASSISTANT: Doctor's release required, possible phased return.\nUSER: Phased means?\nASSISTANT: Part-time initially, building to full-time.\nUSER: Still get disability during phase-in?\nASSISTANT: Partial disability plus partial salary.\nUSER: His job is stressful. That worries me.\nASSISTANT: We can discuss accommodations when he's ready.\nUSER: Like what?\nASSISTANT: Modified duties, work from home, flexible hours.\nUSER: He manages a team of 20.\nASSISTANT: Temporary delegation possible, or co-management.\nUSER: His annual review is December.\nASSISTANT: Reviews suspended during medical leave.\nUSER: He was expecting promotion.\nASSISTANT: That conversation continues when he returns.\nUSER: Fair enough.\nASSISTANT: His bonus?\nUSER: Usually $15,000 in March.\nASSISTANT: Prorated for time worked. If back by January, mostly preserved.\nUSER: That helps with medical bills.\nASSISTANT: Also, company has hardship fund for medical situations.\nUSER: Really?\nASSISTANT: Up to $5,000 grant for employees with major medical expenses.\nUSER: How do we apply?\nASSISTANT: I'll email the application. Committee meets monthly.\nUSER: That would really help.\nASSISTANT: We take care of our people.\nUSER: Robert loves working here.\nASSISTANT: We want him back healthy. No rushing.\nUSER: Thank you for everything.\nASSISTANT: Call me anytime. Sending positive thoughts."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "02178536101389963833ef1b46575706fd366729440fd351bd477",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\", \"On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.\", \"Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.\", \"Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.\", \"Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).\", \"Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).\", \"Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.\", \"The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.\", \"Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.\", \"On 2024-10-20 at 14:00, a 49-minute employer benefits conversation (conversation_id=employer_benefits_001) occurred with TechCorp's Human Resources department (representative Linda) regarding Robert Mitchell's benefits during medical leave.\", \"Robert Mitchell's position at TechCorp is protected under FMLA for 12 weeks; he has 18 accrued vacation days, 5 of which were used for October 15-21, 2024 to cover the short-term disability waiting period, ensuring continuous income.\", \"Robert Mitchell's short-term disability (STD) through TechCorp starts October 22, 2024 (coinciding with his surgery date), pays 60% of his $95,000 annual base salary (~$1,100 weekly, $4,400 monthly) for up to 90 days, and is tax-free as premiums are paid with after-tax dollars; long-term disability (LTD) starts after 90 days, paying 60% of base salary until age 65 if needed.\", \"Robert Mitchell's health insurance during medical leave continues normally, with TechCorp paying their portion; premiums ($450 monthly) are deducted from disability payments, leaving ~$3,950 monthly income.\", \"Robert Mitchell's 401k contributions (10% of salary) and company match are suspended during disability, but vesting continues; his stock options continue vesting during approved medical leave, including 5,000 options vesting in December 2024 which will vest normally.\", \"Required paperwork for Robert Mitchell's leave includes FMLA forms, disability claim, and doctor's certification (Dr. Harrison's office can complete); return to work requires a doctor's release, with possible phased return (part-time initially, partial disability plus partial salary) and accommodations available (modified duties, work from home, flexible hours).\", \"Robert Mitchell's annual review (typically December) is suspended during medical leave, with promotion discussions to continue upon return; his usual $15,000 March bonus will be prorated for time worked, mostly preserved if he returns by January 2025.\", \"TechCorp offers a hardship fund providing up to $5,000 grant for employees with major medical expenses; an application is available via email, and the committee meets monthly to review requests.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to process the new session information and update the memory state. First, I'll identify all the new facts from the conversation between Sarah Mitchell and Linda from TechCorp HR (conversation_id=employer_benefits_001) on 2024-10-20 at 14:00, which lasted 49 minutes.\n\nKey entities: Robert Mitchell, TechCorp, Linda (HR representative), FMLA, short-term disability, long-term disability, vacation days, health insurance, 401k, stock options, FMLA forms, disability claim, doctor's certification, phased return, annual review, bonus, hardship fund.\n\nImportant facts to add:\n\n1. Conversation details: On 2024-10-20 at 14:00, a 49-minute employer benefits conversation (conversation_id=employer_benefits_001) occurred with TechCorp's Human Resources department (representative Linda) regarding Robert Mitchell's benefits during medical leave.\n\n2. FMLA: Robert Mitchell's position is protected under FMLA for 12 weeks.\n\n3. Short-term disability (STD): Starts after 7-day waiting period (October 15-21, 2024), but he can use 5 accrued vacation days (18 total accrued) for the waiting period to avoid pay gap. STD pays 60% of base salary ($95,000 annually) for up to 90 days, resulting in ~$1,100 weekly ($4,400 monthly) tax-free payments (premiums paid with after-tax dollars).\n\n4. Long-term disability (LTD): Starts after 90 days, pays 60% of base salary until age 65 if needed.\n\n5. Vacation days: Robert Mitchell has 18 accrued vacation days; 5 were used for October 15-21, 2024 to cover the STD waiting period, ensuring continuous income.\n\n6. Health insurance during leave: Continues normally, with company paying their portion; premiums ($450 monthly) deducted from disability payments, leaving ~$3,950 monthly income.\n\n7. 401k: Contributions (10% of salary) and company match suspended during disability, but vesting continues.\n\n8. Stock options: Continue vesting during approved medical leave; 5,000 options vesting in December 2024 will vest normally.\n\n9. Required paperwork: FMLA forms, disability claim, and doctor's certification (Dr. Harrison's office can complete).\n\n10. Return to work: Requires doctor's release; possible phased return (part-time initially, with partial disability plus partial salary); accommodations available (modified duties, work from home, flexible hours).\n\n11. Annual review: Suspended during medical leave; promotion discussion to continue upon return.\n\n12. Bonus: Typically $15,000 in March, prorated for time worked; if back by January 2025, mostly preserved.\n\n13. Hardship fund: TechCorp offers a hardship fund providing up to $5,000 grant for employees with major medical expenses; application available via email, committee meets monthly.\n\nNow, I need to integrate these into the existing memory array, ensuring no loss of still-valid facts and adding the new ones as contextual paragraphs with entity, event, time, status, and relationships."
+            }
+          }
+        ],
+        "created": 1785361054,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2139,
+          "prompt_tokens": 2196,
+          "total_tokens": 4335,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 744,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2139,
+        "prompt_tokens": 2196,
+        "total_tokens": 4335,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 744,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "02178536101389963833ef1b46575706fd366729440fd351bd477"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer3_13_emergency_medical_cascade enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:37:34.419655+00:00",
+      "latency_ms": 40754.081,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.\", \"Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.\", \"Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).\", \"Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.\", \"Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.\", \"Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.\", \"On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.\", \"Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.\", \"Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.\", \"Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).\", \"Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).\", \"Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.\", \"The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.\", \"Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.\", \"On 2024-10-20 at 14:00, a 49-minute employer benefits conversation (conversation_id=employer_benefits_001) occurred with TechCorp's Human Resources department (representative Linda) regarding Robert Mitchell's benefits during medical leave.\", \"Robert Mitchell's position at TechCorp is protected under FMLA for 12 weeks; he has 18 accrued vacation days, 5 of which were used for October 15-21, 2024 to cover the short-term disability waiting period, ensuring continuous income.\", \"Robert Mitchell's short-term disability (STD) through TechCorp starts October 22, 2024 (coinciding with his surgery date), pays 60% of his $95,000 annual base salary (~$1,100 weekly, $4,400 monthly) for up to 90 days, and is tax-free as premiums are paid with after-tax dollars; long-term disability (LTD) starts after 90 days, paying 60% of base salary until age 65 if needed.\", \"Robert Mitchell's health insurance during medical leave continues normally, with TechCorp paying their portion; premiums ($450 monthly) are deducted from disability payments, leaving ~$3,950 monthly income.\", \"Robert Mitchell's 401k contributions (10% of salary) and company match are suspended during disability, but vesting continues; his stock options continue vesting during approved medical leave, including 5,000 options vesting in December 2024 which will vest normally.\", \"Required paperwork for Robert Mitchell's leave includes FMLA forms, disability claim, and doctor's certification (Dr. Harrison's office can complete); return to work requires a doctor's release, with possible phased return (part-time initially, partial disability plus partial salary) and accommodations available (modified duties, work from home, flexible hours).\", \"Robert Mitchell's annual review (typically December) is suspended during medical leave, with promotion discussions to continue upon return; his usual $15,000 March bonus will be prorated for time worked, mostly preserved if he returns by January 2025.\", \"TechCorp offers a hardship fund providing up to $5,000 grant for employees with major medical expenses; an application is available via email, and the committee meets monthly to review requests.\"]\n\nUSER QUESTION:\nWhat critical things do I need to handle for my husband's heart surgery and recovery, and are there any coverage gaps I should worry about?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "02178536105460963833ef1b46575706fd366729440fd35677449",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "To ensure your husband Robert’s heart surgery and recovery go smoothly, here are the critical tasks to handle and potential coverage gaps to monitor:\n\n\n### **Critical Tasks for Surgery & Recovery**  \n#### **1. Pre-Surgery Preparation**  \n- **Confirm surgery details**: Verify arrival time, pre-operative instructions (e.g., fasting, medications to hold), and contact information for Dr. Harrison’s team.  \n- **Allergy alert**: Ensure the surgical team is aware of Robert’s penicillin allergy (causes hives) to avoid adverse reactions.  \n- **Paperwork**: Complete required forms for FMLA, short-term disability (STD), and doctor’s certification (Dr. Harrison’s office can assist) to avoid delays in benefits.  \n\n\n#### **2. Post-Surgery Care Coordination**  \n- **Cardiac rehabilitation**: Schedule 36 sessions (3/week for 12 weeks) – covered at 80% after the deductible. Coordinate with the hospital discharge planner to set up appointments.  \n- **Home health care**: Arrange doctor-ordered home health (typically 2 weeks post-surgery). Confirm start date and provider with the hospital.  \n- **Family support**: The kids (14 and 16) are with your sister, but consider updating her on Robert’s status. His elderly parents in Florida may need updates, but visiting hours in the cardiac unit are 24/7 if they can travel.  \n\n\n#### **3. Financial & Insurance Management**  \n- **Out-of-pocket costs**: Use the $5,000 Flexible Spending Account (FSA) to cover the remaining $700 deductible and coinsurance (capped at $6,000 total OOP). Submit claims promptly for reimbursement.  \n- **Pharmacy needs**: Post-surgery medications (e.g., blood thinners) have a separate $200 pharmacy deductible. Tier 2 meds (e.g., cardiac drugs) cost $30 copay; Tier 3 (newer blood thinners) cost $80 copay. The pharmacy OOP max ($3,000/year) will cap costs if needed.  \n- **Hardship fund**: Apply for TechCorp’s $5,000 grant (via email) to offset OOP expenses – the committee reviews monthly.  \n\n\n#### **4. Employment & Leave Protection**  \n- **STD income**: STD starts October 22 (surgery date), paying ~$4,400/month (60% of salary, tax-free). Premiums ($450/month) are deducted, leaving ~$3,950/month.  \n- **Job protection**: FMLA covers 12 weeks; his position is secure. Vacation days (5 used Oct 15-21) bridge the STD waiting period for continuous income.  \n- **Return to work**: Plan for a doctor’s release and possible phased return (part-time, modified duties, etc.).  \n\n\n### **Potential Coverage Gaps to Monitor**  \n- **Pharmacy deductible**: The $200 pharmacy deductible is separate from the medical deductible ($1,500). Ensure this is met to access copays for post-surgery meds.  \n- **Extended home health**: If Robert needs more than 2 weeks of home health, confirm prior authorization with Blue Cross (coverage is “typically” 2 weeks but may be extended if medically necessary).  \n- **Claims processing**: Ensure all medical bills (ER visit, surgery, rehab) are applied to the $6,000 medical OOP max. Follow up with Blue Cross if claims are delayed or not credited correctly.  \n\n\n**No major gaps** exist for surgery, complications, or rehab, but staying organized with paperwork, coordinating care, and using FSA/hardship funds will minimize stress. Let me know if you need help with specific steps (e.g., FMLA forms, pharmacy claims)!",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question. They want to know the critical things to handle for their husband's heart surgery and recovery, plus any coverage gaps to worry about. First, I need to go through the long-term memory to extract relevant info.\n\nStarting with surgery prep: The surgery is scheduled for 10/22 with Dr. Harrison. Pre-authorization is approved, so that's covered. But maybe they need to confirm the details with the hospital, like arrival time, pre-surgery instructions (NPO, medications to avoid). Also, Robert has a penicillin allergy causing hives—important to ensure the surgical team is aware to prevent adverse reactions.\n\nThen, post-surgery care: He'll need 36 cardiac rehab sessions (3/week for 12 weeks), covered at 80% after deductible. Home health care for 2 weeks, doctor-ordered. So they need to arrange these—maybe coordinate with the hospital discharge planner to set up home health and schedule rehab. Also, visiting hours in cardiac unit are 24/7, so they can be there, but maybe plan for family support since the kids are with the sister and parents are in Florida.\n\nInsurance and finances: The out-of-pocket max is $6k, with $700 deductible remaining. They have a $5k FSA, which can cover the remaining deductible and coinsurance. Need to use FSA funds—maybe check how to submit claims. Pharmacy benefits: separate $200 deductible, Tier 2 and 3 copays. Post-surgery meds might include blood thinners (Tier 3, $80 copay), so budget for that. The pharmacy OOP max is $3k, so if meds are expensive, that's a cap, but with FSA, maybe covered.\n\nEmployment and leave: FMLA protects his job for 12 weeks. He used 5 vacation days to cover STD waiting period, so STD starts 10/22, paying 60% salary. Need to complete required paperwork: FMLA forms, disability claim, doctor's certification (Dr. Harrison's office can do). Ensure these are submitted on time to avoid delays in benefits. Also, TechCorp's hardship fund—apply for up to $5k grant, which could help with OOP costs.\n\nCoverage gaps: Let's check. Surgery is pre-authorized, complications covered. Cardiac rehab and home health are covered. Insurance continues during leave. 401k and match suspended, but vesting continues. Stock options vest normally. The main possible gaps: pharmacy deductible ($200) is separate, so they need to meet that for meds. Also, if he needs more than 2 weeks of home health, would that be covered? The note says \"typically approved for 2 weeks,\" so if extended, might need prior auth. Also, COBRA is an option if he can't return, but that's expensive ($2200/month), but not an immediate gap. Disability covers income, so that's good.\n\nCritical things to handle: Confirm surgery details, ensure allergy info is communicated, arrange post-surgery care (rehab, home health), complete leave paperwork, use FSA for OOP costs, apply for hardship fund, manage pharmacy needs (deductible, copays), and coordinate family support for kids and elderly parents.\n\nCoverage gaps to worry about: Pharmacy deductible ($200) not covered by medical OOP max, potential need for extended home health (may require additional authorization), and ensuring all medical claims are processed correctly to apply to the OOP max (e.g., ER visit, surgery, rehab all count towards the $6k). Also, if he needs more than 90 days of STD, LTD kicks in, but that's covered. No major gaps, but need to stay on top of paperwork and claims."
+            }
+          }
+        ],
+        "created": 1785361095,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1636,
+          "prompt_tokens": 1583,
+          "total_tokens": 3219,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 813,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1636,
+        "prompt_tokens": 1583,
+        "total_tokens": 3219,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 813,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "02178536105460963833ef1b46575706fd366729440fd35677449"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer3_13_emergency_medical_cascade enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T21:38:15.179364+00:00",
+      "latency_ms": 10947.558,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=emergency_room_001\ntimestamp=2024-10-15 23:30:00\nmetadata={\"business\": \"St. Mary's Hospital\", \"department\": \"Emergency Department\", \"call_duration\": \"47 minutes\"}\nUSER: My husband was just brought in by ambulance after collapsing at home. I need information!\nASSISTANT: I'm Nurse Patricia in the ED. What's your husband's name?\nUSER: Robert Mitchell. He's 45. He just collapsed while watching TV.\nASSISTANT: He's with the doctors now. We're running tests. What happened exactly?\nUSER: He complained of chest pain, then just collapsed. I called 911.\nASSISTANT: You did the right thing. Did he have any warning signs earlier?\nUSER: He's been tired lately, some shortness of breath climbing stairs.\nASSISTANT: How long has that been going on?\nUSER: Maybe two weeks? He said it was work stress.\nASSISTANT: Does he have any medical conditions?\nUSER: High blood pressure, takes lisinopril. Cholesterol too, on statins.\nASSISTANT: Good to know. Any heart disease in the family?\nUSER: His father had a heart attack at 52.\nASSISTANT: I'll note that. Any allergies to medications?\nUSER: Penicillin gives him hives.\nASSISTANT: Noted. The cardiologist is with him now.\nUSER: Cardiologist? Is it his heart?\nASSISTANT: EKG showed irregularities. They're doing more tests.\nUSER: Oh god. Is he conscious?\nASSISTANT: He regained consciousness in the ambulance. He's stable but being monitored.\nUSER: Can I see him?\nASSISTANT: Once he's settled in the cardiac unit. Probably 30 minutes.\nUSER: Cardiac unit? How serious is this?\nASSISTANT: He needs monitoring. The doctor will explain everything.\nUSER: What tests are they running?\nASSISTANT: Blood work, chest X-ray, echocardiogram, possibly cardiac catheterization.\nUSER: Catheterization? That's the one with the tube?\nASSISTANT: Yes, to look at heart arteries. Only if needed.\nUSER: Does insurance cover all this?\nASSISTANT: Emergency care is covered. Our financial counselor can help with details.\nUSER: We have Blue Cross through his work.\nASSISTANT: Good coverage generally. Focus on Robert now, billing later.\nUSER: How long will he be here?\nASSISTANT: Depends on findings. Minimum overnight observation.\nUSER: I need to call his work.\nASSISTANT: They'll understand. Medical emergency.\nUSER: He's supposed to present tomorrow to the board.\nASSISTANT: He won't make that. He needs rest and treatment.\nUSER: Should I call his parents?\nASSISTANT: Family support helps, but maybe wait for more information?\nUSER: They're in Florida, elderly. I don't want to panic them.\nASSISTANT: Understandable. Call when you know more.\nUSER: What about our kids? They're with my sister.\nASSISTANT: How old?\nUSER: 14 and 16. They know dad went to hospital.\nASSISTANT: Teenagers understand. Be honest but reassuring.\nUSER: Dr. Johnson is coming out.\nASSISTANT: Good, he's the cardiologist. He'll have answers.\nUSER: Thank you for keeping me calm.\nASSISTANT: That's what we're here for. Robert's in good hands.\nUSER: One more thing - visiting hours?\nASSISTANT: Cardiac unit allows 24/7 for spouses.\nUSER: I'm not leaving.\nASSISTANT: We'll get you a chair that reclines.\nUSER: What should I bring from home?\nASSISTANT: His medications, insurance cards, comfortable clothes for later.\nUSER: His CPAP machine?\nASSISTANT: Yes, if he uses one. Sleep apnea affects heart.\nUSER: He was just diagnosed last month.\nASSISTANT: Untreated sleep apnea strains the heart. Bring it.\nUSER: Could that have caused this?\nASSISTANT: The doctor will discuss contributing factors.\nUSER: Here's Dr. Johnson now.\nASSISTANT: I'll give you privacy. Call if you need anything.\n\nconversation_id=insurance_claim_001\ntimestamp=2024-10-18 09:00:00\nmetadata={\"business\": \"Blue Cross Blue Shield\", \"department\": \"Major Medical Claims\", \"call_duration\": \"52 minutes\"}\nUSER: I need to understand coverage for my husband's heart attack and upcoming surgery.\nASSISTANT: I'm James from Blue Cross Major Medical. I see Robert Mitchell's recent admission. How is he?\nUSER: Stable, but needs triple bypass surgery next week.\nASSISTANT: I see the pre-authorization request. St. Mary's submitted it yesterday.\nUSER: Is it approved?\nASSISTANT: Yes, approved this morning. Surgery with Dr. Harrison, October 22nd.\nUSER: What will this cost us?\nASSISTANT: Let me review your plan. You have the Premier PPO?\nUSER: Yes, through TechCorp where Robert works.\nASSISTANT: Deductible is $1,500, you've met $800 this year.\nUSER: So $700 more deductible?\nASSISTANT: Yes, then 20% coinsurance up to out-of-pocket maximum.\nUSER: What's our maximum?\nASSISTANT: $6,000 per person, $12,000 family.\nUSER: So worst case $6,000?\nASSISTANT: For Robert's medical expenses, yes.\nUSER: The hospital estimates $180,000 total charges.\nASSISTANT: That's before insurance discounts. Contracted rate is probably $60,000.\nUSER: Still, 20% of that is $12,000.\nASSISTANT: But you're capped at $6,000 out-of-pocket maximum.\nUSER: That includes the emergency room visit?\nASSISTANT: Yes, all medical expenses count toward the maximum.\nUSER: ER bill was $15,000 already.\nASSISTANT: You'll pay deductible plus coinsurance up to $6,000 total.\nUSER: What about cardiac rehabilitation after?\nASSISTANT: Covered at 80% after deductible, 36 sessions annually.\nUSER: Is that enough?\nASSISTANT: Typical cardiac rehab is 3 sessions weekly for 12 weeks.\nUSER: So exactly 36 sessions.\nASSISTANT: Yes, fully covered program.\nUSER: What about home health care?\nASSISTANT: Covered if medically necessary, doctor ordered.\nUSER: He'll need help initially.\nASSISTANT: Post-surgical home care is typically approved for 2 weeks.\nUSER: The surgeon mentioned possible complications.\nASSISTANT: All complication treatment is covered under the same surgery authorization.\nUSER: Even if he needs ICU longer?\nASSISTANT: Yes, medically necessary care is covered.\nUSER: What about prescriptions?\nASSISTANT: Separate pharmacy benefit. Different deductible.\nUSER: He'll need blood thinners, beta blockers, more.\nASSISTANT: Most cardiac meds are Tier 2, $30 copay after $200 pharmacy deductible.\nUSER: Some might be expensive?\nASSISTANT: Newer blood thinners can be Tier 3, $80 copay.\nUSER: Monthly costs will add up.\nASSISTANT: Pharmacy out-of-pocket maximum is $3,000 annually.\nUSER: So $9,000 total possible medical plus pharmacy?\nASSISTANT: Correct, worst case for the year.\nUSER: We have $5,000 in FSA.\nASSISTANT: That helps significantly with out-of-pocket costs.\nUSER: Can I add more to FSA now?\nASSISTANT: Only during open enrollment unless qualifying event.\nUSER: Does heart attack qualify?\nASSISTANT: Check with HR, but medical leave sometimes qualifies.\nUSER: What if he can't return to work?\nASSISTANT: COBRA continues coverage for 18 months.\nUSER: How much is COBRA?\nASSISTANT: Typically 102% of full premium, about $2,200 monthly for family.\nUSER: That's huge without income!\nASSISTANT: Why disability insurance is important.\nUSER: He has that through work too.\nASSISTANT: Good. Coordinates with medical leave.\nUSER: I need to call HR about everything.\nASSISTANT: Yes, they'll explain leave and disability process.\nUSER: This is overwhelming.\nASSISTANT: Focus on Robert's recovery. Bills can be worked out.\nUSER: Payment plans available?\nASSISTANT: Most hospitals offer plans for large balances.\nUSER: Thank you for explaining everything.\nASSISTANT: Call back with any questions. Best wishes for Robert's surgery.\n\nconversation_id=employer_benefits_001\ntimestamp=2024-10-20 14:00:00\nmetadata={\"business\": \"TechCorp\", \"department\": \"Human Resources\", \"call_duration\": \"49 minutes\"}\nUSER: This is Sarah Mitchell. I need to understand my husband Robert's benefits during his medical leave.\nASSISTANT: Sarah, I'm Linda from HR. We heard about Robert's heart attack. How is he?\nUSER: Surgery scheduled for Monday. Triple bypass.\nASSISTANT: We're all thinking of him. Let me explain his benefits.\nUSER: He's worried about his job.\nASSISTANT: His position is protected under FMLA for 12 weeks.\nUSER: What about pay?\nASSISTANT: Short-term disability kicks in after 7-day waiting period.\nUSER: He's been out since October 15th.\nASSISTANT: So disability starts October 22nd, coincidentally his surgery date.\nUSER: How much does it pay?\nASSISTANT: 60% of base salary for up to 90 days.\nUSER: He makes $95,000 annually.\nASSISTANT: So about $1,100 weekly disability payment.\nUSER: That's $4,400 monthly versus normal $7,900.\nASSISTANT: Correct. But it's tax-free since he pays premiums with after-tax dollars.\nUSER: So closer to $4,400 versus $5,500 take-home?\nASSISTANT: Yes, less gap than appears.\nUSER: What if he needs more than 90 days?\nASSISTANT: Long-term disability starts after 90 days.\nUSER: Same payment?\nASSISTANT: Same 60% but can continue until age 65 if needed.\nUSER: God, I hope not that long.\nASSISTANT: Most bypass patients return in 8-12 weeks.\nUSER: What about his vacation time?\nASSISTANT: He has 18 days accrued.\nUSER: Can he use that for the waiting period?\nASSISTANT: Yes! Use 5 vacation days for October 15-21.\nUSER: So no pay gap?\nASSISTANT: Correct, continuous income.\nUSER: What about health insurance during leave?\nASSISTANT: Continues normally. Company pays their portion.\nUSER: Our premiums?\nASSISTANT: Still deducted from disability payments.\nUSER: That's $450 monthly.\nASSISTANT: Yes, leaving about $3,950 monthly income.\nUSER: His 401k contributions?\nASSISTANT: Suspended during disability. Can resume when he returns.\nUSER: He was contributing 10%.\nASSISTANT: Company match also suspended, but vesting continues.\nUSER: What about his stock options?\nASSISTANT: Continue vesting during approved medical leave.\nUSER: He has 5,000 options vesting in December.\nASSISTANT: Those will vest normally.\nUSER: What paperwork do we need?\nASSISTANT: FMLA forms, disability claim, doctor's certification.\nUSER: The cardiologist can complete those?\nASSISTANT: Yes, Dr. Harrison's office handles these regularly.\nUSER: Return to work process?\nASSISTANT: Doctor's release required, possible phased return.\nUSER: Phased means?\nASSISTANT: Part-time initially, building to full-time.\nUSER: Still get disability during phase-in?\nASSISTANT: Partial disability plus partial salary.\nUSER: His job is stressful. That worries me.\nASSISTANT: We can discuss accommodations when he's ready.\nUSER: Like what?\nASSISTANT: Modified duties, work from home, flexible hours.\nUSER: He manages a team of 20.\nASSISTANT: Temporary delegation possible, or co-management.\nUSER: His annual review is December.\nASSISTANT: Reviews suspended during medical leave.\nUSER: He was expecting promotion.\nASSISTANT: That conversation continues when he returns.\nUSER: Fair enough.\nASSISTANT: His bonus?\nUSER: Usually $15,000 in March.\nASSISTANT: Prorated for time worked. If back by January, mostly preserved.\nUSER: That helps with medical bills.\nASSISTANT: Also, company has hardship fund for medical situations.\nUSER: Really?\nASSISTANT: Up to $5,000 grant for employees with major medical expenses.\nUSER: How do we apply?\nASSISTANT: I'll email the application. Committee meets monthly.\nUSER: That would really help.\nASSISTANT: We take care of our people.\nUSER: Robert loves working here.\nASSISTANT: We want him back healthy. No rushing.\nUSER: Thank you for everything.\nASSISTANT: Call me anytime. Sending positive thoughts.\n\nQUESTION: What critical things do I need to handle for my husband's heart surgery and recovery, and are there any coverage gaps I should worry about?\nANSWER: To ensure your husband Robert’s heart surgery and recovery go smoothly, here are the critical tasks to handle and potential coverage gaps to monitor:\n\n\n### **Critical Tasks for Surgery & Recovery**  \n#### **1. Pre-Surgery Preparation**  \n- **Confirm surgery details**: Verify arrival time, pre-operative instructions (e.g., fasting, medications to hold), and contact information for Dr. Harrison’s team.  \n- **Allergy alert**: Ensure the surgical team is aware of Robert’s penicillin allergy (causes hives) to avoid adverse reactions.  \n- **Paperwork**: Complete required forms for FMLA, short-term disability (STD), and doctor’s certification (Dr. Harrison’s office can assist) to avoid delays in benefits.  \n\n\n#### **2. Post-Surgery Care Coordination**  \n- **Cardiac rehabilitation**: Schedule 36 sessions (3/week for 12 weeks) – covered at 80% after the deductible. Coordinate with the hospital discharge planner to set up appointments.  \n- **Home health care**: Arrange doctor-ordered home health (typically 2 weeks post-surgery). Confirm start date and provider with the hospital.  \n- **Family support**: The kids (14 and 16) are with your sister, but consider updating her on Robert’s status. His elderly parents in Florida may need updates, but visiting hours in the cardiac unit are 24/7 if they can travel.  \n\n\n#### **3. Financial & Insurance Management**  \n- **Out-of-pocket costs**: Use the $5,000 Flexible Spending Account (FSA) to cover the remaining $700 deductible and coinsurance (capped at $6,000 total OOP). Submit claims promptly for reimbursement.  \n- **Pharmacy needs**: Post-surgery medications (e.g., blood thinners) have a separate $200 pharmacy deductible. Tier 2 meds (e.g., cardiac drugs) cost $30 copay; Tier 3 (newer blood thinners) cost $80 copay. The pharmacy OOP max ($3,000/year) will cap costs if needed.  \n- **Hardship fund**: Apply for TechCorp’s $5,000 grant (via email) to offset OOP expenses – the committee reviews monthly.  \n\n\n#### **4. Employment & Leave Protection**  \n- **STD income**: STD starts October 22 (surgery date), paying ~$4,400/month (60% of salary, tax-free). Premiums ($450/month) are deducted, leaving ~$3,950/month.  \n- **Job protection**: FMLA covers 12 weeks; his position is secure. Vacation days (5 used Oct 15-21) bridge the STD waiting period for continuous income.  \n- **Return to work**: Plan for a doctor’s release and possible phased return (part-time, modified duties, etc.).  \n\n\n### **Potential Coverage Gaps to Monitor**  \n- **Pharmacy deductible**: The $200 pharmacy deductible is separate from the medical deductible ($1,500). Ensure this is met to access copays for post-surgery meds.  \n- **Extended home health**: If Robert needs more than 2 weeks of home health, confirm prior authorization with Blue Cross (coverage is “typically” 2 weeks but may be extended if medically necessary).  \n- **Claims processing**: Ensure all medical bills (ER visit, surgery, rehab) are applied to the $6,000 medical OOP max. Follow up with Blue Cross if claims are delayed or not credited correctly.  \n\n\n**No major gaps** exist for surgery, complications, or rehab, but staying organized with paperwork, coordinating care, and using FSA/hardship funds will minimize stress. Let me know if you need help with specific steps (e.g., FMLA forms, pharmacy claims)!\nEVALUATION CRITERIA: The agent must synthesize across emergency, insurance, and employer conversations to identify critical actions and potential gaps:\n\n**IMMEDIATE CRITICAL ACTIONS:**\n\n1. **Before Surgery (by Oct 22):**\n   - Bring CPAP machine to hospital (sleep apnea connection)\n   - Collect all medications for hospital review\n   - Use 5 vacation days for Oct 15-21 (covers disability waiting period)\n   - Submit FMLA paperwork to protect job\n   - Apply for $5,000 company hardship fund\n\n2. **Financial Preparation:**\n   - $6,000 medical out-of-pocket maximum will be hit\n   - $3,000 pharmacy maximum likely too\n   - Total: $9,000 medical costs for year\n   - Have $5,000 FSA to offset\n   - Need $4,000 additional funds\n\n3. **Documentation Needed:**\n   - FMLA certification from Dr. Harrison\n   - Short-term disability claim forms\n   - Doctor's orders for home health care\n   - Cardiac rehab prescription (36 sessions)\n\n**COVERAGE ANALYSIS:**\n\n**Well-Covered Areas:**\n- Surgery fully pre-authorized\n- Job protected for 12 weeks (FMLA)\n- Income at 60% tax-free ($4,400/month)\n- Health insurance continues\n- Stock options keep vesting\n- Cardiac rehab covered (36 sessions)\n- 24/7 spouse visiting allowed\n\n**POTENTIAL GAPS IDENTIFIED:**\n\n1. **Income Gap:**\n   - Normal take-home: $5,500/month\n   - Disability payment: $3,950/month (after insurance premium)\n   - Shortfall: $1,550/month for 3+ months\n\n2. **Recovery Timeline Risk:**\n   - Short-term disability: 90 days\n   - If complications extend beyond: Need LTD documentation\n   - Typical recovery: 8-12 weeks (cutting it close)\n\n3. **Medication Costs:**\n   - New cardiac meds not yet priced\n   - Tier 3 blood thinners: $80/month each\n   - Multiple medications could be $300+/month\n\n4. **Return-to-Work Concerns:**\n   - High-stress job contributed to condition\n   - Needs accommodation plan\n   - Promotion discussion delayed\n   - Bonus will be prorated\n\n**DISCOVERED BENEFITS:**\n\n1. **Company Hardship Fund:**\n   - Up to $5,000 grant available\n   - Apply immediately for medical expenses\n\n2. **Phased Return Option:**\n   - Partial disability + partial salary\n   - Gradual stress re-introduction\n\n3. **Accommodation Possibilities:**\n   - Work from home option\n   - Modified duties\n   - Co-management arrangement\n\n**CRITICAL TIMELINE:**\n\n- Oct 15: Heart attack (vacation days start)\n- Oct 22: Surgery (disability starts)\n- Oct-Dec: Recovery and cardiac rehab\n- Dec: Stock options vest (secured)\n- Jan: Target return to work\n- March: Prorated bonus\n\n**FAMILY CONSIDERATIONS:**\n\n- Kids (14, 16) need honest updates\n- Elderly parents in Florida - wait to inform\n- Sister helping with children\n- Wife can stay 24/7 at hospital\n\n**PROACTIVE RECOMMENDATIONS:**\n\n1. Create written accommodation request for return\n2. Document all symptoms/limitations for potential LTD\n3. Track all medical expenses for FSA and taxes\n4. Consider financial counselor at hospital\n5. Start cardiac rehab immediately post-surgery\n6. Address untreated sleep apnea as contributing factor\n\nThe agent must recognize the interconnected nature of medical, financial, and employment factors while identifying both protective benefits and potential gaps.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a72c7d5eda9c29abeec9b",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 4,\n      \"reasoning\": \"The response accurately reflects the critical tasks and potential coverage gaps based on the provided conversations. It includes specific details such as the need to confirm surgery details, the importance of the FMLA forms, the financial implications of the surgery, and the steps to handle post-surgery care coordination.\",\n      \"evidence\": [\n        \"Confirm surgery details\",\n        \"Allergy alert\",\n        \"Paperwork\",\n        \"Cardiac rehabilitation\",\n        \"Home health care\",\n        \"Family support\",\n        \"Out-of-pocket costs\",\n        \"Pharmacy needs\",\n        \"Hardship fund\",\n        \"STD income\",\n        \"Job protection\",\n        \"Return to work\"\n      ]\n    },\n    \"recall\": {\n      \"score\": 4,\n      \"reasoning\": \"The response covers all the critical aspects discussed in the three conversations, including pre-surgery preparation, post-surgery care coordination, financial and insurance management, and employment and leave protection. It also identifies potential coverage gaps and provides a comprehensive overview of the actions needed.\",\n      \"evidence\": [\n        \"Bring CPAP machine to hospital\",\n        \"Collect all medications for hospital review\",\n        \"Use 5 vacation days for Oct 15-21\",\n        \"Submit FMLA paperwork to protect job\",\n        \"Apply for $5,000 company hardship fund\",\n        \"$6,000 medical out-of-pocket maximum will be hit\",\n        \"$3,000 pharmacy maximum likely too\",\n        \"Total: $9,000 medical costs for year\",\n        \"Have $5,000 FSA to offset\",\n        \"Need $4,000 additional funds\"\n      ]\n    },\n    \"reasoning\": {\n      \"score\": 4,\n      \"reasoning\": \"The response demonstrates a clear understanding of the interconnected nature of medical, financial, and employment factors. It logically synthesizes information from the three conversations to provide a comprehensive plan of action and identifies both protective benefits and potential gaps.\",\n      \"evidence\": [\n        \"The response identifies the need for pre-surgery preparation, the importance of financial preparation, the analysis of coverage, and the proactive recommendations.\"\n      ]\n    },\n    \"proactivity\": {\n      \"score\": 4,\n      \"reasoning\": \"The response is proactive in identifying potential issues and providing solutions. It goes beyond simply listing tasks and gaps, offering specific actions to mitigate potential problems, such as applying for the hardship fund, planning for a phased return to work, and considering financial counseling.\",\n      \"evidence\": [\n        \"Apply for TechCorp’s $5,000 grant\",\n        \"Plan for a doctor’s release and possible phased return\",\n        \"Consider financial counselor at hospital\"\n      ]\n    }\n  },\n  \"hallucination\": {\n    \"detected\": false,\n    \"claims\": [],\n    \"reasoning\": \"The response does not include any unsupported or contradicted factual claims. All information is derived from the provided conversations.\"\n  },\n  \"overall_reasoning\": \"The response effectively synthesizes information from three different conversations to provide a comprehensive overview of the critical tasks and potential coverage gaps for Robert's heart surgery and recovery. It demonstrates a thorough understanding of the situation and offers practical advice and solutions to address the identified issues.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785361096,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 703,
+          "prompt_tokens": 4762,
+          "total_tokens": 5465,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 703,
+        "prompt_tokens": 4762,
+        "total_tokens": 5465,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a72c7d5eda9c29abeec9b"
+    }
+  ],
+  "updated_at_epoch": 1785361106.131537,
+  "answer": "To ensure your husband Robert’s heart surgery and recovery go smoothly, here are the critical tasks to handle and potential coverage gaps to monitor:\n\n\n### **Critical Tasks for Surgery & Recovery**  \n#### **1. Pre-Surgery Preparation**  \n- **Confirm surgery details**: Verify arrival time, pre-operative instructions (e.g., fasting, medications to hold), and contact information for Dr. Harrison’s team.  \n- **Allergy alert**: Ensure the surgical team is aware of Robert’s penicillin allergy (causes hives) to avoid adverse reactions.  \n- **Paperwork**: Complete required forms for FMLA, short-term disability (STD), and doctor’s certification (Dr. Harrison’s office can assist) to avoid delays in benefits.  \n\n\n#### **2. Post-Surgery Care Coordination**  \n- **Cardiac rehabilitation**: Schedule 36 sessions (3/week for 12 weeks) – covered at 80% after the deductible. Coordinate with the hospital discharge planner to set up appointments.  \n- **Home health care**: Arrange doctor-ordered home health (typically 2 weeks post-surgery). Confirm start date and provider with the hospital.  \n- **Family support**: The kids (14 and 16) are with your sister, but consider updating her on Robert’s status. His elderly parents in Florida may need updates, but visiting hours in the cardiac unit are 24/7 if they can travel.  \n\n\n#### **3. Financial & Insurance Management**  \n- **Out-of-pocket costs**: Use the $5,000 Flexible Spending Account (FSA) to cover the remaining $700 deductible and coinsurance (capped at $6,000 total OOP). Submit claims promptly for reimbursement.  \n- **Pharmacy needs**: Post-surgery medications (e.g., blood thinners) have a separate $200 pharmacy deductible. Tier 2 meds (e.g., cardiac drugs) cost $30 copay; Tier 3 (newer blood thinners) cost $80 copay. The pharmacy OOP max ($3,000/year) will cap costs if needed.  \n- **Hardship fund**: Apply for TechCorp’s $5,000 grant (via email) to offset OOP expenses – the committee reviews monthly.  \n\n\n#### **4. Employment & Leave Protection**  \n- **STD income**: STD starts October 22 (surgery date), paying ~$4,400/month (60% of salary, tax-free). Premiums ($450/month) are deducted, leaving ~$3,950/month.  \n- **Job protection**: FMLA covers 12 weeks; his position is secure. Vacation days (5 used Oct 15-21) bridge the STD waiting period for continuous income.  \n- **Return to work**: Plan for a doctor’s release and possible phased return (part-time, modified duties, etc.).  \n\n\n### **Potential Coverage Gaps to Monitor**  \n- **Pharmacy deductible**: The $200 pharmacy deductible is separate from the medical deductible ($1,500). Ensure this is met to access copays for post-surgery meds.  \n- **Extended home health**: If Robert needs more than 2 weeks of home health, confirm prior authorization with Blue Cross (coverage is “typically” 2 weeks but may be extended if medically necessary).  \n- **Claims processing**: Ensure all medical bills (ER visit, surgery, rehab) are applied to the $6,000 medical OOP max. Follow up with Blue Cross if claims are delayed or not credited correctly.  \n\n\n**No major gaps** exist for surgery, complications, or rehab, but staying organized with paperwork, coordinating care, and using FSA/hardship funds will minimize stress. Let me know if you need help with specific steps (e.g., FMLA forms, pharmacy claims)!",
+  "result": {
+    "test_id": "layer3_13_emergency_medical_cascade",
+    "layer": "layer3",
+    "title": "Emergency Medical Crisis - Multi-System Coordination Response",
+    "mode": "enhanced_notes",
+    "session_count": 3,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "emergency_room_001",
+        "memory": [
+          "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+          "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+          "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+          "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+          "Robert Mitchell was to be moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+          "Robert Mitchell has Blue Cross insurance through his employer, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "emergency_room_001"
+        }
+      },
+      {
+        "session_index": 2,
+        "conversation_id": "insurance_claim_001",
+        "memory": [
+          "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+          "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+          "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+          "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+          "Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+          "Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.",
+          "On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.",
+          "Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.",
+          "Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.",
+          "Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).",
+          "Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).",
+          "Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.",
+          "The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.",
+          "Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "insurance_claim_001"
+        }
+      },
+      {
+        "session_index": 3,
+        "conversation_id": "employer_benefits_001",
+        "memory": [
+          "On 2024-10-15 at 23:30, a 47-minute emergency department conversation (conversation_id=emergency_room_001) occurred at St. Mary's Hospital between Nurse Patricia and the wife of patient Robert Mitchell, a 45-year-old male.",
+          "Robert Mitchell collapsed at home while watching TV after complaining of chest pain; he was brought to the hospital by ambulance, regained consciousness in the ambulance, and was stable but under monitoring as of the conversation.",
+          "Robert Mitchell has a medical history including high blood pressure (treated with lisinopril), high cholesterol (treated with statins), and sleep apnea (diagnosed 1 month prior, uses CPAP machine); he has a penicillin allergy causing hives, and a family history of heart disease (father had heart attack at 52).",
+          "Initial medical assessment of Robert Mitchell included an EKG showing irregularities, prompting involvement of cardiologist Dr. Johnson; tests ordered: blood work, chest X-ray, echocardiogram, and possible cardiac catheterization.",
+          "Robert Mitchell was moved to the cardiac unit (estimated 30 minutes from conversation end) for monitoring, with a minimum overnight stay; visiting hours for spouses in the cardiac unit are 24/7.",
+          "Robert Mitchell has Blue Cross insurance through his employer TechCorp, was scheduled to present to the board on 2024-10-16 (will not attend), and has two teenage children (14 and 16) staying with the user's sister; his parents are elderly and reside in Florida.",
+          "On 2024-10-18 at 09:00, a 52-minute insurance claim conversation (conversation_id=insurance_claim_001) occurred with Blue Cross Blue Shield's Major Medical Claims department (representative James) regarding coverage for Robert Mitchell's heart attack and upcoming surgery.",
+          "Robert Mitchell is stable as of 2024-10-18 and requires triple bypass surgery scheduled for 2024-10-22 with Dr. Harrison at St. Mary's Hospital; pre-authorization for surgery was submitted by St. Mary's on 2024-10-17 and approved by Blue Cross on 2024-10-18.",
+          "Robert Mitchell's Blue Cross Premier PPO plan through TechCorp has a $1,500 annual deductible (with $800 met in 2024, $700 remaining), 20% coinsurance, and a $6,000 per-person out-of-pocket maximum ($12,000 family), which includes all medical expenses such as the $15,000 emergency room visit.",
+          "Total hospital charges for Robert Mitchell's surgery are estimated at $180,000, with a contracted rate of approximately $60,000 after insurance discounts; his out-of-pocket costs are capped at $6,000 (deductible + coinsurance).",
+          "Post-surgery care for Robert Mitchell includes 36 sessions of cardiac rehabilitation (covered at 80% after deductible, typical 3 sessions weekly for 12 weeks) and medically necessary home health care (typically approved for 2 weeks post-surgery, doctor-ordered).",
+          "Robert Mitchell's pharmacy benefits under Blue Cross include a separate $200 deductible, with most cardiac medications as Tier 2 ($30 copay) and newer blood thinners as Tier 3 ($80 copay); the pharmacy out-of-pocket maximum is $3,000 annually.",
+          "The user has $5,000 in a Flexible Spending Account (FSA) to help with out-of-pocket costs; COBRA coverage for Robert Mitchell's insurance is available at 102% of the full premium (~$2,200 monthly for family) for 18 months if he cannot return to work, and he has disability insurance through TechCorp.",
+          "Complications from Robert Mitchell's surgery, including extended ICU stays, are covered under the same surgery authorization as medically necessary care.",
+          "On 2024-10-20 at 14:00, a 49-minute employer benefits conversation (conversation_id=employer_benefits_001) occurred with TechCorp's Human Resources department (representative Linda) regarding Robert Mitchell's benefits during medical leave.",
+          "Robert Mitchell's position at TechCorp is protected under FMLA for 12 weeks; he has 18 accrued vacation days, 5 of which were used for October 15-21, 2024 to cover the short-term disability waiting period, ensuring continuous income.",
+          "Robert Mitchell's short-term disability (STD) through TechCorp starts October 22, 2024 (coinciding with his surgery date), pays 60% of his $95,000 annual base salary (~$1,100 weekly, $4,400 monthly) for up to 90 days, and is tax-free as premiums are paid with after-tax dollars; long-term disability (LTD) starts after 90 days, paying 60% of base salary until age 65 if needed.",
+          "Robert Mitchell's health insurance during medical leave continues normally, with TechCorp paying their portion; premiums ($450 monthly) are deducted from disability payments, leaving ~$3,950 monthly income.",
+          "Robert Mitchell's 401k contributions (10% of salary) and company match are suspended during disability, but vesting continues; his stock options continue vesting during approved medical leave, including 5,000 options vesting in December 2024 which will vest normally.",
+          "Required paperwork for Robert Mitchell's leave includes FMLA forms, disability claim, and doctor's certification (Dr. Harrison's office can complete); return to work requires a doctor's release, with possible phased return (part-time initially, partial disability plus partial salary) and accommodations available (modified duties, work from home, flexible hours).",
+          "Robert Mitchell's annual review (typically December) is suspended during medical leave, with promotion discussions to continue upon return; his usual $15,000 March bonus will be prorated for time worked, mostly preserved if he returns by January 2025.",
+          "TechCorp offers a hardship fund providing up to $5,000 grant for employees with major medical expenses; an application is available via email, and the committee meets monthly to review requests."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "employer_benefits_001"
+        }
+      }
+    ],
+    "answer": "To ensure your husband Robert’s heart surgery and recovery go smoothly, here are the critical tasks to handle and potential coverage gaps to monitor:\n\n\n### **Critical Tasks for Surgery & Recovery**  \n#### **1. Pre-Surgery Preparation**  \n- **Confirm surgery details**: Verify arrival time, pre-operative instructions (e.g., fasting, medications to hold), and contact information for Dr. Harrison’s team.  \n- **Allergy alert**: Ensure the surgical team is aware of Robert’s penicillin allergy (causes hives) to avoid adverse reactions.  \n- **Paperwork**: Complete required forms for FMLA, short-term disability (STD), and doctor’s certification (Dr. Harrison’s office can assist) to avoid delays in benefits.  \n\n\n#### **2. Post-Surgery Care Coordination**  \n- **Cardiac rehabilitation**: Schedule 36 sessions (3/week for 12 weeks) – covered at 80% after the deductible. Coordinate with the hospital discharge planner to set up appointments.  \n- **Home health care**: Arrange doctor-ordered home health (typically 2 weeks post-surgery). Confirm start date and provider with the hospital.  \n- **Family support**: The kids (14 and 16) are with your sister, but consider updating her on Robert’s status. His elderly parents in Florida may need updates, but visiting hours in the cardiac unit are 24/7 if they can travel.  \n\n\n#### **3. Financial & Insurance Management**  \n- **Out-of-pocket costs**: Use the $5,000 Flexible Spending Account (FSA) to cover the remaining $700 deductible and coinsurance (capped at $6,000 total OOP). Submit claims promptly for reimbursement.  \n- **Pharmacy needs**: Post-surgery medications (e.g., blood thinners) have a separate $200 pharmacy deductible. Tier 2 meds (e.g., cardiac drugs) cost $30 copay; Tier 3 (newer blood thinners) cost $80 copay. The pharmacy OOP max ($3,000/year) will cap costs if needed.  \n- **Hardship fund**: Apply for TechCorp’s $5,000 grant (via email) to offset OOP expenses – the committee reviews monthly.  \n\n\n#### **4. Employment & Leave Protection**  \n- **STD income**: STD starts October 22 (surgery date), paying ~$4,400/month (60% of salary, tax-free). Premiums ($450/month) are deducted, leaving ~$3,950/month.  \n- **Job protection**: FMLA covers 12 weeks; his position is secure. Vacation days (5 used Oct 15-21) bridge the STD waiting period for continuous income.  \n- **Return to work**: Plan for a doctor’s release and possible phased return (part-time, modified duties, etc.).  \n\n\n### **Potential Coverage Gaps to Monitor**  \n- **Pharmacy deductible**: The $200 pharmacy deductible is separate from the medical deductible ($1,500). Ensure this is met to access copays for post-surgery meds.  \n- **Extended home health**: If Robert needs more than 2 weeks of home health, confirm prior authorization with Blue Cross (coverage is “typically” 2 weeks but may be extended if medically necessary).  \n- **Claims processing**: Ensure all medical bills (ER visit, surgery, rehab) are applied to the $6,000 medical OOP max. Follow up with Blue Cross if claims are delayed or not credited correctly.  \n\n\n**No major gaps** exist for surgery, complications, or rehab, but staying organized with paperwork, coordinating care, and using FSA/hardship funds will minimize stress. Let me know if you need help with specific steps (e.g., FMLA forms, pharmacy claims)!",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 4
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 1.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The response accurately reflects the critical tasks and potential coverage gaps based on the provided conversations. It includes specific details such as the need to confirm surgery details, the importance of the FMLA forms, the financial implications of the surgery, and the steps to handle post-surgery care coordination.",
+          "evidence": [
+            "Confirm surgery details",
+            "Allergy alert",
+            "Paperwork",
+            "Cardiac rehabilitation",
+            "Home health care",
+            "Family support",
+            "Out-of-pocket costs",
+            "Pharmacy needs",
+            "Hardship fund",
+            "STD income",
+            "Job protection",
+            "Return to work"
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The response covers all the critical aspects discussed in the three conversations, including pre-surgery preparation, post-surgery care coordination, financial and insurance management, and employment and leave protection. It also identifies potential coverage gaps and provides a comprehensive overview of the actions needed.",
+          "evidence": [
+            "Bring CPAP machine to hospital",
+            "Collect all medications for hospital review",
+            "Use 5 vacation days for Oct 15-21",
+            "Submit FMLA paperwork to protect job",
+            "Apply for $5,000 company hardship fund",
+            "$6,000 medical out-of-pocket maximum will be hit",
+            "$3,000 pharmacy maximum likely too",
+            "Total: $9,000 medical costs for year",
+            "Have $5,000 FSA to offset",
+            "Need $4,000 additional funds"
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The response demonstrates a clear understanding of the interconnected nature of medical, financial, and employment factors. It logically synthesizes information from the three conversations to provide a comprehensive plan of action and identifies both protective benefits and potential gaps.",
+          "evidence": [
+            "The response identifies the need for pre-surgery preparation, the importance of financial preparation, the analysis of coverage, and the proactive recommendations."
+          ]
+        },
+        "proactivity": {
+          "score": 4,
+          "reasoning": "The response is proactive in identifying potential issues and providing solutions. It goes beyond simply listing tasks and gaps, offering specific actions to mitigate potential problems, such as applying for the hardship fund, planning for a phased return to work, and considering financial counseling.",
+          "evidence": [
+            "Apply for TechCorp’s $5,000 grant",
+            "Plan for a doctor’s release and possible phased return",
+            "Consider financial counselor at hospital"
+          ]
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The response does not include any unsupported or contradicted factual claims. All information is derived from the provided conversations."
+      },
+      "overall_reasoning": "The response effectively synthesizes information from three different conversations to provide a comprehensive overview of the critical tasks and potential coverage gaps for Robert's heart surgery and recovery. It demonstrates a thorough understanding of the situation and offers practical advice and solutions to address the identified issues."
+    }
+  }
+}

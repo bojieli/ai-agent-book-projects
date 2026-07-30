@@ -185,7 +185,7 @@ class MultimodalTools:
         }]
         
         response = await client.chat.completions.create(
-            model="Doubao-1.6",
+            model=self.agent.config.models["doubao-1.6"].model_name,
             messages=messages,
             temperature=self.agent.config.temperature
         )
@@ -590,7 +590,7 @@ class MultimodalAgent:
         messages.append({"role": "user", "content": message_content})
         
         response = await client.chat.completions.create(
-            model="Doubao-1.6",
+            model=self.config.models["doubao-1.6"].model_name,
             messages=messages,
             temperature=self.config.temperature
         )
@@ -690,7 +690,7 @@ class MultimodalAgent:
                 api_key=self.config.doubao_api_key,
                 base_url=self.config.models["doubao-1.6"].base_url
             )
-            model = "Doubao-1.6"
+            model = self.config.models["doubao-1.6"].model_name
         else:
             raise RuntimeError("需要 OPENAI_API_KEY / OPENROUTER_API_KEY / DOUBAO_API_KEY 才能进行图像转文本")
             

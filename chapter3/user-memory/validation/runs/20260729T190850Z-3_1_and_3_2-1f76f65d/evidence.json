@@ -1,0 +1,336 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-1-and-3-2",
+  "run_id": "20260729T190850Z-3_1_and_3_2-1f76f65d",
+  "provenance": {
+    "captured_at": "2026-07-29T19:08:50.076181+00:00",
+    "git_revision": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "credential_presence": {
+      "ARK_API_KEY": true,
+      "MOONSHOT_API_KEY": true,
+      "OPENAI_API_KEY": true,
+      "GEMINI_API_KEY": true,
+      "SILICONFLOW_API_KEY": true
+    }
+  },
+  "status": "partial",
+  "scope": {
+    "dataset_cases_available": 60,
+    "cases_run": 1,
+    "modes": [
+      "notes"
+    ],
+    "evaluations_completed": 1,
+    "evaluations_expected": 1,
+    "layers": [
+      "layer1"
+    ]
+  },
+  "configuration": {
+    "writer_provider": "ark",
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "writer_seed": 37,
+    "judge_provider": "moonshot",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "judge_is_external_to_writer": true,
+    "workers": 1
+  },
+  "acceptance": {
+    "all_60_cases": false,
+    "twenty_per_layer": false,
+    "all_four_modes": false,
+    "sequential_memory_only": true,
+    "independent_llm_judge": true,
+    "all_calls_succeeded": true,
+    "passed": false
+  },
+  "summary": {
+    "aggregate": {
+      "notes": {
+        "layer1": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        },
+        "overall": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        }
+      }
+    },
+    "token_usage": {
+      "prompt_tokens": 5882,
+      "completion_tokens": 2215,
+      "total_tokens": 8097
+    },
+    "by_mode": {
+      "notes": {
+        "api_calls": 3,
+        "token_usage": {
+          "prompt_tokens": 5882,
+          "completion_tokens": 2215,
+          "total_tokens": 8097
+        },
+        "latency_ms": {
+          "total": 42227.854,
+          "mean_per_call": 14075.951333333333
+        }
+      },
+      "enhanced_notes": {
+        "api_calls": 0,
+        "token_usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "latency_ms": {
+          "total": 0,
+          "mean_per_call": 0
+        }
+      },
+      "json_cards": {
+        "api_calls": 0,
+        "token_usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "latency_ms": {
+          "total": 0,
+          "mean_per_call": 0
+        }
+      },
+      "advanced_json_cards": {
+        "api_calls": 0,
+        "token_usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "latency_ms": {
+          "total": 0,
+          "mean_per_call": 0
+        }
+      }
+    },
+    "api_calls": 3,
+    "errors": 0
+  },
+  "errors": [],
+  "results": [
+    {
+      "test_id": "layer1_01_bank_account",
+      "layer": "layer1",
+      "title": "Bank Account Setup - Personal Details Retrieval",
+      "mode": "notes",
+      "session_count": 1,
+      "memory_states": [
+        {
+          "session_index": 1,
+          "conversation_id": "bank_setup_001",
+          "memory": [
+            {
+              "conversation_id": "bank_setup_001"
+            },
+            {
+              "timestamp": "2024-11-15 10:30:00"
+            },
+            {
+              "business": "First National Bank"
+            },
+            {
+              "department": "New Accounts"
+            },
+            {
+              "call_duration": "47 minutes"
+            },
+            {
+              "user_full_name": "Michael James Robertson"
+            },
+            {
+              "user_date_of_birth": "March 15, 1985"
+            },
+            {
+              "user_residential_address": "1847 Maple Street, Apartment 3B, Portland, Oregon, 97205"
+            },
+            {
+              "user_length_at_address": "about two and a half years"
+            },
+            {
+              "user_phone_number": "503-555-8924"
+            },
+            {
+              "user_email": "mrobertson85@email.com"
+            },
+            {
+              "user_employment_status": "employed full-time as a software engineer at TechCorp Industries"
+            },
+            {
+              "user_employment_length_at_TechCorp": "coming up on four years in December"
+            },
+            {
+              "user_annual_income": "$125,000 before taxes"
+            },
+            {
+              "user_social_security_number": "547-82-9163"
+            },
+            {
+              "user_driver_license": "Oregon, number D758392"
+            },
+            {
+              "checking_account_type": "Premium Checking",
+              "minimum_balance": "$2,500"
+            },
+            {
+              "savings_account_type": "Basic Savings",
+              "minimum_balance": "$100"
+            },
+            {
+              "checking_account_number": "4429853327",
+              "owner": "Michael James Robertson"
+            },
+            {
+              "savings_account_number": "4429853328",
+              "owner": "Michael James Robertson"
+            },
+            {
+              "debit_card_requested": true,
+              "pin": "4827"
+            },
+            {
+              "online_banking_username": "MRobertson503"
+            },
+            {
+              "mobile_banking_enrolled": true
+            },
+            {
+              "initial_deposit_checking": "$5,000"
+            },
+            {
+              "initial_deposit_savings": "$500"
+            },
+            {
+              "initial_deposit_method": "electronic transfer from Wells Fargo"
+            },
+            {
+              "wells_fargo_account_number": "8847293001"
+            },
+            {
+              "wells_fargo_routing_number": "121000248"
+            },
+            {
+              "transfer_initiated_date": "2024-11-15"
+            },
+            {
+              "transfer_completion_time": "2-3 business days"
+            },
+            {
+              "automatic_transfer_amount": "$200",
+              "frequency": "monthly",
+              "from_account": "checking",
+              "to_account": "savings",
+              "transfer_day": "15th of each month"
+            },
+            {
+              "overdraft_protection_linked_to": "savings account"
+            },
+            {
+              "debit_card_delivery_time": "7-10 business days"
+            },
+            {
+              "debit_card_delivery_address": "1847 Maple Street, Apartment 3B, Portland, Oregon, 97205"
+            },
+            {
+              "first_national_bank_routing_number": "123006800"
+            },
+            {
+              "atm_benefit": "unlimited free withdrawals at First National Bank ATMs"
+            },
+            {
+              "atm_benefit": "reimbursement up to $15 per month for other bank ATM fees"
+            },
+            {
+              "first_national_bank_atms_in_portland": "47"
+            },
+            {
+              "allpoint_atm_network_access": "free, over 55,000 ATMs nationwide"
+            },
+            {
+              "security_question_1": "first pet name",
+              "answer": "Buddy"
+            },
+            {
+              "security_question_2": "birth city",
+              "answer": "Denver, Colorado"
+            },
+            {
+              "security_question_3": "mother's maiden name",
+              "answer": "Harrison"
+            },
+            {
+              "statement_preference": "electronic",
+              "email": "mrobertson85@email.com"
+            }
+          ],
+          "isolation": {
+            "prior_raw_histories_supplied": 0,
+            "current_memory_supplied": true,
+            "new_history_supplied": "bank_setup_001"
+          }
+        }
+      ],
+      "answer": "Your checking account number is **4429853327**. For direct deposit setup, you may also need the bank's routing number, which is **123006800**. Let me know if you need any other details!",
+      "judge": {
+        "scores": {
+          "precision": 4,
+          "recall": 4,
+          "reasoning": 4,
+          "proactivity": 4
+        },
+        "hallucination_veto": false,
+        "passed": true,
+        "reward": 1.0
+      },
+      "judge_raw": {
+        "dimensions": {
+          "precision": {
+            "score": 4,
+            "reasoning": "The agent accurately retrieved and provided the specific checking account number 4429853327 that was mentioned during the account setup conversation.",
+            "evidence": [
+              "USER: What was my checking account number again? I need it to set up my direct deposit at work.",
+              "ANSWER: Your checking account number is **4429853327**."
+            ]
+          },
+          "recall": {
+            "score": 4,
+            "reasoning": "The agent not only recalled the checking account number but also proactively provided the routing number, which is relevant for setting up direct deposit.",
+            "evidence": [
+              "ANSWER: Your checking account number is **4429853327**. For direct deposit setup, you may also need the bank's routing number, which is **123006800**."
+            ]
+          },
+          "reasoning": {
+            "score": 4,
+            "reasoning": "The agent demonstrated proper memory recall and understanding of the context by providing the exact checking account number without confusion with other numbers mentioned in the conversation."
+          },
+          "proactivity": {
+            "score": 4,
+            "reasoning": "The agent went beyond the user's request by also mentioning the routing number, which is necessary for direct deposit setup, showing a proactive approach to assist the user."
+          }
+        },
+        "hallucination": {
+          "detected": false,
+          "claims": [],
+          "reasoning": "The agent's response is based on the information provided in the conversation and does not include any unsupported or contradicted factual claims."
+        },
+        "overall_reasoning": "The agent's response is exemplary as it accurately provides the requested checking account number and goes a step further by including the routing number, which is essential for the user's direct deposit setup. This demonstrates both precision in recalling the specific account number and proactivity in anticipating the user's needs."
+      }
+    }
+  ]
+}

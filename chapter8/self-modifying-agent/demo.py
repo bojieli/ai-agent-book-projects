@@ -27,7 +27,7 @@ def main() -> None:
         candidate = generate_with_openai(stable_source, diagnosis, args.model)
     else:
         candidate = generate_candidate(stable_source, diagnosis)
-    checks = validate_candidate(candidate["source"], trajectories)
+    checks = validate_candidate(candidate["source"], trajectories, stable_source)
     manifest = release_manifest(stable_source, candidate, diagnosis, checks)
 
     write_candidate(candidate["source"], ROOT / "output" / "candidate" / "retry_policy.py")

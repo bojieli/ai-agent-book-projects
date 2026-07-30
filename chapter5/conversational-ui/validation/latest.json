@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-11",
+  "run_id": "20260729T212933Z-5_11-hmr",
+  "started_at_utc": "2026-07-29T21:29:33.901387+00:00",
+  "completed_at_utc": "2026-07-29T21:30:12.405005+00:00",
+  "provider": "ark",
+  "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+  "model": "doubao-seed-1-6-flash-250615",
+  "source": {
+    "manuscript": "book/chapter5.md#实验-5-11",
+    "campaign_sha256": "11972f611b1ce9cbeff086955c29e562b0e516b8b468a55d3c072ddafcf1d3dc"
+  },
+  "servers": {
+    "frontend": {
+      "command": [
+        "npm",
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "56043",
+        "--strictPort"
+      ]
+    },
+    "backend": {
+      "command": [
+        "python",
+        "main.py",
+        "--reload",
+        "--port",
+        "56044"
+      ],
+      "health": {
+        "status": "ok",
+        "mode": "echo",
+        "model": null
+      }
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "requirement": "把发送按钮和用户消息气泡的主题色从绿色改成蓝色，必须使用 #2563eb。",
+      "kind": "color",
+      "expected": "rgb(37, 99, 235)",
+      "observed": "rgb(37, 99, 235)",
+      "changed_files": [
+        {
+          "path": "src/App.jsx",
+          "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+          "after_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545"
+        },
+        {
+          "path": "src/theme.css",
+          "before_sha256": "499a1d01a5dfe83bb8496349a51a9a9abd8c49df94afcb7d9615920c5653ff16",
+          "after_sha256": "c494cac4e0c0eb23b5b7f91925cb0997ab7eceae5e3d517736b8a71b61338a3b"
+        }
+      ],
+      "chat_state_retained": true,
+      "screenshot": "round-1.png"
+    },
+    {
+      "round": 2,
+      "requirement": "把整个界面的字体换成等宽字体（monospace），保留上一轮蓝色主题。",
+      "kind": "font",
+      "expected": "monospace",
+      "observed": "monospace",
+      "changed_files": [
+        {
+          "path": "src/App.jsx",
+          "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+          "after_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545"
+        },
+        {
+          "path": "src/theme.css",
+          "before_sha256": "c494cac4e0c0eb23b5b7f91925cb0997ab7eceae5e3d517736b8a71b61338a3b",
+          "after_sha256": "ab503f9f2821a97af18c0386893bf93cba4d9da92debad5cd740e37614a1eb68"
+        }
+      ],
+      "chat_state_retained": true,
+      "screenshot": "round-2.png"
+    },
+    {
+      "round": 3,
+      "requirement": "把顶部标题改成“我的专属客服”，保留前两轮的蓝色和等宽字体。",
+      "kind": "title",
+      "expected": "我的专属客服",
+      "observed": "我的专属客服",
+      "changed_files": [
+        {
+          "path": "src/App.jsx",
+          "before_sha256": "87a2587c89fed419d4109b7db931e0b0177a3c907d20a0c6b08f7e3ffe161545",
+          "after_sha256": "76af82f286e3a6affb85a7c2835e78d5c97708aa5eb9088ae5693256aac76e11"
+        },
+        {
+          "path": "src/theme.css",
+          "before_sha256": "ab503f9f2821a97af18c0386893bf93cba4d9da92debad5cd740e37614a1eb68",
+          "after_sha256": "4b217ab0f2c33dda062217f7090b1c0da9d3cc4192add8ca8acb72a70b649e3b"
+        }
+      ],
+      "chat_state_retained": true,
+      "screenshot": "round-3.png"
+    }
+  ],
+  "browser": {
+    "browser": "Chromium",
+    "version": "139.0.7258.5",
+    "vite_hmr_websockets": [
+      {
+        "event": "opened",
+        "url": "ws://127.0.0.1:56043/?token=ylSMD3fv1F2P"
+      }
+    ],
+    "navigation_count_after_initial_load": 0,
+    "sentinel_chat_state_retained": true,
+    "final_title": "我的专属客服",
+    "final_color": "rgb(37, 99, 235)",
+    "final_font": "monospace"
+  },
+  "build": {
+    "returncode": 0,
+    "latency_s": 0.819,
+    "stdout": "\n> conversational-ui-frontend@0.1.0 build\n> vite build\n\nvite v6.4.3 building for production...\ntransforming...\n✓ 27 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.42 kB │ gzip:  0.31 kB\ndist/assets/index-CCn-3TaK.css    1.35 kB │ gzip:  0.56 kB\ndist/assets/index-CvgOOKX3.js   145.07 kB │ gzip: 46.92 kB\n✓ built in 405ms\n",
+    "stderr": ""
+  },
+  "usage": {
+    "calls": 4,
+    "prompt_tokens": 9157,
+    "completion_tokens": 6656,
+    "total_tokens": 15813,
+    "latency_s": 34.724
+  },
+  "artifacts": {
+    "backend.log": {
+      "path": "backend.log",
+      "sha256": "5f932b9b3bb7dfe8069dfb88d5bec4cdeacc454fbdd7472dd066999089b3c090",
+      "bytes": 822
+    },
+    "build.json": {
+      "path": "build.json",
+      "sha256": "bc9bd81991925315ad5a9045ec8db3d6fa025f6cf7de810770f27e3804b857a7",
+      "bytes": 472
+    },
+    "final.png": {
+      "path": "final.png",
+      "sha256": "06d905eaf43a7db3730ae2aebcb65976a880e1761bedf9854ceb3c6bf85ce352",
+      "bytes": 30534
+    },
+    "frontend.log": {
+      "path": "frontend.log",
+      "sha256": "c38d7e06f6656d8a14ab216329383fedd4feb924eee00dfbd6ac371669cdc7fb",
+      "bytes": 598
+    },
+    "receipts.checkpoint.json": {
+      "path": "receipts.checkpoint.json",
+      "sha256": "88664e677ef9a1665dd4b64d94163fe9d75188e2a34eedd833802f66882756c2",
+      "bytes": 58118
+    },
+    "receipts.json": {
+      "path": "receipts.json",
+      "sha256": "88664e677ef9a1665dd4b64d94163fe9d75188e2a34eedd833802f66882756c2",
+      "bytes": 58118
+    },
+    "round-1.png": {
+      "path": "round-1.png",
+      "sha256": "76c8b80499d55d5a2247ceed6064fcea3470fe516b4efa17a37fb3b3b0539c2c",
+      "bytes": 31747
+    },
+    "round-2.png": {
+      "path": "round-2.png",
+      "sha256": "cf092ba62997a36b21e129dc252b1dd18c37c7a8b572c4aec98d0f8a6c3d9395",
+      "bytes": 29210
+    },
+    "round-3.png": {
+      "path": "round-3.png",
+      "sha256": "06d905eaf43a7db3730ae2aebcb65976a880e1761bedf9854ceb3c6bf85ce352",
+      "bytes": 30534
+    },
+    "rounds.json": {
+      "path": "rounds.json",
+      "sha256": "253ff0223525af311c3ed8eb279d37f24cdf570b3b27e83c1fae039362335d91",
+      "bytes": 2369
+    },
+    "final-source/src/App.jsx": {
+      "path": "app/frontend/src/App.jsx",
+      "sha256": "76af82f286e3a6affb85a7c2835e78d5c97708aa5eb9088ae5693256aac76e11",
+      "bytes": 2750
+    },
+    "final-source/src/theme.css": {
+      "path": "app/frontend/src/theme.css",
+      "sha256": "4b217ab0f2c33dda062217f7090b1c0da9d3cc4192add8ca8acb72a70b649e3b",
+      "bytes": 2209
+    }
+  },
+  "acceptance_gates": {
+    "real_react_vite_dev_server": true,
+    "real_fastapi_backend_reload_mode": true,
+    "real_model_generated_three_sequential_edits": true,
+    "vite_hmr_websocket_observed": true,
+    "no_full_page_navigation_during_three_edits": true,
+    "react_chat_state_preserved_across_hmr": true,
+    "all_color_font_title_requests_visible": true,
+    "final_vite_build_passed": true,
+    "raw_provider_receipts_complete": true,
+    "rendered_browser_images_retained": true
+  },
+  "official_complete": true
+}

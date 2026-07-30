@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-07-30T05:05:11.922419+00:00",
+  "files": [
+    {
+      "path": "catalog.schemas.json.gz",
+      "bytes": 21244,
+      "sha256": "822bdadf46573ca850447f1ead6b526c01f46f73d35c90000895f891584d24bd"
+    },
+    {
+      "path": "catalog_receipt.json",
+      "bytes": 864,
+      "sha256": "9f4072990692bb6a0f5c4a6e23f18f2a4bf9938478cf60b2ffd73fe5ee766a7a"
+    },
+    {
+      "path": "control/apple_stock_news/receipt.json",
+      "bytes": 73358,
+      "sha256": "ecd66de27d40f03f8aaafe02fe1826fff1917efac68078031d0cb3117edfbceb"
+    },
+    {
+      "path": "control/github_contributors_visualization/contributors.svg",
+      "bytes": 2602,
+      "sha256": "d14524e843fa88f3ad322848fc7fa8cad7d5153c79f7d74c7be5e24ba3880b0a"
+    },
+    {
+      "path": "control/github_contributors_visualization/receipt.json",
+      "bytes": 124615,
+      "sha256": "c4ea166556d91174ec5790d4ed94d826f2b974c3250b7b4867f643f9439b08d5"
+    },
+    {
+      "path": "control/transformer_arxiv_download/papers/2607.27184v1.pdf",
+      "bytes": 1095498,
+      "sha256": "73f5c9a80cbfd807ed5bc14c963b7c9fd18a9de6eb30c8845b0505a79abd9536"
+    },
+    {
+      "path": "control/transformer_arxiv_download/papers/2607.27185v1.pdf",
+      "bytes": 797471,
+      "sha256": "4e4ff0947d28d37b7cfcfd743b50f1538945b6acfa598e74b084659436780754"
+    },
+    {
+      "path": "control/transformer_arxiv_download/papers/2607.27188v1.pdf",
+      "bytes": 1176383,
+      "sha256": "ecbe0ac9ae6768860d7f9f10a6986f86d4e98f9c73fd398e44894a8ac29b42e8"
+    },
+    {
+      "path": "control/transformer_arxiv_download/receipt.json",
+      "bytes": 67851,
+      "sha256": "a914a67261596d7d0ebcb080afbabb104f62f7408b76b1202c67cc1e7bb3e7a6"
+    },
+    {
+      "path": "embedding_receipt.json",
+      "bytes": 601,
+      "sha256": "4298715b7dca31a650e2f5d1fb774c200b331136400a53db99923b65a410577d"
+    },
+    {
+      "path": "index/embeddings-all-MiniLM-L6-v2-3da0897f88acbd0d32a3.json",
+      "bytes": 1354409,
+      "sha256": "23051857081c61e9dfc184d868fdaecd0bc816360133eeb951cbb6593fdda9c9"
+    },
+    {
+      "path": "protocol.json",
+      "bytes": 1738,
+      "sha256": "bf6e7031aa98a0222222469e01f68c1eac82d97fa7677f245373d53cac07684f"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 3008,
+      "sha256": "f5c29c36e1df3eaf5477960c0377bf91dcd1b15699ff1ba1c5e38f17e811431b"
+    },
+    {
+      "path": "treatment/apple_stock_news/receipt.json",
+      "bytes": 33672,
+      "sha256": "2ac858befb44d83cbe494ebf80b06c0dfb6da2f29d9c78c2c4e218e0b716c05b"
+    },
+    {
+      "path": "treatment/github_contributors_visualization/contributors.svg",
+      "bytes": 215,
+      "sha256": "01d4f904edcaefb2563db27c7a3879eed9ed538df1dbd85fc86ce184bd84466f"
+    },
+    {
+      "path": "treatment/github_contributors_visualization/receipt.json",
+      "bytes": 51082,
+      "sha256": "9707da7d8125d314c8c65967eddf1c46f90cc0c44163989bef808b1127d54aea"
+    },
+    {
+      "path": "treatment/transformer_arxiv_download/papers/2607.27184v1.pdf",
+      "bytes": 1095498,
+      "sha256": "73f5c9a80cbfd807ed5bc14c963b7c9fd18a9de6eb30c8845b0505a79abd9536"
+    },
+    {
+      "path": "treatment/transformer_arxiv_download/papers/2607.27185v1.pdf",
+      "bytes": 797471,
+      "sha256": "4e4ff0947d28d37b7cfcfd743b50f1538945b6acfa598e74b084659436780754"
+    },
+    {
+      "path": "treatment/transformer_arxiv_download/papers/2607.27188v1.pdf",
+      "bytes": 1176383,
+      "sha256": "ecbe0ac9ae6768860d7f9f10a6986f86d4e98f9c73fd398e44894a8ac29b42e8"
+    },
+    {
+      "path": "treatment/transformer_arxiv_download/receipt.json",
+      "bytes": 141065,
+      "sha256": "5521c8b6b4f67ab7d1a9113a01a1959f0df6cba3287c21d839f8477820ccb78e"
+    }
+  ]
+}

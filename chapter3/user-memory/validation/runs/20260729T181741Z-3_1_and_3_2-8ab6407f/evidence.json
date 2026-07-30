@@ -1,0 +1,302 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-1-and-3-2",
+  "run_id": "20260729T181741Z-3_1_and_3_2-8ab6407f",
+  "provenance": {
+    "captured_at": "2026-07-29T18:17:41.204547+00:00",
+    "git_revision": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "credential_presence": {
+      "ARK_API_KEY": true,
+      "MOONSHOT_API_KEY": true,
+      "OPENAI_API_KEY": true,
+      "GEMINI_API_KEY": true,
+      "SILICONFLOW_API_KEY": true
+    }
+  },
+  "status": "partial",
+  "scope": {
+    "dataset_cases_available": 60,
+    "cases_run": 1,
+    "modes": [
+      "notes"
+    ],
+    "evaluations_completed": 1,
+    "evaluations_expected": 1,
+    "layers": [
+      "layer1"
+    ]
+  },
+  "configuration": {
+    "writer_provider": "ark",
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "writer_seed": 37,
+    "judge_provider": "moonshot",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "judge_is_external_to_writer": true,
+    "workers": 1
+  },
+  "acceptance": {
+    "all_60_cases": false,
+    "twenty_per_layer": false,
+    "all_four_modes": false,
+    "sequential_memory_only": true,
+    "independent_llm_judge": true,
+    "all_calls_succeeded": true,
+    "passed": false
+  },
+  "summary": {
+    "aggregate": {
+      "notes": {
+        "layer1": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        },
+        "overall": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        }
+      }
+    },
+    "token_usage": {
+      "prompt_tokens": 5842,
+      "completion_tokens": 2270,
+      "total_tokens": 8112
+    },
+    "api_calls": 3,
+    "errors": 0
+  },
+  "errors": [],
+  "results": [
+    {
+      "test_id": "layer1_01_bank_account",
+      "layer": "layer1",
+      "title": "Bank Account Setup - Personal Details Retrieval",
+      "mode": "notes",
+      "session_count": 1,
+      "memory_states": [
+        {
+          "session_index": 1,
+          "conversation_id": "bank_setup_001",
+          "memory": [
+            {
+              "conversation_id": "bank_setup_001"
+            },
+            {
+              "timestamp": "2024-11-15 10:30:00"
+            },
+            {
+              "business": "First National Bank"
+            },
+            {
+              "department": "New Accounts"
+            },
+            {
+              "call_duration": "47 minutes"
+            },
+            {
+              "customer_full_name": "Michael James Robertson"
+            },
+            {
+              "customer_date_of_birth": "March 15, 1985"
+            },
+            {
+              "customer_residential_address": "1847 Maple Street, Apartment 3B, Portland, Oregon, 97205"
+            },
+            {
+              "customer_address_duration": "about two and a half years"
+            },
+            {
+              "customer_phone_number": "503-555-8924"
+            },
+            {
+              "customer_email": "mrobertson85@email.com"
+            },
+            {
+              "customer_employment_status": "employed full-time"
+            },
+            {
+              "customer_occupation": "software engineer"
+            },
+            {
+              "customer_employer": "TechCorp Industries"
+            },
+            {
+              "customer_employment_duration": "coming up on four years this December"
+            },
+            {
+              "customer_annual_income": "$125,000 a year, before taxes"
+            },
+            {
+              "customer_social_security_number": "547-82-9163"
+            },
+            {
+              "customer_driver_license": "Oregon license, number D758392"
+            },
+            {
+              "checking_account_type": "Premium Checking"
+            },
+            {
+              "Premium_Checking_minimum_balance": "$2,500"
+            },
+            {
+              "savings_account_type": "Basic Savings"
+            },
+            {
+              "Basic_Savings_minimum_balance": "$100"
+            },
+            {
+              "checking_account_number": "4429853327"
+            },
+            {
+              "savings_account_number": "4429853328"
+            },
+            {
+              "online_banking_username": "MRobertson503"
+            },
+            {
+              "mobile_banking_enrolled": "yes"
+            },
+            {
+              "debit_card_requested": "yes"
+            },
+            {
+              "debit_card_pin": "4827"
+            },
+            {
+              "overdraft_protection": "linked to savings account"
+            },
+            {
+              "initial_checking_deposit": "$5,000"
+            },
+            {
+              "initial_savings_deposit": "$500"
+            },
+            {
+              "deposit_method": "electronic transfer from Wells Fargo"
+            },
+            {
+              "Wells_Fargo_account_number": "8847293001"
+            },
+            {
+              "Wells_Fargo_routing_number": "121000248"
+            },
+            {
+              "transfer_completion_time": "within 2-3 business days"
+            },
+            {
+              "automatic_transfer_amount": "$200 monthly from checking to savings"
+            },
+            {
+              "automatic_transfer_day": "15th of each month"
+            },
+            {
+              "direct_deposit_setup": "paycheck from TechCorp Industries"
+            },
+            {
+              "First_National_Bank_routing_number": "123006800"
+            },
+            {
+              "debit_card_international_use": "yes"
+            },
+            {
+              "debit_card_foreign_transaction_fee": "3%"
+            },
+            {
+              "travel_notifications_status": "not set up"
+            },
+            {
+              "security_question_1_answer": "Buddy (first pet name)"
+            },
+            {
+              "security_question_2_answer": "Denver, Colorado (city born in)"
+            },
+            {
+              "security_question_3_answer": "Harrison (mother's maiden name)"
+            },
+            {
+              "statements_preference": "electronic statements"
+            },
+            {
+              "statements_email": "mrobertson85@email.com"
+            },
+            {
+              "credit_card_application_status": "not applied for, will consider later"
+            },
+            {
+              "debit_card_arrival_time": "7-10 business days"
+            },
+            {
+              "debit_card_delivery_address": "1847 Maple Street, Apartment 3B, Portland, Oregon, 97205"
+            }
+          ],
+          "isolation": {
+            "prior_raw_histories_supplied": 0,
+            "current_memory_supplied": true,
+            "new_history_supplied": "bank_setup_001"
+          }
+        }
+      ],
+      "answer": "Your checking account number is 4429853327. For direct deposit setup, you may also need the bank's routing number, which is 123006800. Let me know if you need further details!",
+      "judge": {
+        "scores": {
+          "precision": 4,
+          "recall": 4,
+          "reasoning": 4,
+          "proactivity": 4
+        },
+        "hallucination_veto": false,
+        "passed": true,
+        "reward": 1.0
+      },
+      "judge_raw": {
+        "dimensions": {
+          "precision": {
+            "score": 4,
+            "reasoning": "The agent accurately provided the specific checking account number 4429853327 that was requested by the user.",
+            "evidence": [
+              "USER: What was my checking account number again? I need it to set up my direct deposit at work.",
+              "ANSWER: Your checking account number is 4429853327."
+            ]
+          },
+          "recall": {
+            "score": 4,
+            "reasoning": "The agent recalled the correct checking account number from the conversation without any confusion with other numbers.",
+            "evidence": [
+              "ASSISTANT: Correct. And your savings account number is 4429853328.",
+              "ANSWER: Your checking account number is 4429853327."
+            ]
+          },
+          "reasoning": {
+            "score": 4,
+            "reasoning": "The agent demonstrated proper reasoning by directly addressing the user's request and providing the exact checking account number without any unnecessary information.",
+            "evidence": [
+              "USER: What was my checking account number again? I need it to set up my direct deposit at work.",
+              "ANSWER: Your checking account number is 4429853327."
+            ]
+          },
+          "proactivity": {
+            "score": 4,
+            "reasoning": "The agent not only provided the checking account number but also proactively mentioned the routing number, which is relevant for setting up direct deposit.",
+            "evidence": [
+              "ANSWER: Your checking account number is 4429853327. For direct deposit setup, you may also need the bank's routing number, which is 123006800."
+            ]
+          }
+        },
+        "hallucination": {
+          "detected": false,
+          "claims": [],
+          "reasoning": "The agent's response was based on the information provided in the conversation and did not include any unsupported or contradicted factual claims."
+        },
+        "overall_reasoning": "The agent's response was exemplary in terms of precision, recall, reasoning, and proactivity. It accurately provided the specific checking account number requested by the user and proactively included the routing number, which is necessary for setting up direct deposit. The response was concise, relevant, and demonstrated a clear understanding of the user's needs."
+      }
+    }
+  ]
+}

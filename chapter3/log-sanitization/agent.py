@@ -27,6 +27,11 @@ from config import (
 from metrics import PerformanceMetrics, MetricsCollector
 
 
+def _value_appears_in_text(value: str, text: str) -> bool:
+    """Return True if *value* appears as a substring of *text* (case-insensitive)."""
+    return value.lower() in text.lower()
+
+
 class LogSanitizationAgent:
     """Agent for sanitizing logs using local Qwen3 0.6B model via Ollama"""
     
@@ -100,8 +105,8 @@ class LogSanitizationAgent:
             for chunk in stream:
                 yield chunk.get('message', {}).get('content', '')
         else:
-            # 用与 Ollama 相同的 JSON Schema 强约束输出结构（pii_values 数组），
-            # 避免模型自行发明字段名。strict 模式要求 additionalProperties=false。
+            # 用与 Ollama 相同的 JSON Schema 强约束输出结构 (pii_items 数组),
+            # 避免模型自行发明字段名. strict 模式要求 additionalProperties=false.
             strict_schema = dict(PII_DETECTION_SCHEMA)
             strict_schema["additionalProperties"] = False
             stream = self.client.chat.completions.create(
@@ -194,25 +199,38 @@ class LogSanitizationAgent:
         
         # Parse JSON response
         pii_values = []
+        accepted_items = []
         
         try:
             response_json = json.loads(full_response)
+            if not isinstance(response_json, dict):
+                return [], {}
             
-            # Extract PII values
-            pii_values = response_json.get('pii_values') or []
-            # Strip leading/trailing whitespace and special characters like '-' or empty
-            cleaned_pii_values = []
-            for pii in pii_values:
-                if pii and isinstance(pii, str):
-                    cleaned = pii.strip().strip('-').strip()
-                    if cleaned:
-                        cleaned_pii_values.append(cleaned)
-            pii_values = cleaned_pii_values
+            raw_items = response_json.get('pii_items')
+            if isinstance(raw_items, list):
+                for item in raw_items:
+                    if isinstance(item, dict):
+                        value = item.get('value')
+                        if value and isinstance(value, str) and _value_appears_in_text(value, conversation_text):
+                            pii_values.append(value)
+                            accepted_items.append(item)
+                    elif isinstance(item, str) and item and _value_appears_in_text(item, conversation_text):
+                        pii_values.append(item)
+                        accepted_items.append({"value": item})
+            else:
+                legacy_values = response_json.get('pii_values')
+                if isinstance(legacy_values, list):
+                    for pii in legacy_values:
+                        if pii and isinstance(pii, str):
+                            cleaned = pii.strip().strip('-').strip()
+                            if cleaned:
+                                pii_values.append(cleaned)
 
         except json.JSONDecodeError as e:
             print(f"\n   ⚠️  Failed to parse JSON response: {e}")
             # Fallback to simple line splitting if JSON parsing fails
             pii_values = [line.strip() for line in full_response.split('\n') if line.strip()]
+            accepted_items = []
 
         metrics = {
             'input_tokens': input_tokens,
@@ -222,7 +240,8 @@ class LogSanitizationAgent:
             'total_time_ms': total_time_ms,
             'prefill_speed_tps': prefill_speed,
             'output_speed_tps': output_speed,
-            'pii_items_found': len(pii_values)
+            'pii_items_found': len(pii_values),
+            'pii_items': accepted_items
         }
         
         return pii_values, metrics
@@ -268,6 +287,7 @@ class LogSanitizationAgent:
         
         # Detect PII
         pii_values, perf_metrics = self.detect_pii(conv_text)
+        accepted_items = perf_metrics.get('pii_items', [])
         
         if pii_values:
             print(f"   ✅ Found {len(pii_values)} PII items:")
@@ -307,6 +327,7 @@ class LogSanitizationAgent:
             'pii_found': pii_values,
             'replacements_made': replacements,
             'sanitized_text': sanitized_text,
+            'pii_items': accepted_items,
             'metrics': metric.to_dict()
         }
     

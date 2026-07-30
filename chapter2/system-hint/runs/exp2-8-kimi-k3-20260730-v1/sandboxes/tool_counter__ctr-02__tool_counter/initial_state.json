@@ -1,0 +1,6 @@
+{
+  "suite": "tool_counter",
+  "case_id": "ctr-02",
+  "primary": "gateway-b",
+  "fallback": "mirror-b"
+}

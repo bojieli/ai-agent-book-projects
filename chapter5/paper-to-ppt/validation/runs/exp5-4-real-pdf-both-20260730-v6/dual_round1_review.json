@@ -1,0 +1,18 @@
+{
+  "overall_score": 95,
+  "pass": true,
+  "issues": [
+    {
+      "page": 15,
+      "issue_type": "readability",
+      "severity": "low",
+      "suggestion": "放大注意力可视化图中的文字，确保单个单词清晰可辨，特别是图表底部的单词标签"
+    },
+    {
+      "page": 16,
+      "issue_type": "readability",
+      "severity": "low",
+      "suggestion": "放大注意力可视化图中的文字，确保单个单词清晰可辨，特别是图表底部的单词标签"
+    }
+  ]
+}

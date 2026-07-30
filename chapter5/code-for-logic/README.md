@@ -5,6 +5,21 @@
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
 
+## Formal manuscript result (canonical)
+
+The canonical run uses the pinned revision of
+`K-and-K/perturbed-knights-and-knaves`, stratified across six perturbations and
+2–8 people (84 paired tasks). Every code trajectory invoked
+`python-constraint`, but observed accuracy was 39.3% for code assistance versus
+75.0% for pure reasoning (p=2.27e-7 in the opposite direction). The campaign is
+complete; the manuscript's >90% and significant-improvement hypothesis was not
+observed. Evidence: [`validation/real_ark_doubao_flash_hf84_20260730.json`](validation/real_ark_doubao_flash_hf84_20260730.json).
+
+正式活动固定 K&K 数据集版本，按六类扰动与 2–8 人规模分层抽取 84 道配对题。代码臂
+每题都调用了 `python-constraint`，但实测准确率为 39.3%，低于纯思考的 75.0%
+（p=2.27e-7，方向与预期相反）。因此下文离线求解器 100% 的表格只能证明确定性 CSP
+机制正确，不能替代真实 LLM 对照或正文的 >90% 验收结论。
+
 ---
 
 ## English

@@ -62,7 +62,18 @@ def test_non_numeric_stats_input_returns_error_string_not_crash():
     assert any("调用失败" in r for r in tool_results)
 
 
-def test_valid_tool_call_still_works():
+def test_valid_tool_call_still_works(monkeypatch):
+    # Unit tests do not spend a real Tavily request; the live acceptance run
+    # separately proves that web_search returns attributable external results.
+    monkeypatch.setitem(
+        sys.modules["orchestrator"].TOOL_IMPLEMENTATIONS,
+        "web_search",
+        lambda query: json.dumps({
+            "provider": "tavily",
+            "query": query,
+            "results": [{"url": "https://example.test", "content": "检索结果"}],
+        }, ensure_ascii=False),
+    )
     final, tool_results = _run_with_bad_tool_args(
         "web_search", json.dumps({"query": "新能源汽车 销量"}))
     assert final == FINAL_TEXT

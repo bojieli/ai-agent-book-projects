@@ -109,7 +109,7 @@ class UserMemoryAgent:
                 api_key=api_key,
                 base_url="https://ark.cn-beijing.volces.com/api/v3"
             )
-            self.model = model or "doubao-seed-1-6-thinking-250715"
+            self.model = model or os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
         elif self.provider == "kimi" or self.provider == "moonshot":
             self.client = OpenAI(
                 api_key=api_key,
@@ -438,25 +438,33 @@ Current Memory Context will be provided with each message."""
                 # Content should already have the structure
                 memory_content = content
             else:
-                # Parse content to extract structure
-                parts = str(content).split(':')
-                if len(parts) >= 2:
-                    category = "personal"
-                    subcategory = "info"
-                    key = parts[0].strip().replace(' ', '_').lower()
-                    value = ':'.join(parts[1:]).strip()
+                try:
+                    parsed_content = json.loads(content)
+                except (TypeError, json.JSONDecodeError):
+                    parsed_content = None
+
+                if isinstance(parsed_content, dict):
+                    memory_content = parsed_content
                 else:
-                    category = "general"
-                    subcategory = "notes"
-                    key = f"note_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                    value = content
-                
-                memory_content = {
-                    'category': category,
-                    'subcategory': subcategory,
-                    'key': key,
-                    'value': value
-                }
+                    # Fallback for legacy "key: value" style content.
+                    parts = str(content).split(':')
+                    if len(parts) >= 2:
+                        category = "personal"
+                        subcategory = "info"
+                        key = parts[0].strip().replace(' ', '_').lower()
+                        value = ':'.join(parts[1:]).strip()
+                    else:
+                        category = "general"
+                        subcategory = "notes"
+                        key = f"note_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                        value = content
+
+                    memory_content = {
+                        'category': category,
+                        'subcategory': subcategory,
+                        'key': key,
+                        'value': value
+                    }
             
             memory_id = self.memory_manager.add_memory(
                 content=memory_content,

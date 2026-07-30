@@ -78,45 +78,126 @@ async def search_web(
             "kl": region
         }
         
-        response = requests.post(url, data=data, headers=headers, timeout=15)
-        response.raise_for_status()
-        
-        search_time = time.time() - start_time
-        
-        # Parse HTML results
-        soup = BeautifulSoup(response.text, 'html.parser')
-        result_divs = soup.find_all('div', class_='result')
-        
         search_results = []
-        for i, result_div in enumerate(result_divs[:validated_num_results]):
+        search_engine = "duckduckgo"
+        provider_errors = []
+        try:
+            response = requests.post(url, data=data, headers=headers, timeout=15)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            result_divs = soup.find_all('div', class_='result')
+            for i, result_div in enumerate(result_divs[:validated_num_results]):
+                try:
+                    title_tag = result_div.find('a', class_='result__a')
+                    if not title_tag:
+                        continue
+                    snippet_tag = result_div.find('a', class_='result__snippet')
+                    search_results.append(SearchResult(
+                        id=f"ddg-{i}",
+                        title=title_tag.get_text(strip=True),
+                        url=title_tag.get('href', ''),
+                        snippet=(snippet_tag.get_text(strip=True)
+                                 if snippet_tag else ""),
+                        source="duckduckgo",
+                    ))
+                except Exception as exc:
+                    logging.warning("Error parsing DuckDuckGo result %s: %s", i, exc)
+        except Exception as exc:
+            provider_errors.append(f"duckduckgo-html:{type(exc).__name__}")
+            logging.warning("DuckDuckGo HTML search failed: %s", exc)
+
+        # DuckDuckGo occasionally serves an HTML variant without ``div.result``
+        # while still returning HTTP 200. Fall back to its public Lite result
+        # page so an empty parser match cannot masquerade as a successful
+        # current-web search.
+        if not search_results:
             try:
-                # Extract title and URL
-                title_tag = result_div.find('a', class_='result__a')
-                if not title_tag:
-                    continue
-                    
-                title = title_tag.get_text(strip=True)
-                url_link = title_tag.get('href', '')
-                
-                # Extract snippet
-                snippet_tag = result_div.find('a', class_='result__snippet')
-                snippet = snippet_tag.get_text(strip=True) if snippet_tag else ""
-                
-                result = SearchResult(
-                    id=f"ddg-{i}",
-                    title=title,
-                    url=url_link,
-                    snippet=snippet,
-                    source="duckduckgo"
+                lite_response = requests.post(
+                    "https://lite.duckduckgo.com/lite/",
+                    data=data,
+                    headers=headers,
+                    timeout=15,
                 )
-                search_results.append(result)
-            except Exception as e:
-                logging.warning(f"Error parsing search result {i}: {e}")
-                continue
+                lite_response.raise_for_status()
+                lite_soup = BeautifulSoup(lite_response.text, "html.parser")
+                for i, link in enumerate(
+                    lite_soup.select("a.result-link")[:validated_num_results]
+                ):
+                    snippet_tag = link.find_next(class_="result-snippet")
+                    search_results.append(SearchResult(
+                        id=f"ddg-lite-{i}",
+                        title=link.get_text(" ", strip=True),
+                        url=link.get("href", ""),
+                        snippet=(snippet_tag.get_text(" ", strip=True)
+                                 if snippet_tag else ""),
+                        source="duckduckgo-lite",
+                    ))
+                if search_results:
+                    search_engine = "duckduckgo-lite"
+            except Exception as exc:
+                provider_errors.append(f"duckduckgo-lite:{type(exc).__name__}")
+                logging.warning("DuckDuckGo Lite search failed: %s", exc)
+
+        if not search_results:
+            serper_key = os.getenv("SERPER_API_KEY")
+            tavily_key = os.getenv("TAVILY_API_KEY")
+            if serper_key:
+                try:
+                    serper = requests.post(
+                        "https://google.serper.dev/search",
+                        headers={"X-API-KEY": serper_key,
+                                 "Content-Type": "application/json"},
+                        json={"q": query.strip(), "num": validated_num_results},
+                        timeout=20,
+                    )
+                    serper.raise_for_status()
+                    for i, row in enumerate(
+                        serper.json().get("organic", [])[:validated_num_results]
+                    ):
+                        search_results.append(SearchResult(
+                            id=f"serper-{i}", title=row.get("title", ""),
+                            url=row.get("link", ""), snippet=row.get("snippet", ""),
+                            source="serper-google",
+                        ))
+                    if search_results:
+                        search_engine = "serper-google"
+                except Exception as exc:
+                    provider_errors.append(f"serper:{type(exc).__name__}")
+                    logging.warning("Serper search failed; trying next provider: %s", exc)
+            if not search_results and tavily_key:
+                try:
+                    tavily = requests.post(
+                        "https://api.tavily.com/search",
+                        json={"api_key": tavily_key, "query": query.strip(),
+                              "max_results": validated_num_results,
+                              "search_depth": "basic", "include_answer": False},
+                        timeout=20,
+                    )
+                    tavily.raise_for_status()
+                    for i, row in enumerate(
+                        tavily.json().get("results", [])[:validated_num_results]
+                    ):
+                        search_results.append(SearchResult(
+                            id=f"tavily-{i}", title=row.get("title", ""),
+                            url=row.get("url", ""), snippet=row.get("content", ""),
+                            source="tavily",
+                        ))
+                    if search_results:
+                        search_engine = "tavily"
+                except Exception as exc:
+                    provider_errors.append(f"tavily:{type(exc).__name__}")
+                    logging.warning("Tavily search failed: %s", exc)
+
+        if not search_results:
+            raise LookupError(
+                "No configured live search provider returned results; attempts="
+                + ",".join(provider_errors)
+            )
+        search_time = time.time() - start_time
         
         metadata = SearchMetadata(
             query=query,
-            search_engine="duckduckgo",
+            search_engine=search_engine,
             total_results=len(search_results),
             search_time=search_time,
             language="en",
@@ -289,7 +370,7 @@ async def search_knowledge_base(
         
         # Sort by relevance and limit
         results.sort(key=lambda x: x["relevance"], reverse=True)
-        results = results[:top_k]
+        results = results[:max(0, top_k)]
         
         logging.info(f"✅ Found {len(results)} results")
         

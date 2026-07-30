@@ -1,0 +1,103 @@
+[
+  {
+    "purpose": "generate-live_pipe_parser-attempt-1",
+    "called_at_utc": "2026-07-29T21:24:10.369834+00:00",
+    "latency_s": 27.68,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是一个\"日志解析器代码生成器\"。用户会给你一批**同一种未知格式**的日志样本，\n以及现有系统解析失败的报错。你的任务：编写一个 Python 函数，把这种格式的每一行解析成结构化字段。\n\n严格要求：\n1. 只输出一个 Python 代码块（```python ... ```），不要任何解释文字。\n2. 代码块里必须定义一个函数：def parse(line: str) -> dict | None\n   - 输入是一行日志（字符串）。\n   - 如果这行符合你要解析的格式，返回一个 dict，键为字段名（英文小写下划线），值为解析出的内容。\n   - 如果这行**不符合**这种格式，必须返回 None（不要抛异常，把机会让给其它解析器）。\n3. 只能使用 Python 标准库（re、json、datetime 等），不要 import 第三方库。\n4. 不要有任何 print、input、文件读写、网络访问等副作用。\n5. 必须解析出用户指定的**所有必需字段**（required_keys），字段值不能为空。\n6. 尽量健壮：用正则/分隔符解析，容忍字段顺序内的空格。\n"
+        },
+        {
+          "role": "user",
+          "content": "现有系统无法解析下面这种格式的日志，请生成解析函数。\n\n【失败样本（同一种新格式）】\n2026-07-30T05:23:42Z|INFO|checkout.worker|step=1|accepted real request req-81\n2026-07-30T05:23:42Z|WARNING|checkout.worker|step=2|retrying payment authorization req-81\n2026-07-30T05:23:42Z|ERROR|checkout.worker|step=3|authorization exhausted req-81\n\n【系统报错】\n没有任何已注册解析器能解析该行：'2026-07-30T05:23:42Z|INFO|checkout.worker|step=1|accepted real request req-81'\n\n【必需解析出的字段 required_keys】\n['timestamp', 'level', 'module', 'step', 'message']"
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "0217853602230262b35cfdb86d4e4b324c5d7f5a75557a23d3680",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "```python\nimport re\n\ndef parse(line: str) -> dict | None:\n    # 定义匹配日志格式的正则表达式\n    pattern = r'^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z)\\|([A-Z]+)\\|([\\w.]+)\\|step=(\\d+)\\|(.*)$'\n    match = re.match(pattern, line.strip())\n    \n    if not match:\n        return None\n    \n    # 提取各个字段\n    timestamp = match.group(1)\n    level = match.group(2)\n    module = match.group(3)\n    step = match.group(4)\n    message = match.group(5)\n    \n    # 确保所有必需字段都不为空\n    if not all([timestamp, level, module, step, message]):\n        return None\n    \n    return {\n        'timestamp': timestamp,\n        'level': level,\n        'module': module,\n        'step': step,\n        'message': message\n    }\n```"
+    },
+    "usage": {
+      "prompt_tokens": 588,
+      "completion_tokens": 1136,
+      "total_tokens": 1724,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "purpose": "generate-live_bracket_parser-attempt-1",
+    "called_at_utc": "2026-07-29T21:25:00.326777+00:00",
+    "latency_s": 49.954,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是一个\"日志解析器代码生成器\"。用户会给你一批**同一种未知格式**的日志样本，\n以及现有系统解析失败的报错。你的任务：编写一个 Python 函数，把这种格式的每一行解析成结构化字段。\n\n严格要求：\n1. 只输出一个 Python 代码块（```python ... ```），不要任何解释文字。\n2. 代码块里必须定义一个函数：def parse(line: str) -> dict | None\n   - 输入是一行日志（字符串）。\n   - 如果这行符合你要解析的格式，返回一个 dict，键为字段名（英文小写下划线），值为解析出的内容。\n   - 如果这行**不符合**这种格式，必须返回 None（不要抛异常，把机会让给其它解析器）。\n3. 只能使用 Python 标准库（re、json、datetime 等），不要 import 第三方库。\n4. 不要有任何 print、input、文件读写、网络访问等副作用。\n5. 必须解析出用户指定的**所有必需字段**（required_keys），字段值不能为空。\n6. 尽量健壮：用正则/分隔符解析，容忍字段顺序内的空格。\n"
+        },
+        {
+          "role": "user",
+          "content": "现有系统无法解析下面这种格式的日志，请生成解析函数。\n\n【失败样本（同一种新格式）】\n[2026-07-29T21:23:42.606+00:00] (INFO) <tool=inventory_lookup> {latency_ms=34 status=ok} :: stock check completed\n[2026-07-29T21:23:42.609+00:00] (WARNING) <tool=payment_api> {latency_ms=181 status=retry} :: upstream requested retry\n[2026-07-29T21:23:42.612+00:00] (ERROR) <tool=payment_api> {latency_ms=412 status=timeout} :: deadline exceeded\n\n【系统报错】\n没有任何已注册解析器能解析该行：'[2026-07-29T21:23:42.606+00:00] (INFO) <tool=inventory_lookup> {latency_ms=34 status=ok} :: stock check completed'\n\n【必需解析出的字段 required_keys】\n['timestamp', 'level', 'tool', 'latency_ms', 'status', 'message']"
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "0217853602505592b35cfdb86d4e4b324c5d7f5a75557a2d2f0d6",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "```python\nimport re\n\ndef parse(line: str) -> dict | None:\n    # 定义日志格式的正则表达式模式\n    pattern = r'^\\[(?P<timestamp>[^\\]]+)\\]\\s*\\((?P<level>[^)]+)\\)\\s*<tool=(?P<tool>[^>]+)>\\s*\\{latency_ms=(?P<latency_ms>\\d+)\\s+status=(?P<status>\\w+)\\}\\s*::\\s*(?P<message>.*)$'\n    \n    # 尝试匹配日志行\n    match = re.match(pattern, line.strip())\n    if not match:\n        return None\n    \n    # 提取匹配的组\n    groups = match.groupdict()\n    \n    # 检查所有必需字段是否存在且不为空\n    required_keys = ['timestamp', 'level', 'tool', 'latency_ms', 'status', 'message']\n    for key in required_keys:\n        if key not in groups or not groups[key]:\n            return None\n    \n    # 转换latency_ms为整数\n    try:\n        groups['latency_ms'] = int(groups['latency_ms'])\n    except ValueError:\n        return None\n    \n    return groups\n```"
+    },
+    "usage": {
+      "prompt_tokens": 661,
+      "completion_tokens": 2452,
+      "total_tokens": 3113,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "purpose": "vision-review-rendered-parser-table",
+    "called_at_utc": "2026-07-29T21:25:15.349082+00:00",
+    "latency_s": 14.418,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Inspect this rendered adaptive-log table. Return strict JSON: {\"pass\": bool, \"readable\": bool, \"has_multiple_parsers\": bool, \"observed_columns\": [strings], \"reason\": string}. Pass only if the table is readable, contains multiple parsed rows, and visibly includes both parser identifiers and structured fields."
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "sha256": "d8dfad31b33fc0fa5dcf60b99041e61ef531627e5bde64e92f1cb345ab2cec52",
+                "bytes": 96289
+              }
+            }
+          ]
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "0217853603011172b35cfdb86d4e4b324c5d7f5a75557a2e2712e",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "{\"pass\": true, \"readable\": true, \"has_multiple_parsers\": true, \"observed_columns\": [\"_parser\", \"latency_ms\", \"level\", \"message\", \"module\", \"status\", \"step\", \"timestamp\", \"tool\"], \"reason\": \"The table is readable with clear columns, contains 6 parsed rows, includes multiple parser identifiers (_parser: live_pipe_parser, live_bracket_parser), and structured fields (latency_ms, level, message, etc.)\"}"
+    },
+    "usage": {
+      "prompt_tokens": 2447,
+      "completion_tokens": 481,
+      "total_tokens": 2928,
+      "cached_prompt_tokens": 0
+    }
+  }
+]

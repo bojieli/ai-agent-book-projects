@@ -1,0 +1,28 @@
+{
+  "case": "video_analyze",
+  "tool": "video_analyze",
+  "arguments": {
+    "video_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/media/visual-marker.mp4",
+    "num_frames": 1,
+    "prompt": "Read the text shown in this frame."
+  },
+  "arguments_sha256": "fc90946394bfe61d2b3087106b02b1d1a3b563be4eb57e01bdf1ccc06b5f6698",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "opencv-and-configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": "video_analysis_error",
+  "payload": {
+    "success": false,
+    "message": "Video analysis failed: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}",
+    "metadata": {
+      "error_type": "video_analysis_error"
+    }
+  },
+  "elapsed_seconds": 4.847
+}

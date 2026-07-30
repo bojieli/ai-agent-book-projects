@@ -9,6 +9,8 @@ from openai import OpenAI
 from openai.types.chat.chat_completion import Choice
 import logging
 import os
+import requests
+import time
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -85,10 +87,10 @@ def is_failure_answer(answer: str) -> bool:
 
 class WebSearchAgent:
     """
-    Web Search Agent - 使用 Kimi API 的内置搜索工具
-    
-    根据官方文档: https://platform.moonshot.ai/docs/guide/use-web-search
-    Kimi 提供了内置的 $web_search 工具
+    Web Search Agent - 使用 Kimi Formula API 官方搜索工具。
+
+    kimi-k3 的当前官方路径是标准 ``function`` tool 声明加
+    ``moonshot/web-search:latest`` Formula Fiber 执行。
     """
     
     def __init__(self, api_key: str = None, base_url: str = "https://api.moonshot.cn/v1",
@@ -111,7 +113,7 @@ class WebSearchAgent:
         if self.using_openrouter:
             logger.info(
                 f"MOONSHOT_API_KEY 未设置，改用 OpenRouter 兜底（模型: {model}）。"
-                "注意：Moonshot 内置 $web_search 工具在 OpenRouter 上不可用，"
+                "注意：Moonshot Formula web_search 工具在 OpenRouter 上不可用，"
                 "此模式下模型将仅凭自身知识作答，不做实时联网搜索。"
             )
 
@@ -121,14 +123,23 @@ class WebSearchAgent:
             # 应用配置的搜索超时，避免后端挂起时请求默认阻塞约 10 分钟
             timeout=Config.SEARCH_TIMEOUT,
         )
+        self._api_key = resolved_key
+        self.base_url = resolved_base_url
         self.model = model
         self.verbose = verbose
         self.conversation_history = []
         # ReAct 轨迹：按顺序记录每一步的思考/行动/观察，便于展示与调试
         self.trace: List[Dict[str, Any]] = []
+        # Credential-free provider requests/responses for Experiment 1-2
+        # acceptance.  Search IDs in tool arguments are intentionally retained:
+        # they prove that Moonshot's hosted built-in tool actually executed.
+        self.api_turns: List[Dict[str, Any]] = []
+        self.formula_uri = "moonshot/web-search:latest"
+        self._formula_tools: Optional[List[Dict[str, Any]]] = None
+        self._request_timeout = Config.SEARCH_TIMEOUT
         self.temperature = 0.6
         # 推理模型（Kimi K3）需要充足的输出预算，避免最终答案被截断
-        self.max_tokens = 4096
+        self.max_tokens = 32768
 
     def _emit(self, step: Dict[str, Any]):
         """记录一条 ReAct 轨迹步骤，并在 verbose 模式下实时打印。"""
@@ -137,22 +148,134 @@ class WebSearchAgent:
             print(format_trace_step(step))
         
     def _get_tools(self) -> List[Dict[str, Any]]:
-        """
-        定义可用的工具
-        根据 Kimi 文档，$web_search 是内置工具（仅 Moonshot 支持）。
-        经 OpenRouter 兜底时该内置工具不可用，返回空列表以避免 400 错误，
-        此时模型仅凭自身知识作答。
-        """
+        """Fetch and cache Kimi's authoritative Formula declaration."""
         if getattr(self, "using_openrouter", False):
             return []
-        return [
-            {
-                "type": "builtin_function",
-                "function": {
-                    "name": "$web_search",
-                }
+        if self._formula_tools is not None:
+            return self._formula_tools
+
+        url = (
+            f"{self.base_url.rstrip('/')}/formulas/"
+            f"{self.formula_uri}/tools"
+        )
+        started = time.monotonic()
+        response = None
+        try:
+            response = requests.get(
+                url,
+                headers={"Authorization": f"Bearer {self._api_key}"},
+                timeout=self._request_timeout,
+            )
+            payload = response.json()
+            response.raise_for_status()
+            tools = payload.get("tools")
+            if not isinstance(tools, list) or not tools:
+                raise RuntimeError("Formula declaration response has no tools")
+            if not any(
+                tool.get("type") == "function"
+                and tool.get("function", {}).get("name") == "web_search"
+                for tool in tools
+            ):
+                raise RuntimeError(
+                    "Formula declaration does not contain function web_search"
+                )
+        except Exception as exc:
+            error_payload: Dict[str, Any] = {
+                "class": type(exc).__name__,
+                "message": str(exc),
             }
-        ]
+            if response is not None:
+                try:
+                    error_payload["response"] = response.json()
+                except ValueError:
+                    error_payload["response_text"] = response.text
+            self.api_turns.append({
+                "kind": "formula_tools",
+                "formula_uri": self.formula_uri,
+                "request": {"method": "GET", "url": url},
+                "http_status": getattr(response, "status_code", None),
+                "elapsed_seconds": round(time.monotonic() - started, 6),
+                "error": error_payload,
+            })
+            raise
+
+        self.api_turns.append({
+            "kind": "formula_tools",
+            "formula_uri": self.formula_uri,
+            "request": {"method": "GET", "url": url},
+            "http_status": response.status_code,
+            "response": payload,
+            "elapsed_seconds": round(time.monotonic() - started, 6),
+        })
+        self._formula_tools = tools
+        return tools
+
+    def _execute_formula(self, name: str, raw_arguments: str) -> str:
+        """Execute one Kimi Formula Fiber exactly as the model requested."""
+        if self.using_openrouter:
+            raise RuntimeError("Kimi Formula tools are unavailable on OpenRouter")
+
+        url = (
+            f"{self.base_url.rstrip('/')}/formulas/"
+            f"{self.formula_uri}/fibers"
+        )
+        body = {"name": name, "arguments": raw_arguments}
+        started = time.monotonic()
+        response = None
+        try:
+            response = requests.post(
+                url,
+                headers={"Authorization": f"Bearer {self._api_key}"},
+                json=body,
+                timeout=self._request_timeout,
+            )
+            payload = response.json()
+            response.raise_for_status()
+            if payload.get("status") != "succeeded":
+                raise RuntimeError(
+                    f"Formula Fiber did not succeed: {payload.get('status')!r}"
+                )
+            context = payload.get("context") or {}
+            result = context.get("output")
+            if result in (None, ""):
+                result = context.get("encrypted_output")
+            if result in (None, ""):
+                raise RuntimeError("Succeeded Formula Fiber returned no output")
+        except Exception as exc:
+            error_payload: Dict[str, Any] = {
+                "class": type(exc).__name__,
+                "message": str(exc),
+            }
+            if response is not None:
+                try:
+                    error_payload["response"] = response.json()
+                except ValueError:
+                    error_payload["response_text"] = response.text
+            self.api_turns.append({
+                "kind": "formula_fiber",
+                "formula_uri": self.formula_uri,
+                "request": {
+                    "method": "POST",
+                    "url": url,
+                    "body": body,
+                },
+                "http_status": getattr(response, "status_code", None),
+                "elapsed_seconds": round(time.monotonic() - started, 6),
+                "error": error_payload,
+            })
+            raise
+
+        self.api_turns.append({
+            "kind": "formula_fiber",
+            "formula_uri": self.formula_uri,
+            "request": {"method": "POST", "url": url, "body": body},
+            "http_status": response.status_code,
+            "response": payload,
+            "elapsed_seconds": round(time.monotonic() - started, 6),
+        })
+        if isinstance(result, str):
+            return result
+        return json.dumps(result, ensure_ascii=False)
     
     def _get_system_prompt(self) -> str:
         """
@@ -162,7 +285,7 @@ class WebSearchAgent:
 
 请按照以下步骤处理：
 1. 分析用户问题，识别关键信息需求
-2. 使用 $web_search 工具搜索相关信息
+2. 使用 web_search 官方工具搜索相关信息
 3. 如果需要更多信息，可以多次调用搜索工具
 4. 综合所有信息，生成准确、全面的答案
 
@@ -190,10 +313,33 @@ class WebSearchAgent:
             # 留足输出预算（Moonshot 要求 max_tokens>=2048），否则答案可能被截断为空。
             max_tokens=self.max_tokens,
         )
+        if str(self.model).lower() == "kimi-k3":
+            kwargs["reasoning_effort"] = "max"
         tools = self._get_tools()
         if tools:  # OpenRouter 兜底时无内置搜索工具，省略 tools 参数
             kwargs["tools"] = tools
-        completion = self.client.chat.completions.create(**kwargs)
+        started = time.monotonic()
+        try:
+            completion = self.client.chat.completions.create(**kwargs)
+        except Exception as exc:
+            self.api_turns.append({
+                "kind": "chat_completion",
+                "request": json.loads(json.dumps(kwargs, ensure_ascii=False, default=str)),
+                "elapsed_seconds": round(time.monotonic() - started, 6),
+                "error": {"class": type(exc).__name__, "message": str(exc)},
+            })
+            raise
+        response = (
+            completion.model_dump() if hasattr(completion, "model_dump")
+            else completion.dict() if hasattr(completion, "dict")
+            else {"raw_response": str(completion)}
+        )
+        self.api_turns.append({
+            "kind": "chat_completion",
+            "request": json.loads(json.dumps(kwargs, ensure_ascii=False, default=str)),
+            "response": json.loads(json.dumps(response, ensure_ascii=False, default=str)),
+            "elapsed_seconds": round(time.monotonic() - started, 6),
+        })
         return completion.choices[0]
 
     def search_and_answer(self, user_question: str, max_iterations: int = 5) -> str:
@@ -217,6 +363,9 @@ class WebSearchAgent:
         ]
         # 重置 ReAct 轨迹
         self.trace = []
+        self.api_turns = []
+        # Each independent question keeps its own real declaration receipt.
+        self._formula_tools = None
         logger.info("开始调用 Kimi 搜索工具...")
 
         try:
@@ -282,13 +431,22 @@ class WebSearchAgent:
                         self._emit({"iteration": iteration, "type": "action",
                                     "tool": tool_call_name, "args": tool_call_arguments})
 
-                        if tool_call_name == "$web_search":
-                            # 调用搜索实现
-                            tool_result = search_impl(tool_call_arguments)
+                        if tool_call_name == "web_search":
+                            # Formula requires the original serialized
+                            # arguments, even though the parsed copy above is
+                            # retained for a readable ReAct trace.
+                            tool_result = self._execute_formula(
+                                tool_call_name,
+                                tool_call.function.arguments or "{}",
+                            )
                         else:
                             tool_result = f"Error: unable to find tool by name '{tool_call_name}'"
 
-                        tool_content = json.dumps(tool_result, ensure_ascii=False)
+                        tool_content = (
+                            tool_result
+                            if isinstance(tool_result, str)
+                            else json.dumps(tool_result, ensure_ascii=False)
+                        )
                         # 观察：记录工具返回结果
                         self._emit({"iteration": iteration, "type": "observation",
                                     "tool": tool_call_name, "content": tool_content})
@@ -296,7 +454,6 @@ class WebSearchAgent:
                         self.conversation_history.append({
                             "role": "tool",
                             "tool_call_id": tool_call.id,
-                            "name": tool_call_name,
                             "content": tool_content
                         })
                 elif finish_reason == "length":
@@ -353,6 +510,10 @@ class WebSearchAgent:
     def get_trace(self) -> List[Dict[str, Any]]:
         """获取上一次 search_and_answer 的 ReAct 轨迹（思考/行动/观察/最终答案）"""
         return self.trace
+
+    def get_api_turns(self) -> List[Dict[str, Any]]:
+        """Return detached real-provider evidence for the latest question."""
+        return json.loads(json.dumps(self.api_turns, ensure_ascii=False, default=str))
     
     def set_temperature(self, temperature: float):
         """
@@ -373,7 +534,7 @@ def run_offline_demo(question: str = "Moonshot AI 的 Context Caching 是什么�
     """离线演示 ReAct 循环——无需 API Key 或联网。
 
     本函数**不调用真实搜索**，而是回放一段“示例轨迹”，用来直观展示本章讲的
-    “想→做→看→想→做→看”循环：模型先思考，再调用 $web_search 行动，观察结果后
+    “想→做→看→想→做→看”循环：模型先思考，再调用 web_search 行动，观察结果后
     继续思考，最终综合出答案。轨迹内容仅为教学示例，不代表真实搜索返回。
 
     Returns:
@@ -382,17 +543,17 @@ def run_offline_demo(question: str = "Moonshot AI 的 Context Caching 是什么�
     trace: List[Dict[str, Any]] = [
         {"iteration": 1, "type": "thought",
          "content": "用户想了解 Context Caching。这是 Moonshot 的特性，我需要先搜索官方说明，确认它的定义和作用。"},
-        {"iteration": 1, "type": "action", "tool": "$web_search",
+        {"iteration": 1, "type": "action", "tool": "web_search",
          "args": {"query": "Moonshot AI Context Caching 是什么"}},
-        {"iteration": 1, "type": "observation", "tool": "$web_search",
+        {"iteration": 1, "type": "observation", "tool": "web_search",
          "content": "（示例结果）Context Caching 是一种上下文缓存机制：把重复使用的前缀"
                     "（如长系统提示、文档）缓存在服务端，后续请求命中缓存即可复用，"
                     "从而降低重复计算与费用。"},
         {"iteration": 2, "type": "thought",
          "content": "已知大致定义，但还缺少适用场景。再搜一次它的典型用途以便答得更完整。"},
-        {"iteration": 2, "type": "action", "tool": "$web_search",
+        {"iteration": 2, "type": "action", "tool": "web_search",
          "args": {"query": "Context Caching 适用场景 计费"}},
-        {"iteration": 2, "type": "observation", "tool": "$web_search",
+        {"iteration": 2, "type": "observation", "tool": "web_search",
          "content": "（示例结果）常见于多轮对话、长文档反复问答、固定系统提示等场景；"
                     "命中缓存的 token 通常按更低价格计费，并能显著降低首字延迟。"},
         {"iteration": 3, "type": "answer",

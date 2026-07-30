@@ -14,7 +14,10 @@ from tqdm import tqdm
 import tiktoken
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics.pairwise import cosine_similarity
-import umap
+try:
+    import umap
+except ImportError:  # Optional: deterministic PCA keeps the index usable.
+    umap = None
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 from loguru import logger
@@ -103,9 +106,13 @@ class RaptorIndexer:
             return np.zeros(n_samples)
         
         # Use UMAP for dimensionality reduction if needed
-        if embeddings.shape[1] > 50:
+        if embeddings.shape[1] > 50 and umap is not None:
             reducer = umap.UMAP(n_components=50, n_neighbors=min(15, n_samples-1))
             embeddings_reduced = reducer.fit_transform(embeddings)
+        elif embeddings.shape[1] > 50:
+            from sklearn.decomposition import PCA
+            dimensions = max(1, min(50, n_samples - 1, embeddings.shape[1]))
+            embeddings_reduced = PCA(n_components=dimensions, random_state=42).fit_transform(embeddings)
         else:
             embeddings_reduced = embeddings
         

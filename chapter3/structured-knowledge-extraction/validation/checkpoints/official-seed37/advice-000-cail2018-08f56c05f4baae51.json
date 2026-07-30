@@ -1,0 +1,89 @@
+{
+  "signature": "ab46f33e21eeef48d206a3320402cdb343db0f540b7d7b52118c86db208b07ca",
+  "parsed": {
+    "advice": "匹配依据：待预测案件与训练集原型“盗窃罪-prototype-1”共享部分定义特征，包括“theft_target=现金”“theft_location=公共场所”。但存在多处特征不匹配，如待预测案件中“theft_tool”“disposal_of_stolen_property”“stolen_property_disposal”“stolen_property_recovery”“return_of_stolen_property”等关键特征信息缺失或与原型定义特征（如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等）不一致，匹配距离为0.535。统计区间：该原型案件量为1，刑期统计区间为4.0个月（min=4.0，max=4.0，q25=4.0，q75=4.0，median=4.0）。不确定性：由于待预测案件与原型存在多个定义特征差异，且原型样本量较小（n=1），统计结果可能存在局限性，刑期预测存在不确定性。"
+  },
+  "receipt": {
+    "purpose": "3-13 held-out prototype-grounded advice cail2018-08f56c05f4baae51",
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "started_at": "2026-07-30T04:41:43.942009+00:00",
+    "latency_ms": 23748.511,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是司法数据分析助手。只可使用给出的训练集案件原型统计与已抽取因素，不得使用原始训练案件、外部法律知识或自行给出其他刑期数字。解释匹配依据和统计区间，强调不确定性。只返回 JSON：{\"advice\":\"...\"}。不要写免责声明，系统会统一附加。"
+        },
+        {
+          "role": "user",
+          "content": "HELDOUT EXTRACTED FACTORS:\n{\"charge\": \"盗窃罪\", \"surrender\": null, \"truthful_confession\": null, \"compensation_to_victim\": null, \"victim_forgiveness\": null, \"joint_crime\": false, \"criminal_record\": null, \"arrest_method\": \"被抓获\", \"return_of_stolen_property\": null, \"crime_count\": 1.0, \"crime_amount\": 2075.0, \"guilty_plea\": null, \"first_offense\": null, \"recidivism\": null, \"criminal_form\": \"既遂\", \"disposal_of_stolen_property\": null, \"victim_count\": null, \"theft_count\": 1.0, \"theft_amount\": 2075.0, \"household_theft\": false, \"stolen_property_recovery\": null, \"destructive_means\": false, \"use_special_convenience\": \"工作便利\", \"theft_method\": \"爬窗\", \"theft_target\": \"现金\", \"theft_tool\": null, \"theft_location\": \"公共场所\", \"stolen_property_disposal\": null, \"drug_user_identity\": null}\n\nMATCHED TRAINING PROTOTYPE ONLY:\n{\"prototype_id\": \"盗窃罪-prototype-1\", \"charge\": \"盗窃罪\", \"prototype_size\": 1, \"sentence_months\": {\"median\": 4.0, \"q25\": 4.0, \"q75\": 4.0, \"min\": 4.0, \"max\": 4.0}, \"defining_features\": [{\"feature\": \"cat:theft_tool=筷子\", \"z\": 18.947295321496338}, {\"feature\": \"cat:disposal_of_stolen_property=全部发还\", \"z\": 6.633249580710821}, {\"feature\": \"cat:stolen_property_disposal=返还被害人\", \"z\": 5.916079783099585}, {\"feature\": \"cat:theft_target=现金\", \"z\": 3.6606010435446397}, {\"feature\": \"cat:stolen_property_recovery=全部追回\", \"z\": 3.584153156068214}, {\"feature\": \"cat:return_of_stolen_property=全部退赃\", \"z\": 3.2015621187164305}, {\"feature\": \"cat:theft_location=公共场所\", \"z\": 3.0964875737063133}, {\"feature\": \"cat:theft_method=趁人不备\", \"z\": 2.789352578086535}], \"match_distance\": 0.5352754821097585}"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 900,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "021785386504177cf2d23e4a199b9c4bf1f6d914b47619df647d1",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"advice\":\"匹配依据：待预测案件与训练集原型“盗窃罪-prototype-1”共享部分定义特征，包括“theft_target=现金”“theft_location=公共场所”。但存在多处特征不匹配，如待预测案件中“theft_tool”“disposal_of_stolen_property”“stolen_property_disposal”“stolen_property_recovery”“return_of_stolen_property”等关键特征信息缺失或与原型定义特征（如“theft_tool=筷子”“disposal_of_stolen_property=全部发还”等）不一致，匹配距离为0.535。统计区间：该原型案件量为1，刑期统计区间为4.0个月（min=4.0，max=4.0，q25=4.0，q75=4.0，median=4.0）。不确定性：由于待预测案件与原型存在多个定义特征差异，且原型样本量较小（n=1），统计结果可能存在局限性，刑期预测存在不确定性。\"}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "\n我现在需要处理用户提供的司法数据分析请求。首先，我要仔细阅读用户给出的HELDOUT EXTRACTED FACTORS和MATCHED TRAINING PROTOTYPE ONLY的内容，然后根据要求生成JSON格式的advice。\n\n首先，用户的问题是关于盗窃罪的刑期预测，只能使用提供的训练集案件原型统计与已抽取因素，不能使用外部知识或自行给出刑期数字。需要解释匹配依据和统计区间，强调不确定性。\n\n先看HELDOUT EXTRACTED FACTORS中的因素：charge是盗窃罪，theft_target是现金，theft_location是公共场所，其他因素如theft_tool、disposal_of_stolen_property、stolen_property_disposal、stolen_property_recovery、return_of_stolen_property等都是null或未提及。\n\n然后看MATCHED TRAINING PROTOTYPE，prototype_id是盗窃罪-prototype-1，prototype_size是1，sentence_months的统计区间是median=4.0，q25=4.0，q75=4.0，min=4.0，max=4.0。defining_features里有多个特征，其中与HELDOUT因素匹配的可能是theft_target=现金和theft_location=公共场所，这两个在defining_features中z值分别为3.66和3.09，属于较高的z值，说明这两个特征在原型中是重要的定义特征。不过HELDOUT中的theft_tool是null，而原型中的theft_tool是筷子，这是不匹配的；disposal_of_stolen_property等在HELDOUT中是null，而原型中是全部发还等，也不匹配。match_distance是0.535，说明有一定匹配度但不完全匹配。\n\n接下来，匹配依据需要说明HELDOUT与原型共享的特征，即theft_target=现金和theft_location=公共场所，这两个是原型的defining features。但同时要指出存在不匹配的特征，如theft_tool（HELDOUT中为null，原型中为筷子）、disposal_of_stolen_property等（HELDOUT中未提及，原型中有具体值），这些差异可能影响匹配准确性。\n\n统计区间方面，原型的sentence_months的min、max、q25、q75、median都是4.0，所以统计区间是4.0个月（min=4.0，max=4.0，q25=4.0，q75=4.0，median=4.0）。\n\n需要强调不确定性，因为HELDOUT中存在多个原型定义特征未匹配（如theft_tool、disposal_of_stolen_property等），且原型样本量仅为1（prototype_size=1），统计结果可能存在局限性。\n\n现在组织语言，确保包含匹配依据（共享的theft_target=现金和theft_location=公共场所，以及不匹配的特征）、统计区间（4.0个月的各分位数），并强调不确定性（样本量小、特征不匹配）。\n\n最后，按照要求返回JSON格式，键为\"advice\"，值为上述内容的自然语言描述，不使用Markdown，保持简洁准确。"
+          }
+        }
+      ],
+      "created": 1785386527,
+      "model": "doubao-seed-1-6-250615",
+      "object": "chat.completion",
+      "service_tier": "default",
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 926,
+        "prompt_tokens": 827,
+        "total_tokens": 1753,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 704,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    "usage": {
+      "completion_tokens": 926,
+      "prompt_tokens": 827,
+      "total_tokens": 1753,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 704,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0
+      }
+    },
+    "response_model": "doubao-seed-1-6-250615",
+    "response_id": "021785386504177cf2d23e4a199b9c4bf1f6d914b47619df647d1"
+  }
+}

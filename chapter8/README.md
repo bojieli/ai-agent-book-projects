@@ -8,14 +8,20 @@
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 实验 8-1：用环境结果、过程规则和语言 Rubric 形成带证据的客服轨迹诊断 |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 实验 8-2：比较成功、部分成功与失败轨迹，生成跨轨迹 Markdown 经验文档 |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 实验 8-3：从失败轨迹生成最小 Prompt 补丁，并以边界集和保留集控制发布 |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 实验 8-4：把浏览器轨迹编译为带状态谓词、经重置回放验证的工作流 |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 实验 8-5：由重复故障触发重试/熔断代码补丁、回归、灰度与回滚 |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 8-6：用学习、迁移、规则变化和保持四阶段评估长期进化 |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 实验 8-1：28 条真实客服调用、8 次 Judge 调用与 8 条专家标注样本已通过验收；[证据](trajectory-verifier/validation/real_20260729T165247Z/evidence.json)同时记录关键违规稳定性主张未复现 |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 实验 8-2：真实 GAIA 三组轨迹与知识文档对照已验收；[证据](gaia-experience/validation/real_20260729T164012Z/evidence.json)记录知识文档组仅 25%、两控制组均 50% 的负结果 |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 实验 8-3：真实任务 Agent、LLM Judge 与 Coding Agent 跑完初始/自动/人工三组完整保留集和边界集；原始回执与发布门槛已保存 |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 实验 8-4：真实 ARK Agent + Chromium 在可重置本地消息站完成探索、独立验证、参数化回放、假成功对照与页面变化失效 |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 实验 8-5：真实 Coding Agent 从重复故障生成补丁，并与确定性候选、故意过宽的反例通过同一回归/灰度/回滚发布门；[证据](self-modifying-agent/validation/latest.json)保留接受与拒绝历史 |
+| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 8-6：static、append-only、evolving 三臂 × 3 seeds × 14 任务共 126 次真实调用；[证据](self-evolution-eval/validation/latest.json)保留迁移、规则替换、保持与配对统计 |
 
-以上实验都提供无需 API Key 的离线入口和单元测试；需要真实模型或浏览器的扩展路径在各项目 README 中另行说明。
+以上实验都保留无需 API Key 的离线入口和单元测试用于预检；表中 ✅ 来自各目录保存的真实模型、真实轨迹或真实浏览器规范证据，不由离线机制演示代替。历史数值或定性主张未复现时，证据按负结果如实记录。
+
+证据完整性边界：8-5、8-6 的 canonical evidence 与 `latest.json` 都有独立
+SHA-256 sidecar，当前复算一致；8-4 对三个关键浏览器产物保存并核对了 hash。
+8-1、8-2、8-3 的 `latest.json` 虽与各自真实 run 的 `evidence.json` 字节一致，
+但没有顶层 evidence/source hash manifest，因此可审计强度低于 8-5、8-6，
+不能把提交时存在的 JSON 等同于运行时源码已被固定。
 
 ## 补充案例
 
@@ -30,4 +36,4 @@
 | :--: | --- | --- |
 | ✅ | **可独立运行** | 本仓库自带完整代码，配置好 API Key 即可运行 |
 | 📖 | **复现指南** | 依赖需自行 `git clone` 的**外部仓库**（训练框架、评测基准等） |
-| 🚧 | **设计文档** | 仅包含架构与实现方案，可运行代码仍在完善中 |
+| 🚧 | **进行中** | 已有实现，但真实数据、真实环境或纵向验收证据尚未完整 |

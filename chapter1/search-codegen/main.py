@@ -22,16 +22,17 @@ logger = logging.getLogger(__name__)
 class InteractiveCLI:
     """Interactive command-line interface for GPT-5 Agent"""
     
-    def __init__(self):
+    def __init__(self, backend: str = None, model: str = None):
         """Initialize the CLI"""
-        if not Config.validate():
+        if not Config.validate(backend):
             raise ValueError("Invalid configuration. Please check your .env file")
-        
+        api_key, base_url, resolved_model = Config.resolve(backend, model)
         self.agent = GPT5NativeAgent(
-            api_key=Config.OPENROUTER_API_KEY,
-            base_url=Config.OPENROUTER_BASE_URL,
-            model=Config.MODEL_NAME
+            api_key=api_key,
+            base_url=base_url,
+            model=resolved_model,
         )
+        self.backend = backend or Config.BACKEND
         
         self.commands = {
             "/help": self.show_help,
@@ -213,7 +214,7 @@ Examples:
             if result["tool_calls"]:
                 print("🔧 Tools Used:")
                 for tool in result["tool_calls"]:
-                    print(f"  • {tool.tool_type.value}")
+                    print(f"  • {tool.get('type', 'unknown_tool')}")
                 print()
             
             # Display response
@@ -237,7 +238,7 @@ Examples:
         """Run the interactive CLI"""
         print("\n" + "="*60)
         print("     🤖 GPT-5 Native Tools Agent")
-        print("     Powered by OpenRouter API")
+        print(f"     Responses API backend: {self.backend}")
         print("="*60)
         
         self.show_help()
@@ -272,12 +273,13 @@ Examples:
 def _run_single(args):
     """执行单次请求（single / dry-run 模式），打印可读轨迹并按需保存结果。"""
     # dry-run 只组装请求体、不联网，因此无需真实 API Key
-    api_key = Config.OPENROUTER_API_KEY or ("dry-run-placeholder-key" if args.dry_run else "")
+    api_key, base_url, model = Config.resolve(args.backend, args.model)
+    api_key = api_key or ("DRYRUN-PLACEHOLDER" if args.dry_run else "")
 
     agent = GPT5NativeAgent(
         api_key=api_key,
-        base_url=Config.OPENROUTER_BASE_URL,
-        model=args.model or Config.MODEL_NAME
+        base_url=base_url,
+        model=model,
     )
 
     result = agent.process_request(
@@ -355,6 +357,12 @@ def main():
         help="single / dry-run 模式下的任务或查询内容",
     )
     parser.add_argument(
+        "--backend",
+        choices=["openai", "openrouter"],
+        default=Config.BACKEND,
+        help="Responses API backend; openai is the exact canonical path",
+    )
+    parser.add_argument(
         "--model",
         type=str,
         default=None,
@@ -362,7 +370,7 @@ def main():
     )
     parser.add_argument(
         "--reasoning",
-        choices=["low", "medium", "high"],
+        choices=["none", "low", "medium", "high", "xhigh", "max"],
         default="low",
         help="推理力度 Reasoning Effort（low/medium/high，默认 low）",
     )
@@ -405,15 +413,15 @@ def main():
         return
 
     # 其余模式需要有效配置
-    if not Config.validate():
+    if not Config.validate(args.backend):
         print("❌ 配置错误！")
-        print("请创建 .env 文件并填入 OPENROUTER_API_KEY")
+        print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENROUTER_API_KEY")
         print("\n示例 .env：")
         print("OPENROUTER_API_KEY=your-openrouter-api-key")
         sys.exit(1)
 
     if args.mode == "interactive":
-        cli = InteractiveCLI()
+        cli = InteractiveCLI(args.backend, args.model)
         cli.run()
 
     elif args.mode == "single":

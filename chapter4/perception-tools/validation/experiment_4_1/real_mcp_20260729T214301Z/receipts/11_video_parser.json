@@ -1,0 +1,35 @@
+{
+  "case": "video_parser",
+  "tool": "video_parser",
+  "arguments": {
+    "video_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/media/visual-marker.mp4",
+    "extract_frames": false
+  },
+  "arguments_sha256": "c4e5d42811975625f7f3717d57a2d9160f22b72e059ba3761f6c154d6ce63a97",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "local-opencv",
+    "origin": "local-process"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "visual-marker.mp4",
+      "duration_seconds": 1.6666666666666667,
+      "fps": 3.0,
+      "frame_count": 5,
+      "resolution": "1200x360",
+      "width": 1200,
+      "height": 360
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/media/visual-marker.mp4"
+    }
+  },
+  "elapsed_seconds": 0.027
+}

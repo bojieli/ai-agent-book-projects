@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 460" width="820" height="460" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+
+<!-- messages array label -->
+<text x="40" y="60" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">messages: [</text>
+
+<!-- Row 1: system -->
+<rect x="50" y="78" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="94" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "system", content: "당신은 통신사 고객 상담원입니다..." }</text>
+
+<!-- Row 2: tools -->
+<rect x="50" y="114" width="480" height="32" rx="4" fill="#e8e8e8" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="130" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">tools: [cancel_plan, query_records, ...]</text>
+
+<!-- Bracket for "固定不变" -->
+<path d="M 540,78 C 555,78 555,114 560,123 C 555,132 555,146 540,146" fill="none" stroke="#999999" stroke-width="1.5"/>
+<text x="570" y="112" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">고정</text>
+<text x="570" y="130" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="13" fill="#666666" text-anchor="start" dominant-baseline="central">(KV Cache)</text>
+
+<!-- Row 3: user message -->
+<rect x="50" y="154" width="480" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="170" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "요금제를 해지해 줘" }</text>
+
+<!-- Row 4: assistant tool_calls -->
+<rect x="50" y="190" width="480" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="206" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", tool_calls: [cancel_plan(...)] }</text>
+
+<!-- Row 5: tool result -->
+<rect x="50" y="226" width="480" height="32" rx="4" fill="#fdf6e3" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="242" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "tool", content: "이 요금제에는 약정 기간이 있습니다..." }</text>
+
+<!-- Row 6: assistant text -->
+<rect x="50" y="262" width="480" height="32" rx="4" fill="#d9f0d9" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="278" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "assistant", content: "고객님의 요금제는 약정 기간 중입니다..." }</text>
+
+<!-- Ellipsis row -->
+<text x="280" y="306" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">... 이후 대화 라운드 ...</text>
+
+<!-- Row 7: user follow-up -->
+<rect x="50" y="322" width="480" height="32" rx="4" fill="#dce9f5" stroke="#999999" stroke-width="1.5"/>
+<text x="62" y="338" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "그럼 통화 기록을 조회해 줘" }</text>
+<text x="570" y="338" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central">사용자의 후속 질문</text>
+
+<!-- Row 8: Agent 状态栏 (highlighted) -->
+<rect x="50" y="362" width="480" height="48" rx="4" fill="#fff3cd" stroke="#e6a817" stroke-width="2.5"/>
+<text x="62" y="380" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">{ role: "user", content: "&lt;agent_status&gt;</text>
+<text x="62" y="398" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  3/3회 호출 · TODO: 요금제 해지(진행 중)&lt;/agent_status&gt;" }</text>
+
+<!-- Arrow pointing to system hint -->
+<line x1="570" y1="386" x2="538" y2="386" stroke="#e6a817" stroke-width="2" marker-end="url(#ah)"/>
+<text x="578" y="378" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold">에이전트 프레임워크가</text>
+<text x="578" y="396" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#c9a227" text-anchor="start" dominant-baseline="central" font-weight="bold">삽입한 상태 표시줄</text>
+
+<!-- Closing bracket -->
+<text x="40" y="428" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">]</text>
+
+<!-- Generation position arrow and label -->
+<line x1="50" y1="422" x2="50" y2="450" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="60" y="442" width="20" height="20" rx="2" fill="#d9f0d9" stroke="#999999" stroke-width="1"/>
+<text x="88" y="452" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">모델이 여기서부터 생성 시작</text>
+
+<!-- Bottom note -->
+<rect x="50" y="472" width="720" height="22" rx="4" fill="#f5f5f5" stroke="none"/>
+<text x="410" y="483" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central">← 모델 생성 위치에 바로 인접해 가장 높은 어텐션 가중치를 얻음</text>
+</svg>

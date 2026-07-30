@@ -1,0 +1,282 @@
+{
+  "generated_at": "2026-07-29T22:13:53.151128+00:00",
+  "file_count": 46,
+  "files": [
+    {
+      "path": "catalog_receipt.json",
+      "kind": "file",
+      "bytes": 249214,
+      "sha256": "829aeb8aaa589beb85b195d8702c23015ea8a62296d18568d7ac8337b14a1d2f"
+    },
+    {
+      "path": "credential_preflight.json",
+      "kind": "file",
+      "bytes": 595,
+      "sha256": "7480475ce9967dcce492c36cf6c7fd60916d3f08e6fd9f142435c857d6a369de"
+    },
+    {
+      "path": "fixture_receipt.json",
+      "kind": "file",
+      "bytes": 5771,
+      "sha256": "df2337f0c418526372812de27d901b8d4f545143a8aa189d08783621c41bb20f"
+    },
+    {
+      "path": "fixtures/documents/sample.docx",
+      "kind": "file",
+      "bytes": 36652,
+      "sha256": "8020a5e7743e41f569d6045205c458a74b674e561e6dad6e665b619995182e93"
+    },
+    {
+      "path": "fixtures/documents/sample.pdf",
+      "kind": "file",
+      "bytes": 1461,
+      "sha256": "ccc1621eaaaddb453630a099da564f505567d8fe5ddcbe97a3338e71c3d422ab"
+    },
+    {
+      "path": "fixtures/documents/sample.pptx",
+      "kind": "file",
+      "bytes": 28277,
+      "sha256": "5b9f2a61ac22b1c21d007aaf5f73b35c167ae29514b44b82dde5f0488f410b4c"
+    },
+    {
+      "path": "fixtures/downloads/iana-example.html",
+      "kind": "file",
+      "bytes": 6639,
+      "sha256": "4142da6d9cc75147bb23d15b735a5f6a472551177bda1eef62a0096c702d6e53"
+    },
+    {
+      "path": "fixtures/knowledge/mcp-notes.md",
+      "kind": "file",
+      "bytes": 117,
+      "sha256": "945c0c3c5db50871410a7e3fed03927d5d8756daab542a933ced7a34b38e9bd1"
+    },
+    {
+      "path": "fixtures/media/ocr-source.png",
+      "kind": "file",
+      "bytes": 15559,
+      "sha256": "c0d7cf1025cdafa6c9da51e0ab021f9a7fc192b874770c30f693c81ade651e6f"
+    },
+    {
+      "path": "fixtures/media/spoken-marker.aiff",
+      "kind": "file",
+      "bytes": 160516,
+      "sha256": "8d6b6aca4973239afafe0e42d576b8702f5fc6c008907dc75247923adfd0150f"
+    },
+    {
+      "path": "fixtures/media/visual-marker.mp4",
+      "kind": "file",
+      "bytes": 10089,
+      "sha256": "05ed43bb4e1b34e491bcad877137721ccbdbbd5a6c4b6ee0483b20176484ef99"
+    },
+    {
+      "path": "fixtures/mutation_workspace/.perception-trash/20260729T221336002666Z-e033b8452c8348fe8a823e7cb399def1-moved.txt",
+      "kind": "file",
+      "bytes": 35,
+      "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc"
+    },
+    {
+      "path": "fixtures/mutation_workspace/escape-link",
+      "kind": "symlink-target",
+      "bytes": 146,
+      "sha256": "aca5875eb980ce55fdc25d4db6c507039e3a7c25e52e6935ff24617a30a75f11"
+    },
+    {
+      "path": "fixtures/mutation_workspace/nested/entry.txt",
+      "kind": "file",
+      "bytes": 25,
+      "sha256": "ec677abe859c618dc5ac4e89534031eddaf90c1c8a1f45f68d55ab3af39eb896"
+    },
+    {
+      "path": "fixtures/mutation_workspace/seed.txt",
+      "kind": "file",
+      "bytes": 35,
+      "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc"
+    },
+    {
+      "path": "fixtures/outside-witness.txt",
+      "kind": "file",
+      "bytes": 28,
+      "sha256": "59049c8e49e561bbe617bd612757e0c83d5623857aeb123338d573e01b4c9120"
+    },
+    {
+      "path": "protocol.json",
+      "kind": "file",
+      "bytes": 1865,
+      "sha256": "10cdb8c17da539536632e698495ac929d80d0b2f9e07cf79fe3d9b4ef7c1ffd5"
+    },
+    {
+      "path": "receipts/01_web_search.json",
+      "kind": "file",
+      "bytes": 5318,
+      "sha256": "eadc8c942989225949ed7908205215c1ad4048bc127a9affadcf42e6fbd5eca3"
+    },
+    {
+      "path": "receipts/02_knowledge_base_search.json",
+      "kind": "file",
+      "bytes": 1311,
+      "sha256": "57c804bbe6060fd3a55c3d9dc38cd7ad1cae2331700c9887ba8c512b9b84701a"
+    },
+    {
+      "path": "receipts/03_download.json",
+      "kind": "file",
+      "bytes": 1276,
+      "sha256": "d8eaa623c7f79527c0a191ec33751ee7ed394a48667bbafdfb788340b63a9c0c"
+    },
+    {
+      "path": "receipts/04_webpage_reader.json",
+      "kind": "file",
+      "bytes": 1051,
+      "sha256": "905ad875f262fc69b627bcac9859792eb0dd10c9d37b7bd8f8db5001223b4b2b"
+    },
+    {
+      "path": "receipts/05_document_reader_pdf.json",
+      "kind": "file",
+      "bytes": 1107,
+      "sha256": "334a6a5f39d1388a6e1b86a20828961d53f179972fa82de930a407252bb14145"
+    },
+    {
+      "path": "receipts/06_document_reader_docx.json",
+      "kind": "file",
+      "bytes": 1116,
+      "sha256": "45219e8b9a18f38439e0aee6c5226a2c1441c55f968cc597c6525a0022b3fe12"
+    },
+    {
+      "path": "receipts/07_document_reader_pptx.json",
+      "kind": "file",
+      "bytes": 1114,
+      "sha256": "65ca8cb3b7b8f10558d80b639d226b13b1c95628b5f2b0a8a26cd0e5de19873d"
+    },
+    {
+      "path": "receipts/08_image_ocr.json",
+      "kind": "file",
+      "bytes": 1169,
+      "sha256": "4c179ad5e6f810f2b7cdc0f8ec80f4e7a57952760c25ec76c4e31a75bdec8370"
+    },
+    {
+      "path": "receipts/09_image_analyze.json",
+      "kind": "file",
+      "bytes": 1147,
+      "sha256": "4e1e301b28d9a98d4ffbc31ca336efd8168d1ee6b0cbb7c11256b0e5521f2616"
+    },
+    {
+      "path": "receipts/10_audio_transcribe.json",
+      "kind": "file",
+      "bytes": 1158,
+      "sha256": "46a33a053fa968d926c02ddf2838ccef743e36a182689e08e3c46084b3aed437"
+    },
+    {
+      "path": "receipts/11_video_parser.json",
+      "kind": "file",
+      "bytes": 1113,
+      "sha256": "c90c11595624dd471b5b90715b8a2e1d74aa7f4abfbfe48ff771009f88a8c947"
+    },
+    {
+      "path": "receipts/12_video_analyze.json",
+      "kind": "file",
+      "bytes": 1165,
+      "sha256": "095d9e545728b2e05e49e80e88007b6462c36bc30f9a3d6cdafcd2a1c51c0874"
+    },
+    {
+      "path": "receipts/13_file_reader.json",
+      "kind": "file",
+      "bytes": 1300,
+      "sha256": "98b32ce62ddbd59b4fe5ea0e529523b6eb3f5f9e7677b2eb2aaf03e6421a3fca"
+    },
+    {
+      "path": "receipts/14_grep.json",
+      "kind": "file",
+      "bytes": 1466,
+      "sha256": "8e04526cd59a4a7f7d650e3aa23f6447a3269940de0431a04809ed82c600c986"
+    },
+    {
+      "path": "receipts/15_directory_list.json",
+      "kind": "file",
+      "bytes": 1051,
+      "sha256": "24d10aa4743947d260d5ea635a197c83c4f85dae3d44b17aeea94a45f7dbefec"
+    },
+    {
+      "path": "receipts/16_filesystem_copy.json",
+      "kind": "file",
+      "bytes": 1434,
+      "sha256": "44fb7711549b5cfcae6f025e739a0446977980ea4c361372292de61192f968dc"
+    },
+    {
+      "path": "receipts/17_filesystem_move.json",
+      "kind": "file",
+      "bytes": 1437,
+      "sha256": "5171893eeeca4fd1cba4e07e901ace8c9ee1c1a4ef8f2195398ccc90724449ef"
+    },
+    {
+      "path": "receipts/18_filesystem_delete.json",
+      "kind": "file",
+      "bytes": 1466,
+      "sha256": "1d3a285b71814554c98afcf01408632180cfac6fae32715d01c9a2fa0c6c2ce0"
+    },
+    {
+      "path": "receipts/19_reject_parent_traversal.json",
+      "kind": "file",
+      "bytes": 851,
+      "sha256": "307ee3c6dd4dbb79f74c5b8582db855a9c90f371189a3cb5bf3c91204e3568a4"
+    },
+    {
+      "path": "receipts/20_reject_absolute_path.json",
+      "kind": "file",
+      "bytes": 806,
+      "sha256": "62cec79620f151ed87026ee33c750fa7e0550495de58938548c1d78994ce9642"
+    },
+    {
+      "path": "receipts/21_reject_escaping_symlink.json",
+      "kind": "file",
+      "bytes": 811,
+      "sha256": "9d2d4467851dfdbbb0f279cf9b9f2f9670d00d54d1e9e94eedbd810d698fecce"
+    },
+    {
+      "path": "receipts/22_weather.json",
+      "kind": "file",
+      "bytes": 1073,
+      "sha256": "3088b224dabc62ba2eb2b8d44d35d61d3ecff064c9f4f877cc78d2eabae14cb1"
+    },
+    {
+      "path": "receipts/23_yfinance_quote.json",
+      "kind": "file",
+      "bytes": 1247,
+      "sha256": "a0413401d7d96465da36f4636ac7a88b035ee8c05cc575300ef119156351bb3d"
+    },
+    {
+      "path": "receipts/24_currency_converter.json",
+      "kind": "file",
+      "bytes": 820,
+      "sha256": "d4dd4dd9605edbb9e8975c7e84ac484e4822f89e9af576f1573eef30fe79c9f6"
+    },
+    {
+      "path": "receipts/25_wikipedia_search.json",
+      "kind": "file",
+      "bytes": 1461,
+      "sha256": "aa616d30145e9c11f5cce76342e8bda9cf830f0c6545665b5eda03db0d62bafc"
+    },
+    {
+      "path": "receipts/26_arxiv_search.json",
+      "kind": "file",
+      "bytes": 2654,
+      "sha256": "0e7246270a2ee451634363d2bc119c4c4e66519a19511c05968590fa4eefd87a"
+    },
+    {
+      "path": "receipts/27_calendar_events.json",
+      "kind": "file",
+      "bytes": 729,
+      "sha256": "1269da278056934bbd74ce08016d3a277b11789ad343be54d20fa2c6b02b4497"
+    },
+    {
+      "path": "receipts/28_notion_search.json",
+      "kind": "file",
+      "bytes": 700,
+      "sha256": "bef9ac758b3bf75b86ea093da1e39e520bbf1cc9bb4581907d915ca99580e13d"
+    },
+    {
+      "path": "summary.json",
+      "kind": "file",
+      "bytes": 3771,
+      "sha256": "888848d5cc34214d50e06ffc6a30c657b0648ec69349e69032162bd5a39af3d8"
+    }
+  ]
+}

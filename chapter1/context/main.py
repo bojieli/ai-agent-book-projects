@@ -544,7 +544,15 @@ def run_single_task(api_key: str, task: str, context_mode: str = "full", provide
                 }
                 for tc in result["trajectory"].tool_calls
             ],
-            "reasoning_steps": result["trajectory"].reasoning_steps
+            "reasoning_steps": result["trajectory"].reasoning_steps,
+            # Credential-free, provider-native request/response evidence.  The
+            # ablation is about the context visible on each inference, so a
+            # post-hoc summary is not sufficient to validate Experiment 1-1.
+            "api_turns": result["trajectory"].api_turns,
+            "provider": result.get("provider", provider),
+            "model": result.get("model", model),
+            "base_url": result.get("base_url"),
+            "using_openrouter": result.get("using_openrouter", False),
         }
         json.dump(serializable_result, f, indent=2)
     

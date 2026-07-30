@@ -13,6 +13,15 @@
 
 Proposer only writes Slidev code; Reviewer **renders each page to PNG** and uses a **Vision LLM** to flag issues (text overflow / overcrowding / image size). Proposer revises from structured feedback. Versus single-agent self-review (stacking every rendered image in one context), dual-agent **peak context is much smaller**—Proposer never sees images; Reviewer each round only sees the latest screenshots.
 
+The canonical completed run is
+[`validation/runs/exp5-4-real-pdf-both-20260730-v9/comparison_summary.json`](validation/runs/exp5-4-real-pdf-both-20260730-v9/comparison_summary.json)
+(SHA-256 `bfd913d311ab4d6ad5a8cae93b61ce54ce6d19f9d2d10ee2afdef06becd1e09f`).
+Both twenty-page decks used the pinned real PDF and three original,
+provenance-tracked figure crops, rendered every page, and scored 95/pass under
+the same independent Vision judge. Quality tied; dual-agent peak context was
+24,186 tokens versus 92,601 for single-agent self-review (3.83×), with total
+usage 73,227 versus 298,259 tokens. Every formal gate is true.
+
 ### Why render before judging
 
 When the Agent finishes Slidev source it **does not know the real layout**: crowding, overflow, image size only appear after pixel render. Reviewer therefore receives **new information** the Proposer never saw—the value of the mechanism.
@@ -21,8 +30,8 @@ When the Agent finishes Slidev source it **does not know the real layout**: crow
 
 | Role | Duty | Context contents |
 |---|---|---|
-| **Proposer** (`gpt-5.6-luna`, text) | Read paper → plan pages → write/revise `slides.md` | Paper text + **accumulated structured text feedback** (never images) |
-| **Reviewer** (`gpt-5.6-luna`, Vision) | Look at latest per-page PNGs; structured JSON advice | **Fresh call each round**, latest screenshots only |
+| **Proposer** (configured text model) | Read paper → plan pages → write/revise `slides.md` | Paper text + **accumulated structured text feedback** (never images) |
+| **Reviewer** (configured Vision model) | Look at latest per-page PNGs; structured JSON advice | **Fresh call each round**, latest screenshots only |
 
 Reviewer advice is structured and actionable, not vague “looks bad”: fields `page`, `issue_type` (`text_overflow` / `overcrowded` / `image_size` / `readability` / `layout`), `severity` (high/medium/low), `suggestion`, plus deck-level `overall_score` and `pass`.
 
@@ -68,8 +77,11 @@ npm install
 # 3) Keys
 cp env.example .env    # OPENAI_API_KEY (or OPENROUTER_API_KEY fallback)
 
-# 4) Full pipeline (generate → render → Vision review → iterate → compare)
-python demo.py
+# 4) Canonical manuscript campaign: pinned real arXiv PDF, three original
+#    PDF figures, both comparison arms, real Slidev rendering and Vision review
+python demo.py --provider ark --text-model doubao-seed-1-6-250615 \
+  --vision-model doubao-seed-1-6-250615 --mode both --max-rounds 4 \
+  --out-dir validation/runs/my-real-run
 ```
 
 #### Common flags (`python demo.py --help`)
@@ -78,7 +90,7 @@ A full run may call gpt-5.6-luna Vision dozens of times (slow/costly). Flags for
 
 | Flag | Role |
 |---|---|
-| `--paper PATH` | Input paper Markdown (default `paper/sample_paper.md`) |
+| `--paper PATH` | Legacy/non-canonical local Markdown input. Omit it for the pinned real arXiv PDF used by the formal campaign. |
 | `--out-dir DIR` | Artifacts dir (default `output/`): per-round `slides.md` / `review.json` / `comparison_summary.json`. Rendered PNGs always under `slidev_workspace/exports/` |
 | `--text-model NAME` | Proposer / single-agent text model; overrides `TEXT_MODEL` (default `gpt-5.6-luna`) |
 | `--vision-model NAME` | Reviewer / judge vision model (must support images); overrides `VISION_MODEL` (default `gpt-5.6-luna`) |
@@ -103,8 +115,8 @@ python demo.py --paper my_paper.md --out-dir run_my
 | `demo.py` | Main: both schemes, independent judge, token comparison |
 | `agents.py` | `Proposer` / `Reviewer` / `SelfReviewAgent` + `TokenMeter` |
 | `renderer.py` | `slidev export --format png` → per-page PNGs |
-| `make_figures.py` | matplotlib figures from paper numbers into Slidev `public/` |
-| `paper/sample_paper.md` | Short paper (FlashAttention; title/sections/tables/results) |
+| `paper_source.py` | Downloads the hash-pinned paper PDF, extracts its text, and crops three original paper figures with provenance |
+| `make_figures.py` / `paper/sample_paper.md` | Legacy local-Markdown compatibility path; never satisfies the formal campaign gate |
 | `package.json` | Slidev + render deps |
 | `output/` | Per-round `slides.md`, `review.json`, `comparison_summary.json` |
 | `slidev_workspace/exports/` | Per-round PNG folders (`dual_round1/`, `single_round1/`, …) |
@@ -140,24 +152,26 @@ slidev_workspace/exports/
   - `OPENAI_BASE_URL`: any OpenAI-compatible endpoint.
   - `TEXT_MODEL` / `--text-model` (default `gpt-5.6-luna`).
   - `VISION_MODEL` / `--vision-model` must support images (default `gpt-5.6-luna`).
-- **Paper / out dir**: `--paper PATH`, `--out-dir DIR`; or replace `paper/sample_paper.md` (keep Markdown structure). For custom figures, edit `make_figures.py` and `generate_all()`’s `{filename: description}` map.
+- **Paper / out dir**: omit `--paper` for the canonical hash-pinned arXiv PDF; `--paper PATH` is a legacy compatibility path that cannot pass the formal source-provenance gate. `--out-dir DIR` selects the evidence directory.
 - **Slidev deps**: need **Node** + local `node_modules/` (`@slidev/cli`, `playwright-chromium`, `typescript`). Re-run `npm install`; if browser binary missing, `npx playwright install chromium`. Then `python demo.py --smoke` before a full run.
 
-### On “first draft intentionally crowded”
+### Canonical source and layout preflight
 
-For stable “render → find issues → revise”, `agents.py` makes Proposer / single-agent **first drafts** pack the paper into ~4 pages of long pasted text. That yields **real** overflow and cropped figures (e.g. `slidev_workspace/exports/dual_round1/2.png`). Reviewer issues come from Vision on **real pixels**. Asking for a clean 8–12 page first draft often passes in one round and hides iteration. One real run (noise applies):
-
-```
-双 Agent：round1 score=85 pass=False（4 个 medium：p2/p3/p4 overcrowded、p2 image_size）
-          → Proposer 拆页精简 → round2 score=95 pass=True（+10 改善）
-上下文峰值：双 Agent = 9308 tok，单 Agent 自审 = 14179 tok（单 Agent 图片累积：1640→8069→14179）
-```
+The formal mode does not manufacture an intentionally bad first draft.
+Before paying for pixel review, a deterministic source preflight requires
+18–20 pages, at most four bullets per page, dedicated source-figure pages,
+short one-line figure titles, and bounded inline image layout. Vision remains
+the authority for actual overflow, readability and layout. The two attention
+figures retain the published pixels and exact PDF crop rectangles; a recorded
+90-degree presentation transform makes the original vertical labels readable
+on a landscape slide. Failed refinement runs remain under `validation/runs/`
+and are never promoted when the independent judge reports a blocking defect.
 
 ### Limitations
 
 - **Subjective taste**: Reviewer preferences ≠ user preferences; may converge to Reviewer-local optima (see book thinking questions).
-- **Figures**: not real PDF parse; `make_figures.py` programmatic stand-ins.
-- **Cost/time**: ~10 screenshots per Reviewer round (default gpt-5.6-luna); screenshots scaled to 1280px wide.
+- **Input modes**: the canonical mode parses a real hash-pinned PDF and uses three crops from that PDF. `--paper PATH` deliberately remains a non-canonical compatibility mode with programmatic figures.
+- **Cost/time**: up to 20 screenshots per Reviewer round; screenshots are scaled to 1280px wide before the Vision call.
 - **Non-determinism**: LLM/Vision scores vary; `temperature` lowered but “pass in 1 round” depends on first draft.
 - **Render deps**: `slidev export` needs playwright-chromium; fix binary issues before running (see step 2).
 
@@ -233,8 +247,11 @@ npm install
 # 3) 配置 Key
 cp env.example .env    # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter）
 
-# 4) 跑完整流程（生成 → 渲染 → Vision 审查 → 迭代 → 对比）
-python demo.py
+# 4) 正式活动：固定哈希的真实 arXiv PDF、三张原论文图、两种对照方案、
+#    真实 Slidev 渲染与 Vision 审查
+python demo.py --provider ark --text-model doubao-seed-1-6-250615 \
+  --vision-model doubao-seed-1-6-250615 --mode both --max-rounds 4 \
+  --out-dir validation/runs/my-real-run
 ```
 
 #### 常用参数（`python demo.py --help`）
@@ -243,7 +260,7 @@ python demo.py
 
 | 参数 | 作用 |
 |---|---|
-| `--paper PATH` | 输入论文的 Markdown 路径（默认 `paper/sample_paper.md`）。换成你自己的论文即可。 |
+| `--paper PATH` | 非正式兼容入口：使用本地 Markdown。正式活动须省略该参数，以使用固定哈希的真实 arXiv PDF。 |
 | `--out-dir DIR` | 产物输出目录（默认 `output/`）：各轮 `slides.md`/`review.json`/`comparison_summary.json`。渲染 PNG 始终在 `slidev_workspace/exports/`。 |
 | `--text-model NAME` | Proposer / 单 Agent 文本模型，**覆盖** `TEXT_MODEL` 环境变量（默认 `gpt-5.6-luna`）。 |
 | `--vision-model NAME` | Reviewer / 独立评委看图模型（须支持图像），**覆盖** `VISION_MODEL` 环境变量（默认 `gpt-5.6-luna`）。 |
@@ -268,8 +285,8 @@ python demo.py --paper my_paper.md --out-dir run_my   # 换论文、换输出目
 | `demo.py` | 主流程：跑两种方案、独立评委打分、打印 token 对比 |
 | `agents.py` | `Proposer` / `Reviewer` / `SelfReviewAgent` 三个 Agent + `TokenMeter` 计量 |
 | `renderer.py` | 调 `slidev export --format png` 把 `slides.md` 渲染成逐页 PNG |
-| `make_figures.py` | 用 matplotlib 从论文数字复现 2 张图表，放进 Slidev `public/` |
-| `paper/sample_paper.md` | 精简论文（FlashAttention，含标题/章节/表格/结果） |
+| `paper_source.py` | 下载固定哈希的真实论文 PDF、直接提取正文，并裁出三张带来源信息的原论文图 |
+| `paper/sample_paper.md` / `make_figures.py` | 旧版本地 Markdown 兼容路径；不会通过正式实验的来源门禁 |
 | `package.json` | Slidev 与渲染依赖 |
 | `output/` | 运行产物：各轮 `slides.md`、`review.json`、`comparison_summary.json` |
 | `slidev_workspace/exports/` | 各轮渲染出的 PNG（`dual_round1/`、`single_round1/` …） |
@@ -308,10 +325,8 @@ slidev_workspace/exports/
   - `OPENAI_BASE_URL`：指向任何兼容 OpenAI 协议的端点（自建网关 / 其它供应商）。
   - `TEXT_MODEL` / `--text-model`：Proposer / 单 Agent 文本部分用的模型（默认 `gpt-5.6-luna`）。
   - `VISION_MODEL` / `--vision-model`：Reviewer / 独立评委看图用的模型，**必须支持图像输入**（默认 `gpt-5.6-luna`）。
-- **换输入论文 / 输出目录**：命令行 `--paper PATH` 指定论文、`--out-dir DIR` 指定产物目录（无需改代码）；
-  也可直接替换 `paper/sample_paper.md`（保留 Markdown 章节结构即可）。若新论文有自己的
-  数据图表，改 `make_figures.py` 里的画图函数并更新 `generate_all()` 返回的 `{文件名: 描述}`，
-  Proposer 会据描述引用这些图。
+- **换输入论文 / 输出目录**：正式活动省略 `--paper`，使用固定哈希的真实 arXiv PDF 与三张原论文图；
+  `--paper my.md` 只用于兼容自定义 Markdown，不会被标记为正式完成。`--out-dir DIR` 指定证据目录。
 - **Slidev 渲染依赖（重要）**：渲染链路依赖 **Node** + 本目录内 `node_modules/`，其中包含
   `@slidev/cli`、`playwright-chromium`（`slidev export --format png` 的底层浏览器）、`typescript`
   （twoslash 代码高亮所需）。若 `node_modules/` 缺失或损坏，在本目录执行 `npm install` 重装；
@@ -337,8 +352,8 @@ slidev_workspace/exports/
 
 - **审美主观**：Reviewer 的偏好未必等于目标用户的偏好，反馈循环可能收敛到 Reviewer
   认可但用户嫌挤的局部最优（见书末思考题：如何让用户偏好也进入循环）。
-- **图表来源**：本实验不解析真实 PDF，图表由 `make_figures.py` 从论文数字程序化复现，
-  作为"论文原始图表"的替身；接入真实 PDF 需另加图片抽取。
+- **输入模式**：正式模式解析固定哈希的真实 PDF，并直接裁出三张原论文图；只有显式使用
+  `--paper PATH` 时才走程序化图表的旧版兼容路径。
 - **成本/时长**：每轮 Reviewer 要把约 10 张截图发给视觉模型（默认 gpt-5.6-luna），单次运行需数十次
   API 调用；已把截图统一缩放到 1280px 宽以控制 token。
 - **确定性**：LLM 与 Vision 判定有随机性，具体分数/建议每次略有不同；`temperature`

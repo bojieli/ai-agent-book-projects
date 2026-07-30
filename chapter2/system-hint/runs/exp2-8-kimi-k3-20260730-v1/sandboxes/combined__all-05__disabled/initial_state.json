@@ -1,0 +1,27 @@
+{
+  "suite": "combined",
+  "case_id": "all-05",
+  "records": {
+    "sun": "2025-09-18 18:45:00",
+    "moon": "2025-09-18 19:15:00"
+  },
+  "primary": "core-e",
+  "fallback": "backup-e",
+  "token": "STA-255",
+  "artifacts": [
+    "state.txt",
+    "actions.txt",
+    "closure.txt"
+  ],
+  "requested": "status.json",
+  "actual": "status_current.json",
+  "document_token": "STA-255",
+  "system": {
+    "os": "Darwin",
+    "shell": "zsh",
+    "python": "3.13.0",
+    "cwd": "workspace/five",
+    "manager": "brew",
+    "package": "tree"
+  }
+}

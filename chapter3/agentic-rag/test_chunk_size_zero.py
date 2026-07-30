@@ -1,30 +1,12 @@
-"""Regression: chunk_size=0 must not crash range() on long sentences."""
-import sys
-import types
-from dataclasses import dataclass
+"""Regression: chunk_size=0 must not crash range() on long sentences.
 
+Use the experiment's real configuration module.  The former process-global
+``sys.modules['config']`` stub leaked into later test modules and made their
+imports depend on pytest collection order.
+"""
 
-def _stub():
-    sys.modules.setdefault("requests", types.ModuleType("requests"))
-    cfg = types.ModuleType("config")
-
-    @dataclass
-    class ChunkingConfig:
-        chunk_size: int = 1000
-        chunk_overlap: int = 100
-        max_chunk_size: int = 2000
-        min_chunk_size: int = 1
-        respect_paragraph_boundary: bool = True
-
-    cfg.ChunkingConfig = ChunkingConfig
-    cfg.KnowledgeBaseConfig = object
-    cfg.KnowledgeBaseType = object
-    sys.modules["config"] = cfg
-
-
-_stub()
-
-from chunking import ChunkingConfig, DocumentChunker  # noqa: E402
+from config import ChunkingConfig
+from chunking import DocumentChunker
 
 
 def test_chunk_size_zero_long_unsplittable_sentence():

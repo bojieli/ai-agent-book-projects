@@ -1,0 +1,8 @@
+{
+  "experiment": "4-1",
+  "campaign_id": "real_mcp_dashscope_intl_20260730T070000Z",
+  "status": "blocked",
+  "official_complete": false,
+  "manifest": "validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/manifest.json",
+  "manifest_sha256": "1863389c1e0dff0c2b085744436a3e499e8699cd8164b1d43915b9d886018121"
+}

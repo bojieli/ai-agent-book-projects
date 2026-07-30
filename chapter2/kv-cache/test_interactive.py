@@ -3,17 +3,18 @@
 Test script for interactive mode selection
 """
 
-import sys
 from main import select_mode_interactive
 
-def test_mode_selection():
+def test_mode_selection(monkeypatch):
     """Test the interactive mode selection without running the agent"""
     
     print("🧪 Testing Interactive Mode Selection")
     print("(This is a test - no agent will actually run)")
     
     # Test the selection menu
+    monkeypatch.setattr("builtins.input", lambda _prompt: "7")
     selected = select_mode_interactive()
+    assert selected == "compare"
     
     print("\n" + "="*60)
     if selected == "compare":

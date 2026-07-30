@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 570" width="900" height="570" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#555555"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" fill="#2f2f2f">
+    <!-- Foundation -->
+    <rect x="305" y="22" width="290" height="62" rx="8" fill="#d5d5d5" stroke="#333333" stroke-width="2"/>
+    <text x="450" y="48" text-anchor="middle" font-size="17" font-weight="bold">제1장 에이전트 기초</text>
+    <text x="450" y="70" text-anchor="middle" font-size="12" fill="#666666">공통 개념 · ReAct · 하네스 · 학습 메커니즘</text>
+
+    <line x1="450" y1="84" x2="450" y2="116" stroke="#555555" stroke-width="1.7" marker-end="url(#arrow)"/>
+
+    <!-- Build Agent -->
+    <rect x="24" y="119" width="852" height="142" rx="10" fill="#fafafa" stroke="#8a8a8a" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <rect x="55" y="107" width="116" height="24" rx="12" fill="#5f5f5f"/>
+    <text x="113" y="124" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">에이전트 구축</text>
+
+    <rect x="45" y="151" width="185" height="76" rx="7" fill="#e1e1e1" stroke="#444444" stroke-width="1.7"/>
+    <text x="137.5" y="177" text-anchor="middle" font-size="15" font-weight="bold">제2장 컨텍스트 엔지니어링</text>
+    <text x="137.5" y="201" text-anchor="middle" font-size="11.5" fill="#666666">작업 상태 · 프롬프트 · 압축</text>
+
+    <line x1="230" y1="189" x2="251" y2="189" stroke="#777777" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="255" y="151" width="185" height="76" rx="7" fill="#ededed" stroke="#444444" stroke-width="1.7"/>
+    <text x="347.5" y="177" text-anchor="middle" font-size="15" font-weight="bold">제3장 메모리와 지식 베이스</text>
+    <text x="347.5" y="201" text-anchor="middle" font-size="11.5" fill="#666666">사용자 메모리 · RAG · 지식 구성</text>
+
+    <line x1="440" y1="189" x2="461" y2="189" stroke="#777777" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="465" y="151" width="185" height="76" rx="7" fill="#ededed" stroke="#444444" stroke-width="1.7"/>
+    <text x="557.5" y="177" text-anchor="middle" font-size="15" font-weight="bold">제4장 도구</text>
+    <text x="557.5" y="201" text-anchor="middle" font-size="11.5" fill="#666666">MCP · 보안 · 비동기 아키텍처</text>
+
+    <line x1="650" y1="189" x2="671" y2="189" stroke="#777777" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="675" y="151" width="180" height="76" rx="7" fill="#e1e1e1" stroke="#444444" stroke-width="1.7"/>
+    <text x="765" y="177" text-anchor="middle" font-size="15" font-weight="bold">제5장 코딩 에이전트</text>
+    <text x="765" y="201" text-anchor="middle" font-size="11.5" fill="#666666">코드 생성 · 메타 역량 · 부트스트래핑</text>
+
+    <line x1="450" y1="261" x2="450" y2="294" stroke="#555555" stroke-width="1.7" marker-end="url(#arrow)"/>
+
+    <!-- Evaluate and evolve -->
+    <rect x="78" y="297" width="744" height="137" rx="10" fill="#fafafa" stroke="#6e6e6e" stroke-width="1.7"/>
+    <rect x="108" y="285" width="132" height="24" rx="12" fill="#4d4d4d"/>
+    <text x="174" y="302" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">평가와 진화</text>
+
+    <rect x="103" y="330" width="210" height="70" rx="7" fill="#e6e6e6" stroke="#3f3f3f" stroke-width="1.7"/>
+    <text x="208" y="355" text-anchor="middle" font-size="15" font-weight="bold">제6장 에이전트 평가</text>
+    <text x="208" y="379" text-anchor="middle" font-size="11.5" fill="#666666">환경 · 데이터셋 · 자동 판단</text>
+
+    <line x1="313" y1="365" x2="334" y2="365" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <rect x="338" y="330" width="210" height="70" rx="7" fill="#e6e6e6" stroke="#3f3f3f" stroke-width="1.7"/>
+    <text x="443" y="355" text-anchor="middle" font-size="15" font-weight="bold">제7장 모델 사후 학습</text>
+    <text x="443" y="379" text-anchor="middle" font-size="11.5" fill="#666666">SFT · RL · 파라미터 역량</text>
+
+    <line x1="548" y1="365" x2="569" y2="365" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <rect x="573" y="330" width="224" height="70" rx="7" fill="#d2d2d2" stroke="#333333" stroke-width="2"/>
+    <text x="685" y="355" text-anchor="middle" font-size="15" font-weight="bold">제8장 에이전트의 지속적 진화</text>
+    <text x="685" y="379" text-anchor="middle" font-size="11.5" fill="#5c5c5c">학습 신호 · 네 가지 갱신 · 롤백</text>
+
+    <line x1="450" y1="434" x2="450" y2="468" stroke="#555555" stroke-width="1.7" marker-end="url(#arrow)"/>
+
+    <!-- Interaction and collaboration -->
+    <rect x="132" y="471" width="636" height="82" rx="10" fill="#fafafa" stroke="#8a8a8a" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <rect x="162" y="459" width="132" height="24" rx="12" fill="#6a6a6a"/>
+    <text x="228" y="476" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">상호작용과 협업</text>
+
+    <rect x="157" y="497" width="274" height="42" rx="7" fill="#eeeeee" stroke="#555555" stroke-width="1.5"/>
+    <text x="294" y="523" text-anchor="middle" font-size="12" font-weight="bold">제9장 멀티모달리티와 실시간 상호작용</text>
+    <line x1="431" y1="518" x2="464" y2="518" stroke="#777777" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <rect x="469" y="497" width="274" height="42" rx="7" fill="#eeeeee" stroke="#555555" stroke-width="1.5"/>
+    <text x="606" y="523" text-anchor="middle" font-size="14.5" font-weight="bold">제10장 멀티 에이전트 협업</text>
+  </g>
+</svg>

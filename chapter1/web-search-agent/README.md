@@ -1,6 +1,6 @@
 # Kimi Web Search Agent / Kimi 网络搜索 Agent
 
-> Autonomous ReAct web-search agent on Kimi K3 with built-in `$web_search` (multi-round search + synthesis).  
+> Autonomous ReAct web-search agent on Kimi K3 using Moonshot's official Formula API (multi-round search + synthesis).
 > 配套《深入理解 AI Agent》第 1 章 **实验 1-2 ★：Kimi K3 原生 Agent 能力**。
 
 ← [Chapter 1 index / 返回第 1 章目录](../README.md) · 📖 [Read the chapter / 读本章正文](../../book/chapter1.md)（[EN](../../book-en/chapter1.md)）
@@ -11,45 +11,47 @@
 
 ### Overview
 
-This project implements an autonomous AI agent that uses Kimi (Moonshot AI) built-in web tools (`$web_search` / crawl-style search) to:
+This project implements an autonomous AI agent that uses Kimi K3 and Moonshot's
+official `moonshot/web-search:latest` Formula to:
 
 - **Understand the question**: analyze the user query and identify information needs
-- **Search automatically**: fetch live web information via Kimi’s built-in `$web_search` tool
+- **Search automatically**: fetch live web information through the standard `web_search` function declaration and Formula Fibers
 - **Iterate**: call search multiple times until evidence is sufficient
 - **Synthesize**: combine multi-source results into a clear, accurate answer
 
 It demonstrates the “Model as Agent” idea and the ReAct loop (think → act → observe).
 
-### Kimi web-search service status
+### Exact Formula route
 
-This example depends on Kimi's hosted `$web_search` service. The repository only
-passes the built-in tool's arguments back to Kimi; it does not execute a search
-engine locally.
+Kimi K3's current official hosted-search route is not the legacy
+`builtin_function` passthrough. Every independent question performs this exact
+provider-controlled sequence:
 
-Kimi's [official web-search documentation](https://platform.kimi.ai/docs/guide/use-web-search)
-currently says that the service is being updated, advises against using it in the
-near term, and asks developers to follow later documentation updates. Check that
-page for the latest status before troubleshooting this example.
+1. `GET /v1/formulas/moonshot/web-search:latest/tools` obtains Moonshot's
+   authoritative standard `function` declaration named `web_search`.
+2. The declaration is sent unchanged to `POST /v1/chat/completions` with the
+   conversation. Kimi decides whether and how often to call it.
+3. For each model tool call, the implementation passes the returned `name` and
+   raw serialized `arguments` unchanged to
+   `POST /v1/formulas/moonshot/web-search:latest/fibers`.
+4. Only HTTP-successful Fibers with `status == "succeeded"` are accepted. Their
+   `context.output` (or encrypted output) is returned as the matching tool result.
 
-If a tool observation contains only a `search_id`, for example
-`{"search_result": {"search_id": "..."}}`, but no search-result content:
-
-1. Check Kimi's web-search documentation for the current service status.
-2. Retry later, or use `python main.py --provider offline-demo` to inspect the
-   ReAct flow without calling the hosted service.
-3. Treat the response as a possible external tool/API availability issue; by
-   itself, it does not show that the agent loop or local implementation is broken.
+The search engine remains hosted by Moonshot; this repository does not replace
+it with a local or third-party search implementation. See the official
+[Formula tool guide](https://platform.kimi.ai/docs/guide/use-official-tools)
+and [web-search guide](https://platform.kimi.ai/docs/guide/use-web-search).
 
 ### Architecture
 
 ```mermaid
 graph TD
     A[User question] --> B{Agent thinks}
-    B -->|needs search| C[Call $web_search]
-    C --> D[Kimi search backend]
-    D --> E[Search results]
+    B -->|needs search| C[Model calls web_search]
+    C --> D[POST Formula Fiber]
+    D --> E[Return Fiber output]
     E --> F{Enough info?}
-    F -->|no| G[Call $web_search again]
+    F -->|no| G[Call web_search again]
     G --> H[More information]
     H --> F
     F -->|yes| I[Final answer]
@@ -96,7 +98,12 @@ MOONSHOT_API_KEY=your-api-key-here
 
 **Note**: For backward compatibility, `KIMI_API_KEY` is also accepted.
 
-**Universal OpenRouter fallback**: if neither `MOONSHOT_API_KEY` nor `KIMI_API_KEY` is set but `OPENROUTER_API_KEY` is, requests go through OpenRouter using `OPENROUTER_MODEL` (default `openai/gpt-5.6-luna`). **Important limit**: Kimi’s built-in `$web_search` is Moonshot-only and is **not** available on OpenRouter—fallback mode answers from the model’s knowledge only, **without live web search**. Use a Moonshot key for real online search.
+**Universal OpenRouter fallback**: if neither `MOONSHOT_API_KEY` nor
+`KIMI_API_KEY` is set but `OPENROUTER_API_KEY` is, requests go through
+OpenRouter using `OPENROUTER_MODEL` (default `openai/gpt-5.6-luna`). Moonshot
+Formula declarations and Fibers are not exposed through OpenRouter, so fallback
+mode answers from model knowledge without live Formula search. It is useful for
+interface diagnostics only and cannot satisfy Experiment 1-2 acceptance.
 
 #### 3. Run the Agent
 
@@ -109,7 +116,7 @@ python main.py --help
 | Flag | Description | Default |
 |------|-------------|---------|
 | `query` | Question (positional); omit for interactive mode | none |
-| `--provider` | Backend: `kimi` (built-in `$web_search`, needs API key) / `offline-demo` (offline sample trace) | `kimi` |
+| `--provider` | Backend: `kimi` (Moonshot Formula `web_search`, needs API key) / `offline-demo` (offline sample trace) | `kimi` |
 | `--model` | Model name | `kimi-k3` |
 | `--max-steps` | Max ReAct iterations | `5` |
 | `--base-url` | API base URL | `https://api.moonshot.cn/v1` |
@@ -148,7 +155,7 @@ python quickstart.py
 python examples.py
 ```
 
-> At runtime the agent prints a **ReAct trace**: 💭 think → 🔧 act (`$web_search`) → 👀 observe (results) → ✅ final answer. Use `agent.get_trace()` for a structured trace, or `--output` to save JSON.
+> At runtime the agent prints a **ReAct trace**: 💭 think → 🔧 act (`web_search`) → 👀 observe (Formula output) → ✅ final answer. Use `agent.get_trace()` for a structured trace, or `--output` to save JSON.
 
 ### Usage Examples
 

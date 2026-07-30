@@ -1,0 +1,345 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_09_home_security",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "security_install_001",
+      "memory": [
+        "On 2024-11-11 at 14:45:00, Nancy Rodriguez (DOB: October 15, 1978; address: 1847 Heights Boulevard, Houston, Texas, 77008; lived there 6 years; full-time marketing director; email: nrodriguez78@email.com) initiated a sales and installation call (conversation_id: security_install_001) with ADT Security Services (department: Sales and Installation; call duration: 48 minutes).",
+        "Nancy's home is a 2,400 sq ft two-story single-family house in Houston, Texas (Heights area) with: 3 entry doors (front, back, side to garage), 18 ground-floor windows (6 front, 4 each side, 4 back), a two-car attached garage, one sliding glass door (backyard from living room).",
+        "Nancy selected ADT's Smart Home Security package with a 36-month contract (monthly monitoring fee: $52.99; without contract: $62.99/month). The package includes door sensors (all entry points), window sensors (up to 15 windows), motion detectors, smart hub, two outdoor cameras, 30 days of cloud video storage (60 days available for $10/month extra), two key fobs, one smoke detector, backup battery (24-hour power), cellular connection, and integration with Alexa, Google Assistant, smart locks, and lights.",
+        "Additional equipment added: one glass break detector ($120, covers 25-foot radius), two extra outdoor cameras ($199 each, total 4 cameras), one additional smoke detector ($65, total 2), one CO detector ($100).",
+        "Installation is scheduled for Thursday, November 16, 2024, 8 AM to 12 PM (requires someone 18+ present for 3-4 hours). Installation cost: $99 (promotion; regular $299). Service code for installation: SVC-44821.",
+        "Nancy approved 0% financing over 12 months: monthly cost $136 (equipment) + $52.99 (monitoring) = $188.91/month for first 12 months; then $52.99/month. Total one-time equipment and installation cost: $1,631.",
+        "Nancy's ADT account number: ADT-7789234. System features: arm/disarm via keypad, key fob, or mobile app; 24/7 customer support; 2 free service calls/year."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "security_install_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_09_home_security enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:14:46.482373+00:00",
+      "latency_ms": 32961.237,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=security_install_001\ntimestamp=2024-11-11 14:45:00\nmetadata={\"business\": \"ADT Security Services\", \"department\": \"Sales and Installation\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I've been having some break-ins in my neighborhood and want to install a security system.\nASSISTANT: I understand your concern, and you're making a smart decision. I'm Carlos from ADT Security Services. I'll help you find the right protection for your home. First, may I have your name?\nUSER: I'm Nancy Rodriguez.\nASSISTANT: Thank you, Ms. Rodriguez. What city are you in?\nUSER: I'm in Houston, Texas, in the Heights area.\nASSISTANT: I know that area well. Tell me about your home - is it a single-family house, townhome, or apartment?\nUSER: It's a two-story house, about 2,400 square feet.\nASSISTANT: How many entry doors do you have?\nUSER: Front door, back door, and a side door to the garage.\nASSISTANT: So three entry points. How many windows on the ground floor?\nUSER: Let me think... six in the front, four on each side, and four in the back. So 18 total.\nASSISTANT: That's quite a few windows to secure. Do you have a garage?\nUSER: Yes, a two-car attached garage.\nASSISTANT: And do you have any sliding glass doors?\nUSER: Yes, one leading to the backyard from the living room.\nASSISTANT: Good to know. Based on your home's layout, I'd recommend our Smart Home Security package. It includes door sensors for all entry points, window sensors, motion detectors, and our smart hub.\nUSER: How many window sensors would I get?\nASSISTANT: The package includes sensors for up to 15 windows. We'd prioritize the most vulnerable ones - typically windows hidden from street view or near door locks.\nUSER: What about the other three windows?\nASSISTANT: We can add additional sensors for $40 each, or use glass break detectors which cover multiple windows in a room for $120 each.\nUSER: The glass break detectors sound more efficient.\nASSISTANT: They are. One detector can cover a 25-foot radius. We'd probably need just one additional detector for full coverage.\nUSER: Okay, let's plan on that. What about cameras?\nASSISTANT: Our package includes two outdoor cameras. Most people place them at the front door and back door. Would you like additional cameras?\nUSER: I'd like one for the garage and maybe one for the side of the house.\nASSISTANT: Smart thinking. Additional cameras are $199 each. So that would be two more cameras.\nUSER: Yes, let's do four cameras total. Do they record?\nASSISTANT: Yes, they record to the cloud. The basic package includes 30 days of video storage. You can upgrade to 60 days for $10 more per month.\nUSER: 30 days should be enough. What's the monthly monitoring fee?\nASSISTANT: The Smart Home Security package with professional monitoring is $52.99 per month with a 36-month agreement.\nUSER: That's a three-year contract?\nASSISTANT: Yes, but that locks in your rate. Without a contract, it's $62.99 monthly.\nUSER: I'll take the contract for the lower rate. What about installation?\nASSISTANT: Professional installation is $299, but we're running a promotion this month where it's only $99.\nUSER: Oh, that's a good deal. When could you install?\nASSISTANT: Let me check our Houston schedule... I have availability this Thursday, November 16th, or next Monday, November 20th.\nUSER: What time on Thursday?\nASSISTANT: I have a morning slot from 8 AM to 12 PM, or afternoon from 1 PM to 5 PM.\nUSER: I'll take Thursday morning, 8 to noon.\nASSISTANT: Perfect! I've scheduled you for Thursday, November 16th, between 8 AM and noon. The technician will call 30 minutes before arrival.\nUSER: Do I need to be home?\nASSISTANT: Yes, someone 18 or older needs to be present for the full installation, which typically takes 3-4 hours.\nUSER: That's fine, I'll work from home that day. Now, does the system work if the power goes out?\nASSISTANT: Yes! The control panel has a backup battery that provides 24 hours of power. The cellular connection continues working too.\nUSER: Good. How do I arm and disarm it?\nASSISTANT: Multiple ways - a keypad by each door, a key fob remote, or our mobile app on your smartphone.\nUSER: How many key fobs do I get?\nASSISTANT: The package includes two key fobs. Additional ones are $35 each.\nUSER: Two is enough. My husband and I will each have one. What about smoke detectors?\nUSER: Actually, wait - before smoke detectors, what's my account number going to be?\nASSISTANT: Your ADT account number will be ADT-7789234. I'll also give you a service code for the installation.\nUSER: What's the service code?\nASSISTANT: Your installation service code is SVC-44821. The technician will ask for this.\nUSER: Let me write both down... ADT-7789234 and SVC-44821?\nASSISTANT: Exactly right. Now, you were asking about smoke detectors?\nUSER: Yes, are those included?\nASSISTANT: The package includes one smoke detector. Additional monitored smoke detectors are $65 each. How many total would you like?\nUSER: I should probably have one upstairs and one downstairs.\nASSISTANT: That's wise. So one additional smoke detector for $65.\nUSER: Yes. Do you also monitor carbon monoxide?\nASSISTANT: Yes, CO detectors are $100 each. With your gas appliances, I'd recommend at least one.\nUSER: Okay, add one of those too.\nASSISTANT: Added. Let me calculate your total setup... Equipment package is $849, two additional cameras at $199 each, one glass break detector at $120, one smoke detector at $65, one CO detector at $100, installation at $99.\nUSER: What's the total?\nASSISTANT: Your one-time equipment and installation cost is $1,631, and monthly monitoring is $52.99.\nUSER: Can I finance the equipment?\nASSISTANT: Yes! We can spread it over 12 months at 0% interest, which would be about $136 per month plus your monitoring.\nUSER: So about $190 total per month for the first year?\nASSISTANT: Yes, $188.91 to be exact for the first 12 months, then just $52.99 after that.\nUSER: That's manageable. Let's do the financing.\nASSISTANT: Excellent. I'll need some information for the financing approval. What's your social security number?\nUSER: 523-84-7791.\nASSISTANT: Date of birth?\nUSER: October 15, 1978.\nASSISTANT: Current address?\nUSER: 1847 Heights Boulevard, Houston, Texas, 77008.\nASSISTANT: How long have you lived there?\nUSER: About six years.\nASSISTANT: Employment status?\nUSER: I'm employed full-time as a marketing director.\nASSISTANT: Excellent. Let me run this through... Congratulations! You're approved for the 0% financing.\nUSER: Great! What are the next steps?\nASSISTANT: I'll email your contract to review and sign electronically. What's your email?\nUSER: nrodriguez78@email.com\nASSISTANT: Perfect. You'll receive that within the hour. Once signed, we'll ship your equipment for the Thursday installation.\nUSER: Will the installer explain everything?\nASSISTANT: Yes, they'll train you on the entire system, set up your app, and make sure you're comfortable before leaving.\nUSER: What if I have problems after installation?\nASSISTANT: We have 24/7 customer support. Plus, your account includes two free service calls per year if needed.\nUSER: That's reassuring. Oh, does this integrate with smart home devices?\nASSISTANT: Yes! It works with Alexa, Google Assistant, and most smart locks and lights.\nUSER: Perfect, I have Alexa. Anything else I should know?\nASSISTANT: Just remember your account number ADT-7789234 for any future service needs, and have your service code SVC-44821 ready for the installer Thursday morning.\nUSER: Got it. Thank you so much, Carlos!\nASSISTANT: You're welcome, Ms. Rodriguez! You're all set for Thursday, November 16th, 8 AM to noon. Your home will be much more secure very soon!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 3000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785352486703e2db60196941ae600372cde67b7e8ab1d894fa",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\n  \"On 2024-11-11 at 14:45:00, Nancy Rodriguez (DOB: October 15, 1978; address: 1847 Heights Boulevard, Houston, Texas, 77008; lived there 6 years; full-time marketing director; email: nrodriguez78@email.com) initiated a sales and installation call (conversation_id: security_install_001) with ADT Security Services (department: Sales and Installation; call duration: 48 minutes).\",\n  \"Nancy's home is a 2,400 sq ft two-story single-family house in Houston, Texas (Heights area) with: 3 entry doors (front, back, side to garage), 18 ground-floor windows (6 front, 4 each side, 4 back), a two-car attached garage, one sliding glass door (backyard from living room).\",\n  \"Nancy selected ADT's Smart Home Security package with a 36-month contract (monthly monitoring fee: $52.99; without contract: $62.99/month). The package includes door sensors (all entry points), window sensors (up to 15 windows), motion detectors, smart hub, two outdoor cameras, 30 days of cloud video storage (60 days available for $10/month extra), two key fobs, one smoke detector, backup battery (24-hour power), cellular connection, and integration with Alexa, Google Assistant, smart locks, and lights.\",\n  \"Additional equipment added: one glass break detector ($120, covers 25-foot radius), two extra outdoor cameras ($199 each, total 4 cameras), one additional smoke detector ($65, total 2), one CO detector ($100).\",\n  \"Installation is scheduled for Thursday, November 16, 2024, 8 AM to 12 PM (requires someone 18+ present for 3-4 hours). Installation cost: $99 (promotion; regular $299). Service code for installation: SVC-44821.\",\n  \"Nancy approved 0% financing over 12 months: monthly cost $136 (equipment) + $52.99 (monitoring) = $188.91/month for first 12 months; then $52.99/month. Total one-time equipment and installation cost: $1,631.\",\n  \"Nancy's ADT account number: ADT-7789234. System features: arm/disarm via keypad, key fob, or mobile app; 24/7 customer support; 2 free service calls/year.\"\n]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract all relevant facts from the conversation that would help a future assistant, retaining exact values, ownership, dates, provenance, relationships, etc. Let's go through the conversation step by step.\n\nFirst, the conversation details: conversation_id=security_install_001, timestamp=2024-11-11 14:45:00, metadata with business=ADT Security Services, department=Sales and Installation, call_duration=48 minutes.\n\nUser is Nancy Rodriguez, located in Houston, Texas, Heights area, address 1847 Heights Boulevard, Houston, Texas, 77008, has lived there 6 years, full-time marketing director, DOB October 15, 1978, SSN 523-84-7791, email nrodriguez78@email.com.\n\nHome details: two-story single-family house, 2,400 sq ft, located in Houston, Texas (Heights area), 18 ground-floor windows (6 front, 4 each side, 4 back), 3 entry doors (front, back, side to garage), two-car attached garage, one sliding glass door (backyard from living room), two-car attached garage.\n\nSecurity package: Smart Home Security package with 36-month contract ($52.99/month; without contract $62.99/month). Includes door sensors (all entry points), window sensors (up to 15 windows), motion detectors, smart hub, two outdoor cameras. Additional items: one glass break detector ($120, covers 25-foot radius), two additional cameras ($199 each, total 4 cameras), one additional smoke detector ($65, total 2), one CO detector ($100).\n\nInstallation: scheduled for Thursday, November 16, 2024, 8 AM to 12 PM, professional installation cost $99 (promotion; regular $299), requires someone 18+ present for 3-4 hours. Service code SVC-44821.\n\nFinancing: 0% interest over 12 months, monthly equipment financing ~$136 + $52.99 monitoring = $188.91/month for first 12 months, then $52.99/month.\n\nAccount details: ADT account number ADT-7789234, service code SVC-44821.\n\nOther: System includes backup battery (24 hours), cellular connection, arm/disarm via keypad, key fob (2 included), mobile app. Video storage: 30 days (included), 60 days for $10/month. Integrates with Alexa, Google Assistant, smart locks, lights. 24/7 customer support, 2 free service calls/year.\n\nNow, structure these into contextual paragraphs with entity, event, time, status, relationships."
+            }
+          }
+        ],
+        "created": 1785352519,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1245,
+          "prompt_tokens": 2308,
+          "total_tokens": 3553,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 639,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1245,
+        "prompt_tokens": 2308,
+        "total_tokens": 3553,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 639,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785352486703e2db60196941ae600372cde67b7e8ab1d894fa"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_09_home_security enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:15:19.445080+00:00",
+      "latency_ms": 3843.677,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"On 2024-11-11 at 14:45:00, Nancy Rodriguez (DOB: October 15, 1978; address: 1847 Heights Boulevard, Houston, Texas, 77008; lived there 6 years; full-time marketing director; email: nrodriguez78@email.com) initiated a sales and installation call (conversation_id: security_install_001) with ADT Security Services (department: Sales and Installation; call duration: 48 minutes).\", \"Nancy's home is a 2,400 sq ft two-story single-family house in Houston, Texas (Heights area) with: 3 entry doors (front, back, side to garage), 18 ground-floor windows (6 front, 4 each side, 4 back), a two-car attached garage, one sliding glass door (backyard from living room).\", \"Nancy selected ADT's Smart Home Security package with a 36-month contract (monthly monitoring fee: $52.99; without contract: $62.99/month). The package includes door sensors (all entry points), window sensors (up to 15 windows), motion detectors, smart hub, two outdoor cameras, 30 days of cloud video storage (60 days available for $10/month extra), two key fobs, one smoke detector, backup battery (24-hour power), cellular connection, and integration with Alexa, Google Assistant, smart locks, and lights.\", \"Additional equipment added: one glass break detector ($120, covers 25-foot radius), two extra outdoor cameras ($199 each, total 4 cameras), one additional smoke detector ($65, total 2), one CO detector ($100).\", \"Installation is scheduled for Thursday, November 16, 2024, 8 AM to 12 PM (requires someone 18+ present for 3-4 hours). Installation cost: $99 (promotion; regular $299). Service code for installation: SVC-44821.\", \"Nancy approved 0% financing over 12 months: monthly cost $136 (equipment) + $52.99 (monitoring) = $188.91/month for first 12 months; then $52.99/month. Total one-time equipment and installation cost: $1,631.\", \"Nancy's ADT account number: ADT-7789234. System features: arm/disarm via keypad, key fob, or mobile app; 24/7 customer support; 2 free service calls/year.\"]\n\nUSER QUESTION:\nWhat's my ADT account number and installation service code? The technician just arrived and is asking for them."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "021785352519634a5cf16cfa3c4ebff37e7c43914719d1af83976",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's see. The user is asking for their ADT account number and installation service code. I need to check the long-term memory provided.\n\nFirst, looking at the memory entries. There's a line that says \"Nancy's ADT account number: ADT-7789234.\" That's the account number. Then, under installation details, it mentions \"Service code for installation: SVC-44821.\" So those are the two pieces of information needed. The user is Nancy, so I should provide both numbers clearly. Make sure to state them accurately without any extra info."
+            }
+          }
+        ],
+        "created": 1785352523,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 163,
+          "prompt_tokens": 772,
+          "total_tokens": 935,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 131,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 163,
+        "prompt_tokens": 772,
+        "total_tokens": 935,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 131,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785352519634a5cf16cfa3c4ebff37e7c43914719d1af83976"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_09_home_security enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:15:23.290411+00:00",
+      "latency_ms": 7380.955,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=security_install_001\ntimestamp=2024-11-11 14:45:00\nmetadata={\"business\": \"ADT Security Services\", \"department\": \"Sales and Installation\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I've been having some break-ins in my neighborhood and want to install a security system.\nASSISTANT: I understand your concern, and you're making a smart decision. I'm Carlos from ADT Security Services. I'll help you find the right protection for your home. First, may I have your name?\nUSER: I'm Nancy Rodriguez.\nASSISTANT: Thank you, Ms. Rodriguez. What city are you in?\nUSER: I'm in Houston, Texas, in the Heights area.\nASSISTANT: I know that area well. Tell me about your home - is it a single-family house, townhome, or apartment?\nUSER: It's a two-story house, about 2,400 square feet.\nASSISTANT: How many entry doors do you have?\nUSER: Front door, back door, and a side door to the garage.\nASSISTANT: So three entry points. How many windows on the ground floor?\nUSER: Let me think... six in the front, four on each side, and four in the back. So 18 total.\nASSISTANT: That's quite a few windows to secure. Do you have a garage?\nUSER: Yes, a two-car attached garage.\nASSISTANT: And do you have any sliding glass doors?\nUSER: Yes, one leading to the backyard from the living room.\nASSISTANT: Good to know. Based on your home's layout, I'd recommend our Smart Home Security package. It includes door sensors for all entry points, window sensors, motion detectors, and our smart hub.\nUSER: How many window sensors would I get?\nASSISTANT: The package includes sensors for up to 15 windows. We'd prioritize the most vulnerable ones - typically windows hidden from street view or near door locks.\nUSER: What about the other three windows?\nASSISTANT: We can add additional sensors for $40 each, or use glass break detectors which cover multiple windows in a room for $120 each.\nUSER: The glass break detectors sound more efficient.\nASSISTANT: They are. One detector can cover a 25-foot radius. We'd probably need just one additional detector for full coverage.\nUSER: Okay, let's plan on that. What about cameras?\nASSISTANT: Our package includes two outdoor cameras. Most people place them at the front door and back door. Would you like additional cameras?\nUSER: I'd like one for the garage and maybe one for the side of the house.\nASSISTANT: Smart thinking. Additional cameras are $199 each. So that would be two more cameras.\nUSER: Yes, let's do four cameras total. Do they record?\nASSISTANT: Yes, they record to the cloud. The basic package includes 30 days of video storage. You can upgrade to 60 days for $10 more per month.\nUSER: 30 days should be enough. What's the monthly monitoring fee?\nASSISTANT: The Smart Home Security package with professional monitoring is $52.99 per month with a 36-month agreement.\nUSER: That's a three-year contract?\nASSISTANT: Yes, but that locks in your rate. Without a contract, it's $62.99 monthly.\nUSER: I'll take the contract for the lower rate. What about installation?\nASSISTANT: Professional installation is $299, but we're running a promotion this month where it's only $99.\nUSER: Oh, that's a good deal. When could you install?\nASSISTANT: Let me check our Houston schedule... I have availability this Thursday, November 16th, or next Monday, November 20th.\nUSER: What time on Thursday?\nASSISTANT: I have a morning slot from 8 AM to 12 PM, or afternoon from 1 PM to 5 PM.\nUSER: I'll take Thursday morning, 8 to noon.\nASSISTANT: Perfect! I've scheduled you for Thursday, November 16th, between 8 AM and noon. The technician will call 30 minutes before arrival.\nUSER: Do I need to be home?\nASSISTANT: Yes, someone 18 or older needs to be present for the full installation, which typically takes 3-4 hours.\nUSER: That's fine, I'll work from home that day. Now, does the system work if the power goes out?\nASSISTANT: Yes! The control panel has a backup battery that provides 24 hours of power. The cellular connection continues working too.\nUSER: Good. How do I arm and disarm it?\nASSISTANT: Multiple ways - a keypad by each door, a key fob remote, or our mobile app on your smartphone.\nUSER: How many key fobs do I get?\nASSISTANT: The package includes two key fobs. Additional ones are $35 each.\nUSER: Two is enough. My husband and I will each have one. What about smoke detectors?\nUSER: Actually, wait - before smoke detectors, what's my account number going to be?\nASSISTANT: Your ADT account number will be ADT-7789234. I'll also give you a service code for the installation.\nUSER: What's the service code?\nASSISTANT: Your installation service code is SVC-44821. The technician will ask for this.\nUSER: Let me write both down... ADT-7789234 and SVC-44821?\nASSISTANT: Exactly right. Now, you were asking about smoke detectors?\nUSER: Yes, are those included?\nASSISTANT: The package includes one smoke detector. Additional monitored smoke detectors are $65 each. How many total would you like?\nUSER: I should probably have one upstairs and one downstairs.\nASSISTANT: That's wise. So one additional smoke detector for $65.\nUSER: Yes. Do you also monitor carbon monoxide?\nASSISTANT: Yes, CO detectors are $100 each. With your gas appliances, I'd recommend at least one.\nUSER: Okay, add one of those too.\nASSISTANT: Added. Let me calculate your total setup... Equipment package is $849, two additional cameras at $199 each, one glass break detector at $120, one smoke detector at $65, one CO detector at $100, installation at $99.\nUSER: What's the total?\nASSISTANT: Your one-time equipment and installation cost is $1,631, and monthly monitoring is $52.99.\nUSER: Can I finance the equipment?\nASSISTANT: Yes! We can spread it over 12 months at 0% interest, which would be about $136 per month plus your monitoring.\nUSER: So about $190 total per month for the first year?\nASSISTANT: Yes, $188.91 to be exact for the first 12 months, then just $52.99 after that.\nUSER: That's manageable. Let's do the financing.\nASSISTANT: Excellent. I'll need some information for the financing approval. What's your social security number?\nUSER: 523-84-7791.\nASSISTANT: Date of birth?\nUSER: October 15, 1978.\nASSISTANT: Current address?\nUSER: 1847 Heights Boulevard, Houston, Texas, 77008.\nASSISTANT: How long have you lived there?\nUSER: About six years.\nASSISTANT: Employment status?\nUSER: I'm employed full-time as a marketing director.\nASSISTANT: Excellent. Let me run this through... Congratulations! You're approved for the 0% financing.\nUSER: Great! What are the next steps?\nASSISTANT: I'll email your contract to review and sign electronically. What's your email?\nUSER: nrodriguez78@email.com\nASSISTANT: Perfect. You'll receive that within the hour. Once signed, we'll ship your equipment for the Thursday installation.\nUSER: Will the installer explain everything?\nASSISTANT: Yes, they'll train you on the entire system, set up your app, and make sure you're comfortable before leaving.\nUSER: What if I have problems after installation?\nASSISTANT: We have 24/7 customer support. Plus, your account includes two free service calls per year if needed.\nUSER: That's reassuring. Oh, does this integrate with smart home devices?\nASSISTANT: Yes! It works with Alexa, Google Assistant, and most smart locks and lights.\nUSER: Perfect, I have Alexa. Anything else I should know?\nASSISTANT: Just remember your account number ADT-7789234 for any future service needs, and have your service code SVC-44821 ready for the installer Thursday morning.\nUSER: Got it. Thank you so much, Carlos!\nASSISTANT: You're welcome, Ms. Rodriguez! You're all set for Thursday, November 16th, 8 AM to noon. Your home will be much more secure very soon!\n\nQUESTION: What's my ADT account number and installation service code? The technician just arrived and is asking for them.\nANSWER: Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.\nEVALUATION CRITERIA: The agent should accurately retrieve and provide both the ADT account number ADT-7789234 and the installation service code SVC-44821 from the home security setup conversation. Since the technician has just arrived and is asking for these codes, the response must include both pieces of information exactly as provided during the call. The agent should demonstrate clear recall of both the account number (which will be needed for future service) and the service code (specifically required for the installation). The response must maintain the correct format and sequence for both codes and not confuse them with each other or with other numbers mentioned in the conversation such as the address, phone numbers, or pricing information.\n\nEXPECTED BEHAVIOR: The agent should provide account number ADT-7789234 and service code SVC-44821\n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a514b0efb1450ac9b2e6d",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"dimensions\": {\"precision\": {\"score\": 4, \"reasoning\": \"The agent accurately provided both the ADT account number and the installation service code as requested, without any errors or omissions.\", \"evidence\": [\"Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.\"]}, \"recall\": {\"score\": 4, \"reasoning\": \"The agent successfully recalled both the ADT account number and the installation service code from the conversation, demonstrating complete recall of the required information.\", \"evidence\": [\"Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.\"]}, \"reasoning\": {\"score\": 4, \"reasoning\": \"The agent's response directly addressed the user's request for the ADT account number and installation service code, showing an understanding of the context and the specific information needed.\", \"evidence\": [\"Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.\"]}, \"proactivity\": {\"score\": 1, \"reasoning\": \"The agent did not demonstrate any proactive behavior beyond providing the requested information. There was no additional unsolicited information or actions taken to further assist the user.\", \"evidence\": [\"Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.\"]}}, \"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"The agent's response contained no factual claims beyond the information provided in the conversation, and correctly recalled the specific details requested by the user.\"}, \"overall_reasoning\": \"The agent's response was accurate, complete, and directly addressed the user's request for the ADT account number and installation service code. There was no deviation from the information provided in the conversation, and the response was presented in a clear and concise manner.\"}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785352524,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 454,
+          "prompt_tokens": 2415,
+          "total_tokens": 2869,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 454,
+        "prompt_tokens": 2415,
+        "total_tokens": 2869,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a514b0efb1450ac9b2e6d"
+    }
+  ],
+  "updated_at_epoch": 1785352530.6722932,
+  "answer": "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.",
+  "result": {
+    "test_id": "layer1_09_home_security",
+    "layer": "layer1",
+    "title": "Home Security System Installation - Service Agreement Details",
+    "mode": "enhanced_notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "security_install_001",
+        "memory": [
+          "On 2024-11-11 at 14:45:00, Nancy Rodriguez (DOB: October 15, 1978; address: 1847 Heights Boulevard, Houston, Texas, 77008; lived there 6 years; full-time marketing director; email: nrodriguez78@email.com) initiated a sales and installation call (conversation_id: security_install_001) with ADT Security Services (department: Sales and Installation; call duration: 48 minutes).",
+          "Nancy's home is a 2,400 sq ft two-story single-family house in Houston, Texas (Heights area) with: 3 entry doors (front, back, side to garage), 18 ground-floor windows (6 front, 4 each side, 4 back), a two-car attached garage, one sliding glass door (backyard from living room).",
+          "Nancy selected ADT's Smart Home Security package with a 36-month contract (monthly monitoring fee: $52.99; without contract: $62.99/month). The package includes door sensors (all entry points), window sensors (up to 15 windows), motion detectors, smart hub, two outdoor cameras, 30 days of cloud video storage (60 days available for $10/month extra), two key fobs, one smoke detector, backup battery (24-hour power), cellular connection, and integration with Alexa, Google Assistant, smart locks, and lights.",
+          "Additional equipment added: one glass break detector ($120, covers 25-foot radius), two extra outdoor cameras ($199 each, total 4 cameras), one additional smoke detector ($65, total 2), one CO detector ($100).",
+          "Installation is scheduled for Thursday, November 16, 2024, 8 AM to 12 PM (requires someone 18+ present for 3-4 hours). Installation cost: $99 (promotion; regular $299). Service code for installation: SVC-44821.",
+          "Nancy approved 0% financing over 12 months: monthly cost $136 (equipment) + $52.99 (monitoring) = $188.91/month for first 12 months; then $52.99/month. Total one-time equipment and installation cost: $1,631.",
+          "Nancy's ADT account number: ADT-7789234. System features: arm/disarm via keypad, key fob, or mobile app; 24/7 customer support; 2 free service calls/year."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "security_install_001"
+        }
+      }
+    ],
+    "answer": "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821.",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 0.8125
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The agent accurately provided both the ADT account number and the installation service code as requested, without any errors or omissions.",
+          "evidence": [
+            "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The agent successfully recalled both the ADT account number and the installation service code from the conversation, demonstrating complete recall of the required information.",
+          "evidence": [
+            "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821."
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The agent's response directly addressed the user's request for the ADT account number and installation service code, showing an understanding of the context and the specific information needed.",
+          "evidence": [
+            "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821."
+          ]
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The agent did not demonstrate any proactive behavior beyond providing the requested information. There was no additional unsolicited information or actions taken to further assist the user.",
+          "evidence": [
+            "Your ADT account number is ADT-7789234, and the installation service code is SVC-44821."
+          ]
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The agent's response contained no factual claims beyond the information provided in the conversation, and correctly recalled the specific details requested by the user."
+      },
+      "overall_reasoning": "The agent's response was accurate, complete, and directly addressed the user's request for the ADT account number and installation service code. There was no deviation from the information provided in the conversation, and the response was presented in a clear and concise manner."
+    }
+  }
+}

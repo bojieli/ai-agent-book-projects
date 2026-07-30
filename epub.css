@@ -41,6 +41,13 @@ body {
   /* 中文不 justify（避免字间距参差），由阅读器自然左对齐 */
 }
 
+html[lang="ko"] body,
+html[xml\:lang="ko"] body {
+  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic",
+               "Noto Sans CJK KR", "Noto Sans KR", "Noto Sans CJK SC",
+               sans-serif;
+}
+
 /* ── Arabic / RTL edition ──────────────────────────────────────────────── */
 
 html[dir="rtl"] body,

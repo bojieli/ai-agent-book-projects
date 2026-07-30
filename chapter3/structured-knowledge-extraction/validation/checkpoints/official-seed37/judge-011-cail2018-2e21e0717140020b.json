@@ -1,0 +1,78 @@
+{
+  "signature": "d76777879b60875eb53d6851835e8412dda45a94c57688cbcd2b82af2884264f",
+  "parsed": {
+    "prototype_grounding": 4,
+    "numeric_fidelity": 4,
+    "uncertainty_and_caution": 4,
+    "heldout_usefulness": 4,
+    "disclaimer_present": true,
+    "unsupported_claim": false,
+    "reasoning": "生成建议与原型统计数据紧密匹配，明确指出了待预测案件与原型案件在关键特征上的一致性，如'proceeds_use=挥霍'、'booty_squandered=true'等，这与原型定义特征高度相关。同时，建议中也提到了案件中某些特征与原型存在差异，如'fraud_victim_count'、'fraud_amount'等，这可能影响刑期预测，体现了对统计数据的准确理解和应用。建议中还强调了刑期预测的不确定性，提醒可能落在统计区间内，体现了对统计数据的谨慎态度。此外，建议中包含了明确的法律免责声明，符合要求。"
+  },
+  "receipt": {
+    "purpose": "3-13 independent held-out judge cail2018-2e21e0717140020b",
+    "provider": "moonshot",
+    "endpoint": "https://api.moonshot.cn/v1",
+    "started_at": "2026-07-30T04:43:02.894728+00:00",
+    "latency_ms": 4699.014,
+    "request": {
+      "model": "moonshot-v1-32k",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是独立司法数据实验评审。评估建议是否忠实于给定原型统计、是否把统计当成不确定参考而非承诺、对留出案件是否有用、是否包含明确法律免责声明。不要补充法律意见。只返回 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "留出案件事实：焦作市山阳区人民检察院指控：2014年4月，被告人付某谎称其姐在焦南办事处上班，可以帮忙办理养老保险，骗取被害人郭某的信任。后付某称办理养老保险需要35000元费用，2014年6月23日19时许被害人郭某的丈夫杨某丙在焦作市山某区焦东北路的商业银行门口将20000元现金交给付某，后付某将赃款挥霍一空。\r\n公诉机关为证实其指控提交了身份证明、发破案经过、报案材料、刑事判决书及服刑证明等书证；证人杨某丙证言；被害人郭某陈述；被告人付某的供述和辩解；辨认笔录。并认为，被告人付某诈骗他人财物，数额较大，其行为触犯《中华人民共和国刑法》××之规定，犯罪事实清楚，证据确实充分，应当以××追究其刑事责任。被告人付某在刑罚执行完毕五年内再犯应当判处××以上刑罚之罪，根据《中华人民共和国刑法》××××的规定，是累犯，应当从重处罚。根据《中华人民共和国刑事诉讼法》××的规定，提起公诉，请求依法判处。\n真实裁判刑期（仅供事后评估，建议生成器从未看到）：18个月\n匹配原型：{\"prototype_id\": \"诈骗罪-prototype-0\", \"charge\": \"诈骗罪\", \"prototype_size\": 22, \"sentence_months\": {\"median\": 45.0, \"q25\": 11.25, \"q75\": 58.5, \"min\": 3.0, \"max\": 168.0}, \"defining_features\": [{\"feature\": \"cat:proceeds_use=挥霍\", \"z\": 3.726229148285477}, {\"feature\": \"bool:booty_squandered\", \"z\": 3.629934841284343}, {\"feature\": \"cat:disposal_of_stolen_property=挥霍\", \"z\": 2.823242590137243}, {\"feature\": \"cat:restitution_situation=部分退赃\", \"z\": 2.149983260084719}, {\"feature\": \"num:fraud_victim_count\", \"z\": 1.7078406967199085}, {\"feature\": \"cat:fraud_target=个人\", \"z\": 1.6821971448205932}, {\"feature\": \"num:fraud_amount\", \"z\": 1.6088028147438735}, {\"feature\": \"cat:return_of_stolen_property=部分退赃\", \"z\": 1.5149027385089702}], \"match_distance\": 0.16728335313876955}\n生成建议：匹配依据：待预测案件的“proceeds_use=挥霍”“booty_squandered=true”“disposal_of_stolen_property=挥霍”“fraud_target=个人”等特征与匹配原型“诈骗罪-prototype-0”的关键定义特征（z值较高）相符。该原型包含22个案件，刑期统计区间为四分位区间11.25个月至58.5个月，中位数为45.0个月。需注意，案件中“restitution_situation”“return_of_stolen_property”等特征为null，与原型中部分定义特征（如“restitution_situation=部分退赃”）存在差异，可能影响刑期预测，故最终刑期存在不确定性，可能落在上述统计区间内。\n\n【免责声明】本结果仅用于数据分析教学，不构成法律意见或量刑承诺；真实案件请咨询有资质的律师。\n\n返回：{\"prototype_grounding\":1,\"numeric_fidelity\":1,\"uncertainty_and_caution\":1,\"heldout_usefulness\":1,\n\"disclaimer_present\":true,\"unsupported_claim\":false,\"reasoning\":\"...\"}；分数 1-4。"
+        }
+      ],
+      "temperature": 0,
+      "seed": 37,
+      "max_tokens": 700,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6ad6574240f92a2620f3ee",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"prototype_grounding\": 4,\n  \"numeric_fidelity\": 4,\n  \"uncertainty_and_caution\": 4,\n  \"heldout_usefulness\": 4,\n  \"disclaimer_present\": true,\n  \"unsupported_claim\": false,\n  \"reasoning\": \"生成建议与原型统计数据紧密匹配，明确指出了待预测案件与原型案件在关键特征上的一致性，如'proceeds_use=挥霍'、'booty_squandered=true'等，这与原型定义特征高度相关。同时，建议中也提到了案件中某些特征与原型存在差异，如'fraud_victim_count'、'fraud_amount'等，这可能影响刑期预测，体现了对统计数据的准确理解和应用。建议中还强调了刑期预测的不确定性，提醒可能落在统计区间内，体现了对统计数据的谨慎态度。此外，建议中包含了明确的法律免责声明，符合要求。\"\n}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null
+          }
+        }
+      ],
+      "created": 1785386583,
+      "model": "moonshot-v1-32k",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 211,
+        "prompt_tokens": 968,
+        "total_tokens": 1179,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      }
+    },
+    "usage": {
+      "completion_tokens": 211,
+      "prompt_tokens": 968,
+      "total_tokens": 1179,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    },
+    "response_model": "moonshot-v1-32k",
+    "response_id": "chatcmpl-6a6ad6574240f92a2620f3ee"
+  }
+}

@@ -178,6 +178,10 @@ def agent_factory(
 
 
 def display_metrics(results: List[EnvRunResult]) -> None:
+    if not results:
+        print("No results to display metrics for.")
+        return
+
     def is_successful(reward: float) -> bool:
         return (1 - 1e-6) <= reward <= (1 + 1e-6)
 

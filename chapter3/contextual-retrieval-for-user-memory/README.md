@@ -9,6 +9,16 @@
 
 ## English
 
+### Canonical live campaign
+
+`python campaign.py` evaluates all 60 three-layer cases with a preregistered
+plain/contextual/dual-layer ablation. A live ReAct planner's exact queries are
+replayed across plain and contextual fixed-window indexes; the dual arm adds
+the live Advanced JSON Card checkpoint from Experiment 3-1. Prefixes, cards,
+raw chunks, trajectories, per-layer external-judge metrics, and credential-free
+receipts are retained under `validation/`; `validation/latest.json` is the
+canonical gate report.
+
 ### What this experiment is
 
 Applying contextual retrieval to user memory addresses a core pain point of naive conversation chunking and steps toward higher-level memory. This project implements a dual-layer memory system:

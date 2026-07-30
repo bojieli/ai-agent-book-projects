@@ -53,6 +53,7 @@ class Env(object):
         user_model: str,
         user_provider: Optional[str] = None,
         task_index: Optional[int] = None,
+        user_seed: Optional[int] = None,
     ) -> None:
         super().__init__()
         self.data_load_func = data_load_func
@@ -66,18 +67,19 @@ class Env(object):
         if task_index is not None:
             self.task_index = task_index
         else:
-            self.task_index = random.randint(0, len(tasks))
+            self.task_index = random.randrange(len(tasks))
         self.task = tasks[self.task_index]
         self.wiki = wiki
         self.rules = rules
         self.user = load_user(
-            user_strategy=user_strategy, model=user_model, provider=user_provider
+            user_strategy=user_strategy, model=user_model, provider=user_provider,
+            seed=user_seed,
         )
         self.actions: List[Action] = []
 
     def reset(self, task_index: Optional[int] = None) -> EnvResetResponse:
         if task_index is None:
-            task_index = random.randint(0, len(self.tasks))
+            task_index = random.randrange(len(self.tasks))
         self.task_index = task_index
         self.data = self.data_load_func()
         self.task = self.tasks[task_index]

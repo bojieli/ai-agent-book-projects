@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 900 184" width="900" height="184" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="26.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="126.0" y="74.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">사용자 요청</text>
+<text x="126.0" y="100.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">“Xfinity에 전화해 요금을 깎아 줘”</text>
+<rect x="242.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="342.0" y="74.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">로컬 LLM 서비스</text>
+<text x="342.0" y="100.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">vLLM/Ollama(OpenAI 호환)</text>
+<line x1="228.0" y1="86.0" x2="240.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="458.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="558.0" y="74.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">모델 추론</text>
+<text x="558.0" y="100.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">tool_call 결정 및 생성</text>
+<line x1="444.0" y1="86.0" x2="456.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="674.0" y="44" width="200" height="84" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="774.0" y="74.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">로컬 도구 실행</text>
+<text x="774.0" y="100.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">함수 / 외부 API 호출</text>
+<line x1="660.0" y1="86.0" x2="672.0" y2="86.0" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="774.0" y1="128" x2="774.0" y2="158" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="774.0" y1="158" x2="558.0" y2="158" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="558.0" y1="158" x2="558.0" y2="130" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="666.0" y="176" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">도구 결과를 모델에 반환해 최종 응답 생성</text>
+</svg>

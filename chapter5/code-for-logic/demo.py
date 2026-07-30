@@ -28,10 +28,14 @@
     python demo.py --puzzles my.json     # 换一份谜题数据集
 """
 import argparse
+import datetime as dt
 import json
+import math
 import os
 import re
 import sys
+import time
+from pathlib import Path
 
 from csp_solver import solve_labeled
 from sandbox import run_python
@@ -52,6 +56,7 @@ def _load_dotenv(path=".env"):
 _load_dotenv()
 
 MODEL = os.environ.get("MODEL", "gpt-4o-mini")
+PROVIDER = "unknown"
 
 # --- 通用 OpenRouter 兜底：无直连 key 时自动改走 OpenRouter ---
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -75,7 +80,7 @@ def map_model_to_openrouter(model: str) -> str:
     return "openai/gpt-5.6-luna"
 
 
-def build_client_and_model():
+def build_client_and_model(provider="auto"):
     """构造 OpenAI 客户端并返回 (client, model)。
 
     - 有 OPENAI_API_KEY：直连（默认模型 gpt-4o-mini 是普通 gpt id，可直连 OpenAI）。
@@ -84,14 +89,33 @@ def build_client_and_model():
     - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：整体改走 OpenRouter。
     """
     from openai import OpenAI
-    global MODEL
-    api_key = os.environ.get("OPENAI_API_KEY")
-    base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
-    prefer_or = bool(orkey) and (MODEL or "").lower().startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        api_key, base_url, MODEL = orkey, OPENROUTER_BASE_URL, map_model_to_openrouter(MODEL)
-    kw = {"api_key": api_key, "timeout": 60.0, "max_retries": 3}
+    global MODEL, PROVIDER
+    choices = {
+        "ollama": ("ollama", os.environ.get(
+            "OLLAMA_BASE_URL", "http://127.0.0.1:11434/v1"
+        ), MODEL),
+        "openai": (os.environ.get("OPENAI_API_KEY"),
+                   os.environ.get("OPENAI_BASE_URL"), MODEL),
+        "openrouter": (os.environ.get("OPENROUTER_API_KEY"),
+                       OPENROUTER_BASE_URL, map_model_to_openrouter(MODEL)),
+        "moonshot": (os.environ.get("MOONSHOT_API_KEY"),
+                     "https://api.moonshot.cn/v1", MODEL),
+        "ark": (os.environ.get("ARK_API_KEY"),
+                "https://ark.cn-beijing.volces.com/api/v3", MODEL),
+    }
+    if provider == "auto":
+        provider = next(
+            (name for name in ("openai", "openrouter", "moonshot", "ark")
+             if choices[name][0]),
+            "openai",
+        )
+    if provider not in choices:
+        raise ValueError(f"unsupported provider: {provider}")
+    api_key, base_url, MODEL = choices[provider]
+    if not api_key:
+        raise SystemExit(f"错误：provider={provider} 缺少对应 API key")
+    PROVIDER = provider
+    kw = {"api_key": api_key, "timeout": 180.0, "max_retries": 5}
     if base_url:
         kw["base_url"] = base_url
     return OpenAI(**kw), MODEL
@@ -170,7 +194,11 @@ def parse_answer(text, names):
         try:
             obj = json.loads(m.group(0))
         except json.JSONDecodeError:
-            continue
+            try:
+                import ast
+                obj = ast.literal_eval(m.group(0))
+            except (SyntaxError, ValueError):
+                continue
         if not isinstance(obj, dict):
             continue
         got = {}
@@ -188,18 +216,39 @@ def parse_answer(text, names):
 
 
 def call_model(client, system, user, use_tools):
-    """跑一轮对话(含可能的多次工具调用)，返回 (最终文本, 使用的代码列表)。"""
+    """Run one trajectory and retain credential-free provider receipts."""
     messages = [{"role": "system", "content": system},
                 {"role": "user", "content": user}]
     codes = []
-    for _ in range(8):  # 最多 8 轮，防止无限循环
+    receipts = []
+    for turn in range(8):  # 最多 8 轮，防止无限循环
         kwargs = (dict(model=MODEL, messages=messages, temperature=1, max_tokens=8192)
                   if _reasoning(MODEL)
                   else dict(model=MODEL, messages=messages, temperature=0))
         if use_tools:
-            kwargs.update(tools=TOOLS, tool_choice="auto")
+            kwargs.update(
+                tools=TOOLS,
+                tool_choice="required" if not codes else "auto",
+            )
         resp = client.chat.completions.create(**kwargs)
         msg = resp.choices[0].message
+        usage = getattr(resp, "usage", None)
+        receipts.append({
+            "turn": turn + 1,
+            "response_id": getattr(resp, "id", None),
+            "response_model": getattr(resp, "model", None),
+            "finish_reason": getattr(resp.choices[0], "finish_reason", None),
+            "usage": {
+                "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                "completion_tokens": getattr(usage, "completion_tokens", None),
+                "total_tokens": getattr(usage, "total_tokens", None),
+                "cached_prompt_tokens": getattr(
+                    getattr(usage, "prompt_tokens_details", None),
+                    "cached_tokens", None,
+                ),
+            },
+            "tool_calls": len(getattr(msg, "tool_calls", None) or []),
+        })
         if use_tools and msg.tool_calls:
             messages.append(msg)
             for tc in msg.tool_calls:
@@ -212,21 +261,61 @@ def call_model(client, system, user, use_tools):
                 messages.append({"role": "tool", "tool_call_id": tc.id,
                                  "content": result})
             continue
-        return msg.content or "", codes
-    return "", codes
+        return msg.content or "", codes, receipts
+    return "", codes, receipts
 
 
-def run_mode(client, puzzles, mode):
+def run_mode(client, puzzles, mode, existing=None, checkpoint=None):
     """跑一种 LLM 模式(pure/code)，返回逐题记录列表。"""
     system = CODE_SYSTEM if mode == "code" else PURE_SYSTEM
+    existing_by_id = {
+        record["id"]: record for record in (existing or [])
+        if record.get("id")
+    }
     records = []
     for p in puzzles:
-        text, codes = call_model(client, system, p["description"], mode == "code")
-        pred = parse_answer(text, p["names"])
-        correct = pred == p["solution"]
-        records.append(dict(id=p["id"], num=p["num_people"], pred=pred,
-                            gold=p["solution"], correct=correct,
-                            codes=codes, text=text))
+        previous = existing_by_id.get(p["id"])
+        if (
+            previous
+            and not previous.get("provider_error")
+            and previous.get("provider_receipts")
+            and (mode != "code" or previous.get("codes"))
+        ):
+            record = previous
+        else:
+            started = time.monotonic()
+            try:
+                text, codes, receipts = call_model(
+                    client, system, p["description"], mode == "code"
+                )
+                pred = parse_answer(text, p["names"])
+                record = dict(
+                    id=p["id"], num=p["num_people"], pred=pred,
+                    gold=p["solution"], correct=pred == p["solution"],
+                    source=p.get("source"), codes=codes, text=text,
+                    used_python_constraint=any(
+                        re.search(r"(^|\s)(from|import)\s+constraint\b", code)
+                        for code in codes
+                    ),
+                    duration_s=round(time.monotonic() - started, 3),
+                    provider_receipts=receipts,
+                    provider_error=None,
+                )
+            except Exception as exc:
+                record = dict(
+                    id=p["id"], num=p["num_people"], pred=None,
+                    gold=p["solution"], correct=False,
+                    source=p.get("source"), codes=[], text="",
+                    used_python_constraint=False,
+                    duration_s=round(time.monotonic() - started, 3),
+                    provider_receipts=[],
+                    provider_error=f"{type(exc).__name__}: {exc}",
+                )
+        records.append(record)
+        if checkpoint:
+            checkpoint(mode, records)
+        pred = record.get("pred")
+        correct = bool(record.get("correct"))
         mark = "✓" if correct else "✗"
         print(f"  [{mode:6}] {p['id']} ({p['num_people']}人) {mark}  "
               f"预测={pred}")
@@ -254,6 +343,107 @@ def run_solver(puzzles):
 
 
 LABELS = {"pure": "纯思考", "code": "代码辅助", "solver": "约束求解"}
+
+
+def _wilson(successes, total, z=1.959963984540054):
+    if total <= 0:
+        return [None, None]
+    p = successes / total
+    denominator = 1 + z * z / total
+    center = (p + z * z / (2 * total)) / denominator
+    half = z * math.sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / denominator
+    return [center - half, center + half]
+
+
+def paired_statistics(pure, code):
+    """Preregistered paired accuracy analysis (exact McNemar/binomial test)."""
+    if [r["id"] for r in pure] != [r["id"] for r in code]:
+        raise ValueError("paired modes do not contain the same ordered task ids")
+    pure_only = sum(a["correct"] and not b["correct"] for a, b in zip(pure, code))
+    code_only = sum(not a["correct"] and b["correct"] for a, b in zip(pure, code))
+    discordant = pure_only + code_only
+    if discordant:
+        tail = sum(math.comb(discordant, i) for i in range(min(pure_only, code_only) + 1))
+        p_value = min(1.0, 2 * tail / (2 ** discordant))
+    else:
+        p_value = 1.0
+    code_ok = sum(r["correct"] for r in code)
+    pure_ok = sum(r["correct"] for r in pure)
+    code_accuracy = code_ok / len(code)
+    pure_accuracy = pure_ok / len(pure)
+    library_rate = sum(r["used_python_constraint"] for r in code) / len(code)
+    return {
+        "test": "two-sided exact McNemar/binomial test on discordant pairs",
+        "n": len(code),
+        "contingency": {"pure_only": pure_only, "code_only": code_only,
+                        "discordant": discordant},
+        "pure_accuracy": pure_accuracy,
+        "code_accuracy": code_accuracy,
+        "accuracy_delta": code_accuracy - pure_accuracy,
+        "code_accuracy_wilson_95": _wilson(code_ok, len(code)),
+        "p_value": p_value,
+        "python_constraint_tool_use_rate": library_rate,
+        "acceptance": {
+            "code_accuracy_over_90_percent": code_accuracy > 0.90,
+            "code_significantly_higher_than_pure": (
+                code_accuracy > pure_accuracy and p_value < 0.05
+            ),
+            "all_code_trajectories_used_python_constraint": library_rate == 1.0,
+        },
+    }
+
+
+def campaign_completion(results, puzzles, manifest, mode):
+    """Check exact protocol execution without requiring a positive result."""
+    expected_ids = [puzzle["id"] for puzzle in puzzles]
+    manifest_exact = bool(
+        manifest
+        and manifest.get("dataset") == "K-and-K/perturbed-knights-and-knaves"
+        and manifest.get("revision")
+        == "bc7ee75a15ee8196ccbdb7df3ab46284340412e2"
+        and (manifest.get("sampling") or {}).get("total") == 84
+        and (manifest.get("sampling") or {}).get("cells") == 42
+        and (manifest.get("sampling") or {}).get("per_cell") == 2
+        and len(manifest.get("source_files") or []) == 42
+        and manifest.get("label_validation")
+        == "all rows independently solved with python-constraint"
+    )
+    exact_coverage = (
+        len(expected_ids) == 84 and len(set(expected_ids)) == 84
+    )
+    errors = []
+    arm_checks = {}
+    for arm in ("pure", "code"):
+        records = results.get(arm) or []
+        arm_errors = [
+            {"id": record.get("id"), "error": record.get("provider_error")}
+            for record in records if record.get("provider_error")
+        ]
+        errors.extend({"arm": arm, **error} for error in arm_errors)
+        arm_checks[f"all_{arm}_trajectories_complete"] = (
+            len(records) == 84
+            and [record.get("id") for record in records] == expected_ids
+            and not arm_errors
+            and all(record.get("provider_receipts") for record in records)
+        )
+    code_records = results.get("code") or []
+    checks = {
+        "mode_is_full_paired_campaign": mode == "both",
+        "exact_pinned_stratified_dataset_manifest": manifest_exact,
+        "all_84_unique_tasks_present": exact_coverage,
+        **arm_checks,
+        "zero_provider_errors": not errors,
+        "every_code_trajectory_used_python_constraint": (
+            len(code_records) == 84
+            and all(record.get("used_python_constraint") for record in code_records)
+        ),
+    }
+    return {
+        "status": "complete" if all(checks.values()) else "incomplete",
+        "checks": checks,
+        "provider_errors": errors,
+        "expected_tasks_per_arm": 84,
+    }
 
 
 def print_table(columns, puzzles):
@@ -300,6 +490,12 @@ def main():
                          "code=仅代码辅助；solver=离线约束求解基线(无需 API)")
     ap.add_argument("--model", default=MODEL,
                     help=f"LLM 模型名(默认 {MODEL}；solver 模式忽略)")
+    ap.add_argument(
+        "--provider",
+        choices=["auto", "ollama", "openai", "openrouter", "moonshot", "ark"],
+        default="auto",
+        help="explicit API provider; recorded in the saved evidence",
+    )
     ap.add_argument("--limit", type=int, default=0,
                     help="只跑前 N 题(0=全部)")
     ap.add_argument("--min-people", type=int, default=0,
@@ -310,6 +506,14 @@ def main():
                     help="谜题数据集路径(默认 puzzles.json)")
     ap.add_argument("--output", default="last_run.json",
                     help="逐题完整记录的输出路径(默认 last_run.json)")
+    ap.add_argument(
+        "--manifest", default=None,
+        help="optional dataset manifest; defaults to the matching .manifest.json",
+    )
+    ap.add_argument(
+        "--resume", action="store_true",
+        help="resume successful per-arm rows from OUTPUT.checkpoint.json",
+    )
     args = ap.parse_args()
     MODEL = args.model
 
@@ -328,20 +532,44 @@ def main():
     llm_modes = {"both": ["pure", "code"], "pure": ["pure"],
                  "code": ["code"], "solver": []}[args.mode]
     results = {}
+    checkpoint_path = Path(str(args.output) + ".checkpoint.json")
+    resumed_results = {}
+    if args.resume and checkpoint_path.is_file():
+        prior = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        if prior.get("provider") != args.provider or prior.get("model") != MODEL:
+            raise ValueError("resume rejected: provider/model changed")
+        if prior.get("puzzle_ids") != [puzzle["id"] for puzzle in puzzles]:
+            raise ValueError("resume rejected: selected puzzle set changed")
+        resumed_results = prior.get("results") or {}
+
+    checkpoint_results = {
+        arm: list(records) for arm, records in resumed_results.items()
+    }
+
+    def persist_checkpoint(arm, records):
+        checkpoint_results[arm] = list(records)
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        checkpoint_path.write_text(json.dumps({
+            "schema_version": "1.0", "experiment": "5-2",
+            "provider": args.provider, "model": MODEL,
+            "puzzle_ids": [puzzle["id"] for puzzle in puzzles],
+            "results": checkpoint_results,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if args.mode == "solver":
         print(f"离线约束求解基线    题目数：{len(puzzles)}\n")
         print("== 约束求解(solver，离线) ==")
         results["solver"] = run_solver(puzzles)
     else:
-        if not (os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")):
-            sys.exit("错误：pure/code/both 模式需要 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底）"
-                     "环境变量(可写入 .env)。若只想看离线约束求解基线，请用 --mode solver。")
-        client, MODEL = build_client_and_model()  # 延迟导入 openai + OpenRouter 兜底
-        print(f"模型：{MODEL}    题目数：{len(puzzles)}    模式：{args.mode}\n")
+        client, MODEL = build_client_and_model(args.provider)
+        print(f"供应商：{PROVIDER}    模型：{MODEL}    题目数：{len(puzzles)}    模式：{args.mode}\n")
         for m in llm_modes:
             print(f"== {LABELS[m]}({m}) ==")
-            results[m] = run_mode(client, puzzles, m)
+            results[m] = run_mode(
+                client, puzzles, m,
+                existing=resumed_results.get(m),
+                checkpoint=persist_checkpoint,
+            )
             print()
 
     # ---- 准确率对比表(按 pure -> code -> solver 的固定列序) ----
@@ -361,11 +589,40 @@ def main():
             print(f"预测={sample['pred']}  真值={sample['gold']}")
 
     # 保存完整记录，便于复盘
-    payload = dict(model=MODEL, mode=args.mode)
+    puzzle_path = Path(args.puzzles)
+    manifest_path = (
+        Path(args.manifest) if args.manifest
+        else puzzle_path.with_name(puzzle_path.stem + ".manifest.json")
+    )
+    manifest = None
+    manifest_sha256 = None
+    if manifest_path.is_file():
+        import hashlib
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest_sha256 = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    payload = dict(
+        schema_version="2.0",
+        experiment="5-2",
+        generated_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(),
+        provider=PROVIDER,
+        model=MODEL,
+        mode=args.mode,
+        tasks=len(puzzles),
+        dataset_manifest=manifest,
+        dataset_manifest_sha256=manifest_sha256,
+    )
     for m, recs in results.items():
         payload[m] = recs
         payload[f"{m}_acc"] = sum(r["correct"] for r in recs) / len(recs)
-    with open(args.output, "w", encoding="utf-8") as f:
+    if "pure" in results and "code" in results:
+        payload["paired_analysis"] = paired_statistics(results["pure"], results["code"])
+    payload["completion"] = campaign_completion(
+        results, puzzles, manifest, args.mode
+    )
+    payload["official_complete"] = payload["completion"]["status"] == "complete"
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
     print(f"\n完整逐题记录已保存到 {args.output}")
 

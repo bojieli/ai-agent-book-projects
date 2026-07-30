@@ -1,0 +1,28 @@
+{
+  "case": "reject_absolute_path",
+  "tool": "filesystem_delete",
+  "arguments": {
+    "path": "/tmp"
+  },
+  "arguments_sha256": "ef28a75876b54cb665beeb4cb10d72f463c59d196f5ee4a08e62ac67e7247639",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "workspace-confined-quarantine",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": "PermissionError",
+  "payload": {
+    "success": false,
+    "message": "Filesystem delete failed: Absolute paths are not allowed for filesystem mutations",
+    "metadata": {
+      "operation": "delete",
+      "error_type": "PermissionError",
+      "mutation_root_env": "PERCEPTION_MUTATION_ROOT"
+    }
+  },
+  "elapsed_seconds": 0.002
+}

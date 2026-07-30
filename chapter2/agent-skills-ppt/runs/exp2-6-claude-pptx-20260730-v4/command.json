@@ -1,0 +1,18 @@
+[
+  "claude",
+  "/pptx\n\nCreate a polished 10\u201315 slide presentation from the real academic paper at\n`attention-is-all-you-need.pdf`. Write the final deck to\n`output/attention-is-all-you-need.pptx`.\n\nThis is an audited Agent Skills experiment. Follow the official PPTX Skill by\nprogressive disclosure: invoke the pptx Skill, read its complete SKILL.md, then\nread its complete html2pptx.md only after selection. Use the pinned official\n`scripts/html2pptx.js` workflow. Use the official `scripts/thumbnail.py` to\nmake `output/full-deck-thumbnail.jpg`, inspect the full grid, and fix visible\noverlap, cutoff, contrast, or alignment defects before finishing.\n\nContent gates:\n- cover title, problem/background, Transformer method/architecture, key\n  experimental results, and conclusion;\n- extract or crop at least three visuals directly from the source PDF (not\n  invented replacements), place the files under `source_visuals/`, and embed\n  all of them in the deck;\n- create `source_visuals/manifest.json` as a JSON list. Each item must contain\n  `file`, one-based PDF `page`, the paper's `label` (for example Figure 1 or\n  Table 2), and a faithful `caption`;\n- make every visual consistent with the surrounding slide explanation and\n  cite its source page/label on-slide.\n\nYou may install the Node packages required by the official Skill inside this\nworkspace. Do not use the repository's bundled `demo.py`, local proxy Skill,\nor prewritten sample outline. The final response must name the deck,\nthumbnail, visual manifest, slide count, validation performed, and any\nremaining limitation.\n",
+  "--print",
+  "--output-format",
+  "stream-json",
+  "--verbose",
+  "--model",
+  "sonnet",
+  "--effort",
+  "high",
+  "--max-budget-usd",
+  "8",
+  "--no-session-persistence",
+  "--dangerously-skip-permissions",
+  "--add-dir",
+  "/Users/boj/book/ai-agent-book/chapter2/agent-skills-ppt/external/anthropics-skills/skills/pptx"
+]

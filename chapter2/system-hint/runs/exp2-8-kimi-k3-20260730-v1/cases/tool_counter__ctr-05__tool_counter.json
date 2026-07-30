@@ -1,0 +1,796 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "tool_counter__ctr-05__tool_counter",
+  "suite": "tool_counter",
+  "case_id": "ctr-05",
+  "condition": "tool_counter",
+  "features": [
+    "tool_counter"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "086136f38fb0d19d6c7dc985941eac8a489110fe052cf869477320f94a07dbef",
+  "current_sandbox_sha256": "749d7f33bd0fb39d301d170702681775e4cedc617f2c7da2e1a8f19b76b5b188",
+  "created_at": "2026-07-29T19:43:07.002530+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Retrieve the payload for primary resource gateway-e. If the primary remains unavailable, use fallback mirror-e. Submit the resource that supplied the payload."
+    },
+    {
+      "content": "I'll start by probing the primary resource.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_0",
+          "function": {
+            "arguments": "{\"name\":\"gateway-e\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The task is to retrieve the payload for primary resource \"gateway-e\". If unavailable, use fallback \"mirror-e\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource gateway-e."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_0",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+    },
+    {
+      "content": "The primary failed. Let me probe it once more to confirm it remains unavailable.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_1",
+          "function": {
+            "arguments": "{\"name\":\"gateway-e\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The primary resource gateway-e is temporarily unavailable. Let me try again to confirm, or switch to the fallback. The instruction says \"If the primary remains unavailable, use fallback mirror-e.\" Let me probe once more to confirm it remains unavailable, then switch to fallback.\n\nActually, the agent status says \"After repeated failure, diagnose and switch to a viable fallback.\" I've had one failure. Let me try once more to verify it remains unavailable, then switch."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_1",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable\nTool call #2 for 'probe_resource'."
+    },
+    {
+      "content": "The primary remains unavailable after repeated attempts. Switching to the fallback mirror-e.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_2",
+          "function": {
+            "arguments": "{\"name\":\"mirror-e\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The primary resource gateway-e has failed twice (\"temporarily unavailable\"). Per the instructions, I should switch to the fallback mirror-e. Let me probe mirror-e."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_2",
+      "name": "probe_resource",
+      "content": "verified-payload-ctr-05\nTool call #3 for 'probe_resource'."
+    },
+    {
+      "content": "The fallback mirror-e successfully supplied the payload. Submitting the verified result.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"fallback\":\"mirror-e\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The fallback mirror-e supplied the payload: \"verified-payload-ctr-05\". Now I need to submit the result, naming the resource that supplied the payload — which is mirror-e. I should call submit_result exactly once."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded\nTool call #1 for 'submit_result'."
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:43:07.002979+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-e. If the primary remains unavailable, use fallback mirror-e. Submit the resource that supplied the payload."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTOOL COUNTS: none. After repeated failure, diagnose and switch to a viable fallback.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5005.485,
+      "response": {
+        "id": "chatcmpl-6a6a57cc165e1911f02a36a0",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by probing the primary resource.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_0",
+                  "function": {
+                    "arguments": "{\"name\":\"gateway-e\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The task is to retrieve the payload for primary resource \"gateway-e\". If unavailable, use fallback \"mirror-e\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource gateway-e."
+            }
+          }
+        ],
+        "created": 1785354189,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 104,
+          "prompt_tokens": 348,
+          "total_tokens": 452,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 44,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:43:12.010095+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-e. If the primary remains unavailable, use fallback mirror-e. Submit the resource that supplied the payload."
+          },
+          {
+            "content": "I'll start by probing the primary resource.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_0",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to retrieve the payload for primary resource \"gateway-e\". If unavailable, use fallback \"mirror-e\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource gateway-e."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_0",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTOOL COUNTS: probe_resource=1. After repeated failure, diagnose and switch to a viable fallback.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5752.507,
+      "response": {
+        "id": "chatcmpl-6a6a57d090821727757941c0",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The primary failed. Let me probe it once more to confirm it remains unavailable.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_1",
+                  "function": {
+                    "arguments": "{\"name\":\"gateway-e\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The primary resource gateway-e is temporarily unavailable. Let me try again to confirm, or switch to the fallback. The instruction says \"If the primary remains unavailable, use fallback mirror-e.\" Let me probe once more to confirm it remains unavailable, then switch to fallback.\n\nActually, the agent status says \"After repeated failure, diagnose and switch to a viable fallback.\" I've had one failure. Let me try once more to verify it remains unavailable, then switch."
+            }
+          }
+        ],
+        "created": 1785354193,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 160,
+          "prompt_tokens": 499,
+          "total_tokens": 659,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 92,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:43:17.764541+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-e. If the primary remains unavailable, use fallback mirror-e. Submit the resource that supplied the payload."
+          },
+          {
+            "content": "I'll start by probing the primary resource.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_0",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to retrieve the payload for primary resource \"gateway-e\". If unavailable, use fallback \"mirror-e\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource gateway-e."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_0",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "content": "The primary failed. Let me probe it once more to confirm it remains unavailable.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_1",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The primary resource gateway-e is temporarily unavailable. Let me try again to confirm, or switch to the fallback. The instruction says \"If the primary remains unavailable, use fallback mirror-e.\" Let me probe once more to confirm it remains unavailable, then switch to fallback.\n\nActually, the agent status says \"After repeated failure, diagnose and switch to a viable fallback.\" I've had one failure. Let me try once more to verify it remains unavailable, then switch."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_1",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #2 for 'probe_resource'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTOOL COUNTS: probe_resource=2. After repeated failure, diagnose and switch to a viable fallback.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4310.616,
+      "response": {
+        "id": "chatcmpl-6a6a57d6dac2ed2f4215226b",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The primary remains unavailable after repeated attempts. Switching to the fallback mirror-e.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_2",
+                  "function": {
+                    "arguments": "{\"name\":\"mirror-e\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The primary resource gateway-e has failed twice (\"temporarily unavailable\"). Per the instructions, I should switch to the fallback mirror-e. Let me probe mirror-e."
+            }
+          }
+        ],
+        "created": 1785354199,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 703,
+          "total_tokens": 804,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 33,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:43:22.077571+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-e. If the primary remains unavailable, use fallback mirror-e. Submit the resource that supplied the payload."
+          },
+          {
+            "content": "I'll start by probing the primary resource.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_0",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to retrieve the payload for primary resource \"gateway-e\". If unavailable, use fallback \"mirror-e\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource gateway-e."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_0",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'."
+          },
+          {
+            "content": "The primary failed. Let me probe it once more to confirm it remains unavailable.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_1",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The primary resource gateway-e is temporarily unavailable. Let me try again to confirm, or switch to the fallback. The instruction says \"If the primary remains unavailable, use fallback mirror-e.\" Let me probe once more to confirm it remains unavailable, then switch to fallback.\n\nActually, the agent status says \"After repeated failure, diagnose and switch to a viable fallback.\" I've had one failure. Let me try once more to verify it remains unavailable, then switch."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_1",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable\nTool call #2 for 'probe_resource'."
+          },
+          {
+            "content": "The primary remains unavailable after repeated attempts. Switching to the fallback mirror-e.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_2",
+                "function": {
+                  "arguments": "{\"name\":\"mirror-e\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The primary resource gateway-e has failed twice (\"temporarily unavailable\"). Per the instructions, I should switch to the fallback mirror-e. Let me probe mirror-e."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_2",
+            "name": "probe_resource",
+            "content": "verified-payload-ctr-05\nTool call #3 for 'probe_resource'."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nTOOL COUNTS: probe_resource=3. After repeated failure, diagnose and switch to a viable fallback.\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3623.04,
+      "response": {
+        "id": "chatcmpl-6a6a57dae7c97367e803c0aa",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The fallback mirror-e successfully supplied the payload. Submitting the verified result.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"fallback\":\"mirror-e\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The fallback mirror-e supplied the payload: \"verified-payload-ctr-05\". Now I need to submit the result, naming the resource that supplied the payload — which is mirror-e. I should call submit_result exactly once."
+            }
+          }
+        ],
+        "created": 1785354203,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 114,
+          "prompt_tokens": 848,
+          "total_tokens": 962,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 47,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:43:12.009328+00:00",
+      "tool_call_id": "probe_resource_0",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "gateway-e"
+      },
+      "content": "Error: primary resource is temporarily unavailable\nTool call #1 for 'probe_resource'.",
+      "ok": false,
+      "sandbox_sha256_after": "749d7f33bd0fb39d301d170702681775e4cedc617f2c7da2e1a8f19b76b5b188"
+    },
+    {
+      "at": "2026-07-29T19:43:17.763645+00:00",
+      "tool_call_id": "probe_resource_1",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "gateway-e"
+      },
+      "content": "Error: primary resource is temporarily unavailable\nTool call #2 for 'probe_resource'.",
+      "ok": false,
+      "sandbox_sha256_after": "749d7f33bd0fb39d301d170702681775e4cedc617f2c7da2e1a8f19b76b5b188"
+    },
+    {
+      "at": "2026-07-29T19:43:22.076526+00:00",
+      "tool_call_id": "probe_resource_2",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "mirror-e"
+      },
+      "content": "verified-payload-ctr-05\nTool call #3 for 'probe_resource'.",
+      "ok": true,
+      "sandbox_sha256_after": "749d7f33bd0fb39d301d170702681775e4cedc617f2c7da2e1a8f19b76b5b188"
+    },
+    {
+      "at": "2026-07-29T19:43:25.701942+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "fallback": "mirror-e"
+      },
+      "content": "Submission recorded\nTool call #1 for 'submit_result'.",
+      "ok": true,
+      "sandbox_sha256_after": "749d7f33bd0fb39d301d170702681775e4cedc617f2c7da2e1a8f19b76b5b188"
+    }
+  ],
+  "tool_counters": {
+    "probe_resource": 3,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "tool_counter": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 2398,
+    "completion_tokens": 479,
+    "total_tokens": 2877
+  },
+  "cost": {
+    "amount": 0.09586,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:43:25.703366+00:00",
+  "case_condition_order": [
+    "tool_counter",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 900 340" width="900" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="44" width="370" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="55.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">비에이전트형 RAG</text>
+<text x="215.0" y="81.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">고정된 전처리 단계 · 일회성 검색</text>
+<rect x="80" y="110" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="132" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">사용자 질의</text>
+<line x1="215.0" y1="156" x2="215.0" y2="174" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="174" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="196" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">검색(1회)</text>
+<line x1="215.0" y1="220" x2="215.0" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="80" y="238" width="270" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="215.0" y="260" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">곧바로 답변 생성</text>
+<rect x="500" y="44" width="370" height="46" rx="6" fill="#eef3f6" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="55.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">에이전트형 RAG(Agentic)</text>
+<text x="685.0" y="81.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">에이전트가 ReAct로 반복 검색 주도</text>
+<rect x="530" y="110" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="132" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">사고: 요구 분석 · 키워드 선정</text>
+<line x1="685.0" y1="156" x2="685.0" y2="174" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="530" y="174" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="196" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">행동: 검색 도구 호출</text>
+<line x1="685.0" y1="220" x2="685.0" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="530" y="238" width="310" height="44" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="260" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">관찰: 정보가 충분한가?</text>
+<line x1="840" y1="260" x2="858" y2="260" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="858" y1="260" x2="858" y2="196" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<line x1="858" y1="196" x2="840" y2="196" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="862" y="228.0" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">부족</text>
+<line x1="685.0" y1="302" x2="685.0" y2="320" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="550" y="322" width="270" height="44" rx="6" fill="#dfeef0" stroke="#333333" stroke-width="2"/>
+<text x="685.0" y="344" font-family="Arial, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', 'Malgun Gothic', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">충분 → 종합하여 답변 생성</text>
+</svg>

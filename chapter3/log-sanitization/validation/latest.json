@@ -1,0 +1,52 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-3",
+  "run_id": "20260729T185603Z-3_3-7f84f416",
+  "created_at": "2026-07-29T18:56:03.514546+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/log-sanitization/validation/runs/20260729T185603Z-3_3-7f84f416",
+  "artifacts": {
+    "evidence.json": "9a07a5b4e99b7f8468170a3c4593be2f7b4a703e2ac6fd28a9d3390c49c9f7f7",
+    "receipts.json": "3faf1e5e59ed7679d5f26ee23e3c61081566e7391af5ad2ab9d9a927afcf4e86",
+    "manifest.json": "c8bca3e33bce0ca06ab9f6d695cc8b5481ac71861b41f35940d50c34007702b9"
+  },
+  "inputs": [],
+  "summary": {
+    "regex": {
+      "cases": 12,
+      "mean_precision": 0.4166666666666666,
+      "mean_recall": 0.5,
+      "mean_typed_exact": 0.4166666666666667,
+      "residual_leaks": 9,
+      "mean_utility": 0.954197478750736,
+      "mean_latency_ms": 0.09875
+    },
+    "llm": {
+      "cases": 12,
+      "mean_precision": 0.5138888888888888,
+      "mean_recall": 0.6944444444444445,
+      "mean_typed_exact": 0.3333333333333333,
+      "residual_leaks": 3,
+      "mean_utility": 0.7548189868403488,
+      "mean_latency_ms": 3010.9979999999996
+    },
+    "hybrid": {
+      "cases": 12,
+      "mean_precision": 0.4861111111111111,
+      "mean_recall": 0.7777777777777777,
+      "mean_typed_exact": 0.5,
+      "residual_leaks": 2,
+      "mean_utility": 0.8744827477131053,
+      "mean_latency_ms": 2951.5082500000003
+    }
+  },
+  "acceptance": {
+    "local_model": true,
+    "qwen3_model": true,
+    "structured_type_location_confidence": true,
+    "structured_semistructured_natural_language_cases": true,
+    "regex_llm_hybrid_compared": true,
+    "leakage_utility_latency_measured": true,
+    "passed": true
+  }
+}
