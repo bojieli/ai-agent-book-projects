@@ -14,6 +14,8 @@ def build_candidate_manifest(
         "scope": learning_signal.get("scope", "system_prompt"),
         "rationale": optimization.get("rationale") or learning_signal.get("diagnosis", ""),
         "diff": optimization.get("diff", ""),
+        "edits": list(optimization.get("edits", [])),
+        "target_rule": "transfer only on explicit human request or urgent safety event; otherwise explain policy and seek compliant alternatives",
         "status": "candidate",
     }
 
@@ -28,6 +30,11 @@ def evaluate_release_gate(
 
     checks = {
         "patch_is_nonempty": bool(manifest.get("diff", "").strip()),
+        "patch_is_auditable_old_to_new_edit": bool(manifest.get("edits")) and all(
+            isinstance(edit.get("old_str"), str) and bool(edit["old_str"])
+            and isinstance(edit.get("new_str"), str) and bool(edit["new_str"])
+            for edit in manifest.get("edits", [])
+        ),
         "source_cases_are_recorded": bool(manifest.get("source_case_ids")),
         "holdout_did_not_regress": holdout_after >= holdout_before,
         "boundary_improved": boundary_after > boundary_before,

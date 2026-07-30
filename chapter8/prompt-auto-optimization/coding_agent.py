@@ -9,7 +9,7 @@ Coding Agent：读取系统提示词文件 → 定位相关规则 → 生成精�
 
 import difflib
 import json
-from config import get_client, get_model, get_temperature
+from config import get_client, get_model, get_temperature, record_completion
 
 # 暴露给 Coding Agent 的"文件编辑工具"
 EDIT_TOOLS = [
@@ -119,9 +119,10 @@ def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bo
 
     working = original
     rationale = ""
+    submitted_edits = []
 
     for round_idx in range(max_rounds):
-        resp = client.chat.completions.create(
+        resp = record_completion(client, kind="coding_agent",
             model=model,
             messages=messages,
             tools=EDIT_TOOLS,
@@ -142,6 +143,7 @@ def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bo
             args = {}
         rationale = args.get("rationale", rationale)
         working, applied, errors, warnings, edits = _apply_edits_from_args(working, args)
+        submitted_edits = edits
 
         if verbose:
             print(f"  [round {round_idx + 1}] 提交 {len(edits)} 条编辑，成功 {applied}，失败 {len(errors)}，跳过 {len(warnings)}")
@@ -178,4 +180,10 @@ def optimize_prompt(prompt_path: str, feedback, max_rounds: int = 3, verbose: bo
         )
     )
 
-    return {"before": original, "after": working, "diff": diff, "rationale": rationale}
+    return {
+        "before": original,
+        "after": working,
+        "diff": diff,
+        "rationale": rationale,
+        "edits": submitted_edits,
+    }
