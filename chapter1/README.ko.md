@@ -10,8 +10,8 @@
 | :--: | --- | :--: | --- |
 | 1-1 | [context](context/) | ✅ | 체계적인 구성 요소 제거 실험을 통해 에이전트 컨텍스트를 이루는 각 요소의 중요성을 보여 줍니다. 여러 LLM 제공자(SiliconFlow Qwen, ByteDance Doubao, Moonshot Kimi)를 지원하며, 컨텍스트 모드를 바꾸어 에이전트 행동이 어떻게 달라지는지 관찰할 수 있습니다. |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | 여러 차례 검색하고 정보를 종합하는 기본적인 심층 검색 에이전트를 구현합니다. |
-| 1-3 | [search-codegen](search-codegen/) | ✅ | 웹 검색과 코드 실행 도구를 이용해 복잡한 분석을 수행할 수 있는, 심층 검색과 코드 샌드박스 기능을 갖춘 에이전트를 만듭니다. |
-| 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | 전통적인 강화 학습(Q-learning)과 LLM 기반 인컨텍스트 학습을 비교해 Shunyu Yao의 블로그 글 ‘The Second Half’의 핵심 통찰을 재현합니다. 보물찾기 게임을 통해 LLM이 전통적인 강화 학습보다 250~400배 높은 샘플 효율성으로 더 나은 성능을 낼 수 있음을 보여 줍니다. |
+| 1-3 | [search-codegen](search-codegen/) | 🚧 | GPT-5 공식 Responses API의 호스팅 검색과 코드 인터프리터 경로를 완전히 구현했지만, 공식 실측 두 번 모두 할당량 부족으로 429 응답을 받았습니다. OpenRouter는 인터페이스 진단에만 사용했으며 본문 검수를 대신하지 않습니다. |
+| 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | Q-learning 10,000회와 평가 100회, 공식 Kimi K3의 첫 에피소드까지 두 방식을 실측해 검수를 마쳤습니다. [증거](learning-from-experience/validation/20260730_011704/evidence.json)에는 Kimi가 17단계 만에 성공하고 fallback을 사용하지 않은 사실과 과거 점 추정치와의 차이가 기록돼 있습니다. |
 
 ## 프로젝트 유형
 

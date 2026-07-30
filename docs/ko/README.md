@@ -7,9 +7,9 @@
 
 > 📥 **[PDF / EPUB 다운로드](#-전자책)**(권장) — PDF와 EPUB 판본에서 가장 좋은 읽기 경험을 제공합니다. [온라인 판본](https://bojieli.github.io/ai-agent-book/)에서는 언어 전환, 접을 수 있는 장별 탐색, 전체 텍스트 검색을 이용할 수 있습니다.
 
-**에이전트 = LLM + 컨텍스트 + 도구** — 이 책은 이 핵심 공식을 중심으로 10개 장에 걸쳐 AI 에이전트의 원리부터 엔지니어링 실전까지 설명합니다. 본문과 그림, **93개의 연계 실습**을 모두 오픈 소스로 공개합니다.
+**에이전트 = LLM + 컨텍스트 + 도구** — 이 책은 이 핵심 공식을 중심으로 10개 장에 걸쳐 AI 에이전트의 원리부터 엔지니어링 실전까지 설명합니다. 본문과 그림, **94개의 연계 실습**을 모두 오픈 소스로 공개합니다.
 
-| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **93개** 연계 프로젝트(70개 이상 독립 실행 가능) | 🌐 **10개 언어**: 중 / 영 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 |
+| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **10개 언어**: 중 / 영 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 |
 | :---: | :---: | :---: |
 
 ## 📖 전자책
@@ -55,13 +55,13 @@
 | 3 | 📚 **사용자 메모리와 지식 베이스** | 세션 간 사용자 메모리, RAG, 구조화 색인, 지식 그래프 | [읽기](../../book-ko/chapter3.ko.md) | [14](../../chapter3/README.ko.md) |
 | 4 | 🛠️ **도구** | MCP, 인식·실행·협업 도구, 이벤트 기반 비동기 에이전트, 능동적 도구 탐색 | [읽기](../../book-ko/chapter4.ko.md) | [7](../../chapter4/README.ko.md) |
 | 5 | 💻 **코딩 에이전트와 코드 생성** | 코드는 새 도구를 만들 수 있는 도구. 프로덕션급 코딩 에이전트의 전체 구조 | [읽기](../../book-ko/chapter5.ko.md) | [12](../../chapter5/README.ko.md) |
-| 6 | 🎯 **에이전트 평가** | 평가 환경, 지표, 통계적 유의성, 평가 기반 선택 | [읽기](../../book-ko/chapter6.ko.md) | [12](../../chapter6/README.ko.md) |
-| 7 | 🧠 **모델 사후 학습** | 사전 학습·SFT·RL, 도구 호출 내재화, 샘플 효율성 | [읽기](../../book-ko/chapter7.ko.md) | [16](../../chapter7/README.ko.md) |
+| 6 | 🎯 **에이전트 평가** | 평가 환경, 지표, 통계적 유의성, 평가 기반 선택 | [읽기](../../book-ko/chapter6.ko.md) | [17](../../chapter6/README.ko.md) |
+| 7 | 🧠 **모델 사후 학습** | 사전 학습·SFT·RL, 도구 호출 내재화, 샘플 효율성 | [읽기](../../book-ko/chapter7.ko.md) | [18](../../chapter7/README.ko.md) |
 | 8 | 🔄 **에이전트의 지속적 진화** | 실행 궤적에서 학습 신호를 얻고 지식·지침·프로그램·파라미터 갱신 | [읽기](../../book-ko/chapter8.ko.md) | [6](../../chapter8/README.ko.md) |
-| 9 | 🎙️ **멀티모달과 실시간 상호작용** | 음성, GUI, Computer Use, 로보틱스 | [읽기](../../book-ko/chapter9.ko.md) | [7](../../chapter9/README.ko.md) |
-| 10 | 🤝 **멀티 에이전트 협업** | 협업 구조, 컨텍스트 공유와 격리, 에이전트 사회 | [읽기](../../book-ko/chapter10.ko.md) | [7](../../chapter10/README.ko.md) |
+| 9 | 🎙️ **멀티모달과 실시간 상호작용** | 음성, GUI, Computer Use, 로보틱스 | [읽기](../../book-ko/chapter9.ko.md) | [10](../../chapter9/README.ko.md) |
+| 10 | 🤝 **멀티 에이전트 협업** | 협업 구조, 컨텍스트 공유와 격리, 에이전트 사회 | [읽기](../../book-ko/chapter10.ko.md) | [8](../../chapter10/README.ko.md) |
 
-> 💡 **읽기**는 GitHub에서 장 본문을 여는 링크이며, **N**은 해당 장의 연계 프로젝트 수입니다. 프로젝트 유형(✅ 독립 실행 / 📖 재현 가이드 / 🚧 설계 문서)은 각 장의 README에 설명되어 있습니다.
+> 💡 **읽기**는 GitHub에서 장 본문을 여는 링크이며, **N**은 해당 장의 연계 프로젝트 수입니다. 프로젝트 유형(✅ 독립 실행 / 📖 재현 가이드 / 🚧 진행 중)은 각 장의 README에 설명되어 있습니다.
 >
 > 📚 효율적인 학습 순서는 **[학습 가이드](LEARNING.md)**에서 확인하세요.
 
@@ -86,10 +86,10 @@
 
 ## 📦 부록 · 외부 저장소 가져오기
 
-제6·7·9·10장의 벤치마크, 학습 프레임워크, 로봇 플랫폼에 쓰이는 외부 저장소 19개는 크기와 라이선스 문제로 이 저장소에 포함되어 있지 않습니다.
+제6·7·9·10장의 벤치마크, 학습 프레임워크, 로봇 플랫폼에 쓰이는 외부 저장소 20개는 크기와 라이선스 문제로 이 저장소에 포함되어 있지 않습니다.
 
 <details>
-<summary><b>🔧 clone 명령 펼치기</b> (외부 저장소 19개)</summary>
+<summary><b>🔧 clone 명령 펼치기</b> (외부 저장소 20개)</summary>
 
 ```bash
 # 제6장 · 평가 벤치마크
@@ -107,6 +107,7 @@ git clone https://github.com/bojieli/AdaptThink.git                    chapter7/
 git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # 실험 7-15 코드 샌드박스
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL
@@ -120,7 +121,7 @@ git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10
 git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents
 ```
 
-> 프로젝트 README가 특정 커밋을 지정한다면 재현성을 위해 해당 버전으로 `git checkout`하세요. 제10장의 `use-computer-while-calling`은 독립 프로젝트 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)로 발전했습니다.
+> `SandboxFusion` 명령은 재현성을 위해 고정된 커밋 SHA를 detached HEAD 상태로 체크아웃하고, 실제 HEAD가 해당 SHA와 일치하는지 확인합니다. 다른 프로젝트 README가 특정 커밋을 지정한다면 해당 버전으로 `git checkout`하세요. 제10장의 `use-computer-while-calling`은 독립 프로젝트 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)로 발전했습니다.
 
 </details>
 

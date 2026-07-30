@@ -8,14 +8,14 @@
 
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 환경 결과, 프로세스 규칙, 언어 루브릭을 결합해 고객 서비스 궤적에 대한 근거 기반 진단을 만듭니다. |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 성공·부분 성공·실패 궤적을 비교해 여러 궤적을 아우르는 Markdown 경험 문서를 생성합니다. |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 실패 궤적에서 최소한의 프롬프트 패치를 만들고, 경계 세트와 보존 세트로 릴리스를 통제합니다. |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 브라우저 궤적을 상태 조건이 포함된 워크플로로 컴파일하고, 초기화 후 재실행하는 방식으로 검증합니다. |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 반복되는 실패가 재시도·서킷 브레이커 코드 패치, 회귀 테스트, 카나리 롤아웃, 롤백을 촉발합니다. |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 학습, 전이, 규칙 변경, 보존의 네 단계에 걸친 장기 진화를 평가합니다. |
+| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 실제 고객 서비스 호출 28건, Judge 호출 8건, 전문가 표본 8건을 검수했습니다. [증거](trajectory-verifier/validation/real_20260729T165247Z/evidence.json)에는 핵심 위반의 안정성 주장이 재현되지 않은 사실도 함께 기록돼 있습니다. |
+| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 실제 GAIA 궤적 세 그룹과 지식 문서 대조를 검수했습니다. [증거](gaia-experience/validation/real_20260729T164012Z/evidence.json)에는 지식 문서 그룹이 25%, 두 대조군이 각각 50%였던 부정적 결과가 기록돼 있습니다. |
+| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 실제 작업 에이전트, LLM Judge, 코딩 에이전트로 초기·자동·수동 세 그룹의 전체 보존 세트와 경계 세트를 실행했으며, 원본 응답과 배포 기준을 보존했습니다. |
+| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 실제 ARK 에이전트와 Chromium이 초기화 가능한 로컬 메시지 사이트에서 탐색, 독립 검증, 매개변수화된 재실행, 거짓 성공 대조, 페이지 변경에 따른 무효화를 완료했습니다. |
+| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 실제 코딩 에이전트가 반복 장애에서 패치를 만들고, 결정론적 후보 및 의도적으로 지나치게 넓은 반례와 함께 동일한 회귀·카나리·롤백 배포 게이트를 거쳤습니다. [증거](self-modifying-agent/validation/latest.json)는 수락과 거부 이력을 모두 보존합니다. |
+| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 정적·추가 전용·진화형 세 방식에 대해 3개 시드와 14개 작업, 총 126회의 실제 호출을 수행했습니다. [증거](self-evolution-eval/validation/latest.json)는 전이, 규칙 교체, 보존, 대응표본 통계를 담고 있습니다. |
 
-위 실험은 모두 API 키 없이 실행할 수 있는 오프라인 진입점과 단위 테스트를 제공합니다. 실제 모델이나 브라우저가 필요한 확장 경로는 각 프로젝트 README에 설명되어 있습니다.
+위 실험은 모두 API 키 없이 실행할 수 있는 오프라인 진입점과 단위 테스트를 사전 점검용으로 유지합니다. 표의 ✅는 각 디렉터리에 보존된 실제 모델·궤적·브라우저의 정식 증거를 근거로 하며, 오프라인 동작 시연으로 대신하지 않습니다. 과거의 수치나 정성적 주장이 재현되지 않았을 때도 부정적 결과를 증거에 그대로 기록합니다.
 
 ## 보충 사례
 
@@ -30,4 +30,4 @@
 | :--: | --- | --- |
 | ✅ | **독립 실행** | 전체 코드가 이 저장소에 있으며, API 키를 설정하면 실행할 수 있습니다. |
 | 📖 | **재현 가이드** | **외부 저장소**를 `git clone`해야 하는 상세 안내 문서입니다. |
-| 🚧 | **설계 문서** | 아키텍처와 구현 계획만 있으며, 실행 가능한 코드는 아직 작성 중입니다. |
+| 🚧 | **진행 중** | 구현은 있지만 실제 데이터·환경 또는 장기 검수 증거가 아직 완전하지 않습니다. |
