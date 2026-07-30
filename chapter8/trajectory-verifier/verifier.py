@@ -1,8 +1,7 @@
 """Three-layer trajectory verifier used by Experiment 8-1.
 
-The implementation is deliberately offline.  Production systems can replace
-``HeuristicQualityJudge`` with an LLM judge, while keeping the same evidence-
-bearing report schema and deterministic lower layers.
+Environment and policy conclusions stay deterministic.  Only the two open-
+ended language dimensions are delegated to a quality Judge.
 """
 
 from __future__ import annotations
@@ -201,10 +200,11 @@ class HeuristicQualityJudge:
 
 
 class TrajectoryVerifier:
-    def __init__(self, quality_judge: QualityJudge | None = None):
+    def __init__(self, quality_judge: QualityJudge | None = None, review_confidence: float = 0.75):
         self.result_verifier = ResultVerifier()
         self.process_verifier = ProcessVerifier()
         self.quality_judge = quality_judge or HeuristicQualityJudge()
+        self.review_confidence = review_confidence
 
     def evaluate(self, trajectory: Dict[str, Any]) -> Dict[str, Any]:
         dimensions = [
@@ -220,11 +220,40 @@ class TrajectoryVerifier:
                 "factual_reliability", "promise_action_consistency",
             }
         ]
+        high_risk_failures = [
+            item.dimension for item in dimensions
+            if item.verdict == FAIL and item.dimension in {
+                "rule_compliance", "privacy_boundary", "promise_action_consistency",
+            }
+        ]
+        low_confidence = [
+            item.dimension for item in dimensions
+            if item.confidence < self.review_confidence or item.verdict == UNCERTAIN
+        ]
+        if high_risk_failures or low_confidence:
+            review = {
+                "required": True,
+                "destination": "human_review",
+                "status": "pending",
+                "reasons": {
+                    "high_risk_failures": high_risk_failures,
+                    "low_confidence_or_uncertain": low_confidence,
+                },
+            }
+        else:
+            review = {
+                "required": False,
+                "destination": None,
+                "status": "not_required",
+                "reasons": {"high_risk_failures": [], "low_confidence_or_uncertain": []},
+            }
         return {
             "trajectory_id": trajectory.get("id"),
-            "overall_score": round(sum(scores) / len(scores), 3),
+            "overall_score": round(sum(scores) / len(scores), 3) if scores else 0.0,
             "release_recommendation": "reject" if critical_failures else "review_or_accept",
             "critical_failures": critical_failures,
+            "review": review,
+            "eligible_as_automatic_learning_signal": not review["required"],
             "dimensions": [asdict(item) for item in dimensions],
         }
 

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "experiment": "10-8",
+  "audited_at": "2026-07-29T20:29:44+0800",
+  "safety": {
+    "phone_calls_placed": 0,
+    "human_audio_captured": false,
+    "reason": "no authorized consenting participant or endpoint was supplied"
+  },
+  "audio_endpoint_probe": {
+    "human_audio_used": false,
+    "tts_status": "fail",
+    "tts_error_class": "RateLimitError",
+    "tts_error_code": "insufficient_quota",
+    "asr_status": "fail",
+    "asr_input": "one-second generated 440 Hz WAV; no microphone or human audio",
+    "asr_error_class": "RateLimitError",
+    "asr_error_code": "insufficient_quota",
+    "reason": "both TTS and the separate non-human synthetic ASR probe returned insufficient_quota"
+  },
+  "implementation_gates": {
+    "consent_refusal_before_live_session_construction": {"status": "pass_by_test"},
+    "one_human_plus_5_to_7_ai_roster": {"status": "pass_by_test"},
+    "exact_roles_2_wolves_1_seer_1_witch": {"status": "pass_by_test"},
+    "random_human_role": {"status": "pass_by_test"},
+    "microphone_vad_and_real_asr_path": {"status": "implemented_not_run"},
+    "real_tts_playback_path": {"status": "implemented_endpoint_probe_failed"},
+    "barge_in_cancels_playback_and_transcribes": {
+      "status": "pass_by_mocked_mechanism_test",
+      "acceptance_note": "no microphone or human audio was used"
+    },
+    "spoken_night_actions_and_votes": {"status": "implemented_not_run"},
+    "private_context_and_terminal_side_channel_controls": {"status": "pass_by_test"},
+    "three_cycle_accounting": {"status": "pass_by_test"},
+    "deterministic_judge_and_win_rule": {
+      "status": "pass_by_test",
+      "round_limit_behavior": "unresolved; never invents a winning faction"
+    },
+    "post_game_real_llm_strategy_audit": {
+      "status": "pass_real_api_mechanism_supplemental_only",
+      "schema_validation": "pass_by_test_and_real_ark_run; all four named criteria and evidence are required",
+      "strategy_result": "fail on offline all-AI actions; not live acceptance"
+    }
+  },
+  "acceptance_gates": {
+    "authorized_human_participant": {"status": "not_run"},
+    "real_human_asr": {"status": "not_run"},
+    "real_ai_and_judge_tts": {"status": "fail", "reason": "configured OpenAI Audio credential returned insufficient_quota"},
+    "at_least_three_complete_live_cycles": {"status": "not_run"},
+    "real_llm_role_strategy_pass": {"status": "not_run"},
+    "information_isolation": {"status": "pass_supplemental_only"},
+    "correct_winner": {"status": "pass_supplemental_only"}
+  },
+  "overall_status": "incomplete"
+}

@@ -14,17 +14,27 @@
 """
 
 import argparse
+import hashlib
 import json
 import os
 import sys
 import time
 import traceback
+from datetime import datetime, timezone
+from pathlib import Path
 from statistics import mean
 
 import config
 import pipeline
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
+DEFAULT_REFERENCE_AUDIO = str(
+    Path(__file__).resolve().parents[2]
+    / "chapter9"
+    / "controllable-tts"
+    / "reference_audio"
+    / "neutral_normal_formal.mp3"
+)
 
 
 def load_env():
@@ -42,35 +52,65 @@ def audio_path(cfg_name: str, sample_id: str) -> str:
     return os.path.join(OUT_DIR, f"{cfg_name}__{sample_id}.mp3")
 
 
-def evaluate_one(cfg, sample, use_gemini: bool, fresh: bool,
-                 judge_model: str = None) -> dict:
+def evaluate_one(
+    cfg,
+    sample,
+    use_gemini: bool,
+    fresh: bool,
+    judge_model: str = None,
+    reference_audio: str = "",
+    with_asr: bool = False,
+) -> dict:
     """对单个 (配置, 语料) 跑完整链路。任一步失败返回 error 记录，不抛出。"""
     rec = {"config": cfg.name, "sample": sample.id, "challenge": sample.challenge,
            "provider": getattr(cfg, "provider", "openai"), "ok": False, "error": None}
     path = audio_path(cfg.name, sample.id)
+    stage = "synthesis"
     try:
         # 1) 合成（幂等：已存在且非 fresh 则复用）
         if fresh or not os.path.exists(path) or os.path.getsize(path) == 0:
             pipeline.synthesize(cfg, sample.text, path)
-        # 2) 时长
-        dur = pipeline.probe_duration(path)
-        # 3) 回译
-        hyp = pipeline.transcribe(path)
-        # 4) CER / 字准确率
-        er = pipeline.char_error_rate(sample.text, hyp)
-        # 5) Rubric 打分
-        if use_gemini:
-            rub = pipeline.judge_gemini_audio(sample.text, sample.emotion, path)
-        else:
-            rub = pipeline.judge_rubric(sample.text, sample.emotion, hyp, dur, er.cer,
-                                        model=judge_model)
+        # Preserve successful synthesis evidence even if a later ASR/judge
+        # stage fails.  This keeps provider progress auditable without
+        # incorrectly marking the end-to-end cell complete.
         rec.update({
-            "ok": True, "duration": dur, "hypothesis": hyp,
-            "cer": er.cer, "accuracy": er.accuracy,
-            "speed": (er.ref_len / dur) if dur else 0.0,
+            "audio_path": os.path.relpath(path, OUT_DIR),
+            "audio_sha256": pipeline.sha256_file(path),
+            "audio_bytes": os.path.getsize(path),
+        })
+        # 2) 时长
+        stage = "duration_probe"
+        dur = pipeline.probe_duration(path)
+        # 3) Optional objective ASR. Direct-audio Gemini judging does not
+        # require OpenAI/Whisper and therefore keeps Fish-only runs possible.
+        stage = "optional_asr"
+        hyp = pipeline.transcribe(path) if (with_asr or not use_gemini) else None
+        er = pipeline.char_error_rate(sample.text, hyp) if hyp is not None else None
+        # 4) Rubric: manuscript acceptance requires direct audio plus a real
+        # reference clip, not a transcript-only inference.
+        stage = "multimodal_judge" if use_gemini else "text_judge"
+        if use_gemini:
+            rub = pipeline.judge_gemini_audio(
+                sample.text, sample.emotion, path, reference_audio
+            )
+        else:
+            rub = pipeline.judge_rubric(
+                sample.text, sample.emotion, hyp or "", dur, er.cer if er else 0.0,
+                model=judge_model,
+            )
+        rec.update({
+            "ok": True,
+            "duration": dur,
+            "hypothesis": hyp,
+            "cer": er.cer if er else None,
+            "asr_accuracy": er.accuracy if er else None,
+            "speed": (len(pipeline.normalize(sample.text)) / dur) if dur else 0.0,
             "scores": rub.scores, "reasons": rub.reasons,
+            "judge_model": rub.judge_model,
+            "evidence_mode": rub.evidence_mode,
         })
     except Exception as e:  # 单条失败不影响整表
+        rec["failed_stage"] = stage
         rec["error"] = f"{type(e).__name__}: {e}"
     return rec
 
@@ -86,9 +126,15 @@ def print_detail(rec, sample_text):
         return
     print(f"  {head}")
     print(f"    原文  : {sample_text}")
-    print(f"    回译  : {rec['hypothesis']}")
-    print(f"    时长  : {fmt(rec['duration'])}s   语速: {fmt(rec['speed'])} 字/秒"
-          f"   CER: {fmt(rec['cer'],3)}   字准确率: {fmt(rec['accuracy']*100,1)}%")
+    if rec.get("hypothesis") is not None:
+        print(f"    回译  : {rec['hypothesis']}")
+    objective = ""
+    if rec.get("cer") is not None:
+        objective = (
+            f"   CER: {fmt(rec['cer'],3)}"
+            f"   ASR字准确率: {fmt(rec['asr_accuracy']*100,1)}%"
+        )
+    print(f"    时长  : {fmt(rec['duration'])}s   语速: {fmt(rec['speed'])} 字/秒{objective}")
     s, r = rec["scores"], rec["reasons"]
     for dim in pipeline.RUBRIC_DIMENSIONS:
         print(f"    {dim:<4}: {s.get(dim,'-')}/5  {r.get(dim,'')}")
@@ -104,29 +150,38 @@ def summarize(records):
         ok = [r for r in recs if r["ok"]]
         row = {"config": cfg_name, "n_ok": len(ok), "n": len(recs)}
         if ok:
-            row["cer"] = mean(r["cer"] for r in ok)
-            row["accuracy"] = mean(r["accuracy"] for r in ok)
+            objective = [r for r in ok if r.get("cer") is not None]
+            row["cer"] = mean(r["cer"] for r in objective) if objective else None
+            row["asr_accuracy"] = (
+                mean(r["asr_accuracy"] for r in objective) if objective else None
+            )
             for dim in pipeline.RUBRIC_DIMENSIONS:
                 row[dim] = mean(r["scores"].get(dim, 0) for r in ok)
         rows.append(row)
     # 按整体分降序、CER 升序排序
-    rows.sort(key=lambda x: (-x.get("整体", 0), x.get("cer", 1)))
+    rows.sort(
+        key=lambda x: (
+            -mean(x.get(dim, 0) for dim in pipeline.RUBRIC_DIMENSIONS),
+            x.get("cer") if x.get("cer") is not None else 1,
+        )
+    )
     return rows
 
 
 def print_table(rows):
-    cols = ["整体", "清晰度", "自然度", "停顿节奏"]
-    header = (f"{'配置':<18}{'成功':>6}{'字准确率':>10}{'CER':>8}"
+    cols = list(pipeline.RUBRIC_DIMENSIONS)
+    header = (f"{'配置':<22}{'成功':>6}{'ASR准确率':>11}{'CER':>8}"
               + "".join(f"{c:>9}" for c in cols))
     print(header)
     print("-" * 74)
     for r in rows:
         ok_str = f"{r['n_ok']}/{r['n']}"
         if not r.get("n_ok"):
-            print(f"{r['config']:<18}{ok_str:>6}   (全部失败)")
+            print(f"{r['config']:<22}{ok_str:>6}   (全部失败)")
             continue
-        acc = f"{r['accuracy']*100:.1f}%"
-        line = f"{r['config']:<18}{ok_str:>6}{acc:>10}{r['cer']:>8.3f}"
+        acc = f"{r['asr_accuracy']*100:.1f}%" if r.get("asr_accuracy") is not None else "n/a"
+        cer = f"{r['cer']:.3f}" if r.get("cer") is not None else "n/a"
+        line = f"{r['config']:<22}{ok_str:>6}{acc:>11}{cer:>8}"
         line += "".join(f"{r.get(c,0):>9.2f}" for c in cols)
         print(line)
 
@@ -149,7 +204,7 @@ def print_rubric():
     for dim in pipeline.RUBRIC_DIMENSIONS:
         print(f"  {dim}：{pipeline.RUBRIC_DESCRIPTIONS.get(dim, '')}")
     print("\n默认（Whisper 回译 + LLM）评审基于「转写文本 + 时长 + 语速 + CER」保守打分；")
-    print("--gemini 让多模态模型直接听音频，可覆盖书中「情感表达 / 音色一致性」维度。")
+    print("--gemini 同时提供合成音频与参考语音，覆盖正文全部四个维度。")
 
 
 def main():
@@ -175,6 +230,16 @@ def main():
                     help=f"输出目录（音频 + results.json），默认 {OUT_DIR}")
     ap.add_argument("--extra", action="store_true", help="额外加入 gpt-4o-mini-tts 配置")
     ap.add_argument("--gemini", action="store_true", help="用 Gemini 多模态直接听音频评审（需 GEMINI_API_KEY）")
+    ap.add_argument(
+        "--reference-audio",
+        default=DEFAULT_REFERENCE_AUDIO,
+        help="Gemini 音色一致性对照的真实参考语音（默认复用第 9 章固定证据）",
+    )
+    ap.add_argument(
+        "--with-asr",
+        action="store_true",
+        help="Gemini 直听之外再运行 Whisper/CER；需要可用 OPENAI_API_KEY",
+    )
     ap.add_argument("--quick", action="store_true", help="只用前 2 条语料快速冒烟")
     ap.add_argument("--fresh", action="store_true", help="忽略已有音频，全部重新合成")
     ap.add_argument("--list-providers", action="store_true", dest="list_providers",
@@ -197,9 +262,15 @@ def main():
         OUT_DIR = os.path.abspath(args.output)
     os.makedirs(OUT_DIR, exist_ok=True)
 
-    if not os.environ.get("OPENAI_API_KEY", "").strip():
+    if not args.gemini and not os.environ.get("OPENAI_API_KEY", "").strip():
         print("错误：缺少 OPENAI_API_KEY（回译/默认评审需要）。请 export 或写入 .env 后重试。",
               file=sys.stderr)
+        sys.exit(1)
+    if args.gemini and not os.environ.get("GEMINI_API_KEY", "").strip():
+        print("错误：--gemini 需要 GEMINI_API_KEY。", file=sys.stderr)
+        sys.exit(1)
+    if args.gemini and not os.path.isfile(args.reference_audio):
+        print(f"错误：参考语音不存在：{args.reference_audio}", file=sys.stderr)
         sys.exit(1)
 
     # 选择待对比的配置：--providers 优先（跨服务商），否则默认 OpenAI 多配置。
@@ -240,14 +311,21 @@ def main():
         print(f"\n### 配置 {cfg.name}  (provider={getattr(cfg,'provider','openai')}, "
               f"model={cfg.model}, voice={cfg.voice}, speed={cfg.speed})")
         for sample in corpus:
-            rec = evaluate_one(cfg, sample, args.gemini, args.fresh,
-                               judge_model=None if args.gemini else args.judge_model)
+            rec = evaluate_one(
+                cfg,
+                sample,
+                args.gemini,
+                args.fresh,
+                judge_model=None if args.gemini else args.judge_model,
+                reference_audio=args.reference_audio,
+                with_asr=args.with_asr,
+            )
             print_detail(rec, sample.text)
             records.append(rec)
 
     rows = summarize(records)
     print("\n" + "=" * 72)
-    print("配置对比汇总（按 整体 分降序）")
+    print("配置对比汇总（按四维宏平均分降序）")
     print("=" * 72)
     print_table(rows)
 
@@ -256,9 +334,63 @@ def main():
 
     # 落盘结构化结果，便于二次分析
     out_json = os.path.join(OUT_DIR, "results.json")
+    expected = len(configs) * len(corpus)
+    exact_dims = set(pipeline.RUBRIC_DIMENSIONS)
+    complete_records = [
+        r for r in records
+        if r.get("ok")
+        and r.get("evidence_mode") == "gemini-direct-audio-with-reference"
+        and set(r.get("scores", {})) == exact_dims
+        and all(1 <= int(v) <= 5 for v in r.get("scores", {}).values())
+    ]
+    reference_sha = (
+        pipeline.sha256_file(args.reference_audio)
+        if args.gemini and os.path.isfile(args.reference_audio)
+        else None
+    )
+    payload = {
+        "schema_version": "2.0",
+        "experiment": "6-5",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "command_scope": {
+            "providers": providers_used,
+            "configurations": [
+                {
+                    "name": c.name,
+                    "provider": c.provider,
+                    "model": c.model,
+                    "voice": c.voice,
+                    "speed": c.speed,
+                }
+                for c in configs
+            ],
+            "corpus_ids": [s.id for s in corpus],
+            "expected_records": expected,
+            "direct_audio_judge": args.gemini,
+            "optional_asr_enabled": args.with_asr,
+        },
+        "reference_audio": {
+            "path": os.path.relpath(args.reference_audio, OUT_DIR) if args.gemini else None,
+            "sha256": reference_sha,
+        },
+        "rubric_dimensions": pipeline.RUBRIC_DIMENSIONS,
+        "completion": {
+            "successful_records": ok,
+            "direct_audio_four_dimension_records": len(complete_records),
+            "expected_records": expected,
+            "all_cells_complete": len(complete_records) == expected,
+            "multi_provider": len(providers_used) >= 2,
+            "manuscript_core_complete": (
+                len(complete_records) == expected
+                and len(providers_used) >= 2
+                and bool(reference_sha)
+            ),
+        },
+        "records": records,
+        "summary": rows,
+    }
     with open(out_json, "w", encoding="utf-8") as f:
-        json.dump({"records": records, "summary": rows}, f,
-                  ensure_ascii=False, indent=2)
+        json.dump(payload, f, ensure_ascii=False, indent=2)
     print(f"明细结果已写入 {out_json}")
 
 

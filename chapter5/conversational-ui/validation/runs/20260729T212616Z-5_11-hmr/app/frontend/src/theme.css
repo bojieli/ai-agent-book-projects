@@ -1,0 +1,108 @@
+/* ==========================================================================
+   主题样式表（Agent 定制"颜色 / 字体 / 布局"需求时修改这里）
+   为方便自然语言定制，关键视觉变量集中在 :root 里。
+   ========================================================================== */
+:root {
+  --color-primary: #2563eb;        /* 主色（发送按钮、用户气泡）——改为蓝色 */
+  --color-primary-text: #ffffff;   /* 主色上的文字颜色 */
+  --color-bg: #f5f5f5;             /* 页面背景 */
+  --color-panel: #ffffff;          /* 面板/卡片背景 */
+  --color-text: #1f2937;           /* 正文文字 */
+  --font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-panel);
+}
+
+.header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.header-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.chat-window {
+  flex: 1;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.bubble-assistant {
+  align-self: flex-start;
+  background: #eef2f5;
+  color: var(--color-text);
+}
+
+.bubble-user {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.composer-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.send-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  opacity: 0.9;
+}

@@ -1,3 +1,27 @@
+# Experiments 7-3 / 7-4 reproduction anchor
+
+- Experiment 7-3 source: [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter7/MiniMind-pretrain/minimind`
+- Experiment 7-4 source: [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter7/MiniMind-pretrain/minimind-v`
+- Current workspace state (2026-07-30): both checkouts are absent. A read-only upstream audit fixed the source revisions below and verified their entrypoints; this is source-version evidence only, not evidence that either training experiment ran.
+
+Run from the book repository root:
+
+```bash
+git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/minimind
+git -C chapter7/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
+git -C chapter7/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
+git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD
+test "$(git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"
+
+git clone https://github.com/bojieli/minimind-v.git chapter7/MiniMind-pretrain/minimind-v
+git -C chapter7/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
+git -C chapter7/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
+git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD
+test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
+```
+
+At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The outputs reproduced below are historical companion observations, not proof that the absent checkouts were executed in the current workspace.
+
 ## English
 
 # Training an LLM from Scratch
@@ -7,8 +31,8 @@
 > - VLM (projection layer trained from scratch): [`github.com/bojieli/minimind-v`](https://github.com/bojieli/minimind-v) (forked from jingyaogong/minimind-v)
 >
 > ```bash
-> git clone https://github.com/bojieli/minimind.git    minimind
-> git clone https://github.com/bojieli/minimind-v.git  minimind-v
+> # Use the pinned clone/fetch/detached-checkout/SHA-verification commands
+> # at the top of this README.
 > ```
 > This document records the algorithmic improvements (QK-Norm + Muon) and experimental results made on this basis; training requires a GPU, please follow the upstream repository instructions to reproduce.
 
@@ -992,8 +1016,8 @@ Based on the comprehensive testing in this experiment, we offer the following pr
 > - VLM（投影层从零训）：[`github.com/bojieli/minimind-v`](https://github.com/bojieli/minimind-v)（fork 自 jingyaogong/minimind-v）
 >
 > ```bash
-> git clone https://github.com/bojieli/minimind.git    minimind
-> git clone https://github.com/bojieli/minimind-v.git  minimind-v
+> # 请使用本 README 顶部固定版本的 clone/fetch/detached-checkout/SHA
+> # 校验命令。
 > ```
 > 本文档记录了在此基础上做的算法改进（QK-Norm + Muon）与实验结果；训练依赖 GPU，请按上游仓库说明复现。
 

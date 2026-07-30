@@ -2,8 +2,21 @@
 
 from unittest.mock import Mock
 
-import agent as agent_module
 from agent import WebSearchAgent, _reasoning_safe_temperature, format_trace_step
+
+
+class FakeResponse:
+    def __init__(self, payload, status_code=200):
+        self._payload = payload
+        self.status_code = status_code
+        self.text = ""
+
+    def json(self):
+        return self._payload
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(f"HTTP {self.status_code}")
 
 
 def build_agent(*choices):
@@ -13,7 +26,10 @@ def build_agent(*choices):
     instance.using_openrouter = False
     instance.trace = []
     instance.conversation_history = []
+    instance.api_turns = []
+    instance._formula_tools = None
     instance._chat = Mock(side_effect=choices)
+    instance._execute_formula = Mock(return_value="encrypted formula output")
     return instance
 
 
@@ -22,13 +38,13 @@ def test_format_trace_step_formats_action_with_unicode_arguments():
         {
             "iteration": 2,
             "type": "action",
-            "tool": "$web_search",
+            "tool": "web_search",
             "args": {"query": "서울 날씨"},
         }
     )
 
     assert rendered == (
-        '🔧 [2] 行动: 调用工具 $web_search  参数={"query": "서울 날씨"}'
+        '🔧 [2] 行动: 调用工具 web_search  参数={"query": "서울 날씨"}'
     )
 
 
@@ -50,21 +66,77 @@ def test_reasoning_models_force_supported_temperature():
 def test_tool_definition_is_available_for_moonshot_only():
     instance = WebSearchAgent.__new__(WebSearchAgent)
     instance.using_openrouter = False
-
-    assert instance._get_tools() == [
+    instance._formula_tools = [
         {
-            "type": "builtin_function",
-            "function": {"name": "$web_search"},
+            "type": "function",
+            "function": {
+                "name": "web_search",
+                "parameters": {"type": "object"},
+            },
         }
     ]
+
+    assert instance._get_tools() == instance._formula_tools
 
     instance.using_openrouter = True
     assert instance._get_tools() == []
 
 
-def test_agent_loop_records_tool_flow_and_final_answer(
-    monkeypatch, make_choice, make_tool_call
-):
+def test_formula_declaration_is_fetched_and_recorded(monkeypatch):
+    instance = WebSearchAgent.__new__(WebSearchAgent)
+    instance.using_openrouter = False
+    instance._formula_tools = None
+    instance.base_url = "https://api.moonshot.cn/v1"
+    instance.formula_uri = "moonshot/web-search:latest"
+    instance._api_key = "not-recorded"
+    instance._request_timeout = 12
+    instance.api_turns = []
+    tool = {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "parameters": {"type": "object"},
+        },
+    }
+    get = Mock(return_value=FakeResponse({"object": "list", "tools": [tool]}))
+    monkeypatch.setattr("agent.requests.get", get)
+
+    assert instance._get_tools() == [tool]
+    assert instance._get_tools() == [tool]
+    assert get.call_count == 1
+    assert instance.api_turns[0]["kind"] == "formula_tools"
+    assert "Authorization" not in instance.api_turns[0]["request"]
+
+
+def test_formula_fiber_forwards_raw_arguments_and_records_receipt(monkeypatch):
+    instance = WebSearchAgent.__new__(WebSearchAgent)
+    instance.using_openrouter = False
+    instance.base_url = "https://api.moonshot.cn/v1"
+    instance.formula_uri = "moonshot/web-search:latest"
+    instance._api_key = "not-recorded"
+    instance._request_timeout = 12
+    instance.api_turns = []
+    raw = '{"query":"Moonshot K3"}'
+    post = Mock(
+        return_value=FakeResponse(
+            {
+                "id": "fiber-real",
+                "status": "succeeded",
+                "context": {"encrypted_output": "encrypted provider output"},
+            }
+        )
+    )
+    monkeypatch.setattr("agent.requests.post", post)
+
+    assert instance._execute_formula("web_search", raw) == "encrypted provider output"
+    assert post.call_args.kwargs["json"] == {
+        "name": "web_search",
+        "arguments": raw,
+    }
+    assert instance.api_turns[0]["response"]["id"] == "fiber-real"
+
+
+def test_agent_loop_records_tool_flow_and_final_answer(make_choice, make_tool_call):
     tool_call = make_tool_call(arguments={"query": "Moonshot caching"})
     tool_choice = make_choice(
         finish_reason="tool_calls",
@@ -73,9 +145,6 @@ def test_agent_loop_records_tool_flow_and_final_answer(
     )
     answer_choice = make_choice(content="Context Caching 설명입니다.")
     instance = build_agent(tool_choice, answer_choice)
-    search = Mock(return_value={"query": "Moonshot caching"})
-    monkeypatch.setattr(agent_module, "search_impl", search)
-
     answer = instance.search_and_answer("Context Caching이 뭐야?")
 
     assert answer == "Context Caching 설명입니다."
@@ -85,7 +154,9 @@ def test_agent_loop_records_tool_flow_and_final_answer(
         "observation",
         "answer",
     ]
-    search.assert_called_once_with({"query": "Moonshot caching"})
+    instance._execute_formula.assert_called_once_with(
+        "web_search", '{"query": "Moonshot caching"}'
+    )
     assert instance._chat.call_count == 2
     assert instance.conversation_history[2] == {
         "role": "assistant",
@@ -95,7 +166,7 @@ def test_agent_loop_records_tool_flow_and_final_answer(
                 "id": "call-1",
                 "type": "function",
                 "function": {
-                    "name": "$web_search",
+                    "name": "web_search",
                     "arguments": '{"query": "Moonshot caching"}',
                 },
             }
@@ -104,8 +175,7 @@ def test_agent_loop_records_tool_flow_and_final_answer(
     assert instance.conversation_history[3] == {
         "role": "tool",
         "tool_call_id": "call-1",
-        "name": "$web_search",
-        "content": '{"query": "Moonshot caching"}',
+        "content": "encrypted formula output",
     }
     assert instance.conversation_history[-1] == {
         "role": "assistant",
@@ -193,25 +263,24 @@ def test_agent_loop_marks_truncated_partial_answer(make_choice):
     assert "截断" in instance.conversation_history[-1]["content"]
 
 
-def test_agent_loop_survives_malformed_tool_arguments_json(monkeypatch, make_choice):
+def test_agent_loop_survives_malformed_tool_arguments_json(make_choice):
     """Slightly invalid tool JSON must not abort the ReAct loop."""
     from types import SimpleNamespace
 
     bad_call = SimpleNamespace(
         id="call-bad",
         function=SimpleNamespace(
-            name="$web_search",
+            name="web_search",
             arguments='{"query": "moonshot",}',  # trailing comma
         ),
     )
     tool_choice = make_choice(finish_reason="tool_calls", tool_calls=[bad_call])
     answer_choice = make_choice(content="recovered answer")
     instance = build_agent(tool_choice, answer_choice)
-    search = Mock(return_value={"ok": True})
-    monkeypatch.setattr(agent_module, "search_impl", search)
-
     answer = instance.search_and_answer("what is caching?")
 
     assert answer == "recovered answer"
-    search.assert_called_once_with({})
+    instance._execute_formula.assert_called_once_with(
+        "web_search", '{"query": "moonshot",}'
+    )
     assert any(step["type"] == "action" for step in instance.get_trace())

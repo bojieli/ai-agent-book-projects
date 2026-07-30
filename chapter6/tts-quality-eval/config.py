@@ -116,8 +116,16 @@ PROVIDER_CONFIGS = {
     "openai": TTSConfig("openai-alloy", provider="openai", model="tts-1", voice="alloy"),
     "elevenlabs": TTSConfig("elevenlabs-multi", provider="elevenlabs",
                             model="eleven_multilingual_v2", voice="21m00Tcm4TlvDq8ikWAM"),
-    "fishaudio": TTSConfig("fishaudio-default", provider="fishaudio",
-                          model="speech-1.5", voice=""),
+    # This immutable reference ID is the same real source voice used to build
+    # Chapter 9's checked-in 24-clip Fish S1 library.  Accounts that cannot
+    # access it can supply FISH_REFERENCE_ID explicitly; an empty/default
+    # voice would make the voice-consistency arm scientifically meaningless.
+    "fishaudio": TTSConfig(
+        "fishaudio-s1-clone",
+        provider="fishaudio",
+        model="s1",
+        voice=os.getenv("FISH_REFERENCE_ID", "6df3c1e14c9440e9ac978556536bf116"),
+    ),
     "minimax": TTSConfig("minimax-turbo", provider="minimax",
                         model="speech-01-turbo", voice="male-qn-qingse"),
     "doubao": TTSConfig("doubao-tts", provider="doubao",
@@ -176,5 +184,17 @@ CORPUS = [
         text="太棒了！OpenAI 刚刚发布的新模型在 GAIA 基准测试上表现惊人！",
         challenge="专有名词 + 感叹情感",
         emotion="兴奋",
+    ),
+    Sample(
+        id="sad",
+        text="很遗憾地通知您，救援队今天仍然没有找到失踪的登山者。",
+        challenge="悲伤情感/低语速低语调",
+        emotion="悲伤",
+    ),
+    Sample(
+        id="question",
+        text="请问您希望把明天下午三点的预约改到星期五上午吗？",
+        challenge="对话文体/疑问句升调",
+        emotion="礼貌询问",
     ),
 ]

@@ -1,0 +1,508 @@
+{
+  "experiment_id": "2-4",
+  "created_at": "2026-07-30T05:18:24.493511+08:00",
+  "protocol_sha256": "ec1ec36d5a6ee21b5185295a7a4447f4e0173f1681a9fe471b240dda1e7cf32a",
+  "protocol_copy": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/experiment_protocol.json",
+  "provider": "openai",
+  "model": "kimi-k3",
+  "user_model": "kimi-k3",
+  "objective_scoring": "vendored tau-bench environment reward",
+  "arms": {
+    "baseline": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-baseline_0730051815.json",
+        "sha256": "074fb8b59b8bf1cf1be7de37d2c7b7ccbb9f1db11e58d9a7d0d2cf1889408e86"
+      },
+      "rewards": [
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 70.0,
+      "total": 10,
+      "successes": 7,
+      "failures": 3,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        14,
+        10,
+        30,
+        18,
+        15,
+        14,
+        11,
+        14,
+        16,
+        null
+      ],
+      "tool_calls": [
+        6,
+        5,
+        28,
+        14,
+        12,
+        11,
+        7,
+        11,
+        12,
+        null
+      ],
+      "tool_errors": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 187,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1308761,
+        "completion_tokens": 71951,
+        "total_tokens": 1380712
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 33.37032,
+      "arm_complete": false
+    },
+    "tone_trump": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-tone_trump_0730051817.json",
+        "sha256": "46471eafdc3ed02bac00c1db82a8d7fce4eee6080c64e5115ec0c798603565c5"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 60.0,
+      "total": 10,
+      "successes": 6,
+      "failures": 4,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        13,
+        11,
+        16,
+        18,
+        12,
+        15,
+        10,
+        12,
+        14,
+        null
+      ],
+      "tool_calls": [
+        7,
+        7,
+        14,
+        14,
+        9,
+        12,
+        6,
+        8,
+        10,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 164,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1100695,
+        "completion_tokens": 78345,
+        "total_tokens": 1179040
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 29.848399999999998,
+      "arm_complete": false
+    },
+    "tone_casual": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-tone_casual_0730051818.json",
+        "sha256": "232633b00401c16cf370fc1c68514c2efceaff78d9c6c4d55daed522779d8157"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 90.0,
+      "total": 10,
+      "successes": 9,
+      "failures": 1,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        14,
+        10,
+        16,
+        15,
+        15,
+        14,
+        12,
+        15,
+        16,
+        null
+      ],
+      "tool_calls": [
+        9,
+        5,
+        13,
+        11,
+        11,
+        11,
+        8,
+        9,
+        13,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 173,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1176456,
+        "completion_tokens": 74474,
+        "total_tokens": 1250930
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 30.97652,
+      "arm_complete": false
+    },
+    "wiki_random": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-wiki_random_0730051819.json",
+        "sha256": "048d583a054aa87d9664a160163cc5d35c0f6b25ce526cde98e03dfd646c4e61"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 60.0,
+      "total": 10,
+      "successes": 6,
+      "failures": 4,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 2,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        14,
+        9,
+        14,
+        15,
+        13,
+        10,
+        14,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        7,
+        5,
+        10,
+        13,
+        10,
+        7,
+        10,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 123,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 733921,
+        "completion_tokens": 54842,
+        "total_tokens": 788763
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 20.16262,
+      "arm_complete": false
+    },
+    "no_tool_desc": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-no_tool_desc_0730051821.json",
+        "sha256": "607da9f9ea1e212a044f382b12f04145dcdeab658fe28fb14eb59d0382dbe6da"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 80.0,
+      "total": 10,
+      "successes": 8,
+      "failures": 2,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 2,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        14,
+        9,
+        15,
+        12,
+        15,
+        11,
+        13,
+        13,
+        null,
+        null
+      ],
+      "tool_calls": [
+        9,
+        5,
+        11,
+        9,
+        12,
+        7,
+        10,
+        8,
+        null,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null,
+        null
+      ],
+      "real_api_calls": 141,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 788167,
+        "completion_tokens": 63372,
+        "total_tokens": 851539
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 22.10054,
+      "arm_complete": false
+    },
+    "all_ablations": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v3/tool-calling-kimi-k3-tone_casual_wiki_random_no_tool_desc_0730051822.json",
+        "sha256": "f1f812e78c4d0eb1c02d2757579a0a8e11e250654b13ebd985e5faf2fdf6f9c6"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 70.0,
+      "total": 10,
+      "successes": 7,
+      "failures": 3,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 3,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.AuthenticationError: AuthenticationError: OpenAIException - Invalid Authentication"
+        }
+      ],
+      "agent_steps": [
+        13,
+        10,
+        16,
+        16,
+        9,
+        12,
+        15,
+        12,
+        null,
+        null
+      ],
+      "tool_calls": [
+        7,
+        5,
+        13,
+        12,
+        8,
+        6,
+        10,
+        8,
+        null,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null,
+        null
+      ],
+      "real_api_calls": 145,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 850906,
+        "completion_tokens": 68218,
+        "total_tokens": 919124
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 23.83992,
+      "arm_complete": false
+    }
+  },
+  "credential_scan_passed": true,
+  "credential_findings": [],
+  "usage_and_cost": {
+    "total_real_api_calls": 933,
+    "prompt_tokens": 5958906,
+    "completion_tokens": 411202,
+    "total_tokens": 6370108,
+    "observed_litellm_cost_usd": 0,
+    "all_calls_priced": false,
+    "native_cost_cny": 160.29832000000002,
+    "native_cost_complete": true,
+    "qualification": "Prompt cache detail is unavailable in these responses, so every prompt token is conservatively priced as uncached."
+  },
+  "campaign_complete": false,
+  "hypothesis_results": {
+    "historical_percentages_reproduced": false,
+    "qualification": "Current fixed ten-task campaign only; compare arm metrics directly."
+  }
+}

@@ -13,3 +13,6 @@ output/
 logs/
 checkpoints/
 *.log
+!experiment_protocol.json
+!validation/
+!validation/**

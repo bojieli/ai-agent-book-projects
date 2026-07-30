@@ -1,0 +1,39 @@
+{
+  "case": "wikipedia_search",
+  "tool": "wikipedia_search",
+  "arguments": {
+    "query": "Model Context Protocol",
+    "language": "en",
+    "sentences": 3
+  },
+  "arguments_sha256": "697f2deabfb52773a614f77f31c5e61400afcc7b42b4ba0a282fc2d5b488d9df",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "mediawiki",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "title": "Model Context Protocol",
+      "url": "https://en.wikipedia.org/wiki/Model_Context_Protocol",
+      "summary": "The Model Context Protocol (MCP) is an open standard and open-source framework introduced by Anthropic in November 2024 to standardize the way artificial intelligence (AI) systems like large language models (LLMs) integrate and share data with external tools, systems, and data sources. MCP provides a standardized interface for reading files, executing functions, and handling contextual prompts. Following its announcement, the protocol was adopted by major AI providers, including OpenAI and Google DeepMind.",
+      "language": "en",
+      "search_results": [
+        "Model Context Protocol",
+        "Agent harness",
+        "AI agent"
+      ]
+    },
+    "metadata": {
+      "query": "Model Context Protocol",
+      "language": "en"
+    }
+  },
+  "elapsed_seconds": 7.258
+}

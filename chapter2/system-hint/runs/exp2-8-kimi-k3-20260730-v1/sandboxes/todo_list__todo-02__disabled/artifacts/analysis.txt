@@ -1,0 +1,3 @@
+Analysis for delivery BRAVO-528
+Approach: write the four required artifacts with the identifier token embedded, confirm each write succeeds, then submit the complete artifact list.
+Token placement: one occurrence per artifact, located in the header line.

@@ -1,0 +1,5 @@
+Verification
+- All four required artifacts were created: scope.txt, plan.txt, verification.txt, result.txt.
+- The token CHARLIE-639 appears exactly once in each artifact.
+- No extra artifacts were created beyond the required set.
+- Artifact list is complete and ready for submission.

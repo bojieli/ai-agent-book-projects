@@ -1,0 +1,312 @@
+[
+  {
+    "question_id": 1,
+    "called_at_utc": "2026-07-29T20:58:02.611446+00:00",
+    "latency_s": 8.876,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 平均每个员工在职多久？\nPostgreSQL guidance: Use COALESCE(leave_date, CURRENT_DATE) - hire_date to obtain integer days, then AVG. Return one numeric column."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358674075ffa263910bfaab0198f27d0234753c499bd375",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT AVG(COALESCE(leave_date, CURRENT_DATE) - hire_date) AS average_tenure_days FROM employees;"
+    },
+    "usage": {
+      "prompt_tokens": 299,
+      "completion_tokens": 368,
+      "total_tokens": 667,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 2,
+    "called_at_utc": "2026-07-29T20:58:08.707903+00:00",
+    "latency_s": 6.092,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 每个部门有多少在职员工？\nPostgreSQL guidance: Active means leave_date IS NULL. GROUP BY department. Return department and active count."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358682804ffa263910bfaab0198f27d0234753c495613be",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT department, COUNT(*) AS active_count FROM employees WHERE leave_date IS NULL GROUP BY department;"
+    },
+    "usage": {
+      "prompt_tokens": 288,
+      "completion_tokens": 220,
+      "total_tokens": 508,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 3,
+    "called_at_utc": "2026-07-29T20:58:18.049378+00:00",
+    "latency_s": 9.338,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 哪个部门员工平均级别最高？\nPostgreSQL guidance: Average level across all employees by department; ORDER BY the average descending and LIMIT 1. Return department only."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358688901ffa263910bfaab0198f27d0234753c496b22c4",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT department\nFROM employees\nGROUP BY department\nORDER BY AVG(level) DESC\nLIMIT 1;"
+    },
+    "usage": {
+      "prompt_tokens": 293,
+      "completion_tokens": 350,
+      "total_tokens": 643,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 4,
+    "called_at_utc": "2026-07-29T20:58:35.684731+00:00",
+    "latency_s": 17.632,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 每个部门今年和去年各新入职多少人？\nPostgreSQL guidance: Use COUNT(*) FILTER with EXTRACT(YEAR FROM hire_date) for current and previous years. Return department, this-year count, last-year count; omit departments with both zero."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358698242ffa263910bfaab0198f27d0234753c4946649a",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT department,\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS this_year_count,\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS last_year_count\nFROM employees\nGROUP BY department\nHAVING this_year_count > 0 OR last_year_count > 0;"
+    },
+    "usage": {
+      "prompt_tokens": 312,
+      "completion_tokens": 959,
+      "total_tokens": 1271,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 5,
+    "called_at_utc": "2026-07-29T20:59:06.784757+00:00",
+    "latency_s": 31.095,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 前年3月到去年5月，A部门平均工资是多少？\nPostgreSQL guidance: A=研发部. Inclusive dates are March 1 two years ago through May 31 last year; derive years from CURRENT_DATE with make_date, never literals. Return AVG(salary)."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358715879ffa263910bfaab0198f27d0234753c49eb86ce",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT AVG(s.salary)\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE e.department = '研发部'\n  AND s.pay_date BETWEEN make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 2, 3, 1)\n                      AND make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 1, 5, 31);"
+    },
+    "usage": {
+      "prompt_tokens": 322,
+      "completion_tokens": 1379,
+      "total_tokens": 1701,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 6,
+    "called_at_utc": "2026-07-29T20:59:24.465770+00:00",
+    "latency_s": 17.677,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 去年A部门和B部门平均工资哪个高？\nPostgreSQL guidance: A=研发部 and B=销售部. Join employees to salaries; filter pay_date to previous calendar year, group by department, and return department plus average salary for exactly those two departments."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358746977ffa263910bfaab0198f27d0234753c49b32464",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT e.department, AVG(s.salary) AS average_salary\nFROM employees e\nINNER JOIN salaries s ON e.emp_id = s.emp_id\nWHERE e.department IN ('研发部', '销售部')\n  AND s.pay_date >= date_trunc('year', CURRENT_DATE) - INTERVAL '1 year'\n  AND s.pay_date < date_trunc('year', CURRENT_DATE)\nGROUP BY e.department;"
+    },
+    "usage": {
+      "prompt_tokens": 314,
+      "completion_tokens": 876,
+      "total_tokens": 1190,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 7,
+    "called_at_utc": "2026-07-29T20:59:35.491705+00:00",
+    "latency_s": 11.019,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 今年每个级别的员工平均工资是多少？\nPostgreSQL guidance: Join salary rows to employees, filter pay_date to current calendar year, group by level. Return level and average salary."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358764663ffa263910bfaab0198f27d0234753c498b89c8",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "SELECT e.level, AVG(s.salary) AS average_salary\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE EXTRACT(YEAR FROM s.pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)\nGROUP BY e.level;"
+    },
+    "usage": {
+      "prompt_tokens": 298,
+      "completion_tokens": 448,
+      "total_tokens": 746,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 8,
+    "called_at_utc": "2026-07-29T21:00:05.332452+00:00",
+    "latency_s": 29.826,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 入职一年内、一到两年、两到三年的员工，最近一个月平均工资是多少？\nPostgreSQL guidance: First select each employee's latest salary with DISTINCT ON (emp_id) ordered by pay_date DESC. Bucket CURRENT_DATE-hire_date as <365 入职一年内, 365..729 一到两年, 730..1094 两到三年; exclude older. Return bucket and average latest salary."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358775696ffa263910bfaab0198f27d0234753c493f16ce",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "WITH latest_salaries AS (\n    SELECT DISTINCT ON (emp_id) emp_id, salary\n    FROM salaries\n    ORDER BY emp_id, pay_date DESC\n)\nSELECT \n    CASE \n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER < 365 THEN '入职一年内'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 365 AND 729 THEN '一到两年'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 730 AND 1094 THEN '两到三年'\n    END AS bucket,\n    AVG(ls.salary) AS average_latest_salary\nFROM employees e\nJOIN latest_salaries ls ON e.emp_id = ls.emp_id\nWHERE e.leave_date IS NULL\n    AND (CURRENT_DATE - e.hire_date)::INTEGER <= 1094\nGROUP BY bucket;"
+    },
+    "usage": {
+      "prompt_tokens": 360,
+      "completion_tokens": 1449,
+      "total_tokens": 1809,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 9,
+    "called_at_utc": "2026-07-29T21:00:32.168574+00:00",
+    "latency_s": 26.832,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 去年到今年涨薪幅度最大的10位员工是谁？\nPostgreSQL guidance: Aggregate each employee's average salary separately for current and previous calendar years with FILTER, keep employees having both, compute current minus previous, order descending, LIMIT 10. Return name and raise amount."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358805525ffa263910bfaab0198f27d0234753c494ceef9",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "WITH employee_salary_avg AS (\n    SELECT \n        emp_id,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS avg_prev_year,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS avg_curr_year\n    FROM salaries\n    GROUP BY emp_id\n    HAVING AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) IS NOT NULL\n       AND AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) IS NOT NULL\n)\nSELECT e.name, (esa.avg_curr_year - esa.avg_prev_year) AS raise_amount\nFROM employee_salary_avg esa\nJOIN employees e ON esa.emp_id = e.emp_id\nORDER BY raise_amount DESC\nLIMIT 10;"
+    },
+    "usage": {
+      "prompt_tokens": 320,
+      "completion_tokens": 1503,
+      "total_tokens": 1823,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "question_id": 10,
+    "called_at_utc": "2026-07-29T21:00:58.224523+00:00",
+    "latency_s": 26.052,
+    "request": {
+      "model": "doubao-seed-1-6-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an ERP natural-language-to-SQL Agent. Output exactly one read-only\nPostgreSQL SELECT statement (WITH/CTE is allowed), with no Markdown or prose.\n\nSchema:\nemployees(emp_id INTEGER PRIMARY KEY, name TEXT, department TEXT, level INTEGER,\n          hire_date DATE, leave_date DATE NULL)\nsalaries(emp_id INTEGER REFERENCES employees, pay_date DATE, salary INTEGER,\n         PRIMARY KEY(emp_id,pay_date))\n\nBusiness meanings: leave_date NULL means active; A department is 研发部; B is 销售部.\nUse CURRENT_DATE for all relative dates. Never hard-code a calendar year. Follow the\nrequested output columns exactly. You write only the SQL artifact: you do not see,\ncopy, summarize, or calculate over result rows."
+        },
+        {
+          "role": "user",
+          "content": "Question: 有没有拖欠工资的情况（某个月还在职却没有发薪）？\nPostgreSQL guidance: For every employee generate each employed month with LATERAL generate_series(date_trunc('month', hire_date), date_trunc('month', COALESCE(leave_date,CURRENT_DATE)), interval '1 month'); left join salaries by emp_id and month. Return missing emp_id and to_char(month,'YYYY-MM')."
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "021785358832360ffa263910bfaab0198f27d0234753c49b55777",
+      "model": "doubao-seed-1-6-250615",
+      "finish_reason": "stop",
+      "content": "WITH employed_months AS (\n    SELECT \n        e.emp_id,\n        generate_series(\n            date_trunc('month', e.hire_date),\n            date_trunc('month', COALESCE(e.leave_date, CURRENT_DATE)),\n            interval '1 month'\n        ) AS month\n    FROM employees e\n)\nSELECT \n    em.emp_id,\n    to_char(em.month, 'YYYY-MM') AS month\nFROM employed_months em\nLEFT JOIN salaries s \n    ON em.emp_id = s.emp_id \n    AND em.month = date_trunc('month', s.pay_date)\nWHERE s.emp_id IS NULL;"
+    },
+    "usage": {
+      "prompt_tokens": 348,
+      "completion_tokens": 1090,
+      "total_tokens": 1438,
+      "cached_prompt_tokens": 0
+    }
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "experiment_id": "5-5",
+  "protocol_version": "2.0.0",
+  "source": {
+    "paper": "../paper-to-ppt/validation/runs/exp5-4-real-pdf-20260730-v2/source/1706.03762.pdf",
+    "slide_markdown": "../paper-to-ppt/validation/runs/exp5-4-real-pdf-20260730-v2/dual_round1_slides.md",
+    "rendered_slides": "../paper-to-ppt/validation/runs/exp5-4-real-pdf-20260730-v2/rendered/dual_round1",
+    "selected_pages": [1, 2, 3, 5, 8, 9, 11, 12, 15, 18, 19, 21]
+  },
+  "providers": {
+    "narration": {
+      "name": "Moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "model": "kimi-k3"
+    },
+    "tts": {
+      "name": "Fish Audio",
+      "model": "s1",
+      "authorized_reference_manifest": "../../chapter9/controllable-tts/reference_audio/manifest.json"
+    },
+    "independent_visual_reviewer": {
+      "name": "DashScope",
+      "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen-vl-max"
+    }
+  },
+  "acceptance": {
+    "duration_seconds_min": 300,
+    "duration_seconds_max": 900,
+    "pages": 12,
+    "per_page_av_alignment_tolerance_seconds": 0.2,
+    "final_duration_tolerance_seconds": 0.75,
+    "minimum_visual_alignment_score": 4,
+    "maximum_generation_review_rounds": 3,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  }
+}

@@ -227,6 +227,40 @@ Key flags:
 
 ### Ablation Studies
 
+#### Accepted real Kimi K3 execution (2026-07-29)
+
+`run_experiment_1_1.py` executes the exact five arms from the manuscript and
+persists every credential-free provider request/response, rather than only a
+summary table:
+
+```bash
+python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
+```
+
+The accepted artifact is [validation/latest.json](validation/latest.json). All
+five request-shape contracts passed on the direct Moonshot API. The full arm
+produced the correct USD total and average; removing tool definitions produced
+zero tool actions; removing tool results and removing history both caused
+repeated actions. The no-reasoning arm still answered correctly in this run, so
+the manuscript's categorical contradiction claim was **not reproduced** and is
+reported separately from execution acceptance.
+
+Observed results (these are not the expected-behavior labels below):
+
+| Arm | Iterations | Tool actions | Repeated action | Correct numerical answer |
+|---|---:|---:|---|---|
+| full | 3 | 4 | no | yes |
+| no history | 5 (ceiling) | 15 | yes | no answer |
+| no reasoning | 3 | 4 | no | **yes — negative result for the manuscript claim** |
+| no tool definitions | 1 | 0 | no | no; the model explicitly declined to invent rates |
+| no tool results | 5 | 7 | yes | no; the model eventually reported that observations were hidden |
+
+Here `success` in an individual raw arm means that the API/agent loop returned
+a final response, not that the task or the manuscript hypothesis passed. The
+canonical behavioral booleans are under `analysis.manuscript_behavior_claims`;
+`all_manuscript_behavior_claims_observed` is false. This distinction prevents a
+graceful refusal in an ablated arm from being mislabeled as task success.
+
 The ablation studies systematically remove context components to understand their importance.
 
 #### Test Scenario
@@ -623,6 +657,20 @@ python main.py --mode ablation --ablation-modes full no_history --output my_abla
 | `--output` | 单次结果或消融原始结果的 JSON 输出路径 |
 
 ### 消融实验
+
+#### 已验收的 Kimi K3 真实执行（2026-07-29）
+
+`run_experiment_1_1.py` 会按正文运行五个精确实验组，并保存每轮真实 API 的无凭据
+请求与响应，而不只是汇总表：
+
+```bash
+python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
+```
+
+验收产物见 [validation/latest.json](validation/latest.json)。五组上下文契约全部通过；
+完整组算出了正确结果，移除工具定义后没有工具行动，移除工具结果或历史后都出现重复行动。
+但本次“移除思考过程”仍得到正确答案，因此正文关于必然出现矛盾决策的断言**没有复现**；
+产物把“实验执行通过”和“正文行为结论复现”分开记录。
 
 系统性地移除上下文组件，以理解其重要性。
 

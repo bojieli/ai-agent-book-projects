@@ -18,10 +18,19 @@ import json
 import os
 import shutil
 import sys
+import time
+from datetime import datetime, timezone
 
 from evaluate import evaluate_prompt
 from coding_agent import optimize_prompt
-from config import get_provider, get_model
+from config import (
+    get_api_turns,
+    get_backend_metadata,
+    get_provider,
+    get_model,
+    reset_api_turns,
+    usage_summary,
+)
 from airline_env import CASES
 from learning_signal import diagnose_failures, format_learning_signal
 from release_gate import build_candidate_manifest, evaluate_release_gate
@@ -73,6 +82,8 @@ def _select_cases(limit_per_group=None, groups=GROUPS):
 def main(cases=None, rounds=3, output=None):
     if cases is None:
         cases = CASES
+    reset_api_turns()
+    campaign_started = time.time()
     print("#" * 74)
     print("# 实验 8-3：基于失败轨迹的系统提示词自动优化（航空客服场景）")
     print(f"# LLM 提供商: {get_provider()}   模型: {get_model()}")
@@ -106,7 +117,9 @@ def main(cases=None, rounds=3, output=None):
 
     # ---- 步骤 3：Coding Agent 生成候选 prompt ----
     print("\n【步骤 3】Coding Agent 读取诊断并生成候选系统提示词……")
+    candidate_started = time.time()
     opt = optimize_prompt(WORKING_PROMPT, learning_signal, max_rounds=rounds, verbose=True)
+    failure_to_candidate_seconds = time.time() - candidate_started
     manifest = build_candidate_manifest(opt, learning_signal)
     print(f"\n  Coding Agent 改动说明：{opt['rationale']}")
     print("\n  ---------- 系统提示词文件 diff（真实写入磁盘）----------")
@@ -149,17 +162,67 @@ def main(cases=None, rounds=3, output=None):
     print("  它不会覆盖稳定版本；只有 release_to_canary 才允许进入灰度。")
 
     # ---- 可选：把对比结果落盘为 JSON，便于复现与二次分析 ----
-    if output:
-        summary = {
+    before_by_id = {row["id"]: row for row in before["results"]}
+    after_by_id = {row["id"]: row for row in after["results"]}
+    regressions = [
+        identifier for identifier, old in before_by_id.items()
+        if old["correct"] and not after_by_id[identifier]["correct"]
+    ]
+    boundary_fixed = [
+        identifier for identifier, old in before_by_id.items()
+        if old["group"] == "boundary" and not old["correct"] and after_by_id[identifier]["correct"]
+    ]
+    api_turns = get_api_turns()
+    gates = [
+        {"name": "full_holdout_and_boundary_sets_run", "passed": len(cases) == len(CASES) and {c["group"] for c in cases} == {"holdout", "boundary"}, "evidence": {"selected": len(cases), "canonical": len(CASES)}},
+        {"name": "same_model_and_same_cases_for_three_controls", "passed": all({r["id"] for r in report["results"]} == {c["id"] for c in cases} for report in (before, after, manual)), "evidence": get_model()},
+        {"name": "real_task_agent_calls", "passed": any(turn["kind"].startswith("task_agent") for turn in api_turns), "evidence": sum(turn["kind"].startswith("task_agent") for turn in api_turns)},
+        {"name": "real_llm_judge_calls", "passed": any(turn["kind"] == "llm_judge" for turn in api_turns), "evidence": sum(turn["kind"] == "llm_judge" for turn in api_turns)},
+        {"name": "real_coding_agent_call", "passed": any(turn["kind"] == "coding_agent" for turn in api_turns), "evidence": sum(turn["kind"] == "coding_agent" for turn in api_turns)},
+        {"name": "learning_signal_has_three_dimensions_and_source_ids", "passed": set(learning_signal["dimensions"]) == {"rule_compliance", "task_resolution", "compliant_flexibility"} and bool(learning_signal["source_case_ids"]), "evidence": learning_signal["source_case_ids"]},
+        {"name": "minimal_old_to_new_patch_is_auditable", "passed": bool(manifest.get("edits")) and bool(manifest.get("diff")), "evidence": manifest.get("edits")},
+        {"name": "release_gate_evaluated_all_four_manuscript_conditions", "passed": set(gate["checks"]) >= {"patch_is_nonempty", "patch_is_auditable_old_to_new_edit", "source_cases_are_recorded", "holdout_did_not_regress", "boundary_improved"}, "evidence": gate["checks"]},
+        {"name": "stable_prompt_not_overwritten", "passed": _read(INITIAL_PROMPT) == opt["before"], "evidence": {"stable": INITIAL_PROMPT, "candidate": WORKING_PROMPT}},
+        {"name": "raw_credential_free_api_receipts_saved", "passed": bool(api_turns), "evidence": len(api_turns)},
+    ]
+    execution_accepted = all(item["passed"] for item in gates)
+    result_claims = {
+        "boundary_improved": after["boundary"][0] > before["boundary"][0],
+        "holdout_not_degraded": after["holdout"][0] >= before["holdout"][0],
+        "automatic_candidate_released_only_to_canary": gate["decision"] == "release_to_canary",
+        "automatic_candidate_compared_with_manual": True,
+    }
+    summary = {
+            "schema_version": 2,
+            "experiment_id": "8-3",
+            "canonical_source": "book/chapter8.md#实验-8-3-基于失败轨迹优化系统提示词",
+            "evidence_mode": "real_task_agent_llm_judge_coding_agent_full_campaign",
+            "created_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
             "provider": get_provider(),
             "model": get_model(),
+            "backend": get_backend_metadata(),
+            "credential_value_recorded": False,
             "rounds": rounds,
             "num_cases": len(cases),
+            "case_ids": [case["id"] for case in cases],
             "learning_signal": learning_signal,
             "candidate_manifest": manifest,
             "release_gate": gate,
             "rationale": opt["rationale"],
             "diff": opt["diff"],
+            "prompt_metrics": {
+                "initial_characters": len(opt["before"]),
+                "candidate_characters": len(opt["after"]),
+                "growth_characters": len(opt["after"]) - len(opt["before"]),
+                "manual_characters": len(_read(MANUAL_PROMPT)),
+                "introduced_regressions": len(regressions),
+                "regression_case_ids": regressions,
+                "boundary_failures_fixed": len(boundary_fixed),
+                "boundary_fixed_case_ids": boundary_fixed,
+                "failure_to_candidate_seconds": round(failure_to_candidate_seconds, 6),
+                "campaign_elapsed_seconds": round(time.time() - campaign_started, 6),
+            },
+            "evaluations": {"initial": before, "automatic_candidate": after, "manual": manual},
             "rows": [
                 {"label": "初始 prompt(优化前)", "holdout": list(before["holdout"]),
                  "boundary": list(before["boundary"])},
@@ -168,11 +231,21 @@ def main(cases=None, rounds=3, output=None):
                 {"label": "人工调优版(对照)", "holdout": list(manual["holdout"]),
                  "boundary": list(manual["boundary"])},
             ],
+            "usage": usage_summary(),
+            "api_turns": api_turns,
+            "acceptance": {
+                "gates": gates,
+                "execution_accepted": execution_accepted,
+                "result_claims": result_claims,
+                "all_manuscript_result_claims_observed": all(result_claims.values()),
+            },
         }
+    if output:
         os.makedirs(os.path.dirname(os.path.abspath(output)), exist_ok=True)
         with open(output, "w", encoding="utf-8") as f:
             json.dump(summary, f, ensure_ascii=False, indent=2)
         print(f"  对比结果已写入：{output}")
+    return summary
 
 
 def _build_parser():
@@ -211,7 +284,7 @@ def _build_parser():
         help="覆盖 LLM 模型名（等价于设置环境变量 LLM_MODEL，如 gpt-5.6-luna）。",
     )
     parser.add_argument(
-        "--provider", choices=("openai", "moonshot", "ark"), default=None,
+        "--provider", choices=("openai", "moonshot", "ark", "openrouter"), default=None,
         help="覆盖 LLM 提供商（等价于设置环境变量 LLM_PROVIDER，默认 openai）。",
     )
     parser.add_argument(

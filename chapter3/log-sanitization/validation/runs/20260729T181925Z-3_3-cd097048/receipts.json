@@ -1,0 +1,176 @@
+[
+  {
+    "purpose": "llm:structured_cn",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "客户身份证号11010519491231002X，手机号13800138000。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:19:20.944483Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3957502042,
+      "load_duration": 57011625,
+      "prompt_eval_count": 445,
+      "prompt_eval_duration": 63544667,
+      "eval_count": 76,
+      "eval_duration": 335304839,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\":[{\"type\":\"secret\",\"value\":\"11010519491231002X\",\"start\":0,\"end\":18,\"confidence\":1},{\"type\":\"secret\",\"value\":\"13800138000\",\"start\":0,\"end\":11,\"confidence\":1}]}",
+        "thinking": "好的，我现在需要处理用户提供的客户信息，并检查是否有敏感数据。用户给出的客户身份证号是11010519491231002X，手机号是13800138000。首先，我要确认这些数据是否符合敏感信息的定义。\n\n根据用户提供的类型，敏感信息包括身份证号、手机号等。身份证号有18位，而手机号是11位，但用户提供的都是18位和11位，这可能是一个错误，因为通常身份证号是18位，而手机号通常是11位。不过用户可能输入时有误，或者需要确认是否正确。同样，手机号是13800138000，共11位，这可能是一个错误，但用户可能希望保留。\n\n接下来，我需要检查是否有其他可能的字段或类型被提及，但用户的信息中只有这两个部分。因此，正确的做法是返回这两个部分的值，但需要确保它们是敏感信息。例如，身份证号和手机号都是敏感信息，因此应该直接返回它们的值，而无需额外处理。\n\n最后，确保返回的JSON格式正确，没有其他字段或错误信息，并且只包含敏感数据。这样用户可以清楚知道信息是否被泄露。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3959.616,
+    "usage": {
+      "prompt_tokens": 445,
+      "completion_tokens": 76
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:structured_cn",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "客户身份证号11010519491231002X，手机号[REDACTED_CN_PHONE]。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:19:25.232685Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 4285037500,
+      "load_duration": 58636292,
+      "prompt_eval_count": 565,
+      "prompt_eval_duration": 80994959,
+      "eval_count": 75,
+      "eval_duration": 335223796,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\":[{\"type\":\"cn_id_card\",\"value\":\"11010519491231002X\",\"start\":0,\"end\":18,\"confidence\":1},{\"type\":\"cn_phone\",\"value\":\"[REDACTED_CN_PHONE]\",\"start\":0,\"end\":0,\"confidence\":1}]}",
+        "thinking": "好的，我现在需要处理用户提供的敏感信息，并按照要求返回精确的子字符串。用户给出的客户身份证号是11010519491231002X，手机号是[REDACTED_CN_PHONE]。首先，我要确认用户的需求，他们希望返回的值是身份证号和手机号中的敏感字段，但不包括其他信息。\n\n首先，身份证号的长度是18位，而用户提供的身份证号是11010519491231002X，这明显超过了标准的18位，所以可能用户输入时有误，或者存在其他问题。不过根据用户的要求，只要提取出身份证号和手机号中的敏感字段，不管是否正确，都要返回。因此，我需要检查身份证号中的敏感字段，比如可能的身份证号字段，但用户提供的身份证号是11010519491231002X，其中包含的字符是11010519491231002X，这可能是一个身份证号的前几位，但需要确认是否符合标准。不过根据用户的要求，只要提取出这些字段，不管是否正确，所以直接返回身份证号中的敏感部分，即11010519491231002X，手机号中的[REDACTED_CN_PHONE]，但需要确保没有其他字段被包含。\n\n接下来，检查手机号中的[REDACTED_CN_PHONE]，这里需要确认是否正确，但用户已经标记为[REDACTED_CN_PHONE]，所以直接返回这个部分。同时，确保不包含其他字段，比如地址、医疗记录等，只保留身份证号和手机号中的敏感信息。因此，最终的输出应该是包含身份证号和手机号的字段，但不包含其他信息。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 4287.042,
+    "usage": {
+      "prompt_tokens": 565,
+      "completion_tokens": 75
+    }
+  }
+]

@@ -1,3 +1,21 @@
+# Experiment 7-12 reproduction anchor
+
+Experiment 7-12 is the **V-IRL-L/VL track inside SFTvsRL**, not a separate repository named SpatialReasoning. This directory is the book-owned explanation; executable code is [`bojieli/SFTvsRL`](https://github.com/bojieli/SFTvsRL) at `chapter7/SFTvsRL`, verified at commit `fef0a4a3367260a0934be1e40b01e4021698e023`.
+
+```bash
+git clone https://github.com/bojieli/SFTvsRL.git chapter7/SFTvsRL
+git -C chapter7/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023
+cd chapter7/SFTvsRL
+pip install -r requirements.txt
+pip install -e gym
+bash scripts/virl_training/vl_train.sh
+bash scripts/virl_evaluation/vl_indist_eval.sh
+bash scripts/virl_evaluation/vl_rule_ood_eval.sh
+bash scripts/virl_evaluation/vl_visual_ood_eval.sh
+```
+
+The same checkout supplies Experiment 7-11 through `scripts/gp_training/` and `scripts/gp_evaluation/`. These commands were statically verified but not executed during this audit.
+
 ## English
 
 # VIRL-VL: Vision-Language Navigation with Reinforcement Learning
@@ -120,9 +138,11 @@ According to the paper's Figure 1 and experimental results:
 ### 4.2 Installation Steps
 
 ```bash
-# 1. Clone repository (use the fixed fork version)
-git clone https://github.com/bojieli/SFTvsRL.git
-cd SFTvsRL
+# 1. Clone the verified fork into the book's canonical external-checkout path
+export BOOK_ROOT=/absolute/path/to/ai-agent-book
+git clone https://github.com/bojieli/SFTvsRL.git "${BOOK_ROOT}/chapter7/SFTvsRL"
+git -C "${BOOK_ROOT}/chapter7/SFTvsRL" checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023
+cd "${BOOK_ROOT}/chapter7/SFTvsRL"
 
 # 2. Create conda environment
 conda create -n SFTvsRL python==3.13 -y
@@ -2419,9 +2439,10 @@ Reason: SFT overfitting is too deep; RL cannot correct it
 
 **Q0: Training error `TypeError: unsupported operand type(s) for %: 'int' and 'NoneType'`?**
 - This is a bug in the official code!
-- **Solution**: Use the fixed fork version
+- **Solution**: Use the fixed fork/version recorded at the top of this guide
   ```bash
-  git clone https://github.com/bojieli/SFTvsRL.git
+  git -C "${BOOK_ROOT}/chapter7/SFTvsRL" rev-parse HEAD
+  # Expected: fef0a4a3367260a0934be1e40b01e4021698e023
   ```
 - Detailed explanation in [Section 4.3](#43-official-code-bugs-and-fixes)
 
@@ -2449,7 +2470,7 @@ Reason: SFT overfitting is too deep; RL cannot correct it
 
 Confirm the following before running training:
 
-- [ ] **Use the fixed code** (`git clone https://github.com/bojieli/SFTvsRL.git`) ⭐
+- [ ] **Use the fixed code** (`chapter7/SFTvsRL` at `fef0a4a3367260a0934be1e40b01e4021698e023`) ⭐
 - [ ] **Verify the bug is fixed** (`grep "self.save_every = save_every" rl/trainer/base_trainer.py`)
 - [ ] Install all dependencies (`pip install -r requirements.txt && cd gym && pip install -e .`)
 - [ ] **Download and extract the dataset** to `/root/SFTvsRL_Data/VIRL_routes/`
@@ -2601,9 +2622,11 @@ Confirm the following before running evaluation:
 ### 4.2 安装步骤
 
 ```bash
-# 1. Clone repository（使用修复后的 fork 版本）
-git clone https://github.com/bojieli/SFTvsRL.git
-cd SFTvsRL
+# 1. 将已核验 fork 克隆到本书规范外部 checkout 路径
+export BOOK_ROOT=/absolute/path/to/ai-agent-book
+git clone https://github.com/bojieli/SFTvsRL.git "${BOOK_ROOT}/chapter7/SFTvsRL"
+git -C "${BOOK_ROOT}/chapter7/SFTvsRL" checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023
+cd "${BOOK_ROOT}/chapter7/SFTvsRL"
 
 # 2. Create conda environment
 conda create -n SFTvsRL python==3.13 -y
@@ -4907,9 +4930,10 @@ by generating all possible combinations... [生成 Python 代码]"
 
 **Q0: 训练报错 `TypeError: unsupported operand type(s) for %: 'int' and 'NoneType'`？**
 - 这是官方代码的 bug！
-- **解决方案**：使用修复后的 fork 版本
+- **解决方案**：使用本指南开头固定的 fork/版本
   ```bash
-  git clone https://github.com/bojieli/SFTvsRL.git
+  git -C "${BOOK_ROOT}/chapter7/SFTvsRL" rev-parse HEAD
+  # 预期：fef0a4a3367260a0934be1e40b01e4021698e023
   ```
 - 详细说明见 [4.3 节](#43-官方代码的-bug-与修复)
 
@@ -4937,7 +4961,7 @@ by generating all possible combinations... [生成 Python 代码]"
 
 运行训练前确认：
 
-- [ ] **使用修复后的代码**（`git clone https://github.com/bojieli/SFTvsRL.git`）⭐
+- [ ] **使用修复后的代码**（`chapter7/SFTvsRL`，提交 `fef0a4a3367260a0934be1e40b01e4021698e023`）⭐
 - [ ] **验证 bug 已修复**（`grep "self.save_every = save_every" rl/trainer/base_trainer.py`）
 - [ ] 安装所有依赖（`pip install -r requirements.txt && cd gym && pip install -e .`）
 - [ ] **下载并解压数据集**到 `/root/SFTvsRL_Data/VIRL_routes/`

@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "experiment": "9-1",
+  "run_id": "exp9-1-20260729T153226031Z",
+  "generated_at_utc": "2026-07-29T15:32:26.031Z",
+  "credentials_persisted": false,
+  "provenance": {
+    "host": {
+      "platform": "darwin",
+      "release": "25.3.0",
+      "architecture": "arm64",
+      "cpu_model": "Apple M2 Max",
+      "logical_cpu_count": 12,
+      "total_memory_bytes": 103079215104
+    },
+    "runtime": {
+      "node": "v25.6.0",
+      "onnxruntime_node": "^1.22.0-rev",
+      "axios": "^1.7.5",
+      "ffprobe": "ffprobe version 8.0.1 Copyright (c) 2007-2025 the FFmpeg developers"
+    },
+    "timing_clock": "process.hrtime.bigint monotonic clock"
+  },
+  "source_media": {
+    "path": "microphone_input.wav",
+    "capture_method": "browser_microphone_over_websocket",
+    "original_repository_path": "backend/recordings/recording_2025-02-06T14-51-38-205Z.wav",
+    "sha256": "e69d77415ffa39e1a2e00b99e6dbedce675faa9b4c2b703a256585861c6d2085",
+    "size_bytes": 161836,
+    "original_sha256": "e69d77415ffa39e1a2e00b99e6dbedce675faa9b4c2b703a256585861c6d2085",
+    "duration_seconds": 5.056,
+    "sample_rate_hz": 16000,
+    "channels": 1,
+    "bits_per_sample": 16,
+    "provenance_note": "Existing real microphone capture saved by live-audio/backend/server.js; replayed through the production Silero class for reproducible validation."
+  },
+  "stages": {
+    "vad": {
+      "execution": "real",
+      "mock": false,
+      "probe_only": false,
+      "fallback_used": false,
+      "implementation": "Silero VAD ONNX",
+      "model": "models/silero_vad.onnx",
+      "model_sha256": "2623a2953f6ff3d2c1e61740c6cdb7168133479b267dfef114a4a3cc5bdd788f",
+      "threshold": 0.5,
+      "max_silence_ms": 500,
+      "endpoint_detected": true,
+      "detected_endpoint_count": 2,
+      "selected_endpoint": "longest detected speech segment",
+      "forced_endpoint": false,
+      "observed_trailing_silence_ms": 511,
+      "speech_duration_ms": 1531,
+      "latency_seconds": 5.362510583,
+      "segment_path": "vad_segment.wav",
+      "segment_sha256": "61d43291d32fdbce3a32a1809c7368e12a5bf98f799f28a31e08848b8e7dda06",
+      "segment_bytes": 46124
+    },
+    "asr": {
+      "execution": "real",
+      "mock": false,
+      "probe_only": false,
+      "fallback_used": false,
+      "provider": "local-openai-whisper",
+      "model": "whisper-tiny",
+      "inference_completed": true,
+      "api_request_completed": false,
+      "external_request": false,
+      "latency_seconds": 3.981504083,
+      "transcript": "倒是男生就要战争了",
+      "language": "zh",
+      "runtime": {
+        "python": "3.11.4",
+        "torch": "2.7.0",
+        "openai_whisper": "20231106"
+      },
+      "model_path": "/Users/boj/.cache/whisper/tiny.pt",
+      "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+      "model_load_seconds": 0.34700404200702906,
+      "model_inference_seconds": 2.5749531253241003,
+      "provider_reported_cost_usd": 0,
+      "cost_note": "Local open-source Whisper inference; no external ASR charge."
+    }
+  },
+  "experiment_complete": false,
+  "error": "Error: Real LLM failed: Request failed with status code 401\n    at runLlm (/Users/boj/book/ai-agent-book/chapter9/live-audio/backend/run_real_validation.js:234:30)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async main (/Users/boj/book/ai-agent-book/chapter9/live-audio/backend/run_real_validation.js:407:27)",
+  "acceptance": {
+    "gates": {
+      "schema_and_scope": true,
+      "real_websocket_microphone_media": true,
+      "real_silero_vad_endpoint": true,
+      "real_asr": true,
+      "real_streaming_llm": false,
+      "real_tts_media": false,
+      "measured_stage_latencies": false,
+      "provenance_complete": true,
+      "no_mock_probe_or_fallback": false
+    },
+    "passed": false,
+    "statement": "Passing proves one saved real microphone turn completed Silero VAD -> real ASR -> real LLM -> real TTS. It does not benchmark concurrency or production load."
+  }
+}

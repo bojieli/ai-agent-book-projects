@@ -1,0 +1,51 @@
+{
+  "case": "video_analyze",
+  "tool": "video_analyze",
+  "arguments": {
+    "video_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/visual-marker.mp4",
+    "num_frames": 1,
+    "prompt": "Read the text shown in this frame."
+  },
+  "arguments_sha256": "cb4d46b8162cc7333640932d1d4e58088f589126251a9a36adec460f176dca66",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "opencv-and-configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "visual-marker.mp4",
+      "frames_analyzed": 1,
+      "analyses": [
+        {
+          "frame_number": 0,
+          "timestamp": 0.0,
+          "analysis": "The text in the frame reads:\n\n**EXPERIMENT 4-1**  \n**PERCEPTION TOOLS VERIFIED**\n\nThis appears to be a title or heading, likely indicating the completion or confirmation of a step in an experiment related to perception tools. The phrase \"VERIFIED\" suggests that the tools used for perception (possibly in a scientific, technological, or psychological context) have been tested and confirmed to function correctly.",
+          "provider_receipt": {
+            "provider": "dashscope",
+            "response_id": "chatcmpl-68ae3acf-d028-9c23-8888-2199eea5a752",
+            "response_model": "qwen-vl-max",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 443,
+              "completion_tokens": 86,
+              "total_tokens": 529
+            },
+            "latency_seconds": 4.049
+          }
+        }
+      ],
+      "combined_analysis": "Frame 1 (t=0.0s): The text in the frame reads:\n\n**EXPERIMENT 4-1**  \n**PERCEPTION TOOLS VERIFIED**\n\nThis appears to be a title or heading, likely indicating the completion or confirmation of a step in an experiment related to perception tools. The phrase \"VERIFIED\" suggests that the tools used for perception (possibly in a scientific, technological, or psychological context) have been tested and confirmed to function correctly."
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/media/visual-marker.mp4"
+    }
+  },
+  "elapsed_seconds": 4.078
+}

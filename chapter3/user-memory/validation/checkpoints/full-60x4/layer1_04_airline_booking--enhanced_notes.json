@@ -1,0 +1,353 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_04_airline_booking",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "airline_booking_001",
+      "memory": [
+        "Session: conversation_id=airline_booking_001, timestamp=2024-11-10 16:30:00, metadata={\"business\": \"Pacific Airways\", \"department\": \"Reservations\", \"call_duration\": \"48 minutes\"}; assistant=Marcus (Reservations agent).",
+        "Customer: Rebecca Anne Sullivan (full name as on ID), DOB=January 18th, 1982; contact info: email=rsullivan82@techmail.com, phone=206-555-4412, address=8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101; TSA PreCheck number=842756931; dietary restriction=vegetarian.",
+        "Pacific Rewards: Rebecca joined during session; membership number=PR-4478829; estimated miles earned from trip=5,400.",
+        "Trip details: Round-trip flight (Seattle to Miami) for business conference; outbound date=December 5th, return date=December 9th; 1 passenger (Rebecca).",
+        "Outbound flight: Pacific Airways PA 890 (non-stop), economy class; departs Seattle-Tacoma International (SEA) Terminal B at 10:45 AM, arrives Miami International (MIA) Terminal D at 7:10 PM on December 5th; seat=12C (aisle, right side); price=$685.",
+        "Return flight: Pacific Airways PA 891 (non-stop), economy class; departs MIA Terminal D at 2:35 PM, arrives SEA Terminal B at 5:55 PM on December 9th; seat=14C (aisle, right side); price=$685.",
+        "Baggage: Pre-paid 1 checked bag round-trip; cost=$30 each way ($60 total); included baggage=1 personal item + 1 carry-on.",
+        "Total payment: $685 (outbound) + $685 (return) + $60 (checked baggage) = $1,430 total charged to Rebecca's Visa card (name on card=Rebecca A Sullivan).",
+        "Check-in: Online check-in available 24 hours before departure; mobile boarding pass available (add to Apple Wallet/Google Pay).",
+        "Cancellation policy: Economy tickets non-refundable; change fee=$200 + fare difference; medical cancellation (with doctor's note) = credit for future travel (valid 1 year) minus $100 processing fee.",
+        "Travel insurance: Offered via TravelGuard; comprehensive coverage=$89; can be added within 14 days of session for pre-existing condition coverage.",
+        "Lounge access: Requires business class or Gold status; day pass available for $59.",
+        "WiFi: In-flight WiFi cost=$8/hour or $15/full flight (domestic routes).",
+        "Aircraft: Both flights operated on Boeing 737-900."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "airline_booking_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_04_airline_booking enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:11:36.389967+00:00",
+      "latency_ms": 38716.223,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=airline_booking_001\ntimestamp=2024-11-10 16:30:00\nmetadata={\"business\": \"Pacific Airways\", \"department\": \"Reservations\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I need to book a round-trip flight from Seattle to Miami for a business conference.\nASSISTANT: Good afternoon! Thank you for choosing Pacific Airways. I'm Marcus, and I'll help you with your reservation today. When are you looking to travel?\nUSER: I need to fly out on December 5th and return on December 9th.\nASSISTANT: Let me search for available flights. Do you have a preferred time of day for departure?\nUSER: I'd prefer a morning flight on the 5th, and afternoon or evening for the return.\nASSISTANT: Perfect. And will this be for one passenger?\nUSER: Yes, just myself.\nASSISTANT: May I have your full name as it appears on your ID?\nUSER: It's Rebecca Anne Sullivan.\nASSISTANT: Thank you, Ms. Sullivan. I have several options for December 5th. We have flight PA 234 departing Seattle at 7:15 AM, arriving Miami at 3:45 PM with one stop in Dallas.\nUSER: How long is the layover in Dallas?\nASSISTANT: It's a 1 hour and 30-minute layover.\nUSER: That's cutting it a bit close. What else do you have?\nASSISTANT: There's PA 567 leaving at 9:30 AM, arriving at 6:20 PM with a stop in Phoenix. The layover is 2 hours and 15 minutes.\nUSER: That sounds better. What about non-stop flights?\nASSISTANT: We have one non-stop, PA 890, departing at 10:45 AM and arriving at 7:10 PM. It's our premium route, so it's about $200 more.\nUSER: What's the price difference exactly?\nASSISTANT: The flight with the Phoenix connection is $487 in economy, and the non-stop is $685 in economy.\nUSER: And what about business class?\nASSISTANT: For the non-stop, business class is $1,450. For the Phoenix connection, it's $980.\nUSER: Let's go with economy on the non-stop. I value my time more than the extra cost.\nASSISTANT: Excellent choice. That's PA 890 on December 5th, departing Seattle at 10:45 AM. Now for your return on December 9th?\nUSER: What are the afternoon or evening options?\nASSISTANT: I have PA 891, non-stop, departing Miami at 2:35 PM, arriving Seattle at 5:55 PM.\nUSER: That's perfect actually.\nASSISTANT: Great! That's also $685 for economy. Would you like to select your seats now?\nUSER: Yes, please. I prefer an aisle seat.\nASSISTANT: For the outbound flight, I have aisle seats available in rows 12, 18, 24, and 31. Do you have a preference?\nUSER: I'd like to be closer to the front. Row 12 sounds good.\nASSISTANT: Row 12, seat C is available. It's an aisle seat on the right side of the aircraft. Would that work?\nUSER: Perfect.\nASSISTANT: And for the return flight?\nUSER: Something similar if possible.\nASSISTANT: I can put you in row 14, seat C, also an aisle on the right side.\nUSER: That works great.\nASSISTANT: Wonderful. Now, are you a member of our Pacific Rewards program?\nUSER: No, I'm not.\nASSISTANT: Would you like to join? It's free and you'll earn miles on this trip.\nUSER: Sure, why not.\nASSISTANT: Excellent. I'll need your date of birth for the membership.\nUSER: January 18th, 1982.\nASSISTANT: And your email address?\nUSER: rsullivan82@techmail.com\nASSISTANT: Phone number?\nUSER: 206-555-4412.\nASSISTANT: And your mailing address?\nUSER: 8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101.\nASSISTANT: Perfect. Your Pacific Rewards number is PR-4478829. You'll earn about 5,400 miles from this round trip.\nUSER: Great. What about baggage? What's included?\nASSISTANT: With your economy ticket, you get one personal item and one carry-on included. Checked bags are $35 for the first bag, $45 for the second.\nUSER: I'll probably need to check one bag.\nASSISTANT: Would you like to pre-pay for it now? It saves you $5 per bag.\nUSER: So it would be $30 instead of $35?\nASSISTANT: Correct, $30 each way if you pre-pay now, so $60 total for round trip.\nUSER: Yes, let's do that.\nASSISTANT: Added. Now, do you have any dietary restrictions for the in-flight meal service?\nUSER: I'm vegetarian.\nASSISTANT: I've noted that. We'll have a vegetarian option available for you. Do you have TSA PreCheck or Global Entry?\nUSER: Yes, I have TSA PreCheck. The number is 842756931.\nASSISTANT: I've added that to your reservation. It will appear on your boarding pass. Now, how would you like to pay for this reservation?\nUSER: I'll use my Visa card.\nASSISTANT: Ready when you are.\nUSER: The number is 4532-8876-9901-3345.\nASSISTANT: And the expiration date?\nUSER: 10/26.\nASSISTANT: The CVV code?\nUSER: 338.\nASSISTANT: And the billing zip code?\nUSER: 98101, same as my address.\nASSISTANT: Is the name on the card Rebecca A Sullivan?\nUSER: Yes, that's correct.\nASSISTANT: Perfect. Your total is $1,430 - that's two flights at $685 each plus $60 for checked baggage. Processing now...\nUSER: Sounds right.\nASSISTANT: Your payment has been approved. Your confirmation number is PAC-778K4M.\nUSER: Let me get that... PAC-778K4M?\nASSISTANT: That's correct. I'm emailing your itinerary to rsullivan82@techmail.com right now.\nUSER: Perfect. Oh, what about seat upgrades? Is there extra legroom available?\nASSISTANT: Yes, we have Comfort Plus seats with 4 extra inches of legroom. Would you like to upgrade?\nUSER: How much is it?\nASSISTANT: It's $89 per flight segment, so $178 for your round trip.\nUSER: I'll pass for now. Can I upgrade later if I change my mind?\nASSISTANT: Absolutely. You can upgrade anytime before check-in through our website or mobile app.\nUSER: Good to know. What time should I arrive at the airport?\nASSISTANT: For domestic flights, we recommend arriving 2 hours before departure. So by 8:45 AM for your December 5th flight.\nUSER: And I can check in online?\nASSISTANT: Yes, online check-in opens 24 hours before departure. You can use our mobile app or website.\nUSER: Can I get my boarding pass on my phone?\nASSISTANT: Yes, mobile boarding passes are available. You can also add them to your Apple Wallet or Google Pay.\nUSER: Perfect. What terminal does Pacific Airways use at SeaTac?\nASSISTANT: We operate from Terminal B at Seattle-Tacoma International.\nUSER: And in Miami?\nASSISTANT: We're in Terminal D at Miami International.\nUSER: What's your cancellation policy?\nASSISTANT: Economy tickets are non-refundable, but you can change your flight for a $200 change fee plus any fare difference.\nUSER: What if I need to cancel for medical reasons?\nASSISTANT: With a doctor's note, we can provide a credit for future travel valid for one year, minus a $100 processing fee.\nUSER: Hopefully I won't need that. What about travel insurance?\nASSISTANT: We partner with TravelGuard. Would you like information about coverage?\nUSER: What does it cost?\nASSISTANT: For your trip, comprehensive coverage would be $89. It covers trip cancellation, medical emergencies, lost baggage, and delays.\nUSER: I'll think about it. Can I add it later?\nASSISTANT: You have up to 14 days from today to add it and still get pre-existing condition coverage.\nUSER: Okay, I'll decide soon. Oh, one more thing - can I use the lounge in Seattle?\nASSISTANT: Pacific Lounge access requires business class or Gold status in our rewards program. Day passes are available for $59.\nUSER: Maybe on the way back. Is there anything else I should know?\nASSISTANT: Just remember to check in 24 hours before each flight. Your record locator for all airport services is PAC-778K4M. Both flights are on Boeing 737-900 aircraft with WiFi available for purchase.\nUSER: How much is the WiFi?\nASSISTANT: It's $8 for one hour, $15 for the full flight on domestic routes.\nUSER: Good to know. I think that covers everything.\nASSISTANT: Wonderful! To summarize: Rebecca Sullivan flying Pacific Airways on December 5th, PA 890 from Seattle at 10:45 AM to Miami, seat 12C. Returning December 9th, PA 891 at 2:35 PM, seat 14C. Confirmation PAC-778K4M. Total charged: $1,430. You're all set!\nUSER: Perfect, thank you so much Marcus!\nASSISTANT: My pleasure, Ms. Sullivan. Have a wonderful trip to Miami, and thank you for choosing Pacific Airways!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 3000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853522965683694b53d1b7644bc84f9058822e8eff24945c6",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"Session: conversation_id=airline_booking_001, timestamp=2024-11-10 16:30:00, metadata={\\\"business\\\": \\\"Pacific Airways\\\", \\\"department\\\": \\\"Reservations\\\", \\\"call_duration\\\": \\\"48 minutes\\\"}; assistant=Marcus (Reservations agent).\", \"Customer: Rebecca Anne Sullivan (full name as on ID), DOB=January 18th, 1982; contact info: email=rsullivan82@techmail.com, phone=206-555-4412, address=8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101; TSA PreCheck number=842756931; dietary restriction=vegetarian.\", \"Pacific Rewards: Rebecca joined during session; membership number=PR-4478829; estimated miles earned from trip=5,400.\", \"Trip details: Round-trip flight (Seattle to Miami) for business conference; outbound date=December 5th, return date=December 9th; 1 passenger (Rebecca).\", \"Outbound flight: Pacific Airways PA 890 (non-stop), economy class; departs Seattle-Tacoma International (SEA) Terminal B at 10:45 AM, arrives Miami International (MIA) Terminal D at 7:10 PM on December 5th; seat=12C (aisle, right side); price=$685.\", \"Return flight: Pacific Airways PA 891 (non-stop), economy class; departs MIA Terminal D at 2:35 PM, arrives SEA Terminal B at 5:55 PM on December 9th; seat=14C (aisle, right side); price=$685.\", \"Baggage: Pre-paid 1 checked bag round-trip; cost=$30 each way ($60 total); included baggage=1 personal item + 1 carry-on.\", \"Total payment: $685 (outbound) + $685 (return) + $60 (checked baggage) = $1,430 total charged to Rebecca's Visa card (name on card=Rebecca A Sullivan).\", \"Check-in: Online check-in available 24 hours before departure; mobile boarding pass available (add to Apple Wallet/Google Pay).\", \"Cancellation policy: Economy tickets non-refundable; change fee=$200 + fare difference; medical cancellation (with doctor's note) = credit for future travel (valid 1 year) minus $100 processing fee.\", \"Travel insurance: Offered via TravelGuard; comprehensive coverage=$89; can be added within 14 days of session for pre-existing condition coverage.\", \"Lounge access: Requires business class or Gold status; day pass available for $59.\", \"WiFi: In-flight WiFi cost=$8/hour or $15/full flight (domestic routes).\", \"Aircraft: Both flights operated on Boeing 737-900.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract all relevant facts from the new session that would help a future assistant, retaining exact values, ownership, event status, dates, provenance, and relationships. Let's start by identifying the key entities and events.\n\nFirst, the main entity is Rebecca Anne Sullivan, who is booking a round-trip flight with Pacific Airways. The conversation is part of a reservation session with conversation_id=airline_booking_001, timestamp=2024-11-10 16:30:00, metadata including business=Pacific Airways, department=Reservations, call_duration=48 minutes.\n\nRebecca's details: full name (Rebecca Anne Sullivan), date of birth (January 18th, 1982), email (rsullivan82@techmail.com), phone (206-555-4412), address (8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101), TSA PreCheck number (842756931). She joined Pacific Rewards with number PR-4478829, earning ~5,400 miles.\n\nFlight details: Round-trip Seattle (SEA) to Miami (MIA) for business conference. Outbound: December 5th, non-stop flight PA 890, departs SEA 10:45 AM, arrives MIA 7:10 PM, economy class, seat 12C (aisle, right side). Return: December 9th, non-stop flight PA 891, departs MIA 2:35 PM, arrives SEA 5:55 PM, economy class, seat 14C (aisle, right side). Total cost: $685 each flight ($1,370) + $60 pre-paid checked baggage (round trip, $30 each way) = $1,430 total.\n\nAdditional details: Dietary restriction (vegetarian) noted. Terminals: SEA Terminal B, MIA Terminal D. Cancellation policy: Economy non-refundable, $200 change fee + fare difference; medical cancellation with doctor's note: credit for 1 year minus $100 fee. Travel insurance: $89 for comprehensive coverage, add within 14 days for pre-existing condition coverage. Lounge access: Requires business class or Gold status; day pass $59. WiFi: $8/hour or $15/full flight. Check-in: Online 24 hours before, mobile boarding pass available. Baggage: 1 personal + 1 carry-on included; checked bags $35 first, $45 second (pre-pay $30 each way).\n\nNeed to organize these into contextual paragraphs, each retaining entity, event, time, status, relationships. Avoid redundancy but keep all key facts. Make sure to include conversation_id, timestamp, metadata as part of the session context. Also, note the assistant was Marcus from Reservations."
+            }
+          }
+        ],
+        "created": 1785352335,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1323,
+          "prompt_tokens": 2588,
+          "total_tokens": 3911,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 650,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1323,
+        "prompt_tokens": 2588,
+        "total_tokens": 3911,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 650,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853522965683694b53d1b7644bc84f9058822e8eff24945c6"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_04_airline_booking enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:12:15.109521+00:00",
+      "latency_ms": 10928.752,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"Session: conversation_id=airline_booking_001, timestamp=2024-11-10 16:30:00, metadata={\\\"business\\\": \\\"Pacific Airways\\\", \\\"department\\\": \\\"Reservations\\\", \\\"call_duration\\\": \\\"48 minutes\\\"}; assistant=Marcus (Reservations agent).\", \"Customer: Rebecca Anne Sullivan (full name as on ID), DOB=January 18th, 1982; contact info: email=rsullivan82@techmail.com, phone=206-555-4412, address=8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101; TSA PreCheck number=842756931; dietary restriction=vegetarian.\", \"Pacific Rewards: Rebecca joined during session; membership number=PR-4478829; estimated miles earned from trip=5,400.\", \"Trip details: Round-trip flight (Seattle to Miami) for business conference; outbound date=December 5th, return date=December 9th; 1 passenger (Rebecca).\", \"Outbound flight: Pacific Airways PA 890 (non-stop), economy class; departs Seattle-Tacoma International (SEA) Terminal B at 10:45 AM, arrives Miami International (MIA) Terminal D at 7:10 PM on December 5th; seat=12C (aisle, right side); price=$685.\", \"Return flight: Pacific Airways PA 891 (non-stop), economy class; departs MIA Terminal D at 2:35 PM, arrives SEA Terminal B at 5:55 PM on December 9th; seat=14C (aisle, right side); price=$685.\", \"Baggage: Pre-paid 1 checked bag round-trip; cost=$30 each way ($60 total); included baggage=1 personal item + 1 carry-on.\", \"Total payment: $685 (outbound) + $685 (return) + $60 (checked baggage) = $1,430 total charged to Rebecca's Visa card (name on card=Rebecca A Sullivan).\", \"Check-in: Online check-in available 24 hours before departure; mobile boarding pass available (add to Apple Wallet/Google Pay).\", \"Cancellation policy: Economy tickets non-refundable; change fee=$200 + fare difference; medical cancellation (with doctor's note) = credit for future travel (valid 1 year) minus $100 processing fee.\", \"Travel insurance: Offered via TravelGuard; comprehensive coverage=$89; can be added within 14 days of session for pre-existing condition coverage.\", \"Lounge access: Requires business class or Gold status; day pass available for $59.\", \"WiFi: In-flight WiFi cost=$8/hour or $15/full flight (domestic routes).\", \"Aircraft: Both flights operated on Boeing 737-900.\"]\n\nUSER QUESTION:\nCan you remind me of my flight confirmation number and what seats I selected? I need to add it to my calendar."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "0217853523352873694b53d1b7644bc84f9058822e8eff28ff9a4",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your seat selections are as follows:  \n- **Outbound flight (December 5th, PA 890):** 12C (aisle, right side)  \n- **Return flight (December 9th, PA 891):** 14C (aisle, right side)  \n\nI don’t have your flight confirmation number in my notes. For the confirmation number, please check the email sent to rsullivan82@techmail.com (your provided contact email) from Pacific Airways—this is where booking confirmations are typically sent. Let me know if you need help locating it!",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question. They want their flight confirmation number and the seats they selected. First, I need to check the long-term memory provided.\n\nLooking through the memory, there's a lot of details about the trip, but wait, the confirmation number isn't listed. The memory includes things like conversation ID, membership number, flight details, seats, but no confirmation number. That's a problem. The user asked for the confirmation number, but it's not in the provided memory.\n\nNext, the seats: the outbound flight seat is 12C (aisle, right side), and the return flight seat is 14C (aisle, right side). That part is there. So I can provide the seats, but not the confirmation number.\n\nI need to be honest and say that the confirmation number isn't available in the provided information, but I can give the seats. Also, maybe suggest checking their email (rsullivan82@techmail.com) since that's where confirmations are usually sent. That makes sense because the memory does include her email, so that's a proactive step.\n\nSo the response should include the seats for both outbound and return, mention that the confirmation number isn't in the notes, and suggest checking her email for the confirmation."
+            }
+          }
+        ],
+        "created": 1785352346,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 396,
+          "prompt_tokens": 857,
+          "total_tokens": 1253,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 268,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 396,
+        "prompt_tokens": 857,
+        "total_tokens": 1253,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 268,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853523352873694b53d1b7644bc84f9058822e8eff28ff9a4"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_04_airline_booking enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:12:26.042408+00:00",
+      "latency_ms": 5637.061,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=airline_booking_001\ntimestamp=2024-11-10 16:30:00\nmetadata={\"business\": \"Pacific Airways\", \"department\": \"Reservations\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I need to book a round-trip flight from Seattle to Miami for a business conference.\nASSISTANT: Good afternoon! Thank you for choosing Pacific Airways. I'm Marcus, and I'll help you with your reservation today. When are you looking to travel?\nUSER: I need to fly out on December 5th and return on December 9th.\nASSISTANT: Let me search for available flights. Do you have a preferred time of day for departure?\nUSER: I'd prefer a morning flight on the 5th, and afternoon or evening for the return.\nASSISTANT: Perfect. And will this be for one passenger?\nUSER: Yes, just myself.\nASSISTANT: May I have your full name as it appears on your ID?\nUSER: It's Rebecca Anne Sullivan.\nASSISTANT: Thank you, Ms. Sullivan. I have several options for December 5th. We have flight PA 234 departing Seattle at 7:15 AM, arriving Miami at 3:45 PM with one stop in Dallas.\nUSER: How long is the layover in Dallas?\nASSISTANT: It's a 1 hour and 30-minute layover.\nUSER: That's cutting it a bit close. What else do you have?\nASSISTANT: There's PA 567 leaving at 9:30 AM, arriving at 6:20 PM with a stop in Phoenix. The layover is 2 hours and 15 minutes.\nUSER: That sounds better. What about non-stop flights?\nASSISTANT: We have one non-stop, PA 890, departing at 10:45 AM and arriving at 7:10 PM. It's our premium route, so it's about $200 more.\nUSER: What's the price difference exactly?\nASSISTANT: The flight with the Phoenix connection is $487 in economy, and the non-stop is $685 in economy.\nUSER: And what about business class?\nASSISTANT: For the non-stop, business class is $1,450. For the Phoenix connection, it's $980.\nUSER: Let's go with economy on the non-stop. I value my time more than the extra cost.\nASSISTANT: Excellent choice. That's PA 890 on December 5th, departing Seattle at 10:45 AM. Now for your return on December 9th?\nUSER: What are the afternoon or evening options?\nASSISTANT: I have PA 891, non-stop, departing Miami at 2:35 PM, arriving Seattle at 5:55 PM.\nUSER: That's perfect actually.\nASSISTANT: Great! That's also $685 for economy. Would you like to select your seats now?\nUSER: Yes, please. I prefer an aisle seat.\nASSISTANT: For the outbound flight, I have aisle seats available in rows 12, 18, 24, and 31. Do you have a preference?\nUSER: I'd like to be closer to the front. Row 12 sounds good.\nASSISTANT: Row 12, seat C is available. It's an aisle seat on the right side of the aircraft. Would that work?\nUSER: Perfect.\nASSISTANT: And for the return flight?\nUSER: Something similar if possible.\nASSISTANT: I can put you in row 14, seat C, also an aisle on the right side.\nUSER: That works great.\nASSISTANT: Wonderful. Now, are you a member of our Pacific Rewards program?\nUSER: No, I'm not.\nASSISTANT: Would you like to join? It's free and you'll earn miles on this trip.\nUSER: Sure, why not.\nASSISTANT: Excellent. I'll need your date of birth for the membership.\nUSER: January 18th, 1982.\nASSISTANT: And your email address?\nUSER: rsullivan82@techmail.com\nASSISTANT: Phone number?\nUSER: 206-555-4412.\nASSISTANT: And your mailing address?\nUSER: 8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101.\nASSISTANT: Perfect. Your Pacific Rewards number is PR-4478829. You'll earn about 5,400 miles from this round trip.\nUSER: Great. What about baggage? What's included?\nASSISTANT: With your economy ticket, you get one personal item and one carry-on included. Checked bags are $35 for the first bag, $45 for the second.\nUSER: I'll probably need to check one bag.\nASSISTANT: Would you like to pre-pay for it now? It saves you $5 per bag.\nUSER: So it would be $30 instead of $35?\nASSISTANT: Correct, $30 each way if you pre-pay now, so $60 total for round trip.\nUSER: Yes, let's do that.\nASSISTANT: Added. Now, do you have any dietary restrictions for the in-flight meal service?\nUSER: I'm vegetarian.\nASSISTANT: I've noted that. We'll have a vegetarian option available for you. Do you have TSA PreCheck or Global Entry?\nUSER: Yes, I have TSA PreCheck. The number is 842756931.\nASSISTANT: I've added that to your reservation. It will appear on your boarding pass. Now, how would you like to pay for this reservation?\nUSER: I'll use my Visa card.\nASSISTANT: Ready when you are.\nUSER: The number is 4532-8876-9901-3345.\nASSISTANT: And the expiration date?\nUSER: 10/26.\nASSISTANT: The CVV code?\nUSER: 338.\nASSISTANT: And the billing zip code?\nUSER: 98101, same as my address.\nASSISTANT: Is the name on the card Rebecca A Sullivan?\nUSER: Yes, that's correct.\nASSISTANT: Perfect. Your total is $1,430 - that's two flights at $685 each plus $60 for checked baggage. Processing now...\nUSER: Sounds right.\nASSISTANT: Your payment has been approved. Your confirmation number is PAC-778K4M.\nUSER: Let me get that... PAC-778K4M?\nASSISTANT: That's correct. I'm emailing your itinerary to rsullivan82@techmail.com right now.\nUSER: Perfect. Oh, what about seat upgrades? Is there extra legroom available?\nASSISTANT: Yes, we have Comfort Plus seats with 4 extra inches of legroom. Would you like to upgrade?\nUSER: How much is it?\nASSISTANT: It's $89 per flight segment, so $178 for your round trip.\nUSER: I'll pass for now. Can I upgrade later if I change my mind?\nASSISTANT: Absolutely. You can upgrade anytime before check-in through our website or mobile app.\nUSER: Good to know. What time should I arrive at the airport?\nASSISTANT: For domestic flights, we recommend arriving 2 hours before departure. So by 8:45 AM for your December 5th flight.\nUSER: And I can check in online?\nASSISTANT: Yes, online check-in opens 24 hours before departure. You can use our mobile app or website.\nUSER: Can I get my boarding pass on my phone?\nASSISTANT: Yes, mobile boarding passes are available. You can also add them to your Apple Wallet or Google Pay.\nUSER: Perfect. What terminal does Pacific Airways use at SeaTac?\nASSISTANT: We operate from Terminal B at Seattle-Tacoma International.\nUSER: And in Miami?\nASSISTANT: We're in Terminal D at Miami International.\nUSER: What's your cancellation policy?\nASSISTANT: Economy tickets are non-refundable, but you can change your flight for a $200 change fee plus any fare difference.\nUSER: What if I need to cancel for medical reasons?\nASSISTANT: With a doctor's note, we can provide a credit for future travel valid for one year, minus a $100 processing fee.\nUSER: Hopefully I won't need that. What about travel insurance?\nASSISTANT: We partner with TravelGuard. Would you like information about coverage?\nUSER: What does it cost?\nASSISTANT: For your trip, comprehensive coverage would be $89. It covers trip cancellation, medical emergencies, lost baggage, and delays.\nUSER: I'll think about it. Can I add it later?\nASSISTANT: You have up to 14 days from today to add it and still get pre-existing condition coverage.\nUSER: Okay, I'll decide soon. Oh, one more thing - can I use the lounge in Seattle?\nASSISTANT: Pacific Lounge access requires business class or Gold status in our rewards program. Day passes are available for $59.\nUSER: Maybe on the way back. Is there anything else I should know?\nASSISTANT: Just remember to check in 24 hours before each flight. Your record locator for all airport services is PAC-778K4M. Both flights are on Boeing 737-900 aircraft with WiFi available for purchase.\nUSER: How much is the WiFi?\nASSISTANT: It's $8 for one hour, $15 for the full flight on domestic routes.\nUSER: Good to know. I think that covers everything.\nASSISTANT: Wonderful! To summarize: Rebecca Sullivan flying Pacific Airways on December 5th, PA 890 from Seattle at 10:45 AM to Miami, seat 12C. Returning December 9th, PA 891 at 2:35 PM, seat 14C. Confirmation PAC-778K4M. Total charged: $1,430. You're all set!\nUSER: Perfect, thank you so much Marcus!\nASSISTANT: My pleasure, Ms. Sullivan. Have a wonderful trip to Miami, and thank you for choosing Pacific Airways!\n\nQUESTION: Can you remind me of my flight confirmation number and what seats I selected? I need to add it to my calendar.\nANSWER: Your seat selections are as follows:  \n- **Outbound flight (December 5th, PA 890):** 12C (aisle, right side)  \n- **Return flight (December 9th, PA 891):** 14C (aisle, right side)  \n\nI don’t have your flight confirmation number in my notes. For the confirmation number, please check the email sent to rsullivan82@techmail.com (your provided contact email) from Pacific Airways—this is where booking confirmations are typically sent. Let me know if you need help locating it!\nEVALUATION CRITERIA: The agent should accurately retrieve and provide the confirmation number PAC-778K4M along with both seat assignments from the flight booking conversation - seat 12C for the outbound flight and seat 14C for the return flight. The response must demonstrate precise recall of both the confirmation code and the specific seats selected for each flight. The agent may also helpfully mention that both are aisle seats as discussed during booking, or reference the specific flight numbers (PA 890 outbound and PA 891 return). The agent must not confuse the confirmation number with other codes mentioned like the rewards number or mix up the seat assignments between the two flights.\n\nEXPECTED BEHAVIOR: The agent should provide confirmation number PAC-778K4M and specify seat 12C for the outbound flight and seat 14C for the return flight\n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a509a0efb1450ac9b2d80",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 1,\n      \"reasoning\": \"The agent did not provide the confirmation number PAC-778K4M, which was a core piece of information requested by the user.\",\n      \"evidence\": [\n        \"I don’t have your flight confirmation number in my notes.\"\n      ]\n    },\n    \"recall\": {\n      \"score\": 1,\n      \"reasoning\": \"The agent failed to recall and provide the confirmation number PAC-778K4M, which was a key detail from the original conversation.\",\n      \"evidence\": [\n        \"I don’t have your flight confirmation number in my notes.\"\n      ]\n    },\n    \"reasoning\": {\n      \"score\": 1,\n      \"reasoning\": \"The agent's response demonstrated a lack of reasoning as they did not attempt to retrieve the confirmation number from the provided conversation history or explain why they could not provide it.\"\n    },\n    \"proactivity\": {\n      \"score\": 1,\n      \"reasoning\": \"The agent did not show any proactive behavior in attempting to retrieve the missing information or offering a solution to help the user find the confirmation number.\"\n    }\n  },\n  \"hallucination\": {\n    \"detected\": false,\n    \"claims\": [],\n    \"reasoning\": \"The agent did not make any unsupported factual claims.\"\n  },\n  \"overall_reasoning\": \"The agent failed to meet the basic requirements of the task by not providing the flight confirmation number and only partially addressing the seat selection details. The response lacked precision and recall, and there was no evidence of proactive behavior or reasoning to address the user's request.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785352346,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 366,
+          "prompt_tokens": 2738,
+          "total_tokens": 3104,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 366,
+        "prompt_tokens": 2738,
+        "total_tokens": 3104,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a509a0efb1450ac9b2d80"
+    }
+  ],
+  "updated_at_epoch": 1785352351.682857,
+  "answer": "Your seat selections are as follows:  \n- **Outbound flight (December 5th, PA 890):** 12C (aisle, right side)  \n- **Return flight (December 9th, PA 891):** 14C (aisle, right side)  \n\nI don’t have your flight confirmation number in my notes. For the confirmation number, please check the email sent to rsullivan82@techmail.com (your provided contact email) from Pacific Airways—this is where booking confirmations are typically sent. Let me know if you need help locating it!",
+  "result": {
+    "test_id": "layer1_04_airline_booking",
+    "layer": "layer1",
+    "title": "Airline Reservation - Flight Details and Passenger Information",
+    "mode": "enhanced_notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "airline_booking_001",
+        "memory": [
+          "Session: conversation_id=airline_booking_001, timestamp=2024-11-10 16:30:00, metadata={\"business\": \"Pacific Airways\", \"department\": \"Reservations\", \"call_duration\": \"48 minutes\"}; assistant=Marcus (Reservations agent).",
+          "Customer: Rebecca Anne Sullivan (full name as on ID), DOB=January 18th, 1982; contact info: email=rsullivan82@techmail.com, phone=206-555-4412, address=8923 Evergreen Way, Apartment 14B, Seattle, Washington, 98101; TSA PreCheck number=842756931; dietary restriction=vegetarian.",
+          "Pacific Rewards: Rebecca joined during session; membership number=PR-4478829; estimated miles earned from trip=5,400.",
+          "Trip details: Round-trip flight (Seattle to Miami) for business conference; outbound date=December 5th, return date=December 9th; 1 passenger (Rebecca).",
+          "Outbound flight: Pacific Airways PA 890 (non-stop), economy class; departs Seattle-Tacoma International (SEA) Terminal B at 10:45 AM, arrives Miami International (MIA) Terminal D at 7:10 PM on December 5th; seat=12C (aisle, right side); price=$685.",
+          "Return flight: Pacific Airways PA 891 (non-stop), economy class; departs MIA Terminal D at 2:35 PM, arrives SEA Terminal B at 5:55 PM on December 9th; seat=14C (aisle, right side); price=$685.",
+          "Baggage: Pre-paid 1 checked bag round-trip; cost=$30 each way ($60 total); included baggage=1 personal item + 1 carry-on.",
+          "Total payment: $685 (outbound) + $685 (return) + $60 (checked baggage) = $1,430 total charged to Rebecca's Visa card (name on card=Rebecca A Sullivan).",
+          "Check-in: Online check-in available 24 hours before departure; mobile boarding pass available (add to Apple Wallet/Google Pay).",
+          "Cancellation policy: Economy tickets non-refundable; change fee=$200 + fare difference; medical cancellation (with doctor's note) = credit for future travel (valid 1 year) minus $100 processing fee.",
+          "Travel insurance: Offered via TravelGuard; comprehensive coverage=$89; can be added within 14 days of session for pre-existing condition coverage.",
+          "Lounge access: Requires business class or Gold status; day pass available for $59.",
+          "WiFi: In-flight WiFi cost=$8/hour or $15/full flight (domestic routes).",
+          "Aircraft: Both flights operated on Boeing 737-900."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "airline_booking_001"
+        }
+      }
+    ],
+    "answer": "Your seat selections are as follows:  \n- **Outbound flight (December 5th, PA 890):** 12C (aisle, right side)  \n- **Return flight (December 9th, PA 891):** 14C (aisle, right side)  \n\nI don’t have your flight confirmation number in my notes. For the confirmation number, please check the email sent to rsullivan82@techmail.com (your provided contact email) from Pacific Airways—this is where booking confirmations are typically sent. Let me know if you need help locating it!",
+    "judge": {
+      "scores": {
+        "precision": 1,
+        "recall": 1,
+        "reasoning": 1,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": false,
+      "reward": 0.25
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 1,
+          "reasoning": "The agent did not provide the confirmation number PAC-778K4M, which was a core piece of information requested by the user.",
+          "evidence": [
+            "I don’t have your flight confirmation number in my notes."
+          ]
+        },
+        "recall": {
+          "score": 1,
+          "reasoning": "The agent failed to recall and provide the confirmation number PAC-778K4M, which was a key detail from the original conversation.",
+          "evidence": [
+            "I don’t have your flight confirmation number in my notes."
+          ]
+        },
+        "reasoning": {
+          "score": 1,
+          "reasoning": "The agent's response demonstrated a lack of reasoning as they did not attempt to retrieve the confirmation number from the provided conversation history or explain why they could not provide it."
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The agent did not show any proactive behavior in attempting to retrieve the missing information or offering a solution to help the user find the confirmation number."
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The agent did not make any unsupported factual claims."
+      },
+      "overall_reasoning": "The agent failed to meet the basic requirements of the task by not providing the flight confirmation number and only partially addressing the seat selection details. The response lacked precision and recall, and there was no evidence of proactive behavior or reasoning to address the user's request."
+    }
+  }
+}

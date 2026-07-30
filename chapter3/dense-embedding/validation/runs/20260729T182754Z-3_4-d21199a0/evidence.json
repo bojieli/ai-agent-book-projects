@@ -1,0 +1,548 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-4",
+  "run_id": "20260729T182754Z-3_4-d21199a0",
+  "provenance": {
+    "captured_at": "2026-07-29T18:27:54.233593+00:00",
+    "git_revision": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "credential_presence": {
+      "ARK_API_KEY": true,
+      "MOONSHOT_API_KEY": true,
+      "OPENAI_API_KEY": true,
+      "GEMINI_API_KEY": true,
+      "SILICONFLOW_API_KEY": true
+    }
+  },
+  "status": "partial",
+  "configuration": {
+    "embedding_model": "Qwen/Qwen3-Embedding-0.6B",
+    "model_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "device": "cpu",
+    "seed": 37,
+    "dimension": 1024,
+    "documents": 40,
+    "queries": 20,
+    "top_k": 3,
+    "annoy_runtime": {
+      "kind": "docker-linux-aarch64",
+      "reason": "host macOS ARM ANNOY extension failed health check (returned fewer than k items)",
+      "base_image": "python:3.11-slim",
+      "base_image_repo_digests": [
+        "python@sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93"
+      ],
+      "container_setup_and_run_wall_ms": 38303.133
+    }
+  },
+  "acceptance": {
+    "real_embedding_model": true,
+    "same_vectors_and_queries": true,
+    "exact_search_ground_truth": true,
+    "recall_latency_build_size_measured": true,
+    "incremental_behavior_measured": true,
+    "both_backends_recall_at_least_0_8": true,
+    "passed": false
+  },
+  "summary": {
+    "embedding_latency_ms": 8671.983,
+    "annoy": {
+      "build_ms": 5.385,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.10229384060949087,
+        "p50": 0.09818747639656067,
+        "p95": 0.12266857083886863
+      },
+      "serialized_bytes": 542256,
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 2.763,
+        "requires_full_rebuild": true,
+        "recall_at_k_after_update": 1.0
+      }
+    },
+    "hnsw": {
+      "build_ms": 1.375,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.03809796180576086,
+        "p50": 0.03702123649418354,
+        "p95": 0.042385491542518146
+      },
+      "serialized_bytes": 135912,
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 0.919,
+        "requires_full_rebuild": false,
+        "recall_at_k_after_update": 1.0
+      }
+    }
+  },
+  "corpus": {
+    "doc_ids": [
+      "doc_0000",
+      "doc_0001",
+      "doc_0002",
+      "doc_0003",
+      "doc_0004",
+      "doc_0005",
+      "doc_0006",
+      "doc_0007",
+      "doc_0008",
+      "doc_0009",
+      "doc_0010",
+      "doc_0011",
+      "doc_0012",
+      "doc_0013",
+      "doc_0014",
+      "doc_0015",
+      "doc_0016",
+      "doc_0017",
+      "doc_0018",
+      "doc_0019",
+      "doc_0020",
+      "doc_0021",
+      "doc_0022",
+      "doc_0023",
+      "doc_0024",
+      "doc_0025",
+      "doc_0026",
+      "doc_0027",
+      "doc_0028",
+      "doc_0029",
+      "doc_0030",
+      "doc_0031",
+      "doc_0032",
+      "doc_0033",
+      "doc_0034",
+      "doc_0035",
+      "doc_0036",
+      "doc_0037",
+      "doc_0038",
+      "doc_0039"
+    ],
+    "texts": [
+      "Topic: vector search. Approximate nearest-neighbor indexes accelerate semantic vector retrieval. A concise technical overview. Document revision 0000.",
+      "Topic: database transactions. Database transactions use atomicity, consistency, isolation and durability. A concise technical overview. Document revision 0001.",
+      "Topic: photosynthesis. Green plants turn sunlight and carbon dioxide into chemical energy. A concise technical overview. Document revision 0002.",
+      "Topic: quantum entanglement. Entangled particles exhibit correlated quantum measurement outcomes. A concise technical overview. Document revision 0003.",
+      "Topic: contract law. A valid contract generally requires offer acceptance and consideration. A concise technical overview. Document revision 0004.",
+      "Topic: neural networks. Deep neural networks learn layered nonlinear representations from data. A concise technical overview. Document revision 0005.",
+      "Topic: cybersecurity. Zero trust security continuously verifies identity and device posture. A concise technical overview. Document revision 0006.",
+      "Topic: volcanoes. Volcanoes form when magma rises through fractures in the planetary crust. A concise technical overview. Document revision 0007.",
+      "Topic: water cycle. Evaporation condensation precipitation and runoff form the water cycle. A concise technical overview. Document revision 0008.",
+      "Topic: operating systems. An operating system schedules processes and manages memory and devices. A concise technical overview. Document revision 0009.",
+      "Topic: HTTP errors. HTTP status 403 means a server understood but refused a request. A concise technical overview. Document revision 0010.",
+      "Topic: machine translation. Multilingual models translate meaning between natural languages. A concise technical overview. Document revision 0011.",
+      "Topic: financial risk. Portfolio diversification reduces exposure to idiosyncratic financial risk. A concise technical overview. Document revision 0012.",
+      "Topic: medical imaging. Radiology systems analyze X-rays CT scans and magnetic resonance images. A concise technical overview. Document revision 0013.",
+      "Topic: supply chains. Supply chain planning coordinates inventory logistics demand and suppliers. A concise technical overview. Document revision 0014.",
+      "Topic: climate science. Climate models simulate long-term interactions among atmosphere ocean and land. A concise technical overview. Document revision 0015.",
+      "Topic: CPU instructions. SIMD instructions apply one operation to several packed numeric values. A concise technical overview. Document revision 0016.",
+      "Topic: compiler design. A compiler parses source code optimizes intermediate form and emits machine code. A concise technical overview. Document revision 0017.",
+      "Topic: graph theory. Graph algorithms traverse vertices and edges to discover paths and communities. A concise technical overview. Document revision 0018.",
+      "Topic: astronomy. Astronomers infer stellar properties from spectra luminosity and orbital motion. A concise technical overview. Document revision 0019.",
+      "Topic: vector search. Approximate nearest-neighbor indexes accelerate semantic vector retrieval. This passage explains the central mechanism and its practical use. Document revision 0020.",
+      "Topic: database transactions. Database transactions use atomicity, consistency, isolation and durability. This passage explains the central mechanism and its practical use. Document revision 0021.",
+      "Topic: photosynthesis. Green plants turn sunlight and carbon dioxide into chemical energy. This passage explains the central mechanism and its practical use. Document revision 0022.",
+      "Topic: quantum entanglement. Entangled particles exhibit correlated quantum measurement outcomes. This passage explains the central mechanism and its practical use. Document revision 0023.",
+      "Topic: contract law. A valid contract generally requires offer acceptance and consideration. This passage explains the central mechanism and its practical use. Document revision 0024.",
+      "Topic: neural networks. Deep neural networks learn layered nonlinear representations from data. This passage explains the central mechanism and its practical use. Document revision 0025.",
+      "Topic: cybersecurity. Zero trust security continuously verifies identity and device posture. This passage explains the central mechanism and its practical use. Document revision 0026.",
+      "Topic: volcanoes. Volcanoes form when magma rises through fractures in the planetary crust. This passage explains the central mechanism and its practical use. Document revision 0027.",
+      "Topic: water cycle. Evaporation condensation precipitation and runoff form the water cycle. This passage explains the central mechanism and its practical use. Document revision 0028.",
+      "Topic: operating systems. An operating system schedules processes and manages memory and devices. This passage explains the central mechanism and its practical use. Document revision 0029.",
+      "Topic: HTTP errors. HTTP status 403 means a server understood but refused a request. This passage explains the central mechanism and its practical use. Document revision 0030.",
+      "Topic: machine translation. Multilingual models translate meaning between natural languages. This passage explains the central mechanism and its practical use. Document revision 0031.",
+      "Topic: financial risk. Portfolio diversification reduces exposure to idiosyncratic financial risk. This passage explains the central mechanism and its practical use. Document revision 0032.",
+      "Topic: medical imaging. Radiology systems analyze X-rays CT scans and magnetic resonance images. This passage explains the central mechanism and its practical use. Document revision 0033.",
+      "Topic: supply chains. Supply chain planning coordinates inventory logistics demand and suppliers. This passage explains the central mechanism and its practical use. Document revision 0034.",
+      "Topic: climate science. Climate models simulate long-term interactions among atmosphere ocean and land. This passage explains the central mechanism and its practical use. Document revision 0035.",
+      "Topic: CPU instructions. SIMD instructions apply one operation to several packed numeric values. This passage explains the central mechanism and its practical use. Document revision 0036.",
+      "Topic: compiler design. A compiler parses source code optimizes intermediate form and emits machine code. This passage explains the central mechanism and its practical use. Document revision 0037.",
+      "Topic: graph theory. Graph algorithms traverse vertices and edges to discover paths and communities. This passage explains the central mechanism and its practical use. Document revision 0038.",
+      "Topic: astronomy. Astronomers infer stellar properties from spectra luminosity and orbital motion. This passage explains the central mechanism and its practical use. Document revision 0039."
+    ],
+    "queries": [
+      "Find technical information about vector search.",
+      "Find technical information about database transactions.",
+      "Find technical information about photosynthesis.",
+      "Find technical information about quantum entanglement.",
+      "Find technical information about contract law.",
+      "Find technical information about neural networks.",
+      "Find technical information about cybersecurity.",
+      "Find technical information about volcanoes.",
+      "Find technical information about water cycle.",
+      "Find technical information about operating systems.",
+      "Find technical information about HTTP errors.",
+      "Find technical information about machine translation.",
+      "Find technical information about financial risk.",
+      "Find technical information about medical imaging.",
+      "Find technical information about supply chains.",
+      "Find technical information about climate science.",
+      "Find technical information about CPU instructions.",
+      "Find technical information about compiler design.",
+      "Find technical information about graph theory.",
+      "Find technical information about astronomy."
+    ]
+  },
+  "results": {
+    "annoy": {
+      "build_ms": 5.385,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.10229384060949087,
+        "p50": 0.09818747639656067,
+        "p95": 0.12266857083886863
+      },
+      "serialized_bytes": 542256,
+      "rankings": [
+        {
+          "query_index": 0,
+          "doc_ids": [
+            "doc_0000",
+            "doc_0020",
+            "doc_0018"
+          ]
+        },
+        {
+          "query_index": 1,
+          "doc_ids": [
+            "doc_0001",
+            "doc_0021",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 2,
+          "doc_ids": [
+            "doc_0002",
+            "doc_0022",
+            "doc_0008"
+          ]
+        },
+        {
+          "query_index": 3,
+          "doc_ids": [
+            "doc_0003",
+            "doc_0023",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 4,
+          "doc_ids": [
+            "doc_0024",
+            "doc_0004",
+            "doc_0003"
+          ]
+        },
+        {
+          "query_index": 5,
+          "doc_ids": [
+            "doc_0005",
+            "doc_0025",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 6,
+          "doc_ids": [
+            "doc_0006",
+            "doc_0026",
+            "doc_0018"
+          ]
+        },
+        {
+          "query_index": 7,
+          "doc_ids": [
+            "doc_0007",
+            "doc_0027",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 8,
+          "doc_ids": [
+            "doc_0008",
+            "doc_0028",
+            "doc_0015"
+          ]
+        },
+        {
+          "query_index": 9,
+          "doc_ids": [
+            "doc_0009",
+            "doc_0029",
+            "doc_0016"
+          ]
+        },
+        {
+          "query_index": 10,
+          "doc_ids": [
+            "doc_0010",
+            "doc_0030",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 11,
+          "doc_ids": [
+            "doc_0011",
+            "doc_0031",
+            "doc_0025"
+          ]
+        },
+        {
+          "query_index": 12,
+          "doc_ids": [
+            "doc_0012",
+            "doc_0018",
+            "doc_0005"
+          ]
+        },
+        {
+          "query_index": 13,
+          "doc_ids": [
+            "doc_0013",
+            "doc_0000",
+            "doc_0005"
+          ]
+        },
+        {
+          "query_index": 14,
+          "doc_ids": [
+            "doc_0014",
+            "doc_0008",
+            "doc_0028"
+          ]
+        },
+        {
+          "query_index": 15,
+          "doc_ids": [
+            "doc_0015",
+            "doc_0008",
+            "doc_0028"
+          ]
+        },
+        {
+          "query_index": 16,
+          "doc_ids": [
+            "doc_0016",
+            "doc_0029",
+            "doc_0017"
+          ]
+        },
+        {
+          "query_index": 17,
+          "doc_ids": [
+            "doc_0017",
+            "doc_0016",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 18,
+          "doc_ids": [
+            "doc_0018",
+            "doc_0005",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 19,
+          "doc_ids": [
+            "doc_0019",
+            "doc_0000",
+            "doc_0013"
+          ]
+        }
+      ],
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 2.763,
+        "requires_full_rebuild": true,
+        "recall_at_k_after_update": 1.0
+      }
+    },
+    "hnsw": {
+      "build_ms": 1.375,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.03809796180576086,
+        "p50": 0.03702123649418354,
+        "p95": 0.042385491542518146
+      },
+      "serialized_bytes": 135912,
+      "rankings": [
+        {
+          "query_index": 0,
+          "doc_ids": [
+            "doc_0000",
+            "doc_0020",
+            "doc_0018"
+          ]
+        },
+        {
+          "query_index": 1,
+          "doc_ids": [
+            "doc_0001",
+            "doc_0021",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 2,
+          "doc_ids": [
+            "doc_0002",
+            "doc_0022",
+            "doc_0008"
+          ]
+        },
+        {
+          "query_index": 3,
+          "doc_ids": [
+            "doc_0003",
+            "doc_0023",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 4,
+          "doc_ids": [
+            "doc_0024",
+            "doc_0004",
+            "doc_0003"
+          ]
+        },
+        {
+          "query_index": 5,
+          "doc_ids": [
+            "doc_0005",
+            "doc_0025",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 6,
+          "doc_ids": [
+            "doc_0006",
+            "doc_0026",
+            "doc_0018"
+          ]
+        },
+        {
+          "query_index": 7,
+          "doc_ids": [
+            "doc_0007",
+            "doc_0027",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 8,
+          "doc_ids": [
+            "doc_0008",
+            "doc_0028",
+            "doc_0015"
+          ]
+        },
+        {
+          "query_index": 9,
+          "doc_ids": [
+            "doc_0009",
+            "doc_0029",
+            "doc_0016"
+          ]
+        },
+        {
+          "query_index": 10,
+          "doc_ids": [
+            "doc_0010",
+            "doc_0030",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 11,
+          "doc_ids": [
+            "doc_0011",
+            "doc_0031",
+            "doc_0025"
+          ]
+        },
+        {
+          "query_index": 12,
+          "doc_ids": [
+            "doc_0012",
+            "doc_0018",
+            "doc_0005"
+          ]
+        },
+        {
+          "query_index": 13,
+          "doc_ids": [
+            "doc_0013",
+            "doc_0000",
+            "doc_0005"
+          ]
+        },
+        {
+          "query_index": 14,
+          "doc_ids": [
+            "doc_0014",
+            "doc_0008",
+            "doc_0028"
+          ]
+        },
+        {
+          "query_index": 15,
+          "doc_ids": [
+            "doc_0015",
+            "doc_0008",
+            "doc_0028"
+          ]
+        },
+        {
+          "query_index": 16,
+          "doc_ids": [
+            "doc_0016",
+            "doc_0029",
+            "doc_0017"
+          ]
+        },
+        {
+          "query_index": 17,
+          "doc_ids": [
+            "doc_0017",
+            "doc_0016",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 18,
+          "doc_ids": [
+            "doc_0018",
+            "doc_0005",
+            "doc_0000"
+          ]
+        },
+        {
+          "query_index": 19,
+          "doc_ids": [
+            "doc_0019",
+            "doc_0000",
+            "doc_0013"
+          ]
+        }
+      ],
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 0.919,
+        "requires_full_rebuild": false,
+        "recall_at_k_after_update": 1.0
+      }
+    }
+  }
+}

@@ -1,0 +1,738 @@
+{
+  "schema_version": 2,
+  "experiment": "8-4",
+  "canonical_source": "book/chapter8.md#实验-8-4-从浏览器轨迹生成可验证工作流",
+  "executed_at": "2026-07-29T17:13:14.558813+00:00",
+  "execution_mode": "real_model_plus_local_http_plus_real_playwright_chromium",
+  "model": "doubao-seed-1-6-flash-250615",
+  "seed": 8401,
+  "backend": {
+    "provider": "ark",
+    "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    "credential_env": "ARK_API_KEY",
+    "credential_value_recorded": false
+  },
+  "credential_value_recorded": false,
+  "host": {
+    "python": "3.11.4",
+    "platform": "macOS-26.3-arm64-arm-64bit"
+  },
+  "lifecycle": {
+    "exploration": {
+      "success": true,
+      "captured_actions": [
+        {
+          "action": "input_text",
+          "selector": "#recipient",
+          "value_key": "recipient",
+          "action_parameters": {
+            "text_template": "{recipient}"
+          },
+          "before": {
+            "url": "http://127.0.0.1:63425/app",
+            "visible": true,
+            "page_status": {
+              "url": "http://127.0.0.1:63425/app",
+              "status_text": "Draft",
+              "persisted_count": 0
+            }
+          },
+          "after": {
+            "url": "http://127.0.0.1:63425/app",
+            "value": "test@example.com",
+            "status_text": "Draft"
+          },
+          "locator_evidence": {
+            "xpath": "/html[1]/body[1]/main[1]/label[1]/input[1]",
+            "css": "#recipient",
+            "id": "recipient",
+            "name": "recipient",
+            "type": "email",
+            "role": null,
+            "aria-label": null,
+            "data-testid": "recipient",
+            "captured_url": "http://127.0.0.1:63425/app"
+          }
+        },
+        {
+          "action": "input_text",
+          "selector": "#subject",
+          "value_key": "subject",
+          "action_parameters": {
+            "text_template": "{subject}"
+          },
+          "before": {
+            "url": "http://127.0.0.1:63425/app",
+            "visible": true,
+            "page_status": {
+              "url": "http://127.0.0.1:63425/app",
+              "status_text": "Draft",
+              "persisted_count": 0
+            }
+          },
+          "after": {
+            "url": "http://127.0.0.1:63425/app",
+            "value": "测试邮件",
+            "status_text": "Draft"
+          },
+          "locator_evidence": {
+            "xpath": "/html[1]/body[1]/main[1]/label[2]/input[1]",
+            "css": "#subject",
+            "id": "subject",
+            "name": "subject",
+            "type": "text",
+            "role": null,
+            "aria-label": null,
+            "data-testid": "subject",
+            "captured_url": "http://127.0.0.1:63425/app"
+          }
+        },
+        {
+          "action": "input_text",
+          "selector": "#content",
+          "value_key": "content",
+          "action_parameters": {
+            "text_template": "{content}"
+          },
+          "before": {
+            "url": "http://127.0.0.1:63425/app",
+            "visible": true,
+            "page_status": {
+              "url": "http://127.0.0.1:63425/app",
+              "status_text": "Draft",
+              "persisted_count": 0
+            }
+          },
+          "after": {
+            "url": "http://127.0.0.1:63425/app",
+            "value": "第一次探索正文",
+            "status_text": "Draft"
+          },
+          "locator_evidence": {
+            "xpath": "/html[1]/body[1]/main[1]/label[3]/textarea[1]",
+            "css": "#content",
+            "id": "content",
+            "name": "content",
+            "type": "textarea",
+            "role": null,
+            "aria-label": null,
+            "data-testid": "content",
+            "captured_url": "http://127.0.0.1:63425/app"
+          }
+        },
+        {
+          "action": "click",
+          "selector": "#send",
+          "value_key": null,
+          "action_parameters": {},
+          "before": {
+            "url": "http://127.0.0.1:63425/app",
+            "visible": true,
+            "page_status": {
+              "url": "http://127.0.0.1:63425/app",
+              "status_text": "Draft",
+              "persisted_count": 0
+            }
+          },
+          "after": {
+            "url": "http://127.0.0.1:63425/app",
+            "value": null,
+            "status_text": "Message sent"
+          },
+          "locator_evidence": {
+            "xpath": "/html[1]/body[1]/main[1]/button[1]",
+            "css": "#send",
+            "id": "send",
+            "name": "",
+            "type": "button",
+            "role": null,
+            "aria-label": null,
+            "data-testid": "send",
+            "captured_url": "http://127.0.0.1:63425/app"
+          }
+        }
+      ],
+      "llm_calls": 4,
+      "elapsed_seconds": 5.312764,
+      "browser": {
+        "engine": "playwright-chromium",
+        "version": "139.0.7258.5",
+        "headless": true
+      },
+      "api_receipts": [
+        {
+          "kind": "browser_agent_step",
+          "step": 1,
+          "backend": {
+            "provider": "ark",
+            "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+            "credential_env": "ARK_API_KEY",
+            "credential_value_recorded": false
+          },
+          "request": {
+            "model": "doubao-seed-1-6-flash-250615",
+            "messages": [
+              {
+                "role": "user",
+                "content": "You are the stepwise browser Agent for a local disposable mail sandbox.\nChoose exactly the next safe action, not a multi-action plan. Return JSON only as\n{\"action\":\"input_text|click\",\"selector\":\"#id\",\"value_key\":\"recipient|subject|content|null\"}.\nGoal: send one message using the supplied parameter keys. Fill recipient, subject and content before clicking send.\nTask parameters: {\"recipient\": \"test@example.com\", \"subject\": \"测试邮件\", \"content\": \"第一次探索正文\"}\nPrior actions: []\nCurrent page state: {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}\nCurrent controls: [{\"tag\": \"input\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria_label\": null, \"data_testid\": \"recipient\", \"text\": \"\", \"label\": \"Recipient\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\"}, {\"tag\": \"input\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria_label\": null, \"data_testid\": \"subject\", \"text\": \"\", \"label\": \"Subject\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\"}, {\"tag\": \"textarea\", \"id\": \"content\", \"name\": \"content\", \"type\": \"textarea\", \"role\": null, \"aria_label\": null, \"data_testid\": \"content\", \"text\": \"\", \"label\": \"Content\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[3]/textarea[1]\"}, {\"tag\": \"button\", \"id\": \"send\", \"name\": \"\", \"type\": \"button\", \"role\": null, \"aria_label\": null, \"data_testid\": \"send\", \"text\": \"Send message\", \"label\": \"\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/button[1]\"}]\n"
+              }
+            ],
+            "temperature": 0,
+            "seed": 8401,
+            "max_tokens": 300,
+            "response_format": {
+              "type": "json_object"
+            }
+          },
+          "response": {
+            "id": "021785345154246dceccb6eac83fbed179ddd9eacafd80e172c91",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "content": "{\"action\":\"input_text\",\"selector\":\"#recipient\",\"value_key\":\"recipient\"}",
+                  "role": "assistant",
+                  "reasoning_content": "Got it, let's see. I need to fill in the recipient, subject, and content first, then click send. First, the recipient field has id \"recipient\". I should set its value to the provided recipient \"test@example.com\". So the first action is to input the recipient into the recipient field."
+                }
+              }
+            ],
+            "created": 1785345155,
+            "model": "doubao-seed-1-6-flash-250615",
+            "object": "chat.completion",
+            "service_tier": "default",
+            "usage": {
+              "completion_tokens": 85,
+              "prompt_tokens": 547,
+              "total_tokens": 632,
+              "completion_tokens_details": {
+                "reasoning_tokens": 67
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          },
+          "elapsed_seconds": 1.088667
+        },
+        {
+          "kind": "browser_agent_step",
+          "step": 2,
+          "backend": {
+            "provider": "ark",
+            "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+            "credential_env": "ARK_API_KEY",
+            "credential_value_recorded": false
+          },
+          "request": {
+            "model": "doubao-seed-1-6-flash-250615",
+            "messages": [
+              {
+                "role": "user",
+                "content": "You are the stepwise browser Agent for a local disposable mail sandbox.\nChoose exactly the next safe action, not a multi-action plan. Return JSON only as\n{\"action\":\"input_text|click\",\"selector\":\"#id\",\"value_key\":\"recipient|subject|content|null\"}.\nGoal: send one message using the supplied parameter keys. Fill recipient, subject and content before clicking send.\nTask parameters: {\"recipient\": \"test@example.com\", \"subject\": \"测试邮件\", \"content\": \"第一次探索正文\"}\nPrior actions: [{\"action\": \"input_text\", \"selector\": \"#recipient\", \"value_key\": \"recipient\", \"action_parameters\": {\"text_template\": \"{recipient}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"test@example.com\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\", \"css\": \"#recipient\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria-label\": null, \"data-testid\": \"recipient\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}]\nCurrent page state: {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}\nCurrent controls: [{\"tag\": \"input\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria_label\": null, \"data_testid\": \"recipient\", \"text\": \"\", \"label\": \"Recipient\", \"value\": \"test@example.com\", \"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\"}, {\"tag\": \"input\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria_label\": null, \"data_testid\": \"subject\", \"text\": \"\", \"label\": \"Subject\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\"}, {\"tag\": \"textarea\", \"id\": \"content\", \"name\": \"content\", \"type\": \"textarea\", \"role\": null, \"aria_label\": null, \"data_testid\": \"content\", \"text\": \"\", \"label\": \"Content\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[3]/textarea[1]\"}, {\"tag\": \"button\", \"id\": \"send\", \"name\": \"\", \"type\": \"button\", \"role\": null, \"aria_label\": null, \"data_testid\": \"send\", \"text\": \"Send message\", \"label\": \"\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/button[1]\"}]\n"
+              }
+            ],
+            "temperature": 0,
+            "seed": 8402,
+            "max_tokens": 300,
+            "response_format": {
+              "type": "json_object"
+            }
+          },
+          "response": {
+            "id": "021785345155201dceccb6eac83fbed179ddd9eacafd80ea8cef8",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "content": "{\"action\":\"input_text\",\"selector\":\"#subject\",\"value_key\":\"subject\",\"value\":\"测试邮件\"}",
+                  "role": "assistant",
+                  "reasoning_content": "用户现在需要继续完成邮件的填写，已经填了收件人，接下来需要填写主题。根据任务参数，主题是“测试邮件”，所以应该找到subject的输入框，执行input_text操作。"
+                }
+              }
+            ],
+            "created": 1785345156,
+            "model": "doubao-seed-1-6-flash-250615",
+            "object": "chat.completion",
+            "service_tier": "default",
+            "usage": {
+              "completion_tokens": 67,
+              "prompt_tokens": 805,
+              "total_tokens": 872,
+              "completion_tokens_details": {
+                "reasoning_tokens": 46
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          },
+          "elapsed_seconds": 1.115811
+        },
+        {
+          "kind": "browser_agent_step",
+          "step": 3,
+          "backend": {
+            "provider": "ark",
+            "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+            "credential_env": "ARK_API_KEY",
+            "credential_value_recorded": false
+          },
+          "request": {
+            "model": "doubao-seed-1-6-flash-250615",
+            "messages": [
+              {
+                "role": "user",
+                "content": "You are the stepwise browser Agent for a local disposable mail sandbox.\nChoose exactly the next safe action, not a multi-action plan. Return JSON only as\n{\"action\":\"input_text|click\",\"selector\":\"#id\",\"value_key\":\"recipient|subject|content|null\"}.\nGoal: send one message using the supplied parameter keys. Fill recipient, subject and content before clicking send.\nTask parameters: {\"recipient\": \"test@example.com\", \"subject\": \"测试邮件\", \"content\": \"第一次探索正文\"}\nPrior actions: [{\"action\": \"input_text\", \"selector\": \"#recipient\", \"value_key\": \"recipient\", \"action_parameters\": {\"text_template\": \"{recipient}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"test@example.com\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\", \"css\": \"#recipient\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria-label\": null, \"data-testid\": \"recipient\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}, {\"action\": \"input_text\", \"selector\": \"#subject\", \"value_key\": \"subject\", \"action_parameters\": {\"text_template\": \"{subject}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"测试邮件\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\", \"css\": \"#subject\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria-label\": null, \"data-testid\": \"subject\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}]\nCurrent page state: {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}\nCurrent controls: [{\"tag\": \"input\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria_label\": null, \"data_testid\": \"recipient\", \"text\": \"\", \"label\": \"Recipient\", \"value\": \"test@example.com\", \"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\"}, {\"tag\": \"input\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria_label\": null, \"data_testid\": \"subject\", \"text\": \"\", \"label\": \"Subject\", \"value\": \"测试邮件\", \"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\"}, {\"tag\": \"textarea\", \"id\": \"content\", \"name\": \"content\", \"type\": \"textarea\", \"role\": null, \"aria_label\": null, \"data_testid\": \"content\", \"text\": \"\", \"label\": \"Content\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/label[3]/textarea[1]\"}, {\"tag\": \"button\", \"id\": \"send\", \"name\": \"\", \"type\": \"button\", \"role\": null, \"aria_label\": null, \"data_testid\": \"send\", \"text\": \"Send message\", \"label\": \"\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/button[1]\"}]\n"
+              }
+            ],
+            "temperature": 0,
+            "seed": 8403,
+            "max_tokens": 300,
+            "response_format": {
+              "type": "json_object"
+            }
+          },
+          "response": {
+            "id": "021785345156320dceccb6eac83fbed179ddd9eacafd80e19b3ad",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "content": "{\"action\":\"input_text\",\"selector\":\"#content\",\"value_key\":\"content\",\"value\":\"第一次探索正文\"}",
+                  "role": "assistant",
+                  "reasoning_content": "用户现在需要填写邮件的正文内容，然后点击发送按钮。首先需要找到内容的文本框，也就是id为content的textarea，然后输入content参数的值。首先执行input_text操作填写content，然后再点击send按钮。"
+                }
+              }
+            ],
+            "created": 1785345157,
+            "model": "doubao-seed-1-6-flash-250615",
+            "object": "chat.completion",
+            "service_tier": "default",
+            "usage": {
+              "completion_tokens": 73,
+              "prompt_tokens": 1052,
+              "total_tokens": 1125,
+              "completion_tokens_details": {
+                "reasoning_tokens": 51
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          },
+          "elapsed_seconds": 0.88575
+        },
+        {
+          "kind": "browser_agent_step",
+          "step": 4,
+          "backend": {
+            "provider": "ark",
+            "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+            "credential_env": "ARK_API_KEY",
+            "credential_value_recorded": false
+          },
+          "request": {
+            "model": "doubao-seed-1-6-flash-250615",
+            "messages": [
+              {
+                "role": "user",
+                "content": "You are the stepwise browser Agent for a local disposable mail sandbox.\nChoose exactly the next safe action, not a multi-action plan. Return JSON only as\n{\"action\":\"input_text|click\",\"selector\":\"#id\",\"value_key\":\"recipient|subject|content|null\"}.\nGoal: send one message using the supplied parameter keys. Fill recipient, subject and content before clicking send.\nTask parameters: {\"recipient\": \"test@example.com\", \"subject\": \"测试邮件\", \"content\": \"第一次探索正文\"}\nPrior actions: [{\"action\": \"input_text\", \"selector\": \"#recipient\", \"value_key\": \"recipient\", \"action_parameters\": {\"text_template\": \"{recipient}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"test@example.com\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\", \"css\": \"#recipient\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria-label\": null, \"data-testid\": \"recipient\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}, {\"action\": \"input_text\", \"selector\": \"#subject\", \"value_key\": \"subject\", \"action_parameters\": {\"text_template\": \"{subject}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"测试邮件\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\", \"css\": \"#subject\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria-label\": null, \"data-testid\": \"subject\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}, {\"action\": \"input_text\", \"selector\": \"#content\", \"value_key\": \"content\", \"action_parameters\": {\"text_template\": \"{content}\"}, \"before\": {\"url\": \"http://127.0.0.1:63425/app\", \"visible\": true, \"page_status\": {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}}, \"after\": {\"url\": \"http://127.0.0.1:63425/app\", \"value\": \"第一次探索正文\", \"status_text\": \"Draft\"}, \"locator_evidence\": {\"xpath\": \"/html[1]/body[1]/main[1]/label[3]/textarea[1]\", \"css\": \"#content\", \"id\": \"content\", \"name\": \"content\", \"type\": \"textarea\", \"role\": null, \"aria-label\": null, \"data-testid\": \"content\", \"captured_url\": \"http://127.0.0.1:63425/app\"}}]\nCurrent page state: {\"url\": \"http://127.0.0.1:63425/app\", \"status_text\": \"Draft\", \"persisted_count\": 0}\nCurrent controls: [{\"tag\": \"input\", \"id\": \"recipient\", \"name\": \"recipient\", \"type\": \"email\", \"role\": null, \"aria_label\": null, \"data_testid\": \"recipient\", \"text\": \"\", \"label\": \"Recipient\", \"value\": \"test@example.com\", \"xpath\": \"/html[1]/body[1]/main[1]/label[1]/input[1]\"}, {\"tag\": \"input\", \"id\": \"subject\", \"name\": \"subject\", \"type\": \"text\", \"role\": null, \"aria_label\": null, \"data_testid\": \"subject\", \"text\": \"\", \"label\": \"Subject\", \"value\": \"测试邮件\", \"xpath\": \"/html[1]/body[1]/main[1]/label[2]/input[1]\"}, {\"tag\": \"textarea\", \"id\": \"content\", \"name\": \"content\", \"type\": \"textarea\", \"role\": null, \"aria_label\": null, \"data_testid\": \"content\", \"text\": \"\", \"label\": \"Content\", \"value\": \"第一次探索正文\", \"xpath\": \"/html[1]/body[1]/main[1]/label[3]/textarea[1]\"}, {\"tag\": \"button\", \"id\": \"send\", \"name\": \"\", \"type\": \"button\", \"role\": null, \"aria_label\": null, \"data_testid\": \"send\", \"text\": \"Send message\", \"label\": \"\", \"value\": \"\", \"xpath\": \"/html[1]/body[1]/main[1]/button[1]\"}]\n"
+              }
+            ],
+            "temperature": 0,
+            "seed": 8404,
+            "max_tokens": 300,
+            "response_format": {
+              "type": "json_object"
+            }
+          },
+          "response": {
+            "id": "021785345157209dceccb6eac83fbed179ddd9eacafd80ee29c9d",
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "content": "{\"action\":\"click\",\"selector\":\"#send\",\"value_key\":null}",
+                  "role": "assistant",
+                  "reasoning_content": "用户现在需要点击发送按钮来发送邮件，当前已经填充了收件人、主题和正文，接下来需要找到发送按钮并点击。根据当前控件，发送按钮的id是send，所以应该执行click动作，选择selector为#send。"
+                }
+              }
+            ],
+            "created": 1785345158,
+            "model": "doubao-seed-1-6-flash-250615",
+            "object": "chat.completion",
+            "service_tier": "default",
+            "usage": {
+              "completion_tokens": 69,
+              "prompt_tokens": 1301,
+              "total_tokens": 1370,
+              "completion_tokens_details": {
+                "reasoning_tokens": 54
+              },
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            }
+          },
+          "elapsed_seconds": 1.309567
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 3705,
+        "completion_tokens": 294,
+        "total_tokens": 3999,
+        "provider_reported_cost_usd": null,
+        "provider_reported_cost_observations": 0,
+        "cost_qualification": "provider did not expose monetary cost; no price was guessed"
+      },
+      "screenshot": "exploration-final.png"
+    },
+    "candidate_file": "workflow_store/candidate_local-mail-send-v1.json",
+    "validation_reset_count": 8,
+    "validation_replay": {
+      "success": true,
+      "steps_completed": 4,
+      "total_steps": 4,
+      "errors": [],
+      "execution_time": 4.201009035110474,
+      "model_calls_saved": 4,
+      "failed_predicate": null,
+      "fallback_required": false,
+      "actions_executed": [
+        "input_text",
+        "input_text",
+        "input_text",
+        "click"
+      ],
+      "validation_enabled": true
+    },
+    "transfer_replay": {
+      "success": true,
+      "steps_completed": 4,
+      "total_steps": 4,
+      "errors": [],
+      "execution_time": 4.447128057479858,
+      "model_calls_saved": 4,
+      "failed_predicate": null,
+      "fallback_required": false,
+      "actions_executed": [
+        "input_text",
+        "input_text",
+        "input_text",
+        "click"
+      ],
+      "validation_enabled": true
+    },
+    "page_change_replay": {
+      "success": false,
+      "steps_completed": 3,
+      "total_steps": 4,
+      "errors": [
+        "Step 4 failed: step 4 precondition failed: send button is visible before the side effect; expected=True, actual=False"
+      ],
+      "execution_time": 5.79477596282959,
+      "model_calls_saved": 4,
+      "failed_predicate": "step 4 precondition failed: send button is visible before the side effect; expected=True, actual=False",
+      "fallback_required": true,
+      "actions_executed": [
+        "input_text",
+        "input_text",
+        "input_text"
+      ],
+      "validation_enabled": true
+    },
+    "invalid_file": "workflow_store/invalid_local-mail-send-v1.json"
+  },
+  "false_success_comparison": [
+    {
+      "case": "blank_content",
+      "naive_reported_success": true,
+      "naive_actual_success": false,
+      "validated_reported_success": false,
+      "validated_actual_success": false,
+      "validated_failure": "step 4 postcondition failed: server-confirmed send status is visible; expected='Message sent', actual='Message not sent'"
+    },
+    {
+      "case": "dropped_persistence",
+      "naive_reported_success": true,
+      "naive_actual_success": false,
+      "validated_reported_success": false,
+      "validated_actual_success": false,
+      "validated_failure": "step 4 postcondition failed: server-confirmed send status is visible; expected='Message sent', actual='Accepted but not persisted'"
+    }
+  ],
+  "metrics": {
+    "exploration_seconds": 5.312764,
+    "validation_replay_seconds": 4.201009035110474,
+    "parameterized_replay_seconds": 4.447128057479858,
+    "exploration_llm_calls": 4,
+    "parameterized_replay_llm_calls": 0,
+    "exploration_success_rate": 1.0,
+    "replay_success_rate": 1.0,
+    "workflow_match_rate": 1.0,
+    "naive_false_success_rate": 1.0,
+    "state_validated_false_success_rate": 0.0,
+    "page_change_detection_rate": 1.0,
+    "fallback_relearn_count": 1,
+    "speedup_exploration_over_parameterized_replay": 1.1946505545447883
+  },
+  "cost": {
+    "prompt_tokens": 3705,
+    "completion_tokens": 294,
+    "total_tokens": 3999,
+    "provider_reported_cost_usd": null,
+    "provider_reported_cost_observations": 0,
+    "cost_qualification": "provider did not expose monetary cost; no price was guessed"
+  },
+  "sandbox": {
+    "url_origin": "http://127.0.0.1:63425",
+    "external_side_effects": false,
+    "final_state": {
+      "messages": [],
+      "version": 2,
+      "fault": "normal",
+      "reset_count": 8,
+      "events": [
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "normal",
+          "reset_index": 1
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "test@example.com",
+            "subject": "测试邮件",
+            "content": "第一次探索正文"
+          },
+          "version": 1
+        },
+        {
+          "event": "message_persisted",
+          "message": {
+            "recipient": "test@example.com",
+            "subject": "测试邮件",
+            "content": "第一次探索正文"
+          }
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "normal",
+          "reset_index": 2
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "test@example.com",
+            "subject": "测试邮件",
+            "content": "第一次探索正文"
+          },
+          "version": 1
+        },
+        {
+          "event": "message_persisted",
+          "message": {
+            "recipient": "test@example.com",
+            "subject": "测试邮件",
+            "content": "第一次探索正文"
+          }
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "normal",
+          "reset_index": 3
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": "完全不同的回放正文"
+          },
+          "version": 1
+        },
+        {
+          "event": "message_persisted",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": "完全不同的回放正文"
+          }
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "normal",
+          "reset_index": 4
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": ""
+          },
+          "version": 1
+        },
+        {
+          "event": "validation_rejected",
+          "reason": "blank_field"
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "normal",
+          "reset_index": 5
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": ""
+          },
+          "version": 1
+        },
+        {
+          "event": "validation_rejected",
+          "reason": "blank_field"
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "drop_persistence",
+          "reset_index": 6
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": "完全不同的回放正文"
+          },
+          "version": 1
+        },
+        {
+          "event": "persistence_dropped"
+        },
+        {
+          "event": "validation_reset",
+          "version": 1,
+          "fault": "drop_persistence",
+          "reset_index": 7
+        },
+        {
+          "event": "send_request",
+          "message": {
+            "recipient": "second@example.org",
+            "subject": "季度报告",
+            "content": "完全不同的回放正文"
+          },
+          "version": 1
+        },
+        {
+          "event": "persistence_dropped"
+        },
+        {
+          "event": "validation_reset",
+          "version": 2,
+          "fault": "normal",
+          "reset_index": 8
+        }
+      ]
+    }
+  },
+  "gates": {
+    "real_stepwise_model_exploration_succeeded": true,
+    "capture_has_actions_parameters_url_and_locator_evidence": true,
+    "workflow_has_pre_post_and_final_state_checks": true,
+    "first_success_created_candidate": true,
+    "independent_reset_replay_validated": true,
+    "missing_reset_never_published": true,
+    "validated_workflow_was_matchable": true,
+    "parameterized_replay_used_no_llm": true,
+    "training_literals_not_reused": true,
+    "naive_baseline_exposes_false_success": true,
+    "state_validation_rejects_false_success": true,
+    "page_change_stopped_before_side_effect": true,
+    "invalid_version_removed_from_retrieval": true
+  },
+  "acceptance": {
+    "gates": [
+      {
+        "name": "real_stepwise_model_exploration_succeeded",
+        "passed": true
+      },
+      {
+        "name": "capture_has_actions_parameters_url_and_locator_evidence",
+        "passed": true
+      },
+      {
+        "name": "workflow_has_pre_post_and_final_state_checks",
+        "passed": true
+      },
+      {
+        "name": "first_success_created_candidate",
+        "passed": true
+      },
+      {
+        "name": "independent_reset_replay_validated",
+        "passed": true
+      },
+      {
+        "name": "missing_reset_never_published",
+        "passed": true
+      },
+      {
+        "name": "validated_workflow_was_matchable",
+        "passed": true
+      },
+      {
+        "name": "parameterized_replay_used_no_llm",
+        "passed": true
+      },
+      {
+        "name": "training_literals_not_reused",
+        "passed": true
+      },
+      {
+        "name": "naive_baseline_exposes_false_success",
+        "passed": true
+      },
+      {
+        "name": "state_validation_rejects_false_success",
+        "passed": true
+      },
+      {
+        "name": "page_change_stopped_before_side_effect",
+        "passed": true
+      },
+      {
+        "name": "invalid_version_removed_from_retrieval",
+        "passed": true
+      }
+    ],
+    "execution_accepted": true,
+    "result_claims": {
+      "validated_workflow_completed_parameterized_transfer": true,
+      "replay_eliminated_stepwise_llm_calls": true,
+      "state_validation_reduced_false_success_rate": true,
+      "page_change_was_detected_before_side_effect": true,
+      "replay_was_faster_than_exploration": true
+    },
+    "all_manuscript_result_claims_observed": true
+  },
+  "accepted": true,
+  "artifact_hashes": {
+    "candidate_snapshot_sha256": "9894d2a9b014bd13464b58db393661e67a3d5b661dde2bb682efc1372bcce8ce",
+    "invalid_sha256": "b74221eadec6906f4f2553f8841d2a2cb5d406a243a71e28ac8066b200ce8b8b",
+    "exploration_screenshot_sha256": "57751956e96c4c4d331fcd1278f85011792cf4a76bdfe82536ae30c52df992e2"
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "experiment": "9-3",
+  "timestamp_utc": "2026-07-29T10:11:30.432848+00:00",
+  "model": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
+  "device": "mlx",
+  "method": "growing-prefix full re-encoding (not true streaming)",
+  "cases": [
+    {
+      "scenario": "normal",
+      "audio": "validation/scenarios/normal.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 4.139199791010469,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 5.053489749785513,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 4.907809666823596,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 7.4875,
+          "inference_seconds": 5.012733499985188,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "vad_wait_seconds": 7.4875,
+        "asr_seconds": 0.5402721669524908,
+        "total_response_seconds": 8.027772166952492,
+        "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家",
+        "segment_count": 1,
+        "endpoints": [
+          7.487
+        ]
+      },
+      "whisper_final_cer": 0.10526315789473684
+    },
+    {
+      "scenario": "pause",
+      "audio": "validation/scenarios/long_pause.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 4.358620333019644,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 4.480873542372137,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 4.751943958923221,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还还是在三号会议室",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点还还是在三号会议室', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        },
+        {
+          "prefix_seconds": 8.0,
+          "inference_seconds": 4.8131710002198815,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 8.3875,
+          "inference_seconds": 4.650784750003368,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': []}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "vad_wait_seconds": 4.04,
+        "asr_seconds": 0.5881568747572601,
+        "total_response_seconds": 4.62815687475726,
+        "transcript": "麻煩你幫我把明天下午的會議改到兩點半地點 還是在三號會議時別忘了通知大家",
+        "segment_count": 2,
+        "endpoints": [
+          4.04,
+          8.387
+        ]
+      },
+      "whisper_final_cer": 0.42105263157894735
+    },
+    {
+      "scenario": "noise",
+      "audio": "validation/scenarios/background_noise.wav",
+      "reference": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+      "qwen2_audio": [
+        {
+          "prefix_seconds": 2.0,
+          "inference_seconds": 4.019581000320613,
+          "transcript": "麻烦你帮我把明天下午的会议",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 4.0,
+          "inference_seconds": 4.358317042235285,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半地点",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半地点', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        },
+        {
+          "prefix_seconds": 6.0,
+          "inference_seconds": 4.340823790989816,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。",
+          "acoustic_events": [],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室。', 'acoustic_events': []}"
+        },
+        {
+          "prefix_seconds": 7.4875,
+          "inference_seconds": 4.508679833263159,
+          "transcript": "麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。",
+          "acoustic_events": [
+            "<|noise|>",
+            "<|laughter|>",
+            "<|cough|>"
+          ],
+          "raw_response": "{'transcript': '麻烦你帮我把明天下午的会议改到两点半，地点还是在三号会议室，别忘了通知大家。', 'acoustic_events': ['noise', 'laughter', 'cough']}"
+        }
+      ],
+      "qwen2_final_cer": 0.0,
+      "whisper_vad": {
+        "vad_wait_seconds": 7.4875,
+        "asr_seconds": 0.4322935417294502,
+        "total_response_seconds": 7.91979354172945,
+        "transcript": "麻烦你帮我把明天下午的会议改到两点半地点还是在三号会议时别忘了通知大家",
+        "segment_count": 1,
+        "endpoints": [
+          7.487
+        ]
+      },
+      "whisper_final_cer": 0.10526315789473684
+    }
+  ]
+}

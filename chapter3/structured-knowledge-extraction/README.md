@@ -9,6 +9,20 @@
 
 ## English
 
+### Canonical official-data campaign
+
+`python campaign.py` is the acceptance run. It reads the official CAIL2018
+archive (cache-only), deterministically materializes a bounded 420-case sample
+(360 train/60 held out across three charges), performs live bottom-up discovery
+and live modular extraction, selects per-charge clusters with silhouette
+diagnostics, and independently judges prototype-only held-out advice. The
+official URL/repository revision/archive SHA-256 and bytes, split, raw receipts,
+prototype statistics, leakage checks, and legal disclaimer gate are recorded
+under `validation/runs/<run-id>/`; `validation/latest.json` is canonical.
+
+The large `data/official/CAIL2018_ALL_DATA.zip` is intentionally ignored. Only
+the deterministic sample and validation evidence are versionable.
+
 ### What this experiment is
 
 This lab shows how an Agent can treat a knowledge base not as a “static warehouse you only retrieve from,” but as data to **read, understand, and turn into structured decision logic**—then answer questions using that logic.

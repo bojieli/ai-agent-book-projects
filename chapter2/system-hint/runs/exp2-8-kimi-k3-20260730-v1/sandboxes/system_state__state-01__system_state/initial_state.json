@@ -1,0 +1,12 @@
+{
+  "suite": "system_state",
+  "case_id": "state-01",
+  "system": {
+    "os": "Linux",
+    "shell": "bash",
+    "python": "3.11.9",
+    "cwd": "workspace/alpha",
+    "manager": "apt",
+    "package": "jq"
+  }
+}

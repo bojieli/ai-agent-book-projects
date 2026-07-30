@@ -57,9 +57,16 @@ start_frame = int(round(START * FPS))
 dur_frames = max(1, int(round((END - START) * FPS)))
 
 # 1) 导入影片 + 音轨（new_sound 在无音轨素材上会抛 RuntimeError，忽略即可）
-movie = se.sequences.new_movie(name="clip", filepath=SRC, channel=1, frame_start=1)
+# frame_offset_start trims the strip's visible left edge as well as advancing
+# into the source.  Start the raw strip earlier by the same amount so the
+# trimmed clip's final visible start remains at output frame 1.
+movie = se.sequences.new_movie(
+    name="clip", filepath=SRC, channel=1, frame_start=1 - start_frame
+)
 try:
-    sound = se.sequences.new_sound(name="audio", filepath=SRC, channel=2, frame_start=1)
+    sound = se.sequences.new_sound(
+        name="audio", filepath=SRC, channel=2, frame_start=1 - start_frame
+    )
 except RuntimeError:
     sound = None
 
@@ -132,7 +139,14 @@ def _plan_fields(plan: dict):
         if etype == "subtitle":
             subtitle = eff.get("text", "")
         elif etype == "slowmo":
-            slowmo = float(eff.get("factor", 2.0))
+            # Skip null factor like non-positive.
+            raw = eff.get("factor", 2.0)
+            if raw is None:
+                continue
+            factor = float(raw)
+            if factor <= 0:
+                continue
+            slowmo = factor
     return start, end, subtitle, slowmo
 
 

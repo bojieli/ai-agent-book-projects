@@ -91,6 +91,24 @@ npm run dev
 
 Open http://localhost:3000. Keep the frontend running; new trajectories appear automatically.
 
+### Experiment 2-7: status-bar comparison
+
+The manuscript's Xfinity control is a separate matched campaign, not the older
+tool-vs-no-tool demo. It runs the same complete trajectory in two arms, adds
+the exact `<agent_status>` 3/3 block only to the intervention arm, samples
+three real Qwen3-0.6B decisions per arm, and captures the final layer's true
+eager-attention tensor for the first matched pair.
+
+```bash
+python run_status_bar_experiment.py \
+  --output runs/exp2-7-qwen3-0.6b-$(date +%Y%m%d-%H%M%S)
+```
+
+The output retains raw prompts, token IDs/text, behavior classifications,
+region-level response attention, lossless matrices, a side-by-side heatmap,
+model revision, hashes, and a completion receipt. The preregistered design is
+`status_bar_protocol.json`; completion does not depend on a favorable result.
+
 ### Project structure
 
 ```

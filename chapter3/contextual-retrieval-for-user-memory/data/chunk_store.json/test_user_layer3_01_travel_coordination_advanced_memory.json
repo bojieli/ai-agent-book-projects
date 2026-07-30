@@ -1,0 +1,54 @@
+{
+  "user_id": "test_user_layer3_01_travel_coordination",
+  "type": "advanced_json_cards",
+  "updated_at": "2025-09-25T21:29:18.255280",
+  "categories": {
+    "travel": {
+      "passport_renewal_urgency": {
+        "backstory": "Jessica learned her passport expires Feb 18 2025 and she has a January business trip to Tokyo; renewal recommended by October.",
+        "date_created": "2024-06-12 14:22:00",
+        "person": "Jessica Martinez (primary)",
+        "relationship": "primary account holder",
+        "passport_number": "487223901",
+        "expiration_date": "2025-02-18",
+        "renewal_method": "mail (DS-82)",
+        "expedited_fee": 60,
+        "total_expedited_cost": 190,
+        "mailing_address": "National Passport Processing Center, PO Box 90955, Philadelphia, PA 19190-0955",
+        "deadline_to_submit": "early October 2024",
+        "_metadata": {
+          "created_at": "2025-09-25T21:29:18.253893",
+          "updated_at": "2025-09-25T21:29:18.253906"
+        }
+      },
+      "tokyo_trip": {
+        "backstory": "User booked a trip to Tokyo in previous conversations",
+        "date_created": "2025-09-25 21:29:18",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "destination": "Tokyo, Japan",
+        "departure_date": "2025-01-25",
+        "return_date": "2025-02-01",
+        "purpose": "business conference",
+        "_metadata": {
+          "created_at": "2025-09-25T21:29:18.254912",
+          "updated_at": "2025-09-25T21:29:18.254915"
+        }
+      },
+      "passport_jessica": {
+        "backstory": "User's passport expiration was mentioned when booking travel",
+        "date_created": "2025-09-25 21:29:18",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "passport_number": "XXXXX1234",
+        "expiration_date": "2025-02-18",
+        "issuing_country": "USA",
+        "needs_renewal": true,
+        "_metadata": {
+          "created_at": "2025-09-25T21:29:18.255272",
+          "updated_at": "2025-09-25T21:29:18.255275"
+        }
+      }
+    }
+  }
+}

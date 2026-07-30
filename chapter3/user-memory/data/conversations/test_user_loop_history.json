@@ -1,0 +1,13 @@
+{
+  "user_id": "test_user_loop",
+  "updated_at": "2026-07-29T21:11:56.728444",
+  "conversations": [
+    {
+      "session_id": "session-1",
+      "user_message": "你好，我是小明",
+      "assistant_message": "你好小明！",
+      "timestamp": "2026-07-29T21:11:56.728341",
+      "turn_number": 1
+    }
+  ]
+}

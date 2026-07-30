@@ -77,7 +77,8 @@ class WorkflowReplayer:
     async def replay_workflow(self, 
                              workflow: Workflow, 
                              parameters: Optional[Dict[str, Any]] = None,
-                             initial_url: Optional[str] = None) -> Dict[str, Any]:
+                             initial_url: Optional[str] = None,
+                             validate_state: bool = True) -> Dict[str, Any]:
         """
         Replay a workflow with the given parameters.
         
@@ -99,6 +100,8 @@ class WorkflowReplayer:
             "model_calls_saved": len(workflow.steps),  # Each step would require an LLM call
             "failed_predicate": None,
             "fallback_required": False,
+            "actions_executed": [],
+            "validation_enabled": validate_state,
         }
         
         try:
@@ -118,9 +121,12 @@ class WorkflowReplayer:
                 logger.info(f"Executing step {i+1}/{len(workflow.steps)}: {step.action_type.value}")
                 
                 try:
-                    await self._check_predicates(step.preconditions, f"step {i+1} precondition")
+                    if validate_state:
+                        await self._check_predicates(step.preconditions, f"step {i+1} precondition")
                     await self._execute_step(step)
-                    await self._check_predicates(step.postconditions, f"step {i+1} postcondition")
+                    results["actions_executed"].append(step.action_type.value)
+                    if validate_state:
+                        await self._check_predicates(step.postconditions, f"step {i+1} postcondition")
                     results["steps_completed"] += 1
                     
                     # Small delay between actions for stability
@@ -138,7 +144,8 @@ class WorkflowReplayer:
                     break
             
             if results["steps_completed"] == results["total_steps"]:
-                await self._check_predicates(workflow.final_predicates, "workflow final predicate")
+                if validate_state:
+                    await self._check_predicates(workflow.final_predicates, "workflow final predicate")
                 results["success"] = True
             
         except Exception as e:
@@ -156,7 +163,14 @@ class WorkflowReplayer:
 
     async def _check_predicates(self, predicates, location: str) -> None:
         for predicate in predicates:
+            # Browser actions often resolve before their fetch/DOM callback has
+            # committed visible state. Poll the real page briefly instead of
+            # turning that race into either a false failure or a fixed sleep.
+            deadline = time.monotonic() + 2.0
             ok, actual = await self._evaluate_predicate(predicate)
+            while not ok and time.monotonic() < deadline:
+                await asyncio.sleep(0.05)
+                ok, actual = await self._evaluate_predicate(predicate)
             if not ok:
                 description = predicate.description or predicate.predicate_type.value
                 raise PredicateFailure(
@@ -183,6 +197,14 @@ class WorkflowReplayer:
                 return False, "element missing"
             actual = await locator.inner_text()
             return str(predicate.expected) in actual, actual
+        if predicate.predicate_type == PredicateType.ELEMENT_VALUE_EQUALS:
+            if not predicate.selector:
+                return False, "missing selector"
+            locator = self.page.locator(predicate.selector).first
+            if await locator.count() == 0:
+                return False, "element missing"
+            actual = await locator.input_value()
+            return actual == str(predicate.expected), actual
         if predicate.predicate_type == PredicateType.PAGE_STATE_EQUALS:
             if not predicate.state_key:
                 return False, "missing state_key"

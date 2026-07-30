@@ -1,0 +1,2393 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "combined__all-01__disabled",
+  "suite": "combined",
+  "case_id": "all-01",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "a9dcd1a0a1de6945bf8e261ac3ede544c831113d043b3d39240b8819516f90db",
+  "current_sandbox_sha256": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9",
+  "created_at": "2026-07-29T19:51:16.811167+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+    },
+    {
+      "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_record_0",
+          "function": {
+            "arguments": "{\"name\":\"oak\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_record_1",
+          "function": {
+            "arguments": "{\"name\":\"pine\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "inspect_system_2",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 2
+        }
+      ],
+      "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "content": "payload-for-oak"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "content": "payload-for-pine"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_2",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_3",
+          "function": {
+            "arguments": "{\"name\":\"core-a\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_document_4",
+          "function": {
+            "arguments": "{\"file\":\"config.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "write_artifact_5",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "write_artifact_6",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "write_artifact_7",
+          "function": {
+            "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 4
+        }
+      ],
+      "reasoning_content": "The records return payloads \"payload-for-oak\" and \"payload-for-pine\". I need to select the \"later\" one. Hmm, how do I determine which is later? The records just returned payloads without timestamps. Maybe I need to check the probe_resource? No — the task says \"read records oak and pine and select the later one\". \n\nThe payloads don't have timestamps. Maybe \"later\" refers to alphabetical order? Or maybe the record data includes timing info I'm not seeing. Let me think — \"payload-for-oak\" and \"payload-for-pine\". Alphabetically, \"pine\" comes after \"oak\". So \"pine\" would be the later one alphabetically.\n\nHmm, but maybe the records have more metadata. Let me re-read them? The tool returned just the payload strings. Perhaps the intended interpretation: \"select the later one\" — later in alphabetical order = pine. Alternatively, later in the order listed in the task (oak first, pine second) = pine. Either way, pine seems to be the later one.\n\nActually, let me consider: the task lists \"oak and pine\" — oak first, pine second. Later in that listing = pine. Alphabetically pine > oak too. So selected_record = pine.\n\nNow step 2: retrieve core-a or fallback backup-a. Let me probe core-a first.\n\nStep 3: create artifacts with content CFG-711.\n\nStep 4: read config.txt — possibly renamed, so I may need list_documents if read fails.\n\nStep 5: install jq via apt (the native manager from inspect_system).\n\nLet me probe core-a first to see if it's available. Also, I can try reading config.txt in parallel — if it fails, I'll list documents. And I can write the artifacts in parallel too since their content is given (CFG-711).\n\nActually, let me be careful about dependencies: probe core-a first; if unavailable, probe backup-a. The fallback resource name goes into submit_result as \"fallback\" — \"Resource that supplied payload\". So whichever supplies the payload.\n\nLet me do: probe core-a, read config.txt, and write the three artifacts — all independent. Then handle fallbacks if needed."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_3",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_4",
+      "name": "read_document",
+      "content": "Error: document not found"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_5",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/observe.txt"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_6",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/recover.txt"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_7",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/deliver.txt"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_8",
+          "function": {
+            "arguments": "{\"name\":\"backup-a\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "list_documents_9",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "- core-a is unavailable → fall back to backup-a\n- config.txt not found → it's possibly renamed; list documents to find the actual filename\n- Artifacts written successfully\n\nLet me probe backup-a and list documents in parallel."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_8",
+      "name": "probe_resource",
+      "content": "verified-payload-all-01"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_9",
+      "name": "list_documents",
+      "content": "[\"config_live.txt\"]"
+    },
+    {
+      "content": "backup-a supplied the payload, and the document was renamed to `config_live.txt`. Now I'll read that document and install jq via apt.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_10",
+          "function": {
+            "arguments": "{\"file\":\"config_live.txt\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "install_package_11",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "- backup-a supplied the payload: \"verified-payload-all-01\"\n- The document was renamed to \"config_live.txt\"\n\nNow read config_live.txt to recover the exact token, and install jq with apt. These are independent."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_10",
+      "name": "read_document",
+      "content": "CFG-711"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_11",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_12",
+          "function": {
+            "arguments": "{\"artifacts\":[\"observe.txt\",\"recover.txt\",\"deliver.txt\"],\"document\":\"config_live.txt\",\"fallback\":\"backup-a\",\"manager\":\"apt\",\"package\":\"jq\",\"selected_record\":\"pine\",\"token\":\"CFG-711\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "All components are complete:\n\n1. ✅ Read records oak (\"payload-for-oak\") and pine (\"payload-for-pine\"); later one = pine\n2. ✅ core-a unavailable → fallback backup-a supplied payload \"verified-payload-all-01\"\n3. ✅ Created observe.txt, recover.txt, deliver.txt each with exactly CFG-711\n4. ✅ Read renamed document config_live.txt; token = CFG-711\n5. ✅ Installed jq with apt\n\nNow submit the combined result:\n- selected_record: pine\n- fallback: backup-a\n- artifacts: [\"observe.txt\", \"recover.txt\", \"deliver.txt\"]\n- document: config_live.txt\n- token: CFG-711\n- manager: apt\n- package: jq"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_12",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:51:16.811545+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 7225.861,
+      "response": {
+        "id": "chatcmpl-6a6a59b5e3dfcfab6fd0e1b1",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_record_0",
+                  "function": {
+                    "arguments": "{\"name\":\"oak\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_record_1",
+                  "function": {
+                    "arguments": "{\"name\":\"pine\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "inspect_system_2",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 2
+                }
+              ],
+              "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+            }
+          }
+        ],
+        "created": 1785354678,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 239,
+          "prompt_tokens": 787,
+          "total_tokens": 1026,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 126,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:51:24.046988+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "inspect_system_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 2
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-oak"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-pine"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_2",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 21559.61,
+      "response": {
+        "id": "chatcmpl-6a6a59bd24415bd46fc5eb15",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_3",
+                  "function": {
+                    "arguments": "{\"name\":\"core-a\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_document_4",
+                  "function": {
+                    "arguments": "{\"file\":\"config.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "write_artifact_5",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "write_artifact_6",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "write_artifact_7",
+                  "function": {
+                    "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 4
+                }
+              ],
+              "reasoning_content": "The records return payloads \"payload-for-oak\" and \"payload-for-pine\". I need to select the \"later\" one. Hmm, how do I determine which is later? The records just returned payloads without timestamps. Maybe I need to check the probe_resource? No — the task says \"read records oak and pine and select the later one\". \n\nThe payloads don't have timestamps. Maybe \"later\" refers to alphabetical order? Or maybe the record data includes timing info I'm not seeing. Let me think — \"payload-for-oak\" and \"payload-for-pine\". Alphabetically, \"pine\" comes after \"oak\". So \"pine\" would be the later one alphabetically.\n\nHmm, but maybe the records have more metadata. Let me re-read them? The tool returned just the payload strings. Perhaps the intended interpretation: \"select the later one\" — later in alphabetical order = pine. Alternatively, later in the order listed in the task (oak first, pine second) = pine. Either way, pine seems to be the later one.\n\nActually, let me consider: the task lists \"oak and pine\" — oak first, pine second. Later in that listing = pine. Alphabetically pine > oak too. So selected_record = pine.\n\nNow step 2: retrieve core-a or fallback backup-a. Let me probe core-a first.\n\nStep 3: create artifacts with content CFG-711.\n\nStep 4: read config.txt — possibly renamed, so I may need list_documents if read fails.\n\nStep 5: install jq via apt (the native manager from inspect_system).\n\nLet me probe core-a first to see if it's available. Also, I can try reading config.txt in parallel — if it fails, I'll list documents. And I can write the artifacts in parallel too since their content is given (CFG-711).\n\nActually, let me be careful about dependencies: probe core-a first; if unavailable, probe backup-a. The fallback resource name goes into submit_result as \"fallback\" — \"Resource that supplied payload\". So whichever supplies the payload.\n\nLet me do: probe core-a, read config.txt, and write the three artifacts — all independent. Then handle fallbacks if needed."
+            }
+          }
+        ],
+        "created": 1785354686,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 682,
+          "prompt_tokens": 1143,
+          "total_tokens": 1825,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 451,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 768
+          },
+          "cached_tokens": 768
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:51:45.619479+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "inspect_system_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 2
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-oak"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-pine"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_2",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"config.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "write_artifact_5",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_6",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_7",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "The records return payloads \"payload-for-oak\" and \"payload-for-pine\". I need to select the \"later\" one. Hmm, how do I determine which is later? The records just returned payloads without timestamps. Maybe I need to check the probe_resource? No — the task says \"read records oak and pine and select the later one\". \n\nThe payloads don't have timestamps. Maybe \"later\" refers to alphabetical order? Or maybe the record data includes timing info I'm not seeing. Let me think — \"payload-for-oak\" and \"payload-for-pine\". Alphabetically, \"pine\" comes after \"oak\". So \"pine\" would be the later one alphabetically.\n\nHmm, but maybe the records have more metadata. Let me re-read them? The tool returned just the payload strings. Perhaps the intended interpretation: \"select the later one\" — later in alphabetical order = pine. Alternatively, later in the order listed in the task (oak first, pine second) = pine. Either way, pine seems to be the later one.\n\nActually, let me consider: the task lists \"oak and pine\" — oak first, pine second. Later in that listing = pine. Alphabetically pine > oak too. So selected_record = pine.\n\nNow step 2: retrieve core-a or fallback backup-a. Let me probe core-a first.\n\nStep 3: create artifacts with content CFG-711.\n\nStep 4: read config.txt — possibly renamed, so I may need list_documents if read fails.\n\nStep 5: install jq via apt (the native manager from inspect_system).\n\nLet me probe core-a first to see if it's available. Also, I can try reading config.txt in parallel — if it fails, I'll list documents. And I can write the artifacts in parallel too since their content is given (CFG-711).\n\nActually, let me be careful about dependencies: probe core-a first; if unavailable, probe backup-a. The fallback resource name goes into submit_result as \"fallback\" — \"Resource that supplied payload\". So whichever supplies the payload.\n\nLet me do: probe core-a, read config.txt, and write the three artifacts — all independent. Then handle fallbacks if needed."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_5",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/observe.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_6",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/recover.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_7",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/deliver.txt"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5833.831,
+      "response": {
+        "id": "chatcmpl-6a6a59d2e8509f89c756bcc7",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_8",
+                  "function": {
+                    "arguments": "{\"name\":\"backup-a\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "list_documents_9",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "- core-a is unavailable → fall back to backup-a\n- config.txt not found → it's possibly renamed; list documents to find the actual filename\n- Artifacts written successfully\n\nLet me probe backup-a and list documents in parallel."
+            }
+          }
+        ],
+        "created": 1785354708,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 115,
+          "prompt_tokens": 1966,
+          "total_tokens": 2081,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 48,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 1024
+          },
+          "cached_tokens": 1024
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:51:51.460681+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "inspect_system_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 2
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-oak"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-pine"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_2",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"config.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "write_artifact_5",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_6",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_7",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "The records return payloads \"payload-for-oak\" and \"payload-for-pine\". I need to select the \"later\" one. Hmm, how do I determine which is later? The records just returned payloads without timestamps. Maybe I need to check the probe_resource? No — the task says \"read records oak and pine and select the later one\". \n\nThe payloads don't have timestamps. Maybe \"later\" refers to alphabetical order? Or maybe the record data includes timing info I'm not seeing. Let me think — \"payload-for-oak\" and \"payload-for-pine\". Alphabetically, \"pine\" comes after \"oak\". So \"pine\" would be the later one alphabetically.\n\nHmm, but maybe the records have more metadata. Let me re-read them? The tool returned just the payload strings. Perhaps the intended interpretation: \"select the later one\" — later in alphabetical order = pine. Alternatively, later in the order listed in the task (oak first, pine second) = pine. Either way, pine seems to be the later one.\n\nActually, let me consider: the task lists \"oak and pine\" — oak first, pine second. Later in that listing = pine. Alphabetically pine > oak too. So selected_record = pine.\n\nNow step 2: retrieve core-a or fallback backup-a. Let me probe core-a first.\n\nStep 3: create artifacts with content CFG-711.\n\nStep 4: read config.txt — possibly renamed, so I may need list_documents if read fails.\n\nStep 5: install jq via apt (the native manager from inspect_system).\n\nLet me probe core-a first to see if it's available. Also, I can try reading config.txt in parallel — if it fails, I'll list documents. And I can write the artifacts in parallel too since their content is given (CFG-711).\n\nActually, let me be careful about dependencies: probe core-a first; if unavailable, probe backup-a. The fallback resource name goes into submit_result as \"fallback\" — \"Resource that supplied payload\". So whichever supplies the payload.\n\nLet me do: probe core-a, read config.txt, and write the three artifacts — all independent. Then handle fallbacks if needed."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_5",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/observe.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_6",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/recover.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_7",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/deliver.txt"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_8",
+                "function": {
+                  "arguments": "{\"name\":\"backup-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_9",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "- core-a is unavailable → fall back to backup-a\n- config.txt not found → it's possibly renamed; list documents to find the actual filename\n- Artifacts written successfully\n\nLet me probe backup-a and list documents in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_8",
+            "name": "probe_resource",
+            "content": "verified-payload-all-01"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_9",
+            "name": "list_documents",
+            "content": "[\"config_live.txt\"]"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6588.058,
+      "response": {
+        "id": "chatcmpl-6a6a59d83d849064d6690d61",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "backup-a supplied the payload, and the document was renamed to `config_live.txt`. Now I'll read that document and install jq via apt.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_10",
+                  "function": {
+                    "arguments": "{\"file\":\"config_live.txt\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "install_package_11",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "- backup-a supplied the payload: \"verified-payload-all-01\"\n- The document was renamed to \"config_live.txt\"\n\nNow read config_live.txt to recover the exact token, and install jq with apt. These are independent."
+            }
+          }
+        ],
+        "created": 1785354713,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 174,
+          "prompt_tokens": 2139,
+          "total_tokens": 2313,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 48,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 1792
+          },
+          "cached_tokens": 1792
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:51:58.059060+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records oak and pine and select the later one; (2) retrieve core-a or, if unavailable, fallback backup-a; (3) create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711; (4) read possibly-renamed document config.txt and recover its exact token; (5) install package jq with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll start by gathering the foundational information: reading both records and inspecting the system state.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"oak\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"pine\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "inspect_system_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 2
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records \"oak\" and \"pine\", select the later one\n2. Retrieve \"core-a\" or, if unavailable, fallback \"backup-a\"\n3. Create artifacts observe.txt, recover.txt, deliver.txt, each containing exactly CFG-711\n4. Read possibly-renamed document config.txt and recover its exact token\n5. Install package jq with the simulated host's native package manager\n\nLet me start by reading the records oak and pine, and inspecting the system to figure out the native package manager. These are independent calls, so I can make them in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-oak"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-pine"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_2",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_3",
+                "function": {
+                  "arguments": "{\"name\":\"core-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"config.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "write_artifact_5",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"observe.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_6",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"recover.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_7",
+                "function": {
+                  "arguments": "{\"content\":\"CFG-711\",\"file\":\"deliver.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "The records return payloads \"payload-for-oak\" and \"payload-for-pine\". I need to select the \"later\" one. Hmm, how do I determine which is later? The records just returned payloads without timestamps. Maybe I need to check the probe_resource? No — the task says \"read records oak and pine and select the later one\". \n\nThe payloads don't have timestamps. Maybe \"later\" refers to alphabetical order? Or maybe the record data includes timing info I'm not seeing. Let me think — \"payload-for-oak\" and \"payload-for-pine\". Alphabetically, \"pine\" comes after \"oak\". So \"pine\" would be the later one alphabetically.\n\nHmm, but maybe the records have more metadata. Let me re-read them? The tool returned just the payload strings. Perhaps the intended interpretation: \"select the later one\" — later in alphabetical order = pine. Alternatively, later in the order listed in the task (oak first, pine second) = pine. Either way, pine seems to be the later one.\n\nActually, let me consider: the task lists \"oak and pine\" — oak first, pine second. Later in that listing = pine. Alphabetically pine > oak too. So selected_record = pine.\n\nNow step 2: retrieve core-a or fallback backup-a. Let me probe core-a first.\n\nStep 3: create artifacts with content CFG-711.\n\nStep 4: read config.txt — possibly renamed, so I may need list_documents if read fails.\n\nStep 5: install jq via apt (the native manager from inspect_system).\n\nLet me probe core-a first to see if it's available. Also, I can try reading config.txt in parallel — if it fails, I'll list documents. And I can write the artifacts in parallel too since their content is given (CFG-711).\n\nActually, let me be careful about dependencies: probe core-a first; if unavailable, probe backup-a. The fallback resource name goes into submit_result as \"fallback\" — \"Resource that supplied payload\". So whichever supplies the payload.\n\nLet me do: probe core-a, read config.txt, and write the three artifacts — all independent. Then handle fallbacks if needed."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_3",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_5",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/observe.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_6",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/recover.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_7",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/deliver.txt"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_8",
+                "function": {
+                  "arguments": "{\"name\":\"backup-a\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_9",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "- core-a is unavailable → fall back to backup-a\n- config.txt not found → it's possibly renamed; list documents to find the actual filename\n- Artifacts written successfully\n\nLet me probe backup-a and list documents in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_8",
+            "name": "probe_resource",
+            "content": "verified-payload-all-01"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_9",
+            "name": "list_documents",
+            "content": "[\"config_live.txt\"]"
+          },
+          {
+            "content": "backup-a supplied the payload, and the document was renamed to `config_live.txt`. Now I'll read that document and install jq via apt.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_10",
+                "function": {
+                  "arguments": "{\"file\":\"config_live.txt\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "install_package_11",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "- backup-a supplied the payload: \"verified-payload-all-01\"\n- The document was renamed to \"config_live.txt\"\n\nNow read config_live.txt to recover the exact token, and install jq with apt. These are independent."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_10",
+            "name": "read_document",
+            "content": "CFG-711"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_11",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 9662.342,
+      "response": {
+        "id": "chatcmpl-6a6a59df8917d7cfdbb93449",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_12",
+                  "function": {
+                    "arguments": "{\"artifacts\":[\"observe.txt\",\"recover.txt\",\"deliver.txt\"],\"document\":\"config_live.txt\",\"fallback\":\"backup-a\",\"manager\":\"apt\",\"package\":\"jq\",\"selected_record\":\"pine\",\"token\":\"CFG-711\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "All components are complete:\n\n1. ✅ Read records oak (\"payload-for-oak\") and pine (\"payload-for-pine\"); later one = pine\n2. ✅ core-a unavailable → fallback backup-a supplied payload \"verified-payload-all-01\"\n3. ✅ Created observe.txt, recover.txt, deliver.txt each with exactly CFG-711\n4. ✅ Read renamed document config_live.txt; token = CFG-711\n5. ✅ Installed jq with apt\n\nNow submit the combined result:\n- selected_record: pine\n- fallback: backup-a\n- artifacts: [\"observe.txt\", \"recover.txt\", \"deliver.txt\"]\n- document: config_live.txt\n- token: CFG-711\n- manager: apt\n- package: jq"
+            }
+          }
+        ],
+        "created": 1785354719,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 309,
+          "prompt_tokens": 2367,
+          "total_tokens": 2676,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 152,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 2048
+          },
+          "cached_tokens": 2048
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:51:24.040892+00:00",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "arguments": {
+        "name": "oak"
+      },
+      "content": "payload-for-oak",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:51:24.044084+00:00",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "arguments": {
+        "name": "pine"
+      },
+      "content": "payload-for-pine",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:51:24.045591+00:00",
+      "tool_call_id": "inspect_system_2",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/one\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}",
+      "ok": true,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:51:45.610473+00:00",
+      "tool_call_id": "probe_resource_3",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "core-a"
+      },
+      "content": "Error: primary resource is temporarily unavailable",
+      "ok": false,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:51:45.612426+00:00",
+      "tool_call_id": "read_document_4",
+      "name": "read_document",
+      "arguments": {
+        "file": "config.txt"
+      },
+      "content": "Error: document not found",
+      "ok": false,
+      "sandbox_sha256_after": "4b7f6415c5c5842654b9ba24018aefaa4c45e9aa8611e5ec139e9122ecbdf504"
+    },
+    {
+      "at": "2026-07-29T19:51:45.614262+00:00",
+      "tool_call_id": "write_artifact_5",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "observe.txt"
+      },
+      "content": "Wrote artifacts/observe.txt",
+      "ok": true,
+      "sandbox_sha256_after": "4452b1935b7fa3c65041f9dee18538867c2f482f8a7334648ff28084c83d3bcc"
+    },
+    {
+      "at": "2026-07-29T19:51:45.615930+00:00",
+      "tool_call_id": "write_artifact_6",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "recover.txt"
+      },
+      "content": "Wrote artifacts/recover.txt",
+      "ok": true,
+      "sandbox_sha256_after": "0447ddf132114bc12f859affd5b7d1b56151cbae3c19f3956362f22a548ca50d"
+    },
+    {
+      "at": "2026-07-29T19:51:45.617706+00:00",
+      "tool_call_id": "write_artifact_7",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "CFG-711",
+        "file": "deliver.txt"
+      },
+      "content": "Wrote artifacts/deliver.txt",
+      "ok": true,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:51:51.455720+00:00",
+      "tool_call_id": "probe_resource_8",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "backup-a"
+      },
+      "content": "verified-payload-all-01",
+      "ok": true,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:51:51.458294+00:00",
+      "tool_call_id": "list_documents_9",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"config_live.txt\"]",
+      "ok": true,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:51:58.053814+00:00",
+      "tool_call_id": "read_document_10",
+      "name": "read_document",
+      "arguments": {
+        "file": "config_live.txt"
+      },
+      "content": "CFG-711",
+      "ok": true,
+      "sandbox_sha256_after": "f1049013e8713b910df0263cd25af2399a9541abf279e463bd8e607ef0573c96"
+    },
+    {
+      "at": "2026-07-29T19:51:58.056526+00:00",
+      "tool_call_id": "install_package_11",
+      "name": "install_package",
+      "arguments": {
+        "manager": "apt",
+        "package": "jq"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    },
+    {
+      "at": "2026-07-29T19:52:07.728666+00:00",
+      "tool_call_id": "submit_result_12",
+      "name": "submit_result",
+      "arguments": {
+        "artifacts": [
+          "observe.txt",
+          "recover.txt",
+          "deliver.txt"
+        ],
+        "document": "config_live.txt",
+        "fallback": "backup-a",
+        "manager": "apt",
+        "package": "jq",
+        "selected_record": "pine",
+        "token": "CFG-711"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "55399e37ab257bc80b5e686266590b71afc0e3f3203e82f972a8ca4ace3f87d9"
+    }
+  ],
+  "tool_counters": {
+    "read_record": 2,
+    "inspect_system": 1,
+    "probe_resource": 2,
+    "read_document": 2,
+    "write_artifact": 3,
+    "list_documents": 1,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "timestamps": true,
+    "tool_counter": true,
+    "todo_list": true,
+    "detailed_errors": true,
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 5,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 8402,
+    "completion_tokens": 1519,
+    "total_tokens": 9921
+  },
+  "cost": {
+    "amount": 0.31994,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:52:07.732748+00:00",
+  "case_condition_order": [
+    "combined",
+    "disabled"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

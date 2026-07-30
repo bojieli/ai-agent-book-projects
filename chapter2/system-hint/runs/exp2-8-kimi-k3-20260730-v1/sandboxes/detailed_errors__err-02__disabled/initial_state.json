@@ -1,0 +1,7 @@
+{
+  "suite": "detailed_errors",
+  "case_id": "err-02",
+  "requested": "policy.md",
+  "actual": "policy_final.md",
+  "document_token": "POL-3152"
+}

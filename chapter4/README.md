@@ -18,6 +18,10 @@
 
 > 此外，[`chapter4/docker-compose.yml`](docker-compose.yml) 与 [`chapter4/DOCKER_DEPLOYMENT.md`](DOCKER_DEPLOYMENT.md) 提供了将上述 MCP 工具服务器容器化部署的参考方案。
 
+## 正式实验验收
+
+真实运行、原始收据、哈希、逐项门禁与外部凭据阻塞项统一记录在 [EXPERIMENT_LEDGER.md](EXPERIMENT_LEDGER.md)。代码“可独立运行”不等于本机当前凭据已满足论文实验：4-1 至 4-4 的可执行核心均已通过真实运行，但授权私有数据、外部通知或真实邮箱门禁仍按证据诚实标为 blocked；不会用 mock 结果代替。
+
 ## 项目类型说明
 
 | 图标 | 类型 | 含义 |

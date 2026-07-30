@@ -1,0 +1,26 @@
+{
+  "user_id": "test_user_layer1_04_airline_booking",
+  "type": "advanced_json_cards",
+  "updated_at": "2026-07-30T06:02:48.701807",
+  "categories": {
+    "financial": {
+      "financial_layer1_0": {
+        "backstory": "Information about financial topics discussed in conversation",
+        "date_created": "2026-07-30 06:02:48",
+        "person": "User (primary)",
+        "relationship": "primary account holder",
+        "conversation_id": "layer1_04_airline_booking",
+        "topics": [
+          "payment",
+          "credit"
+        ],
+        "extracted_from": "3 conversation chunks",
+        "extraction_method": "fallback_keywords",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:48.701790",
+          "updated_at": "2026-07-30T06:02:48.701796"
+        }
+      }
+    }
+  }
+}

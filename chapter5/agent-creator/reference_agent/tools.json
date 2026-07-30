@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "lookup_domain_fact",
+        "description": "Look up a fact in the Agent's verified domain knowledge base. Use this before answering domain-specific factual questions.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {"type": "string", "description": "A concise lookup query."}
+          },
+          "required": ["query"],
+          "additionalProperties": false
+        }
+      }
+    }
+  ]
+}

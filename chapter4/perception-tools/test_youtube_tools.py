@@ -14,6 +14,14 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from multimodal_tools import extract_youtube_transcript
 
 
+def _load_success_or_skip_ip_block(result):
+    """Skip only YouTube's explicit provider-side IP ban response."""
+    data = json.loads(result.text)
+    if not data["success"] and "blocking requests from your IP" in str(data["message"]):
+        pytest.skip("YouTube transcript provider explicitly blocked this runner IP")
+    return data
+
+
 class TestYouTubeTranscript:
     """Tests for YouTube transcript extraction."""
     
@@ -29,7 +37,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         message = data["message"]
@@ -54,7 +62,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         message = data["message"]
@@ -74,7 +82,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         message = data["message"]
@@ -92,7 +100,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         transcript = data["message"]["transcript"]
@@ -119,7 +127,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         message = data["message"]
@@ -158,7 +166,7 @@ class TestYouTubeTranscript:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         metadata = data["metadata"]
@@ -214,7 +222,7 @@ class TestYouTubeTranscriptFormats:
             language_code="en"
         )
         
-        data = json.loads(result.text)
+        data = _load_success_or_skip_ip_block(result)
         assert data["success"] is True
         
         message = data["message"]

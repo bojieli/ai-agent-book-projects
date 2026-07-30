@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-1",
+  "dataset": "HuggingFaceH4/aime_2024",
+  "revision": "2fe88a2f1091d5048c0f36abc874fb997b3dd99a",
+  "source_path": "data/train-00000-of-00001.parquet",
+  "source_sha256": "26139847601a5037c237d5928b195e7260ca8074cf4f264b794af42847f79ccf",
+  "split": "train",
+  "problems": 30,
+  "selection": "all published AIME I and AIME II 2024 problems",
+  "answers": "published integer answer field; solutions are never sent to the model"
+}

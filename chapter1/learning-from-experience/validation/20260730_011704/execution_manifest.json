@@ -1,0 +1,17 @@
+{
+  "experiment_id": "7-2",
+  "campaign_started_at_local": "2026-07-30T01:17:04+08:00",
+  "command": [
+    "python",
+    "run_experiment_7_2.py"
+  ],
+  "execution_source_sha256": {
+    "game_environment.py": "4af75d35cd609e1ee4d163c37c637c3f559365eb47eda1e562e805a6c62f3105",
+    "rl_agent.py": "3821f04679ad4c9d021e3e0557b39b94d43348ef63192f05f077be79ff3442a0",
+    "llm_agent.py": "28579c10cc4ba71eb3ac232e1538172dad78d2ca9733d24fc7bf63fb26385783",
+    "experiment.py": "c8e2890271ba12583d955b1d418d5b171b1becdbcd27b1614d790ac81dee6d96",
+    "run_experiment_7_2.py": "9e988e96fb7d9bc5b16d15a30782e78db14ab3ea10d702fdb7aed3e992b870a1"
+  },
+  "post_run_status": "The campaign and all raw artifacts completed; evidence.json serialization then failed because numpy.bool_ is not handled by the standard JSON encoder. No API rerun is required.",
+  "captured_before_source_repair": true
+}

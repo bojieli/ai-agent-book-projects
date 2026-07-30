@@ -1,0 +1,345 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_11_mortgage_application",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "mortgage_app_001",
+      "memory": [
+        "On 2024-11-20 at 09:15:00, David Alexander Thompson (DOB: July 22, 1982; SSN: 652-41-8897) initiated a mortgage application (conversation_id: mortgage_app_001) with Wells Fargo Home Lending's Mortgage Applications department, assisted by Robert. The call duration was 63 minutes.",
+        "David resides at 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601, where he has lived for 3 years and 4 months, renting from Citywide Property Management LLC at $2,450/month.",
+        "Employed by McKenzie Financial Advisors as a Senior Financial Analyst for 6 years and 2 months, David earns a base salary of $145,000/year, with a 2023 bonus of $28,500. He also does freelance consulting via Thompson Consulting LLC (2 years) averaging $1,800/month.",
+        "David's assets include: Chase checking ($18,500), Wells Fargo savings ($67,000), Marcus by Goldman Sachs savings ($45,000), Vanguard brokerage ($125,000), TD Ameritrade account ($38,000), employer 401k ($285,000), and Fidelity Roth IRA ($78,000).",
+        "Liabilities: Visa (balance $2,300, limit $15,000), MasterCard (paid off, limit $12,000), Amex (balance $1,100, limit $25,000); BMW Financial auto loan (balance $31,500, monthly payment $685, interest rate 3.9%); co-signed sister's student loan (balance $18,000, current on payments).",
+        "David is purchasing a single-family home at 789 Oak Park Avenue, Evanston, Illinois 60201 (built 1998; 4 bedrooms, 3.5 bathrooms; 3,200 sqft) for $625,000. He plans a 20% down payment ($125,000), seeking a $500,000 loan. The property has an HOA fee of $185/month (covers landscaping, snow removal, community park/pool) and annual property taxes of $14,800. The offer is accepted, in attorney review until December 5, 2024, with closing scheduled for January 15, 2025. A home inspection is scheduled for November 26, 2024.",
+        "David's monthly gross income (base salary + bonus + consulting) is ~$14,267. His debt-to-income ratio is 30%, calculated with total monthly housing/debt payments of ~$4,285 (includes mortgage, taxes, insurance, HOA, car payment).",
+        "Mortgage details: No PMI required (20% down). Current 30-year fixed rate is ~6.875%. A 60-day rate lock is recommended for the January 15, 2025 closing, with a one-time float-down option if rates drop by ≥0.25%. Underwriting takes 3-4 weeks.",
+        "Required documents: 2022-2023 tax returns, last 2 pay stubs, last 2 bank statements (all accounts), purchase agreement (with attorney), employer verification (HR contact: 312-555-8900). David will provide these; his email is dthompson82@email.com. Robert (direct line: 312-555-7600) will send the application and checklist within the hour."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "mortgage_app_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_11_mortgage_application enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:31:03.611465+00:00",
+      "latency_ms": 40311.745,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=mortgage_app_001\ntimestamp=2024-11-20 09:15:00\nmetadata={\"business\": \"Wells Fargo Home Lending\", \"department\": \"Mortgage Applications\", \"call_duration\": \"63 minutes\"}\nUSER: Hi, I'd like to apply for a home mortgage loan.\nASSISTANT: Good morning! I'm Robert from Wells Fargo Home Lending. I'll help you with your mortgage application today. Let's start with some basic information. What's your full legal name?\nUSER: David Alexander Thompson.\nASSISTANT: Thank you, Mr. Thompson. And your date of birth?\nUSER: July 22nd, 1982.\nASSISTANT: What's your Social Security number?\nUSER: 652-41-8897.\nASSISTANT: And your current address?\nUSER: 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601.\nASSISTANT: How long have you lived at this address?\nUSER: About three years and four months.\nASSISTANT: Are you currently renting or do you own?\nUSER: I'm renting. The monthly rent is $2,450.\nASSISTANT: Who's your landlord or management company?\nUSER: Citywide Property Management LLC.\nASSISTANT: Thank you. Now, let's discuss your employment. Current employer?\nUSER: I work for McKenzie Financial Advisors.\nASSISTANT: Your position there?\nUSER: Senior Financial Analyst.\nASSISTANT: How long have you been with McKenzie Financial?\nUSER: Six years and two months.\nASSISTANT: And your annual salary?\nUSER: My base salary is $145,000 per year.\nASSISTANT: Do you receive any bonuses or additional compensation?\nUSER: Yes, I typically get an annual bonus. Last year it was $28,500.\nASSISTANT: Any other sources of income?\nUSER: I do some freelance consulting, averaging about $1,800 per month.\nASSISTANT: How long have you been doing the consulting work?\nUSER: For about two years now.\nASSISTANT: Do you have a business name or is it under your personal name?\nUSER: It's under Thompson Consulting LLC.\nASSISTANT: Great. Now let's talk about your assets. What's your total in checking accounts?\nUSER: I have about $18,500 in my Chase checking account.\nASSISTANT: Savings accounts?\nUSER: I have $67,000 in my Wells Fargo savings and another $45,000 in a Marcus by Goldman Sachs high-yield savings.\nASSISTANT: Any investment accounts?\nUSER: Yes, I have a Vanguard brokerage account with about $125,000 and a TD Ameritrade account with $38,000.\nASSISTANT: What about retirement accounts?\nUSER: My 401k with my employer has around $285,000, and I have a Roth IRA at Fidelity with $78,000.\nASSISTANT: Excellent. Now, any liabilities? Credit card debt?\nUSER: I have three credit cards. The Visa has a $2,300 balance, MasterCard is paid off, and my Amex has about $1,100.\nASSISTANT: What are the credit limits on those cards?\nUSER: The Visa is $15,000 limit, MasterCard is $12,000, and Amex is $25,000.\nASSISTANT: Any auto loans?\nUSER: Yes, I have a car loan with BMW Financial. The balance is $31,500.\nASSISTANT: Monthly payment?\nUSER: $685 per month.\nASSISTANT: Interest rate on that loan?\nUSER: It's 3.9%.\nASSISTANT: Any student loans?\nUSER: No, I paid those off two years ago.\nASSISTANT: Other debts or monthly obligations?\nUSER: No, that's everything.\nASSISTANT: Now, about the property you're looking to purchase. What's the address?\nUSER: It's 789 Oak Park Avenue, Evanston, Illinois 60201.\nASSISTANT: Purchase price?\nUSER: $625,000.\nASSISTANT: How much are you planning to put down?\nUSER: I'm planning to put down 20%, so $125,000.\nASSISTANT: So you're looking to borrow $500,000?\nUSER: Exactly.\nASSISTANT: Have you already made an offer?\nUSER: Yes, it was accepted. We're in attorney review until December 5th.\nASSISTANT: When's the planned closing date?\nUSER: January 15th, 2025.\nASSISTANT: Is this going to be your primary residence?\nUSER: Yes, absolutely.\nASSISTANT: Are you purchasing alone or with someone else?\nUSER: Just me, I'm buying it alone.\nASSISTANT: Are you a first-time homebuyer?\nUSER: No, I owned a condo about eight years ago but sold it when I relocated for work.\nASSISTANT: What did you sell that property for?\nUSER: I sold it for $285,000 back in 2016.\nASSISTANT: Did you have any gain or loss on that sale?\nUSER: I made about a $45,000 profit after all expenses.\nASSISTANT: Good. Now, do you have a preference for loan type? 30-year fixed, 15-year fixed, or adjustable rate?\nUSER: I'm interested in a 30-year fixed rate.\nASSISTANT: Based on your credit score range, which we'll verify, current rates are around 6.875% for a 30-year fixed with 20% down.\nUSER: Speaking of credit score, what do you need?\nASSISTANT: We'll pull your credit report. Do you know your approximate score?\nUSER: Last I checked it was 782.\nASSISTANT: Excellent score. That should qualify you for our best rates. Have you had any late payments in the last two years?\nUSER: No, no late payments at all.\nASSISTANT: Any bankruptcies or foreclosures?\nUSER: No, never.\nASSISTANT: Have you co-signed any loans for anyone?\nUSER: Actually yes, I co-signed my sister's student loan about five years ago.\nASSISTANT: What's the balance on that loan?\nUSER: It's down to about $18,000 now.\nASSISTANT: Is she current on payments?\nUSER: Yes, she's never missed a payment.\nASSISTANT: Good. Now, for the down payment, where will those funds come from?\nUSER: From my savings accounts - the Wells Fargo and Marcus accounts I mentioned.\nASSISTANT: Will any of the down payment be a gift from family?\nUSER: No, it's all my own savings.\nASSISTANT: Have you made any large deposits to your accounts in the last 60 days?\nUSER: Just my regular salary and the consulting income. Oh, and I got my annual bonus of $28,500 deposited about three weeks ago.\nASSISTANT: That's fine, we'll just need documentation for that. Now, regarding the property, what type of home is it?\nUSER: It's a single-family home, built in 1998.\nASSISTANT: How many bedrooms and bathrooms?\nUSER: Four bedrooms, three and a half bathrooms.\nASSISTANT: Square footage?\nUSER: About 3,200 square feet.\nASSISTANT: Is there a homeowners association?\nUSER: Yes, the HOA fee is $185 per month.\nASSISTANT: What does that cover?\nUSER: Landscaping of common areas, snow removal, and maintenance of the community park and pool.\nASSISTANT: Annual property taxes?\nUSER: They're about $14,800 per year.\nASSISTANT: Has a home inspection been done yet?\nUSER: Scheduled for next Tuesday, November 26th.\nASSISTANT: Good. Now, let me calculate your debt-to-income ratio. Your monthly gross income including the consulting would be about $14,267, correct?\nUSER: That sounds right.\nASSISTANT: With the mortgage payment, taxes, insurance, HOA, and your car payment, your total monthly housing and debt payments would be approximately $4,285. That gives you a debt-to-income ratio of about 30%, which is excellent.\nUSER: That's good to hear.\nASSISTANT: For the loan application, I'll need several documents. Do you have your last two years of tax returns?\nUSER: Yes, I have 2022 and 2023 returns ready.\nASSISTANT: Last two months of pay stubs?\nUSER: I can download those from our HR portal.\nASSISTANT: Last two months of bank statements for all accounts?\nUSER: I'll need to gather those.\nASSISTANT: And we'll need the purchase agreement and your employer's contact information for verification.\nUSER: The purchase agreement is with my attorney. My HR department number is 312-555-8900.\nASSISTANT: Perfect. Once we receive all documents, the underwriting process typically takes 3-4 weeks.\nUSER: That should work with our January 15th closing.\nASSISTANT: Yes, we'll have plenty of time. I'll email you the full application and document checklist. What's your email address?\nUSER: It's dthompson82@email.com\nASSISTANT: Great. I'll send that within the hour. Any questions about the mortgage process?\nUSER: What about mortgage insurance?\nASSISTANT: With 20% down, you won't need PMI - private mortgage insurance.\nUSER: Perfect. And when do I lock in the interest rate?\nASSISTANT: You can lock anytime between now and closing. We offer 30, 45, or 60-day locks. Given your January 15th closing, I'd recommend a 60-day lock for safety.\nUSER: What if rates drop after I lock?\nASSISTANT: We have a one-time float-down option if rates drop by at least 0.25% from your locked rate.\nUSER: That's good to know. I think I'll wait a week or two before locking.\nASSISTANT: That's fine. Just keep in mind rates can change daily. I'll monitor them and keep you informed.\nUSER: Please do. I think that covers everything I needed to know today.\nASSISTANT: Excellent. I'll process your application and send you the document list. My direct line is 312-555-7600 if you have any questions.\nUSER: Thank you, Robert. I'll gather those documents and send them over soon.\nASSISTANT: Perfect. Congratulations on your home purchase, Mr. Thompson. We'll make sure everything goes smoothly for your closing."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785353463803111fb6a4d6acc002d9c575cdd1b4a76216d475",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"On 2024-11-20 at 09:15:00, David Alexander Thompson (DOB: July 22, 1982; SSN: 652-41-8897) initiated a mortgage application (conversation_id: mortgage_app_001) with Wells Fargo Home Lending's Mortgage Applications department, assisted by Robert. The call duration was 63 minutes.\", \"David resides at 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601, where he has lived for 3 years and 4 months, renting from Citywide Property Management LLC at $2,450/month.\", \"Employed by McKenzie Financial Advisors as a Senior Financial Analyst for 6 years and 2 months, David earns a base salary of $145,000/year, with a 2023 bonus of $28,500. He also does freelance consulting via Thompson Consulting LLC (2 years) averaging $1,800/month.\", \"David's assets include: Chase checking ($18,500), Wells Fargo savings ($67,000), Marcus by Goldman Sachs savings ($45,000), Vanguard brokerage ($125,000), TD Ameritrade account ($38,000), employer 401k ($285,000), and Fidelity Roth IRA ($78,000).\", \"Liabilities: Visa (balance $2,300, limit $15,000), MasterCard (paid off, limit $12,000), Amex (balance $1,100, limit $25,000); BMW Financial auto loan (balance $31,500, monthly payment $685, interest rate 3.9%); co-signed sister's student loan (balance $18,000, current on payments).\", \"David is purchasing a single-family home at 789 Oak Park Avenue, Evanston, Illinois 60201 (built 1998; 4 bedrooms, 3.5 bathrooms; 3,200 sqft) for $625,000. He plans a 20% down payment ($125,000), seeking a $500,000 loan. The property has an HOA fee of $185/month (covers landscaping, snow removal, community park/pool) and annual property taxes of $14,800. The offer is accepted, in attorney review until December 5, 2024, with closing scheduled for January 15, 2025. A home inspection is scheduled for November 26, 2024.\", \"David's monthly gross income (base salary + bonus + consulting) is ~$14,267. His debt-to-income ratio is 30%, calculated with total monthly housing/debt payments of ~$4,285 (includes mortgage, taxes, insurance, HOA, car payment).\", \"Mortgage details: No PMI required (20% down). Current 30-year fixed rate is ~6.875%. A 60-day rate lock is recommended for the January 15, 2025 closing, with a one-time float-down option if rates drop by ≥0.25%. Underwriting takes 3-4 weeks.\", \"Required documents: 2022-2023 tax returns, last 2 pay stubs, last 2 bank statements (all accounts), purchase agreement (with attorney), employer verification (HR contact: 312-555-8900). David will provide these; his email is dthompson82@email.com. Robert (direct line: 312-555-7600) will send the application and checklist within the hour.\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create a JSON object with a \"memory\" array containing contextual paragraphs that retain entity, event, time, status, and relationships from the new session. Let's start by identifying key entities and their details.\n\nFirst, the conversation is a mortgage application session with conversation_id=mortgage_app_001, timestamp=2024-11-20 09:15:00, business=Wells Fargo Home Lending, department=Mortgage Applications, call_duration=63 minutes. The assistant is Robert from Wells Fargo, and the user is David Alexander Thompson.\n\nDavid's personal info: full name, DOB (July 22, 1982), SSN (652-41-8897), current address (2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601), lived there 3y4m, renting from Citywide Property Management LLC, monthly rent $2450.\n\nEmployment: McKenzie Financial Advisors, Senior Financial Analyst, 6y2m tenure, base salary $145k/year, annual bonus (last year $28.5k), freelance consulting via Thompson Consulting LLC (2y, $1800/month).\n\nAssets: Chase checking $18.5k, Wells Fargo savings $67k, Marcus savings $45k, Vanguard brokerage $125k, TD Ameritrade $38k, 401k $285k, Roth IRA $78k.\n\nLiabilities: Visa $2300 (limit $15k), MasterCard $0 (limit $12k), Amex $1100 (limit $25k), BMW Financial auto loan $31.5k (payment $685/month, 3.9% rate), co-signed sister's student loan $18k (current on payments).\n\nProperty: 789 Oak Park Avenue, Evanston, IL 60201, single-family home (1998), 4br/3.5ba, 3200 sqft, purchase price $625k, 20% down ($125k), loan $500k, HOA $185/month (covers landscaping, snow removal, park/pool), property taxes $14.8k/year, home inspection scheduled 2024-11-26, attorney review until 2024-12-05, closing 2025-01-15.\n\nApplication details: DTI 30%, no PMI needed, 60-day rate lock recommended, documents needed (2022-2023 tax returns, 2 pay stubs, 2 bank statements, purchase agreement, employer contact 312-555-8900), email dthompson82@email.com, underwriting 3-4 weeks, assistant Robert (direct line 312-555-7600).\n\nNow, structure into paragraphs with context, ensuring all key facts are included without redundancy, retaining exact values, dates, etc."
+            }
+          }
+        ],
+        "created": 1785353504,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1563,
+          "prompt_tokens": 2761,
+          "total_tokens": 4324,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 696,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1563,
+        "prompt_tokens": 2761,
+        "total_tokens": 4324,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 696,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785353463803111fb6a4d6acc002d9c575cdd1b4a76216d475"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_11_mortgage_application enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:31:43.926164+00:00",
+      "latency_ms": 12626.116,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"On 2024-11-20 at 09:15:00, David Alexander Thompson (DOB: July 22, 1982; SSN: 652-41-8897) initiated a mortgage application (conversation_id: mortgage_app_001) with Wells Fargo Home Lending's Mortgage Applications department, assisted by Robert. The call duration was 63 minutes.\", \"David resides at 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601, where he has lived for 3 years and 4 months, renting from Citywide Property Management LLC at $2,450/month.\", \"Employed by McKenzie Financial Advisors as a Senior Financial Analyst for 6 years and 2 months, David earns a base salary of $145,000/year, with a 2023 bonus of $28,500. He also does freelance consulting via Thompson Consulting LLC (2 years) averaging $1,800/month.\", \"David's assets include: Chase checking ($18,500), Wells Fargo savings ($67,000), Marcus by Goldman Sachs savings ($45,000), Vanguard brokerage ($125,000), TD Ameritrade account ($38,000), employer 401k ($285,000), and Fidelity Roth IRA ($78,000).\", \"Liabilities: Visa (balance $2,300, limit $15,000), MasterCard (paid off, limit $12,000), Amex (balance $1,100, limit $25,000); BMW Financial auto loan (balance $31,500, monthly payment $685, interest rate 3.9%); co-signed sister's student loan (balance $18,000, current on payments).\", \"David is purchasing a single-family home at 789 Oak Park Avenue, Evanston, Illinois 60201 (built 1998; 4 bedrooms, 3.5 bathrooms; 3,200 sqft) for $625,000. He plans a 20% down payment ($125,000), seeking a $500,000 loan. The property has an HOA fee of $185/month (covers landscaping, snow removal, community park/pool) and annual property taxes of $14,800. The offer is accepted, in attorney review until December 5, 2024, with closing scheduled for January 15, 2025. A home inspection is scheduled for November 26, 2024.\", \"David's monthly gross income (base salary + bonus + consulting) is ~$14,267. His debt-to-income ratio is 30%, calculated with total monthly housing/debt payments of ~$4,285 (includes mortgage, taxes, insurance, HOA, car payment).\", \"Mortgage details: No PMI required (20% down). Current 30-year fixed rate is ~6.875%. A 60-day rate lock is recommended for the January 15, 2025 closing, with a one-time float-down option if rates drop by ≥0.25%. Underwriting takes 3-4 weeks.\", \"Required documents: 2022-2023 tax returns, last 2 pay stubs, last 2 bank statements (all accounts), purchase agreement (with attorney), employer verification (HR contact: 312-555-8900). David will provide these; his email is dthompson82@email.com. Robert (direct line: 312-555-7600) will send the application and checklist within the hour.\"]\n\nUSER QUESTION:\nWhat was my total liquid assets amount that I mentioned for the mortgage application?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "021785353504119111fb6a4d6acc002d9c575cdd1b4a76222e680",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your total liquid assets mentioned for the mortgage application are $293,500. This includes:  \n- Chase checking: $18,500  \n- Wells Fargo savings: $67,000  \n- Marcus by Goldman Sachs savings: $45,000  \n- Vanguard brokerage: $125,000  \n- TD Ameritrade account: $38,000  \n\n(Retirement accounts like your employer 401k and Fidelity Roth IRA are not classified as liquid assets for mortgage underwriting purposes.)",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's see. The user is asking for their total liquid assets mentioned in the mortgage application. First, I need to recall what liquid assets are. Liquid assets are those that can be easily converted to cash, like checking accounts, savings accounts, and brokerage accounts. Retirement accounts like 401k and Roth IRA are usually not considered liquid because they might have penalties for early withdrawal, so I should exclude those.\n\nLooking at the long-term memory, David's assets are listed as: Chase checking ($18,500), Wells Fargo savings ($67,000), Marcus by Goldman Sachs savings ($45,000), Vanguard brokerage ($125,000), TD Ameritrade account ($38,000), employer 401k ($285,000), and Fidelity Roth IRA ($78,000). \n\nSo the liquid ones would be the checking, savings, and brokerage accounts. Let's add those up: Chase checking (18,500) + Wells Fargo savings (67,000) + Marcus savings (45,000) + Vanguard brokerage (125,000) + TD Ameritrade (38,000). Let me calculate that step by step. 18,500 + 67,000 is 85,500. 85,500 + 45,000 is 130,500. 130,500 + 125,000 is 255,500. 255,500 + 38,000 is 293,500. The 401k and Roth IRA are retirement accounts, so they're not included. So the total liquid assets should be $293,500."
+            }
+          }
+        ],
+        "created": 1785353516,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 532,
+          "prompt_tokens": 1042,
+          "total_tokens": 1574,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 413,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 532,
+        "prompt_tokens": 1042,
+        "total_tokens": 1574,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 413,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785353504119111fb6a4d6acc002d9c575cdd1b4a76222e680"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_11_mortgage_application enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:31:56.556159+00:00",
+      "latency_ms": 6418.16,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=mortgage_app_001\ntimestamp=2024-11-20 09:15:00\nmetadata={\"business\": \"Wells Fargo Home Lending\", \"department\": \"Mortgage Applications\", \"call_duration\": \"63 minutes\"}\nUSER: Hi, I'd like to apply for a home mortgage loan.\nASSISTANT: Good morning! I'm Robert from Wells Fargo Home Lending. I'll help you with your mortgage application today. Let's start with some basic information. What's your full legal name?\nUSER: David Alexander Thompson.\nASSISTANT: Thank you, Mr. Thompson. And your date of birth?\nUSER: July 22nd, 1982.\nASSISTANT: What's your Social Security number?\nUSER: 652-41-8897.\nASSISTANT: And your current address?\nUSER: 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601.\nASSISTANT: How long have you lived at this address?\nUSER: About three years and four months.\nASSISTANT: Are you currently renting or do you own?\nUSER: I'm renting. The monthly rent is $2,450.\nASSISTANT: Who's your landlord or management company?\nUSER: Citywide Property Management LLC.\nASSISTANT: Thank you. Now, let's discuss your employment. Current employer?\nUSER: I work for McKenzie Financial Advisors.\nASSISTANT: Your position there?\nUSER: Senior Financial Analyst.\nASSISTANT: How long have you been with McKenzie Financial?\nUSER: Six years and two months.\nASSISTANT: And your annual salary?\nUSER: My base salary is $145,000 per year.\nASSISTANT: Do you receive any bonuses or additional compensation?\nUSER: Yes, I typically get an annual bonus. Last year it was $28,500.\nASSISTANT: Any other sources of income?\nUSER: I do some freelance consulting, averaging about $1,800 per month.\nASSISTANT: How long have you been doing the consulting work?\nUSER: For about two years now.\nASSISTANT: Do you have a business name or is it under your personal name?\nUSER: It's under Thompson Consulting LLC.\nASSISTANT: Great. Now let's talk about your assets. What's your total in checking accounts?\nUSER: I have about $18,500 in my Chase checking account.\nASSISTANT: Savings accounts?\nUSER: I have $67,000 in my Wells Fargo savings and another $45,000 in a Marcus by Goldman Sachs high-yield savings.\nASSISTANT: Any investment accounts?\nUSER: Yes, I have a Vanguard brokerage account with about $125,000 and a TD Ameritrade account with $38,000.\nASSISTANT: What about retirement accounts?\nUSER: My 401k with my employer has around $285,000, and I have a Roth IRA at Fidelity with $78,000.\nASSISTANT: Excellent. Now, any liabilities? Credit card debt?\nUSER: I have three credit cards. The Visa has a $2,300 balance, MasterCard is paid off, and my Amex has about $1,100.\nASSISTANT: What are the credit limits on those cards?\nUSER: The Visa is $15,000 limit, MasterCard is $12,000, and Amex is $25,000.\nASSISTANT: Any auto loans?\nUSER: Yes, I have a car loan with BMW Financial. The balance is $31,500.\nASSISTANT: Monthly payment?\nUSER: $685 per month.\nASSISTANT: Interest rate on that loan?\nUSER: It's 3.9%.\nASSISTANT: Any student loans?\nUSER: No, I paid those off two years ago.\nASSISTANT: Other debts or monthly obligations?\nUSER: No, that's everything.\nASSISTANT: Now, about the property you're looking to purchase. What's the address?\nUSER: It's 789 Oak Park Avenue, Evanston, Illinois 60201.\nASSISTANT: Purchase price?\nUSER: $625,000.\nASSISTANT: How much are you planning to put down?\nUSER: I'm planning to put down 20%, so $125,000.\nASSISTANT: So you're looking to borrow $500,000?\nUSER: Exactly.\nASSISTANT: Have you already made an offer?\nUSER: Yes, it was accepted. We're in attorney review until December 5th.\nASSISTANT: When's the planned closing date?\nUSER: January 15th, 2025.\nASSISTANT: Is this going to be your primary residence?\nUSER: Yes, absolutely.\nASSISTANT: Are you purchasing alone or with someone else?\nUSER: Just me, I'm buying it alone.\nASSISTANT: Are you a first-time homebuyer?\nUSER: No, I owned a condo about eight years ago but sold it when I relocated for work.\nASSISTANT: What did you sell that property for?\nUSER: I sold it for $285,000 back in 2016.\nASSISTANT: Did you have any gain or loss on that sale?\nUSER: I made about a $45,000 profit after all expenses.\nASSISTANT: Good. Now, do you have a preference for loan type? 30-year fixed, 15-year fixed, or adjustable rate?\nUSER: I'm interested in a 30-year fixed rate.\nASSISTANT: Based on your credit score range, which we'll verify, current rates are around 6.875% for a 30-year fixed with 20% down.\nUSER: Speaking of credit score, what do you need?\nASSISTANT: We'll pull your credit report. Do you know your approximate score?\nUSER: Last I checked it was 782.\nASSISTANT: Excellent score. That should qualify you for our best rates. Have you had any late payments in the last two years?\nUSER: No, no late payments at all.\nASSISTANT: Any bankruptcies or foreclosures?\nUSER: No, never.\nASSISTANT: Have you co-signed any loans for anyone?\nUSER: Actually yes, I co-signed my sister's student loan about five years ago.\nASSISTANT: What's the balance on that loan?\nUSER: It's down to about $18,000 now.\nASSISTANT: Is she current on payments?\nUSER: Yes, she's never missed a payment.\nASSISTANT: Good. Now, for the down payment, where will those funds come from?\nUSER: From my savings accounts - the Wells Fargo and Marcus accounts I mentioned.\nASSISTANT: Will any of the down payment be a gift from family?\nUSER: No, it's all my own savings.\nASSISTANT: Have you made any large deposits to your accounts in the last 60 days?\nUSER: Just my regular salary and the consulting income. Oh, and I got my annual bonus of $28,500 deposited about three weeks ago.\nASSISTANT: That's fine, we'll just need documentation for that. Now, regarding the property, what type of home is it?\nUSER: It's a single-family home, built in 1998.\nASSISTANT: How many bedrooms and bathrooms?\nUSER: Four bedrooms, three and a half bathrooms.\nASSISTANT: Square footage?\nUSER: About 3,200 square feet.\nASSISTANT: Is there a homeowners association?\nUSER: Yes, the HOA fee is $185 per month.\nASSISTANT: What does that cover?\nUSER: Landscaping of common areas, snow removal, and maintenance of the community park and pool.\nASSISTANT: Annual property taxes?\nUSER: They're about $14,800 per year.\nASSISTANT: Has a home inspection been done yet?\nUSER: Scheduled for next Tuesday, November 26th.\nASSISTANT: Good. Now, let me calculate your debt-to-income ratio. Your monthly gross income including the consulting would be about $14,267, correct?\nUSER: That sounds right.\nASSISTANT: With the mortgage payment, taxes, insurance, HOA, and your car payment, your total monthly housing and debt payments would be approximately $4,285. That gives you a debt-to-income ratio of about 30%, which is excellent.\nUSER: That's good to hear.\nASSISTANT: For the loan application, I'll need several documents. Do you have your last two years of tax returns?\nUSER: Yes, I have 2022 and 2023 returns ready.\nASSISTANT: Last two months of pay stubs?\nUSER: I can download those from our HR portal.\nASSISTANT: Last two months of bank statements for all accounts?\nUSER: I'll need to gather those.\nASSISTANT: And we'll need the purchase agreement and your employer's contact information for verification.\nUSER: The purchase agreement is with my attorney. My HR department number is 312-555-8900.\nASSISTANT: Perfect. Once we receive all documents, the underwriting process typically takes 3-4 weeks.\nUSER: That should work with our January 15th closing.\nASSISTANT: Yes, we'll have plenty of time. I'll email you the full application and document checklist. What's your email address?\nUSER: It's dthompson82@email.com\nASSISTANT: Great. I'll send that within the hour. Any questions about the mortgage process?\nUSER: What about mortgage insurance?\nASSISTANT: With 20% down, you won't need PMI - private mortgage insurance.\nUSER: Perfect. And when do I lock in the interest rate?\nASSISTANT: You can lock anytime between now and closing. We offer 30, 45, or 60-day locks. Given your January 15th closing, I'd recommend a 60-day lock for safety.\nUSER: What if rates drop after I lock?\nASSISTANT: We have a one-time float-down option if rates drop by at least 0.25% from your locked rate.\nUSER: That's good to know. I think I'll wait a week or two before locking.\nASSISTANT: That's fine. Just keep in mind rates can change daily. I'll monitor them and keep you informed.\nUSER: Please do. I think that covers everything I needed to know today.\nASSISTANT: Excellent. I'll process your application and send you the document list. My direct line is 312-555-7600 if you have any questions.\nUSER: Thank you, Robert. I'll gather those documents and send them over soon.\nASSISTANT: Perfect. Congratulations on your home purchase, Mr. Thompson. We'll make sure everything goes smoothly for your closing.\n\nQUESTION: What was my total liquid assets amount that I mentioned for the mortgage application?\nANSWER: Your total liquid assets mentioned for the mortgage application are $293,500. This includes:  \n- Chase checking: $18,500  \n- Wells Fargo savings: $67,000  \n- Marcus by Goldman Sachs savings: $45,000  \n- Vanguard brokerage: $125,000  \n- TD Ameritrade account: $38,000  \n\n(Retirement accounts like your employer 401k and Fidelity Roth IRA are not classified as liquid assets for mortgage underwriting purposes.)\nEVALUATION CRITERIA: The agent should correctly recall and calculate the total liquid assets mentioned:\n- Chase checking: $18,500\n- Wells Fargo savings: $67,000\n- Marcus high-yield savings: $45,000\n- Total liquid assets: $130,500\n\nThe agent should provide this specific total, not including investment or retirement accounts which are not typically considered immediately liquid for mortgage purposes.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a552df5e22e43d6b06026",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n    \"dimensions\": {\n        \"precision\": {\n            \"score\": 1,\n            \"reasoning\": \"The assistant provided an incorrect total liquid assets amount, including investment and retirement accounts which are not typically considered liquid assets for mortgage underwriting purposes.\",\n            \"evidence\": [\n                \"Your total liquid assets mentioned for the mortgage application are $293,500.\"\n            ]\n        },\n        \"recall\": {\n            \"score\": 1,\n            \"reasoning\": \"The assistant did not recall the correct total liquid assets amount, including investment and retirement accounts which are not typically considered liquid assets for mortgage underwriting purposes.\",\n            \"evidence\": [\n                \"Your total liquid assets mentioned for the mortgage application are $293,500.\"\n            ]\n        },\n        \"reasoning\": {\n            \"score\": 1,\n            \"reasoning\": \"The assistant incorrectly included investment and retirement accounts in the calculation of liquid assets, which is not standard for mortgage underwriting purposes.\"\n        },\n        \"proactivity\": {\n            \"score\": 1,\n            \"reasoning\": \"The assistant did not proactively correct the inclusion of non-liquid assets in the calculation.\"\n        }\n    },\n    \"hallucination\": {\n        \"detected\": true,\n        \"claims\": [\n            \"Your total liquid assets mentioned for the mortgage application are $293,500.\"\n        ],\n        \"reasoning\": \"The assistant incorrectly included investment and retirement accounts in the calculation of liquid assets, which is not standard for mortgage underwriting purposes.\"\n    },\n    \"overall_reasoning\": \"The assistant's response was factually incorrect as it included non-liquid assets in the calculation of total liquid assets, which does not align with standard mortgage underwriting practices.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785353517,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 375,
+          "prompt_tokens": 2753,
+          "total_tokens": 3128,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 375,
+        "prompt_tokens": 2753,
+        "total_tokens": 3128,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a552df5e22e43d6b06026"
+    }
+  ],
+  "updated_at_epoch": 1785353522.977152,
+  "answer": "Your total liquid assets mentioned for the mortgage application are $293,500. This includes:  \n- Chase checking: $18,500  \n- Wells Fargo savings: $67,000  \n- Marcus by Goldman Sachs savings: $45,000  \n- Vanguard brokerage: $125,000  \n- TD Ameritrade account: $38,000  \n\n(Retirement accounts like your employer 401k and Fidelity Roth IRA are not classified as liquid assets for mortgage underwriting purposes.)",
+  "result": {
+    "test_id": "layer1_11_mortgage_application",
+    "layer": "layer1",
+    "title": "Mortgage Application - Financial Details Retrieval",
+    "mode": "enhanced_notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "mortgage_app_001",
+        "memory": [
+          "On 2024-11-20 at 09:15:00, David Alexander Thompson (DOB: July 22, 1982; SSN: 652-41-8897) initiated a mortgage application (conversation_id: mortgage_app_001) with Wells Fargo Home Lending's Mortgage Applications department, assisted by Robert. The call duration was 63 minutes.",
+          "David resides at 2156 Riverside Drive, Apartment 14C, Chicago, Illinois 60601, where he has lived for 3 years and 4 months, renting from Citywide Property Management LLC at $2,450/month.",
+          "Employed by McKenzie Financial Advisors as a Senior Financial Analyst for 6 years and 2 months, David earns a base salary of $145,000/year, with a 2023 bonus of $28,500. He also does freelance consulting via Thompson Consulting LLC (2 years) averaging $1,800/month.",
+          "David's assets include: Chase checking ($18,500), Wells Fargo savings ($67,000), Marcus by Goldman Sachs savings ($45,000), Vanguard brokerage ($125,000), TD Ameritrade account ($38,000), employer 401k ($285,000), and Fidelity Roth IRA ($78,000).",
+          "Liabilities: Visa (balance $2,300, limit $15,000), MasterCard (paid off, limit $12,000), Amex (balance $1,100, limit $25,000); BMW Financial auto loan (balance $31,500, monthly payment $685, interest rate 3.9%); co-signed sister's student loan (balance $18,000, current on payments).",
+          "David is purchasing a single-family home at 789 Oak Park Avenue, Evanston, Illinois 60201 (built 1998; 4 bedrooms, 3.5 bathrooms; 3,200 sqft) for $625,000. He plans a 20% down payment ($125,000), seeking a $500,000 loan. The property has an HOA fee of $185/month (covers landscaping, snow removal, community park/pool) and annual property taxes of $14,800. The offer is accepted, in attorney review until December 5, 2024, with closing scheduled for January 15, 2025. A home inspection is scheduled for November 26, 2024.",
+          "David's monthly gross income (base salary + bonus + consulting) is ~$14,267. His debt-to-income ratio is 30%, calculated with total monthly housing/debt payments of ~$4,285 (includes mortgage, taxes, insurance, HOA, car payment).",
+          "Mortgage details: No PMI required (20% down). Current 30-year fixed rate is ~6.875%. A 60-day rate lock is recommended for the January 15, 2025 closing, with a one-time float-down option if rates drop by ≥0.25%. Underwriting takes 3-4 weeks.",
+          "Required documents: 2022-2023 tax returns, last 2 pay stubs, last 2 bank statements (all accounts), purchase agreement (with attorney), employer verification (HR contact: 312-555-8900). David will provide these; his email is dthompson82@email.com. Robert (direct line: 312-555-7600) will send the application and checklist within the hour."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "mortgage_app_001"
+        }
+      }
+    ],
+    "answer": "Your total liquid assets mentioned for the mortgage application are $293,500. This includes:  \n- Chase checking: $18,500  \n- Wells Fargo savings: $67,000  \n- Marcus by Goldman Sachs savings: $45,000  \n- Vanguard brokerage: $125,000  \n- TD Ameritrade account: $38,000  \n\n(Retirement accounts like your employer 401k and Fidelity Roth IRA are not classified as liquid assets for mortgage underwriting purposes.)",
+    "judge": {
+      "scores": {
+        "precision": 1,
+        "recall": 1,
+        "reasoning": 1,
+        "proactivity": 1
+      },
+      "hallucination_veto": true,
+      "passed": false,
+      "reward": 0.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 1,
+          "reasoning": "The assistant provided an incorrect total liquid assets amount, including investment and retirement accounts which are not typically considered liquid assets for mortgage underwriting purposes.",
+          "evidence": [
+            "Your total liquid assets mentioned for the mortgage application are $293,500."
+          ]
+        },
+        "recall": {
+          "score": 1,
+          "reasoning": "The assistant did not recall the correct total liquid assets amount, including investment and retirement accounts which are not typically considered liquid assets for mortgage underwriting purposes.",
+          "evidence": [
+            "Your total liquid assets mentioned for the mortgage application are $293,500."
+          ]
+        },
+        "reasoning": {
+          "score": 1,
+          "reasoning": "The assistant incorrectly included investment and retirement accounts in the calculation of liquid assets, which is not standard for mortgage underwriting purposes."
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The assistant did not proactively correct the inclusion of non-liquid assets in the calculation."
+        }
+      },
+      "hallucination": {
+        "detected": true,
+        "claims": [
+          "Your total liquid assets mentioned for the mortgage application are $293,500."
+        ],
+        "reasoning": "The assistant incorrectly included investment and retirement accounts in the calculation of liquid assets, which is not standard for mortgage underwriting purposes."
+      },
+      "overall_reasoning": "The assistant's response was factually incorrect as it included non-liquid assets in the calculation of total liquid assets, which does not align with standard mortgage underwriting practices."
+    }
+  }
+}

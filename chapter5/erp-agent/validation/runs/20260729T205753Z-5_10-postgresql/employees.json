@@ -1,0 +1,322 @@
+[
+  {
+    "emp_id": 1,
+    "name": "秦娟",
+    "department": "研发部",
+    "level": 3,
+    "hire_date": "2025-08-07",
+    "leave_date": null
+  },
+  {
+    "emp_id": 2,
+    "name": "郑雪",
+    "department": "销售部",
+    "level": 8,
+    "hire_date": "2026-03-08",
+    "leave_date": null
+  },
+  {
+    "emp_id": 3,
+    "name": "孙芳",
+    "department": "人力资源部",
+    "level": 6,
+    "hire_date": "2026-05-17",
+    "leave_date": null
+  },
+  {
+    "emp_id": 4,
+    "name": "钱松",
+    "department": "销售部",
+    "level": 4,
+    "hire_date": "2026-05-14",
+    "leave_date": null
+  },
+  {
+    "emp_id": 5,
+    "name": "韩晓",
+    "department": "人力资源部",
+    "level": 6,
+    "hire_date": "2026-03-21",
+    "leave_date": null
+  },
+  {
+    "emp_id": 6,
+    "name": "赵军",
+    "department": "市场部",
+    "level": 9,
+    "hire_date": "2025-09-02",
+    "leave_date": null
+  },
+  {
+    "emp_id": 7,
+    "name": "陈艳",
+    "department": "市场部",
+    "level": 5,
+    "hire_date": "2025-11-26",
+    "leave_date": null
+  },
+  {
+    "emp_id": 8,
+    "name": "孔静",
+    "department": "研发部",
+    "level": 3,
+    "hire_date": "2026-01-09",
+    "leave_date": null
+  },
+  {
+    "emp_id": 9,
+    "name": "朱娜",
+    "department": "市场部",
+    "level": 7,
+    "hire_date": "2025-01-23",
+    "leave_date": null
+  },
+  {
+    "emp_id": 10,
+    "name": "孔敏",
+    "department": "人力资源部",
+    "level": 3,
+    "hire_date": "2024-12-02",
+    "leave_date": null
+  },
+  {
+    "emp_id": 11,
+    "name": "张勇",
+    "department": "市场部",
+    "level": 9,
+    "hire_date": "2024-10-16",
+    "leave_date": null
+  },
+  {
+    "emp_id": 12,
+    "name": "韩超",
+    "department": "研发部",
+    "level": 8,
+    "hire_date": "2025-06-20",
+    "leave_date": null
+  },
+  {
+    "emp_id": 13,
+    "name": "郑建",
+    "department": "销售部",
+    "level": 9,
+    "hire_date": "2025-06-15",
+    "leave_date": null
+  },
+  {
+    "emp_id": 14,
+    "name": "张军",
+    "department": "财务部",
+    "level": 8,
+    "hire_date": "2025-03-05",
+    "leave_date": null
+  },
+  {
+    "emp_id": 15,
+    "name": "秦英",
+    "department": "市场部",
+    "level": 4,
+    "hire_date": "2025-01-17",
+    "leave_date": null
+  },
+  {
+    "emp_id": 16,
+    "name": "杨军",
+    "department": "销售部",
+    "level": 7,
+    "hire_date": "2024-09-17",
+    "leave_date": null
+  },
+  {
+    "emp_id": 17,
+    "name": "韩平",
+    "department": "财务部",
+    "level": 5,
+    "hire_date": "2023-11-27",
+    "leave_date": null
+  },
+  {
+    "emp_id": 18,
+    "name": "孙平",
+    "department": "销售部",
+    "level": 9,
+    "hire_date": "2024-06-22",
+    "leave_date": null
+  },
+  {
+    "emp_id": 19,
+    "name": "沈平",
+    "department": "市场部",
+    "level": 3,
+    "hire_date": "2023-12-28",
+    "leave_date": null
+  },
+  {
+    "emp_id": 20,
+    "name": "魏磊",
+    "department": "财务部",
+    "level": 6,
+    "hire_date": "2024-04-03",
+    "leave_date": null
+  },
+  {
+    "emp_id": 21,
+    "name": "朱强",
+    "department": "销售部",
+    "level": 4,
+    "hire_date": "2024-03-07",
+    "leave_date": null
+  },
+  {
+    "emp_id": 22,
+    "name": "韩强",
+    "department": "财务部",
+    "level": 5,
+    "hire_date": "2023-09-26",
+    "leave_date": null
+  },
+  {
+    "emp_id": 23,
+    "name": "李丽",
+    "department": "财务部",
+    "level": 3,
+    "hire_date": "2023-11-03",
+    "leave_date": null
+  },
+  {
+    "emp_id": 24,
+    "name": "华英",
+    "department": "销售部",
+    "level": 9,
+    "hire_date": "2024-05-03",
+    "leave_date": null
+  },
+  {
+    "emp_id": 25,
+    "name": "魏栋",
+    "department": "财务部",
+    "level": 7,
+    "hire_date": "2022-06-27",
+    "leave_date": "2024-12-21"
+  },
+  {
+    "emp_id": 26,
+    "name": "赵丽",
+    "department": "人力资源部",
+    "level": 9,
+    "hire_date": "2022-11-11",
+    "leave_date": "2025-08-19"
+  },
+  {
+    "emp_id": 27,
+    "name": "秦刚",
+    "department": "人力资源部",
+    "level": 9,
+    "hire_date": "2021-08-27",
+    "leave_date": "2026-04-29"
+  },
+  {
+    "emp_id": 28,
+    "name": "褚东",
+    "department": "市场部",
+    "level": 6,
+    "hire_date": "2023-04-03",
+    "leave_date": "2025-09-30"
+  },
+  {
+    "emp_id": 29,
+    "name": "卫国",
+    "department": "市场部",
+    "level": 7,
+    "hire_date": "2023-07-23",
+    "leave_date": null
+  },
+  {
+    "emp_id": 30,
+    "name": "蒋磊",
+    "department": "市场部",
+    "level": 9,
+    "hire_date": "2023-04-09",
+    "leave_date": null
+  },
+  {
+    "emp_id": 31,
+    "name": "赵平",
+    "department": "销售部",
+    "level": 7,
+    "hire_date": "2022-07-09",
+    "leave_date": null
+  },
+  {
+    "emp_id": 32,
+    "name": "张霞",
+    "department": "研发部",
+    "level": 3,
+    "hire_date": "2022-03-13",
+    "leave_date": null
+  },
+  {
+    "emp_id": 33,
+    "name": "吴敏",
+    "department": "研发部",
+    "level": 4,
+    "hire_date": "2022-11-23",
+    "leave_date": null
+  },
+  {
+    "emp_id": 34,
+    "name": "周雪",
+    "department": "财务部",
+    "level": 9,
+    "hire_date": "2021-07-07",
+    "leave_date": null
+  },
+  {
+    "emp_id": 35,
+    "name": "陶松",
+    "department": "销售部",
+    "level": 4,
+    "hire_date": "2021-06-02",
+    "leave_date": "2026-03-20"
+  },
+  {
+    "emp_id": 36,
+    "name": "华艳",
+    "department": "市场部",
+    "level": 7,
+    "hire_date": "2023-02-07",
+    "leave_date": "2025-06-27"
+  },
+  {
+    "emp_id": 37,
+    "name": "许华",
+    "department": "销售部",
+    "level": 8,
+    "hire_date": "2022-01-20",
+    "leave_date": null
+  },
+  {
+    "emp_id": 38,
+    "name": "金丽",
+    "department": "市场部",
+    "level": 6,
+    "hire_date": "2021-09-07",
+    "leave_date": null
+  },
+  {
+    "emp_id": 39,
+    "name": "吕芳",
+    "department": "销售部",
+    "level": 3,
+    "hire_date": "2022-11-15",
+    "leave_date": null
+  },
+  {
+    "emp_id": 40,
+    "name": "韩伟",
+    "department": "人力资源部",
+    "level": 4,
+    "hire_date": "2021-12-01",
+    "leave_date": null
+  }
+]

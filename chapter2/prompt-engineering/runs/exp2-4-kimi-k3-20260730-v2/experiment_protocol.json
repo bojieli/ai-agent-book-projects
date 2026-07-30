@@ -1,0 +1,94 @@
+{
+  "experiment_id": "2-4",
+  "protocol_version": "1.0.0",
+  "frozen_on": "2026-07-30",
+  "authority": "book/chapter2.md:654",
+  "benchmark": "vendored tau-bench airline test split",
+  "provider": "Moonshot official OpenAI-compatible endpoint",
+  "model": "kimi-k3",
+  "user_model": "kimi-k3",
+  "temperature": 1,
+  "user_temperature": 1,
+  "seed": 20260730,
+  "task_ids": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "trials_per_task": 1,
+  "max_agent_steps": 30,
+  "arms": {
+    "baseline": {
+      "tone": "professional neutral",
+      "wiki": "original structured rules",
+      "tool_descriptions": "complete"
+    },
+    "tone_trump": {
+      "tone": "exaggerated Trump-style",
+      "wiki": "original structured rules",
+      "tool_descriptions": "complete"
+    },
+    "tone_casual": {
+      "tone": "casual with emoji/slang",
+      "wiki": "original structured rules",
+      "tool_descriptions": "complete"
+    },
+    "wiki_random": {
+      "tone": "professional neutral",
+      "wiki": "same rules flattened and pre-shuffled",
+      "tool_descriptions": "complete"
+    },
+    "no_tool_desc": {
+      "tone": "professional neutral",
+      "wiki": "original structured rules",
+      "tool_descriptions": "all description fields blank"
+    },
+    "all_ablations": {
+      "tone": "casual with emoji/slang",
+      "wiki": "same rules flattened and pre-shuffled",
+      "tool_descriptions": "all description fields blank"
+    }
+  },
+  "metrics": [
+    "tau-bench objective reward/pass rate",
+    "agent steps and model calls",
+    "tool calls and environment tool errors",
+    "provider prompt/completion/total tokens",
+    "provider response IDs",
+    "LiteLLM native cost estimate"
+  ],
+  "acceptance_gates": [
+    "all six arms run the same ten task IDs with the same seed and user simulator",
+    "each task is scored only by the vendored tau-bench objective environment",
+    "every agent and simulated-user model call is a real provider response with ID and usage",
+    "raw request messages, tools, response content/tool calls, usage, timings, and trajectories are retained",
+    "the randomized wiki contains the same experimental rule material in the frozen pre-generated order",
+    "the no-description arm preserves schemas while blanking every nested description",
+    "campaign completion is independent of whether the manuscript hypotheses win",
+    "historical percentage claims are not treated as reproduced unless this fixed campaign independently yields them",
+    "credential scan passes"
+  ],
+  "hypotheses": {
+    "tone": "tone variants have limited effect on objective task success",
+    "organization": "randomizing instruction organization reduces success",
+    "tool_descriptions": "removing descriptions increases tool errors and reduces success"
+  },
+  "transport_amendment": {
+    "amended_on": "2026-07-30",
+    "reason": "The OpenAI-direct credential returned insufficient_quota and the OpenRouter credential returned User not found before any model response or task observation was obtained.",
+    "change": "Use the available official Moonshot endpoint and kimi-k3 for both action model and user simulator.",
+    "unchanged": [
+      "tasks",
+      "arms",
+      "temperature",
+      "seed",
+      "step limit",
+      "objective gates and hypotheses"
+    ],
+    "failed_campaign": "runs/exp2-4-gpt-4o-mini-20260730-v1",
+    "methodological_note": "This is an availability amendment, not a response-conditioned change: both rejected transports produced zero successful model calls and therefore exposed no task outcomes."
+  },
+  "pricing": {
+    "currency": "CNY",
+    "uncached_input_per_million_tokens": 20,
+    "cached_input_per_million_tokens": 2,
+    "output_per_million_tokens": 100,
+    "qualification": "Prompt cache detail is unavailable in these responses, so every prompt token is conservatively priced as uncached."
+  }
+}

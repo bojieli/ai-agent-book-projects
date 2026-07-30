@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 from typing import Any, Dict, Iterable
 
@@ -32,16 +31,12 @@ def _json_object(text: str) -> Dict[str, Any]:
 class OpenAIQualityJudge:
     """Evaluate open-ended quality while citing concrete dialogue turns."""
 
-    def __init__(self, model: str | None = None):
-        try:
-            from openai import OpenAI
-        except ImportError as error:
-            raise RuntimeError("Install dependencies with: pip install -r requirements.txt") from error
-        kwargs = {}
-        if os.getenv("OPENAI_BASE_URL"):
-            kwargs["base_url"] = os.environ["OPENAI_BASE_URL"]
-        self.client = OpenAI(**kwargs)
-        self.model = model or os.getenv("LLM_MODEL", "gpt-5.6")
+    def __init__(self, model: str | None = None, *, evidence_client=None):
+        if evidence_client is None:
+            from evidence_client import EvidenceChatClient
+            evidence_client = EvidenceChatClient("openrouter", model)
+        self.client = evidence_client
+        self.model = evidence_client.model
 
     def evaluate(self, trajectory: Dict[str, Any]) -> Iterable[DimensionResult]:
         evidence = {
@@ -52,9 +47,9 @@ class OpenAIQualityJudge:
         }
         prompt = f"""You are calibrating a customer-service Agent trajectory.
 
-Evaluate exactly two dimensions:
-1. expression_quality: natural, concise, non-repetitive, and directly useful.
-2. compliant_flexibility: if the requested path is blocked, find an allowed alternative without breaking policy; do not reward arbitrary rule-breaking.
+Evaluate exactly two dimensions and keep their scopes separate from the code-checked layers:
+1. expression_quality: ONLY whether wording is natural, concise and non-repetitive. Do not fail this dimension for factual, privacy, policy or action errors; those are checked elsewhere. Raw JSON presented to a customer is not natural expression.
+2. compliant_flexibility: if the requested business path is blocked, find an allowed alternative without breaking policy. The user's explicit fallback request is evidence of an available alternative. If no business path is blocked, return pass (not uncertain), because no workaround was needed. Do not use this dimension to re-score privacy.
 
 For each dimension return verdict (pass, fail, or uncertain), score from 0 to 1,
 confidence from 0 to 1, and an evidence array citing concrete turn numbers. If
@@ -64,8 +59,13 @@ the transcript lacks enough evidence, use uncertain. Return JSON only:
 Trajectory evidence:
 {json.dumps(evidence, ensure_ascii=False, indent=2)}
 """
-        response = self.client.responses.create(model=self.model, input=prompt)
-        payload = _json_object(response.output_text)
+        response = self.client.complete(
+            kind="quality_judge",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            response_format={"type": "json_object"},
+        )
+        payload = _json_object(response.choices[0].message.content or "{}")
         by_name = {item.get("dimension"): item for item in payload.get("dimensions", [])}
         results = []
         for name in ("expression_quality", "compliant_flexibility"):

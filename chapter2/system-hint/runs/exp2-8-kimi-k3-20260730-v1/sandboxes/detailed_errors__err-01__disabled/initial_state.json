@@ -1,0 +1,7 @@
+{
+  "suite": "detailed_errors",
+  "case_id": "err-01",
+  "requested": "invoice.txt",
+  "actual": "invoice_2025.txt",
+  "document_token": "INV-2041"
+}

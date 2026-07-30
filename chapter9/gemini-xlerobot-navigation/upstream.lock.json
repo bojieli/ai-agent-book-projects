@@ -1,0 +1,35 @@
+{
+  "experiment_id": "9-9",
+  "repository": "https://github.com/Vector-Wangel/XLeRobot.git",
+  "commit": "3d14695e40c9c68229c0aacffca6053c75cd3eb6",
+  "guide": {
+    "published_url": "https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html",
+    "path": "docs/en/source/software/getting_started/LLM_agent.md",
+    "git_blob": "d336a9e35838267614d31cdb98b9b50d66427f03"
+  },
+  "robocrew": {
+    "repository": "https://github.com/Grigorij-Dudnik/RoboCrew.git",
+    "tag": "v0.3.1",
+    "commit": "c749148f29bd14e61347f9fc3530c343fff0d994",
+    "version_file": {
+      "path": "pyproject.toml",
+      "git_blob": "9029068bdb511dfc02262adf7c2af69ec2fac0fe"
+    },
+    "pypi": {
+      "version": "0.3.1",
+      "wheel_url": "https://files.pythonhosted.org/packages/29/8d/893d6d5cfe8a8e5aac943936ee497934533d882cfd933f609a12a66101c2/robocrew-0.3.1-py3-none-any.whl",
+      "wheel_sha256": "4afbc8ab19ffb61cc0617486408460c80072991434636aff041a1ef87f2abb4f",
+      "sdist_url": "https://files.pythonhosted.org/packages/28/f2/16e1a8eeb2df9fff008045db5b2202bf83939eac3d48449f500f4a1326f9/robocrew-0.3.1.tar.gz",
+      "sdist_sha256": "a6c25a0f18b7d7d52a7efc199226a6175dfb1032213ff3845e75e3701a948c98"
+    }
+  },
+  "required_model": "gemini-robotics-er-1.5-preview",
+  "required_navigation_api_key_env": "GOOGLE_API_KEY",
+  "reference_frame": {
+    "source_url": "https://github.com/user-attachments/assets/296f6f60-52a4-4fa0-9a77-a113b4868f83",
+    "referenced_by": "docs/en/source/software/getting_started/LLM_agent.md",
+    "sha256": "2dae44dd2dbd9259f9448095f09e064ade50d485e8d0dcab7a3ca2a73435bcc1",
+    "role": "upstream reference input for non-actuating API validation; not navigation evidence"
+  },
+  "verified_at": "2026-07-30"
+}

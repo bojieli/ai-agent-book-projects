@@ -21,6 +21,7 @@ class Faction(str, Enum):
     """两大阵营。预言家、女巫、村民都属于好人阵营（好人 = 神职 + 平民）。"""
     WEREWOLF = "狼人阵营"
     GOOD = "好人阵营"
+    UNDECIDED = "未决"
 
 
 # 角色 -> 阵营

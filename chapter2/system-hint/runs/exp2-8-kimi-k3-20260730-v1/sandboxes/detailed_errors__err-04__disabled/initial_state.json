@@ -1,0 +1,7 @@
+{
+  "suite": "detailed_errors",
+  "case_id": "err-04",
+  "requested": "brief.txt",
+  "actual": "brief_revised.txt",
+  "document_token": "BRF-5374"
+}

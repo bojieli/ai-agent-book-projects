@@ -1,0 +1,27 @@
+{
+  "suite": "combined",
+  "case_id": "all-04",
+  "records": {
+    "gold": "2025-09-17 07:30:00",
+    "silver": "2025-09-17 07:29:59"
+  },
+  "primary": "core-d",
+  "fallback": "backup-d",
+  "token": "NOT-144",
+  "artifacts": [
+    "inputs.txt",
+    "fallback.txt",
+    "final.txt"
+  ],
+  "requested": "notes.txt",
+  "actual": "notes_latest.txt",
+  "document_token": "NOT-144",
+  "system": {
+    "os": "Linux",
+    "shell": "fish",
+    "python": "3.10.14",
+    "cwd": "workspace/four",
+    "manager": "apt",
+    "package": "curl"
+  }
+}

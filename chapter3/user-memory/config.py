@@ -47,7 +47,7 @@ def openrouter_model_id(model) -> str:
 # primary provider key is missing but OPENROUTER_API_KEY is present.
 PROVIDER_DEFAULT_MODELS = {
     "siliconflow": "Qwen/Qwen3-235B-A22B-Thinking-2507",
-    "doubao": "doubao-seed-1-6-thinking-250715",
+    "doubao": os.getenv("ARK_MODEL", "doubao-seed-1-6-250615"),
     "kimi": "kimi-k3",
     "moonshot": "kimi-k3",
 }
@@ -70,7 +70,9 @@ class Config:
     # API Keys for different providers
     MOONSHOT_API_KEY: str = os.getenv("MOONSHOT_API_KEY", "")  # For kimi/moonshot
     SILICONFLOW_API_KEY: str = os.getenv("SILICONFLOW_API_KEY", "")
-    DOUBAO_API_KEY: str = os.getenv("DOUBAO_API_KEY", "")
+    # Ark is the provider's canonical product name; older companion docs used
+    # DOUBAO_API_KEY. Accept both without copying credentials into local files.
+    DOUBAO_API_KEY: str = os.getenv("DOUBAO_API_KEY") or os.getenv("ARK_API_KEY", "")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     
     # Base URLs for different providers

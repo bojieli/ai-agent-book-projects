@@ -1,0 +1,8 @@
+{
+  "suite": "timestamps",
+  "case_id": "ts-02",
+  "records": {
+    "amber": "2025-09-14 11:45:00",
+    "indigo": "2025-09-14 08:20:00"
+  }
+}

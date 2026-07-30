@@ -375,7 +375,7 @@ Tuy nhiên, vectơ từ tĩnh có một hạn chế cơ bản: chúng không th�
 
 ### Nhúng thưa thớt: truy xuất từ khóa khớp chính xác
 
-Khác với phương pháp nhúng dày đặc nắm bắt được sự tương đồng về ngữ nghĩa, phương pháp nhúng thưa thớt bắt nguồn từ việc truy xuất thông tin truyền thống và cốt lõi của nó là kết hợp từ khóa chính xác. Nó biểu diễn tài liệu dưới dạng vectơ có chiều cực cao, với phần lớn các kích thước bằng 0 và chỉ các kích thước tương ứng với các từ xuất hiện trong tài liệu có giá trị khác 0. Nền tảng của lý thuyết này là mô hình Bag of Words (BoW) cổ điển - nó coi một đoạn văn bản như một "túi chứa đầy từ" và chỉ quan tâm đến những từ nào xuất hiện và chúng xuất hiện bao nhiêu lần, hoàn toàn bỏ qua thứ tự từ. Ví dụ: "mèo đuổi chó" và "chó đuổi mèo" hoàn toàn giống nhau trong mô hình túi từ. Trên cơ sở này, các thuật toán xếp hạng xác suất phức tạp hơn đang dần được phát triển.
+Khác với phương pháp nhúng dày đặc nắm bắt được sự tương đồng về ngữ nghĩa, phương pháp nhúng thưa thớt bắt nguồn từ việc truy xuất thông tin truyền thống và cốt lõi của nó là kết hợp từ khóa chính xác. Nó biểu diễn tài liệu dưới dạng vectơ có chiều cực cao, với phần lớn các kích thước bằng 0 và chỉ các kích thước tương ứng với các từ xuất hiện trong tài liệu có giá trị khác 0. Nền tảng của lý thuyết này là mô hình Bag of Words (BoW) cổ điển - nó coi một đoạn văn bản như một "túi chứa đầy từ" và chỉ quan tâm đến những từ nào xuất hiện và chúng xuất hiện bao nhiêu lần, hoàn toàn bỏ qua thứ tự từ. Ví dụ: "mèo đuổi chó" và "chó đuổi mèo" hoàn toàn giống nhau trong mô hình túi từ. Trên cơ sở này, các thuật toán trọng số thuật ngữ và xếp hạng phức tạp hơn đang dần được phát triển.
 
 
 ![Hình 3-8 Cơ chế tính điểm BM25 ](images/fig3-8.svg)

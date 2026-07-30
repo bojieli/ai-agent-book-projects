@@ -63,24 +63,37 @@ def get_client():
     """返回全局共享的 LLM 客户端（懒加载，进程内单例）。
 
     仅在线模式（真实调用 LLM）才会用到；离线模式不导入 openai、不构造客户端。
-      1) 有 OPENAI_API_KEY -> 直连 OpenAI；
-      2) 否则有 OPENROUTER_API_KEY -> 走 OpenRouter，并把 _MODEL 映射到其命名空间；
-      3) 都没有则报清晰错误。
+      1) 有 ARK/Moonshot key -> 使用其 OpenAI-compatible real endpoint；
+      2) 否则直连 OpenAI；3) 最后才回退 OpenRouter。
     """
     global _client, _MODEL
     if _client is None:
         from openai import OpenAI  # 懒导入：离线模式无需安装 openai
-        if os.environ.get("OPENAI_API_KEY"):
-            _client = OpenAI()  # 自动读取环境变量 OPENAI_API_KEY
+        client_options = {
+            "timeout": float(os.getenv("WEREWOLF_LLM_TIMEOUT", "45")),
+            "max_retries": int(os.getenv("WEREWOLF_LLM_RETRIES", "1")),
+        }
+        if os.environ.get("ARK_API_KEY"):
+            _MODEL = os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
+            _client = OpenAI(api_key=os.environ["ARK_API_KEY"],
+                             base_url="https://ark.cn-beijing.volces.com/api/v3",
+                             **client_options)
+        elif os.environ.get("MOONSHOT_API_KEY"):
+            _MODEL = os.getenv("MOONSHOT_MODEL", "kimi-k3")
+            _client = OpenAI(api_key=os.environ["MOONSHOT_API_KEY"],
+                             base_url="https://api.moonshot.cn/v1", **client_options)
+        elif os.environ.get("OPENAI_API_KEY"):
+            _client = OpenAI(**client_options)  # 自动读取 OPENAI_API_KEY
         elif os.environ.get("OPENROUTER_API_KEY"):
             _MODEL = _to_openrouter_model(_MODEL)
             _client = OpenAI(
                 api_key=os.environ["OPENROUTER_API_KEY"],
                 base_url="https://openrouter.ai/api/v1",
+                **client_options,
             )
         else:
             raise RuntimeError(
-                "未设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请参考 env.example 配置，"
+                "未设置 ARK/MOONSHOT/OPENAI/OPENROUTER 任一文本模型 Key，请参考 env.example，"
                 "或改用离线模式：python demo.py --offline"
             )
     return _client
@@ -136,11 +149,14 @@ class PlayerAgent:
         ]
         # 给推理型模型（如 gpt-5.6 系列）留足输出预算：其内部推理 token 也计入
         # max_tokens，预算过小会导致 content 被截断为空。设一个下限兜底。
+        # Resolve the provider before reading _MODEL: get_client() may switch the
+        # model id from the OpenAI default to an ARK/Moonshot endpoint id.
+        client = get_client()
         kwargs = dict(model=_MODEL, messages=messages, temperature=0.8,
                       max_tokens=max(max_tokens, 512))
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
-        resp = _safe_create(get_client(), **kwargs)
+        resp = _safe_create(client, **kwargs)
         # content 可能为 None（如被截断）；用空串兜底，交由上层解析做降级处理。
         return (resp.choices[0].message.content or "").strip()
 

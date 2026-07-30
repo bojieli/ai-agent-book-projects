@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-3",
+  "manuscript_source": "book/chapter5.md#experiment-5-3",
+  "design": "controlled tau-bench airline policy experiment",
+  "model": {
+    "name": "qwen3:4b",
+    "runtime": "Ollama OpenAI-compatible chat.completions",
+    "temperature": 0
+  },
+  "matched_arms": [
+    "natural-language policy plus naive execution tool",
+    "natural-language policy plus checklist parameters plus server-ground-truth gate"
+  ],
+  "cases": {
+    "count": 60,
+    "factorial_matrix": {
+      "cabin": ["basic_economy", "economy_flex", "business"],
+      "hours_since_booking": [5.0, 24.0, 24.1, 26.0, 120.0],
+      "flight_status": ["scheduled", "cancelled_by_airline", "delayed_major", "delayed_minor"]
+    },
+    "user_variants": 5
+  },
+  "metrics": [
+    "task success rate",
+    "policy violations",
+    "invalid tool calls",
+    "user experience proxy",
+    "checklist expected-value mismatch rate",
+    "paired exact McNemar significance"
+  ],
+  "acceptance": {
+    "same_real_qwen3_4b_model_both_arms": true,
+    "all_60_cases_attempted_in_both_arms": true,
+    "server_policy_uses_database_facts_and_server_clock_only": true,
+    "raw_messages_tool_calls_provider_receipts_and_usage_saved": true
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-8",
+  "run_id": "exp5-8-live-http-mcp-20260730-053403",
+  "generated_at_utc": "2026-07-29T21:37:08Z",
+  "provider": "ark",
+  "model": "doubao-seed-1-6-250615",
+  "service": {
+    "kind": "real local HTTP subprocess",
+    "base_url": "http://127.0.0.1:56938",
+    "pid": 96265
+  },
+  "source_trajectory_ids": [
+    "HTTP-INV-001",
+    "HTTP-RF-001"
+  ],
+  "model_call_count": 2,
+  "github_issue_url": "https://github.com/bojieli/ai-agent-book/issues/502",
+  "gates": {
+    "real_local_http_trajectories": true,
+    "measured_latency_and_raw_http": true,
+    "live_model_diagnosis": true,
+    "diagnosis_references_trajectories_and_turns": true,
+    "live_model_generated_executable_tests": true,
+    "buggy_failures_reproduced": true,
+    "fixed_system_passes": true,
+    "official_github_mcp_issue_created": true,
+    "raw_provider_receipts_complete": true
+  },
+  "artifacts": {
+    "PRD.md": {
+      "sha256": "d21f65b3f5243f79b6ab46525945b8e882a6646d75177062cb4d976192369353",
+      "bytes": 448
+    },
+    "architecture.md": {
+      "sha256": "e76c20c6ac826325db0c7b35204b0ce7235973dc33e3b62220aae607a60f49e4",
+      "bytes": 422
+    },
+    "diagnosis.json": {
+      "sha256": "4232addd060d6ace66814d53625d6b08b8511e77c34253c3d9e1529199d4b570",
+      "bytes": 1334
+    },
+    "github_mcp_receipt.json": {
+      "sha256": "30c42f32006eaf0fda5350747ce2bbf44d61af79a6020a62ab12bfb28836976e",
+      "bytes": 1882
+    },
+    "http_service.py": {
+      "sha256": "bbe0170e342a34fb70dc2477fede68cd393e1fd9a6d98140974a61677413c997",
+      "bytes": 3701
+    },
+    "live_replays.json": {
+      "sha256": "ef8401bed39405e0398d47a2b3553d50c50d1199b359873afa180b60153b29a8",
+      "bytes": 16057
+    },
+    "production_trajectories.jsonl": {
+      "sha256": "9d45f81e64ff8b6ccaa109dbdc838bb016832bcae14633fc86a9a917fccb0e6e",
+      "bytes": 2300
+    },
+    "provider_receipts.checkpoint.json": {
+      "sha256": "20e466f383f807d9ad1d6e0a1a699733f7e7e4da2d459a3add1a976578fb2bd0",
+      "bytes": 12171
+    },
+    "provider_receipts.json": {
+      "sha256": "20e466f383f807d9ad1d6e0a1a699733f7e7e4da2d459a3add1a976578fb2bd0",
+      "bytes": 12171
+    },
+    "regression_tests.json": {
+      "sha256": "642d9037754d16665be684f69eb6decd74e8db25181b214bce806e34ceeb7c3a",
+      "bytes": 1091
+    },
+    "service.stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "service.stdout.jsonl": {
+      "sha256": "776fe22d507f08f0b56e017599777a60c0165a70e57556e34b3540a27b25fe5a",
+      "bytes": 2987
+    }
+  },
+  "official_complete": true
+}

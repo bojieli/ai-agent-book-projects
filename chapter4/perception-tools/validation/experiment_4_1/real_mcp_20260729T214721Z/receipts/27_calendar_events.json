@@ -1,0 +1,27 @@
+{
+  "case": "calendar_events",
+  "tool": "calendar_events",
+  "arguments": {
+    "calendar_id": "primary",
+    "max_results": 5
+  },
+  "arguments_sha256": "339afbf08769281fb4ed269e3d46da2d8e0d5eff86f0d4a6d36c0159414d7c7a",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "google-calendar-api",
+    "origin": "private-live-api"
+  },
+  "simulation_markers": [],
+  "error_type": "missing_credentials",
+  "payload": {
+    "success": false,
+    "message": "Google Calendar not configured. Please run setup to authenticate.",
+    "metadata": {
+      "error_type": "missing_credentials"
+    }
+  },
+  "elapsed_seconds": 0.05
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-1-and-3-2",
+  "run_id": "20260729T181741Z-3_1_and_3_2-8ab6407f",
+  "created_at": "2026-07-29T18:17:41.206311+00:00",
+  "status": "partial",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/user-memory/validation/runs/20260729T181741Z-3_1_and_3_2-8ab6407f",
+  "artifacts": {
+    "evidence.json": "cd522d7a6c46d2f02b69d479146cc8470b41b1a447cfc9eeb538a49dbdb71e43",
+    "receipts.json": "99c2430da27f37fbf9f93d8ce35798d52cfc7c7a95c3e7b9ffb1612b4b714361"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/user-memory-evaluation/test_cases/layer1/01_bank_account_setup.yaml",
+      "sha256": "e9f788fa393a0f07c83f32e90f05d0b2212355ba62e0a5c3288a469b5feb75b6",
+      "bytes": 11396
+    }
+  ],
+  "summary": {
+    "aggregate": {
+      "notes": {
+        "layer1": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        },
+        "overall": {
+          "n": 1,
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "hallucination_rate": 0.0
+        }
+      }
+    },
+    "token_usage": {
+      "prompt_tokens": 5842,
+      "completion_tokens": 2270,
+      "total_tokens": 8112
+    },
+    "api_calls": 3,
+    "errors": 0
+  },
+  "acceptance": {
+    "all_60_cases": false,
+    "twenty_per_layer": false,
+    "all_four_modes": false,
+    "sequential_memory_only": true,
+    "independent_llm_judge": true,
+    "all_calls_succeeded": true,
+    "passed": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "user_id": "default_user",
+  "updated_at": "2025-09-18T21:54:06.558179",
+  "conversations": [
+    {
+      "session_id": "session-5853d246",
+      "user_message": "What was my checking account number again? I need it to set up my direct deposit at work.",
+      "assistant_message": "Your First National Bank Premium Checking account number is **4429853327**.\n\nFor the direct-deposit form you’ll also need the routing number: **123006800**.",
+      "timestamp": "2025-09-18T21:54:06.557899",
+      "turn_number": 1
+    }
+  ]
+}

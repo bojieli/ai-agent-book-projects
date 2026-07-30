@@ -8,6 +8,7 @@ import shutil
 import time
 import base64
 import psutil
+import shlex
 from typing import Dict, Any, Optional, List
 from enum import Enum
 import logging
@@ -276,13 +277,36 @@ class LanguageExecutor:
             with open(code_file, 'w', encoding='utf-8') as f:
                 f.write(code)
             
-            # Use python3 with unbuffered output
-            result = await self._run_command(
-                f'python3 -u {code_file}',
-                timeout,
-                stdin,
-                tmp_dir
-            )
+            # Run untrusted Python in a real container boundary when Docker is
+            # available: no network, read-only rootfs, bounded memory/CPU/PIDs,
+            # and only the one ephemeral work directory mounted writable.
+            if shutil.which("docker"):
+                mount = shlex.quote(f"{tmp_dir}:/workspace:rw")
+                command = (
+                    "docker run --rm --network none --memory 256m --cpus 1 "
+                    "--pids-limit 64 --read-only "
+                    "--tmpfs /tmp:rw,nosuid,nodev,noexec,size=16m "
+                    f"-v {mount} -w /workspace python:3.11-slim "
+                    "python -I -B -u main.py"
+                )
+                result = await self._run_command(command, timeout, stdin, tmp_dir)
+                result["sandbox"] = {
+                    "kind": "docker",
+                    "image": "python:3.11-slim",
+                    "network": "none",
+                    "rootfs": "read-only",
+                    "memory": "256m",
+                    "cpus": 1,
+                    "pids_limit": 64,
+                }
+            else:
+                result = await self._run_command(
+                    f'python3 -I -B -u {shlex.quote(code_file)}',
+                    timeout,
+                    stdin,
+                    tmp_dir
+                )
+                result["sandbox"] = {"kind": "local-process", "degraded": True}
             result['language'] = 'python'
             return result
     

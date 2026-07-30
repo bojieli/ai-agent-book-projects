@@ -1,0 +1,650 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "system_state__state-03__system_state",
+  "suite": "system_state",
+  "case_id": "state-03",
+  "condition": "system_state",
+  "features": [
+    "system_state"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "84e977a6d1441aa7e428bfbdf59f01881b88880d0b91d1053072367d20454acd",
+  "current_sandbox_sha256": "456cf608e5fc710ad7983f8c6b6ad98ce2e11334c3e4846051b6fa8ff5878452",
+  "created_at": "2026-07-29T19:49:11.227261+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Install package Git.Git in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+    },
+    {
+      "content": "I'll start by inspecting the host state to confirm the environment and native package manager.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_0",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The user wants me to install the package Git.Git using the OS-native package manager. The system state shows os=Windows, manager=winget. Let me inspect the system first to verify, then install the package, then submit the result.\n\nLet me start by inspecting the system."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/gamma\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+    },
+    {
+      "content": "The host is confirmed: **Windows** with **winget** as its native package manager. Now I'll install `Git.Git` using winget.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "install_package_1",
+          "function": {
+            "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The system state confirms:\n- OS: Windows\n- Shell: PowerShell\n- Native package manager: winget\n- Package to install: Git.Git\n\nNow I'll install the package using winget."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "The install succeeded. Submitting the verified result now.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The installation succeeded. Now I need to submit the final result with the manager and package used, as required by the instructions."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:49:11.227647+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package Git.Git in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Windows, shell=PowerShell, python=3.11.8, cwd=workspace/gamma, manager=winget\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5696.246,
+      "response": {
+        "id": "chatcmpl-6a6a59380bcec3d35951b94e",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by inspecting the host state to confirm the environment and native package manager.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_0",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The user wants me to install the package Git.Git using the OS-native package manager. The system state shows os=Windows, manager=winget. Let me inspect the system first to verify, then install the package, then submit the result.\n\nLet me start by inspecting the system."
+            }
+          }
+        ],
+        "created": 1785354553,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 111,
+          "prompt_tokens": 430,
+          "total_tokens": 541,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 59,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:16.928512+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package Git.Git in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the host state to confirm the environment and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to install the package Git.Git using the OS-native package manager. The system state shows os=Windows, manager=winget. Let me inspect the system first to verify, then install the package, then submit the result.\n\nLet me start by inspecting the system."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/gamma\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Windows, shell=PowerShell, python=3.11.8, cwd=workspace/gamma, manager=winget\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5755.229,
+      "response": {
+        "id": "chatcmpl-6a6a593e86556e24ddc97014",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The host is confirmed: **Windows** with **winget** as its native package manager. Now I'll install `Git.Git` using winget.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "install_package_1",
+                  "function": {
+                    "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The system state confirms:\n- OS: Windows\n- Shell: PowerShell\n- Native package manager: winget\n- Package to install: Git.Git\n\nNow I'll install the package using winget."
+            }
+          }
+        ],
+        "created": 1785354559,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 143,
+          "prompt_tokens": 614,
+          "total_tokens": 757,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 43,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:22.685785+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package Git.Git in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the host state to confirm the environment and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to install the package Git.Git using the OS-native package manager. The system state shows os=Windows, manager=winget. Let me inspect the system first to verify, then install the package, then submit the result.\n\nLet me start by inspecting the system."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/gamma\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+          },
+          {
+            "content": "The host is confirmed: **Windows** with **winget** as its native package manager. Now I'll install `Git.Git` using winget.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The system state confirms:\n- OS: Windows\n- Shell: PowerShell\n- Native package manager: winget\n- Package to install: Git.Git\n\nNow I'll install the package using winget."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Windows, shell=PowerShell, python=3.11.8, cwd=workspace/gamma, manager=winget\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4863.298,
+      "response": {
+        "id": "chatcmpl-6a6a5943f3fb1d6dd9475c6e",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The install succeeded. Submitting the verified result now.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The installation succeeded. Now I need to submit the final result with the manager and package used, as required by the instructions."
+            }
+          }
+        ],
+        "created": 1785354564,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 106,
+          "prompt_tokens": 788,
+          "total_tokens": 894,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 26,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:49:16.926420+00:00",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/gamma\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}",
+      "ok": true,
+      "sandbox_sha256_after": "69eff95683a6c4e4df9b405a887adb26667e8783740a5f1ac2c3e4b9582282d4"
+    },
+    {
+      "at": "2026-07-29T19:49:22.684886+00:00",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "arguments": {
+        "manager": "winget",
+        "package": "Git.Git"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "456cf608e5fc710ad7983f8c6b6ad98ce2e11334c3e4846051b6fa8ff5878452"
+    },
+    {
+      "at": "2026-07-29T19:49:27.550209+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "manager": "winget",
+        "package": "Git.Git"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "456cf608e5fc710ad7983f8c6b6ad98ce2e11334c3e4846051b6fa8ff5878452"
+    }
+  ],
+  "tool_counters": {
+    "inspect_system": 1,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1832,
+    "completion_tokens": 360,
+    "total_tokens": 2192
+  },
+  "cost": {
+    "amount": 0.07264,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:49:27.551371+00:00",
+  "case_condition_order": [
+    "system_state",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

@@ -1,3 +1,29 @@
+# Experiment 7-15 reproduction anchor
+
+`chapter7/retool` is the book-owned guide, not the executable source tree. The ReTool recipe is in [`bojieli/verl`](https://github.com/bojieli/verl) at `chapter7/verl` (verified commit `1593fc3a8cf894debdc3dece2a23ed739c282789`). Live code execution additionally requires [`bojieli/SandboxFusion`](https://github.com/bojieli/SandboxFusion) at `chapter7/SandboxFusion`; that checkout is currently absent, but a read-only upstream audit fixed it to `4a0d573ebd64c98234c190a9d1d49e4276199a0c`. No sandbox service or ReTool training was started.
+
+```bash
+git clone https://github.com/bojieli/verl.git chapter7/verl
+git -C chapter7/verl fetch origin 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl rev-parse HEAD
+test "$(git -C chapter7/verl rev-parse HEAD)" = "1593fc3a8cf894debdc3dece2a23ed739c282789"
+
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion
+git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion rev-parse HEAD
+test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
+
+cd chapter7/SandboxFusion
+make run-online
+# In a second shell, from the book repository root:
+cd chapter7/verl
+bash recipe/retool/run_qwen2-32b_dapo.sh
+```
+
+The SFT, dataset, checkpoint conversion, and service prerequisites below remain required. These commands were inspected, not executed, during this audit.
+
 ## English
 
 # ReTool: Enhancing LLM Mathematical Reasoning with Multi-Turn Dialogue and Code Sandbox
@@ -35,7 +61,11 @@ These version choices are based on support for the latest deep learning framewor
 verl is an efficient reinforcement learning framework specifically designed for RLHF (Reinforcement Learning from Human Feedback) training of large language models. For a single-server 8x H200 GPU configuration, a modified version is recommended:
 
 ```bash
-git clone https://github.com/bojieli/verl
+# Run from the book repository root and reuse the canonical checkout above.
+git -C chapter7/verl fetch origin 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl rev-parse HEAD
+test "$(git -C chapter7/verl rev-parse HEAD)" = "1593fc3a8cf894debdc3dece2a23ed739c282789"
 ```
 
 This modified version is optimized for a single 8x H200 configuration. For multi-node configurations, the original verl framework should be used:
@@ -71,7 +101,7 @@ After activating the environment, all subsequent package installations and comma
 Navigate to the verl directory and install the required dependencies. This process includes installing base dependencies, CUDA-related dependencies, and verl itself:
 
 ```bash
-cd verl
+cd chapter7/verl
 pip install -r requirements.txt
 pip install -r requirements-cuda.txt
 pip install -e .
@@ -210,8 +240,13 @@ SandboxFusion is the code execution sandbox environment used in the reinforcemen
 Download the modified version of SandboxFusion, which supports running 128 parallel workers locally to meet the demands of large-scale training:
 
 ```bash
-git clone https://github.com/bojieli/SandboxFusion
-cd SandboxFusion/
+# Run from the book repository root.
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion
+git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion rev-parse HEAD
+test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
+cd chapter7/SandboxFusion
 ```
 
 Create a dedicated Conda environment for SandboxFusion. Note that Python 3.12 is used here instead of 3.13 to ensure optimal compatibility with SandboxFusion's dependencies:
@@ -888,7 +923,11 @@ ReTool 是一种创新的强化学习方法，旨在通过多轮对话和代码�
 verl 是一个高效的强化学习框架，专门为大语言模型的 RLHF（Reinforcement Learning from Human Feedback）训练而设计。对于单台 8 卡 H200 服务器的配置，建议使用经过修改的版本：
 
 ```bash
-git clone https://github.com/bojieli/verl
+# 从本书仓库根目录运行，并复用本指南顶部的规范 checkout。
+git -C chapter7/verl fetch origin 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+git -C chapter7/verl rev-parse HEAD
+test "$(git -C chapter7/verl rev-parse HEAD)" = "1593fc3a8cf894debdc3dece2a23ed739c282789"
 ```
 
 该修改版本针对单台 8 卡 H200 的配置进行了优化。如果使用多机配置，则应该使用原始的 verl 框架：
@@ -924,7 +963,7 @@ conda activate verl
 进入 verl 目录并安装所需的依赖包。这个过程包括安装基础依赖、CUDA 相关依赖以及 verl 本身：
 
 ```bash
-cd verl
+cd chapter7/verl
 pip install -r requirements.txt
 pip install -r requirements-cuda.txt
 pip install -e .
@@ -1066,8 +1105,13 @@ SandboxFusion 是 ReTool 强化学习阶段使用的代码执行沙箱环境。�
 下载 SandboxFusion 的修改版本，该版本支持在本地运行 128 个并行 worker，满足大规模训练的需求：
 
 ```bash
-git clone https://github.com/bojieli/SandboxFusion
-cd SandboxFusion/
+# 从本书仓库根目录运行。
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion
+git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c
+git -C chapter7/SandboxFusion rev-parse HEAD
+test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
+cd chapter7/SandboxFusion
 ```
 
 为 SandboxFusion 创建独立的 Conda 环境。注意这里使用 Python 3.12 而非 3.13，这是为了与 SandboxFusion 的依赖保持最佳兼容性：

@@ -1,0 +1,5 @@
+Scope of delivery
+Tracking token: CHARLIE-639
+Required artifacts: scope.txt, plan.txt, verification.txt, result.txt.
+Constraint: every artifact must contain the tracking token exactly once.
+No additional artifacts are in scope.

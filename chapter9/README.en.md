@@ -9,16 +9,19 @@
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
 | 9-1 | [live-audio](live-audio/) | ✅ | A real-time voice chat demo integrating speech-to-text, AI dialogue, and text-to-speech. Supports multiple AI service providers (OpenAI, OpenRouter, ARK, Siliconflow), providing a low-latency conversational experience. |
-| 9-2 | [phone-agent](phone-agent/) | ✅ | Demonstrates a voice agent "interacting with the outside world via phone calls on behalf of the user": The upper layer is a standard ReAct agent. Upon receiving a natural language task, it autonomously determines the number and purpose of the call, invokes a `make_phone_call` tool (based on a telephony API abstraction) to complete the entire conversation, reads the structured call log, asks follow-up questions as needed by making another call, and finally reports back to the user. |
+| 9-2 | [phone-agent](phone-agent/) | 🚧 | The official `pine-voice` SDK direct/ReAct paths are implemented, but no authorized, consenting E.164 destination was supplied. The preflight records no dial and no transcript; test doubles do not count as acceptance. |
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | Demonstrates the core trade-off of streaming speech perception: chunk continuous audio into segments of increasing length and feed them to the ASR. Each received segment produces a "current partial recognition result" to achieve extremely low first-chunk latency for early text output. The cost is that early chunks, lacking the context of the latter half of the sentence, may be erroneous, gradually converging as audio accumulates. This contrasts with the high-accuracy/high-latency approach of "waiting for the entire sentence before recognition." |
-| 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | End-to-end speech reasoning with Step-Audio R1 ("listen → think → speak"), comparing latency and paralinguistic loss against the ASR→LLM→TTS cascade |
-| 9-5 | [controllable-tts](controllable-tts/) | ✅ | The main LLM's output carries control tokens (emotion/speech rate/style/pause/laughter). The execution layer parses these tokens, maps them to corresponding style profiles in a reference speech library, and then synthesizes speech. This delegates decisions about "where to pause and what tone to use" to the LLM, allowing the same text to be synthesized in different styles and emotions. |
-| 9-6 | `claude-quickstarts/` | 📖 | Quickstart examples and best practices for the Claude API, covering various use cases. |
-| 9-7 | `browser-use/` | 📖 | Browser-Use is a powerful browser automation framework that enables LLMs to control a browser to complete complex tasks. It supports scenarios like form filling, web navigation, and data extraction, serving as a typical implementation of GUI automation (Computer Use). |
+| 9-4 | [end-to-end-speech](end-to-end-speech/) | 🚧 | The exact Step-Audio R1 customized-vLLM deployment and real audio client are implemented, but this host has neither a reachable Step-Audio endpoint nor CUDA; blocker evidence fails closed instead of substituting another model. |
+| 9-5 | [controllable-tts](controllable-tts/) | 🚧 | A real Fish Audio S1 4×3×2 reference library and A/B/C media pass structural gates; the qualitative listening study and “near-human customer service” evaluation are still missing. |
+| 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | External `anthropics/claude-quickstarts` checkout pinned to `9bcc95e…`; the exact Computer Use demo is its containerized Ubuntu desktop/Claude agent loop, not the whole quickstarts collection. |
+| 9-7 | `browser-use/` | 📖 | External `browser-use/browser-use` checkout pinned to `ec9277c…`; the prose task uses the visual CLI (`use_vision=True`) to search Google for San Francisco weather and retain the action/screenshot trajectory. |
+| 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | External XLeRobot pinned to `3d14695…` for keyboard/Xbox/Joy-Con/VR teleoperation. Only source/non-actuating preflight exists; no authorized four-mode hardware run or pick/place/wipe evidence. |
+| 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | External XLeRobot `3d14695…` plus RoboCrew, using exactly `gemini-robotics-er-1.5-preview`, angle annotation, and forward/left/right tools. No authorized robot/navigation run exists. |
+| 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | External `lerobot-sim2real` pinned to `87d6c1d…` for the five-stage RGB→PPO→SO-100 pipeline. The host lacks ManiSkill/NVIDIA and no authorized physical robot run exists. |
 ## Project Types
 
 | Icon | Type | Meaning |
 | :--: | --- | --- |
 | ✅ | **Standalone** | Full code in this repo, runs after configuring API Key |
 | 📖 | **Reproduction Guide** | Detailed doc depending on **external repos** to `git clone` |
-| 🚧 | **Design Doc** | Architecture/implementation plan only, runnable code still WIP |
+| 🚧 | **In Progress** | An implementation exists, but required live execution, authorization, hardware, or manuscript acceptance evidence is incomplete |

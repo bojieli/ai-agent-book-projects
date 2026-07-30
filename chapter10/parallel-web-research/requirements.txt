@@ -1,4 +1,5 @@
-# 核心机制（消息总线 / 并行 / 级联终止 / 竞态）仅用 Python 标准库 asyncio，无需任何第三方依赖。
-# 以下依赖仅用于"可选的真实 LLM 判断"与从 .env 读取密钥；不装也能跑通离线演示。
 openai>=1.30.0
+playwright>=1.44.0
 python-dotenv>=1.0.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

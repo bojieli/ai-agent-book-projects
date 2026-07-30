@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def test_basic_functionality():
+def _basic_functionality():
     """Test basic functionality of the system"""
     print("🧪 Testing Agentic RAG System")
     print("="*60)
@@ -126,7 +126,12 @@ def test_basic_functionality():
     return True
 
 
-def test_evaluation_dataset():
+def test_basic_functionality():
+    """Pytest contract: surface helper failure as an assertion."""
+    assert _basic_functionality()
+
+
+def _evaluation_dataset():
     """Test evaluation dataset generation"""
     print("\n📊 Testing Evaluation Dataset...")
     
@@ -157,15 +162,20 @@ def test_evaluation_dataset():
         return False
 
 
+def test_evaluation_dataset():
+    """Pytest contract: surface helper failure as an assertion."""
+    assert _evaluation_dataset()
+
+
 if __name__ == "__main__":
     print("🚀 Agentic RAG System - Test Suite")
     print("="*60)
     
     # Run tests
-    success = test_basic_functionality()
+    success = _basic_functionality()
     
     if success:
-        test_evaluation_dataset()
+        _evaluation_dataset()
     
     print("\n" + "="*60)
     if success:
