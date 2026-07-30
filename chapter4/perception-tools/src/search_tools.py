@@ -370,7 +370,7 @@ async def search_knowledge_base(
         
         # Sort by relevance and limit
         results.sort(key=lambda x: x["relevance"], reverse=True)
-        results = results[:top_k]
+        results = results[:max(0, top_k)]
         
         logging.info(f"✅ Found {len(results)} results")
         
