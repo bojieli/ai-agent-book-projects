@@ -37,11 +37,11 @@ Lebih jauh lagi, GPT-Live memperkenalkan perubahan struktural kedua—memisahkan
 
 [^ch9-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. Klasifikasi tiga bagian dari "Cascaded / Turn-based / Full-Duplex" di bagian ini berasal dari ringkasan artikel ini tentang tiga generasi evolusi ChatGPT Voice; "Omnimodal End-to-End (Omni)" dalam teks sesuai dengan kategori "model suara berbasis giliran" (turn-based voice models) mereka.
 
-## Paradigma 1: Cascaded Pipeline (Jalur Pipa Berjenjang)
+## Paradigma 1: Cascaded Pipeline (Pipeline Berjenjang)
 
 Sebagian besar asisten suara komersial—dari speaker pintar hingga robot layanan pelanggan—didasarkan pada pipeline serial (Gambar 9-1): Voice Activity Detection (VAD) menentukan kapan pengguna selesai berbicara → Automatic Speech Recognition (ASR) mengubah audio menjadi teks → Large Language Model (LLM) memahami maksud dan menghasilkan balasan → Text-to-Speech (TTS) menyuarakan balasan. Seperti lomba lari estafet, setiap tahap harus menunggu tahap sebelumnya selesai sebelum dapat dimulai.
 
-![Gambar 9-1: Jalur Pipa Serial Agent Suara](images/fig9-1.svg)
+![Gambar 9-1: Pipeline Serial Agent Suara](images/fig9-1.svg)
 
 Asisten suara awal mengadopsi pipeline serial empat tahap ini karena alasan sederhana: tidak ada satu model pun yang dapat menangani pengenalan ucapan, pemahaman bahasa, pemikiran, dan sintesis ucapan secara bersamaan. Arsitektur modular memungkinkan setiap komponen dikembangkan dan dioptimalkan secara independen. Namun, biaya dari modularitas adalah latensi yang terakumulasi—setiap tahap harus menunggu tahap sebelumnya selesai sebelum dapat dimulai.
 
