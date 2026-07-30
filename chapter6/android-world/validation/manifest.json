@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "experiment": "6-10",
+  "status": "incomplete",
+  "generated_at_utc": "2026-07-29T22:28:08.621632+00:00",
+  "run_dir": "chapter6/android-world/validation",
+  "git_commit": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+  "command": "python run_controlled_experiment.py --mode paired HYPOTHESIS ...",
+  "provider_receipt_count": 0,
+  "status_reasons": [
+    "The real evidence covers four Wi-Fi Settings tasks with one trial each on a Pixel 9 Pro API-35 AVD, not all 116 tasks on the Pixel 6 API-33 reference environment.",
+    "The promoted H5C candidate still requires 116 tasks x five seeds = 580 direct candidate episodes, full app provisioning, and a clean iterative rerun."
+  ],
+  "inputs": [
+    {
+      "path": "chapter6/android-world/experiment_core.py",
+      "bytes": 22939,
+      "sha256": "fe8d7e9ea7bfa540c2f573ef4a40416d307d5f38c0eb47fa5e5765fc4ee91955"
+    },
+    {
+      "path": "chapter6/android-world/run_controlled_experiment.py",
+      "bytes": 49636,
+      "sha256": "eadcb5c4edd634e8661e25e938164a868748a95c7f2a2f4971c33421e6ee43ac"
+    },
+    {
+      "path": "chapter6/android-world/t3a_summary.md",
+      "bytes": 28800,
+      "sha256": "e5616507e2b0658b64dc5d0e2c08e6207eba12da8345a31d1cb85bf68957f002"
+    },
+    {
+      "path": "chapter6/android-world/t3a_failed_analysis.md",
+      "bytes": 14448,
+      "sha256": "7486112a3bf0791a17ca72b81b3745dcd92936416b5c3da937618c8d7a6eb00d"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter6/android-world/validation/paired_h5_a11y_api35_20260729/evidence.json",
+      "bytes": 47072,
+      "sha256": "b2276e35e1f58d32775ea70ac04142a7d3075c074b9f31d40b153e1be10f93da"
+    },
+    {
+      "path": "chapter6/android-world/validation/paired_h5_a11y_api35_20260729/report.md",
+      "bytes": 8239,
+      "sha256": "5d5b0db9580020c286096ca53617cbd2d0f7fb811e48c4cf51688212ef638272"
+    },
+    {
+      "path": "chapter6/android-world/validation/paired_h5c_compact_api35_20260729/evidence.json",
+      "bytes": 39643,
+      "sha256": "a60204b6c0ac187b0ae9a68182b5ada302420fc31b2fc22c308e10eb1242e390"
+    },
+    {
+      "path": "chapter6/android-world/validation/paired_h5c_compact_api35_20260729/report.md",
+      "bytes": 8930,
+      "sha256": "55abde0ef9a6d5ed090f26bc99e424346c42a5e98036a278bd50edcf4bf48f2e"
+    },
+    {
+      "path": "chapter6/android-world/validation/paired_wifi_api35_20260729/evidence.json",
+      "bytes": 45941,
+      "sha256": "a1665bffafed7b8935db03dc4369435015f784d6f6465fe09c7da86fc0504635"
+    },
+    {
+      "path": "chapter6/android-world/validation/paired_wifi_api35_20260729/report.md",
+      "bytes": 4096,
+      "sha256": "067f176e4722082afd45bedbd79a392b26d677d54013a8b14a81cea1fbd70d57"
+    }
+  ]
+}

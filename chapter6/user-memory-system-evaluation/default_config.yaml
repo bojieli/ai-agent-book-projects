@@ -1,0 +1,93 @@
+# Full book matrix. Prices are dated provider list prices in the native
+# published currency. Never add an FX conversion without its own dated source.
+chat_models:
+  kimi:
+    model: kimi-k2.5
+    base_url: https://api.moonshot.cn/v1
+    api_key_env: KIMI_API_KEY
+    disable_thinking: true
+    temperature: 0.6
+    pricing:
+      currency: CNY
+      as_of_date: "2026-07-29"
+      source_url: https://platform.kimi.com/docs/pricing/chat-k25
+      input_per_million: 4.00
+      cached_input_per_million: 0.70
+      output_per_million: 21.00
+      source_note: Published Kimi K2.5 list price; input rate is cache-miss/uncached.
+  doubao:
+    model: doubao-seed-1-6-250615
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    api_key_env: ARK_API_KEY
+  openai-mini:
+    model: gpt-4.1-mini
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+
+embeddings:
+  bge-m3:
+    model: BAAI/bge-m3
+    base_url: https://api.siliconflow.cn/v1
+    api_key_env: SILICONFLOW_API_KEY
+  openai-small:
+    model: text-embedding-3-small
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    pricing:
+      currency: USD
+      as_of_date: "2026-07-29"
+      source_url: https://openai.com/api/pricing/
+      input_per_million: 0.02
+      source_note: Published text-embedding-3-small list price.
+  doubao:
+    # Ark embeddings normally use a provisioned endpoint id.
+    model: ${DOUBAO_EMBEDDING_MODEL}
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    api_key_env: ARK_API_KEY
+  mistral:
+    model: mistral-embed
+    base_url: https://api.mistral.ai/v1
+    api_key_env: MISTRAL_API_KEY
+    pricing:
+      currency: USD
+      as_of_date: "2026-07-29"
+      source_url: https://mistral.ai/pricing/api/
+      input_per_million: 0.10
+      source_note: Published Mistral Embed list price.
+  openai-small-openrouter:
+    model: openai/text-embedding-3-small
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+rerankers:
+  none:
+    type: none
+  bge-reranker-v2-m3:
+    type: siliconflow
+    model: BAAI/bge-reranker-v2-m3
+    api_key_env: SILICONFLOW_API_KEY
+  kimi-semantic:
+    type: llm
+    chat_model: kimi
+
+judge:
+  evaluator: kimi
+  model: kimi-k2.5
+
+experiment_6_4:
+  main_model: kimi
+  embedding: mistral
+  reranker: kimi-semantic
+  rounds_per_chunk: 6
+  overlap: 2
+
+experiment_6_9:
+  # The named adapters cover the BGE-M3/OpenAI/Doubao comparison in the book;
+  # Mistral is an additional independently hosted control.
+  embeddings: [bge-m3, openai-small, doubao, mistral]
+  rerankers: [none, bge-reranker-v2-m3, kimi-semantic]
+  main_models: [kimi, doubao]
+  retrieval_judge_model: kimi
+  max_search_rounds: 3
+  rounds_per_chunk: 6
+  overlap: 2

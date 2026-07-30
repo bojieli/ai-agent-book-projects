@@ -48,11 +48,15 @@ class Span:
     prompt_tokens: int = 0
     cached_tokens: int = 0
     completion_tokens: int = 0
+    reasoning_tokens: int = 0
     # 该轮输入里「工具返回结果」占用的累计 token（同一份工具返回会在后续每轮被反复计费）。
     # 由上层用 tokenizer 估算并填入；离线复用时从 records 读回。-1 表示未知。
     tool_ctx_tokens: int = -1
     latency_s: float = 0.0
     cost_usd: float = 0.0
+    response_id: str = ""
+    response_model: str = ""
+    response_created: int = 0
 
     @property
     def total_tokens(self) -> int:
@@ -107,6 +111,8 @@ class Tracer:
 
         prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
         completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
+        completion_details = getattr(usage, "completion_tokens_details", None)
+        reasoning_tokens = int(getattr(completion_details, "reasoning_tokens", 0) or 0)
         span = Span(
             step=step,
             tool=tool,
@@ -114,10 +120,14 @@ class Tracer:
             prompt_tokens=prompt_tokens,
             cached_tokens=cached,
             completion_tokens=completion_tokens,
+            reasoning_tokens=reasoning_tokens,
             tool_ctx_tokens=tool_ctx_tokens,
             latency_s=latency,
             cost_usd=self.pricing.cost_usd(
                 prompt_tokens, cached, completion_tokens),
+            response_id=str(getattr(resp, "id", "") or ""),
+            response_model=str(getattr(resp, "model", "") or ""),
+            response_created=int(getattr(resp, "created", 0) or 0),
         )
         self.spans.append(span)
         return resp
@@ -137,9 +147,13 @@ class Tracer:
                 prompt_tokens=int(r.get("prompt_tokens") or 0),
                 cached_tokens=int(r.get("cached_tokens") or 0),
                 completion_tokens=int(r.get("completion_tokens") or 0),
+                reasoning_tokens=int(r.get("reasoning_tokens") or 0),
                 tool_ctx_tokens=(-1 if r.get("tool_ctx_tokens") is None
                                  else int(r.get("tool_ctx_tokens"))),
                 latency_s=float(r.get("latency_s") or 0.0),
+                response_id=str(r.get("response_id") or ""),
+                response_model=str(r.get("response_model") or ""),
+                response_created=int(r.get("response_created") or 0),
             )
             span.cost_usd = tr.pricing.cost_usd(
                 span.prompt_tokens, span.cached_tokens, span.completion_tokens)
