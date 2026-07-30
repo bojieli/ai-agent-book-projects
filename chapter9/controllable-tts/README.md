@@ -37,8 +37,8 @@ source .venv/bin/activate
 
 cd chapter9/controllable-tts
 
-# Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# Install this experiment's Fish SDK runtime dependencies.
+python -m pip install -r requirements.txt
 
 # Requires ffmpeg/ffprobe installed on the system
 cp env.example .env                       # Fill in FISH_API_KEY and reference settings
@@ -72,7 +72,7 @@ source .venv/bin/activate
 # Windows cmd: .venv\Scripts\activate.bat
 
 cd chapter9/controllable-tts
-python -m pytest tests
+python -m pytest -q
 ```
 
 | 配置 | ffprobe 时长 |

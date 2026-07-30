@@ -21,8 +21,8 @@ source .venv/bin/activate
 
 cd chapter9/end-to-end-speech
 
-# Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# Install this experiment's Step-Audio client/runtime dependencies.
+python -m pip install -r requirements.txt
 
 hf download stepfun-ai/Step-Audio-R1 --local-dir /models/Step-Audio-R1
 export STEP_AUDIO_MODEL_DIR=/models/Step-Audio-R1
@@ -82,7 +82,7 @@ source .venv/bin/activate
 # Windows cmd: .venv\Scripts\activate.bat
 
 cd chapter9/end-to-end-speech
-python -m pytest tests
+python -m pytest -q
 ```
 
 证据写入 `validation/latest.json`。这只能证明公开单路径可调用；`--skip-cascade` 只用于服务调试。两者都不能使表 9-1 验收通过。

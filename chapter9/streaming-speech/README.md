@@ -21,8 +21,8 @@ source .venv/bin/activate
 
 cd chapter9/streaming-speech
 
-# Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# Install this experiment's local audio/model runtime dependencies.
+python -m pip install -r requirements.txt
 ```
 
 NVIDIA 路径使用原始 BF16 权重：

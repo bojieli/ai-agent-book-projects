@@ -19,8 +19,8 @@ source .venv/bin/activate
 
 cd chapter9/phone-agent
 
-# Single-project compatibility path, still supported during migration:
-# python -m pip install -r requirements.txt
+# Install this experiment's Pine Voice SDK runtime dependencies.
+python -m pip install -r requirements.txt
 
 cp env.example .env
 ```
