@@ -2,10 +2,8 @@
 tools.py —— 各专业角色的专属工具实现 + OpenAI function-calling schema。
 
 设计原则（配合实验 10-2）：
-- 工具用「轻量真实实现」或「可控 mock」，重点不是工具多强，
-  而是展示「自主角色移交」这一机制。
-- research.web_search：内置知识库 mock（可控、可复现），
-  未命中时诚实返回「未检索到」。
+- 所有被实验场景实际调用的工具都执行真实工作，不用预置答案冒充检索。
+- research.web_search：Tavily 真实联网检索，并返回可追溯 URL 与摘录。
 - coding.execute_python：真实执行 Python 代码并捕获标准输出（子进程 + 超时）。
 - data_analysis.calculate / descriptive_stats：真实的安全计算。
 - writing.count_characters：真实的中英文字数统计。
@@ -16,67 +14,69 @@ tools.py —— 各专业角色的专属工具实现 + OpenAI function-calling s
 from __future__ import annotations
 
 import ast
+import json
 import operator
 import os
 import subprocess
 import sys
 import tempfile
+import urllib.error
+import urllib.request
 from typing import Callable, Dict, List
 
 
 # ---------------------------------------------------------------------------
-# research 角色：web_search —— 内置知识库 mock
+# research 角色：web_search —— 真实 Tavily 搜索
 # ---------------------------------------------------------------------------
 
-# 一个极小的「联网检索结果」知识库。命中关键词即返回内置资料，
-# 保证 demo 可复现，同时不依赖真实外网。
-_KNOWLEDGE_BASE = [
-    {
-        "keywords": ["新能源", "汽车", "销量", "nev", "电动车"],
-        "content": (
-            "【检索结果·中国乘用车市场信息联席会/中汽协】\n"
-            "中国新能源汽车年度销量（单位：万辆）：\n"
-            "- 2021 年：352.1 万辆\n"
-            "- 2022 年：688.7 万辆\n"
-            "- 2023 年：949.5 万辆\n"
-            "备注：包含纯电动(BEV)与插电混动(PHEV)乘用车。"
-        ),
-    },
-    {
-        "keywords": ["光伏", "装机", "太阳能"],
-        "content": (
-            "【检索结果·国家能源局】\n"
-            "中国光伏新增装机量（单位：GW）：\n"
-            "- 2021 年：54.9 GW\n"
-            "- 2022 年：87.4 GW\n"
-            "- 2023 年：216.9 GW"
-        ),
-    },
-    {
-        "keywords": ["python", "gil", "全局解释器锁"],
-        "content": (
-            "【检索结果·技术资料】\n"
-            "CPython 的 GIL(全局解释器锁)保证同一时刻只有一个线程执行字节码，"
-            "因此 CPU 密集型任务用多线程无法并行，需改用多进程或 C 扩展。"
-            "PEP 703 提出可选的 no-GIL 构建，Python 3.13 起以实验特性提供。"
-        ),
-    },
-]
-
-
 def web_search(query: str) -> str:
-    """在内置知识库中检索（mock 联网检索）。"""
-    q = (query or "").lower()
-    hits: List[str] = []
-    for entry in _KNOWLEDGE_BASE:
-        if any(kw.lower() in q for kw in entry["keywords"]):
-            hits.append(entry["content"])
-    if hits:
-        return "\n\n".join(hits)
-    return (
-        f"未在内置知识库中检索到与「{query}」直接相关的权威数据。"
-        "请换一个更具体的检索词，或说明需要哪一年的数据。"
+    """Run a real Tavily web search and return attributable source excerpts."""
+    api_key = os.environ.get("TAVILY_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("web_search requires TAVILY_API_KEY; no mock fallback is allowed")
+    body = {
+        "api_key": api_key,
+        "query": query,
+        "search_depth": "advanced",
+        "max_results": 8,
+        "include_answer": True,
+        "include_raw_content": False,
+    }
+    request = urllib.request.Request(
+        "https://api.tavily.com/search",
+        data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            payload = json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")[:1000]
+        raise RuntimeError(f"Tavily HTTP {exc.code}: {detail}") from None
+    results = []
+    for item in payload.get("results") or []:
+        if not isinstance(item, dict):
+            continue
+        results.append({
+            "title": item.get("title"),
+            "url": item.get("url"),
+            "content": item.get("content"),
+            "score": item.get("score"),
+        })
+    if not results:
+        return json.dumps({
+            "provider": "tavily",
+            "query": query,
+            "answer": payload.get("answer"),
+            "results": [],
+        }, ensure_ascii=False)
+    return json.dumps({
+        "provider": "tavily",
+        "query": query,
+        "answer": payload.get("answer"),
+        "results": results,
+    }, ensure_ascii=False)
 
 
 # ---------------------------------------------------------------------------
@@ -183,7 +183,7 @@ TOOL_SCHEMAS: Dict[str, dict] = {
         "type": "function",
         "function": {
             "name": "web_search",
-            "description": "联网检索信息（本实验用内置知识库 mock）。用于查数据、事实、资料。",
+            "description": "通过 Tavily 真实联网检索信息，返回带 URL 的来源摘录。用于查数据、事实、资料。",
             "parameters": {
                 "type": "object",
                 "properties": {

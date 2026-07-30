@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "generated_at": "2026-07-29T20:59:26+0800",
+  "command_profile": "real Playwright + real LLM + synthetic scripted phone answers; no submit",
+  "transport": "scripted",
+  "synthetic_values_used": true,
+  "human_audio_used": false,
+  "pstn_calls_placed": 0,
+  "external_form_submissions": 0,
+  "decision_provider": "Volcengine ARK",
+  "decision_model": "doubao-seed-1-6-250615",
+  "page_url": "https://demoqa.com/automation-practice-form",
+  "fields_discovered": 13,
+  "required_fields": ["firstName", "lastName", "gender", "userNumber"],
+  "result": {
+    "filled": ["firstName", "lastName", "gender", "userNumber"],
+    "submitted": false,
+    "errors": [],
+    "browser_closed": true
+  },
+  "timing_evidence": {
+    "question_times": {
+      "firstName": 31.312472,
+      "lastName": 34.77661,
+      "gender": 38.136418,
+      "userNumber": 41.920582
+    },
+    "fill_times": {
+      "firstName": 34.859382,
+      "lastName": 38.218494,
+      "gender": 42.040402,
+      "userNumber": 48.001121
+    },
+    "overlap_checks": [
+      {
+        "field_being_filled": "firstName",
+        "next_question": "lastName",
+        "next_question_before_fill_completed": true
+      },
+      {
+        "field_being_filled": "lastName",
+        "next_question": "gender",
+        "next_question_before_fill_completed": true
+      },
+      {
+        "field_being_filled": "gender",
+        "next_question": "userNumber",
+        "next_question_before_fill_completed": true
+      }
+    ],
+    "expected_overlap_count": 3,
+    "independent_tasks": ["phone-agent-react-loop", "computer-agent-react-loop"]
+  },
+  "persisted_collected_values": ["<redacted>", "<redacted>", "<redacted>", "<redacted>"],
+  "gates": {
+    "real_playwright_page_and_fill": {"status": "pass"},
+    "autonomous_real_llm_tool_call": {"status": "pass"},
+    "ask_one_fill_one_concurrency": {"status": "pass"},
+    "browser_resource_cleanup": {"status": "pass"},
+    "real_form_submission": {
+      "status": "not_run",
+      "reason": "no external form side effect was authorized"
+    },
+    "real_pstn_call": {
+      "status": "not_run",
+      "reason": "no authorized consenting endpoint was supplied"
+    },
+    "real_audio_asr_tts": {
+      "status": "not_run",
+      "reason": "scripted transport is explicitly non-acceptance"
+    }
+  },
+  "overall_status": "incomplete"
+}

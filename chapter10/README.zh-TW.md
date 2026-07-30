@@ -10,11 +10,12 @@
 | :--: | --- | :--: | --- |
 | 10-1 | [staged-system-prompt](staged-system-prompt/) | ✅ | 同一 Coding Agent 在需求澄清/實現/審查三階段載入不同提示詞與工具集，對話歷史跨階段共享，審查不透過可回退 |
 | 10-2 | [multi-role-transfer](multi-role-transfer/) | ✅ | 共享上下文下的鏈式 handoff：多角色各有獨立提示詞與工具，透過 `transfer_to_agent` 自主切換 |
-| 10-3 | [book-translation](book-translation/) | ✅ | 管理者模式拆分翻譯給術語表/翻譯/審校專職 Agent，Manager 只存索引、譯文全落盤，上下文基本恆定 |
-| 10-4 | `use-computer-while-calling/` | 📖 | 電話 Agent（Node.js）與瀏覽器 Agent（Python）經 WebSocket 直接通訊無協調器並行協作；程式碼已獨立為 [TalkAct](https://github.com/19PINE-AI/TalkAct)，本倉庫不內建該目錄（克隆命令見主 README 附錄） |
-| 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N 個同構子 Agent 並行搜尋，命中即級聯終止；訊息匯流排/並行派發/即時監控/競態處理均真實實現 |
+| 10-3 | [book-translation](book-translation/) | 🚧 | 四角色 Manager 與單 Agent 對照已有真實模型小樣本；仍需依正文使用含大量插圖與程式碼的技術書，完整比較品質、效率、token 與資源消耗。 |
+| 10-4 | `use-computer-while-calling/` | 📖 | 外部 [TalkAct](https://github.com/19PINE-AI/TalkAct) 固定於 `7d70007…`：fast/slow Agent 真正並行，透過行程內 `SharedState` 黑板（滾動摘要、transcript/action log）與雙向文字佇列共享資訊；此版本不是 WebSocket bridge。本倉庫不內建該 checkout，精確克隆與 benchmark 入口見主 README 附錄。 |
+| 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Playwright 觀察真實表單，真實 LLM 自主決定呼叫 `initiate_phone_call_agent`；需明確同意的 Twilio/本機語音路徑支援校驗、重問、提問/填寫並行、脫敏軌跡與選擇性提交。目前證據僅以 scripted 回答驗證瀏覽器/LLM/並行，PSTN 與真人音訊仍為 `not_run`，因此真人驗收尚未完成。 |
+| 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N 個獨立 Playwright 瀏覽器工作階段搜尋十個真實大學網站，真實 LLM 擷取可引用證據；驗收保留監控、逾時/錯誤隔離、單次結算、級聯終止確認、資源清理與同站 3.142× 並行加速。 |
 | 10-7 | `generative_agents/` | 📖 | 史丹佛「AI 小鎮」生成式智慧體（實驗 10-7 配套）；外部倉庫 `joonspk-research/generative_agents`，需自行克隆（見主 README 附錄） |
-| 10-8 | [voice-werewolf](voice-werewolf/) | ✅ | 用多 Agent 狼人殺演示「上下文不共享」的資訊許可權：玩家私有上下文嚴格隔離，確定性法官投遞資訊並審計 |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 已實作需明確同意的 6–8 席真人路徑（1 真人＋5–7 個真實 AI）、精確角色、麥克風 ASR/TTS/打斷、三循環、策略、隔離與規則勝負門禁。未提供授權真人，兩個安全 Audio API 探測皆回傳 `insufficient_quota`；真人音訊/循環/策略尚未執行，全 AI 補充路徑不算驗收。 |
 
 ## 專案型別說明
 
@@ -22,4 +23,4 @@
 | :--: | --- | --- |
 | ✅ | **可獨立執行** | 本倉庫自帶完整程式碼，配置好 API Key 即可執行 |
 | 📖 | **復現指南** | 依賴需自行 `git clone` 的**外部倉庫**（訓練框架、評測基準等） |
-| 🚧 | **設計文件** | 僅包含架構與實現方案，可執行程式碼仍在完善中 |
+| 🚧 | **進行中** | 實作或實驗要求的驗收證據尚未完整；可能已有可執行程式碼，但不代表完整驗收 |

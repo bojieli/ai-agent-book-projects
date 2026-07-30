@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "experiment": "10-8",
+  "generated_at": "2026-07-29T20:29:44+0800",
+  "mode": "real_llm_audit_of_offline_all_ai_supplement",
+  "acceptance_path": false,
+  "human_audio_used": false,
+  "provider": "ark",
+  "model": "doubao-seed-1-6-250615",
+  "completed_cycles": 2,
+  "winner": "狼人阵营",
+  "action_count": 31,
+  "audit": {
+    "criteria": {
+      "werewolf_concealment": {
+        "status": "fail",
+        "evidence": "P6 speech: '我是好人，从发言看 P1 有点可疑，建议重点关注他。' (Accuses teammate P1)"
+      },
+      "seer_timing_and_evidence": {
+        "status": "fail",
+        "evidence": "P4 never reveals the known P7/P5 investigation results in its public speeches"
+      },
+      "villager_logical_reasoning": {
+        "status": "fail",
+        "evidence": "P3 says it merely feels P7 is suspicious without citing public speech or voting behavior"
+      },
+      "role_consistency": {
+        "status": "fail",
+        "evidence": "P4 withholds Seer results and P6 accuses its Werewolf teammate P1"
+      }
+    },
+    "model_overall_pass_claim": false,
+    "schema_valid": true,
+    "validation_errors": [],
+    "overall_pass": false
+  },
+  "overall_status": "supplemental_only",
+  "acceptance_note": "The audit used a real text-model endpoint, but graded deterministic offline actions, had no human seat/audio, completed only two cycles, and failed all role-strategy criteria. It is not live acceptance."
+}

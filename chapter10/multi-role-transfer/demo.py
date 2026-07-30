@@ -20,8 +20,11 @@ demo.py —— 实验 10-2 演示入口：多角色转换 / transfer_to_agent
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
+from datetime import datetime, timezone
+from pathlib import Path
 
 from openai import OpenAI
 
@@ -163,6 +166,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="离线打印角色花名册与内置场景后退出，不需要 API Key（用于自检）。",
     )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="保存完整、脱敏的机器可读实验轨迹与验收结论。",
+    )
     return parser.parse_args()
 
 
@@ -176,6 +185,99 @@ def print_run_summary(orch: MultiRoleOrchestrator, final: str):
     print(f"\n{C.MAGENTA}各角色分工（谁用了什么工具、谁产出最终回复）:{C.RESET}")
     print(orch.role_work_summary())
     print(f"\n{C.GREEN}最终成果:{C.RESET}\n{final}")
+
+
+def save_evidence(
+    path: Path,
+    orch: MultiRoleOrchestrator,
+    final: str,
+    *,
+    model: str,
+    base_url: str,
+    task: str,
+) -> dict:
+    """Persist direct receipts and fail-closed manuscript acceptance gates."""
+    tools_by_role: dict[str, list[str]] = {}
+    for role, kind, detail in orch.activity:
+        if kind == "tool":
+            tools_by_role.setdefault(role, []).append(detail)
+    tool_contents = [
+        str(message.get("content", ""))
+        for message in orch.history
+        if message.get("role") == "tool"
+    ]
+    real_search = any(
+        '"provider": "tavily"' in content and '"url":' in content
+        for content in tool_contents
+    )
+    counted_drafts: list[str] = []
+    for message in orch.history:
+        if message.get("role") != "assistant":
+            continue
+        for call in message.get("tool_calls") or []:
+            if call.get("function", {}).get("name") != "count_characters":
+                continue
+            try:
+                arguments = json.loads(call["function"].get("arguments") or "{}")
+            except json.JSONDecodeError:
+                arguments = {}
+            if isinstance(arguments.get("text"), str):
+                counted_drafts.append(arguments["text"])
+    final_draft = counted_drafts[-1] if counted_drafts else ""
+    chain = [orch.handoffs[0].from_role] + [h.to_role for h in orch.handoffs] if orch.handoffs else []
+    required_roles_in_order = all(
+        role in chain and chain.index(role) < chain.index(next_role)
+        for role, next_role in zip(
+            ["triage", "research", "data_analysis"],
+            ["research", "data_analysis", "writing"],
+        )
+    )
+    final_chars = len(final)
+    gates = {
+        "real_web_search_with_urls": real_search,
+        "triage_research_analysis_writing_order": required_roles_in_order,
+        "research_used_web_search": "web_search" in tools_by_role.get("research", []),
+        "data_analysis_used_calculate": "calculate" in tools_by_role.get("data_analysis", []),
+        "writing_checked_length": "count_characters" in tools_by_role.get("writing", []),
+        "final_not_step_limit": not orch.terminated_by_limit,
+        "final_nonempty": bool(final.strip()),
+        "investor_summary_within_120_characters": bool(final_draft) and len(final_draft) <= 120,
+        "shared_history_visible_after_handoffs": all(
+            later["history_messages_visible"] >= earlier["history_messages_visible"]
+            for earlier, later in zip(orch.api_calls, orch.api_calls[1:])
+        ),
+    }
+    payload = {
+        "schema_version": "1.0",
+        "experiment": "10-2",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "provider": {
+            "model": model,
+            "base_url": base_url,
+            "search": "Tavily",
+            "credentials_redacted": True,
+        },
+        "task": task,
+        "handoffs": [vars(h) for h in orch.handoffs],
+        "handoff_chain": chain,
+        "activity": [
+            {"role": role, "kind": kind, "detail": detail}
+            for role, kind, detail in orch.activity
+        ],
+        "api_calls": orch.api_calls,
+        "steps_used": orch.steps_used,
+        "history": orch.history,
+        "final_answer": final,
+        "final_character_count": final_chars,
+        "counted_investor_summary": final_draft,
+        "counted_investor_summary_characters": len(final_draft),
+        "acceptance_gates": gates,
+        "status": "complete" if all(gates.values()) else "incomplete",
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n机器可读证据: {path}  status={payload['status']}")
+    return payload
 
 
 def run_interactive(orch: MultiRoleOrchestrator):
@@ -259,6 +361,15 @@ def main():
 
     final = orch.run(task)
     print_run_summary(orch, final)
+    if args.output:
+        save_evidence(
+            args.output,
+            orch,
+            final,
+            model=model,
+            base_url=base_url,
+            task=task,
+        )
 
 
 if __name__ == "__main__":
