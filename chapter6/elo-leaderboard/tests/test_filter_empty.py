@@ -7,6 +7,10 @@ crash with ZeroDivisionError at the "After filtering" percentage print.
 import pandas as pd
 import pytest
 
+from _bootstrap import bootstrap_experiment_root
+
+bootstrap_experiment_root()
+
 from data_loader import filter_data
 
 

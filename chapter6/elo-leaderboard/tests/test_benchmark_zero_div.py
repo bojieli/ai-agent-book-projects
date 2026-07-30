@@ -3,12 +3,6 @@ Test suite locking out ZeroDivisionError in benchmark summary print logic
 when time_basic is 0.0 or df_sample is empty.
 """
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-
 def test_benchmark_pct_reduction_zero_division():
     """
     Ensure zero time_basic does not raise ZeroDivisionError during benchmark calculation.

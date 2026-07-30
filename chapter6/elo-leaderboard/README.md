@@ -67,6 +67,22 @@ cd chapter6/elo-leaderboard
 # python -m pip install -r requirements.txt
 ```
 
+## Testing
+
+```bash
+# From the repository root, include the shared test tooling:
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# Activate it before changing directories:
+source .venv/bin/activate
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/elo-leaderboard
+python -m pytest tests
+```
+
 ## 命令行工具 / Command-Line Interface (`cli.py`)
 
 `cli.py` 是本实验统一的 argparse 命令行入口（中文 `--help`），把整条流水线拆成子命令：
@@ -231,7 +247,7 @@ elo-leaderboard/
 ├── benchmark.py                # Performance benchmark tool
 ├── quickstart.py               # Quick demo with synthetic data
 ├── elo_rating.py               # Reference implementation (for comparison)
-├── test_elo.py                 # Unit tests
+├── tests/                      # Unit and regression tests
 ├── requirements.txt            # Python dependencies
 └── README.md                   # This file
 ```
@@ -676,6 +692,22 @@ cd chapter6/elo-leaderboard
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
+```
+
+### 测试
+
+```bash
+# 在仓库根目录安装测试工具：
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# 切换目录前先激活环境：
+source .venv/bin/activate
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/elo-leaderboard
+python -m pytest tests
 ```
 
 ### 命令行（`cli.py`）

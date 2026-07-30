@@ -7,6 +7,10 @@ empty pd.date_range for freq='W'; the old code then crashed on date_ranges[-1].
 """
 import pandas as pd
 
+from _bootstrap import bootstrap_experiment_root
+
+bootstrap_experiment_root()
+
 from data_loader import get_time_slices
 
 

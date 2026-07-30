@@ -1,9 +1,15 @@
 """
 Unit tests for Elo rating system
 """
-import pytest
-from elo_rating import EloRatingSystem
 import math
+
+import pytest
+
+from _bootstrap import bootstrap_experiment_root
+
+bootstrap_experiment_root()
+
+from elo_rating import EloRatingSystem
 
 
 def test_initial_rating():
@@ -162,4 +168,3 @@ def test_reset():
 if __name__ == "__main__":
     # Run tests
     pytest.main([__file__, "-v"])
-
