@@ -48,10 +48,9 @@ def hash_func_call(func: Callable[..., Any], args: tuple[Any], kwargs: dict[str,
     bound_args.apply_defaults()
     standardized_args = sorted(bound_args.arguments.items())
     arg_hash = hash_item(standardized_args)
-    hashed_func = id(func)
+    hashed_func = getattr(func, "__qualname__", getattr(func, "__name__", str(func)))
     call = (hashed_func, arg_hash)
     return hashlib.md5(str(call).encode()).hexdigest()
-
 
 def cache_call_w_dedup(func: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(func)
