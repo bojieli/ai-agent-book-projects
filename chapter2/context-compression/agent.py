@@ -206,6 +206,7 @@ TODAY'S DATE: {date_string}"""
             try:
                 result = self.web_tools.search_web(**arguments)
             except Exception as e:
+                logger.error(f"Failed to execute search_web: {e}")
                 return {"error": f"Failed to execute search_web: {e}"}, None
             
             # Apply compression strategy
@@ -225,6 +226,7 @@ TODAY'S DATE: {date_string}"""
             try:
                 result = self.web_tools.fetch_webpage(**arguments)
             except Exception as e:
+                logger.error(f"Failed to execute fetch_webpage: {e}")
                 return {"error": f"Failed to execute fetch_webpage: {e}"}, None
             
             # For fetch, we typically don't compress (used for follow-ups)
@@ -577,10 +579,22 @@ TODAY'S DATE: {date_string}"""
                         function_name = tool_call['function']['name']
                         raw_args = tool_call['function'].get('arguments') or "{}"
                         try:
-                            function_args = json.loads(raw_args)
+                            if isinstance(raw_args, dict):
+                                function_args = raw_args
+                            elif isinstance(raw_args, (bytes, bytearray)):
+                                function_args = json.loads(raw_args.decode("utf-8"))
+                            elif isinstance(raw_args, str):
+                                function_args = json.loads(raw_args)
+                            else:
+                                function_args = json.loads(str(raw_args))
+
                             if not isinstance(function_args, dict):
+                                logger.warning(
+                                    "Tool argument JSON is not an object, proceeding with empty object: %r",
+                                    raw_args,
+                                )
                                 function_args = {}
-                        except (json.JSONDecodeError, TypeError):
+                        except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
                             # Tolerate bad tool-arg JSON; keep the loop alive.
                             function_args = {}
                             logger.warning(
