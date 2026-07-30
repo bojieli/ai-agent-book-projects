@@ -1,3 +1,18 @@
+# Experiment 7-10 reproduction anchor
+
+This directory is the book-owned explanation. Executable training code is the external [`bojieli/AdaptThink`](https://github.com/bojieli/AdaptThink) checkout at `chapter7/AdaptThink-original`, verified in the current workspace at commit `0033ad172dd53ac64004b763477407014f21b838`.
+
+```bash
+git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original
+git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838
+cd chapter7/AdaptThink-original
+bash scripts/preprocess_dataset.sh
+bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh
+bash scripts/run_eval_verl_hf.sh
+```
+
+These commands identify the upstream workflow; they were not run during the documentation audit.
+
 ## English
 
 # AdaptThink: Teaching Reasoning Models When to Think
@@ -314,7 +329,7 @@ conda create -n adapt_think python=3.13
 conda activate adapt_think
 
 # Install dependencies
-cd projects/week7/AdaptThink-original
+cd chapter7/AdaptThink-original
 pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```
