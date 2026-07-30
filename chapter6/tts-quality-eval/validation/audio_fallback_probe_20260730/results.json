@@ -1,0 +1,105 @@
+{
+  "schema_version": "2.0",
+  "experiment": "6-5",
+  "generated_at_utc": "2026-07-30T04:26:22.901148+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio"
+    ],
+    "configurations": [
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone"
+    ],
+    "expected_records": 2,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 0,
+    "direct_audio_four_dimension_records": 0,
+    "expected_records": 2,
+    "all_cells_complete": false,
+    "multi_provider": false,
+    "manuscript_core_complete": false
+  },
+  "records": [
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__num.mp3",
+      "audio_sha256": "0bfb70e01370fe9f28ddbde6aebb9b23ec5cb5e312377edbdace44ad43a071a6",
+      "audio_bytes": 99055,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "JudgeRouteError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__polyphone.mp3",
+      "audio_sha256": "f90e5bc2f8f21f707697b5db949c1400b6fe899b3b64bd9e4e2c374bb79e0b77",
+      "audio_bytes": 95293,
+      "failed_stage": "multimodal_judge",
+      "judge_provider_attempts": [
+        {
+          "provider": "Google Gemini API",
+          "model": "gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "provider": "OpenRouter audio route",
+          "model": "google/gemini-3.5-flash",
+          "status": "unavailable",
+          "error": "OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 0,
+      "n": 2
+    }
+  ]
+}

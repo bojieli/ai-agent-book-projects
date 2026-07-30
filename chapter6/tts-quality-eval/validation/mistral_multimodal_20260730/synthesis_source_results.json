@@ -1,0 +1,208 @@
+{
+  "schema_version": "2.0",
+  "experiment": "6-5",
+  "generated_at_utc": "2026-07-30T04:17:40.702999+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio",
+      "openai"
+    ],
+    "configurations": [
+      {
+        "name": "tts1-alloy-1.0",
+        "provider": "openai",
+        "model": "tts-1",
+        "voice": "alloy",
+        "speed": 1.0
+      },
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone",
+      "long",
+      "emotion",
+      "sad",
+      "question"
+    ],
+    "expected_records": 12,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 0,
+    "direct_audio_four_dimension_records": 0,
+    "expected_records": 12,
+    "all_cells_complete": false,
+    "multi_provider": true,
+    "manuscript_core_complete": false
+  },
+  "records": [
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "openai",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "tts1-alloy-1.0__num.mp3",
+      "audio_sha256": "954eca94164d5af7d4a849def397e16a192d22a86168fab86f76ccd2443fb3ed",
+      "audio_bytes": 132960,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "openai",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "tts1-alloy-1.0__polyphone.mp3",
+      "audio_sha256": "fa6e6ca29a3d17d33167c04c32b132d6aee2cb406d2acbf7bbeb13529af98abb",
+      "audio_bytes": 130560,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "openai",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "tts1-alloy-1.0__long.mp3",
+      "audio_sha256": "c04786022e111c49f635eb361cb4cae3b786334291af86f7f36e69fff7909d1a",
+      "audio_bytes": 273600,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "openai",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "tts1-alloy-1.0__emotion.mp3",
+      "audio_sha256": "86215ce027003e1b0a721545b594ef0325745738a46bbf927a7843da3a15b514",
+      "audio_bytes": 116160,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "tts1-alloy-1.0",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+      "failed_stage": "synthesis"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__num.mp3",
+      "audio_sha256": "6e9717e58f422db10b8e9538aa3812de456a1dde4bd9028fde928c2eaac42ad3",
+      "audio_bytes": 101981,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__polyphone.mp3",
+      "audio_sha256": "6bff6109ec7682f85680d8b60ea58dd48fbe5b3eeda59fb326d2288d250c85b5",
+      "audio_bytes": 95293,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__long.mp3",
+      "audio_sha256": "89542f05312bac767d5151f7552d0c75065cc7ecdf739dcc180b3c92a67b21c5",
+      "audio_bytes": 206052,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__emotion.mp3",
+      "audio_sha256": "81608431645b08be6bf7171dbb250f391b1ba7f5714d535c0e2ce323d7f6ca29",
+      "audio_bytes": 104488,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__sad.mp3",
+      "audio_sha256": "bf16b438885b651681197f15ad969a447b8b5cf781a298600580af5bea049f4c",
+      "audio_bytes": 87352,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: OpenRouter audio HTTP 401: {\"error\":{\"message\":\"User not found.\",\"code\":401}}",
+      "audio_path": "fishaudio-s1-clone__question.mp3",
+      "audio_sha256": "1d5f16e92d66e1855c57b264e3ec1ddaf9e09aa9cfedca38fb5dfd623f829ad3",
+      "audio_bytes": 76067,
+      "failed_stage": "multimodal_judge"
+    }
+  ],
+  "summary": [
+    {
+      "config": "tts1-alloy-1.0",
+      "n_ok": 0,
+      "n": 6
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 0,
+      "n": 6
+    }
+  ]
+}

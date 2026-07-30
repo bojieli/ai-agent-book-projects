@@ -114,7 +114,9 @@ PROVIDERS = {
 # 各 provider 的代表性配置（--providers 选中时，每个 provider 取这一条参与对比）。
 # 非 OpenAI 的 voice/model 取各家常见默认值，可在此按账号可用音色调整。
 PROVIDER_CONFIGS = {
-    "openai": TTSConfig("openai-alloy", provider="openai", model="tts-1", voice="alloy"),
+    # Reuse the identical default-grid identity so a cross-provider campaign
+    # can audit an existing OpenAI artifact instead of synthesizing it twice.
+    "openai": TTSConfig("tts1-alloy-1.0", provider="openai", model="tts-1", voice="alloy"),
     "elevenlabs": TTSConfig("elevenlabs-multi", provider="elevenlabs",
                             model="eleven_multilingual_v2", voice="21m00Tcm4TlvDq8ikWAM"),
     # This immutable reference ID is the same real source voice used to build
