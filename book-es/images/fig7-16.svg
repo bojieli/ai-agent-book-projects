@@ -762,48 +762,48 @@
 <rect x="818" y="65" width="1" height="30" fill="#505050"/>
 <rect x="819" y="65" width="1" height="30" fill="#505050"/>
 <rect x="60" y="65" width="760" height="30" fill="none" stroke="#333333" stroke-width="2" rx="4"/>
-<text x="60" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">稀疏</text>
-<text x="820" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">密集</text>
+<text x="60" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">disperso</text>
+<text x="820" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">denso</text>
 <line x1="98.0" y1="65" x2="98.0" y2="95" stroke="#333333" stroke-width="2"/>
 <line x1="98.0" y1="95" x2="117.5" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="20" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="117.5" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">二元奖励</text>
+<text x="117.5" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">recompensa binaria</text>
 <line x1="30" y1="162" x2="205" y2="162" stroke="#999999" stroke-width="2"/>
-<text x="30" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">GAIA: 精确匹配 → 0 / 1</text>
-<text x="30" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">SWE-Bench: 测试通过 → 0 / 1</text>
-<text x="30" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">信用分配困难: 10步中</text>
-<text x="30" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">哪步导致失败？</text>
+<text x="30" y="182" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">GAIA: coincidencia exacta → 0 / 1</text>
+<text x="30" y="204" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">SWE-Bench: prueba superada → 0 / 1</text>
+<text x="30" y="226" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">dificultad de asignación de crédito: en 10 pasos</text>
+<text x="30" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">¿qué paso causó el fallo?</text>
 <line x1="310.8" y1="65" x2="310.8" y2="95" stroke="#333333" stroke-width="2"/>
 <line x1="310.8" y1="95" x2="310.8" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="213.3" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.8" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">里程碑奖励</text>
+<text x="310.8" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">recompensa por hito</text>
 <line x1="223.3" y1="162" x2="398.3" y2="162" stroke="#999999" stroke-width="2"/>
-<text x="223.3" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">τ²-bench 多维验证:</text>
-<text x="223.3" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  DB状态 ✓ (+0.4)</text>
-<text x="223.3" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  关键词确认 ✓ (+0.3)</text>
-<text x="223.3" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  流程合规 ✓ (+0.3)</text>
+<text x="223.3" y="182" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">Verificación multidimensional de τ²-bench:</text>
+<text x="223.3" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  Estado de la DB ✓ (+0.4)</text>
+<text x="223.3" y="226" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">  confirmación de palabra clave ✓ (+0.3)</text>
+<text x="223.3" y="248" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">  cumplimiento del proceso ✓ (+0.3)</text>
 <line x1="531.2" y1="65" x2="531.2" y2="95" stroke="#333333" stroke-width="2"/>
 <line x1="531.2" y1="95" x2="531.2" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="433.70000000000005" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="531.2" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">过程奖励</text>
+<text x="531.2" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">recompensa de proceso</text>
 <line x1="443.70000000000005" y1="162" x2="618.7" y2="162" stroke="#999999" stroke-width="2"/>
-<text x="443.70000000000005" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">每步骤即时反馈:</text>
-<text x="443.70000000000005" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  身份验证 → +0.1</text>
-<text x="443.70000000000005" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  查询信息 → +0.1</text>
-<text x="443.70000000000005" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  用户确认 → +0.2</text>
+<text x="443.70000000000005" y="182" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">retroalimentación inmediata por paso:</text>
+<text x="443.70000000000005" y="204" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">  verificación de identidad → +0.1</text>
+<text x="443.70000000000005" y="226" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  consultar información → +0.1</text>
+<text x="443.70000000000005" y="248" font-family="'Courier New', Courier, monospace" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central">  confirmación del usuario → +0.2</text>
 <line x1="744.0" y1="65" x2="744.0" y2="95" stroke="#333333" stroke-width="2"/>
 <line x1="744.0" y1="95" x2="744.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="646.5" y="130" width="195" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="744.0" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">密集连续</text>
+<text x="744.0" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">denso continuo</text>
 <line x1="656.5" y1="162" x2="831.5" y2="162" stroke="#999999" stroke-width="2"/>
-<text x="656.5" y="182" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">AndroidWorld 部分得分:</text>
-<text x="656.5" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  正确点击 → +0.05</text>
-<text x="656.5" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  字段填写 → +0.1</text>
-<text x="656.5" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  最终状态 → +0.5</text>
+<text x="656.5" y="182" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">Puntuación parcial de AndroidWorld:</text>
+<text x="656.5" y="204" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  clic correcto → +0.05</text>
+<text x="656.5" y="226" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  llenado de campo → +0.1</text>
+<text x="656.5" y="248" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">  estado final → +0.5</text>
 <rect x="100" y="290" width="680" height="50" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="115" y="308" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">Pine AI 案例: binary reward 需100次试错 才偶然成功</text>
-<text x="115" y="328" font-family="'Courier New', Courier, monospace" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central">根因: model-free RL 只看 reward=0，无法从 observation 中学习</text>
+<text x="115" y="308" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central">Caso de Pine AI: la recompensa binaria requiere 100 intentos para tener éxito por azar</text>
+<text x="115" y="328" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">causa raíz: RL sin modelo solo ve recompensa=0, no puede aprender de la observación</text>
 <rect x="100" y="355" width="680" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="440.0" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">权衡：密集奖励更易学习，但标注成本高且可能过度约束创新性</text>
-<text x="440.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">实践：过程奖励与结果奖励协同使用</text>
+<text x="440.0" y="373" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">compromiso: la recompensa densa es más fácil de aprender, pero el costo de anotación es alto y puede sobrelimitar la innovación</text>
+<text x="440.0" y="393" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">práctica: la recompensa de proceso y la recompensa de resultado se usan juntas</text>
 </svg>
