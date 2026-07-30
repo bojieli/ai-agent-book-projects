@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 340" width="780" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="68" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="130" y="83" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">1단계</text>
+<text x="130" y="105" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">전방 관찰</text>
+<text x="130" y="123" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">좌회전 선택</text>
+<text x="130" y="145" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+1</text>
+<line x1="193" y1="115" x2="199" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="198" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="260" y="83" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">2단계</text>
+<text x="260" y="105" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">도로 표지판 인식</text>
+<text x="260" y="123" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">방향 확인</text>
+<text x="260" y="145" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+1</text>
+<line x1="323" y1="115" x2="329" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="328" y="65" width="124" height="100" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="390" y="83" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">3단계</text>
+<text x="390" y="105" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">교차로를 지나침</text>
+<text x="390" y="123" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">계속 직진</text>
+<text x="390" y="145" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=−1</text>
+<line x1="453" y1="115" x2="459" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="458" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="520" y="83" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4단계</text>
+<text x="520" y="105" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">오류 발견</text>
+<text x="520" y="123" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">유턴해 복귀</text>
+<text x="520" y="145" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=0</text>
+<line x1="583" y1="115" x2="589" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="588" y="65" width="124" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="650" y="83" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">5단계</text>
+<text x="650" y="105" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">목표 도달</text>
+<text x="650" y="123" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">작업 완료</text>
+<text x="650" y="145" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+10</text>
+<rect x="30" y="195" width="720" height="60" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="213" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">핵심 질문: 최종 보상 +10은 어느 단계에 귀속해야 하는가?</text>
+<text x="390" y="237" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">3단계에서 실수했지만 4단계에서 교정 → 4단계의 교정이 1-2단계의 올바른 행동보다 중요</text>
+<rect x="30" y="275" width="340" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="200" y="295" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">과정 보상(V-IRL 내비게이션)</text>
+<text x="200" y="317" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">단계별 즉시 피드백: 올바름 +1 / 오류 −1</text>
+<text x="200" y="335" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 기여도 할당 완화  ✗ 탐색 제한 가능</text>
+<rect x="410" y="275" width="340" height="80" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="580" y="295" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">결과 보상(SimpleVLA-RL)</text>
+<text x="580" y="317" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">종료 시에만 피드백: 성공 1 / 실패 0</text>
+<text x="580" y="335" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 탐색 자유 극대화  ✗ 학습 난이도 증가</text>
+</svg>

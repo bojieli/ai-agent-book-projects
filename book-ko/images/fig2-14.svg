@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 540" width="920" height="540" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<text x="220.0" y="65" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">상태 표시줄 없음</text>
+<text x="645.0" y="65" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">상태 표시줄 있음</text>
+<rect x="30" y="90" width="385" height="35" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="107.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">system:</text>
+<text x="120" y="107.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">System Prompt + Tools</text>
+<rect x="30" y="128" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="145.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user:</text>
+<text x="120" y="145.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Xfinity에 연락해 요금을 깎아 줘&quot;</text>
+<rect x="30" y="166" width="385" height="35" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="38" y="183.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant:</text>
+<text x="120" y="183.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">phone_call(Xfinity) → 1회</text>
+<rect x="30" y="204" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="221.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">tool:</text>
+<text x="120" y="221.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">결과: 45분 대기, 연결되지 않음</text>
+<rect x="30" y="242" width="385" height="35" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="38" y="259.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant:</text>
+<text x="120" y="259.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">web_search(&quot;Xfinity deals&quot;)</text>
+<rect x="30" y="280" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="297.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">tool:</text>
+<text x="120" y="297.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">결과: [방대한 검색 내용...]</text>
+<rect x="30" y="318" width="385" height="35" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="38" y="335.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant:</text>
+<text x="120" y="335.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">phone_call(Xfinity) → 2회</text>
+<rect x="30" y="356" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="373.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">tool:</text>
+<text x="120" y="373.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">결과: 연결됨, 월 $65 제시</text>
+<rect x="30" y="394" width="385" height="35" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="38" y="411.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">assistant:</text>
+<text x="120" y="411.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">phone_call(Xfinity) → 3회</text>
+<rect x="30" y="432" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="449.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">tool:</text>
+<text x="120" y="449.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">결과: 월 $59로 인하 확인</text>
+<rect x="30" y="470" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="487.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user:</text>
+<text x="120" y="487.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;한 번 더 전화해서 재촉해 줄래?&quot;</text>
+<text x="220.0" y="523" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 모델이 전체 컨텍스트를 훑어 통화 횟수를</text>
+<text x="220.0" y="543" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">직접 세야 하므로 틀리기 쉬움</text>
+<rect x="455" y="90" width="385" height="35" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="463" y="107.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">system:</text>
+<text x="540" y="107.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">System Prompt + Tools</text>
+<rect x="455" y="128" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="463" y="145.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user:</text>
+<text x="540" y="145.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;Xfinity에 연락해 요금을 깎아 줘&quot;</text>
+<rect x="455" y="166" width="385" height="90" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="463" y="211.0" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">...:</text>
+<text x="540" y="211.0" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">[ 동일한 궤적 내용 ]</text>
+<rect x="455" y="259" width="385" height="35" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="463" y="276.5" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">user:</text>
+<text x="540" y="276.5" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;한 번 더 전화해서 재촉해 줄래?&quot;</text>
+<rect x="455" y="297" width="385" height="130" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="465" y="315" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">&lt;agent_status&gt;</text>
+<text x="470" y="337" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">phone_call 3회 호출 (Xfinity: 3)</text>
+<text x="470" y="357" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">제약 확인: 상한 도달 (3/3) ✗</text>
+<text x="470" y="377" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">TODO: [✓]Xfinity 연락 [✓]요금 인하 확인</text>
+<text x="470" y="397" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">현재 시각: 2025-09-14 10:30</text>
+<text x="470" y="417" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">현재 상태: 사용자 확인 대기</text>
+<text x="815" y="417" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="end" dominant-baseline="central" font-weight="bold">&lt;/agent_status&gt;</text>
+<text x="645.0" y="445" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 모델이 정제된 상태를 바로 읽음</text>
+<text x="645.0" y="465" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">제약을 정확히 지키고 더는 전화하지 않음</text>
+<text x="435.0" y="300" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">VS</text>
+</svg>

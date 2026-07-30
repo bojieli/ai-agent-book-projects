@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 390" width="920" height="390" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="40" y="70" width="400" height="46" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="240" y="93" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">사용자 메모리(개인 단위)</text>
+<rect x="480" y="70" width="400" height="46" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="680" y="93" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">지식 베이스(집단 단위)</text>
+<rect x="40" y="128" width="400" height="158" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="60" y="156" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 메모리 계층 · 3단계 평가</text>
+<text x="60" y="184" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 네 가지 저장 형식</text>
+<text x="60" y="212" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 인지 유형: 일화 · 의미 · 절차</text>
+<text x="60" y="240" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 메모리 프레임워크: Mem0 · Memobase</text>
+<text x="60" y="268" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 압축·정리 · 개인정보 등급화</text>
+<rect x="480" y="128" width="400" height="158" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="500" y="156" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 문서 청킹 · 멀티모달 추출</text>
+<text x="500" y="184" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 밀집/희소 임베딩 · 혼합 검색</text>
+<text x="500" y="212" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 구조화 색인: RAPTOR · GraphRAG</text>
+<text x="500" y="240" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 파일 시스템 패러다임 · Agentic RAG</text>
+<text x="500" y="268" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 컨텍스트 인식 검색 · 심층 지식 추출</text>
+<line x1="240" y1="320" x2="240" y2="288" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="680" y1="320" x2="680" y2="288" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="40" y="322" width="840" height="50" rx="6" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="460" y="340" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">공통 기반: 검색 기술</text>
+<text x="460" y="360" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">문서 청킹 · 벡터/키워드 임베딩 · 혼합 검색 · 재순위화</text>
+<text x="460" y="404" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">두 흐름의 결합: 고급 JSON 카드로 개요 유지 + 컨텍스트 인식 검색으로 세부 정보 조회</text>
+</svg>

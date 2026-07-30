@@ -1,15 +1,15 @@
 # AI Agent'ları Derinlemesine Anlamak: Tasarım İlkeleri ve Mühendislik Pratiği
 
-[![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-9%20dil-informational.svg)](#-e-kitap)
+[![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-10%20dil-informational.svg)](#-e-kitap)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an**
+**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an · [한국어](../ko/README.md)**
 
 > 📥 **[PDF / EPUB indir](#-e-kitap)** (önerilir) — PDF / EPUB sürümleri en iyi okuma deneyimini sunar; kitabı [çevrimiçi](https://bojieli.github.io/ai-agent-book/) da okuyabilirsiniz.
 
 **Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **93 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
 
-| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **9 dil**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR |
+| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **10 dil**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 E-Kitap
@@ -24,12 +24,13 @@
 > - **Vietnamca** (topluluk çevirisi, by [@toanalien](https://github.com/toanalien)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.epub)
 > - **Japonca** (topluluk çevirisi, by [@eltociear](https://github.com/eltociear)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ja.epub)
 > - **Türkçe** (topluluk çevirisi, by [@memisemre](https://github.com/memisemre)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.epub)
+> - **Korece** (topluluk çevirisi, by [@JeongJaeSoon](https://github.com/JeongJaeSoon)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.epub)
 >
 > 🌐 Kitabı ayrıca [çevrimiçi okuyabilirsiniz](https://bojieli.github.io/ai-agent-book/) — dil değiştirici, katlanabilir bölüm ağacı, tam metin araması ve eşlik eden deneylere doğrudan bağlantılar sunar.
 
-Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/) klasörlerinde bulunur.
+Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe/Korece sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) klasörlerinde bulunur.
 
-Birleşik derleme betiği Çince, İngilizce, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca ve Türkçe için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
+Birleşik derleme betiği Çince, İngilizce, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca, Türkçe ve Korece için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
 
 <details>
 <summary><b>🔧 PDF'i kendiniz derlemek mi istiyorsunuz?</b> (pandoc / xelatex / ElegantBook gerektirir)</summary>
@@ -144,7 +145,7 @@ Kitap ve eşlik eden kod tamamen açık kaynaktır. Pull Request'ler büyük mem
 | 🐛 **Kod iyileştirmeleri ve hata düzeltmeleri** | Eşlik eden projeleri daha sağlam, kullanışlı ve üretime hazır hale getirin |
 | 🧪 **Yeni pratik projeler** | Deneyler için daha iyi uygulamalar ekleyin/değiştirin veya yeni örnekler katkısında bulunun |
 | 🎨 **Görsel tasarımı** | `book/images/` içindeki grafikleri daha net ve düzgün hale getirin (`book/gen_*_figs.py` tarafından üretilir) |
-| 🌐 **Yeni çeviriler** | Daha fazla dile çeviri memnuniyetle karşılanır; referans için Tayvan Geleneksel Çincesi (`book-zhtw/`), İngilizce (`book-en/`), Tamilce (`book-ta/`), Vietnamca (`book-vi/`), Türkçe (`book-tr/`) klasörlerine bakabilirsiniz |
+| 🌐 **Yeni çeviriler** | Daha fazla dile çeviri memnuniyetle karşılanır; referans için Tayvan Geleneksel Çincesi (`book-zhtw/`), İngilizce (`book-en/`), Tamilce (`book-ta/`), Vietnamca (`book-vi/`), Türkçe (`book-tr/`) ve Korece (`book-ko/`) klasörlerine bakabilirsiniz |
 
 Göndermeden önce lütfen ilgili deneyleri çalıştırıp tekrarlanabilirliği doğrulayın; fikirleri önce tartışmak için bir issue açmaktan çekinmeyin.
 

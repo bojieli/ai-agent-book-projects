@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" width="1000" height="360" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#33434d"/>
+    </marker>
+    <style>
+      .t{font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','PingFang SC','Microsoft YaHei',sans-serif;fill:#26343c}
+      .h{font-size:20px;font-weight:700}
+      .s{font-size:15px;fill:#52636d}
+      .box{fill:#f5f7f8;stroke:#33434d;stroke-width:2}
+      .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
+      .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="28" text-anchor="middle" class="t h">지속적 진화: 실행 경험에서 새 에이전트 버전으로</text>
+
+  <rect x="25" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="100" y="100" text-anchor="middle" class="t h">업무 실행</text>
+  <text x="100" y="128" text-anchor="middle" class="t s">사용자·환경·도구와</text>
+  <text x="100" y="149" text-anchor="middle" class="t s">상호 작용</text>
+
+  <rect x="205" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="280" y="105" text-anchor="middle" class="t h">궤적 기록</text>
+  <text x="280" y="134" text-anchor="middle" class="t s">행동·결과·피드백</text>
+
+  <rect x="385" y="72" width="150" height="90" rx="8" class="accent"/>
+  <text x="460" y="105" text-anchor="middle" class="t h">신호 형성</text>
+  <text x="460" y="134" text-anchor="middle" class="t s">결과·과정·품질</text>
+
+  <rect x="565" y="55" width="230" height="124" rx="8" class="accent"/>
+  <text x="680" y="84" text-anchor="middle" class="t h">후보 갱신 생성</text>
+  <rect x="582" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="102" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="582" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <rect x="686" y="139" width="92" height="27" rx="5" fill="#ffffff" stroke="#66808e"/>
+  <text x="628" y="121" text-anchor="middle" class="t s">지식</text>
+  <text x="732" y="121" text-anchor="middle" class="t s">지침</text>
+  <text x="628" y="158" text-anchor="middle" class="t s">프로그램</text>
+  <text x="732" y="158" text-anchor="middle" class="t s">매개변수</text>
+
+  <rect x="825" y="72" width="150" height="90" rx="8" class="box"/>
+  <text x="900" y="105" text-anchor="middle" class="t h">검증·릴리스</text>
+  <text x="900" y="134" text-anchor="middle" class="t s">회귀·카나리·롤백</text>
+
+  <path d="M175 117 H203" class="line"/>
+  <path d="M355 117 H383" class="line"/>
+  <path d="M535 117 H563" class="line"/>
+  <path d="M795 117 H823" class="line"/>
+
+  <path d="M900 162 V238 H100 V164" class="line" stroke-dasharray="7 5"/>
+  <text x="500" y="265" text-anchor="middle" class="t h">새 에이전트가 다음 실행 주기에 진입</text>
+  <text x="500" y="294" text-anchor="middle" class="t s">후속 행동을 바꾸고 검증을 통과한 갱신만 지속적 진화를 이룹니다</text>
+  <line x1="260" y1="318" x2="740" y2="318" stroke="#9aa8af" stroke-width="1"/>
+</svg>
