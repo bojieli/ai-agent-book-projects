@@ -1,0 +1,16 @@
+{
+  "case": "desktop_mobile_capabilities",
+  "tool": "environment_capabilities",
+  "arguments": {},
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "computer_use_container_image_present": true,
+    "computer_use_active_session": false,
+    "android_world_adb_present": true,
+    "android_active_devices": [],
+    "note": "Availability probe only; absent active sessions cannot satisfy execution gates."
+  },
+  "latency_seconds": 0.035
+}

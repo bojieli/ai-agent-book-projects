@@ -1,0 +1,42 @@
+{
+  "url": "https://download.blender.org/peach/trailer/trailer_480p.mov",
+  "title": "Big Buck Bunny trailer (Blender Foundation Peach Open Movie Project)",
+  "license": "Creative Commons Attribution 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0/",
+  "sha256": "36801b74638c12be9aa587e93cd18edfc9bc51a1c089ab2a19ee42beed9f497d",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 853,
+        "height": 480,
+        "r_frame_rate": "25/1"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 6,
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "duration": "32.995000",
+      "size": "11061011"
+    }
+  },
+  "naturally_occurring_scenes": true,
+  "ground_truth": {
+    "start": 9.08,
+    "end": 11.2,
+    "target": "the single continuous shot showing the large white rabbit walking alone in a sunny green meadow, after the ONE BIG RABBIT title and before the THREE RODENTS title",
+    "method": "Human-labeled target shot bounded by ffmpeg scene-change frames; source inspection found transitions at 9.08 and 11.20 seconds.",
+    "ffmpeg_scene_threshold": 0.35
+  }
+}

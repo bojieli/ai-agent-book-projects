@@ -30,6 +30,7 @@ class PredicateType(Enum):
     URL_CONTAINS = "url_contains"
     ELEMENT_VISIBLE = "element_visible"
     ELEMENT_TEXT_CONTAINS = "element_text_contains"
+    ELEMENT_VALUE_EQUALS = "element_value_equals"
     PAGE_STATE_EQUALS = "page_state_equals"
 
 

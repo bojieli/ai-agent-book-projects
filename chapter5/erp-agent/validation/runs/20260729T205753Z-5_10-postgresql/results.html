@@ -1,0 +1,77 @@
+<!doctype html><meta charset=utf-8><title>Experiment 5-10 PostgreSQL artifacts</title>
+    <style>body{font-family:system-ui;margin:30px;background:#f7f8fa;color:#172033}section{background:white;padding:18px;margin:16px 0;border-radius:12px}table{border-collapse:collapse}td{border:1px solid #ccd3dd;padding:5px 9px}pre{white-space:pre-wrap;background:#eef2f7;padding:12px}.ok{color:#08783e}.bad{color:#b42318}</style>
+    <h1>ERP Agent: SQL artifacts executed by PostgreSQL</h1><section><h2>1. 平均每个员工在职多久？</h2><pre>SELECT AVG(COALESCE(leave_date, CURRENT_DATE) - hire_date) AS average_tenure_days FROM employees</pre><table><tr><td>886.2</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>2. 每个部门有多少在职员工？</h2><pre>SELECT department, COUNT(*) AS active_count FROM employees WHERE leave_date IS NULL GROUP BY department</pre><table><tr><td>人力资源部</td><td>4</td></tr><tr><td>市场部</td><td>9</td></tr><tr><td>研发部</td><td>5</td></tr><tr><td>财务部</td><td>6</td></tr><tr><td>销售部</td><td>10</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>3. 哪个部门员工平均级别最高？</h2><pre>SELECT department
+FROM employees
+GROUP BY department
+ORDER BY AVG(level) DESC
+LIMIT 1</pre><table><tr><td>销售部</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>4. 每个部门今年和去年各新入职多少人？</h2><pre>SELECT department,
+       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS this_year_count,
+       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS last_year_count
+FROM employees
+GROUP BY department
+HAVING this_year_count &gt; 0 OR last_year_count &gt; 0</pre><p>(no rows)</p><p class=bad>FAIL: UndefinedColumn: column &quot;this_year_count&quot; does not exist
+LINE 6: HAVING this_year_count &gt; 0 OR last_year_count &gt; 0
+               ^
+</p></section><section><h2>5. 前年3月到去年5月，A部门平均工资是多少？</h2><pre>SELECT AVG(s.salary)
+FROM employees e
+JOIN salaries s ON e.emp_id = s.emp_id
+WHERE e.department = &#x27;研发部&#x27;
+  AND s.pay_date BETWEEN make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 2, 3, 1)
+                      AND make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 1, 5, 31)</pre><table><tr><td>27695.833333333332</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>6. 去年A部门和B部门平均工资哪个高？</h2><pre>SELECT e.department, AVG(s.salary) AS average_salary
+FROM employees e
+INNER JOIN salaries s ON e.emp_id = s.emp_id
+WHERE e.department IN (&#x27;研发部&#x27;, &#x27;销售部&#x27;)
+  AND s.pay_date &gt;= date_trunc(&#x27;year&#x27;, CURRENT_DATE) - INTERVAL &#x27;1 year&#x27;
+  AND s.pay_date &lt; date_trunc(&#x27;year&#x27;, CURRENT_DATE)
+GROUP BY e.department</pre><table><tr><td>研发部</td><td>28569.444444444445</td></tr><tr><td>销售部</td><td>29481.55339805825</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>7. 今年每个级别的员工平均工资是多少？</h2><pre>SELECT e.level, AVG(s.salary) AS average_salary
+FROM employees e
+JOIN salaries s ON e.emp_id = s.emp_id
+WHERE EXTRACT(YEAR FROM s.pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)
+GROUP BY e.level</pre><table><tr><td>3</td><td>23456.428571428572</td></tr><tr><td>4</td><td>26248.823529411766</td></tr><tr><td>5</td><td>34534.75</td></tr><tr><td>6</td><td>28461.363636363636</td></tr><tr><td>7</td><td>29935.0</td></tr><tr><td>8</td><td>32242.69230769231</td></tr><tr><td>9</td><td>34559.90566037736</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>8. 入职一年内、一到两年、两到三年的员工，最近一个月平均工资是多少？</h2><pre>WITH latest_salaries AS (
+    SELECT DISTINCT ON (emp_id) emp_id, salary
+    FROM salaries
+    ORDER BY emp_id, pay_date DESC
+)
+SELECT 
+    CASE 
+        WHEN (CURRENT_DATE - e.hire_date)::INTEGER &lt; 365 THEN &#x27;入职一年内&#x27;
+        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 365 AND 729 THEN &#x27;一到两年&#x27;
+        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 730 AND 1094 THEN &#x27;两到三年&#x27;
+    END AS bucket,
+    AVG(ls.salary) AS average_latest_salary
+FROM employees e
+JOIN latest_salaries ls ON e.emp_id = ls.emp_id
+WHERE e.leave_date IS NULL
+    AND (CURRENT_DATE - e.hire_date)::INTEGER &lt;= 1094
+GROUP BY bucket</pre><table><tr><td>一到两年</td><td>27683.125</td></tr><tr><td>两到三年</td><td>31138.75</td></tr><tr><td>入职一年内</td><td>24053.75</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>9. 去年到今年涨薪幅度最大的10位员工是谁？</h2><pre>WITH employee_salary_avg AS (
+    SELECT 
+        emp_id,
+        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS avg_prev_year,
+        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS avg_curr_year
+    FROM salaries
+    GROUP BY emp_id
+    HAVING AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) IS NOT NULL
+       AND AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) IS NOT NULL
+)
+SELECT e.name, (esa.avg_curr_year - esa.avg_prev_year) AS raise_amount
+FROM employee_salary_avg esa
+JOIN employees e ON esa.emp_id = e.emp_id
+ORDER BY raise_amount DESC
+LIMIT 10</pre><table><tr><td>韩平</td><td>12000.0</td></tr><tr><td>韩伟</td><td>2200.0</td></tr><tr><td>吕芳</td><td>2155.0</td></tr><tr><td>金丽</td><td>2110.0</td></tr><tr><td>许华</td><td>2065.0</td></tr><tr><td>陶松</td><td>1975.0</td></tr><tr><td>周雪</td><td>1930.0</td></tr><tr><td>吴敏</td><td>1885.0</td></tr><tr><td>张霞</td><td>1840.0</td></tr><tr><td>赵平</td><td>1795.0</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section><section><h2>10. 有没有拖欠工资的情况（某个月还在职却没有发薪）？</h2><pre>WITH employed_months AS (
+    SELECT 
+        e.emp_id,
+        generate_series(
+            date_trunc(&#x27;month&#x27;, e.hire_date),
+            date_trunc(&#x27;month&#x27;, COALESCE(e.leave_date, CURRENT_DATE)),
+            interval &#x27;1 month&#x27;
+        ) AS month
+    FROM employees e
+)
+SELECT 
+    em.emp_id,
+    to_char(em.month, &#x27;YYYY-MM&#x27;) AS month
+FROM employed_months em
+LEFT JOIN salaries s 
+    ON em.emp_id = s.emp_id 
+    AND em.month = date_trunc(&#x27;month&#x27;, s.pay_date)
+WHERE s.emp_id IS NULL</pre><table><tr><td>17</td><td>2026-01</td></tr></table><p class=ok>PASS: independent Python reference matched</p></section>

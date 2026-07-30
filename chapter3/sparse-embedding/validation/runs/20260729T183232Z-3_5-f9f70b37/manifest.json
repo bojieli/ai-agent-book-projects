@@ -1,0 +1,43 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-5",
+  "run_id": "20260729T183232Z-3_5-f9f70b37",
+  "created_at": "2026-07-29T18:32:32.574550+00:00",
+  "status": "passed",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/sparse-embedding/validation/runs/20260729T183232Z-3_5-f9f70b37",
+  "artifacts": {
+    "evidence.json": "69bc798be2f18e814b53665d29692cb4182e70561f4dcf222f25bf36d21eae0e",
+    "receipts.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/sparse-embedding/benchmark.py",
+      "sha256": "f3601a917de0b1a169691fbb5fb4323b7310220af9eb2221414ed74220a8da89",
+      "bytes": 7038
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/sparse-embedding/bm25_engine.py",
+      "sha256": "efcaa2eef462b05d2e1dc9d9f2c5dc0d548a529ca17315ec52e0b0e85fe636c0",
+      "bytes": 20138
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/sparse-embedding/cli.py",
+      "sha256": "6b76c01fd3889a029b5c37a4f589e3a438bc093c406e144e5e4209441c556ec2",
+      "bytes": 16004
+    }
+  ],
+  "summary": {
+    "exact_keyword_recall_at_5": 1.0,
+    "exact_keyword_mrr": 1.0,
+    "synonym_only_recall_at_5": 0.0,
+    "synonym_only_mrr": 0.0
+  },
+  "acceptance": {
+    "uses_from_scratch_engine": true,
+    "hand_score_matches": true,
+    "inverted_index_df_matches": true,
+    "all_exact_keyword_queries_recalled": true,
+    "synonym_only_failure_observed": true,
+    "transparent_tf_idf_scores_retained": true
+  }
+}

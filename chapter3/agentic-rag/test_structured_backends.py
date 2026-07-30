@@ -4,8 +4,18 @@ Test script for Agentic RAG with structured index backends (RAPTOR and GraphRAG)
 
 import asyncio
 import logging
+import os
+import pytest
 from config import Config, KnowledgeBaseType
 from agent import AgenticRAG
+
+# These are manual end-to-end checks for separately launched RAPTOR/GraphRAG
+# services, not hermetic unit tests.  Keep direct-script behavior intact while
+# making the dependency explicit during normal pytest runs.
+pytestmark = pytest.mark.skipif(
+    os.getenv("RUN_STRUCTURED_BACKEND_INTEGRATION") != "1",
+    reason="set RUN_STRUCTURED_BACKEND_INTEGRATION=1 with port 4242 services running",
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

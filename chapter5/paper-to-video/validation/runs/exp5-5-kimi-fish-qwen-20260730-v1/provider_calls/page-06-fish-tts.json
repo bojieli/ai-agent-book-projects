@@ -1,0 +1,16 @@
+{
+  "provider": "Fish Audio",
+  "model": "s1",
+  "request": {
+    "text_sha256": "b59e996561e12a91147ef542f2d0c20af8e036631fa644d7863e1123620793be",
+    "text_characters": 305,
+    "reference_id_sha256": "bb2ec197d6276bfad81bbdbcec4473040861e6bc20caf53cf4d1f8184a7416be",
+    "format": "mp3"
+  },
+  "response_artifact": {
+    "path": "page-06.mp3",
+    "sha256": "59eee15356e96e74c2953c7d4b16a142eefbb13c5c76166fb3a338ca069ec9f2",
+    "bytes": 693393
+  },
+  "elapsed_ms": 6436.549
+}

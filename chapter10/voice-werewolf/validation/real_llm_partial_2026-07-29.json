@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "experiment": "10-8",
+  "generated_at": "2026-07-29T18:16:41+0800",
+  "acceptance_path": false,
+  "mode": "real_llm_all_ai_diagnostic",
+  "llm_provider": "Volcengine ARK",
+  "llm_model": "doubao-seed-1-6-250615",
+  "trace_file": "real_llm_partial_trace_2026-07-29.json",
+  "players": 7,
+  "role_counts": {"狼人": 2, "预言家": 1, "女巫": 1, "村民": 3},
+  "observed": {
+    "complete_day_night_vote_cycles": 2,
+    "entered_round": 3,
+    "real_model_actions_observed": [
+      "werewolf kill proposals and consensus",
+      "seer inspection",
+      "witch heal decision",
+      "public speeches",
+      "public votes"
+    ],
+    "round_2_exile": {"player": "P1", "revealed_role": "狼人"}
+  },
+  "termination": {
+    "status": "operator_stopped",
+    "reason": "one provider request remained pending and the pre-timeout run exceeded eleven minutes",
+    "remediation_in_current_code": "WEREWOLF_LLM_TIMEOUT defaults to 45 seconds with one bounded retry"
+  },
+  "gates": {
+    "real_llm_gameplay": {"status": "partial", "complete_cycles": 2},
+    "three_complete_cycles": {"status": "fail", "observed": 2},
+    "real_llm_strategy_acceptance": {"status": "not_run", "reason": "game did not reach post-game audit"},
+    "one_authorized_human_participant": {"status": "not_run"},
+    "real_human_asr": {"status": "not_run"},
+    "real_ai_and_judge_tts": {"status": "not_run"}
+  },
+  "overall_status": "incomplete"
+}

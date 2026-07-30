@@ -1,0 +1,68 @@
+{
+  "schema_version": "chapter3-evidence-v1",
+  "experiment": "3-4",
+  "run_id": "20260729T182108Z-3_4-7353a50f",
+  "created_at": "2026-07-29T18:21:08.387916+00:00",
+  "status": "partial",
+  "run_dir": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/validation/runs/20260729T182108Z-3_4-7353a50f",
+  "artifacts": {
+    "evidence.json": "598decd9d5a757f70c27db255e8117e2621aa6799e4bb8a871083c97503d03c8",
+    "receipts.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "inputs": [
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/indexing.py",
+      "sha256": "80ca520a78f044b367edfe71ff4e4bb22fa80f00d4803831d17b2b8c14ba1f57",
+      "bytes": 14977
+    },
+    {
+      "path": "/Users/boj/book/ai-agent-book/chapter3/dense-embedding/benchmark.py",
+      "sha256": "9780724566260f034a5bba3143a303a7e934d4b8ee0f8055adacc5a51bdbf8a8",
+      "bytes": 10855
+    }
+  ],
+  "summary": {
+    "embedding_latency_ms": 9437.365,
+    "annoy": {
+      "build_ms": 1.214,
+      "recall_at_k": 0.16666666666666666,
+      "query_latency_ms": {
+        "mean": 0.027637556195259094,
+        "p50": 0.026833033189177513,
+        "p95": 0.030818302184343352
+      },
+      "serialized_bytes": 542256,
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 1.247,
+        "requires_full_rebuild": true,
+        "recall_at_k_after_update": 0.13333333333333333
+      }
+    },
+    "hnsw": {
+      "build_ms": 1.398,
+      "recall_at_k": 1.0,
+      "query_latency_ms": {
+        "mean": 0.04115619231015444,
+        "p50": 0.03870879299938679,
+        "p95": 0.05208926741033793
+      },
+      "serialized_bytes": 135912,
+      "incremental_update": {
+        "items_added": 8,
+        "latency_ms": 0.74,
+        "requires_full_rebuild": false,
+        "recall_at_k_after_update": 1.0
+      }
+    }
+  },
+  "acceptance": {
+    "real_embedding_model": true,
+    "same_vectors_and_queries": true,
+    "exact_search_ground_truth": true,
+    "recall_latency_build_size_measured": true,
+    "incremental_behavior_measured": true,
+    "both_backends_recall_at_least_0_8": false,
+    "passed": false
+  }
+}

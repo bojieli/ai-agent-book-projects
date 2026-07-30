@@ -1,0 +1,2272 @@
+{
+  "schema_version": "2.0",
+  "experiment": "5-2",
+  "generated_at_utc": "2026-07-29T18:17:24.337201+00:00",
+  "model": "gpt-4o-mini",
+  "mode": "solver",
+  "tasks": 84,
+  "dataset_manifest": {
+    "schema_version": "1.0",
+    "experiment": "5-2",
+    "dataset": "K-and-K/perturbed-knights-and-knaves",
+    "revision": "bc7ee75a15ee8196ccbdb7df3ab46284340412e2",
+    "license": "CC-BY-NC-SA-4.0",
+    "sampling": {
+      "split": "test",
+      "perturbations": [
+        "perturbed_leaf",
+        "perturbed_statement",
+        "reorder_statement",
+        "random_pair",
+        "uncommon_name",
+        "flip_role"
+      ],
+      "people": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "per_cell": 2,
+      "seed": 512,
+      "cells": 42,
+      "total": 84
+    },
+    "source_files": [
+      {
+        "path": "test/perturbed_leaf/people2_num100.jsonl",
+        "sha256": "541c5dadb60c54e4c9973cafa0dbd69635538fb44aa5dcb28dc64ea7a78a56be",
+        "published_rows": 76,
+        "sampled_rows": [
+          6,
+          11
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people3_num100.jsonl",
+        "sha256": "4c3d767065edb62d19728da7a4e4e4c63f550c1719c3600c868f50f48715711e",
+        "published_rows": 93,
+        "sampled_rows": [
+          6,
+          92
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people4_num100.jsonl",
+        "sha256": "b3811d1ea4bbdb2ade55dde240361470516e0541c58b5c526609f99ad6a038d7",
+        "published_rows": 94,
+        "sampled_rows": [
+          66,
+          82
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people5_num100.jsonl",
+        "sha256": "17529110798b0a659286983d0cf4e0d3b5a2b560dfb6ab3b3acb1b61ac9d7da7",
+        "published_rows": 98,
+        "sampled_rows": [
+          16,
+          41
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people6_num100.jsonl",
+        "sha256": "032c0c253bbe574335c741bb5ba7d07b48f622e217dc939f72a633ef9fbe46b0",
+        "published_rows": 100,
+        "sampled_rows": [
+          17,
+          51
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people7_num100.jsonl",
+        "sha256": "f62b1f0c3c45e3a62660951fc12b9716679f1466bdc313066d85d08d6fe3c767",
+        "published_rows": 100,
+        "sampled_rows": [
+          79,
+          80
+        ]
+      },
+      {
+        "path": "test/perturbed_leaf/people8_num100.jsonl",
+        "sha256": "01947375b3a16ce4fb340d6f0e1545d5aeadfc6f695c49cf2a6f436fcc5ba099",
+        "published_rows": 100,
+        "sampled_rows": [
+          11,
+          69
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people2_num100.jsonl",
+        "sha256": "18479f9b2c327e9ce51e901479e9e7ffcd4397094e91fdca430871a3fc131fc3",
+        "published_rows": 100,
+        "sampled_rows": [
+          8,
+          94
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people3_num100.jsonl",
+        "sha256": "cb8832b4aae19426e10a039236f0e4fb7dad797598edb3850db8067ff7cda1a6",
+        "published_rows": 100,
+        "sampled_rows": [
+          0,
+          24
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people4_num100.jsonl",
+        "sha256": "ec8821279ff09db70098b97c5b47f452f2b9a6059b3d32ff22c9fce8342e4c30",
+        "published_rows": 100,
+        "sampled_rows": [
+          27,
+          28
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people5_num100.jsonl",
+        "sha256": "791a14c3a7fea7713904786cdbd24ccc94901c0508c1ed3daf5abe3794857ed4",
+        "published_rows": 100,
+        "sampled_rows": [
+          95,
+          99
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people6_num100.jsonl",
+        "sha256": "afadf008aa8aba0753bb198baca07ea51ebd9879045b619861225eea56559134",
+        "published_rows": 100,
+        "sampled_rows": [
+          47,
+          52
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people7_num100.jsonl",
+        "sha256": "bd3900ae3527887659a1a0da1146780e0a47e4d96ff301e1c2039f35bcfff849",
+        "published_rows": 100,
+        "sampled_rows": [
+          15,
+          28
+        ]
+      },
+      {
+        "path": "test/perturbed_statement/people8_num100.jsonl",
+        "sha256": "c3d91ba046bbeb5ec0d64c9147d3d2c76c1f631716da47d32b8379ebfcbe35a0",
+        "published_rows": 100,
+        "sampled_rows": [
+          37,
+          86
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people2_num100.jsonl",
+        "sha256": "c116f384f984150969554d783ccf7cecf4c6e56c59d2f5d326bfcfa722bb149c",
+        "published_rows": 100,
+        "sampled_rows": [
+          60,
+          76
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people3_num100.jsonl",
+        "sha256": "ff772d57162fb500e608ef28c59eaf57ba1d80f60cf3f73902162c3476f6b0a2",
+        "published_rows": 100,
+        "sampled_rows": [
+          0,
+          64
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people4_num100.jsonl",
+        "sha256": "be12e4b5a38792785264c16c11117f7f10f955517e32c92ea37949017a4da0cb",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          97
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people5_num100.jsonl",
+        "sha256": "04a492522cdeb64a960632652b54e3fd27cc505fa8a1c48cf9c666cc8e7d6fb0",
+        "published_rows": 100,
+        "sampled_rows": [
+          55,
+          92
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people6_num100.jsonl",
+        "sha256": "4b6131d749c47ce1580d0443e373112cc5f0e20f1b0245455b3df63b106580c5",
+        "published_rows": 100,
+        "sampled_rows": [
+          80,
+          85
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people7_num100.jsonl",
+        "sha256": "d3051b151ef7e5c47a9cd69b09b52f1ec94c7f899821ec685e286e578c7932c5",
+        "published_rows": 100,
+        "sampled_rows": [
+          67,
+          92
+        ]
+      },
+      {
+        "path": "test/reorder_statement/people8_num100.jsonl",
+        "sha256": "3710c66680d201ebf3d6d243fa9f54ee7e5ce35570ed44f87cd5111b05dc1d9b",
+        "published_rows": 100,
+        "sampled_rows": [
+          2,
+          14
+        ]
+      },
+      {
+        "path": "test/random_pair/people2_num100.jsonl",
+        "sha256": "92b9d18d12ea3eaaa0a49daa03f519b5c5f66614bf724e541e9c00e1b9be24ae",
+        "published_rows": 100,
+        "sampled_rows": [
+          13,
+          14
+        ]
+      },
+      {
+        "path": "test/random_pair/people3_num100.jsonl",
+        "sha256": "6eb60022244be6fa25d372d1580eb8dddfb06914d7290dbe1d64c9cb57c1f612",
+        "published_rows": 100,
+        "sampled_rows": [
+          54,
+          75
+        ]
+      },
+      {
+        "path": "test/random_pair/people4_num100.jsonl",
+        "sha256": "1cafedf8ea1c5bf393d2366a6d798e66730059fdd5290c8b2a8cca35de6c4589",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          90
+        ]
+      },
+      {
+        "path": "test/random_pair/people5_num100.jsonl",
+        "sha256": "9036535b0ace7b3cfe1b8cf94fbb898b0c07e8d88d23cbc914707ed6d0221ebc",
+        "published_rows": 100,
+        "sampled_rows": [
+          62,
+          79
+        ]
+      },
+      {
+        "path": "test/random_pair/people6_num100.jsonl",
+        "sha256": "9d3a4bcd28f465b311bd5cdc96958b69529240f05e00a79d80ea7a54b8d53002",
+        "published_rows": 100,
+        "sampled_rows": [
+          22,
+          45
+        ]
+      },
+      {
+        "path": "test/random_pair/people7_num100.jsonl",
+        "sha256": "389713889ec22d14bf64d1bb9b846d1fb7a4adba44004b6ce9db1e0ac3d54190",
+        "published_rows": 100,
+        "sampled_rows": [
+          64,
+          91
+        ]
+      },
+      {
+        "path": "test/random_pair/people8_num100.jsonl",
+        "sha256": "8885fe0d63bfe5910617bd84e6be646f7b62a26978a649b4173889601d0f9229",
+        "published_rows": 100,
+        "sampled_rows": [
+          68,
+          71
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people2_num100.jsonl",
+        "sha256": "25437adfc79438934dbaa113f4a2b06378d3f899a3cc9d8193202a3e0d746f29",
+        "published_rows": 100,
+        "sampled_rows": [
+          16,
+          82
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people3_num100.jsonl",
+        "sha256": "087b47837520c8da31d78deac08781c3a62ad7961bae246d68f81843b3795ab0",
+        "published_rows": 100,
+        "sampled_rows": [
+          37,
+          40
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people4_num100.jsonl",
+        "sha256": "8e0edc42da3d5739a4e24f82725c6332e71189016391810b5e80d549c71d1004",
+        "published_rows": 100,
+        "sampled_rows": [
+          44,
+          57
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people5_num100.jsonl",
+        "sha256": "c1e7ade7a1791ab17a1d951f7548ce8c54767190f0402e4e6785889810694f3f",
+        "published_rows": 100,
+        "sampled_rows": [
+          5,
+          47
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people6_num100.jsonl",
+        "sha256": "4046b49fe876c7f4eab6eddc35ff0a9f01ad487faf59e9edb5605a39b3e56530",
+        "published_rows": 100,
+        "sampled_rows": [
+          8,
+          56
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people7_num100.jsonl",
+        "sha256": "752a97113d999fcff5f2910c78fca761133822b99b5ae6ec9070421e0e51b2dc",
+        "published_rows": 100,
+        "sampled_rows": [
+          34,
+          69
+        ]
+      },
+      {
+        "path": "test/uncommon_name/people8_num100.jsonl",
+        "sha256": "951228b33ff7b4afffcbd247eeb67390d9af5ff2def9f9cdb0f8433564fffc15",
+        "published_rows": 100,
+        "sampled_rows": [
+          12,
+          68
+        ]
+      },
+      {
+        "path": "test/flip_role/people2_num100.jsonl",
+        "sha256": "2885eb7b356f9ab67ff2ccef9372dcfa7ebcf6ed2b8c5e720db1d74f03840c8d",
+        "published_rows": 100,
+        "sampled_rows": [
+          7,
+          80
+        ]
+      },
+      {
+        "path": "test/flip_role/people3_num100.jsonl",
+        "sha256": "31026489710814617c66a6879408accc099c34f395425b41d0bd56743d933461",
+        "published_rows": 100,
+        "sampled_rows": [
+          36,
+          79
+        ]
+      },
+      {
+        "path": "test/flip_role/people4_num100.jsonl",
+        "sha256": "a5d56cc8724a40fd674dba7730f52ca8dec26966f07ff434302bd62b1260a458",
+        "published_rows": 100,
+        "sampled_rows": [
+          36,
+          97
+        ]
+      },
+      {
+        "path": "test/flip_role/people5_num100.jsonl",
+        "sha256": "1429f88b80794e12f731bcd9cd2502384a3c4ac1a3292010103baccd86e93ae7",
+        "published_rows": 100,
+        "sampled_rows": [
+          22,
+          73
+        ]
+      },
+      {
+        "path": "test/flip_role/people6_num100.jsonl",
+        "sha256": "ccfee7ea7e2f24376e88193a979a20ac6410ec2458c534af7e4daedab4ff47ff",
+        "published_rows": 100,
+        "sampled_rows": [
+          39,
+          62
+        ]
+      },
+      {
+        "path": "test/flip_role/people7_num100.jsonl",
+        "sha256": "b5720e5a434747f323f90086ac6bae7ba33d1b6ba8d617424f599bfabdbcdeca",
+        "published_rows": 100,
+        "sampled_rows": [
+          1,
+          91
+        ]
+      },
+      {
+        "path": "test/flip_role/people8_num100.jsonl",
+        "sha256": "d668973f128b119ad065e0b58f33099516dbd801f0e7957c00e876115e8119dc",
+        "published_rows": 100,
+        "sampled_rows": [
+          64,
+          96
+        ]
+      }
+    ],
+    "label_validation": "all rows independently solved with python-constraint"
+  },
+  "dataset_manifest_sha256": "2e55a7d8b07e55b035a8129889b11dff186589bcad97c02c0ce553f38249212f",
+  "solver": [
+    {
+      "id": "perturbed_leaf-p2-r006",
+      "num": 2,
+      "pred": {
+        "James": "knight",
+        "Sophia": "knave"
+      },
+      "gold": {
+        "James": "knight",
+        "Sophia": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p2-r011",
+      "num": 2,
+      "pred": {
+        "Aiden": "knight",
+        "Lucas": "knave"
+      },
+      "gold": {
+        "Aiden": "knight",
+        "Lucas": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p3-r006",
+      "num": 3,
+      "pred": {
+        "Olivia": "knight",
+        "Amelia": "knave",
+        "James": "knave"
+      },
+      "gold": {
+        "Olivia": "knight",
+        "Amelia": "knave",
+        "James": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p3-r092",
+      "num": 3,
+      "pred": {
+        "William": "knight",
+        "Isabella": "knave",
+        "David": "knave"
+      },
+      "gold": {
+        "William": "knight",
+        "Isabella": "knave",
+        "David": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p4-r066",
+      "num": 4,
+      "pred": {
+        "Scarlett": "knave",
+        "Sophia": "knave",
+        "Logan": "knight",
+        "Victoria": "knight"
+      },
+      "gold": {
+        "Scarlett": "knave",
+        "Sophia": "knave",
+        "Logan": "knight",
+        "Victoria": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p4-r082",
+      "num": 4,
+      "pred": {
+        "Amelia": "knave",
+        "Riley": "knight",
+        "Victoria": "knave",
+        "Elizabeth": "knave"
+      },
+      "gold": {
+        "Amelia": "knave",
+        "Riley": "knight",
+        "Victoria": "knave",
+        "Elizabeth": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p5-r016",
+      "num": 5,
+      "pred": {
+        "Penelope": "knight",
+        "Scarlett": "knave",
+        "Zoey": "knave",
+        "David": "knight",
+        "Logan": "knight"
+      },
+      "gold": {
+        "Penelope": "knight",
+        "Scarlett": "knave",
+        "Zoey": "knave",
+        "David": "knight",
+        "Logan": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p5-r041",
+      "num": 5,
+      "pred": {
+        "Henry": "knave",
+        "Aurora": "knight",
+        "Joseph": "knight",
+        "Jackson": "knave",
+        "Ava": "knave"
+      },
+      "gold": {
+        "Henry": "knave",
+        "Aurora": "knight",
+        "Joseph": "knight",
+        "Jackson": "knave",
+        "Ava": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p6-r017",
+      "num": 6,
+      "pred": {
+        "Scarlett": "knight",
+        "Jacob": "knight",
+        "Benjamin": "knave",
+        "Charlotte": "knave",
+        "David": "knight",
+        "Zoey": "knave"
+      },
+      "gold": {
+        "Scarlett": "knight",
+        "Jacob": "knight",
+        "Benjamin": "knave",
+        "Charlotte": "knave",
+        "David": "knight",
+        "Zoey": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p6-r051",
+      "num": 6,
+      "pred": {
+        "Ava": "knight",
+        "Liam": "knight",
+        "Jacob": "knight",
+        "James": "knight",
+        "Noah": "knight",
+        "Joseph": "knave"
+      },
+      "gold": {
+        "Ava": "knight",
+        "Liam": "knight",
+        "Jacob": "knight",
+        "James": "knight",
+        "Noah": "knight",
+        "Joseph": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p7-r079",
+      "num": 7,
+      "pred": {
+        "Lucas": "knight",
+        "Isabella": "knave",
+        "James": "knave",
+        "Ella": "knave",
+        "Emma": "knave",
+        "Luke": "knight",
+        "Sofia": "knave"
+      },
+      "gold": {
+        "Lucas": "knight",
+        "Isabella": "knave",
+        "James": "knave",
+        "Ella": "knave",
+        "Emma": "knave",
+        "Luke": "knight",
+        "Sofia": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p7-r080",
+      "num": 7,
+      "pred": {
+        "Charlotte": "knight",
+        "Evelyn": "knave",
+        "Olivia": "knight",
+        "Oliver": "knave",
+        "Riley": "knight",
+        "Aria": "knight",
+        "Liam": "knight"
+      },
+      "gold": {
+        "Charlotte": "knight",
+        "Evelyn": "knave",
+        "Olivia": "knight",
+        "Oliver": "knave",
+        "Riley": "knight",
+        "Aria": "knight",
+        "Liam": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p8-r011",
+      "num": 8,
+      "pred": {
+        "Zoey": "knave",
+        "Chloe": "knight",
+        "Matthew": "knight",
+        "Aurora": "knave",
+        "Ethan": "knight",
+        "Aiden": "knave",
+        "Emily": "knight",
+        "Lily": "knight"
+      },
+      "gold": {
+        "Zoey": "knave",
+        "Chloe": "knight",
+        "Matthew": "knight",
+        "Aurora": "knave",
+        "Ethan": "knight",
+        "Aiden": "knave",
+        "Emily": "knight",
+        "Lily": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_leaf-p8-r069",
+      "num": 8,
+      "pred": {
+        "Isabella": "knave",
+        "Jacob": "knight",
+        "Jackson": "knight",
+        "Benjamin": "knave",
+        "Sophia": "knight",
+        "Ava": "knight",
+        "Ella": "knight",
+        "Aiden": "knave"
+      },
+      "gold": {
+        "Isabella": "knave",
+        "Jacob": "knight",
+        "Jackson": "knight",
+        "Benjamin": "knave",
+        "Sophia": "knight",
+        "Ava": "knight",
+        "Ella": "knight",
+        "Aiden": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p2-r008",
+      "num": 2,
+      "pred": {
+        "Daniel": "knight",
+        "Mia": "knight"
+      },
+      "gold": {
+        "Daniel": "knight",
+        "Mia": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p2-r094",
+      "num": 2,
+      "pred": {
+        "Riley": "knight",
+        "Abigail": "knave"
+      },
+      "gold": {
+        "Riley": "knight",
+        "Abigail": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p3-r000",
+      "num": 3,
+      "pred": {
+        "Penelope": "knave",
+        "David": "knave",
+        "Zoey": "knave"
+      },
+      "gold": {
+        "Penelope": "knave",
+        "David": "knave",
+        "Zoey": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p3-r024",
+      "num": 3,
+      "pred": {
+        "Aiden": "knight",
+        "Harper": "knight",
+        "Emma": "knave"
+      },
+      "gold": {
+        "Aiden": "knight",
+        "Harper": "knight",
+        "Emma": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p4-r027",
+      "num": 4,
+      "pred": {
+        "Victoria": "knave",
+        "Lucas": "knight",
+        "Oliver": "knave",
+        "Harper": "knave"
+      },
+      "gold": {
+        "Victoria": "knave",
+        "Lucas": "knight",
+        "Oliver": "knave",
+        "Harper": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p4-r028",
+      "num": 4,
+      "pred": {
+        "Daniel": "knave",
+        "David": "knave",
+        "Victoria": "knave",
+        "Mason": "knight"
+      },
+      "gold": {
+        "Daniel": "knave",
+        "David": "knave",
+        "Victoria": "knave",
+        "Mason": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p5-r095",
+      "num": 5,
+      "pred": {
+        "Jackson": "knight",
+        "Ella": "knight",
+        "Alexander": "knave",
+        "Chloe": "knight",
+        "Emma": "knight"
+      },
+      "gold": {
+        "Jackson": "knight",
+        "Ella": "knight",
+        "Alexander": "knave",
+        "Chloe": "knight",
+        "Emma": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p5-r099",
+      "num": 5,
+      "pred": {
+        "Alexander": "knave",
+        "Luke": "knight",
+        "Jackson": "knight",
+        "Charlotte": "knight",
+        "Harper": "knight"
+      },
+      "gold": {
+        "Alexander": "knave",
+        "Luke": "knight",
+        "Jackson": "knight",
+        "Charlotte": "knight",
+        "Harper": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p6-r047",
+      "num": 6,
+      "pred": {
+        "Noah": "knight",
+        "Charlotte": "knight",
+        "Lily": "knight",
+        "Samuel": "knight",
+        "Owen": "knight",
+        "Grace": "knave"
+      },
+      "gold": {
+        "Noah": "knight",
+        "Charlotte": "knight",
+        "Lily": "knight",
+        "Samuel": "knight",
+        "Owen": "knight",
+        "Grace": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p6-r052",
+      "num": 6,
+      "pred": {
+        "Emily": "knave",
+        "Noah": "knave",
+        "Sophia": "knave",
+        "Olivia": "knight",
+        "Avery": "knave",
+        "Grace": "knight"
+      },
+      "gold": {
+        "Emily": "knave",
+        "Noah": "knave",
+        "Sophia": "knave",
+        "Olivia": "knight",
+        "Avery": "knave",
+        "Grace": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p7-r015",
+      "num": 7,
+      "pred": {
+        "Emma": "knave",
+        "Zoey": "knight",
+        "David": "knight",
+        "Jack": "knight",
+        "Amelia": "knave",
+        "Logan": "knave",
+        "Abigail": "knave"
+      },
+      "gold": {
+        "Emma": "knave",
+        "Zoey": "knight",
+        "David": "knight",
+        "Jack": "knight",
+        "Amelia": "knave",
+        "Logan": "knave",
+        "Abigail": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p7-r028",
+      "num": 7,
+      "pred": {
+        "Aria": "knight",
+        "Aiden": "knight",
+        "Emily": "knave",
+        "Lily": "knight",
+        "Mason": "knave",
+        "Sophia": "knave",
+        "Sebastian": "knight"
+      },
+      "gold": {
+        "Aria": "knight",
+        "Aiden": "knight",
+        "Emily": "knave",
+        "Lily": "knight",
+        "Mason": "knave",
+        "Sophia": "knave",
+        "Sebastian": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p8-r037",
+      "num": 8,
+      "pred": {
+        "Ava": "knight",
+        "Grace": "knight",
+        "Riley": "knight",
+        "James": "knight",
+        "Harper": "knave",
+        "Avery": "knight",
+        "Sofia": "knave",
+        "Noah": "knight"
+      },
+      "gold": {
+        "Ava": "knight",
+        "Grace": "knight",
+        "Riley": "knight",
+        "James": "knight",
+        "Harper": "knave",
+        "Avery": "knight",
+        "Sofia": "knave",
+        "Noah": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "perturbed_statement-p8-r086",
+      "num": 8,
+      "pred": {
+        "David": "knight",
+        "Ella": "knave",
+        "Matthew": "knave",
+        "Charlotte": "knave",
+        "Oliver": "knave",
+        "Samuel": "knave",
+        "Riley": "knight",
+        "Alexander": "knight"
+      },
+      "gold": {
+        "David": "knight",
+        "Ella": "knave",
+        "Matthew": "knave",
+        "Charlotte": "knave",
+        "Oliver": "knave",
+        "Samuel": "knave",
+        "Riley": "knight",
+        "Alexander": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p2-r060",
+      "num": 2,
+      "pred": {
+        "Isabella": "knave",
+        "Emma": "knave"
+      },
+      "gold": {
+        "Isabella": "knave",
+        "Emma": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p2-r076",
+      "num": 2,
+      "pred": {
+        "Isabella": "knave",
+        "Elizabeth": "knight"
+      },
+      "gold": {
+        "Isabella": "knave",
+        "Elizabeth": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p3-r000",
+      "num": 3,
+      "pred": {
+        "Penelope": "knave",
+        "David": "knave",
+        "Zoey": "knight"
+      },
+      "gold": {
+        "Penelope": "knave",
+        "David": "knave",
+        "Zoey": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p3-r064",
+      "num": 3,
+      "pred": {
+        "Lucas": "knight",
+        "Evelyn": "knave",
+        "Grace": "knave"
+      },
+      "gold": {
+        "Lucas": "knight",
+        "Evelyn": "knave",
+        "Grace": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p4-r068",
+      "num": 4,
+      "pred": {
+        "Aurora": "knight",
+        "Elizabeth": "knave",
+        "Grace": "knight",
+        "Daniel": "knight"
+      },
+      "gold": {
+        "Aurora": "knight",
+        "Elizabeth": "knave",
+        "Grace": "knight",
+        "Daniel": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p4-r097",
+      "num": 4,
+      "pred": {
+        "Lucas": "knave",
+        "Ava": "knave",
+        "Grace": "knight",
+        "Liam": "knave"
+      },
+      "gold": {
+        "Lucas": "knave",
+        "Ava": "knave",
+        "Grace": "knight",
+        "Liam": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p5-r055",
+      "num": 5,
+      "pred": {
+        "Olivia": "knave",
+        "Victoria": "knave",
+        "Mason": "knight",
+        "Lily": "knight",
+        "Abigail": "knave"
+      },
+      "gold": {
+        "Olivia": "knave",
+        "Victoria": "knave",
+        "Mason": "knight",
+        "Lily": "knight",
+        "Abigail": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p5-r092",
+      "num": 5,
+      "pred": {
+        "Sophia": "knight",
+        "Avery": "knave",
+        "Michael": "knight",
+        "Chloe": "knave",
+        "Luke": "knave"
+      },
+      "gold": {
+        "Sophia": "knight",
+        "Avery": "knave",
+        "Michael": "knight",
+        "Chloe": "knave",
+        "Luke": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p6-r080",
+      "num": 6,
+      "pred": {
+        "Olivia": "knave",
+        "Joseph": "knave",
+        "Matthew": "knight",
+        "Penelope": "knight",
+        "Charlotte": "knight",
+        "Liam": "knight"
+      },
+      "gold": {
+        "Olivia": "knave",
+        "Joseph": "knave",
+        "Matthew": "knight",
+        "Penelope": "knight",
+        "Charlotte": "knight",
+        "Liam": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p6-r085",
+      "num": 6,
+      "pred": {
+        "David": "knave",
+        "Ava": "knave",
+        "Riley": "knave",
+        "Aiden": "knave",
+        "Sebastian": "knave",
+        "Abigail": "knave"
+      },
+      "gold": {
+        "David": "knave",
+        "Ava": "knave",
+        "Riley": "knave",
+        "Aiden": "knave",
+        "Sebastian": "knave",
+        "Abigail": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p7-r067",
+      "num": 7,
+      "pred": {
+        "Avery": "knight",
+        "Liam": "knight",
+        "William": "knave",
+        "James": "knight",
+        "Isabella": "knave",
+        "Riley": "knave",
+        "Ava": "knave"
+      },
+      "gold": {
+        "Avery": "knight",
+        "Liam": "knight",
+        "William": "knave",
+        "James": "knight",
+        "Isabella": "knave",
+        "Riley": "knave",
+        "Ava": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p7-r092",
+      "num": 7,
+      "pred": {
+        "Abigail": "knight",
+        "Sophia": "knave",
+        "Logan": "knight",
+        "Owen": "knight",
+        "Joseph": "knave",
+        "Aiden": "knave",
+        "Matthew": "knave"
+      },
+      "gold": {
+        "Abigail": "knight",
+        "Sophia": "knave",
+        "Logan": "knight",
+        "Owen": "knight",
+        "Joseph": "knave",
+        "Aiden": "knave",
+        "Matthew": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p8-r002",
+      "num": 8,
+      "pred": {
+        "Isabella": "knight",
+        "Avery": "knight",
+        "Ella": "knight",
+        "Matthew": "knight",
+        "Luke": "knight",
+        "Mia": "knight",
+        "Scarlett": "knight",
+        "Benjamin": "knight"
+      },
+      "gold": {
+        "Isabella": "knight",
+        "Avery": "knight",
+        "Ella": "knight",
+        "Matthew": "knight",
+        "Luke": "knight",
+        "Mia": "knight",
+        "Scarlett": "knight",
+        "Benjamin": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "reorder_statement-p8-r014",
+      "num": 8,
+      "pred": {
+        "Avery": "knight",
+        "Sophia": "knight",
+        "Lily": "knight",
+        "Penelope": "knave",
+        "Oliver": "knave",
+        "Jackson": "knave",
+        "Sebastian": "knight",
+        "Samuel": "knave"
+      },
+      "gold": {
+        "Avery": "knight",
+        "Sophia": "knight",
+        "Lily": "knight",
+        "Penelope": "knave",
+        "Oliver": "knave",
+        "Jackson": "knave",
+        "Sebastian": "knight",
+        "Samuel": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p2-r013",
+      "num": 2,
+      "pred": {
+        "Aria": "knight",
+        "Benjamin": "knave"
+      },
+      "gold": {
+        "Aria": "knight",
+        "Benjamin": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p2-r014",
+      "num": 2,
+      "pred": {
+        "Jack": "knave",
+        "Mason": "knave"
+      },
+      "gold": {
+        "Jack": "knave",
+        "Mason": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p3-r054",
+      "num": 3,
+      "pred": {
+        "Jackson": "knight",
+        "Henry": "knave",
+        "Liam": "knave"
+      },
+      "gold": {
+        "Jackson": "knight",
+        "Henry": "knave",
+        "Liam": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p3-r075",
+      "num": 3,
+      "pred": {
+        "Mason": "knight",
+        "Jack": "knight",
+        "Harper": "knight"
+      },
+      "gold": {
+        "Mason": "knight",
+        "Jack": "knight",
+        "Harper": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p4-r068",
+      "num": 4,
+      "pred": {
+        "Aurora": "knight",
+        "Elizabeth": "knave",
+        "Grace": "knight",
+        "Daniel": "knight"
+      },
+      "gold": {
+        "Aurora": "knight",
+        "Elizabeth": "knave",
+        "Grace": "knight",
+        "Daniel": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p4-r090",
+      "num": 4,
+      "pred": {
+        "Jackson": "knight",
+        "Isabella": "knight",
+        "Olivia": "knight",
+        "Mia": "knight"
+      },
+      "gold": {
+        "Jackson": "knight",
+        "Isabella": "knight",
+        "Olivia": "knight",
+        "Mia": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p5-r062",
+      "num": 5,
+      "pred": {
+        "Ella": "knave",
+        "Jacob": "knave",
+        "Sebastian": "knight",
+        "Logan": "knight",
+        "James": "knave"
+      },
+      "gold": {
+        "Ella": "knave",
+        "Jacob": "knave",
+        "Sebastian": "knight",
+        "Logan": "knight",
+        "James": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p5-r079",
+      "num": 5,
+      "pred": {
+        "Emma": "knight",
+        "Harper": "knave",
+        "Aurora": "knave",
+        "Sebastian": "knave",
+        "James": "knave"
+      },
+      "gold": {
+        "Emma": "knight",
+        "Harper": "knave",
+        "Aurora": "knave",
+        "Sebastian": "knave",
+        "James": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p6-r022",
+      "num": 6,
+      "pred": {
+        "Ethan": "knave",
+        "Oliver": "knight",
+        "Amelia": "knight",
+        "Charlotte": "knight",
+        "Michael": "knight",
+        "David": "knight"
+      },
+      "gold": {
+        "Ethan": "knave",
+        "Oliver": "knight",
+        "Amelia": "knight",
+        "Charlotte": "knight",
+        "Michael": "knight",
+        "David": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p6-r045",
+      "num": 6,
+      "pred": {
+        "Aria": "knight",
+        "Penelope": "knight",
+        "Ella": "knight",
+        "Lily": "knight",
+        "Ethan": "knave",
+        "Grace": "knight"
+      },
+      "gold": {
+        "Aria": "knight",
+        "Penelope": "knight",
+        "Ella": "knight",
+        "Lily": "knight",
+        "Ethan": "knave",
+        "Grace": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p7-r064",
+      "num": 7,
+      "pred": {
+        "Penelope": "knave",
+        "Elizabeth": "knight",
+        "Amelia": "knave",
+        "Sofia": "knight",
+        "James": "knave",
+        "Sebastian": "knave",
+        "Harper": "knight"
+      },
+      "gold": {
+        "Penelope": "knave",
+        "Elizabeth": "knight",
+        "Amelia": "knave",
+        "Sofia": "knight",
+        "James": "knave",
+        "Sebastian": "knave",
+        "Harper": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p7-r091",
+      "num": 7,
+      "pred": {
+        "Olivia": "knight",
+        "Charlotte": "knave",
+        "Aiden": "knight",
+        "Avery": "knave",
+        "Luke": "knight",
+        "Harper": "knight",
+        "Sofia": "knave"
+      },
+      "gold": {
+        "Olivia": "knight",
+        "Charlotte": "knave",
+        "Aiden": "knight",
+        "Avery": "knave",
+        "Luke": "knight",
+        "Harper": "knight",
+        "Sofia": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p8-r068",
+      "num": 8,
+      "pred": {
+        "Jackson": "knave",
+        "Ava": "knave",
+        "Michael": "knight",
+        "Aria": "knave",
+        "Lily": "knave",
+        "Emily": "knave",
+        "James": "knight",
+        "Sebastian": "knave"
+      },
+      "gold": {
+        "Jackson": "knave",
+        "Ava": "knave",
+        "Michael": "knight",
+        "Aria": "knave",
+        "Lily": "knave",
+        "Emily": "knave",
+        "James": "knight",
+        "Sebastian": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "random_pair-p8-r071",
+      "num": 8,
+      "pred": {
+        "Riley": "knight",
+        "James": "knave",
+        "Benjamin": "knave",
+        "Noah": "knave",
+        "Lily": "knave",
+        "Sofia": "knight",
+        "Luke": "knight",
+        "Michael": "knight"
+      },
+      "gold": {
+        "Riley": "knight",
+        "James": "knave",
+        "Benjamin": "knave",
+        "Noah": "knave",
+        "Lily": "knave",
+        "Sofia": "knight",
+        "Luke": "knight",
+        "Michael": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p2-r016",
+      "num": 2,
+      "pred": {
+        "Amaryllis": "knave",
+        "Balthazar": "knave"
+      },
+      "gold": {
+        "Amaryllis": "knave",
+        "Balthazar": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p2-r082",
+      "num": 2,
+      "pred": {
+        "Percival": "knight",
+        "Caius": "knight"
+      },
+      "gold": {
+        "Percival": "knight",
+        "Caius": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p3-r037",
+      "num": 3,
+      "pred": {
+        "Peregrine": "knight",
+        "Cosima": "knight",
+        "Quillan": "knave"
+      },
+      "gold": {
+        "Peregrine": "knight",
+        "Cosima": "knight",
+        "Quillan": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p3-r040",
+      "num": 3,
+      "pred": {
+        "Vesper": "knave",
+        "Oberon": "knave",
+        "Cillian": "knave"
+      },
+      "gold": {
+        "Vesper": "knave",
+        "Oberon": "knave",
+        "Cillian": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p4-r044",
+      "num": 4,
+      "pred": {
+        "Cyprian": "knave",
+        "Caius": "knave",
+        "Zephyrine": "knight",
+        "Zephyr": "knight"
+      },
+      "gold": {
+        "Cyprian": "knave",
+        "Caius": "knave",
+        "Zephyrine": "knight",
+        "Zephyr": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p4-r057",
+      "num": 4,
+      "pred": {
+        "Eulalia": "knight",
+        "Xiomara": "knight",
+        "Amaryllis": "knave",
+        "Calliope": "knave"
+      },
+      "gold": {
+        "Eulalia": "knight",
+        "Xiomara": "knight",
+        "Amaryllis": "knave",
+        "Calliope": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p5-r005",
+      "num": 5,
+      "pred": {
+        "Saffron": "knave",
+        "Zora": "knight",
+        "Cosima": "knight",
+        "Xiomara": "knave",
+        "Perdita": "knave"
+      },
+      "gold": {
+        "Saffron": "knave",
+        "Zora": "knight",
+        "Cosima": "knight",
+        "Xiomara": "knave",
+        "Perdita": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p5-r047",
+      "num": 5,
+      "pred": {
+        "Melisande": "knave",
+        "Isolde": "knave",
+        "Leander": "knave",
+        "Percival": "knave",
+        "Quillan": "knight"
+      },
+      "gold": {
+        "Melisande": "knave",
+        "Isolde": "knave",
+        "Leander": "knave",
+        "Percival": "knave",
+        "Quillan": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p6-r008",
+      "num": 6,
+      "pred": {
+        "Oberon": "knave",
+        "Vesper": "knave",
+        "Cillian": "knight",
+        "Xanthe": "knave",
+        "Florian": "knave",
+        "Cyprian": "knave"
+      },
+      "gold": {
+        "Oberon": "knave",
+        "Vesper": "knave",
+        "Cillian": "knight",
+        "Xanthe": "knave",
+        "Florian": "knave",
+        "Cyprian": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p6-r056",
+      "num": 6,
+      "pred": {
+        "Zora": "knight",
+        "Leocadio": "knight",
+        "Xiomara": "knave",
+        "Theron": "knight",
+        "Lysander": "knight",
+        "Ottoline": "knight"
+      },
+      "gold": {
+        "Zora": "knight",
+        "Leocadio": "knight",
+        "Xiomara": "knave",
+        "Theron": "knight",
+        "Lysander": "knight",
+        "Ottoline": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p7-r034",
+      "num": 7,
+      "pred": {
+        "Eulalia": "knave",
+        "Ondine": "knight",
+        "Perdita": "knave",
+        "Zinnia": "knave",
+        "Evander": "knight",
+        "Sylvester": "knight",
+        "Evanthe": "knave"
+      },
+      "gold": {
+        "Eulalia": "knave",
+        "Ondine": "knight",
+        "Perdita": "knave",
+        "Zinnia": "knave",
+        "Evander": "knight",
+        "Sylvester": "knight",
+        "Evanthe": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p7-r069",
+      "num": 7,
+      "pred": {
+        "Caius": "knight",
+        "Perdita": "knight",
+        "Lysander": "knave",
+        "Thaddeus": "knight",
+        "Osiris": "knave",
+        "Zinnia": "knave",
+        "Theron": "knight"
+      },
+      "gold": {
+        "Caius": "knight",
+        "Perdita": "knight",
+        "Lysander": "knave",
+        "Thaddeus": "knight",
+        "Osiris": "knave",
+        "Zinnia": "knave",
+        "Theron": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p8-r012",
+      "num": 8,
+      "pred": {
+        "Vesper": "knave",
+        "Zephyrus": "knight",
+        "Eulalia": "knight",
+        "Xanthe": "knight",
+        "Zinnia": "knight",
+        "Cyprian": "knight",
+        "Caius": "knave",
+        "Sylvester": "knave"
+      },
+      "gold": {
+        "Vesper": "knave",
+        "Zephyrus": "knight",
+        "Eulalia": "knight",
+        "Xanthe": "knight",
+        "Zinnia": "knight",
+        "Cyprian": "knight",
+        "Caius": "knave",
+        "Sylvester": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "uncommon_name-p8-r068",
+      "num": 8,
+      "pred": {
+        "Amaryllis": "knave",
+        "Osiris": "knave",
+        "Cillian": "knight",
+        "Zenobia": "knave",
+        "Eurydice": "knave",
+        "Ottoline": "knave",
+        "Calliope": "knight",
+        "Ignatius": "knave"
+      },
+      "gold": {
+        "Amaryllis": "knave",
+        "Osiris": "knave",
+        "Cillian": "knight",
+        "Zenobia": "knave",
+        "Eurydice": "knave",
+        "Ottoline": "knave",
+        "Calliope": "knight",
+        "Ignatius": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p2-r007",
+      "num": 2,
+      "pred": {
+        "Owen": "knave",
+        "Penelope": "knave"
+      },
+      "gold": {
+        "Owen": "knave",
+        "Penelope": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p2-r080",
+      "num": 2,
+      "pred": {
+        "Benjamin": "knave",
+        "Olivia": "knave"
+      },
+      "gold": {
+        "Benjamin": "knave",
+        "Olivia": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p3-r036",
+      "num": 3,
+      "pred": {
+        "David": "knight",
+        "William": "knave",
+        "Noah": "knave"
+      },
+      "gold": {
+        "David": "knight",
+        "William": "knave",
+        "Noah": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p3-r079",
+      "num": 3,
+      "pred": {
+        "James": "knave",
+        "Harper": "knight",
+        "Jack": "knave"
+      },
+      "gold": {
+        "James": "knave",
+        "Harper": "knight",
+        "Jack": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p4-r036",
+      "num": 4,
+      "pred": {
+        "Noah": "knave",
+        "William": "knight",
+        "Aria": "knight",
+        "Aurora": "knave"
+      },
+      "gold": {
+        "Noah": "knave",
+        "William": "knight",
+        "Aria": "knight",
+        "Aurora": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p4-r097",
+      "num": 4,
+      "pred": {
+        "Lucas": "knave",
+        "Ava": "knave",
+        "Grace": "knight",
+        "Liam": "knave"
+      },
+      "gold": {
+        "Lucas": "knave",
+        "Ava": "knave",
+        "Grace": "knight",
+        "Liam": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p5-r022",
+      "num": 5,
+      "pred": {
+        "Zoey": "knight",
+        "Sophia": "knave",
+        "Emily": "knight",
+        "Michael": "knave",
+        "Lucas": "knight"
+      },
+      "gold": {
+        "Zoey": "knight",
+        "Sophia": "knave",
+        "Emily": "knight",
+        "Michael": "knave",
+        "Lucas": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p5-r073",
+      "num": 5,
+      "pred": {
+        "Isabella": "knight",
+        "Oliver": "knight",
+        "Aiden": "knave",
+        "Penelope": "knight",
+        "Jacob": "knave"
+      },
+      "gold": {
+        "Isabella": "knight",
+        "Oliver": "knight",
+        "Aiden": "knave",
+        "Penelope": "knight",
+        "Jacob": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p6-r039",
+      "num": 6,
+      "pred": {
+        "Scarlett": "knave",
+        "Grace": "knave",
+        "Mason": "knight",
+        "Mia": "knave",
+        "Charlotte": "knave",
+        "Riley": "knight"
+      },
+      "gold": {
+        "Scarlett": "knave",
+        "Grace": "knave",
+        "Mason": "knight",
+        "Mia": "knave",
+        "Charlotte": "knave",
+        "Riley": "knight"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p6-r062",
+      "num": 6,
+      "pred": {
+        "Lucas": "knave",
+        "Ella": "knight",
+        "James": "knight",
+        "Oliver": "knight",
+        "Sofia": "knave",
+        "Jacob": "knave"
+      },
+      "gold": {
+        "Lucas": "knave",
+        "Ella": "knight",
+        "James": "knight",
+        "Oliver": "knight",
+        "Sofia": "knave",
+        "Jacob": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p7-r001",
+      "num": 7,
+      "pred": {
+        "Isabella": "knight",
+        "Mason": "knave",
+        "Ella": "knave",
+        "Harper": "knight",
+        "Daniel": "knight",
+        "David": "knight",
+        "Michael": "knave"
+      },
+      "gold": {
+        "Isabella": "knight",
+        "Mason": "knave",
+        "Ella": "knave",
+        "Harper": "knight",
+        "Daniel": "knight",
+        "David": "knight",
+        "Michael": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p7-r091",
+      "num": 7,
+      "pred": {
+        "Olivia": "knight",
+        "Charlotte": "knave",
+        "Aiden": "knight",
+        "Avery": "knave",
+        "Luke": "knight",
+        "Harper": "knight",
+        "Sofia": "knave"
+      },
+      "gold": {
+        "Olivia": "knight",
+        "Charlotte": "knave",
+        "Aiden": "knight",
+        "Avery": "knave",
+        "Luke": "knight",
+        "Harper": "knight",
+        "Sofia": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p8-r064",
+      "num": 8,
+      "pred": {
+        "Oliver": "knight",
+        "Jacob": "knight",
+        "Amelia": "knight",
+        "Harper": "knight",
+        "Mia": "knave",
+        "William": "knight",
+        "Elizabeth": "knight",
+        "Ella": "knave"
+      },
+      "gold": {
+        "Oliver": "knight",
+        "Jacob": "knight",
+        "Amelia": "knight",
+        "Harper": "knight",
+        "Mia": "knave",
+        "William": "knight",
+        "Elizabeth": "knight",
+        "Ella": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    },
+    {
+      "id": "flip_role-p8-r096",
+      "num": 8,
+      "pred": {
+        "Alexander": "knave",
+        "Amelia": "knight",
+        "Mason": "knave",
+        "Ava": "knight",
+        "Elizabeth": "knight",
+        "Benjamin": "knave",
+        "Victoria": "knight",
+        "Penelope": "knave"
+      },
+      "gold": {
+        "Alexander": "knave",
+        "Amelia": "knight",
+        "Mason": "knave",
+        "Ava": "knight",
+        "Elizabeth": "knight",
+        "Benjamin": "knave",
+        "Victoria": "knight",
+        "Penelope": "knave"
+      },
+      "correct": true,
+      "codes": [],
+      "text": "",
+      "num_solutions": 1
+    }
+  ],
+  "solver_acc": 1.0
+}

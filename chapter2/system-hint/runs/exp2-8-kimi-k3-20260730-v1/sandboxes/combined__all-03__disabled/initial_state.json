@@ -1,0 +1,27 @@
+{
+  "suite": "combined",
+  "case_id": "all-03",
+  "records": {
+    "east": "2025-09-16 12:00:00",
+    "west": "2025-09-16 12:00:02"
+  },
+  "primary": "core-c",
+  "fallback": "backup-c",
+  "token": "LED-933",
+  "artifacts": [
+    "facts.txt",
+    "remediation.txt",
+    "evidence.txt"
+  ],
+  "requested": "ledger.csv",
+  "actual": "ledger_final.csv",
+  "document_token": "LED-933",
+  "system": {
+    "os": "Windows",
+    "shell": "PowerShell",
+    "python": "3.11.8",
+    "cwd": "workspace/three",
+    "manager": "winget",
+    "package": "Git.Git"
+  }
+}

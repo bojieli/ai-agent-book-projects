@@ -7,7 +7,7 @@ import logging
 import time
 import traceback
 from typing import Union, Literal
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit, urlunsplit
 
 import requests
 from dotenv import load_dotenv
@@ -73,35 +73,95 @@ class PubChemClient:
         self.last_request_time = current_time
         return 0.0
     
-    def make_request(self, url: str, params: dict = None, max_retries: int = 3) -> tuple[dict | None, float]:
+    @staticmethod
+    def _listkey_poll_url(url: str, list_key: str) -> str:
+        """Convert an asynchronous PUG REST request into its ListKey poll URL."""
+        parsed = urlsplit(url)
+        compound_marker = "/compound/"
+        compound_index = parsed.path.find(compound_marker)
+        if compound_index < 0:
+            raise requests.RequestException("PubChem ListKey response for an unsupported endpoint")
+
+        operation_start = compound_index + len(compound_marker)
+        operation_indexes = [
+            index
+            for marker in ("/property/", "/cids/", "/synonyms/")
+            if (index := parsed.path.find(marker, operation_start)) >= 0
+        ]
+        if not operation_indexes:
+            raise requests.RequestException("PubChem ListKey response did not identify a poll operation")
+
+        operation_index = min(operation_indexes)
+        poll_path = (
+            parsed.path[:operation_start]
+            + f"listkey/{quote(list_key, safe='')}"
+            + parsed.path[operation_index:]
+        )
+        return urlunsplit((parsed.scheme, parsed.netloc, poll_path, parsed.query, parsed.fragment))
+
+    def make_request(
+        self,
+        url: str,
+        params: dict = None,
+        max_retries: int = 12,
+        _origin_url: str | None = None,
+        _started_at: float | None = None,
+    ) -> tuple[dict | None, float]:
         """Make a rate-limited request to PubChem API with retry for async operations."""
+        origin_url = _origin_url or url
+        started_at = _started_at if _started_at is not None else time.perf_counter()
         self._rate_limit()
-        start_time = time.time()
         
         try:
             response = self.session.get(url, params=params, timeout=self.timeout)
-            response_time = time.time() - start_time
             
             if response.status_code == 200:
-                return response.json(), response_time
+                return response.json(), time.perf_counter() - started_at
             elif response.status_code == 202:
-                # Async operation - wait and retry
+                # PUG REST returns a ListKey for long-running searches. Polling the
+                # original URL starts a new job, so switch to the documented
+                # list-key endpoint and retain the complete request latency.
                 if max_retries > 0:
-                    logging.info(f"PubChem async operation, waiting 2s before retry...")
+                    waiting = response.json().get("Waiting", {})
+                    list_key = str(waiting.get("ListKey", "")).strip()
+                    if not list_key:
+                        raise requests.RequestException("PubChem async response omitted ListKey")
+                    poll_url = self._listkey_poll_url(url, list_key)
+                    logging.info("PubChem async operation, waiting 2s before polling ListKey")
                     time.sleep(2)
-                    return self.make_request(url, params, max_retries - 1)
+                    return self.make_request(
+                        poll_url,
+                        params,
+                        max_retries - 1,
+                        _origin_url=origin_url,
+                        _started_at=started_at,
+                    )
                 else:
                     raise requests.RequestException("PubChem async operation timeout after retries")
-            elif response.status_code == 503:
-                raise requests.RequestException("PubChem service temporarily unavailable (503)")
+            elif response.status_code in {429, 500, 502, 503, 504} and max_retries > 0:
+                # A ListKey job can fail independently inside PubChem. Start a
+                # fresh copy of the original query in that case; otherwise
+                # retry the same endpoint. All retries remain bounded.
+                retry_url = origin_url if "/listkey/" in url else url
+                logging.warning(
+                    "PubChem transient HTTP %s; retrying %s",
+                    response.status_code,
+                    "original query" if retry_url == origin_url else "request",
+                )
+                time.sleep(2)
+                return self.make_request(
+                    retry_url,
+                    params,
+                    max_retries - 1,
+                    _origin_url=origin_url,
+                    _started_at=started_at,
+                )
             else:
                 raise requests.RequestException(f"HTTP {response.status_code}: {response.text}")
         
         except requests.Timeout:
-            response_time = time.time() - start_time
             raise requests.RequestException(f"Request timeout after {self.timeout}s")
         except requests.RequestException:
-            response_time = time.time() - start_time
             raise
 
 

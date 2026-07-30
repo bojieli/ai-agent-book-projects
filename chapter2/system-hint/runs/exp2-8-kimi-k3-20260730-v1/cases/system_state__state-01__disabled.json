@@ -1,0 +1,869 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "system_state__state-01__disabled",
+  "suite": "system_state",
+  "case_id": "state-01",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "97159ee60b4c6dad85bac536f1ef51141c0eeaa9403b1d023a0a316928b3044a",
+  "current_sandbox_sha256": "ce4ea8e8638b4e1bbc98b247f7961a46ef86d9536097d92b8687b776bc668729",
+  "created_at": "2026-07-29T19:48:51.974813+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Install package jq in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+    },
+    {
+      "content": "I'll start by inspecting the simulated host to determine its OS and native package manager.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_0",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The task is to install the package \"jq\" using the OS-native package manager of the simulated host. Let me first inspect the system to determine what OS and package manager are available."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+    },
+    {
+      "content": "The host is Linux with `apt` as its native package manager. I'll install `jq` using apt.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "install_package_1",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The host is Linux with apt as the native package manager. The package to install is jq. Let me install it using apt."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "The installation succeeded. Let me verify the host state before submitting.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_2",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The install succeeded. Now I should verify by inspecting the system again, then submit the result."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_2",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+    },
+    {
+      "content": "Verification complete — the host confirms `apt` as the manager and `jq` as the installed package. Submitting the result.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The system state confirms the manager is apt and the package is jq. The installation was successful. Now I'll submit the result."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:48:51.975058+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package jq in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4539.899,
+      "response": {
+        "id": "chatcmpl-6a6a592524415bd46fc5ea7f",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by inspecting the simulated host to determine its OS and native package manager.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_0",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The task is to install the package \"jq\" using the OS-native package manager of the simulated host. Let me first inspect the system to determine what OS and package manager are available."
+            }
+          }
+        ],
+        "created": 1785354533,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 90,
+          "prompt_tokens": 378,
+          "total_tokens": 468,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 38,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:48:56.518865+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package jq in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the simulated host to determine its OS and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to install the package \"jq\" using the OS-native package manager of the simulated host. Let me first inspect the system to determine what OS and package manager are available."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5096.963,
+      "response": {
+        "id": "chatcmpl-6a6a592933bb148351445bfe",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The host is Linux with `apt` as its native package manager. I'll install `jq` using apt.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "install_package_1",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The host is Linux with apt as the native package manager. The package to install is jq. Let me install it using apt."
+            }
+          }
+        ],
+        "created": 1785354538,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 115,
+          "prompt_tokens": 537,
+          "total_tokens": 652,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 27,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:01.617547+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package jq in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the simulated host to determine its OS and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to install the package \"jq\" using the OS-native package manager of the simulated host. Let me first inspect the system to determine what OS and package manager are available."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          },
+          {
+            "content": "The host is Linux with `apt` as its native package manager. I'll install `jq` using apt.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The host is Linux with apt as the native package manager. The package to install is jq. Let me install it using apt."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3899.755,
+      "response": {
+        "id": "chatcmpl-6a6a592e134e2d1c20f0b978",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The installation succeeded. Let me verify the host state before submitting.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_2",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The install succeeded. Now I should verify by inspecting the system again, then submit the result."
+            }
+          }
+        ],
+        "created": 1785354543,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 69,
+          "prompt_tokens": 683,
+          "total_tokens": 752,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 20,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:05.523464+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package jq in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the simulated host to determine its OS and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The task is to install the package \"jq\" using the OS-native package manager of the simulated host. Let me first inspect the system to determine what OS and package manager are available."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          },
+          {
+            "content": "The host is Linux with `apt` as its native package manager. I'll install `jq` using apt.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The host is Linux with apt as the native package manager. The package to install is jq. Let me install it using apt."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          },
+          {
+            "content": "The installation succeeded. Let me verify the host state before submitting.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The install succeeded. Now I should verify by inspecting the system again, then submit the result."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_2",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5693.692,
+      "response": {
+        "id": "chatcmpl-6a6a5932a770d98a4bcdfd52",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Verification complete — the host confirms `apt` as the manager and `jq` as the installed package. Submitting the result.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"jq\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The system state confirms the manager is apt and the package is jq. The installation was successful. Now I'll submit the result."
+            }
+          }
+        ],
+        "created": 1785354548,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 118,
+          "prompt_tokens": 821,
+          "total_tokens": 939,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 26,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:48:56.517205+00:00",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}",
+      "ok": true,
+      "sandbox_sha256_after": "706a6548fed5d76c51403ffde6824599289381e6aa2f78f6d798f48bf433aa71"
+    },
+    {
+      "at": "2026-07-29T19:49:01.616791+00:00",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "arguments": {
+        "manager": "apt",
+        "package": "jq"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "ce4ea8e8638b4e1bbc98b247f7961a46ef86d9536097d92b8687b776bc668729"
+    },
+    {
+      "at": "2026-07-29T19:49:05.520755+00:00",
+      "tool_call_id": "inspect_system_2",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/alpha\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"jq\", \"python\": \"3.11.9\", \"shell\": \"bash\"}",
+      "ok": true,
+      "sandbox_sha256_after": "ce4ea8e8638b4e1bbc98b247f7961a46ef86d9536097d92b8687b776bc668729"
+    },
+    {
+      "at": "2026-07-29T19:49:11.221519+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "manager": "apt",
+        "package": "jq"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "ce4ea8e8638b4e1bbc98b247f7961a46ef86d9536097d92b8687b776bc668729"
+    }
+  ],
+  "tool_counters": {
+    "inspect_system": 2,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 2419,
+    "completion_tokens": 392,
+    "total_tokens": 2811
+  },
+  "cost": {
+    "amount": 0.08757999999999999,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:49:11.224545+00:00",
+  "case_condition_order": [
+    "system_state",
+    "disabled"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

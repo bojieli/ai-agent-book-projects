@@ -1,0 +1,846 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "detailed_errors__err-02__disabled",
+  "suite": "detailed_errors",
+  "case_id": "err-02",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "172dd1967ff62ce08325b439916022b1c645dabb889e322dfc1adf6e50fccff2",
+  "current_sandbox_sha256": "c76b150b153580e30e7739f14980faeee6ab82515787a6698c62f5f421ece266",
+  "created_at": "2026-07-29T19:47:24.826134+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Read policy.md. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+    },
+    {
+      "content": "I'll start by attempting to read policy.md directly.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_0",
+          "function": {
+            "arguments": "{\"file\":\"policy.md\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The user wants me to read policy.md, but it may have been renamed. Let me first try to read policy.md, and if that fails, list the available documents."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "content": "Error: document not found"
+    },
+    {
+      "content": "The file isn't named policy.md. Let me list the available documents to find what it may have been renamed to.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "list_documents_1",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The file policy.md doesn't exist under that name. Let me list the available documents to find the actual file."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "content": "[\"policy_final.md\"]"
+    },
+    {
+      "content": "I found a candidate document: policy_final.md. Let me read it to recover its contents.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_2",
+          "function": {
+            "arguments": "{\"file\":\"policy_final.md\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "There's a document called policy_final.md. Let me read it to recover its contents and find the token."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "content": "POL-3152"
+    },
+    {
+      "content": "I've verified the document. The file policy.md was renamed to **policy_final.md**, and it contains the exact token **POL-3152**. Submitting the verified result now.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"document\":\"policy_final.md\",\"token\":\"POL-3152\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The document policy_final.md contains the token \"POL-3152\". This appears to be the renamed policy.md file, and the token inside is POL-3152.\n\nLet me submit the result with the actual filename and the exact token."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:47:24.826436+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read policy.md. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4099.801,
+      "response": {
+        "id": "chatcmpl-6a6a58cd8917d7cfdbb9330f",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by attempting to read policy.md directly.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_0",
+                  "function": {
+                    "arguments": "{\"file\":\"policy.md\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The user wants me to read policy.md, but it may have been renamed. Let me first try to read policy.md, and if that fails, list the available documents."
+            }
+          }
+        ],
+        "created": 1785354446,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 98,
+          "prompt_tokens": 367,
+          "total_tokens": 465,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 36,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:47:28.931153+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read policy.md. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "I'll start by attempting to read policy.md directly.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"policy.md\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read policy.md, but it may have been renamed. Let me first try to read policy.md, and if that fails, list the available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4399.615,
+      "response": {
+        "id": "chatcmpl-6a6a58d23393bfb96f2e2c71",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The file isn't named policy.md. Let me list the available documents to find what it may have been renamed to.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "list_documents_1",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The file policy.md doesn't exist under that name. Let me list the available documents to find the actual file."
+            }
+          }
+        ],
+        "created": 1785354450,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 82,
+          "prompt_tokens": 497,
+          "total_tokens": 579,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 23,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:47:33.335904+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read policy.md. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "I'll start by attempting to read policy.md directly.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"policy.md\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read policy.md, but it may have been renamed. Let me first try to read policy.md, and if that fails, list the available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "The file isn't named policy.md. Let me list the available documents to find what it may have been renamed to.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file policy.md doesn't exist under that name. Let me list the available documents to find the actual file."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"policy_final.md\"]"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6318.731,
+      "response": {
+        "id": "chatcmpl-6a6a58d69425f19a76649f9e",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I found a candidate document: policy_final.md. Let me read it to recover its contents.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_2",
+                  "function": {
+                    "arguments": "{\"file\":\"policy_final.md\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "There's a document called policy_final.md. Let me read it to recover its contents and find the token."
+            }
+          }
+        ],
+        "created": 1785354456,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 94,
+          "prompt_tokens": 611,
+          "total_tokens": 705,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 22,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:47:39.660950+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read policy.md. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "I'll start by attempting to read policy.md directly.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"policy.md\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read policy.md, but it may have been renamed. Let me first try to read policy.md, and if that fails, list the available documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "The file isn't named policy.md. Let me list the available documents to find what it may have been renamed to.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "list_documents_1",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file policy.md doesn't exist under that name. Let me list the available documents to find the actual file."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_1",
+            "name": "list_documents",
+            "content": "[\"policy_final.md\"]"
+          },
+          {
+            "content": "I found a candidate document: policy_final.md. Let me read it to recover its contents.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_2",
+                "function": {
+                  "arguments": "{\"file\":\"policy_final.md\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "There's a document called policy_final.md. Let me read it to recover its contents and find the token."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_2",
+            "name": "read_document",
+            "content": "POL-3152"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6158.972,
+      "response": {
+        "id": "chatcmpl-6a6a58dca770d98a4bcdfced",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I've verified the document. The file policy.md was renamed to **policy_final.md**, and it contains the exact token **POL-3152**. Submitting the verified result now.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"document\":\"policy_final.md\",\"token\":\"POL-3152\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The document policy_final.md contains the token \"POL-3152\". This appears to be the renamed policy.md file, and the token inside is POL-3152.\n\nLet me submit the result with the actual filename and the exact token."
+            }
+          }
+        ],
+        "created": 1785354461,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 156,
+          "prompt_tokens": 736,
+          "total_tokens": 892,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 49,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:47:28.929009+00:00",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "arguments": {
+        "file": "policy.md"
+      },
+      "content": "Error: document not found",
+      "ok": false,
+      "sandbox_sha256_after": "c76b150b153580e30e7739f14980faeee6ab82515787a6698c62f5f421ece266"
+    },
+    {
+      "at": "2026-07-29T19:47:33.333425+00:00",
+      "tool_call_id": "list_documents_1",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"policy_final.md\"]",
+      "ok": true,
+      "sandbox_sha256_after": "c76b150b153580e30e7739f14980faeee6ab82515787a6698c62f5f421ece266"
+    },
+    {
+      "at": "2026-07-29T19:47:39.658199+00:00",
+      "tool_call_id": "read_document_2",
+      "name": "read_document",
+      "arguments": {
+        "file": "policy_final.md"
+      },
+      "content": "POL-3152",
+      "ok": true,
+      "sandbox_sha256_after": "c76b150b153580e30e7739f14980faeee6ab82515787a6698c62f5f421ece266"
+    },
+    {
+      "at": "2026-07-29T19:47:45.823808+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "document": "policy_final.md",
+        "token": "POL-3152"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "c76b150b153580e30e7739f14980faeee6ab82515787a6698c62f5f421ece266"
+    }
+  ],
+  "tool_counters": {
+    "read_document": 2,
+    "list_documents": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "detailed_errors": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 2211,
+    "completion_tokens": 430,
+    "total_tokens": 2641
+  },
+  "cost": {
+    "amount": 0.08721999999999999,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:47:45.826961+00:00",
+  "case_condition_order": [
+    "disabled",
+    "detailed_errors"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

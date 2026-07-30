@@ -1,0 +1,477 @@
+{
+  "experiment_id": "2-4",
+  "created_at": "2026-07-30T06:23:29.421682+08:00",
+  "protocol_sha256": "ec1ec36d5a6ee21b5185295a7a4447f4e0173f1681a9fe471b240dda1e7cf32a",
+  "protocol_copy": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/experiment_protocol.json",
+  "provider": "openai",
+  "model": "kimi-k3",
+  "user_model": "kimi-k3",
+  "objective_scoring": "vendored tau-bench environment reward",
+  "arms": {
+    "baseline": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-baseline_0730062324.json",
+        "sha256": "c2bcc6260fe07b8c427131aed29a16c7c23f0351d0a1db4ce85bdd66b9a6bf38"
+      },
+      "rewards": [
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 70.0,
+      "total": 10,
+      "successes": 7,
+      "failures": 3,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        14,
+        10,
+        30,
+        18,
+        15,
+        14,
+        11,
+        14,
+        16,
+        24
+      ],
+      "tool_calls": [
+        6,
+        5,
+        28,
+        14,
+        12,
+        11,
+        7,
+        11,
+        12,
+        17
+      ],
+      "tool_errors": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 221,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1599454,
+        "completion_tokens": 88017,
+        "total_tokens": 1687471
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 40.79078,
+      "arm_complete": true
+    },
+    "tone_trump": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_trump_0730062324.json",
+        "sha256": "e5b2328f6e49c8959cd45bbd9fb30fbdd9e2ab1df7bfffb6c7e20ed83c1b1ac2"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 60.0,
+      "total": 10,
+      "successes": 6,
+      "failures": 4,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.NotFoundError: OpenAIException - The model `kimi-k3` does not exist or you do not have access to it."
+        }
+      ],
+      "agent_steps": [
+        13,
+        11,
+        16,
+        18,
+        12,
+        15,
+        10,
+        12,
+        14,
+        null
+      ],
+      "tool_calls": [
+        7,
+        7,
+        14,
+        14,
+        9,
+        12,
+        6,
+        8,
+        10,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 164,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1100695,
+        "completion_tokens": 78345,
+        "total_tokens": 1179040
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 29.848399999999998,
+      "arm_complete": false
+    },
+    "tone_casual": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_casual_0730062326.json",
+        "sha256": "3bb24ed4bc8ce8fec1808dad703c922235cbfa2972ad4b54c5c76da378204038"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 90.0,
+      "total": 10,
+      "successes": 9,
+      "failures": 1,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.NotFoundError: OpenAIException - The model `kimi-k3` does not exist or you do not have access to it."
+        }
+      ],
+      "agent_steps": [
+        14,
+        10,
+        16,
+        15,
+        15,
+        14,
+        12,
+        15,
+        16,
+        null
+      ],
+      "tool_calls": [
+        9,
+        5,
+        13,
+        11,
+        11,
+        11,
+        8,
+        9,
+        13,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 173,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1176456,
+        "completion_tokens": 74474,
+        "total_tokens": 1250930
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 30.97652,
+      "arm_complete": false
+    },
+    "wiki_random": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-wiki_random_0730062327.json",
+        "sha256": "db1d386704fca08b55d8a3f4cca46976e23ec97950702c63de5d443bd2354820"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 80.0,
+      "total": 10,
+      "successes": 8,
+      "failures": 2,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        14,
+        9,
+        14,
+        15,
+        13,
+        10,
+        14,
+        30,
+        15,
+        23
+      ],
+      "tool_calls": [
+        7,
+        5,
+        10,
+        13,
+        10,
+        7,
+        10,
+        28,
+        11,
+        15
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 209,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1446738,
+        "completion_tokens": 89732,
+        "total_tokens": 1536470
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 37.90796,
+      "arm_complete": true
+    },
+    "no_tool_desc": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-no_tool_desc_0730062327.json",
+        "sha256": "fa003ae5dccfbc58d338d7973434de7a2ca4e3bc436dac6970031c5d925d20ed"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 90.0,
+      "total": 10,
+      "successes": 9,
+      "failures": 1,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 9,
+          "error": "litellm.NotFoundError: OpenAIException - The model `kimi-k3` does not exist or you do not have access to it."
+        }
+      ],
+      "agent_steps": [
+        14,
+        9,
+        15,
+        12,
+        15,
+        11,
+        13,
+        13,
+        17,
+        null
+      ],
+      "tool_calls": [
+        9,
+        5,
+        11,
+        9,
+        12,
+        7,
+        10,
+        8,
+        14,
+        null
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        null
+      ],
+      "real_api_calls": 162,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 944131,
+        "completion_tokens": 74801,
+        "total_tokens": 1018932
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 26.36272,
+      "arm_complete": false
+    },
+    "all_ablations": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-kimi-k3-20260730-v5/tool-calling-kimi-k3-tone_casual_wiki_random_no_tool_desc_0730062328.json",
+        "sha256": "98733b43f7c1d41932bcceebd47dca3c0b9257da0cb6affdc3205273eb464d13"
+      },
+      "rewards": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "success_rate": 80.0,
+      "total": 10,
+      "successes": 8,
+      "failures": 2,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [],
+      "agent_steps": [
+        13,
+        10,
+        16,
+        16,
+        9,
+        12,
+        15,
+        12,
+        15,
+        21
+      ],
+      "tool_calls": [
+        7,
+        5,
+        13,
+        12,
+        8,
+        6,
+        10,
+        8,
+        10,
+        14
+      ],
+      "tool_errors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "real_api_calls": 196,
+      "response_ids_present": true,
+      "usage": {
+        "prompt_tokens": 1247279,
+        "completion_tokens": 97489,
+        "total_tokens": 1344768
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": false,
+      "native_cost_cny": 34.69448,
+      "arm_complete": true
+    }
+  },
+  "credential_scan_passed": true,
+  "credential_findings": [],
+  "usage_and_cost": {
+    "total_real_api_calls": 1125,
+    "prompt_tokens": 7514753,
+    "completion_tokens": 502858,
+    "total_tokens": 8017611,
+    "observed_litellm_cost_usd": 0,
+    "all_calls_priced": false,
+    "native_cost_cny": 200.58086,
+    "native_cost_complete": true,
+    "qualification": "Prompt cache detail is unavailable in these responses, so every prompt token is conservatively priced as uncached."
+  },
+  "campaign_complete": false,
+  "hypothesis_results": {
+    "historical_percentages_reproduced": false,
+    "qualification": "Current fixed ten-task campaign only; compare arm metrics directly."
+  }
+}

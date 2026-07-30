@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "name": "Reference Policy Agent",
+  "role": "Evaluate structured policy records using only supplied evidence.",
+  "requirements": "Demonstrate the uncustomized policy-record template.",
+  "sample_task": "Evaluate the supplied checks.",
+  "tool_name": "evaluate_required_records",
+  "tool_description": "Evaluate every user-supplied record against its required passing state.",
+  "record_noun": "policy record",
+  "records_argument": "records",
+  "identifier_field": "id",
+  "required_field": "required",
+  "status_field": "status",
+  "evidence_field": "evidence",
+  "passing_values": [
+    "passed"
+  ],
+  "approved_label": "APPROVED",
+  "rejected_label": "REFUSED",
+  "remediation_by_status": {
+    "failed": "Correct the failed requirement and rerun it."
+  },
+  "default_remediation": "Resolve the non-passing requirement and attach passing evidence."
+}

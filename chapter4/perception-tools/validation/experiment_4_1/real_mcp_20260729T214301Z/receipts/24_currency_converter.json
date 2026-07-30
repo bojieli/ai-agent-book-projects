@@ -1,0 +1,35 @@
+{
+  "case": "currency_converter",
+  "tool": "currency_converter",
+  "arguments": {
+    "amount": 10,
+    "from_currency": "USD",
+    "to_currency": "SGD"
+  },
+  "arguments_sha256": "8e2c229a505df791071d022f2070870bc3da118c47b105afe6d7ced02fbed2d2",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "live-exchange-rate-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "amount": 10.0,
+      "from_currency": "USD",
+      "to_currency": "SGD",
+      "exchange_rate": 1.29,
+      "converted_amount": 12.9,
+      "timestamp": "2026-07-29"
+    },
+    "metadata": {
+      "rate": 1.29
+    }
+  },
+  "elapsed_seconds": 1.684
+}

@@ -1,0 +1,2016 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "combined__all-03__disabled",
+  "suite": "combined",
+  "case_id": "all-03",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "0bf77b099fa1bd65e061062692a236655c229527bb341db4cda8f9cd2e577e62",
+  "current_sandbox_sha256": "439a667ad09912b21c769c320e260f65cb7674c95a75177485fa3ff52a046327",
+  "created_at": "2026-07-29T19:53:04.749241+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Complete every component of this incident workflow and submit one combined result: (1) read records east and west and select the later one; (2) retrieve core-c or, if unavailable, fallback backup-c; (3) create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933; (4) read possibly-renamed document ledger.csv and recover its exact token; (5) install package Git.Git with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+    },
+    {
+      "content": "I'll work through each component systematically. Let me start with the independent operations: reading both records, probing the primary resource, inspecting the system, and attempting to read the document.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_record_0",
+          "function": {
+            "arguments": "{\"name\":\"east\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_record_1",
+          "function": {
+            "arguments": "{\"name\":\"west\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "probe_resource_2",
+          "function": {
+            "arguments": "{\"name\":\"core-c\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "inspect_system_3",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "read_document_4",
+          "function": {
+            "arguments": "{\"file\":\"ledger.csv\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 4
+        }
+      ],
+      "reasoning_content": "Let me break down the task:\n\n1. Read records east and west and select the later one\n2. Retrieve core-c or, if unavailable, fallback backup-c\n3. Create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933\n4. Read possibly-renamed document ledger.csv and recover its exact token\n5. Install package Git.Git with the simulated host's native package manager\n\nLet me start by reading the records and inspecting the system. First, let me do the independent calls:\n- read_record east\n- read_record west\n- probe_resource core-c\n- inspect_system (to find native package manager)\n- read_document ledger.csv (might fail, then list_documents)\n\nLet me start with parallel calls for the independent ones."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "content": "payload-for-east"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "content": "payload-for-west"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_2",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_3",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/three\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_4",
+      "name": "read_document",
+      "content": "Error: document not found"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_5",
+          "function": {
+            "arguments": "{\"name\":\"backup-c\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "list_documents_6",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 1
+        },
+        {
+          "id": "write_artifact_7",
+          "function": {
+            "arguments": "{\"content\":\"LED-933\",\"file\":\"facts.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 2
+        },
+        {
+          "id": "write_artifact_8",
+          "function": {
+            "arguments": "{\"content\":\"LED-933\",\"file\":\"remediation.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 3
+        },
+        {
+          "id": "write_artifact_9",
+          "function": {
+            "arguments": "{\"content\":\"LED-933\",\"file\":\"evidence.txt\"}",
+            "name": "write_artifact"
+          },
+          "type": "function",
+          "index": 4
+        }
+      ],
+      "reasoning_content": "Let me analyze what I have:\n\n1. Records east and west both return payloads: \"payload-for-east\" and \"payload-for-west\". I need to select the \"later\" one. Hmm, the payloads don't have timestamps. \"Later\" — east vs west. Alphabetically, \"west\" comes later than \"east\". Or perhaps the task means the later one in some ordering. Since there's no timestamp info, maybe \"west\" is the later one (w > e alphabetically, or west was listed second in the task). The task says \"read records east and west and select the later one\". Given the submit_result has \"selected_record\": \"Name of later record\", I need to pick one. Without timestamps, the natural interpretation might be alphabetical later = west. Let me go with west.\n\n2. core-c is unavailable, so I need to probe fallback backup-c. The document ledger.csv was not found — it's possibly renamed. I need to list_documents to find it. Native package manager is winget, install Git.Git. Create the three artifacts with content \"LED-933\".\n\nLet me do: probe backup-c, list_documents, and write the three artifacts in parallel."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_5",
+      "name": "probe_resource",
+      "content": "verified-payload-all-03"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_6",
+      "name": "list_documents",
+      "content": "[\"ledger_final.csv\"]"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_7",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/facts.txt"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_8",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/remediation.txt"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "write_artifact_9",
+      "name": "write_artifact",
+      "content": "Wrote artifacts/evidence.txt"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_10",
+          "function": {
+            "arguments": "{\"file\":\"ledger_final.csv\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "install_package_11",
+          "function": {
+            "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "- backup-c supplied payload: \"verified-payload-all-03\"\n- Document was renamed to ledger_final.csv\n- All three artifacts written\n\nNow I need to read ledger_final.csv to recover its exact token, and install Git.Git with winget. These are independent, so parallel."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_10",
+      "name": "read_document",
+      "content": "LED-933"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_11",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_12",
+          "function": {
+            "arguments": "{\"artifacts\":[\"facts.txt\",\"remediation.txt\",\"evidence.txt\"],\"document\":\"ledger_final.csv\",\"fallback\":\"backup-c\",\"manager\":\"winget\",\"package\":\"Git.Git\",\"selected_record\":\"west\",\"token\":\"LED-933\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "All components are complete:\n\n1. ✅ Read records east (\"payload-for-east\") and west (\"payload-for-west\"). Selected the later one: west (alphabetically later; both payloads lack timestamps, west is the later record). ✅ core-c unavailable → fallback backup-c supplied \"verified-payload-all-03\"\n3. ✅ Artifacts facts.txt, remediation.txt, evidence.txt each containing exactly LED-933\n4. ✅ Document renamed to ledger_final.csv; exact token recovered: LED-933\n5. ✅ Installed Git.Git via winget (simulated host's native package manager)\n\nNow submit the combined result."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_12",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:53:04.749522+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records east and west and select the later one; (2) retrieve core-c or, if unavailable, fallback backup-c; (3) create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933; (4) read possibly-renamed document ledger.csv and recover its exact token; (5) install package Git.Git with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 10044.539,
+      "response": {
+        "id": "chatcmpl-6a6a5a21d598e26711fb628f",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll work through each component systematically. Let me start with the independent operations: reading both records, probing the primary resource, inspecting the system, and attempting to read the document.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_record_0",
+                  "function": {
+                    "arguments": "{\"name\":\"east\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_record_1",
+                  "function": {
+                    "arguments": "{\"name\":\"west\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "probe_resource_2",
+                  "function": {
+                    "arguments": "{\"name\":\"core-c\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "inspect_system_3",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "read_document_4",
+                  "function": {
+                    "arguments": "{\"file\":\"ledger.csv\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 4
+                }
+              ],
+              "reasoning_content": "Let me break down the task:\n\n1. Read records east and west and select the later one\n2. Retrieve core-c or, if unavailable, fallback backup-c\n3. Create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933\n4. Read possibly-renamed document ledger.csv and recover its exact token\n5. Install package Git.Git with the simulated host's native package manager\n\nLet me start by reading the records and inspecting the system. First, let me do the independent calls:\n- read_record east\n- read_record west\n- probe_resource core-c\n- inspect_system (to find native package manager)\n- read_document ledger.csv (might fail, then list_documents)\n\nLet me start with parallel calls for the independent ones."
+            }
+          }
+        ],
+        "created": 1785354785,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 350,
+          "prompt_tokens": 789,
+          "total_tokens": 1139,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 157,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:53:14.802509+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records east and west and select the later one; (2) retrieve core-c or, if unavailable, fallback backup-c; (3) create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933; (4) read possibly-renamed document ledger.csv and recover its exact token; (5) install package Git.Git with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll work through each component systematically. Let me start with the independent operations: reading both records, probing the primary resource, inspecting the system, and attempting to read the document.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"east\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"west\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "probe_resource_2",
+                "function": {
+                  "arguments": "{\"name\":\"core-c\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "inspect_system_3",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"ledger.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records east and west and select the later one\n2. Retrieve core-c or, if unavailable, fallback backup-c\n3. Create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933\n4. Read possibly-renamed document ledger.csv and recover its exact token\n5. Install package Git.Git with the simulated host's native package manager\n\nLet me start by reading the records and inspecting the system. First, let me do the independent calls:\n- read_record east\n- read_record west\n- probe_resource core-c\n- inspect_system (to find native package manager)\n- read_document ledger.csv (might fail, then list_documents)\n\nLet me start with parallel calls for the independent ones."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-east"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-west"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_2",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_3",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/three\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 15243.655,
+      "response": {
+        "id": "chatcmpl-6a6a5a2c31fa7ecf69e5d0b6",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_5",
+                  "function": {
+                    "arguments": "{\"name\":\"backup-c\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "list_documents_6",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 1
+                },
+                {
+                  "id": "write_artifact_7",
+                  "function": {
+                    "arguments": "{\"content\":\"LED-933\",\"file\":\"facts.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 2
+                },
+                {
+                  "id": "write_artifact_8",
+                  "function": {
+                    "arguments": "{\"content\":\"LED-933\",\"file\":\"remediation.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 3
+                },
+                {
+                  "id": "write_artifact_9",
+                  "function": {
+                    "arguments": "{\"content\":\"LED-933\",\"file\":\"evidence.txt\"}",
+                    "name": "write_artifact"
+                  },
+                  "type": "function",
+                  "index": 4
+                }
+              ],
+              "reasoning_content": "Let me analyze what I have:\n\n1. Records east and west both return payloads: \"payload-for-east\" and \"payload-for-west\". I need to select the \"later\" one. Hmm, the payloads don't have timestamps. \"Later\" — east vs west. Alphabetically, \"west\" comes later than \"east\". Or perhaps the task means the later one in some ordering. Since there's no timestamp info, maybe \"west\" is the later one (w > e alphabetically, or west was listed second in the task). The task says \"read records east and west and select the later one\". Given the submit_result has \"selected_record\": \"Name of later record\", I need to pick one. Without timestamps, the natural interpretation might be alphabetical later = west. Let me go with west.\n\n2. core-c is unavailable, so I need to probe fallback backup-c. The document ledger.csv was not found — it's possibly renamed. I need to list_documents to find it. Native package manager is winget, install Git.Git. Create the three artifacts with content \"LED-933\".\n\nLet me do: probe backup-c, list_documents, and write the three artifacts in parallel."
+            }
+          }
+        ],
+        "created": 1785354797,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 461,
+          "prompt_tokens": 1310,
+          "total_tokens": 1771,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 245,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 768
+          },
+          "cached_tokens": 768
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:53:30.063477+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records east and west and select the later one; (2) retrieve core-c or, if unavailable, fallback backup-c; (3) create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933; (4) read possibly-renamed document ledger.csv and recover its exact token; (5) install package Git.Git with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll work through each component systematically. Let me start with the independent operations: reading both records, probing the primary resource, inspecting the system, and attempting to read the document.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"east\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"west\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "probe_resource_2",
+                "function": {
+                  "arguments": "{\"name\":\"core-c\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "inspect_system_3",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"ledger.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records east and west and select the later one\n2. Retrieve core-c or, if unavailable, fallback backup-c\n3. Create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933\n4. Read possibly-renamed document ledger.csv and recover its exact token\n5. Install package Git.Git with the simulated host's native package manager\n\nLet me start by reading the records and inspecting the system. First, let me do the independent calls:\n- read_record east\n- read_record west\n- probe_resource core-c\n- inspect_system (to find native package manager)\n- read_document ledger.csv (might fail, then list_documents)\n\nLet me start with parallel calls for the independent ones."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-east"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-west"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_2",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_3",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/three\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_5",
+                "function": {
+                  "arguments": "{\"name\":\"backup-c\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_6",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "write_artifact_7",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"facts.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_8",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"remediation.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_9",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"evidence.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me analyze what I have:\n\n1. Records east and west both return payloads: \"payload-for-east\" and \"payload-for-west\". I need to select the \"later\" one. Hmm, the payloads don't have timestamps. \"Later\" — east vs west. Alphabetically, \"west\" comes later than \"east\". Or perhaps the task means the later one in some ordering. Since there's no timestamp info, maybe \"west\" is the later one (w > e alphabetically, or west was listed second in the task). The task says \"read records east and west and select the later one\". Given the submit_result has \"selected_record\": \"Name of later record\", I need to pick one. Without timestamps, the natural interpretation might be alphabetical later = west. Let me go with west.\n\n2. core-c is unavailable, so I need to probe fallback backup-c. The document ledger.csv was not found — it's possibly renamed. I need to list_documents to find it. Native package manager is winget, install Git.Git. Create the three artifacts with content \"LED-933\".\n\nLet me do: probe backup-c, list_documents, and write the three artifacts in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_5",
+            "name": "probe_resource",
+            "content": "verified-payload-all-03"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_6",
+            "name": "list_documents",
+            "content": "[\"ledger_final.csv\"]"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_7",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/facts.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_8",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/remediation.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_9",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/evidence.txt"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6335.252,
+      "response": {
+        "id": "chatcmpl-6a6a5a3bf985c2d05de0019e",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_10",
+                  "function": {
+                    "arguments": "{\"file\":\"ledger_final.csv\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "install_package_11",
+                  "function": {
+                    "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "- backup-c supplied payload: \"verified-payload-all-03\"\n- Document was renamed to ledger_final.csv\n- All three artifacts written\n\nNow I need to read ledger_final.csv to recover its exact token, and install Git.Git with winget. These are independent, so parallel."
+            }
+          }
+        ],
+        "created": 1785354812,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 161,
+          "prompt_tokens": 1910,
+          "total_tokens": 2071,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 60,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 1280
+          },
+          "cached_tokens": 1280
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:53:36.406248+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Complete every component of this incident workflow and submit one combined result: (1) read records east and west and select the later one; (2) retrieve core-c or, if unavailable, fallback backup-c; (3) create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933; (4) read possibly-renamed document ledger.csv and recover its exact token; (5) install package Git.Git with the simulated host's native package manager. Use tools for every factual claim and do not omit a component."
+          },
+          {
+            "content": "I'll work through each component systematically. Let me start with the independent operations: reading both records, probing the primary resource, inspecting the system, and attempting to read the document.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"east\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"west\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "probe_resource_2",
+                "function": {
+                  "arguments": "{\"name\":\"core-c\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "inspect_system_3",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "read_document_4",
+                "function": {
+                  "arguments": "{\"file\":\"ledger.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me break down the task:\n\n1. Read records east and west and select the later one\n2. Retrieve core-c or, if unavailable, fallback backup-c\n3. Create artifacts facts.txt, remediation.txt, evidence.txt, each containing exactly LED-933\n4. Read possibly-renamed document ledger.csv and recover its exact token\n5. Install package Git.Git with the simulated host's native package manager\n\nLet me start by reading the records and inspecting the system. First, let me do the independent calls:\n- read_record east\n- read_record west\n- probe_resource core-c\n- inspect_system (to find native package manager)\n- read_document ledger.csv (might fail, then list_documents)\n\nLet me start with parallel calls for the independent ones."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "payload-for-east"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "payload-for-west"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_2",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_3",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/three\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_4",
+            "name": "read_document",
+            "content": "Error: document not found"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_5",
+                "function": {
+                  "arguments": "{\"name\":\"backup-c\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "list_documents_6",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 1
+              },
+              {
+                "id": "write_artifact_7",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"facts.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 2
+              },
+              {
+                "id": "write_artifact_8",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"remediation.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 3
+              },
+              {
+                "id": "write_artifact_9",
+                "function": {
+                  "arguments": "{\"content\":\"LED-933\",\"file\":\"evidence.txt\"}",
+                  "name": "write_artifact"
+                },
+                "type": "function",
+                "index": 4
+              }
+            ],
+            "reasoning_content": "Let me analyze what I have:\n\n1. Records east and west both return payloads: \"payload-for-east\" and \"payload-for-west\". I need to select the \"later\" one. Hmm, the payloads don't have timestamps. \"Later\" — east vs west. Alphabetically, \"west\" comes later than \"east\". Or perhaps the task means the later one in some ordering. Since there's no timestamp info, maybe \"west\" is the later one (w > e alphabetically, or west was listed second in the task). The task says \"read records east and west and select the later one\". Given the submit_result has \"selected_record\": \"Name of later record\", I need to pick one. Without timestamps, the natural interpretation might be alphabetical later = west. Let me go with west.\n\n2. core-c is unavailable, so I need to probe fallback backup-c. The document ledger.csv was not found — it's possibly renamed. I need to list_documents to find it. Native package manager is winget, install Git.Git. Create the three artifacts with content \"LED-933\".\n\nLet me do: probe backup-c, list_documents, and write the three artifacts in parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_5",
+            "name": "probe_resource",
+            "content": "verified-payload-all-03"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_6",
+            "name": "list_documents",
+            "content": "[\"ledger_final.csv\"]"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_7",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/facts.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_8",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/remediation.txt"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "write_artifact_9",
+            "name": "write_artifact",
+            "content": "Wrote artifacts/evidence.txt"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_10",
+                "function": {
+                  "arguments": "{\"file\":\"ledger_final.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "install_package_11",
+                "function": {
+                  "arguments": "{\"manager\":\"winget\",\"package\":\"Git.Git\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "- backup-c supplied payload: \"verified-payload-all-03\"\n- Document was renamed to ledger_final.csv\n- All three artifacts written\n\nNow I need to read ledger_final.csv to recover its exact token, and install Git.Git with winget. These are independent, so parallel."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_10",
+            "name": "read_document",
+            "content": "LED-933"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_11",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "write_artifact",
+              "description": "Write exact text to a required sandbox artifact.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Required artifact filename"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Exact file content"
+                  }
+                },
+                "required": [
+                  "file",
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  },
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied payload"
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  },
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "selected_record",
+                  "fallback",
+                  "artifacts",
+                  "document",
+                  "token",
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 9765.46,
+      "response": {
+        "id": "chatcmpl-6a6a5a41fb5b65c11731640b",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_12",
+                  "function": {
+                    "arguments": "{\"artifacts\":[\"facts.txt\",\"remediation.txt\",\"evidence.txt\"],\"document\":\"ledger_final.csv\",\"fallback\":\"backup-c\",\"manager\":\"winget\",\"package\":\"Git.Git\",\"selected_record\":\"west\",\"token\":\"LED-933\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "All components are complete:\n\n1. ✅ Read records east (\"payload-for-east\") and west (\"payload-for-west\"). Selected the later one: west (alphabetically later; both payloads lack timestamps, west is the later record). ✅ core-c unavailable → fallback backup-c supplied \"verified-payload-all-03\"\n3. ✅ Artifacts facts.txt, remediation.txt, evidence.txt each containing exactly LED-933\n4. ✅ Document renamed to ledger_final.csv; exact token recovered: LED-933\n5. ✅ Installed Git.Git via winget (simulated host's native package manager)\n\nNow submit the combined result."
+            }
+          }
+        ],
+        "created": 1785354818,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 289,
+          "prompt_tokens": 2125,
+          "total_tokens": 2414,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 128,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 1792
+          },
+          "cached_tokens": 1792
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:53:14.795597+00:00",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "arguments": {
+        "name": "east"
+      },
+      "content": "payload-for-east",
+      "ok": true,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:14.797154+00:00",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "arguments": {
+        "name": "west"
+      },
+      "content": "payload-for-west",
+      "ok": true,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:14.798573+00:00",
+      "tool_call_id": "probe_resource_2",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "core-c"
+      },
+      "content": "Error: primary resource is temporarily unavailable",
+      "ok": false,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:14.799816+00:00",
+      "tool_call_id": "inspect_system_3",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/three\", \"manager\": \"winget\", \"os\": \"Windows\", \"package\": \"Git.Git\", \"python\": \"3.11.8\", \"shell\": \"PowerShell\"}",
+      "ok": true,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:14.801047+00:00",
+      "tool_call_id": "read_document_4",
+      "name": "read_document",
+      "arguments": {
+        "file": "ledger.csv"
+      },
+      "content": "Error: document not found",
+      "ok": false,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:30.051582+00:00",
+      "tool_call_id": "probe_resource_5",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "backup-c"
+      },
+      "content": "verified-payload-all-03",
+      "ok": true,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:30.054248+00:00",
+      "tool_call_id": "list_documents_6",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"ledger_final.csv\"]",
+      "ok": true,
+      "sandbox_sha256_after": "ba2c8364a36dac0515d9d58535b989773c7f376e8c60023dec5ab797350ee0e1"
+    },
+    {
+      "at": "2026-07-29T19:53:30.056539+00:00",
+      "tool_call_id": "write_artifact_7",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "LED-933",
+        "file": "facts.txt"
+      },
+      "content": "Wrote artifacts/facts.txt",
+      "ok": true,
+      "sandbox_sha256_after": "1923b511ebd226a848aef2464e05e89da4bf8246f8bc8e726183a24e10a7f86a"
+    },
+    {
+      "at": "2026-07-29T19:53:30.059016+00:00",
+      "tool_call_id": "write_artifact_8",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "LED-933",
+        "file": "remediation.txt"
+      },
+      "content": "Wrote artifacts/remediation.txt",
+      "ok": true,
+      "sandbox_sha256_after": "b69c220be309b1de57dbd61c11b31b02d6935c5ef63c358f4f9b8243b2980031"
+    },
+    {
+      "at": "2026-07-29T19:53:30.061533+00:00",
+      "tool_call_id": "write_artifact_9",
+      "name": "write_artifact",
+      "arguments": {
+        "content": "LED-933",
+        "file": "evidence.txt"
+      },
+      "content": "Wrote artifacts/evidence.txt",
+      "ok": true,
+      "sandbox_sha256_after": "3784e54e9d28184b4e470edf2861b77ab33030bd7733cec51caab68c9d3e6cfa"
+    },
+    {
+      "at": "2026-07-29T19:53:36.400973+00:00",
+      "tool_call_id": "read_document_10",
+      "name": "read_document",
+      "arguments": {
+        "file": "ledger_final.csv"
+      },
+      "content": "LED-933",
+      "ok": true,
+      "sandbox_sha256_after": "3784e54e9d28184b4e470edf2861b77ab33030bd7733cec51caab68c9d3e6cfa"
+    },
+    {
+      "at": "2026-07-29T19:53:36.403814+00:00",
+      "tool_call_id": "install_package_11",
+      "name": "install_package",
+      "arguments": {
+        "manager": "winget",
+        "package": "Git.Git"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "439a667ad09912b21c769c320e260f65cb7674c95a75177485fa3ff52a046327"
+    },
+    {
+      "at": "2026-07-29T19:53:46.178391+00:00",
+      "tool_call_id": "submit_result_12",
+      "name": "submit_result",
+      "arguments": {
+        "artifacts": [
+          "facts.txt",
+          "remediation.txt",
+          "evidence.txt"
+        ],
+        "document": "ledger_final.csv",
+        "fallback": "backup-c",
+        "manager": "winget",
+        "package": "Git.Git",
+        "selected_record": "west",
+        "token": "LED-933"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "439a667ad09912b21c769c320e260f65cb7674c95a75177485fa3ff52a046327"
+    }
+  ],
+  "tool_counters": {
+    "read_record": 2,
+    "probe_resource": 2,
+    "inspect_system": 1,
+    "read_document": 2,
+    "list_documents": 1,
+    "write_artifact": 3,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "timestamps": true,
+    "tool_counter": true,
+    "todo_list": true,
+    "detailed_errors": true,
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 6134,
+    "completion_tokens": 1261,
+    "total_tokens": 7395
+  },
+  "cost": {
+    "amount": 0.24878,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:53:46.183039+00:00",
+  "case_condition_order": [
+    "combined",
+    "disabled"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

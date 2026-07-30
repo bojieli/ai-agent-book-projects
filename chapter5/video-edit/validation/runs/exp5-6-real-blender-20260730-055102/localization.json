@@ -1,0 +1,334 @@
+{
+  "request": "Cut out the shot of the large white rabbit walking alone in the sunny meadow, slow it to 1.5x duration, and add the subtitle BIG BUNNY along the bottom.",
+  "target": "the single continuous shot showing the large white rabbit walking alone in a sunny green meadow, after the ONE BIG RABBIT title and before the THREE RODENTS title",
+  "coarse_interval_s": 10,
+  "coarse_frames": [
+    {
+      "timestamp_s": 0.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/coarse/frame-000.00.png",
+      "sha256": "cdd5c7f27f84347a40eb467c356c5a2fda3facdad9057f246034e355b89dcfdd",
+      "bytes": 1580
+    },
+    {
+      "timestamp_s": 10.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/coarse/frame-010.00.png",
+      "sha256": "bdf01683fab23e1e98099d0f6e19596eabcd96ddb1c643b3d0c6749b5f2995a9",
+      "bytes": 288771
+    },
+    {
+      "timestamp_s": 20.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/coarse/frame-020.00.png",
+      "sha256": "713c2f7a5db41b01640dbae71ef4d5057c382dd1480d9e31bcc3f6d05c9da52b",
+      "bytes": 183618
+    },
+    {
+      "timestamp_s": 30.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/coarse/frame-030.00.png",
+      "sha256": "ce5d5733e716607000f9d6aef75dbb9b31279dd50e7db7c6c1e714819624224a",
+      "bytes": 264372
+    },
+    {
+      "timestamp_s": 31.495,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/coarse/frame-031.50.png",
+      "sha256": "57e555d305ac18228155454935f9a411a9e21ccc092348997f8e3299d4011b89",
+      "bytes": 40146
+    }
+  ],
+  "coarse_result": {
+    "start": 10.0,
+    "end": 20.0,
+    "reason": "The 10.00s frame shows a large white rabbit standing alone in a sunny green meadow with a backdrop of mountains and clouds. The next frame at 20.00s transitions to three rodents in a different setting, indicating the rabbit shot is continuous between these timestamps."
+  },
+  "fine_interval_s": 1,
+  "fine_window": [
+    5,
+    25
+  ],
+  "fine_frames": [
+    {
+      "timestamp_s": 5.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-005.00.png",
+      "sha256": "7bf0f2f437e8781ac96e6a27b41f975189c3784dbd3368672d43fd4b2d92813a",
+      "bytes": 451029
+    },
+    {
+      "timestamp_s": 6.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-006.00.png",
+      "sha256": "618ee855deb607995c0be98d0a64db5614c4f851837af105e0672822947fe361",
+      "bytes": 451002
+    },
+    {
+      "timestamp_s": 7.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-007.00.png",
+      "sha256": "40e9724ee1834abee7d12002cd83a4120738b0ffd0a294741c25c2135edb02b8",
+      "bytes": 196294
+    },
+    {
+      "timestamp_s": 8.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-008.00.png",
+      "sha256": "1da6191f1a0c6ccc987a8e5d0682d7e664aa4ce8b8ce31d232bec5ae695b0c4e",
+      "bytes": 25229
+    },
+    {
+      "timestamp_s": 9.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-009.00.png",
+      "sha256": "c0358569f2defb8cfdcd0c73393fc2e75cab6168920819a7c0d28395389132b7",
+      "bytes": 26259
+    },
+    {
+      "timestamp_s": 10.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-010.00.png",
+      "sha256": "bdf01683fab23e1e98099d0f6e19596eabcd96ddb1c643b3d0c6749b5f2995a9",
+      "bytes": 288771
+    },
+    {
+      "timestamp_s": 11.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-011.00.png",
+      "sha256": "c1abe47a8bd0e10472b75a472cea78ff24613c64ccc74ffba9b566d71336c4f4",
+      "bytes": 290263
+    },
+    {
+      "timestamp_s": 12.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-012.00.png",
+      "sha256": "5833475f37ad6ccc7f98c953193368b11c4f3390d1633e224b0a43514c7aa2ec",
+      "bytes": 23585
+    },
+    {
+      "timestamp_s": 13.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-013.00.png",
+      "sha256": "f14dca5370861a1b1f1ee95d1e00172314f27e60ec9f3451a16e08efb46cabf4",
+      "bytes": 24310
+    },
+    {
+      "timestamp_s": 14.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-014.00.png",
+      "sha256": "ab5ed49e0a1267d80e53bc524db96a521aedf419d4a2e766463bd58fc2cbd96a",
+      "bytes": 290328
+    },
+    {
+      "timestamp_s": 15.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-015.00.png",
+      "sha256": "101c7a220045bdad559ffabcf2345a307c4b2a8ace71c1f289f861cb5ac8dfcf",
+      "bytes": 337454
+    },
+    {
+      "timestamp_s": 16.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-016.00.png",
+      "sha256": "6b674c7689ae86485ce112daa9a14cbd4334d3c41cbc12bcc8a06b0c34c3d0bd",
+      "bytes": 118937
+    },
+    {
+      "timestamp_s": 17.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-017.00.png",
+      "sha256": "44134f20bffcd9fb57c3ca421a7be03fa2596962423a955140bf44e3d5c2582b",
+      "bytes": 24201
+    },
+    {
+      "timestamp_s": 18.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-018.00.png",
+      "sha256": "bf44d8b974343063293c92d2933edd0e9a711802d44753f5c0c8b4f4cf3406aa",
+      "bytes": 25412
+    },
+    {
+      "timestamp_s": 19.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-019.00.png",
+      "sha256": "7d2fdecd1cff9d025880e069d111c9e8aa0c488dd1e570b62f5147a136543271",
+      "bytes": 78776
+    },
+    {
+      "timestamp_s": 20.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-020.00.png",
+      "sha256": "713c2f7a5db41b01640dbae71ef4d5057c382dd1480d9e31bcc3f6d05c9da52b",
+      "bytes": 183618
+    },
+    {
+      "timestamp_s": 21.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-021.00.png",
+      "sha256": "c9758159919eb5f8612e3af01258d1c7792d446ca5c08add2ff3dcd3b97e7617",
+      "bytes": 96371
+    },
+    {
+      "timestamp_s": 22.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-022.00.png",
+      "sha256": "54b41278b256654341515bee8f7adb3166bdb15c90f3da9f7f47eb72cad77d33",
+      "bytes": 192864
+    },
+    {
+      "timestamp_s": 23.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-023.00.png",
+      "sha256": "3e49ae19ac287a5acdcff0db46d93d3ca77f98d039d9c53f07210466a323b5b3",
+      "bytes": 22428
+    },
+    {
+      "timestamp_s": 24.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-024.00.png",
+      "sha256": "6eb1ae362db441052be6685922270fcd86572c8b223e99a41a519424ac113c0d",
+      "bytes": 24410
+    },
+    {
+      "timestamp_s": 25.0,
+      "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/fine/frame-025.00.png",
+      "sha256": "354595be0073fcaed614da1ff41177f01e54f74b63f5614ed5033a9c00e0a773",
+      "bytes": 211411
+    }
+  ],
+  "fine_result": {
+    "start": 9.0,
+    "end": 12.0,
+    "reason": "The large white rabbit is shown alone in a sunny green meadow with mountains and pink clouds at 10.00s and 11.00s, between the 'ONE BIG RABBIT' title (ends at 9.00s) and 'THREE RODENTS' title (starts at 12.00s), with consistent visual elements indicating a single continuous shot."
+  },
+  "ground_truth": {
+    "start": 9.08,
+    "end": 11.2
+  },
+  "start_error_s": 0.08,
+  "end_error_s": 0.8,
+  "reviewer_driven_refinements": [
+    {
+      "round": 1,
+      "prior_interval": [
+        9.0,
+        12.0
+      ],
+      "source_frames": [
+        {
+          "timestamp_s": 8.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-008.00.png",
+          "sha256": "1da6191f1a0c6ccc987a8e5d0682d7e664aa4ce8b8ce31d232bec5ae695b0c4e",
+          "bytes": 25229
+        },
+        {
+          "timestamp_s": 8.25,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-008.25.png",
+          "sha256": "fc4e9dfec0220c38b50fa199c95332eba6ad403d683042318e059c8cc0d06d57",
+          "bytes": 26862
+        },
+        {
+          "timestamp_s": 8.5,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-008.50.png",
+          "sha256": "23520885852103457d35c7f97617da0090763888261c4b5003793c6d6b48b070",
+          "bytes": 27408
+        },
+        {
+          "timestamp_s": 8.75,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-008.75.png",
+          "sha256": "a26f15eb86f4d0633cc3f6ed4659e500e3480d6a93703bd961d920d58cb22dcb",
+          "bytes": 27826
+        },
+        {
+          "timestamp_s": 9.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-009.00.png",
+          "sha256": "c0358569f2defb8cfdcd0c73393fc2e75cab6168920819a7c0d28395389132b7",
+          "bytes": 26259
+        },
+        {
+          "timestamp_s": 9.25,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-009.25.png",
+          "sha256": "23b0a10b6440ac809301ebdae5ef3e174440c51c1bdbe1e341daa1811b32b6ec",
+          "bytes": 281564
+        },
+        {
+          "timestamp_s": 9.5,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-009.50.png",
+          "sha256": "b1534ad39b5d73921220488351b56de61e387f02d0d2d63007bba0947dde64c8",
+          "bytes": 282016
+        },
+        {
+          "timestamp_s": 9.75,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-009.75.png",
+          "sha256": "ac5db4099b689927bb0e3b91f6d9a402b5c28576b0c759a8c8430ea090ede3f0",
+          "bytes": 281200
+        },
+        {
+          "timestamp_s": 10.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-010.00.png",
+          "sha256": "bdf01683fab23e1e98099d0f6e19596eabcd96ddb1c643b3d0c6749b5f2995a9",
+          "bytes": 288771
+        },
+        {
+          "timestamp_s": 10.25,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-010.25.png",
+          "sha256": "077c87cb4d94b1d0647968b48fd9ae3dfe73b3b83e7052b718b0c2a1638884e9",
+          "bytes": 290424
+        },
+        {
+          "timestamp_s": 10.5,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-010.50.png",
+          "sha256": "1702da4cdbf746a8f5b3b3ea1dbbe20065810e896cf5eead3b4e0e899a95ace6",
+          "bytes": 290739
+        },
+        {
+          "timestamp_s": 10.75,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-010.75.png",
+          "sha256": "f4b896f7e565cbe8753020129ce1d2420ef7fa1d7d5e35274a544cb91ecefc05",
+          "bytes": 290790
+        },
+        {
+          "timestamp_s": 11.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-011.00.png",
+          "sha256": "c1abe47a8bd0e10472b75a472cea78ff24613c64ccc74ffba9b566d71336c4f4",
+          "bytes": 290263
+        },
+        {
+          "timestamp_s": 11.25,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-011.25.png",
+          "sha256": "bd9c57afa81fbcb2dfd6aa1fafe0e4bfcd3da4e13b69b8086234b26906923bb1",
+          "bytes": 22691
+        },
+        {
+          "timestamp_s": 11.5,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-011.50.png",
+          "sha256": "7a00b9b759b7ea49228504de9b4481be13a24b86bba9284899c48ee6c39c24f6",
+          "bytes": 24009
+        },
+        {
+          "timestamp_s": 11.75,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-011.75.png",
+          "sha256": "42f8c635d8ec11df1d542340fe5bb977a9d9799878937ecac77366bfa2fd3897",
+          "bytes": 24402
+        },
+        {
+          "timestamp_s": 12.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-012.00.png",
+          "sha256": "5833475f37ad6ccc7f98c953193368b11c4f3390d1633e224b0a43514c7aa2ec",
+          "bytes": 23585
+        },
+        {
+          "timestamp_s": 12.25,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-012.25.png",
+          "sha256": "5459ffd9787260f9f96f16464e7a8842c5535f4a725eaee8d7b6f114a0ff6e45",
+          "bytes": 24966
+        },
+        {
+          "timestamp_s": 12.5,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-012.50.png",
+          "sha256": "47974ae09fd7f2f4affdf06dba5aa92e16dca70da873cd1f631171f46e8dccf9",
+          "bytes": 25722
+        },
+        {
+          "timestamp_s": 12.75,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-012.75.png",
+          "sha256": "cd6c95353c889323e7af0f0768a65c310ce0d4cc7aa2651b83a528805ddbd10f",
+          "bytes": 26543
+        },
+        {
+          "timestamp_s": 13.0,
+          "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-055102/frames/boundary-refinement-1/frame-013.00.png",
+          "sha256": "f14dca5370861a1b1f1ee95d1e00172314f27e60ec9f3451a16e08efb46cabf4",
+          "bytes": 24310
+        }
+      ],
+      "result": {
+        "start": 9.25,
+        "end": 11.0,
+        "reason": "visual boundary evidence"
+      }
+    }
+  ],
+  "final_interval": [
+    9.25,
+    11.0
+  ],
+  "final_start_error_s": 0.17,
+  "final_end_error_s": 0.2
+}

@@ -1,0 +1,33 @@
+{
+  "case": "document_reader_pdf",
+  "tool": "document_reader",
+  "arguments": {
+    "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/documents/sample.pdf"
+  },
+  "arguments_sha256": "dfeb17d0860305864e52af8f7187e3fb69b2b5137e51dcd5f19759b3c10a784b",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "format-aware-local-parser",
+    "origin": "local-process"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "sample.pdf",
+      "file_type": "pdf",
+      "page_count": 1,
+      "text": "Experiment 4-1 PDF PERCEPTION-EXPERIMENT-4-1-VERIFIED\n\n",
+      "text_length": 55
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T065000Z/fixtures/documents/sample.pdf",
+      "file_type": ".pdf"
+    }
+  },
+  "elapsed_seconds": 0.002
+}

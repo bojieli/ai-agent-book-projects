@@ -1,0 +1,29 @@
+{
+  "case": "reject_parent_traversal",
+  "tool": "filesystem_copy",
+  "arguments": {
+    "source_path": "seed.txt",
+    "destination_path": "../escaped.txt"
+  },
+  "arguments_sha256": "f30b8515b7a09f4b2e769eb600c8dc378524249cc9d6bb311673a20d1b74d6f2",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "workspace-confined-copy",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": "PermissionError",
+  "payload": {
+    "success": false,
+    "message": "Filesystem copy failed: Parent traversal is not allowed for filesystem mutations",
+    "metadata": {
+      "operation": "copy",
+      "error_type": "PermissionError",
+      "mutation_root_env": "PERCEPTION_MUTATION_ROOT"
+    }
+  },
+  "elapsed_seconds": 0.002
+}

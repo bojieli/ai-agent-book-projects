@@ -95,10 +95,20 @@ class APIConfig:
 
 def get_raptor_config() -> RaptorConfig:
     """Get RAPTOR configuration from environment."""
-    api_key, base_url, model_name = _resolve_llm(
-        os.getenv("OPENAI_API_KEY", ""),
-        os.getenv("RAPTOR_MODEL", "gpt-5.6-luna"),
+    openai_key = os.getenv("OPENAI_API_KEY", "")
+    ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
+    direct_key = openai_key or ark_key
+    default_model = (
+        os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
+        if ark_key and not openai_key
+        else "gpt-5.6-luna"
     )
+    api_key, base_url, model_name = _resolve_llm(
+        direct_key,
+        os.getenv("RAPTOR_MODEL", default_model),
+    )
+    if base_url is None and ark_key and not openai_key:
+        base_url = "https://ark.cn-beijing.volces.com/api/v3"
     return RaptorConfig(
         openai_api_key=api_key,
         model_name=model_name,
@@ -115,11 +125,21 @@ def get_raptor_config() -> RaptorConfig:
 
 def get_graphrag_config() -> GraphRAGConfig:
     """Get GraphRAG configuration from environment."""
-    api_key, base_url, llm_model, summ_model = _resolve_llm(
-        os.getenv("OPENAI_API_KEY", ""),
-        os.getenv("GRAPHRAG_MODEL", "gpt-5.6-luna"),
-        os.getenv("GRAPHRAG_SUMMARY_MODEL", "gpt-5.6-luna"),
+    openai_key = os.getenv("OPENAI_API_KEY", "")
+    ark_key = os.getenv("ARK_API_KEY") or os.getenv("DOUBAO_API_KEY", "")
+    direct_key = openai_key or ark_key
+    default_model = (
+        os.getenv("ARK_MODEL", "doubao-seed-1-6-250615")
+        if ark_key and not openai_key
+        else "gpt-5.6-luna"
     )
+    api_key, base_url, llm_model, summ_model = _resolve_llm(
+        direct_key,
+        os.getenv("GRAPHRAG_MODEL", default_model),
+        os.getenv("GRAPHRAG_SUMMARY_MODEL", default_model),
+    )
+    if base_url is None and ark_key and not openai_key:
+        base_url = "https://ark.cn-beijing.volces.com/api/v3"
     return GraphRAGConfig(
         llm_api_key=api_key,
         llm_model=llm_model,

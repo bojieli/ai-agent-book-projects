@@ -1,0 +1,90 @@
+{
+  "overall_score": 65,
+  "pass": false,
+  "issues": [
+    {
+      "page": 2,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将6个要点拆分为2页，每页不超过3-4个要点，或精简合并相似内容"
+    },
+    {
+      "page": 3,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将RNN和卷积方法分两页展示，或每个部分保留2个核心要点"
+    },
+    {
+      "page": 5,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大架构图至至少占页面60%空间，确保图中文字和模块清晰可见"
+    },
+    {
+      "page": 5,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "删除图片下方的小字体说明文字，或单独用一页解释架构细节"
+    },
+    {
+      "page": 7,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将3个子要点拆分为独立要点，或移至下一页单独讲解decoder子层结构"
+    },
+    {
+      "page": 9,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大多头注意力机制图，确保每个头的结构和连接关系清晰可辨"
+    },
+    {
+      "page": 9,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "删除图片下方的小字体说明文字，公式保持现有大小即可"
+    },
+    {
+      "page": 13,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Data & Batching和Hardware & Schedule分两页展示，或各保留2个最关键要点"
+    },
+    {
+      "page": 15,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "表格保留核心对比数据，4个要点精简为2-3个核心结论"
+    },
+    {
+      "page": 18,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "单独一页放大展示注意力可视化图，确保能看清词语间的注意力连接关系"
+    },
+    {
+      "page": 18,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "删除图片下方的小字体说明文字，用简洁标题概括可视化内容"
+    },
+    {
+      "page": 19,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "单独一页放大展示指代消解可视化图，确保紫色连接线和词语清晰可见"
+    },
+    {
+      "page": 19,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "删除图片下方的小字体说明文字，直接在标题中说明可视化内容"
+    },
+    {
+      "page": 21,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Key Contributions和Future Directions分两页展示，每部分保留3-4个要点"
+    }
+  ]
+}

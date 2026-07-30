@@ -1,0 +1,650 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "system_state__state-04__system_state",
+  "suite": "system_state",
+  "case_id": "state-04",
+  "condition": "system_state",
+  "features": [
+    "system_state"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "e5d456c5887f63e5c71ea1d614743cadb315238c1a236a6235fc9df154b9fced",
+  "current_sandbox_sha256": "ed94e7b8ad08995c8c02c70647678fa8f6e77d4139a531be33a07e8774d92692",
+  "created_at": "2026-07-29T19:49:48.692358+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Install package curl in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_0",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "Let me start by inspecting the system to understand the state."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/delta\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"curl\", \"python\": \"3.10.14\", \"shell\": \"fish\"}"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "install_package_1",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"curl\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The system inspection shows:\n- OS: Linux\n- Package manager: apt\n- Package: curl\n\nNow I'll install curl using apt, the OS-native package manager."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"manager\":\"apt\",\"package\":\"curl\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The install succeeded. Now I need to submit the result with the manager and package used."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:49:48.692915+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package curl in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Linux, shell=fish, python=3.10.14, cwd=workspace/delta, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4037.318,
+      "response": {
+        "id": "chatcmpl-6a6a595d8dc9461ab3e2b328",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_0",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "Let me start by inspecting the system to understand the state."
+            }
+          }
+        ],
+        "created": 1785354591,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 49,
+          "prompt_tokens": 426,
+          "total_tokens": 475,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 13,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:52.734331+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package curl in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "Let me start by inspecting the system to understand the state."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/delta\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"curl\", \"python\": \"3.10.14\", \"shell\": \"fish\"}"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Linux, shell=fish, python=3.10.14, cwd=workspace/delta, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5156.123,
+      "response": {
+        "id": "chatcmpl-6a6a5961fabdd4e38cb6c1e3",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "install_package_1",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"curl\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The system inspection shows:\n- OS: Linux\n- Package manager: apt\n- Package: curl\n\nNow I'll install curl using apt, the OS-native package manager."
+            }
+          }
+        ],
+        "created": 1785354593,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 544,
+          "total_tokens": 645,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 35,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:57.895768+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package curl in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "Let me start by inspecting the system to understand the state."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/delta\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"curl\", \"python\": \"3.10.14\", \"shell\": \"fish\"}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"apt\",\"package\":\"curl\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The system inspection shows:\n- OS: Linux\n- Package manager: apt\n- Package: curl\n\nNow I'll install curl using apt, the OS-native package manager."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Linux, shell=fish, python=3.10.14, cwd=workspace/delta, manager=apt\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3809.251,
+      "response": {
+        "id": "chatcmpl-6a6a59665a05a483e1d3f6ab",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"manager\":\"apt\",\"package\":\"curl\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The install succeeded. Now I need to submit the result with the manager and package used."
+            }
+          }
+        ],
+        "created": 1785354599,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 85,
+          "prompt_tokens": 676,
+          "total_tokens": 761,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 19,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:49:52.732749+00:00",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/delta\", \"manager\": \"apt\", \"os\": \"Linux\", \"package\": \"curl\", \"python\": \"3.10.14\", \"shell\": \"fish\"}",
+      "ok": true,
+      "sandbox_sha256_after": "35a3d733b340c4a2378288e54ca106f1dccd824fb16e7e3a39e60db876d851b2"
+    },
+    {
+      "at": "2026-07-29T19:49:57.893102+00:00",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "arguments": {
+        "manager": "apt",
+        "package": "curl"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "ed94e7b8ad08995c8c02c70647678fa8f6e77d4139a531be33a07e8774d92692"
+    },
+    {
+      "at": "2026-07-29T19:50:01.708012+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "manager": "apt",
+        "package": "curl"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "ed94e7b8ad08995c8c02c70647678fa8f6e77d4139a531be33a07e8774d92692"
+    }
+  ],
+  "tool_counters": {
+    "inspect_system": 1,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1646,
+    "completion_tokens": 235,
+    "total_tokens": 1881
+  },
+  "cost": {
+    "amount": 0.05642,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:50:01.710888+00:00",
+  "case_condition_order": [
+    "disabled",
+    "system_state"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

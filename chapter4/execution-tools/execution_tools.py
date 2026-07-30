@@ -177,6 +177,8 @@ class ExecutionTools:
                 "error": result.get('error'),
                 "compile_output": result.get('compile_output'),
                 "phase": result.get('phase'),
+                "execution_time": result.get('execution_time'),
+                "sandbox": result.get('sandbox'),
                 "verification": "passed" if Config.AUTO_VERIFY_CODE else "skipped"
             }
             

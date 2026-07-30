@@ -1,0 +1,11 @@
+# Local credentials and interpreter caches
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Experiment evidence is intentionally durable, including tiny media fixtures
+# that are ignored by the repository-wide extension rules.
+!experiment_protocol.json
+!validation/
+!validation/**

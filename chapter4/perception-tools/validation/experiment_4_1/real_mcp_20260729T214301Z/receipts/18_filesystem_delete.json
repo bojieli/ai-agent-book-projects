@@ -1,0 +1,45 @@
+{
+  "case": "filesystem_delete",
+  "tool": "filesystem_delete",
+  "arguments": {
+    "path": "moved.txt"
+  },
+  "arguments_sha256": "05ca93abb4caf2ca737949e5e7829d839c513edbfad1e44f00b95b3ce49fc1bd",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "workspace-confined-quarantine",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "operation": "delete",
+      "path": "moved.txt",
+      "path_exists_after": false,
+      "quarantine_path": ".perception-trash/20260729T214327244925Z-e39664e96bda47b49e30d24b5b626fa4-moved.txt",
+      "reversible": true,
+      "quarantine_fingerprint": {
+        "kind": "file",
+        "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc",
+        "bytes": 35,
+        "entries": 1
+      }
+    },
+    "metadata": {
+      "mutation_root": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/mutation_workspace",
+      "pre_operation_fingerprint": {
+        "kind": "file",
+        "sha256": "e088e8ab3d0dd13410c3b99f54f88aa805ad66d63294dd27f987722ede86f9fc",
+        "bytes": 35,
+        "entries": 1
+      },
+      "verification": "original path absent and quarantine fingerprint matches"
+    }
+  },
+  "elapsed_seconds": 0.002
+}

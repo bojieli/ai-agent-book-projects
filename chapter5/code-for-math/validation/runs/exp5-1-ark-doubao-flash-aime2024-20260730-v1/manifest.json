@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-1",
+  "run_id": "exp5-1-ark-doubao-flash-aime2024-20260730-v1",
+  "result_status": "complete_exact_experiment",
+  "official_complete": true,
+  "hypothesis_supported": false,
+  "result": {
+    "cot_correct": 11,
+    "code_correct": 16,
+    "n": 30,
+    "accuracy_delta": 0.16666666666666669,
+    "mcnemar_exact_p_value": 0.125
+  },
+  "gates": {
+    "exact_pinned_aime_2024_manifest": true,
+    "all_30_unique_aime_i_and_ii_tasks": true,
+    "all_required_cot_trajectories_complete": true,
+    "all_required_code_trajectories_complete": true,
+    "zero_provider_errors": true,
+    "every_code_trajectory_called_real_sandbox": true
+  },
+  "artifacts": {
+    "aime_2024.json": {
+      "sha256": "8ce3b0e62b7e680e0909ed7afa810ed6a43ad11e66d65ff7897fb2f94508c6d4",
+      "bytes": 21719
+    },
+    "aime_2024.manifest.json": {
+      "sha256": "ef698a4071fa8e3bbfefebe65835909a96087f4d056e24f36e4454d163dbc37b",
+      "bytes": 481
+    },
+    "command.json": {
+      "sha256": "d5cb01ffb8eccb68859616ae2b5f8f5dbc4b3669b920a844630ee7ee285f339c",
+      "bytes": 353
+    },
+    "result.json": {
+      "sha256": "846e2e2431b0b2c704b6d139df952047229060cbbd29df8400def80c42d266ac",
+      "bytes": 354724
+    }
+  }
+}

@@ -2,7 +2,6 @@
 """Test script to demonstrate LLM evaluation integration"""
 
 import os
-import sys
 import logging
 from pathlib import Path
 from rich.console import Console
@@ -26,7 +25,7 @@ def test_llm_evaluation_integration():
     console.print("="*80)
     
     from config import Config
-    from evaluator import UserMemoryEvaluator, TestCase, EvaluationResult
+    from evaluator import UserMemoryEvaluator, TestCase
     
     # Initialize evaluator
     config = Config.from_env()
@@ -57,8 +56,8 @@ def test_llm_evaluation_integration():
             "metadata": {"business": "Demo Bank"}
         }],
         user_question="What is my account number?",
-        expected_answer="Your account number is 123456789.",
-        required_information=["account number: 123456789"]
+        evaluation_criteria="The answer must identify the account number as 123456789.",
+        expected_behavior="Answer directly using the account number from the conversation."
     )
     
     # Simulate an agent response
@@ -67,7 +66,7 @@ def test_llm_evaluation_integration():
     console.print("\n[bold]Simulating Evaluation Process:[/bold]")
     console.print(f"Test Question: {test_case.user_question}")
     console.print(f"Agent Answer: {agent_answer}")
-    console.print(f"Expected Answer: {test_case.expected_answer}")
+    console.print(f"Evaluation Criteria: {test_case.evaluation_criteria}")
     
     if evaluator.llm_evaluator:
         console.print("\n[yellow]LLM Evaluation would be triggered automatically when running a test case[/yellow]")

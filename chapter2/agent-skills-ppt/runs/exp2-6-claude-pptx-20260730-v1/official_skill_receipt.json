@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/anthropics/skills.git",
+  "revision": "69c0b1a0674149f27b61b2635f935524b6add202",
+  "skill_path": "/Users/boj/book/ai-agent-book/chapter2/agent-skills-ppt/external/anthropics-skills/skills/pptx",
+  "required_file_hashes": {
+    "skills/pptx/SKILL.md": "b6f25545bfb358739f1532f793458b5dbc87ee009933cb7c306b2d951ab6617f",
+    "skills/pptx/html2pptx.md": "f08ed7580969b796d9cd5ade93e2cdee981dcaf13cc5eb12e8d4a3700c2d6047",
+    "skills/pptx/scripts/html2pptx.js": "c675d09a54d6a002e8ca5917b9d24a6568aa8d455bb7abeb212d4f564dd07a34",
+    "skills/pptx/scripts/thumbnail.py": "c21fd950b6ada7bd2f029885d3e56bc66b7ff061cc8404c492eb301664aa9e5d"
+  }
+}

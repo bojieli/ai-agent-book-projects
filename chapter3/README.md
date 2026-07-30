@@ -4,13 +4,18 @@
 
 ← [返回主目录](../README.md) · 📖 [读本章正文](../book/chapter3.md)
 
+可复现实验的逐项验收条件与规范证据路径见
+[EXPERIMENT_LEDGER.md](EXPERIMENT_LEDGER.md)；项目可运行不等同于实验已通过，
+最终状态以各项目的 `validation/latest.json` 为准。
+
 ## 配套项目
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
 | 3-1, 3-2 | [user-memory](user-memory/) | ✅ | 长期用户记忆系统，让 Agent 记住偏好与历史交互、提供个性化服务 |
-| 3-1 | [user-memory-evaluation](user-memory-evaluation/) | ✅ | 系统化评估用户记忆系统的准确性、相关性和有效性 |
+| 3-1, 6-3 | [user-memory-evaluation](user-memory-evaluation/) | ✅ | 三层用户记忆评估集；实验 6-3 的四档多维 Rubric、逐维证据与幻觉一票否决 |
 | 3-2 | [mem0](mem0/) · [memobase](memobase/) | ✅ | 用 mem0、Memobase 两个开源框架各实现一版用户记忆，作为实验 3-2 的对照实现 |
+| 3-3 | [log-sanitization](log-sanitization/) | ✅ | 智能日志脱敏系统，基于本地 Ollama 模型检测并脱敏日志中的密钥和 PII 敏感数据 |
 | 3-4 | [dense-embedding](dense-embedding/) | ✅ | 向量相似性搜索服务，对比 ANNOY（树）与 HNSW（图）两种 ANN 算法的权衡 |
 | 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | 从零实现基于 BM25 的稀疏向量搜索引擎，可视化内部工作机制 |
 | 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | 稠密 + 稀疏 + 神经重排序的完整流水线，用测试用例展示混合检索的互补效果 |

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "evidence_type": "focused_software_tests",
+  "human_audio_used": false,
+  "pstn_calls_placed": 0,
+  "gates": {
+    "live_transport_refuses_without_consent_before_browser_or_audio_creation": "pass",
+    "unexpected_agent_failure_cancels_peer": "pass",
+    "unexpected_agent_failure_closes_phone_transport": "pass",
+    "task_completed_triggers_opt_in_submission": "pass",
+    "computer_fill_error_returns_to_phone_and_blocks_submission": "pass",
+    "optional_blank_is_audited_and_never_written_to_browser": "pass",
+    "field_validation_and_reask": "pass",
+    "ask_next_before_prior_fill_completes": "pass"
+  },
+  "acceptance_boundary": {
+    "real_pstn_call": "not_run",
+    "real_human_asr_tts": "not_run",
+    "real_external_form_submission": "not_run",
+    "overall_status": "incomplete"
+  }
+}

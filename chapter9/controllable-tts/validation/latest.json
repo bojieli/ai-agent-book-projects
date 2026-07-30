@@ -1,0 +1,117 @@
+{
+  "experiment": "9-5",
+  "timestamp_utc": "2026-07-29T10:19:56.497167+00:00",
+  "provider": "Fish Audio",
+  "backend": "s1",
+  "reference_profile_count": 24,
+  "dimensions": {
+    "emotion": [
+      "neutral",
+      "happy",
+      "frustrated",
+      "thinking"
+    ],
+    "speed": [
+      "normal",
+      "fast",
+      "slow"
+    ],
+    "style": [
+      "formal",
+      "casual"
+    ]
+  },
+  "input_with_markers": "[EMO:happy][SPEED:fast][STYLE:casual]太好了！您的订单已确认。[THINKING]让我查一下发货时间。[EMO:neutral][SPEED:normal][STYLE:formal]预计明天下午送达。",
+  "parse_trace": [
+    "  [EMO:happy]            -> 情绪 = happy",
+    "  [SPEED:fast]           -> 语速 = fast",
+    "  [STYLE:casual]         -> 风格 = casual",
+    "  [THINKING]             -> 切换到 思考/慢速/正式 参考语音",
+    "  [THINKING] 停顿          -> 插入静音 1200ms",
+    "  [THINKING] 填充音         -> Fish S1 原生标记 '(uncertain)嗯……' (情绪=thinking,语速=slow)",
+    "  [EMO:neutral]          -> 情绪 = neutral",
+    "  [SPEED:normal]         -> 语速 = normal",
+    "  [STYLE:formal]         -> 风格 = formal"
+  ],
+  "outputs": {
+    "A_no_control_markers": {
+      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/A_no_control_markers.mp3",
+      "probe": {
+        "duration": "5.355000",
+        "size": "85680"
+      }
+    },
+    "B_single_reference": {
+      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/B_single_reference.mp3",
+      "segments": [
+        {
+          "model": "s1",
+          "provider": "Fish Audio",
+          "profile": "neutral_normal_formal",
+          "reference_path": "neutral_normal_formal.mp3",
+          "reference_sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0",
+          "fish_text": "太好了！您的订单已确认。让我查一下发货时间。预计明天下午送达。",
+          "type": "speech",
+          "text": "太好了！您的订单已确认。让我查一下发货时间。预计明天下午送达。"
+        }
+      ],
+      "probe": {
+        "duration": "5.903563",
+        "size": "94457"
+      }
+    },
+    "C_24_reference_library": {
+      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/C_24_reference_library.mp3",
+      "segments": [
+        {
+          "model": "s1",
+          "provider": "Fish Audio",
+          "profile": "happy_fast_casual",
+          "reference_path": "happy_fast_casual.mp3",
+          "reference_sha256": "0e96b8c6abe891c6292e6c7037aac67979ac407c3125301f5421afe35ce256d5",
+          "fish_text": "太好了！您的订单已确认。",
+          "type": "speech",
+          "text": "太好了！您的订单已确认。"
+        },
+        {
+          "type": "silence",
+          "ms": 1200
+        },
+        {
+          "model": "s1",
+          "provider": "Fish Audio",
+          "profile": "thinking_slow_formal",
+          "reference_path": "thinking_slow_formal.mp3",
+          "reference_sha256": "abef0a802382dad67b37e3447de08401a1d1cdb451420759853f4af9df234ac9",
+          "fish_text": "(uncertain)嗯……",
+          "type": "speech",
+          "text": "(uncertain)嗯……"
+        },
+        {
+          "model": "s1",
+          "provider": "Fish Audio",
+          "profile": "thinking_slow_formal",
+          "reference_path": "thinking_slow_formal.mp3",
+          "reference_sha256": "abef0a802382dad67b37e3447de08401a1d1cdb451420759853f4af9df234ac9",
+          "fish_text": "让我查一下发货时间。",
+          "type": "speech",
+          "text": "让我查一下发货时间。"
+        },
+        {
+          "model": "s1",
+          "provider": "Fish Audio",
+          "profile": "neutral_normal_formal",
+          "reference_path": "neutral_normal_formal.mp3",
+          "reference_sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0",
+          "fish_text": "预计明天下午送达。",
+          "type": "speech",
+          "text": "预计明天下午送达。"
+        }
+      ],
+      "probe": {
+        "duration": "8.305306",
+        "size": "133790"
+      }
+    }
+  }
+}

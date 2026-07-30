@@ -16,7 +16,6 @@
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | 复现 Agent Skills「渐进式披露」，按需加载完整流程后用 python-pptx 生成真实 `.pptx` |
 | 2-8 | [system-hint](system-hint/) | ✅ | 研究系统提示对 Agent 行为的影响，探索如何通过优化系统提示提升性能 |
 | 2-9 | [context-compression](context-compression/) | ✅ | 实现并对比摘要、关键信息提取、语义压缩等多种策略，保持能力的同时减少 token |
-| 3-3 | [log-sanitization](log-sanitization/) | ✅ | 智能日志脱敏系统，在保留调试信息的同时保护敏感数据 |
 
 ## 项目类型说明
 

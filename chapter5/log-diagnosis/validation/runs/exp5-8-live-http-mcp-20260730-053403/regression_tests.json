@@ -1,0 +1,41 @@
+{
+  "test_cases": [
+    {
+      "test_id": "TC-R1-HTTP-RF-001-T2",
+      "trajectory_id": "HTTP-RF-001",
+      "focus_turn": 2,
+      "description": "Refund flow must include verify_refund_eligibility before process_refund (R1)",
+      "assertion": {
+        "type": "step_present",
+        "params": {
+          "tool": "verify_refund_eligibility"
+        }
+      }
+    },
+    {
+      "test_id": "TC-R2-LATENCY-HTTP-INV-001-T2",
+      "trajectory_id": "HTTP-INV-001",
+      "focus_turn": 2,
+      "description": "check_stock must complete within 250 ms (R2)",
+      "assertion": {
+        "type": "latency_under",
+        "params": {
+          "tool": "check_stock",
+          "threshold_ms": 250
+        }
+      }
+    },
+    {
+      "test_id": "TC-R2-STATUS-HTTP-INV-001-T2",
+      "trajectory_id": "HTTP-INV-001",
+      "focus_turn": 2,
+      "description": "check_stock origin timeout must use degraded cache route, resulting in successful flow (R2)",
+      "assertion": {
+        "type": "final_status_is",
+        "params": {
+          "value": "success"
+        }
+      }
+    }
+  ]
+}

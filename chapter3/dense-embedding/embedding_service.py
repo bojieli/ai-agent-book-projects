@@ -143,7 +143,8 @@ class EmbeddingService:
             self.logger.logger.info(f"📚 Batch encoding {len(texts)} texts")
             total_chars = sum(len(t) for t in texts)
             self.logger.logger.debug(f"  Total characters: {total_chars}")
-            self.logger.logger.debug(f"  Average text length: {total_chars/len(texts):.1f} chars")
+            avg_len = total_chars / len(texts) if texts else 0.0
+            self.logger.logger.debug(f"  Average text length: {avg_len:.1f} chars")
         
         # Encode all texts
         embeddings = self.model.encode(
@@ -171,7 +172,8 @@ class EmbeddingService:
         
         if self.logger:
             self.logger.logger.info(f"✅ Batch encoding completed in {encoding_time:.4f} seconds")
-            self.logger.logger.debug(f"  Average time per text: {encoding_time/len(texts):.4f} seconds")
+            avg_time = encoding_time / len(texts) if texts else 0.0
+            self.logger.logger.debug(f"  Average time per text: {avg_time:.4f} seconds")
         
         return result
     

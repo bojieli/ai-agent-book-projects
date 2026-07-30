@@ -9,12 +9,15 @@
 | Proje | Tür | Açıklama |
 | --- | :--: | --- |
 | [live-audio](live-audio/) | ✅ | Konuşmadan metne, AI diyaloğu ve metinden konuşmayı entegre eden gerçek zamanlı bir sesli sohbet demosu. Birden çok AI hizmet sağlayıcısını destekler (OpenAI, OpenRouter, ARK, Siliconflow), düşük gecikmeli bir konuşma deneyimi sunar. |
-| `browser-use/` | 📖 | Browser-Use, LLM'lerin karmaşık görevleri tamamlamak için bir tarayıcıyı kontrol etmesini sağlayan güçlü bir tarayıcı otomasyon çerçevesidir. Form doldurma, web gezinme ve veri çıkarımı gibi senaryoları destekler; GUI otomasyonunun (Computer Use) tipik bir uygulaması olarak hizmet eder. |
-| `claude-quickstarts/` | 📖 | Çeşitli kullanım senaryolarını kapsayan Claude API için hızlı başlangıç örnekleri ve en iyi uygulamalar. |
-| [phone-agent](phone-agent/) | ✅ | "Kullanıcı adına telefon görüşmeleriyle dış dünyayla etkileşim kuran" bir sesli ajanı gösterir: üst katman standart bir ReAct ajanıdır. Doğal dil görevi aldığında aramanın sayısını ve amacını özerk olarak belirler, tüm konuşmayı tamamlamak için bir `make_phone_call` aracını (bir telefon API soyutlamasına dayalı) çağırır, yapılandırılmış arama günlüğünü okur, gerektiğinde başka bir arama yaparak takip soruları sorar ve sonunda kullanıcıya rapor verir. |
-| [end-to-end-speech](end-to-end-speech/) | ✅ | Step-Audio R1'in uçtan uca ses düşüncesine ("dinle→düşün→konuş") karşılık gelir; gecikmeyi ve paralinguistik kaybı ASR→LLM→TTS zincirleme yaklaşımıyla karşılaştırır. |
+| `browser-use/` | 📖 | Harici `browser-use/browser-use` `ec9277c…` commit'ine sabitlenmiştir; visual CLI (`use_vision=True`) Google'da San Francisco hava durumunu arar ve action/screenshot yörüngesini saklar. |
+| `claude-quickstarts/computer-use-demo/` | 📖 | Harici `anthropics/claude-quickstarts` `9bcc95e…` commit'ine sabitlenmiştir; hedef tüm quickstarts değil, container içindeki Ubuntu desktop＋Claude agent loop Computer Use demosudur. |
+| [phone-agent](phone-agent/) | 🚧 | Resmî `pine-voice` SDK direct/ReAct yolları uygulanmıştır; ancak yetkili ve onay vermiş bir E.164 hedefi yoktur. Preflight arama/transcript olmadığını kaydeder; test double kabul sayılmaz. |
+| [end-to-end-speech](end-to-end-speech/) | 🚧 | Tam Step-Audio R1 customized-vLLM deploy ve gerçek audio client uygulanmıştır; erişilebilir endpoint/CUDA yoktur. Blocker kanıtı başka modelle ikame etmeden fail-closed davranır. |
 | [streaming-speech](streaming-speech/) | ✅ | Akış tabanlı ses algısının temel ödünleşimini gösterir: sürekli sesi giderek uzayan segmentlere ayırır ve ASR'ye besler. Alınan her segment, erken metin çıktısı için son derece düşük ilk parça gecikmesi sağlamak üzere bir "mevcut kısmi tanıma sonucu" üretir. Bedeli, cümlenin ikinci yarısının bağlamından yoksun olan erken parçaların hatalı olabilmesi, ses biriktikçe kademeli olarak yakınsamasıdır. Bu, "tanımadan önce tüm cümleyi bekleme"nin yüksek doğruluk/yüksek gecikmeli yaklaşımıyla tezat oluşturur. |
-| [controllable-tts](controllable-tts/) | ✅ | Ana LLM'in çıktısı kontrol tokenleri taşır (duygu/konuşma hızı/stil/duraklama/kahkaha). Yürütme katmanı bu tokenleri ayrıştırır, bunları bir referans konuşma kütüphanesindeki karşılık gelen stil profillerine eşler, ardından konuşmayı sentezler. Bu, "nerede duraklanacağı ve hangi tonun kullanılacağı" kararlarını LLM'e devreder, aynı metnin farklı stil ve duygularla sentezlenmesine olanak tanır. |
+| [controllable-tts](controllable-tts/) | 🚧 | Gerçek Fish Audio S1 4×3×2 referans kütüphanesi ve A/B/C medya yapısal kapıları geçer; nitel dinleme çalışması ve “insana yakın” değerlendirme eksiktir. |
+| [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | Harici XLeRobot `3d14695…`, keyboard/Xbox/Joy-Con/VR teleoperation. Yalnız source/non-actuating preflight vardır; yetkili dört-mod donanım ve pick/place/wipe kanıtı yoktur. |
+| [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | Harici XLeRobot `3d14695…`＋RoboCrew; tam `gemini-robotics-er-1.5-preview`, angle annotation ve forward/left/right tools. Yetkili robot navigation çalışması yoktur. |
+| [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | Harici `lerobot-sim2real` `87d6c1d…`, beş aşamalı RGB→PPO→SO-100 pipeline. Makinede ManiSkill/NVIDIA ve yetkili fiziksel robot çalışması yoktur. |
 
 ## Proje Türleri
 
@@ -22,4 +25,4 @@
 | :--: | --- | --- |
 | ✅ | **Bağımsız** | Bu depoda tam kod, API Key yapılandırıldıktan sonra çalışır |
 | 📖 | **Yeniden Üretim Rehberi** | `git clone` ile **harici depolara** bağımlı ayrıntılı belge |
-| 🚧 | **Tasarım Belgesi** | Yalnızca mimari/uygulama planı, çalıştırılabilir kod henüz hazır değil |
+| 🚧 | **Devam Ediyor** | Uygulama vardır; ancak gerekli canlı çalıştırma, yetki, donanım veya metin kabul kanıtı eksiktir |

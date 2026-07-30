@@ -7,7 +7,15 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ``evaluation`` is intentionally runnable both as a script directory and via
+# pytest from the repository root.  Put this experiment's directory first so
+# the unqualified educational imports below cannot resolve a sibling
+# experiment's ``config.py``/``agent.py`` from an earlier sys.path entry.
+_PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PROJECT_DIR in sys.path:
+    sys.path.remove(_PROJECT_DIR)
+sys.path.insert(0, _PROJECT_DIR)
 
 from config import Config
 from agent import AgenticRAG
@@ -55,7 +63,7 @@ class RAGEvaluator:
                 else:
                     keywords_missing.append(keyword)
             
-            evaluation["metrics"]["keyword_recall"] = len(keywords_found) / len(test_case["expected_keywords"])
+            evaluation["metrics"]["keyword_recall"] = len(keywords_found) / len(test_case["expected_keywords"]) if test_case["expected_keywords"] else 1.0
             evaluation["metrics"]["keywords_found"] = keywords_found
             evaluation["metrics"]["keywords_missing"] = keywords_missing
         
@@ -70,7 +78,7 @@ class RAGEvaluator:
                 else:
                     analysis_missing.append(point)
             
-            evaluation["metrics"]["analysis_recall"] = len(analysis_found) / len(test_case["expected_analysis"])
+            evaluation["metrics"]["analysis_recall"] = len(analysis_found) / len(test_case["expected_analysis"]) if test_case["expected_analysis"] else 1.0
             evaluation["metrics"]["analysis_found"] = analysis_found
             evaluation["metrics"]["analysis_missing"] = analysis_missing
         

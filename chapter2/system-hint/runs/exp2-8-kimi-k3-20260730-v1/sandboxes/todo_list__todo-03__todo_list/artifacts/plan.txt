@@ -1,0 +1,10 @@
+Delivery Token: CHARLIE-639
+
+Plan:
+Step 1: Create scope.txt defining the delivery boundaries and requirements.
+Step 2: Create plan.txt (this file) describing the execution steps.
+Step 3: Create verification.txt recording the verification checks for each artifact.
+Step 4: Create result.txt summarizing the completed delivery.
+Step 5: Embed the required delivery token exactly once in every artifact.
+Step 6: Verify that all four artifacts exist and each contains the token exactly once.
+Step 7: Submit the complete artifact list: scope.txt, plan.txt, verification.txt, result.txt.

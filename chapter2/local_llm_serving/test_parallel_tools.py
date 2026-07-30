@@ -7,9 +7,8 @@ Covers:
 2. Real-model runs of the book's "Vancouver time + weather" example through:
    - OllamaNativeAgent.chat / chat_stream (native tool calling)
    - OllamaOpenAICompatible.chat (OpenAI-compatible endpoint, native tools)
-   - VLLMToolAgent.chat / chat_stream (<tool_call> XML parsed from content;
-     the OpenAI-compatible endpoint of Ollama stands in for the vLLM server,
-     so the `tools` kwarg is dropped to make the model emit XML in content)
+   - VLLMToolAgent.chat / chat_stream (structured OpenAI-compatible tool calls;
+     Ollama's OpenAI-compatible endpoint stands in for the vLLM server)
 
 Run from this directory:  python3 test_parallel_tools.py
 Requires: ollama serve + ollama pull qwen2.5:7b-instruct-q8_0
@@ -75,8 +74,18 @@ def test_native_execute_parallel():
     assert all(json.loads(r)["success"] for r in results)
 
 
-def _make_chunk(text):
-    return SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content=text))])
+def _make_chunk(text=None, tool_calls=None):
+    delta = SimpleNamespace(content=text, tool_calls=tool_calls or [])
+    return SimpleNamespace(choices=[SimpleNamespace(delta=delta)])
+
+
+def _tool_fragment(index, *, call_id=None, name=None, arguments=None):
+    return SimpleNamespace(
+        index=index,
+        id=call_id,
+        type="function" if call_id else None,
+        function=SimpleNamespace(name=name, arguments=arguments),
+    )
 
 
 def test_vllm_stream_parallel():
@@ -84,18 +93,26 @@ def test_vllm_stream_parallel():
     agent = VLLMToolAgent(api_base="http://localhost:11434/v1", api_key="ollama")
     _register_sleep_tools(agent.tool_registry)
 
-    tool_xml = (
-        '<tool_call>{"name": "sleep_a", "arguments": {}}</tool_call>'
-        '<tool_call>{"name": "sleep_b", "arguments": {}}</tool_call>'
-    )
     state = {"n": 0}
 
     def fake_create(**kwargs):
         state["n"] += 1
         if state["n"] == 1:
-            # split the two tool calls across chunks to exercise buffering
-            parts = [tool_xml[:25], tool_xml[25:90], tool_xml[90:]]
-            return iter([_make_chunk(p) for p in parts])
+            # Split arguments across chunks and interleave two call indexes.
+            return iter([
+                _make_chunk(tool_calls=[
+                    _tool_fragment(
+                        0, call_id="call_a", name="sleep_a", arguments='{"tag":'
+                    ),
+                    _tool_fragment(
+                        1, call_id="call_b", name="sleep_b", arguments='{"tag":'
+                    ),
+                ]),
+                _make_chunk(tool_calls=[
+                    _tool_fragment(0, arguments='"a"}'),
+                    _tool_fragment(1, arguments='"b"}'),
+                ]),
+            ])
         return iter([_make_chunk("done")])
 
     agent.client = SimpleNamespace(
@@ -172,20 +189,16 @@ def test_vllm_agent_real_model():
     print(f"\n== VLLMToolAgent.chat (real {REAL_MODEL} via OpenAI endpoint) ==")
     agent = VLLMToolAgent(api_base="http://localhost:11434/v1", api_key="ollama")
 
-    # Ollama's OpenAI endpoint stands in for the vLLM server. The agent parses
-    # <tool_call> XML from content, so drop the native `tools` kwarg (which
-    # would make Ollama return structured tool_calls instead) and fix the
-    # hardcoded vLLM model name to the Ollama one.
+    # Ollama's OpenAI endpoint stands in for the vLLM server. Keep the native
+    # tools payload so both chat paths receive structured tool_calls.
     real_create = agent.client.chat.completions.create
 
-    def create_xml_mode(**kwargs):
-        kwargs.pop("tools", None)
-        kwargs.pop("tool_choice", None)
+    def create_structured_mode(**kwargs):
         kwargs["model"] = REAL_MODEL
         return real_create(**kwargs)
 
     agent.client = SimpleNamespace(
-        chat=SimpleNamespace(completions=SimpleNamespace(create=create_xml_mode))
+        chat=SimpleNamespace(completions=SimpleNamespace(create=create_structured_mode))
     )
 
     response, tool_msgs, batch = "", [], 0
@@ -204,7 +217,7 @@ def test_vllm_agent_real_model():
     for m in tool_msgs:
         print(f"    - {m['name']}: {m['content'][:100]}")
     print(f"  final response: {response[:300]}")
-    assert tool_msgs, "model did not emit <tool_call> XML"
+    assert tool_msgs, "model did not emit a structured tool call"
 
     print(f"\n== VLLMToolAgent.chat_stream (real {REAL_MODEL}) ==")
     events = []

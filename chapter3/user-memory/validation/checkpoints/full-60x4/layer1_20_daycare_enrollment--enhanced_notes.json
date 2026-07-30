@@ -1,0 +1,347 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_20_daycare_enrollment",
+  "mode": "enhanced_notes",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "daycare_enroll_001",
+      "memory": [
+        "Barbara Mitchell (parent) is enrolling twin daughters Emma and Olivia Mitchell (3 years old, born October 2021) at Bright Beginnings Learning Center (Enrollment Services, Sharon as assistant) for full-time daycare starting January 6, 2025 (when Barbara returns from maternity leave); conversation_id=daycare_enroll_001, timestamp=2024-11-15 10:30:00, call duration 48 minutes.",
+        "Schedule: Monday-Friday, 7:30 AM-5:30 PM; girls will be in Butterfly classroom (3-year-olds) with 12 children, 2 teachers (1:6 ratio); twins kept together unless parents request separation.",
+        "Tuition: $325/week per child; 10% sibling discount on second child (Emma: $325, Olivia: $292.50); total weekly tuition $617.50. Weekly tuition due Monday mornings via automatic withdrawal (checking/credit card).",
+        "Fees: One-time registration fee $150/child ($300 total) due immediately to hold spots; annual supply fee $200/child ($400 total) due with first tuition payment (December 23, 2024). First week's tuition ($617.50) due December 23, 2024; total due then: $617.50 + $400 = $1,017.50.",
+        "Meals: Breakfast 8:00-8:30 AM (arrive by 8:30 to eat); lunch and afternoon snack included. Nap time 12:30-2:30 PM; non-nappers have quiet activities (puzzles/books). Supplies needed: Change of clothes, nap blanket, small pillow (center provides cots).",
+        "Policies: Nut-free facility; sick policy (fever-free 24h without meds, no vomiting/diarrhea); late pick-up fee $1/minute/child (e.g., 10 minutes late = $20 total). Vacation credit after 6 months: 1 week/year at 50% tuition ($308.75/week). Closed major holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving + day after, Christmas Eve, Christmas); tuition remains due for holiday weeks.",
+        "Emma has peanut allergy: Requires allergy action plan from pediatrician; center keeps Benadryl/EpiPen as prescribed. Olivia has mild speech delay, receives speech therapy Wednesdays at 10 AM; center will accommodate therapy in quiet room during learning centers.",
+        "Parent communication: Daily app reports (meals, naps, activities, mood); monthly newsletters; parent-teacher conferences (October, March; request anytime).",
+        "Enrollment forms needed: Birth certificates, immunization records, emergency contacts, pediatrician info, allergy/medical info. Forms to be emailed to bmitchell@email.com within the hour. Tour scheduled for November 16, 2024 at 4 PM (Barbara to bring Emma and Olivia)."
+      ],
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "daycare_enroll_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_20_daycare_enrollment enhanced_notes session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:38:25.886165+00:00",
+      "latency_ms": 39460.772,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as an array of contextual paragraphs. Each paragraph must retain the entity, event, time, status, and relationships needed to interpret it."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n[]\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=daycare_enroll_001\ntimestamp=2024-11-15 10:30:00\nmetadata={\"business\": \"Bright Beginnings Learning Center\", \"department\": \"Enrollment Services\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I'm looking for daycare for my twin daughters starting in January.\nASSISTANT: Good morning! I'm Sharon from Bright Beginnings Learning Center. I'd be happy to help you with enrollment. How old are your daughters?\nUSER: They just turned 3 in October.\nASSISTANT: Perfect age for our Preschool 1 program! What are their names?\nUSER: Emma and Olivia Mitchell.\nASSISTANT: Beautiful names! And what's your name?\nUSER: I'm Barbara Mitchell.\nASSISTANT: Thank you, Ms. Mitchell. When exactly would you need care to start?\nUSER: January 6th, 2025, when I return from maternity leave.\nASSISTANT: Congratulations on your new baby! What days and hours do you need?\nUSER: Monday through Friday, probably 7:30 AM to 5:30 PM.\nASSISTANT: That's our standard full-time schedule. Let me check availability... Yes, we have two spots in our Butterfly classroom for 3-year-olds.\nUSER: They'd be in the same classroom?\nASSISTANT: Yes, we keep twins together unless parents request otherwise. The Butterfly room has 12 children with 2 teachers.\nUSER: What's the teacher-child ratio?\nASSISTANT: For 3-year-olds, it's 1:6, so two teachers for twelve children.\nUSER: That's good. What's the tuition?\nASSISTANT: Full-time for 3-year-olds is $325 per week per child.\nUSER: So $650 weekly for both?\nASSISTANT: Actually, we offer a 10% sibling discount on the second child. So $325 for Emma and $292.50 for Olivia, total $617.50 weekly.\nUSER: That helps. How do you bill?\nASSISTANT: Weekly tuition is due Monday mornings. We offer automatic withdrawal from checking or credit card.\nUSER: What about registration fees?\nASSISTANT: There's a one-time registration fee of $150 per child, so $300 for both.\nUSER: Is that due immediately?\nASSISTANT: Yes, registration fees hold their spots. Plus first week's tuition is due two weeks before start date.\nUSER: So I'd pay $300 registration now, and $617.50 on December 23rd?\nASSISTANT: Exactly right.\nUSER: What about supplies?\nASSISTANT: Annual supply fee is $200 per child, covers art materials, educational supplies, and field trips.\nUSER: When is that due?\nASSISTANT: Supply fee is due with first tuition payment, so December 23rd. That's another $400 for both girls.\nUSER: What's included in the tuition?\nASSISTANT: Breakfast, lunch, afternoon snack, all activities, and basic field trips. Special trips might have small fees.\nUSER: What time is breakfast?\nASSISTANT: Breakfast is 8:00-8:30 AM. If they arrive after 8:30, they should eat at home.\nUSER: They'll be there by 7:30, so that's perfect. What about naps?\nASSISTANT: Nap time is 12:30-2:30 PM. Do they still nap?\nUSER: Emma does, but Olivia usually just rests quietly.\nASSISTANT: That's fine. Non-nappers have quiet activities like puzzles or books on their cots.\nUSER: What do they need to bring?\nASSISTANT: Complete change of clothes, nap blanket, and small pillow if desired. We provide cots.\nUSER: Are they potty trained required?\nASSISTANT: For the 3-year-old room, we expect them to be mostly trained but accidents are normal. Are they trained?\nUSER: Emma is fully trained, Olivia has occasional accidents.\nASSISTANT: Very normal at this age. Just send extra clothes. We help with bathroom reminders.\nUSER: What's the daily schedule like?\nASSISTANT: 7:30-8:00 free play, 8:00-8:30 breakfast, 8:30-9:00 circle time, 9:00-10:00 learning centers, 10:00-10:30 snack and story, 10:30-11:30 outdoor play...\nUSER: And afternoons?\nASSISTANT: 11:30-12:00 lunch, 12:00-12:30 bathroom and prep for nap, 12:30-2:30 nap/rest, 2:30-3:00 snack, 3:00-4:00 art or music, 4:00-5:00 outdoor play, 5:00-5:30 quiet activities and pickup.\nUSER: What curriculum do you follow?\nASSISTANT: We use Creative Curriculum, focusing on social-emotional development, pre-math, pre-literacy, and science exploration.\nUSER: Do they learn letters and numbers?\nASSISTANT: Yes, through play-based learning. By 4, most know uppercase letters and numbers 1-10.\nUSER: What about sick policies?\nASSISTANT: Children must be fever-free for 24 hours without medication before returning. Same for vomiting or diarrhea.\nUSER: What if I need to pick them up late?\nASSISTANT: We're open until 6:00 PM. After 5:30 PM is $1 per minute per child late fee.\nUSER: So if I'm 10 minutes late?\nASSISTANT: That would be $20 total, $10 per child.\nUSER: What about vacation credits?\nASSISTANT: After 6 months enrollment, you get one week vacation credit per year at 50% tuition.\nUSER: So I'd pay half tuition for vacation week?\nASSISTANT: Correct, $308.75 instead of $617.50 for that week.\nUSER: What about holidays?\nASSISTANT: We're closed major holidays - New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving and day after, Christmas Eve and Christmas.\nUSER: Do we still pay for those weeks?\nASSISTANT: Yes, tuition remains the same for holiday weeks. It's calculated into the weekly rate.\nUSER: What forms do I need for enrollment?\nASSISTANT: Birth certificates, immunization records, emergency contacts, pediatrician info, and any allergy or medical information.\nUSER: Emma has a peanut allergy.\nASSISTANT: We're a nut-free facility. You'll need an allergy action plan from your pediatrician and we'll keep Benadryl or EpiPen as prescribed.\nUSER: That's reassuring. What about developmental concerns?\nASSISTANT: Do either have any developmental delays or IEP services?\nUSER: Olivia has mild speech delay and gets speech therapy once a week.\nASSISTANT: We can accommodate therapy visits. The therapist can work with her here during the day.\nUSER: That would be wonderful. Currently it's Wednesdays at 10 AM.\nASSISTANT: Perfect timing during learning centers. We have a quiet room they can use.\nUSER: What about parent communication?\nASSISTANT: Daily reports through our app - meals, naps, activities, mood. Plus monthly newsletters and parent-teacher conferences twice yearly.\nUSER: When are conferences?\nASSISTANT: October and March, but you can request meetings anytime.\nUSER: Can I tour the facility?\nASSISTANT: Absolutely! Can you come tomorrow at 10 AM or 4 PM?\nUSER: 4 PM works better.\nASSISTANT: Great, I'll schedule you for tomorrow, November 16th at 4 PM. Bring the girls if you'd like.\nUSER: I will. Should I bring the paperwork then?\nASSISTANT: If you decide to enroll, yes. Or I can email the forms now to review.\nUSER: Please email them to bmitchell@email.com\nASSISTANT: I'll send those within the hour. To summarize: $300 registration to hold spots, then $1,017.50 due December 23rd for first week plus supplies.\nUSER: And weekly tuition of $617.50 after that?\nASSISTANT: Correct, starting January 13th for the second week.\nUSER: Perfect. See you tomorrow at 4!\nASSISTANT: Looking forward to meeting you and Emma and Olivia tomorrow, Ms. Mitchell!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853539061267079f7997bde53da02e3efd0b6b68d8dd97f99",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": [\"Barbara Mitchell (parent) is enrolling twin daughters Emma and Olivia Mitchell (3 years old, born October 2021) at Bright Beginnings Learning Center (Enrollment Services, Sharon as assistant) for full-time daycare starting January 6, 2025 (when Barbara returns from maternity leave); conversation_id=daycare_enroll_001, timestamp=2024-11-15 10:30:00, call duration 48 minutes.\", \"Schedule: Monday-Friday, 7:30 AM-5:30 PM; girls will be in Butterfly classroom (3-year-olds) with 12 children, 2 teachers (1:6 ratio); twins kept together unless parents request separation.\", \"Tuition: $325/week per child; 10% sibling discount on second child (Emma: $325, Olivia: $292.50); total weekly tuition $617.50. Weekly tuition due Monday mornings via automatic withdrawal (checking/credit card).\", \"Fees: One-time registration fee $150/child ($300 total) due immediately to hold spots; annual supply fee $200/child ($400 total) due with first tuition payment (December 23, 2024). First week's tuition ($617.50) due December 23, 2024; total due then: $617.50 + $400 = $1,017.50.\", \"Meals: Breakfast 8:00-8:30 AM (arrive by 8:30 to eat); lunch and afternoon snack included. Nap time 12:30-2:30 PM; non-nappers have quiet activities (puzzles/books). Supplies needed: Change of clothes, nap blanket, small pillow (center provides cots).\", \"Policies: Nut-free facility; sick policy (fever-free 24h without meds, no vomiting/diarrhea); late pick-up fee $1/minute/child (e.g., 10 minutes late = $20 total). Vacation credit after 6 months: 1 week/year at 50% tuition ($308.75/week). Closed major holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving + day after, Christmas Eve, Christmas); tuition remains due for holiday weeks.\", \"Emma has peanut allergy: Requires allergy action plan from pediatrician; center keeps Benadryl/EpiPen as prescribed. Olivia has mild speech delay, receives speech therapy Wednesdays at 10 AM; center will accommodate therapy in quiet room during learning centers.\", \"Parent communication: Daily app reports (meals, naps, activities, mood); monthly newsletters; parent-teacher conferences (October, March; request anytime).\", \"Enrollment forms needed: Birth certificates, immunization records, emergency contacts, pediatrician info, allergy/medical info. Forms to be emailed to bmitchell@email.com within the hour. Tour scheduled for November 16, 2024 at 4 PM (Barbara to bring Emma and Olivia).\"]}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to extract all relevant facts from the conversation that would help a future assistant, retaining exact values, ownership, dates, provenance, relationships, etc. Let's go through the conversation step by step.\n\nFirst, the context: Barbara Mitchell is enrolling her twin daughters, Emma and Olivia Mitchell (3 years old, born October 2021), at Bright Beginnings Learning Center (Enrollment Services, Sharon as the assistant). The session is conversation_id=daycare_enroll_001, timestamp=2024-11-15 10:30:00, call duration 48 minutes.\n\nKey details:\n\n- Start date: January 6, 2025 (when Barbara returns from maternity leave).\n- Schedule: Monday-Friday, 7:30 AM-5:30 PM (full-time).\n- Classroom: Butterfly classroom for 3-year-olds, same room for twins (unless requested otherwise). Butterfly room has 12 children, 2 teachers (1:6 ratio for 3-year-olds).\n- Tuition: $325/week per child, 10% sibling discount on second child (Emma: $325, Olivia: $292.50; total $617.50/week).\n- Billing: Weekly due Monday mornings, automatic withdrawal (checking/credit card).\n- Fees: One-time registration fee $150/child ($300 total) due immediately to hold spots; annual supply fee $200/child ($400 total) due with first tuition payment (December 23, 2024). First week's tuition ($617.50) due December 23, 2024; total due then: $617.50 + $400 = $1,017.50.\n- Meals: Breakfast 8:00-8:30 AM (arrive by 8:30 to eat), lunch, afternoon snack included.\n- Nap time: 12:30-2:30 PM; non-nappers have quiet activities.\n- Supplies needed: Change of clothes, nap blanket, small pillow (center provides cots).\n- Policies: Nut-free facility; sick policy (fever-free 24h without meds, no vomiting/diarrhea); late pick-up fee $1/minute/child (e.g., 10 minutes late = $20 total); vacation credit after 6 months: 1 week/year at 50% tuition ($308.75/week); closed major holidays (tuition still due); weekly tuition continues through holidays.\n- Enrollment forms: Birth certificates, immunization records, emergency contacts, pediatrician info, allergy/medical info.\n- Emma's peanut allergy: Nut-free facility; requires allergy action plan from pediatrician, Benadryl/EpiPen kept as prescribed.\n- Olivia's speech delay: Speech therapy once weekly (Wednesdays at 10 AM) accommodated at center in quiet room during learning centers.\n- Parent communication: Daily app reports (meals, naps, activities, mood); monthly newsletters; parent-teacher conferences (October, March; request anytime).\n- Tour scheduled: November 16, 2024 at 4 PM (Barbara to bring girls); forms to be emailed to bmitchell@email.com within the hour.\n\nNeed to organize these into contextual paragraphs, each with entity, event, time, status, relationships. Avoid redundancy but retain all key facts."
+            }
+          }
+        ],
+        "created": 1785353945,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1460,
+          "prompt_tokens": 2206,
+          "total_tokens": 3666,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 770,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1460,
+        "prompt_tokens": 2206,
+        "total_tokens": 3666,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 770,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853539061267079f7997bde53da02e3efd0b6b68d8dd97f99"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_20_daycare_enrollment enhanced_notes",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:39:05.348310+00:00",
+      "latency_ms": 13754.399,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: enhanced_notes\nLONG-TERM MEMORY:\n[\"Barbara Mitchell (parent) is enrolling twin daughters Emma and Olivia Mitchell (3 years old, born October 2021) at Bright Beginnings Learning Center (Enrollment Services, Sharon as assistant) for full-time daycare starting January 6, 2025 (when Barbara returns from maternity leave); conversation_id=daycare_enroll_001, timestamp=2024-11-15 10:30:00, call duration 48 minutes.\", \"Schedule: Monday-Friday, 7:30 AM-5:30 PM; girls will be in Butterfly classroom (3-year-olds) with 12 children, 2 teachers (1:6 ratio); twins kept together unless parents request separation.\", \"Tuition: $325/week per child; 10% sibling discount on second child (Emma: $325, Olivia: $292.50); total weekly tuition $617.50. Weekly tuition due Monday mornings via automatic withdrawal (checking/credit card).\", \"Fees: One-time registration fee $150/child ($300 total) due immediately to hold spots; annual supply fee $200/child ($400 total) due with first tuition payment (December 23, 2024). First week's tuition ($617.50) due December 23, 2024; total due then: $617.50 + $400 = $1,017.50.\", \"Meals: Breakfast 8:00-8:30 AM (arrive by 8:30 to eat); lunch and afternoon snack included. Nap time 12:30-2:30 PM; non-nappers have quiet activities (puzzles/books). Supplies needed: Change of clothes, nap blanket, small pillow (center provides cots).\", \"Policies: Nut-free facility; sick policy (fever-free 24h without meds, no vomiting/diarrhea); late pick-up fee $1/minute/child (e.g., 10 minutes late = $20 total). Vacation credit after 6 months: 1 week/year at 50% tuition ($308.75/week). Closed major holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving + day after, Christmas Eve, Christmas); tuition remains due for holiday weeks.\", \"Emma has peanut allergy: Requires allergy action plan from pediatrician; center keeps Benadryl/EpiPen as prescribed. Olivia has mild speech delay, receives speech therapy Wednesdays at 10 AM; center will accommodate therapy in quiet room during learning centers.\", \"Parent communication: Daily app reports (meals, naps, activities, mood); monthly newsletters; parent-teacher conferences (October, March; request anytime).\", \"Enrollment forms needed: Birth certificates, immunization records, emergency contacts, pediatrician info, allergy/medical info. Forms to be emailed to bmitchell@email.com within the hour. Tour scheduled for November 16, 2024 at 4 PM (Barbara to bring Emma and Olivia).\"]\n\nUSER QUESTION:\nWhat was the complete weekly tuition cost for both twins and what initial payments are required before they start?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "0217853539455427079f7997bde53da02e3efd0b6b68d8da4c465",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child).  \n\n\n### Initial payments required before they start:  \n1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).  \n2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:  \n   - First week’s tuition: $617.50  \n   - Annual supply fee: $200 per child, totaling $400  \n   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**  \n\n\nThus, initial payments are $300 (immediate registration) and $1,017.50 (by December 23, 2024).",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle this user's question. They want to know the complete weekly tuition cost for both twins and the initial payments required before they start. \n\nFirst, looking at the long-term memory, under \"Tuition,\" it says $325/week per child, with a 10% sibling discount on the second child. So Emma is $325, Olivia is 10% off $325. Let me calculate that: 10% of 325 is 32.50, so 325 - 32.50 = 292.50. Then total weekly tuition is 325 + 292.50 = 617.50. That's the weekly cost.\n\nNow, initial payments. The \"Fees\" section mentions a one-time registration fee of $150 per child, so $300 total, due immediately to hold spots. Then, the annual supply fee is $200 per child, $400 total, due with the first tuition payment on December 23, 2024. The first week's tuition is $617.50, also due on December 23. So total due on December 23 is 617.50 (tuition) + 400 (supply fee) = 1017.50. Plus the registration fee of $300 due immediately. \n\nSo initial payments are the $300 registration fee right away, and then $1017.50 by December 23, 2024. I need to make sure I list both parts: the immediate registration fee and the December 23 payment which includes first tuition and supply fees."
+            }
+          }
+        ],
+        "created": 1785353959,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 616,
+          "prompt_tokens": 869,
+          "total_tokens": 1485,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 383,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 616,
+        "prompt_tokens": 869,
+        "total_tokens": 1485,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 383,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853539455427079f7997bde53da02e3efd0b6b68d8da4c465"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_20_daycare_enrollment enhanced_notes",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:39:19.104237+00:00",
+      "latency_ms": 8534.691,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=daycare_enroll_001\ntimestamp=2024-11-15 10:30:00\nmetadata={\"business\": \"Bright Beginnings Learning Center\", \"department\": \"Enrollment Services\", \"call_duration\": \"48 minutes\"}\nUSER: Hi, I'm looking for daycare for my twin daughters starting in January.\nASSISTANT: Good morning! I'm Sharon from Bright Beginnings Learning Center. I'd be happy to help you with enrollment. How old are your daughters?\nUSER: They just turned 3 in October.\nASSISTANT: Perfect age for our Preschool 1 program! What are their names?\nUSER: Emma and Olivia Mitchell.\nASSISTANT: Beautiful names! And what's your name?\nUSER: I'm Barbara Mitchell.\nASSISTANT: Thank you, Ms. Mitchell. When exactly would you need care to start?\nUSER: January 6th, 2025, when I return from maternity leave.\nASSISTANT: Congratulations on your new baby! What days and hours do you need?\nUSER: Monday through Friday, probably 7:30 AM to 5:30 PM.\nASSISTANT: That's our standard full-time schedule. Let me check availability... Yes, we have two spots in our Butterfly classroom for 3-year-olds.\nUSER: They'd be in the same classroom?\nASSISTANT: Yes, we keep twins together unless parents request otherwise. The Butterfly room has 12 children with 2 teachers.\nUSER: What's the teacher-child ratio?\nASSISTANT: For 3-year-olds, it's 1:6, so two teachers for twelve children.\nUSER: That's good. What's the tuition?\nASSISTANT: Full-time for 3-year-olds is $325 per week per child.\nUSER: So $650 weekly for both?\nASSISTANT: Actually, we offer a 10% sibling discount on the second child. So $325 for Emma and $292.50 for Olivia, total $617.50 weekly.\nUSER: That helps. How do you bill?\nASSISTANT: Weekly tuition is due Monday mornings. We offer automatic withdrawal from checking or credit card.\nUSER: What about registration fees?\nASSISTANT: There's a one-time registration fee of $150 per child, so $300 for both.\nUSER: Is that due immediately?\nASSISTANT: Yes, registration fees hold their spots. Plus first week's tuition is due two weeks before start date.\nUSER: So I'd pay $300 registration now, and $617.50 on December 23rd?\nASSISTANT: Exactly right.\nUSER: What about supplies?\nASSISTANT: Annual supply fee is $200 per child, covers art materials, educational supplies, and field trips.\nUSER: When is that due?\nASSISTANT: Supply fee is due with first tuition payment, so December 23rd. That's another $400 for both girls.\nUSER: What's included in the tuition?\nASSISTANT: Breakfast, lunch, afternoon snack, all activities, and basic field trips. Special trips might have small fees.\nUSER: What time is breakfast?\nASSISTANT: Breakfast is 8:00-8:30 AM. If they arrive after 8:30, they should eat at home.\nUSER: They'll be there by 7:30, so that's perfect. What about naps?\nASSISTANT: Nap time is 12:30-2:30 PM. Do they still nap?\nUSER: Emma does, but Olivia usually just rests quietly.\nASSISTANT: That's fine. Non-nappers have quiet activities like puzzles or books on their cots.\nUSER: What do they need to bring?\nASSISTANT: Complete change of clothes, nap blanket, and small pillow if desired. We provide cots.\nUSER: Are they potty trained required?\nASSISTANT: For the 3-year-old room, we expect them to be mostly trained but accidents are normal. Are they trained?\nUSER: Emma is fully trained, Olivia has occasional accidents.\nASSISTANT: Very normal at this age. Just send extra clothes. We help with bathroom reminders.\nUSER: What's the daily schedule like?\nASSISTANT: 7:30-8:00 free play, 8:00-8:30 breakfast, 8:30-9:00 circle time, 9:00-10:00 learning centers, 10:00-10:30 snack and story, 10:30-11:30 outdoor play...\nUSER: And afternoons?\nASSISTANT: 11:30-12:00 lunch, 12:00-12:30 bathroom and prep for nap, 12:30-2:30 nap/rest, 2:30-3:00 snack, 3:00-4:00 art or music, 4:00-5:00 outdoor play, 5:00-5:30 quiet activities and pickup.\nUSER: What curriculum do you follow?\nASSISTANT: We use Creative Curriculum, focusing on social-emotional development, pre-math, pre-literacy, and science exploration.\nUSER: Do they learn letters and numbers?\nASSISTANT: Yes, through play-based learning. By 4, most know uppercase letters and numbers 1-10.\nUSER: What about sick policies?\nASSISTANT: Children must be fever-free for 24 hours without medication before returning. Same for vomiting or diarrhea.\nUSER: What if I need to pick them up late?\nASSISTANT: We're open until 6:00 PM. After 5:30 PM is $1 per minute per child late fee.\nUSER: So if I'm 10 minutes late?\nASSISTANT: That would be $20 total, $10 per child.\nUSER: What about vacation credits?\nASSISTANT: After 6 months enrollment, you get one week vacation credit per year at 50% tuition.\nUSER: So I'd pay half tuition for vacation week?\nASSISTANT: Correct, $308.75 instead of $617.50 for that week.\nUSER: What about holidays?\nASSISTANT: We're closed major holidays - New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving and day after, Christmas Eve and Christmas.\nUSER: Do we still pay for those weeks?\nASSISTANT: Yes, tuition remains the same for holiday weeks. It's calculated into the weekly rate.\nUSER: What forms do I need for enrollment?\nASSISTANT: Birth certificates, immunization records, emergency contacts, pediatrician info, and any allergy or medical information.\nUSER: Emma has a peanut allergy.\nASSISTANT: We're a nut-free facility. You'll need an allergy action plan from your pediatrician and we'll keep Benadryl or EpiPen as prescribed.\nUSER: That's reassuring. What about developmental concerns?\nASSISTANT: Do either have any developmental delays or IEP services?\nUSER: Olivia has mild speech delay and gets speech therapy once a week.\nASSISTANT: We can accommodate therapy visits. The therapist can work with her here during the day.\nUSER: That would be wonderful. Currently it's Wednesdays at 10 AM.\nASSISTANT: Perfect timing during learning centers. We have a quiet room they can use.\nUSER: What about parent communication?\nASSISTANT: Daily reports through our app - meals, naps, activities, mood. Plus monthly newsletters and parent-teacher conferences twice yearly.\nUSER: When are conferences?\nASSISTANT: October and March, but you can request meetings anytime.\nUSER: Can I tour the facility?\nASSISTANT: Absolutely! Can you come tomorrow at 10 AM or 4 PM?\nUSER: 4 PM works better.\nASSISTANT: Great, I'll schedule you for tomorrow, November 16th at 4 PM. Bring the girls if you'd like.\nUSER: I will. Should I bring the paperwork then?\nASSISTANT: If you decide to enroll, yes. Or I can email the forms now to review.\nUSER: Please email them to bmitchell@email.com\nASSISTANT: I'll send those within the hour. To summarize: $300 registration to hold spots, then $1,017.50 due December 23rd for first week plus supplies.\nUSER: And weekly tuition of $617.50 after that?\nASSISTANT: Correct, starting January 13th for the second week.\nUSER: Perfect. See you tomorrow at 4!\nASSISTANT: Looking forward to meeting you and Emma and Olivia tomorrow, Ms. Mitchell!\n\nQUESTION: What was the complete weekly tuition cost for both twins and what initial payments are required before they start?\nANSWER: The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child).  \n\n\n### Initial payments required before they start:  \n1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).  \n2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:  \n   - First week’s tuition: $617.50  \n   - Annual supply fee: $200 per child, totaling $400  \n   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**  \n\n\nThus, initial payments are $300 (immediate registration) and $1,017.50 (by December 23, 2024).\nEVALUATION CRITERIA: The agent should accurately recall:\n\nWeekly tuition:\n- Emma: $325 per week (full price)\n- Olivia: $292.50 per week (10% sibling discount)\n- Total weekly: $617.50\n\nInitial payments required:\n- Registration fee: $300 ($150 per child) - due upon enrollment\n- First week's tuition: $617.50 - due December 23, 2024\n- Supply fee: $400 ($200 per child) - due December 23, 2024\n- Total due December 23: $1,017.50\n\nStart date: January 6, 2025\nSchedule: Monday-Friday, 7:30 AM - 5:30 PM\n\nThe response should include both the weekly tuition breakdown and all initial payment amounts with their due dates.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a56e7f5e22e43d6b06920",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n    \"dimensions\": {\n        \"precision\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant accurately recalled the weekly tuition cost for both twins as $617.50, which includes the correct individual costs for Emma and Olivia, as well as the sibling discount applied to Olivia's tuition.\",\n            \"evidence\": [\n                \"The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child).\"\n            ]\n        },\n        \"recall\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant correctly recalled all the initial payments required before the twins start, including the one-time registration fee, first week's tuition, and the annual supply fee, along with their respective amounts and due dates.\",\n            \"evidence\": [\n                \"1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).\",\n                \"2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:\",\n                \"   - First week’s tuition: $617.50\",\n                \"   - Annual supply fee: $200 per child, totaling $400\",\n                \"   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**\"\n            ]\n        },\n        \"reasoning\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant provided a clear and logical breakdown of the costs, explaining the构成 of the weekly tuition and the initial payments required, which aligns with the information provided in the conversation.\"\n        },\n        \"proactivity\": {\n            \"score\": 4,\n            \"reasoning\": \"The assistant was proactive in summarizing the costs and due dates, ensuring the user had a clear understanding of the financial commitments before enrolling their children.\"\n        }\n    },\n    \"hallucination\": {\n        \"detected\": false,\n        \"claims\": [],\n        \"reasoning\": \"The response from the assistant is fully supported by the conversation and does not include any unsupported or contradicted factual claims.\"\n    },\n    \"overall_reasoning\": \"The assistant's response is comprehensive, accurate, and aligns with the information provided in the conversation. It covers all aspects of the question, including the weekly tuition cost and the initial payments required, demonstrating a high level of precision, recall, reasoning, and proactivity.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785353959,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 553,
+          "prompt_tokens": 2484,
+          "total_tokens": 3037,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 553,
+        "prompt_tokens": 2484,
+        "total_tokens": 3037,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a56e7f5e22e43d6b06920"
+    }
+  ],
+  "updated_at_epoch": 1785353967.641355,
+  "answer": "The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child).  \n\n\n### Initial payments required before they start:  \n1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).  \n2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:  \n   - First week’s tuition: $617.50  \n   - Annual supply fee: $200 per child, totaling $400  \n   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**  \n\n\nThus, initial payments are $300 (immediate registration) and $1,017.50 (by December 23, 2024).",
+  "result": {
+    "test_id": "layer1_20_daycare_enrollment",
+    "layer": "layer1",
+    "title": "Daycare Enrollment Process - Childcare Schedule and Fee Structure",
+    "mode": "enhanced_notes",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "daycare_enroll_001",
+        "memory": [
+          "Barbara Mitchell (parent) is enrolling twin daughters Emma and Olivia Mitchell (3 years old, born October 2021) at Bright Beginnings Learning Center (Enrollment Services, Sharon as assistant) for full-time daycare starting January 6, 2025 (when Barbara returns from maternity leave); conversation_id=daycare_enroll_001, timestamp=2024-11-15 10:30:00, call duration 48 minutes.",
+          "Schedule: Monday-Friday, 7:30 AM-5:30 PM; girls will be in Butterfly classroom (3-year-olds) with 12 children, 2 teachers (1:6 ratio); twins kept together unless parents request separation.",
+          "Tuition: $325/week per child; 10% sibling discount on second child (Emma: $325, Olivia: $292.50); total weekly tuition $617.50. Weekly tuition due Monday mornings via automatic withdrawal (checking/credit card).",
+          "Fees: One-time registration fee $150/child ($300 total) due immediately to hold spots; annual supply fee $200/child ($400 total) due with first tuition payment (December 23, 2024). First week's tuition ($617.50) due December 23, 2024; total due then: $617.50 + $400 = $1,017.50.",
+          "Meals: Breakfast 8:00-8:30 AM (arrive by 8:30 to eat); lunch and afternoon snack included. Nap time 12:30-2:30 PM; non-nappers have quiet activities (puzzles/books). Supplies needed: Change of clothes, nap blanket, small pillow (center provides cots).",
+          "Policies: Nut-free facility; sick policy (fever-free 24h without meds, no vomiting/diarrhea); late pick-up fee $1/minute/child (e.g., 10 minutes late = $20 total). Vacation credit after 6 months: 1 week/year at 50% tuition ($308.75/week). Closed major holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving + day after, Christmas Eve, Christmas); tuition remains due for holiday weeks.",
+          "Emma has peanut allergy: Requires allergy action plan from pediatrician; center keeps Benadryl/EpiPen as prescribed. Olivia has mild speech delay, receives speech therapy Wednesdays at 10 AM; center will accommodate therapy in quiet room during learning centers.",
+          "Parent communication: Daily app reports (meals, naps, activities, mood); monthly newsletters; parent-teacher conferences (October, March; request anytime).",
+          "Enrollment forms needed: Birth certificates, immunization records, emergency contacts, pediatrician info, allergy/medical info. Forms to be emailed to bmitchell@email.com within the hour. Tour scheduled for November 16, 2024 at 4 PM (Barbara to bring Emma and Olivia)."
+        ],
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "daycare_enroll_001"
+        }
+      }
+    ],
+    "answer": "The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child).  \n\n\n### Initial payments required before they start:  \n1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).  \n2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:  \n   - First week’s tuition: $617.50  \n   - Annual supply fee: $200 per child, totaling $400  \n   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**  \n\n\nThus, initial payments are $300 (immediate registration) and $1,017.50 (by December 23, 2024).",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 4
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 1.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The assistant accurately recalled the weekly tuition cost for both twins as $617.50, which includes the correct individual costs for Emma and Olivia, as well as the sibling discount applied to Olivia's tuition.",
+          "evidence": [
+            "The complete weekly tuition cost for both twins is **$617.50** (Emma: $325/week; Olivia: $292.50/week, with a 10% sibling discount on the second child)."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The assistant correctly recalled all the initial payments required before the twins start, including the one-time registration fee, first week's tuition, and the annual supply fee, along with their respective amounts and due dates.",
+          "evidence": [
+            "1. **One-time registration fee**: $150 per child, totaling **$300** (due immediately to hold spots).",
+            "2. **First week’s tuition + annual supply fee**: Due by December 23, 2024:",
+            "   - First week’s tuition: $617.50",
+            "   - Annual supply fee: $200 per child, totaling $400",
+            "   - **Total due December 23, 2024**: $617.50 + $400 = **$1,017.50**"
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The assistant provided a clear and logical breakdown of the costs, explaining the构成 of the weekly tuition and the initial payments required, which aligns with the information provided in the conversation."
+        },
+        "proactivity": {
+          "score": 4,
+          "reasoning": "The assistant was proactive in summarizing the costs and due dates, ensuring the user had a clear understanding of the financial commitments before enrolling their children."
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The response from the assistant is fully supported by the conversation and does not include any unsupported or contradicted factual claims."
+      },
+      "overall_reasoning": "The assistant's response is comprehensive, accurate, and aligns with the information provided in the conversation. It covers all aspects of the question, including the weekly tuition cost and the initial payments required, demonstrating a high level of precision, recall, reasoning, and proactivity."
+    }
+  }
+}

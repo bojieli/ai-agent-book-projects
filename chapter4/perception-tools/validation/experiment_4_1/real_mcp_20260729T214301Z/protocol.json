@@ -1,0 +1,71 @@
+{
+  "experiment": "4-1",
+  "title": "Perception tools MCP server five-category live campaign",
+  "authority": "book/chapter4.md:166",
+  "transport": "mcp-stdio",
+  "fail_closed": true,
+  "mutation_root_environment": "PERCEPTION_MUTATION_ROOT",
+  "categories": {
+    "search": {
+      "required_cases": [
+        "web_search",
+        "knowledge_base_search",
+        "download"
+      ]
+    },
+    "multimodal": {
+      "required_cases": [
+        "webpage_reader",
+        "document_reader_pdf",
+        "document_reader_docx",
+        "document_reader_pptx",
+        "image_ocr",
+        "image_analyze",
+        "audio_transcribe",
+        "video_parser",
+        "video_analyze"
+      ]
+    },
+    "filesystem": {
+      "required_cases": [
+        "file_reader",
+        "grep",
+        "directory_list",
+        "filesystem_copy",
+        "filesystem_move",
+        "filesystem_delete"
+      ],
+      "required_safety_cases": [
+        "reject_parent_traversal",
+        "reject_absolute_path",
+        "reject_escaping_symlink"
+      ]
+    },
+    "public_data": {
+      "required_cases": [
+        "weather",
+        "yfinance_quote",
+        "currency_converter",
+        "wikipedia_search",
+        "arxiv_search"
+      ]
+    },
+    "private_data": {
+      "required_cases": [
+        "calendar_events",
+        "notion_search"
+      ],
+      "credential_blocking_allowed": true
+    }
+  },
+  "acceptance": {
+    "catalog_from_real_mcp": true,
+    "catalog_contains_all_required_tools": true,
+    "every_success_is_substantive": true,
+    "filesystem_receipts_include_pre_post_hashes": true,
+    "filesystem_isolation_probes_are_rejected": true,
+    "private_sources_require_live_authorized_success": true,
+    "missing_or_invalid_credentials_never_pass": true,
+    "manifest_hashes_every_campaign_file": true
+  }
+}

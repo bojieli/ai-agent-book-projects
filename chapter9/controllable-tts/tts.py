@@ -1,138 +1,123 @@
-"""
-TTS 合成层（OpenAI TTS）
-========================
+"""Fish Audio S1 zero-shot cloning execution layer."""
 
-Provider 适配：书中实验用 Fish Audio 的控制标记 + 声音克隆参考语音库。
-Fish Audio 无可用 key，这里改用 OpenAI TTS 演示相同思路：
-
-  - 首选 gpt-4o-mini-tts：支持 `instructions` 参数，可用一段风格提示词精确
-    控制情感 / 语速 / 口吻，最贴近「控制标记 -> 风格化语音」的语义；
-  - 若该模型不可用，自动兜底到 tts-1：不支持 instructions，改用多 voice +
-    `speed` 参数 + 文本级停顿近似。
-
-一段控制标记文本被解析成多个片段后：
-  - speech 片段：各自用对应参考语音（同一 base voice + 不同 instructions）合成；
-  - silence 片段：用 ffmpeg 生成真实静音；
-最后用 ffmpeg 把所有片段按顺序拼成一个 mp3（音色一致、韵律/情感/停顿不同）。
-"""
+from __future__ import annotations
 
 import os
 import subprocess
 import tempfile
+from pathlib import Path
+from typing import Any
 
-from openai import OpenAI
+from voice_library import DEFAULT_MANIFEST, load_voice_library, profile_key
 
-from voice_library import VOICE_LIBRARY, BASE_VOICE, build_instructions, speed_factor, profile_key
-
-# 可用 TTS_MODEL 环境变量覆盖；默认首选 gpt-4o-mini-tts
-PREFERRED_MODEL = os.getenv("TTS_MODEL", "gpt-4o-mini-tts")
-FALLBACK_MODEL = "tts-1"
-
-_client = None
-_active_model = None  # 首次调用后确定实际使用的模型
+MODEL = "s1"
 
 
-def _get_client():
-    global _client
-    if _client is None:
-        # timeout + 自动重试：单次网络/SSL 抖动不至于让整段合成崩溃
-        _client = OpenAI(timeout=60.0, max_retries=3)
-    return _client
+def _session():
+    from fish_audio_sdk import Session
+
+    key = os.getenv("FISH_API_KEY")
+    if not key:
+        raise RuntimeError("Fish S1 synthesis requires FISH_API_KEY")
+    return Session(key)
 
 
-def _synth_call(model, text, voice, instructions, speed, out_path):
-    """真正调用 OpenAI TTS。gpt-4o-mini-tts 用 instructions；tts-1 用 speed。"""
-    client = _get_client()
-    kwargs = dict(model=model, voice=voice, input=text, response_format="mp3")
-    if model == "tts-1":
-        # tts-1 不支持 instructions，用 speed 参数近似语速控制
-        kwargs["speed"] = max(0.25, min(4.0, speed))
-    else:
-        kwargs["instructions"] = instructions
-    with client.audio.speech.with_streaming_response.create(**kwargs) as resp:
-        resp.stream_to_file(out_path)
+def synth_speech(
+    text: str,
+    emotion: str,
+    speed: str,
+    style: str,
+    emphasis: bool,
+    out_path: str | Path,
+    *,
+    voice_library: dict[str, Any],
+) -> dict[str, Any]:
+    """Clone from the selected real reference clip using Fish S1."""
+    from fish_audio_sdk import Prosody, ReferenceAudio, TTSRequest
 
-
-def synth_speech(text, emotion, speed, style, emphasis, out_path):
-    """
-    合成一个 speech 片段，返回实际使用的 (model, voice, instructions/speed) 供打印。
-    音色固定 = BASE_VOICE，保证整段音色一致（模拟 Fish Audio 的音色一致性）。
-    """
-    global _active_model
     key = profile_key(emotion, speed, style)
-    profile = VOICE_LIBRARY.get(key)
-    voice = profile["base_voice"] if profile else BASE_VOICE
-    instructions = build_instructions(emotion, speed, style, emphasis)
-    spd = speed_factor(speed)
+    profile = voice_library["profiles"][key]
+    reference_path = Path(profile["absolute_path"])
+    # S1 supports native parentheses markers, including real non-verbal sounds.
+    fish_text = f"(emphasis){text}" if emphasis else text
+    request = TTSRequest(
+        text=fish_text,
+        references=[ReferenceAudio(audio=reference_path.read_bytes(), text=profile["transcript"])],
+        format="mp3",
+        prosody=Prosody(speed=1.0, volume=0),
+    )
+    Path(out_path).write_bytes(b"".join(_session().tts(request, backend=MODEL)))
+    return {
+        "model": MODEL,
+        "provider": "Fish Audio",
+        "profile": key,
+        "reference_path": reference_path.name,
+        "reference_sha256": profile["sha256"],
+        "fish_text": fish_text,
+    }
 
-    model = _active_model or PREFERRED_MODEL
-    try:
-        _synth_call(model, text, voice, instructions, spd, out_path)
-        _active_model = model
-    except Exception as e:
-        # 首选模型不可用时兜底到 tts-1
-        if model != FALLBACK_MODEL:
-            print(f"  [warn] 模型 {model} 调用失败({repr(e)[:80]})，兜底到 {FALLBACK_MODEL}")
-            _synth_call(FALLBACK_MODEL, text, voice, instructions, spd, out_path)
-            _active_model = FALLBACK_MODEL
-            model = FALLBACK_MODEL
-        else:
-            raise
-    return {"model": model, "voice": voice, "profile": key,
-            "instructions": instructions, "speed_factor": spd}
+
+def synth_direct_reference(text: str, reference_id: str, out_path: str | Path) -> dict[str, Any]:
+    """Fish S1 without the 24-clip control library (configuration A)."""
+    from fish_audio_sdk import TTSRequest
+
+    request = TTSRequest(text=text, reference_id=reference_id, format="mp3")
+    Path(out_path).write_bytes(b"".join(_session().tts(request, backend=MODEL)))
+    return {"provider": "Fish Audio", "model": MODEL, "reference_id": reference_id}
 
 
-def make_silence(ms, out_path):
-    """用 ffmpeg 生成一段真实静音 mp3（会计入总时长，可被 ffprobe 验证）。"""
+def make_silence(ms: int, out_path: str | Path) -> None:
     subprocess.run(
-        ["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono",
-         "-t", f"{ms/1000:.3f}", "-q:a", "9", out_path],
-        check=True, capture_output=True,
+        ["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
+         "-t", f"{ms / 1000:.3f}", "-q:a", "9", str(out_path)],
+        check=True,
     )
 
 
-def concat_mp3(part_paths, out_path):
-    """用 ffmpeg concat demuxer 把多个 mp3 片段按顺序拼接（统一重编码，避免时基问题）。"""
-    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
-        for p in part_paths:
-            f.write(f"file '{os.path.abspath(p)}'\n")
-        list_path = f.name
+def concat_mp3(parts: list[Path], out_path: str | Path) -> None:
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as handle:
+        for part in parts:
+            handle.write(f"file '{part.resolve()}'\n")
+        list_path = handle.name
     try:
         subprocess.run(
-            ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_path,
-             "-ar", "24000", "-ac", "1", "-b:a", "64k", out_path],
-            check=True, capture_output=True,
+            ["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", list_path,
+             "-ar", "44100", "-ac", "1", "-b:a", "128k", str(out_path)],
+            check=True,
         )
     finally:
         os.unlink(list_path)
 
 
-def synthesize_segments(segments, out_path, workdir):
-    """
-    把 parse() 得到的片段列表合成为一个完整 mp3。
-    返回每个片段的合成信息列表（供打印验证）。
-    """
+def synthesize_segments(
+    segments,
+    out_path,
+    workdir,
+    *,
+    manifest_path: str | Path = DEFAULT_MANIFEST,
+):
     if not segments:
-        # 解析结果为空（例如输入只有控制标记、没有任何语音正文）时直接给出
-        # 清晰报错，避免走 ffmpeg concat 空列表产生晦涩的 CalledProcessError。
-        raise SystemExit("错误：没有可合成的语音片段（输入可能只含控制标记，没有正文）。")
-    os.makedirs(workdir, exist_ok=True)
+        raise ValueError("No speech segments to synthesize")
+    library = load_voice_library(manifest_path)
+    workdir = Path(workdir)
+    workdir.mkdir(parents=True, exist_ok=True)
     parts, info = [], []
-    for i, seg in enumerate(segments):
-        part_path = os.path.join(workdir, f"seg_{i:02d}.mp3")
-        if seg["type"] == "silence":
-            make_silence(seg["ms"], part_path)
-            info.append({"type": "silence", "ms": seg["ms"]})
+    for index, segment in enumerate(segments):
+        path = workdir / f"segment_{index:02d}.mp3"
+        if segment["type"] == "silence":
+            make_silence(segment["ms"], path)
+            meta = {"type": "silence", "ms": segment["ms"]}
         else:
-            meta = synth_speech(seg["text"], seg["emotion"], seg["speed"],
-                                seg["style"], seg.get("emphasis", False), part_path)
-            meta["type"] = "speech"
-            meta["text"] = seg["text"]
-            info.append(meta)
-        parts.append(part_path)
-
+            meta = synth_speech(
+                segment["text"], segment["emotion"], segment["speed"], segment["style"],
+                segment.get("emphasis", False), path, voice_library=library,
+            )
+            meta.update(type="speech", text=segment["text"])
+        parts.append(path)
+        info.append(meta)
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     if len(parts) == 1:
-        os.replace(parts[0], out_path)
+        Path(out_path).write_bytes(parts[0].read_bytes())
     else:
         concat_mp3(parts, out_path)
     return info

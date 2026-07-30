@@ -1,0 +1,27 @@
+{
+  "suite": "combined",
+  "case_id": "all-01",
+  "records": {
+    "oak": "2025-09-13 08:00:00",
+    "pine": "2025-09-14 08:00:00"
+  },
+  "primary": "core-a",
+  "fallback": "backup-a",
+  "token": "CFG-711",
+  "artifacts": [
+    "observe.txt",
+    "recover.txt",
+    "deliver.txt"
+  ],
+  "requested": "config.txt",
+  "actual": "config_live.txt",
+  "document_token": "CFG-711",
+  "system": {
+    "os": "Linux",
+    "shell": "bash",
+    "python": "3.11.9",
+    "cwd": "workspace/one",
+    "manager": "apt",
+    "package": "jq"
+  }
+}

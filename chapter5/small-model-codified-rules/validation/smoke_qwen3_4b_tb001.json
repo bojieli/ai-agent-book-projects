@@ -1,0 +1,432 @@
+{
+  "schema_version": "2.0",
+  "experiment": "5-3",
+  "generated_at_utc": "2026-07-29T18:33:57.706070+00:00",
+  "protocol": {
+    "path": "experiment_protocol.json",
+    "sha256": "1c97333e9df04680b1328b482bfc916c330979013c4af2b1974280914f48b19b",
+    "content": {
+      "schema_version": "1.0",
+      "experiment": "5-3",
+      "manuscript_source": "book/chapter5.md#experiment-5-3",
+      "design": "controlled tau-bench airline policy experiment",
+      "model": {
+        "name": "qwen3:4b",
+        "runtime": "Ollama OpenAI-compatible chat.completions",
+        "temperature": 0
+      },
+      "matched_arms": [
+        "natural-language policy plus naive execution tool",
+        "natural-language policy plus checklist parameters plus server-ground-truth gate"
+      ],
+      "cases": {
+        "count": 60,
+        "factorial_matrix": {
+          "cabin": [
+            "basic_economy",
+            "economy_flex",
+            "business"
+          ],
+          "hours_since_booking": [
+            5.0,
+            24.0,
+            24.1,
+            26.0,
+            120.0
+          ],
+          "flight_status": [
+            "scheduled",
+            "cancelled_by_airline",
+            "delayed_major",
+            "delayed_minor"
+          ]
+        },
+        "user_variants": 5
+      },
+      "metrics": [
+        "task success rate",
+        "policy violations",
+        "invalid tool calls",
+        "user experience proxy",
+        "checklist expected-value mismatch rate",
+        "paired exact McNemar significance"
+      ],
+      "acceptance": {
+        "same_real_qwen3_4b_model_both_arms": true,
+        "all_60_cases_attempted_in_both_arms": true,
+        "server_policy_uses_database_facts_and_server_clock_only": true,
+        "raw_messages_tool_calls_provider_receipts_and_usage_saved": true
+      }
+    }
+  },
+  "config": {
+    "provider": "ollama",
+    "small_model": "qwen3:4b",
+    "big_model": null,
+    "mode": "both",
+    "task_ids": [
+      "TB001-basic_economy-h5p0-scheduled"
+    ]
+  },
+  "arms": [
+    {
+      "key": "small_control",
+      "mode": "control",
+      "model": "qwen3:4b",
+      "label": "小模型·纯自然语言",
+      "role": "控制组",
+      "summary": {
+        "n": 1,
+        "success": 1,
+        "success_rate": 1.0,
+        "violations": 0,
+        "invalid": 0,
+        "user_experience_success": 1,
+        "user_experience_rate": 1.0,
+        "checklist_total": 0,
+        "checklist_mismatch": 0
+      },
+      "results": [
+        {
+          "task_id": "TB001-basic_economy-h5p0-scheduled",
+          "expect_refundable": true,
+          "refunded": true,
+          "success": true,
+          "wrongful_refund": false,
+          "wrongful_refusal": false,
+          "invalid_tool_calls": 0,
+          "offered_alt": null,
+          "explained_policy": true,
+          "user_experience_ok": true,
+          "checklist_records": [],
+          "source": {
+            "design": "controlled tau-bench airline policy matrix",
+            "cabin": "basic_economy",
+            "hours_since_booking": 5.0,
+            "flight_status": "scheduled",
+            "user_variant": 0
+          },
+          "final_text": "The reservation TB001 has been successfully canceled, and the full refund of **501.00 yuan** has been processed to your original payment method. \n\nThis refund is allowed under the policy because your booking was made within 24 hours (5 hours ago) for a basic_economy ticket. No additional action is required — the refund will appear in your account within 3-5 business days. \n\nThank you for your patience! ✈️",
+          "transcript": [
+            {
+              "tool": "get_reservation",
+              "args": {
+                "reservation_id": "TB001"
+              },
+              "result": {
+                "status": "ok",
+                "reservation_id": "TB001",
+                "passenger_name": "Passenger 001",
+                "flight_no": "TAU001",
+                "route": "SFO-JFK",
+                "depart_date": "2026-09-01",
+                "cabin": "basic_economy",
+                "price": 501.0,
+                "reservation_status": "active",
+                "flight_status": "scheduled",
+                "server_time": "2026-07-17T12:00:00",
+                "booked_at": "2026-07-17T07:00:00",
+                "hours_since_booking": 5.0
+              }
+            },
+            {
+              "tool": "cancel_reservation",
+              "args": {
+                "reservation_id": "TB001"
+              },
+              "result": {
+                "status": "ok",
+                "message": "预订 TB001 已取消，全额退款 501.0 元已原路退回。",
+                "refund_amount": 501.0
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是 SkyWing 航空公司的客服 Agent，可以帮乘客查询和取消预订。\n\n【退款政策（自然语言）】\n- 经济舱基础票（basic_economy）默认不可退款。\n- 例外 1：下单后 24 小时内，可全额退款。\n- 例外 2：航班被航司取消，或发生重大延误（延误 ≥ 3 小时），可全额退款。\n- 经济舱灵活票（economy_flex）与商务舱（business）可全额退款。\n- 若不可退款：应礼貌解释政策，并主动提议替代方案（如保留客票改签、申请旅行信用点），\n  绝不能给用户退款。\n\n请先判断能否退款，再决定是否调用取消/退款工具。乘客自述的信息（舱位、下单时间等）\n可能不准确，应以系统查询到的预订信息为准。"
+            },
+            {
+              "role": "user",
+              "content": "Please cancel reservation TB001 and issue the refund allowed by policy."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "id": "call_erpwan7b",
+                  "type": "function",
+                  "function": {
+                    "name": "get_reservation",
+                    "arguments": "{\"reservation_id\":\"TB001\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "call_erpwan7b",
+              "content": "{\"status\": \"ok\", \"reservation_id\": \"TB001\", \"passenger_name\": \"Passenger 001\", \"flight_no\": \"TAU001\", \"route\": \"SFO-JFK\", \"depart_date\": \"2026-09-01\", \"cabin\": \"basic_economy\", \"price\": 501.0, \"reservation_status\": \"active\", \"flight_status\": \"scheduled\", \"server_time\": \"2026-07-17T12:00:00\", \"booked_at\": \"2026-07-17T07:00:00\", \"hours_since_booking\": 5.0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "id": "call_lnp7jhzj",
+                  "type": "function",
+                  "function": {
+                    "name": "cancel_reservation",
+                    "arguments": "{\"reservation_id\":\"TB001\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "call_lnp7jhzj",
+              "content": "{\"status\": \"ok\", \"message\": \"预订 TB001 已取消，全额退款 501.0 元已原路退回。\", \"refund_amount\": 501.0}"
+            },
+            {
+              "role": "assistant",
+              "content": "The reservation TB001 has been successfully canceled, and the full refund of **501.00 yuan** has been processed to your original payment method. \n\nThis refund is allowed under the policy because your booking was made within 24 hours (5 hours ago) for a basic_economy ticket. No additional action is required — the refund will appear in your account within 3-5 business days. \n\nThank you for your patience! ✈️"
+            }
+          ],
+          "provider_receipts": [
+            {
+              "turn": 1,
+              "response_id": "chatcmpl-459",
+              "response_model": "qwen3:4b",
+              "finish_reason": "tool_calls",
+              "usage": {
+                "prompt_tokens": 422,
+                "completion_tokens": 573,
+                "total_tokens": 995,
+                "cached_prompt_tokens": null
+              }
+            },
+            {
+              "turn": 2,
+              "response_id": "chatcmpl-696",
+              "response_model": "qwen3:4b",
+              "finish_reason": "tool_calls",
+              "usage": {
+                "prompt_tokens": 616,
+                "completion_tokens": 1024,
+                "total_tokens": 1640,
+                "cached_prompt_tokens": null
+              }
+            },
+            {
+              "turn": 3,
+              "response_id": "chatcmpl-959",
+              "response_model": "qwen3:4b",
+              "finish_reason": "stop",
+              "usage": {
+                "prompt_tokens": 697,
+                "completion_tokens": 456,
+                "total_tokens": 1153,
+                "cached_prompt_tokens": null
+              }
+            }
+          ],
+          "duration_s": 34.697
+        }
+      ]
+    },
+    {
+      "key": "small_codified",
+      "mode": "codified",
+      "model": "qwen3:4b",
+      "label": "小模型+代码化规则",
+      "role": "实验组",
+      "summary": {
+        "n": 1,
+        "success": 1,
+        "success_rate": 1.0,
+        "violations": 0,
+        "invalid": 0,
+        "user_experience_success": 1,
+        "user_experience_rate": 1.0,
+        "checklist_total": 1,
+        "checklist_mismatch": 0
+      },
+      "results": [
+        {
+          "task_id": "TB001-basic_economy-h5p0-scheduled",
+          "expect_refundable": true,
+          "refunded": true,
+          "success": true,
+          "wrongful_refund": false,
+          "wrongful_refusal": false,
+          "invalid_tool_calls": 0,
+          "offered_alt": null,
+          "explained_policy": true,
+          "user_experience_ok": true,
+          "checklist_records": [
+            {
+              "reservation_id": "TB001",
+              "expected_refundable": true,
+              "actual_refundable": true,
+              "match": true,
+              "actual_reason": "within_24h",
+              "expected_reason": "within_24h"
+            }
+          ],
+          "source": {
+            "design": "controlled tau-bench airline policy matrix",
+            "cabin": "basic_economy",
+            "hours_since_booking": 5.0,
+            "flight_status": "scheduled",
+            "user_variant": 0
+          },
+          "final_text": "The reservation TB001 has been successfully canceled and a full refund of **501.0 yuan** has been issued. This was approved under the policy exception for bookings made within 24 hours (your reservation was booked 5 hours ago). \n\n✅ **Refund Details**:  \n- Refund Amount: 501.0 yuan  \n- Reason: within_24h (policy exception)  \n- Status: Confirmed by system (db_truth matches your checklist)  \n\nNo further action is required. Thank you for your patience! ✈️",
+          "transcript": [
+            {
+              "tool": "get_reservation",
+              "args": {
+                "reservation_id": "TB001"
+              },
+              "result": {
+                "status": "ok",
+                "reservation_id": "TB001",
+                "passenger_name": "Passenger 001",
+                "flight_no": "TAU001",
+                "route": "SFO-JFK",
+                "depart_date": "2026-09-01",
+                "cabin": "basic_economy",
+                "price": 501.0,
+                "reservation_status": "active",
+                "flight_status": "scheduled",
+                "server_time": "2026-07-17T12:00:00",
+                "booked_at": "2026-07-17T07:00:00",
+                "hours_since_booking": 5.0
+              }
+            },
+            {
+              "tool": "cancel_reservation",
+              "args": {
+                "reservation_id": "TB001",
+                "expected_refundable": true,
+                "expected_reason": "within_24h"
+              },
+              "result": {
+                "status": "ok",
+                "message": "已按数据库真值校验通过（within_24h）。预订 TB001 已取消，全额退款 501.0 元。",
+                "refund_amount": 501.0,
+                "db_truth": {
+                  "refundable": true,
+                  "reason": "within_24h"
+                }
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是 SkyWing 航空公司的客服 Agent，可以帮乘客查询和取消预订。\n\n【退款政策（自然语言）】\n- 经济舱基础票（basic_economy）默认不可退款。\n- 例外 1：下单后 24 小时内，可全额退款。\n- 例外 2：航班被航司取消，或发生重大延误（延误 ≥ 3 小时），可全额退款。\n- 经济舱灵活票（economy_flex）与商务舱（business）可全额退款。\n- 若不可退款：应礼貌解释政策，并主动提议替代方案（如保留客票改签、申请旅行信用点），\n  绝不能给用户退款。\n\n请先判断能否退款，再决定是否调用取消/退款工具。乘客自述的信息（舱位、下单时间等）\n可能不准确，应以系统查询到的预订信息为准。\n\n【操作要求】\n调用 cancel_reservation 前，请先用 get_reservation 查询真实预订信息，逐条核对退款政策，\n并在 expected_refundable / expected_reason 参数中如实填写你的判断（这是一份调用前 checklist）。\n系统会以数据库真值为准进行校验：若你的判断与真值不符或存在违规，调用会被拒绝。"
+            },
+            {
+              "role": "user",
+              "content": "Please cancel reservation TB001 and issue the refund allowed by policy."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "id": "call_wmhjlrrk",
+                  "type": "function",
+                  "function": {
+                    "name": "get_reservation",
+                    "arguments": "{\"reservation_id\":\"TB001\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "call_wmhjlrrk",
+              "content": "{\"status\": \"ok\", \"reservation_id\": \"TB001\", \"passenger_name\": \"Passenger 001\", \"flight_no\": \"TAU001\", \"route\": \"SFO-JFK\", \"depart_date\": \"2026-09-01\", \"cabin\": \"basic_economy\", \"price\": 501.0, \"reservation_status\": \"active\", \"flight_status\": \"scheduled\", \"server_time\": \"2026-07-17T12:00:00\", \"booked_at\": \"2026-07-17T07:00:00\", \"hours_since_booking\": 5.0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "id": "call_mx5v341w",
+                  "type": "function",
+                  "function": {
+                    "name": "cancel_reservation",
+                    "arguments": "{\"reservation_id\":\"TB001\",\"expected_refundable\":true,\"expected_reason\":\"within_24h\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "call_mx5v341w",
+              "content": "{\"status\": \"ok\", \"message\": \"已按数据库真值校验通过（within_24h）。预订 TB001 已取消，全额退款 501.0 元。\", \"refund_amount\": 501.0, \"db_truth\": {\"refundable\": true, \"reason\": \"within_24h\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "The reservation TB001 has been successfully canceled and a full refund of **501.0 yuan** has been issued. This was approved under the policy exception for bookings made within 24 hours (your reservation was booked 5 hours ago). \n\n✅ **Refund Details**:  \n- Refund Amount: 501.0 yuan  \n- Reason: within_24h (policy exception)  \n- Status: Confirmed by system (db_truth matches your checklist)  \n\nNo further action is required. Thank you for your patience! ✈️"
+            }
+          ],
+          "provider_receipts": [
+            {
+              "turn": 1,
+              "response_id": "chatcmpl-730",
+              "response_model": "qwen3:4b",
+              "finish_reason": "tool_calls",
+              "usage": {
+                "prompt_tokens": 735,
+                "completion_tokens": 308,
+                "total_tokens": 1043,
+                "cached_prompt_tokens": null
+              }
+            },
+            {
+              "turn": 2,
+              "response_id": "chatcmpl-261",
+              "response_model": "qwen3:4b",
+              "finish_reason": "tool_calls",
+              "usage": {
+                "prompt_tokens": 929,
+                "completion_tokens": 578,
+                "total_tokens": 1507,
+                "cached_prompt_tokens": null
+              }
+            },
+            {
+              "turn": 3,
+              "response_id": "chatcmpl-507",
+              "response_model": "qwen3:4b",
+              "finish_reason": "stop",
+              "usage": {
+                "prompt_tokens": 1057,
+                "completion_tokens": 482,
+                "total_tokens": 1539,
+                "cached_prompt_tokens": null
+              }
+            }
+          ],
+          "duration_s": 20.097
+        }
+      ]
+    }
+  ],
+  "paired_analysis": {
+    "test": "two-sided exact McNemar/binomial test",
+    "n": 1,
+    "control_only": 0,
+    "codified_only": 0,
+    "discordant": 0,
+    "p_value": 1.0,
+    "control_success_rate": 1.0,
+    "codified_success_rate": 1.0,
+    "success_rate_delta": 0.0,
+    "codified_significantly_higher": false
+  }
+}

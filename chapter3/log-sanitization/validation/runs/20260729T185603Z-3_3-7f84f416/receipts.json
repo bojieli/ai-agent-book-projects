@@ -1,0 +1,2090 @@
+[
+  {
+    "purpose": "llm:structured_cn",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "客户身份证号11010519491231002X，手机号13800138000。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:54:55.93163Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 4000281459,
+      "load_duration": 841988750,
+      "prompt_eval_count": 445,
+      "prompt_eval_duration": 68767750,
+      "eval_count": 76,
+      "eval_duration": 337824706,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\":[{\"type\":\"secret\",\"value\":\"11010519491231002X\",\"start\":0,\"end\":18,\"confidence\":1},{\"type\":\"secret\",\"value\":\"13800138000\",\"start\":0,\"end\":11,\"confidence\":1}]}",
+        "thinking": "好的，我现在需要处理用户提供的客户信息，并检查是否有敏感数据。用户给出的客户身份证号是11010519491231002X，手机号是13800138000。首先，我要确认这些数据是否符合敏感信息的定义。\n\n根据用户提供的类型，敏感信息包括身份证号、手机号等。身份证号有18位，而手机号是11位，但用户提供的都是18位和11位，这可能是一个错误，因为通常身份证号是18位，而手机号通常是11位。不过用户可能输入时有误，或者需要确认是否正确。同样，手机号是13800138000，共11位，这可能是一个错误，但用户可能希望保留。\n\n接下来，我需要检查是否有其他可能的字段或类型被提及，但用户的信息中只有这两个部分。因此，正确的做法是返回这两个部分的值，但需要确保它们是敏感信息。例如，身份证号和手机号都是敏感信息，因此应该直接返回它们的值，而无需额外处理。\n\n最后，确保返回的JSON格式正确，没有其他字段或错误信息，并且只包含敏感数据。这样用户可以清楚知道信息是否被泄露。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 4001.205,
+    "usage": {
+      "prompt_tokens": 445,
+      "completion_tokens": 76
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:structured_cn",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "客户身份证号11010519491231002X，手机号[REDACTED_CN_PHONE]。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:54:58.933544Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3000818084,
+      "load_duration": 63240125,
+      "prompt_eval_count": 565,
+      "prompt_eval_duration": 84096917,
+      "eval_count": 75,
+      "eval_duration": 343976290,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\":[{\"type\":\"cn_id_card\",\"value\":\"11010519491231002X\",\"start\":0,\"end\":18,\"confidence\":1},{\"type\":\"cn_phone\",\"value\":\"[REDACTED_CN_PHONE]\",\"start\":0,\"end\":0,\"confidence\":1}]}",
+        "thinking": "好的，我现在需要处理用户提供的敏感信息，并按照要求返回精确的子字符串。用户给出的客户身份证号是11010519491231002X，手机号是[REDACTED_CN_PHONE]。首先，我要确认用户的需求，他们希望返回的值是身份证号和手机号中的敏感字段，但不包括其他信息。\n\n首先，身份证号的长度是18位，而用户提供的身份证号是11010519491231002X，这明显超过了标准的18位，所以可能用户输入时有误，或者存在其他问题。不过根据用户的要求，只要提取出身份证号和手机号中的敏感字段，不管是否正确，都要返回。因此，我需要检查身份证号中的敏感字段，比如可能的身份证号字段，但用户提供的身份证号是11010519491231002X，其中包含的字符是11010519491231002X，这可能是一个身份证号的前几位，但需要确认是否符合标准。不过根据用户的要求，只要提取出这些字段，不管是否正确，所以直接返回身份证号中的敏感部分，即11010519491231002X，手机号中的[REDACTED_CN_PHONE]，但需要确保没有其他字段被包含。\n\n接下来，检查手机号中的[REDACTED_CN_PHONE]，这里需要确认是否正确，但用户已经标记为[REDACTED_CN_PHONE]，所以直接返回这个部分。同时，确保不包含其他字段，比如地址、医疗记录等，只保留身份证号和手机号中的敏感信息。因此，最终的输出应该是包含身份证号和手机号的字段，但不包含其他信息。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3002.355,
+    "usage": {
+      "prompt_tokens": 565,
+      "completion_tokens": 75
+    }
+  },
+  {
+    "purpose": "llm:structured_us",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "SSN 123-45-6789; Visa 4111 1111 1111 1111; ticket 123-45-6780 is not an SSN."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:01.865443Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2929626167,
+      "load_duration": 57873167,
+      "prompt_eval_count": 511,
+      "prompt_eval_duration": 87684958,
+      "eval_count": 138,
+      "eval_duration": 631922460,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"credit_card\",\n      \"value\": \"Visa 4111 1111 1111 1111\"\n     , \"start\": 0,\n      \"end\": 14,\n      \"confidence\": 0.5\n    },\n    {\n      \"type\": \"ticket\",\n      \"value\": \"ticket 123-45-6780\"\n     , \"start\": 0,\n      \"end\": 14,\n      \"confidence\": 0.5\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided some information and wants me to check for any sensitive data. The logs mention SSN 123-45-6789, Visa 4111 1111 1111 1111, and a ticket 123-45-6780 that's not an SSN. \n\nFirst, I need to look at each part. The SSN is a valid format, so that's not a problem. The Visa number is a credit card number, which is a sensitive field. The ticket number is a ticket ID, which isn't an SSN. The user is pointing out that the ticket isn't an SSN, which is correct.\n\nNow, the task is to return exact substrings only. The user mentioned to return JSON with the fields as specified. So, I need to make sure I'm only listing the exact fields without adding anything else. \n\nLooking at the provided information, the Visa number is a credit card number, which is a sensitive field. The ticket number is a ticket ID, which isn't an SSN. So the exact substrings would be Visa and ticket. \n\nI should format this as JSON with those fields. Let me double-check that there are no other fields mentioned. The user's message doesn't include any other fields like cn_id_card or similar, so only Visa and ticket are relevant. \n\nYes, that's all. So the final answer should be a JSON object with those two fields.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2932.027,
+    "usage": {
+      "prompt_tokens": 511,
+      "completion_tokens": 138
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:structured_us",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "SSN [REDACTED_US_SSN]; Visa [REDACTED_CREDIT_CARD]; ticket [REDACTED_US_SSN] is not an SSN."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:05.13045Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3261812333,
+      "load_duration": 58492292,
+      "prompt_eval_count": 540,
+      "prompt_eval_duration": 92659666,
+      "eval_count": 125,
+      "eval_duration": 588718246,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"ssn\",\n      \"value\": \"[REDACTED_US_SSN]\"\n     , \"start\": 0,\n      \"end\": 0\n     , \"confidence\": 0.0\n    },\n    {\n      \"type\": \"credit_card\",\n      \"value\": \"[REDACTED_CREDIT_CARD]\"\n     , \"start\": 0,\n      \"end\": 0\n     , \"confidence\": 0.0\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided some information and wants me to extract specific substrings. The logs mention SSN, Visa, and ticket. But they also note that the ticket is not an SSN. \n\nFirst, I need to check if the ticket is a real value. The ticket is [REDACTED_US_SSN], which is a substring. But wait, the user says it's not an SSN. So maybe the ticket is a placeholder or a field name. The exact substrings to return are the ones mentioned in the problem statement. \n\nThe problem says to return exact substrings only. So even if the ticket is a field name, I should return that. The user's instruction says to return JSON with the exact substrings, not the entire string. So even though the ticket is not an SSN, the problem expects the [REDACTED_US_SSN] as a substring. \n\nI need to make sure I'm not missing any other fields. The other parts are Visa and ticket. Visa is [REDACTED_CREDIT_CARD], which is a substring. So the exact substrings to return are Visa and ticket. \n\nWait, but the user's message says that the ticket is not an SSN. So maybe the ticket is a field name, and the [REDACTED_US_SSN] is part of that. So the correct substrings to return are Visa and ticket. \n\nI should format the JSON with those two entries. Let me double-check the problem statement to ensure I'm not missing anything. The problem specifies to return exact substrings, so even if the ticket is a field name, I need to include that. \n\nYes, so the final answer should be JSON with Visa and ticket as the exact substrings.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3264.16,
+    "usage": {
+      "prompt_tokens": 540,
+      "completion_tokens": 125
+    }
+  },
+  {
+    "purpose": "llm:credentials",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "postgres://alice:S3cr3t-Pass@db.internal:5432/prod failed; retry token=not-a-real-token-but-secret"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:07.628268Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2495765667,
+      "load_duration": 54352875,
+      "prompt_eval_count": 456,
+      "prompt_eval_duration": 70901084,
+      "eval_count": 105,
+      "eval_duration": 486157123,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"field_name\",\n      \"value\": \"retry_token\"\n     , \"start\": 0,\n      \"end\": 1\n     , \"confidence\": 1\n    },\n    {\n      \"type\": \"value\",\n      \"value\": \"not-a-real-token-but-secret\",\n      \"start\": 1,\n      \"end\": 2\n     , \"confidence\": 1\n    }\n  ]\n}",
+        "thinking": "Okay, let's look at the user's query. They provided a PostgreSQL connection string with a failed message and a retry token that's a secret. The task is to extract exact substrings from the logs that are either sensitive information or field names, instructions, product codes, etc.\n\nFirst, I need to parse the log entry. The main part is the connection string: postgres://alice:S3cr3t-Pass@db.internal:5432/prod. The error message is \"failed; retry token=not-a-real-token-but-secret\". \n\nLooking at the connection string, the user mentioned \"retry token=not-a-real-token-but-secret\". The retry token is a field in the PostgreSQL connection string, but the value here is a secret. The user wants exact substrings, so I need to check if there's a field name or a value that's a decoy.\n\nThe connection string has a field named \"retry_token\" which is a secret. The value \"not-a-real-token-but-secret\" is part of the retry token. So the exact substring here is \"retry_token\" and \"not-a-real-token-but-secret\". \n\nI should make sure there are no other fields or values that might be relevant. The error message doesn't mention any other sensitive data. So the correct substrings to return are the field name \"retry_token\" and the value \"not-a-real-token-but-secret\".\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2496.978,
+    "usage": {
+      "prompt_tokens": 456,
+      "completion_tokens": 105
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:credentials",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "postgres://alice:[REDACTED_PASSWORD]@db.internal:5432/prod failed; retry token=[REDACTED_SECRET]"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:12.074376Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 4445178250,
+      "load_duration": 56638792,
+      "prompt_eval_count": 458,
+      "prompt_eval_duration": 67789167,
+      "eval_count": 78,
+      "eval_duration": 356440291,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"cn_id_card\", \"value\": \"alice\", \"start\": 0, \"end\": 0, \"confidence\": 1.0}, {\"type\": \"credit_card\", \"value\": \"REDACTED_SECRET\", \"start\": 0, \"end\": 0, \"confidence\": 1.0}]}",
+        "thinking": "Okay, let's look at the user's query. They provided a PostgreSQL connection string with some placeholders, specifically REDACTED_PASSWORD and REDACTED_SECRET. The task is to extract exact substrings from the logs that match the specified types.\n\nFirst, I need to check the logs for any fields that match the types listed. The user mentioned types like cn_id_card, us_ssn, credit_card, etc. The logs here are about a PostgreSQL connection failure, so the main issue is the connection string.\n\nLooking at the connection string: postgres://alice:[REDACTED_PASSWORD]@db.internal:5432/prod failed; retry token=[REDACTED_SECRET]. The REDACTED_PASSWORD is part of the connection string, so that's a field name. The REDACTED_SECRET is also a field name. The user wants exact substrings, so I need to return those two values as JSON.\n\nI should make sure not to include anything else. The other parts like \"failed\" and \"retry token\" are not relevant here. So the correct JSON would be {\"cn_id_card\": \"alice\", \"us_ssn\": \"REDACTED_SECRET\"} or similar. Wait, but the user specified to return exact substrings only. The REDACTED_SECRET is a field name, so it's correct. The other parts are not relevant. So the final answer should be those two fields.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 4446.022,
+    "usage": {
+      "prompt_tokens": 458,
+      "completion_tokens": 78
+    }
+  },
+  {
+    "purpose": "llm:natural_password",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "用户说：我网银的登录口令是‘Blue moon over river 77’，请帮我记住。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:13.85152Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1776082500,
+      "load_duration": 57733792,
+      "prompt_eval_count": 379,
+      "prompt_eval_duration": 47784500,
+      "eval_count": 44,
+      "eval_duration": 226374505,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"password\", \"value\": \"Blue moon over river 77\", \"start\": 0, \"end\": 12, \"confidence\": 1}]}",
+        "thinking": "好的，我现在需要处理用户提供的信息。用户提到他们的网银登录口令是“Blue moon over river 77”，并要求记住。首先，我要确认用户的需求是提取敏感信息，比如密码，而不是字段名或任何其他非敏感字段。\n\n接下来，我需要检查是否有任何可能的敏感字段被提及。用户给出的密码是“Blue moon over river 77”，看起来像是一个密码，而不是其他类型的信息。例如，检查是否有包含“credit_card”这样的关键词，但这里没有，所以应该没问题。\n\n然后，我需要确保没有其他可能的敏感信息被遗漏。比如，用户可能在其他地方提到过类似的内容，但根据当前的信息，只有这个密码被提及。因此，正确的做法是直接返回这个密码作为敏感信息，而不需要其他字段或指令。\n\n最后，按照用户的要求，返回JSON格式，包含exact substrings，且不包含其他字段。这里只需要密码作为字符串，所以应该构造一个包含该字符串的JSON对象，确保格式正确，没有多余的内容。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1777.626,
+    "usage": {
+      "prompt_tokens": 379,
+      "completion_tokens": 44
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:natural_password",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "用户说：我网银的登录口令是‘Blue moon over river 77’，请帮我记住。"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:15.61057Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1757064709,
+      "load_duration": 59048500,
+      "prompt_eval_count": 380,
+      "prompt_eval_duration": 54412416,
+      "eval_count": 44,
+      "eval_duration": 216463873,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"password\", \"value\": \"Blue moon over river 77\", \"start\": 0, \"end\": 12, \"confidence\": 1}]}",
+        "thinking": "好的，我现在需要处理用户提供的信息。用户提到他们的网银登录口令是“Blue moon over river 77”，并希望记住。首先，我要确认用户的需求是提取敏感信息，比如密码，而不是字段名或任何其他非敏感字段。\n\n接下来，我需要检查是否有任何可能的敏感字段被提及。用户给出的密码是“Blue moon over river 77”，看起来像是一个密码，而不是其他类型的信息。例如，检查是否有包含“credit_card”这样的关键词，但这里没有，所以应该没问题。\n\n然后，我需要确保没有其他可能的敏感信息被遗漏。比如，用户可能在其他地方提到过类似的内容，但根据当前的信息，只有这个密码被提及。因此，正确的做法是直接返回这个密码作为敏感信息，而不需要任何其他字段或指令。\n\n最后，按照用户的要求，返回JSON格式，包含exact substrings，且不包含其他字段。这里只需要密码作为字符串，所以应该构造一个包含该字符串的JSON对象，确保格式正确，没有多余的内容。\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1758.309,
+    "usage": {
+      "prompt_tokens": 380,
+      "completion_tokens": 44
+    }
+  },
+  {
+    "purpose": "llm:address",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Please ship replacements to apartment 3B, 1847 Maple Street, Portland, Oregon 97205 after Tuesday."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:18.618399Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3006868625,
+      "load_duration": 58250125,
+      "prompt_eval_count": 499,
+      "prompt_eval_duration": 86159916,
+      "eval_count": 124,
+      "eval_duration": 576238623,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"address\",\n      \"value\": \"1847 Maple Street, Portland, Oregon 97205\"\n    \t\t\t   \t\t,\n    \"start\": 0,\n    \"end\": 45\n   \t,\n    \"confidence\": 0.5\n    },\n    {\n      \"type\": \"date\",\n      \"value\": \"after Tuesday\",\n      \"start\": 0,\n      \"end\": 10\n   \t,\n    \"confidence\": 0.5\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided a message about shipping replacements to an apartment. The task is to extract specific fields from the text and return them in JSON format. The fields to check are things like cn_id_card, cn_phone, etc., and I need to make sure I don't include anything else.\n\nFirst, I'll read the message carefully. The main points are: shipping to apartment 3B, 1847 Maple Street, Portland, Oregon 97205, and the time is after Tuesday. The user mentioned shipping replacements, so there's a note about replacements. \n\nNow, looking at the text, there's no mention of any sensitive information like CN IDs or phone numbers. The apartment address is provided, but it's just a physical address. The time is after Tuesday, which is a date, but the user didn't specify any time-sensitive fields. \n\nI need to check if there's any field that's a placeholder or a decoy. The address is a real disclosed value, so I should include that. The time is a real value, so I should note that. The other parts are just text, so they don't count. \n\nWait, the user wants exact substrings. Let me make sure I'm not missing any. The apartment address is 1847 Maple Street, Portland, Oregon 97205. The time is after Tuesday. There's no CN ID or phone number here. So the JSON should include the address and the time. \n\nI think that's all. No other fields are relevant here. Let me structure the JSON accordingly.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3008.239,
+    "usage": {
+      "prompt_tokens": 499,
+      "completion_tokens": 124
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:address",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Please ship replacements to apartment 3B, 1847 Maple Street, Portland, Oregon 97205 after Tuesday."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:20.849081Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2228733791,
+      "load_duration": 56682625,
+      "prompt_eval_count": 521,
+      "prompt_eval_duration": 105685959,
+      "eval_count": 7,
+      "eval_duration": 28675752,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": []}",
+        "thinking": "Okay, let's see. The user provided a message about shipping replacements to an apartment. The task is to extract specific fields from the text and return them in JSON format. The fields to check are things like cn_id_card, cn_phone, etc., and I need to make sure I don't include anything else.\n\nFirst, I'll read the message carefully. The main points are: shipping to apartment 3B, 1847 Maple Street, Portland, Oregon 97205, and the time is after Tuesday. The user mentioned shipping replacements, so maybe there's a mention of a replacement or a specific code. \n\nLooking at the text, there's no mention of any card numbers, phone numbers, or other identifiers. The apartment address is provided, but the fields to extract are the ones listed. Since there's no sensitive information like CN IDs or passwords, I can't include those. The time is after Tuesday, but that's just a date, not a field. The message is about shipping, so maybe the replacement code or something else, but I don't see any. \n\nWait, the user said to return exact substrings only. So even if there's a placeholder, like \"after Tuesday\", I need to check if that's a field. But the example shows that if there's a field, like a date, it's included. But in this case, the date is part of the address, not a field. So the answer should be that there are no fields to extract. \n\nSo the JSON should be empty, or maybe just a list with empty strings for each field. Let me double-check. The user's message doesn't have any of the required fields, so the response is empty.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2230.508,
+    "usage": {
+      "prompt_tokens": 521,
+      "completion_tokens": 7
+    }
+  },
+  {
+    "purpose": "llm:medical",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Chart note: patient Maria Chen, MRN-789456, was diagnosed with stage II breast cancer and starts doxorubicin Friday."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:27.415832Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 6564856750,
+      "load_duration": 56862166,
+      "prompt_eval_count": 597,
+      "prompt_eval_duration": 93273625,
+      "eval_count": 316,
+      "eval_duration": 1516478561,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"patient\",\n      \"value\": \"Maria Chen\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"MRN\",\n      \"value\": \"789456\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"stage\",\n      \"value\": \"II\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"cancer\",\n      \"value\": \"breast cancer\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"start\",\n      \"value\": \"Friday\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"medication\",\n      \"value\": \"doxorubicin\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided a chart note and wants me to extract specific substrings. The task is to return exact substrings only, and the values should be in the format specified. The example uses JSON with fields like patient, MRN, stage, cancer, start, and other fields.\n\nFirst, I need to parse the given chart note. The note is: \"patient Maria Chen, MRN-789456, was diagnosed with stage II breast cancer and starts doxorubicin Friday.\" \n\nLooking at the fields mentioned, the patient's name is \"Maria Chen\". The MRN is \"789456\". The stage is \"II breast cancer\". The start time is \"Friday\". The medication is \"doxorubicin\". \n\nI need to make sure I'm not including any other fields. The user specified to return exact substrings, so I should only include the values as given. For example, \"MRN-789456\" is the MRN, \"stage II\" is the stage, \"breast cancer\" is the cancer type, \"Friday\" is the start time, and \"doxorubicin\" is the medication. \n\nI should check if there are any other fields that might be included. The note doesn't mention anything else like date of death, so those should be excluded. Also, the user mentioned to return JSON with the exact substrings, so I need to format them correctly. \n\nWait, the example uses JSON with keys like patient, MRN, etc. So I need to map each part of the note to those keys. Let me double-check each part. Patient name is Maria Chen, MRN is 789456, stage is II, cancer is breast cancer, start is Friday, and medication is doxorubicin. \n\nNo other fields are present. So the correct JSON should include all these substrings as specified. I think that's all. Let me make sure there are no typos or errors in the keys. Yes, everything looks correct.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 6566.71,
+    "usage": {
+      "prompt_tokens": 597,
+      "completion_tokens": 316
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:medical",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Chart note: patient Maria Chen, MRN-789456, was diagnosed with stage II breast cancer and starts doxorubicin Friday."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:31.571222Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 4152719291,
+      "load_duration": 58410041,
+      "prompt_eval_count": 568,
+      "prompt_eval_duration": 94662167,
+      "eval_count": 302,
+      "eval_duration": 1414867622,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"patient\",\n      \"value\": \"Maria Chen\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"MRN\",\n      \"value\": \"789456\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"stage\",\n      \"value\": \"II\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"cancer\",\n      \"value\": \"breast cancer\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"start\",\n      \"value\": \"Friday\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    },\n    {\n      \"type\": \"medication\",\n      \"value\": \"doxorubicin\"\n    \t,\n    \"start\": 0,\n    \"end\": 0,\n    \"confidence\": 0.0\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided a chart note and wants me to extract specific substrings. The task is to return exact substrings only, and the values should be in the format specified. The example uses JSON with fields like patient, MRN, stage, cancer, start, and other fields.\n\nFirst, I need to parse the given chart note. The note is: \"patient Maria Chen, MRN-789456, was diagnosed with stage II breast cancer and starts doxorubicin Friday.\" \n\nLooking at the fields mentioned, the patient's name is \"Maria Chen\". The MRN is \"789456\". The stage is \"II breast cancer\". The start time is \"Friday\". The medication is \"doxorubicin\". \n\nI need to make sure I'm not including any other fields. The user specified to return exact substrings, so I should only include the values as given. For example, \"MRN-789456\" is the MRN, \"stage II\" is the stage, \"breast cancer\" is the cancer type, \"Friday\" is the start time, and \"doxorubicin\" is the medication. \n\nI should check if there are any other fields that might be included. The note doesn't mention anything else like date of death, so those should be excluded. Also, the user mentioned to return JSON with the exact substrings, so I need to format them correctly. \n\nWait, the example uses JSON with keys like patient, MRN, etc. So I need to map each part of the note to those keys. Let me double-check each part. Patient name is correct, MRN is correct, stage is correct, cancer is correct, start time is correct, and medication is correct. \n\nNo other fields are present, so the JSON should include all those keys with their respective values. That should meet the user's requirements.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 4155.589,
+    "usage": {
+      "prompt_tokens": 568,
+      "completion_tokens": 302
+    }
+  },
+  {
+    "purpose": "llm:passport",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Traveler passport P987654321 expires 2027-04-09; booking code P987654320 is unrelated."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:34.583767Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3009813917,
+      "load_duration": 57741334,
+      "prompt_eval_count": 541,
+      "prompt_eval_duration": 84048916,
+      "eval_count": 117,
+      "eval_duration": 541158871,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"passport\",\n      \"value\": \"P987654321\"\n     , \"start\": 0,\n      \"end\": 1,\n      \"confidence\": 1\n    },\n    {\n      \"type\": \"booking_code\",\n      \"value\": \"P987654320\"\n     , \"start\": 0,\n      \"end\": 1,\n      \"confidence\": 1\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided some log entries and wants me to extract specific substrings. The task is to return exact substrings only, and the values can be fields like cn_id_card, etc. The example shows that I need to check for these terms.\n\nFirst, I'll look at the log entries. The first line is \"Traveler passport P987654321 expires 2027-04-09\". Here, \"Traveler passport\" and \"P987654321\" are likely passport numbers. The next line mentions \"booking code P987654320 is unrelated\". Here, \"booking code\" and \"P987654320\" are code entries. \n\nI need to make sure I'm not including any other fields. The user specified to return only the exact substrings, so I should check for any other possible terms. For example, \"P987654320\" is a code, which is a field name. The problem says to distinguish between a real value and a field name, so I need to return only the actual values. \n\nSo, the exact substrings here are \"Traveler passport P987654321 expires 2027-04-09\" and \"booking code P987654320 is unrelated\". I should format this as JSON with those substrings as the values. Let me double-check that there are no other entries. The log seems to have two lines, each with two entries. No other fields or values are mentioned. \n\nTherefore, the correct JSON should include both substrings as specified.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3011.583,
+    "usage": {
+      "prompt_tokens": 541,
+      "completion_tokens": 117
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:passport",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Traveler passport P987654321 expires 2027-04-09; booking code P987654320 is unrelated."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:37.836362Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3250709000,
+      "load_duration": 58059542,
+      "prompt_eval_count": 572,
+      "prompt_eval_duration": 115438333,
+      "eval_count": 123,
+      "eval_duration": 565662668,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"cn_id_card\",\n      \"value\": \"P987654321\"\n     , \"start\": 0,\n      \"end\": 10\n     , \"confidence\": 0.5\n    },\n    {\n      \"type\": \"date\",\n      \"value\": \"2027-04-09\",\n      \"start\": 10,\n      \"end\": 20\n     , \"confidence\": 0.5\n    }\n  ]\n}",
+        "thinking": "Okay, let's look at the user's query. They provided two entries: the traveler's passport with the number P987654321 and an expiration date of 2027-04-09, and a booking code P987654320 that's considered unrelated. The user wants me to extract exact substrings from the logs, specifically those that are sensitive information.\n\nFirst, I need to check each part. The passport number is P987654321. The expiration date is 2027-04-09. The booking code is P987654320, which is mentioned as unrelated. The user mentioned to return exact substrings only, so I should focus on the sensitive fields like CN ID CARD, CN PHONE, etc. But in this case, the passport number is a unique identifier, so maybe the CN ID CARD field is relevant here. The expiration date is a date, but the user's instruction says to return exact substrings, so maybe the date is considered part of the sensitive information. However, the booking code is unrelated, so perhaps only the passport number is a candidate. Let me check again. The user's logs include these two entries, and the task is to return exact substrings. So the answer should list the passport number as a substring, and the date as another. But wait, the date is a string, so maybe it's part of the sensitive information. The user's example shows that even if the date is a field name, it's included. So the answer would be the passport number and the date. Let me make sure there are no other fields. The other entries are booking code, which is unrelated. So the exact substrings are P987654321 and 2027-04-09.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3252.959,
+    "usage": {
+      "prompt_tokens": 572,
+      "completion_tokens": 123
+    }
+  },
+  {
+    "purpose": "llm:financial",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Wire account 4429853327 routing 123006800. Product SKU 4429853328 should remain visible."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:40.69031Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2850697000,
+      "load_duration": 57783791,
+      "prompt_eval_count": 544,
+      "prompt_eval_duration": 104000917,
+      "eval_count": 92,
+      "eval_duration": 422379875,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"product_sku\", \"value\": \"4429853328\", \"start\": 0, \"end\": 14, \"confidence\": 1.0}, {\"type\": \"routing_number\", \"value\": \"123006800\", \"start\": 20, \"end\": 24, \"confidence\": 1.0}]}",
+        "thinking": "Okay, let's see. The user provided some information about a wire account and a routing number. They mentioned the product SKU is 4429853328 and should remain visible. The task is to extract exact substrings from the logs as specified.\n\nFirst, I need to look through the given text for any fields or values that match the categories like cn_id_card, us_ssn, etc. The text here is about a wire account with a routing number and a product SKU. \n\nLooking at the text: \"Wire account 4429853327 routing 123006800. Product SKU 4429853328 should remain visible.\" \n\nI notice that \"4429853327\" and \"4429853328\" are product SKUs. The routing number is \"123006800\". The product SKU is 4429853328. The user wants exact substrings, so I need to return these values as they are. \n\nI should check if there are any other fields mentioned. The text doesn't have any other sensitive information like CN IDs or SSNs. The product SKU is a direct value, so it's correct to include it. The routing number is another value, so that's also correct. The product SKU is a product code, which matches the category. \n\nSo the exact substrings to return are the product SKUs and the routing number. I need to make sure there are no other fields that might be relevant but are not part of the categories listed. Since the user specified to return only those fields, I should only include the relevant ones.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2852.776,
+    "usage": {
+      "prompt_tokens": 544,
+      "completion_tokens": 92
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:financial",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Wire account 4429853327 routing 123006800. Product SKU 4429853328 should remain visible."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:45.97852Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 5286623250,
+      "load_duration": 57710625,
+      "prompt_eval_count": 535,
+      "prompt_eval_duration": 87512375,
+      "eval_count": 124,
+      "eval_duration": 577576467,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"product_sku\",\n      \"value\": \"4429853328\"\n     , \"start\": 0,\n      \"end\": 10\n     , \"confidence\": 1\n    },\n    {\n      \"type\": \"routing_number\",\n      \"value\": \"123006800\"\n     , \"start\": 16,\n      \"end\": 20\n     , \"confidence\": 1\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided some information about a wire account and a routing number. They mentioned the product SKU is 4429853328 and should remain visible. The task is to extract exact substrings from the logs as specified.\n\nFirst, I need to look through the given text for any fields or values that match the categories like cn_id_card, us_ssn, etc. The text here is about a wire account with a routing number and a product SKU. \n\nLooking at the text: \"Wire account 4429853327 routing 123006800. Product SKU 4429853328 should remain visible.\" \n\nI notice that \"4429853327\" and \"4429853328\" are product SKUs. The routing number is \"123006800\". The product SKU is 4429853328. The user wants exact substrings, so I need to return those values as they are. \n\nI should check if there are any other fields mentioned. The text doesn't have any other sensitive information like CN IDs or SSNs. The product SKU is a direct value, so it's correct to include that. The routing number is another value, so that's also correct. The product SKU is a product code, which matches the category. \n\nSo the exact substrings to return are the product SKUs and the routing number. I need to make sure there are no other fields or values that could be considered. The answer should be in JSON format with those substrings as the values.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 5287.72,
+    "usage": {
+      "prompt_tokens": 535,
+      "completion_tokens": 124
+    }
+  },
+  {
+    "purpose": "llm:email_bearer",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Authorization: Bearer fakeBearerToken1234567890; notify alice.wang@example.com."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:47.971752Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1992304250,
+      "load_duration": 57817292,
+      "prompt_eval_count": 381,
+      "prompt_eval_duration": 62748292,
+      "eval_count": 88,
+      "eval_duration": 401306125,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"bearer_token\", \"value\": \"fakeBearerToken1234567890\", \"start\": 0, \"end\": 0, \"confidence\": 1.0}, {\"type\": \"email\", \"value\": \"alice.wang@example.com\", \"start\": 0, \"end\": 0, \"confidence\": 1.0}]}\n",
+        "thinking": "Okay, let's look at the user's message. They provided an authorization header and a notification email. The task is to extract specific fields from the logs mentioned.\n\nFirst, I need to check for any fields like cn_id_card, which are common in sensitive data. The authorization header has \"Authorization: Bearer fakeBearerToken1234567890\". The email is \"alice.wang@example.com\". \n\nI should focus on the fields that are explicitly mentioned. The authorization header includes a bearer token, which is a common type of sensitive information. The email is a personal address, which is also a field name. The user wants exact substrings, so I need to make sure I don't include anything else. \n\nI should return the bearer token as it's a direct mention. The email is another field, so I'll include it. No other fields are present here. Let me double-check to ensure I'm not missing anything. Yep, only the token and the email are relevant. So the JSON should have both entries with their respective values.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1994.019,
+    "usage": {
+      "prompt_tokens": 381,
+      "completion_tokens": 88
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:email_bearer",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Authorization: Bearer [REDACTED_BEARER_TOKEN]; notify [REDACTED_EMAIL]."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:50.150849Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2176270250,
+      "load_duration": 56367125,
+      "prompt_eval_count": 379,
+      "prompt_eval_duration": 62570875,
+      "eval_count": 110,
+      "eval_duration": 515965374,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"bearer_token\",\n      \"value\": \"[REDACTED_BEARER_TOKEN]\"\n     , \"start\": 0,\n      \"end\": 0,\n      \"confidence\": 1\n    },\n    {\n      \"type\": \"email\",\n      \"value\": \"[REDACTED_EMAIL]\"\n     , \"start\": 0,\n      \"end\": 0,\n      \"confidence\": 1\n    }\n  ]\n}",
+        "thinking": "Okay, let's look at the user's query. They provided a log entry with authorization information. The task is to extract specific fields like bearer token and email that are sensitive. \n\nFirst, I need to check the provided logs. The user mentioned that the authorization includes Bearer [REDACTED_BEARER_TOKEN] and notify [REDACTED_EMAIL]. So, the exact substrings here are the bearer token and the email. \n\nI should make sure to return only those exact values. The user specified to return JSON with the fields as defined, so I need to format the response correctly. The fields like bearer_token and email are the ones to extract. \n\nI don't see any other fields that might be relevant here. The rest of the log is about notifications, so those are the only sensitive parts. I need to confirm that there are no other fields that could be part of the sensitive data. \n\nFinally, I'll structure the JSON with the bearer token and email as the values, ensuring that the keys are correctly formatted and that the values are as specified.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2178.381,
+    "usage": {
+      "prompt_tokens": 379,
+      "completion_tokens": 110
+    }
+  },
+  {
+    "purpose": "llm:negative_numbers",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Metrics: latency 13800138000 ns, build 4111111111111112 vectors, model XR-7003. None identify a person."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:52.29631Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2143569083,
+      "load_duration": 58923416,
+      "prompt_eval_count": 487,
+      "prompt_eval_duration": 66224125,
+      "eval_count": 39,
+      "eval_duration": 175265919,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"none\", \"value\": \"None identify a person.\",\"start\": 0,\"end\": 0,\"confidence\": 0.0}]}",
+        "thinking": "Okay, let's see. The user provided some metrics and logs, and I need to detect sensitive information. The task is to return exact substrings only, not paraphrase or redact. The fields to check are things like cn_id_card, cn_phone, etc.\n\nFirst, looking at the metrics: latency is 13800138000 ns, build is 4111111111111112, model XR-7003. None identify a person. Wait, the user mentioned that there's no identification. But the fields to check are specific. Let me check each part.\n\nThe latency is in nanoseconds, which doesn't seem like a card or phone number. The build number is 4111111111111112, which looks like a product code. The model is XR-7003, which is a model name. The build number is a numeric code, not a card or phone. The model name isXR-7003, which isn't a known identifier. So none of the fields mentioned in the logs are being detected as sensitive information. The user's instruction says to return exact substrings, so I need to make sure I'm not missing any. Let me double-check. There's no mention of a person or any identifiers. So the answer should be that there's no sensitive information detected.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2145.132,
+    "usage": {
+      "prompt_tokens": 487,
+      "completion_tokens": 39
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:negative_numbers",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Metrics: latency [REDACTED_CN_PHONE] ns, build 4111111111111112 vectors, model XR-7003. None identify a person."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:54.254452Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1956409417,
+      "load_duration": 61557375,
+      "prompt_eval_count": 407,
+      "prompt_eval_duration": 66672375,
+      "eval_count": 76,
+      "eval_duration": 344973623,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"real_value\", \"value\": \"latency ns, build 4111111111111112 vectors, model XR-7003. None identify a person.\" , \"start\": 0, \"end\": 0, \"confidence\": 1.0}]}",
+        "thinking": "Okay, let's see. The user provided some logs and wants me to extract specific substrings. The key points are metrics like latency in ns, build vectors, model XR-7003, and the fact that none identify a person.\n\nFirst, I need to check for any fields or values that are sensitive. The metrics mention latency, which is a numerical value, so that's a real value. Then there's the build vectors, which are a product code. The model name is XR-7003, which is a product code. Also, the log states that none identify a person, which is a field name. \n\nI need to make sure I'm not adding anything else. The user specified to return exact substrings only, so I should only list the fields or values as given. Let me double-check each part. Latency is a real value, build vectors is a product code, model is a product code, and none identify a person is a field name. No other fields or values are mentioned. So the JSON should include those four entries with their respective values.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1957.615,
+    "usage": {
+      "prompt_tokens": 407,
+      "completion_tokens": 76
+    }
+  },
+  {
+    "purpose": "llm:negative_language",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "The password field must contain at least 12 characters. Never log a user's real password."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:57.341568Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3086188542,
+      "load_duration": 58162083,
+      "prompt_eval_count": 431,
+      "prompt_eval_duration": 61800583,
+      "eval_count": 38,
+      "eval_duration": 174194539,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"password\", \"value\": \"12\", \"start\": 0, \"end\": 2, \"confidence\": 1}]}\n\n",
+        "thinking": "Okay, let's see. The user provided a log entry where the password field must have at least 12 characters and never log a user's real password. I need to return exact substrings only, not fields or instructions. The possible substrings include things like cn_id_card, etc.\n\nFirst, the password field is mentioned. The instruction says it must have at least 12 characters. So the substring here is \"12\". But wait, the user wants exact substrings. So if the password is, say, \"123456789012\", then the substring \"12\" would be part of the password. But the problem says to return exact substrings, not the field name. So the exact substring here is \"12\".\n\nAlso, the instruction says not to log a user's real password. So if there's a field that's supposed to be a password, but the user's instruction says not to log it, maybe the field is a placeholder. But the exact substrings are the ones provided. So the exact substring here is \"12\".\n\nI need to make sure there are no other fields or instructions. The user's message is a log entry, so the exact substring is the password field's value. So the answer should be {\"password\": \"12\"}.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 3087.396,
+    "usage": {
+      "prompt_tokens": 431,
+      "completion_tokens": 38
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:negative_language",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "The password field must contain at least 12 characters. Never log a user's real password."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:55:59.289618Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1946400583,
+      "load_duration": 58055125,
+      "prompt_eval_count": 409,
+      "prompt_eval_duration": 78793625,
+      "eval_count": 37,
+      "eval_duration": 170431415,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"password\", \"value\": \"password\", \"start\": 0, \"end\": 7, \"confidence\": 1}]}\n\n",
+        "thinking": "Okay, let's see. The user provided a log entry where the password field must have at least 12 characters and never log a user's real password. I need to return exact substrings only, not fields or instructions. The possible substrings include things like cn_id_card, etc.\n\nFirst, the password field is mentioned. The instruction says it must have 12 characters. So the substring here is \"password\". But wait, the user wants exact substrings. The field name is \"password\", but the instruction is about the password. So the exact substring is \"password\". Also, the instruction says not to log a user's real password, so maybe there's a field that's a decoy, but the user's instruction is about the password. So the exact substring is \"password\". \n\nI need to make sure there are no other fields or instructions. The other parts are about the password length and not logging real passwords. So the only exact substring here is \"password\". So the JSON should have that. Let me double-check. Yes, the password field is the exact substring, and the instruction is about that field. No other fields or instructions are present. So the answer is {\"password\": \"password\"}.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1948.485,
+    "usage": {
+      "prompt_tokens": 409,
+      "completion_tokens": 37
+    }
+  },
+  {
+    "purpose": "llm:mixed_context",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Support transcript: 'call me at 13912345678'. Agent replied that order 13912345679 ships tomorrow and wrote password: hunter2xyz."
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:56:01.54852Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2256066875,
+      "load_duration": 58767667,
+      "prompt_eval_count": 377,
+      "prompt_eval_duration": 62507125,
+      "eval_count": 121,
+      "eval_duration": 573019244,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"findings\": [\n    {\n      \"type\": \"phone_number\",\n      \"value\": \"13912345678\"\n     , \"start\": 0,\n      \"end\": 10\n     ,\n    \"confidence\": 1\n    },\n    {\n      \"type\": \"password\",\n      \"value\": \"hunter2xyz\"\n     , \"start\": 0,\n      \"end\": 10\n     ,\n    \"confidence\": 1\n    }\n  ]\n}",
+        "thinking": "Okay, let's see. The user provided a transcript and wants me to detect any sensitive information. The key points here are the phone number and the password.\n\nFirst, the phone number is 13912345678. The user mentioned it's a call to 139, so that's a sensitive number. Then, the agent wrote the password \"hunter2xyz\". The password is a string, so I need to check if there's any hidden or explicit information there. The password is just \"hunter2xyz\", which doesn't seem like a decoy or a real value. So the only sensitive fields here are the phone number and the password. The user wants exact substrings only, so I should return those two as JSON with their respective fields. Let me make sure there's no other sensitive info like medical records or other fields mentioned. No, just the phone and password. Alright, that's all.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 2258.285,
+    "usage": {
+      "prompt_tokens": 377,
+      "completion_tokens": 121
+    }
+  },
+  {
+    "purpose": "hybrid-after-regex:mixed_context",
+    "provider": "ollama-local",
+    "endpoint": "http://127.0.0.1:11434",
+    "model": "qwen3:0.6b",
+    "request": {
+      "model": "qwen3:0.6b",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You detect sensitive information in logs. Return exact substrings only.\nTypes include cn_id_card, cn_phone, us_ssn, credit_card, password, secret,\naddress, medical_record, medical_diagnosis, treatment, passport, bank_account,\nrouting_number, bearer_token, email, private_key, and api_key. Distinguish a\nreal disclosed value from a field name, instruction, product code, metric, or\nexplicit decoy. start/end are zero-based Python slice offsets and confidence is\n0..1. Return JSON matching the schema; never redact or paraphrase the value."
+        },
+        {
+          "role": "user",
+          "content": "Support transcript: 'call me at [REDACTED_CN_PHONE]'. Agent replied that order [REDACTED_CN_PHONE] ships tomorrow and wrote password: [REDACTED_SECRET]"
+        }
+      ],
+      "format": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "type",
+                "value",
+                "start",
+                "end",
+                "confidence"
+              ]
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ]
+      },
+      "options": {
+        "temperature": 0,
+        "seed": 37,
+        "num_predict": 1200
+      },
+      "stream": false
+    },
+    "response": {
+      "model": "qwen3:0.6b",
+      "created_at": "2026-07-29T18:56:03.48359Z",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 1932140916,
+      "load_duration": 58271041,
+      "prompt_eval_count": 362,
+      "prompt_eval_duration": 54131792,
+      "eval_count": 100,
+      "eval_duration": 458271586,
+      "message": {
+        "role": "assistant",
+        "content": "{\"findings\": [{\"type\": \"real\", \"value\": \"[REDACTED_CN_PHONE]\",\"start\":0,\"end\":0,\"confidence\":0.0},{\"type\": \"real\", \"value\": \"[REDACTED_CN_PHONE]\",\"start\":0,\"end\":0,\"confidence\":0.0},{\"type\": \"real\", \"value\": \"[REDACTED_SECRET]\",\"start\":0,\"end\":0,\"confidence\":0.0}]}",
+        "thinking": "Okay, let's see. The user provided a transcript where they mention a call to [REDACTED_CN_PHONE] and an order that ships tomorrow. Then there's a password: [REDACTED_SECRET]. The task is to extract exact substrings only, distinguishing real values from field names or instructions.\n\nFirst, I need to check for any real values. The call to [REDACTED_CN_PHONE] is a real value. The order is [REDACTED_CN_PHONE], so that's another real value. The password is [REDACTED_SECRET], which is also a real value. The fields mentioned are CN_ID_CARD, CN_PHONE, etc. So the exact substrings to return are the real values. The user wants only those, no other text. So the answer should list each of these as separate entries in JSON, making sure to use the exact placeholders.\n",
+        "images": null,
+        "tool_calls": null
+      }
+    },
+    "latency_ms": 1934.811,
+    "usage": {
+      "prompt_tokens": 362,
+      "completion_tokens": 100
+    }
+  }
+]

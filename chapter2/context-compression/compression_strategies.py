@@ -246,7 +246,7 @@ Full Content:
 ========================
 """
             all_content.append(content)
-            total_length += len(result.get('content', ''))
+            total_length += len(result.get('content') or '')
         
         full_content = "\n\n".join(all_content)
         

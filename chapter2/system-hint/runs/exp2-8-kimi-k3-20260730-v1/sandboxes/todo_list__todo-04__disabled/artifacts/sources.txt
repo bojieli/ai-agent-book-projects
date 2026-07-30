@@ -1,0 +1,6 @@
+Delivery Sources
+Tracking token: DELTA-740
+
+1. Internal knowledge base extract
+2. External data feed snapshot
+3. Prior delivery archive reference

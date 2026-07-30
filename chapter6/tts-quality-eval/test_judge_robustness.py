@@ -52,22 +52,27 @@ def _stub_judge(monkeypatch, payload: dict):
 def test_judge_rubric_tolerates_null_score(monkeypatch):
     """'score': null in a dimension dict is scored 0, not int(None) TypeError."""
     _stub_judge(monkeypatch, {
-        "清晰度": {"score": None, "reason": "无法判断"},
+        "准确性": {"score": None, "reason": "无法判断"},
         "自然度": {"score": 4, "reason": "语速正常"},
-        "停顿节奏": {"score": 3},
-        "整体": {"score": 5, "reason": "总体可用"},
+        "情感表达": {"score": 0},
+        "音色一致性": {"score": 0, "reason": "无法听到音频"},
     })
     rub = pipeline.judge_rubric("原文文本", "中性", "回译文本", 3.0, 0.05)
-    assert rub.scores["清晰度"] == 0
+    assert rub.scores["准确性"] == 0
     assert rub.scores["自然度"] == 4
-    assert rub.scores["整体"] == 5
+    assert rub.scores["音色一致性"] == 0
 
 
 def test_judge_rubric_tolerates_null_dimension(monkeypatch):
     """A bare null dimension (non-dict) is scored 0, not int(None) TypeError."""
-    _stub_judge(monkeypatch, {"清晰度": None, "自然度": 4, "停顿节奏": 3, "整体": 5})
+    _stub_judge(monkeypatch, {
+        "准确性": None,
+        "自然度": 4,
+        "情感表达": 0,
+        "音色一致性": 0,
+    })
     rub = pipeline.judge_rubric("原文文本", "中性", "回译文本", 3.0, 0.05)
-    assert rub.scores["清晰度"] == 0
+    assert rub.scores["准确性"] == 0
     assert rub.scores["自然度"] == 4
 
 
@@ -96,23 +101,31 @@ def test_judge_gemini_audio_blocked_raises_clear_error(monkeypatch, tmp_path, pa
     _stub_gemini(monkeypatch, payload)
     audio = tmp_path / "a.mp3"
     audio.write_bytes(b"\xff\xfb" + b"\x00" * 256)
+    reference = tmp_path / "reference.mp3"
+    reference.write_bytes(b"\xff\xfb" + b"\x01" * 256)
     with pytest.raises(RuntimeError, match="Gemini 未返回评审文本"):
-        pipeline.judge_gemini_audio("原文", "中性", str(audio))
+        pipeline.judge_gemini_audio("原文", "中性", str(audio), str(reference))
 
 
 def test_judge_gemini_audio_parses_valid_response(monkeypatch, tmp_path):
     """A normal Gemini response still parses (defensive navigation keeps working)."""
-    inner = json.dumps({"清晰度": {"score": 4, "reason": "ok"}, "自然度": 4,
-                        "停顿节奏": None, "整体": {"score": 5}}, ensure_ascii=False)
+    inner = json.dumps({
+        "准确性": {"score": 4, "reason": "ok"},
+        "自然度": 4,
+        "情感表达": None,
+        "音色一致性": {"score": 5},
+    }, ensure_ascii=False)
     _stub_gemini(monkeypatch, {
         "candidates": [{"content": {"parts": [{"text": inner}]}}],
     })
     audio = tmp_path / "a.mp3"
     audio.write_bytes(b"\xff\xfb" + b"\x00" * 256)
-    rub = pipeline.judge_gemini_audio("原文", "中性", str(audio))
-    assert rub.scores["清晰度"] == 4
-    assert rub.scores["停顿节奏"] == 0   # null score -> 0
-    assert rub.scores["整体"] == 5
+    reference = tmp_path / "reference.mp3"
+    reference.write_bytes(b"\xff\xfb" + b"\x01" * 256)
+    rub = pipeline.judge_gemini_audio("原文", "中性", str(audio), str(reference))
+    assert rub.scores["准确性"] == 4
+    assert rub.scores["情感表达"] == 0   # null score -> 0
+    assert rub.scores["音色一致性"] == 5
 
 
 if __name__ == "__main__":

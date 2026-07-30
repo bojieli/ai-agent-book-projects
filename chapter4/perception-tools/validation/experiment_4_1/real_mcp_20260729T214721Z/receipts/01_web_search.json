@@ -1,0 +1,58 @@
+{
+  "case": "web_search",
+  "tool": "web_search",
+  "arguments": {
+    "query": "Model Context Protocol official specification",
+    "num_results": 3
+  },
+  "arguments_sha256": "f5d475b1c7202a0c7c2a0eba3e63e569ee6a65f46929b097a30983506ac9ebe7",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "duckduckgo-live-search",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "query": "Model Context Protocol official specification",
+      "results": [
+        {
+          "id": "ddg-0",
+          "title": "Specification - Model Context Protocol",
+          "url": "https://modelcontextprotocol.io/specification/2025-03-26",
+          "snippet": "ModelContextProtocol(MCP) is an openprotocolthat enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with thecontextthey need.",
+          "source": "duckduckgo"
+        },
+        {
+          "id": "ddg-1",
+          "title": "Model Context Protocol (MCP)",
+          "url": "https://github.com/modelcontextprotocol/modelcontextprotocol",
+          "snippet": "ModelContextProtocol(MCP) Just heard of MCP and not sure where to start? Check out our documentation website. This repo contains the: MCPspecificationMCPprotocolschemaOfficialMCP documentation The schema is defined in TypeScript first, but made available as JSON Schema as well, for wider compatibility.",
+          "source": "duckduckgo"
+        },
+        {
+          "id": "ddg-2",
+          "title": "Specification - Model Context Protocol （MCP）",
+          "url": "https://modelcontextprotocol.info/specification/",
+          "snippet": "ModelContextProtocolSpecificationTheModelContextProtocol(MCP) is an openprotocolthat enables seamless integration between LLM applications and external data sources and tools. This section contains the detailed technicalspecificationsfor implementing theprotocol. Available Versions MCP is under active development. The followingspecificationsare available:Specification(Latest ...",
+          "source": "duckduckgo"
+        }
+      ],
+      "count": 3
+    },
+    "metadata": {
+      "query": "Model Context Protocol official specification",
+      "search_engine": "duckduckgo",
+      "total_results": 3,
+      "search_time": 2.811976194381714,
+      "language": "en",
+      "country": "wt-wt"
+    }
+  },
+  "elapsed_seconds": 2.815
+}

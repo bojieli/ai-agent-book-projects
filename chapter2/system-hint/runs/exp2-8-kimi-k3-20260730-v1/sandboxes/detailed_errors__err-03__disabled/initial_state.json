@@ -1,0 +1,7 @@
+{
+  "suite": "detailed_errors",
+  "case_id": "err-03",
+  "requested": "metrics.csv",
+  "actual": "metrics_v2.csv",
+  "document_token": "MET-4263"
+}

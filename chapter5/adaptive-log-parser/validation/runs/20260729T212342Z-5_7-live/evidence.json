@@ -1,0 +1,239 @@
+{
+  "formats": [
+    {
+      "name": "live_pipe_parser",
+      "raw_log": "live-format-1.log",
+      "raw_log_sha256": "0e6df83a5a373e7adb217708ccfa45df197f2ee84edd638b9db981cba85d5b80",
+      "samples": 3,
+      "initial_failures": 3,
+      "required_keys": [
+        "timestamp",
+        "level",
+        "module",
+        "step",
+        "message"
+      ],
+      "parser": "parsers/live_pipe_parser.py",
+      "parser_sha256": "8c03fe6676bfe61f78900065f1a4caae5f2ee16ebe563cb57ed2c68bd4e8d4d5",
+      "test": {
+        "passed": true,
+        "report": "[样本1] 通过，解析出字段：['level', 'message', 'module', 'step', 'timestamp']\n[样本2] 通过，解析出字段：['level', 'message', 'module', 'step', 'timestamp']\n[样本3] 通过，解析出字段：['level', 'message', 'module', 'step', 'timestamp']",
+        "results": [
+          {
+            "timestamp": "2026-07-30T05:23:42Z",
+            "level": "INFO",
+            "module": "checkout.worker",
+            "step": "1",
+            "message": "accepted real request req-81"
+          },
+          {
+            "timestamp": "2026-07-30T05:23:42Z",
+            "level": "WARNING",
+            "module": "checkout.worker",
+            "step": "2",
+            "message": "retrying payment authorization req-81"
+          },
+          {
+            "timestamp": "2026-07-30T05:23:42Z",
+            "level": "ERROR",
+            "module": "checkout.worker",
+            "step": "3",
+            "message": "authorization exhausted req-81"
+          }
+        ]
+      },
+      "parsed_after_hot_update": [
+        {
+          "_parser": "live_pipe_parser",
+          "timestamp": "2026-07-30T05:23:42Z",
+          "level": "INFO",
+          "module": "checkout.worker",
+          "step": "1",
+          "message": "accepted real request req-81"
+        },
+        {
+          "_parser": "live_pipe_parser",
+          "timestamp": "2026-07-30T05:23:42Z",
+          "level": "WARNING",
+          "module": "checkout.worker",
+          "step": "2",
+          "message": "retrying payment authorization req-81"
+        },
+        {
+          "_parser": "live_pipe_parser",
+          "timestamp": "2026-07-30T05:23:42Z",
+          "level": "ERROR",
+          "module": "checkout.worker",
+          "step": "3",
+          "message": "authorization exhausted req-81"
+        }
+      ]
+    },
+    {
+      "name": "live_bracket_parser",
+      "raw_log": "live-format-2.log",
+      "raw_log_sha256": "b52aa925d76f1c10017d42f16efd4daacf5ed73c9184067bdee9a9e50a7878b6",
+      "samples": 3,
+      "initial_failures": 3,
+      "required_keys": [
+        "timestamp",
+        "level",
+        "tool",
+        "latency_ms",
+        "status",
+        "message"
+      ],
+      "parser": "parsers/live_bracket_parser.py",
+      "parser_sha256": "4f1780d6d2e9886eafc1f5a0c3cce09c9873cb4113f9de5f34482d1efc35e07c",
+      "test": {
+        "passed": true,
+        "report": "[样本1] 通过，解析出字段：['latency_ms', 'level', 'message', 'status', 'timestamp', 'tool']\n[样本2] 通过，解析出字段：['latency_ms', 'level', 'message', 'status', 'timestamp', 'tool']\n[样本3] 通过，解析出字段：['latency_ms', 'level', 'message', 'status', 'timestamp', 'tool']",
+        "results": [
+          {
+            "timestamp": "2026-07-29T21:23:42.606+00:00",
+            "level": "INFO",
+            "tool": "inventory_lookup",
+            "latency_ms": 34,
+            "status": "ok",
+            "message": "stock check completed"
+          },
+          {
+            "timestamp": "2026-07-29T21:23:42.609+00:00",
+            "level": "WARNING",
+            "tool": "payment_api",
+            "latency_ms": 181,
+            "status": "retry",
+            "message": "upstream requested retry"
+          },
+          {
+            "timestamp": "2026-07-29T21:23:42.612+00:00",
+            "level": "ERROR",
+            "tool": "payment_api",
+            "latency_ms": 412,
+            "status": "timeout",
+            "message": "deadline exceeded"
+          }
+        ]
+      },
+      "parsed_after_hot_update": [
+        {
+          "_parser": "live_bracket_parser",
+          "timestamp": "2026-07-29T21:23:42.606+00:00",
+          "level": "INFO",
+          "tool": "inventory_lookup",
+          "latency_ms": 34,
+          "status": "ok",
+          "message": "stock check completed"
+        },
+        {
+          "_parser": "live_bracket_parser",
+          "timestamp": "2026-07-29T21:23:42.609+00:00",
+          "level": "WARNING",
+          "tool": "payment_api",
+          "latency_ms": 181,
+          "status": "retry",
+          "message": "upstream requested retry"
+        },
+        {
+          "_parser": "live_bracket_parser",
+          "timestamp": "2026-07-29T21:23:42.612+00:00",
+          "level": "ERROR",
+          "tool": "payment_api",
+          "latency_ms": 412,
+          "status": "timeout",
+          "message": "deadline exceeded"
+        }
+      ]
+    }
+  ],
+  "loaded_after_restart": [
+    "live_bracket_parser",
+    "live_pipe_parser"
+  ],
+  "rows_after_restart": [
+    {
+      "_parser": "live_pipe_parser",
+      "timestamp": "2026-07-30T05:23:42Z",
+      "level": "INFO",
+      "module": "checkout.worker",
+      "step": "1",
+      "message": "accepted real request req-81"
+    },
+    {
+      "_parser": "live_pipe_parser",
+      "timestamp": "2026-07-30T05:23:42Z",
+      "level": "WARNING",
+      "module": "checkout.worker",
+      "step": "2",
+      "message": "retrying payment authorization req-81"
+    },
+    {
+      "_parser": "live_pipe_parser",
+      "timestamp": "2026-07-30T05:23:42Z",
+      "level": "ERROR",
+      "module": "checkout.worker",
+      "step": "3",
+      "message": "authorization exhausted req-81"
+    },
+    {
+      "_parser": "live_bracket_parser",
+      "timestamp": "2026-07-29T21:23:42.606+00:00",
+      "level": "INFO",
+      "tool": "inventory_lookup",
+      "latency_ms": 34,
+      "status": "ok",
+      "message": "stock check completed"
+    },
+    {
+      "_parser": "live_bracket_parser",
+      "timestamp": "2026-07-29T21:23:42.609+00:00",
+      "level": "WARNING",
+      "tool": "payment_api",
+      "latency_ms": 181,
+      "status": "retry",
+      "message": "upstream requested retry"
+    },
+    {
+      "_parser": "live_bracket_parser",
+      "timestamp": "2026-07-29T21:23:42.612+00:00",
+      "level": "ERROR",
+      "tool": "payment_api",
+      "latency_ms": 412,
+      "status": "timeout",
+      "message": "deadline exceeded"
+    }
+  ],
+  "browser": {
+    "browser": "Chromium",
+    "version": "139.0.7258.5",
+    "rows": 6,
+    "columns": [
+      "_parser",
+      "latency_ms",
+      "level",
+      "message",
+      "module",
+      "status",
+      "step",
+      "timestamp",
+      "tool"
+    ]
+  },
+  "vision_judgment": {
+    "pass": true,
+    "readable": true,
+    "has_multiple_parsers": true,
+    "observed_columns": [
+      "_parser",
+      "latency_ms",
+      "level",
+      "message",
+      "module",
+      "status",
+      "step",
+      "timestamp",
+      "tool"
+    ],
+    "reason": "The table is readable with clear columns, contains 6 parsed rows, includes multiple parser identifiers (_parser: live_pipe_parser, live_bracket_parser), and structured fields (latency_ms, level, message, etc.)"
+  }
+}

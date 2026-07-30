@@ -1,0 +1,73 @@
+{
+  "user_id": "test_user_contextual",
+  "type": "advanced_json_cards",
+  "updated_at": "2026-07-30T06:02:46.252409",
+  "categories": {
+    "financial": {
+      "bank_account_primary": {
+        "backstory": "User shared their banking details while setting up automatic bill payments",
+        "date_created": "2024-01-15 10:30:00",
+        "person": "John Smith (primary)",
+        "relationship": "primary account holder",
+        "bank_name": "Chase Bank",
+        "account_type": "checking",
+        "account_ending": "4567",
+        "routing_number": "021000021",
+        "purpose": "primary checking for bills",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:46.250690",
+          "updated_at": "2026-07-30T06:02:46.250698"
+        }
+      }
+    },
+    "medical": {
+      "doctor_dermatologist_sarah": {
+        "backstory": "User needed to schedule a dermatology appointment for their daughter's skin condition",
+        "date_created": "2024-01-16 14:00:00",
+        "person": "Sarah Smith (daughter)",
+        "relationship": "family member",
+        "doctor_name": "Dr. Emily Johnson",
+        "specialty": "Pediatric Dermatology",
+        "clinic": "Children's Health Center",
+        "phone": "555-0123",
+        "condition_treated": "eczema",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:46.251071",
+          "updated_at": "2026-07-30T06:02:46.251075"
+        }
+      }
+    },
+    "travel": {
+      "passport_jessica": {
+        "backstory": "User mentioned passport expiration while planning international travel",
+        "date_created": "2024-12-20 09:00:00",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "passport_number": "XXXXX1234",
+        "expiration_date": "2025-02-18",
+        "issuing_country": "USA",
+        "needs_renewal": true,
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:46.251297",
+          "updated_at": "2026-07-30T06:02:46.251300"
+        }
+      },
+      "tokyo_trip_january": {
+        "backstory": "User booked a trip to Tokyo for a business conference",
+        "date_created": "2024-12-22 11:00:00",
+        "person": "Jessica Thompson (primary)",
+        "relationship": "primary account holder",
+        "destination": "Tokyo, Japan",
+        "departure_date": "2025-01-25",
+        "return_date": "2025-02-01",
+        "purpose": "business conference",
+        "hotel": "Hilton Tokyo",
+        "flight": "UA837",
+        "_metadata": {
+          "created_at": "2026-07-30T06:02:46.252403",
+          "updated_at": "2026-07-30T06:02:46.252406"
+        }
+      }
+    }
+  }
+}

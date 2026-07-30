@@ -1,0 +1,44 @@
+{
+  "case": "image_analyze",
+  "tool": "image_analyze",
+  "arguments": {
+    "image_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/media/ocr-source.png",
+    "prompt": "Read the prominent text and describe the simple image."
+  },
+  "arguments_sha256": "32fb631a4ba62ec276726380141dff679e74d1b0b938080272ae54d70062aaa7",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "configured-vision-api",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "file_name": "ocr-source.png",
+      "prompt": "Read the prominent text and describe the simple image.",
+      "analysis": "The image is a simple, minimalistic text-based graphic with a white background. It contains two lines of black, capitalized, sans-serif text centered horizontally. The first line reads \"EXPERIMENT 4-1,\" and the second line reads \"PERCEPTION TOOLS VERIFIED.\" The text is clear and straightforward, suggesting a formal or scientific context, possibly indicating the successful completion or validation of a specific experiment related to perception tools. There are no additional graphics, colors, or design elements.",
+      "model": "qwen-vl-max",
+      "provider_receipt": {
+        "provider": "dashscope",
+        "response_id": "chatcmpl-2d96d47a-8ce5-9fad-9eab-e352743c5933",
+        "response_model": "qwen-vl-max",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 438,
+          "completion_tokens": 100,
+          "total_tokens": 538
+        },
+        "latency_seconds": 4.247
+      }
+    },
+    "metadata": {
+      "file_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/media/ocr-source.png"
+    }
+  },
+  "elapsed_seconds": 4.414
+}

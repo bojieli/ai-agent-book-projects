@@ -4,5 +4,6 @@ __pycache__/
 .venv/
 venv/
 audio/
+artifacts/
 *.mp3
 *.wav

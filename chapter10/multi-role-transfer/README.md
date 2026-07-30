@@ -13,8 +13,9 @@ and control is **autonomously handed off** between roles via a `transfer_to_agen
   but dynamic switching based on task progress.
 - Because **the same conversation history is shared**, the full history is naturally preserved upon handoff,
   and the new role automatically inherits all prior context (no explicit parameter passing required).
-- The core mechanism is **autonomous role handoff**, not the sophistication of the tools themselves,
-  so the tools use lightweight real implementations / controllable mocks.
+- The core mechanism is **autonomous role handoff**, but every tool used by an accepted run still performs
+  real work. In particular, `web_search` calls Tavily and fails closed when `TAVILY_API_KEY` is absent;
+  there is no knowledge-base/mock fallback in the current implementation.
 
 ## Architecture
 
@@ -36,7 +37,7 @@ and control is **autonomously handed off** between roles via a `transfer_to_agen
 | Role | Description | Dedicated Tool Set |
 |------|-------------|-------------------|
 | `triage` | Front-desk triage / default entry point, decomposes requests and hands off sequentially, final wrap-up | Only `transfer_to_agent` |
-| `research` | Information retrieval | `web_search` (built-in knowledge base mock) |
+| `research` | Information retrieval | `web_search` (real Tavily search with attributable URLs) |
 | `coding` | Programming | `execute_python` (real execution with output capture) |
 | `data_analysis` | Data analysis / computation | `calculate`, `descriptive_stats` |
 | `writing` | Polishing and writing | `count_characters` |
@@ -57,6 +58,7 @@ pip install -r requirements.txt
 
 # Configure API key (choose one)
 export OPENAI_API_KEY=sk-...        # Direct export
+export TAVILY_API_KEY=tvly-...      # Required by research.web_search; no mock fallback
 # or: cp env.example .env and fill in
 
 python demo.py
@@ -64,7 +66,7 @@ python demo.py
 
 Configurable environment variables (all have defaults):
 `OPENAI_API_KEY`, `OPENAI_BASE_URL` (default `https://api.openai.com/v1`),
-`OPENAI_MODEL` (default `gpt-5.6-luna`).
+`OPENAI_MODEL` (default `gpt-5.6-luna`), and `TAVILY_API_KEY` for the research role's real web search.
 
 **General fallback**: Prefers direct OpenAI connection via `OPENAI_API_KEY`; if that variable is not set but
 `OPENROUTER_API_KEY` is set, it automatically switches to OpenRouter and maps the model name to its namespace
@@ -124,9 +126,12 @@ making it clear at a glance how "different specialized roles take turns on the s
 
 > Note: Real LLM output has randomness; specific wording or step counts in a given run may vary slightly, but the handoff mechanism is consistent.
 
-### Expected Output Example (from a real run)
+### Expected Output Shape
 
-The following is a key excerpt from an actual `python demo.py` run (`model=gpt-5.6-luna`, routed via OpenRouter), unedited and unembellished:
+The following excerpt illustrates the console format. The canonical accepted real run is
+[`validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json`](validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json):
+it records Moonshot `kimi-k2.5`, real Tavily results with source URLs, the complete handoff chain,
+the calculation tool call, the counted draft, raw provider response IDs/usage, and all acceptance gates.
 
 ```text
 === Role Roster (5 specialized roles) ===
@@ -165,7 +170,7 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
 ## Limitations
 
 - The default model is `gpt-5.6-luna`; whether the handoff follows the expected chain depends heavily on the selected model's instruction-following ability. Switching models may yield different results.
-- The `research` role's `web_search` is a **built-in knowledge base mock**, not a real web search; it only matches a small set of predefined keywords (new energy vehicle sales, photovoltaic installations, Python GIL). Changing the query may return no results.
+- The `research` role requires a live Tavily credential. Missing credentials, HTTP failures, or empty provider results are surfaced explicitly and never replaced with canned facts.
 - Real LLM output has randomness: the exact number of handoff steps, the wording of each `reason`, whether the `coding` role is visited, etc., may vary between runs, but the handoff mechanism itself is consistent.
 - `orchestrator.py` has a hard `max_steps` limit (default 20) and a correction prompt for "same (role, tool, arguments) called ≥3 times consecutively" to prevent model infinite loops; this is a safety net, not an indication that every run will use all these steps.
 
@@ -186,7 +191,8 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
   而是根据任务进展动态切换。
 - 因为**共享同一段对话历史**，移交时完整历史天然保留，
   新角色自动继承此前所有内容（无需显式传参）。
-- 机制重点是「自主角色移交」，而非工具本身多强，因此工具用轻量真实实现 / 可控 mock。
+- 机制重点是「自主角色移交」，但验收运行中调用的工具仍必须执行真实工作。当前
+  `web_search` 真实调用 Tavily；缺少 `TAVILY_API_KEY` 时会失败关闭，不再回退到内置知识库或 mock。
 
 ## 架构
 
@@ -208,7 +214,7 @@ According to public data from CAAM, China's new energy vehicle sales grew from 3
 | 角色 | 说明 | 专属工具集 |
 |------|------|-----------|
 | `triage` | 前台分诊 / 默认入口，拆解需求并按序移交、最后收尾 | 仅 `transfer_to_agent` |
-| `research` | 信息检索 | `web_search`（内置知识库 mock） |
+| `research` | 信息检索 | `web_search`（真实 Tavily 检索，返回可追溯 URL） |
 | `coding` | 编程 | `execute_python`（真实执行并捕获输出） |
 | `data_analysis` | 数据分析 / 计算 | `calculate`、`descriptive_stats` |
 | `writing` | 润色写作 | `count_characters` |
@@ -229,6 +235,7 @@ pip install -r requirements.txt
 
 # 配置 key（二选一）
 export OPENAI_API_KEY=sk-...        # 直接 export
+export TAVILY_API_KEY=tvly-...      # research.web_search 必需；无 mock fallback
 # 或： cp env.example .env 后填写
 
 python demo.py
@@ -236,7 +243,7 @@ python demo.py
 
 可配环境变量（均有默认值）：
 `OPENAI_API_KEY`、`OPENAI_BASE_URL`（默认 `https://api.openai.com/v1`）、
-`OPENAI_MODEL`（默认 `gpt-5.6-luna`）。
+`OPENAI_MODEL`（默认 `gpt-5.6-luna`），以及供检索角色真实联网使用的 `TAVILY_API_KEY`。
 
 **通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
 `OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
@@ -296,9 +303,12 @@ triage → research → data_analysis → writing
 
 > 注：真实 LLM 输出有随机性，某次运行的具体措辞/步数可能略有不同，但移交机制一致。
 
-### 预期输出示例（真实运行截取）
+### 预期输出形态
 
-以下是一次 `python demo.py`（`model=gpt-5.6-luna`，经 OpenRouter 路由）真实运行的关键片段，未做任何编造或修饰：
+以下片段用于说明控制台输出格式。正式验收以
+[`validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json`](validation/exp10-2-kimi-k2.5-tavily-20260730-v2.json)
+为准：该文件记录 Moonshot `kimi-k2.5`、带来源 URL 的真实 Tavily 结果、完整移交链、计算工具调用、
+长度核对、原始 provider response ID/usage 与全部验收门禁。
 
 ```
 === 角色花名册（共 5 个专业角色）===
@@ -337,6 +347,6 @@ triage → research → data_analysis → writing
 ## 局限
 
 - 默认模型为 `gpt-5.6-luna`；移交是否按预期链路发生，很大程度依赖所选模型的指令遵循能力，换模型效果可能不同。
-- `research` 角色的 `web_search` 是**内置知识库 mock**，并非真实联网检索，仅能命中预置的少量关键词（新能源汽车销量、光伏装机、Python GIL），换查询词可能查不到。
+- `research` 角色需要可用的 Tavily 凭据。缺少凭据、HTTP 失败或供应商返回空结果都会显式报错，不会用预置事实替代。
 - 真实 LLM 输出存在随机性：具体移交步数、每次 `reason` 的措辞、是否途经 `coding` 角色等，不同次运行可能不同，但移交机制本身一致。
 - `orchestrator.py` 设有 `max_steps`（默认 20）硬上限，以及「同一 (角色, 工具, 参数) 连续调用 ≥3 次」的纠偏提示，用于防止模型死循环；这是兜底保护，不代表每次运行都会用满这些步数。

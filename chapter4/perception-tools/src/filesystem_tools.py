@@ -1,12 +1,21 @@
+"""File-system perception tools and tightly scoped mutation helpers.
+
+Read operations retain their historical behavior.  Move, copy, and delete are
+available only beneath the directory named by ``PERCEPTION_MUTATION_ROOT``.
+They reject absolute paths, traversal, symlinks, and the private quarantine
+directory.  Delete and overwrite are implemented as reversible quarantine
+moves so the experiment never has to destroy user data.
 """
-File system tools: file reading, grep search, and text summarization.
-"""
+import hashlib
 import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import traceback
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Union
 
@@ -17,6 +26,290 @@ from base import ActionResponse, validate_file_path
 
 
 load_dotenv()
+
+
+MUTATION_ROOT_ENV = "PERCEPTION_MUTATION_ROOT"
+QUARANTINE_DIRECTORY = ".perception-trash"
+
+
+def _mutation_error(operation: str, exc: Exception) -> TextContent:
+    action_response = ActionResponse(
+        success=False,
+        message=f"Filesystem {operation} failed: {exc}",
+        metadata={
+            "operation": operation,
+            "error_type": type(exc).__name__,
+            "mutation_root_env": MUTATION_ROOT_ENV,
+        },
+    )
+    return TextContent(
+        type="text",
+        text=json.dumps(action_response.model_dump()),
+    )
+
+
+def _mutation_root() -> Path:
+    configured = os.getenv(MUTATION_ROOT_ENV, "").strip()
+    if not configured:
+        raise PermissionError(
+            f"{MUTATION_ROOT_ENV} must name an explicit experiment workspace"
+        )
+    root = Path(configured).expanduser().resolve(strict=True)
+    if not root.is_dir():
+        raise NotADirectoryError(f"Mutation root is not a directory: {root}")
+    return root
+
+
+def _relative_parts(value: str) -> tuple[str, ...]:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("Path must be a non-empty relative path")
+    path = Path(value)
+    if path.is_absolute():
+        raise PermissionError("Absolute paths are not allowed for filesystem mutations")
+    if ".." in path.parts:
+        raise PermissionError("Parent traversal is not allowed for filesystem mutations")
+    parts = tuple(part for part in path.parts if part not in {"", "."})
+    if not parts:
+        raise PermissionError("The mutation workspace root itself cannot be changed")
+    if parts[0] == QUARANTINE_DIRECTORY:
+        raise PermissionError("The filesystem quarantine is managed by the server")
+    return parts
+
+
+def _inside_root(root: Path, path: Path) -> bool:
+    try:
+        path.relative_to(root)
+        return True
+    except ValueError:
+        return False
+
+
+def _resolve_mutation_path(
+    root: Path,
+    value: str,
+    *,
+    must_exist: bool,
+) -> Path:
+    parts = _relative_parts(value)
+    unresolved = root.joinpath(*parts)
+    if must_exist:
+        resolved = unresolved.resolve(strict=True)
+    else:
+        parent = unresolved.parent.resolve(strict=True)
+        if not parent.is_dir():
+            raise NotADirectoryError(f"Destination parent is not a directory: {parent}")
+        resolved = parent / unresolved.name
+    if not _inside_root(root, resolved):
+        raise PermissionError("Resolved path escapes the configured mutation root")
+    if unresolved.is_symlink() or (resolved.exists() and resolved.is_symlink()):
+        raise PermissionError("Symbolic links are not allowed for filesystem mutations")
+    return resolved
+
+
+def _assert_no_symlinks(path: Path) -> None:
+    if path.is_symlink():
+        raise PermissionError(f"Symbolic links are not allowed: {path}")
+    if path.is_dir():
+        for item in path.rglob("*"):
+            if item.is_symlink():
+                raise PermissionError(f"Symbolic links are not allowed: {item}")
+
+
+def _fingerprint(path: Path) -> dict:
+    """Return a deterministic content receipt for one file or directory."""
+    digest = hashlib.sha256()
+    total_bytes = 0
+    entries = 0
+    if path.is_file():
+        with path.open("rb") as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(block)
+                total_bytes += len(block)
+        entries = 1
+        kind = "file"
+    elif path.is_dir():
+        kind = "directory"
+        for item in sorted(path.rglob("*"), key=lambda candidate: candidate.as_posix()):
+            if item.is_symlink():
+                raise PermissionError(f"Symbolic links are not allowed: {item}")
+            relative = item.relative_to(path).as_posix()
+            item_kind = "directory" if item.is_dir() else "file"
+            digest.update(f"{item_kind}\0{relative}\0".encode("utf-8"))
+            entries += 1
+            if item.is_file():
+                with item.open("rb") as stream:
+                    for block in iter(lambda: stream.read(1024 * 1024), b""):
+                        digest.update(block)
+                        total_bytes += len(block)
+    else:
+        raise ValueError(f"Unsupported filesystem object: {path}")
+    return {
+        "kind": kind,
+        "sha256": digest.hexdigest(),
+        "bytes": total_bytes,
+        "entries": entries,
+    }
+
+
+def _quarantine(root: Path, path: Path) -> Path:
+    trash = root / QUARANTINE_DIRECTORY
+    trash.mkdir(mode=0o700, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    destination = trash / f"{stamp}-{uuid.uuid4().hex}-{path.name}"
+    path.rename(destination)
+    return destination
+
+
+async def move_path(
+    source_path: str,
+    destination_path: str,
+    overwrite: bool = False,
+) -> TextContent:
+    """Move a file/directory inside the explicit mutation workspace."""
+    operation = "move"
+    quarantined_destination = None
+    try:
+        root = _mutation_root()
+        source = _resolve_mutation_path(root, source_path, must_exist=True)
+        destination = _resolve_mutation_path(root, destination_path, must_exist=False)
+        if source == destination:
+            raise ValueError("Source and destination must be different")
+        _assert_no_symlinks(source)
+        before = _fingerprint(source)
+        if destination.exists():
+            if not overwrite:
+                raise FileExistsError(f"Destination already exists: {destination_path}")
+            _assert_no_symlinks(destination)
+            quarantined_destination = _quarantine(root, destination)
+        try:
+            source.rename(destination)
+        except Exception:
+            if quarantined_destination and not destination.exists():
+                quarantined_destination.rename(destination)
+            raise
+        after = _fingerprint(destination)
+        if before != after or source.exists():
+            raise RuntimeError("Post-move verification failed")
+        response = ActionResponse(
+            success=True,
+            message={
+                "operation": operation,
+                "source": source_path,
+                "destination": destination_path,
+                "source_exists_after": source.exists(),
+                "destination_fingerprint": after,
+                "replaced_path_quarantine": (
+                    str(quarantined_destination.relative_to(root))
+                    if quarantined_destination else None
+                ),
+            },
+            metadata={
+                "mutation_root": str(root),
+                "pre_operation_fingerprint": before,
+                "verification": "source absent and destination fingerprint matches",
+            },
+        )
+        return TextContent(type="text", text=json.dumps(response.model_dump()))
+    except Exception as exc:
+        logging.error("Filesystem move error: %s", traceback.format_exc())
+        return _mutation_error(operation, exc)
+
+
+async def copy_path(
+    source_path: str,
+    destination_path: str,
+    overwrite: bool = False,
+) -> TextContent:
+    """Copy a file/directory inside the explicit mutation workspace."""
+    operation = "copy"
+    quarantined_destination = None
+    try:
+        root = _mutation_root()
+        source = _resolve_mutation_path(root, source_path, must_exist=True)
+        destination = _resolve_mutation_path(root, destination_path, must_exist=False)
+        if source == destination:
+            raise ValueError("Source and destination must be different")
+        _assert_no_symlinks(source)
+        before = _fingerprint(source)
+        if destination.exists():
+            if not overwrite:
+                raise FileExistsError(f"Destination already exists: {destination_path}")
+            _assert_no_symlinks(destination)
+            quarantined_destination = _quarantine(root, destination)
+        try:
+            if source.is_dir():
+                shutil.copytree(source, destination, symlinks=False)
+            else:
+                shutil.copy2(source, destination)
+        except Exception:
+            if destination.exists():
+                if destination.is_dir():
+                    shutil.rmtree(destination)
+                else:
+                    destination.unlink()
+            if quarantined_destination:
+                quarantined_destination.rename(destination)
+            raise
+        after = _fingerprint(destination)
+        if before != after or not source.exists():
+            raise RuntimeError("Post-copy verification failed")
+        response = ActionResponse(
+            success=True,
+            message={
+                "operation": operation,
+                "source": source_path,
+                "destination": destination_path,
+                "source_exists_after": source.exists(),
+                "destination_fingerprint": after,
+                "replaced_path_quarantine": (
+                    str(quarantined_destination.relative_to(root))
+                    if quarantined_destination else None
+                ),
+            },
+            metadata={
+                "mutation_root": str(root),
+                "pre_operation_fingerprint": before,
+                "verification": "source retained and destination fingerprint matches",
+            },
+        )
+        return TextContent(type="text", text=json.dumps(response.model_dump()))
+    except Exception as exc:
+        logging.error("Filesystem copy error: %s", traceback.format_exc())
+        return _mutation_error(operation, exc)
+
+
+async def delete_path(path: str) -> TextContent:
+    """Remove a path from the workspace by moving it to private quarantine."""
+    operation = "delete"
+    try:
+        root = _mutation_root()
+        target = _resolve_mutation_path(root, path, must_exist=True)
+        _assert_no_symlinks(target)
+        before = _fingerprint(target)
+        quarantine = _quarantine(root, target)
+        after = _fingerprint(quarantine)
+        if target.exists() or before != after:
+            raise RuntimeError("Post-delete verification failed")
+        response = ActionResponse(
+            success=True,
+            message={
+                "operation": operation,
+                "path": path,
+                "path_exists_after": target.exists(),
+                "quarantine_path": str(quarantine.relative_to(root)),
+                "reversible": True,
+                "quarantine_fingerprint": after,
+            },
+            metadata={
+                "mutation_root": str(root),
+                "pre_operation_fingerprint": before,
+                "verification": "original path absent and quarantine fingerprint matches",
+            },
+        )
+        return TextContent(type="text", text=json.dumps(response.model_dump()))
+    except Exception as exc:
+        logging.error("Filesystem delete error: %s", traceback.format_exc())
+        return _mutation_error(operation, exc)
 
 
 async def read_file(

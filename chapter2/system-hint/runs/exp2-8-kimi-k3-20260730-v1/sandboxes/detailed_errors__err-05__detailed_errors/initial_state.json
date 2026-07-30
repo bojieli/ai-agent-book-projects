@@ -1,0 +1,7 @@
+{
+  "suite": "detailed_errors",
+  "case_id": "err-05",
+  "requested": "manifest.json",
+  "actual": "manifest_current.json",
+  "document_token": "MAN-6485"
+}

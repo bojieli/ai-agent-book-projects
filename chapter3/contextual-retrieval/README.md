@@ -9,6 +9,16 @@
 
 ## English
 
+### Canonical live campaign
+
+`python campaign.py` regenerates every prefix live from the full source
+document plus its target chunk, then compares the same 15 labeled queries over
+plain/contextual BM25, dense Qwen3 embeddings, and RRF hybrid indexes. It records
+recall@1/3/5, MRR, model revision, index-time usage/cost assumptions, source
+hashes, and raw ARK receipts in `validation/runs/<run-id>/`; the canonical
+pointer is `validation/latest.json`. `compare_retrieval.py` remains the small
+offline demonstration and is not accepted as the canonical live result.
+
 ### Overview
 
 Educational implementation of Anthropic’s Contextual Retrieval: prepend chunk-specific context before embedding/indexing to fix the “orphaned chunk” problem.

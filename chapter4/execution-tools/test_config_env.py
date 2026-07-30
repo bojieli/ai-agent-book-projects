@@ -6,12 +6,8 @@ ValueError. They now fall back to defaults with a warning.
 """
 import importlib
 import os
-import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(__file__))
-
-# Ensure the real local config module is imported (other tests stub it).
-sys.modules.pop("config", None)
 import config as cfg
 
 
@@ -40,7 +36,13 @@ def test_env_float_parses_valid_value(monkeypatch):
 def test_module_import_survives_malformed_env(monkeypatch):
     """Import-time class attributes must not raise on malformed env values."""
     monkeypatch.setenv("MAX_OUTPUT_LENGTH", "lots")
-    # Fresh import from disk (test_terminal_controller stubs sys.modules['config']).
-    sys.modules.pop("config", None)
-    fresh = importlib.import_module("config")
+    # Execute a fresh copy under a unique name without replacing the shared
+    # config module that implementation modules imported during collection.
+    spec = importlib.util.spec_from_file_location(
+        "_execution_tools_config_malformed_test",
+        Path(cfg.__file__),
+    )
+    assert spec is not None and spec.loader is not None
+    fresh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fresh)
     assert fresh.Config.MAX_OUTPUT_LENGTH == 1000
