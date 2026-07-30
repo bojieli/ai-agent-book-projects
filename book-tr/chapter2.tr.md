@@ -44,6 +44,8 @@ Bir büyük model API'sinin özü bir **mesaj listesidir** (messages). Listedeki
 
 Ayrıca, araç tanımları (tools) istekte mesajlar olarak değil ayrı bir alan olarak sağlanır ve modele hangi araçların mevcut olduğunu ve her aracın hangi parametreleri kabul ettiğini bildirir.
 
+Bu, Bölüm 1'de “context'in beş bileşeni” olarak tanıtılan aynı API istek yapısının farklı bir açıdan sınıflandırılmasıdır: `system`, `user`, `assistant` ve `tool` olmak üzere dört mesaj rolü sırasıyla system prompt'a, kullanıcı mesajlarına, asistan mesajlarına ve araç sonuçlarına karşılık gelir. Geriye kalan bileşen olan araç tanımları, bir mesaj rolü olarak değil isteğin üst düzey `tools` alanı üzerinden iletilir. Dolayısıyla “dört mesaj rolü + `tools` alanı”, Bölüm 1'deki beş context bileşenini tam olarak kapsar.
+
 ### Tek Turlu Diyalog: En Basit API Çağrısı
 
 ![Şekil 2-2: Tek Turlu Bir API Çağrısının İstek ve Yanıt Yapısı](images/fig2-2.svg)
