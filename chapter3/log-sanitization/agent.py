@@ -70,17 +70,19 @@ class LogSanitizationAgent:
             openrouter_key = os.getenv("OPENROUTER_API_KEY")
             if openrouter_key:
                 from openai import OpenAI
-                from openrouter_fallback import (
-                    OPENROUTER_BASE_URL,
-                    map_model_to_openrouter,
+
+                from agentbook.providers import resolve_backend
+                # 这里的回退条件是“本地 Ollama 连不上”，而非缺少凭证，
+                # 因此由本实验判定后再向注册表要一个 OpenRouter backend。
+                # 本地小模型（qwen3:0.6b 等）在 OpenRouter 上未必可用，
+                # substitute_unknown 让注册表替换成可用的默认模型。
+                backend = resolve_backend(
+                    "openrouter", model=self.model, api_key=openrouter_key
                 )
                 self.backend = "openrouter"
-                self.client = OpenAI(api_key=openrouter_key,
-                                     base_url=OPENROUTER_BASE_URL)
-                # 本地小模型（qwen3:0.6b 等）在 OpenRouter 上未必可用，
-                # 默认改用 openai/gpt-5.6-luna；带 "/" 的 id 原样透传。
-                self.model = (map_model_to_openrouter(self.model)
-                              if "/" in self.model else "openai/gpt-5.6-luna")
+                self.client = OpenAI(api_key=backend.api_key,
+                                     base_url=backend.base_url)
+                self.model = backend.model
                 print(f"⚠️  Ollama unavailable ({e}); "
                       f"falling back to OpenRouter model: {self.model}")
             else:

@@ -8,12 +8,15 @@ import sys
 from pathlib import Path
 from agent import SystemHintAgent, SystemHintConfig
 
+from agentbook.providers import PROVIDERS
+
 
 def main():
     """Quick start demonstration"""
-    
-    # Check for API key
-    api_key = os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+
+    # Check for API key. 接受哪些环境变量由 agentbook 的 provider 注册表定义；
+    # Kimi 官方 key 缺失时用 OPENROUTER_API_KEY 兜底。
+    api_key = PROVIDERS["kimi"].api_key() or os.getenv("OPENROUTER_API_KEY")
     if not api_key:
         print("❌ Error: Please set KIMI_API_KEY environment variable")
         print("\nSetup instructions:")
