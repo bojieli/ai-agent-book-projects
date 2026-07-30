@@ -8,7 +8,7 @@ Este capítulo aborda tres escenarios en los que **las restricciones de tiempo r
 
 La voz es la interfaz con mayor ancho de banda y más natural. Se pueden distinguir dos tipos de herramientas: herramientas de dictado por voz (reemplazo de teclado) y Agentes de voz (como Pine o ChatGPT Voice), donde la voz es tanto la entrada como la interacción misma. Una aplicación avanzada es la "programación por susurro" (whisper coding), donde el desarrollador habla con el Agente de código.
 
-## Tres Paradigma de la Arquitectura de Voz
+## Tres Paradigmas de la Arquitectura de Voz
 
 1. **Cascada (Cascaded)**: Cadena de tres modelos: Reconocimiento Automático del Habla (ASR) → Modelo de Lenguaje Grande (LLM) → Texto a Voz (TTS). Latencia acumulada y pérdida de información no textual.
 2. **Omnimodal de Extremo a Extremo (Omni)**: Un solo modelo que "escucha, piensa y habla" directamente (ej. Qwen3-Omni, Step-Audio 2). Preserva la prosodia y la emoción, pero aún asume el "turno de habla" basado en detección de silencio (VAD).
@@ -78,7 +78,7 @@ Herramientas: herramienta `computer` (mouse/teclado), herramienta `bash`, herram
 
  Tres enfoques principales:
 1. **Anotación Visual (Set-of-Mark original)**: Segmentar regiones con modelos como SAM y superponer números.
-2. **Indexación de Elementos Estructurados (DOM / Accessibility Tree)**: Encriptar/numerar elementos interactivos del DOM o árbol de accesibilidad (implementación de `browser-use`).
+2. **Indexación de Elementos Estructurados (DOM / Accessibility Tree)**: Identificar/numerar elementos interactivos del DOM o árbol de accesibilidad (implementación de `browser-use`).
 3. **Predicción Directa de Coordenadas**: El modelo predice coordenadas $(x,y)$ directamente (SeeClick, Claude). Requiere escalado bidireccional de coordenadas para coincidir con la resolución del modelo.
 
 ![Figura 9-9: Set-of-Mark vs Indexación de Elementos Estructurados (browser-use)](images/fig9-9.svg)

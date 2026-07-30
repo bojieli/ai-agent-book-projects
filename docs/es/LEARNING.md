@@ -3,11 +3,11 @@
 ← [Volver al README principal](README.md)
 
 
-### Concepto Central: Agente = Modelo + Contexto + Herramientas
+## Concepto Central: Agente = LLM + Contexto + Herramientas
 
-El marco central de este libro es **Agente = Modelo + Contexto + Herramientas**. Estos tres componentes colaboran para realizar el comportamiento inteligente de un agente:
+El marco central de este libro es **Agente = LLM + Contexto + Herramientas**. Estos tres componentes colaboran para realizar el comportamiento inteligente de un agente:
 
-- **Modelo**: El cerebro del agente, que proporciona capacidades de comprensión, razonamiento y toma de decisiones.
+- **LLM**: El cerebro del agente, que proporciona capacidades de comprensión, razonamiento y toma de decisiones.
 - **Contexto**: El sistema operativo del agente, que contiene instrucciones del sistema, historial de diálogo, procesos de razonamiento, registros de interacción con herramientas, etc.
 - **Herramientas**: Las manos del agente, que le permiten percibir el entorno, ejecutar acciones e interactuar con el mundo exterior.
 

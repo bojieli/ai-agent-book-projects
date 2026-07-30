@@ -404,7 +404,7 @@ Delegar tareas pesadas a subagentes independientes devuelve solo un resumen conc
 - **SOP en el Prompt del Sistema**: Estructurar las instrucciones mediante XML/Markdown y flujos orientados a procesos.
 - **Skills para Carga Bajo Demanda**: La revelación progresiva evita la saturación del contexto.
 - **Barra de Estado para Estados Explícitos**: Inyectar metadatos al final del contexto guía la atención del modelo de forma precisa.
-- **Compresión e Aislamiento**: Combinar la compresión jerárquica con el aislamiento de subagentes para mantener la densidad de información.
+- **Compresión y Aislamiento**: Combinar la compresión jerárquica con el aislamiento de subagentes para mantener la densidad de información.
 
 ## Preguntas de Reflexión
 

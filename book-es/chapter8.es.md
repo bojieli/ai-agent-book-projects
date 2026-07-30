@@ -41,7 +41,7 @@ Tabla 8-2 Límites aplicables de los cuatro métodos de evolución continua
 |---|---|---|---|
 | Base de conocimientos de experiencia | Hechos, patrones experimentales, excepciones | Actualización rápida, trazabilidad | Depende de recuperación y aplicación correcta |
 | Prompts y Skills | Principios de juicio y procedimientos expresables | Interpretable, controlable | Propenso a sobrecarga o conflictos |
-| Programas y Harness | Procedimientos deterministas, herramientas, restricciones | Probable, ejecución estable, bajo costo | Mayor costo de desarrollo inicial |
+| Programas y Harness | Procedimientos deterministas, herramientas, restricciones | Predecible, ejecución estable, bajo costo | Mayor costo de desarrollo inicial |
 | Parámetros del modelo | Percepción de alta dimensión, estilo, estrategias | Alta generalización, bajo overhead | Alto costo de actualización y regresión |
 
 ### 1. Consolidación de Experiencia en Conocimiento
@@ -95,7 +95,7 @@ Tabla 8-3 Métricas de evaluación por capas para la evolución continua
 | Validez de cambios candidatos | ¿El actualizador propone cambios útiles? | Tasa de aceptación y ganancia en validación |
 | Tasa de activación de artefactos | ¿El Agente carga la nueva Skill/memoria? | Trazas de recuperación y enrutamiento |
 | Tasa de cumplimiento exitoso | ¿El Agente sigue la nueva regla o proceso? | Secuencias de acciones y verificadores |
-| Ganancia en tareas no vistas | ¿Mejora el sistema en tareas no usadas en la evolución? | Éxito, calidad y costo en tareas retendidas |
+| Ganancia en tareas no vistas | ¿Mejora el sistema en tareas no usadas en la evolución? | Éxito, calidad y costo en tareas retenidas |
 
 ### Consolidación y Limpieza (Sleep Learning)
 

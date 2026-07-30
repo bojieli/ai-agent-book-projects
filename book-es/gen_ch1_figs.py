@@ -31,7 +31,7 @@ def fig1_4():
     s.group_box(100, 210, 460, 280, 'Bucle ReAct (ejecución autónoma dentro del modelo)')
 
     # Step 1: User input
-    s.box(120, 250, 200, 55, 'Usuario: Buscar la tendencia de Bitcoin del último mes\n', fill='light', font_size=FS_SMALL)
+    s.box(120, 250, 200, 55, 'Usuario: Buscar la tendencia de Bitcoin del último mes', fill='light', font_size=FS_SMALL)
 
     # Step 2: Think
     s.box(120, 325, 200, 55, 'Pensamiento: Se deben buscar datos en tiempo real y analizarlos con código', fill='#e8e8e8', font_size=FS_SMALL)

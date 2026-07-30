@@ -65,7 +65,7 @@ pandoc "${CHAPTERS[@]}" \
     --toc-depth=3 \
     --number-sections \
     -V documentclass=elegantbook \
-    -V classoption=lang=en \
+    -V classoption=lang=es \
     -V classoption=cyan \
     -V classoption=device=normal \
     -V author="Bojie Li" \

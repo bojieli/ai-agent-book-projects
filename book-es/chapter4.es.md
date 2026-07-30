@@ -80,7 +80,7 @@ Deben incorporar compresión consciente del contexto para salidas grandes, pagin
 Requieren defensas de seguridad en capas:
 1. **Validación de entradas**: Prevención de path traversal (`../../etc/passwd`) e inyección de comandos.
 2. **Control de permisos**: Directorios de trabajo restringidos y listas negras de comandos.
-3. **Mecanismo Proproser-Reviewer (Proponer-Revisar)**:
+3. **Mecanismo Proposer-Reviewer (Proponer-Revisar)**:
    - **Pre-aprobación**: Un modelo independiente revisa las acciones propuestas de alto riesgo antes de ejecutarlas.
    - **Post-validación**: Verificación de resultados mediante cambio de modalidad (ej. renderizar visualmente un documento generado).
 4. **Mecanismo Sidecar**: Módulo de seguridad out-of-band que evalúa riesgos en paralelo con la salida en streaming del modelo principal, aislando el texto libre para evitar inyecciones.
@@ -172,7 +172,7 @@ El uso de Skills sustituye el motor de búsqueda vectorial por la lectura jerár
 
 - **Principios ACI**: Granularidad equilibrada, generalidad mediante ejecutores de código y descripciones claras orientadas al "cuándo usar" y "límites".
 - **Estándar MCP**: Desacoplamiento de herramientas y clientes mediante un protocolo abierto Cliente-Servidor.
-- **Seguridad en Ejecución**: Validación de entradas, Proposer-Reviewer, Sidecar e indemnización/idempotencia.
+- **Seguridad en Ejecución**: Validación de entradas, Proposer-Reviewer, Sidecar e idempotencia.
 - **Arquitectura Asíncrona Orientada a Eventos**: Procesamiento dinámico de eventos mediante estrategias de cancelación, cola y paralelismo.
 - **Descubrimiento Proactivo**: Superación del límite de herramientas mediante búsqueda dinámica (MCP-Zero) y revelación progresiva con Skills.
 

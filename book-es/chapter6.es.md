@@ -52,7 +52,7 @@ Tabla 6-1 Ejemplo de Puntuación con Rúbrica para Tarea de Reembolso de Atenci�
 |------------------------|--------------------------------|------|--------------------------------|
 | Corrección Operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente un reembolso completo de \$299 |
 | Cumplimiento de Políticas | ¿Sigue la política de reembolso de 7 días? | 4 | El pedido está dentro del período de reembolso, cumple con la política |
-| Compleitud de Información | ¿Proporciona el monto, el tiempo de llegada y el ID de reembolso? | 4 | Se proporcionaron los tres datos clave |
+| Completitud de la información | ¿Proporciona el monto, el tiempo de llegada y el ID de reembolso? | 4 | Se proporcionaron los tres datos clave |
 | Detección de Alucinaciones (Ítem de Veto) | ¿Fabrica información inexistente? | Aprobado | Toda la información proviene de las salidas de las herramientas |
 
 La alucinación se enumera como un **ítem de veto** en lugar de una dimensión de puntuación graduada porque es ortogonal a la calidad: una respuesta fluida y detallada que contiene información falsa es mucho más perjudicial para el usuario que una breve pero precisa.
