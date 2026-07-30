@@ -749,6 +749,12 @@ def fmt(value: Any, digits: int = 3) -> str:
     return str(value)
 
 
+def fmt_pct(value: float | None, digits: int = 1) -> str:
+    if value is None:
+        return "—"
+    return f"{value:.{digits}%}"
+
+
 def markdown(report: dict[str, Any]) -> str:
     lines = [
         f"# Experiment 6-8 campaign: `{report['campaign_id']}`",
@@ -765,12 +771,12 @@ def markdown(report: dict[str, Any]) -> str:
         ttft, e2e = row["ttft_s"], row["e2e_s"]
         lines.append(
             f"| {row['provider']} | {row['target_context_tokens']} | {row['target_output_tokens']} | "
-            f"{row['requests']} | {row['success_rate']:.1%} | "
+            f"{row['requests']} | {fmt_pct(row['success_rate'], 1)} | "
             f"{fmt(ttft['p50'])}/{fmt(ttft['p95'])}/{fmt(ttft['p99'])} | "
             f"{fmt(e2e['p50'])}/{fmt(e2e['p95'])}/{fmt(e2e['p99'])} | "
             f"{fmt(row['input_prefill_throughput_tokens_s']['p50'], 1)} | "
             f"{fmt(row['output_throughput_tokens_s']['p50'], 1)} | "
-            f"{row['output_length_attainment_rate']:.1%} | "
+            f"{fmt_pct(row['output_length_attainment_rate'], 1)} | "
             f"{fmt(row['reasoning_tokens']['p50'], 1)} | "
             f"{fmt(row['thinking_ttft_s']['p50'])} |"
         )
@@ -781,7 +787,7 @@ def markdown(report: dict[str, Any]) -> str:
     ])
     for row in report["availability"]:
         lines.append(
-            f"| {row['provider']} | {row['probes']} | {row['uptime']:.2%} | "
+            f"| {row['provider']} | {row['probes']} | {fmt_pct(row['uptime'], 2)} | "
             f"{row['outage_count']} | {fmt(row['mttr_s'])} | "
             f"{row['longest_continuous_availability_s'] / 3600:.2f} |"
         )
@@ -792,7 +798,7 @@ def markdown(report: dict[str, Any]) -> str:
     ])
     for row in report["rate_limits"]:
         lines.append(
-            f"| {row['provider']} | {row['concurrency']} | {row['success_rate']:.1%} | "
+            f"| {row['provider']} | {row['concurrency']} | {fmt_pct(row['success_rate'], 1)} | "
             f"{fmt(row['measured_rpm'], 1)} | {fmt(row['measured_input_tpm'], 1)} | "
             f"{fmt(row['measured_output_tpm'], 1)} |"
         )
