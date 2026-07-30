@@ -157,8 +157,8 @@ $$\nabla_\theta J(\theta) = \mathbb{E}\big[\nabla_\theta \log \pi_\theta(a \mid 
 $$L^{\text{CLIP}}(\theta) = \mathbb{E}\Big[\min\big(\rho\,\hat{A},\ \operatorname{clip}(\rho,\, 1-\epsilon,\, 1+\epsilon)\,\hat{A}\big)\Big]$$
 
 **GRPO (Group Relative Policy Optimization)** elimina la red de valor y calcula la ventaja relativa dentro de un grupo de $N$ respuestas muestreadas para la misma pregunta:
-$$\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_N)}{\operatorname{std}(r_1,\dots,r_N)}$$
-
+$$\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_N)}{\max(\operatorname{std}(r_1,\dots,r_N),\, \epsilon)}$$
+*(donde $\epsilon > 0$ es una pequeña constante de estabilidad numérica, por ejemplo $10^{-8}$; si todas las recompensas del grupo son idénticas, $\hat{A}_i = 0$)*
 Tabla 7-4 Comparación de Métodos de Post-Entrenamiento y Optimización en Tiempo de Inferencia
 
 | Método | Tipo | Idea Central | Ventaja | Desventaja | Escenario Aplicable |

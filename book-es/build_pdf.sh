@@ -41,6 +41,7 @@ CHAPTERS=(
     chapter9.es.md
     chapter10.es.md
     afterword.es.md
+    glossary.es.md
     reference-answers.es.md
 )
 

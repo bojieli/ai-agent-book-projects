@@ -46,12 +46,18 @@ def generate_openai(prompt, out):
         return True
     except Exception as e:
         print(f"gpt-image-1 unavailable ({e}); falling back to dall-e-3 …")
-        r = client.images.generate(model="dall-e-3", prompt=prompt,
-                                    size="1024x1792", quality="hd",
-                                    style="natural", n=1)
-        url = r.data[0].url
-        urllib.request.urlretrieve(url, out)
-        return True
+        try:
+            r = client.images.generate(model="dall-e-3", prompt=prompt,
+                                        size="1024x1792", quality="hd",
+                                        style="natural", n=1)
+            url = r.data[0].url
+            with urllib.request.urlopen(url, timeout=30) as resp:
+                with open(out, "wb") as f:
+                    f.write(resp.read())
+            return True
+        except Exception as fallback_err:
+            print(f"dall-e-3 image generation failed ({fallback_err}). Falling back to default TikZ art in cover.tex.")
+            return False
 
 
 def generate(prompt, out):
