@@ -1,0 +1,566 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "tool_counter__ctr-04__disabled",
+  "suite": "tool_counter",
+  "case_id": "ctr-04",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "55757e3653a17911ae23746fd171bbc18740b8b43707d5f88888dd952eacac0a",
+  "current_sandbox_sha256": "e81a62131ca34acc0b14d6abe9f17376b484a8d0b1b427b16e8e65c3e0cb727d",
+  "created_at": "2026-07-29T19:42:50.941912+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Retrieve the payload for primary resource gateway-d. If the primary remains unavailable, use fallback mirror-d. Submit the resource that supplied the payload."
+    },
+    {
+      "content": "I'll start by probing the primary resource gateway-d.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_0",
+          "function": {
+            "arguments": "{\"name\":\"gateway-d\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The user wants me to retrieve the payload for primary resource \"gateway-d\". If the primary is unavailable, use fallback \"mirror-d\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource \"gateway-d\"."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_0",
+      "name": "probe_resource",
+      "content": "Error: primary resource is temporarily unavailable"
+    },
+    {
+      "content": "The primary is unavailable. Falling back to mirror-d.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "probe_resource_1",
+          "function": {
+            "arguments": "{\"name\":\"mirror-d\"}",
+            "name": "probe_resource"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The primary resource gateway-d is temporarily unavailable. Per the instructions, I should use the fallback mirror-d."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "probe_resource_1",
+      "name": "probe_resource",
+      "content": "verified-payload-ctr-04"
+    },
+    {
+      "content": "The fallback mirror-d supplied the payload. Submitting the result.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"fallback\":\"mirror-d\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The fallback mirror-d supplied the payload \"verified-payload-ctr-04\". Now I submit the result with the fallback resource that supplied the payload, which is \"mirror-d\"."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:42:50.942234+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-d. If the primary remains unavailable, use fallback mirror-d. Submit the resource that supplied the payload."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5061.065,
+      "response": {
+        "id": "chatcmpl-6a6a57bc255aaaf8ea5dc375",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by probing the primary resource gateway-d.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_0",
+                  "function": {
+                    "arguments": "{\"name\":\"gateway-d\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The user wants me to retrieve the payload for primary resource \"gateway-d\". If the primary is unavailable, use fallback \"mirror-d\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource \"gateway-d\"."
+            }
+          }
+        ],
+        "created": 1785354173,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 111,
+          "prompt_tokens": 311,
+          "total_tokens": 422,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 49,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:42:56.005042+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-d. If the primary remains unavailable, use fallback mirror-d. Submit the resource that supplied the payload."
+          },
+          {
+            "content": "I'll start by probing the primary resource gateway-d.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_0",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-d\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to retrieve the payload for primary resource \"gateway-d\". If the primary is unavailable, use fallback \"mirror-d\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource \"gateway-d\"."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_0",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3899.616,
+      "response": {
+        "id": "chatcmpl-6a6a57c1bc7cc35e30f1b6e7",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The primary is unavailable. Falling back to mirror-d.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "probe_resource_1",
+                  "function": {
+                    "arguments": "{\"name\":\"mirror-d\"}",
+                    "name": "probe_resource"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The primary resource gateway-d is temporarily unavailable. Per the instructions, I should use the fallback mirror-d."
+            }
+          }
+        ],
+        "created": 1785354177,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 85,
+          "prompt_tokens": 456,
+          "total_tokens": 541,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 22,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:42:59.906861+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Retrieve the payload for primary resource gateway-d. If the primary remains unavailable, use fallback mirror-d. Submit the resource that supplied the payload."
+          },
+          {
+            "content": "I'll start by probing the primary resource gateway-d.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_0",
+                "function": {
+                  "arguments": "{\"name\":\"gateway-d\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to retrieve the payload for primary resource \"gateway-d\". If the primary is unavailable, use fallback \"mirror-d\". Then submit the resource that supplied the payload.\n\nLet me start by probing the primary resource \"gateway-d\"."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_0",
+            "name": "probe_resource",
+            "content": "Error: primary resource is temporarily unavailable"
+          },
+          {
+            "content": "The primary is unavailable. Falling back to mirror-d.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "probe_resource_1",
+                "function": {
+                  "arguments": "{\"name\":\"mirror-d\"}",
+                  "name": "probe_resource"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The primary resource gateway-d is temporarily unavailable. Per the instructions, I should use the fallback mirror-d."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "probe_resource_1",
+            "name": "probe_resource",
+            "content": "verified-payload-ctr-04"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_resource",
+              "description": "Probe a primary or fallback resource.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Resource name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "fallback": {
+                    "type": "string",
+                    "description": "Resource that supplied the payload"
+                  }
+                },
+                "required": [
+                  "fallback"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5085.496,
+      "response": {
+        "id": "chatcmpl-6a6a57c533277b847199918c",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The fallback mirror-d supplied the payload. Submitting the result.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"fallback\":\"mirror-d\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The fallback mirror-d supplied the payload \"verified-payload-ctr-04\". Now I submit the result with the fallback resource that supplied the payload, which is \"mirror-d\"."
+            }
+          }
+        ],
+        "created": 1785354182,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 102,
+          "prompt_tokens": 575,
+          "total_tokens": 677,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 37,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:42:56.004248+00:00",
+      "tool_call_id": "probe_resource_0",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "gateway-d"
+      },
+      "content": "Error: primary resource is temporarily unavailable",
+      "ok": false,
+      "sandbox_sha256_after": "e81a62131ca34acc0b14d6abe9f17376b484a8d0b1b427b16e8e65c3e0cb727d"
+    },
+    {
+      "at": "2026-07-29T19:42:59.905834+00:00",
+      "tool_call_id": "probe_resource_1",
+      "name": "probe_resource",
+      "arguments": {
+        "name": "mirror-d"
+      },
+      "content": "verified-payload-ctr-04",
+      "ok": true,
+      "sandbox_sha256_after": "e81a62131ca34acc0b14d6abe9f17376b484a8d0b1b427b16e8e65c3e0cb727d"
+    },
+    {
+      "at": "2026-07-29T19:43:04.993627+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "fallback": "mirror-d"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "e81a62131ca34acc0b14d6abe9f17376b484a8d0b1b427b16e8e65c3e0cb727d"
+    }
+  ],
+  "tool_counters": {
+    "probe_resource": 2,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "tool_counter": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1342,
+    "completion_tokens": 298,
+    "total_tokens": 1640
+  },
+  "cost": {
+    "amount": 0.056639999999999996,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:43:04.994884+00:00",
+  "case_condition_order": [
+    "disabled",
+    "tool_counter"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

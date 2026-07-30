@@ -1,0 +1,4 @@
+Decision Record
+Decision: Approve release of item ALPHA-417 for delivery.
+Rationale: Item meets all required delivery checks.
+Approved by: Local-sandbox agent

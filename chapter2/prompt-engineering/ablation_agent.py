@@ -5,6 +5,10 @@ Extends ToolCallingAgent to support tone modifications
 
 import json
 import os
+import time
+import copy
+import traceback
+from datetime import datetime, timezone
 from litellm import completion
 from typing import List, Optional, Dict, Any
 
@@ -26,7 +30,8 @@ class AblationAgent(Agent):
         model: str,
         provider: str,
         temperature: float = 0.0,
-        verbose: bool = True
+        verbose: bool = True,
+        seed: Optional[int] = None,
     ):
         """
         Initialize the ablation agent
@@ -45,6 +50,7 @@ class AblationAgent(Agent):
         self.provider = provider
         self.temperature = temperature
         self.verbose = verbose
+        self.seed = seed
     
     def solve(
         self, env: Env, task_index: Optional[int] = None, max_num_steps: int = 30
@@ -79,6 +85,10 @@ class AblationAgent(Agent):
         obs = env_reset_res.observation
         info = env_reset_res.info.model_dump()
         reward = 0.0
+        api_records: List[Dict[str, Any]] = []
+        tool_call_count = 0
+        tool_error_count = 0
+        failure = None
         
         if self.verbose:
             print(f"\n📝 Initial User Message:")
@@ -143,7 +153,14 @@ class AblationAgent(Agent):
                     "custom_llm_provider": self.provider,
                     "tools": self.tools_info,
                     "temperature": self.temperature,
+                    "max_tokens": 4096,
                 }
+                requested_seed = (
+                    self.seed + (task_index or 0) * 1000 + step
+                    if self.seed is not None else None
+                )
+                if requested_seed is not None:
+                    completion_kwargs["seed"] = requested_seed
                 
                 # Add reasoning_effort for gpt-5 to minimize thinking tokens
                 if "gpt-5" in self.model:
@@ -151,7 +168,46 @@ class AblationAgent(Agent):
                     if self.verbose:
                         print("💭 Using reasoning_effort='low' to minimize thinking tokens")
                 
+                requested_at = datetime.now(timezone.utc).isoformat()
+                started = time.perf_counter()
                 res = completion(**completion_kwargs)
+                choice = res.choices[0]
+                usage = getattr(res, "usage", None)
+                usage_payload = (
+                    usage.model_dump()
+                    if usage is not None and hasattr(usage, "model_dump")
+                    else None
+                )
+                hidden_cost = getattr(res, "_hidden_params", {}).get("response_cost")
+                api_records.append({
+                    "requested_at": requested_at,
+                    "provider": self.provider,
+                    "model": self.model,
+                    "task_index": task_index,
+                    "step": step + 1,
+                    "requested_seed": requested_seed,
+                    "request": {
+                        "messages": copy.deepcopy(messages),
+                        "tools": copy.deepcopy(self.tools_info),
+                        "temperature": self.temperature,
+                        "max_tokens": 4096,
+                    },
+                    "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+                    "response": {
+                        "id": getattr(res, "id", None),
+                        "model": getattr(res, "model", None),
+                        "created": getattr(res, "created", None),
+                        "finish_reason": getattr(choice, "finish_reason", None),
+                        "content": choice.message.content,
+                        "reasoning_content": getattr(choice.message, "reasoning_content", None),
+                        "tool_calls": [
+                            item.model_dump() if hasattr(item, "model_dump") else item
+                            for item in (getattr(choice.message, "tool_calls", None) or [])
+                        ],
+                        "usage": usage_payload,
+                        "litellm_estimated_cost": hidden_cost,
+                    },
+                })
                 
                 # Debug: Print response
                 if self.verbose:  # Show full API response details when verbose
@@ -171,14 +227,36 @@ class AblationAgent(Agent):
                             print(f"      {tc.function.arguments}")  # Show FULL arguments
                     print(f"{'='*60}\n")
             except Exception as e:
+                if "requested_at" in locals() and (
+                    not api_records or api_records[-1].get("step") != step + 1
+                ):
+                    api_records.append({
+                        "requested_at": requested_at,
+                        "provider": self.provider,
+                        "model": self.model,
+                        "task_index": task_index,
+                        "step": step + 1,
+                        "requested_seed": requested_seed,
+                        "request": completion_kwargs,
+                        "elapsed_ms": round((time.perf_counter() - started) * 1000, 3),
+                        "error": {"type": type(e).__name__, "message": str(e)},
+                    })
                 print(f"\n❌ ERROR calling API:")
                 print(f"  Provider: {self.provider}")
                 print(f"  Model: {self.model}")
                 print(f"  Error: {str(e)}")
                 print(f"  Error type: {type(e).__name__}")
-                import traceback
                 print(f"  Traceback:\n{traceback.format_exc()}")
-                raise
+                failure = {
+                    "type": type(e).__name__,
+                    "message": str(e),
+                    "traceback": traceback.format_exc(),
+                }
+                # Return a scored failure with every accepted receipt retained.
+                # Raising here made the outer runner discard the complete
+                # in-memory trajectory and all calls made before a late error.
+                reward = 0.0
+                break
             
             next_message = res.choices[0].message.model_dump()
             cost = res._hidden_params.get("response_cost", 0)
@@ -210,9 +288,15 @@ class AblationAgent(Agent):
             
             # Convert message to action
             action = message_to_action(next_message)
+            if action.name != RESPOND_ACTION_NAME:
+                tool_call_count += 1
             
             # Step in environment
             env_response = env.step(action)
+            if action.name != RESPOND_ACTION_NAME and str(
+                env_response.observation
+            ).startswith(("Error:", "Unknown action")):
+                tool_error_count += 1
             reward = env_response.reward
             info = {**info, **env_response.info.model_dump()}
             
@@ -273,6 +357,22 @@ class AblationAgent(Agent):
             print(f"  Total Cost: ${total_cost:.4f}")
             print(f"  Messages Exchanged: {len(messages)}")
             print(f"{'='*80}\n")
+
+        info["experiment_metrics"] = {
+            "agent_steps": step + 1,
+            "agent_model_calls": len(api_records),
+            "tool_calls": tool_call_count,
+            "tool_errors": tool_error_count,
+        }
+        info["agent_api_records"] = api_records
+        info["user_api_records"] = (
+            env.user.get_api_records()
+            if hasattr(env.user, "get_api_records") else []
+        )
+        if failure is not None:
+            info["error"] = failure["message"]
+            info["error_type"] = failure["type"]
+            info["traceback"] = failure["traceback"]
         
         return SolveResult(
             reward=reward,

@@ -1,0 +1,848 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "detailed_errors__err-03__detailed_errors",
+  "suite": "detailed_errors",
+  "case_id": "err-03",
+  "condition": "detailed_errors",
+  "features": [
+    "detailed_errors"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "81e7219f52a44ee3065634ae6ab9120c092f8bdb88600efe27b139692656fbe6",
+  "current_sandbox_sha256": "d3d5e2b7e8e3514ac42f2dbe2b0def9da3cf0634f55d5fdf39748b677b0c6889",
+  "created_at": "2026-07-29T19:47:44.625410+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Read metrics.csv. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_0",
+          "function": {
+            "arguments": "{\"file\":\"metrics.csv\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The user wants me to read \"metrics.csv\" but it may have been renamed. I need to recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside.\n\nLet me start by trying to read metrics.csv."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'metrics.csv' does not exist\", \"arguments\": {\"file\": \"metrics.csv\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"metrics_v2.csv\"]}"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_document_1",
+          "function": {
+            "arguments": "{\"file\":\"metrics_v2.csv\"}",
+            "name": "read_document"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The file \"metrics.csv\" doesn't exist. There's an available document \"metrics_v2.csv\". Let me read that."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_document_1",
+      "name": "read_document",
+      "content": "MET-4263"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "list_documents_2",
+          "function": {
+            "arguments": "{}",
+            "name": "list_documents"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The actual document is \"metrics_v2.csv\" and its content is \"MET-4263\". The token found inside is \"MET-4263\".\n\nLet me verify by listing documents to make sure there's nothing else ambiguous. Actually, the error already gave me the available documents list: [\"metrics_v2.csv\"]. I read it and got the content \"MET-4263\". \n\nLet me list documents to double-check there isn't more than one candidate, to be thorough. Actually the available_documents from the error already showed only one file. But to be safe, let me list documents."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "list_documents_2",
+      "name": "list_documents",
+      "content": "[\"metrics_v2.csv\"]"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_3",
+          "function": {
+            "arguments": "{\"document\":\"metrics_v2.csv\",\"token\":\"MET-4263\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "Confirmed: the only document available is \"metrics_v2.csv\", and its content is the token \"MET-4263\". Now I'll submit the result."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:47:44.625775+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read metrics.csv. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 3778.323,
+      "response": {
+        "id": "chatcmpl-6a6a58e1e7c97367e803c2d2",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_0",
+                  "function": {
+                    "arguments": "{\"file\":\"metrics.csv\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The user wants me to read \"metrics.csv\" but it may have been renamed. I need to recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside.\n\nLet me start by trying to read metrics.csv."
+            }
+          }
+        ],
+        "created": 1785354465,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 105,
+          "prompt_tokens": 367,
+          "total_tokens": 472,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 53,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:47:48.408762+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read metrics.csv. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"metrics.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read \"metrics.csv\" but it may have been renamed. I need to recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside.\n\nLet me start by trying to read metrics.csv."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'metrics.csv' does not exist\", \"arguments\": {\"file\": \"metrics.csv\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"metrics_v2.csv\"]}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5725.723,
+      "response": {
+        "id": "chatcmpl-6a6a58e48d20c5ab26762cd1",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_document_1",
+                  "function": {
+                    "arguments": "{\"file\":\"metrics_v2.csv\"}",
+                    "name": "read_document"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The file \"metrics.csv\" doesn't exist. There's an available document \"metrics_v2.csv\". Let me read that."
+            }
+          }
+        ],
+        "created": 1785354472,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 79,
+          "prompt_tokens": 567,
+          "total_tokens": 646,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 25,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:47:54.139849+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read metrics.csv. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"metrics.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read \"metrics.csv\" but it may have been renamed. I need to recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside.\n\nLet me start by trying to read metrics.csv."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'metrics.csv' does not exist\", \"arguments\": {\"file\": \"metrics.csv\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"metrics_v2.csv\"]}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_1",
+                "function": {
+                  "arguments": "{\"file\":\"metrics_v2.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file \"metrics.csv\" doesn't exist. There's an available document \"metrics_v2.csv\". Let me read that."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_1",
+            "name": "read_document",
+            "content": "MET-4263"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 6199.06,
+      "response": {
+        "id": "chatcmpl-6a6a58eabfb3431a6ebc30ae",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "list_documents_2",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "list_documents"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The actual document is \"metrics_v2.csv\" and its content is \"MET-4263\". The token found inside is \"MET-4263\".\n\nLet me verify by listing documents to make sure there's nothing else ambiguous. Actually, the error already gave me the available documents list: [\"metrics_v2.csv\"]. I read it and got the content \"MET-4263\". \n\nLet me list documents to double-check there isn't more than one candidate, to be thorough. Actually the available_documents from the error already showed only one file. But to be safe, let me list documents."
+            }
+          }
+        ],
+        "created": 1785354476,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 155,
+          "prompt_tokens": 677,
+          "total_tokens": 832,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 119,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:48:00.345791+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Read metrics.csv. It may have been renamed. Recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_0",
+                "function": {
+                  "arguments": "{\"file\":\"metrics.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The user wants me to read \"metrics.csv\" but it may have been renamed. I need to recover the actual document without inventing its contents, then submit the actual filename and the exact token found inside.\n\nLet me start by trying to read metrics.csv."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_0",
+            "name": "read_document",
+            "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'metrics.csv' does not exist\", \"arguments\": {\"file\": \"metrics.csv\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"metrics_v2.csv\"]}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_document_1",
+                "function": {
+                  "arguments": "{\"file\":\"metrics_v2.csv\"}",
+                  "name": "read_document"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The file \"metrics.csv\" doesn't exist. There's an available document \"metrics_v2.csv\". Let me read that."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_document_1",
+            "name": "read_document",
+            "content": "MET-4263"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "list_documents_2",
+                "function": {
+                  "arguments": "{}",
+                  "name": "list_documents"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The actual document is \"metrics_v2.csv\" and its content is \"MET-4263\". The token found inside is \"MET-4263\".\n\nLet me verify by listing documents to make sure there's nothing else ambiguous. Actually, the error already gave me the available documents list: [\"metrics_v2.csv\"]. I read it and got the content \"MET-4263\". \n\nLet me list documents to double-check there isn't more than one candidate, to be thorough. Actually the available_documents from the error already showed only one file. But to be safe, let me list documents."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "list_documents_2",
+            "name": "list_documents",
+            "content": "[\"metrics_v2.csv\"]"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_document",
+              "description": "Read one document by filename.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Document filename"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "list_documents",
+              "description": "List available document filenames after a lookup failure.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "description": "Actual document filename"
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Exact recovered token"
+                  }
+                },
+                "required": [
+                  "document",
+                  "token"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5201.126,
+      "response": {
+        "id": "chatcmpl-6a6a58f011ee356aa5b8face",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_3",
+                  "function": {
+                    "arguments": "{\"document\":\"metrics_v2.csv\",\"token\":\"MET-4263\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "Confirmed: the only document available is \"metrics_v2.csv\", and its content is the token \"MET-4263\". Now I'll submit the result."
+            }
+          }
+        ],
+        "created": 1785354483,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 104,
+          "prompt_tokens": 865,
+          "total_tokens": 969,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 32,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:47:48.406772+00:00",
+      "tool_call_id": "read_document_0",
+      "name": "read_document",
+      "arguments": {
+        "file": "metrics.csv"
+      },
+      "content": "{\"error_type\": \"FileNotFoundError\", \"description\": \"Document 'metrics.csv' does not exist\", \"arguments\": {\"file\": \"metrics.csv\"}, \"stack\": \"sandbox.read_document -> open\", \"suggestion\": \"List the directory and try the renamed file\", \"available_documents\": [\"metrics_v2.csv\"]}",
+      "ok": false,
+      "sandbox_sha256_after": "d3d5e2b7e8e3514ac42f2dbe2b0def9da3cf0634f55d5fdf39748b677b0c6889"
+    },
+    {
+      "at": "2026-07-29T19:47:54.137453+00:00",
+      "tool_call_id": "read_document_1",
+      "name": "read_document",
+      "arguments": {
+        "file": "metrics_v2.csv"
+      },
+      "content": "MET-4263",
+      "ok": true,
+      "sandbox_sha256_after": "d3d5e2b7e8e3514ac42f2dbe2b0def9da3cf0634f55d5fdf39748b677b0c6889"
+    },
+    {
+      "at": "2026-07-29T19:48:00.342796+00:00",
+      "tool_call_id": "list_documents_2",
+      "name": "list_documents",
+      "arguments": {},
+      "content": "[\"metrics_v2.csv\"]",
+      "ok": true,
+      "sandbox_sha256_after": "d3d5e2b7e8e3514ac42f2dbe2b0def9da3cf0634f55d5fdf39748b677b0c6889"
+    },
+    {
+      "at": "2026-07-29T19:48:05.550248+00:00",
+      "tool_call_id": "submit_result_3",
+      "name": "submit_result",
+      "arguments": {
+        "document": "metrics_v2.csv",
+        "token": "MET-4263"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "d3d5e2b7e8e3514ac42f2dbe2b0def9da3cf0634f55d5fdf39748b677b0c6889"
+    }
+  ],
+  "tool_counters": {
+    "read_document": 2,
+    "list_documents": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "detailed_errors": true
+  },
+  "objective_pass": true,
+  "llm_turns": 4,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 2476,
+    "completion_tokens": 443,
+    "total_tokens": 2919
+  },
+  "cost": {
+    "amount": 0.09382,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:48:05.553615+00:00",
+  "case_condition_order": [
+    "detailed_errors",
+    "disabled"
+  ],
+  "order_position": 0,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

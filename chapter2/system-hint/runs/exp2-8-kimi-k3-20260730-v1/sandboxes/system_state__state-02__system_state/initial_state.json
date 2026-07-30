@@ -1,0 +1,12 @@
+{
+  "suite": "system_state",
+  "case_id": "state-02",
+  "system": {
+    "os": "Darwin",
+    "shell": "zsh",
+    "python": "3.12.4",
+    "cwd": "workspace/beta",
+    "manager": "brew",
+    "package": "ripgrep"
+  }
+}

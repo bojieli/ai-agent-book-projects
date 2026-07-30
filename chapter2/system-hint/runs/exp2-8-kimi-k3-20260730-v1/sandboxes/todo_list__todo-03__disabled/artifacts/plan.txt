@@ -1,0 +1,7 @@
+Plan
+1. Write scope.txt describing the delivery scope.
+2. Write plan.txt (this file) describing the steps.
+3. Write verification.txt confirming the checks performed.
+4. Write result.txt summarizing the outcome.
+5. Embed the token CHARLIE-639 exactly once in each of the four files.
+6. Verify all artifacts, then submit the complete artifact list.

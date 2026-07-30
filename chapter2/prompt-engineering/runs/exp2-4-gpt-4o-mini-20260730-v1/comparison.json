@@ -1,0 +1,700 @@
+{
+  "experiment_id": "2-4",
+  "created_at": "2026-07-30T02:21:25.575202+08:00",
+  "protocol_sha256": "ebedaecdbb6c4fc8d8d92222dc17334a27a1b1b9f19e4732578563f5e9389424",
+  "protocol_copy": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/experiment_protocol.json",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "user_model": "gpt-4o-mini",
+  "objective_scoring": "vendored tau-bench environment reward",
+  "arms": {
+    "baseline": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-baseline_0730022052.json",
+        "sha256": "0edf8d281ea5e5d39ca5079d445b1684b1ec8de1026013590d68c5a0e88121fd"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    },
+    "tone_trump": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_trump_0730022059.json",
+        "sha256": "1531727c765cd3b1caef4b3c486399467979a40f951c603ae577241ed7918ccb"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    },
+    "tone_casual": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_casual_0730022104.json",
+        "sha256": "4a1205d5ee3394b18e95d184a2f6dc7a565a2c1ba1558428b83f394f3d989b51"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    },
+    "wiki_random": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-wiki_random_0730022109.json",
+        "sha256": "bca0c69faf8faceabf444cc5f85c51bd7b4db4b72ea83151ed1ea88e60891264"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    },
+    "no_tool_desc": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-no_tool_desc_0730022115.json",
+        "sha256": "7a0fd841f28b3c6a8fe0f801bb33fba08acbdaa3a3dadbc0330334d209592ebf"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    },
+    "all_ablations": {
+      "artifact": {
+        "path": "/Users/boj/book/ai-agent-book/chapter2/prompt-engineering/runs/exp2-4-gpt-4o-mini-20260730-v1/tool-calling-gpt-4o-mini-tone_casual_wiki_random_no_tool_desc_0730022120.json",
+        "sha256": "aee798ceabad4e2022adcbadef6aca739937be4fbeffc9f98c9c65950bbd3990"
+      },
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "success_rate": 0.0,
+      "total": 10,
+      "successes": 0,
+      "failures": 10,
+      "tasks_completed": 10,
+      "expected_tasks": 10,
+      "task_errors": [
+        {
+          "task_id": 0,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 1,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 2,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 3,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 4,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 5,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 6,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 7,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 8,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        },
+        {
+          "task_id": 9,
+          "error": "litellm.RateLimitError: RateLimitError: OpenAIException - You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors."
+        }
+      ],
+      "agent_steps": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_calls": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "tool_errors": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "real_api_calls": 0,
+      "response_ids_present": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "observed_litellm_cost_usd": 0,
+      "all_calls_priced": true,
+      "arm_complete": false
+    }
+  },
+  "credential_scan_passed": true,
+  "credential_findings": [],
+  "usage_and_cost": {
+    "total_real_api_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0,
+    "observed_litellm_cost_usd": 0,
+    "all_calls_priced": true,
+    "qualification": "provider usage with LiteLLM response-cost estimate"
+  },
+  "campaign_complete": false,
+  "hypothesis_results": {
+    "historical_percentages_reproduced": false,
+    "qualification": "Current fixed ten-task campaign only; compare arm metrics directly."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "suite": "timestamps",
+  "case_id": "ts-03",
+  "records": {
+    "north": "2025-09-12 17:30:00",
+    "south": "2025-09-13 06:15:00"
+  }
+}

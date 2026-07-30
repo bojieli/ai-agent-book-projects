@@ -1,0 +1,8 @@
+{
+  "suite": "timestamps",
+  "case_id": "ts-05",
+  "records": {
+    "quartz": "2025-09-11 23:59:59",
+    "river": "2025-09-12 00:00:01"
+  }
+}

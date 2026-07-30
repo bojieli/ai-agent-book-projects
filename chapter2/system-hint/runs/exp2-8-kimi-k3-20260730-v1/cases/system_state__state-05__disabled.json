@@ -1,0 +1,636 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "system_state__state-05__disabled",
+  "suite": "system_state",
+  "case_id": "state-05",
+  "condition": "disabled",
+  "features": [],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "f5d058c27c9be2d2c83b09f5066a2e2f4b3d61a6b4d8567eb12d7b08736a2155",
+  "current_sandbox_sha256": "2124a384e94e70552a049c84167bceb6e0d88884728c91dad1cedb3aca865a11",
+  "created_at": "2026-07-29T19:50:04.106033+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Install package tree in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_0",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "Let me start by inspecting the simulated host to determine what OS and package manager it uses."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/epsilon\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"tree\", \"python\": \"3.13.0\", \"shell\": \"zsh\"}"
+    },
+    {
+      "content": "The host is macOS (Darwin) with Homebrew as its native package manager. Installing `tree` via brew:",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "install_package_1",
+          "function": {
+            "arguments": "{\"manager\":\"brew\",\"package\":\"tree\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The host is Darwin (macOS), and the native package manager is Homebrew (brew). I need to install the \"tree\" package using brew."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "Installation succeeded. Submitting the verified result:",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"manager\":\"brew\",\"package\":\"tree\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The installation succeeded. Now I need to submit the result with the manager and package used."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:50:04.106455+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package tree in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4254.766,
+      "response": {
+        "id": "chatcmpl-6a6a596de802f55ebfc27344",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_0",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "Let me start by inspecting the simulated host to determine what OS and package manager it uses."
+            }
+          }
+        ],
+        "created": 1785354606,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 55,
+          "prompt_tokens": 378,
+          "total_tokens": 433,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 19,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:50:08.365621+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package tree in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "Let me start by inspecting the simulated host to determine what OS and package manager it uses."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/epsilon\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"tree\", \"python\": \"3.13.0\", \"shell\": \"zsh\"}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5376.233,
+      "response": {
+        "id": "chatcmpl-6a6a5971a66e76149f573dbf",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The host is macOS (Darwin) with Homebrew as its native package manager. Installing `tree` via brew:",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "install_package_1",
+                  "function": {
+                    "arguments": "{\"manager\":\"brew\",\"package\":\"tree\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The host is Darwin (macOS), and the native package manager is Homebrew (brew). I need to install the \"tree\" package using brew."
+            }
+          }
+        ],
+        "created": 1785354610,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 122,
+          "prompt_tokens": 503,
+          "total_tokens": 625,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 32,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:50:13.747150+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package tree in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "Let me start by inspecting the simulated host to determine what OS and package manager it uses."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/epsilon\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"tree\", \"python\": \"3.13.0\", \"shell\": \"zsh\"}"
+          },
+          {
+            "content": "The host is macOS (Darwin) with Homebrew as its native package manager. Installing `tree` via brew:",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"brew\",\"package\":\"tree\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The host is Darwin (macOS), and the native package manager is Homebrew (brew). I need to install the \"tree\" package using brew."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4286.25,
+      "response": {
+        "id": "chatcmpl-6a6a59767d03af917e2eb9f5",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Installation succeeded. Submitting the verified result:",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"manager\":\"brew\",\"package\":\"tree\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The installation succeeded. Now I need to submit the result with the manager and package used."
+            }
+          }
+        ],
+        "created": 1785354615,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 94,
+          "prompt_tokens": 656,
+          "total_tokens": 750,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 19,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:50:08.363505+00:00",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/epsilon\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"tree\", \"python\": \"3.13.0\", \"shell\": \"zsh\"}",
+      "ok": true,
+      "sandbox_sha256_after": "b6d341ae2773f20c20bc9860639ca0a3b9287376f512ba9e39491b23e8ac5be4"
+    },
+    {
+      "at": "2026-07-29T19:50:13.744799+00:00",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "arguments": {
+        "manager": "brew",
+        "package": "tree"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "2124a384e94e70552a049c84167bceb6e0d88884728c91dad1cedb3aca865a11"
+    },
+    {
+      "at": "2026-07-29T19:50:18.034595+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "manager": "brew",
+        "package": "tree"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "2124a384e94e70552a049c84167bceb6e0d88884728c91dad1cedb3aca865a11"
+    }
+  ],
+  "tool_counters": {
+    "inspect_system": 1,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1537,
+    "completion_tokens": 271,
+    "total_tokens": 1808
+  },
+  "cost": {
+    "amount": 0.05784,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:50:18.035747+00:00",
+  "case_condition_order": [
+    "system_state",
+    "disabled"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

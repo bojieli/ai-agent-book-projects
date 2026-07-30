@@ -1,0 +1,646 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "system_state__state-02__system_state",
+  "suite": "system_state",
+  "case_id": "state-02",
+  "condition": "system_state",
+  "features": [
+    "system_state"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "984fbb2c23c45ba81aa527195142ef0f5d0552eb2c117f8658e485644ddf0b8e",
+  "current_sandbox_sha256": "a5212a6b2433c21d5999ddcbadf132555f26dd4df902b31297483f23c1a9d569",
+  "created_at": "2026-07-29T19:49:16.039560+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "Install package ripgrep in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+    },
+    {
+      "content": "I'll start by inspecting the host to confirm its OS and native package manager.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "inspect_system_0",
+          "function": {
+            "arguments": "{}",
+            "name": "inspect_system"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The system state shows os=Darwin, manager=brew. So the OS-native package manager is brew (Homebrew on macOS). Let me inspect the system to confirm, then install ripgrep using brew, then submit the result.\n\nThe task says \"Inspect the host if needed\" — I already have the state info from the agent_status, but let me inspect to verify anyway. Actually, I can call inspect_system and then install. But install depends on knowing the manager, which I can confirm via inspect. Let me do inspect first, then install, then submit."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "content": "{\"cwd\": \"workspace/beta\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"ripgrep\", \"python\": \"3.12.4\", \"shell\": \"zsh\"}"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "install_package_1",
+          "function": {
+            "arguments": "{\"manager\":\"brew\",\"package\":\"ripgrep\"}",
+            "name": "install_package"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The host is Darwin (macOS) with brew as the native package manager. Now I'll install ripgrep using brew."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "content": "Simulated install succeeded"
+    },
+    {
+      "content": "The installation succeeded. Now I'll submit the verified result.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"manager\":\"brew\",\"package\":\"ripgrep\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "The simulated install succeeded. Now I need to submit the result with the manager (brew) and package (ripgrep) used."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:49:16.039923+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package ripgrep in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Darwin, shell=zsh, python=3.12.4, cwd=workspace/beta, manager=brew\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 7143.297,
+      "response": {
+        "id": "chatcmpl-6a6a593c5e7b32b0b979340f",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll start by inspecting the host to confirm its OS and native package manager.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "inspect_system_0",
+                  "function": {
+                    "arguments": "{}",
+                    "name": "inspect_system"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The system state shows os=Darwin, manager=brew. So the OS-native package manager is brew (Homebrew on macOS). Let me inspect the system to confirm, then install ripgrep using brew, then submit the result.\n\nThe task says \"Inspect the host if needed\" — I already have the state info from the agent_status, but let me inspect to verify anyway. Actually, I can call inspect_system and then install. But install depends on knowing the manager, which I can confirm via inspect. Let me do inspect first, then install, then submit."
+            }
+          }
+        ],
+        "created": 1785354557,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 168,
+          "prompt_tokens": 428,
+          "total_tokens": 596,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 117,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:23.187671+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package ripgrep in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the host to confirm its OS and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The system state shows os=Darwin, manager=brew. So the OS-native package manager is brew (Homebrew on macOS). Let me inspect the system to confirm, then install ripgrep using brew, then submit the result.\n\nThe task says \"Inspect the host if needed\" — I already have the state info from the agent_status, but let me inspect to verify anyway. Actually, I can call inspect_system and then install. But install depends on knowing the manager, which I can confirm via inspect. Let me do inspect first, then install, then submit."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/beta\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"ripgrep\", \"python\": \"3.12.4\", \"shell\": \"zsh\"}"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Darwin, shell=zsh, python=3.12.4, cwd=workspace/beta, manager=brew\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4347.802,
+      "response": {
+        "id": "chatcmpl-6a6a5944ea1b91cd11188bde",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "install_package_1",
+                  "function": {
+                    "arguments": "{\"manager\":\"brew\",\"package\":\"ripgrep\"}",
+                    "name": "install_package"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The host is Darwin (macOS) with brew as the native package manager. Now I'll install ripgrep using brew."
+            }
+          }
+        ],
+        "created": 1785354565,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 94,
+          "prompt_tokens": 668,
+          "total_tokens": 762,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 26,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:49:27.537436+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "Install package ripgrep in the simulated host using its OS-native package manager. Inspect the host if needed, perform the action, and submit the manager and package used."
+          },
+          {
+            "content": "I'll start by inspecting the host to confirm its OS and native package manager.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "inspect_system_0",
+                "function": {
+                  "arguments": "{}",
+                  "name": "inspect_system"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The system state shows os=Darwin, manager=brew. So the OS-native package manager is brew (Homebrew on macOS). Let me inspect the system to confirm, then install ripgrep using brew, then submit the result.\n\nThe task says \"Inspect the host if needed\" — I already have the state info from the agent_status, but let me inspect to verify anyway. Actually, I can call inspect_system and then install. But install depends on knowing the manager, which I can confirm via inspect. Let me do inspect first, then install, then submit."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "inspect_system_0",
+            "name": "inspect_system",
+            "content": "{\"cwd\": \"workspace/beta\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"ripgrep\", \"python\": \"3.12.4\", \"shell\": \"zsh\"}"
+          },
+          {
+            "content": "",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "install_package_1",
+                "function": {
+                  "arguments": "{\"manager\":\"brew\",\"package\":\"ripgrep\"}",
+                  "name": "install_package"
+                },
+                "type": "function",
+                "index": 0
+              }
+            ],
+            "reasoning_content": "The host is Darwin (macOS) with brew as the native package manager. Now I'll install ripgrep using brew."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "install_package_1",
+            "name": "install_package",
+            "content": "Simulated install succeeded"
+          },
+          {
+            "role": "user",
+            "content": "<agent_status>\nSYSTEM STATE: os=Darwin, shell=zsh, python=3.12.4, cwd=workspace/beta, manager=brew\n</agent_status>"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "inspect_system",
+              "description": "Inspect the simulated host state.",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "install_package",
+              "description": "Perform a simulated native package-manager install action.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Package manager"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package name"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "manager": {
+                    "type": "string",
+                    "description": "Manager used"
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package installed"
+                  }
+                },
+                "required": [
+                  "manager",
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 4616.482,
+      "response": {
+        "id": "chatcmpl-6a6a594852b09907857fc464",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "The installation succeeded. Now I'll submit the verified result.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"manager\":\"brew\",\"package\":\"ripgrep\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "The simulated install succeeded. Now I need to submit the result with the manager (brew) and package (ripgrep) used."
+            }
+          }
+        ],
+        "created": 1785354569,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 107,
+          "prompt_tokens": 793,
+          "total_tokens": 900,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 28,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 512
+          },
+          "cached_tokens": 512
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:49:23.185538+00:00",
+      "tool_call_id": "inspect_system_0",
+      "name": "inspect_system",
+      "arguments": {},
+      "content": "{\"cwd\": \"workspace/beta\", \"manager\": \"brew\", \"os\": \"Darwin\", \"package\": \"ripgrep\", \"python\": \"3.12.4\", \"shell\": \"zsh\"}",
+      "ok": true,
+      "sandbox_sha256_after": "b083309991e25bb8fa0491204bd376a82094527cbffa76a0ea82dea74713f8f4"
+    },
+    {
+      "at": "2026-07-29T19:49:27.536636+00:00",
+      "tool_call_id": "install_package_1",
+      "name": "install_package",
+      "arguments": {
+        "manager": "brew",
+        "package": "ripgrep"
+      },
+      "content": "Simulated install succeeded",
+      "ok": true,
+      "sandbox_sha256_after": "a5212a6b2433c21d5999ddcbadf132555f26dd4df902b31297483f23c1a9d569"
+    },
+    {
+      "at": "2026-07-29T19:49:32.155051+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "manager": "brew",
+        "package": "ripgrep"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "a5212a6b2433c21d5999ddcbadf132555f26dd4df902b31297483f23c1a9d569"
+    }
+  ],
+  "tool_counters": {
+    "inspect_system": 1,
+    "install_package": 1,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "system_state": true
+  },
+  "objective_pass": true,
+  "llm_turns": 3,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 1889,
+    "completion_tokens": 369,
+    "total_tokens": 2258
+  },
+  "cost": {
+    "amount": 0.07468,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:49:32.156119+00:00",
+  "case_condition_order": [
+    "disabled",
+    "system_state"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}

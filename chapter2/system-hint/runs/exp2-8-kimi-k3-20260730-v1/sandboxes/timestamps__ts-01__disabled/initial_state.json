@@ -1,0 +1,8 @@
+{
+  "suite": "timestamps",
+  "case_id": "ts-01",
+  "records": {
+    "cedar": "2025-09-13 22:10:00",
+    "maple": "2025-09-14 09:05:00"
+  }
+}

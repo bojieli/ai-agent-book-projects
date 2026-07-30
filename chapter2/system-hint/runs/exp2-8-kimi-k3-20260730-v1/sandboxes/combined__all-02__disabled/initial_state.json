@@ -1,0 +1,27 @@
+{
+  "suite": "combined",
+  "case_id": "all-02",
+  "records": {
+    "red": "2025-09-15 10:01:00",
+    "blue": "2025-09-15 10:00:00"
+  },
+  "primary": "core-b",
+  "fallback": "backup-b",
+  "token": "RUN-822",
+  "artifacts": [
+    "timeline.txt",
+    "diagnosis.txt",
+    "handoff.txt"
+  ],
+  "requested": "runbook.md",
+  "actual": "runbook_v3.md",
+  "document_token": "RUN-822",
+  "system": {
+    "os": "Darwin",
+    "shell": "zsh",
+    "python": "3.12.4",
+    "cwd": "workspace/two",
+    "manager": "brew",
+    "package": "ripgrep"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "experiment_id": "2-8",
+  "protocol_version": "1.0.0",
+  "frozen_on": "2026-07-30",
+  "authority": [
+    "book/chapter2.md:918",
+    "book-en/chapter2.md:918"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3",
+    "api": "OpenAI-compatible chat.completions with tools/tool_calls",
+    "temperature": 1,
+    "max_completion_tokens": 4096
+  },
+  "pricing": {
+    "currency": "CNY",
+    "uncached_input_per_million": 20.0,
+    "cached_input_per_million": 2.0,
+    "output_per_million": 100.0,
+    "source": "https://platform.kimi.com/docs/pricing/chat-k3.md"
+  },
+  "design": {
+    "matched_cases_per_contrast": 5,
+    "arm_order": "alternating enabled-first/disabled-first by case index; timestamp adds a raw-reading arm",
+    "same_model": true,
+    "same_user_prompt_within_case": true,
+    "same_initial_sandbox_within_case": true,
+    "max_llm_turns": 8,
+    "acceptance_independent_of_hypothesis": true,
+    "objective_scoring_only": true,
+    "external_side_effects": "none; tools are restricted to a per-run local sandbox"
+  },
+  "conditions": {
+    "disabled": [],
+    "timestamps_raw": ["timestamps"],
+    "timestamps_guided": ["timestamps", "timestamp_guidance"],
+    "tool_counter": ["tool_counter"],
+    "todo_list": ["todo_list"],
+    "detailed_errors": ["detailed_errors"],
+    "system_state": ["system_state"],
+    "combined": [
+      "timestamps",
+      "timestamp_guidance",
+      "tool_counter",
+      "todo_list",
+      "detailed_errors",
+      "system_state"
+    ]
+  },
+  "contrasts": [
+    {"feature": "timestamps_raw", "enabled": "timestamps_raw", "control": "disabled", "suite": "timestamps"},
+    {"feature": "timestamps_guided", "enabled": "timestamps_guided", "control": "disabled", "suite": "timestamps"},
+    {"feature": "tool_counter", "enabled": "tool_counter", "control": "disabled", "suite": "tool_counter"},
+    {"feature": "todo_list", "enabled": "todo_list", "control": "disabled", "suite": "todo_list"},
+    {"feature": "detailed_errors", "enabled": "detailed_errors", "control": "disabled", "suite": "detailed_errors"},
+    {"feature": "system_state", "enabled": "system_state", "control": "disabled", "suite": "system_state"},
+    {"feature": "combined", "enabled": "combined", "control": "disabled", "suite": "combined"}
+  ],
+  "cases": {
+    "timestamps": [
+      {"id": "ts-01", "records": {"cedar": "2025-09-13 22:10:00", "maple": "2025-09-14 09:05:00"}, "expected": "maple"},
+      {"id": "ts-02", "records": {"amber": "2025-09-14 11:45:00", "indigo": "2025-09-14 08:20:00"}, "expected": "amber"},
+      {"id": "ts-03", "records": {"north": "2025-09-12 17:30:00", "south": "2025-09-13 06:15:00"}, "expected": "south"},
+      {"id": "ts-04", "records": {"lima": "2025-09-14 14:00:01", "oslo": "2025-09-14 14:00:00"}, "expected": "lima"},
+      {"id": "ts-05", "records": {"quartz": "2025-09-11 23:59:59", "river": "2025-09-12 00:00:01"}, "expected": "river"}
+    ],
+    "tool_counter": [
+      {"id": "ctr-01", "primary": "gateway-a", "fallback": "mirror-a"},
+      {"id": "ctr-02", "primary": "gateway-b", "fallback": "mirror-b"},
+      {"id": "ctr-03", "primary": "gateway-c", "fallback": "mirror-c"},
+      {"id": "ctr-04", "primary": "gateway-d", "fallback": "mirror-d"},
+      {"id": "ctr-05", "primary": "gateway-e", "fallback": "mirror-e"}
+    ],
+    "todo_list": [
+      {"id": "todo-01", "token": "ALPHA-417", "artifacts": ["inventory.txt", "decision.txt", "audit.txt", "summary.txt"]},
+      {"id": "todo-02", "token": "BRAVO-528", "artifacts": ["inputs.txt", "analysis.txt", "checks.txt", "delivery.txt"]},
+      {"id": "todo-03", "token": "CHARLIE-639", "artifacts": ["scope.txt", "plan.txt", "verification.txt", "result.txt"]},
+      {"id": "todo-04", "token": "DELTA-740", "artifacts": ["sources.txt", "matrix.txt", "review.txt", "report.txt"]},
+      {"id": "todo-05", "token": "ECHO-851", "artifacts": ["request.txt", "work.txt", "quality.txt", "handoff.txt"]}
+    ],
+    "detailed_errors": [
+      {"id": "err-01", "requested": "invoice.txt", "actual": "invoice_2025.txt", "token": "INV-2041"},
+      {"id": "err-02", "requested": "policy.md", "actual": "policy_final.md", "token": "POL-3152"},
+      {"id": "err-03", "requested": "metrics.csv", "actual": "metrics_v2.csv", "token": "MET-4263"},
+      {"id": "err-04", "requested": "brief.txt", "actual": "brief_revised.txt", "token": "BRF-5374"},
+      {"id": "err-05", "requested": "manifest.json", "actual": "manifest_current.json", "token": "MAN-6485"}
+    ],
+    "system_state": [
+      {"id": "state-01", "os": "Linux", "shell": "bash", "python": "3.11.9", "cwd": "workspace/alpha", "manager": "apt", "package": "jq"},
+      {"id": "state-02", "os": "Darwin", "shell": "zsh", "python": "3.12.4", "cwd": "workspace/beta", "manager": "brew", "package": "ripgrep"},
+      {"id": "state-03", "os": "Windows", "shell": "PowerShell", "python": "3.11.8", "cwd": "workspace/gamma", "manager": "winget", "package": "Git.Git"},
+      {"id": "state-04", "os": "Linux", "shell": "fish", "python": "3.10.14", "cwd": "workspace/delta", "manager": "apt", "package": "curl"},
+      {"id": "state-05", "os": "Darwin", "shell": "zsh", "python": "3.13.0", "cwd": "workspace/epsilon", "manager": "brew", "package": "tree"}
+    ],
+    "combined": [
+      {"id": "all-01", "records": {"oak": "2025-09-13 08:00:00", "pine": "2025-09-14 08:00:00"}, "expected_record": "pine", "primary": "core-a", "fallback": "backup-a", "requested": "config.txt", "actual": "config_live.txt", "token": "CFG-711", "os": "Linux", "shell": "bash", "python": "3.11.9", "cwd": "workspace/one", "manager": "apt", "package": "jq", "artifacts": ["observe.txt", "recover.txt", "deliver.txt"]},
+      {"id": "all-02", "records": {"red": "2025-09-15 10:01:00", "blue": "2025-09-15 10:00:00"}, "expected_record": "red", "primary": "core-b", "fallback": "backup-b", "requested": "runbook.md", "actual": "runbook_v3.md", "token": "RUN-822", "os": "Darwin", "shell": "zsh", "python": "3.12.4", "cwd": "workspace/two", "manager": "brew", "package": "ripgrep", "artifacts": ["timeline.txt", "diagnosis.txt", "handoff.txt"]},
+      {"id": "all-03", "records": {"east": "2025-09-16 12:00:00", "west": "2025-09-16 12:00:02"}, "expected_record": "west", "primary": "core-c", "fallback": "backup-c", "requested": "ledger.csv", "actual": "ledger_final.csv", "token": "LED-933", "os": "Windows", "shell": "PowerShell", "python": "3.11.8", "cwd": "workspace/three", "manager": "winget", "package": "Git.Git", "artifacts": ["facts.txt", "remediation.txt", "evidence.txt"]},
+      {"id": "all-04", "records": {"gold": "2025-09-17 07:30:00", "silver": "2025-09-17 07:29:59"}, "expected_record": "gold", "primary": "core-d", "fallback": "backup-d", "requested": "notes.txt", "actual": "notes_latest.txt", "token": "NOT-144", "os": "Linux", "shell": "fish", "python": "3.10.14", "cwd": "workspace/four", "manager": "apt", "package": "curl", "artifacts": ["inputs.txt", "fallback.txt", "final.txt"]},
+      {"id": "all-05", "records": {"sun": "2025-09-18 18:45:00", "moon": "2025-09-18 19:15:00"}, "expected_record": "moon", "primary": "core-e", "fallback": "backup-e", "requested": "status.json", "actual": "status_current.json", "token": "STA-255", "os": "Darwin", "shell": "zsh", "python": "3.13.0", "cwd": "workspace/five", "manager": "brew", "package": "tree", "artifacts": ["state.txt", "actions.txt", "closure.txt"]}
+    ]
+  },
+  "objective_gates": {
+    "timestamps": "both records fetched and submit_result.selected_record equals the later recorded timestamp",
+    "tool_counter": "fallback resource read, submitted fallback matches ground truth, and primary probe count is at most three",
+    "todo_list": "all four required sandbox artifacts exist with exact case token and submission lists every artifact",
+    "detailed_errors": "the actual renamed document is read and its exact token is submitted after the requested path fails",
+    "system_state": "the correct native manager/package action succeeds and the submitted manager matches ground truth",
+    "combined": "all five component gates pass in the same run"
+  },
+  "protocol_acceptance_gates": [
+    "protocol hash recorded before live execution",
+    "official Moonshot endpoint and exact kimi-k3 model for every response",
+    "all preregistered matched runs completed with nonempty response IDs and provider usage",
+    "assistant tool_calls are followed by matching role=tool messages",
+    "each enabled intervention is visible in raw model input and absent from its matched control",
+    "all writes remain inside per-run sandbox roots",
+    "objective scoring derives from tool actions, sandbox state, and fixed ground truth rather than model self-report",
+    "credential scan passes and raw request/response/tool receipts are retained",
+    "all observed usage is priced in native CNY or explicitly marked unpriced",
+    "campaign completion does not depend on any enabled arm outperforming control"
+  ],
+  "hypotheses": {
+    "timestamps_raw": "raw timestamp readings may tie the disabled control, consistent with the manuscript caveat",
+    "timestamps_guided": "guided timestamps have a higher objective pass rate than disabled",
+    "tool_counter": "counter arm has a higher pass rate or fewer primary retries than disabled",
+    "todo_list": "TODO arm has a higher complete-artifact rate and no greater mean LLM turns than disabled",
+    "detailed_errors": "detailed-error arm has a higher recovery pass rate than disabled",
+    "system_state": "state arm has a higher correct native-manager rate than disabled",
+    "combined": "combined arm has a higher mean component score and overall pass rate than disabled"
+  },
+  "historical_claim_policy": {
+    "todo_15_vs_21_iterations": "not directly reproduced unless the original task distribution and iteration definition are available; report current-suite means separately",
+    "error_recovery_60_vs_95_percent": "not directly reproduced with this five-pair suite; report current-suite exact rates separately",
+    "time_sense_19_to_49_point_gain": "not directly reproduced because this is a targeted status-bar suite, not the cited six-model time-sense benchmark"
+  }
+}

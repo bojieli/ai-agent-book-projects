@@ -1,0 +1,425 @@
+{
+  "experiment_id": "2-8",
+  "run_id": "timestamps__ts-03__timestamps_raw",
+  "suite": "timestamps",
+  "case_id": "ts-03",
+  "condition": "timestamps_raw",
+  "features": [
+    "timestamps"
+  ],
+  "provider": {
+    "name": "moonshot",
+    "base_url": "https://api.moonshot.cn/v1",
+    "model": "kimi-k3"
+  },
+  "protocol_sha256": "75231fd4c4f1335e51ddd00395478d1955e5f1670cf61e135ee1d8dc49be4e7a",
+  "initial_sandbox_sha256": "b3bae9b3ad84925307c13b2de2043855c246d7d460215b948b18223399e418ca",
+  "current_sandbox_sha256": "13c6c8c26c17e7f59001fe139eadd3b908314538e2d6af092e7a64b16a9ec594",
+  "created_at": "2026-07-29T19:39:00.027281+00:00",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+    },
+    {
+      "role": "user",
+      "content": "[2025-09-19 09:00:00] Read both records north and south. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+    },
+    {
+      "content": "I'll read both records to compare their timestamps.",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "read_record_0",
+          "function": {
+            "arguments": "{\"name\":\"north\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 0
+        },
+        {
+          "id": "read_record_1",
+          "function": {
+            "arguments": "{\"name\":\"south\"}",
+            "name": "read_record"
+          },
+          "type": "function",
+          "index": 1
+        }
+      ],
+      "reasoning_content": "The user wants me to read both records \"north\" and \"south\", compare their timestamps, and submit the name of the record with the later recorded timestamp.\n\nLet me read both records. These are independent calls, so I can make them in the same block."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "content": "[2025-09-12 17:30:00] payload-for-north"
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "content": "[2025-09-13 06:15:00] payload-for-south"
+    },
+    {
+      "content": "I've verified both records:\n- **north**: 2025-09-12 17:30:00\n- **south**: 2025-09-13 06:15:00\n\nComparing the timestamps, south's timestamp (2025-09-13 06:15:00) is later than north's (2025-09-12 17:30:00).",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "submit_result_2",
+          "function": {
+            "arguments": "{\"selected_record\":\"south\"}",
+            "name": "submit_result"
+          },
+          "type": "function",
+          "index": 0
+        }
+      ],
+      "reasoning_content": "I have both records:\n- north: 2025-09-12 17:30:00\n- south: 2025-09-13 06:15:00\n\nComparing the timestamps:\n- north: 2025-09-12 17:30:00\n- south: 2025-09-13 06:15:00\n\nsouth's timestamp (2025-09-13 06:15:00) is later than north's (2025-09-12 17:30:00). September 13 is after September 12.\n\nSo I should submit \"south\"."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "content": "Submission recorded"
+    }
+  ],
+  "api_calls": [
+    {
+      "requested_at": "2026-07-29T19:39:00.027555+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Read both records north and south. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  }
+                },
+                "required": [
+                  "selected_record"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 5801.869,
+      "response": {
+        "id": "chatcmpl-6a6a56d46439639453f1146a",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I'll read both records to compare their timestamps.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "read_record_0",
+                  "function": {
+                    "arguments": "{\"name\":\"north\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 0
+                },
+                {
+                  "id": "read_record_1",
+                  "function": {
+                    "arguments": "{\"name\":\"south\"}",
+                    "name": "read_record"
+                  },
+                  "type": "function",
+                  "index": 1
+                }
+              ],
+              "reasoning_content": "The user wants me to read both records \"north\" and \"south\", compare their timestamps, and submit the name of the record with the later recorded timestamp.\n\nLet me read both records. These are independent calls, so I can make them in the same block."
+            }
+          }
+        ],
+        "created": 1785353941,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 144,
+          "prompt_tokens": 326,
+          "total_tokens": 470,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 54,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": null
+        }
+      }
+    },
+    {
+      "requested_at": "2026-07-29T19:39:05.834528+00:00",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an audited local-sandbox agent. Use the supplied tools to complete the user's task. Treat tool output as ground truth, do not invent state, and finish by calling submit_result exactly once after verification."
+          },
+          {
+            "role": "user",
+            "content": "[2025-09-19 09:00:00] Read both records north and south. Select the record with the later recorded timestamp and submit its name. Do not guess if a tool can provide evidence."
+          },
+          {
+            "content": "I'll read both records to compare their timestamps.",
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "read_record_0",
+                "function": {
+                  "arguments": "{\"name\":\"north\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 0
+              },
+              {
+                "id": "read_record_1",
+                "function": {
+                  "arguments": "{\"name\":\"south\"}",
+                  "name": "read_record"
+                },
+                "type": "function",
+                "index": 1
+              }
+            ],
+            "reasoning_content": "The user wants me to read both records \"north\" and \"south\", compare their timestamps, and submit the name of the record with the later recorded timestamp.\n\nLet me read both records. These are independent calls, so I can make them in the same block."
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_0",
+            "name": "read_record",
+            "content": "[2025-09-12 17:30:00] payload-for-north"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_record_1",
+            "name": "read_record",
+            "content": "[2025-09-13 06:15:00] payload-for-south"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_record",
+              "description": "Read one named record.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Record name"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "submit_result",
+              "description": "Submit the final result only after tool-backed verification.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "selected_record": {
+                    "type": "string",
+                    "description": "Name of later record"
+                  }
+                },
+                "required": [
+                  "selected_record"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 1,
+        "max_tokens": 4096
+      },
+      "elapsed_ms": 10234.051,
+      "response": {
+        "id": "chatcmpl-6a6a56da6ff5c9a91b92adc9",
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "I've verified both records:\n- **north**: 2025-09-12 17:30:00\n- **south**: 2025-09-13 06:15:00\n\nComparing the timestamps, south's timestamp (2025-09-13 06:15:00) is later than north's (2025-09-12 17:30:00).",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "submit_result_2",
+                  "function": {
+                    "arguments": "{\"selected_record\":\"south\"}",
+                    "name": "submit_result"
+                  },
+                  "type": "function",
+                  "index": 0
+                }
+              ],
+              "reasoning_content": "I have both records:\n- north: 2025-09-12 17:30:00\n- south: 2025-09-13 06:15:00\n\nComparing the timestamps:\n- north: 2025-09-12 17:30:00\n- south: 2025-09-13 06:15:00\n\nsouth's timestamp (2025-09-13 06:15:00) is later than north's (2025-09-12 17:30:00). September 13 is after September 12.\n\nSo I should submit \"south\"."
+            }
+          }
+        ],
+        "created": 1785353947,
+        "model": "kimi-k3",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 265,
+          "prompt_tokens": 553,
+          "total_tokens": 818,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 131,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 256
+          },
+          "cached_tokens": 256
+        }
+      }
+    }
+  ],
+  "tool_events": [
+    {
+      "at": "2026-07-29T19:39:05.831771+00:00",
+      "tool_call_id": "read_record_0",
+      "name": "read_record",
+      "arguments": {
+        "name": "north"
+      },
+      "content": "[2025-09-12 17:30:00] payload-for-north",
+      "ok": true,
+      "sandbox_sha256_after": "13c6c8c26c17e7f59001fe139eadd3b908314538e2d6af092e7a64b16a9ec594"
+    },
+    {
+      "at": "2026-07-29T19:39:05.833522+00:00",
+      "tool_call_id": "read_record_1",
+      "name": "read_record",
+      "arguments": {
+        "name": "south"
+      },
+      "content": "[2025-09-13 06:15:00] payload-for-south",
+      "ok": true,
+      "sandbox_sha256_after": "13c6c8c26c17e7f59001fe139eadd3b908314538e2d6af092e7a64b16a9ec594"
+    },
+    {
+      "at": "2026-07-29T19:39:16.071381+00:00",
+      "tool_call_id": "submit_result_2",
+      "name": "submit_result",
+      "arguments": {
+        "selected_record": "south"
+      },
+      "content": "Submission recorded",
+      "ok": true,
+      "sandbox_sha256_after": "13c6c8c26c17e7f59001fe139eadd3b908314538e2d6af092e7a64b16a9ec594"
+    }
+  ],
+  "tool_counters": {
+    "read_record": 2,
+    "submit_result": 1
+  },
+  "todos": {},
+  "complete": true,
+  "termination": "submit_result",
+  "component_scores": {
+    "timestamps": true
+  },
+  "objective_pass": true,
+  "llm_turns": 2,
+  "tool_protocol_valid": true,
+  "usage": {
+    "prompt_tokens": 879,
+    "completion_tokens": 409,
+    "total_tokens": 1288
+  },
+  "cost": {
+    "amount": 0.05848,
+    "currency": "CNY",
+    "qualification": "all prompt tokens conservatively priced as uncached"
+  },
+  "provider_receipts_valid": true,
+  "finished_at": "2026-07-29T19:39:16.074320+00:00",
+  "case_condition_order": [
+    "timestamps_guided",
+    "timestamps_raw",
+    "disabled"
+  ],
+  "order_position": 1,
+  "order_metadata_source": "backfilled_from_frozen_protocol"
+}
