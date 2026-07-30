@@ -1,6 +1,6 @@
 """
 Test suite locking out TypeError and FileNotFoundError in AgentRuntime checkpointing
-when tasks is None or destination directory doesn't exist.
+when tasks is None, trajectory is None, or destination directory doesn't exist.
 """
 
 import json
@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from runtime import AgentRuntime
+from tasks import TaskManager
 
 
 def test_save_checkpoint_creates_nested_directories():
@@ -30,19 +31,23 @@ def test_save_checkpoint_creates_nested_directories():
         assert os.path.exists(target_path)
 
 
-def test_load_checkpoint_handles_null_tasks():
+def test_load_checkpoint_handles_null_tasks_and_trajectory():
     """
-    Ensure load_checkpoint logs task counts without TypeError when tasks key is None.
+    Ensure load_checkpoint gracefully handles JSON containing "tasks": null and
+    "trajectory": null with a real TaskManager without raising TypeError.
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         target_path = os.path.join(tmpdir, "checkpoint.json")
         with open(target_path, "w", encoding="utf-8") as f:
-            json.dump({'trajectory': [], 'tasks': None}, f)
+            json.dump({'trajectory': None, 'tasks': None}, f)
 
         runtime = AgentRuntime.__new__(AgentRuntime)
-        runtime.tasks = MagicMock()
+        runtime.tasks = TaskManager(on_complete=MagicMock(), log=MagicMock())
         runtime.log = MagicMock()
 
         data = runtime.load_checkpoint(target_path)
         assert data['tasks'] is None
+        assert data['trajectory'] is None
+        assert len(runtime.trajectory) == 0
+        assert len(runtime.tasks._tasks) == 0
         runtime.log.assert_called_once()

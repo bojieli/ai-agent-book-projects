@@ -397,8 +397,10 @@ class AgentRuntime:
         """从检查点文件恢复轨迹与任务状态（原地覆盖当前状态）。"""
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        self.trajectory = [Event.from_dict(d) for d in data.get("trajectory", [])]
-        self.tasks.restore(data.get("tasks", []))
+        trajectory = data.get("trajectory") or []
+        tasks = data.get("tasks") or []
+        self.trajectory = [Event.from_dict(d) for d in trajectory]
+        self.tasks.restore(tasks)
         self.log("STATE", f"已从检查点恢复 <- {path}"
-                          f"（{len(self.trajectory)} 条轨迹事件，{len(data.get('tasks') or [])} 个任务）")
+                          f"（{len(self.trajectory)} 条轨迹事件，{len(tasks)} 个任务）")
         return data
