@@ -31,7 +31,8 @@ def evaluate_release_gate(
     checks = {
         "patch_is_nonempty": bool(manifest.get("diff", "").strip()),
         "patch_is_auditable_old_to_new_edit": bool(manifest.get("edits")) and all(
-            isinstance(edit.get("old_str"), str) and bool(edit["old_str"])
+            isinstance(edit, dict)
+            and isinstance(edit.get("old_str"), str) and bool(edit["old_str"])
             and isinstance(edit.get("new_str"), str) and bool(edit["new_str"])
             for edit in manifest.get("edits", [])
         ),
