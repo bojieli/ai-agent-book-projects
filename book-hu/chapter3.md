@@ -20,7 +20,7 @@ A felhasználói memóriarendszer magja egy aktív, folyamatos tanulási folyama
 
 Értsük meg ezt a folyamatot egy konkrét példán keresztül. Tegyük fel, hogy egy felhasználó és egy Ágens a következő beszélgetést folytatja:
 
-```
+```text
 User: Segíts lefoglalni egy járatot Tokióba jövő péntekre. Inkább ablak melletti
       ülést szeretek, és vegetáriánus vagyok, szóval speciális étkezésre lesz szükségem.
 Agent: Megkeresem a Tokióba induló járatokat jövő péntekre...
@@ -32,7 +32,7 @@ User: Igen, és használd a United MileagePlus számomat: 12345678.
 
 Miután ez a beszélgetés véget ért, az Ágens keretrendszer meghív egy dedikált LLM-et a párbeszéd elemzésére és a hosszú távon megjegyzendő információk kinyerésére:
 
-```
+```text
 Kinyert emlékek:
 - A felhasználó az ablak melletti üléseket preferálja (preferencia)
 - A felhasználó vegetáriánus, speciális ételekre van szüksége a járatokon (étkezési korlátozás)
@@ -75,7 +75,9 @@ Ezekre építve egy háromszintű, az Ágens-forgatókönyvekhez jobban illeszke
 
 Az értékelési szempontok meghatározása után áttérhetünk a konkrét tervezésre. A memóriarendszer tervezése három független dimenzióra bontható le – **hol tároljuk, hogyan tároljuk, és mit tárolunk**. Ez a szakasz a "hol tároljuk" kérdéssel foglalkozik.
 
-Ahhoz, hogy az Ágens hatékonyan tudja kezelni az aktuális feladatokat, miközben szekciókon átívelő személyre szabott szolgáltatást nyújt, a memóriát különböző szintekre kell osztani – nagyjából úgy, ahogy az emberek megkülönböztetik a rövid távú munkaemlékezetet a hosszú távú memóriától:\n\n"Trajektória" egyetlen Ágens-futtatás teljes történeti rekordja – ami megfelel az 1. fejezetben definiált "dinamikus trajektóriának" (felhasználói üzenetek + modellválaszok + eszköz-végrehajtási eredmények, együttesen trajektória). A trajektória rögzíti a beszélgetés kezdetétől az aktuális pillanatig minden eseményt időrendi sorrendben, és soha nem íródik felül – az új események folyamatosan a végére fűződnek, de az egyszer rögzített rekordokat soha nem módosítják vagy törlik (ezt a számítástechnika append-only mintának nevezi). A trajektória azonnali kontextust biztosít az Ágens döntéshozatalához – "mit mondtam az imént", "hogyan válaszolt a felhasználó", "mit adott vissza az eszköz".
+Ahhoz, hogy az Ágens hatékonyan tudja kezelni az aktuális feladatokat, miközben szekciókon átívelő személyre szabott szolgáltatást nyújt, a memóriát különböző szintekre kell osztani – nagyjából úgy, ahogy az emberek megkülönböztetik a rövid távú munkaemlékezetet a hosszú távú memóriától:
+
+"Trajektória" egyetlen Ágens-futtatás teljes történeti rekordja – ami megfelel az 1. fejezetben definiált "dinamikus trajektóriának" (felhasználói üzenetek + modellválaszok + eszköz-végrehajtási eredmények, együttesen trajektória). A trajektória rögzíti a beszélgetés kezdetétől az aktuális pillanatig minden eseményt időrendi sorrendben, és soha nem íródik felül – az új események folyamatosan a végére fűződnek, de az egyszer rögzített rekordokat soha nem módosítják vagy törlik (ezt a számítástechnika append-only mintának nevezi). A trajektória azonnali kontextust biztosít az Ágens döntéshozatalához – "mit mondtam az imént", "hogyan válaszolt a felhasználó", "mit adott vissza az eszköz".
 
 A trajektória egyetlen szekció teljes nyers rekordja, időrendben hozzáfűzve és soha nem módosítva; a felhasználói hosszú távú memória ezzel szemben "szekciókon átívelő, stabil, desztillált információ", amelyet ismételten átírnak, összeolvasztanak és ritkítanak. Az előbbi napló, az utóbbi archívum.
 
@@ -308,7 +310,9 @@ A visszakereső minősége közvetlenül meghatározza a RAG hatékonyságát �
 
 A 3-5. ábra a RAG központi folyamatát mutatja lekérdezés során: visszakeresés, bővítés és generálás. A visszakeresés előtt azonban van egy nélkülözhetetlen offline előfeldolgozási lépés – "a darabolás (chunking)": hosszú dokumentumok felvágása önálló visszakeresésre alkalmas töredékekre (chunk-ekre). A darabolás két okból szükséges. Először is, a beágyazó modelleknek korlátai vannak a bemeneti hosszra, és amikor egy teljes dokumentumot egyetlen vektorba tömörítenek, több téma keveredik össze, és a vektor nem tud pontosan reprezentálni egyetlen témát sem – ez ugyanaz a probléma, amivel a Bővített jegyzeteknél találkoztunk: minél hosszabb a bekezdés, annál nehezebb a beágyazásnak megragadnia a lényeget. Másodszor, a visszakeresés célja, hogy csak a "releváns részt" illesszük be a kontextusba. Ha a töredék túl nagy, sok irreleváns tartalmat hoz magával, pazarolva a kontextusablakot és elterelve a figyelmet.
 
-A gyakori darabolási stratégiák három kategóriába sorolhatók:\n\n"Fix méretű darabolás:" A legegyszerűbb módszer, fix tokenszám (pl. 512) szerinti vágás, általában némi átfedéssel a szomszédos darabok között (pl. 50-100 token), hogy megakadályozzuk a kulcsmondatok elvágását a határon. Egyszerűen implementálható és kiszámítható eredményeket ad, de teljesen figyelmen kívül hagyja a dokumentum szerkezetét – egy bekezdés, egy kódrészlet vagy egy táblázat félbevágható.
+A gyakori darabolási stratégiák három kategóriába sorolhatók:
+
+"Fix méretű darabolás:" A legegyszerűbb módszer, fix tokenszám (pl. 512) szerinti vágás, általában némi átfedéssel a szomszédos darabok között (pl. 50-100 token), hogy megakadályozzuk a kulcsmondatok elvágását a határon. Egyszerűen implementálható és kiszámítható eredményeket ad, de teljesen figyelmen kívül hagyja a dokumentum szerkezetét – egy bekezdés, egy kódrészlet vagy egy táblázat félbevágható.
 
 "Rekurzív/szerkezettudatos darabolás:" Ez a módszer rekurzívan vág a dokumentum természetes határai mentén (fejezetcímek, bekezdések, mondatok) – először nagyobb határok mentén próbál vágni, és ha a darab még mindig túl hosszú, kisebbekre vált. Ez a módszer kifejezetten jól illik az explicit struktúrával rendelkező dokumentumokhoz – Markdown, HTML –, és ez a leggyakoribb alapértelmezés az éles rendszerekben.
 
@@ -379,7 +383,7 @@ A TF-IDF egy egyszerű intuíción alapul: minél gyakrabban jelenik meg egy sz�
 >
 > Lekérdezés során a napló részletezi a BM25 számítás minden lépését. Ismét a "model distillation" lekérdezést használva példaként – a következő napló a projekthez mellékelt kis mintakorpuszból (N=10 dokumentum) származik, így a találatok száma sokkal kisebb, mint a korábban említett 100 cikkes forgatókönyv. A kézi újraszámolás megkönnyítésére a példa rögzíti a BM25 paramétereket: k1=1.5, b=0.75, átlagos dokumentumhossz avgdl=250 szó; az IDF a standard formát használja: IDF=ln((N−df+0.5)/(df+0.5)), ahol df a szót tartalmazó dokumentumok száma:
 >
-> ```
+> ```text
 > Lekérdezés tokenek: ["model", "distillation"]
 >
 > "model" szó → Inverziós index 3 dokumentumot talál (df=3, IDF=ln((10−3+0.5)/(3+0.5))=0.76):
@@ -524,7 +528,7 @@ Ezért a gyakorlatban javasolt stratégia "egy réteges, kiegészítő kialakít
 
 A RAPTOR és GraphRAG a tudományos közösség tudásszervezési kutatásait képviseli; a ByteDance Volcano Engine által nyílt forráskódúvá tett [OpenViking](https://github.com/volcengine/OpenViking) egy harmadik filozófiát javasol: a "fájlrendszer paradigmát". A kontextust nem lapos vektoros töredékekként vagy gráfcsomópontokként kezeli. Ehelyett minden kontextust – emlékeket, erőforrásokat, készségeket – egy virtuális fájlrendszer könyvtáraiba és fájljaiba képez le, mindegyiknek egyedi URI-ja van:
 
-```
+```text
 viking://
 ├── resources/          # Külső tudás: dokumentumok, kódbázisok, weboldalak
 ├── user/memories/      # Felhasználói emlékek: preferenciák, szokások
@@ -553,9 +557,9 @@ Az előző szakaszok arról szóltak, "hogyan szervezzük és keressük vissza j
 
 ### Ágens RAG: Paradigmaváltás az eszköz-alapú tudásvisszakeresés felé
 
-Egy erőteljes tudásbázis felépítése után a következő kérdés, hogy az Ágens hogyan használhatja azt intelligensen és autonóm módon. A hagyományos RAG folyamat egy egyszerű egyirányú adatfolyam: a felhasználó lekérdezése közvetlenül a visszakeresésre szolgál, az eredmények közvetlenül bekerülnek a modell kontextusába, és a modell közvetlenül generálja a végső választ. Ez a ""Nem-Ágens"" mód hatékony, de a plafonja alacsony: alapvetően egy passzív visszakereső és generáló csővezeték, nincs képessége egy probléma mély megértésére, szétbontására vagy iteratív feltárására.
+Egy erőteljes tudásbázis felépítése után a következő kérdés, hogy az Ágens hogyan használhatja azt intelligensen és autonóm módon. A hagyományos RAG folyamat egy egyszerű egyirányú adatfolyam: a felhasználó lekérdezése közvetlenül a visszakeresésre szolgál, az eredmények közvetlenül bekerülnek a modell kontextusába, és a modell közvetlenül generálja a végső választ. Ez a „Nem-Ágens” mód hatékony, de a plafonja alacsony: alapvetően egy passzív visszakereső és generáló csővezeték, nincs képessége egy probléma mély megértésére, szétbontására vagy iteratív feltárására.
 
-Ennek a korlátnak a leküzdéséhez a RAG-ot egy rögzített adatfeldolgozási folyamatból egy dinamikus, az Ágens által vezetett iteratív feltárási folyamattá kell fejlesztenünk. Ez az ""Ágens RAG"" központi gondolata.
+Ennek a korlátnak a leküzdéséhez a RAG-ot egy rögzített adatfeldolgozási folyamatból egy dinamikus, az Ágens által vezetett iteratív feltárási folyamattá kell fejlesztenünk. Ez az „Ágens RAG” központi gondolata.
 
 A hagyományos RAG olyan, mintha egyetlen könyvtári keresés lenne megengedett, mielőtt meg kell írnod a jelentést. Az Ágens RAG olyan, mint egy kutató, aki folyamatosan visszatér különböző polcokhoz, módosítja a keresési stratégiákat és keresztellenőrzi a forrásokat – csak akkor kezd el írni, ha már megvan az anyag.
 

@@ -42,7 +42,9 @@ A bővítés nem jelenti azt, hogy minden elérhető tokent és eszközt egyszer
 
 [^ch1-agent-products]: A Manus hivatalos anyagai az eredeti Sandboxot egy elkülönített felhő-alapú virtuális gépként írják le. Amikor bemutatták a Google Drive Connectorát, a Manus kifejezetten felidézte a korábbi, töredezett munkafolyamatot, amikor a fájlokat manuálisan kellett letölteni és feltölteni a Drive, az asztali gép és a Manus között. Amikor 2026 márciusában elindította a My Computer szolgáltatást, azt a tényt, hogy a fontos munka helyben, nem pedig a felhőben található, a felhő-sandbox alapvető korlátjának nevezte. Az OpenClaw hivatalos README-je egy helyi-első, mindig aktív személyi asszisztensként írja le, amely a felhasználó saját eszközein fut, és több mint húsz üzenetküldő csatornát sorol fel; eszközei és bővítményrendszere felhő-integrációkat és helyi képességeket is hozzáadhatnak. Lásd: https://manus.im/blog/manus-sandbox, https://manus.im/blog/manus-google-drive-connector, https://manus.im/blog/manus-my-computer-desktop, https://github.com/openclaw/openclaw, és https://docs.openclaw.ai/tools
 
-Az egyes összetevők szerepének és összeillésének megértése az alapja a hatékony ügynökrendszerek építésének. A legkonkrétabb összetevővel – az eszközökkel, vagyis a cselekvési interfészekkel – kezdjük, majd haladunk befelé az LLM és a kontextus felé. Először azonban nézzük meg, hogy a különböző típusú ügynökök hogyan viszonyulnak egymáshoz e három dimenzió mentén:\n\n| Ügynöktermék | Aktuális információhalmaz | Cselekvési interfészek | Stratégia |
+Az egyes összetevők szerepének és összeillésének megértése az alapja a hatékony ügynökrendszerek építésének. A legkonkrétabb összetevővel – az eszközökkel, vagyis a cselekvési interfészekkel – kezdjük, majd haladunk befelé az LLM és a kontextus felé. Először azonban nézzük meg, hogy a különböző típusú ügynökök hogyan viszonyulnak egymáshoz e három dimenzió mentén:
+
+| Ügynöktermék | Aktuális információhalmaz | Cselekvési interfészek | Stratégia |
 |--------------|--------------------------|------------------------|-----------|
 | "Kódoló ügynökök (pl. Cursor)" | Követelménydokumentumok, kódbázis, terminálkörnyezet | Nyitott (belső érvelés, kódkeresés, fájl olvasás/írás, parancsvégrehajtás stb.) | Iteratív fejlesztés: követelmények megértése → releváns kód keresése → kód szerkesztése → tesztelés és ellenőrzés → hibakeresés és javítás |
 | "Kereső ügynökök (pl. Deep Research)" | Webes források, tudományos adatbázisok, helyi fájlok | Nyitott (belső érvelés, keresőlekérdezések, webes olvasás, összefoglalók generálása) | Iteratív mélyítés: keresési irány módosítása a meglévő információk alapján, fokozatosan egy teljes jelentés szintetizálása |
@@ -256,7 +258,9 @@ Egy konkrét példa mutatja a Harness értékét. Tegyük fel, hogy megkéred az
 
 Röviden: egy modell Harness nélkül lehet nagyon képzett, de hiányoznak belőle a megbízható feladatvégrehajtáshoz szükséges környező vezérlőelemek.
 
-Pontosabban: minden, a modellen kívüli infrastruktúra a Harness-hez tartozik. A Harness magja a Kontextus és az Eszközök, amelyek köré háromféle mérnöki védelmi mechanizmus épül:\n\n| Funkció | Egymondatos felelősség | Kapcsolat a Kontextussal/Eszközökkel |
+Pontosabban: minden, a modellen kívüli infrastruktúra a Harness-hez tartozik. A Harness magja a Kontextus és az Eszközök, amelyek köré háromféle mérnöki védelmi mechanizmus épül:
+
+| Funkció | Egymondatos felelősség | Kapcsolat a Kontextussal/Eszközökkel |
 |---------|------------------------|--------------------------------------|
 | "Kontextus" | Releváns információkat biztosít a modellnek | Alapképesség |
 | "Eszközök" | Cselekvési interfészeket biztosít a modellnek | Alapképesség |
@@ -379,7 +383,9 @@ A gyakorlatban a munkafolyamatok és az autonóm ügynökök nem zárják ki egy
 
 #### A főbb ügynökkeretrendszerek rövid összehasonlítása
 
-Az alábbi táblázat összefoglalja a széles körben használt ügynökkeretrendszereket és platformokat, hogy segítse az olvasókat a megfelelő kiválasztásában a saját forgatókönyvükhöz:\n\n| A Harness fókuszterülete | Kapcsolódó fejezet | Alapvető tartalom | Biztonsági aggályok |
+Az alábbi táblázat összefoglalja a széles körben használt ügynökkeretrendszereket és platformokat, hogy segítse az olvasókat a megfelelő kiválasztásában a saját forgatókönyvükhöz:
+
+| A Harness fókuszterülete | Kapcsolódó fejezet | Alapvető tartalom | Biztonsági aggályok |
 |---------------------------|--------------------|-------------------|---------------------|
 | Kontextustervezés | 2. fejezet (Context Engineering) | Prompt Engineering, ügynök állapotsáv, kontextus-tömörítés, Agent Skills | Prompt injection és információszivárgás |
 | Kontextus bővítése (tudás perzisztálása) | 3. fejezet (Knowledge Bases) | Felhasználói memória, RAG, strukturált indexek, Agentic RAG | Érzékeny információk kiszivárgása, adatvédelem |

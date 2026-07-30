@@ -385,7 +385,7 @@ Ez a generálás plusz felülvizsgálat (Proposer-Reviewer) minta itt újra megj
 >
 > "Megközelítés": Az Ágens egy annotált szöveges leírás alapján szerkesztési szkriptet generál a videó összeállításához, majd egy automatikus felülvizsgálati ciklust indít a kódolt szabályok alapján a képelemzéshez és a feldolgozás követelményeknek való megfelelésének ellenőrzéséhez.
 >
-
+> 
 > "Kísérlet 5-4 ★★: Automatikus Zene Generálás"
 >
 > "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens képes-e zenei szekvenciák generálására és lejátszására programozott MIDI generálás segítségével.
@@ -522,7 +522,9 @@ Ne túlozzuk el: a gyakori problémák, mint a lejárt tokenek, elavult zárfáj
 
 **Kulcsfontosságú Technikák, Amikor egy Ágens Ágenst Ír.**
 
-Egy kiváló minőségű Ágens létrehozása sokkal nehezebb, mint hétköznapi alkalmazáskód generálása, mert az Ágens architektúra minták, legjobb gyakorlatok és gyakori buktatók mély megértését igényli. E területi szakértelem nélkül még a legerősebb kódgeneráló modellek is súlyos architekturális hibákkal rendelkező Ágenseket produkálnak. Gyakori hibák:\n\n1. "Ad hoc kontextuskezelés": A 2. fejezetben tárgyalt szabványos kontextusformátum használatának elmulasztása, a trajektóriák egyszerű szövegként való bedobása a kontextusba, a strukturált üzenetekből származó KV Cache optimalizációk figyelmen kívül hagyása, és határfeltételi hibák bevezetése az eszközhívási ciklusokban
+Egy kiváló minőségű Ágens létrehozása sokkal nehezebb, mint hétköznapi alkalmazáskód generálása, mert az Ágens architektúra minták, legjobb gyakorlatok és gyakori buktatók mély megértését igényli. E területi szakértelem nélkül még a legerősebb kódgeneráló modellek is súlyos architekturális hibákkal rendelkező Ágenseket produkálnak. Gyakori hibák:
+
+1. "Ad hoc kontextuskezelés": A 2. fejezetben tárgyalt szabványos kontextusformátum használatának elmulasztása, a trajektóriák egyszerű szövegként való bedobása a kontextusba, a strukturált üzenetekből származó KV Cache optimalizációk figyelmen kívül hagyása, és határfeltételi hibák bevezetése az eszközhívási ciklusokban
 2. "Nem szabványos eszköztervezés": Homályos leírások, hiányzó használati határ utasítások és negatív listák, paraméterek konkrét példák nélkül
 3. "Elavult technológiai választások": Hajlam a tréning adatokból származó leggyakoribb, de elavult modellek és API-k használatára. Megoldás: Tartson fenn egy SOTA tudásbázist, vagy szerelje fel az Ágenst keresési képességgel
 4. "Elszakadás a külső ökoszisztémától": Elavult API-k, nem karbantartott könyvtárak vagy hibás minták használata

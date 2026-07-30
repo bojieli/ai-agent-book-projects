@@ -223,7 +223,9 @@ Három kulcsfontosságú részlet van itt:
   "choices": [{
     "message": {
       "role": "assistant",                         // ← Modell által generált
-      "content": "It's currently 5:18 AM on Saturday, September 13, 2025 in Vancouver.\n\nWeather: 13.2°C with clear skies and 93% humidity. It's quite cool this morning - you might want to grab a jacket."
+      "content": "It's currently 5:18 AM on Saturday, September 13, 2025 in Vancouver.
+
+Weather: 13.2°C with clear skies and 93% humidity. It's quite cool this morning - you might want to grab a jacket."
     }
   }]
 }
@@ -233,7 +235,13 @@ Ezúttal a modell nem ad vissza `tool_calls`-t; szöveges választ ad vissza, me
 
 ### Az Ügynök Magciklusának Megvalósítása Kódban
 
-Most, hogy a JSON struktúra világos, összekapcsolhatjuk a fenti lépéseket Pythonban. Az alábbiakban egy minimális ügynök megvalósítás látható, amely egyetlen hurok köré épül:\n\n```python\nfrom openai import OpenAI\n\nclient = OpenAI()\n\n# ── Eszközdefiníciók ──\ntools = [\n    {\n        "type": "function",
+Most, hogy a JSON struktúra világos, összekapcsolhatjuk a fenti lépéseket Pythonban. Az alábbiakban egy minimális ügynök megvalósítás látható, amely egyetlen hurok köré épül:
+
+```python\nfrom openai import OpenAI
+
+client = OpenAI()
+
+# ── Eszközdefiníciók ──\ntools = [\n    {\n        "type": "function",
         "function": {
             "name": "get_current_time",
             "description": "Get the current date and time in a specific timezone",
@@ -306,7 +314,9 @@ while True:
 
 A huroknak egy fő elágazása van: **ha a modell `tool_calls`-t ad vissza, hajtsa végre az eszközöket és folytassa; egyébként adja ki az eredményt és lépjen ki.** E folyamat során a `messages` lista folyamatosan növekszik, ahogy minden kör hozzáfűzi a modell válaszát és az eszköz-végrehajtási eredményeket.
 
-A `messages` lista a következőképpen változik a körök során:\n\n"Kezdeti állapot (az első hívás előtt):"
+A `messages` lista a következőképpen változik a körök során:
+
+"Kezdeti állapot (az első hívás előtt):"
 ```
 messages = [
   { role: "system",  content: "You are a helpful assistant..." },     # Fejlesztő által írva
@@ -542,7 +552,9 @@ Az ügynökök számára a következmény az, hogy a hosszú kontextusoknak nem 
 
 [^ch2-2]: Li, Bojie. *Models Take Notes at Prefill: KV Cache Can Be Editable and Composable.* arXiv:2606.17107, 2026.
 
-Most, hogy megértettük, hogyan dolgozzák fel és gyorsítótárazza a kontextust, a következő kérdés az, hogyan tervezzük meg magát a tartalmat. A következő szakaszok azt tárgyalják, hogy mi tartozik a kontextusba és hogyan szervezzük azt, három összefüggő szál mentén:\n\n- **Prompt Tervezés, Prompt Injekció és Dinamikus Promptok (Ügynöki Készségek)**: Hogyan írjuk meg a rendszer promptot és mit tartalmazzon. Ez a kontextustervezés legközvetlenebb része. Az eszközdefiníciók, egy másik statikus komponens a rendszer prompt mellett, szintén közvetlenül befolyásolják az ügynök eszközhasználatának pontosságát. Ez a fejezet megadja az alapelveket, a 4. fejezet pedig részletesen kibővíti azokat. A következő kérdés a biztonság: amikor a külső tartalom megkísérli eltéríteni a gondosan megtervezett kontextust, hogyan védekezzen a rendszer kontextus szinten? Ahogy a promptok hosszabbá válnak és egyre több forgatókönyvet fednek le, mindennek egyetlen rendszer promptba helyezése kivitelezhetetlenné válik: tokent pazarl, és szétteríti a figyelmet. Ez természetesen vezet az Ügynöki Készségek progresszív feltárási mechanizmusához, ahol a tudás igény szerint töltődik be, ahelyett, hogy egyszerre lenne minden benne.
+Most, hogy megértettük, hogyan dolgozzák fel és gyorsítótárazza a kontextust, a következő kérdés az, hogyan tervezzük meg magát a tartalmat. A következő szakaszok azt tárgyalják, hogy mi tartozik a kontextusba és hogyan szervezzük azt, három összefüggő szál mentén:
+
+- **Prompt Tervezés, Prompt Injekció és Dinamikus Promptok (Ügynöki Készségek)**: Hogyan írjuk meg a rendszer promptot és mit tartalmazzon. Ez a kontextustervezés legközvetlenebb része. Az eszközdefiníciók, egy másik statikus komponens a rendszer prompt mellett, szintén közvetlenül befolyásolják az ügynök eszközhasználatának pontosságát. Ez a fejezet megadja az alapelveket, a 4. fejezet pedig részletesen kibővíti azokat. A következő kérdés a biztonság: amikor a külső tartalom megkísérli eltéríteni a gondosan megtervezett kontextust, hogyan védekezzen a rendszer kontextus szinten? Ahogy a promptok hosszabbá válnak és egyre több forgatókönyvet fednek le, mindennek egyetlen rendszer promptba helyezése kivitelezhetetlenné válik: tokent pazarl, és szétteríti a figyelmet. Ez természetesen vezet az Ügynöki Készségek progresszív feltárási mechanizmusához, ahol a tudás igény szerint töltődik be, ahelyett, hogy egyszerre lenne minden benne.
 - "Ügynöki Állapotsáv": Egy független mechanizmus, amely dinamikus metainformációkat (feladat előrehaladása, környezet állapota, eszközhívások száma, stb.) injektál a kontextus végébe, kompenzálva a modell azon képtelenségét, hogy aktívan összegezze a burkolt állapotokat. Hasonlóan a telefon képernyőjének tetején látható időhöz, akkumulátorhoz és hálózati jelhez, az Ügynöki Állapotsáv lehetővé teszi a modell számára, hogy bármikor hozzáférjen az aktuális futásidejű állapothoz.
 - "Kontextustömörítési Stratégiák": A folyamatosan bővülő kontextus problémájának kezelése – mikor kell tömöríteni, hogyan kell tömöríteni, és hogyan fér meg a tömörítés a KV Cache mellett.
 
@@ -766,7 +778,9 @@ Ebből a perspektívából a kontextuson belüli tanulás inkább egy gyors alka
 
 Mielőtt konkrét tömörítési stratégiákat tárgyalnánk, fel kell oldanunk egy látszólagos ellentmondást: a korábbi szakaszok hangsúlyozták, hogy a KV Cache megköveteli a kontextus előtagjának változatlanságát, de a tömörítés magában foglalja a kontextus közepén lévő tartalom módosítását.
 
-A kulcs a tömörítés "időzítésének és helyének" megértése. A tömörítés nem módosítja a kontextust egyetlen API hívás során; helyette a "két API hívás között" történik, amikor az ügynök-keretrendszer előfeldolgozza az üzenetlistát:\n\n1.  **A Rendszer Prompt és az Eszközdefiníciók soha nem érintettek** – ez a "statikus előtag" a kontextus legelején, és a KV Cache folyamatosan gyorsítótárazva van.
+A kulcs a tömörítés "időzítésének és helyének" megértése. A tömörítés nem módosítja a kontextust egyetlen API hívás során; helyette a "két API hívás között" történik, amikor az ügynök-keretrendszer előfeldolgozza az üzenetlistát:
+
+1.  **A Rendszer Prompt és az Eszközdefiníciók soha nem érintettek** – ez a "statikus előtag" a kontextus legelején, és a KV Cache folyamatosan gyorsítótárazva van.
 2.  **A tömörítés célpontja a beszélgetéstörténetben lévő eszközeredmények** – amikor az ügynök-keretrendszer lecseréli az eredeti eszközkimenetet egy tömörített összefoglalóra, a csere pontja utáni gyorsítótár érvénytelenné válik, de az előtte lévő gyorsítótár érvényes marad.
 3.  "Ez egy tudatos kompromisszum": tömörítés nélkül a kontextus az ablakkorlát fölé nő, és a feladat teljesen meghiúsul; a tömörítéssel némi gyorsítótár elveszik, de a kontextus hossza ellenőrzés alatt marad, és az információsűrűség nő. Ezért mérlegelni kell a tömörítés gyakoriságát – a gyakori tömörítés gyakran töri meg a gyorsítótárat. A legjobb, ha batch tömörítést végzünk, amikor a kontextus megközelíti a küszöböt, ahelyett, hogy minden körben tömörítenénk.
 
@@ -824,7 +838,9 @@ A kontextustömörítési stratégiák kutatása az ügynökrendszerek tervezés
 
 Bár a tömörítés számítási többletköltséggel jár, mert minden tömörítés egy extra LLM hívást igényel, a befektetés megtérülése rendkívül magas lehet a megtakarított token költségekhez és a feladat sikerességének javulásához képest. A kísérletek azt mutatják, hogy a kontextustudatos tömörítés több mint 75%-kal csökkenti a tokenhasználatot.
 
-Amit a tömörítés a legkönnyebben elveszít, az nem maguk a részletek, hanem **a korai architekturális döntések, a korlátok mögötti érvelés és a sikertelen utak** – az LLM-ek általában előnyben részesítik az olyan információk törlését, amelyek úgy tűnik, újra megszerezhetők. Production-szintű ügynökrendszerekben ajánlott explicit módon meghatározni a megtartási prioritásokat a tömörítés során:\n\n1.  "Architekturális Döntések és Kulcsfontosságú Korlátok": Nem szabad összefoglalni.
+Amit a tömörítés a legkönnyebben elveszít, az nem maguk a részletek, hanem **a korai architekturális döntések, a korlátok mögötti érvelés és a sikertelen utak** – az LLM-ek általában előnyben részesítik az olyan információk törlését, amelyek úgy tűnik, újra megszerezhetők. Production-szintű ügynökrendszerekben ajánlott explicit módon meghatározni a megtartási prioritásokat a tömörítés során:
+
+1.  "Architekturális Döntések és Kulcsfontosságú Korlátok": Nem szabad összefoglalni.
 2.  **Módosított Fájlok Listája és Kulcsfontosságú Változtatási Rekordok**: Teljes egészében megőrizni.
 3.  "Ellenőrzési Státusz" (sikerült/megbukott): Meg kell tartani.
 4.  "Megoldatlan TODO-k és Visszaállítási Jegyzetek": Meg kell tartani.

@@ -107,96 +107,97 @@ Először is tegyünk le egy definíciós vitát: az 1. fejezet nyelvén a több
 
 ![10-2. ábra: Szakasz-alapú szerepváltás](images/fig10-2.png)
 
-> **10-1. kísérlet ★★: Rendszerpromptok meghatározása a végrehajtási szakasz alapján**
->
-> Ez a kísérlet bemutatja, hogy a szakaszspecifikus rendszerpromptok hogyan javíthatják a teljesítményt egy teljes Kódoló Ügynök munkafolyamat során.
->
-> "Feladat Forgatókönyv": Egy felhasználó szoftverfejlesztési kérelmet nyújt be, és az Ügynök három szakaszon halad keresztül: követelménytisztázás, kódimplementáció és minőségi felülvizsgálat.
->
-> **1. szakasz: Követelménytisztázás** (Szerep: Követelményelemző)
->
-> A rendszerprompt hangsúlyozza:
+> **10-1. kísérlet ★★: Rendszerpromptok meghatározása a végrehajtási szakasz alapján**>
+
+>> Ez a kísérlet bemutatja, hogy a szakaszspecifikus rendszerpromptok hogyan javíthatják a teljesítményt egy teljes Kódoló Ügynök munkafolyamat során.>
+
+>> "Feladat Forgatókönyv": Egy felhasználó szoftverfejlesztési kérelmet nyújt be, és az Ügynök három szakaszon halad keresztül: követelménytisztázás, kódimplementáció és minőségi felülvizsgálat.>
+
+>> **1. szakasz: Követelménytisztázás** (Szerep: Követelményelemző)>
+
+>> A rendszerprompt hangsúlyozza:
 > - "Az Ön felelőssége, hogy teljes mértékben megértse a felhasználó igényeit. Tegyen fel kérdéseket a kétértelműségek tisztázására, biztosítva, hogy teljesen megértse a várt funkcionalitást, használati forgatókönyveket és teljesítménykövetelményeket."
 > - "Ne rohanjon az implementációba. Ebben a szakaszban az Ön feladata a kérdések feltevése és megerősítése, nem a kódírás."
-> - "Miután megerősítette, hogy minden kulcsfontosságú követelmény egyértelmű, hívja meg a `complete_requirements_analysis()` eszközt a szakasz lezárásához."
->
-> Az eszközkészlet korlátozott: `ask_clarifying_question(kérdés)` a tisztázó kérdések feltevéséhez a felhasználónak, `save_requirement(kulcs, érték)` a megerősített követelmények rögzítéséhez, és `complete_requirements_analysis()` a szakasz befejezettként való megjelöléséhez.
->
-> Az Ügynök megkérdezi a felhasználót, hogy milyen típusú fájlokat kell feldolgoznia a szkriptnek, hogy rekurzívan kell-e feldolgoznia az alkönyvtárakat, és hogy meg kell-e őriznie az eredeti fájlneveket a fájlok áthelyezése után. Ezek az egyeztetések segítenek strukturált követelménykészlet felépítésében és rögzítésében. Miután a követelmények elég egyértelműek, meghívja a `complete_requirements_analysis()` függvényt. Ez a befejezési jelzés megmondja a rendszernek, hogy töltse be a következő szakasz konfigurációját.
->
-> **2. szakasz: Kódimplementáció** (Szerep: Szoftvermérnök)
->
-> Az új rendszerprompt hangsúlyozza:
+> - "Miután megerősítette, hogy minden kulcsfontosságú követelmény egyértelmű, hívja meg a `complete_requirements_analysis()` eszközt a szakasz lezárásához.">
+
+>> Az eszközkészlet korlátozott: `ask_clarifying_question(kérdés)` a tisztázó kérdések feltevéséhez a felhasználónak, `save_requirement(kulcs, érték)` a megerősített követelmények rögzítéséhez, és `complete_requirements_analysis()` a szakasz befejezettként való megjelöléséhez.>
+
+>> Az Ügynök megkérdezi a felhasználót, hogy milyen típusú fájlokat kell feldolgoznia a szkriptnek, hogy rekurzívan kell-e feldolgoznia az alkönyvtárakat, és hogy meg kell-e őriznie az eredeti fájlneveket a fájlok áthelyezése után. Ezek az egyeztetések segítenek strukturált követelménykészlet felépítésében és rögzítésében. Miután a követelmények elég egyértelműek, meghívja a `complete_requirements_analysis()` függvényt. Ez a befejezési jelzés megmondja a rendszernek, hogy töltse be a következő szakasz konfigurációját.>
+
+>> **2. szakasz: Kódimplementáció** (Szerep: Szoftvermérnök)>
+
+>> Az új rendszerprompt hangsúlyozza:
 > - "Az Ön felelőssége, hogy kiváló minőségű Python kódot írjon a megerősített követelmények alapján."
 > - "Kövesse a bevált gyakorlatokat: tegye a kódot modulárissá, kezelje megfelelően a hibákat, és adjon hozzá kommentárokat, ahol hasznosak."
-> - "A kód elkészítése és az alapvető tesztek sikeres teljesítése után hívja meg a `submit_for_review()` függvényt a felülvizsgálati szakaszba lépéshez."
->
-> Az eszközök is változnak: a követelménytisztázási eszközöket fejlesztőeszközök váltják fel, mint a `write_file(útvonal, tartalom)`, `read_file(útvonal)` és `execute_code(kód)`. Az első szakaszban rögzített követelményeket használva az Ügynök megírja a core logikát, hibakezelést ad hozzá, és teszteket hoz létre. Továbbra is hozzáférhet a korábbi beszélgetéshez a követelmény részleteiért, de most kizárólag az implementációra összpontosít, ahelyett, hogy további kérdéseket tenne fel. Befejezéskor meghívja a `submit_for_review()` függvényt.
->
-> **3. szakasz: Kód Felülvizsgálat** (Szerep: Kód Felülvizsgáló)
->
-> Az új rendszerprompt hangsúlyozza:
+> - "A kód elkészítése és az alapvető tesztek sikeres teljesítése után hívja meg a `submit_for_review()` függvényt a felülvizsgálati szakaszba lépéshez.">
+
+>> Az eszközök is változnak: a követelménytisztázási eszközöket fejlesztőeszközök váltják fel, mint a `write_file(útvonal, tartalom)`, `read_file(útvonal)` és `execute_code(kód)`. Az első szakaszban rögzített követelményeket használva az Ügynök megírja a core logikát, hibakezelést ad hozzá, és teszteket hoz létre. Továbbra is hozzáférhet a korábbi beszélgetéshez a követelmény részleteiért, de most kizárólag az implementációra összpontosít, ahelyett, hogy további kérdéseket tenne fel. Befejezéskor meghívja a `submit_for_review()` függvényt.>
+
+>> **3. szakasz: Kód Felülvizsgálat** (Szerep: Kód Felülvizsgáló)>
+
+>> Az új rendszerprompt hangsúlyozza:
 > - "Vizsgálja felül a kódot a funkcionális helyesség, a kódolási szabványok betartása, a hibakezelés, a teljesítmény és a biztonság szempontjából."
 > - "Alkalmazzon kritikus megközelítést, és azonosítsa a potenciális problémákat és a kód javításának lehetőségeit."
-> - "Ha súlyos problémákat talál, hívja meg a `request_revision(problémák)` függvényt, hogy visszatérjen az implementációs szakaszba a módosításhoz; ha a minőség elfogadható, hívja meg az `approve_code()` függvényt a feladat befejezéséhez."
->
-> Az eszközkészlet ismét változik: kódminőség-elemző eszközök váltják fel, mint a `run_linter(fájl)`, `run_tests(fájl)` és `analyze_complexity(fájl)`. Az Ügynök a felülvizsgáló szemszögéből vizsgálja újra a kódot, statikus elemzést futtat, és ellenőrzi a potenciális hibákat, teljesítményproblémákat vagy biztonsági kockázatokat.
->
-> Ez a háromszakaszos tervezés lehetővé teszi, hogy az Ügynök minden szakaszban a core feladatra összpontosítson. Még fontosabb, hogy az egyértelmű szakaszátmenetek biztosítják, hogy minden szakasz befejeződjön: az Ügynök nem ugorhatja át a követelményelemzést, és nem kezdheti el azonnal a kódolást, vagy nem adhatja le az eredményt felülvizsgálat nélkül.
->
-> "Kísérleti Követelmények":
+> - "Ha súlyos problémákat talál, hívja meg a `request_revision(problémák)` függvényt, hogy visszatérjen az implementációs szakaszba a módosításhoz; ha a minőség elfogadható, hívja meg az `approve_code()` függvényt a feladat befejezéséhez.">
+
+>> Az eszközkészlet ismét változik: kódminőség-elemző eszközök váltják fel, mint a `run_linter(fájl)`, `run_tests(fájl)` és `analyze_complexity(fájl)`. Az Ügynök a felülvizsgáló szemszögéből vizsgálja újra a kódot, statikus elemzést futtat, és ellenőrzi a potenciális hibákat, teljesítményproblémákat vagy biztonsági kockázatokat.>
+
+>> Ez a háromszakaszos tervezés lehetővé teszi, hogy az Ügynök minden szakaszban a core feladatra összpontosítson. Még fontosabb, hogy az egyértelmű szakaszátmenetek biztosítják, hogy minden szakasz befejeződjön: az Ügynök nem ugorhatja át a követelményelemzést, és nem kezdheti el azonnal a kódolást, vagy nem adhatja le az eredményt felülvizsgálat nélkül.>
+
+>> "Kísérleti Követelmények":
 > 1. Valósítson meg háromszakaszos rendszerpromptokat, mindegyik egyértelmű szerepdefinícióval és viselkedési iránymutatással
 > 2. Konfiguráljon minden szakaszhoz illeszkedő eszközkészleteket
 > 3. Valósítson meg egy szakaszátmeneti trigger mechanizmust (specifikus eszközhívásokon keresztül)
 > 4. Biztosítsa a kontextus folytonosságát a szakaszok között
 > 5. Kezelje a visszaállítási forgatókönyveket – amikor a kód felülvizsgálat problémákat talál, térjen vissza az implementációs szakaszba
-> 6. Rögzítse az egyes szakaszok tevékenységét annak bemutatására, hogy a különböző promptok hogyan eredményeznek eltérő viselkedést
+> 6. Rögzítse az egyes szakaszok tevékenységét annak bemutatására, hogy a különböző promptok hogyan eredményeznek eltérő viselkedést>
 >
 
-### Többdoménes Szerepváltás
+>### Többdoménes Szerepváltás
 
 A többszakaszos szerepváltás egyetlen feladattípuson belül (szoftverfejlesztés) mutatta be a szakaszos végrehajtást. A többdoménes szerepváltás tovább megy: az Ügynök dinamikusan változtatja a szerepét, ahogy egy feladat domének között mozog. Ahelyett, hogy egy előre meghatározott lineáris folyamatot követne, azt választja ki, hogy melyik szakmai szerepet vegye fel a felhasználó változó igényeire válaszul.
 
-> "10-2. kísérlet ★★: Többszerepű Váltás"
->
-> "Előfeltételek": Ajánlott, hogy az olvasók először tekintsék át a 2. fejezetben található Ügynök Készségek (Agent Skills) mechanizmusát.
->
-> "Rendszerarchitektúra": Öt szerep van meghatározva:
->
-> - "triage (recepció; alapértelmezett belépési pont)": Azonosítja a felhasználó átfogó igényeit, a munkát egymást követő részfeladatokra bontja, minden részfeladatot a megfelelő specialistához irányít, és végső ellenőrzést végez, amikor minden részfeladat kész. Az egyetlen eszköze a `transfer_to_agent`.
+> "10-2. kísérlet ★★: Többszerepű Váltás">
+
+>> "Előfeltételek": Ajánlott, hogy az olvasók először tekintsék át a 2. fejezetben található Ügynök Készségek (Agent Skills) mechanizmusát.>
+
+>> "Rendszerarchitektúra": Öt szerep van meghatározva:>
+
+>> - "triage (recepció; alapértelmezett belépési pont)": Azonosítja a felhasználó átfogó igényeit, a munkát egymást követő részfeladatokra bontja, minden részfeladatot a megfelelő specialistához irányít, és végső ellenőrzést végez, amikor minden részfeladat kész. Az egyetlen eszköze a `transfer_to_agent`.
 > - "research (információkereső szakértő)": `web_search` segítségével keres adatokat, tényeket és anyagokat.
 > - "coding (programozási szakértő)": `execute_python` segítségével ír és futtat kódot programozási és szkriptelési feladatokhoz.
 > - "data_analysis (adat elemző szakértő)": `calculate` / `descriptive_stats` segítségével végez kvantitatív számításokat és statisztikákat (pl. év/év növekedési ráta, összetett éves növekedési ráta (CAGR), átlag).
-> - "writing (író szakértő)": A keresett adatokat és elemzési eredményeket egyértelmű vázlattá alakítja, a közönséghez igazítva (és `count_characters` segítségével hozzávetőleges hosszellenőrzést végez).
+> - "writing (író szakértő)": A keresett adatokat és elemzési eredményeket egyértelmű vázlattá alakítja, a közönséghez igazítva (és `count_characters` segítségével hozzávetőleges hosszellenőrzést végez).>
+
+>> "Alapvető Mechanizmus: transfer_to_agent Eszköz">
+
+>> Minden szerep rendelkezik a `transfer_to_agent(cél_szerep, indok)` eszközzel. Amikor egy szerep meghívja, a rendszer elmenti az aktuális beszélgetési előzményt, betölti a cél szerep promptját és eszközkészletét, átadja az előzményt annak a szerepnek, és folytatja a végrehajtást.>
+
+>> "Kísérleti Forgatókönyv": A rendszer alapértelmezés szerint a `triage` szerepben indul. A felhasználó egy több doménre kiterjedő feladatot ad be: "Befektetői anyagokat készítek. Segíts megtalálni Kína újenergiás járműeladásait 2021-re, 2022-re és 2023-ra, számold ki a három év összetett éves növekedési rátáját, majd írj egy összefoglalót kínaiul a befektetőknek, maximum 120 karakterben." A `triage` a feladatot "adatok keresése → mutatók kiszámítása → vázlat írása" részekre bontja, és először a `research`-nek adja át:
 >
-> "Alapvető Mechanizmus: transfer_to_agent Eszköz"
->
-> Minden szerep rendelkezik a `transfer_to_agent(cél_szerep, indok)` eszközzel. Amikor egy szerep meghívja, a rendszer elmenti az aktuális beszélgetési előzményt, betölti a cél szerep promptját és eszközkészletét, átadja az előzményt annak a szerepnek, és folytatja a végrehajtást.
->
-> "Kísérleti Forgatókönyv": A rendszer alapértelmezés szerint a `triage` szerepben indul. A felhasználó egy több doménre kiterjedő feladatot ad be: "Befektetői anyagokat készítek. Segíts megtalálni Kína újenergiás járműeladásait 2021-re, 2022-re és 2023-ra, számold ki a három év összetett éves növekedési rátáját, majd írj egy összefoglalót kínaiul a befektetőknek, maximum 120 karakterben." A `triage` a feladatot "adatok keresése → mutatók kiszámítása → vázlat írása" részekre bontja, és először a `research`-nek adja át:\n>
 > ```python
 > transfer_to_agent(target_role="research", reason="Find annual new-energy vehicle sales figures for 2021-2023")
-> ```
->
-> A `research` a `web_search` segítségével megtalálja az eladási adatokat, hozzáadja a kulcsadatokat a beszélgetéshez, és átadja a feladatot a `data_analysis`-nek:
->
-> ```python
+> ```>
+
+>> A `research` a `web_search` segítségével megtalálja az eladási adatokat, hozzáadja a kulcsadatokat a beszélgetéshez, és átadja a feladatot a `data_analysis`-nek:>
+
+>> ```python
 > transfer_to_agent(target_role="data_analysis", reason="The data is ready; calculate CAGR from 2021 to 2023")
-> ```
->
-> A `data_analysis` a `calculate` segítségével kiszámítja a növekedési rátát. Ezután átadja a feladatot a `writing`-nek, amely megírja az összefoglalót, és visszaadja a `triage`-nak a végső jóváhagyáshoz. A teljes lánc: `triage` → `research` → `data_analysis` → `writing` → `triage`. Minden szerep láthatja a teljes beszélgetési előzményt, így a következő szerep természetesen tudja, hogy mi már megtörtént.
->
-> A szerepváltás döntése a rendszerpromptokban található iránymutatás függvénye. A `triage` prompt explicit módon felsorolja az útválasztási szabályokat: adatok vagy forrásanyagok keresése → `research`; kód írása és futtatása → `coding`; kvantitatív számítások és statisztikák → `data_analysis`; anyag csiszolása vázlattá → `writing`. Egy feladatot akkor kell átadni, ha mély szaktudást vagy specializált eszközöket igényel. Minden specialista promptja azonosítja a következő megfelelő szerepet, vagy utasítja a specialistát, hogy adja vissza a feladatot a `triage`-nak.
->
-> "Kísérleti Követelmények":
+> ```>
+
+>> A `data_analysis` a `calculate` segítségével kiszámítja a növekedési rátát. Ezután átadja a feladatot a `writing`-nek, amely megírja az összefoglalót, és visszaadja a `triage`-nak a végső jóváhagyáshoz. A teljes lánc: `triage` → `research` → `data_analysis` → `writing` → `triage`. Minden szerep láthatja a teljes beszélgetési előzményt, így a következő szerep természetesen tudja, hogy mi már megtörtént.>
+
+>> A szerepváltás döntése a rendszerpromptokban található iránymutatás függvénye. A `triage` prompt explicit módon felsorolja az útválasztási szabályokat: adatok vagy forrásanyagok keresése → `research`; kód írása és futtatása → `coding`; kvantitatív számítások és statisztikák → `data_analysis`; anyag csiszolása vázlattá → `writing`. Egy feladatot akkor kell átadni, ha mély szaktudást vagy specializált eszközöket igényel. Minden specialista promptja azonosítja a következő megfelelő szerepet, vagy utasítja a specialistát, hogy adja vissza a feladatot a `triage`-nak.>
+
+>> "Kísérleti Követelmények":
 > 1. Valósítson meg rendszerpromptokat és specializált eszközkészleteket legalább három szakmai szerephez
 > 2. Valósítsa meg a `transfer_to_agent` eszközt, támogatva a dinamikus váltást
 > 3. Biztosítsa a kontextus folytonosságát a szerepváltás után
 > 4. Akadályozza meg a körkörös átadásokat, amelyek az Ügynököt ismétlődő szerepváltásba kényszerítik
-> 5. Tervezzen összetett, több doménre kiterjedő feladatfolyamokat a szerepváltás értékének bemutatására
+> 5. Tervezzen összetett, több doménre kiterjedő feladatfolyamokat a szerepváltás értékének bemutatására>
 >
 
-## Többügynökös Együttműködés Megosztott Kontextus Nélkül
+>## Többügynökös Együttműködés Megosztott Kontextus Nélkül
 
 A megosztott kontextus nélküli architektúrában minden Ügynök független entitásként működik saját kontextussal, trajektóriával és állapottal. Az Ügynökök nem férhetnek hozzá közvetlenül egymás belső kontextusához; az együttműködés kizárólag explicit, strukturált adatátvitelen alapul a fejezet elején bemutatott három kommunikációs mechanizmuson keresztül: eszközhívás-paraméterek, megosztott fájlrendszer és üzenetsor.
 
@@ -256,7 +257,7 @@ A 10-4. táblázat összehasonlítja ezt a négy területtípust négy dimenzió
 | Csatolt Külső Erőforrások | Külső engedélyezéstől függ | A külső forrás határozza meg | Többnyire írásvédett, írás óvatosságot igényel | A külső forrás kezeli |
 | Beépített Rendszer Erőforrások | Minden Ügynök | Munkameneteken át stabil | Írásvédett | Nem szükséges (írásvédett) |
 
-A ""fájl útvonal mint univerzális interfész"" értéke abban rejlik, hogy az útvonalat csererendszerré teszi. Akár termékeket cserélnek az Ügynökök, akár egy fő Ügynök ad bemenetet egy al-ügynöknek, akár szervezetek működnek együtt A2A-n keresztül, egy könnyű útvonal karakterláncot adnak át, ahelyett, hogy a fájl tartalmát betöltenék a kontextusablakba (4. fejezet). Ez összhangban van az 5. fejezet "a fájlrendszer mint az Ügynök központja" koncepciójával, amely leírja, hogyan használ egyetlen Ügynök a fájlrendszert a memória és a képességek tárolására. Itt ugyanez az absztrakció több Ügynökre terjed ki: a privát, megosztott, külső és beépített tárolókat csatoló virtuális könyvtárfa biztosítja a többügynökös együttműködés tárolási alapját.
+A „fájl útvonal mint univerzális interfész” értéke abban rejlik, hogy az útvonalat csererendszerré teszi. Akár termékeket cserélnek az Ügynökök, akár egy fő Ügynök ad bemenetet egy al-ügynöknek, akár szervezetek működnek együtt A2A-n keresztül, egy könnyű útvonal karakterláncot adnak át, ahelyett, hogy a fájl tartalmát betöltenék a kontextusablakba (4. fejezet). Ez összhangban van az 5. fejezet "a fájlrendszer mint az Ügynök központja" koncepciójával, amely leírja, hogyan használ egyetlen Ügynök a fájlrendszert a memória és a képességek tárolására. Itt ugyanez az absztrakció több Ügynökre terjed ki: a privát, megosztott, külső és beépített tárolókat csatoló virtuális könyvtárfa biztosítja a többügynökös együttműködés tárolási alapját.
 
 ### Kommunikáció és Vezérlés az Ügynökök Között
 
@@ -342,69 +343,70 @@ A menedzser minta négy mechanizmustól függ:
 
 "Eredmény Integráció": Miután az al-ügynökök befejezték, a Menedzser összegyűjti és integrálja az eredményeket. Ez magában foglalhatja a konfliktusok feloldását és az ellentmondások egyeztetését. Végül a Menedzser ellenőrzi az integrált eredményt.
 
-> **10-3. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**
+> **10-3. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**>
+
+>> Ez a kísérlet egy többszereplős, menedzser mintájú feladatot valósít meg, amelyben egy Menedzser Ügynök koordinál három al-ügynököt – Fordító, Műszaki Felülvizsgáló és Formázó – automatikus nyelvi dokumentáció generálásához.>
+
+>> "Rendszer Tervezés":>
+
+>> A 4. fejezet al-ügynök mechanizmusára építve (`spawn_subagent` a gyermek Ügynök létrehozásához, `send_message_to_subagent` az aszinkron kommunikációhoz, `cancel_subagent` a megszakításhoz) építs fel egy menedzser mintájú architektúrát a következő lépésekkel:>
+
+>> **1. lépés: Kezdeti Feladatbontás**. A `triage` szerep (kapu) fogadja a felhasználó utasítását, pl. "Automatikusan fordítsd le az angol dokumentációt kínaira, németre és japánra, és biztosítsd, hogy a műszaki kifejezések konzisztensek legyenek minden nyelven." A `triage` meghatározza a feladat bontását:
 >
-> Ez a kísérlet egy többszereplős, menedzser mintájú feladatot valósít meg, amelyben egy Menedzser Ügynök koordinál három al-ügynököt – Fordító, Műszaki Felülvizsgáló és Formázó – automatikus nyelvi dokumentáció generálásához.
->
-> "Rendszer Tervezés":
->
-> A 4. fejezet al-ügynök mechanizmusára építve (`spawn_subagent` a gyermek Ügynök létrehozásához, `send_message_to_subagent` az aszinkron kommunikációhoz, `cancel_subagent` a megszakításhoz) építs fel egy menedzser mintájú architektúrát a következő lépésekkel:
->
-> **1. lépés: Kezdeti Feladatbontás**. A `triage` szerep (kapu) fogadja a felhasználó utasítását, pl. "Automatikusan fordítsd le az angol dokumentációt kínaira, németre és japánra, és biztosítsd, hogy a műszaki kifejezések konzisztensek legyenek minden nyelven." A `triage` meghatározza a feladat bontását:\n>
 > - A Műszaki Író elkészíti a termék angol szójegyzékét.
 > - Két Fordító párhuzamosan lefordítja a szójegyzéket németre és japánra.
 > - A Műszaki Felülvizsgáló ellenőrzi a lefordított dokumentáció műszaki pontosságát.
 > - A Formázó egységesíti a formázást.
-> - Végül a tesztelő integrációs teszteket futtat.
->
-> **2. lépés: Al-ügynök Csoport Létrehozása**. A `triage` átadja a kontextust a Menedzser Ügynöknek, amely létrehozza és ütemezi a feladatokat. A kód stílusának szemléltetésére:
->
-> ```python
+> - Végül a tesztelő integrációs teszteket futtat.>
+
+>> **2. lépés: Al-ügynök Csoport Létrehozása**. A `triage` átadja a kontextust a Menedzser Ügynöknek, amely létrehozza és ütemezi a feladatokat. A kód stílusának szemléltetésére:>
+
+>> ```python
 > # Szójegyzék feladat: indíts egy al-ügynököt a szójegyzék létrehozásához
 > task_glossary = spawn_subagent(
 >     agent_id="glossary_writer",
 >     system_prompt="Angol műszaki szójegyzék írója. {glossary_rules}",
 >     tools=[write_file, read_file, web_search],
 >     task="Hozz létre egy angol műszaki szójegyzéket a termékhez. ..."
-> )
->
-> # Fordítás feladatok: párhuzamosan indítva
+> )>
+
+>> # Fordítás feladatok: párhuzamosan indítva
 > task_de = spawn_subagent(
 >     agent_id="translator_de",
 >     system_prompt="Angolról németre fordító, technikai dokumentáció specialista.",
 >     tools=[write_file, read_file],
 >     task=f"Fordítsd le a teljes dokumentációt németre. ..."
-> )
->
-> task_ja = spawn_subagent(
+> )>
+
+>> task_ja = spawn_subagent(
 >     agent_id="translator_ja",
 >     system_prompt="Angolról japánra fordító, technikai dokumentáció specialista.",
 >     tools=[write_file, read_file],
 >     task=f"Fordítsd le a teljes dokumentációt japánra. ..."
 > )
-> ```
->
-> **3. lépés: Kommunikáció az Al-ügynökökkel**. A Menedzser a megosztott fájlrendszeren keresztül kapcsolódik az al-ügynökökhöz. Az eredményeket a `/workspace/shared/` könyvtáron keresztül adják át. Párhuzamos kommunikációhoz használj üzenetsort.
->
-> A Menedzser időszakosan ellenőrzi a `/workspace/shared/progress/*.md` előrehaladási fájlokat. Ha egy fordító al-ügynök egy órája nem frissítette a fájlt, a Menedzser üzenetet küld neki: "Mi a helyzet a német fordítással?"
->
-> **4. lépés: Párhuzamos Végrehajtás**. A két fordítási feladat párhuzamosan fut. A Menedzser aszinkron módon gyűjti az előrehaladási információkat a megosztott könyvtáron keresztül.
->
-> **5. lépés: Integráció és Ellenőrzés**. Miután minden al-ügynök befejezte, a Menedzser integrálja az eredményeket. Ez magában foglalhatja a formázás egységesítését a Formázó al-ügynök segítségével, és végül az integráció tesztelését.
->
-> "Kísérleti Követelmények":
+> ```>
+
+>> **3. lépés: Kommunikáció az Al-ügynökökkel**. A Menedzser a megosztott fájlrendszeren keresztül kapcsolódik az al-ügynökökhöz. Az eredményeket a `/workspace/shared/` könyvtáron keresztül adják át. Párhuzamos kommunikációhoz használj üzenetsort.>
+
+>> A Menedzser időszakosan ellenőrzi a `/workspace/shared/progress/*.md` előrehaladási fájlokat. Ha egy fordító al-ügynök egy órája nem frissítette a fájlt, a Menedzser üzenetet küld neki: "Mi a helyzet a német fordítással?">
+
+>> **4. lépés: Párhuzamos Végrehajtás**. A két fordítási feladat párhuzamosan fut. A Menedzser aszinkron módon gyűjti az előrehaladási információkat a megosztott könyvtáron keresztül.>
+
+>> **5. lépés: Integráció és Ellenőrzés**. Miután minden al-ügynök befejezte, a Menedzser integrálja az eredményeket. Ez magában foglalhatja a formázás egységesítését a Formázó al-ügynök segítségével, és végül az integráció tesztelését.>
+
+>> "Kísérleti Követelmények":
 > 1. Valósíts meg egy Menedzser Ügynököt, amely három al-ügynököt koordinál: Fordító, Műszaki Felülvizsgáló, Formázó
 > 2. Valósítsd meg a feladatbontást, a párhuzamos végrehajtást és az eredmény-integrációt
 > 3. Tervezz egy előrehaladási megosztási mechanizmust a megosztott fájlrendszeren keresztül (a Menedzser olvassa az al-ügynökök `progress.md` fájljait)
 > 4. Valósítsd meg a Menedzser számára, hogy elakadás észlelésekor üzenetet küldhessen az al-ügynöknek
 > 5. Ellenőrizd, hogy a Menedzser párhuzamosan indíthat-e több al-ügynököt
-> 6. Határozz meg egy időkorlátot: ha az al-ügynök nem fejezi be időben, a Menedzser jelezze a felhasználónak
->
-> "Opció: Korai Befejezés".
-> Ha a Fordító hirtelen letiltja a kérést, töröld ki a felesleges al-ügynököket. A Menedzser küldjön egy `cancel_subagent(task_de)` kérést a német fordító leállítására. Ekkor a japán fordítónak tovább kell dolgoznia, mert nincs függőség. A Menedzser megkeresheti a következő elérhető modellt, vagy felhasználói beavatkozást kérhet.
+> 6. Határozz meg egy időkorlátot: ha az al-ügynök nem fejezi be időben, a Menedzser jelezze a felhasználónak>
+
+>> "Opció: Korai Befejezés".
+> Ha a Fordító hirtelen letiltja a kérést, töröld ki a felesleges al-ügynököket. A Menedzser küldjön egy `cancel_subagent(task_de)` kérést a német fordító leállítására. Ekkor a japán fordítónak tovább kell dolgoznia, mert nincs függőség. A Menedzser megkeresheti a következő elérhető modellt, vagy felhasználói beavatkozást kérhet.>
 >
 
-"Hibakezelési Stratégiák a Menedzser Mintában."
+>"Hibakezelési Stratégiák a Menedzser Mintában."
 
 A menedzser minta egyik fontos tervezési szempontja a hibakezelés. Az alábbi táblázat felsorol néhány gyakori forgatókönyvet:
 
@@ -425,28 +427,28 @@ Az alapvető menedzser minta egy központi Menedzser általi szekvenciális fela
 
 Az al-ügynökök nem hívják közvetlenül egymást, hanem üzeneteket tesznek közzé az üzenetsoron. A többi al-ügynök (beleértve a Menedzsert is) feliratkozik bizonyos típusú üzenetekre. Ez a mintázat jelentős előnyöket kínál: az üzenetek természetes módon naplózhatók és nyomon követhetők; az új al-ügynökök egyszerűen feliratkoznak a kapcsolódó üzenettípusokra, anélkül hogy a meglévő al-ügynököket módosítani kellene; a Menedzser és az al-ügynökök aszinkron módon kommunikálhatnak.
 
-> **10-4. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**
->
-> Ez a kísérlet megköveteli a 9. fejezet valós idejű telefonhívás Ügynökét.
->
-> "Feladat Forgatókönyv": A felhasználó bejelentkezik a weblapra és kitölt egy űrlapot (online bejelentkezéses ellenőrző pont). Eközben a felhasználónak át kell adnia egy ellenőrző kódot a vevőszolgálat által küldött SMS-ből. Ebben a forgatókönyvben a számítógép Ügynök segít a felhasználónak a webes műveletekben, miközben a telefon Ügynök hívja a vevőszolgálatot, hogy megszerezze a kódot.
->
-> "Rendszer Tervezés": Elegendő két Ügynök, mindegyik saját szakterülettel. A számítógép Ügynökök eszközei: `read_file`, `write_file`, `execute_code`, `list_dir`, `search_web`, `send_message`. A telefon Ügynök (a 9. fejezetből) hozzáadja a `make_call` eszközt. Ebben a társi együttműködési mintában nincs Menedzser; a két Ügynök közvetlen pont-pont üzenetküldéssel kommunikál (`send_message`). A koordináció a következőképpen történik:
->
-> 1. A számítógép Ügynök navigál az ügyfélszolgálati weboldalra, és elindít egy csevegést.
+> **10-4. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**>
+
+>> Ez a kísérlet megköveteli a 9. fejezet valós idejű telefonhívás Ügynökét.>
+
+>> "Feladat Forgatókönyv": A felhasználó bejelentkezik a weblapra és kitölt egy űrlapot (online bejelentkezéses ellenőrző pont). Eközben a felhasználónak át kell adnia egy ellenőrző kódot a vevőszolgálat által küldött SMS-ből. Ebben a forgatókönyvben a számítógép Ügynök segít a felhasználónak a webes műveletekben, miközben a telefon Ügynök hívja a vevőszolgálatot, hogy megszerezze a kódot.>
+
+>> "Rendszer Tervezés": Elegendő két Ügynök, mindegyik saját szakterülettel. A számítógép Ügynökök eszközei: `read_file`, `write_file`, `execute_code`, `list_dir`, `search_web`, `send_message`. A telefon Ügynök (a 9. fejezetből) hozzáadja a `make_call` eszközt. Ebben a társi együttműködési mintában nincs Menedzser; a két Ügynök közvetlen pont-pont üzenetküldéssel kommunikál (`send_message`). A koordináció a következőképpen történik:>
+
+>> 1. A számítógép Ügynök navigál az ügyfélszolgálati weboldalra, és elindít egy csevegést.
 > 2. A csevegés során a weboldal SMS küldésére kéri a felhasználót egy ellenőrző kóddal. Mivel ez nem hajtható végre a számítógépen, a számítógép Ügynök üzenetet küld a telefon Ügynöknek: "Hívd fel az ügyfélszolgálati számot, kérdezd meg az ellenőrző kódot. Itt van a telefonszám és a hívás kontextusa."
 > 3. A telefon Ügynök megkapja az üzenetet és elindítja a hívást. A hívás befejezése után visszaküldi az ellenőrző kódot a számítógép Ügynöknek.
-> 4. A számítógép Ügynök kitölti az ellenőrző kódot a weboldalon, és befejezi az űrlap kitöltését.
->
-> A megosztott kontextus nyilvánvalóan nem szükséges: webes böngészés és valós idejű hanghívás két különböző környezet, és nincs szükség a teljes beszélgetési előzmény átadására. Mindössze egy üzenet elegendő.
->
-> "Kísérleti Követelmények":
+> 4. A számítógép Ügynök kitölti az ellenőrző kódot a weboldalon, és befejezi az űrlap kitöltését.>
+
+>> A megosztott kontextus nyilvánvalóan nem szükséges: webes böngészés és valós idejű hanghívás két különböző környezet, és nincs szükség a teljes beszélgetési előzmény átadására. Mindössze egy üzenet elegendő.>
+
+>> "Kísérleti Követelmények":
 > 1. Két Ügynök előkészítése különböző eszközkészletekkel (számítógép és telefon)
 > 2. Pont-pont kommunikációs mechanizmus megvalósítása `send_message` segítségével
-> 3. Csak a szükséges információ átadása az együttműködés során (nem a teljes kontextus)
+> 3. Csak a szükséges információ átadása az együttműködés során (nem a teljes kontextus)>
 >
 
-A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
+>A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
 
 ### Decentralizált Minta: Elosztott Koordináció
 
@@ -472,49 +474,49 @@ A decentralizált minta számos formát ölthet. Az alábbiakban három képvise
 
 Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és annak iparági elfogadottsága alakul.
 
-> "10-5. kísérlet ★★: Kétügynökös PPT Javasló-Ellenőrző"
->
-> Ez a kísérlet az 5. fejezet 5-2. kísérletének (PPT generálás vizuális visszajelzéssel) adaptációja a megosztott kontextus nélküli architektúrához. A Javasló és az Ellenőrző Ügynökök most nem osztanak kontextust; fájlok és eszközhívás paraméterek segítségével kommunikálnak.
->
-> "Rendszer Tervezés":
->
-> Javasló Ügynök: a PPT Python kódját írja és a `/workspace/shared/` könyvtárba menti, majd üzenetet küld az Ellenőrzőnek: "Kérlek, ellenőrizd le a generált PPT-t." Az Ellenőrző beolvassa a PPT kódot, rendereli a PPT-t, képernyőképet készít, majd visszaküldi a képernyőképet az ellenőrzési eredményekkel együtt.
->
-> Ahelyett, hogy a Javasló és az Ellenőrző osztozna a kontextuson, most a `/workspace/shared/` megosztott könyvtáron keresztül kommunikálnak: a Javasló a generált PPT kódot a `/workspace/shared/output/` útvonalra menti; miután az Ellenőrző elkészíti a visszajelzést, visszaírja a `/workspace/shared/feedback/` útvonalra. Minden Ügynök felelős a saját kontextusáért, és nincs szükség a teljes előzmények átadására.
->
-> "Kísérleti Követelmények":
+> "10-5. kísérlet ★★: Kétügynökös PPT Javasló-Ellenőrző">
+
+>> Ez a kísérlet az 5. fejezet 5-2. kísérletének (PPT generálás vizuális visszajelzéssel) adaptációja a megosztott kontextus nélküli architektúrához. A Javasló és az Ellenőrző Ügynökök most nem osztanak kontextust; fájlok és eszközhívás paraméterek segítségével kommunikálnak.>
+
+>> "Rendszer Tervezés":>
+
+>> Javasló Ügynök: a PPT Python kódját írja és a `/workspace/shared/` könyvtárba menti, majd üzenetet küld az Ellenőrzőnek: "Kérlek, ellenőrizd le a generált PPT-t." Az Ellenőrző beolvassa a PPT kódot, rendereli a PPT-t, képernyőképet készít, majd visszaküldi a képernyőképet az ellenőrzési eredményekkel együtt.>
+
+>> Ahelyett, hogy a Javasló és az Ellenőrző osztozna a kontextuson, most a `/workspace/shared/` megosztott könyvtáron keresztül kommunikálnak: a Javasló a generált PPT kódot a `/workspace/shared/output/` útvonalra menti; miután az Ellenőrző elkészíti a visszajelzést, visszaírja a `/workspace/shared/feedback/` útvonalra. Minden Ügynök felelős a saját kontextusáért, és nincs szükség a teljes előzmények átadására.>
+> 
+>> "Kísérleti Követelmények":
 > 1. Két Ügynök definiálása: Javasló (PPT kódot generál) és Ellenőrző (PPT-t renderel és ellenőrzi)
 > 2. Kommunikációs mechanizmus a megosztott fájlrendszeren keresztül
 > 3. Ellenőrzésre vonatkozó ismételt körök: a Javasló minden körben beolvassa az Ellenőrző visszajelzését, és javítja a PPT-t
-> 4. Iteráció számkorlát (pl. legfeljebb 5 kör)
+> 4. Iteráció számkorlát (pl. legfeljebb 5 kör)>
 >
+> 
+>> "10-6. kísérlet ★★★: Üzenetsor-alapú Párhuzamos Keresés">
+> 
+>> "Feladat Forgatókönyv": A felhasználó kér egy összetett keresést, pl. "Találd meg a kapcsolati adatait a Samsung amerikai ügyfélszolgálatának." Ehhez több forrás (weboldal, hivatalos dokumentum, fórum stb.) egyidejű keresése szükséges. A kihívás az, hogy a keresésnek hatékonynak kell lennie – ha az egyik forrás megtalálja az eredményt, a többit azonnal le kell állítani.>
+> 
+>> "Rendszer Tervezés":>
+> 
+>> A keresés egy "elosztott párhuzamos felszámolás (parallel teardown)" alkalmazási forgatókönyve. A Menedzser elindít több kereső al-ügynököt, amelyek különböző forrásokat vizsgálnak. Amint az egyik al-ügynök megtalálja az eredményt, közzétesz egy `result_found` eseményt az üzenetsoron. A Menedzser feliratkozik erre az eseményre, és amikor megkapja, elküldi a `terminate` parancsot a többi al-ügynöknek. Minden al-ügynök szabályosan leáll, erőforrásokat szabadítva fel.>
 
-> "10-6. kísérlet ★★★: Üzenetsor-alapú Párhuzamos Keresés"
->
-> "Feladat Forgatókönyv": A felhasználó kér egy összetett keresést, pl. "Találd meg a kapcsolati adatait a Samsung amerikai ügyfélszolgálatának." Ehhez több forrás (weboldal, hivatalos dokumentum, fórum stb.) egyidejű keresése szükséges. A kihívás az, hogy a keresésnek hatékonynak kell lennie – ha az egyik forrás megtalálja az eredményt, a többit azonnal le kell állítani.
->
-> "Rendszer Tervezés":
->
-> A keresés egy "elosztott párhuzamos felszámolás (parallel teardown)" alkalmazási forgatókönyve. A Menedzser elindít több kereső al-ügynököt, amelyek különböző forrásokat vizsgálnak. Amint az egyik al-ügynök megtalálja az eredményt, közzétesz egy `result_found` eseményt az üzenetsoron. A Menedzser feliratkozik erre az eseményre, és amikor megkapja, elküldi a `terminate` parancsot a többi al-ügynöknek. Minden al-ügynök szabályosan leáll, erőforrásokat szabadítva fel.
->
-> "Üzenetsor Használat":
->
-> - A Menedzser üzenetet küld: `{type: "search", target: "all", payload: {query: "..."}}`
+>> "Üzenetsor Használat":>
+
+>> - A Menedzser üzenetet küld: `{type: "search", target: "all", payload: {query: "..."}}`
 > - Az al-ügynökök válaszüzenetet küldenek: `{type: "status_update", target: "manager", payload: {agent: "agent_A", status: "searching"}}`
 > - Amikor egy al-ügynök megtalálja az eredményt: `{type: "result_found", target: "manager", payload: {result: "..."}}`
-> - A Menedzser elküldi a `terminate` parancsot a többi al-ügynöknek: `{type: "terminate", target: "agent_B|agent_C|...", payload: {reason: "result_found"}}`
->
-> "Versenyhelyzet Védelem": Több al-ügynök szinte egyszerre találhat eredményt. A `result_found` feldolgozása előtt a Menedzser ellenőrizze a `result_lock` állapotot. Csak az első sikeres eseményt fogadja el; az összes későbbi esemény további kezelés nélkül eldobásra kerül.
->
-> "Kísérleti Követelmények":
+> - A Menedzser elküldi a `terminate` parancsot a többi al-ügynöknek: `{type: "terminate", target: "agent_B|agent_C|...", payload: {reason: "result_found"}}`>
+
+>> "Versenyhelyzet Védelem": Több al-ügynök szinte egyszerre találhat eredményt. A `result_found` feldolgozása előtt a Menedzser ellenőrizze a `result_lock` állapotot. Csak az első sikeres eseményt fogadja el; az összes későbbi esemény további kezelés nélkül eldobásra kerül.>
+
+>> "Kísérleti Követelmények":
 > 1. Állíts fel egy üzenetsort a Menedzser Ügynök és az al-ügynökök közötti kommunikációhoz (használhatsz Redis, RabbitMQ, vagy egy egyszerűbb eseménybusz implementációt)
 > 2. Indíts el legalább 3 kereső al-ügynököt, amelyek párhuzamosan dolgoznak
 > 3. Valósítsd meg a kaszkád megszakítást: amint az egyik al-ügynök megtalálja a választ, a Menedzser megszakítja a többit
 > 4. Valósítsd meg a versenyhelyzet védelmet a `result_lock` segítségével
-> 5. Naplózd az egyes al-ügynökök végrehajtási idejét és a kaszkád megszakítás hatékonyságát
+> 5. Naplózd az egyes al-ügynökök végrehajtási idejét és a kaszkád megszakítás hatékonyságát>
 >
 
-## Többügynökös Hibamódok
+>## Többügynökös Hibamódok
 
 A fejezet eddig a többügynökös együttműködés tervezésére összpontosított: milyen architektúra és milyen koordinációs mechanizmus. Most egy másik kérdésre térünk át: "mi romolhat el?" A hibamódok megértése ugyanolyan fontos, mint a jó architektúra kiválasztása – a gyakorlatban a legtöbb hiba nem az architektúra elégtelenségéből, hanem a váratlan kölcsönhatásokból adódik.
 
@@ -550,7 +552,7 @@ A konkurencia-ütközések fájlszintű problémák, amelyek a bevett operáció
 
 Tekintsünk egy konkrét forgatókönyvet. Tegyük fel, hogy egy fordítási rendszer a menedzser mintát használja (a 10-3. kísérlet architektúrája), ahol a Menedzser egy műszaki könyv fejezeteit több fordító Ügynökhöz rendeli:
 
-```
+```text
 Terminológia Ügynök: Lefordítja a "reasoning"-t "推理"-nek, de a "推理" a kínaiban gyakrabban használatos következtetésre, ami kétértelműséget teremt
         ↓ ír a glossary.json fájlba
 Fordító Ügynök A: Lefordítja a 2. fejezetet, a szójegyzékből olvas, lefordítja a "reasoning tokens"-t "推理 token"-nek
@@ -591,7 +593,9 @@ Az ebben a szakaszban szereplő esetek három dimenzióból érthetők meg:
 
 Smallville egy 2D virtuális város, hasonló a "The Sims"-hez, nyilvános és privát terekkel, mint egy kávézó, park, lakóházak és üzletek. Huszonöt Ügynök játszik különböző szerepeket (boltvezető, művész, diák, professzor stb.), mindegyik egyedi háttértörténettel, személyiségjegyekkel és interperszonális kapcsolatokkal. Például John Lin egy gyógyszertár tulajdonosa, aki szereti a családját és törődik a közösséggel; Isabella Rodriguez a város kávézójának, a Hobbs Cafe-nak a vezetője, melegszívű és vendégszerető; Klaus Mueller egy egyetemi hallgató, aki egy kutatási dolgozatot ír.
 
-Ezen Ügynökök intelligenciája három core összetevőre épül:\n\n"Memória Adatfolyam (Memory Stream)": A hagyományos Ügynökökkel ellentétben, amelyek csak korlátozott beszélgetési előzményt őriznek meg, a generatív Ügynökök egy teljes tapasztalat-rekord adatfolyamot tartanak fenn, beleértve a megfigyelt eseményeket, beszélgetéseket és generált gondolatokat. Minden memória fontosság, frissesség és relevancia szerint van pontozva, lehetővé téve az Ügynök számára, hogy prioritásként kezelje a legrelevánsabb emlékek előhívását az aktuális kontextushoz. Ez hasonlít az emberi emlékezethez: a tegnapi ebéd elhalványulhat, míg egy múlt heti fontos beszélgetés élénk marad.
+Ezen Ügynökök intelligenciája három core összetevőre épül:
+
+"Memória Adatfolyam (Memory Stream)": A hagyományos Ügynökökkel ellentétben, amelyek csak korlátozott beszélgetési előzményt őriznek meg, a generatív Ügynökök egy teljes tapasztalat-rekord adatfolyamot tartanak fenn, beleértve a megfigyelt eseményeket, beszélgetéseket és generált gondolatokat. Minden memória fontosság, frissesség és relevancia szerint van pontozva, lehetővé téve az Ügynök számára, hogy prioritásként kezelje a legrelevánsabb emlékek előhívását az aktuális kontextushoz. Ez hasonlít az emberi emlékezethez: a tegnapi ebéd elhalványulhat, míg egy múlt heti fontos beszélgetés élénk marad.
 
 "Reflexiós Mechanizmus": Az Ügynökök időszakosan szüneteltetik napi tevékenységeiket, hogy áttekintsék a közelmúlt tapasztalatait, és absztrakt kérdéseket tegyenek fel magukról és másokról ("Mit kutat Klaus Mueller?" "Ki a legközelebbi barátom?") Ezen önkérdésfeltevés révén az Ügynök az egyes események memóriáit általánosított felismerésekké emeli, visszatárolva azokat a memória adatfolyamba a jövőbeli döntések alapjaként. A reflexió nemcsak abban segít az Ügynöknek, hogy megértse a külvilágot, hanem elősegíti az öntudatot is – az Ügynök elkezdi "felismerni" a saját szerepét, kapcsolatait és céljait.
 
@@ -607,22 +611,22 @@ A legfontosabb tanulság nem az, hogy "az Ügynökök tudnak bulit szervezni" �
 
 A tanulmány két másik mérhető jelenségről is beszámolt. Az első a "relációs memória": az Ügynökök emlékeztek korábbi beszélgetésekre, és hivatkoztak rájuk a későbbi interakciók során. Például egy Ügynök, aki megtudta egy másik Ügynök fényképezési projektjét, megkérdezhette, hogy halad az, amikor legközelebb találkoztak. Ahogy ezek az interakciók felhalmozódtak, a város társas hálózata jelentősen sűrűbbé vált. A második jelenség a "koordinált részvétel": Isabella önállóan toborzott segítséget a dekorációhoz, míg a meghívottak módosították időbeosztásukat, hogy részt tudjanak venni. Több Ügynök összehangolódott egy időre és helyre központi parancs nélkül. Ezek a viselkedések nem voltak előre programozva; az Ügynökök autonóm érveléséből fakadtak memória, reflexió és társas józan ész alapján.
 
-> **10-7. kísérlet ★: A Stanford AI Town Futtatása**
->
-> "Kísérleti Lépések":
+> **10-7. kísérlet ★: A Stanford AI Town Futtatása**>
+
+>> "Kísérleti Lépések":
 > 1. Klónozd a `https://github.com/joonspk-research/generative_agents` tárat, és kövesd a tároló utasításait a környezet konfigurálásához.
 > 2. Futtasd az alap forgatókönyvet két szimulált napon keresztül 25 Ügynökkel, és figyeld meg a kialakuló spontán társas tevékenységeket.
 > 3. Elemezd a memória adatfolyam és reflexiós naplókat az Ügynökök döntéseinek nyomon követéséhez.
 > 4. Módosítsd az Ügynökök háttértörténetét vagy kezdeti céljait, majd figyeld meg, hogyan változik a viselkedésük.
-> 5. Távolítsd el a reflexiós mechanizmust vagy rövidítsd le a memóriaablakot, majd hasonlítsd össze a kapott viselkedést az alapesettel, és figyeld meg a viselkedési hihetőség csökkenését.
->
-> "Főbb Megfigyelések":
+> 5. Távolítsd el a reflexiós mechanizmust vagy rövidítsd le a memóriaablakot, majd hasonlítsd össze a kapott viselkedést az alapesettel, és figyeld meg a viselkedési hihetőség csökkenését.>
+
+>> "Főbb Megfigyelések":
 > - Hogyan alakítanak ki az Ügynökök spontán társas kapcsolatokat egyszerű napi tevékenységekből
 > - Hogyan terjed az információ az Ügynökök között központi irányítás nélkül
-> - Hogyan befolyásolja az Ügynökök hosszú távú memóriája és reflexiója személyiségük koherenciáját
+> - Hogyan befolyásolja az Ügynökök hosszú távú memóriája és reflexiója személyiségük koherenciáját>
 >
 
-### Agentopia: Egy Évtizedes Életszimuláció
+>### Agentopia: Egy Évtizedes Életszimuláció
 
 A Stanford AI Town megmutatta, hogy egy Ügynök társadalom képes társas viselkedést produkálni, de a szimuláció csak két napig tartott. Ez két kérdést vet fel: **Mi jelenik meg, amikor egy ilyen szimuláció évekig fut, és vajon a modellek tanulhatnak-e ezekből a hosszú távú társas tapasztalatokból?** Az Agentopia (2026, Fudan Egyetem és munkatársai)[^agentopia-2026] 100 Ügynököt szimulált tíz egymást követő éven keresztül három tematikus virtuális világban: egy lakóház, egy varázsakadémia és egy középiskola. Az Ügynökök autonóm módon személyes fejlődést folytattak, társas kapcsolatokat építettek, és karriert és pénzügyeket kezeltek.
 
@@ -669,25 +673,25 @@ Együtt a Pinchwork és a RentAHuman a "piac-alapú koordinációt" képviselik:
 
 A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai játékmenetet": szabályok által korlátozva és információs aszimmetria mellett az Ügynököknek érvelniük, megtéveszteniük és átlátniuk a megtévesztést kell. Építészeti ellenpontot nyújt a szakaszt nyitó Stanford városhoz. A város szabad interakciót tesz lehetővé teljesen decentralizált környezetben, míg a Farkasos egy centralizált **bíró + hozzáférés-vezérlési** tervezést használ: egy kód által vezérelt bíró tartja fenn a globális állapotot, és minden szerepnek csak azt az információt adja át, amelyet tudnia kell. A két eset együtt mutatja, hogy a különböző architektúrák hogyan szolgálnak különböző célokat az Ügynök társadalomban.
 
-> **10-8. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**
->
-> A Farkasos egy klasszikus társas leleplező játék, amely a játékosok érvelését, megtévesztését és társas stratégiáit teszteli. Ez a kísérlet egy többügynökös rendszert épít, amelyben MI Ügynökök és emberek valós idejű hanginterakción keresztül játszanak együtt Farkasost. Teszteli az Ügynökök érvelési, szerepjátszási és valós idejű interakciós képességeit.
->
-> "Architektúra Tervezés":
->
-> **1. Játék Állapot Kezelése**: A Bíró (kód által vezérelt, nem LLM) központosított állapotot tart fenn – játékos lista (vegyes ember + MI), identitások, frakciók, túlélési státusz, játékfázisok (Éjszaka/Nappal/Szavazás/Lezárás) és történelmi esemény rekordok.
->
-> **2. Információ Hozzáférés-vezérlés**: A Farkasos core mechanizmusa az információs aszimmetria: a különböző szerepek különböző információkat kapnak. Például a farkasok tudják, kik a csapattársaik, de a falusiak nem; a Látó minden éjjel ellenőrizheti egy játékos identitását, de csak a Látó ismeri az eredményt. Amikor a Bíró meghív egy Ügynököt, csak az adott Ügynök szerepe számára elérhető információt adja át.
->
-> **3. Valós Idejű Hang Interakció**: Használd a 9. fejezet valós idejű hang Ügynökét az emberi játékosok és a MI Ügynökök közötti kommunikáció alapjaként. A nappali megbeszélés során a Bíró irányítja a megszólalási sorrendet: a játékosok pozíció szerinti sorrendben szólalhatnak meg, vagy jelentkezhetnek. A szavazás során a Bíró összegyűjti minden játékos szavazatát, akár ember mondta ki, akár MI Ügynök generálta, összesíti az eredményeket, és kihirdeti, ki esett ki.
->
-> **4. Ügynök Érvelés és Stratégia**:
->
-> - "Farkas Álcázási Stratégia": "Viselkedj úgy, mint egy átlagos falusi. Gyanakvást fejezhetsz ki más játékosokkal kapcsolatban, de kerüld, hogy annyira agresszív légy, hogy felhívd magadra a figyelmet. Ha egy játékos azt állítja, hogy ő a Látó, és farkasként azonosít, vádold vissza, hogy kamu Látó. Szavazáskor próbálj a többségi célponttal tartani, hogy ne tűnj ki."
+> **10-8. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**>
+
+>> A Farkasos egy klasszikus társas leleplező játék, amely a játékosok érvelését, megtévesztését és társas stratégiáit teszteli. Ez a kísérlet egy többügynökös rendszert épít, amelyben MI Ügynökök és emberek valós idejű hanginterakción keresztül játszanak együtt Farkasost. Teszteli az Ügynökök érvelési, szerepjátszási és valós idejű interakciós képességeit.>
+
+>> "Architektúra Tervezés":>
+
+>> **1. Játék Állapot Kezelése**: A Bíró (kód által vezérelt, nem LLM) központosított állapotot tart fenn – játékos lista (vegyes ember + MI), identitások, frakciók, túlélési státusz, játékfázisok (Éjszaka/Nappal/Szavazás/Lezárás) és történelmi esemény rekordok.>
+
+>> **2. Információ Hozzáférés-vezérlés**: A Farkasos core mechanizmusa az információs aszimmetria: a különböző szerepek különböző információkat kapnak. Például a farkasok tudják, kik a csapattársaik, de a falusiak nem; a Látó minden éjjel ellenőrizheti egy játékos identitását, de csak a Látó ismeri az eredményt. Amikor a Bíró meghív egy Ügynököt, csak az adott Ügynök szerepe számára elérhető információt adja át.>
+
+>> **3. Valós Idejű Hang Interakció**: Használd a 9. fejezet valós idejű hang Ügynökét az emberi játékosok és a MI Ügynökök közötti kommunikáció alapjaként. A nappali megbeszélés során a Bíró irányítja a megszólalási sorrendet: a játékosok pozíció szerinti sorrendben szólalhatnak meg, vagy jelentkezhetnek. A szavazás során a Bíró összegyűjti minden játékos szavazatát, akár ember mondta ki, akár MI Ügynök generálta, összesíti az eredményeket, és kihirdeti, ki esett ki.>
+
+>> **4. Ügynök Érvelés és Stratégia**:>
+
+>> - "Farkas Álcázási Stratégia": "Viselkedj úgy, mint egy átlagos falusi. Gyanakvást fejezhetsz ki más játékosokkal kapcsolatban, de kerüld, hogy annyira agresszív légy, hogy felhívd magadra a figyelmet. Ha egy játékos azt állítja, hogy ő a Látó, és farkasként azonosít, vádold vissza, hogy kamu Látó. Szavazáskor próbálj a többségi célponttal tartani, hogy ne tűnj ki."
 > - "Látó Identitás Bizonyítás": "Ha több játékos is azt állítja, hogy ő a Látó, hasonlítsd össze a jelentett ellenőrzéseiket a tiéddel, és mutass rá az ellentmondásokra. Ha egy másik Látó-jelölt azt mondja, hogy ellenőrzött egy játékost, figyeld, hogy a későbbi viselkedése egyértelműen ellentmond-e az állított identitásnak. Kérd meg a Boszorkányt, hogy segítsen ellenőrizni az állításokat, amikor lehetséges."
-> - "Falusi Logikai Érvelés": "Ellenőrizd, hogy minden játékos kijelentései belsőleg konzisztensek-e. Figyelj azokra a játékosokra, akik dominálják a beszélgetést, homályosak a szerepükkel kapcsolatban, vagy többször változtatják az álláspontjukat. Vizsgáld meg a szavazási mintákat, mert a farkasok összehangolódhatnak egy olyan nem farkas játékos ellen, aki veszélyt jelent rájuk. Minden következtetés alapja specifikus kijelentések vagy cselekvések legyen, ne találgatás."
->
-> "Elfogadási Kritériumok":
+> - "Falusi Logikai Érvelés": "Ellenőrizd, hogy minden játékos kijelentései belsőleg konzisztensek-e. Figyelj azokra a játékosokra, akik dominálják a beszélgetést, homályosak a szerepükkel kapcsolatban, vagy többször változtatják az álláspontjukat. Vizsgáld meg a szavazási mintákat, mert a farkasok összehangolódhatnak egy olyan nem farkas játékos ellen, aki veszélyt jelent rájuk. Minden következtetés alapja specifikus kijelentések vagy cselekvések legyen, ne találgatás.">
+
+>> "Elfogadási Kritériumok":
 > - Hozz létre egy játékot 6-8 játékossal (1 emberi játékos + 5-7 MI Ügynök)
 > - Szerep konfiguráció: 2 Farkas, 1 Látó, 1 Boszorkány, a többi Falusi; az emberi játékos véletlenszerű szerepet kap
 > - A játék legalább 3 teljes körön keresztül normálisan tudjon haladni (Éjszaka-Nappal-Szavazás ciklus)
@@ -695,12 +699,12 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 > - A Farkas Ügynökök hatékonyan tudják álcázni identitásukat
 > - A Látó Ügynökök képesek megfelelő időben felfedni szerepüket és ellenőrzési eredményeiket
 > - A Falusi Ügynökök érvelése a kijelentések és viselkedések logikai elemzésén alapul, nem véletlenszerű találgatáson
-> - A játék helyesen tudja meghatározni a győztest a végén
->
->
-> ![10-13. ábra: Hangalapú Farkasos Ügynök Rendszer](images/fig10-13.png)
->
->
+> - A játék helyesen tudja meghatározni a győztest a végén>
+
+>>
+> ![10-13. ábra: Hangalapú Farkasos Ügynök Rendszer](images/fig10-13.png)>
+
+>>
 
 ## Fejezet Összefoglaló
 

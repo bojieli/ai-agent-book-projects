@@ -238,7 +238,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > | 400B (nagy) | 5M-10M | 1000+ GPU, 6-12 hónap | $10M-20M+ |
 >
 > A kísérlet fő következtetése: Ha a számítási költségvetés korlátozott, a hatékonyság növelésének kulcsa a modellméret és az adatmennyiség közötti egyensúly megtalálása. Nem mindig a nagyobb modell jobb; időnként a kisebb modell több adaton való tréningezése hatékonyabb.
-
+> 
 > **7-3. kísérlet ★★: Közel nulla erőforrású pre-tréning – A matematikai alapok építése**
 >
 > Ez a kísérlet egy 1M paraméteres modellt tréningező alacsony erőforrású megközelítést mutat be. A modell egy egyszerű, matematikai problémák generálására használt szintaktikai szabályrendszerből származó adatokon tanul, bemutatva a pre-tréning alapelveit anélkül, hogy nagyszabású számítási erőforrásokra lenne szükség.
@@ -252,7 +252,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > - "5000 lépés után": Stabilizálódás, a token pontosság ~95%, de a modell megtanulta a tréning specifikus szerkezeteit és elvesztette az általánosítás képességét
 >
 > Ez a kísérlet élénken szemlélteti a pre-tréning alapelveit: a modell megtanulja a nyelv szintaxisát és a számítási mintákat, és a tréning során az általánosítás képessége csökkenhet, ami a korai leállítás (early stopping) fontosságát hangsúlyozza. (A korai leállítás ismét felbukkan az SFT szakaszban, ahol a GeneralPoints kísérlet ugyanezzel a jelenséggel szembesül.)
-
+> 
 > **7-4. kísérlet ★★: Hatékony pre-tréning korlátozott adatokkal – Adatminőség vs. mennyiség**
 >
 > Korlátozott adatok mellett hasonlítjuk össze a tisztított (de-duplikált, szűrt magas minőségű) adatok és a nyers (szűretlen) adatok hatását a modell teljesítményére. Tisztított adatokon a pre-tréning jobb általánosítást (alacsonyabb perplexitású) és gyorsabb konvergenciát mutat, ami azt jelzi, hogy az adatminőség fontosabb, mint az adatmennyiség. A kísérlet kvantitatív eredményei:
@@ -264,7 +264,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > | Nyers adat (kibővített) | 2M token | 44.1 | 10000+ |
 >
 > Megállapítás: **a tisztított 500K token jobb eredményt ér el, mint a 2M nyers token** – az adatminőség fontosabb, mint az adatmennyiség. (Ugyanez az elv újra felbukkan a későbbi kísérletekben: a 7-9. kísérletben a "rejection sampling fine-tuning" mögött is az adatminőség és az adatmennyiség közötti választás áll.)
-
+> 
 > **7-5. kísérlet ★★: Folytatott pre-tréning új nyelv tanulásához**
 >
 > A Mistral 7B v0.3 alapmodell – amely elsősorban angol nyelvű pre-tréninget kapott, és szinte semmit sem tud koreaiul – egy új nyelv (koreai) elsajátítását mutatja be folytatott pre-tréningen keresztül a koreai Wikipédián. Ez egy már pre-tréningezett modellen végzett felügyelet nélküli tréning új nyelvi adatokon. A modell már rendelkezik általános nyelvi modellezési képességekkel, és csak alkalmazkodnia kell az új adateloszláshoz, így a költség sokkal alacsonyabb, mint a nulláról induló tréningé. Egy kulcsfontosságú mérnöki szempont a vegyes adatok használata (~80% koreai + 20% angol) a katasztrofális felejtés enyhítésére: a céls nyelv túl magas aránya az eredeti nyelv romlásához vezet, míg a túl alacsony arány nem elegendő tanulási hatékonyságot eredményez. Végül az SFT-t koreai utasításadatokkal hajtják végre a gyakorlati koreai beszélgetési képesség eléréséhez. Ennek a kísérletnek a következtetését újra hasznosítjuk a fejezet végén található "Teljes poszt-tréning kép és gyakorlati tippek" részben: ha egy modellnek nagyszámú új domain-ismeretet kell megjegyeznie, támaszkodj a folytatott pre-tréningre, ne az SFT-re.
@@ -466,7 +466,9 @@ Ez a fejezet azon része, amelyet a leginkább szeretném, ha megjegyeznél – 
 
 ### Környezet: A modell gyakorlóterepe
 
-Az RL lényege a "próba-szerencse tanulás", és a próba-szerencséhez "gyakorlótér" kell – ez a szimulációs környezet. A modell ismételten futtatja a feladatokat a környezetben, visszajelzést kap, és módosítja az irányelvét. A környezet "hűsége" (mennyire hasonlít a valós telepítési forgatókönyvhöz) közvetlenül meghatározza, hogy a tréningezett irányelv használható-e:\n\n- **Torz környezet = halott irányelv.** Ha a szimulált ügyfélszolgálatos mindig egy rögzített forgatókönyvből válaszol, és a hibaüzenetek nem egyeznek az éles környezettel, a modell egy teszt-megoldó stratégiát tanul, ami csak a szimulációban működik, és összeomlik, amint kiadják. Ez a leggyakoribb módja annak, hogy RL projektek meghaljanak – nem az algoritmus volt rossz, hanem a gyakorlópálya nem a vizsgaterem volt.
+Az RL lényege a "próba-szerencse tanulás", és a próba-szerencséhez "gyakorlótér" kell – ez a szimulációs környezet. A modell ismételten futtatja a feladatokat a környezetben, visszajelzést kap, és módosítja az irányelvét. A környezet "hűsége" (mennyire hasonlít a valós telepítési forgatókönyvhöz) közvetlenül meghatározza, hogy a tréningezett irányelv használható-e:
+
+- **Torz környezet = halott irányelv.** Ha a szimulált ügyfélszolgálatos mindig egy rögzített forgatókönyvből válaszol, és a hibaüzenetek nem egyeznek az éles környezettel, a modell egy teszt-megoldó stratégiát tanul, ami csak a szimulációban működik, és összeomlik, amint kiadják. Ez a leggyakoribb módja annak, hogy RL projektek meghaljanak – nem az algoritmus volt rossz, hanem a gyakorlópálya nem a vizsgaterem volt.
 - **A nagy hűségű környezet építése gyakran nehezebb és drágább, mint maga a tréning.** Egy olyan környezet, amely támogatja a nagy léptékű párhuzamosságot, megbízható reprodukálhatóságot és valósághű visszajelzést, általában sokkal több mérnöki erőfeszítést igényel, mint maga a modell hangolása. A fejezet későbbi eszközhívási kísérletei, beleértve az AWorld MCP sandboxát és a ReTool kód-interpreter sandboxát, sokat invesztálnak a környezeti mérnöki munkába egy egyszerű okból: **a valós API-k sebességkorlátokkal rendelkeznek, letilthatják a fiókokat, és mellékhatásokat okozhatnak, így nem használhatók közvetlenül a tréninghez.** Először meg kell építened egy stabil, irányítható, visszajátszható "árnyékvilágot".
 - "A környezet másik fele a jutalomfüggvény." A környezetnek nemcsak azt kell szimulálnia, hogy "hogyan változik a világ", hanem azt is meg kell határoznia, hogy "az akció jó vagy rossz volt" – ez a jutalomjel forrása. A jutalomtervezés a környezeti mérnöki munka része, amelyet a következő szakaszban részletesebben tárgyalunk.
 

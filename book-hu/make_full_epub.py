@@ -14,26 +14,32 @@ chapters = [
     ("introduction.md", "Bevezető"),
     ("chapter1.md", "1. fejezet: A Harness-ek alapjai"),
     ("chapter2.md", "2. fejezet: Kontextusmérnökség"),
-    ("chapter3.md", "3. fejezet: Prompt engineering"),
-    ("chapter4.md", "4. fejezet: Visszakeresés"),
-    ("chapter5.md", "5. fejezet: Eszközhasználat"),
-    ("chapter6.md", "6. fejezet: Memória"),
+    ("chapter3.md", "3. fejezet: Felhasználói memória és Tudásbázis"),
+    ("chapter4.md", "4. fejezet: Eszközök"),
+    ("chapter5.md", "5. fejezet: Kódoló Agent és eszközfejlesztés"),
+    ("chapter6.md", "6. fejezet: Ügynökök kiértékelése"),
     ("chapter7.md", "7. fejezet: Modell finomhangolás"),
     ("chapter8.md", "8. fejezet: Munkafolyamatok és orchestáció"),
     ("chapter9.md", "9. fejezet: Multimodalitás"),
-    ("chapter10.md", "10. fejezet: További fejezetek"),
+    ("chapter10.md", "10. fejezet: Többügynökös együttműködés"),
     ("afterword.md", "Utószó"),
     ("reference-answers.md", "Függelék: Gondolkodtató kérdések válaszai"),
 ]
 
 # Check which files exist
 existing = []
+missing = []
 for fname, title in chapters:
     fpath = os.path.join(book_dir, fname)
     if os.path.exists(fpath):
         existing.append((fname, title, fpath))
     else:
         print(f"⚠️  HIÁNYZIK: {fname}")
+        missing.append(fname)
+
+if missing:
+    print(f"❌ Hiányzó fejezetek: {', '.join(missing)}")
+    sys.exit(1)
 
 if not existing:
     print("❌ Nincs egyetlen fájl sem!")
