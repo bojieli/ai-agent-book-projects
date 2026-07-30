@@ -93,6 +93,7 @@ def hash_func_call(
     standardized_args = sorted(bound_args.arguments.items())
     return _CallableIdentity(func), hash_item(standardized_args)
 
+
 def cache_call_w_dedup(func: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> T:
