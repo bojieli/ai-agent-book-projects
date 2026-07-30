@@ -1,0 +1,66 @@
+{
+  "overall_score": 65,
+  "pass": false,
+  "issues": [
+    {
+      "page": 2,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将要点拆分为2页，例如将State-of-the-art results单独作为一页展示"
+    },
+    {
+      "page": 3,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将三个部分拆分为独立页面，每个部分单独一页详细说明"
+    },
+    {
+      "page": 4,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大架构图至占页面2/3空间，删除图片下方的文字说明或将其移至下一页"
+    },
+    {
+      "page": 4,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "删除图片下方的长段文字，仅保留标题和简短说明"
+    },
+    {
+      "page": 5,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Encoder和Decoder分拆为两页，每页单独详细说明其结构"
+    },
+    {
+      "page": 7,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Multi-Head Attention原理和Applications分拆为两页"
+    },
+    {
+      "page": 10,
+      "issue_type": "overcrowded",
+      "severity": "high",
+      "suggestion": "将Data & Batching、Hardware & Schedule、Optimizer & Regularization三个部分拆分为3页"
+    },
+    {
+      "page": 14,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大注意力可视化图，使其占满页面，确保文字和连线清晰可见"
+    },
+    {
+      "page": 15,
+      "issue_type": "image_size",
+      "severity": "high",
+      "suggestion": "放大注意力可视化图，增加对比度，确保不同颜色的注意力头可区分"
+    },
+    {
+      "page": 16,
+      "issue_type": "overcrowded",
+      "severity": "medium",
+      "suggestion": "将Contributions和Future Work分拆为两页，每部分保留3-4个要点"
+    }
+  ]
+}

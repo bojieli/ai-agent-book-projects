@@ -1,0 +1,67 @@
+{
+  "signature": "97dc260e58ab3e2bd1fe44bdd97865cb900b51fa78ca03a0d6fd5ad8b88bc7ec",
+  "parsed": {
+    "narration": "上一页我们看了论文标题，现在这一页是摘要，相当于整篇论文的电梯演讲。请大家先看屏幕上加粗的 Transformer 这个词——作者提出这是第一个完全建立在注意力机制上的模型，彻底抛弃了循环和卷积结构。为什么这一点关键？因为没有了循环，训练就可以高度并行，耗时大幅下降。再看屏幕下方两个数字：英德翻译 28.4 BLEU，比此前最好成绩高出 2 个点；英法 41.8 BLEU，直接刷新纪录。最后一行还提到，它能泛化到英语句法分析等其他任务。那么注意力机制究竟是如何运作的？我们下一页就从引言开始拆解。",
+    "visual_references": [
+      "页面标题 Abstract",
+      "加粗的 Transformer 一词",
+      "数值 28.4 BLEU（英德）与 41.8 BLEU（英法）",
+      "最后一条关于 English constituency parsing 的泛化结论"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 2/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n## Abstract\n\n- Proposes **Transformer** - first model based solely on attention mechanisms\n- Dispenses with recurrence and convolutions entirely\n- Superior quality while being more parallelizable and requiring less training time\n- Achieves 28.4 BLEU on WMT 2014 English-to-German (↑2 BLEU over previous best)\n- Achieves 41.8 BLEU on WMT 2014 English-to-French (new state-of-the-art)\n- Generalizes well to other tasks like English constituency parsing\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6acef17935e4e9b19f0c12",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"上一页我们看了论文标题，现在这一页是摘要，相当于整篇论文的电梯演讲。请大家先看屏幕上加粗的 Transformer 这个词——作者提出这是第一个完全建立在注意力机制上的模型，彻底抛弃了循环和卷积结构。为什么这一点关键？因为没有了循环，训练就可以高度并行，耗时大幅下降。再看屏幕下方两个数字：英德翻译 28.4 BLEU，比此前最好成绩高出 2 个点；英法 41.8 BLEU，直接刷新纪录。最后一行还提到，它能泛化到英语句法分析等其他任务。那么注意力机制究竟是如何运作的？我们下一页就从引言开始拆解。\",\"visual_references\":[\"页面标题 Abstract\",\"加粗的 Transformer 一词\",\"数值 28.4 BLEU（英德）与 41.8 BLEU（英法）\",\"最后一条关于 English constituency parsing 的泛化结论\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "The user wants a Chinese narration for slide 2/12 of \"Attention Is All You Need\" — the Abstract slide. Requirements: 180-240 Chinese characters, guiding narrative, point to visible elements, no fabricated numbers, JSON only.\n\nThe slide shows: Abstract with points about Transformer, attention only, no recurrence/convolutions, 28.4 BLEU EN-DE, 41.8 BLEU EN-FR, generalization to parsing.\n\nNeed to connect with previous page (title page presumably) and next page (introduction). Start should match page 2 (following title page). End could lead to page 3.\n\nWrite ~200 characters. Visual references: title \"Abstract\", \"Transformer\" bold text, numbers 28.4 BLEU, 41.8 BLEU.\n\nDraft:\n\n\"上一页我们看了论文标题，现在这一页是摘要——也就是整篇论文的'电梯演讲'。请大家看屏幕上第二条：作者彻底抛弃了循环和卷积结构，只靠注意力机制构建了整个模型，这就是加粗的'Transformer'这个词的由来。为什么这很重要？因为去掉循环意味着训练可以高度并行，速度大幅提升。再看下面两个数字：英德翻译28.4 BLEU，比此前最好成绩高2个点；英法41.8 BLEU，直接刷新纪录。最后一行还提到它能泛化到句法分析等任务。那么注意力机制具体长什么样？我们下一页进入引言部分。\"\n\nCount characters roughly: that's around 200. Let me count more carefully.\n\n\"上一页我们看了论文标题，现在这一页是摘要——也就是整篇论文的'电梯演讲'。\" ~30\n\"请大家看屏幕上第二条：作者彻底抛弃了循环和卷积结构，只靠注意力机制构建了整个模型，这就是加粗的'Transformer'这个词的由来。\" ~55\n\"为什么这很重要？因为去掉循环意味着训练可以高度并行，速度大幅提升。\" ~30\n\"再看下面两个数字：英德翻译28.4 BLEU，比此前最好成绩高2个点；英法41.8 BLEU，直接刷新纪录。\" ~42\n\"最后一行还提到它能泛化到句法分析等任务。\" ~20\n\"那么注意力机制具体长什么样？我们下一页进入引言部分。\" ~25\n\nTotal ~200 characters. Good, within 180-240.\n\nVisual references: [\"标题 Abstract\", \"加粗的 Transformer 一词\", \"28.4 BLEU 和 41.8 BLEU 两个数值\", \"最后一条关于 English constituency parsing 的泛化结论\"]\n\nReturn JSON only."
+          }
+        }
+      ],
+      "created": 1785384691,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 733,
+        "prompt_tokens": 402,
+        "total_tokens": 1135,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 528,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 26401.716
+  }
+}

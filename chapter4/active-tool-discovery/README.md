@@ -5,6 +5,64 @@
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
+## Canonical manuscript campaign / 正式实验活动
+
+`run_exact_experiment.py` replaces the mechanism-only demo for formal
+Experiment 4-6 acceptance. It obtains all 126 complete schemas from the real
+perception MCP server, proves the full-catalog control exceeds 50K measured
+tokens, uses local Ollama `qwen3:4b` for both arms, retrieves five candidates
+with `all-MiniLM-L6-v2`, and executes every selected tool through MCP against
+real public APIs/local processes. No mock tool result can satisfy a formal
+gate. Runs are resumable and store the gzipped catalog, model receipts, MCP
+receipts, artifacts, hashes, paired metrics, and an honest hypothesis result.
+
+```bash
+python run_exact_experiment.py --campaign-id my-qwen3-4b-run
+# after an interruption:
+python run_exact_experiment.py --campaign-id my-qwen3-4b-run --resume
+```
+
+`demo.py` and `offline_backend.py` remain useful teaching/CI paths, but their
+lightweight tool outputs and scripted model do not count as formal evidence.
+
+The completed canonical evidence is
+[`validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json),
+with manifest SHA-256
+`88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c`.
+All twelve gates passed. Control and treatment both selected every required
+capability and completed all three tasks (100% versus 100%), so the predicted
+accuracy/completion improvement was not observed. Treatment elapsed time was
+808.926 seconds versus 2,590.820 seconds for control (3.20× faster). Its
+initial system prompt was 1,251 tokens per task and it dynamically injected
+12,838 schema tokens across all tasks; control used 50,352 system-prompt tokens
+per task.
+
+The pass does not hide weak-model detours. In the treatment Apple trajectory,
+Qwen made an irrelevant search and code call (leaving a 215-byte empty SVG)
+and attempted to finish twice before the completion gate forced discovery of
+the stock and news specialists. The arXiv trajectory also retained malformed
+actions and a redundant discovery. The first v2 terminal attempt additionally
+retains real 429/503/disconnect receipts under `failed_attempts/`; a single
+bounded resume archived it and retried only that incomplete task. Completed
+receipts are never replayed, and a third real attempt is refused.
+
+`run_exact_experiment.py` 是实验 4-6 的正式运行器：从真实感知 MCP 读取 126 个完整
+schema，验证控制组超过 50K token，两组都使用本地 Ollama `qwen3:4b`，实验组用
+`all-MiniLM-L6-v2` 每次检索五个候选，并通过 MCP 调用真实公共 API 或本地进程执行所选
+工具。mock 结果不能通过正式门禁；中断后可用 `--resume` 续跑。`demo.py` 与离线后端仅作
+教学/CI 机制自检，不是正式验收证据。
+
+正式证据为
+[`validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json`](validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z/summary.json)，
+manifest SHA-256 为
+`88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c`。
+12 项门禁全部通过；对照组与实验组均完成 3/3 任务，准确率均为 100%，因此正文
+预期的准确率/完成率提升并未出现。实验组用时 808.926 秒，对照组为
+2,590.820 秒（快 3.20×）；实验组每任务初始 system prompt 为 1,251 token，
+三任务合计动态注入 12,838 token，对照组每任务则为 50,352 token。
+成功轨迹仍保留了 Apple 任务的无关搜索/代码调用、215 字节空 SVG、两次过早结束，
+以及 arXiv 任务的格式错误和冗余发现；不把通过解读为“工具选择过程干净”。
+
 ---
 
 ## English
@@ -21,8 +79,8 @@ When an Agent has hundreds of tools, a common approach is to inject every tool J
 ### Mechanisms
 
 ```
-tools_library.py   126 cross-domain tools (finance/web/arxiv/github/geo/weather/media/...; 17 domains)
-                   Real name/description/parameters; execution is lightweight mock (focus: “pick the right tool”)
+tools_library.py   126 cross-domain teaching tools (finance/web/arxiv/github/geo/weather/media/...; 17 domains)
+                   demo.py uses lightweight outputs; the formal runner instead uses perception MCP schemas/execution
                    Intentionally mixes 8 generic/near-synonym tools (web_search, etc.) with inflated descriptions
                    select_tools(size): subset by --tool-set-size to show full injection cost growing with catalog size
 discovery.py       Pluggable embedding backend + tool vector index; OpenAIEmbedder uses text-embedding-3-small

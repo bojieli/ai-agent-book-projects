@@ -104,6 +104,18 @@ DISCOVER_SCHEMA = {
     },
 }
 
+TREATMENT_GUIDANCE = """
+The two base tools are deliberately insufficient for authoritative,
+domain-specific retrieval. Never use generic web_search or code_interpreter as
+a substitute for a missing specialist merely because a search snippet mentions
+the desired value. A structured market quote, repository metadata, academic
+search, and file download each require an appropriate specialist discovered at
+the moment that capability gap arises. A task can contain multiple distinct
+gaps; call discover_tools separately for each one, while continuing to use
+web_search for general current-news context and code_interpreter for local
+computation after the required source data has been obtained.
+""".strip()
+
 
 def canonical_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str)
@@ -624,6 +636,7 @@ async def run_agent_task(session: ClientSession, schemas: list[dict[str, Any]],
         system = ("You are Qwen3-4B in the active-discovery treatment. Initially only the three "
                   "schemas below exist. Discover a specialist only when you encounter that capability "
                   "gap. Previously discovered schema blocks stay at their original history position.\n\n" +
+                  TREATMENT_GUIDANCE + "\n\n" +
                   render_schemas(base_schemas + [DISCOVER_SCHEMA]) + "\n\n" + _AGENT_PROTOCOL)
         available = set(BASE_TOOL_NAMES)
     initial_schema_names = sorted(available | ({"discover_tools"} if strategy == "treatment" else set()))
@@ -661,6 +674,32 @@ async def run_agent_task(session: ClientSession, schemas: list[dict[str, Any]],
             )
             continue
         if action["action"] == "finish":
+            completion_probe = _finalize_execution(task, state, task_dir)
+            if not completion_probe["task_complete"]:
+                successful = {
+                    receipt.get("tool")
+                    for receipt in state["receipts"]
+                    if receipt.get("success") is True
+                }
+                missing_count = sum(
+                    not bool(successful & slot) for slot in task["slots"]
+                )
+                append_history(
+                    messages,
+                    history,
+                    "user",
+                    "Finish rejected: one or more requested subtasks still lack "
+                    f"a successful specialist observation or required artifact "
+                    f"(missing capability slots: {missing_count}). "
+                    "Use discover_tools for each remaining capability gap, then "
+                    "execute the discovered specialist before finishing. "
+                    f"[STATUS BAR: available tools = {sorted(available)}]",
+                    turn=turn,
+                    event="premature_finish_rejected",
+                    available=available,
+                    extra={"missing_capability_slots": missing_count},
+                )
+                continue
             final_answer = action["answer"]
             break
         if action["action"] == "discover_tools":
@@ -760,8 +799,26 @@ async def run_group(session: ClientSession, schemas: list[dict[str, Any]],
                 or record.get("model") != MODEL
             ):
                 raise RuntimeError(f"incompatible completed task receipt: {receipt_path}")
-            records.append(record)
-            continue
+            if record.get("execution", {}).get("task_complete") is True:
+                records.append(record)
+                continue
+
+            # A formal campaign may make one bounded recovery attempt for an
+            # incomplete task after a real provider failure. Preserve the
+            # entire first attempt (receipt plus any partial artifacts) inside
+            # the same campaign before retrying from a clean task directory.
+            # Refuse a third attempt rather than silently cycling forever.
+            failed_attempts = task_dir / "failed_attempts"
+            archive_dir = failed_attempts / "attempt-1"
+            if archive_dir.exists():
+                raise RuntimeError(
+                    f"maximum two real attempts exhausted for incomplete task: {task_dir}"
+                )
+            archive_dir.mkdir(parents=True)
+            for child in list(task_dir.iterdir()):
+                if child == failed_attempts:
+                    continue
+                child.replace(archive_dir / child.name)
         record = await run_agent_task(session, schemas, index, strategy, task, task_dir)
         write_json(receipt_path, record)
         records.append(record)
@@ -1002,8 +1059,25 @@ async def run(campaign_id: str | None = None, *, resume: bool = False) -> Path:
     if resume:
         if not campaign_dir.is_dir():
             raise RuntimeError(f"resume campaign does not exist: {campaign_dir}")
-        if (campaign_dir / "summary.json").exists() or (campaign_dir / "manifest.json").exists():
-            raise RuntimeError(f"resume campaign is already finalized: {campaign_dir}")
+        summary_path = campaign_dir / "summary.json"
+        manifest_path = campaign_dir / "manifest.json"
+        if summary_path.exists() or manifest_path.exists():
+            if not (summary_path.is_file() and manifest_path.is_file()):
+                raise RuntimeError(
+                    f"resume campaign has only one final artifact: {campaign_dir}"
+                )
+            failed_summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            if failed_summary.get("status") != "failed":
+                raise RuntimeError(f"resume campaign already passed: {campaign_dir}")
+            campaign_attempts = campaign_dir / "failed_campaign_attempts"
+            attempt_dir = campaign_attempts / "attempt-1"
+            if attempt_dir.exists():
+                raise RuntimeError(
+                    f"maximum two real campaign attempts exhausted: {campaign_dir}"
+                )
+            attempt_dir.mkdir(parents=True)
+            summary_path.replace(attempt_dir / "summary.failed.json")
+            manifest_path.replace(attempt_dir / "manifest.failed.json")
         recorded_protocol = json.loads(
             (campaign_dir / "protocol.json").read_text(encoding="utf-8")
         )

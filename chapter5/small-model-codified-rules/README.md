@@ -5,6 +5,22 @@
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
 
+## Formal manuscript result (canonical)
+
+The canonical campaign ran local Ollama `qwen3:4b` on all 60 frozen policy
+cases in both matched arms (120 complete trajectories). The codified arm
+verified database facts and server time and exposed checklist parameters, but
+scored 91.7% versus 95.0% for the natural-language control (exact paired
+p=0.6875). This is a complete **negative** hypothesis result, not evidence of a
+significant gain. The raw messages, tool transcripts, usage, policy truth, and
+paired analysis are in
+[`validation/real_ollama_qwen3_4b_60x2_20260730.json`](validation/real_ollama_qwen3_4b_60x2_20260730.json).
+
+正式活动用本地 Ollama `qwen3:4b` 完成固定 60 个政策案例的两组配对运行，共 120 条完整
+轨迹。代码化组确实执行了数据库真值、服务端时钟与 checklist 门禁，但成功率 91.7%，
+控制组 95.0%，精确配对检验 p=0.6875，未出现显著提升。这是完整而诚实的负结论；
+下文 8 题示例表只用于解释机制，不能当作正式实验结果。
+
 ---
 
 ## English

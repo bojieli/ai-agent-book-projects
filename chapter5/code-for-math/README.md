@@ -5,6 +5,22 @@
 
 ← [Chapter 5 index / 返回第 5 章目录](../README.md)
 
+## Formal manuscript result (canonical)
+
+The acceptance campaign is the hash-pinned 30-problem AIME 2024 paired run in
+[`validation/runs/exp5-1-ark-doubao-flash-aime2024-20260730-v1/`](validation/runs/exp5-1-ark-doubao-flash-aime2024-20260730-v1/).
+Every code-arm trajectory called the real subprocess sandbox; the observed
+accuracy was 53.3% for code assistance versus 36.7% for pure CoT. The +16.7
+point difference was not statistically significant under the preregistered
+exact paired test (p=0.125), so the manuscript hypothesis is **not claimed as
+supported**. The smaller tables below are teaching examples, not the formal
+result.
+
+正式验收以固定哈希的 AIME 2024 全 30 题配对活动为准；代码臂每题都真实调用子进程沙箱。
+实测代码辅助 53.3%、纯 CoT 36.7%，提升 16.7 个百分点，但精确配对检验 p=0.125，
+未达到统计显著。因此仓库只声明“正式实验完整执行”，不声明正文预期已被支持。下文较小题集
+的表格仅是教学示例，不是正式结论。
+
 ---
 
 ## English

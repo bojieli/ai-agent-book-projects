@@ -8,7 +8,8 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 | 4-2 | `execution-tools/validation/experiment_4_2/real_mcp_20260730T070500Z` | blocked | false | `f1743d28e763d79d7a8690fc118c62ffaf124270e062eb3236542fca9636f5ab` |
 | 4-3 | `collaboration-tools/validation/experiment_4_3/real_mcp_kimi_20260730T065500Z` | blocked | false | `b3a06d0a2db68128a0cd3d659157f85bc6e541f3b992dafefb1641c7688837b3` |
 | 4-4 | `agent-with-event-trigger/validation/experiment_4_4/credential_probe_20260730T064500Z` | blocked | false | `5c9f15094dbab0151539818522ccf71d88ec2ba2e7f0654f373db365a9992dd9` |
-| 4-6 | exact Qwen3-4B campaign in progress | pending | false | pending |
+| 4-5 | `async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z` | passed | true | `03d87ae52985b2b7c2deb434539b86c57aafc8840663cb98761d7e753be0ff96` |
+| 4-6 | `active-tool-discovery/validation/experiment_4_6/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `88d622db4981207a9980c30abea4eb8dc2621161ded80be0cb2bb8582833153c` |
 
 ## Experiment 4-1 — perception MCP
 
@@ -40,6 +41,50 @@ Manuscript gates: three real inbound test-mailbox events processed FIFO: meeting
 - The campaign fetched and hashed all eight official Unipile Email/Calendar schema documents and made credential-redacted live API probes.
 - Blocked before mailbox mutation: the configured Unipile credential returns 401 with both documented `X-API-KEY` and diagnostic Bearer authentication. Therefore zero local/synthetic mail objects were substituted and no three-email success is claimed.
 
+## Experiment 4-5 — interruptible asynchronous agent
+
+All four exact manuscript scenarios passed with real OS subprocesses: a 3–5
+second command remained non-blocking while the time question was answered;
+queued instructions were appended once and produced a Japanese HTML artifact;
+an interrupt terminated the real child process and the runtime recovered; and
+the 3%/2%/1% parallel jobs triggered exactly one status query after the fast
+job, preserved the >50% job, cancelled only the <=50% job, and produced a
+hashed integrated report. The canonical summary is
+`async-agent/validation/experiment_4_5/real_subprocess_20260730T052500Z/summary.json`.
+
 ## Experiment 4-6 — active tool discovery
 
-The exact campaign uses local Ollama `qwen3:4b`, the perception MCP server's 120+ complete schemas, an over-50K-token full-schema control, a local `all-MiniLM-L6-v2` embedding index, five-schema dynamic injection, and the three manuscript tasks. Final metrics and status will be recorded after the immutable campaign terminates.
+The canonical campaign uses local Ollama `qwen3:4b`, 126 complete schemas
+listed by the real perception MCP server, a 50,120-token schema catalog, a
+local `all-MiniLM-L6-v2` index, five-schema user-history injection with a
+cumulative status bar, and the three exact manuscript tasks in both arms. All
+twelve formal gates are true. Both groups selected every required capability
+and completed 3/3 tasks, so the manuscript's expected accuracy/completion
+improvement was **not observed**: both arms scored 100%. Active discovery was
+faster in this run (808.926 versus 2,590.820 seconds, 3.20×) and exposed much
+less schema text (1,251 initial system tokens per treatment task plus 12,838
+dynamic tokens across the group, versus 50,352 system tokens per control
+task).
+
+The successful aggregate must not be read as clean treatment behavior. On the
+Apple task, Qwen first issued a vague discovery, malformed JSON, an irrelevant
+Google search and a real but irrelevant `code_interpreter` call that wrote a
+215-byte empty contributor chart; two premature finishes were rejected before
+it discovered and executed `yfinance_quote` and `search_news`. The recovered
+arXiv task retained two protocol parse errors and a redundant vague discovery.
+Those trajectories remain in the canonical receipts.
+
+Failed evidence is also preserved. The first exact campaign
+`qwen3_4b_exact_20260730T061700Z` completed but had treatment at only 1/3 tasks
+(manifest SHA-256
+`e3b98be25fca51e3454e442f2e312ff84aad24c89c2d44a7c1e46628cdbebe09`).
+The canonical v2 campaign's first terminal attempt hit real arXiv
+429/503/disconnect failures; its final search succeeded only on turn 12, too
+late to download. Its failed manifest SHA-256 is
+`e18bc4465606087c195a2abafbd375048c2921233bae812ef3bc3f522eb9b86b`.
+A bounded same-campaign resume archived that failed summary, manifest and task
+receipt, reused the other five completed receipts, then made one fresh real
+attempt. With the arXiv client page bounded to the requested three results,
+the official endpoint succeeded on its first call and all three PDFs were
+downloaded, signature-checked and hashed. No cached result or mock substituted
+for either failed attempt.

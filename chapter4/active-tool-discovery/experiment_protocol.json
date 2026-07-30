@@ -14,7 +14,8 @@
     "system_tools": ["web_search", "code_interpreter", "discover_tools"],
     "discovery_top_k": 5,
     "schema_injection_role": "user",
-    "status_bar_updates": true
+    "status_bar_updates": true,
+    "base_tool_boundary": "Generic web search and local code cannot substitute for authoritative domain-specific retrieval; discover each missing specialist at the moment the gap arises."
   },
   "tasks": [
     {

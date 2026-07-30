@@ -1,0 +1,62 @@
+{
+  "paper": {
+    "title": "Attention Is All You Need",
+    "authors": "Ashish Vaswani et al.",
+    "arxiv_id": "1706.03762",
+    "pdf_url": "https://arxiv.org/pdf/1706.03762",
+    "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+    "observed_pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+  },
+  "paper_text": {
+    "path": "/Users/boj/book/ai-agent-book/chapter5/paper-to-ppt/validation/runs/exp5-4-real-pdf-both-20260730-v4/source/paper_text.md",
+    "sha256": "4da5f2a1da38bad8149832b5ada3c94f0619188db8fed5cdca8ff63405587eb8",
+    "characters": 39819
+  },
+  "visuals": [
+    {
+      "filename": "paper_figure_1_transformer.png",
+      "pdf_page": 3,
+      "source_label": "Figure 1",
+      "caption": "The Transformer model architecture.",
+      "rect": [
+        92,
+        28,
+        520,
+        535
+      ],
+      "sha256": "48f09e2e2426e8ca76c1e438600438dca2f9e61360e92ae3edbb538a2cc611d2",
+      "bytes": 150087,
+      "public_copy_sha256": "48f09e2e2426e8ca76c1e438600438dca2f9e61360e92ae3edbb538a2cc611d2"
+    },
+    {
+      "filename": "paper_figure_3_long_distance.png",
+      "pdf_page": 13,
+      "source_label": "Figure 3",
+      "caption": "Encoder self-attention following long-distance dependencies.",
+      "rect": [
+        92,
+        55,
+        525,
+        455
+      ],
+      "sha256": "ea456861962564d2ef5a158e4205cfea29b537f4a611df989db5d65471f23d78",
+      "bytes": 96204,
+      "public_copy_sha256": "ea456861962564d2ef5a158e4205cfea29b537f4a611df989db5d65471f23d78"
+    },
+    {
+      "filename": "paper_figure_4_anaphora.png",
+      "pdf_page": 14,
+      "source_label": "Figure 4",
+      "caption": "Attention heads involved in anaphora resolution.",
+      "rect": [
+        92,
+        135,
+        525,
+        665
+      ],
+      "sha256": "b1f0c6b0e186acb50cae69c304a9a2a0e1f09fd15f1beb0bba03194528163d7e",
+      "bytes": 264855,
+      "public_copy_sha256": "b1f0c6b0e186acb50cae69c304a9a2a0e1f09fd15f1beb0bba03194528163d7e"
+    }
+  ]
+}

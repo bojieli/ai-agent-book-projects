@@ -1,0 +1,24 @@
+{
+  "overall_score": 85,
+  "pass": false,
+  "issues": [
+    {
+      "page": 14,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "可视化图中的文字字号过小，建议放大文字或调整图表布局以提高可读性"
+    },
+    {
+      "page": 15,
+      "issue_type": "readability",
+      "severity": "medium",
+      "suggestion": "可视化图中的文字字号过小，建议放大文字或调整图表布局以提高可读性"
+    },
+    {
+      "page": 16,
+      "issue_type": "overcrowded",
+      "severity": "low",
+      "suggestion": "当前页面包含6个要点，略超出建议的5个要点限制，可考虑将Limitations和Future Work分为两页展示"
+    }
+  ]
+}

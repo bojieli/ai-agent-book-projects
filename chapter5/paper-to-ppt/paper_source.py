@@ -15,6 +15,7 @@ import urllib.request
 from pathlib import Path
 
 import fitz
+from PIL import Image
 
 
 PAPER = {
@@ -26,29 +27,34 @@ PAPER = {
 }
 
 # Coordinates are in PDF points and were registered against the pinned PDF.
-# They deliberately include the original caption so provenance is visible in
-# the slide and can be audited without trusting our description.
+# They isolate the published figure itself (rather than surrounding body text)
+# so labels remain legible after a 16:9 slide render. Provenance does not rely
+# on pixels from the caption: the manifest records the source page, crop
+# rectangle, published figure label/caption, PDF hash, and extracted hash.
 VISUALS = [
     {
         "filename": "paper_figure_1_transformer.png",
         "pdf_page": 3,
         "source_label": "Figure 1",
         "caption": "The Transformer model architecture.",
-        "rect": [92, 28, 520, 535],
+        "rect": [92, 60, 520, 405],
+        "rotation_degrees": 0,
     },
     {
         "filename": "paper_figure_3_long_distance.png",
         "pdf_page": 13,
-        "source_label": "Figure 3",
-        "caption": "Encoder self-attention following long-distance dependencies.",
-        "rect": [92, 55, 525, 455],
+        "source_label": "Figure 3 (long-distance dependency focus)",
+        "caption": "Published encoder attention linking 'making' to 'more difficult'.",
+        "rect": [190, 88, 425, 311],
+        "rotation_degrees": 90,
     },
     {
         "filename": "paper_figure_4_anaphora.png",
         "pdf_page": 14,
-        "source_label": "Figure 4",
-        "caption": "Attention heads involved in anaphora resolution.",
-        "rect": [92, 135, 525, 665],
+        "source_label": "Figure 4 (lower panel, anaphora focus)",
+        "caption": "Published attention from 'its' to 'Law' and 'application'.",
+        "rect": [92, 360, 310, 610],
+        "rotation_degrees": 90,
     },
 ]
 
@@ -106,6 +112,15 @@ def prepare_real_paper(run_dir: str | Path, public_dir: str | Path) -> dict:
         pixmap = page.get_pixmap(matrix=fitz.Matrix(2.5, 2.5), clip=rect, alpha=False)
         extracted_path = visual_dir / visual["filename"]
         pixmap.save(extracted_path)
+        if visual.get("rotation_degrees"):
+            # The published attention labels run vertically. A lossless
+            # quarter-turn makes those original pixels audience-readable on a
+            # landscape slide; the transform is explicit in the manifest.
+            with Image.open(extracted_path) as source_image:
+                rotated = source_image.rotate(
+                    -int(visual["rotation_degrees"]), expand=True
+                )
+                rotated.save(extracted_path)
         public_path = public_dir / visual["filename"]
         shutil.copyfile(extracted_path, public_path)
         row = {
