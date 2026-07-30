@@ -437,7 +437,7 @@ Ví dụ: Người tìm việc gửi hồ sơ của họ cho các công ty săn 
 
 Cơ chế "chú ý chung" này cho phép các bộ mã hóa chéo nắm bắt được các liên kết ngữ nghĩa tinh tế mà các bộ mã hóa kép không thể nhận biết được, đưa ra thứ hạng cuối cùng chính xác hơn nhiều so với một phương pháp truy xuất duy nhất.
 
-[^ch3-cross-encoder]: BERT, đầu vào được tổng hợp sẽ được phân tách bằng các dấu đặc biệt (chẳng hạn như `[CLS] Văn bản truy vấn [SEP] Văn bản tài liệu [SEP]`, [CLS] đánh dấu sự bắt đầu của chuỗi, [SEP] đánh dấu ranh giới phân tách). Đây là chi tiết phát triển được khai báo ở mức độ thấp và không cần thiết để hiểu quá trình xuất dữ liệu.
+[^ch3-cross-encoder]: BERT, đầu vào được tổng hợp sẽ được phân tách bằng các dấu đặc biệt (chẳng hạn như `[CLS] Văn bản truy vấn [SEP] Văn bản tài liệu [SEP]`, trong đó, `[CLS]` đánh dấu sự bắt đầu của chuỗi, `[SEP]` đánh dấu ranh giới phân tách). Đây là chi tiết phát triển được khai báo ở mức độ thấp và không cần thiết để hiểu quá trình xuất dữ liệu.
 
 **Làm thế nào để đo lường chất lượng tìm kiếm?** Việc điều chỉnh quy trình nhiều giai đoạn như vậy đòi hỏi các số liệu khách quan. Có ba chỉ số cốt lõi (tất cả đều được tính toán trên bộ truy vấn kiểm tra có câu trả lời được chú thích):
 
