@@ -368,13 +368,23 @@ However, static word vectors have a fundamental limitation: they cannot handle p
 
 Unlike dense embeddings, which capture semantic similarity, sparse embeddings are rooted in traditional information retrieval: at their core is exact keyword matching. A sparse embedding represents a document as an extremely high-dimensional vector in which most dimensions are zero—only the dimensions corresponding to words that appear in the document are non-zero. The theoretical foundation is the classic Bag of Words (BoW) model, which treats a piece of text as a "bag of words," caring only about which words appear and how often, ignoring word order entirely: "cat chases dog" and "dog chases cat" are identical in BoW. More sophisticated term-weighting and ranking algorithms evolved from this foundation.
 
-![Figure 3-8: BM25 Scoring Mechanism](images/fig3-8.svg)
-
 #### From TF-IDF to BM25
 
-Let's build intuition with a concrete example. Assume a knowledge base has 100 technical articles, and a user searches for "model distillation." The word "model" appears in 60 articles (too common, low discriminative power), while "distillation" appears in only 3 articles (very rare, high discriminative power). A good retrieval algorithm should give higher weight to the word "distillation"—articles containing "distillation" are more likely to be what the user is actually looking for. This is the core idea behind TF-IDF and BM25.
+The core intuition of TF-IDF (Term Frequency–Inverse Document Frequency) is that a term matters more for retrieval when it appears often in the current document but rarely across the corpus. If 60 of 100 articles contain "model" but only 3 contain "distillation," then "distillation" does more to distinguish articles that are truly about "model distillation."
 
-TF-IDF is based on a simple intuition: the more frequently a word appears in a document (TF, Term Frequency), and the fewer documents in the collection contain it (lower Document Frequency, or DF, and thus higher Inverse Document Frequency, or IDF), the more important the word is. In the example above, "model" has `df/N = 60%`, so its IDF value is low; "distillation" has `df/N = 3%`, so its IDF value is high—therefore, "distillation" contributes much more to the ranking than "model." However, TF-IDF does not account for document length (longer documents naturally have higher term frequencies), and term-frequency growth is linear: is a word that appears 10 times really twice as important as one that appears five times? BM25 introduces two key parameters to correct these issues. `k1` controls the "saturation" of term frequency: intuitively, an article mentioning "distillation" 20 times is not really twice as relevant as one mentioning it 10 times. `k1` causes the contribution of term frequency to gradually level off as it increases, preventing long documents from unfairly dominating due to term frequency accumulation. `b` controls document length normalization, allowing the algorithm to handle documents of different lengths more fairly. This makes BM25 a more robust and effective ranking function, and it remains an indispensable core component in major search engines today.
+$$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t), \qquad \text{IDF}(t) = \ln\frac{N}{\text{DF}(t)}$$
+
+Here, `TF(t,d)` is the number of times term $t$ appears in document $d$, `DF(t)` is the number of documents containing it, and $N$ is the total number of documents. In the simplest formulation above, raw term frequency grows linearly and document length is not normalized: a term appearing 10 times receives twice the TF of one appearing 5 times, while longer documents can score higher simply because they contain more words.
+
+BM25 (Okapi BM25) can be viewed as a classic correction to these two limitations. It retains IDF weighting for rare terms while adding term-frequency saturation and document-length normalization:
+
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+
+Here, $q_i$ is a query term, $|D|$ is the document length, and $\text{avgdl}$ is the corpus's average document length. As Figure 3-8 shows, $k_1$ controls how quickly term frequency saturates, so repeated occurrences provide diminishing gains; $b$ controls the strength of length normalization, making documents of different lengths more comparable. Consequently, 10 occurrences usually contribute less than twice as much as 5, and the same term frequency receives less weight in a longer document. Specific parameter values and the arithmetic are covered in Experiment 3-5.
+
+
+![Figure 3-8: BM25 Scoring Mechanism](images/fig3-8.svg)
+
 
 > **Experiment 3-5 ★★: Exploring Sparse Retrieval: Implementing a BM25 Search Engine from Scratch**
 >
