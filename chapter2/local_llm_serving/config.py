@@ -21,7 +21,6 @@ VLLM_SERVER_CONFIG = {
     "host": VLLM_HOST,
     "enable_auto_tool_choice": True,
     "tool_call_parser": "hermes",
-    "chat_template": "tool_use",  # Use tool-specific chat template
     "max_model_len": 8192,
     "gpu_memory_utilization": 0.9,
     "dtype": "auto",

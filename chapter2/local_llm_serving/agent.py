@@ -245,7 +245,7 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             
             # Call the model
             response = self.client.chat.completions.create(
-                model="Qwen3-0.6B",
+                model="Qwen/Qwen3-0.6B",
                 messages=messages,
                 tools=tools,
                 tool_choice="auto" if use_tools else None,
@@ -256,10 +256,28 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             assistant_message = response.choices[0].message
             content = assistant_message.content or ""
             
-            # Check for tool calls in the response
+            # Read tool calls from the structured field. With
+            # enable_auto_tool_choice + the hermes parser, vLLM extracts the
+            # <tool_call> tags out of the text and returns them here instead of
+            # leaving them in `content` (which only holds <think> and final text).
             tool_calls = []
-            if use_tools and content:
-                tool_calls = self._parse_tool_calls(content)
+            if use_tools and assistant_message.tool_calls:
+                for tc in assistant_message.tool_calls:
+                    raw_args = tc.function.arguments
+                    try:
+                        parsed_args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"Failed to parse tool arguments for {tc.function.name}: {e}")
+                        parsed_args = {}
+                    logger.info(f"Model requested tool call: {tc.function.name}({raw_args})")
+                    tool_calls.append({
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {
+                            "name": tc.function.name,
+                            "arguments": parsed_args,
+                        },
+                    })
             
             if tool_calls:
                 logger.info(f"Model requested {len(tool_calls)} tool call(s)")
@@ -358,7 +376,7 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             
             # Stream response from model
             stream_response = self.client.chat.completions.create(
-                model="Qwen3-0.6B",
+                model="Qwen/Qwen3-0.6B",
                 messages=messages,
                 tools=tools,
                 tool_choice="auto" if use_tools else None,
@@ -368,9 +386,8 @@ After receiving tool results, use them to provide a comprehensive answer to the 
             )
             
             collected_content = []
-            tool_calls_buffer = ""
-            tool_calls_detected = False
-            pending_tool_calls = []
+            thinking_buffer = ""
+            tool_call_parts = {}
             
             # Process the stream
             for chunk in stream_response:
@@ -379,59 +396,114 @@ After receiving tool results, use them to provide a comprehensive answer to the 
                     if delta.content:
                         content_chunk = delta.content
                         collected_content.append(content_chunk)
-                        buffered_this_chunk = False
                         
                         # Check if this is internal thinking (between <think> tags)
-                        if '<think>' in content_chunk or tool_calls_buffer:
-                            tool_calls_buffer += content_chunk
-                            buffered_this_chunk = True
-                            if '</think>' in tool_calls_buffer:
+                        if '<think>' in content_chunk or thinking_buffer:
+                            thinking_buffer += content_chunk
+                            if '</think>' in thinking_buffer:
                                 # Extract and yield thinking
                                 import re
-                                thinking_match = re.search(r'<think>(.*?)</think>', tool_calls_buffer, re.DOTALL)
+                                thinking_match = re.search(r'<think>(.*?)</think>', thinking_buffer, re.DOTALL)
                                 if thinking_match:
                                     # Stream thinking character by character
                                     for char in thinking_match.group(1).strip():
                                         yield {"type": "thinking", "content": char}
-                                tool_calls_buffer = re.sub(r'<think>.*?</think>', '', tool_calls_buffer, flags=re.DOTALL)
-                        
-                        # Check for tool calls
-                        if '<tool_call>' in content_chunk or tool_calls_buffer:
-                            if not buffered_this_chunk:
-                                tool_calls_buffer += content_chunk
-                            # Collect all complete tool calls; they are executed
-                            # in parallel once the stream finishes
-                            while '</tool_call>' in tool_calls_buffer:
-                                tool_calls_detected = True
-                                import re
-                                tool_match = re.search(r'<tool_call>(.*?)</tool_call>', tool_calls_buffer, re.DOTALL)
-                                if not tool_match:
-                                    break
-                                try:
-                                    tool_data = json.loads(tool_match.group(1).strip())
-                                    pending_tool_calls.append(tool_data)
-                                    yield {"type": "tool_call", "content": tool_data}
-                                except Exception as e:
-                                    error_msg = f"❌ Tool call parse exception: {str(e)}"
-                                    logger.error(f"Tool call parse error: {e}")
-                                    yield {"type": "tool_error", "content": error_msg}
-                                    # Add error to history so agent can see it
-                                    self.conversation_history.append({
-                                        "role": "user",
-                                        "content": f'<tool_response>\n{error_msg}\n</tool_response>',
-                                        "name": "unknown"
-                                    })
-                                # Keep any trailing partial tool call for the next chunk
-                                tool_calls_buffer = tool_calls_buffer[tool_match.end():]
+                                remaining = re.sub(
+                                    r'<think>.*?</think>', '', thinking_buffer, flags=re.DOTALL
+                                )
+                                thinking_buffer = ""
+                                if remaining:
+                                    yield {"type": "content", "content": remaining}
                         else:
                             # Regular content
                             yield {"type": "content", "content": content_chunk}
-            
-            # Execute all tool calls from this turn in parallel (they are
-            # independent by construction, since the model generated all of
-            # them without seeing any result)
-            if pending_tool_calls:
-                if len(pending_tool_calls) == 1:
+
+                    # vLLM streams structured tool calls in fragments. Calls
+                    # are keyed by index because ids, names, and arguments may
+                    # arrive in separate chunks.
+                    for fragment in getattr(delta, "tool_calls", None) or []:
+                        index = getattr(fragment, "index", None)
+                        if index is None:
+                            index = 0
+                        buffered = tool_call_parts.setdefault(index, {
+                            "id": None,
+                            "type": "function",
+                            "function": {"name": "", "arguments": ""},
+                        })
+                        if getattr(fragment, "id", None):
+                            buffered["id"] = fragment.id
+                        if getattr(fragment, "type", None):
+                            buffered["type"] = fragment.type
+                        function = getattr(fragment, "function", None)
+                        if function:
+                            if getattr(function, "name", None):
+                                buffered["function"]["name"] += function.name
+                            if getattr(function, "arguments", None):
+                                buffered["function"]["arguments"] += function.arguments
+
+            # Save complete response and structured calls to history before
+            # adding tool results, matching the non-streaming message order.
+            complete_response = ''.join(collected_content)
+
+            if tool_call_parts:
+                pending_tool_calls = []
+                parse_errors = []
+                assistant_tool_calls = []
+
+                for index in sorted(tool_call_parts):
+                    buffered = tool_call_parts[index]
+                    call_id = buffered["id"] or str(uuid.uuid4())[:8]
+                    tool_name = buffered["function"]["name"] or "unknown"
+                    raw_args = buffered["function"]["arguments"] or "{}"
+                    assistant_tool_calls.append({
+                        "id": call_id,
+                        "type": buffered["type"],
+                        "function": {
+                            "name": tool_name,
+                            "arguments": raw_args,
+                        },
+                    })
+
+                    try:
+                        parsed_args = json.loads(raw_args)
+                    except json.JSONDecodeError as e:
+                        error_msg = f"❌ Tool call parse exception: {str(e)}"
+                        logger.error(f"Tool call parse error: {e}")
+                        parse_errors.append((tool_name, error_msg))
+                        yield {"type": "tool_error", "content": error_msg}
+                        continue
+
+                    tool_data = {
+                        "id": call_id,
+                        "name": tool_name,
+                        "arguments": parsed_args,
+                    }
+                    pending_tool_calls.append(tool_data)
+                    yield {
+                        "type": "tool_call",
+                        "content": {
+                            "name": tool_name,
+                            "arguments": parsed_args,
+                        },
+                    }
+
+                self.conversation_history.append({
+                    "role": "assistant",
+                    "content": complete_response,
+                    "tool_calls": assistant_tool_calls,
+                })
+
+                for tool_name, error_msg in parse_errors:
+                    self.conversation_history.append({
+                        "role": "user",
+                        "content": f'<tool_response>\n{error_msg}\n</tool_response>',
+                        "name": tool_name,
+                    })
+
+                # Execute all valid tool calls from this turn in parallel.
+                if not pending_tool_calls:
+                    outcomes = []
+                elif len(pending_tool_calls) == 1:
                     outcomes = [self._execute_single_tool(pending_tool_calls[0])]
                 else:
                     with ThreadPoolExecutor(max_workers=len(pending_tool_calls)) as executor:
@@ -449,16 +521,7 @@ After receiving tool results, use them to provide a comprehensive answer to the 
                         "content": f'<tool_response>\n{result}\n</tool_response>',
                         "name": tool_data["name"]
                     })
-            
-            # Save complete response to history
-            complete_response = ''.join(collected_content)
-            
-            if tool_calls_detected:
-                # Add assistant's message to history
-                self.conversation_history.append({
-                    "role": "assistant",
-                    "content": complete_response
-                })
+
                 # Continue the ReAct loop - let the model decide what to do next
                 continue
             else:
