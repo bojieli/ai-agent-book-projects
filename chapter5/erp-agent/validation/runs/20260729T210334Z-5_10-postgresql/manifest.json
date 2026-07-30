@@ -1,0 +1,584 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-10",
+  "run_id": "20260729T210334Z-5_10-postgresql",
+  "started_at_utc": "2026-07-29T21:03:34.066223+00:00",
+  "completed_at_utc": "2026-07-29T21:06:43.050217+00:00",
+  "provider": "ark",
+  "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+  "model": "doubao-seed-1-6-250615",
+  "postgresql": {
+    "version": "PostgreSQL 14.13 (Homebrew) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit",
+    "database": "postgres",
+    "schema": "exp5_10_20260729t210334z510postgresql",
+    "employees": 40,
+    "salary_rows": 1184
+  },
+  "source": {
+    "manuscript": "book/chapter5.md#实验-5-10",
+    "campaign_sha256": "d921a6d18683dcbcfa84f4ea08ad67a622315ddf54b05cf9a1ea048564eae209",
+    "seed_sha256": "833c1a09349802dfad70c84b7d568d1e06ec3d73bdef588c796b2d704a73730d"
+  },
+  "records": [
+    {
+      "id": 1,
+      "question": "平均每个员工在职多久？",
+      "sql": "SELECT AVG(COALESCE(leave_date, CURRENT_DATE) - hire_date) AS average_tenure_days FROM employees",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT AVG(COALESCE(leave_date, CURRENT_DATE) - hire_date) AS average_tenure_days FROM employees",
+          "query_latency_s": 0.0015,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          886.2
+        ]
+      ],
+      "row_count": 1,
+      "query_latency_s": 0.0015,
+      "expected": [
+        [
+          886.2
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 2,
+      "question": "每个部门有多少在职员工？",
+      "sql": "SELECT department, COUNT(emp_id) AS active_count FROM employees WHERE leave_date IS NULL GROUP BY department",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT department, COUNT(emp_id) AS active_count FROM employees WHERE leave_date IS NULL GROUP BY department",
+          "query_latency_s": 0.0007,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "人力资源部",
+          4
+        ],
+        [
+          "市场部",
+          9
+        ],
+        [
+          "研发部",
+          5
+        ],
+        [
+          "财务部",
+          6
+        ],
+        [
+          "销售部",
+          10
+        ]
+      ],
+      "row_count": 5,
+      "query_latency_s": 0.0007,
+      "expected": [
+        [
+          "研发部",
+          5
+        ],
+        [
+          "销售部",
+          10
+        ],
+        [
+          "人力资源部",
+          4
+        ],
+        [
+          "市场部",
+          9
+        ],
+        [
+          "财务部",
+          6
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 3,
+      "question": "哪个部门员工平均级别最高？",
+      "sql": "SELECT department\nFROM employees\nGROUP BY department\nORDER BY AVG(level) DESC\nLIMIT 1",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT department\nFROM employees\nGROUP BY department\nORDER BY AVG(level) DESC\nLIMIT 1",
+          "query_latency_s": 0.0008,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "销售部"
+        ]
+      ],
+      "row_count": 1,
+      "query_latency_s": 0.0008,
+      "expected": [
+        [
+          "销售部"
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 4,
+      "question": "每个部门今年和去年各新入职多少人？",
+      "sql": "SELECT department,\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS \"this-year count\",\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS \"last-year count\"\nFROM employees\nGROUP BY department\nHAVING COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) > 0\n   OR COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) > 0",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT department,\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS \"this-year count\",\n       COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS \"last-year count\"\nFROM employees\nGROUP BY department\nHAVING COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE)) > 0\n   OR COUNT(*) FILTER (WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) > 0",
+          "query_latency_s": 0.0008,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "财务部",
+          0,
+          1
+        ],
+        [
+          "销售部",
+          2,
+          1
+        ],
+        [
+          "人力资源部",
+          2,
+          0
+        ],
+        [
+          "研发部",
+          1,
+          2
+        ],
+        [
+          "市场部",
+          0,
+          4
+        ]
+      ],
+      "row_count": 5,
+      "query_latency_s": 0.0008,
+      "expected": [
+        [
+          "研发部",
+          1,
+          2
+        ],
+        [
+          "销售部",
+          2,
+          1
+        ],
+        [
+          "人力资源部",
+          2,
+          0
+        ],
+        [
+          "市场部",
+          0,
+          4
+        ],
+        [
+          "财务部",
+          0,
+          1
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 5,
+      "question": "前年3月到去年5月，A部门平均工资是多少？",
+      "sql": "SELECT AVG(s.salary)\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE e.department = '研发部'\n  AND s.pay_date BETWEEN make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 2, 3, 1)\n                      AND make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 1, 5, 31)",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT AVG(s.salary)\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE e.department = '研发部'\n  AND s.pay_date BETWEEN make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 2, 3, 1)\n                      AND make_date(EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - 1, 5, 31)",
+          "query_latency_s": 0.0021,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          27695.833333333332
+        ]
+      ],
+      "row_count": 1,
+      "query_latency_s": 0.0021,
+      "expected": [
+        [
+          27695.83
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 6,
+      "question": "去年A部门和B部门平均工资哪个高？",
+      "sql": "SELECT department, AVG(salary) AS average_salary\nFROM employees\nJOIN salaries ON employees.emp_id = salaries.emp_id\nWHERE department IN ('研发部', '销售部')\n  AND pay_date >= date_trunc('year', CURRENT_DATE) - INTERVAL '1 year'\n  AND pay_date < date_trunc('year', CURRENT_DATE)\nGROUP BY department",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT department, AVG(salary) AS average_salary\nFROM employees\nJOIN salaries ON employees.emp_id = salaries.emp_id\nWHERE department IN ('研发部', '销售部')\n  AND pay_date >= date_trunc('year', CURRENT_DATE) - INTERVAL '1 year'\n  AND pay_date < date_trunc('year', CURRENT_DATE)\nGROUP BY department",
+          "query_latency_s": 0.0011,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "研发部",
+          28569.444444444445
+        ],
+        [
+          "销售部",
+          29481.55339805825
+        ]
+      ],
+      "row_count": 2,
+      "query_latency_s": 0.0011,
+      "expected": [
+        [
+          "研发部",
+          28569.44
+        ],
+        [
+          "销售部",
+          29481.55
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 7,
+      "question": "今年每个级别的员工平均工资是多少？",
+      "sql": "SELECT e.level, AVG(s.salary) AS average_salary\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE EXTRACT(YEAR FROM s.pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)\nGROUP BY e.level",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "SELECT e.level, AVG(s.salary) AS average_salary\nFROM employees e\nJOIN salaries s ON e.emp_id = s.emp_id\nWHERE EXTRACT(YEAR FROM s.pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)\nGROUP BY e.level",
+          "query_latency_s": 0.0014,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          3,
+          23456.428571428572
+        ],
+        [
+          4,
+          26248.823529411766
+        ],
+        [
+          5,
+          34534.75
+        ],
+        [
+          6,
+          28461.363636363636
+        ],
+        [
+          7,
+          29935.0
+        ],
+        [
+          8,
+          32242.69230769231
+        ],
+        [
+          9,
+          34559.90566037736
+        ]
+      ],
+      "row_count": 7,
+      "query_latency_s": 0.0014,
+      "expected": [
+        [
+          3,
+          23456.43
+        ],
+        [
+          8,
+          32242.69
+        ],
+        [
+          6,
+          28461.36
+        ],
+        [
+          4,
+          26248.82
+        ],
+        [
+          9,
+          34559.91
+        ],
+        [
+          5,
+          34534.75
+        ],
+        [
+          7,
+          29935
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 8,
+      "question": "入职一年内、一到两年、两到三年的员工，最近一个月平均工资是多少？",
+      "sql": "WITH latest_salaries AS (\n    SELECT DISTINCT ON (emp_id) emp_id, salary\n    FROM salaries\n    ORDER BY emp_id, pay_date DESC\n)\nSELECT \n    CASE \n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER < 365 THEN '入职一年内'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 365 AND 729 THEN '一到两年'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 730 AND 1094 THEN '两到三年'\n    END AS bucket,\n    AVG(ls.salary) AS average_latest_salary\nFROM employees e\nJOIN latest_salaries ls ON e.emp_id = ls.emp_id\nWHERE e.leave_date IS NULL\n    AND (CURRENT_DATE - e.hire_date)::INTEGER < 1095\nGROUP BY bucket\nORDER BY bucket",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "WITH latest_salaries AS (\n    SELECT DISTINCT ON (emp_id) emp_id, salary\n    FROM salaries\n    ORDER BY emp_id, pay_date DESC\n)\nSELECT \n    CASE \n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER < 365 THEN '入职一年内'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 365 AND 729 THEN '一到两年'\n        WHEN (CURRENT_DATE - e.hire_date)::INTEGER BETWEEN 730 AND 1094 THEN '两到三年'\n    END AS bucket,\n    AVG(ls.salary) AS average_latest_salary\nFROM employees e\nJOIN latest_salaries ls ON e.emp_id = ls.emp_id\nWHERE e.leave_date IS NULL\n    AND (CURRENT_DATE - e.hire_date)::INTEGER < 1095\nGROUP BY bucket\nORDER BY bucket",
+          "query_latency_s": 0.0015,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "一到两年",
+          27683.125
+        ],
+        [
+          "两到三年",
+          31138.75
+        ],
+        [
+          "入职一年内",
+          24053.75
+        ]
+      ],
+      "row_count": 3,
+      "query_latency_s": 0.0015,
+      "expected": [
+        [
+          "入职一年内",
+          24053.75
+        ],
+        [
+          "一到两年",
+          27683.12
+        ],
+        [
+          "两到三年",
+          31138.75
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 9,
+      "question": "去年到今年涨薪幅度最大的10位员工是谁？",
+      "sql": "WITH emp_salary_avg AS (\n    SELECT \n        emp_id,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS current_avg,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS previous_avg\n    FROM salaries\n    GROUP BY emp_id\n    HAVING \n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) IS NOT NULL\n        AND AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) IS NOT NULL\n)\nSELECT \n    e.name,\n    (esa.current_avg - esa.previous_avg) AS raise_amount\nFROM emp_salary_avg esa\nJOIN employees e ON esa.emp_id = e.emp_id\nORDER BY raise_amount DESC\nLIMIT 10",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "WITH emp_salary_avg AS (\n    SELECT \n        emp_id,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) AS current_avg,\n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) AS previous_avg\n    FROM salaries\n    GROUP BY emp_id\n    HAVING \n        AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE)) IS NOT NULL\n        AND AVG(salary) FILTER (WHERE EXTRACT(YEAR FROM pay_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1) IS NOT NULL\n)\nSELECT \n    e.name,\n    (esa.current_avg - esa.previous_avg) AS raise_amount\nFROM emp_salary_avg esa\nJOIN employees e ON esa.emp_id = e.emp_id\nORDER BY raise_amount DESC\nLIMIT 10",
+          "query_latency_s": 0.0018,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          "韩平",
+          12000.0
+        ],
+        [
+          "韩伟",
+          2200.0
+        ],
+        [
+          "吕芳",
+          2155.0
+        ],
+        [
+          "金丽",
+          2110.0
+        ],
+        [
+          "许华",
+          2065.0
+        ],
+        [
+          "陶松",
+          1975.0
+        ],
+        [
+          "周雪",
+          1930.0
+        ],
+        [
+          "吴敏",
+          1885.0
+        ],
+        [
+          "张霞",
+          1840.0
+        ],
+        [
+          "赵平",
+          1795.0
+        ]
+      ],
+      "row_count": 10,
+      "query_latency_s": 0.0018,
+      "expected": [
+        [
+          "韩平",
+          12000
+        ],
+        [
+          "韩伟",
+          2200
+        ],
+        [
+          "吕芳",
+          2155
+        ],
+        [
+          "金丽",
+          2110
+        ],
+        [
+          "许华",
+          2065
+        ],
+        [
+          "陶松",
+          1975
+        ],
+        [
+          "周雪",
+          1930
+        ],
+        [
+          "吴敏",
+          1885
+        ],
+        [
+          "张霞",
+          1840
+        ],
+        [
+          "赵平",
+          1795
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    },
+    {
+      "id": 10,
+      "question": "有没有拖欠工资的情况（某个月还在职却没有发薪）？",
+      "sql": "WITH employee_employed_months AS (\n    SELECT \n        e.emp_id,\n        generate_series(\n            date_trunc('month', e.hire_date),\n            date_trunc('month', COALESCE(e.leave_date, CURRENT_DATE)),\n            interval '1 month'\n        ) AS employed_month\n    FROM employees e\n)\nSELECT \n    em.emp_id,\n    to_char(em.employed_month, 'YYYY-MM') AS month\nFROM employee_employed_months em\nLEFT JOIN salaries s \n    ON em.emp_id = s.emp_id \n    AND date_trunc('month', s.pay_date) = em.employed_month\nWHERE s.emp_id IS NULL",
+      "sql_attempts": [
+        {
+          "attempt": 1,
+          "sql": "WITH employee_employed_months AS (\n    SELECT \n        e.emp_id,\n        generate_series(\n            date_trunc('month', e.hire_date),\n            date_trunc('month', COALESCE(e.leave_date, CURRENT_DATE)),\n            interval '1 month'\n        ) AS employed_month\n    FROM employees e\n)\nSELECT \n    em.emp_id,\n    to_char(em.employed_month, 'YYYY-MM') AS month\nFROM employee_employed_months em\nLEFT JOIN salaries s \n    ON em.emp_id = s.emp_id \n    AND date_trunc('month', s.pay_date) = em.employed_month\nWHERE s.emp_id IS NULL",
+          "query_latency_s": 0.0122,
+          "execution_error": null
+        }
+      ],
+      "rows": [
+        [
+          17,
+          "2026-01"
+        ]
+      ],
+      "row_count": 1,
+      "query_latency_s": 0.0122,
+      "expected": [
+        [
+          17,
+          "2026-01"
+        ]
+      ],
+      "passed": true,
+      "comparison": "independent Python reference matched"
+    }
+  ],
+  "browser": {
+    "browser": "Chromium",
+    "version": "139.0.7258.5",
+    "html": "results.html",
+    "screenshot": "results.png"
+  },
+  "usage": {
+    "calls": 10,
+    "prompt_tokens": 3154,
+    "completion_tokens": 8192,
+    "total_tokens": 11346,
+    "model_latency_s": 187.73,
+    "db_latency_s": 0.0239
+  },
+  "artifacts": {
+    "employees.json": {
+      "path": "employees.json",
+      "sha256": "7e5e237da09edb3db029e367a52569267241673a99e19d2ffddbb85a45cb59bd"
+    },
+    "salaries.json": {
+      "path": "salaries.json",
+      "sha256": "70a9dcd335d5c3e277eac92a4ae351f0f33c56ef9b2a526047cf60c98ed04228"
+    },
+    "schema.sql": {
+      "path": "schema.sql",
+      "sha256": "76a7d9f85d8bf3998729c40fa448e61e49ec24d47acba2f04580e5d2aeb27596"
+    },
+    "receipts.json": {
+      "path": "receipts.json",
+      "sha256": "0eb53eb1ac08d3b4091d02db1053e67078ac83e0f564ba8ae6f76fbc937e7a85"
+    },
+    "queries_and_results.json": {
+      "path": "queries_and_results.json",
+      "sha256": "a2be9fa715a15fe4290ee250f67a1c742ff8a3c3cff215f664a0d77b10ec8b40"
+    },
+    "results.html": {
+      "path": "results.html",
+      "sha256": "6099929004da8eb22e56f2557d3e167cd39ae2aee2b4a70d2fe61576d1980639"
+    },
+    "results.png": {
+      "path": "results.png",
+      "sha256": "9dccf840df361ad4031eb559672639876595f038f907e95987cc5c7ca550462c"
+    }
+  },
+  "acceptance_gates": {
+    "real_postgresql_server": true,
+    "exact_two_table_schema_created": true,
+    "all_10_natural_language_questions_attempted": true,
+    "all_10_sql_artifacts_are_read_only": true,
+    "database_not_llm_received_rows": true,
+    "database_executed_every_artifact": true,
+    "all_10_answers_match_independent_reference": true,
+    "result_tables_rendered_directly_in_real_browser": true,
+    "raw_model_receipts_complete": true,
+    "repairs_use_execution_errors_only": true,
+    "raw_database_rows_and_hashes_retained": true
+  },
+  "official_complete": true
+}

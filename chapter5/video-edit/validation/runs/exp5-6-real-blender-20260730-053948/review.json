@@ -1,0 +1,158 @@
+{
+  "negative_control": {
+    "plan": {
+      "start": 0.0,
+      "end": 3.0,
+      "effects": [
+        "slowmo:1.5",
+        "subtitle:BIG BUNNY"
+      ]
+    },
+    "render": {
+      "attempts": [
+        {
+          "attempt": 1,
+          "script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/negative-control-attempt-1.py",
+          "script_sha256": "906f8c6755e58ee9b0806fee11ec81d3a9e95d08fc89cc04473ef825b88f0e82",
+          "blender_log": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/blender_logs/negative-control-attempt-1.log",
+          "blender_log_sha256": "0ec721a0ab199e8cf5022338084c08f2e33f5b0532a495cee7be12cbb0e29d19",
+          "blender_exit_code": 0,
+          "blender_latency_s": 0.596,
+          "accepted": false
+        },
+        {
+          "attempt": 2,
+          "script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/negative-control-attempt-2.py",
+          "script_sha256": "0acf30c39cb4e33210706970455d70972e4de94cb5804779cde111f8ae27ddf4",
+          "blender_log": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/blender_logs/negative-control-attempt-2.log",
+          "blender_log_sha256": "82896e18f49e90b3913b6523957a7e12258a5ee5a6f45ff140b5362c0ff806f3",
+          "blender_exit_code": 0,
+          "blender_latency_s": 0.669,
+          "accepted": false
+        },
+        {
+          "attempt": 3,
+          "script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/negative-control-attempt-3.py",
+          "script_sha256": "b07364046e4ab5714b4393d2fa727ac17648946762b019578ba21c7ef0ac5953",
+          "blender_log": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/blender_logs/negative-control-attempt-3.log",
+          "blender_log_sha256": "7818a54d4ac856e57fbb8bc4e56d1cf0d1c802d0ecc46cdc013db7b26017531d",
+          "blender_exit_code": 0,
+          "blender_latency_s": 1.833,
+          "accepted": true
+        }
+      ],
+      "accepted_script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/negative-control-attempt-3.py",
+      "output": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/negative_control.mp4"
+    },
+    "review": {
+      "pass": false,
+      "target_present": false,
+      "irrelevant_content_present": true,
+      "subtitle_visible": true,
+      "feedback": "All frames show title cards with 'THE PEACH OPEN MOVIE PROJECT PRESENTS' and 'BIG BUNNY' on a gray background; no large white rabbit, sunny meadow, or the target rabbit walking shot is visible."
+    },
+    "frames": [
+      {
+        "timestamp_s": 0.35,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/negative-review/frame-000.35.png",
+        "sha256": "113732852a3ed623001cbef9e71c10af0b5f60753be8b1f41a14a578d97cee8e",
+        "bytes": 21114
+      },
+      {
+        "timestamp_s": 2.251,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/negative-review/frame-002.25.png",
+        "sha256": "c8965c10e2311c9752fbfccf9b268dff49100ab8e51cda96462ab831e0e6cbce",
+        "bytes": 44712
+      },
+      {
+        "timestamp_s": 4.151,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/negative-review/frame-004.15.png",
+        "sha256": "9cce535f13d961323b049feee88d0fc73e689502f4679d935d141588139470c8",
+        "bytes": 45469
+      }
+    ]
+  },
+  "correction_triggered": true,
+  "corrected_final": {
+    "plan": {
+      "start": 9.0,
+      "end": 12.0,
+      "effects": [
+        "slowmo:1.5",
+        "subtitle:BIG BUNNY"
+      ]
+    },
+    "render": {
+      "attempts": [
+        {
+          "attempt": 1,
+          "script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/corrected-final-attempt-1.py",
+          "script_sha256": "9a6f21980c4159a4ed91c9bfa39d09b84151d134c7ac9aa372ceedb8ae116a68",
+          "blender_log": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/blender_logs/corrected-final-attempt-1.log",
+          "blender_log_sha256": "df99dfe60be973a2626bd05bde0662614b7de2822f97b65952395abc4cde25bd",
+          "blender_exit_code": 0,
+          "blender_latency_s": 1.95,
+          "accepted": true
+        }
+      ],
+      "accepted_script": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/scripts/corrected-final-attempt-1.py",
+      "output": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/final.mp4"
+    },
+    "review": {
+      "pass": false,
+      "target_present": true,
+      "irrelevant_content_present": true,
+      "subtitle_visible": true,
+      "feedback": "Third frame shows 'THREE RODENTS' title card (irrelevant content); first two frames show target large white rabbit in sunny meadow with 'BIG BUNNY' subtitle at bottom."
+    },
+    "frames": [
+      {
+        "timestamp_s": 0.35,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/final-review/frame-000.35.png",
+        "sha256": "ba21afabc4197a93b06d4d78ed6f2dff568601b2b94425856efaf5606e49b9bb",
+        "bytes": 229388
+      },
+      {
+        "timestamp_s": 2.251,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/final-review/frame-002.25.png",
+        "sha256": "389dd8b56fbc2d21af80ebb8f55895602050601915d1b19274e04d2e5678be47",
+        "bytes": 245324
+      },
+      {
+        "timestamp_s": 4.151,
+        "path": "/Users/boj/book/ai-agent-book/chapter5/video-edit/validation/runs/exp5-6-real-blender-20260730-053948/frames/final-review/frame-004.15.png",
+        "sha256": "261fbc9ee0b8784f1d4a1f84b34489c5baf3824b6467c82a7673e4b836f97cf0",
+        "bytes": 36595
+      }
+    ],
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 854,
+          "height": 480,
+          "r_frame_rate": "25/1"
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "duration": "4.501000",
+        "size": "441102"
+      }
+    },
+    "expected_slowed_duration_s": 4.5,
+    "observed_duration_s": 4.501
+  }
+}

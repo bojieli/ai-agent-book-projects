@@ -1,0 +1,68 @@
+{
+  "signature": "6dd019ceb894c5b82fe8b47a597e2e2037c86807ed5448795a4f43528b47ab2c",
+  "parsed": {
+    "narration": "前面我们把整个编码器解码器架构拆完了，现在回到一个根本问题：为什么偏偏选注意力？请大家看屏幕上这张对比表，三列分别是每层复杂度、顺序操作数和最大路径长度。先看循环层这一行：它必须逐词往后传，顺序操作是 O(n)，路径长度也是 O(n)，长距离依赖很难学。再看自注意力这一行：任意两个位置一步直达，路径长度是常数 O(1)，还能完全并行。卷积居中，要堆 log 层才能连上远端。所以当句子长度 n 小于维度 d 时，自注意力既快又省。下一页我们就看实验如何兑现这些理论优势。",
+    "visual_references": [
+      "标题 Why Self-Attention?",
+      "对比表三列：Complexity、Sequential Operations、Max Path Length",
+      "Recurrent 行的 O(n) 顺序操作与路径长度",
+      "Self-Attention 行的 O(1) 常数路径长度",
+      "Convolutional 行的 O(log_k n)"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 8/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n## Why Self-Attention?\n\n| Layer Type | Complexity | Sequential Operations | Max Path Length |\n|------------|------------|-----------------------|-----------------|\n| Self-Attention | $O(n^2 \\cdot d)$ | $O(1)$ | $O(1)$ |\n| Recurrent | $O(n \\cdot d^2)$ | $O(n)$ | $O(n)$ |\n| Convolutional | $O(k \\cdot n \\cdot d^2)$ | $O(1)$ | $O(\\log_k n)$ |\n\n- Constant path length between any positions\n- More parallelizable than RNNs\n- Better computational efficiency for typical sentence lengths\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6a7f47e323e45631c9db51",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"前面我们把整个编码器解码器架构拆完了，现在回到一个根本问题：为什么偏偏选注意力？请大家看屏幕上这张对比表，三列分别是每层复杂度、顺序操作数和最大路径长度。先看循环层这一行：它必须逐词往后传，顺序操作是 O(n)，路径长度也是 O(n)，长距离依赖很难学。再看自注意力这一行：任意两个位置一步直达，路径长度是常数 O(1)，还能完全并行。卷积居中，要堆 log 层才能连上远端。所以当句子长度 n 小于维度 d 时，自注意力既快又省。下一页我们就看实验如何兑现这些理论优势。\",\"visual_references\":[\"标题 Why Self-Attention?\",\"对比表三列：Complexity、Sequential Operations、Max Path Length\",\"Recurrent 行的 O(n) 顺序操作与路径长度\",\"Self-Attention 行的 O(1) 常数路径长度\",\"Convolutional 行的 O(log_k n)\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "The user wants a narration for slide 8/12 of \"Attention Is All You Need\" - the \"Why Self-Attention?\" comparison table. Need 180-240 Chinese characters, spoken style, guiding narrative explaining \"why\" and connection to previous/next pages, pointing to visible elements (title, table, formulas, values), no fabricated numbers, matching page order opening/closing.\n\nPrevious pages likely covered the model architecture (encoder-decoder, attention mechanism, multi-head). Next pages might cover experiments/results. This slide justifies why self-attention is chosen — Table 1 in the paper comparing layer types on complexity, sequential operations, max path length.\n\nI should reference the table on screen: three columns — Complexity per layer, Sequential Operations, Maximum Path Length. Compare self-attention O(n²·d), recurrent O(n·d²) with O(n) sequential ops, convolutional O(k·n·d²) with O(log_k n) path length. Key points: constant path length O(1) between any two positions — long-range dependencies learned in one step; parallelizable unlike RNN; when sequence length n smaller than d (typical for sentences), self-attention is cheaper.\n\nOpening should connect: \"看完了模型结构，为什么作者要用自注意力替换掉循环和卷积呢？\" Closing: leads to next page — experiments/results verify this choice.\n\nCount characters: aim 180-240 Chinese characters. Let me draft:\n\n\"前面我们把整个架构拆开了，现在回到一个根本问题：为什么偏偏选注意力？请大家看屏幕上这张对比表，三列分别是每层复杂度、顺序操作数和最大路径长度。先看循环层这一行：它必须一个词一个词往后传，顺序操作是 O(n)，路径长度也是 O(n)，长距离依赖很难学。而自注意力这一行，任意两个位置一步直达，路径长度是常数 O(1)，还能完全并行。卷积居中，需要堆 log 层才能连上远端。所以当句子长度 n 小于维度 d 时，自注意力既快又省。下一页我们就看实验怎么验证这个选择。\"\n\nCount roughly: Let me count characters.\n\n\"前面我们把整个架构拆开了，现在回到一个根本问题：为什么偏偏选注意力？\" ~ 35 chars\n\"请大家看屏幕上这张对比表，三列分别是每层复杂度、顺序操作数和最大路径长度。\" ~ 36\n\"先看循环层这一行：它必须一个词一个词往后传，顺序操作是 O(n)，路径长度也是 O(n)，长距离依赖很难学。\" ~ 45 (letters count as chars roughly)\n\"而自注意力这一行，任意两个位置一步直达，路径长度是常数 O(1)，还能完全并行。\" ~ 35\n\"卷积居中，需要堆 log 层才能连上远端。\" ~ 18\n\"所以当句子长度 n 小于维度 d 时，自注意力既快又省。\" ~ 24\n\"下一页我们就看实验怎么验证这个选择。\" ~ 17\n\nTotal ~210. Good, within 180-240.\n\nVisual references: the comparison table, the sequential operations column, self-attention row O(1), recurrent row O(n), three column headers.\n\nMust return only JSON."
+          }
+        }
+      ],
+      "created": 1785364296,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 894,
+        "prompt_tokens": 431,
+        "total_tokens": 1325,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 666,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 31507.869
+  }
+}

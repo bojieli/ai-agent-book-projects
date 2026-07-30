@@ -1,0 +1,66 @@
+{
+  "signature": "889389c29f1a515a166cd4957ebf29c9a103c1d740d3d66dc5279d045cd6a7c1",
+  "parsed": {
+    "narration": "大家好，我们从第一页开始。屏幕上最显眼的是这篇论文的标题——Attention Is All You Need，下面副标题写着“一种用于序列转导的革命性架构”，作者是 Ashish Vaswani 等人，发表于 2017 年的 NIPS 会议。请大家先记住这个标题，因为它本身就是论文的核心主张：只用注意力机制，就足以完成序列到序列的建模，不再需要循环或卷积。为什么这么说、又是怎么做到的？这正是我们接下来十一页要逐步拆解的：先看它要解决什么问题，再看整体架构与关键公式，最后看实验结果是否撑得起这个大胆宣言。现在我们从背景出发。",
+    "visual_references": [
+      "主标题 Attention Is All You Need",
+      "副标题 A Revolutionary Architecture for Sequence Transduction",
+      "作者 Ashish Vaswani et al. 与 NIPS 2017 字样"
+    ]
+  },
+  "receipt": {
+    "provider": "Moonshot",
+    "request": {
+      "model": "kimi-k3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你是一位严谨而自然的中文技术讲师，正在讲解论文 Attention Is All You Need。\n这是第 1/12 页。下面给出该页真实 Slidev 源码：\n<slide>\n# Attention Is All You Need\n## A Revolutionary Architecture for Sequence Transduction\n\nAshish Vaswani et al.  \nNIPS 2017\n</slide>\n请写一段 180–240 个中文字符左右的口语讲解。必须满足：\n1. 用引导性叙事解释“为什么”和“它与前后页的关系”，不能逐条照读幻灯片；\n2. 明确指向当前屏幕上的可见元素（标题、公式、表格、数值或图片）；有图片/表格/公式时必须说出观众该看哪里；\n3. 不虚构源码中没有的数值或结论；开头/结尾与页序匹配；\n4. 只返回 JSON：{\"narration\":\"...\",\"visual_references\":[\"...\"]}。\n"
+        }
+      ],
+      "temperature": 1,
+      "max_tokens": 1200,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "response": {
+      "id": "chatcmpl-6a6a7ebf33277b847199b22e",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"narration\":\"大家好，我们从第一页开始。屏幕上最显眼的是这篇论文的标题——Attention Is All You Need，下面副标题写着“一种用于序列转导的革命性架构”，作者是 Ashish Vaswani 等人，发表于 2017 年的 NIPS 会议。请大家先记住这个标题，因为它本身就是论文的核心主张：只用注意力机制，就足以完成序列到序列的建模，不再需要循环或卷积。为什么这么说、又是怎么做到的？这正是我们接下来十一页要逐步拆解的：先看它要解决什么问题，再看整体架构与关键公式，最后看实验结果是否撑得起这个大胆宣言。现在我们从背景出发。\",\"visual_references\":[\"主标题 Attention Is All You Need\",\"副标题 A Revolutionary Architecture for Sequence Transduction\",\"作者 Ashish Vaswani et al. 与 NIPS 2017 字样\"]}",
+            "refusal": null,
+            "role": "assistant",
+            "annotations": null,
+            "audio": null,
+            "function_call": null,
+            "tool_calls": null,
+            "reasoning_content": "The user wants a Chinese narration for slide 1/12 of \"Attention Is All You Need\" presentation. This is the title slide. Need 180-240 Chinese characters, oral style, guiding narrative explaining \"why\" and relation to subsequent pages, pointing to visible elements (title, subtitle, authors, NIPS 2017). No fabricated content. Return JSON only.\n\nLet me draft:\n\n\"大家好，我们从这一页开始。屏幕上显示的是今天的主角——论文标题 Attention Is All You Need，副标题写着‘一种用于序列转导的革命性架构’，作者是以 Ashish Vaswani 为首的团队，发表于 2017 年的 NIPS 会议。为什么这篇论文值得我们逐页细读？因为在它之前，序列建模几乎离不开循环和卷积结构，而这个标题本身就在宣告：只靠注意力机制，就够了。接下来的十几页里，我们会先看它要解决什么问题，再拆解模型的整体结构与核心公式，最后看实验结果如何支撑这个大胆的主张。让我们从背景开始。\"\n\nCount characters roughly. Let me count: need 180-240 Chinese characters. The draft seems around 210-230. Good.\n\nVisual references: [\"标题 Attention Is All You Need\", \"副标题 A Revolutionary Architecture for Sequence Transduction\", \"作者 Ashish Vaswani et al. 与 NIPS 2017 字样\"]\n\nReturn JSON only."
+          }
+        }
+      ],
+      "created": 1785364159,
+      "model": "kimi-k3",
+      "object": "chat.completion",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 475,
+        "prompt_tokens": 326,
+        "total_tokens": 801,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 282,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    "elapsed_ms": 16795.873
+  }
+}

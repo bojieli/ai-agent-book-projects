@@ -1,0 +1,149 @@
+{
+  "schema_version": "2.0",
+  "experiment": "5-1",
+  "generated_at_utc": "2026-07-29T18:26:52.037316+00:00",
+  "provider": "ark",
+  "model": "doubao-seed-1-6-flash-250615",
+  "mode": "both",
+  "num_problems": 1,
+  "dataset_manifest": {
+    "schema_version": "1.0",
+    "experiment": "5-1",
+    "dataset": "HuggingFaceH4/aime_2024",
+    "revision": "2fe88a2f1091d5048c0f36abc874fb997b3dd99a",
+    "source_path": "data/train-00000-of-00001.parquet",
+    "source_sha256": "26139847601a5037c237d5928b195e7260ca8074cf4f264b794af42847f79ccf",
+    "split": "train",
+    "problems": 30,
+    "selection": "all published AIME I and AIME II 2024 problems",
+    "answers": "published integer answer field; solutions are never sent to the model"
+  },
+  "dataset_manifest_sha256": "ef698a4071fa8e3bbfefebe65835909a96087f4d056e24f36e4454d163dbc37b",
+  "cot_correct": 1,
+  "code_correct": 1,
+  "rows": [
+    {
+      "id": "aime2024-60",
+      "topic": "official AIME 2024",
+      "answer": 204,
+      "question": "Every morning Aya goes for a $9$-kilometer-long walk and stops at a coffee shop afterwards. When she walks at a constant speed of $s$ kilometers per hour, the walk takes her 4 hours, including $t$ minutes spent in the coffee shop. When she walks $s+2$ kilometers per hour, the walk takes her 2 hours and 24 minutes, including $t$ minutes spent in the coffee shop. Suppose Aya walks at $s+\\frac{1}{2}$ kilometers per hour. Find the number of minutes the walk takes her, including the $t$ minutes spent in the coffee shop.",
+      "source": {
+        "dataset": "HuggingFaceH4/aime_2024",
+        "revision": "2fe88a2f1091d5048c0f36abc874fb997b3dd99a",
+        "source_id": 60,
+        "year": "2024",
+        "problem_url": "https://artofproblemsolving.com/wiki/index.php/2024_AIME_I_Problems/Problem_1"
+      },
+      "cot_pred": 204,
+      "cot_ok": true,
+      "cot_text": "### Step 1: Define variables and set up equations\nLet \\( s \\) be the walking speed in km/h, \\( t \\) be the time spent in the coffee shop in minutes. \n\nFor the first scenario:  \n- Distance = 9 km, speed = \\( s \\) km/h, total time = 4 hours.  \n- Walking time = \\( 4 - \\frac{t}{60} \\) hours.  \n- Equation: \\( 9 = s \\left(4 - \\frac{t}{60}\\right) \\).  \n\nFor the second scenario:  \n- Distance = 9 km, speed = \\( s + 2 \\) km/h, total time = 2 hours 24 minutes = 2.4 hours.  \n- Walking time = \\( 2.4 - \\frac{t}{60} \\) hours.  \n- Equation: \\( 9 = (s + 2) \\left(2.4 - \\frac{t}{60}\\right) \\).  \n\n\n### Step 2: Solve for \\( s \\) and \\( t \\)\nSet the two equations equal to each other:  \n\\[\ns \\left(4 - \\frac{t}{60}\\right) = (s + 2) \\left(2.4 - \\frac{t}{60}\\right)\n\\]  \n\nLet \\( u = \\frac{t}{60} \\). Substitute \\( u \\) into the equation:  \n\\[\ns(4 - u) = (s + 2)(2.4 - u)\n\\]  \n\nExpand and simplify:  \n\\[\n4s - su = 2.4s - su + 4.8 - 2u\n\\]  \nCancel \\( -su \\) from both sides:  \n\\[\n4s = 2.4s + 4.8 - 2u\n\\]  \n\\[\n1.6s = 4.8 - 2u \\implies s = 3 - \\frac{5}{4}u\n\\]  \n\nSubstitute \\( s = 3 - \\frac{5}{4}u \\) into the first equation \\( 9 = s(4 - u) \\):  \n\\[\n9 = \\left(3 - \\frac{5}{4}u\\right)(4 - u)\n\\]  \n\nExpand and simplify:  \n\\[\n9 = 12 - 8u + \\frac{5}{4}u^2\n\\]  \n\\[\n\\frac{5}{4}u^2 - 8u + 3 = 0\n\\]  \n\nMultiply by 4 to clear the fraction:  \n\\[\n5u^2 - 32u + 12 = 0\n\\]  \n\nSolve the quadratic equation using the quadratic formula \\( u = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\):  \n\\[\nu = \\frac{32 \\pm \\sqrt{32^2 - 4 \\cdot 5 \\cdot 12}}{2 \\cdot 5} = \\frac{32 \\pm 28}{10}\n\\]  \n\nThis gives two solutions: \\( u = 6 \\) or \\( u = 0.4 \\). Since \\( u = \\frac{t}{60} \\), \\( u = 6 \\) would imply \\( t = 360 \\) minutes (invalid, as total time in second scenario is 144 minutes), so \\( u = 0.4 \\). Thus, \\( t = 0.4 \\times 60 = 24 \\) minutes.  \n\nSubstitute \\( u = 0.4 \\) back to find \\( s \\):  \n\\[\ns = 3 - \\frac{5}{4} \\times 0.4 = 2.5 \\text{ km/h}\n\\]  \n\n\n### Step 3: Find the total time for the third scenario\nFor the third scenario:  \n- Speed = \\( s + \\frac{1}{2} = 2.5 + 0.5 = 3 \\) km/h.  \n- Walking time = \\( \\frac{9}{3} = 3 \\) hours = 180 minutes.  \n- Total time = walking time + \\( t \\) = \\( 180 + 24 = 204 \\) minutes.  \n\n\nFINAL ANSWER: 204",
+      "cot_duration_s": 16.418,
+      "cot_evidence": {
+        "provider_receipts": [
+          {
+            "turn": 1,
+            "response_id": "0217853495724104b9bc39337c792d38f4e57e23b62aa4af3059b",
+            "response_model": "doubao-seed-1-6-flash-250615",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 247,
+              "completion_tokens": 3743,
+              "total_tokens": 3990,
+              "cached_prompt_tokens": 0
+            },
+            "tool_calls": 0
+          }
+        ],
+        "tool_traces": []
+      },
+      "code_pred": 204,
+      "code_ok": true,
+      "code_text": "FINAL ANSWER: 204",
+      "code_duration_s": 23.503,
+      "generated_code": [
+        "",
+        "import math\n\n# Solve for s\na = 4\nb = 8\nc = -45\ndiscriminant = b**2 - 4*a*c\ns = (-b + math.sqrt(discriminant)) / (2*a)\n\n# Find t\nt = 60 * (4 - 9 / s)\n\n# New speed\nnew_speed = s + 0.5\nwalk_time_hours = 9 / new_speed\nwalk_time_minutes = walk_time_hours * 60\n\n# Total time including t\ntotal_time = walk_time_minutes + t\n\nprint(int(total_time))"
+      ],
+      "code_evidence": {
+        "provider_receipts": [
+          {
+            "turn": 1,
+            "response_id": "0217853495887134b9bc39337c792d38f4e57e23b62aa4a54a3e8",
+            "response_model": "doubao-seed-1-6-flash-250615",
+            "finish_reason": "length",
+            "usage": {
+              "prompt_tokens": 651,
+              "completion_tokens": 4096,
+              "total_tokens": 4747,
+              "cached_prompt_tokens": 0
+            },
+            "tool_calls": 1
+          },
+          {
+            "turn": 2,
+            "response_id": "0217853496068054b9bc39337c792d38f4e57e23b62aa4aaa7543",
+            "response_model": "doubao-seed-1-6-flash-250615",
+            "finish_reason": "tool_calls",
+            "usage": {
+              "prompt_tokens": 4968,
+              "completion_tokens": 931,
+              "total_tokens": 5899,
+              "cached_prompt_tokens": 0
+            },
+            "tool_calls": 1
+          },
+          {
+            "turn": 3,
+            "response_id": "0217853496115044b9bc39337c792d38f4e57e23b62aa4af15af7",
+            "response_model": "doubao-seed-1-6-flash-250615",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 5162,
+              "completion_tokens": 60,
+              "total_tokens": 5222,
+              "cached_prompt_tokens": 0
+            },
+            "tool_calls": 0
+          }
+        ],
+        "tool_traces": [
+          {
+            "tool_call_id": "call_564bbhh7s66zmmfvumduddbg",
+            "code": "",
+            "result": "[错误] 未提供 code"
+          },
+          {
+            "tool_call_id": "call_0qcu7irnywolpplyhcj9kvb7",
+            "code": "import math\n\n# Solve for s\na = 4\nb = 8\nc = -45\ndiscriminant = b**2 - 4*a*c\ns = (-b + math.sqrt(discriminant)) / (2*a)\n\n# Find t\nt = 60 * (4 - 9 / s)\n\n# New speed\nnew_speed = s + 0.5\nwalk_time_hours = 9 / new_speed\nwalk_time_minutes = walk_time_hours * 60\n\n# Total time including t\ntotal_time = walk_time_minutes + t\n\nprint(int(total_time))",
+            "result": "204\n"
+          }
+        ]
+      },
+      "tool_calls": 2,
+      "used_math_library": false
+    }
+  ],
+  "paired_analysis": {
+    "test": "two-sided exact McNemar/binomial test on discordant pairs",
+    "n": 1,
+    "contingency": {
+      "cot_only": 0,
+      "code_only": 0,
+      "discordant": 0
+    },
+    "cot_accuracy": 1.0,
+    "code_accuracy": 1.0,
+    "accuracy_delta": 0.0,
+    "code_accuracy_wilson_95": [
+      0.20654931437723745,
+      1.0
+    ],
+    "p_value": 1.0,
+    "math_library_use_rate": 0.0,
+    "acceptance": {
+      "code_significantly_higher_than_cot": false,
+      "at_least_one_generated_solution_used_sympy_numpy_or_scipy": false,
+      "every_code_arm_called_sandbox": true
+    }
+  }
+}

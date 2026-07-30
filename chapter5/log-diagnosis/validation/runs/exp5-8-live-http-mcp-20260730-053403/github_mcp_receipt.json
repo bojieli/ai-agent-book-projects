@@ -1,0 +1,18 @@
+{
+  "server": "official github/github-mcp-server",
+  "transport": "stdio",
+  "tool": "issue_write(method=create)",
+  "request": {
+    "method": "create",
+    "owner": "bojieli",
+    "repo": "ai-agent-book",
+    "title": "[Experiment 5-8][auto-diagnosis] Live HTTP regression findings (exp5-8-live-http-mcp-20260730-053403)",
+    "body": "This issue was created automatically by the Chapter 5 Experiment 5-8 acceptance campaign.\n\n## Evidence-backed diagnosis\n\n- **P0 Refund flow missing verify_refund_eligibility check** (R1): Refund flow did not call `verify_refund_eligibility` before `process_refund`, violating the policy requirement that every refund must include this check. Trajectories: HTTP-RF-001; turns: [2].\n- **P1 check_stock origin timeout not handled via degraded cache route** (R2): check_stock call timed out (latency 350.414 ms exceeds 250 ms client deadline) but orchestrator failed to use the degraded cache route, resulting in flow failure. Trajectories: HTTP-INV-001; turns: [2].\n\n## Generated regression tests\n\n- `TC-R1-HTTP-RF-001-T2` cites `HTTP-RF-001` turn 2: `{\"type\": \"step_present\", \"params\": {\"tool\": \"verify_refund_eligibility\"}}`\n- `TC-R2-LATENCY-HTTP-INV-001-T2` cites `HTTP-INV-001` turn 2: `{\"type\": \"latency_under\", \"params\": {\"tool\": \"check_stock\", \"threshold_ms\": 250}}`\n- `TC-R2-STATUS-HTTP-INV-001-T2` cites `HTTP-INV-001` turn 2: `{\"type\": \"final_status_is\", \"params\": {\"value\": \"success\"}}`\n\nThe campaign replayed each test against the live buggy and fixed HTTP orchestrators: all tests failed on buggy behavior and passed on fixed behavior."
+  },
+  "response": {
+    "is_error": false,
+    "content": "{\"id\":\"5013792084\",\"url\":\"https://github.com/bojieli/ai-agent-book/issues/502\"}"
+  },
+  "issue_url": "https://github.com/bojieli/ai-agent-book/issues/502",
+  "credential_free": true
+}

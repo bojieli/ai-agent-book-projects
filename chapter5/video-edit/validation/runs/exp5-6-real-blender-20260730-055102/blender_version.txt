@@ -1,0 +1,13 @@
+Blender 4.3.2
+	build date: 2024-12-17
+	build time: 02:14:25
+	build commit date: 2024-12-16
+	build commit time: 21:10
+	build hash: 32f5fdce0a0a
+	build branch: blender-v4.3-release
+	build platform: Darwin
+	build type: Release
+	build c flags:  -Wall -Werror=implicit-function-declaration -Werror=return-type -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wstrict-prototypes -Wmissing-prototypes -Wunused-parameter -Wundef -Wundef-prefix -Werror=unguarded-availability-new  -mmacosx-version-min=11.2 -Xclang -fopenmp -I'/Users/blender/git/blender-v430/blender.git/lib/macos_arm64/openmp/include' -std=gnu11  -pipe -funsigned-char -fno-strict-aliasing -ffp-contract=off  
+	build c++ flags:  -Wall -Wc++20-designator -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wno-overloaded-virtual -Wno-sign-compare -Wno-invalid-offsetof -Wno-suggest-override -Wundef -Wundef-prefix -Wunused-parameter -Wmismatched-tags -Werror=unguarded-availability-new  -mmacosx-version-min=11.2 -ftemplate-depth=1024 -Xclang -fopenmp -I'/Users/blender/git/blender-v430/blender.git/lib/macos_arm64/openmp/include'  -pipe -funsigned-char -fno-strict-aliasing -ffp-contract=off  
+	build link flags: -fexceptions -framework CoreServices -framework Foundation -framework IOKit -framework AppKit -framework Cocoa -framework Carbon -framework AudioUnit -framework AudioToolbox -framework CoreAudio -framework Metal -framework QuartzCore -framework Accelerate -liconv -Wl,-unexported_symbols_list,'/Users/blender/git/blender-v430/blender.git/source/creator/symbols_apple.map' -Xlinker -no_warn_duplicate_libraries
+	build system: CMake

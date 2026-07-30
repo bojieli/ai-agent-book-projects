@@ -1,0 +1,64 @@
+[
+  {
+    "purpose": "generate-form-attempt-1",
+    "called_at_utc": "2026-07-29T21:25:46.329389+00:00",
+    "latency_s": 3.64,
+    "request": {
+      "model": "doubao-seed-1-6-flash-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是一个\"意图澄清\"助手。用户会给出一个信息不完整的请求，\n你的任务不是直接追问，而是**生成一个自包含的 HTML 表单**，让用户一次性补全所有\n缺失信息。\n\n严格要求（订机票场景）：\n1. 表单必须包含以下字段，字段的 name 属性必须使用给定的英文标识：\n   - 出发城市：文本输入框，name=\"departure_city\"\n   - 出发日期：日期选择器 <input type=\"date\">，name=\"departure_date\"\n   - 旅行类型：单选按钮 <input type=\"radio\" name=\"trip_type\">，两个选项\n     value=\"one_way\"（单程）和 value=\"round_trip\"（往返）\n   - 返程日期：日期选择器，name=\"return_date\"，放在 id=\"return_date_field\" 的\n     容器里\n2. **级联逻辑（关键）**：返程日期字段默认隐藏，只有当旅行类型选择\"往返\"\n   (round_trip) 时才通过 JavaScript 显示出来；选回\"单程\"时再次隐藏。\n3. 提交时用 JavaScript 阻止默认提交，把所有字段汇总为一个 JSON 对象，\n   key 使用上面的英文 name，并显示在 id=\"result\" 的元素里\n   （例如 <pre id=\"result\"></pre>）。\n4. 输出必须是**完整、自包含**的 HTML（含 <style> 和 <script>，内联，不引用外部\n   资源），可直接保存为 .html 文件在浏览器打开。\n\n只输出 HTML 代码本身，不要任何解释文字，不要用 markdown 代码块包裹。"
+        },
+        {
+          "role": "user",
+          "content": "用户请求：我想订一张去北京的机票\n请为其中缺失的信息生成澄清表单。"
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "02178536034303104b7fd0428efab78207837433ca5fe67baa6ba",
+      "model": "doubao-seed-1-6-flash-250615",
+      "finish_reason": "stop",
+      "content": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>机票预订澄清表单</title>\n    <style>\n        #return_date_field { display: none; }\n    </style>\n</head>\n<body>\n    <form id=\"bookingForm\">\n        <label for=\"departure_city\">出发城市：</label>\n        <input type=\"text\" id=\"departure_city\" name=\"departure_city\" required><br>\n\n        <label for=\"departure_date\">出发日期：</label>\n        <input type=\"date\" id=\"departure_date\" name=\"departure_date\" required><br>\n\n        <label>旅行类型：</label>\n        <input type=\"radio\" id=\"one_way\" name=\"trip_type\" value=\"one_way\" checked>单程\n        <input type=\"radio\" id=\"round_trip\" name=\"trip_type\" value=\"round_trip\">往返<br>\n\n        <div id=\"return_date_field\">\n            <label for=\"return_date\">返程日期：</label>\n            <input type=\"date\" id=\"return_date\" name=\"return_date\">\n        </div><br>\n\n        <input type=\"submit\" value=\"提交\">\n    </form>\n    <pre id=\"result\"></pre>\n\n    <script>\n        document.getElementById('round_trip').addEventListener('change', function() {\n            document.getElementById('return_date_field').style.display = this.checked ? 'block' : 'none';\n        });\n        document.getElementById('one_way').addEventListener('change', function() {\n            document.getElementById('return_date_field').style.display = this.checked ? 'none' : 'block';\n        });\n\n        document.getElementById('bookingForm').addEventListener('submit', function(e) {\n            e.preventDefault();\n            const formData = {\n                departure_city: document.getElementById('departure_city').value,\n                departure_date: document.getElementById('departure_date').value,\n                trip_type: document.querySelector('input[name=\"trip_type\"]:checked').value,\n                return_date: document.getElementById('return_date').value\n            };\n            document.getElementById('result').textContent = JSON.stringify(formData, null, 2);\n        });\n    </script>\n</body>\n</html>"
+    },
+    "usage": {
+      "prompt_tokens": 449,
+      "completion_tokens": 654,
+      "total_tokens": 1103,
+      "cached_prompt_tokens": 0
+    }
+  },
+  {
+    "purpose": "continue-after-browser-submit",
+    "called_at_utc": "2026-07-29T21:25:47.866760+00:00",
+    "latency_s": 0.876,
+    "request": {
+      "model": "doubao-seed-1-6-flash-250615",
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是订机票助手。用户已经通过澄清表单一次性提交了 JSON 格式\n的补全信息。请解析这些信息并给出一段简洁的中文\"订票摘要\"，确认航段、日期、行程类型。\n如果是单程(one_way)则不要提返程；如果是往返(round_trip)则必须包含返程日期。\n最后追加一句下一步操作提示（如\"正在为您检索航班...\"）。只输出摘要文本。"
+        },
+        {
+          "role": "user",
+          "content": "原始请求：我想订一张去北京的机票\n浏览器表单实际提交的 JSON 数据：\n{\n  \"departure_city\": \"上海\",\n  \"departure_date\": \"2026-08-11\",\n  \"trip_type\": \"round_trip\",\n  \"return_date\": \"2026-08-18\"\n}"
+        }
+      ],
+      "temperature": 0
+    },
+    "response": {
+      "id": "02178536034718104b7fd0428efab78207837433ca5fe67358839",
+      "model": "doubao-seed-1-6-flash-250615",
+      "finish_reason": "stop",
+      "content": "订上海至北京往返机票，去程日期2026-08-11，返程日期2026-08-18。正在为您检索航班..."
+    },
+    "usage": {
+      "prompt_tokens": 241,
+      "completion_tokens": 139,
+      "total_tokens": 380,
+      "cached_prompt_tokens": 0
+    }
+  }
+]

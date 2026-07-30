@@ -1,0 +1,8 @@
+{"listening": 56305}
+{"client": "127.0.0.1", "message": "\"GET /health HTTP/1.1\" 200 -", "time": 1785360656.4696589}
+{"client": "127.0.0.1", "message": "\"GET /orders/ORD-58-A HTTP/1.1\" 200 -", "time": 1785360656.470422}
+{"client": "127.0.0.1", "message": "\"POST /refund/process HTTP/1.1\" 200 -", "time": 1785360656.470944}
+{"client": "127.0.0.1", "message": "\"POST /notifications HTTP/1.1\" 200 -", "time": 1785360656.471394}
+{"client": "127.0.0.1", "message": "\"GET /orders/ORD-58-B HTTP/1.1\" 200 -", "time": 1785360656.4718232}
+{"client": "127.0.0.1", "message": "\"POST /notifications HTTP/1.1\" 200 -", "time": 1785360656.8262029}
+{"client": "127.0.0.1", "message": "\"GET /inventory/SKU-42 HTTP/1.1\" 200 -", "time": 1785360657.274664}

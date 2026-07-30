@@ -2,3 +2,4 @@ openai>=1.30.0
 python-dotenv>=1.0
 Pillow>=10.0
 matplotlib>=3.7
+PyMuPDF>=1.25.0
