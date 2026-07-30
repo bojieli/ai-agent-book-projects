@@ -98,7 +98,7 @@ def _apply_edit_ffmpeg(source: str, plan: dict, out_path: str) -> str:
                 continue
             vf_chain.append(f"setpts={factor}*PTS")
             # atempo 只支持 0.5~2.0，用 1/factor 放慢音频。
-            af_chain.append(f"atempo={max(0.5, min(1.0, 1.0 / factor))}")
+            af_chain.append(f"atempo={max(0.5, min(2.0, 1.0 / factor))}")
 
     cmd = ["ffmpeg", "-y", "-ss", f"{start:.3f}", "-to", f"{end:.3f}", "-i", source]
     if vf_chain:
@@ -107,7 +107,9 @@ def _apply_edit_ffmpeg(source: str, plan: dict, out_path: str) -> str:
         cmd += ["-af", ",".join(af_chain)]
     cmd += ["-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", out_path]
 
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_dir = os.path.dirname(out_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     run(cmd, desc="ffmpeg 剪辑")
     return out_path
 
