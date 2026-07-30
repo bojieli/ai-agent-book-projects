@@ -64,3 +64,11 @@ def test_completion_requires_exact_30_task_two_arm_evidence():
     result = campaign_completion(rows, "both", manifest)
     assert result["status"] == "incomplete"
     assert result["checks"]["every_code_trajectory_called_real_sandbox"] is False
+
+
+def test_paired_statistics_empty_rows():
+    result = paired_statistics([])
+    assert result["n"] == 0
+    assert result["cot_accuracy"] == 0.0
+    assert result["code_accuracy"] == 0.0
+    assert result["math_library_use_rate"] == 0.0

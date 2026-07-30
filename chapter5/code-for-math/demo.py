@@ -474,9 +474,9 @@ def paired_statistics(rows):
     n = len(rows)
     cot_ok = sum(r["cot_ok"] for r in rows)
     code_ok = sum(r["code_ok"] for r in rows)
-    cot_accuracy = cot_ok / n
-    code_accuracy = code_ok / n
-    library_rate = sum(r["used_math_library"] for r in rows) / n
+    cot_accuracy = cot_ok / n if n > 0 else 0.0
+    code_accuracy = code_ok / n if n > 0 else 0.0
+    library_rate = sum(r["used_math_library"] for r in rows) / n if n > 0 else 0.0
     return {
         "test": "two-sided exact McNemar/binomial test on discordant pairs",
         "n": n,
