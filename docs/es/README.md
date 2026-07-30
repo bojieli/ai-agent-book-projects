@@ -53,8 +53,8 @@ El libro se desarrolla en torno a la fórmula central **Agente = LLM + Contexto 
 | Cap | Tema | Resumen en una línea | Texto | Código |
 | :--: | --- | --- | :--: | :--: |
 | 1 | 🚀 **Fundamentos de Agentes** | **Agente = LLM + Contexto + Herramientas**; La ingeniería del Harness es la verdadera ventaja competitiva | [Leer](../../book-es/chapter1.es.md) | [4](../../chapter1/README.es.md) |
-| 2 | 🎯 **Ingeniería del Contexto** | El contexto limita la capacidad del Agente: KV Cache, ingeniería de prompts, Agent Skills, compresión de contexto | [Leer](../../book-es/chapter2.es.md) | [9](../../chapter2/README.es.md) |
-| 3 | 📚 **Memoria de Usuario y Bases de Conocimiento** | Memoria de usuario entre sesiones + conocimiento externo: memoria de usuario, RAG, índices estructurados, grafos de conocimiento | [Leer](../../book-es/chapter3.es.md) | [13](../../chapter3/README.es.md) |
+| 2 | 🎯 **Ingeniería del Contexto** | El contexto limita la capacidad del Agente: KV Cache, ingeniería de prompts, Agent Skills, compresión de contexto | [Leer](../../book-es/chapter2.es.md) | [8](../../chapter2/README.es.md) |
+| 3 | 📚 **Memoria de Usuario y Bases de Conocimiento** | Memoria de usuario entre sesiones + conocimiento externo: memoria de usuario, RAG, índices estructurados, grafos de conocimiento | [Leer](../../book-es/chapter3.es.md) | [14](../../chapter3/README.es.md) |
 | 4 | 🛠️ **Herramientas** | Las herramientas son las manos del Agente: protocolo MCP, herramientas de percepción/ejecución/colaboración, Agentes asíncronos orientados a eventos, descubrimiento activo de herramientas | [Leer](../../book-es/chapter4.es.md) | [7](../../chapter4/README.es.md) |
 | 5 | 💻 **Coding Agent y Generación de Código** | El código es una "herramienta para crear nuevas herramientas"; panorama completo de un Coding Agent de grado de producción | [Leer](../../book-es/chapter5.es.md) | [12](../../chapter5/README.es.md) |
 | 6 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter6.es.md) | [12](../../chapter6/README.es.md) |

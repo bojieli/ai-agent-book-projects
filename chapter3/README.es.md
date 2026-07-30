@@ -11,6 +11,7 @@
 | 3-1, 3-2 | [user-memory](user-memory/) | ✅ | Sistema de memoria de usuario a largo plazo para recordar preferencias e interacciones históricas |
 | 3-1 | [user-memory-evaluation](user-memory-evaluation/) | ✅ | Evaluación sistemática de la precisión, relevancia y efectividad del sistema de memoria de usuario |
 | 3-2 | [mem0](mem0/) · [memobase](memobase/) | ✅ | Implementaciones de referencia de memoria de usuario utilizando los marcos de código abierto mem0 y Memobase |
+| 3-3 | [log-sanitization](log-sanitization/) | ✅ | Sistema inteligente de sanitización de registros para proteger datos sensibles manteniendo la información de depuración |
 | 3-4 | [dense-embedding](dense-embedding/) | ✅ | Servicio de búsqueda por similitud vectorial comparando algoritmos ANN (ANNOY y HNSW) |
 | 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | Motor de búsqueda de vectores dispersos basado en BM25 construido desde cero |
 | 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | Pipeline completo de recuperación densa + dispersa + reordenamiento neuronal |

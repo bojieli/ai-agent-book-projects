@@ -16,7 +16,6 @@
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Reproducción de "divulgación progresiva" de Agent Skills para generar archivos `.pptx` con python-pptx |
 | 2-8 | [system-hint](system-hint/) | ✅ | Estudio del impacto de los prompts de sistema en el comportamiento del Agente |
 | 2-9 | [context-compression](context-compression/) | ✅ | Comparación de estrategias de resumen, extracción de información clave y compresión semántica de contexto |
-| 3-3 | [log-sanitization](log-sanitization/) | ✅ | Sistema inteligente de sanitización de registros para proteger datos sensibles manteniendo la información de depuración |
 
 ## Tipos de Proyectos
 
