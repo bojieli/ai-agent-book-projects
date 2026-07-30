@@ -365,7 +365,7 @@ Ancak, statik kelime vektörlerinin temel bir sınırlaması vardır: çok anlam
 
 ### Sparse Embedding: Anahtar Kelime Tabanlı Tam Eşleşme Retrieval'ı
 
-Semantik benzerliği yakalayan dense embedding'lerden farklı olarak, sparse embedding'ler geleneksel bilgi getirmede köklenir: özlerinde tam anahtar kelime eşleştirmesi vardır. Bir sparse embedding, bir dokümanı, çoğu boyutu sıfır olan son derece yüksek boyutlu bir vektör olarak temsil eder—yalnızca dokümanda görünen kelimelere karşılık gelen boyutlar sıfırdan farklıdır. Teorik temel, bir metin parçasını yalnızca hangi kelimelerin göründüğüne ve ne sıklıkta göründüğüne önem veren, kelime sırasını tamamen göz ardı eden klasik Bag of Words (BoW) modelidir: "kedi köpeği kovalar" ve "köpek kediyi kovalar" BoW'da özdeştir. Bu temelden giderek daha sofistike olasılıksal sıralama algoritmaları evrildi.
+Semantik benzerliği yakalayan dense embedding'lerden farklı olarak, sparse embedding'ler geleneksel bilgi getirmede köklenir: özlerinde tam anahtar kelime eşleştirmesi vardır. Bir sparse embedding, bir dokümanı, çoğu boyutu sıfır olan son derece yüksek boyutlu bir vektör olarak temsil eder—yalnızca dokümanda görünen kelimelere karşılık gelen boyutlar sıfırdan farklıdır. Teorik temel, bir metin parçasını yalnızca hangi kelimelerin göründüğüne ve ne sıklıkta göründüğüne önem veren, kelime sırasını tamamen göz ardı eden klasik Bag of Words (BoW) modelidir: "kedi köpeği kovalar" ve "köpek kediyi kovalar" BoW'da özdeştir. Bu temelden giderek daha sofistike terim ağırlıklandırma ve sıralama algoritmaları evrildi.
 
 ![Şekil 3-8: BM25 Puanlama Mekanizması](images/fig3-8.svg)
 

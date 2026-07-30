@@ -366,7 +366,7 @@ However, static word vectors have a fundamental limitation: they cannot handle p
 
 ### Sparse Embeddings: Keyword-Based Exact-Match Retrieval
 
-Unlike dense embeddings, which capture semantic similarity, sparse embeddings are rooted in traditional information retrieval: at their core is exact keyword matching. A sparse embedding represents a document as an extremely high-dimensional vector in which most dimensions are zero—only the dimensions corresponding to words that appear in the document are non-zero. The theoretical foundation is the classic Bag of Words (BoW) model, which treats a piece of text as a "bag of words," caring only about which words appear and how often, ignoring word order entirely: "cat chases dog" and "dog chases cat" are identical in BoW. More sophisticated probabilistic ranking algorithms evolved from this foundation.
+Unlike dense embeddings, which capture semantic similarity, sparse embeddings are rooted in traditional information retrieval: at their core is exact keyword matching. A sparse embedding represents a document as an extremely high-dimensional vector in which most dimensions are zero—only the dimensions corresponding to words that appear in the document are non-zero. The theoretical foundation is the classic Bag of Words (BoW) model, which treats a piece of text as a "bag of words," caring only about which words appear and how often, ignoring word order entirely: "cat chases dog" and "dog chases cat" are identical in BoW. More sophisticated term-weighting and ranking algorithms evolved from this foundation.
 
 ![Figure 3-8: BM25 Scoring Mechanism](images/fig3-8.svg)
 
