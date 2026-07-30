@@ -82,8 +82,10 @@ class Event:
     @classmethod
     def from_dict(cls, d: dict) -> "Event":
         """从检查点字典还原事件对象。"""
+        raw_ts = d.get("ts")
         return cls(
-            type=d["type"], message=d.get("message"), label=d.get("label", ""),
+            type=d["type"], message=d.get("message"),
+            label=d.get("label") or "",
             task_id=d.get("task_id"), urgency=d.get("urgency"),
-            ts=d.get("ts", time.time()),
+            ts=raw_ts if raw_ts is not None else time.time(),
         )

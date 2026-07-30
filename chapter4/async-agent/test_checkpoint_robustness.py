@@ -51,3 +51,51 @@ def test_load_checkpoint_handles_null_tasks_and_trajectory():
         assert len(runtime.trajectory) == 0
         assert len(runtime.tasks._tasks) == 0
         runtime.log.assert_called_once()
+
+def test_load_checkpoint_handles_null_task_fields_and_event_fields():
+    """
+    Ensure load_checkpoint gracefully handles JSON containing null fields in
+    task records and trajectory events without setting None for non-optional attributes.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        target_path = os.path.join(tmpdir, "checkpoint.json")
+        checkpoint_data = {
+            'trajectory': [
+                {
+                    'type': 'user.input',
+                    'message': {'role': 'user', 'content': 'hello'},
+                    'label': None,
+                    'ts': None,
+                }
+            ],
+            'tasks': [
+                {
+                    'task_id': 'T1',
+                    'command': 'python analyze_logs.py',
+                    'rate': 50.0,
+                    'progress': 100.0,
+                    'status': 'completed',
+                    'result': None,
+                    'executable_receipt': None,
+                }
+            ]
+        }
+        with open(target_path, "w", encoding="utf-8") as f:
+            json.dump(checkpoint_data, f)
+
+        runtime = AgentRuntime.__new__(AgentRuntime)
+        runtime.tasks = TaskManager(on_complete=MagicMock(), log=MagicMock())
+        runtime.log = MagicMock()
+
+        runtime.load_checkpoint(target_path)
+
+        ev = runtime.trajectory[0]
+        assert isinstance(ev.label, str)
+        assert ev.label == ""
+        assert isinstance(ev.ts, float)
+
+        st = runtime.tasks.query('T1')
+        assert isinstance(st.result, str)
+        assert st.result == ""
+        assert isinstance(st.executable_receipt, dict)
+        assert st.executable_receipt == {}

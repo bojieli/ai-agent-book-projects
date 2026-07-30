@@ -265,14 +265,15 @@ class TaskManager:
     def restore(self, records: list[dict]) -> None:
         for record in records:
             status = "suspended" if record["status"] == "running" else record["status"]
+            receipt = record.get("executable_receipt")
             state = TaskState(
                 task_id=record["task_id"], command=record["command"],
                 rate=record["rate"], progress=record["progress"], status=status,
-                result=record.get("result", ""), pid=record.get("pid"),
+                result=record.get("result") or "", pid=record.get("pid"),
                 returncode=record.get("returncode"),
                 started_at=record.get("started_at"), completed_at=record.get("completed_at"),
                 stdout_sha256=record.get("stdout_sha256"),
-                executable_receipt=record.get("executable_receipt", {}),
+                executable_receipt=receipt if isinstance(receipt, dict) else {},
             )
             self._tasks[state.task_id] = state
             try:
