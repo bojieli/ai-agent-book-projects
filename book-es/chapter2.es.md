@@ -4,11 +4,11 @@ El Capítulo 1 comparó el contexto con los "ojos" del Agente: el Agente solo pu
 
 ![Figura 2-1: Visión general de la composición de la ventana de contexto](images/fig2-1.svg)
 
-## El Contexto: El Techo de las Capacidades del Agente
+## El Contexto — El Techo de las Capacidades del Agente
 
 Los modelos de lenguaje grandes obtienen resultados destacados en evaluaciones estandarizadas, pero a menudo tienen un rendimiento inferior en entornos empresariales reales. La razón no es misteriosa: las capacidades del modelo son de propósito general, mientras que la ejecución de tareas concretas requiere información de contexto (la arquitectura de tu producto, las reglas de negocio y las convenciones internas), información que el modelo simplemente desconoce.
 
-Imagina a un ingeniero genial que se une a tu equipo. Posee una profunda preparación teórica y una capacidad de programación extraordinaria, pero ignora por completo la arquitectura de tu producto, la lógica de negocio, la deuda técnica y las normas del equipo. Peor aún, las decisiones arquitectónicas clave están dispersas en la memoria de distintos miembros del equipo y la base de código carece de documentación. Este genio, a pesar de su destacada inteligencia, difícilmente podrá aportar un valor real rápidamente; este es precisamente el dilema al que se enfrentan los Agentes de IA actuales.
+Imagina a un ingeniero genial que se une a tu equipo. Posee una profunda preparación teórica y una capacidad de programación extraordinaria, pero ignora por completo la arquitectura de tu producto, la lógica de negocio, la deuda técnica y las normas del equipo. Peor aún, las decisiones arquitectónicas clave están dispersas en la memoria de distintos miembros del equipo y la base de código carece de documentación. Este genio, a pesar de su destacada inteligencia, difícilmente podrá aportar un valor real rápidamente; —este es precisamente el dilema al que se enfrentan los Agentes de IA actuales.
 
 Considera el ejemplo de un Agente Programador (Coding Agent). Ante la misma instrucción, "Ayúdame a corregir este error", la calidad del contexto que recibe el Agente determina directamente si podrá completar la tarea:
 
@@ -395,7 +395,7 @@ Las secciones siguientes del capítulo se desarrollarán en torno a cada nivel d
 >
 > El punto más importante que conviene recordar de este experimento es: un modelo pequeño de 0.6B, con un diseño de prompt adecuado, también puede realizar llamadas a herramientas de forma fiable. El tamaño del modelo es importante, pero no es el único factor determinante. Algunos dispositivos móviles de gama alta ya pueden ejecutar modelos pequeños de la clase 0.6B, y la capacidad de los modelos en el dispositivo sigue aumentando; la era de los Agentes en el dispositivo está más cerca de lo que la mayoría prevé.
 >
-> Durante el experimento es posible que hayas notado que modificar el prompt del sistema hace que la primera respuesta del modelo sea más lenta; este es precisamente el mecanismo de KV Cache que se explicará en la siguiente sección: cambiar el prefijo provoca la invalidez de la caché y obliga al modelo a recalcular.
+> Durante el experimento es posible que hayas notado que modificar el prompt del sistema hace que la primera respuesta del modelo sea más lenta; —este es precisamente el mecanismo de KV Cache que se explicará en la siguiente sección: cambiar el prefijo provoca la invalidez de la caché y obliga al modelo a recalcular.
 
 ## Diseño de Contexto Amigable con la Caché KV (KV Cache)
 
@@ -475,7 +475,7 @@ La complejidad computacional de la fase de pre-rellenado (prefill) pasa de ser c
 
 $$	ext{Costo} = O(L_{	ext{prefijo}}) + O(L_{	ext{nuevo}})^2$$
 
-Si los tokens del prefijo coinciden (es decir, $L_{	ext{prefijo}}$ se recupera de la caché), el costo computacional inicial se reduce drásticamente, disminuyendo la latencia TTFT. Sin embargo, si el token en la posición $i$ cambia, todos los tokens subsiguientes $i \dots N$ pierden la coincidencia y deben ser recalculados.
+Si los tokens del prefijo coinciden —es decir, $L_{	ext{prefijo}}$ se recupera de la caché), el costo computacional inicial se reduce drásticamente, disminuyendo la latencia TTFT. Sin embargo, si el token en la posición $i$ cambia, todos los tokens subsiguientes $i \dots N$ pierden la coincidencia y deben ser recalculados.
 
 ### KV Cache y Prompt Cache: Dos Niveles de Caché
 
