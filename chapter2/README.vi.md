@@ -16,7 +16,6 @@
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Tái hiện tư tưởng “tiết lộ tăng dần” của Agent Skills: khi khởi động, Agent chỉ thấy một thư mục Skill mỏng; sau khi nhận diện nhiệm vụ cần Skill `pptx`, nó mới tải dần quy trình đầy đủ, tài liệu chi tiết và script đóng gói, cuối cùng dùng python-pptx tạo file `.pptx` thật. |
 | 2-8 | [system-hint](system-hint/) | ✅ | Nghiên cứu ảnh hưởng của System Hint tới hành vi Agent, khám phá cách tối ưu system prompt để nâng cao hiệu năng. |
 | 2-9 | [context-compression](context-compression/) | ✅ | Triển khai và so sánh nhiều chiến lược nén ngữ cảnh, bao gồm tóm tắt, trích xuất thông tin then chốt, nén ngữ nghĩa, v.v. Mục tiêu là giảm lượng token sử dụng trong khi vẫn giữ năng lực của Agent. |
-| 3-3 | [log-sanitization](log-sanitization/) | ✅ | Triển khai hệ thống khử nhạy cảm log thông minh, bảo vệ dữ liệu nhạy cảm trong khi vẫn giữ thông tin debug. |
 
 ## Phân loại dự án
 

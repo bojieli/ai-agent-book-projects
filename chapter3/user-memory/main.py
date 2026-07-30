@@ -683,12 +683,7 @@ def run_evaluation_mode(user_id: str, memory_mode: MemoryMode, verbose: bool = T
             # View current memory
             print("\n📄 Current Memory State:")
             print("-"*60)
-            memories = processor.get_current_memories()
-            if memories:
-                for mem in memories:
-                    print(f"  • {mem}")
-            else:
-                print("  (No memories stored)")
+            print(processor.memory_manager.get_context_string())
                 
         elif choice == "3":
             # Clear memory

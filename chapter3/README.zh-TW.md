@@ -11,6 +11,7 @@
 | 3-1, 3-2 | [user-memory](user-memory/) | ✅ | 長期使用者記憶系統，讓 Agent 記住偏好與歷史互動、提供個性化服務 |
 | 3-1 | [user-memory-evaluation](user-memory-evaluation/) | ✅ | 系統化評估使用者記憶系統的準確性、相關性和有效性 |
 | 3-2 | [mem0](mem0/) · [memobase](memobase/) | ✅ | 用 mem0、Memobase 兩個開源框架各實現一版使用者記憶，作為實驗 3-2 的對照實現 |
+| 3-3 | [log-sanitization](log-sanitization/) | ✅ | 智慧日誌脫敏系統，基於本地 Ollama 模型檢測並脫敏日誌中的金鑰和 PII 敏感資料 |
 | 3-4 | [dense-embedding](dense-embedding/) | ✅ | 向量相似性搜尋服務，對比 ANNOY（樹）與 HNSW（圖）兩種 ANN 演算法的權衡 |
 | 3-5 | [sparse-embedding](sparse-embedding/) | ✅ | 從零實現基於 BM25 的稀疏向量搜尋引擎，視覺化內部工作機制 |
 | 3-6 | [retrieval-pipeline](retrieval-pipeline/) | ✅ | 稠密 + 稀疏 + 神經重排序的完整流水線，用測試用例展示混合檢索的互補效果 |

@@ -55,7 +55,7 @@ class RAGEvaluator:
                 else:
                     keywords_missing.append(keyword)
             
-            evaluation["metrics"]["keyword_recall"] = len(keywords_found) / len(test_case["expected_keywords"])
+            evaluation["metrics"]["keyword_recall"] = len(keywords_found) / len(test_case["expected_keywords"]) if test_case["expected_keywords"] else 1.0
             evaluation["metrics"]["keywords_found"] = keywords_found
             evaluation["metrics"]["keywords_missing"] = keywords_missing
         
@@ -70,7 +70,7 @@ class RAGEvaluator:
                 else:
                     analysis_missing.append(point)
             
-            evaluation["metrics"]["analysis_recall"] = len(analysis_found) / len(test_case["expected_analysis"])
+            evaluation["metrics"]["analysis_recall"] = len(analysis_found) / len(test_case["expected_analysis"]) if test_case["expected_analysis"] else 1.0
             evaluation["metrics"]["analysis_found"] = analysis_found
             evaluation["metrics"]["analysis_missing"] = analysis_missing
         

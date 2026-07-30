@@ -16,7 +16,6 @@
 | 2-6 | [agent-skills-ppt](agent-skills-ppt/) | ✅ | Reproduces the "progressive disclosure" concept of Agent Skills: the Agent initially sees only a thin Skill directory. Only after identifying that the task requires the `pptx` Skill does it progressively load its complete workflow, detailed documentation, and bundled scripts, ultimately generating a real `.pptx` file using python-pptx. |
 | 2-8 | [system-hint](system-hint/) | ✅ | Studies the impact of System Hints on Agent behavior, exploring how to improve performance by optimizing system prompts. |
 | 2-9 | [context-compression](context-compression/) | ✅ | Implements and compares multiple context compression strategies, including summarization, key information extraction, and semantic compression. Reduces token usage while maintaining Agent capabilities. |
-| 3-3 | [log-sanitization](log-sanitization/) | ✅ | Implements an intelligent log sanitization system that protects sensitive data while preserving debugging information. |
 ## Project Types
 
 | Icon | Type | Meaning |
