@@ -1,0 +1,15 @@
+{
+  "case": "terminal_danger_rejected",
+  "tool": "virtual_terminal",
+  "arguments": {
+    "command": "rm -rf ./should-never-execute",
+    "timeout": 10
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Command execution not approved: The command 'rm -rf' performs recursive, forced deletion without confirmation, which is inherently destructive and irreversible. The target directory name 'should-never-execute' further signals this operation should not proceed. There is no verification of the path's contents, no backup mechanism, and no explicit user confirmation for this destructive action."
+  },
+  "latency_seconds": 18.275
+}

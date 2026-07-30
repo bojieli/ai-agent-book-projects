@@ -1,0 +1,39 @@
+{
+  "case": "knowledge_base_search",
+  "tool": "knowledge_base_search",
+  "arguments": {
+    "query": "PERCEPTION-EXPERIMENT-4-1-VERIFIED",
+    "knowledge_base_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/knowledge",
+    "top_k": 3
+  },
+  "arguments_sha256": "66626c75ed47e5c2de4470904f4da6e6df331e874473f0efe269a7ed993eb368",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "local-knowledge-files",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": {
+      "query": "PERCEPTION-EXPERIMENT-4-1-VERIFIED",
+      "results": [
+        {
+          "file": "mcp-notes.md",
+          "snippet": "# Experiment 4-1\n\nPERCEPTION-EXPERIMENT-4-1-VERIFIED\nThe Model Context Protocol connects agents to perception tools.",
+          "relevance": 1
+        }
+      ],
+      "total_found": 1
+    },
+    "metadata": {
+      "knowledge_base": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z/fixtures/knowledge",
+      "top_k": 3
+    }
+  },
+  "elapsed_seconds": 0.002
+}

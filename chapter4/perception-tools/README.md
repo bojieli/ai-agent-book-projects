@@ -30,6 +30,10 @@ A comprehensive MCP (Model Context Protocol) server providing various perception
 - **File Reader**: Read files with encoding support
 - **Grep Search**: Search for patterns in files (regex support)
 - **Text Summarization**: Summarize long text content
+- **Directory Browser**: Bounded directory listing/tree operations
+- **Safe Move / Copy / Delete**: Relative paths only beneath an explicit
+  `PERCEPTION_MUTATION_ROOT`; traversal, absolute paths, and symlinks are
+  rejected, while delete/overwrite use reversible quarantine
 
 #### Public Data Sources
 - **Weather**: Current weather via [Open-Meteo](https://open-meteo.com/) (free, no API key)
@@ -98,6 +102,36 @@ Follow the [Google Calendar API quickstart](https://developers.google.com/calend
 ```bash
 pip install notion-client
 ```
+
+#### Safe filesystem mutations
+
+The read-only filesystem tools need no configuration. Move, copy, and delete
+fail closed until an explicit disposable workspace is configured:
+
+```bash
+export PERCEPTION_MUTATION_ROOT=/absolute/path/to/disposable/workspace
+```
+
+Mutation arguments remain relative to that root. The server records pre/post
+SHA-256 fingerprints, rejects `..`, absolute paths, and symlinks, and moves
+deleted/replaced data into `.perception-trash` so the operation is reversible.
+
+### Exact Experiment 4-1 campaign
+
+Run the five-category campaign through the real MCP stdio transport:
+
+```bash
+python run_experiment_4_1.py
+pytest -q test_experiment_4_1.py test_filesystem_mutations.py \
+  test_real_experiment_4_1_evidence.py test_expanded_catalog.py
+```
+
+The durable July 30, 2026 receipt is intentionally **blocked**, not passed:
+search, filesystem, and public-data categories passed; local webpage/document,
+OCR, Whisper, and video parsing also passed; image/video AI analysis received
+OpenAI `insufficient_quota`, while Calendar and Notion lacked authorization.
+Those four calls remain failed evidence and cannot satisfy the corresponding
+category gates.
 
 ### Usage
 
@@ -215,6 +249,9 @@ Parameters:
 > `provider/model` form). Override the model via `PERCEPTION_VISION_MODEL`.
 > (Local Whisper transcription still needs `OPENAI_API_KEY` — OpenRouter has no
 > audio-transcription API.)
+> Gemini is also supported through its OpenAI-compatible endpoint: set
+> `GEMINI_API_KEY`, `PERCEPTION_VISION_PROVIDER=gemini`, and optionally
+> `PERCEPTION_VISION_MODEL` (the campaign uses `gemini-2.5-flash`).
 
 ##### `video_parser`
 Parse and extract metadata from video files.

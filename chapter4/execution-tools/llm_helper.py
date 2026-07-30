@@ -1,6 +1,11 @@
 """LLM helper for safety checks, approval, and summarization."""
 
 import json
+import datetime as dt
+import os
+import subprocess
+import time
+from pathlib import Path
 from typing import Optional, Dict, Any
 from openai import OpenAI
 from config import Config
@@ -54,6 +59,39 @@ class LLMHelper:
         self.model = None
         self.provider = None
 
+    def _record_receipt(self, purpose: str, request: dict, response, latency: float) -> None:
+        """Checkpoint credential-free raw provider evidence after every call."""
+        target = os.getenv("EXECUTION_LLM_RECEIPT_PATH")
+        if not target:
+            return
+        path = Path(target)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        usage = getattr(response, "usage", None)
+        choice = response.choices[0]
+        row = {
+            "purpose": purpose,
+            "called_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "provider": self.provider,
+            "request": request,
+            "response": {
+                "id": getattr(response, "id", None),
+                "model": getattr(response, "model", None),
+                "finish_reason": getattr(choice, "finish_reason", None),
+                "content": choice.message.content,
+            },
+            "usage": {
+                "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                "completion_tokens": getattr(usage, "completion_tokens", None),
+                "total_tokens": getattr(usage, "total_tokens", None),
+            },
+            "latency_seconds": round(latency, 3),
+        }
+        existing = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else []
+        existing.append(row)
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        temporary.write_text(json.dumps(existing, ensure_ascii=False, indent=2), encoding="utf-8")
+        temporary.replace(path)
+
     def _ensure_client(self) -> None:
         """Create the LLM client on first use (raises if no API key)."""
         if self.client is None:
@@ -104,18 +142,22 @@ Respond in JSON format:
         
         try:
             self._ensure_client()
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
+            request = {
+                "model": self.model,
+                "messages": [
                     {
                         "role": "system",
                         "content": "You are a cautious safety reviewer. Approve operations that are safe and reject risky ones."
                     },
                     {"role": "user", "content": prompt}
                 ],
-                temperature=_reasoning_safe_temperature(self.model, 0.1),
-                max_tokens=Config.MAX_TOKENS
-            )
+                "temperature": _reasoning_safe_temperature(self.model, 0.1),
+                "max_tokens": Config.MAX_TOKENS,
+            }
+            started = time.perf_counter()
+            response = self.client.chat.completions.create(**request)
+            self._record_receipt("dangerous_operation_review", request, response,
+                                 time.perf_counter() - started)
 
             result = _parse_json_response(response.choices[0].message.content)
             return result["approved"], result["reason"]
@@ -247,6 +289,21 @@ Be concise and practical."""
                 return True, None
             except SyntaxError as e:
                 return False, f"Syntax error at line {e.lineno}: {e.msg}"
+
+        # JavaScript gets a real deterministic parser/linter rather than an
+        # LLM opinion. Node's --check performs syntax validation without
+        # executing the program.
+        if language in {"javascript", "js"}:
+            try:
+                process = subprocess.run(
+                    ["node", "--check", "-"], input=code, text=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10,
+                )
+            except (OSError, subprocess.SubprocessError) as exc:
+                return False, f"JavaScript linter unavailable: {exc}"
+            if process.returncode == 0:
+                return True, None
+            return False, process.stderr.strip() or "JavaScript syntax check failed"
         
         # For other languages, use LLM for basic validation
         prompt = f"""Check the following {language} code for syntax errors:

@@ -1,0 +1,28 @@
+{
+  "case": "reject_escaping_symlink",
+  "tool": "filesystem_delete",
+  "arguments": {
+    "path": "escape-link"
+  },
+  "arguments_sha256": "0cda34db2d162698b7076bdf382db85514c3506df0f19278a094153ec55e3fe2",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "workspace-confined-quarantine",
+    "origin": "local-filesystem"
+  },
+  "simulation_markers": [],
+  "error_type": "PermissionError",
+  "payload": {
+    "success": false,
+    "message": "Filesystem delete failed: Resolved path escapes the configured mutation root",
+    "metadata": {
+      "operation": "delete",
+      "error_type": "PermissionError",
+      "mutation_root_env": "PERCEPTION_MUTATION_ROOT"
+    }
+  },
+  "elapsed_seconds": 0.001
+}

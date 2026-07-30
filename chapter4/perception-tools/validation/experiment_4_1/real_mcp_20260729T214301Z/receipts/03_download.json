@@ -1,0 +1,31 @@
+{
+  "case": "download",
+  "tool": "download",
+  "arguments": {
+    "url": "https://www.iana.org/help/example-domains",
+    "output_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/downloads/iana-example.html",
+    "timeout": 60
+  },
+  "arguments_sha256": "0953bd1cc2d839b57edec8ec3d9beef838eef1dc459ad93dd3984f22a0445cc1",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": true,
+  "substantive_observation": true,
+  "backend_provenance": {
+    "backend": "tls-http-download",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": null,
+  "payload": {
+    "success": true,
+    "message": "Successfully downloaded file to /Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/downloads/iana-example.html",
+    "metadata": {
+      "url": "https://www.iana.org/help/example-domains",
+      "output_path": "/Users/boj/book/ai-agent-book/chapter4/perception-tools/validation/experiment_4_1/real_mcp_20260729T214301Z/fixtures/downloads/iana-example.html",
+      "file_size_bytes": 6639,
+      "duration_seconds": 3.3426239490509033
+    }
+  },
+  "elapsed_seconds": 3.345
+}

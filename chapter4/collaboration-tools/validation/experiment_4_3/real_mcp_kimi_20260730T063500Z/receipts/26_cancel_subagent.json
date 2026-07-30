@@ -1,0 +1,16 @@
+{
+  "case": "cancel_subagent",
+  "tool": "mcp_cancel_subagent",
+  "arguments": {
+    "subagent_id": "51b87786-6c7a-4eae-b8ce-113d28d2d968"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "subagent_id": "51b87786-6c7a-4eae-b8ce-113d28d2d968",
+    "previous_status": "running",
+    "status": "cancelled"
+  },
+  "latency_seconds": 0.003
+}

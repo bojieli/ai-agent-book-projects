@@ -1,0 +1,27 @@
+{
+  "case": "web_search",
+  "tool": "web_search",
+  "arguments": {
+    "query": "Model Context Protocol official specification",
+    "num_results": 3
+  },
+  "arguments_sha256": "f5d475b1c7202a0c7c2a0eba3e63e569ee6a65f46929b097a30983506ac9ebe7",
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "success": false,
+  "substantive_observation": false,
+  "backend_provenance": {
+    "backend": "duckduckgo-live-search",
+    "origin": "live-api"
+  },
+  "simulation_markers": [],
+  "error_type": "search_error",
+  "payload": {
+    "success": false,
+    "message": "Search operation failed: 400 Client Error: Bad Request for url: https://google.serper.dev/search",
+    "metadata": {
+      "error_type": "search_error"
+    }
+  },
+  "elapsed_seconds": 5.112
+}

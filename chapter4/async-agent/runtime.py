@@ -33,9 +33,9 @@ TOOL_SCHEMAS = [
         "type": "function",
         "function": {
             "name": "run_terminal_command",
-            "description": ("异步执行一个（模拟的）耗时终端命令，例如日志分析脚本。"
-                            "调用后命令在后台运行，本工具立即返回一个 task_id 占位符，"
-                            "不会阻塞。任务真正完成后，其结果会作为一条新的系统事件出现在对话中。"),
+            "description": ("异步执行一个受限的真实日志分析子进程。调用后立即返回 task_id，"
+                            "不会阻塞；进度来自子进程 stdout。自然完成后，真实返回码、输出哈希和"
+                            "文件分析指标会作为新的系统事件出现。取消会终止对应 OS 进程。"),
             "parameters": {
                 "type": "object",
                 "properties": {
