@@ -40,9 +40,28 @@ class TestToolRegistry(unittest.TestCase):
         self.assertIn("exchange_rate", result)
         self.assertGreater(result["converted_amount"], 0)
         
+        # Currency symbol normalization (US$, S$, A$, C$, $)
+        result_us = tools.convert_currency(100, "US$", "EUR")
+        self.assertEqual(result_us["from_currency"], "USD")
+        self.assertEqual(result_us["converted_amount"], 92.0)
+
+        result_s = tools.convert_currency(100, "S$", "USD")
+        self.assertEqual(result_s["from_currency"], "SGD")
+        self.assertIn("converted_amount", result_s)
+
+        result_a = tools.convert_currency(100, "A$", "USD")
+        self.assertEqual(result_a["from_currency"], "AUD")
+        self.assertIn("converted_amount", result_a)
+
+        result_c = tools.convert_currency(100, "C$", "USD")
+        self.assertEqual(result_c["from_currency"], "CAD")
+        self.assertIn("converted_amount", result_c)
+
         # Invalid currency
         result = tools.convert_currency(100, "XXX", "YYY")
         self.assertIn("error", result)
+        result_invalid_s = tools.convert_currency(100, "S$INVALID", "USD")
+        self.assertIn("error", result_invalid_s)
     
     def test_pdf_parser_structure(self):
         """Test PDF parser structure (without actual PDF)"""

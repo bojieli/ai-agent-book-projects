@@ -143,16 +143,6 @@ class ToolRegistry:
             Dictionary with conversion result
         """
         try:
-            # Normalize currency codes (handle S$ / $ notation). Must be
-            # unconditional: gated on startswith("S$"), the "$" -> USD
-            # replacement could never fire (no "$" survives the S$ replace).
-            from_currency = from_currency.upper().replace("S$", "SGD").replace("$", "USD")
-            to_currency = to_currency.upper().replace("S$", "SGD").replace("$", "USD")
-            
-            logger.info(f"Converting {amount} {from_currency} to {to_currency}")
-            
-            # For demonstration, using fixed rates (in production, use a real API)
-            # These are example rates - you would normally fetch from an API
             exchange_rates = {
                 "USD": 1.0,
                 "EUR": 0.92,
@@ -165,6 +155,47 @@ class ToolRegistry:
                 "INR": 83.12,
                 "SGD": 1.34
             }
+
+            def _normalize_code(code: str) -> str:
+                if not isinstance(code, str):
+                    return str(code or "")
+                c = code.strip().upper()
+                symbols = {
+                    "$": "USD",
+                    "US$": "USD",
+                    "U.S.$": "USD",
+                    "USD$": "USD",
+                    "S$": "SGD",
+                    "SG$": "SGD",
+                    "SGD$": "SGD",
+                    "A$": "AUD",
+                    "AU$": "AUD",
+                    "AUD$": "AUD",
+                    "C$": "CAD",
+                    "CA$": "CAD",
+                    "CAD$": "CAD",
+                    "€": "EUR",
+                    "£": "GBP",
+                    "₹": "INR",
+                }
+                if c in symbols:
+                    return symbols[c]
+                if c.endswith("$"):
+                    prefix = c[:-1].strip()
+                    if prefix in exchange_rates:
+                        return prefix
+                    if prefix in ("US", "U.S."):
+                        return "USD"
+                    if prefix in ("AU", "A"):
+                        return "AUD"
+                    if prefix in ("CA", "C"):
+                        return "CAD"
+                return c
+
+            from_currency = _normalize_code(from_currency)
+            to_currency = _normalize_code(to_currency)
+            
+            logger.info(f"Converting {amount} {from_currency} to {to_currency}")
             
             if from_currency not in exchange_rates or to_currency not in exchange_rates:
                 return {"error": f"Unsupported currency: {from_currency} or {to_currency}"}
