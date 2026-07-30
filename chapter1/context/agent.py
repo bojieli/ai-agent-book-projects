@@ -180,8 +180,6 @@ class ToolRegistry:
                 }
                 if c in symbols:
                     return symbols[c]
-                if c.startswith("S$"):
-                    return "SGD"
                 if c.endswith("$"):
                     prefix = c[:-1].strip()
                     if prefix in exchange_rates:

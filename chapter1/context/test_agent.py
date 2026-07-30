@@ -60,6 +60,8 @@ class TestToolRegistry(unittest.TestCase):
         # Invalid currency
         result = tools.convert_currency(100, "XXX", "YYY")
         self.assertIn("error", result)
+        result_invalid_s = tools.convert_currency(100, "S$INVALID", "USD")
+        self.assertIn("error", result_invalid_s)
     
     def test_pdf_parser_structure(self):
         """Test PDF parser structure (without actual PDF)"""
