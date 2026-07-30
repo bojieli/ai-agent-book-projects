@@ -26,6 +26,24 @@ on:
       - '.github/workflows/build-latest.yml'
       - '.github/scripts/**'
   workflow_dispatch:
+    inputs:
+      edition:
+        description: Edition to verify on a non-main ref
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - zh-CN
+          - zh-TW
+          - en
+          - ru
+          - ta
+          - vi
+          - tr
+          - ko
+          - ja
+          - ar
 
 permissions:
   contents: write
@@ -133,15 +151,28 @@ jobs:
       - name: Build PDFs
         env:
           PANGOCAIRO_BACKEND: fontconfig
+          EDITION: ${{ inputs.edition || 'all' }}
         run: |
           set -u
-          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+          if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$EDITION" = "all" ]; then
             main="book book-zhtw book-en book-ru book-vi book-ta book-ar book-tr book-ko"
             optional="book-ja"
           else
-            # workflow_dispatch on a feature branch is a focused locale
-            # verification run. It must not rebuild or release every edition.
-            main="book-ko"
+            # workflow_dispatch on a feature branch is a focused edition
+            # verification run. Release publication remains gated to main.
+            case "$EDITION" in
+              zh-CN) main="book" ;;
+              zh-TW) main="book-zhtw" ;;
+              en) main="book-en" ;;
+              ru) main="book-ru" ;;
+              ta) main="book-ta" ;;
+              vi) main="book-vi" ;;
+              tr) main="book-tr" ;;
+              ko) main="book-ko" ;;
+              ja) main="book-ja" ;;
+              ar) main="book-ar" ;;
+              *) echo "::error::Unsupported edition: $EDITION"; exit 2 ;;
+            esac
             optional=""
           fi
           pids=""
@@ -175,11 +206,13 @@ jobs:
             "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.pdf"
 
       - name: Build EPUBs
+        env:
+          EDITION: ${{ inputs.edition || 'all' }}
         run: |
-          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+          if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$EDITION" = "all" ]; then
             ./build_epub.sh all
           else
-            ./build_epub.sh ko
+            ./build_epub.sh "$EDITION"
           fi
 
       # WIP: ja EPUB depends on the ja PDF above; non-fatal, not part of `all`.
@@ -193,14 +226,14 @@ jobs:
         continue-on-error: true
         run: ./build_epub.sh ar
 
-      - name: Upload Korean verification artifacts
+      - name: Upload verification artifacts
         if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: korean-book-artifacts
+          name: book-verification-${{ inputs.edition || 'all' }}
           path: |
-            book-ko/AI-Agents-in-Depth-ko.pdf
-            book-ko/AI-Agents-in-Depth-ko.epub
+            book*/*.pdf
+            book*/*.epub
           if-no-files-found: error
 
       - name: Upload to the rolling latest release

@@ -52,7 +52,7 @@
 % Korean word boundaries are meaningful. xeCJK defaults to discarding spaces
 % between CJK characters and adding spacing at CJK/Latin boundaries because
 % that is conventional for Chinese text. Preserve only the source spacing.
-\xeCJKsetup{CJKspace=true,CJKecglue={},xCJKecglue=false}
+\xeCJKsetup{AutoFallBack=true,CJKspace=true,CJKecglue={},xCJKecglue=false}
 
 % ── tcolorbox (ElegantBook already loads it; just add libraries) ──
 \tcbuselibrary{skins,breakable}
@@ -164,6 +164,25 @@
   \setCJKsansfont[AutoFakeBold=2.5]{Apple SD Gothic Neo}%
   \setCJKmonofont[AutoFakeBold=2.5]{Apple SD Gothic Neo}%
 }}
+
+% The Korean text intentionally preserves Simplified Chinese in translation
+% examples and proper names. Korean-only macOS fonts omit some of those glyphs,
+% so register an SC family after the primary families instead of silently
+% dropping characters. CI installs Noto Sans CJK SC; Songti SC and PingFang SC
+% cover contributors using the macOS system-font fallback above.
+\IfFontExistsTF{Noto Sans CJK SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{Noto Sans CJK SC}%
+}{\IfFontExistsTF{Songti SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{Songti SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{Songti SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{Songti SC}%
+}{\IfFontExistsTF{PingFang SC}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[AutoFakeBold=2.5]{PingFang SC}%
+  \setCJKfallbackfamilyfont{\CJKsfdefault}[AutoFakeBold=2.5]{PingFang SC}%
+  \setCJKfallbackfamilyfont{\CJKttdefault}[AutoFakeBold=2.5]{PingFang SC}%
+}{}}}
 
 % ElegantBook has no Korean locale, so lang=cn supplies CJK typesetting.
 % Override its chapter wrapper directly; ctex heading keys are not enabled by

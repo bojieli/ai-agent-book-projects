@@ -5,9 +5,11 @@
 -- figure and chapter. Uses raw LaTeX \label / \hyperref so it does not depend
 -- on LaTeX counters (the displayed text is the manual number verbatim).
 --
--- Korean figure references span three inline elements:
--- Str("그림") Space Str("2-6"). Match them at the Inlines level while keeping
--- compact N장 / 제N장 references handled inside a single Str token.
+-- Korean figure references usually span three inline elements:
+-- Str("그림") Space Str("2-6"). When they follow an opening delimiter without
+-- whitespace, Pandoc keeps that delimiter and "그림" in the preceding Str
+-- (for example Str("문장(그림")). Match both forms at the Inlines level while
+-- keeping compact N장 / 제N장 references handled inside a single Str token.
 --
 -- Topdown traversal: Image/Figure return `false` to skip their own captions,
 -- so figure captions are anchored but NOT self-linkified.
@@ -120,11 +122,13 @@ return {
       while i <= #inlines do
         local el = inlines[i]
         local linked = false
-        if el.t == 'Str' and el.text == '그림' and i + 2 <= #inlines
+        local figure_prefix = el.t == 'Str' and el.text:match('^(.*)그림$')
+        if figure_prefix and i + 2 <= #inlines
             and inlines[i + 1].t == 'Space'
             and inlines[i + 2].t == 'Str' then
           local a, b, suffix = inlines[i + 2].text:match('^(%d+)%-(%d+)(.*)$')
           if a and ok_figure_suffix(suffix) then
+            if figure_prefix ~= '' then out:insert(pandoc.Str(figure_prefix)) end
             out:insert(pandoc.RawInline('latex',
               '\\crossreflink{' .. fig_label(a, b) .. '}{그림 ' .. a .. '-' .. b .. '}'))
             if suffix ~= '' then out:insert(pandoc.Str(suffix)) end

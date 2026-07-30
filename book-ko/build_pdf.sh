@@ -3,6 +3,8 @@
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
 #               Korean text (body, code, captions): Noto Serif/Sans CJK KR
 #               or AppleMyungjo/Apple SD Gothic Neo (macOS fallback);
+#               Simplified Chinese examples: Noto Sans CJK SC or
+#               Songti SC/PingFang SC (macOS fallback);
 #               Latin code: Menlo or DejaVu Sans Mono; symbols: Arial Unicode MS
 #               or DejaVu Sans; final caption fallback: DejaVu Sans
 # Usage: cd book-ko && bash build_pdf.sh
