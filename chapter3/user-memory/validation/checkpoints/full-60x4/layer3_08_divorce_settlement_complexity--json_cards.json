@@ -1,0 +1,1432 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer3_08_divorce_settlement_complexity",
+  "mode": "json_cards",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "divorce_attorney_consultation",
+      "memory": {
+        "session": {
+          "id": "divorce_attorney_consultation",
+          "timestamp": "2024-06-12"
+        },
+        "marriage": {
+          "duration_years": 18,
+          "separation_date": "2024-02"
+        },
+        "children": {
+          "count": 2,
+          "ages": [
+            16,
+            14
+          ],
+          "custody": {
+            "arrangement": "joint",
+            "primary_residence": "user"
+          },
+          "tax_claims": "not_discussed"
+        },
+        "assets": {
+          "real_estate": {
+            "primary_residence": {
+              "address": "Riverside Drive",
+              "value": 650000,
+              "mortgage_remaining": 180000,
+              "equity": 470000,
+              "heloc": {
+                "balance": 40000,
+                "purpose": "renovations",
+                "timing": "2 years ago"
+              }
+            },
+            "rental_property": {
+              "address": "Oak Street",
+              "value": 350000,
+              "mortgage_status": "paid_off",
+              "purchase_year": "10 years ago",
+              "purpose": "investment",
+              "monthly_income_after_expenses": 2400
+            }
+          },
+          "retirement_accounts": {
+            "user_401k": {
+              "total_value": 280000,
+              "premarital_portion": 30000,
+              "accumulated_during_marriage": "most"
+            },
+            "spouse_401k": {
+              "total_value": 220000,
+              "accumulated_during_marriage": "most"
+            }
+          },
+          "joint_brokerage": {
+            "value": 150000,
+            "assets_type": "stocks"
+          },
+          "vehicles": {
+            "user_car": {
+              "value": 25000,
+              "payment_status": "paid_off"
+            },
+            "spouse_car": {
+              "value": 35000,
+              "payment_status": "paid_off"
+            }
+          },
+          "personal_property": {
+            "artwork": {
+              "total_value": 20000,
+              "contested_status": "yes"
+            }
+          }
+        },
+        "debts": {
+          "credit_cards": 12000,
+          "heloc": 40000,
+          "primary_residence_mortgage": 180000
+        },
+        "divorce_proposals": {
+          "spouse_initial": {
+            "assets_requested": [
+              "rental_property",
+              "spouse_401k"
+            ],
+            "proposed_to_user": [
+              "primary_residence",
+              "user_401k"
+            ],
+            "joint_brokerage_split": "50-50"
+          },
+          "assistant_suggestions": {
+            "option1": "sell both properties, split proceeds after debts",
+            "option2": "user keeps house, spouse gets rental, equalize with ~$60k from spouse's 401k via QDRO",
+            "qdro_details": "Qualified Domestic Relations Order, tax-free transfer between spouses in divorce"
+          },
+          "rental_property_valuation": {
+            "current_estimate": 350000,
+            "proposed_with_income": 400000,
+            "annual_income": 28800
+          }
+        },
+        "financial_details": {
+          "incomes": {
+            "user": 95000,
+            "spouse": 110000
+          },
+          "child_support": {
+            "estimate_per_child_monthly": 400,
+            "based_on_incomes": "user $95k, spouse $110k"
+          },
+          "alimony": {
+            "possibility": "yes",
+            "duration_estimate_years": "2-3",
+            "monthly_amount_estimate": "1000-1500",
+            "basis": "user stayed home 5 years when kids young"
+          },
+          "health_insurance": {
+            "user_current": "on spouse's plan",
+            "post_divorce_option": "COBRA",
+            "cobra_duration": "36 months",
+            "cobra_cost_monthly_estimate": "600-800"
+          },
+          "legal_fees": {
+            "mediation_total_estimate": "5000-10000",
+            "trial_per_party_estimate": "15000-25000"
+          }
+        },
+        "next_steps": {
+          "required_documents": {
+            "items": [
+              "3 years tax returns",
+              "current account statements",
+              "property appraisals"
+            ],
+            "timeline": "this week"
+          },
+          "process": {
+            "preferred": "mediation first",
+            "proposal_content": "all assets, debts, custody, support, implementation timeline",
+            "qdro_timeline": "2-3 months after divorce decree",
+            "house_refinance_timeline": "2-3 months",
+            "rental_sale_timeline": "2-3 months typically"
+          }
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "divorce_attorney_consultation"
+      }
+    },
+    {
+      "session_index": 2,
+      "conversation_id": "real_estate_agent_discussion",
+      "memory": {
+        "session": {
+          "id": "real_estate_agent_discussion",
+          "timestamp": "2024-08-03"
+        },
+        "marriage": {
+          "duration_years": 18,
+          "separation_date": "2024-02"
+        },
+        "children": {
+          "count": 2,
+          "ages": [
+            16,
+            14
+          ],
+          "custody": {
+            "arrangement": "joint",
+            "primary_residence": "user"
+          },
+          "tax_claims": "not_discussed"
+        },
+        "assets": {
+          "real_estate": {
+            "primary_residence": {
+              "address": "Riverside Drive",
+              "value": 650000,
+              "mortgage_remaining": 180000,
+              "equity": 470000,
+              "heloc": {
+                "balance": 40000,
+                "purpose": "renovations",
+                "timing": "2 years ago"
+              }
+            },
+            "rental_property": {
+              "address": "Oak Street",
+              "value": 350000,
+              "mortgage_status": "paid_off",
+              "purchase_year": "10 years ago",
+              "purpose": "investment",
+              "monthly_income_after_expenses": 2400,
+              "property_details": {
+                "type": "3-bedroom single family home",
+                "bathrooms": "2 full",
+                "updates": {
+                  "roof": "2 years ago",
+                  "HVAC": "5 years ago",
+                  "kitchen": "updated 7 years ago",
+                  "bathrooms": "original, well-maintained",
+                  "exterior": "repainted last year",
+                  "landscaping": "professionally maintained"
+                }
+              },
+              "tenant": {
+                "lease_end_date": "February next year",
+                "monthly_rent": 2400,
+                "payment_history": "perfect for 3 years, never late"
+              },
+              "valuation": {
+                "original_purchase_price": 185000,
+                "comparable_sales_range": "340000-385000",
+                "agent_estimate_range": "355000-370000"
+              },
+              "sale_timeline": {
+                "required_sale_date": "November 2024",
+                "reason": "divorce finalization by year-end"
+              },
+              "financials": {
+                "commission_rate": "6%",
+                "estimated_commission_example": "21600 on 360000",
+                "closing_costs_range": "3000-4000",
+                "capital_gains": {
+                  "gain_estimate": 175000,
+                  "tax_estimate": "30000-40000",
+                  "exclusion_applicable": "no",
+                  "1031_exchange_applicable": "no"
+                }
+              },
+              "sale_process": {
+                "spouse_cooperation_status": "agreed to sell, no specifics discussed",
+                "required_agreements": "both spouses must sign listing agreements and accept offers",
+                "dispute_resolution": "court may decide if disagreement on price",
+                "earnest_money_handling": "joint escrow account recommended"
+              },
+              "tenant_considerations": {
+                "showing_requirement": "24-hour notice",
+                "cooperation_incentive": "possible $200-300 monthly rent reduction"
+              }
+            }
+          },
+          "retirement_accounts": {
+            "user_401k": {
+              "total_value": 280000,
+              "premarital_portion": 30000,
+              "accumulated_during_marriage": "most"
+            },
+            "spouse_401k": {
+              "total_value": 220000,
+              "accumulated_during_marriage": "most"
+            }
+          }
+        },
+        "joint_brokerage": {
+          "value": 150000,
+          "assets_type": "stocks"
+        },
+        "vehicles": {
+          "user_car": {
+            "value": 25000,
+            "payment_status": "paid_off"
+          },
+          "spouse_car": {
+            "value": 35000,
+            "payment_status": "paid_off"
+          }
+        },
+        "personal_property": {
+          "artwork": {
+            "total_value": 20000,
+            "contested_status": "yes"
+          }
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "real_estate_agent_discussion"
+      }
+    },
+    {
+      "session_index": 3,
+      "conversation_id": "retirement_account_discussion",
+      "memory": {
+        "session": {
+          "id": "retirement_account_discussion",
+          "timestamp": "2024-09-15"
+        },
+        "marriage": {
+          "duration_years": 18,
+          "separation_date": "2024-02"
+        },
+        "children": {
+          "count": 2,
+          "ages": [
+            16,
+            14
+          ],
+          "custody": {
+            "arrangement": "joint",
+            "primary_residence": "user"
+          },
+          "tax_claims": "not_discussed"
+        },
+        "assets": {
+          "real_estate": {
+            "primary_residence": {
+              "address": "Riverside Drive",
+              "value": 650000,
+              "mortgage_remaining": 180000,
+              "equity": 470000,
+              "heloc": {
+                "balance": 40000,
+                "purpose": "renovations",
+                "timing": "2 years ago"
+              }
+            },
+            "rental_property": {
+              "address": "Oak Street",
+              "value": 350000,
+              "mortgage_status": "paid_off",
+              "purchase_year": "10 years ago",
+              "purpose": "investment",
+              "monthly_income_after_expenses": 2400,
+              "property_details": {
+                "type": "3-bedroom single family home",
+                "bathrooms": "2 full",
+                "updates": {
+                  "roof": "2 years ago",
+                  "HVAC": "5 years ago",
+                  "kitchen": "updated 7 years ago",
+                  "bathrooms": "original, well-maintained",
+                  "exterior": "repainted last year",
+                  "landscaping": "professionally maintained"
+                }
+              },
+              "tenant": {
+                "lease_end_date": "February next year",
+                "monthly_rent": 2400,
+                "payment_history": "perfect for 3 years, never late"
+              },
+              "valuation": {
+                "original_purchase_price": 185000,
+                "comparable_sales_range": "340000-385000",
+                "agent_estimate_range": "355000-370000"
+              },
+              "sale_timeline": {
+                "required_sale_date": "November 2024",
+                "reason": "divorce finalization by year-end"
+              },
+              "financials": {
+                "commission_rate": "6%",
+                "estimated_commission_example": "21600 on 360000",
+                "closing_costs_range": "3000-4000",
+                "capital_gains": {
+                  "gain_estimate": 175000,
+                  "tax_estimate": "30000-40000",
+                  "exclusion_applicable": "no",
+                  "1031_exchange_applicable": "no"
+                }
+              },
+              "sale_process": {
+                "spouse_cooperation_status": "agreed to sell, no specifics discussed",
+                "required_agreements": "both spouses must sign listing agreements and accept offers",
+                "dispute_resolution": "court may decide if disagreement on price",
+                "earnest_money_handling": "joint escrow account recommended"
+              },
+              "tenant_considerations": {
+                "showing_requirement": "24-hour notice",
+                "cooperation_incentive": "possible $200-300 monthly rent reduction"
+              }
+            }
+          },
+          "retirement_accounts": {
+            "user_401k": {
+              "total_value": 280000,
+              "premarital_portion": 30000,
+              "accumulated_during_marriage": "most",
+              "division": {
+                "amount_negotiated": 60000,
+                "percentage_of_current_balance": 21,
+                "cutoff_date": "2024-02",
+                "balance_at_cutoff": 265000,
+                "growth_since_cutoff": 15000,
+                "spouse_portion_growth_applicable": "depends on decree language"
+              },
+              "qdro": {
+                "definition": "Qualified Domestic Relations Order",
+                "need_specialist_or_attorney": "yes",
+                "cost_range": "500-1500",
+                "process_time_after_divorce": "30-60 days",
+                "tax_implications": "tax-free direct transfer to spouse's retirement account",
+                "cash_withdrawal_consequences": "taxes and potential penalties for spouse"
+              },
+              "account_status_during_qdro": {
+                "frozen_activities": "new contributions, distributions",
+                "allowed_activities": "market returns",
+                "ongoing_contributions_subaccount": "yes"
+              },
+              "loans": {
+                "advised_against_before_qdro": "yes",
+                "advised_against_reason": "reduces balance, complicates division",
+                "max_loan_after_division": "lesser of $50000 or 50% of vested balance",
+                "vested_status": "fully vested",
+                "years_at_employer": 12
+              },
+              "contributions": {
+                "monthly_total": 1500,
+                "user_contribution": 1000,
+                "employer_match": 500
+              },
+              "beneficiaries": {
+                "current": "spouse",
+                "need_update_after_divorce": "yes",
+                "change_requirement_during_marriage": "spouse written consent",
+                "spouse_rights": "automatic beneficiary rights in 401k",
+                "inheritance_risk_before_divorce": "spouse inherits unless waived",
+                "waiver_option": "spouse can sign waiver now"
+              }
+            },
+            "spouse_401k": {
+              "total_value": 220000,
+              "accumulated_during_marriage": "most"
+            },
+            "ira": {
+              "total_value": 30000,
+              "premarital_status": "yes",
+              "value_at_marriage": 8000,
+              "growth_during_marriage": 22000,
+              "community_property_state_growth_status": "likely marital property",
+              "division_status": "not addressed in settlement"
+            }
+          },
+          "joint_brokerage": {
+            "value": 150000,
+            "assets_type": "stocks"
+          },
+          "vehicles": {
+            "user_car": {
+              "value": 25000,
+              "payment_status": "paid_off"
+            },
+            "spouse_car": {
+              "value": 35000,
+              "payment_status": "paid_off"
+            }
+          },
+          "personal_property": {
+            "artwork": {
+              "total_value": 20000,
+              "contested_status": "yes"
+            }
+          }
+        },
+        "social_security": {
+          "marriage_duration_qualification": "18 years (10+ required)",
+          "spousal_benefit": {
+            "percentage": "up to 50% of spouse's benefit",
+            "full_retirement_age": 67,
+            "early_claim_age": 62,
+            "early_claim_reduction": "about 30%"
+          },
+          "benefit_receipt_rule": "higher of own benefit or spousal benefit",
+          "remarriage_restriction": "cannot remarry before age 60 to claim spousal benefit"
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "retirement_account_discussion"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer3_08_divorce_settlement_complexity json_cards session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:28:50.151405+00:00",
+      "latency_ms": 60306.226,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=divorce_attorney_consultation\ntimestamp=2024-06-12\nmetadata={}\nUSER: Hi, I need help with my divorce proceedings. Things are getting complicated with the asset division\nASSISTANT: I understand this is a difficult time. Let's review your situation. How long were you married?\nUSER: Eighteen years. We separated last February\nASSISTANT: That's a long-term marriage, which affects asset division. Do you have children?\nUSER: Two kids, 16 and 14 years old\nASSISTANT: Custody and support will be important considerations. Is custody being contested?\nUSER: No, we've agreed to joint custody with them primarily living with me\nASSISTANT: That's good when parents can agree. Now, let's discuss assets. Do you own a home together?\nUSER: Yes, we have the house on Riverside Drive, valued at about $650,000\nASSISTANT: What's the remaining mortgage?\nUSER: About $180,000 left on it\nASSISTANT: So roughly $470,000 in equity. Any other real estate?\nUSER: We have a rental property on Oak Street, worth maybe $350,000\nASSISTANT: Mortgage on that one?\nUSER: It's paid off. We bought it ten years ago as an investment\nASSISTANT: Excellent. What about retirement accounts?\nUSER: I have a 401k with about $280,000, and my spouse has one with $220,000\nASSISTANT: Were these accumulated during the marriage?\nUSER: Most of it. I had maybe $30,000 when we got married\nASSISTANT: That premarital portion would typically remain yours. What about other investments?\nUSER: We have a joint brokerage account with about $150,000 in stocks\nASSISTANT: Any other significant assets? Cars, boats, collectibles?\nUSER: Two cars - mine is worth about $25,000, theirs is worth $35,000. Both paid off\nASSISTANT: What about debts beyond the mortgage?\nUSER: Credit cards with about $12,000 total, and a home equity line with $40,000 balance\nASSISTANT: Is the HELOC on the primary residence?\nUSER: Yes, we used it for renovations two years ago\nASSISTANT: Now, has your spouse proposed any division arrangement?\nUSER: They want to keep the rental property and their retirement account\nASSISTANT: And in exchange?\nUSER: I'd get the house and my retirement account\nASSISTANT: Let's run the numbers. The rental is worth $350,000, their 401k is $220,000, total $570,000\nUSER: And I'd get the house equity of $470,000 plus my 401k at $280,000, so $750,000?\nASSISTANT: Don't forget you'd also assume the mortgage and HELOC, reducing your net\nUSER: Right, so really $530,000 for me after the debts\nASSISTANT: Plus you'd be responsible for the mortgage payments going forward\nUSER: That doesn't seem fair\nASSISTANT: It's not equitable. What about the brokerage account?\nUSER: They suggested splitting that 50-50\nASSISTANT: So add $75,000 to each side. You'd have $605,000, they'd have $645,000\nUSER: Still not equal\nASSISTANT: Plus you'd have all the debt service. We should counter-propose\nUSER: What would you suggest?\nASSISTANT: Option one: Sell both properties and split all proceeds after debts\nUSER: I really want to keep the house for the kids' stability\nASSISTANT: Understandable. Option two: You keep the house, they get the rental, but equalize with other assets\nUSER: How would we equalize?\nASSISTANT: They'd owe you about $60,000 from their 401k to make it even\nUSER: Can you just transfer money from a 401k?\nASSISTANT: Through a QDRO - Qualified Domestic Relations Order. It's a special court order for retirement divisions\nUSER: Does that trigger taxes?\nASSISTANT: Not if done properly through the QDRO. It's a tax-free transfer between spouses in divorce\nUSER: That sounds better\nASSISTANT: Another consideration - who claims the kids on taxes?\nUSER: We haven't discussed that\nASSISTANT: Typically the primary custodial parent, but it's negotiable. The tax benefits are significant\nUSER: What about child support?\nASSISTANT: With joint custody, it depends on income disparity. What are your respective incomes?\nUSER: I make about $95,000, they make $110,000\nASSISTANT: Not a huge gap, but they'd likely owe some support. State calculator suggests about $400 per month per child\nUSER: So $800 monthly?\nASSISTANT: Approximately, though it could be offset against the asset division\nUSER: What about alimony?\nASSISTANT: In an 18-year marriage with similar incomes, it's possible but not automatic\nUSER: I did stay home for five years when the kids were young\nASSISTANT: That career sacrifice could support an alimony claim. Maybe 2-3 years of support\nUSER: How much would that be?\nASSISTANT: Possibly $1,000-1,500 monthly, but it's negotiable\nUSER: What about health insurance? I'm on their plan\nASSISTANT: You'll need your own after divorce. COBRA allows 36 months continuation at your cost\nUSER: That's expensive\nASSISTANT: Yes, often $600-800 monthly. Factor that into negotiations\nUSER: What about the rental property income?\nASSISTANT: Currently that's joint income. How much does it generate?\nUSER: About $2,400 monthly after expenses\nASSISTANT: If they keep it, they get all that income going forward\nUSER: That's another advantage for them\nASSISTANT: Exactly. We should value the rental higher - include the income stream\nUSER: How do we do that?\nASSISTANT: Commercial properties use cap rates. The $28,800 annual income adds significant value\nUSER: So maybe it's worth more than $350,000?\nASSISTANT: Could argue $400,000 with the income considered\nUSER: That changes the math significantly\nASSISTANT: Yes. Now they'd be getting $620,000 in value versus your $605,000\nUSER: Even worse split\nASSISTANT: We need to restructure. What about keeping both properties jointly for now?\nUSER: How would that work?\nASSISTANT: Continue co-owning the rental, split income, sell when market improves\nUSER: We don't really want to stay financially connected\nASSISTANT: Understandable. Then selling the rental might be best\nUSER: When would we need to sell?\nASSISTANT: Ideally before the divorce finalizes, or specify a deadline in the decree\nUSER: The market's pretty good now\nASSISTANT: Then list it soon. Sales take 2-3 months typically\nUSER: What happens to the rental income meanwhile?\nASSISTANT: Should go into a separate account, split after sale closes\nUSER: Okay. What about timing for everything else?\nASSISTANT: The QDRO takes 2-3 months after the divorce decree. House refinance about the same\nUSER: Refinance?\nASSISTANT: You'll need to refinance the house into your name only\nUSER: Will I qualify on my income alone?\nASSISTANT: With $95,000 income and $180,000 mortgage, should be fine. Debt-to-income looks good\nUSER: What about the HELOC?\nASSISTANT: That needs to be rolled into the refinance or paid off\nUSER: So I'd be refinancing $220,000 total?\nASSISTANT: Yes. At current rates, probably $1,600-1,800 monthly payment\nUSER: That's manageable with the child support\nASSISTANT: Good. Now, have you discussed personal property?\nUSER: Not in detail. Furniture, electronics, that stuff\nASSISTANT: Usually splits naturally - you keep what you use. Any contested items?\nUSER: Some artwork we collected together\nASSISTANT: How valuable?\nUSER: Maybe $20,000 worth total\nASSISTANT: Significant enough to address. Options are alternate selection, sale and split, or buy-out\nUSER: I'd prefer alternating selection\nASSISTANT: Fair approach. You each pick pieces in turns\nUSER: What about legal fees?\nASSISTANT: Each party typically pays their own, unless there's a large income disparity\nUSER: How much should I budget?\nASSISTANT: For a contested divorce with these assets, $15,000-25,000 if it goes to trial\nUSER: That much?\nASSISTANT: Trials are expensive. Mediation is cheaper - maybe $5,000-10,000 total\nUSER: We should try mediation first\nASSISTANT: Wise choice. We can prepare a settlement proposal for mediation\nUSER: What should that include?\nASSISTANT: All assets, debts, custody, support, and implementation timeline\nUSER: When do you need information from me?\nASSISTANT: Get me three years of tax returns, current statements for all accounts, and property appraisals\nUSER: I can gather those this week\nASSISTANT: Perfect. We'll draft a comprehensive proposal\nUSER: Thank you for explaining everything\nASSISTANT: You're welcome. This is complex but we'll work through it systematically"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853605303865630b2fa661ac131412e72f6bdd3759f6a6f96",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\n  \"session\": {\n    \"id\": \"divorce_attorney_consultation\",\n    \"timestamp\": \"2024-06-12\"\n  },\n  \"marriage\": {\n    \"duration_years\": 18,\n    \"separation_date\": \"2024-02\"\n  },\n  \"children\": {\n    \"count\": 2,\n    \"ages\": [16, 14],\n    \"custody\": {\n      \"arrangement\": \"joint\",\n      \"primary_residence\": \"user\"\n    },\n    \"tax_claims\": \"not_discussed\"\n  },\n  \"assets\": {\n    \"real_estate\": {\n      \"primary_residence\": {\n        \"address\": \"Riverside Drive\",\n        \"value\": 650000,\n        \"mortgage_remaining\": 180000,\n        \"equity\": 470000,\n        \"heloc\": {\n          \"balance\": 40000,\n          \"purpose\": \"renovations\",\n          \"timing\": \"2 years ago\"\n        }\n      },\n      \"rental_property\": {\n        \"address\": \"Oak Street\",\n        \"value\": 350000,\n        \"mortgage_status\": \"paid_off\",\n        \"purchase_year\": \"10 years ago\",\n        \"purpose\": \"investment\",\n        \"monthly_income_after_expenses\": 2400\n      }\n    },\n    \"retirement_accounts\": {\n      \"user_401k\": {\n        \"total_value\": 280000,\n        \"premarital_portion\": 30000,\n        \"accumulated_during_marriage\": \"most\"\n      },\n      \"spouse_401k\": {\n        \"total_value\": 220000,\n        \"accumulated_during_marriage\": \"most\"\n      }\n    },\n    \"joint_brokerage\": {\n      \"value\": 150000,\n      \"assets_type\": \"stocks\"\n    },\n    \"vehicles\": {\n      \"user_car\": {\n        \"value\": 25000,\n        \"payment_status\": \"paid_off\"\n      },\n      \"spouse_car\": {\n        \"value\": 35000,\n        \"payment_status\": \"paid_off\"\n      }\n    },\n    \"personal_property\": {\n      \"artwork\": {\n        \"total_value\": 20000,\n        \"contested_status\": \"yes\"\n      }\n    }\n  },\n  \"debts\": {\n    \"credit_cards\": 12000,\n    \"heloc\": 40000,\n    \"primary_residence_mortgage\": 180000\n  },\n  \"divorce_proposals\": {\n    \"spouse_initial\": {\n      \"assets_requested\": [\"rental_property\", \"spouse_401k\"],\n      \"proposed_to_user\": [\"primary_residence\", \"user_401k\"],\n      \"joint_brokerage_split\": \"50-50\"\n    },\n    \"assistant_suggestions\": {\n      \"option1\": \"sell both properties, split proceeds after debts\",\n      \"option2\": \"user keeps house, spouse gets rental, equalize with ~$60k from spouse's 401k via QDRO\",\n      \"qdro_details\": \"Qualified Domestic Relations Order, tax-free transfer between spouses in divorce\"\n    },\n    \"rental_property_valuation\": {\n      \"current_estimate\": 350000,\n      \"proposed_with_income\": 400000,\n      \"annual_income\": 28800\n    }\n  },\n  \"financial_details\": {\n    \"incomes\": {\n      \"user\": 95000,\n      \"spouse\": 110000\n    },\n    \"child_support\": {\n      \"estimate_per_child_monthly\": 400,\n      \"based_on_incomes\": \"user $95k, spouse $110k\"\n    },\n    \"alimony\": {\n      \"possibility\": \"yes\",\n      \"duration_estimate_years\": \"2-3\",\n      \"monthly_amount_estimate\": \"1000-1500\",\n      \"basis\": \"user stayed home 5 years when kids young\"\n    },\n    \"health_insurance\": {\n      \"user_current\": \"on spouse's plan\",\n      \"post_divorce_option\": \"COBRA\",\n      \"cobra_duration\": \"36 months\",\n      \"cobra_cost_monthly_estimate\": \"600-800\"\n    },\n    \"legal_fees\": {\n      \"mediation_total_estimate\": \"5000-10000\",\n      \"trial_per_party_estimate\": \"15000-25000\"\n    }\n  },\n  \"next_steps\": {\n    \"required_documents\": {\n      \"items\": [\"3 years tax returns\", \"current account statements\", \"property appraisals\"],\n      \"timeline\": \"this week\"\n    },\n    \"process\": {\n      \"preferred\": \"mediation first\",\n      \"proposal_content\": \"all assets, debts, custody, support, implementation timeline\",\n      \"qdro_timeline\": \"2-3 months after divorce decree\",\n      \"house_refinance_timeline\": \"2-3 months\",\n      \"rental_sale_timeline\": \"2-3 months typically\"\n    }\n  }\n}}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create a hierarchical JSON object that captures all the key facts from the divorce attorney consultation session. Let me start by identifying the main categories. The conversation covers marriage details, children, assets, debts, divorce proposals, and next steps. \n\nFirst, \"marriage\" as a category. Subcategories could include duration, separation date. The user was married 18 years, separated in February (need to note the year, but the timestamp is 2024-06-12, so separation was February of the same year? The user said \"last February\", so 2024-02).\n\nNext, \"children\": number, ages, custody arrangement. Two kids, 16 and 14, joint custody with primary residence with user.\n\n\"assets\" is a major category. Subcategories: real_estate, retirement_accounts, investments, vehicles, personal_property. \n\nFor real_estate: primary residence (Riverside Drive, value $650k, mortgage $180k, equity $470k, HELOC $40k on it), rental property (Oak Street, value $350k, paid off, bought 10 years ago as investment, generates $2400/month income after expenses).\n\nRetirement accounts: user's 401k ($280k, $30k premarital), spouse's 401k ($220k, mostly marital). \n\nInvestments: joint brokerage account ($150k stocks).\n\nVehicles: user's car ($25k, paid off), spouse's car ($35k, paid off).\n\nPersonal_property: artwork ($20k total).\n\n\"children\" category: subcategories \"custody\" (joint, primary with user), \"tax_claims\" (not discussed), \"ages\" (16 and 14).\n\n\"debts\": subcategories \"mortgages\", \"credit_cards\", \"heloc\", \"other\". Primary residence mortgage $180k, credit cards $12k, HELOC $40k (on primary residence, used for renovations 2 years ago).\n\n\"divorce_proposals\": subcategories \"spouse_proposal\", \"assistant_suggestions\". Spouse proposed keeping rental property and their 401k, user gets house and their 401k, split joint brokerage 50-50. Assistant suggested options like selling properties, equalizing with QDRO, selling rental, etc.\n\n\"next_steps\": subcategories \"required_documents\", \"timeline\", \"legal_process\". User needs to provide 3 years tax returns, account statements, property appraisals (this week), draft settlement proposal for mediation.\n\n\"financial_details\": child support estimate ($400/month per child), alimony possibility (2-3 years, $1000-1500/month), COBRA cost ($600-800/month), legal fees (mediation $5k-10k, trial $15k-25k per party).\n\nI need to structure each of these with exact values, dates, ownership, etc. Let me build this step by step, ensuring hierarchy: category/subcategory/key/value.\n\nFor example, under \"assets/real_estate/primary_residence\", keys like \"address\" (Riverside Drive), \"value\" ($650000), \"mortgage_remaining\" ($180000), \"equity\" ($470000), \"heloc_balance\" ($40000), \"heloc_purpose\" (renovations), \"heloc_timing\" (2 years ago).\n\n\"assets/real_estate/rental_property\": \"address\" (Oak Street), \"value\" ($350000), \"mortgage_status\" (paid off), \"purchase_year\" (10 years ago), \"purpose\" (investment), \"monthly_income_after_expenses\" ($2400).\n\n\"assets/retirement_accounts/user_401k\": \"total_value\" ($280000), \"premarital_portion\" ($30000), \"accumulated_during_marriage\" (most). \"spouse_401k\": \"total_value\" ($220000), \"accumulated_during_marriage\" (most).\n\n\"assets/joint_brokerage\": \"value\" ($150000), \"assets_type\" (stocks).\n\n\"assets/vehicles/user_car\": \"value\" ($25000), \"payment_status\" (paid off). \"spouse_car\": \"value\" ($35000), \"payment_status\" (paid off).\n\n\"debts\": \"credit_cards\" ($12000), \"heloc\" ($40000, linked to primary residence), \"primary_residence_mortgage\" ($180000).\n\n\"children\": \"count\" (2), \"ages\" (16,14), \"custody_arrangement\" (joint, primary with user), \"tax_claims_discussed\" (no).\n\n\"marriage\": \"duration_years\" (18), \"separation_date\" (\"2024-02\").\n\n\"divorce_proposals/spouse_initial\": \"assets_requested\" (rental property, their 401k), \"proposed_to_user\" (primary residence, user's 401k), \"joint_brokerage_split\" (\"50-50\").\n\n\"divorce_proposals/assistant_suggestions\": \"option1\" (sell both properties, split proceeds after debts), \"option2\" (user keeps house, spouse gets rental, equalize with $60k from spouse's 401k via QDRO), \"qdro_details\" (\"Qualified Domestic Relations Order\", \"tax_free_transfer_between_spouses\").\n\n\"financial_details/child_support\": \"estimate_per_child_monthly\" ($400), \"based_on_incomes\" (user $95000, spouse $110000). \"alimony\": \"possibility\" (yes), \"duration_estimate_years\" (2-3), \"monthly_amount_estimate\" ($1000-$1500), \"basis\" (career sacrifice: user stayed home 5 years when kids young). \"cobra\": \"cost_monthly_estimate\" ($600-$800), \"duration\" (36 months), \"coverage_type\" (health insurance continuation). \"legal_fees/mediation\" ($5000-$10000 total), \"trial\" ($15000-$25000 per party).\n\n\"next_steps/required_documents\": \"items\" (3 years tax returns, current account statements, property appraisals), \"timeline\" (\"this week\"). \"process\": \"preferred\" (mediation first), \"proposal_content\" (all assets, debts, custody, support, implementation timeline).\n\nNeed to make sure all relationships are captured, like HELOC is on primary residence, rental property bought 10 years ago, etc. Also, exact dates like timestamp of the session is 2024-06-12, conversation_id is divorce_attorney_consultation.\n\nPutting it all together in a hierarchical JSON structure with these categories and subcategories."
+            }
+          }
+        ],
+        "created": 1785360590,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2958,
+          "prompt_tokens": 2479,
+          "total_tokens": 5437,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1618,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2958,
+        "prompt_tokens": 2479,
+        "total_tokens": 5437,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1618,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853605303865630b2fa661ac131412e72f6bdd3759f6a6f96"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_08_divorce_settlement_complexity json_cards session 2",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:29:50.461821+00:00",
+      "latency_ms": 70850.054,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 2\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{\"session\": {\"id\": \"divorce_attorney_consultation\", \"timestamp\": \"2024-06-12\"}, \"marriage\": {\"duration_years\": 18, \"separation_date\": \"2024-02\"}, \"children\": {\"count\": 2, \"ages\": [16, 14], \"custody\": {\"arrangement\": \"joint\", \"primary_residence\": \"user\"}, \"tax_claims\": \"not_discussed\"}, \"assets\": {\"real_estate\": {\"primary_residence\": {\"address\": \"Riverside Drive\", \"value\": 650000, \"mortgage_remaining\": 180000, \"equity\": 470000, \"heloc\": {\"balance\": 40000, \"purpose\": \"renovations\", \"timing\": \"2 years ago\"}}, \"rental_property\": {\"address\": \"Oak Street\", \"value\": 350000, \"mortgage_status\": \"paid_off\", \"purchase_year\": \"10 years ago\", \"purpose\": \"investment\", \"monthly_income_after_expenses\": 2400}}, \"retirement_accounts\": {\"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\"}, \"spouse_401k\": {\"total_value\": 220000, \"accumulated_during_marriage\": \"most\"}}, \"joint_brokerage\": {\"value\": 150000, \"assets_type\": \"stocks\"}, \"vehicles\": {\"user_car\": {\"value\": 25000, \"payment_status\": \"paid_off\"}, \"spouse_car\": {\"value\": 35000, \"payment_status\": \"paid_off\"}}, \"personal_property\": {\"artwork\": {\"total_value\": 20000, \"contested_status\": \"yes\"}}}, \"debts\": {\"credit_cards\": 12000, \"heloc\": 40000, \"primary_residence_mortgage\": 180000}, \"divorce_proposals\": {\"spouse_initial\": {\"assets_requested\": [\"rental_property\", \"spouse_401k\"], \"proposed_to_user\": [\"primary_residence\", \"user_401k\"], \"joint_brokerage_split\": \"50-50\"}, \"assistant_suggestions\": {\"option1\": \"sell both properties, split proceeds after debts\", \"option2\": \"user keeps house, spouse gets rental, equalize with ~$60k from spouse's 401k via QDRO\", \"qdro_details\": \"Qualified Domestic Relations Order, tax-free transfer between spouses in divorce\"}, \"rental_property_valuation\": {\"current_estimate\": 350000, \"proposed_with_income\": 400000, \"annual_income\": 28800}}, \"financial_details\": {\"incomes\": {\"user\": 95000, \"spouse\": 110000}, \"child_support\": {\"estimate_per_child_monthly\": 400, \"based_on_incomes\": \"user $95k, spouse $110k\"}, \"alimony\": {\"possibility\": \"yes\", \"duration_estimate_years\": \"2-3\", \"monthly_amount_estimate\": \"1000-1500\", \"basis\": \"user stayed home 5 years when kids young\"}, \"health_insurance\": {\"user_current\": \"on spouse's plan\", \"post_divorce_option\": \"COBRA\", \"cobra_duration\": \"36 months\", \"cobra_cost_monthly_estimate\": \"600-800\"}, \"legal_fees\": {\"mediation_total_estimate\": \"5000-10000\", \"trial_per_party_estimate\": \"15000-25000\"}}, \"next_steps\": {\"required_documents\": {\"items\": [\"3 years tax returns\", \"current account statements\", \"property appraisals\"], \"timeline\": \"this week\"}, \"process\": {\"preferred\": \"mediation first\", \"proposal_content\": \"all assets, debts, custody, support, implementation timeline\", \"qdro_timeline\": \"2-3 months after divorce decree\", \"house_refinance_timeline\": \"2-3 months\", \"rental_sale_timeline\": \"2-3 months typically\"}}}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=real_estate_agent_discussion\ntimestamp=2024-08-03\nmetadata={}\nUSER: Hi, I'm considering selling an investment property and need some guidance\nASSISTANT: I'd be happy to help! Tell me about the property you're looking to sell\nUSER: It's a rental property on Oak Street, a 3-bedroom single family home\nASSISTANT: Nice area. How long have you owned it?\nUSER: About ten years. We bought it as an investment\nASSISTANT: Great timing - significant appreciation over that period. What's your timeline for selling?\nUSER: I need to sell fairly quickly, within the next few months\nASSISTANT: Is this related to any specific deadline?\nUSER: It's part of a divorce settlement. We need to divide the assets\nASSISTANT: I understand. These sales often have court-imposed timelines. Do you have a deadline?\nUSER: The divorce should finalize by year-end, so preferably sold by November\nASSISTANT: That gives us about three months. Doable in this market. Is your spouse cooperative on the sale?\nUSER: Somewhat. We've agreed to sell but haven't discussed specifics\nASSISTANT: Both parties will need to sign listing agreements and accept offers. Current tenant situation?\nUSER: There's a tenant with a lease through next February\nASSISTANT: That complicates things. Buyers might want it vacant or might like the income\nUSER: The tenant pays $2,400 monthly\nASSISTANT: Good rental income. That's appealing to investors. What's their payment history?\nUSER: Perfect for three years, never late\nASSISTANT: Excellent selling point. Do you know what comparable properties are selling for?\nUSER: I think around $350,000 but I'm not sure\nASSISTANT: Let me check recent sales... I see three similar properties sold between $340,000-385,000\nUSER: What made the difference in price?\nASSISTANT: Condition and updates mainly. When did you last update the property?\nUSER: New roof two years ago, HVAC five years ago\nASSISTANT: Good mechanicals help. What about kitchen and bathrooms?\nUSER: Kitchen was updated seven years ago, bathrooms are original but well-maintained\nASSISTANT: For investor buyers, that's usually fine. How many bathrooms?\nUSER: Two full bathrooms\nASSISTANT: Good. What about the exterior and landscaping?\nUSER: We repainted last year and the yard is professionally maintained\nASSISTANT: Excellent. I'd estimate $355,000-370,000 based on what you've described\nUSER: That's better than I expected\nASSISTANT: The rental income supports the value. At $2,400/month, that's a 7.8% cap rate\nUSER: Is that good?\nASSISTANT: Very attractive to investors. Would you consider selling to the current tenant?\nUSER: I hadn't thought about that\nASSISTANT: Sometimes tenants want to buy. Saves showing hassle and they know the property\nUSER: Would they qualify for a mortgage?\nASSISTANT: We could ask. If interested, they'd get pre-qualified. Shall I reach out?\nUSER: Let me check with my spouse first\nASSISTANT: Of course. Now, about commission - standard is 6% split between buying and selling agents\nUSER: On $360,000, that's about $21,600?\nASSISTANT: Correct. Plus you'll have closing costs - title, escrow, about another $3,000-4,000\nUSER: So net proceeds around $335,000?\nASSISTANT: Approximately. Don't forget capital gains tax\nUSER: How much would that be?\nASSISTANT: Depends on your basis. What did you pay originally?\nUSER: About $185,000\nASSISTANT: So roughly $175,000 gain. At capital gains rate, maybe $30,000-40,000 in taxes\nUSER: That's significant. Any way to reduce it?\nASSISTANT: If it was ever your primary residence, you might get some exclusion\nUSER: No, always a rental\nASSISTANT: Then full capital gains apply. You could do a 1031 exchange to defer taxes\nUSER: What's that?\nASSISTANT: Buy another investment property with the proceeds, defer taxes until you sell that\nUSER: But we're divorcing, need to split the money\nASSISTANT: Right, 1031 won't work then. The taxes are unavoidable\nUSER: Should we price it higher to account for taxes?\nASSISTANT: Market determines price, not your tax situation. Overpricing means longer sale time\nUSER: Good point. What about showing the property with tenants?\nASSISTANT: Requires 24-hour notice to tenants. Some buyers want to see it vacant\nUSER: Could we offer the tenants something to cooperate?\nASSISTANT: Sometimes sellers offer a rent reduction for showing flexibility\nUSER: How much?\nASSISTANT: $200-300 off monthly rent is common\nUSER: That seems reasonable\nASSISTANT: Should we plan for photos next week?\nUSER: I need to discuss with my spouse and the attorney first\nASSISTANT: Of course. One important point - both spouses must agree to all terms\nUSER: What if we disagree on price?\nASSISTANT: The court might have to decide, which delays everything\nUSER: We should probably agree upfront then\nASSISTANT: Exactly. I suggest a pricing strategy meeting with both parties\nUSER: Can you do that?\nASSISTANT: Absolutely. Neutral presentation of market data helps everyone agree\nUSER: What about the earnest money when we get an offer?\nASSISTANT: Goes into escrow. For divorce sales, I recommend a joint account\nUSER: Not into one person's account?\nASSISTANT: That can cause problems. Escrow holds it neutrally\nUSER: Makes sense. What if we get multiple offers?\nASSISTANT: Great problem to have. We'd present all offers to both parties\nUSER: How do we decide which to accept?\nASSISTANT: Price, terms, contingencies, closing date. Cash offers are strongest\nUSER: Why cash?\nASSISTANT: No financing contingency, faster closing, more certain\nUSER: How common are cash offers?\nASSISTANT: For investment properties, maybe 30-40% of offers\nUSER: That's encouraging. What about inspection issues?\nASSISTANT: Buyers will inspect. Budget $2,000-5,000 for typical repair requests\nUSER: Who pays for repairs?\nASSISTANT: Negotiable, but sellers usually handle them to keep deals together\nUSER: From the proceeds?\nASSISTANT: Can be deducted at closing or handled before\nUSER: Deducting sounds easier\nASSISTANT: Usually is. What about personal property in the house?\nUSER: Just basic appliances that stay\nASSISTANT: Good. Refrigerator, washer, dryer?\nUSER: All included, they're maybe five years old\nASSISTANT: That helps value. What about HOA?\nUSER: No HOA, which I know is good\nASSISTANT: Very good - many buyers avoid HOAs\nUSER: What's our next step?\nASSISTANT: Get agreement from your spouse, then we'll do a walkthrough and pricing analysis\nUSER: How detailed is the pricing analysis?\nASSISTANT: I'll provide 10-15 comparable sales, market trends, suggested list price\nUSER: That should help convince my spouse\nASSISTANT: Data helps remove emotion from pricing decisions\nUSER: Exactly what we need\nASSISTANT: When can both of you meet?\nUSER: I'll check and get back to you this week\nASSISTANT: Perfect. Bring any documentation - tenant lease, repair receipts, tax bills\nUSER: Will do. This is helpful\nASSISTANT: Divorce sales are challenging but manageable with good communication\nUSER: I appreciate your understanding\nASSISTANT: Of course. We'll get through this smoothly"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853605906525630b2fa661ac131412e72f6bdd3759f63cfed",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\"session\": {\"id\": \"real_estate_agent_discussion\", \"timestamp\": \"2024-08-03\"}, \"marriage\": {\"duration_years\": 18, \"separation_date\": \"2024-02\"}, \"children\": {\"count\": 2, \"ages\": [16, 14], \"custody\": {\"arrangement\": \"joint\", \"primary_residence\": \"user\"}, \"tax_claims\": \"not_discussed\"}, \"assets\": {\"real_estate\": {\"primary_residence\": {\"address\": \"Riverside Drive\", \"value\": 650000, \"mortgage_remaining\": 180000, \"equity\": 470000, \"heloc\": {\"balance\": 40000, \"purpose\": \"renovations\", \"timing\": \"2 years ago\"}}, \"rental_property\": {\"address\": \"Oak Street\", \"value\": 350000, \"mortgage_status\": \"paid_off\", \"purchase_year\": \"10 years ago\", \"purpose\": \"investment\", \"monthly_income_after_expenses\": 2400, \"property_details\": {\"type\": \"3-bedroom single family home\", \"bathrooms\": \"2 full\", \"updates\": {\"roof\": \"2 years ago\", \"HVAC\": \"5 years ago\", \"kitchen\": \"updated 7 years ago\", \"bathrooms\": \"original, well-maintained\", \"exterior\": \"repainted last year\", \"landscaping\": \"professionally maintained\"}}, \"tenant\": {\"lease_end_date\": \"February next year\", \"monthly_rent\": 2400, \"payment_history\": \"perfect for 3 years, never late\"}, \"valuation\": {\"original_purchase_price\": 185000, \"comparable_sales_range\": \"340000-385000\", \"agent_estimate_range\": \"355000-370000\"}, \"sale_timeline\": {\"required_sale_date\": \"November 2024\", \"reason\": \"divorce finalization by year-end\"}, \"financials\": {\"commission_rate\": \"6%\", \"estimated_commission_example\": \"21600 on 360000\", \"closing_costs_range\": \"3000-4000\", \"capital_gains\": {\"gain_estimate\": 175000, \"tax_estimate\": \"30000-40000\", \"exclusion_applicable\": \"no\", \"1031_exchange_applicable\": \"no\"}}, \"sale_process\": {\"spouse_cooperation_status\": \"agreed to sell, no specifics discussed\", \"required_agreements\": \"both spouses must sign listing agreements and accept offers\", \"dispute_resolution\": \"court may decide if disagreement on price\", \"earnest_money_handling\": \"joint escrow account recommended\"}, \"tenant_considerations\": {\"showing_requirement\": \"24-hour notice\", \"cooperation_incentive\": \"possible $200-300 monthly rent reduction\"}}}, \"retirement_accounts\": {\"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\"}, \"spouse_401k\": {\"total_value\": 220000, \"accumulated_during_marriage\": \"most\"}}}, \"joint_brokerage\": {\"value\": 150000, \"assets_type\": \"stocks\"}, \"vehicles\": {\"user_car\": {\"value\": 25000, \"payment_status\": \"paid_off\"}, \"spouse_car\": {\"value\": 35000, \"payment_status\": \"paid_off\"}}, \"personal_property\": {\"artwork\": {\"total_value\": 20000, \"contested_status\": \"yes\"}}}, \"debts\": {\"credit_cards\": 12000, \"heloc\": 40000, \"primary_residence_mortgage\": 180000}, \"divorce_proposals\": {\"spouse_initial\": {\"assets_requested\": [\"rental_property\", \"spouse_401k\"], \"proposed_to_user\": [\"primary_residence\", \"user_401k\"], \"joint_brokerage_split\": \"50-50\"}, \"assistant_suggestions\": {\"option1\": \"sell both properties, split proceeds after debts\", \"option2\": \"user keeps house, spouse gets rental, equalize with ~$60k from spouse's 401k via QDRO\", \"qdro_details\": \"Qualified Domestic Relations Order, tax-free transfer between spouses in divorce\"}, \"rental_property_valuation\": {\"current_estimate\": 350000, \"proposed_with_income\": 400000, \"annual_income\": 28800}, \"rental_property_sale_status\": \"part of divorce asset division\" },\"financial_details\": {\"incomes\": {\"user\": 95000, \"spouse\": 110000}, \"child_support\": {\"estimate_per_child_monthly\": 400, \"based_on_incomes\": \"user $95k, spouse $110k\"}, \"alimony\": {\"possibility\": \"yes\", \"duration_estimate_years\": \"2-3\", \"monthly_amount_estimate\": \"1000-1500\", \"basis\": \"user stayed home 5 years when kids young\"}, \"health_insurance\": {\"user_current\": \"on spouse's plan\", \"post_divorce_option\": \"COBRA\", \"cobra_duration\": \"36 months\", \"cobra_cost_monthly_estimate\": \"600-800\"}, \"legal_fees\": {\"mediation_total_estimate\": \"5000-10000\", \"trial_per_party_estimate\": \"15000-25000\"}},\"next_steps\": {\"required_documents\": {\"items\": [\"3 years tax returns\", \"current account statements\", \"property appraisals\"], \"timeline\": \"this week\"}, \"process\": {\"preferred\": \"mediation first\", \"proposal_content\": \"all assets, debts, custody, support, implementation timeline\", \"qdro_timeline\": \"2-3 months after divorce decree\", \"house_refinance_timeline\": \"2-3 months\", \"rental_sale_timeline\": \"2-3 months typically\", \"current_rental_sale_target\": \"within 3 months (by November)\"}} }",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory with new facts from the current session while retaining existing valid information. Let's start by identifying the existing memory structure and then integrating the new details from the real estate agent discussion.\n\nFirst, the existing memory has a \"session\" object with id and timestamp. The new session has conversation_id=real_estate_agent_discussion and timestamp=2024-08-03, so we should update the session details.\n\nNext, the \"assets\" category has \"rental_property\" with address \"Oak Street\", value 350000, mortgage_status \"paid_off\", purchase_year \"10 years ago\", purpose \"investment\", monthly_income_after_expenses 2400. From the new session, we get more details about the rental property:\n\n- Property type: 3-bedroom single family home\n- Tenant details: lease through February (next year), pays $2400 monthly, payment history perfect for 3 years (never late)\n- Updates/maintenance: new roof 2 years ago, HVAC 5 years ago, kitchen updated 7 years ago, bathrooms original (2 full bathrooms) but well-maintained, repainted last year, yard professionally maintained\n- Comparable sales: 3 similar sold $340k-$385k, agent estimate $355k-$370k\n- Selling timeline: need to sell by November (divorce finalize by year-end)\n- Spouse cooperation: agreed to sell, no specifics discussed yet\n- Tenant situation: complicates sale, buyers may want vacant or income\n- Commission: 6% (e.g., $21,600 on $360k), closing costs $3k-$4k\n- Capital gains tax: original purchase price $185k, gain ~$175k, tax estimate $30k-$40k (no primary residence exclusion, 1031 exchange not applicable due to divorce)\n- Showing considerations: 24-hour notice to tenant, possible rent reduction ($200-$300/month) for cooperation\n- Required agreements: both spouses must sign listing/accept offers, potential court decision if disagreement on price\n- Earnest money: joint escrow account recommended\n\nNow, we need to organize these new facts into the existing hierarchy. The \"rental_property\" under \"assets/real_estate\" is the primary area to update. We can add subcategories like \"property_details\", \"tenant\", \"valuation\", \"sale_timeline\", \"financials\", \"process_notes\".\n\nAlso, the \"divorce_proposals\" might need an update regarding the rental property sale as part of the settlement, but the user mentioned it's part of dividing assets, so we can note that in \"divorce_proposals\" or under \"rental_property/sale_timeline\".\n\nThe \"session\" should be updated with the new conversation_id and timestamp, but since the original session was \"divorce_attorney_consultation\" and this is a new session, we might need to adjust the \"session\" object to reflect the current session, but the user instruction says \"apply updates without losing still-valid facts\". However, the initial \"session\" was from the divorce attorney consultation, and this is a new session with the real estate agent. Maybe the \"session\" should be a list, but the original memory has \"session\" as a single object. Alternatively, perhaps \"session\" in the original was the initial session, and now we have a new session, so we need to update the \"session\" id and timestamp to the current one, but that might lose the original session info. Wait, the user instruction says \"select only facts that may help a future assistant, but retain exact values... apply updates without losing still-valid facts\". The original session info (divorce attorney consultation on 2024-06-12) is still valid, so we shouldn't lose that. Maybe the \"session\" should have a \"current\" and \"previous\" or \"sessions\" as an array. But the original memory has \"session\" as a single object. Hmm, the initial memory's \"session\" is part of the \"current memory state\" from older sessions, and the new session is the \"new session\" to analyze and replace the memory state. The user says \"replace the memory state\" with the new session analysis. So the \"current memory state\" is to be replaced by integrating the new session's facts into the existing structure.\n\nLooking back at the original memory's \"session\" object: {\"session\": {\"id\": \"divorce_attorney_consultation\", \"timestamp\": \"2024-06-12\"}}. Now, the new session is \"real_estate_agent_discussion\" on \"2024-08-03\". Since we need to retain still-valid facts, the original session info might still be relevant, but perhaps the \"session\" in the memory should represent the most recent session, while other session details are part of the context. Alternatively, maybe \"session\" is just metadata about the current interaction, so we update it to the new session's id and timestamp.\n\nNow, structuring the new details under \"assets/real_estate/rental_property\":\n\n- property_details: type (3-bedroom single family home), bathrooms (2 full), updates (roof: 2 years ago, HVAC: 5 years ago, kitchen: updated 7 years ago, bathrooms: original, exterior: repainted last year, landscaping: professionally maintained)\n- tenant: lease_end (February next year), monthly_rent (2400), payment_history (perfect, 3 years, never late)\n- valuation: original_purchase_price (185000), comparable_sales_range (340000-385000), agent_estimate_range (355000-370000)\n- sale_timeline: required_sale_date (November 2024), reason (divorce finalization by year-end)\n- financials: commission_rate (6%), estimated_commission (21600 on 360000), closing_costs_range (3000-4000), capital_gains (gain_estimate 175000, tax_estimate 30000-40000, exclusion_applicable no, 1031_exchange_applicable no)\n- sale_process: timeline_constraint divorce_finalization_by_year_end, spouse_cooperation_status agreed_to_sell_no_specifics, required_agreements both_spouses_sign_listing_offers, dispute_resolution_court_decision_possible_if_price_disagreement, earnest_money_handling joint_escrow_account_recommended\n- tenant_considerations: lease_end_date February_next_year, payment_history perfect_3_years_never_late, showing_requirement 24_hour_notice, cooperation_incentive possible_rent_reduction_200-300_monthly\n\nAlso, the original \"rental_property\" had \"monthly_income_after_expenses\": 2400, which matches the tenant's monthly rent mentioned, so that's consistent.\n\nOther areas: \"divorce_proposals\" originally had spouse_initial requesting rental property. Now, the user is selling it as part of the divorce settlement, so we can add under \"divorce_proposals\" that the rental property is being sold as part of asset division, with timeline by November.\n\nPutting this all together, the updated memory should include these new details under the appropriate categories, preserving existing valid facts like purchase year, mortgage status, etc."
+            }
+          }
+        ],
+        "created": 1785360661,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 3128,
+          "prompt_tokens": 3050,
+          "total_tokens": 6178,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1639,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 3128,
+        "prompt_tokens": 3050,
+        "total_tokens": 6178,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1639,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853605906525630b2fa661ac131412e72f6bdd3759f63cfed"
+    },
+    {
+      "purpose": "3-1/3-2 memory update layer3_08_divorce_settlement_complexity json_cards session 3",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:31:01.317331+00:00",
+      "latency_ms": 56495.09,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 3\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{\"session\": {\"id\": \"real_estate_agent_discussion\", \"timestamp\": \"2024-08-03\"}, \"marriage\": {\"duration_years\": 18, \"separation_date\": \"2024-02\"}, \"children\": {\"count\": 2, \"ages\": [16, 14], \"custody\": {\"arrangement\": \"joint\", \"primary_residence\": \"user\"}, \"tax_claims\": \"not_discussed\"}, \"assets\": {\"real_estate\": {\"primary_residence\": {\"address\": \"Riverside Drive\", \"value\": 650000, \"mortgage_remaining\": 180000, \"equity\": 470000, \"heloc\": {\"balance\": 40000, \"purpose\": \"renovations\", \"timing\": \"2 years ago\"}}, \"rental_property\": {\"address\": \"Oak Street\", \"value\": 350000, \"mortgage_status\": \"paid_off\", \"purchase_year\": \"10 years ago\", \"purpose\": \"investment\", \"monthly_income_after_expenses\": 2400, \"property_details\": {\"type\": \"3-bedroom single family home\", \"bathrooms\": \"2 full\", \"updates\": {\"roof\": \"2 years ago\", \"HVAC\": \"5 years ago\", \"kitchen\": \"updated 7 years ago\", \"bathrooms\": \"original, well-maintained\", \"exterior\": \"repainted last year\", \"landscaping\": \"professionally maintained\"}}, \"tenant\": {\"lease_end_date\": \"February next year\", \"monthly_rent\": 2400, \"payment_history\": \"perfect for 3 years, never late\"}, \"valuation\": {\"original_purchase_price\": 185000, \"comparable_sales_range\": \"340000-385000\", \"agent_estimate_range\": \"355000-370000\"}, \"sale_timeline\": {\"required_sale_date\": \"November 2024\", \"reason\": \"divorce finalization by year-end\"}, \"financials\": {\"commission_rate\": \"6%\", \"estimated_commission_example\": \"21600 on 360000\", \"closing_costs_range\": \"3000-4000\", \"capital_gains\": {\"gain_estimate\": 175000, \"tax_estimate\": \"30000-40000\", \"exclusion_applicable\": \"no\", \"1031_exchange_applicable\": \"no\"}}, \"sale_process\": {\"spouse_cooperation_status\": \"agreed to sell, no specifics discussed\", \"required_agreements\": \"both spouses must sign listing agreements and accept offers\", \"dispute_resolution\": \"court may decide if disagreement on price\", \"earnest_money_handling\": \"joint escrow account recommended\"}, \"tenant_considerations\": {\"showing_requirement\": \"24-hour notice\", \"cooperation_incentive\": \"possible $200-300 monthly rent reduction\"}}}, \"retirement_accounts\": {\"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\"}, \"spouse_401k\": {\"total_value\": 220000, \"accumulated_during_marriage\": \"most\"}}}, \"joint_brokerage\": {\"value\": 150000, \"assets_type\": \"stocks\"}, \"vehicles\": {\"user_car\": {\"value\": 25000, \"payment_status\": \"paid_off\"}, \"spouse_car\": {\"value\": 35000, \"payment_status\": \"paid_off\"}}, \"personal_property\": {\"artwork\": {\"total_value\": 20000, \"contested_status\": \"yes\"}}}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=retirement_account_discussion\ntimestamp=2024-09-15\nmetadata={}\nUSER: Hi, I need help understanding how to divide retirement accounts in my divorce\nASSISTANT: I can help with that. We handle QDROs regularly. What type of retirement account do you have?\nUSER: I have a 401k through my employer with about $280,000\nASSISTANT: Is this being divided as part of your divorce settlement?\nUSER: Yes, but I'm not sure exactly how much\nASSISTANT: The divorce decree should specify either a percentage or dollar amount\nUSER: We're still negotiating. It might be around $60,000 to my spouse\nASSISTANT: That's about 21% of the current balance. How long until the divorce is final?\nUSER: Probably another two months\nASSISTANT: Good to plan ahead. The QDRO process takes time after the divorce\nUSER: What exactly is a QDRO?\nASSISTANT: Qualified Domestic Relations Order - it's a court order that allows us to divide the account\nUSER: Do I need a lawyer for that?\nASSISTANT: Most people use a QDRO specialist or attorney. The language must be precise\nUSER: How much does that cost?\nASSISTANT: Typically $500-1,500 depending on complexity\nUSER: And this avoids taxes and penalties?\nASSISTANT: Yes, if done correctly. Direct transfer to your ex-spouse's retirement account is tax-free\nUSER: What if they want cash instead?\nASSISTANT: They can take cash but will pay taxes and potentially penalties\nUSER: That's their choice though?\nASSISTANT: Yes, once the money is in their account, they control it\nUSER: How long does the transfer take?\nASSISTANT: After we receive the QDRO, usually 30-60 days to process\nUSER: Can I access my remaining balance during this?\nASSISTANT: Your account is typically frozen once we receive the QDRO until division is complete\nUSER: Frozen completely?\nASSISTANT: No new contributions or distributions, but it still earns market returns\nUSER: What about my ongoing contributions from payroll?\nASSISTANT: Those continue but go into a separate sub-account until the QDRO is processed\nUSER: That makes sense. What about loans against the 401k?\nASSISTANT: Do you have any outstanding loans?\nUSER: No, but I was considering one for house expenses\nASSISTANT: I'd advise against it before the QDRO. It complicates the division\nUSER: How so?\nASSISTANT: The loan reduces your account balance, affecting the calculation\nUSER: So wait until after?\nASSISTANT: Yes, after the division is complete, you can borrow from your remaining balance\nUSER: What's the maximum loan amount?\nASSISTANT: Lesser of $50,000 or 50% of your vested balance\nUSER: So after giving up $60,000, I'd have $220,000 left, could borrow $50,000?\nASSISTANT: Correct, assuming you're fully vested\nUSER: I've been here 12 years, so yes, fully vested\nASSISTANT: Good. Now, about the division - do you know the cutoff date?\nUSER: What do you mean?\nASSISTANT: The date for valuing the account. Could be separation date, divorce date, or other\nUSER: I think it's the separation date, last February\nASSISTANT: The balance was different then. Let me check... $265,000 in February\nUSER: So the division would be based on that?\nASSISTANT: Likely yes. $60,000 from $265,000 is different from current balance\nUSER: The market's been good since then\nASSISTANT: Yes, your account has grown about $15,000 since separation\nUSER: Does my spouse get any of that growth?\nASSISTANT: Depends on the decree language. Sometimes they get growth on their portion\nUSER: How is that calculated?\nASSISTANT: We'd calculate their percentage of the February balance, apply to current balance\nUSER: So if they get $60,000 of the $265,000, that's 22.6%?\nASSISTANT: Correct. 22.6% of the current $280,000 would be about $63,300\nUSER: That's $3,300 more\nASSISTANT: Yes, they'd participate in the market gains on their portion\nUSER: Makes sense but costs me more\nASSISTANT: The QDRO should specify this clearly to avoid disputes\nUSER: What about future contributions?\nASSISTANT: After the division date, all new contributions are typically yours alone\nUSER: Good. I contribute about $1,500 per month\nASSISTANT: Excellent savings rate. That includes employer match?\nUSER: Yes, I put in $1,000, they match $500\nASSISTANT: Nice match. That continues unaffected after the QDRO\nUSER: What about my spouse's 401k? It has about $220,000\nASSISTANT: Are you getting a portion of theirs?\nUSER: No, we're each keeping our own, but I'm paying them from mine\nASSISTANT: So you're equalizing the overall settlement with your 401k\nUSER: Exactly\nASSISTANT: Common approach. Simpler than multiple QDROs\nUSER: What about Social Security? We were married 18 years\nASSISTANT: At 10+ years, you can claim on their record if beneficial\nUSER: Even after divorce?\nASSISTANT: Yes, if you don't remarry before age 60\nUSER: How much would I get?\nASSISTANT: Up to 50% of their benefit if you wait until your full retirement age\nUSER: When is that?\nASSISTANT: Depends on your birth year. If born in 1960 or later, it's 67\nUSER: I'm 45 now, so 22 years away\nASSISTANT: Right. But you can claim reduced benefits at 62\nUSER: How much is the reduction?\nASSISTANT: About 30% reduction if you claim at 62 versus 67\nUSER: That's significant\nASSISTANT: Yes, waiting pays off if you can afford it\nUSER: What about my own Social Security?\nASSISTANT: You'd get the higher of your own benefit or the spousal benefit\nUSER: Not both?\nASSISTANT: No, just the higher amount\nUSER: Good to know. Back to the 401k - what about beneficiaries?\nASSISTANT: You'll need to update those after divorce\nUSER: Currently it's my spouse\nASSISTANT: Common situation. Change it as soon as the divorce is final\nUSER: Can I change it now?\nASSISTANT: Your spouse must consent in writing while you're still married\nUSER: Even though we're separated?\nASSISTANT: Yes, legal spouses have automatic beneficiary rights in 401ks\nUSER: What if something happens before the divorce is final?\nASSISTANT: Your spouse would inherit unless they've waived rights\nUSER: That's concerning\nASSISTANT: You could ask them to sign a waiver now\nUSER: Would they?\nASSISTANT: Depends on your relationship. Some couples cooperate on these matters\nUSER: Worth asking. What about IRAs?\nASSISTANT: Different rules. You can change IRA beneficiaries without spousal consent in most states\nUSER: I have a small IRA too, about $30,000\nASSISTANT: Is that being divided?\nUSER: No, I had that before marriage\nASSISTANT: Good, premarital assets typically stay separate\nUSER: What about the growth on it?\nASSISTANT: That gets complicated. Growth during marriage might be marital property\nUSER: It was worth $8,000 when we married\nASSISTANT: So $22,000 in growth. State law determines if that's marital\nUSER: I'm in a community property state\nASSISTANT: Then the growth is likely community property, unfortunately\nUSER: So they'd get half of $22,000?\nASSISTANT: Possibly, unless you've agreed otherwise in the settlement\nUSER: We didn't specifically address it\nASSISTANT: Might want to clarify that before finalizing\nUSER: Good point. This is more complex than I thought\nASSISTANT: Retirement divisions usually are. Happy to review your QDRO when ready\nUSER: I'll definitely take you up on that\nASSISTANT: We want to make sure it's processed correctly the first time"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 6000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "0217853606615051fad3a044f20103f8e4b726dec7c2fa4d0256b",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\"session\": {\"id\": \"retirement_account_discussion\", \"timestamp\": \"2024-09-15\"}, \"marriage\": {\"duration_years\": 18, \"separation_date\": \"2024-02\"}, \"children\": {\"count\": 2, \"ages\": [16, 14], \"custody\": {\"arrangement\": \"joint\", \"primary_residence\": \"user\"}, \"tax_claims\": \"not_discussed\"}, \"assets\": {\"real_estate\": {\"primary_residence\": {\"address\": \"Riverside Drive\", \"value\": 650000, \"mortgage_remaining\": 180000, \"equity\": 470000, \"heloc\": {\"balance\": 40000, \"purpose\": \"renovations\", \"timing\": \"2 years ago\"}}, \"rental_property\": {\"address\": \"Oak Street\", \"value\": 350000, \"mortgage_status\": \"paid_off\", \"purchase_year\": \"10 years ago\", \"purpose\": \"investment\", \"monthly_income_after_expenses\": 2400, \"property_details\": {\"type\": \"3-bedroom single family home\", \"bathrooms\": \"2 full\", \"updates\": {\"roof\": \"2 years ago\", \"HVAC\": \"5 years ago\", \"kitchen\": \"updated 7 years ago\", \"bathrooms\": \"original, well-maintained\", \"exterior\": \"repainted last year\", \"landscaping\": \"professionally maintained\"}}, \"tenant\": {\"lease_end_date\": \"February next year\", \"monthly_rent\": 2400, \"payment_history\": \"perfect for 3 years, never late\"}, \"valuation\": {\"original_purchase_price\": 185000, \"comparable_sales_range\": \"340000-385000\", \"agent_estimate_range\": \"355000-370000\"}, \"sale_timeline\": {\"required_sale_date\": \"November 2024\", \"reason\": \"divorce finalization by year-end\"}, \"financials\": {\"commission_rate\": \"6%\", \"estimated_commission_example\": \"21600 on 360000\", \"closing_costs_range\": \"3000-4000\", \"capital_gains\": {\"gain_estimate\": 175000, \"tax_estimate\": \"30000-40000\", \"exclusion_applicable\": \"no\", \"1031_exchange_applicable\": \"no\"}}, \"sale_process\": {\"spouse_cooperation_status\": \"agreed to sell, no specifics discussed\", \"required_agreements\": \"both spouses must sign listing agreements and accept offers\", \"dispute_resolution\": \"court may decide if disagreement on price\", \"earnest_money_handling\": \"joint escrow account recommended\"}, \"tenant_considerations\": {\"showing_requirement\": \"24-hour notice\", \"cooperation_incentive\": \"possible $200-300 monthly rent reduction\"}}}, \"retirement_accounts\": {\"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\", \"division\": {\"amount_negotiated\": 60000, \"percentage_of_current_balance\": 21, \"cutoff_date\": \"2024-02\", \"balance_at_cutoff\": 265000, \"growth_since_cutoff\": 15000, \"spouse_portion_growth_applicable\": \"depends on decree language\"}, \"qdro\": {\"definition\": \"Qualified Domestic Relations Order\", \"need_specialist_or_attorney\": \"yes\", \"cost_range\": \"500-1500\", \"process_time_after_divorce\": \"30-60 days\", \"tax_implications\": \"tax-free direct transfer to spouse's retirement account\", \"cash_withdrawal_consequences\": \"taxes and potential penalties for spouse\"}, \"account_status_during_qdro\": {\"frozen_activities\": \"new contributions, distributions\", \"allowed_activities\": \"market returns\", \"ongoing_contributions_subaccount\": \"yes\"}, \"loans\": {\"advised_against_before_qdro\": \"yes\", \"advised_against_reason\": \"reduces balance, complicates division\", \"max_loan_after_division\": \"lesser of $50000 or 50% of vested balance\", \"vested_status\": \"fully vested\", \"years_at_employer\": 12}, \"contributions\": {\"monthly_total\": 1500, \"user_contribution\": 1000, \"employer_match\": 500}, \"beneficiaries\": {\"current\": \"spouse\", \"need_update_after_divorce\": \"yes\", \"change_requirement_during_marriage\": \"spouse written consent\", \"spouse_rights\": \"automatic beneficiary rights in 401k\", \"inheritance_risk_before_divorce\": \"spouse inherits unless waived\", \"waiver_option\": \"spouse can sign waiver now\"}}, \"spouse_401k\": {\"total_value\": 220000, \"accumulated_during_marriage\": \"most\"}, \"ira\": {\"total_value\": 30000, \"premarital_status\": \"yes\", \"value_at_marriage\": 8000, \"growth_during_marriage\": 22000, \"community_property_state_growth_status\": \"likely marital property\", \"division_status\": \"not addressed in settlement\"}}, \"joint_brokerage\": {\"value\": 150000, \"assets_type\": \"stocks\"}, \"vehicles\": {\"user_car\": {\"value\": 25000, \"payment_status\": \"paid_off\"}, \"spouse_car\": {\"value\": 35000, \"payment_status\": \"paid_off\"}}, \"personal_property\": {\"artwork\": {\"total_value\": 20000, \"contested_status\": \"yes\"}}}, \"social_security\": {\"marriage_duration_qualification\": \"18 years (10+ required)\", \"spousal_benefit\": {\"percentage\": \"up to 50% of spouse's benefit\", \"full_retirement_age\": 67, \"early_claim_age\": 62, \"early_claim_reduction\": \"about 30%\"}, \"benefit_receipt_rule\": \"higher of own benefit or spousal benefit\", \"remarriage_restriction\": \"cannot remarry before age 60 to claim spousal benefit\"}}}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to update the memory with new facts from the current session about retirement accounts, specifically the user's 401k and Social Security, while preserving existing valid information. Let's start by identifying the new details.\n\nFirst, the session info: conversation_id is \"retirement_account_discussion\" and timestamp is \"2024-09-15\". The previous session was \"real_estate_agent_discussion\" on \"2024-08-03\", so we need to update the session details.\n\nNext, the user's 401k: existing memory has \"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\"}. New info:\n- Division amount: ~$60,000 to spouse (negotiated, ~21% of current balance)\n- Cutoff date for valuation: separation date (\"2024-02\"), balance then was $265,000\n- Growth since separation: $15,000 (from $265k to $280k)\n- QDRO details: court order to divide account, requires specialist/attorney ($500-1500 cost), process time 30-60 days after divorce, tax-free direct transfer to spouse's retirement account; cash withdrawal by spouse incurs taxes/penalties\n- Account status during QDRO: frozen (no new contributions/distributions, but earns market returns); ongoing payroll contributions go to separate sub-account\n- Loans: user considering loan, advised against before QDRO (complicates division); max loan after division: lesser of $50k or 50% vested balance (user fully vested, 12 years at employer)\n- Beneficiaries: current is spouse, needs update post-divorce; can't change now without spouse's written consent; spouse has automatic beneficiary rights while married; risk if user dies before divorce (spouse inherits unless waived)\n- Future contributions: $1,500/month (user $1k, employer match $500)\n\nSocial Security:\n- Marriage duration: 18 years (qualifies for spousal benefits)\n- Spousal benefit: up to 50% of spouse's benefit at full retirement age (FRA 67 for user, born 1960 or later); reduced by ~30% if claimed at 62\n- User's own benefit: higher of own or spousal benefit is received (not both)\n- Eligibility: user must not remarry before 60 to claim spousal benefit\n\nAlso, the user mentioned a small IRA (~$30k, premarital, worth $8k at marriage, growth $22k during marriage; in community property state, growth may be marital property, not addressed in settlement yet).\n\nExisting memory has \"retirement_accounts\" with \"user_401k\" and \"spouse_401k\". We need to add subcategories under \"user_401k\" for division, QDRO, loans, beneficiaries, contributions, and valuation details. Also, add \"social_security\" as a new category under the root, and \"ira\" under \"retirement_accounts\".\n\nNeed to preserve existing facts like \"total_value\": 280000 (still valid), \"premarital_portion\": 30000, etc. Update session info with new conversation_id and timestamp.\n\nOrganize hierarchically:\n\n- session: id (new), timestamp (new)\n- marriage: existing (duration_years 18, separation_date 2024-02) – still valid\n- children: existing – no new info\n- assets:\n  - real_estate: existing – no new info\n  - retirement_accounts:\n    - user_401k:\n      - existing: total_value, premarital_portion, accumulated_during_marriage\n      - new: division (amount, percentage, cutoff_date, balance_at_cutoff, growth_since_cutoff, spouse_portion_growth_applicable), qdro (definition, need_specialist_or_attorney, cost_range, process_time_after_divorce, tax_implications, cash_withdrawal_consequences), account_status_during_qdro (frozen_activities, allowed_activities, ongoing_contributions_subaccount), loans (advised_against_before_qdro_reason, max_loan_after_division, vested_status, years_at_employer), contributions (monthly_total, user_contribution, employer_match), beneficiaries (current, need_update_after_divorce, change_requirement_during_marriage, spouse_rights, inheritance_risk_before_divorce, waiver_option)\n    - spouse_401k: existing – no new info\n    - ira: (total_value, premarital_status, value_at_marriage, growth_during_marriage, community_property_state_growth_status, division_status)\n- social_security: (marriage_duration_qualification, spousal_benefit_percentage, full_retirement_age, early_claim_age, early_claim_reduction, benefit_receipt_rule, remarriage_restriction)\n- other existing assets (joint_brokerage, vehicles, personal_property): no new info, retain\n\nNow, structure all these into the JSON, ensuring exact values, dates, relationships, etc."
+            }
+          }
+        ],
+        "created": 1785360717,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2706,
+          "prompt_tokens": 3096,
+          "total_tokens": 5802,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1198,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2706,
+        "prompt_tokens": 3096,
+        "total_tokens": 5802,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1198,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853606615051fad3a044f20103f8e4b726dec7c2fa4d0256b"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer3_08_divorce_settlement_complexity json_cards",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T21:31:57.816028+00:00",
+      "latency_ms": 53476.764,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nLONG-TERM MEMORY:\n{\"session\": {\"id\": \"retirement_account_discussion\", \"timestamp\": \"2024-09-15\"}, \"marriage\": {\"duration_years\": 18, \"separation_date\": \"2024-02\"}, \"children\": {\"count\": 2, \"ages\": [16, 14], \"custody\": {\"arrangement\": \"joint\", \"primary_residence\": \"user\"}, \"tax_claims\": \"not_discussed\"}, \"assets\": {\"real_estate\": {\"primary_residence\": {\"address\": \"Riverside Drive\", \"value\": 650000, \"mortgage_remaining\": 180000, \"equity\": 470000, \"heloc\": {\"balance\": 40000, \"purpose\": \"renovations\", \"timing\": \"2 years ago\"}}, \"rental_property\": {\"address\": \"Oak Street\", \"value\": 350000, \"mortgage_status\": \"paid_off\", \"purchase_year\": \"10 years ago\", \"purpose\": \"investment\", \"monthly_income_after_expenses\": 2400, \"property_details\": {\"type\": \"3-bedroom single family home\", \"bathrooms\": \"2 full\", \"updates\": {\"roof\": \"2 years ago\", \"HVAC\": \"5 years ago\", \"kitchen\": \"updated 7 years ago\", \"bathrooms\": \"original, well-maintained\", \"exterior\": \"repainted last year\", \"landscaping\": \"professionally maintained\"}}, \"tenant\": {\"lease_end_date\": \"February next year\", \"monthly_rent\": 2400, \"payment_history\": \"perfect for 3 years, never late\"}, \"valuation\": {\"original_purchase_price\": 185000, \"comparable_sales_range\": \"340000-385000\", \"agent_estimate_range\": \"355000-370000\"}, \"sale_timeline\": {\"required_sale_date\": \"November 2024\", \"reason\": \"divorce finalization by year-end\"}, \"financials\": {\"commission_rate\": \"6%\", \"estimated_commission_example\": \"21600 on 360000\", \"closing_costs_range\": \"3000-4000\", \"capital_gains\": {\"gain_estimate\": 175000, \"tax_estimate\": \"30000-40000\", \"exclusion_applicable\": \"no\", \"1031_exchange_applicable\": \"no\"}}, \"sale_process\": {\"spouse_cooperation_status\": \"agreed to sell, no specifics discussed\", \"required_agreements\": \"both spouses must sign listing agreements and accept offers\", \"dispute_resolution\": \"court may decide if disagreement on price\", \"earnest_money_handling\": \"joint escrow account recommended\"}, \"tenant_considerations\": {\"showing_requirement\": \"24-hour notice\", \"cooperation_incentive\": \"possible $200-300 monthly rent reduction\"}}}, \"retirement_accounts\": {\"user_401k\": {\"total_value\": 280000, \"premarital_portion\": 30000, \"accumulated_during_marriage\": \"most\", \"division\": {\"amount_negotiated\": 60000, \"percentage_of_current_balance\": 21, \"cutoff_date\": \"2024-02\", \"balance_at_cutoff\": 265000, \"growth_since_cutoff\": 15000, \"spouse_portion_growth_applicable\": \"depends on decree language\"}, \"qdro\": {\"definition\": \"Qualified Domestic Relations Order\", \"need_specialist_or_attorney\": \"yes\", \"cost_range\": \"500-1500\", \"process_time_after_divorce\": \"30-60 days\", \"tax_implications\": \"tax-free direct transfer to spouse's retirement account\", \"cash_withdrawal_consequences\": \"taxes and potential penalties for spouse\"}, \"account_status_during_qdro\": {\"frozen_activities\": \"new contributions, distributions\", \"allowed_activities\": \"market returns\", \"ongoing_contributions_subaccount\": \"yes\"}, \"loans\": {\"advised_against_before_qdro\": \"yes\", \"advised_against_reason\": \"reduces balance, complicates division\", \"max_loan_after_division\": \"lesser of $50000 or 50% of vested balance\", \"vested_status\": \"fully vested\", \"years_at_employer\": 12}, \"contributions\": {\"monthly_total\": 1500, \"user_contribution\": 1000, \"employer_match\": 500}, \"beneficiaries\": {\"current\": \"spouse\", \"need_update_after_divorce\": \"yes\", \"change_requirement_during_marriage\": \"spouse written consent\", \"spouse_rights\": \"automatic beneficiary rights in 401k\", \"inheritance_risk_before_divorce\": \"spouse inherits unless waived\", \"waiver_option\": \"spouse can sign waiver now\"}}, \"spouse_401k\": {\"total_value\": 220000, \"accumulated_during_marriage\": \"most\"}, \"ira\": {\"total_value\": 30000, \"premarital_status\": \"yes\", \"value_at_marriage\": 8000, \"growth_during_marriage\": 22000, \"community_property_state_growth_status\": \"likely marital property\", \"division_status\": \"not addressed in settlement\"}}, \"joint_brokerage\": {\"value\": 150000, \"assets_type\": \"stocks\"}, \"vehicles\": {\"user_car\": {\"value\": 25000, \"payment_status\": \"paid_off\"}, \"spouse_car\": {\"value\": 35000, \"payment_status\": \"paid_off\"}}, \"personal_property\": {\"artwork\": {\"total_value\": 20000, \"contested_status\": \"yes\"}}}, \"social_security\": {\"marriage_duration_qualification\": \"18 years (10+ required)\", \"spousal_benefit\": {\"percentage\": \"up to 50% of spouse's benefit\", \"full_retirement_age\": 67, \"early_claim_age\": 62, \"early_claim_reduction\": \"about 30%\"}, \"benefit_receipt_rule\": \"higher of own benefit or spousal benefit\", \"remarriage_restriction\": \"cannot remarry before age 60 to claim spousal benefit\"}}\n\nUSER QUESTION:\nThe divorce papers are ready to sign but something feels off about the asset division. Can you help me understand if I'm getting a fair deal?"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "0217853607180031fad3a044f20103f8e4b726dec7c2fa4cbc69f",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "To assess the fairness of your asset division, we need to review key assets and their proposed splits, but critical details are missing from the provided information. Here’s a breakdown of gaps and potential concerns based on what’s available:\n\n\n### **1. Real Estate: Major Unresolved Details**  \n- **Primary Residence**: You have $470,000 in equity, but a $40,000 HELOC (net equity ~$430,000). *No information is provided on how this equity will be split* (e.g., will you keep the home and buy out your spouse, or sell and split proceeds?). This is a significant asset and must be addressed.  \n- **Rental Property**: Scheduled to sell by November 2024, with estimated net proceeds (after commission, closing costs, and taxes) of ~$299,900 (based on a $360,000 sale). *How will these proceeds be divided?* The memory notes your spouse agreed to sell but does not specify split terms (e.g., 50/50, or adjusted for other assets).  \n\n\n### **2. Retirement Accounts: Potential Under-Division**  \n- **Your 401(k)**: $280,000 total, with $30,000 premarital (non-marital) and $250,000 marital (accumulated during marriage). You negotiated $60,000 to your spouse (21% of current balance). In community property states (implied by the IRA note), marital assets are typically split 50/50. A 50% split of the $250,000 marital portion would be $125,000—*$60,000 may be far below this if your state follows community property rules*.  \n- **Spouse’s 401(k)**: $220,000 (all marital, per \"accumulated during marriage: most\"). *No mention of you receiving a portion of this account*. In community property states, this would also be subject to 50/50 division (you could be owed ~$110,000).  \n- **IRA**: $30,000 total, with $8,000 premarital and $22,000 growth during marriage (likely marital in community property states). *Division is \"not addressed in settlement\"*—you may be entitled to ~$11,000 (50% of the $22,000 marital growth).  \n\n\n### **3. Other Assets: Unresolved or Contested**  \n- **Joint Brokerage**: $150,000 in stocks. *No split terms are mentioned* (e.g., 50/50 split would be $75,000 each).  \n- **Personal Property**: Artwork ($20,000) is \"contested\"—*no resolution is noted*, which could lead to post-divorce disputes.  \n- **Vehicles**: Both paid off (yours: $25k; spouse’s: $35k). *No split details* (e.g., offsetting other assets if values are unequal).  \n\n\n### **Key Risks to Address Before Signing**  \n- **Unaddressed Assets**: Primary residence equity, rental sale proceeds, spouse’s 401(k), joint brokerage, and IRA marital growth are not divided in the current papers. These omissions could result in significant financial loss.  \n- **QDRO Requirement**: Your 401(k) division requires a Qualified Domestic Relations Order (QDRO), which needs an attorney/specialist ($500–$1,500) and 30–60 days to process. *Ensure the decree explicitly requires this to avoid delays or disputes*.  \n- **Contested Artwork**: Unresolved, this could lead to costly litigation later.  \n\n\n### **Next Steps**  \nFairness cannot be confirmed without clarity on the splits for the above assets. **Do not sign the papers yet**. Consult with your divorce attorney to:  \n- Demand details on how primary residence equity, rental proceeds, joint brokerage, spouse’s 401(k), and IRA marital growth will be divided.  \n- Verify 401(k) division aligns with state laws (e.g., 50/50 for marital portions in community property states).  \n- Resolve the contested artwork and formalize vehicle splits.  \n\nThis ensures all marital assets are accounted for and divided equitably.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's tackle the user's question. They're about to sign divorce papers but feel something's off with asset division and want to know if it's fair. First, I need to use the provided long-term memory to analyze the assets and their division.\n\nStarting with real estate: The primary residence has equity of $470,000, but there's a HELOC of $40,000, so net equity might be $430,000. The rental property is to be sold by November 2024, with a gain estimate of $175,000 and tax of $30k-$40k. The sale proceeds would be after commission (6%) and closing costs. For example, at $360k sale, commission is $21,600, closing costs $3k-$4k, so net around $360k - $21.6k - $3.5k = $334,900. Then subtract the tax estimate, so maybe $334,900 - $35k = $299,900. But how is this split? The memory doesn't mention the split of primary residence equity or rental sale proceeds, which is a big gap.\n\nRetirement accounts: User's 401k is $280k, with $30k premarital. They negotiated $60k to spouse (21% of current balance). The cutoff was Feb 2024 (separation date) with balance $265k, so growth since is $15k. If the decree includes growth, spouse might get more. Spouse's 401k is $220k, all marital? No mention of user getting any from spouse's 401k. IRA is $30k, premarital $8k, growth $22k (likely marital in community property state), but division not addressed. That's a red flag—IRA growth during marriage might be marital and should be divided.\n\nJoint brokerage: $150k in stocks, no split mentioned. Personal property: artwork ($20k) is contested, so not resolved. Vehicles are both paid off, user's $25k, spouse's $35k—no split info.\n\nSocial security: 18-year marriage qualifies for spousal benefits, but that's future, not immediate division.\n\nKey issues: No info on primary residence equity split, rental sale proceeds split, spouse's 401k division, joint brokerage split, IRA marital growth division, contested artwork. These omissions mean fairness can't be assessed. Also, user's 401k division: $60k is 21% of current $280k, but premarital is $30k, so marital portion is $250k. 50% of marital would be $125k, so $60k might be low if community property. But depends on state (memory doesn't say, but IRA mentions community property state, so likely community property). In community property, marital assets are split 50/50. Spouse's 401k ($220k, all marital?) would mean user should get ~$110k, but no mention. IRA growth $22k (marital) should be split, so user might be owed $11k. Joint brokerage $150k should be split $75k each.\n\nRisks: Unaddressed assets (IRA, joint brokerage, primary residence, rental proceeds) could lead to loss. Contested artwork not resolved. QDRO for 401k needs specialist, cost $500-$1500, process 30-60 days—must be included in decree.\n\nNeed to warn user that critical asset divisions are missing, can't assess fairness without that info, and to consult attorney before signing."
+            }
+          }
+        ],
+        "created": 1785360771,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 1847,
+          "prompt_tokens": 1696,
+          "total_tokens": 3543,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 857,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 1847,
+        "prompt_tokens": 1696,
+        "total_tokens": 3543,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 857,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853607180031fad3a044f20103f8e4b726dec7c2fa4cbc69f"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer3_08_divorce_settlement_complexity json_cards",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T21:32:51.300971+00:00",
+      "latency_ms": 10905.723,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=divorce_attorney_consultation\ntimestamp=2024-06-12\nmetadata={}\nUSER: Hi, I need help with my divorce proceedings. Things are getting complicated with the asset division\nASSISTANT: I understand this is a difficult time. Let's review your situation. How long were you married?\nUSER: Eighteen years. We separated last February\nASSISTANT: That's a long-term marriage, which affects asset division. Do you have children?\nUSER: Two kids, 16 and 14 years old\nASSISTANT: Custody and support will be important considerations. Is custody being contested?\nUSER: No, we've agreed to joint custody with them primarily living with me\nASSISTANT: That's good when parents can agree. Now, let's discuss assets. Do you own a home together?\nUSER: Yes, we have the house on Riverside Drive, valued at about $650,000\nASSISTANT: What's the remaining mortgage?\nUSER: About $180,000 left on it\nASSISTANT: So roughly $470,000 in equity. Any other real estate?\nUSER: We have a rental property on Oak Street, worth maybe $350,000\nASSISTANT: Mortgage on that one?\nUSER: It's paid off. We bought it ten years ago as an investment\nASSISTANT: Excellent. What about retirement accounts?\nUSER: I have a 401k with about $280,000, and my spouse has one with $220,000\nASSISTANT: Were these accumulated during the marriage?\nUSER: Most of it. I had maybe $30,000 when we got married\nASSISTANT: That premarital portion would typically remain yours. What about other investments?\nUSER: We have a joint brokerage account with about $150,000 in stocks\nASSISTANT: Any other significant assets? Cars, boats, collectibles?\nUSER: Two cars - mine is worth about $25,000, theirs is worth $35,000. Both paid off\nASSISTANT: What about debts beyond the mortgage?\nUSER: Credit cards with about $12,000 total, and a home equity line with $40,000 balance\nASSISTANT: Is the HELOC on the primary residence?\nUSER: Yes, we used it for renovations two years ago\nASSISTANT: Now, has your spouse proposed any division arrangement?\nUSER: They want to keep the rental property and their retirement account\nASSISTANT: And in exchange?\nUSER: I'd get the house and my retirement account\nASSISTANT: Let's run the numbers. The rental is worth $350,000, their 401k is $220,000, total $570,000\nUSER: And I'd get the house equity of $470,000 plus my 401k at $280,000, so $750,000?\nASSISTANT: Don't forget you'd also assume the mortgage and HELOC, reducing your net\nUSER: Right, so really $530,000 for me after the debts\nASSISTANT: Plus you'd be responsible for the mortgage payments going forward\nUSER: That doesn't seem fair\nASSISTANT: It's not equitable. What about the brokerage account?\nUSER: They suggested splitting that 50-50\nASSISTANT: So add $75,000 to each side. You'd have $605,000, they'd have $645,000\nUSER: Still not equal\nASSISTANT: Plus you'd have all the debt service. We should counter-propose\nUSER: What would you suggest?\nASSISTANT: Option one: Sell both properties and split all proceeds after debts\nUSER: I really want to keep the house for the kids' stability\nASSISTANT: Understandable. Option two: You keep the house, they get the rental, but equalize with other assets\nUSER: How would we equalize?\nASSISTANT: They'd owe you about $60,000 from their 401k to make it even\nUSER: Can you just transfer money from a 401k?\nASSISTANT: Through a QDRO - Qualified Domestic Relations Order. It's a special court order for retirement divisions\nUSER: Does that trigger taxes?\nASSISTANT: Not if done properly through the QDRO. It's a tax-free transfer between spouses in divorce\nUSER: That sounds better\nASSISTANT: Another consideration - who claims the kids on taxes?\nUSER: We haven't discussed that\nASSISTANT: Typically the primary custodial parent, but it's negotiable. The tax benefits are significant\nUSER: What about child support?\nASSISTANT: With joint custody, it depends on income disparity. What are your respective incomes?\nUSER: I make about $95,000, they make $110,000\nASSISTANT: Not a huge gap, but they'd likely owe some support. State calculator suggests about $400 per month per child\nUSER: So $800 monthly?\nASSISTANT: Approximately, though it could be offset against the asset division\nUSER: What about alimony?\nASSISTANT: In an 18-year marriage with similar incomes, it's possible but not automatic\nUSER: I did stay home for five years when the kids were young\nASSISTANT: That career sacrifice could support an alimony claim. Maybe 2-3 years of support\nUSER: How much would that be?\nASSISTANT: Possibly $1,000-1,500 monthly, but it's negotiable\nUSER: What about health insurance? I'm on their plan\nASSISTANT: You'll need your own after divorce. COBRA allows 36 months continuation at your cost\nUSER: That's expensive\nASSISTANT: Yes, often $600-800 monthly. Factor that into negotiations\nUSER: What about the rental property income?\nASSISTANT: Currently that's joint income. How much does it generate?\nUSER: About $2,400 monthly after expenses\nASSISTANT: If they keep it, they get all that income going forward\nUSER: That's another advantage for them\nASSISTANT: Exactly. We should value the rental higher - include the income stream\nUSER: How do we do that?\nASSISTANT: Commercial properties use cap rates. The $28,800 annual income adds significant value\nUSER: So maybe it's worth more than $350,000?\nASSISTANT: Could argue $400,000 with the income considered\nUSER: That changes the math significantly\nASSISTANT: Yes. Now they'd be getting $620,000 in value versus your $605,000\nUSER: Even worse split\nASSISTANT: We need to restructure. What about keeping both properties jointly for now?\nUSER: How would that work?\nASSISTANT: Continue co-owning the rental, split income, sell when market improves\nUSER: We don't really want to stay financially connected\nASSISTANT: Understandable. Then selling the rental might be best\nUSER: When would we need to sell?\nASSISTANT: Ideally before the divorce finalizes, or specify a deadline in the decree\nUSER: The market's pretty good now\nASSISTANT: Then list it soon. Sales take 2-3 months typically\nUSER: What happens to the rental income meanwhile?\nASSISTANT: Should go into a separate account, split after sale closes\nUSER: Okay. What about timing for everything else?\nASSISTANT: The QDRO takes 2-3 months after the divorce decree. House refinance about the same\nUSER: Refinance?\nASSISTANT: You'll need to refinance the house into your name only\nUSER: Will I qualify on my income alone?\nASSISTANT: With $95,000 income and $180,000 mortgage, should be fine. Debt-to-income looks good\nUSER: What about the HELOC?\nASSISTANT: That needs to be rolled into the refinance or paid off\nUSER: So I'd be refinancing $220,000 total?\nASSISTANT: Yes. At current rates, probably $1,600-1,800 monthly payment\nUSER: That's manageable with the child support\nASSISTANT: Good. Now, have you discussed personal property?\nUSER: Not in detail. Furniture, electronics, that stuff\nASSISTANT: Usually splits naturally - you keep what you use. Any contested items?\nUSER: Some artwork we collected together\nASSISTANT: How valuable?\nUSER: Maybe $20,000 worth total\nASSISTANT: Significant enough to address. Options are alternate selection, sale and split, or buy-out\nUSER: I'd prefer alternating selection\nASSISTANT: Fair approach. You each pick pieces in turns\nUSER: What about legal fees?\nASSISTANT: Each party typically pays their own, unless there's a large income disparity\nUSER: How much should I budget?\nASSISTANT: For a contested divorce with these assets, $15,000-25,000 if it goes to trial\nUSER: That much?\nASSISTANT: Trials are expensive. Mediation is cheaper - maybe $5,000-10,000 total\nUSER: We should try mediation first\nASSISTANT: Wise choice. We can prepare a settlement proposal for mediation\nUSER: What should that include?\nASSISTANT: All assets, debts, custody, support, and implementation timeline\nUSER: When do you need information from me?\nASSISTANT: Get me three years of tax returns, current statements for all accounts, and property appraisals\nUSER: I can gather those this week\nASSISTANT: Perfect. We'll draft a comprehensive proposal\nUSER: Thank you for explaining everything\nASSISTANT: You're welcome. This is complex but we'll work through it systematically\n\nconversation_id=real_estate_agent_discussion\ntimestamp=2024-08-03\nmetadata={}\nUSER: Hi, I'm considering selling an investment property and need some guidance\nASSISTANT: I'd be happy to help! Tell me about the property you're looking to sell\nUSER: It's a rental property on Oak Street, a 3-bedroom single family home\nASSISTANT: Nice area. How long have you owned it?\nUSER: About ten years. We bought it as an investment\nASSISTANT: Great timing - significant appreciation over that period. What's your timeline for selling?\nUSER: I need to sell fairly quickly, within the next few months\nASSISTANT: Is this related to any specific deadline?\nUSER: It's part of a divorce settlement. We need to divide the assets\nASSISTANT: I understand. These sales often have court-imposed timelines. Do you have a deadline?\nUSER: The divorce should finalize by year-end, so preferably sold by November\nASSISTANT: That gives us about three months. Doable in this market. Is your spouse cooperative on the sale?\nUSER: Somewhat. We've agreed to sell but haven't discussed specifics\nASSISTANT: Both parties will need to sign listing agreements and accept offers. Current tenant situation?\nUSER: There's a tenant with a lease through next February\nASSISTANT: That complicates things. Buyers might want it vacant or might like the income\nUSER: The tenant pays $2,400 monthly\nASSISTANT: Good rental income. That's appealing to investors. What's their payment history?\nUSER: Perfect for three years, never late\nASSISTANT: Excellent selling point. Do you know what comparable properties are selling for?\nUSER: I think around $350,000 but I'm not sure\nASSISTANT: Let me check recent sales... I see three similar properties sold between $340,000-385,000\nUSER: What made the difference in price?\nASSISTANT: Condition and updates mainly. When did you last update the property?\nUSER: New roof two years ago, HVAC five years ago\nASSISTANT: Good mechanicals help. What about kitchen and bathrooms?\nUSER: Kitchen was updated seven years ago, bathrooms are original but well-maintained\nASSISTANT: For investor buyers, that's usually fine. How many bathrooms?\nUSER: Two full bathrooms\nASSISTANT: Good. What about the exterior and landscaping?\nUSER: We repainted last year and the yard is professionally maintained\nASSISTANT: Excellent. I'd estimate $355,000-370,000 based on what you've described\nUSER: That's better than I expected\nASSISTANT: The rental income supports the value. At $2,400/month, that's a 7.8% cap rate\nUSER: Is that good?\nASSISTANT: Very attractive to investors. Would you consider selling to the current tenant?\nUSER: I hadn't thought about that\nASSISTANT: Sometimes tenants want to buy. Saves showing hassle and they know the property\nUSER: Would they qualify for a mortgage?\nASSISTANT: We could ask. If interested, they'd get pre-qualified. Shall I reach out?\nUSER: Let me check with my spouse first\nASSISTANT: Of course. Now, about commission - standard is 6% split between buying and selling agents\nUSER: On $360,000, that's about $21,600?\nASSISTANT: Correct. Plus you'll have closing costs - title, escrow, about another $3,000-4,000\nUSER: So net proceeds around $335,000?\nASSISTANT: Approximately. Don't forget capital gains tax\nUSER: How much would that be?\nASSISTANT: Depends on your basis. What did you pay originally?\nUSER: About $185,000\nASSISTANT: So roughly $175,000 gain. At capital gains rate, maybe $30,000-40,000 in taxes\nUSER: That's significant. Any way to reduce it?\nASSISTANT: If it was ever your primary residence, you might get some exclusion\nUSER: No, always a rental\nASSISTANT: Then full capital gains apply. You could do a 1031 exchange to defer taxes\nUSER: What's that?\nASSISTANT: Buy another investment property with the proceeds, defer taxes until you sell that\nUSER: But we're divorcing, need to split the money\nASSISTANT: Right, 1031 won't work then. The taxes are unavoidable\nUSER: Should we price it higher to account for taxes?\nASSISTANT: Market determines price, not your tax situation. Overpricing means longer sale time\nUSER: Good point. What about showing the property with tenants?\nASSISTANT: Requires 24-hour notice to tenants. Some buyers want to see it vacant\nUSER: Could we offer the tenants something to cooperate?\nASSISTANT: Sometimes sellers offer a rent reduction for showing flexibility\nUSER: How much?\nASSISTANT: $200-300 off monthly rent is common\nUSER: That seems reasonable\nASSISTANT: Should we plan for photos next week?\nUSER: I need to discuss with my spouse and the attorney first\nASSISTANT: Of course. One important point - both spouses must agree to all terms\nUSER: What if we disagree on price?\nASSISTANT: The court might have to decide, which delays everything\nUSER: We should probably agree upfront then\nASSISTANT: Exactly. I suggest a pricing strategy meeting with both parties\nUSER: Can you do that?\nASSISTANT: Absolutely. Neutral presentation of market data helps everyone agree\nUSER: What about the earnest money when we get an offer?\nASSISTANT: Goes into escrow. For divorce sales, I recommend a joint account\nUSER: Not into one person's account?\nASSISTANT: That can cause problems. Escrow holds it neutrally\nUSER: Makes sense. What if we get multiple offers?\nASSISTANT: Great problem to have. We'd present all offers to both parties\nUSER: How do we decide which to accept?\nASSISTANT: Price, terms, contingencies, closing date. Cash offers are strongest\nUSER: Why cash?\nASSISTANT: No financing contingency, faster closing, more certain\nUSER: How common are cash offers?\nASSISTANT: For investment properties, maybe 30-40% of offers\nUSER: That's encouraging. What about inspection issues?\nASSISTANT: Buyers will inspect. Budget $2,000-5,000 for typical repair requests\nUSER: Who pays for repairs?\nASSISTANT: Negotiable, but sellers usually handle them to keep deals together\nUSER: From the proceeds?\nASSISTANT: Can be deducted at closing or handled before\nUSER: Deducting sounds easier\nASSISTANT: Usually is. What about personal property in the house?\nUSER: Just basic appliances that stay\nASSISTANT: Good. Refrigerator, washer, dryer?\nUSER: All included, they're maybe five years old\nASSISTANT: That helps value. What about HOA?\nUSER: No HOA, which I know is good\nASSISTANT: Very good - many buyers avoid HOAs\nUSER: What's our next step?\nASSISTANT: Get agreement from your spouse, then we'll do a walkthrough and pricing analysis\nUSER: How detailed is the pricing analysis?\nASSISTANT: I'll provide 10-15 comparable sales, market trends, suggested list price\nUSER: That should help convince my spouse\nASSISTANT: Data helps remove emotion from pricing decisions\nUSER: Exactly what we need\nASSISTANT: When can both of you meet?\nUSER: I'll check and get back to you this week\nASSISTANT: Perfect. Bring any documentation - tenant lease, repair receipts, tax bills\nUSER: Will do. This is helpful\nASSISTANT: Divorce sales are challenging but manageable with good communication\nUSER: I appreciate your understanding\nASSISTANT: Of course. We'll get through this smoothly\n\nconversation_id=retirement_account_discussion\ntimestamp=2024-09-15\nmetadata={}\nUSER: Hi, I need help understanding how to divide retirement accounts in my divorce\nASSISTANT: I can help with that. We handle QDROs regularly. What type of retirement account do you have?\nUSER: I have a 401k through my employer with about $280,000\nASSISTANT: Is this being divided as part of your divorce settlement?\nUSER: Yes, but I'm not sure exactly how much\nASSISTANT: The divorce decree should specify either a percentage or dollar amount\nUSER: We're still negotiating. It might be around $60,000 to my spouse\nASSISTANT: That's about 21% of the current balance. How long until the divorce is final?\nUSER: Probably another two months\nASSISTANT: Good to plan ahead. The QDRO process takes time after the divorce\nUSER: What exactly is a QDRO?\nASSISTANT: Qualified Domestic Relations Order - it's a court order that allows us to divide the account\nUSER: Do I need a lawyer for that?\nASSISTANT: Most people use a QDRO specialist or attorney. The language must be precise\nUSER: How much does that cost?\nASSISTANT: Typically $500-1,500 depending on complexity\nUSER: And this avoids taxes and penalties?\nASSISTANT: Yes, if done correctly. Direct transfer to your ex-spouse's retirement account is tax-free\nUSER: What if they want cash instead?\nASSISTANT: They can take cash but will pay taxes and potentially penalties\nUSER: That's their choice though?\nASSISTANT: Yes, once the money is in their account, they control it\nUSER: How long does the transfer take?\nASSISTANT: After we receive the QDRO, usually 30-60 days to process\nUSER: Can I access my remaining balance during this?\nASSISTANT: Your account is typically frozen once we receive the QDRO until division is complete\nUSER: Frozen completely?\nASSISTANT: No new contributions or distributions, but it still earns market returns\nUSER: What about my ongoing contributions from payroll?\nASSISTANT: Those continue but go into a separate sub-account until the QDRO is processed\nUSER: That makes sense. What about loans against the 401k?\nASSISTANT: Do you have any outstanding loans?\nUSER: No, but I was considering one for house expenses\nASSISTANT: I'd advise against it before the QDRO. It complicates the division\nUSER: How so?\nASSISTANT: The loan reduces your account balance, affecting the calculation\nUSER: So wait until after?\nASSISTANT: Yes, after the division is complete, you can borrow from your remaining balance\nUSER: What's the maximum loan amount?\nASSISTANT: Lesser of $50,000 or 50% of your vested balance\nUSER: So after giving up $60,000, I'd have $220,000 left, could borrow $50,000?\nASSISTANT: Correct, assuming you're fully vested\nUSER: I've been here 12 years, so yes, fully vested\nASSISTANT: Good. Now, about the division - do you know the cutoff date?\nUSER: What do you mean?\nASSISTANT: The date for valuing the account. Could be separation date, divorce date, or other\nUSER: I think it's the separation date, last February\nASSISTANT: The balance was different then. Let me check... $265,000 in February\nUSER: So the division would be based on that?\nASSISTANT: Likely yes. $60,000 from $265,000 is different from current balance\nUSER: The market's been good since then\nASSISTANT: Yes, your account has grown about $15,000 since separation\nUSER: Does my spouse get any of that growth?\nASSISTANT: Depends on the decree language. Sometimes they get growth on their portion\nUSER: How is that calculated?\nASSISTANT: We'd calculate their percentage of the February balance, apply to current balance\nUSER: So if they get $60,000 of the $265,000, that's 22.6%?\nASSISTANT: Correct. 22.6% of the current $280,000 would be about $63,300\nUSER: That's $3,300 more\nASSISTANT: Yes, they'd participate in the market gains on their portion\nUSER: Makes sense but costs me more\nASSISTANT: The QDRO should specify this clearly to avoid disputes\nUSER: What about future contributions?\nASSISTANT: After the division date, all new contributions are typically yours alone\nUSER: Good. I contribute about $1,500 per month\nASSISTANT: Excellent savings rate. That includes employer match?\nUSER: Yes, I put in $1,000, they match $500\nASSISTANT: Nice match. That continues unaffected after the QDRO\nUSER: What about my spouse's 401k? It has about $220,000\nASSISTANT: Are you getting a portion of theirs?\nUSER: No, we're each keeping our own, but I'm paying them from mine\nASSISTANT: So you're equalizing the overall settlement with your 401k\nUSER: Exactly\nASSISTANT: Common approach. Simpler than multiple QDROs\nUSER: What about Social Security? We were married 18 years\nASSISTANT: At 10+ years, you can claim on their record if beneficial\nUSER: Even after divorce?\nASSISTANT: Yes, if you don't remarry before age 60\nUSER: How much would I get?\nASSISTANT: Up to 50% of their benefit if you wait until your full retirement age\nUSER: When is that?\nASSISTANT: Depends on your birth year. If born in 1960 or later, it's 67\nUSER: I'm 45 now, so 22 years away\nASSISTANT: Right. But you can claim reduced benefits at 62\nUSER: How much is the reduction?\nASSISTANT: About 30% reduction if you claim at 62 versus 67\nUSER: That's significant\nASSISTANT: Yes, waiting pays off if you can afford it\nUSER: What about my own Social Security?\nASSISTANT: You'd get the higher of your own benefit or the spousal benefit\nUSER: Not both?\nASSISTANT: No, just the higher amount\nUSER: Good to know. Back to the 401k - what about beneficiaries?\nASSISTANT: You'll need to update those after divorce\nUSER: Currently it's my spouse\nASSISTANT: Common situation. Change it as soon as the divorce is final\nUSER: Can I change it now?\nASSISTANT: Your spouse must consent in writing while you're still married\nUSER: Even though we're separated?\nASSISTANT: Yes, legal spouses have automatic beneficiary rights in 401ks\nUSER: What if something happens before the divorce is final?\nASSISTANT: Your spouse would inherit unless they've waived rights\nUSER: That's concerning\nASSISTANT: You could ask them to sign a waiver now\nUSER: Would they?\nASSISTANT: Depends on your relationship. Some couples cooperate on these matters\nUSER: Worth asking. What about IRAs?\nASSISTANT: Different rules. You can change IRA beneficiaries without spousal consent in most states\nUSER: I have a small IRA too, about $30,000\nASSISTANT: Is that being divided?\nUSER: No, I had that before marriage\nASSISTANT: Good, premarital assets typically stay separate\nUSER: What about the growth on it?\nASSISTANT: That gets complicated. Growth during marriage might be marital property\nUSER: It was worth $8,000 when we married\nASSISTANT: So $22,000 in growth. State law determines if that's marital\nUSER: I'm in a community property state\nASSISTANT: Then the growth is likely community property, unfortunately\nUSER: So they'd get half of $22,000?\nASSISTANT: Possibly, unless you've agreed otherwise in the settlement\nUSER: We didn't specifically address it\nASSISTANT: Might want to clarify that before finalizing\nUSER: Good point. This is more complex than I thought\nASSISTANT: Retirement divisions usually are. Happy to review your QDRO when ready\nUSER: I'll definitely take you up on that\nASSISTANT: We want to make sure it's processed correctly the first time\n\nQUESTION: The divorce papers are ready to sign but something feels off about the asset division. Can you help me understand if I'm getting a fair deal?\nANSWER: To assess the fairness of your asset division, we need to review key assets and their proposed splits, but critical details are missing from the provided information. Here’s a breakdown of gaps and potential concerns based on what’s available:\n\n\n### **1. Real Estate: Major Unresolved Details**  \n- **Primary Residence**: You have $470,000 in equity, but a $40,000 HELOC (net equity ~$430,000). *No information is provided on how this equity will be split* (e.g., will you keep the home and buy out your spouse, or sell and split proceeds?). This is a significant asset and must be addressed.  \n- **Rental Property**: Scheduled to sell by November 2024, with estimated net proceeds (after commission, closing costs, and taxes) of ~$299,900 (based on a $360,000 sale). *How will these proceeds be divided?* The memory notes your spouse agreed to sell but does not specify split terms (e.g., 50/50, or adjusted for other assets).  \n\n\n### **2. Retirement Accounts: Potential Under-Division**  \n- **Your 401(k)**: $280,000 total, with $30,000 premarital (non-marital) and $250,000 marital (accumulated during marriage). You negotiated $60,000 to your spouse (21% of current balance). In community property states (implied by the IRA note), marital assets are typically split 50/50. A 50% split of the $250,000 marital portion would be $125,000—*$60,000 may be far below this if your state follows community property rules*.  \n- **Spouse’s 401(k)**: $220,000 (all marital, per \"accumulated during marriage: most\"). *No mention of you receiving a portion of this account*. In community property states, this would also be subject to 50/50 division (you could be owed ~$110,000).  \n- **IRA**: $30,000 total, with $8,000 premarital and $22,000 growth during marriage (likely marital in community property states). *Division is \"not addressed in settlement\"*—you may be entitled to ~$11,000 (50% of the $22,000 marital growth).  \n\n\n### **3. Other Assets: Unresolved or Contested**  \n- **Joint Brokerage**: $150,000 in stocks. *No split terms are mentioned* (e.g., 50/50 split would be $75,000 each).  \n- **Personal Property**: Artwork ($20,000) is \"contested\"—*no resolution is noted*, which could lead to post-divorce disputes.  \n- **Vehicles**: Both paid off (yours: $25k; spouse’s: $35k). *No split details* (e.g., offsetting other assets if values are unequal).  \n\n\n### **Key Risks to Address Before Signing**  \n- **Unaddressed Assets**: Primary residence equity, rental sale proceeds, spouse’s 401(k), joint brokerage, and IRA marital growth are not divided in the current papers. These omissions could result in significant financial loss.  \n- **QDRO Requirement**: Your 401(k) division requires a Qualified Domestic Relations Order (QDRO), which needs an attorney/specialist ($500–$1,500) and 30–60 days to process. *Ensure the decree explicitly requires this to avoid delays or disputes*.  \n- **Contested Artwork**: Unresolved, this could lead to costly litigation later.  \n\n\n### **Next Steps**  \nFairness cannot be confirmed without clarity on the splits for the above assets. **Do not sign the papers yet**. Consult with your divorce attorney to:  \n- Demand details on how primary residence equity, rental proceeds, joint brokerage, spouse’s 401(k), and IRA marital growth will be divided.  \n- Verify 401(k) division aligns with state laws (e.g., 50/50 for marital portions in community property states).  \n- Resolve the contested artwork and formalize vehicle splits.  \n\nThis ensures all marital assets are accounted for and divided equitably.\nEVALUATION CRITERIA: The agent must identify several critical discrepancies and red flags by connecting information across all three conversations:\n\n1. Asset valuation timeline conflict: The attorney discussed February separation date for valuations, but the real estate agent quoted current August values for the rental property ($355,000-370,000 vs the $350,000 in attorney discussion)\n\n2. Capital gains tax oversight: The attorney's calculation didn't account for the $30,000-40,000 capital gains tax on the rental property sale, which significantly reduces net proceeds\n\n3. Rental income discontinuity: The rental generates $2,400/month ($28,800/year) which the attorney valued in the property worth, but if sold in November, the user loses this income stream not reflected in the settlement\n\n4. QDRO calculation confusion: The retirement specialist calculated the ex-spouse should get $63,300 (with growth) not the $60,000 discussed with attorney, creating a $3,300 discrepancy\n\n5. IRA oversight: The $30,000 IRA with $22,000 marital growth wasn't included in the attorney's asset division calculation - ex-spouse may be entitled to $11,000 of this\n\n6. Tenant lease complication: The tenant has a lease through February but divorce finalizes by year-end, creating potential legal issues with the sale\n\n7. Timeline impossibility: Needs 2-3 months to sell property (per agent), 2-3 months for QDRO processing, and 2-3 months for refinancing, but divorce supposedly finalizing in 2 months\n\n8. Total miscalculation: Attorney showed user getting $605,000 vs spouse's $645,000, but didn't account for: capital gains tax (-$35,000), IRA growth division (-$11,000), QDRO growth (-$3,300), and rental income loss\n\n9. Double commission concern: Real estate fees of $21,600 weren't factored into the attorney's division calculation\n\nThe agent should recognize the user is potentially losing $50,000+ due to these overlooked factors and recommend immediate consultation with the attorney before signing.\n\nEXPECTED BEHAVIOR: \n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a7184f5e22e43d6b0c7ee",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\n  \"dimensions\": {\n    \"precision\": {\n      \"score\": 1,\n      \"reasoning\": \"The response does not accurately reflect the details provided in the authoritative conversations. It incorrectly states that the user's 401k is being divided as $60,000 to the spouse, which is not confirmed in the provided conversations. Additionally, the response does not address the IRA or other assets correctly, leading to a lack of precision in identifying the user's situation.\",\n      \"evidence\": []\n    },\n    \"recall\": {\n      \"score\": 1,\n      \"reasoning\": \"The response fails to recall several key details from the authoritative conversations. It does not mention the rental property's sale and its impact on the division of assets, the potential division of the spouse's 401k, the IRA's marital growth, or the personal property and vehicles. These omissions result in a lack of comprehensive recall of the user's situation.\",\n      \"evidence\": []\n    },\n    \"reasoning\": {\n      \"score\": 1,\n      \"reasoning\": \"The response does not demonstrate logical reasoning based on the information provided. It incorrectly assumes details not mentioned in the conversations and fails to connect the various pieces of information to provide a coherent analysis of the user's situation. The reasoning is flawed as it does not account for the complexities and details discussed in the authoritative conversations.\",\n      \"evidence\": []\n    },\n    \"proactivity\": {\n      \"score\": 1,\n      \"reasoning\": \"The response lacks proactivity in addressing the user's concerns. It does not offer any suggestions or next steps based on the information provided, nor does it identify the critical issues that need to be resolved before the user can determine if they are getting a fair deal. The response is reactive rather than proactive in helping the user understand their asset division.\",\n      \"evidence\": []\n    }\n  },\n  \"hallucination\": {\n    \"detected\": true,\n    \"claims\": [\n      \"The divorce decree should specify either a percentage or dollar amount\",\n      \"The balance was different then. Let me check... $265,000 in February\",\n      \"The division would be based on that?\"\n    ],\n    \"reasoning\": \"These claims are not supported by the information provided in the authoritative conversations. The conversations do not mention a specific dollar amount or percentage for the division of the 401k, nor do they provide a balance from February to base the division on. These claims are fabricated and do not align with the provided conversations.\",\n    \"evidence\": []\n  },\n  \"overall_reasoning\": \"The response is severely lacking in its ability to accurately and comprehensively address the user's concerns based on the information provided in the authoritative conversations. It fails to recall key details, does not demonstrate logical reasoning, and lacks proactivity in guiding the user towards understanding their asset division. The response also includes fabricated details that are not supported by the conversations, leading to a hallucination veto.\"\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785360773,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 634,
+          "prompt_tokens": 7298,
+          "total_tokens": 7932,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 634,
+        "prompt_tokens": 7298,
+        "total_tokens": 7932,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a7184f5e22e43d6b0c7ee"
+    }
+  ],
+  "updated_at_epoch": 1785360782.2110488,
+  "answer": "To assess the fairness of your asset division, we need to review key assets and their proposed splits, but critical details are missing from the provided information. Here’s a breakdown of gaps and potential concerns based on what’s available:\n\n\n### **1. Real Estate: Major Unresolved Details**  \n- **Primary Residence**: You have $470,000 in equity, but a $40,000 HELOC (net equity ~$430,000). *No information is provided on how this equity will be split* (e.g., will you keep the home and buy out your spouse, or sell and split proceeds?). This is a significant asset and must be addressed.  \n- **Rental Property**: Scheduled to sell by November 2024, with estimated net proceeds (after commission, closing costs, and taxes) of ~$299,900 (based on a $360,000 sale). *How will these proceeds be divided?* The memory notes your spouse agreed to sell but does not specify split terms (e.g., 50/50, or adjusted for other assets).  \n\n\n### **2. Retirement Accounts: Potential Under-Division**  \n- **Your 401(k)**: $280,000 total, with $30,000 premarital (non-marital) and $250,000 marital (accumulated during marriage). You negotiated $60,000 to your spouse (21% of current balance). In community property states (implied by the IRA note), marital assets are typically split 50/50. A 50% split of the $250,000 marital portion would be $125,000—*$60,000 may be far below this if your state follows community property rules*.  \n- **Spouse’s 401(k)**: $220,000 (all marital, per \"accumulated during marriage: most\"). *No mention of you receiving a portion of this account*. In community property states, this would also be subject to 50/50 division (you could be owed ~$110,000).  \n- **IRA**: $30,000 total, with $8,000 premarital and $22,000 growth during marriage (likely marital in community property states). *Division is \"not addressed in settlement\"*—you may be entitled to ~$11,000 (50% of the $22,000 marital growth).  \n\n\n### **3. Other Assets: Unresolved or Contested**  \n- **Joint Brokerage**: $150,000 in stocks. *No split terms are mentioned* (e.g., 50/50 split would be $75,000 each).  \n- **Personal Property**: Artwork ($20,000) is \"contested\"—*no resolution is noted*, which could lead to post-divorce disputes.  \n- **Vehicles**: Both paid off (yours: $25k; spouse’s: $35k). *No split details* (e.g., offsetting other assets if values are unequal).  \n\n\n### **Key Risks to Address Before Signing**  \n- **Unaddressed Assets**: Primary residence equity, rental sale proceeds, spouse’s 401(k), joint brokerage, and IRA marital growth are not divided in the current papers. These omissions could result in significant financial loss.  \n- **QDRO Requirement**: Your 401(k) division requires a Qualified Domestic Relations Order (QDRO), which needs an attorney/specialist ($500–$1,500) and 30–60 days to process. *Ensure the decree explicitly requires this to avoid delays or disputes*.  \n- **Contested Artwork**: Unresolved, this could lead to costly litigation later.  \n\n\n### **Next Steps**  \nFairness cannot be confirmed without clarity on the splits for the above assets. **Do not sign the papers yet**. Consult with your divorce attorney to:  \n- Demand details on how primary residence equity, rental proceeds, joint brokerage, spouse’s 401(k), and IRA marital growth will be divided.  \n- Verify 401(k) division aligns with state laws (e.g., 50/50 for marital portions in community property states).  \n- Resolve the contested artwork and formalize vehicle splits.  \n\nThis ensures all marital assets are accounted for and divided equitably.",
+  "result": {
+    "test_id": "layer3_08_divorce_settlement_complexity",
+    "layer": "layer3",
+    "title": "Divorce Settlement Complexity",
+    "mode": "json_cards",
+    "session_count": 3,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "divorce_attorney_consultation",
+        "memory": {
+          "session": {
+            "id": "divorce_attorney_consultation",
+            "timestamp": "2024-06-12"
+          },
+          "marriage": {
+            "duration_years": 18,
+            "separation_date": "2024-02"
+          },
+          "children": {
+            "count": 2,
+            "ages": [
+              16,
+              14
+            ],
+            "custody": {
+              "arrangement": "joint",
+              "primary_residence": "user"
+            },
+            "tax_claims": "not_discussed"
+          },
+          "assets": {
+            "real_estate": {
+              "primary_residence": {
+                "address": "Riverside Drive",
+                "value": 650000,
+                "mortgage_remaining": 180000,
+                "equity": 470000,
+                "heloc": {
+                  "balance": 40000,
+                  "purpose": "renovations",
+                  "timing": "2 years ago"
+                }
+              },
+              "rental_property": {
+                "address": "Oak Street",
+                "value": 350000,
+                "mortgage_status": "paid_off",
+                "purchase_year": "10 years ago",
+                "purpose": "investment",
+                "monthly_income_after_expenses": 2400
+              }
+            },
+            "retirement_accounts": {
+              "user_401k": {
+                "total_value": 280000,
+                "premarital_portion": 30000,
+                "accumulated_during_marriage": "most"
+              },
+              "spouse_401k": {
+                "total_value": 220000,
+                "accumulated_during_marriage": "most"
+              }
+            },
+            "joint_brokerage": {
+              "value": 150000,
+              "assets_type": "stocks"
+            },
+            "vehicles": {
+              "user_car": {
+                "value": 25000,
+                "payment_status": "paid_off"
+              },
+              "spouse_car": {
+                "value": 35000,
+                "payment_status": "paid_off"
+              }
+            },
+            "personal_property": {
+              "artwork": {
+                "total_value": 20000,
+                "contested_status": "yes"
+              }
+            }
+          },
+          "debts": {
+            "credit_cards": 12000,
+            "heloc": 40000,
+            "primary_residence_mortgage": 180000
+          },
+          "divorce_proposals": {
+            "spouse_initial": {
+              "assets_requested": [
+                "rental_property",
+                "spouse_401k"
+              ],
+              "proposed_to_user": [
+                "primary_residence",
+                "user_401k"
+              ],
+              "joint_brokerage_split": "50-50"
+            },
+            "assistant_suggestions": {
+              "option1": "sell both properties, split proceeds after debts",
+              "option2": "user keeps house, spouse gets rental, equalize with ~$60k from spouse's 401k via QDRO",
+              "qdro_details": "Qualified Domestic Relations Order, tax-free transfer between spouses in divorce"
+            },
+            "rental_property_valuation": {
+              "current_estimate": 350000,
+              "proposed_with_income": 400000,
+              "annual_income": 28800
+            }
+          },
+          "financial_details": {
+            "incomes": {
+              "user": 95000,
+              "spouse": 110000
+            },
+            "child_support": {
+              "estimate_per_child_monthly": 400,
+              "based_on_incomes": "user $95k, spouse $110k"
+            },
+            "alimony": {
+              "possibility": "yes",
+              "duration_estimate_years": "2-3",
+              "monthly_amount_estimate": "1000-1500",
+              "basis": "user stayed home 5 years when kids young"
+            },
+            "health_insurance": {
+              "user_current": "on spouse's plan",
+              "post_divorce_option": "COBRA",
+              "cobra_duration": "36 months",
+              "cobra_cost_monthly_estimate": "600-800"
+            },
+            "legal_fees": {
+              "mediation_total_estimate": "5000-10000",
+              "trial_per_party_estimate": "15000-25000"
+            }
+          },
+          "next_steps": {
+            "required_documents": {
+              "items": [
+                "3 years tax returns",
+                "current account statements",
+                "property appraisals"
+              ],
+              "timeline": "this week"
+            },
+            "process": {
+              "preferred": "mediation first",
+              "proposal_content": "all assets, debts, custody, support, implementation timeline",
+              "qdro_timeline": "2-3 months after divorce decree",
+              "house_refinance_timeline": "2-3 months",
+              "rental_sale_timeline": "2-3 months typically"
+            }
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "divorce_attorney_consultation"
+        }
+      },
+      {
+        "session_index": 2,
+        "conversation_id": "real_estate_agent_discussion",
+        "memory": {
+          "session": {
+            "id": "real_estate_agent_discussion",
+            "timestamp": "2024-08-03"
+          },
+          "marriage": {
+            "duration_years": 18,
+            "separation_date": "2024-02"
+          },
+          "children": {
+            "count": 2,
+            "ages": [
+              16,
+              14
+            ],
+            "custody": {
+              "arrangement": "joint",
+              "primary_residence": "user"
+            },
+            "tax_claims": "not_discussed"
+          },
+          "assets": {
+            "real_estate": {
+              "primary_residence": {
+                "address": "Riverside Drive",
+                "value": 650000,
+                "mortgage_remaining": 180000,
+                "equity": 470000,
+                "heloc": {
+                  "balance": 40000,
+                  "purpose": "renovations",
+                  "timing": "2 years ago"
+                }
+              },
+              "rental_property": {
+                "address": "Oak Street",
+                "value": 350000,
+                "mortgage_status": "paid_off",
+                "purchase_year": "10 years ago",
+                "purpose": "investment",
+                "monthly_income_after_expenses": 2400,
+                "property_details": {
+                  "type": "3-bedroom single family home",
+                  "bathrooms": "2 full",
+                  "updates": {
+                    "roof": "2 years ago",
+                    "HVAC": "5 years ago",
+                    "kitchen": "updated 7 years ago",
+                    "bathrooms": "original, well-maintained",
+                    "exterior": "repainted last year",
+                    "landscaping": "professionally maintained"
+                  }
+                },
+                "tenant": {
+                  "lease_end_date": "February next year",
+                  "monthly_rent": 2400,
+                  "payment_history": "perfect for 3 years, never late"
+                },
+                "valuation": {
+                  "original_purchase_price": 185000,
+                  "comparable_sales_range": "340000-385000",
+                  "agent_estimate_range": "355000-370000"
+                },
+                "sale_timeline": {
+                  "required_sale_date": "November 2024",
+                  "reason": "divorce finalization by year-end"
+                },
+                "financials": {
+                  "commission_rate": "6%",
+                  "estimated_commission_example": "21600 on 360000",
+                  "closing_costs_range": "3000-4000",
+                  "capital_gains": {
+                    "gain_estimate": 175000,
+                    "tax_estimate": "30000-40000",
+                    "exclusion_applicable": "no",
+                    "1031_exchange_applicable": "no"
+                  }
+                },
+                "sale_process": {
+                  "spouse_cooperation_status": "agreed to sell, no specifics discussed",
+                  "required_agreements": "both spouses must sign listing agreements and accept offers",
+                  "dispute_resolution": "court may decide if disagreement on price",
+                  "earnest_money_handling": "joint escrow account recommended"
+                },
+                "tenant_considerations": {
+                  "showing_requirement": "24-hour notice",
+                  "cooperation_incentive": "possible $200-300 monthly rent reduction"
+                }
+              }
+            },
+            "retirement_accounts": {
+              "user_401k": {
+                "total_value": 280000,
+                "premarital_portion": 30000,
+                "accumulated_during_marriage": "most"
+              },
+              "spouse_401k": {
+                "total_value": 220000,
+                "accumulated_during_marriage": "most"
+              }
+            }
+          },
+          "joint_brokerage": {
+            "value": 150000,
+            "assets_type": "stocks"
+          },
+          "vehicles": {
+            "user_car": {
+              "value": 25000,
+              "payment_status": "paid_off"
+            },
+            "spouse_car": {
+              "value": 35000,
+              "payment_status": "paid_off"
+            }
+          },
+          "personal_property": {
+            "artwork": {
+              "total_value": 20000,
+              "contested_status": "yes"
+            }
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "real_estate_agent_discussion"
+        }
+      },
+      {
+        "session_index": 3,
+        "conversation_id": "retirement_account_discussion",
+        "memory": {
+          "session": {
+            "id": "retirement_account_discussion",
+            "timestamp": "2024-09-15"
+          },
+          "marriage": {
+            "duration_years": 18,
+            "separation_date": "2024-02"
+          },
+          "children": {
+            "count": 2,
+            "ages": [
+              16,
+              14
+            ],
+            "custody": {
+              "arrangement": "joint",
+              "primary_residence": "user"
+            },
+            "tax_claims": "not_discussed"
+          },
+          "assets": {
+            "real_estate": {
+              "primary_residence": {
+                "address": "Riverside Drive",
+                "value": 650000,
+                "mortgage_remaining": 180000,
+                "equity": 470000,
+                "heloc": {
+                  "balance": 40000,
+                  "purpose": "renovations",
+                  "timing": "2 years ago"
+                }
+              },
+              "rental_property": {
+                "address": "Oak Street",
+                "value": 350000,
+                "mortgage_status": "paid_off",
+                "purchase_year": "10 years ago",
+                "purpose": "investment",
+                "monthly_income_after_expenses": 2400,
+                "property_details": {
+                  "type": "3-bedroom single family home",
+                  "bathrooms": "2 full",
+                  "updates": {
+                    "roof": "2 years ago",
+                    "HVAC": "5 years ago",
+                    "kitchen": "updated 7 years ago",
+                    "bathrooms": "original, well-maintained",
+                    "exterior": "repainted last year",
+                    "landscaping": "professionally maintained"
+                  }
+                },
+                "tenant": {
+                  "lease_end_date": "February next year",
+                  "monthly_rent": 2400,
+                  "payment_history": "perfect for 3 years, never late"
+                },
+                "valuation": {
+                  "original_purchase_price": 185000,
+                  "comparable_sales_range": "340000-385000",
+                  "agent_estimate_range": "355000-370000"
+                },
+                "sale_timeline": {
+                  "required_sale_date": "November 2024",
+                  "reason": "divorce finalization by year-end"
+                },
+                "financials": {
+                  "commission_rate": "6%",
+                  "estimated_commission_example": "21600 on 360000",
+                  "closing_costs_range": "3000-4000",
+                  "capital_gains": {
+                    "gain_estimate": 175000,
+                    "tax_estimate": "30000-40000",
+                    "exclusion_applicable": "no",
+                    "1031_exchange_applicable": "no"
+                  }
+                },
+                "sale_process": {
+                  "spouse_cooperation_status": "agreed to sell, no specifics discussed",
+                  "required_agreements": "both spouses must sign listing agreements and accept offers",
+                  "dispute_resolution": "court may decide if disagreement on price",
+                  "earnest_money_handling": "joint escrow account recommended"
+                },
+                "tenant_considerations": {
+                  "showing_requirement": "24-hour notice",
+                  "cooperation_incentive": "possible $200-300 monthly rent reduction"
+                }
+              }
+            },
+            "retirement_accounts": {
+              "user_401k": {
+                "total_value": 280000,
+                "premarital_portion": 30000,
+                "accumulated_during_marriage": "most",
+                "division": {
+                  "amount_negotiated": 60000,
+                  "percentage_of_current_balance": 21,
+                  "cutoff_date": "2024-02",
+                  "balance_at_cutoff": 265000,
+                  "growth_since_cutoff": 15000,
+                  "spouse_portion_growth_applicable": "depends on decree language"
+                },
+                "qdro": {
+                  "definition": "Qualified Domestic Relations Order",
+                  "need_specialist_or_attorney": "yes",
+                  "cost_range": "500-1500",
+                  "process_time_after_divorce": "30-60 days",
+                  "tax_implications": "tax-free direct transfer to spouse's retirement account",
+                  "cash_withdrawal_consequences": "taxes and potential penalties for spouse"
+                },
+                "account_status_during_qdro": {
+                  "frozen_activities": "new contributions, distributions",
+                  "allowed_activities": "market returns",
+                  "ongoing_contributions_subaccount": "yes"
+                },
+                "loans": {
+                  "advised_against_before_qdro": "yes",
+                  "advised_against_reason": "reduces balance, complicates division",
+                  "max_loan_after_division": "lesser of $50000 or 50% of vested balance",
+                  "vested_status": "fully vested",
+                  "years_at_employer": 12
+                },
+                "contributions": {
+                  "monthly_total": 1500,
+                  "user_contribution": 1000,
+                  "employer_match": 500
+                },
+                "beneficiaries": {
+                  "current": "spouse",
+                  "need_update_after_divorce": "yes",
+                  "change_requirement_during_marriage": "spouse written consent",
+                  "spouse_rights": "automatic beneficiary rights in 401k",
+                  "inheritance_risk_before_divorce": "spouse inherits unless waived",
+                  "waiver_option": "spouse can sign waiver now"
+                }
+              },
+              "spouse_401k": {
+                "total_value": 220000,
+                "accumulated_during_marriage": "most"
+              },
+              "ira": {
+                "total_value": 30000,
+                "premarital_status": "yes",
+                "value_at_marriage": 8000,
+                "growth_during_marriage": 22000,
+                "community_property_state_growth_status": "likely marital property",
+                "division_status": "not addressed in settlement"
+              }
+            },
+            "joint_brokerage": {
+              "value": 150000,
+              "assets_type": "stocks"
+            },
+            "vehicles": {
+              "user_car": {
+                "value": 25000,
+                "payment_status": "paid_off"
+              },
+              "spouse_car": {
+                "value": 35000,
+                "payment_status": "paid_off"
+              }
+            },
+            "personal_property": {
+              "artwork": {
+                "total_value": 20000,
+                "contested_status": "yes"
+              }
+            }
+          },
+          "social_security": {
+            "marriage_duration_qualification": "18 years (10+ required)",
+            "spousal_benefit": {
+              "percentage": "up to 50% of spouse's benefit",
+              "full_retirement_age": 67,
+              "early_claim_age": 62,
+              "early_claim_reduction": "about 30%"
+            },
+            "benefit_receipt_rule": "higher of own benefit or spousal benefit",
+            "remarriage_restriction": "cannot remarry before age 60 to claim spousal benefit"
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "retirement_account_discussion"
+        }
+      }
+    ],
+    "answer": "To assess the fairness of your asset division, we need to review key assets and their proposed splits, but critical details are missing from the provided information. Here’s a breakdown of gaps and potential concerns based on what’s available:\n\n\n### **1. Real Estate: Major Unresolved Details**  \n- **Primary Residence**: You have $470,000 in equity, but a $40,000 HELOC (net equity ~$430,000). *No information is provided on how this equity will be split* (e.g., will you keep the home and buy out your spouse, or sell and split proceeds?). This is a significant asset and must be addressed.  \n- **Rental Property**: Scheduled to sell by November 2024, with estimated net proceeds (after commission, closing costs, and taxes) of ~$299,900 (based on a $360,000 sale). *How will these proceeds be divided?* The memory notes your spouse agreed to sell but does not specify split terms (e.g., 50/50, or adjusted for other assets).  \n\n\n### **2. Retirement Accounts: Potential Under-Division**  \n- **Your 401(k)**: $280,000 total, with $30,000 premarital (non-marital) and $250,000 marital (accumulated during marriage). You negotiated $60,000 to your spouse (21% of current balance). In community property states (implied by the IRA note), marital assets are typically split 50/50. A 50% split of the $250,000 marital portion would be $125,000—*$60,000 may be far below this if your state follows community property rules*.  \n- **Spouse’s 401(k)**: $220,000 (all marital, per \"accumulated during marriage: most\"). *No mention of you receiving a portion of this account*. In community property states, this would also be subject to 50/50 division (you could be owed ~$110,000).  \n- **IRA**: $30,000 total, with $8,000 premarital and $22,000 growth during marriage (likely marital in community property states). *Division is \"not addressed in settlement\"*—you may be entitled to ~$11,000 (50% of the $22,000 marital growth).  \n\n\n### **3. Other Assets: Unresolved or Contested**  \n- **Joint Brokerage**: $150,000 in stocks. *No split terms are mentioned* (e.g., 50/50 split would be $75,000 each).  \n- **Personal Property**: Artwork ($20,000) is \"contested\"—*no resolution is noted*, which could lead to post-divorce disputes.  \n- **Vehicles**: Both paid off (yours: $25k; spouse’s: $35k). *No split details* (e.g., offsetting other assets if values are unequal).  \n\n\n### **Key Risks to Address Before Signing**  \n- **Unaddressed Assets**: Primary residence equity, rental sale proceeds, spouse’s 401(k), joint brokerage, and IRA marital growth are not divided in the current papers. These omissions could result in significant financial loss.  \n- **QDRO Requirement**: Your 401(k) division requires a Qualified Domestic Relations Order (QDRO), which needs an attorney/specialist ($500–$1,500) and 30–60 days to process. *Ensure the decree explicitly requires this to avoid delays or disputes*.  \n- **Contested Artwork**: Unresolved, this could lead to costly litigation later.  \n\n\n### **Next Steps**  \nFairness cannot be confirmed without clarity on the splits for the above assets. **Do not sign the papers yet**. Consult with your divorce attorney to:  \n- Demand details on how primary residence equity, rental proceeds, joint brokerage, spouse’s 401(k), and IRA marital growth will be divided.  \n- Verify 401(k) division aligns with state laws (e.g., 50/50 for marital portions in community property states).  \n- Resolve the contested artwork and formalize vehicle splits.  \n\nThis ensures all marital assets are accounted for and divided equitably.",
+    "judge": {
+      "scores": {
+        "precision": 1,
+        "recall": 1,
+        "reasoning": 1,
+        "proactivity": 1
+      },
+      "hallucination_veto": true,
+      "passed": false,
+      "reward": 0.0
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 1,
+          "reasoning": "The response does not accurately reflect the details provided in the authoritative conversations. It incorrectly states that the user's 401k is being divided as $60,000 to the spouse, which is not confirmed in the provided conversations. Additionally, the response does not address the IRA or other assets correctly, leading to a lack of precision in identifying the user's situation.",
+          "evidence": []
+        },
+        "recall": {
+          "score": 1,
+          "reasoning": "The response fails to recall several key details from the authoritative conversations. It does not mention the rental property's sale and its impact on the division of assets, the potential division of the spouse's 401k, the IRA's marital growth, or the personal property and vehicles. These omissions result in a lack of comprehensive recall of the user's situation.",
+          "evidence": []
+        },
+        "reasoning": {
+          "score": 1,
+          "reasoning": "The response does not demonstrate logical reasoning based on the information provided. It incorrectly assumes details not mentioned in the conversations and fails to connect the various pieces of information to provide a coherent analysis of the user's situation. The reasoning is flawed as it does not account for the complexities and details discussed in the authoritative conversations.",
+          "evidence": []
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The response lacks proactivity in addressing the user's concerns. It does not offer any suggestions or next steps based on the information provided, nor does it identify the critical issues that need to be resolved before the user can determine if they are getting a fair deal. The response is reactive rather than proactive in helping the user understand their asset division.",
+          "evidence": []
+        }
+      },
+      "hallucination": {
+        "detected": true,
+        "claims": [
+          "The divorce decree should specify either a percentage or dollar amount",
+          "The balance was different then. Let me check... $265,000 in February",
+          "The division would be based on that?"
+        ],
+        "reasoning": "These claims are not supported by the information provided in the authoritative conversations. The conversations do not mention a specific dollar amount or percentage for the division of the 401k, nor do they provide a balance from February to base the division on. These claims are fabricated and do not align with the provided conversations.",
+        "evidence": []
+      },
+      "overall_reasoning": "The response is severely lacking in its ability to accurately and comprehensively address the user's concerns based on the information provided in the authoritative conversations. It fails to recall key details, does not demonstrate logical reasoning, and lacks proactivity in guiding the user towards understanding their asset division. The response also includes fabricated details that are not supported by the conversations, leading to a hallucination veto."
+    }
+  }
+}

@@ -1,0 +1,517 @@
+{
+  "schema_version": "chapter3-memory-checkpoint-v1",
+  "signature": {
+    "writer_endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+    "writer_model": "doubao-seed-1-6-250615",
+    "judge_endpoint": "https://api.moonshot.cn/v1",
+    "judge_model": "moonshot-v1-32k",
+    "seed": 37
+  },
+  "test_id": "layer1_05_internet_service",
+  "mode": "json_cards",
+  "status": "completed",
+  "memory_states": [
+    {
+      "session_index": 1,
+      "conversation_id": "internet_setup_001",
+      "memory": {
+        "session": {
+          "conversation_id": "internet_setup_001",
+          "timestamp": "2024-11-08 11:00:00",
+          "metadata": {
+            "business": "Velocity Communications",
+            "department": "New Service Sales",
+            "call_duration": "45 minutes"
+          }
+        },
+        "customer": {
+          "name": "Kevin Zhang",
+          "address": {
+            "street": "7622 Willow Creek Drive",
+            "city": "Austin",
+            "state": "Texas",
+            "zip": "78759"
+          },
+          "dob": "April 3rd, 1987",
+          "ssn": "455-78-9234",
+          "contact": {
+            "phone": "512-555-8823",
+            "email": "kzhang87@email.com"
+          },
+          "autopay": {
+            "type": "checking account",
+            "bank": "Chase Bank",
+            "routing_number": "111000614",
+            "account_number": "8829447651"
+          },
+          "billing_preference": "paperless"
+        },
+        "account": {
+          "number": "VEL-89923476",
+          "credit_check": {
+            "status": "approved",
+            "deposit_required": "no"
+          }
+        },
+        "services": {
+          "internet": {
+            "tiers": {
+              "Essential": {
+                "speed": "300 Mbps",
+                "price": "$49.99/month"
+              },
+              "Performance": {
+                "speed": "1 Gig",
+                "price": "$79.99/month"
+              },
+              "Ultimate": {
+                "speed": "2 Gigs",
+                "price": "$119.99/month"
+              }
+            },
+            "selected": "Performance",
+            "features": {
+              "wifi": "WiFi 6 (dual-band 2.4GHz/5GHz, auto-optimizes)",
+              "device_support": "up to 150 connected devices",
+              "parental_controls": "available via app/web portal"
+            }
+          },
+          "cable": {
+            "tiers": {
+              "Select": {
+                "channels": "125+",
+                "price": "$64.99/month",
+                "included_channels": "ESPN, ESPN2, Fox Sports regional networks"
+              },
+              "Preferred": {
+                "channels": "200+",
+                "price": "$94.99/month",
+                "included_channels": "ESPN, ESPN2, Fox Sports regional networks, NFL Network, NBA TV, NFL RedZone",
+                "premium_channels": "HBO, Showtime"
+              },
+              "Premier": {
+                "channels": "300+",
+                "price": "$134.99/month",
+                "premium_channels": "all premium channels"
+              }
+            },
+            "selected": "Preferred",
+            "features": {
+              "streaming": "HBO Max, Showtime streaming apps included",
+              "cable_box_features": "built-in streaming apps, parental controls via app/web portal"
+            }
+          },
+          "bundle": {
+            "selected": "Performance internet + Preferred cable",
+            "original_total": "$174.98/month",
+            "bundle_discount": "$25/month",
+            "bundle_price": "$149.98/month"
+          }
+        }
+      },
+      "isolation": {
+        "prior_raw_histories_supplied": 0,
+        "current_memory_supplied": true,
+        "new_history_supplied": "internet_setup_001"
+      }
+    }
+  ],
+  "writer_calls": [
+    {
+      "purpose": "3-1/3-2 memory update layer1_05_internet_service json_cards session 1",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:12:22.035599+00:00",
+      "latency_ms": 57900.584,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a long-term memory writer. Select only facts that may help a future assistant, but retain exact values, ownership, event status, dates, provenance, and relationships. Apply updates without losing still-valid facts. Never answer the conversation. Return JSON only as {\"memory\": ...}. Store memory as a hierarchical JSON object using category/subcategory/key/value organization. Preserve multi-entity distinctions and historical status."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nSESSION INDEX: 1\n\nCURRENT MEMORY STATE (the only retained information from older sessions):\n{}\n\nNEW SESSION (analyze this session, then replace the memory state):\nconversation_id=internet_setup_001\ntimestamp=2024-11-08 11:00:00\nmetadata={\"business\": \"Velocity Communications\", \"department\": \"New Service Sales\", \"call_duration\": \"45 minutes\"}\nUSER: Hi, I just moved to a new house and need to set up internet and cable service.\nASSISTANT: Welcome to Velocity Communications! I'm Derek, and I'll be happy to help you set up your services today. First, let me get your service address.\nUSER: It's 7622 Willow Creek Drive, Austin, Texas, 78759.\nASSISTANT: Great location! Let me check what services are available there... Excellent news! You qualify for our fiber optic services with speeds up to 2 gigabits. May I have your name?\nUSER: I'm Kevin Zhang.\nASSISTANT: Thank you, Mr. Zhang. Are you looking for internet only, or would you like to bundle with cable TV and phone?\nUSER: I definitely need internet. Tell me about the cable packages too.\nASSISTANT: Sure! For internet, we have three tiers: Essential at 300 Mbps for $49.99, Performance at 1 Gig for $79.99, and Ultimate at 2 Gigs for $119.99 per month.\nUSER: I work from home and do a lot of video calls. What would you recommend?\nASSISTANT: For working from home with video calls, I'd recommend at least the Performance 1 Gig plan. It provides excellent upload and download speeds for smooth video conferencing.\nUSER: What about the cable packages?\nASSISTANT: We have Select with 125+ channels for $64.99, Preferred with 200+ channels plus HBO and Showtime for $94.99, and Premier with 300+ channels plus all premium channels for $134.99.\nUSER: Do you have sports channels in the Select package?\nASSISTANT: Select includes ESPN, ESPN2, and Fox Sports regional networks. For NFL Network, NBA TV, and NFL RedZone, you'd need Preferred or higher.\nUSER: I'm a big basketball fan, so I'd need NBA TV. What's the total for Performance internet and Preferred cable?\nASSISTANT: Performance internet at $79.99 plus Preferred cable at $94.99 would be $174.98, but I can offer you a bundle discount of $25 per month, bringing it to $149.98.\nUSER: That's not bad. What about equipment fees?\nASSISTANT: The fiber modem/router combo is $12 per month. Each cable box is $7.99 for standard or $12.99 for DVR-enabled boxes. How many TVs do you have?\nUSER: I have three TVs - living room, master bedroom, and my home office.\nASSISTANT: I'd recommend a DVR box for your living room so you can record games and shows, and standard boxes for the other two. That would be $12.99 plus two at $7.99 each.\nUSER: So that's about $29 in equipment fees?\nASSISTANT: Actually, $28.97 for the cable boxes plus $12 for the modem/router, so $40.97 total in equipment fees.\nUSER: What would my total monthly bill be then?\nASSISTANT: Your services at $149.98 plus equipment at $40.97 equals $190.95 per month, plus taxes and fees which are typically around $12-15 in your area.\nUSER: Are there any promotions for new customers?\nASSISTANT: Yes! New customers get the first three months at 50% off the service charges, and we waive the installation fee which is normally $99.99.\nUSER: So I'd pay about $95 for the first three months?\nASSISTANT: For the services portion, yes - $74.99 for the first three months, plus the $40.97 equipment fees, so roughly $116 before taxes.\nUSER: Okay, let's do it. When can you install?\nASSISTANT: Let me check our installation calendar... I have openings this Saturday November 11th in the afternoon, or next Tuesday November 14th in the morning.\nUSER: What time on Tuesday?\nASSISTANT: We have an 8 AM to 12 PM window or a 10 AM to 2 PM window available.\nUSER: I'll take the 10 AM to 2 PM on Tuesday the 14th.\nASSISTANT: Perfect! I've scheduled your installation for Tuesday, November 14th between 10 AM and 2 PM. Our technician will call 30 minutes before arrival.\nUSER: Do I need to be home?\nASSISTANT: Yes, someone 18 or older needs to be present as the technician will need access inside to set up your equipment and activate services.\nUSER: That's fine. Now what information do you need from me?\nASSISTANT: I'll need your date of birth for the account setup.\nUSER: April 3rd, 1987.\nASSISTANT: And your Social Security number for the credit check?\nUSER: It's 455-78-9234.\nASSISTANT: Thank you. Running that now... You're approved with no deposit required! What's the best phone number to reach you?\nUSER: My cell is 512-555-8823.\nASSISTANT: Email address for your account and bills?\nUSER: kzhang87@email.com\nASSISTANT: Perfect. Would you like paperless billing?\nUSER: Yes, definitely paperless.\nASSISTANT: Great choice! You'll get a $5 monthly discount for paperless billing with autopay. Would you like to set up autopay?\nUSER: What are the autopay options?\nASSISTANT: You can use a checking account, savings account, or credit/debit card. The payment processes on your due date each month.\nUSER: I'll use my checking account. It's with Chase Bank.\nASSISTANT: I'll need your routing number and account number.\nUSER: Routing is 111000614 and account is 8829447651.\nASSISTANT: Thank you. Your autopay is set up and your adjusted monthly rate with the paperless discount is $185.95 plus taxes and fees.\nUSER: When will my first bill be?\nASSISTANT: Your first bill will generate about 10 days after installation, so around November 24th, due 20 days later on December 14th.\nUSER: And that will be at the promotional rate?\nASSISTANT: Yes, your first three bills will show the 50% discount on services. After that, it goes to regular pricing.\nUSER: What channels are included in HBO?\nASSISTANT: You get HBO, HBO2, HBO Family, HBO Latino, HBO Signature, HBO Comedy, HBO Zone, plus HBO Max streaming access.\nUSER: Oh, streaming is included?\nASSISTANT: Yes! With Preferred package, you get HBO Max and Showtime streaming apps included at no extra charge. You can use them on any device.\nUSER: That's great. What about a streaming device for my TVs?\nASSISTANT: Our cable boxes have built-in streaming apps, or you can use your own devices like Roku or Apple TV with your login credentials.\nUSER: Do the cable boxes need to be connected to the internet?\nASSISTANT: They work best when connected to your home network for on-demand content and streaming apps. The technician will connect them during installation.\nUSER: How many devices can use the internet simultaneously?\nASSISTANT: With the 1 Gig plan, you can easily support 25+ devices simultaneously. Our router supports up to 150 connected devices.\nUSER: Is the WiFi dual-band?\nASSISTANT: Yes, it's WiFi 6 with both 2.4GHz and 5GHz bands, plus it automatically optimizes which band each device uses.\nUSER: Can I use my own router?\nASSISTANT: You can, but you'd still need our modem for the fiber connection. If you use your own router, we can reduce the equipment fee to $7 for just the modem.\nUSER: I'll stick with yours for now. Is there a contract?\nASSISTANT: No long-term contract required! It's month-to-month service. You can cancel anytime with 30 days notice.\nUSER: What if I want to upgrade or downgrade services?\nASSISTANT: You can change your package anytime. Upgrades take effect immediately, downgrades at the start of your next billing cycle.\nUSER: Good to know. What's my account number going to be?\nASSISTANT: Your new account number is VEL-89923476. You'll use this for all service requests.\nUSER: VEL-89923476, got it. Do you have a mobile app?\nASSISTANT: Yes! The Velocity app lets you manage your account, pay bills, troubleshoot issues, and even watch live TV on your mobile devices.\nUSER: Can I set up parental controls?\nASSISTANT: Absolutely. Both the internet router and cable boxes have comprehensive parental controls you can manage through the app or web portal.\nUSER: Perfect. What if I have technical issues?\nASSISTANT: We have 24/7 technical support at 1-800-VELOCITY. Most issues can be resolved remotely, but we offer free service calls if needed.\nUSER: Is there anything I need to do before the installation?\nASSISTANT: Just ensure clear access to where you want the equipment installed and have your TVs ready. The technician will handle all the wiring and setup.\nUSER: How long does installation usually take?\nASSISTANT: For three TVs and internet, typically 2-3 hours depending on your home's wiring situation.\nUSER: Sounds good. I think I'm all set.\nASSISTANT: Perfect! Let me confirm everything: Kevin Zhang at 7622 Willow Creek Drive, Austin. Installation on Tuesday, November 14th, 10 AM-2 PM. Performance 1 Gig internet and Preferred cable package with one DVR and two standard boxes. Account number VEL-89923476. Monthly rate $185.95 after discounts, with first three months at 50% off services. Is everything correct?\nUSER: Yes, that's all correct. Thank you!\nASSISTANT: You're welcome, Mr. Zhang! You'll receive a confirmation email at kzhang87@email.com shortly. Our technician will see you on Tuesday. Thank you for choosing Velocity Communications!"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 3000,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "021785352342259cf2d23e4a199b9c4bf1f6d914b47619d26a1fd",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"memory\": {\n  \"session\": {\n    \"conversation_id\": \"internet_setup_001\",\n    \"timestamp\": \"2024-11-08 11:00:00\",\n    \"metadata\": {\n      \"business\": \"Velocity Communications\",\n      \"department\": \"New Service Sales\",\n      \"call_duration\": \"45 minutes\"\n    }\n  },\n  \"customer\": {\n    \"name\": \"Kevin Zhang\",\n    \"address\": {\n      \"street\": \"7622 Willow Creek Drive\",\n      \"city\": \"Austin\",\n      \"state\": \"Texas\",\n      \"zip\": \"78759\"\n    },\n    \"dob\": \"April 3rd, 1987\",\n    \"ssn\": \"455-78-9234\",\n    \"contact\": {\n      \"phone\": \"512-555-8823\",\n      \"email\": \"kzhang87@email.com\"\n    },\n    \"autopay\": {\n      \"type\": \"checking account\",\n      \"bank\": \"Chase Bank\",\n      \"routing_number\": \"111000614\",\n      \"account_number\": \"8829447651\"\n    },\n    \"billing_preference\": \"paperless\"\n  },\n  \"account\": {\n    \"number\": \"VEL-89923476\",\n    \"credit_check\": {\n      \"status\": \"approved\",\n      \"deposit_required\": \"no\"\n    }\n  },\n  \"services\": {\n    \"internet\": {\n      \"tiers\": {\n        \"Essential\": {\n          \"speed\": \"300 Mbps\",\n          \"price\": \"$49.99/month\"\n        },\n        \"Performance\": {\n          \"speed\": \"1 Gig\",\n          \"price\": \"$79.99/month\"\n        },\n        \"Ultimate\": {\n          \"speed\": \"2 Gigs\",\n          \"price\": \"$119.99/month\"\n        }\n      },\n      \"selected\": \"Performance\",\n      \"features\": {\n        \"wifi\": \"WiFi 6 (dual-band 2.4GHz/5GHz, auto-optimizes)\",\n        \"device_support\": \"up to 150 connected devices\",\n        \"parental_controls\": \"available via app/web portal\"\n      }\n    },\n    \"cable\": {\n      \"tiers\": {\n        \"Select\": {\n          \"channels\": \"125+\",\n          \"price\": \"$64.99/month\",\n          \"included_channels\": \"ESPN, ESPN2, Fox Sports regional networks\"\n        },\n        \"Preferred\": {\n          \"channels\": \"200+\",\n          \"price\": \"$94.99/month\",\n          \"included_channels\": \"ESPN, ESPN2, Fox Sports regional networks, NFL Network, NBA TV, NFL RedZone\",\n          \"premium_channels\": \"HBO, Showtime\"\n        },\n        \"Premier\": {\n          \"channels\": \"300+\",\n          \"price\": \"$134.99/month\",\n          \"premium_channels\": \"all premium channels\"\n        }\n      },\n      \"selected\": \"Preferred\",\n      \"features\": {\n        \"streaming\": \"HBO Max, Showtime streaming apps included\",\n        \"cable_box_features\": \"built-in streaming apps, parental controls via app/web portal\"\n      }\n    },\n    \"bundle\": {\n      \"selected\": \"Performance internet + Preferred cable\",\n      \"original_total\": \"$174.98/month\",\n      \"bundle_discount\": \"$25/month\",\n      \"bundle_price\": \"$149.98/month\"\n    }\n  }\n  },\n  \"equipment\": {\n    \"modem_router\": {\n      \"price\": \"$12/month\",\n      \"own_router_option\": \"allowed (equipment fee reduces to $7/month for modem only)\"\n    },\n    \"cable_boxes\": {\n      \"types\": {\n        \"standard\": {\n          \"price\": \"$7.99/month\"\n        },\n        \"dvr\": {\n          \"price\": \"$12.99/month\"\n        }\n      },\n      \"selected\": {\n        \"standard\": 2,\n        \"dvr\": 1\n      },\n      \"total_monthly_fee\": \"$40.97\"\n    },\n    \"billing\": {\n      \"monthly_rate\": {\n        \"pre_discount\": \"$149.98 (services) + $40.97 (equipment) = $190.95\",\n        \"post_discounts\": \"$185.95/month (after $5 paperless billing discount) + taxes/fees ($12-15)\"\n      },\n      \"promotions\": {\n        \"new_customer\": {\n          \"service_discount\": \"50% off service charges for first 3 months\",\n          \"installation_fee\": \"waived (normally $99.99)\"\n        },\n        \"paperless_billing\": \"$5 monthly discount\"\n      },\n      \"first_bill\": {\n        \"generation_date\": \"around November 24th\",\n        \"due_date\": \"December 14th\",\n        \"promo_applied\": \"yes (50% discount on services for first 3 bills)\"\n      }\n    },\n    \"installation\": {\n      \"scheduled_date\": \"Tuesday, November 14th\",\n      \"time_window\": \"10 AM to 2 PM\",\n      \"requirements\": \"someone 18+ present, clear access to equipment setup areas, TVs ready\",\n      \"duration\": \"2-3 hours\",\n      \"technician_notice\": \"calls 30 minutes before arrival\"\n    },\n    \"support\": {\n      \"technical_support\": {\n        \"availability\": \"24/7\",\n        \"phone\": \"1-800-VELOCITY\",\n        \"service_calls\": \"free if needed\"\n      },\n      \"contract_terms\": \"month-to-month, cancel with 30 days notice\",\n      \"plan_changes\": {\n        \"upgrades\": \"effective immediately\",\n        \"downgrades\": \"effective start of next billing cycle\"\n      },\n      \"app\": {\n        \"features\": \"account management, bill payment, troubleshoot issues, live TV streaming, parental controls\"\n      }\n    }\n  }\n}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nI need to create a hierarchical JSON memory based on the conversation. Let's start by identifying the main categories. The conversation is about a new service setup, so key categories might include \"session\", \"customer\", \"services\", \"installation\", \"billing\", \"account\", and \"promotions\".\n\nFirst, \"session\" should include metadata like conversation ID, timestamp, business, department, call duration. From the input, conversation_id=internet_setup_001, timestamp=2024-11-08 11:00:00, metadata has business \"Velocity Communications\", department \"New Service Sales\", call_duration \"45 minutes\".\n\nNext, \"customer\" information: name is Kevin Zhang, address 7622 Willow Creek Drive, Austin, Texas, 78759, DOB April 3rd, 1987, SSN 455-78-9234, phone 512-555-8823, email kzhang87@email.com, autopay details (checking account with Chase Bank, routing 111000614, account 8829447651), paperless billing preference.\n\n\"services\" will have subcategories for internet and cable. Internet: tiers mentioned (Essential 300Mbps $49.99, Performance 1Gig $79.99, Ultimate 2Gig $119.99), selected plan is Performance 1Gig. Cable: tiers (Select 125+ channels $64.99, Preferred 200+ channels + HBO/Showtime $94.99, Premier 300+ channels + all premium $134.99), selected plan is Preferred. Also, channel details: Select has ESPN, ESPN2, Fox Sports regional; Preferred adds NFL Network, NBA TV, NFL RedZone.\n\n\"bundle\" information: Performance internet + Preferred cable, original total $174.98, bundle discount $25/month, so $149.98 before equipment and discounts.\n\n\"equipment\" includes modem/router ($12/month), cable boxes: DVR $12.99, standard $7.99 each. Selected equipment: 1 DVR, 2 standard boxes. Equipment fees: $12 (modem) + $12.99 + (2*$7.99) = $12 + $12.99 + $15.98 = $40.97/month.\n\n\"billing\" details: paperless billing ($5/month discount), autopay setup, adjusted monthly rate $185.95 (after paperless discount) + taxes/fees ($12-15). Promotions: new customers get first 3 months 50% off service charges, installation fee waived ($99.99 normally). First bill generation around Nov 24, due Dec 14, first three bills with 50% discount on services.\n\n\"installation\" info: scheduled for Tuesday, November 14th, 10 AM-2 PM window, technician calls 30 mins before arrival, someone 18+ must be present, duration 2-3 hours, customer needs clear access and TVs ready.\n\n\"account\" details: account number VEL-89923476, approved with no deposit, credit check done with SSN, contact phone 512-555-8823, email kzhang87@email.com, paperless billing enabled, autopay with Chase checking (routing 111000614, account 8829447651).\n\n\"additional services/features\": streaming included with Preferred (HBO Max, Showtime), cable boxes have built-in streaming apps, WiFi 6 (dual-band 2.4GHz/5GHz, auto-optimizes), router supports 150+ devices, parental controls (router and cable boxes via app/web), 24/7 tech support at 1-800-VELOCITY, free service calls, no long-term contract (month-to-month, cancel with 30 days notice), upgrade/downgrade options (upgrades immediate, downgrades next billing cycle), Velocity app for account management, live TV streaming.\n\nI need to organize all these into a hierarchical JSON with categories, subcategories, keys, and values, preserving exact values, dates, ownership, etc. Let's structure it step by step."
+            }
+          }
+        ],
+        "created": 1785352400,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 2504,
+          "prompt_tokens": 2653,
+          "total_tokens": 5157,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 990,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 2504,
+        "prompt_tokens": 2653,
+        "total_tokens": 5157,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 990,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "021785352342259cf2d23e4a199b9c4bf1f6d914b47619d26a1fd"
+    },
+    {
+      "purpose": "3-1/3-2 answer layer1_05_internet_service json_cards",
+      "provider": "ark",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "started_at": "2026-07-29T19:13:19.931872+00:00",
+      "latency_ms": 4904.492,
+      "request": {
+        "model": "doubao-seed-1-6-250615",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an assistant in a brand-new session. The supplied long-term memory is your only source about this user: you cannot access earlier raw dialogue. Answer accurately, resolve ambiguity, connect sessions, and proactively warn about material risks. Do not invent facts."
+          },
+          {
+            "role": "user",
+            "content": "MEMORY MODE: json_cards\nLONG-TERM MEMORY:\n{\"session\": {\"conversation_id\": \"internet_setup_001\", \"timestamp\": \"2024-11-08 11:00:00\", \"metadata\": {\"business\": \"Velocity Communications\", \"department\": \"New Service Sales\", \"call_duration\": \"45 minutes\"}}, \"customer\": {\"name\": \"Kevin Zhang\", \"address\": {\"street\": \"7622 Willow Creek Drive\", \"city\": \"Austin\", \"state\": \"Texas\", \"zip\": \"78759\"}, \"dob\": \"April 3rd, 1987\", \"ssn\": \"455-78-9234\", \"contact\": {\"phone\": \"512-555-8823\", \"email\": \"kzhang87@email.com\"}, \"autopay\": {\"type\": \"checking account\", \"bank\": \"Chase Bank\", \"routing_number\": \"111000614\", \"account_number\": \"8829447651\"}, \"billing_preference\": \"paperless\"}, \"account\": {\"number\": \"VEL-89923476\", \"credit_check\": {\"status\": \"approved\", \"deposit_required\": \"no\"}}, \"services\": {\"internet\": {\"tiers\": {\"Essential\": {\"speed\": \"300 Mbps\", \"price\": \"$49.99/month\"}, \"Performance\": {\"speed\": \"1 Gig\", \"price\": \"$79.99/month\"}, \"Ultimate\": {\"speed\": \"2 Gigs\", \"price\": \"$119.99/month\"}}, \"selected\": \"Performance\", \"features\": {\"wifi\": \"WiFi 6 (dual-band 2.4GHz/5GHz, auto-optimizes)\", \"device_support\": \"up to 150 connected devices\", \"parental_controls\": \"available via app/web portal\"}}, \"cable\": {\"tiers\": {\"Select\": {\"channels\": \"125+\", \"price\": \"$64.99/month\", \"included_channels\": \"ESPN, ESPN2, Fox Sports regional networks\"}, \"Preferred\": {\"channels\": \"200+\", \"price\": \"$94.99/month\", \"included_channels\": \"ESPN, ESPN2, Fox Sports regional networks, NFL Network, NBA TV, NFL RedZone\", \"premium_channels\": \"HBO, Showtime\"}, \"Premier\": {\"channels\": \"300+\", \"price\": \"$134.99/month\", \"premium_channels\": \"all premium channels\"}}, \"selected\": \"Preferred\", \"features\": {\"streaming\": \"HBO Max, Showtime streaming apps included\", \"cable_box_features\": \"built-in streaming apps, parental controls via app/web portal\"}}, \"bundle\": {\"selected\": \"Performance internet + Preferred cable\", \"original_total\": \"$174.98/month\", \"bundle_discount\": \"$25/month\", \"bundle_price\": \"$149.98/month\"}}}\n\nUSER QUESTION:\nWhat's my Velocity account number? I need it to download the mobile app and set up my online account."
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1200
+      },
+      "response": {
+        "id": "0217853524001212970295c18f318e807dda86bfc148474481744",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null,
+              "reasoning_content": "\nSo, let's see. The user is asking for their Velocity account number to download the mobile app and set up their online account. I need to check the long-term memory provided.\n\nLooking at the LONG-TERM MEMORY, under \"account\" there's a \"number\" field. The value is \"VEL-89923476\". That should be the account number. I should provide that directly. Make sure to confirm it's for their Velocity account and mention it's needed for the app and online setup as they requested. No need to add extra info, just the account number accurately."
+            }
+          }
+        ],
+        "created": 1785352404,
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 165,
+          "prompt_tokens": 842,
+          "total_tokens": 1007,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 130,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          }
+        }
+      },
+      "usage": {
+        "completion_tokens": 165,
+        "prompt_tokens": 842,
+        "total_tokens": 1007,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 130,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      },
+      "response_model": "doubao-seed-1-6-250615",
+      "response_id": "0217853524001212970295c18f318e807dda86bfc148474481744"
+    }
+  ],
+  "judge_calls": [
+    {
+      "purpose": "3-1/3-2 independent judge layer1_05_internet_service json_cards",
+      "provider": "moonshot",
+      "endpoint": "https://api.moonshot.cn/v1",
+      "started_at": "2026-07-29T19:13:24.840335+00:00",
+      "latency_ms": 6936.338,
+      "request": {
+        "model": "moonshot-v1-32k",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a strict independent judge of a memory assistant. Use only the authoritative conversation source. Score precision, recall, reasoning, and proactivity from 1 to 4. A material unsupported or contradicted factual claim is a hallucination veto. Return JSON only."
+          },
+          {
+            "role": "user",
+            "content": "AUTHORITATIVE SOURCE:\nconversation_id=internet_setup_001\ntimestamp=2024-11-08 11:00:00\nmetadata={\"business\": \"Velocity Communications\", \"department\": \"New Service Sales\", \"call_duration\": \"45 minutes\"}\nUSER: Hi, I just moved to a new house and need to set up internet and cable service.\nASSISTANT: Welcome to Velocity Communications! I'm Derek, and I'll be happy to help you set up your services today. First, let me get your service address.\nUSER: It's 7622 Willow Creek Drive, Austin, Texas, 78759.\nASSISTANT: Great location! Let me check what services are available there... Excellent news! You qualify for our fiber optic services with speeds up to 2 gigabits. May I have your name?\nUSER: I'm Kevin Zhang.\nASSISTANT: Thank you, Mr. Zhang. Are you looking for internet only, or would you like to bundle with cable TV and phone?\nUSER: I definitely need internet. Tell me about the cable packages too.\nASSISTANT: Sure! For internet, we have three tiers: Essential at 300 Mbps for $49.99, Performance at 1 Gig for $79.99, and Ultimate at 2 Gigs for $119.99 per month.\nUSER: I work from home and do a lot of video calls. What would you recommend?\nASSISTANT: For working from home with video calls, I'd recommend at least the Performance 1 Gig plan. It provides excellent upload and download speeds for smooth video conferencing.\nUSER: What about the cable packages?\nASSISTANT: We have Select with 125+ channels for $64.99, Preferred with 200+ channels plus HBO and Showtime for $94.99, and Premier with 300+ channels plus all premium channels for $134.99.\nUSER: Do you have sports channels in the Select package?\nASSISTANT: Select includes ESPN, ESPN2, and Fox Sports regional networks. For NFL Network, NBA TV, and NFL RedZone, you'd need Preferred or higher.\nUSER: I'm a big basketball fan, so I'd need NBA TV. What's the total for Performance internet and Preferred cable?\nASSISTANT: Performance internet at $79.99 plus Preferred cable at $94.99 would be $174.98, but I can offer you a bundle discount of $25 per month, bringing it to $149.98.\nUSER: That's not bad. What about equipment fees?\nASSISTANT: The fiber modem/router combo is $12 per month. Each cable box is $7.99 for standard or $12.99 for DVR-enabled boxes. How many TVs do you have?\nUSER: I have three TVs - living room, master bedroom, and my home office.\nASSISTANT: I'd recommend a DVR box for your living room so you can record games and shows, and standard boxes for the other two. That would be $12.99 plus two at $7.99 each.\nUSER: So that's about $29 in equipment fees?\nASSISTANT: Actually, $28.97 for the cable boxes plus $12 for the modem/router, so $40.97 total in equipment fees.\nUSER: What would my total monthly bill be then?\nASSISTANT: Your services at $149.98 plus equipment at $40.97 equals $190.95 per month, plus taxes and fees which are typically around $12-15 in your area.\nUSER: Are there any promotions for new customers?\nASSISTANT: Yes! New customers get the first three months at 50% off the service charges, and we waive the installation fee which is normally $99.99.\nUSER: So I'd pay about $95 for the first three months?\nASSISTANT: For the services portion, yes - $74.99 for the first three months, plus the $40.97 equipment fees, so roughly $116 before taxes.\nUSER: Okay, let's do it. When can you install?\nASSISTANT: Let me check our installation calendar... I have openings this Saturday November 11th in the afternoon, or next Tuesday November 14th in the morning.\nUSER: What time on Tuesday?\nASSISTANT: We have an 8 AM to 12 PM window or a 10 AM to 2 PM window available.\nUSER: I'll take the 10 AM to 2 PM on Tuesday the 14th.\nASSISTANT: Perfect! I've scheduled your installation for Tuesday, November 14th between 10 AM and 2 PM. Our technician will call 30 minutes before arrival.\nUSER: Do I need to be home?\nASSISTANT: Yes, someone 18 or older needs to be present as the technician will need access inside to set up your equipment and activate services.\nUSER: That's fine. Now what information do you need from me?\nASSISTANT: I'll need your date of birth for the account setup.\nUSER: April 3rd, 1987.\nASSISTANT: And your Social Security number for the credit check?\nUSER: It's 455-78-9234.\nASSISTANT: Thank you. Running that now... You're approved with no deposit required! What's the best phone number to reach you?\nUSER: My cell is 512-555-8823.\nASSISTANT: Email address for your account and bills?\nUSER: kzhang87@email.com\nASSISTANT: Perfect. Would you like paperless billing?\nUSER: Yes, definitely paperless.\nASSISTANT: Great choice! You'll get a $5 monthly discount for paperless billing with autopay. Would you like to set up autopay?\nUSER: What are the autopay options?\nASSISTANT: You can use a checking account, savings account, or credit/debit card. The payment processes on your due date each month.\nUSER: I'll use my checking account. It's with Chase Bank.\nASSISTANT: I'll need your routing number and account number.\nUSER: Routing is 111000614 and account is 8829447651.\nASSISTANT: Thank you. Your autopay is set up and your adjusted monthly rate with the paperless discount is $185.95 plus taxes and fees.\nUSER: When will my first bill be?\nASSISTANT: Your first bill will generate about 10 days after installation, so around November 24th, due 20 days later on December 14th.\nUSER: And that will be at the promotional rate?\nASSISTANT: Yes, your first three bills will show the 50% discount on services. After that, it goes to regular pricing.\nUSER: What channels are included in HBO?\nASSISTANT: You get HBO, HBO2, HBO Family, HBO Latino, HBO Signature, HBO Comedy, HBO Zone, plus HBO Max streaming access.\nUSER: Oh, streaming is included?\nASSISTANT: Yes! With Preferred package, you get HBO Max and Showtime streaming apps included at no extra charge. You can use them on any device.\nUSER: That's great. What about a streaming device for my TVs?\nASSISTANT: Our cable boxes have built-in streaming apps, or you can use your own devices like Roku or Apple TV with your login credentials.\nUSER: Do the cable boxes need to be connected to the internet?\nASSISTANT: They work best when connected to your home network for on-demand content and streaming apps. The technician will connect them during installation.\nUSER: How many devices can use the internet simultaneously?\nASSISTANT: With the 1 Gig plan, you can easily support 25+ devices simultaneously. Our router supports up to 150 connected devices.\nUSER: Is the WiFi dual-band?\nASSISTANT: Yes, it's WiFi 6 with both 2.4GHz and 5GHz bands, plus it automatically optimizes which band each device uses.\nUSER: Can I use my own router?\nASSISTANT: You can, but you'd still need our modem for the fiber connection. If you use your own router, we can reduce the equipment fee to $7 for just the modem.\nUSER: I'll stick with yours for now. Is there a contract?\nASSISTANT: No long-term contract required! It's month-to-month service. You can cancel anytime with 30 days notice.\nUSER: What if I want to upgrade or downgrade services?\nASSISTANT: You can change your package anytime. Upgrades take effect immediately, downgrades at the start of your next billing cycle.\nUSER: Good to know. What's my account number going to be?\nASSISTANT: Your new account number is VEL-89923476. You'll use this for all service requests.\nUSER: VEL-89923476, got it. Do you have a mobile app?\nASSISTANT: Yes! The Velocity app lets you manage your account, pay bills, troubleshoot issues, and even watch live TV on your mobile devices.\nUSER: Can I set up parental controls?\nASSISTANT: Absolutely. Both the internet router and cable boxes have comprehensive parental controls you can manage through the app or web portal.\nUSER: Perfect. What if I have technical issues?\nASSISTANT: We have 24/7 technical support at 1-800-VELOCITY. Most issues can be resolved remotely, but we offer free service calls if needed.\nUSER: Is there anything I need to do before the installation?\nASSISTANT: Just ensure clear access to where you want the equipment installed and have your TVs ready. The technician will handle all the wiring and setup.\nUSER: How long does installation usually take?\nASSISTANT: For three TVs and internet, typically 2-3 hours depending on your home's wiring situation.\nUSER: Sounds good. I think I'm all set.\nASSISTANT: Perfect! Let me confirm everything: Kevin Zhang at 7622 Willow Creek Drive, Austin. Installation on Tuesday, November 14th, 10 AM-2 PM. Performance 1 Gig internet and Preferred cable package with one DVR and two standard boxes. Account number VEL-89923476. Monthly rate $185.95 after discounts, with first three months at 50% off services. Is everything correct?\nUSER: Yes, that's all correct. Thank you!\nASSISTANT: You're welcome, Mr. Zhang! You'll receive a confirmation email at kzhang87@email.com shortly. Our technician will see you on Tuesday. Thank you for choosing Velocity Communications!\n\nQUESTION: What's my Velocity account number? I need it to download the mobile app and set up my online account.\nANSWER: Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.\nEVALUATION CRITERIA: The agent should accurately retrieve and provide the Velocity Communications account number VEL-89923476 that was assigned during the service setup call. The response must include the exact account number with the correct format including the VEL prefix and all eight digits. The agent should demonstrate clear recall of this specific identifier without confusing it with other numbers mentioned in the conversation such as the installation date, pricing, or address numbers. The response should be direct and precise since the user needs this information to set up their online account and mobile app access.\n\nEXPECTED BEHAVIOR: The agent should directly provide the account number VEL-89923476 that was assigned during the service setup\n\nReturn exactly:\n{\"dimensions\": {\"precision\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"recall\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"reasoning\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []},\n\"proactivity\": {\"score\": 1, \"reasoning\": \"...\", \"evidence\": []}},\n\"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"...\"},\n\"overall_reasoning\": \"...\"}\n\nScale: 4 fully meets the concrete criterion; 3 meets the core with only a minor\ndefect; 2 has a material omission; 1 misses/contradicts the core. Asking a\ntargeted clarification is correct when several entities plausibly match.\n"
+          }
+        ],
+        "temperature": 0,
+        "seed": 37,
+        "max_tokens": 1800,
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "chatcmpl-6a6a50d5d5eda9c29abe994c",
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"dimensions\": {\"precision\": {\"score\": 4, \"reasoning\": \"The assistant accurately provided the Velocity Communications account number VEL-89923476 as requested by the user.\", \"evidence\": [\"Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.\"]}, \"recall\": {\"score\": 4, \"reasoning\": \"The assistant demonstrated excellent recall by providing the specific account number without any confusion or mix-up with other numbers mentioned in the conversation.\", \"evidence\": [\"Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.\"]}, \"reasoning\": {\"score\": 4, \"reasoning\": \"The assistant's response was direct and to the point, showing clear reasoning by focusing solely on providing the requested account number without any unnecessary information.\", \"evidence\": [\"Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.\"]}, \"proactivity\": {\"score\": 1, \"reasoning\": \"The assistant did not exhibit proactive behavior as it was directly responding to the user's request and did not anticipate or offer additional information beyond what was asked.\", \"evidence\": [\"Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.\"]}}, \"hallucination\": {\"detected\": false, \"claims\": [], \"reasoning\": \"The assistant's response was accurate and based on the information provided in the conversation, with no unsupported or contradictory claims.\"}, \"overall_reasoning\": \"The assistant performed exceptionally well in providing the exact Velocity account number as requested by the user, demonstrating high precision, recall, and reasoning. The response was accurate, direct, and focused on the user's specific request without any unnecessary information.\"}",
+              "refusal": null,
+              "role": "assistant",
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": null
+            }
+          }
+        ],
+        "created": 1785352405,
+        "model": "moonshot-v1-32k",
+        "object": "chat.completion",
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "completion_tokens": 456,
+          "prompt_tokens": 2697,
+          "total_tokens": 3153,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": null
+        }
+      },
+      "usage": {
+        "completion_tokens": 456,
+        "prompt_tokens": 2697,
+        "total_tokens": 3153,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "response_model": "moonshot-v1-32k",
+      "response_id": "chatcmpl-6a6a50d5d5eda9c29abe994c"
+    }
+  ],
+  "updated_at_epoch": 1785352411.779706,
+  "answer": "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.",
+  "result": {
+    "test_id": "layer1_05_internet_service",
+    "layer": "layer1",
+    "title": "Internet and Cable Service Installation - Account Setup and Service Details",
+    "mode": "json_cards",
+    "session_count": 1,
+    "memory_states": [
+      {
+        "session_index": 1,
+        "conversation_id": "internet_setup_001",
+        "memory": {
+          "session": {
+            "conversation_id": "internet_setup_001",
+            "timestamp": "2024-11-08 11:00:00",
+            "metadata": {
+              "business": "Velocity Communications",
+              "department": "New Service Sales",
+              "call_duration": "45 minutes"
+            }
+          },
+          "customer": {
+            "name": "Kevin Zhang",
+            "address": {
+              "street": "7622 Willow Creek Drive",
+              "city": "Austin",
+              "state": "Texas",
+              "zip": "78759"
+            },
+            "dob": "April 3rd, 1987",
+            "ssn": "455-78-9234",
+            "contact": {
+              "phone": "512-555-8823",
+              "email": "kzhang87@email.com"
+            },
+            "autopay": {
+              "type": "checking account",
+              "bank": "Chase Bank",
+              "routing_number": "111000614",
+              "account_number": "8829447651"
+            },
+            "billing_preference": "paperless"
+          },
+          "account": {
+            "number": "VEL-89923476",
+            "credit_check": {
+              "status": "approved",
+              "deposit_required": "no"
+            }
+          },
+          "services": {
+            "internet": {
+              "tiers": {
+                "Essential": {
+                  "speed": "300 Mbps",
+                  "price": "$49.99/month"
+                },
+                "Performance": {
+                  "speed": "1 Gig",
+                  "price": "$79.99/month"
+                },
+                "Ultimate": {
+                  "speed": "2 Gigs",
+                  "price": "$119.99/month"
+                }
+              },
+              "selected": "Performance",
+              "features": {
+                "wifi": "WiFi 6 (dual-band 2.4GHz/5GHz, auto-optimizes)",
+                "device_support": "up to 150 connected devices",
+                "parental_controls": "available via app/web portal"
+              }
+            },
+            "cable": {
+              "tiers": {
+                "Select": {
+                  "channels": "125+",
+                  "price": "$64.99/month",
+                  "included_channels": "ESPN, ESPN2, Fox Sports regional networks"
+                },
+                "Preferred": {
+                  "channels": "200+",
+                  "price": "$94.99/month",
+                  "included_channels": "ESPN, ESPN2, Fox Sports regional networks, NFL Network, NBA TV, NFL RedZone",
+                  "premium_channels": "HBO, Showtime"
+                },
+                "Premier": {
+                  "channels": "300+",
+                  "price": "$134.99/month",
+                  "premium_channels": "all premium channels"
+                }
+              },
+              "selected": "Preferred",
+              "features": {
+                "streaming": "HBO Max, Showtime streaming apps included",
+                "cable_box_features": "built-in streaming apps, parental controls via app/web portal"
+              }
+            },
+            "bundle": {
+              "selected": "Performance internet + Preferred cable",
+              "original_total": "$174.98/month",
+              "bundle_discount": "$25/month",
+              "bundle_price": "$149.98/month"
+            }
+          }
+        },
+        "isolation": {
+          "prior_raw_histories_supplied": 0,
+          "current_memory_supplied": true,
+          "new_history_supplied": "internet_setup_001"
+        }
+      }
+    ],
+    "answer": "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account.",
+    "judge": {
+      "scores": {
+        "precision": 4,
+        "recall": 4,
+        "reasoning": 4,
+        "proactivity": 1
+      },
+      "hallucination_veto": false,
+      "passed": true,
+      "reward": 0.8125
+    },
+    "judge_raw": {
+      "dimensions": {
+        "precision": {
+          "score": 4,
+          "reasoning": "The assistant accurately provided the Velocity Communications account number VEL-89923476 as requested by the user.",
+          "evidence": [
+            "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account."
+          ]
+        },
+        "recall": {
+          "score": 4,
+          "reasoning": "The assistant demonstrated excellent recall by providing the specific account number without any confusion or mix-up with other numbers mentioned in the conversation.",
+          "evidence": [
+            "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account."
+          ]
+        },
+        "reasoning": {
+          "score": 4,
+          "reasoning": "The assistant's response was direct and to the point, showing clear reasoning by focusing solely on providing the requested account number without any unnecessary information.",
+          "evidence": [
+            "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account."
+          ]
+        },
+        "proactivity": {
+          "score": 1,
+          "reasoning": "The assistant did not exhibit proactive behavior as it was directly responding to the user's request and did not anticipate or offer additional information beyond what was asked.",
+          "evidence": [
+            "Your Velocity account number is VEL-89923476. You can use this number to download the mobile app and set up your online account."
+          ]
+        }
+      },
+      "hallucination": {
+        "detected": false,
+        "claims": [],
+        "reasoning": "The assistant's response was accurate and based on the information provided in the conversation, with no unsupported or contradictory claims."
+      },
+      "overall_reasoning": "The assistant performed exceptionally well in providing the exact Velocity account number as requested by the user, demonstrating high precision, recall, and reasoning. The response was accurate, direct, and focused on the user's specific request without any unnecessary information."
+    }
+  }
+}
