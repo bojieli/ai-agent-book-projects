@@ -4,8 +4,27 @@ import types
 from dataclasses import dataclass
 import numpy as np
 
+import pytest
 
-def _stub_graphrag_deps():
+
+class STStub:
+    def __init__(self, *args, **kwargs):
+        self.encode_calls = 0
+
+    def encode(self, texts, **kwargs):
+        self.encode_calls += 1
+        return np.array([[0.1, 0.2, 0.3]])
+
+
+@dataclass
+class GraphRAGConfig:
+    llm_api_key: str = "test"
+    base_url: str = "test"
+    llm_model: str = "test"
+
+
+@pytest.fixture(autouse=True)
+def mock_graphrag_deps(monkeypatch):
     mods = [
         "openai",
         "sentence_transformers",
@@ -18,39 +37,34 @@ def _stub_graphrag_deps():
         "config",
     ]
     for name in mods:
-        sys.modules.setdefault(name, types.ModuleType(name))
+        if name not in sys.modules:
+            monkeypatch.setitem(sys.modules, name, types.ModuleType(name))
 
-    sys.modules["openai"].OpenAI = object
-    sys.modules["sklearn.metrics.pairwise"].cosine_similarity = (
-        lambda a, b: np.array([[0.95]])
+    monkeypatch.setattr(sys.modules["openai"], "OpenAI", object, raising=False)
+    monkeypatch.setattr(
+        sys.modules["sklearn.metrics.pairwise"],
+        "cosine_similarity",
+        lambda a, b: np.array([[0.95]]),
+        raising=False,
     )
-
-    class STStub:
-        def __init__(self, *args, **kwargs):
-            self.encode_calls = 0
-
-        def encode(self, texts, **kwargs):
-            self.encode_calls += 1
-            return np.array([[0.1, 0.2, 0.3]])
-
-    sys.modules["sentence_transformers"].SentenceTransformer = STStub
-    sys.modules["loguru"].logger = types.SimpleNamespace(
-        info=lambda *a, **k: None,
-        warning=lambda *a, **k: None,
-        error=lambda *a, **k: None,
+    monkeypatch.setattr(
+        sys.modules["sentence_transformers"],
+        "SentenceTransformer",
+        STStub,
+        raising=False,
     )
-    sys.modules["tqdm"].tqdm = lambda x, **k: x
-
-    @dataclass
-    class GraphRAGConfig:
-        llm_api_key: str = "test"
-        base_url: str = "test"
-        llm_model: str = "test"
-
-    sys.modules["config"].GraphRAGConfig = GraphRAGConfig
-
-
-_stub_graphrag_deps()
+    monkeypatch.setattr(
+        sys.modules["loguru"],
+        "logger",
+        types.SimpleNamespace(
+            info=lambda *a, **k: None,
+            warning=lambda *a, **k: None,
+            error=lambda *a, **k: None,
+        ),
+        raising=False,
+    )
+    monkeypatch.setattr(sys.modules["tqdm"], "tqdm", lambda x, **k: x, raising=False)
+    monkeypatch.setattr(sys.modules["config"], "GraphRAGConfig", GraphRAGConfig, raising=False)
 
 from graphrag_indexer import Entity, GraphRAGIndexer  # noqa: E402
 import networkx as nx  # noqa: E402
