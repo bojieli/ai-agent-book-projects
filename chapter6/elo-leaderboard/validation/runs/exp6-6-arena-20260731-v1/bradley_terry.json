@@ -1,0 +1,905 @@
+[
+  {
+    "lower_ci": 1199.4356201692,
+    "model": "chatgpt-4o-latest",
+    "rank": 1,
+    "rating": 1202.8722324768,
+    "upper_ci": 1207.3805726125
+  },
+  {
+    "lower_ci": 1182.767114327,
+    "model": "gemini-1.5-pro-exp-0801",
+    "rank": 2,
+    "rating": 1187.3727762743,
+    "upper_ci": 1191.7564879767
+  },
+  {
+    "lower_ci": 1173.1270556478,
+    "model": "gpt-4o-2024-05-13",
+    "rank": 3,
+    "rating": 1174.5475812185,
+    "upper_ci": 1177.0403252386
+  },
+  {
+    "lower_ci": 1161.1978031325,
+    "model": "gpt-4o-mini-2024-07-18",
+    "rank": 4,
+    "rating": 1162.9712796813,
+    "upper_ci": 1166.568334134
+  },
+  {
+    "lower_ci": 1156.0224735749,
+    "model": "claude-3-5-sonnet-20240620",
+    "rank": 5,
+    "rating": 1159.6692177384,
+    "upper_ci": 1161.8458744744
+  },
+  {
+    "lower_ci": 1153.6447817793,
+    "model": "gemini-advanced-0514",
+    "rank": 6,
+    "rating": 1155.6305094344,
+    "upper_ci": 1157.1030226933
+  },
+  {
+    "lower_ci": 1150.4614200682,
+    "model": "llama-3.1-405b-instruct",
+    "rank": 7,
+    "rating": 1153.3950109278,
+    "upper_ci": 1157.0848375454
+  },
+  {
+    "lower_ci": 1146.348878889,
+    "model": "gpt-4o-2024-08-06",
+    "rank": 8,
+    "rating": 1150.7428051987,
+    "upper_ci": 1156.3245456986
+  },
+  {
+    "lower_ci": 1146.7772301944,
+    "model": "gemini-1.5-pro-api-0514",
+    "rank": 9,
+    "rating": 1149.1265569601,
+    "upper_ci": 1151.5010539806
+  },
+  {
+    "lower_ci": 1143.6682527667,
+    "model": "gemini-1.5-pro-api-0409-preview",
+    "rank": 10,
+    "rating": 1146.1756037638,
+    "upper_ci": 1147.8895040945
+  },
+  {
+    "lower_ci": 1142.3990049162,
+    "model": "gpt-4-turbo-2024-04-09",
+    "rank": 11,
+    "rating": 1144.9187340632,
+    "upper_ci": 1146.8362809167
+  },
+  {
+    "lower_ci": 1138.1303324947,
+    "model": "gpt-4-1106-preview",
+    "rank": 12,
+    "rating": 1139.5004505155,
+    "upper_ci": 1140.97644635
+  },
+  {
+    "lower_ci": 1136.3852091186,
+    "model": "mistral-large-2407",
+    "rank": 13,
+    "rating": 1139.3566231011,
+    "upper_ci": 1143.8960727747
+  },
+  {
+    "lower_ci": 1135.0624903381,
+    "model": "athene-70b-0725",
+    "rank": 14,
+    "rating": 1138.2016223593,
+    "upper_ci": 1141.397916447
+  },
+  {
+    "lower_ci": 1135.0278139027,
+    "model": "claude-3-opus-20240229",
+    "rank": 15,
+    "rating": 1136.5739464324,
+    "upper_ci": 1137.5663039742
+  },
+  {
+    "lower_ci": 1131.7219814044,
+    "model": "llama-3.1-70b-instruct",
+    "rank": 16,
+    "rating": 1134.8942150397,
+    "upper_ci": 1139.3028524197
+  },
+  {
+    "lower_ci": 1132.1800230236,
+    "model": "gpt-4-0125-preview",
+    "rank": 17,
+    "rating": 1133.974390087,
+    "upper_ci": 1135.7552442263
+  },
+  {
+    "lower_ci": 1127.3300289872,
+    "model": "yi-large-preview",
+    "rank": 18,
+    "rating": 1128.1692229165,
+    "upper_ci": 1131.371743138
+  },
+  {
+    "lower_ci": 1111.850158929,
+    "model": "reka-core-20240722",
+    "rank": 19,
+    "rating": 1117.1464671073,
+    "upper_ci": 1121.9537941313
+  },
+  {
+    "lower_ci": 1114.0244965884,
+    "model": "gemini-1.5-flash-api-0514",
+    "rank": 20,
+    "rating": 1116.6161359294,
+    "upper_ci": 1118.5223962538
+  },
+  {
+    "lower_ci": 1103.6704090106,
+    "model": "deepseek-v2-api-0628",
+    "rank": 21,
+    "rating": 1107.2808888587,
+    "upper_ci": 1112.0417779712
+  },
+  {
+    "lower_ci": 1103.9432951297,
+    "model": "gemma-2-27b-it",
+    "rank": 22,
+    "rating": 1105.9132519337,
+    "upper_ci": 1108.0293102426
+  },
+  {
+    "lower_ci": 1099.3459906048,
+    "model": "deepseek-coder-v2-0724",
+    "rank": 23,
+    "rating": 1105.3954927337,
+    "upper_ci": 1113.0353361228
+  },
+  {
+    "lower_ci": 1099.9821845459,
+    "model": "yi-large",
+    "rank": 24,
+    "rating": 1102.4018397329,
+    "upper_ci": 1104.8525831946
+  },
+  {
+    "lower_ci": 1094.5198632757,
+    "model": "nemotron-4-340b-instruct",
+    "rank": 25,
+    "rating": 1098.0765768899,
+    "upper_ci": 1100.3082488796
+  },
+  {
+    "lower_ci": 1092.3225621341,
+    "model": "bard-jan-24-gemini-pro",
+    "rank": 26,
+    "rating": 1096.589845604,
+    "upper_ci": 1104.5333605578
+  },
+  {
+    "lower_ci": 1089.9500461084,
+    "model": "glm-4-0520",
+    "rank": 27,
+    "rating": 1095.5341569364,
+    "upper_ci": 1100.1005750187
+  },
+  {
+    "lower_ci": 1093.6731280724,
+    "model": "llama-3-70b-instruct",
+    "rank": 28,
+    "rating": 1094.9281802329,
+    "upper_ci": 1095.7283536945
+  },
+  {
+    "lower_ci": 1088.0897564085,
+    "model": "claude-3-sonnet-20240229",
+    "rank": 29,
+    "rating": 1090.1434308802,
+    "upper_ci": 1091.5131310821
+  },
+  {
+    "lower_ci": 1086.224736458,
+    "model": "reka-core-20240501",
+    "rank": 30,
+    "rating": 1088.4321613308,
+    "upper_ci": 1090.272779249
+  },
+  {
+    "lower_ci": 1082.4844014079,
+    "model": "reka-flash-20240722",
+    "rank": 31,
+    "rating": 1088.2114217704,
+    "upper_ci": 1094.1409244278
+  },
+  {
+    "lower_ci": 1076.2505646464,
+    "model": "command-r-plus",
+    "rank": 32,
+    "rating": 1078.6392855764,
+    "upper_ci": 1080.5241685262
+  },
+  {
+    "lower_ci": 1072.978332193,
+    "model": "gemma-2-9b-it",
+    "rank": 33,
+    "rating": 1076.1200490762,
+    "upper_ci": 1078.284506667
+  },
+  {
+    "lower_ci": 1073.5327980749,
+    "model": "qwen2-72b-instruct",
+    "rank": 34,
+    "rating": 1075.9397511888,
+    "upper_ci": 1077.9102798056
+  },
+  {
+    "lower_ci": 1073.0022184434,
+    "model": "gpt-4-0314",
+    "rank": 35,
+    "rating": 1074.4688060969,
+    "upper_ci": 1077.3841437021
+  },
+  {
+    "lower_ci": 1069.6849684012,
+    "model": "qwen-max-0428",
+    "rank": 36,
+    "rating": 1072.288830872,
+    "upper_ci": 1075.2788486953
+  },
+  {
+    "lower_ci": 1067.4064473159,
+    "model": "glm-4-0116",
+    "rank": 37,
+    "rating": 1072.1854778301,
+    "upper_ci": 1078.0278828583
+  },
+  {
+    "lower_ci": 1065.2785446605,
+    "model": "claude-3-haiku-20240307",
+    "rank": 38,
+    "rating": 1067.2876085746,
+    "upper_ci": 1068.5180263057
+  },
+  {
+    "lower_ci": 1063.4499078695,
+    "model": "deepseek-coder-v2",
+    "rank": 39,
+    "rating": 1066.5634197273,
+    "upper_ci": 1071.0372811761
+  },
+  {
+    "lower_ci": 1052.4060997176,
+    "model": "llama-3.1-8b-instruct",
+    "rank": 40,
+    "rating": 1057.2617029177,
+    "upper_ci": 1062.4851344029
+  },
+  {
+    "lower_ci": 1050.6516231153,
+    "model": "reka-flash-preview-20240611",
+    "rank": 41,
+    "rating": 1053.4286082128,
+    "upper_ci": 1056.9047978837
+  },
+  {
+    "lower_ci": 1049.878634752,
+    "model": "gpt-4-0613",
+    "rank": 42,
+    "rating": 1051.2288727429,
+    "upper_ci": 1053.3859970522
+  },
+  {
+    "lower_ci": 1047.658821981,
+    "model": "qwen1.5-110b-chat",
+    "rank": 43,
+    "rating": 1050.1472801797,
+    "upper_ci": 1054.1870464263
+  },
+  {
+    "lower_ci": 1043.4416581432,
+    "model": "yi-1.5-34b-chat",
+    "rank": 44,
+    "rating": 1046.5798307425,
+    "upper_ci": 1048.4870877901
+  },
+  {
+    "lower_ci": 1043.9717227179,
+    "model": "mistral-large-2402",
+    "rank": 45,
+    "rating": 1045.8549746499,
+    "upper_ci": 1048.6558688014
+  },
+  {
+    "lower_ci": 1039.8435107486,
+    "model": "reka-flash-21b-20240226-online",
+    "rank": 46,
+    "rating": 1044.4541273285,
+    "upper_ci": 1047.5722059799
+  },
+  {
+    "lower_ci": 1038.3457593513,
+    "model": "llama-3-8b-instruct",
+    "rank": 47,
+    "rating": 1040.8943517232,
+    "upper_ci": 1042.1727089946
+  },
+  {
+    "lower_ci": 1034.3532315209,
+    "model": "command-r",
+    "rank": 48,
+    "rating": 1037.5954245649,
+    "upper_ci": 1039.801976874
+  },
+  {
+    "lower_ci": 1033.8210405932,
+    "model": "claude-1",
+    "rank": 49,
+    "rating": 1037.2264989242,
+    "upper_ci": 1039.8445566211
+  },
+  {
+    "lower_ci": 1032.4181357042,
+    "model": "reka-flash-21b-20240226",
+    "rank": 50,
+    "rating": 1036.2083492306,
+    "upper_ci": 1038.9143450059
+  },
+  {
+    "lower_ci": 1033.5592570692,
+    "model": "mistral-medium",
+    "rank": 51,
+    "rating": 1035.9830773208,
+    "upper_ci": 1038.0506828269
+  },
+  {
+    "lower_ci": 1033.4716682328,
+    "model": "mixtral-8x22b-instruct-v0.1",
+    "rank": 52,
+    "rating": 1035.6187089038,
+    "upper_ci": 1037.3385699205
+  },
+  {
+    "lower_ci": 1032.3748800585,
+    "model": "qwen1.5-72b-chat",
+    "rank": 53,
+    "rating": 1035.5734020095,
+    "upper_ci": 1037.8584457516
+  },
+  {
+    "lower_ci": 1016.6859168483,
+    "model": "claude-2.0",
+    "rank": 54,
+    "rating": 1020.4032512576,
+    "upper_ci": 1023.0900087939
+  },
+  {
+    "lower_ci": 1016.4818650296,
+    "model": "gemini-pro-dev-api",
+    "rank": 55,
+    "rating": 1018.8216738996,
+    "upper_ci": 1022.0575603351
+  },
+  {
+    "lower_ci": 1013.9644553596,
+    "model": "gemma-2-2b-it",
+    "rank": 56,
+    "rating": 1018.7496539694,
+    "upper_ci": 1022.6257555787
+  },
+  {
+    "lower_ci": 1009.8189712109,
+    "model": "zephyr-orpo-141b-A35b-v0.1",
+    "rank": 57,
+    "rating": 1017.4768858149,
+    "upper_ci": 1023.4231756618
+  },
+  {
+    "lower_ci": 1011.7444717478,
+    "model": "qwen1.5-32b-chat",
+    "rank": 58,
+    "rating": 1014.2192047782,
+    "upper_ci": 1017.4848181067
+  },
+  {
+    "lower_ci": 1009.527805507,
+    "model": "mistral-next",
+    "rank": 59,
+    "rating": 1013.8190347615,
+    "upper_ci": 1016.756252395
+  },
+  {
+    "lower_ci": 1008.0043265533,
+    "model": "phi-3-medium-4k-instruct",
+    "rank": 60,
+    "rating": 1011.6064259691,
+    "upper_ci": 1014.8977711664
+  },
+  {
+    "lower_ci": 1003.3664596337,
+    "model": "claude-2.1",
+    "rank": 61,
+    "rating": 1006.9894951694,
+    "upper_ci": 1008.7578243389
+  },
+  {
+    "lower_ci": 1003.5743630599,
+    "model": "starling-lm-7b-beta",
+    "rank": 62,
+    "rating": 1006.9783218473,
+    "upper_ci": 1009.6647795891
+  },
+  {
+    "lower_ci": 1003.3560004715,
+    "model": "gpt-3.5-turbo-0613",
+    "rank": 63,
+    "rating": 1004.9730864576,
+    "upper_ci": 1008.7646121872
+  },
+  {
+    "lower_ci": 1000.3011942689,
+    "model": "mixtral-8x7b-instruct-v0.1",
+    "rank": 64,
+    "rating": 1002.12545233,
+    "upper_ci": 1004.4555563028
+  },
+  {
+    "lower_ci": 996.8355186436,
+    "model": "yi-34b-chat",
+    "rank": 65,
+    "rating": 1000.1263930743,
+    "upper_ci": 1002.9767969377
+  },
+  {
+    "lower_ci": 996.5513388826,
+    "model": "claude-instant-1",
+    "rank": 66,
+    "rating": 999.4536204497,
+    "upper_ci": 1003.0420312018
+  },
+  {
+    "lower_ci": 991.5815494729,
+    "model": "gemini-pro",
+    "rank": 67,
+    "rating": 998.3909699055,
+    "upper_ci": 1005.6665144072
+  },
+  {
+    "lower_ci": 994.5272838271,
+    "model": "qwen1.5-14b-chat",
+    "rank": 68,
+    "rating": 997.6714948516,
+    "upper_ci": 1000.3276398407
+  },
+  {
+    "lower_ci": 988.7882364736,
+    "model": "gpt-3.5-turbo-0314",
+    "rank": 69,
+    "rating": 997.4790766208,
+    "upper_ci": 1005.2920277339
+  },
+  {
+    "lower_ci": 989.2933547328,
+    "model": "wizardlm-70b",
+    "rank": 70,
+    "rating": 995.5069328559,
+    "upper_ci": 1000.0203225061
+  },
+  {
+    "lower_ci": 992.3677866278,
+    "model": "gpt-3.5-turbo-0125",
+    "rank": 71,
+    "rating": 994.221194786,
+    "upper_ci": 996.0922832004
+  },
+  {
+    "lower_ci": 989.517752069,
+    "model": "dbrx-instruct-preview",
+    "rank": 72,
+    "rating": 991.6558051925,
+    "upper_ci": 994.3414735308
+  },
+  {
+    "lower_ci": 988.3935167102,
+    "model": "phi-3-small-8k-instruct",
+    "rank": 73,
+    "rating": 990.3926872181,
+    "upper_ci": 993.4532484928
+  },
+  {
+    "lower_ci": 980.2003929739,
+    "model": "tulu-2-dpo-70b",
+    "rank": 74,
+    "rating": 986.8619167507,
+    "upper_ci": 995.6082960114
+  },
+  {
+    "lower_ci": 979.2393563337,
+    "model": "llama-2-70b-chat",
+    "rank": 75,
+    "rating": 982.0382072414,
+    "upper_ci": 983.1882888775
+  },
+  {
+    "lower_ci": 976.2082709482,
+    "model": "openchat-3.5-0106",
+    "rank": 76,
+    "rating": 980.6486425506,
+    "upper_ci": 984.7448454329
+  },
+  {
+    "lower_ci": 976.21123294,
+    "model": "vicuna-33b",
+    "rank": 77,
+    "rating": 978.8419077515,
+    "upper_ci": 983.0972163635
+  },
+  {
+    "lower_ci": 976.387496134,
+    "model": "snowflake-arctic-instruct",
+    "rank": 78,
+    "rating": 978.4458039182,
+    "upper_ci": 981.5060581663
+  },
+  {
+    "lower_ci": 969.5806601345,
+    "model": "starling-lm-7b-alpha",
+    "rank": 79,
+    "rating": 976.025808172,
+    "upper_ci": 980.086762811
+  },
+  {
+    "lower_ci": 965.8992419629,
+    "model": "nous-hermes-2-mixtral-8x7b-dpo",
+    "rank": 80,
+    "rating": 975.4699172429,
+    "upper_ci": 981.307231701
+  },
+  {
+    "lower_ci": 969.0894947313,
+    "model": "gemma-1.1-7b-it",
+    "rank": 81,
+    "rating": 971.847848073,
+    "upper_ci": 975.4703266199
+  },
+  {
+    "lower_ci": 966.6172052307,
+    "model": "llama2-70b-steerlm-chat",
+    "rank": 82,
+    "rating": 971.6537111318,
+    "upper_ci": 979.8268878882
+  },
+  {
+    "lower_ci": 961.617441776,
+    "model": "pplx-70b-online",
+    "rank": 83,
+    "rating": 967.4367908935,
+    "upper_ci": 972.8126406202
+  },
+  {
+    "lower_ci": 959.5692952959,
+    "model": "openchat-3.5",
+    "rank": 84,
+    "rating": 966.0510063396,
+    "upper_ci": 971.8466170437
+  },
+  {
+    "lower_ci": 956.7287406383,
+    "model": "deepseek-llm-67b-chat",
+    "rank": 85,
+    "rating": 965.1147523375,
+    "upper_ci": 971.4330625559
+  },
+  {
+    "lower_ci": 956.3934469962,
+    "model": "openhermes-2.5-mistral-7b",
+    "rank": 86,
+    "rating": 963.454411119,
+    "upper_ci": 968.2145476373
+  },
+  {
+    "lower_ci": 957.6795493747,
+    "model": "mistral-7b-instruct-v0.2",
+    "rank": 87,
+    "rating": 961.195768793,
+    "upper_ci": 964.3273838331
+  },
+  {
+    "lower_ci": 955.9914563912,
+    "model": "qwen1.5-7b-chat",
+    "rank": 88,
+    "rating": 959.7566395303,
+    "upper_ci": 963.8434392791
+  },
+  {
+    "lower_ci": 953.2396686903,
+    "model": "phi-3-mini-4k-instruct-june-2024",
+    "rank": 89,
+    "rating": 958.8907631692,
+    "upper_ci": 964.0199135738
+  },
+  {
+    "lower_ci": 953.2564762147,
+    "model": "gpt-3.5-turbo-1106",
+    "rank": 90,
+    "rating": 955.8557887224,
+    "upper_ci": 959.2854635955
+  },
+  {
+    "lower_ci": 951.2318268117,
+    "model": "phi-3-mini-4k-instruct",
+    "rank": 91,
+    "rating": 955.5964299136,
+    "upper_ci": 958.4767635868
+  },
+  {
+    "lower_ci": 939.9598426545,
+    "model": "dolphin-2.2.1-mistral-7b",
+    "rank": 92,
+    "rating": 952.2051167375,
+    "upper_ci": 962.2676381777
+  },
+  {
+    "lower_ci": 945.2431328588,
+    "model": "solar-10.7b-instruct-v1.0",
+    "rank": 93,
+    "rating": 951.1224233106,
+    "upper_ci": 958.6524028214
+  },
+  {
+    "lower_ci": 948.6812080723,
+    "model": "llama-2-13b-chat",
+    "rank": 94,
+    "rating": 951.0465511917,
+    "upper_ci": 953.7276982632
+  },
+  {
+    "lower_ci": 940.2487365654,
+    "model": "wizardlm-13b",
+    "rank": 95,
+    "rating": 945.6170139554,
+    "upper_ci": 952.3153173674
+  },
+  {
+    "lower_ci": 937.3497020159,
+    "model": "zephyr-7b-beta",
+    "rank": 96,
+    "rating": 941.7856240916,
+    "upper_ci": 945.7193614882
+  },
+  {
+    "lower_ci": 925.3514960917,
+    "model": "mpt-30b-chat",
+    "rank": 97,
+    "rating": 933.4637447927,
+    "upper_ci": 942.1936901157
+  },
+  {
+    "lower_ci": 928.7552755121,
+    "model": "pplx-7b-online",
+    "rank": 98,
+    "rating": 932.9740226673,
+    "upper_ci": 940.2890736975
+  },
+  {
+    "lower_ci": 924.8240945839,
+    "model": "codellama-34b-instruct",
+    "rank": 99,
+    "rating": 931.25075507,
+    "upper_ci": 936.6721012017
+  },
+  {
+    "lower_ci": 919.9794338309,
+    "model": "zephyr-7b-alpha",
+    "rank": 100,
+    "rating": 930.8024303718,
+    "upper_ci": 940.3904190626
+  },
+  {
+    "lower_ci": 927.6228696967,
+    "model": "vicuna-13b",
+    "rank": 101,
+    "rating": 930.129806663,
+    "upper_ci": 933.8873904378
+  },
+  {
+    "lower_ci": 916.3079081804,
+    "model": "codellama-70b-instruct",
+    "rank": 102,
+    "rating": 929.7441814853,
+    "upper_ci": 939.4638589466
+  },
+  {
+    "lower_ci": 919.0275736817,
+    "model": "gemma-7b-it",
+    "rank": 103,
+    "rating": 925.6063141152,
+    "upper_ci": 931.2321796245
+  },
+  {
+    "lower_ci": 921.4335696267,
+    "model": "llama-2-7b-chat",
+    "rank": 104,
+    "rating": 925.1226871516,
+    "upper_ci": 927.4211774328
+  },
+  {
+    "lower_ci": 919.914948524,
+    "model": "phi-3-mini-128k-instruct",
+    "rank": 105,
+    "rating": 925.0941128748,
+    "upper_ci": 928.953409783
+  },
+  {
+    "lower_ci": 917.0649637172,
+    "model": "qwen-14b-chat",
+    "rank": 106,
+    "rating": 923.0565707958,
+    "upper_ci": 927.5147584562
+  },
+  {
+    "lower_ci": 910.6316722798,
+    "model": "falcon-180b-chat",
+    "rank": 107,
+    "rating": 922.8642075646,
+    "upper_ci": 938.170426621
+  },
+  {
+    "lower_ci": 912.8204058608,
+    "model": "guanaco-33b",
+    "rank": 108,
+    "rating": 921.0201740806,
+    "upper_ci": 929.2566479601
+  },
+  {
+    "lower_ci": 903.2450471973,
+    "model": "gemma-1.1-2b-it",
+    "rank": 109,
+    "rating": 908.7494526802,
+    "upper_ci": 913.4741035764
+  },
+  {
+    "lower_ci": 899.9846491667,
+    "model": "stripedhyena-nous-7b",
+    "rank": 110,
+    "rating": 905.1534113535,
+    "upper_ci": 912.9382997405
+  },
+  {
+    "lower_ci": 899.9839053334,
+    "model": "olmo-7b-instruct",
+    "rank": 111,
+    "rating": 903.629872537,
+    "upper_ci": 908.2570306538
+  },
+  {
+    "lower_ci": 890.8398870858,
+    "model": "mistral-7b-instruct",
+    "rank": 112,
+    "rating": 897.2720855909,
+    "upper_ci": 902.9292885859
+  },
+  {
+    "lower_ci": 887.0047037055,
+    "model": "vicuna-7b",
+    "rank": 113,
+    "rating": 893.825818387,
+    "upper_ci": 899.7593423485
+  },
+  {
+    "lower_ci": 887.0036385995,
+    "model": "palm-2",
+    "rank": 114,
+    "rating": 891.3072880052,
+    "upper_ci": 897.1963496269
+  },
+  {
+    "lower_ci": 872.1578125039,
+    "model": "gemma-2b-it",
+    "rank": 115,
+    "rating": 880.4830688196,
+    "upper_ci": 884.0952002573
+  },
+  {
+    "lower_ci": 868.4676861275,
+    "model": "qwen1.5-4b-chat",
+    "rank": 116,
+    "rating": 877.0664166393,
+    "upper_ci": 883.3511645246
+  },
+  {
+    "lower_ci": 846.7609834499,
+    "model": "koala-13b",
+    "rank": 117,
+    "rating": 852.5741703315,
+    "upper_ci": 859.5370102373
+  },
+  {
+    "lower_ci": 833.5366986653,
+    "model": "chatglm3-6b",
+    "rank": 118,
+    "rating": 843.5467457427,
+    "upper_ci": 853.6979083485
+  },
+  {
+    "lower_ci": 808.672593832,
+    "model": "gpt4all-13b-snoozy",
+    "rank": 119,
+    "rating": 821.0385947815,
+    "upper_ci": 835.6716204673
+  },
+  {
+    "lower_ci": 804.1197078456,
+    "model": "chatglm2-6b",
+    "rank": 120,
+    "rating": 815.3737962537,
+    "upper_ci": 821.0889058237
+  },
+  {
+    "lower_ci": 805.0790145038,
+    "model": "mpt-7b-chat",
+    "rank": 121,
+    "rating": 813.8798502443,
+    "upper_ci": 823.374846381
+  },
+  {
+    "lower_ci": 803.3055604626,
+    "model": "RWKV-4-Raven-14B",
+    "rank": 122,
+    "rating": 810.0683748343,
+    "upper_ci": 819.7203248755
+  },
+  {
+    "lower_ci": 781.8369679949,
+    "model": "alpaca-13b",
+    "rank": 123,
+    "rating": 789.0910768147,
+    "upper_ci": 797.3012759671
+  },
+  {
+    "lower_ci": 778.7113024193,
+    "model": "oasst-pythia-12b",
+    "rank": 124,
+    "rating": 782.6327874047,
+    "upper_ci": 789.0013974908
+  },
+  {
+    "lower_ci": 760.5962982346,
+    "model": "chatglm-6b",
+    "rank": 125,
+    "rating": 767.7699631784,
+    "upper_ci": 776.2247501319
+  },
+  {
+    "lower_ci": 749.711207841,
+    "model": "fastchat-t5-3b",
+    "rank": 126,
+    "rating": 756.8214872887,
+    "upper_ci": 762.6617679978
+  },
+  {
+    "lower_ci": 723.1589751426,
+    "model": "stablelm-tuned-alpha-7b",
+    "rank": 127,
+    "rating": 727.6986691281,
+    "upper_ci": 737.7996673488
+  },
+  {
+    "lower_ci": 701.8523006848,
+    "model": "dolly-v2-12b",
+    "rank": 128,
+    "rating": 710.1023148692,
+    "upper_ci": 717.2721178625
+  },
+  {
+    "lower_ci": 679.2645194103,
+    "model": "llama-13b",
+    "rank": 129,
+    "rating": 689.1631346499,
+    "upper_ci": 694.5590720343
+  }
+]

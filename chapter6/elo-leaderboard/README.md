@@ -83,6 +83,37 @@ cd chapter6/elo-leaderboard
 python -m pytest tests
 ```
 
+## Canonical full-data validation
+
+The accepted Experiment 6-6 run uses the complete public 2024-08-14 Arena
+snapshot rather than the synthetic quickstart or a small sample. The 2.0 GB
+input is not committed to git; the manifest records its official URL, byte
+size, 1,799,991-row count, and SHA-256.
+
+```bash
+curl -L \
+  https://storage.googleapis.com/arena_external_data/public/clean_battle_20240814_public.json \
+  -o /path/to/arena_data.json
+
+python validation/run_experiment.py \
+  --input /path/to/arena_data.json \
+  --output-dir validation/runs/exp6-6-arena-20260731-v1 \
+  --bootstrap-rounds 20
+
+python validation/validate_evidence.py \
+  validation/runs/exp6-6-arena-20260731-v1 \
+  --input /path/to/arena_data.json
+```
+
+The retained canonical run accepted 1,670,250 anonymous, deduplicated votes
+over 129 models. Chronological online Elo (initial 1000, K=4) and the
+Bradley-Terry reconstruction reached Spearman 0.787, Kendall 0.606, and 12/20
+top-model overlap. This is the expected broad agreement, not score identity:
+online Elo is order-dependent while Bradley-Terry fits all comparisons at
+once. Seventeen cumulative monthly snapshots drive the retained D3 animation.
+
+Canonical evidence: [`validation/latest.json`](validation/latest.json).
+
 ## 命令行工具 / Command-Line Interface (`cli.py`)
 
 `cli.py` 是本实验统一的 argparse 命令行入口（中文 `--help`），把整条流水线拆成子命令：

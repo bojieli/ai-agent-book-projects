@@ -1,0 +1,387 @@
+{
+  "dataset": {
+    "accepted_records": 1670250,
+    "bounded_test_run": false,
+    "bytes": 2131976365,
+    "end_utc": "2024-08-14T19:52:53.409200+00:00",
+    "load_filter_seconds": 15.133,
+    "model_count": 129,
+    "outcomes": {
+      "model_a": 543065,
+      "model_b": 550810,
+      "tie": 281121,
+      "tie (bothbad)": 295254
+    },
+    "path_recorded_as": "arena_data.json",
+    "sha256": "747c1c937dfa941d5a455a1fd70e2879d29642058da39b97996b977233b9bd1b",
+    "source_records": 1799991,
+    "start_utc": "2023-04-24T15:53:11.132200+00:00",
+    "url": "https://storage.googleapis.com/arena_external_data/public/clean_battle_20240814_public.json"
+  },
+  "experiment": "6-6",
+  "gates": {
+    "bradley_terry_official_method_completed": true,
+    "chronological_online_elo_k4_completed": true,
+    "d3_animation_saved": true,
+    "millions_of_blind_votes_loaded": true,
+    "monthly_history_saved": true,
+    "official_public_arena_snapshot_hashed": true,
+    "online_vs_official_method_rank_agreement_observed": true,
+    "pairwise_empirical_and_predicted_matrix_saved": true,
+    "static_visualizations_saved": true
+  },
+  "generated_at_utc": "2026-07-31T09:59:17.815099+00:00",
+  "official_complete": true,
+  "protocol": {
+    "bootstrap_random_seed": 0,
+    "bootstrap_rounds": 20,
+    "history_interval": "monthly cumulative snapshots",
+    "official_method": "Bradley-Terry maximum-likelihood reconstruction",
+    "online_elo": "initial=1000, K=4, stable chronological order"
+  },
+  "results": {
+    "official_method_top_20": [
+      {
+        "lower_ci": 1199.4356201692,
+        "model": "chatgpt-4o-latest",
+        "rank": 1,
+        "rating": 1202.8722324768,
+        "upper_ci": 1207.3805726125
+      },
+      {
+        "lower_ci": 1182.767114327,
+        "model": "gemini-1.5-pro-exp-0801",
+        "rank": 2,
+        "rating": 1187.3727762743,
+        "upper_ci": 1191.7564879767
+      },
+      {
+        "lower_ci": 1173.1270556478,
+        "model": "gpt-4o-2024-05-13",
+        "rank": 3,
+        "rating": 1174.5475812185,
+        "upper_ci": 1177.0403252386
+      },
+      {
+        "lower_ci": 1161.1978031325,
+        "model": "gpt-4o-mini-2024-07-18",
+        "rank": 4,
+        "rating": 1162.9712796813,
+        "upper_ci": 1166.568334134
+      },
+      {
+        "lower_ci": 1156.0224735749,
+        "model": "claude-3-5-sonnet-20240620",
+        "rank": 5,
+        "rating": 1159.6692177384,
+        "upper_ci": 1161.8458744744
+      },
+      {
+        "lower_ci": 1153.6447817793,
+        "model": "gemini-advanced-0514",
+        "rank": 6,
+        "rating": 1155.6305094344,
+        "upper_ci": 1157.1030226933
+      },
+      {
+        "lower_ci": 1150.4614200682,
+        "model": "llama-3.1-405b-instruct",
+        "rank": 7,
+        "rating": 1153.3950109278,
+        "upper_ci": 1157.0848375454
+      },
+      {
+        "lower_ci": 1146.348878889,
+        "model": "gpt-4o-2024-08-06",
+        "rank": 8,
+        "rating": 1150.7428051987,
+        "upper_ci": 1156.3245456986
+      },
+      {
+        "lower_ci": 1146.7772301944,
+        "model": "gemini-1.5-pro-api-0514",
+        "rank": 9,
+        "rating": 1149.1265569601,
+        "upper_ci": 1151.5010539806
+      },
+      {
+        "lower_ci": 1143.6682527667,
+        "model": "gemini-1.5-pro-api-0409-preview",
+        "rank": 10,
+        "rating": 1146.1756037638,
+        "upper_ci": 1147.8895040945
+      },
+      {
+        "lower_ci": 1142.3990049162,
+        "model": "gpt-4-turbo-2024-04-09",
+        "rank": 11,
+        "rating": 1144.9187340632,
+        "upper_ci": 1146.8362809167
+      },
+      {
+        "lower_ci": 1138.1303324947,
+        "model": "gpt-4-1106-preview",
+        "rank": 12,
+        "rating": 1139.5004505155,
+        "upper_ci": 1140.97644635
+      },
+      {
+        "lower_ci": 1136.3852091186,
+        "model": "mistral-large-2407",
+        "rank": 13,
+        "rating": 1139.3566231011,
+        "upper_ci": 1143.8960727747
+      },
+      {
+        "lower_ci": 1135.0624903381,
+        "model": "athene-70b-0725",
+        "rank": 14,
+        "rating": 1138.2016223593,
+        "upper_ci": 1141.397916447
+      },
+      {
+        "lower_ci": 1135.0278139027,
+        "model": "claude-3-opus-20240229",
+        "rank": 15,
+        "rating": 1136.5739464324,
+        "upper_ci": 1137.5663039742
+      },
+      {
+        "lower_ci": 1131.7219814044,
+        "model": "llama-3.1-70b-instruct",
+        "rank": 16,
+        "rating": 1134.8942150397,
+        "upper_ci": 1139.3028524197
+      },
+      {
+        "lower_ci": 1132.1800230236,
+        "model": "gpt-4-0125-preview",
+        "rank": 17,
+        "rating": 1133.974390087,
+        "upper_ci": 1135.7552442263
+      },
+      {
+        "lower_ci": 1127.3300289872,
+        "model": "yi-large-preview",
+        "rank": 18,
+        "rating": 1128.1692229165,
+        "upper_ci": 1131.371743138
+      },
+      {
+        "lower_ci": 1111.850158929,
+        "model": "reka-core-20240722",
+        "rank": 19,
+        "rating": 1117.1464671073,
+        "upper_ci": 1121.9537941313
+      },
+      {
+        "lower_ci": 1114.0244965884,
+        "model": "gemini-1.5-flash-api-0514",
+        "rank": 20,
+        "rating": 1116.6161359294,
+        "upper_ci": 1118.5223962538
+      }
+    ],
+    "online_top_20": [
+      {
+        "matches": 55654,
+        "model": "gemini-1.5-pro-api-0409-preview",
+        "rank": 1,
+        "rating": 1159.8203895968,
+        "wins": 33738.5
+      },
+      {
+        "matches": 20071,
+        "model": "gemini-1.5-pro-exp-0801",
+        "rank": 2,
+        "rating": 1127.8877886511,
+        "wins": 12139.5
+      },
+      {
+        "matches": 14514,
+        "model": "chatgpt-4o-latest",
+        "rank": 3,
+        "rating": 1126.6935165964,
+        "wins": 8999.0
+      },
+      {
+        "matches": 5655,
+        "model": "gpt-3.5-turbo-0314",
+        "rank": 4,
+        "rating": 1103.9751202512,
+        "wins": 3789.0
+      },
+      {
+        "matches": 11827,
+        "model": "bard-jan-24-gemini-pro",
+        "rank": 5,
+        "rating": 1094.2118678517,
+        "wins": 7075.5
+      },
+      {
+        "matches": 21172,
+        "model": "claude-1",
+        "rank": 6,
+        "rating": 1092.7309868534,
+        "wins": 12081.5
+      },
+      {
+        "matches": 52155,
+        "model": "gemini-advanced-0514",
+        "rank": 7,
+        "rating": 1087.5408038371,
+        "wins": 30523.0
+      },
+      {
+        "matches": 13604,
+        "model": "llama-3.1-70b-instruct",
+        "rank": 8,
+        "rating": 1087.3529845908,
+        "wins": 7058.5
+      },
+      {
+        "matches": 77509,
+        "model": "gpt-4o-2024-05-13",
+        "rank": 9,
+        "rating": 1086.7242770205,
+        "wins": 46951.0
+      },
+      {
+        "matches": 9761,
+        "model": "gpt-4o-2024-08-06",
+        "rank": 10,
+        "rating": 1085.601246973,
+        "wins": 5323.0
+      },
+      {
+        "matches": 19370,
+        "model": "gpt-4o-mini-2024-07-18",
+        "rank": 11,
+        "rating": 1079.187026245,
+        "wins": 11082.0
+      },
+      {
+        "matches": 47703,
+        "model": "claude-3-5-sonnet-20240620",
+        "rank": 12,
+        "rating": 1079.0096726066,
+        "wins": 27107.5
+      },
+      {
+        "matches": 155944,
+        "model": "claude-3-opus-20240229",
+        "rank": 13,
+        "rating": 1074.9078256001,
+        "wins": 91432.5
+      },
+      {
+        "matches": 11476,
+        "model": "athene-70b-0725",
+        "rank": 14,
+        "rating": 1073.7607622933,
+        "wins": 6098.0
+      },
+      {
+        "matches": 18790,
+        "model": "gemini-pro-dev-api",
+        "rank": 15,
+        "rating": 1072.3072263884,
+        "wins": 8728.5
+      },
+      {
+        "matches": 12774,
+        "model": "claude-2.0",
+        "rank": 16,
+        "rating": 1069.530762176,
+        "wins": 6814.5
+      },
+      {
+        "matches": 10239,
+        "model": "glm-4-0520",
+        "rank": 17,
+        "rating": 1065.2967580553,
+        "wins": 5154.5
+      },
+      {
+        "matches": 20669,
+        "model": "nemotron-4-340b-instruct",
+        "rank": 18,
+        "rating": 1063.9797181947,
+        "wins": 10567.5
+      },
+      {
+        "matches": 51739,
+        "model": "yi-large-preview",
+        "rank": 19,
+        "rating": 1060.8561460851,
+        "wins": 28793.0
+      },
+      {
+        "matches": 39631,
+        "model": "llama-2-70b-chat",
+        "rank": 20,
+        "rating": 1060.6350445555,
+        "wins": 18272.0
+      }
+    ],
+    "rank_comparison": {
+      "claim_boundary": "This is a same-snapshot reconstruction of the official method, not a scrape of the mutable live leaderboard. Scores need not match the live service.",
+      "common_models": 129,
+      "comparison_target": "Bradley-Terry MLE reconstruction used by Chatbot Arena",
+      "kendall_rank_correlation": 0.606347,
+      "official_method_top_20": [
+        "chatgpt-4o-latest",
+        "gemini-1.5-pro-exp-0801",
+        "gpt-4o-2024-05-13",
+        "gpt-4o-mini-2024-07-18",
+        "claude-3-5-sonnet-20240620",
+        "gemini-advanced-0514",
+        "llama-3.1-405b-instruct",
+        "gpt-4o-2024-08-06",
+        "gemini-1.5-pro-api-0514",
+        "gemini-1.5-pro-api-0409-preview",
+        "gpt-4-turbo-2024-04-09",
+        "gpt-4-1106-preview",
+        "mistral-large-2407",
+        "athene-70b-0725",
+        "claude-3-opus-20240229",
+        "llama-3.1-70b-instruct",
+        "gpt-4-0125-preview",
+        "yi-large-preview",
+        "reka-core-20240722",
+        "gemini-1.5-flash-api-0514"
+      ],
+      "online_top_20": [
+        "gemini-1.5-pro-api-0409-preview",
+        "gemini-1.5-pro-exp-0801",
+        "chatgpt-4o-latest",
+        "gpt-3.5-turbo-0314",
+        "bard-jan-24-gemini-pro",
+        "claude-1",
+        "gemini-advanced-0514",
+        "llama-3.1-70b-instruct",
+        "gpt-4o-2024-05-13",
+        "gpt-4o-2024-08-06",
+        "gpt-4o-mini-2024-07-18",
+        "claude-3-5-sonnet-20240620",
+        "claude-3-opus-20240229",
+        "athene-70b-0725",
+        "gemini-pro-dev-api",
+        "claude-2.0",
+        "glm-4-0520",
+        "nemotron-4-340b-instruct",
+        "yi-large-preview",
+        "llama-2-70b-chat"
+      ],
+      "spearman_rank_correlation": 0.786717,
+      "top_20_overlap": 12
+    }
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "timing_seconds": {
+    "bradley_terry": 71.472,
+    "online_and_history": 8.301,
+    "total": 97.248
+  }
+}

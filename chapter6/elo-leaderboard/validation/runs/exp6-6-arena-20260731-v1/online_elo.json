@@ -1,0 +1,905 @@
+[
+  {
+    "matches": 55654,
+    "model": "gemini-1.5-pro-api-0409-preview",
+    "rank": 1,
+    "rating": 1159.8203895968,
+    "wins": 33738.5
+  },
+  {
+    "matches": 20071,
+    "model": "gemini-1.5-pro-exp-0801",
+    "rank": 2,
+    "rating": 1127.8877886511,
+    "wins": 12139.5
+  },
+  {
+    "matches": 14514,
+    "model": "chatgpt-4o-latest",
+    "rank": 3,
+    "rating": 1126.6935165964,
+    "wins": 8999.0
+  },
+  {
+    "matches": 5655,
+    "model": "gpt-3.5-turbo-0314",
+    "rank": 4,
+    "rating": 1103.9751202512,
+    "wins": 3789.0
+  },
+  {
+    "matches": 11827,
+    "model": "bard-jan-24-gemini-pro",
+    "rank": 5,
+    "rating": 1094.2118678517,
+    "wins": 7075.5
+  },
+  {
+    "matches": 21172,
+    "model": "claude-1",
+    "rank": 6,
+    "rating": 1092.7309868534,
+    "wins": 12081.5
+  },
+  {
+    "matches": 52155,
+    "model": "gemini-advanced-0514",
+    "rank": 7,
+    "rating": 1087.5408038371,
+    "wins": 30523.0
+  },
+  {
+    "matches": 13604,
+    "model": "llama-3.1-70b-instruct",
+    "rank": 8,
+    "rating": 1087.3529845908,
+    "wins": 7058.5
+  },
+  {
+    "matches": 77509,
+    "model": "gpt-4o-2024-05-13",
+    "rank": 9,
+    "rating": 1086.7242770205,
+    "wins": 46951.0
+  },
+  {
+    "matches": 9761,
+    "model": "gpt-4o-2024-08-06",
+    "rank": 10,
+    "rating": 1085.601246973,
+    "wins": 5323.0
+  },
+  {
+    "matches": 19370,
+    "model": "gpt-4o-mini-2024-07-18",
+    "rank": 11,
+    "rating": 1079.187026245,
+    "wins": 11082.0
+  },
+  {
+    "matches": 47703,
+    "model": "claude-3-5-sonnet-20240620",
+    "rank": 12,
+    "rating": 1079.0096726066,
+    "wins": 27107.5
+  },
+  {
+    "matches": 155944,
+    "model": "claude-3-opus-20240229",
+    "rank": 13,
+    "rating": 1074.9078256001,
+    "wins": 91432.5
+  },
+  {
+    "matches": 11476,
+    "model": "athene-70b-0725",
+    "rank": 14,
+    "rating": 1073.7607622933,
+    "wins": 6098.0
+  },
+  {
+    "matches": 18790,
+    "model": "gemini-pro-dev-api",
+    "rank": 15,
+    "rating": 1072.3072263884,
+    "wins": 8728.5
+  },
+  {
+    "matches": 12774,
+    "model": "claude-2.0",
+    "rank": 16,
+    "rating": 1069.530762176,
+    "wins": 6814.5
+  },
+  {
+    "matches": 10239,
+    "model": "glm-4-0520",
+    "rank": 17,
+    "rating": 1065.2967580553,
+    "wins": 5154.5
+  },
+  {
+    "matches": 20669,
+    "model": "nemotron-4-340b-instruct",
+    "rank": 18,
+    "rating": 1063.9797181947,
+    "wins": 10567.5
+  },
+  {
+    "matches": 51739,
+    "model": "yi-large-preview",
+    "rank": 19,
+    "rating": 1060.8561460851,
+    "wins": 28793.0
+  },
+  {
+    "matches": 39631,
+    "model": "llama-2-70b-chat",
+    "rank": 20,
+    "rating": 1060.6350445555,
+    "wins": 18272.0
+  },
+  {
+    "matches": 6974,
+    "model": "reka-core-20240722",
+    "rank": 21,
+    "rating": 1059.9327626435,
+    "wins": 3490.0
+  },
+  {
+    "matches": 69418,
+    "model": "gemini-1.5-pro-api-0514",
+    "rank": 22,
+    "rating": 1059.8892020659,
+    "wins": 39302.5
+  },
+  {
+    "matches": 6565,
+    "model": "gemini-pro",
+    "rank": 23,
+    "rating": 1059.2020149016,
+    "wins": 3028.0
+  },
+  {
+    "matches": 18897,
+    "model": "llama-3.1-405b-instruct",
+    "rank": 24,
+    "rating": 1058.4003562569,
+    "wins": 10361.5
+  },
+  {
+    "matches": 11517,
+    "model": "mistral-large-2407",
+    "rank": 25,
+    "rating": 1058.1277726399,
+    "wins": 6038.5
+  },
+  {
+    "matches": 84505,
+    "model": "gpt-4-turbo-2024-04-09",
+    "rank": 26,
+    "rating": 1054.9014485987,
+    "wins": 48844.5
+  },
+  {
+    "matches": 92488,
+    "model": "gpt-4-1106-preview",
+    "rank": 27,
+    "rating": 1054.2069148591,
+    "wins": 57496.5
+  },
+  {
+    "matches": 38959,
+    "model": "gpt-3.5-turbo-0613",
+    "rank": 28,
+    "rating": 1052.6707187439,
+    "wins": 19308.0
+  },
+  {
+    "matches": 85867,
+    "model": "gpt-4-0125-preview",
+    "rank": 29,
+    "rating": 1050.1218586343,
+    "wins": 50802.5
+  },
+  {
+    "matches": 7579,
+    "model": "glm-4-0116",
+    "rank": 30,
+    "rating": 1049.1894798578,
+    "wins": 3566.0
+  },
+  {
+    "matches": 4858,
+    "model": "zephyr-orpo-141b-A35b-v0.1",
+    "rank": 31,
+    "rating": 1045.2216087838,
+    "wins": 2116.5
+  },
+  {
+    "matches": 25748,
+    "model": "qwen-max-0428",
+    "rank": 32,
+    "rating": 1044.8335252342,
+    "wins": 12269.5
+  },
+  {
+    "matches": 20633,
+    "model": "claude-instant-1",
+    "rank": 33,
+    "rating": 1044.7562986355,
+    "wins": 11178.0
+  },
+  {
+    "matches": 16672,
+    "model": "yi-large",
+    "rank": 34,
+    "rating": 1044.7374546104,
+    "wins": 8533.5
+  },
+  {
+    "matches": 3997,
+    "model": "deepseek-coder-v2-0724",
+    "rank": 35,
+    "rating": 1043.8935002553,
+    "wins": 1883.5
+  },
+  {
+    "matches": 16165,
+    "model": "deepseek-v2-api-0628",
+    "rank": 36,
+    "rating": 1042.4852039574,
+    "wins": 7994.5
+  },
+  {
+    "matches": 56129,
+    "model": "gemini-1.5-flash-api-0514",
+    "rank": 37,
+    "rating": 1041.3766839839,
+    "wins": 29778.0
+  },
+  {
+    "matches": 161827,
+    "model": "llama-3-70b-instruct",
+    "rank": 38,
+    "rating": 1040.8719399645,
+    "wins": 84977.0
+  },
+  {
+    "matches": 80911,
+    "model": "command-r-plus",
+    "rank": 39,
+    "rating": 1034.8822379837,
+    "wins": 40967.0
+  },
+  {
+    "matches": 55979,
+    "model": "gpt-4-0314",
+    "rank": 40,
+    "rating": 1033.6412751608,
+    "wins": 31098.0
+  },
+  {
+    "matches": 37702,
+    "model": "claude-2.1",
+    "rank": 41,
+    "rating": 1032.8143823524,
+    "wins": 16848.0
+  },
+  {
+    "matches": 8391,
+    "model": "wizardlm-70b",
+    "rank": 42,
+    "rating": 1032.5111769139,
+    "wins": 4325.0
+  },
+  {
+    "matches": 27838,
+    "model": "gemma-2-27b-it",
+    "rank": 43,
+    "rating": 1030.7976774989,
+    "wins": 13981.5
+  },
+  {
+    "matches": 1714,
+    "model": "dolphin-2.2.1-mistral-7b",
+    "rank": 44,
+    "rating": 1029.9575607586,
+    "wins": 738.5
+  },
+  {
+    "matches": 3003,
+    "model": "guanaco-33b",
+    "rank": 45,
+    "rating": 1027.2582838587,
+    "wins": 1552.0
+  },
+  {
+    "matches": 3843,
+    "model": "nous-hermes-2-mixtral-8x7b-dpo",
+    "rank": 46,
+    "rating": 1025.2145335894,
+    "wins": 1697.5
+  },
+  {
+    "matches": 7192,
+    "model": "wizardlm-13b",
+    "rank": 47,
+    "rating": 1024.793903105,
+    "wins": 3690.0
+  },
+  {
+    "matches": 2650,
+    "model": "mpt-30b-chat",
+    "rank": 48,
+    "rating": 1024.0563241095,
+    "wins": 1351.5
+  },
+  {
+    "matches": 27508,
+    "model": "qwen1.5-110b-chat",
+    "rank": 49,
+    "rating": 1023.7761579902,
+    "wins": 12612.0
+  },
+  {
+    "matches": 113106,
+    "model": "claude-3-sonnet-20240229",
+    "rank": 50,
+    "rating": 1023.6338810846,
+    "wins": 60284.5
+  },
+  {
+    "matches": 12377,
+    "model": "mistral-next",
+    "rank": 51,
+    "rating": 1021.9755255724,
+    "wins": 5952.5
+  },
+  {
+    "matches": 15801,
+    "model": "deepseek-coder-v2",
+    "rank": 52,
+    "rating": 1021.6778455715,
+    "wins": 7243.0
+  },
+  {
+    "matches": 16056,
+    "model": "reka-flash-21b-20240226-online",
+    "rank": 53,
+    "rating": 1020.8238893282,
+    "wins": 7554.5
+  },
+  {
+    "matches": 16667,
+    "model": "starling-lm-7b-beta",
+    "rank": 54,
+    "rating": 1020.1246920766,
+    "wins": 7626.0
+  },
+  {
+    "matches": 3636,
+    "model": "llama2-70b-steerlm-chat",
+    "rank": 55,
+    "rating": 1018.5882277478,
+    "wins": 1587.5
+  },
+  {
+    "matches": 35555,
+    "model": "mistral-medium",
+    "rank": 56,
+    "rating": 1018.0043978294,
+    "wins": 17731.5
+  },
+  {
+    "matches": 19740,
+    "model": "llama-2-13b-chat",
+    "rank": 57,
+    "rating": 1016.6652779795,
+    "wins": 8935.5
+  },
+  {
+    "matches": 6660,
+    "model": "tulu-2-dpo-70b",
+    "rank": 58,
+    "rating": 1014.6804751782,
+    "wins": 3231.0
+  },
+  {
+    "matches": 62688,
+    "model": "reka-core-20240501",
+    "rank": 59,
+    "rating": 1013.8222528866,
+    "wins": 31198.0
+  },
+  {
+    "matches": 89617,
+    "model": "gpt-4-0613",
+    "rank": 60,
+    "rating": 1013.3276942754,
+    "wins": 43878.0
+  },
+  {
+    "matches": 4981,
+    "model": "deepseek-llm-67b-chat",
+    "rank": 61,
+    "rating": 1011.6783077357,
+    "wins": 2017.0
+  },
+  {
+    "matches": 4291,
+    "model": "solar-10.7b-instruct-v1.0",
+    "rank": 62,
+    "rating": 1011.6055213958,
+    "wins": 1814.0
+  },
+  {
+    "matches": 12987,
+    "model": "openchat-3.5-0106",
+    "rank": 63,
+    "rating": 1009.5145969972,
+    "wins": 5974.0
+  },
+  {
+    "matches": 7156,
+    "model": "reka-flash-20240722",
+    "rank": 64,
+    "rating": 1003.5048766039,
+    "wins": 3290.0
+  },
+  {
+    "matches": 25248,
+    "model": "gemma-2-9b-it",
+    "rank": 65,
+    "rating": 1003.026164166,
+    "wins": 11661.5
+  },
+  {
+    "matches": 12671,
+    "model": "llama-3.1-8b-instruct",
+    "rank": 66,
+    "rating": 1002.2631876345,
+    "wins": 5121.0
+  },
+  {
+    "matches": 8117,
+    "model": "openchat-3.5",
+    "rank": 67,
+    "rating": 1001.939993772,
+    "wins": 3783.0
+  },
+  {
+    "matches": 6338,
+    "model": "pplx-7b-online",
+    "rank": 68,
+    "rating": 1001.6927968751,
+    "wins": 2572.0
+  },
+  {
+    "matches": 40643,
+    "model": "qwen1.5-72b-chat",
+    "rank": 69,
+    "rating": 1000.9425509065,
+    "wins": 19941.0
+  },
+  {
+    "matches": 1815,
+    "model": "zephyr-7b-alpha",
+    "rank": 70,
+    "rating": 999.8845726251,
+    "wins": 855.0
+  },
+  {
+    "matches": 109888,
+    "model": "claude-3-haiku-20240307",
+    "rank": 71,
+    "rating": 999.7072031054,
+    "wins": 55074.0
+  },
+  {
+    "matches": 10422,
+    "model": "starling-lm-7b-alpha",
+    "rank": 72,
+    "rating": 998.0936577805,
+    "wins": 4817.0
+  },
+  {
+    "matches": 25792,
+    "model": "reka-flash-21b-20240226",
+    "rank": 73,
+    "rating": 992.8107482264,
+    "wins": 11891.0
+  },
+  {
+    "matches": 64938,
+    "model": "mistral-large-2402",
+    "rank": 74,
+    "rating": 992.5035561283,
+    "wins": 30754.5
+  },
+  {
+    "matches": 17026,
+    "model": "gpt-3.5-turbo-1106",
+    "rank": 75,
+    "rating": 990.5828502496,
+    "wins": 7026.0
+  },
+  {
+    "matches": 4864,
+    "model": "qwen1.5-7b-chat",
+    "rank": 76,
+    "rating": 990.5290268684,
+    "wins": 1903.5
+  },
+  {
+    "matches": 20477,
+    "model": "reka-flash-preview-20240611",
+    "rank": 77,
+    "rating": 990.4289024537,
+    "wins": 9003.5
+  },
+  {
+    "matches": 25156,
+    "model": "yi-1.5-34b-chat",
+    "rank": 78,
+    "rating": 988.8079557694,
+    "wins": 11066.0
+  },
+  {
+    "matches": 5091,
+    "model": "openhermes-2.5-mistral-7b",
+    "rank": 79,
+    "rating": 988.507956639,
+    "wins": 2379.0
+  },
+  {
+    "matches": 7508,
+    "model": "codellama-34b-instruct",
+    "rank": 80,
+    "rating": 986.9963372601,
+    "wins": 3192.5
+  },
+  {
+    "matches": 18666,
+    "model": "qwen1.5-14b-chat",
+    "rank": 81,
+    "rating": 985.79676379,
+    "wins": 8265.0
+  },
+  {
+    "matches": 15946,
+    "model": "yi-34b-chat",
+    "rank": 82,
+    "rating": 984.9789753527,
+    "wins": 7423.5
+  },
+  {
+    "matches": 6890,
+    "model": "pplx-70b-online",
+    "rank": 83,
+    "rating": 984.0082457269,
+    "wins": 3118.0
+  },
+  {
+    "matches": 34410,
+    "model": "qwen2-72b-instruct",
+    "rank": 84,
+    "rating": 983.7228839439,
+    "wins": 16578.5
+  },
+  {
+    "matches": 33736,
+    "model": "dbrx-instruct-preview",
+    "rank": 85,
+    "rating": 983.0655232047,
+    "wins": 14350.5
+  },
+  {
+    "matches": 107100,
+    "model": "llama-3-8b-instruct",
+    "rank": 86,
+    "rating": 978.2506897907,
+    "wins": 49020.5
+  },
+  {
+    "matches": 1325,
+    "model": "falcon-180b-chat",
+    "rank": 87,
+    "rating": 976.0053410687,
+    "wins": 580.0
+  },
+  {
+    "matches": 8745,
+    "model": "palm-2",
+    "rank": 88,
+    "rating": 975.4724123669,
+    "wins": 3851.5
+  },
+  {
+    "matches": 5070,
+    "model": "qwen-14b-chat",
+    "rank": 89,
+    "rating": 974.4393986925,
+    "wins": 2262.5
+  },
+  {
+    "matches": 5270,
+    "model": "stripedhyena-nous-7b",
+    "rank": 90,
+    "rating": 972.5214538963,
+    "wins": 2001.0
+  },
+  {
+    "matches": 22783,
+    "model": "qwen1.5-32b-chat",
+    "rank": 91,
+    "rating": 970.5573357551,
+    "wins": 10038.5
+  },
+  {
+    "matches": 56373,
+    "model": "command-r",
+    "rank": 92,
+    "rating": 968.3429828775,
+    "wins": 25830.5
+  },
+  {
+    "matches": 9178,
+    "model": "gemma-7b-it",
+    "rank": 93,
+    "rating": 966.2526965022,
+    "wins": 3447.5
+  },
+  {
+    "matches": 11330,
+    "model": "zephyr-7b-beta",
+    "rank": 94,
+    "rating": 966.1969243012,
+    "wins": 5268.0
+  },
+  {
+    "matches": 50256,
+    "model": "mixtral-8x22b-instruct-v0.1",
+    "rank": 95,
+    "rating": 964.4141739849,
+    "wins": 22236.0
+  },
+  {
+    "matches": 7022,
+    "model": "vicuna-7b",
+    "rank": 96,
+    "rating": 963.6362226151,
+    "wins": 3187.5
+  },
+  {
+    "matches": 34197,
+    "model": "snowflake-arctic-instruct",
+    "rank": 97,
+    "rating": 961.9084215198,
+    "wins": 13326.5
+  },
+  {
+    "matches": 22938,
+    "model": "vicuna-33b",
+    "rank": 98,
+    "rating": 959.3823284501,
+    "wins": 10924.5
+  },
+  {
+    "matches": 10509,
+    "model": "gemma-2-2b-it",
+    "rank": 99,
+    "rating": 959.2713799268,
+    "wins": 3731.5
+  },
+  {
+    "matches": 7038,
+    "model": "koala-13b",
+    "rank": 100,
+    "rating": 954.395027749,
+    "wins": 3380.0
+  },
+  {
+    "matches": 68914,
+    "model": "gpt-3.5-turbo-0125",
+    "rank": 101,
+    "rating": 951.9181205239,
+    "wins": 29165.5
+  },
+  {
+    "matches": 9145,
+    "model": "mistral-7b-instruct",
+    "rank": 102,
+    "rating": 948.891187234,
+    "wins": 3685.5
+  },
+  {
+    "matches": 14559,
+    "model": "llama-2-7b-chat",
+    "rank": 103,
+    "rating": 948.4212635676,
+    "wins": 6212.0
+  },
+  {
+    "matches": 20074,
+    "model": "mistral-7b-instruct-v0.2",
+    "rank": 104,
+    "rating": 945.8420359878,
+    "wins": 8282.5
+  },
+  {
+    "matches": 25095,
+    "model": "gemma-1.1-7b-it",
+    "rank": 105,
+    "rating": 941.8141470663,
+    "wins": 9687.0
+  },
+  {
+    "matches": 1787,
+    "model": "gpt4all-13b-snoozy",
+    "rank": 106,
+    "rating": 938.6958755482,
+    "wins": 680.0
+  },
+  {
+    "matches": 18505,
+    "model": "phi-3-small-8k-instruct",
+    "rank": 107,
+    "rating": 930.6944270029,
+    "wins": 7100.0
+  },
+  {
+    "matches": 6496,
+    "model": "olmo-7b-instruct",
+    "rank": 108,
+    "rating": 928.8306135323,
+    "wins": 2157.0
+  },
+  {
+    "matches": 21129,
+    "model": "phi-3-mini-4k-instruct",
+    "rank": 109,
+    "rating": 928.4371869598,
+    "wins": 7094.0
+  },
+  {
+    "matches": 21617,
+    "model": "phi-3-mini-128k-instruct",
+    "rank": 110,
+    "rating": 928.3336295806,
+    "wins": 7094.5
+  },
+  {
+    "matches": 4938,
+    "model": "RWKV-4-Raven-14B",
+    "rank": 111,
+    "rating": 927.486785137,
+    "wins": 1965.5
+  },
+  {
+    "matches": 19794,
+    "model": "vicuna-13b",
+    "rank": 112,
+    "rating": 927.1632498042,
+    "wins": 9553.5
+  },
+  {
+    "matches": 1193,
+    "model": "codellama-70b-instruct",
+    "rank": 113,
+    "rating": 926.7141337337,
+    "wins": 411.5
+  },
+  {
+    "matches": 4018,
+    "model": "mpt-7b-chat",
+    "rank": 114,
+    "rating": 922.0268289601,
+    "wins": 1573.5
+  },
+  {
+    "matches": 76064,
+    "model": "mixtral-8x7b-instruct-v0.1",
+    "rank": 115,
+    "rating": 920.8542542685,
+    "wins": 33437.0
+  },
+  {
+    "matches": 22427,
+    "model": "phi-3-medium-4k-instruct",
+    "rank": 116,
+    "rating": 919.7045738753,
+    "wins": 8854.0
+  },
+  {
+    "matches": 4921,
+    "model": "gemma-2b-it",
+    "rank": 117,
+    "rating": 918.581510353,
+    "wins": 1513.0
+  },
+  {
+    "matches": 10484,
+    "model": "phi-3-mini-4k-instruct-june-2024",
+    "rank": 118,
+    "rating": 913.3885931532,
+    "wins": 3097.5
+  },
+  {
+    "matches": 7811,
+    "model": "qwen1.5-4b-chat",
+    "rank": 119,
+    "rating": 910.8121423587,
+    "wins": 2364.5
+  },
+  {
+    "matches": 4995,
+    "model": "chatglm-6b",
+    "rank": 120,
+    "rating": 908.8611775605,
+    "wins": 1834.5
+  },
+  {
+    "matches": 5874,
+    "model": "alpaca-13b",
+    "rank": 121,
+    "rating": 904.2619553966,
+    "wins": 2330.0
+  },
+  {
+    "matches": 11363,
+    "model": "gemma-1.1-2b-it",
+    "rank": 122,
+    "rating": 892.2955737397,
+    "wins": 3282.0
+  },
+  {
+    "matches": 2707,
+    "model": "chatglm2-6b",
+    "rank": 123,
+    "rating": 888.2580854124,
+    "wins": 808.0
+  },
+  {
+    "matches": 3334,
+    "model": "stablelm-tuned-alpha-7b",
+    "rank": 124,
+    "rating": 882.7115402984,
+    "wins": 1141.5
+  },
+  {
+    "matches": 4763,
+    "model": "chatglm3-6b",
+    "rank": 125,
+    "rating": 867.498613261,
+    "wins": 1454.0
+  },
+  {
+    "matches": 6382,
+    "model": "oasst-pythia-12b",
+    "rank": 126,
+    "rating": 865.3424632797,
+    "wins": 2425.0
+  },
+  {
+    "matches": 2443,
+    "model": "llama-13b",
+    "rank": 127,
+    "rating": 852.9506118392,
+    "wins": 745.5
+  },
+  {
+    "matches": 4304,
+    "model": "fastchat-t5-3b",
+    "rank": 128,
+    "rating": 847.3254654092,
+    "wins": 1465.0
+  },
+  {
+    "matches": 3484,
+    "model": "dolly-v2-12b",
+    "rank": 129,
+    "rating": 834.3876685486,
+    "wins": 1099.5
+  }
+]

@@ -42,6 +42,14 @@ env/
 *.html
 !index.html
 
+# Canonical Experiment 6-6 evidence is intentionally versioned.  The public
+# Arena input remains ignored because it is ~2 GB; manifests bind it by URL,
+# byte size, record count, and SHA-256 instead.
+!validation/
+!validation/**/*.json
+!validation/**/*.png
+!validation/**/*.html
+
 # OS
 .DS_Store
 Thumbs.db
@@ -52,4 +60,3 @@ Thumbs.db
 
 # Logs
 *.log
-

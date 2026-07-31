@@ -1,0 +1,7 @@
+{
+  "experiment": "6-6",
+  "manifest_sha256": "b67f8b15a088e694ae356322e0ccd676b54ed79a0dc1c787ca1960ef670ba2e8",
+  "official_complete": true,
+  "run": "runs/exp6-6-arena-20260731-v1",
+  "status": "passed"
+}

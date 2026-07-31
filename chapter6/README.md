@@ -21,7 +21,7 @@
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60 用例 × 3 系统共 180/180 条真实轨迹，零错误且原生币种定价完整；[验收结果](user-memory-system-evaluation/results/full_6_4_60_cases_costed.json)状态为 `complete` |
 | 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | 组件、模型、评估器的 4×3×2×60 全矩阵尚未完成；少量默认配置 checkpoint 与 backend readiness 不能替代所有单元的真实证据 |
 | 6-5 | [tts-quality-eval](tts-quality-eval/) | ✅ | [真实验收](tts-quality-eval/validation/mistral_multimodal_20260730/manifest.json)完成 OpenAI/Fish 两 provider × 四类语料的 8/8 双音频 Voxtral 四维评审；候选/参考音频逐项哈希，早期 Gemini/OpenRouter 失败证据仍保留 |
-| 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | 基于 ELO 评分的 Agent 性能排行榜，通过对战比较相对能力 |
+| 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | [正式全量验收](elo-leaderboard/validation/runs/exp6-6-arena-20260731-v1/manifest.json)处理 1,799,991 条公开 Arena 记录（1,670,250 条盲选票、129 个模型），在线 Elo 与 Bradley-Terry 排名 Spearman 0.787、Top-20 重合 12/20；胜率矩阵、17 个月度快照、三张图与 D3 动画均由同一 manifest 哈希绑定并复核通过 |
 | 6-7 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
 | 6-8 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
 | 6-10 | [android-world](android-world/) | 📖 | 本书对 T3A Agent 在 AndroidWorld 上的评估报告与失败分析笔记（实验 6-10 起点；非基准源码） |
