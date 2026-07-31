@@ -41,7 +41,7 @@ Továbbá a GPT-Live egy második strukturális változást is bevezetett — a 
 
 A kereskedelmi hangasszisztenek túlnyomó többsége — az okoshangszóróktól az ügyfélszolgálati robotokig — egy soros csővezetéken alapul (9-1. ábra): a Beszédtevékenység-érzékelő (VAD) meghatározza, hogy a felhasználó befejezte-e a beszédet → az Automatikus Beszédfelismerő (ASR) szöveggé alakítja a hangot → egy nagy nyelvi modell (LLM) megérti a szándékot és választ generál → a Szöveg-Beszéd átalakító (TTS) hangosítja a választ. Mint egy váltóversenyben, minden szakasznak meg kell várnia, amíg az előző befejeződik, mielőtt elindulhat.
 
-![9-1. ábra: Hangügynök soros csővezetéke](images/fig9-1.png)
+![9-1. ábra: Hangügynök soros csővezetéke](images/fig9-1.svg)
 
 A korai hangasszisztensek egyszerű okból alkalmazták ezt a négyfokozatú soros csővezetéket: egyetlen modell sem tudta egyszerre kezelni a beszédfelismerést, a nyelvi megértést, a gondolkodást és a beszédszintézist. A moduláris architektúra lehetővé tette, hogy az egyes komponenseket egymástól függetlenül fejlesszék és optimalizálják. A modularitás ára azonban a felhalmozott késleltetés — minden szakasznak meg kell várnia az előző befejezését, mielőtt elindulhat.
 
@@ -53,13 +53,13 @@ A korai hangasszisztensek egyszerű okból alkalmazták ezt a négyfokozatú sor
 
 "TTS": A válaszszöveget beszéddé alakítja; egy rövid szegmens szintézise jellemzően 200-500 ms-ot vesz igénybe. A 9-2. ábra egy rövid, érvelés nélküli válaszon szemlélteti a soros késleltetés felhalmozódását: VAD (500-800 ms) + ASR (50-200 ms) + LLM TTFT (100-500 ms) + LLM rövid szegmens generálása (100-300 ms) + TTS (200-500 ms), összesen körülbelül 0,95-2,3 másodperc. Ez csak egy szemléltető tartomány konzisztens mérési konvenció mellett; a tényleges késleltetés függ a bemenet és a válasz hosszától, a modelltől, a hardvertől, a hálózattól és a terheléstől is.
 
-![9-2. ábra: Késleltetési vízesés: A teljes válaszidő soros felhalmozódása](images/fig9-2.png)
+![9-2. ábra: Késleltetési vízesés: A teljes válaszidő soros felhalmozódása](images/fig9-2.svg)
 
 Gyártási környezetben a sorbanállási késleltetés (queuing latency) tovább ront a helyzeten. Ez úgy működik, mint egy étteremben: minél forgalmasabb a konyha, annál hosszabb a várakozás — és a várakozás nem lineárisan nő, hanem az egekbe szökik (9-3. ábra). Amikor egy kérés sor nélkül érkezik, a feldolgozási ideje a sor nélküli, vagy üresjárati késleltetés. De amikor több kérés érkezik egyszerre, a későn érkezőknek sorba kell állniuk.
 
 Intuitívan, minél magasabb a kihasználtság, annál meredekebben — és nemlineárisan — nő a várakozási idő. A sorbanálláselmélet megadja a közelítő összefüggést (itt intuíció céljára, nincs szükség szigorú levezetésre): Teljes Késleltetés ≈ Üresjárati Késleltetés × 1/(1-Kihasználtság). A kihasználtság a szerver foglaltságának arányát jelenti; például 50%-os kihasználtság azt jelenti, hogy a szerver az idő felében dolgoz fel kéréseket, fele időben tétlen. 50%-os kihasználtságnál a késleltetés megduplázódik; 80%-nál ötszöröse az üresjárati késleltetésnek — ezért nem futhatnak a szerverek huzamosabb ideig magas terhelés alatt.
 
-![9-3. ábra: Sorbanállási késleltetési görbe](images/fig9-3.png)
+![9-3. ábra: Sorbanállási késleltetési görbe](images/fig9-3.svg)
 
 > "9-1. kísérlet ★: Hagyományos hangügynök építése"
 >
@@ -150,7 +150,7 @@ Bármilyen erős is az Omni, csupán három modellt egyesített egybe, **anélk�
 
 [^ch9-13]: A kaszkád és a végponti megoldás pontossági előnyeinek teljes keresztmodális méréséért, valamint annak előrejelzéséért, hogy az irány a feladat természetétől függ (hogy a köztes reprezentáció kellően hordozza-e a feladatinformációt), lásd Bojie Li és Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (megjelenés alatt).
 
-![9-4. ábra: Végponttól végpontig tartó multimodális hangmodell architektúrák összehasonlítása](images/fig9-4.png)
+![9-4. ábra: Végponttól végpontig tartó multimodális hangmodell architektúrák összehasonlítása](images/fig9-4.svg)
 
 Modellszinten az "OpenAI Realtime API" közel áll a végponti megoldáshoz, mert a modell natívan dolgozza fel a hangot. Az interakció-vezérlés szintjén azonban továbbra is hagyományos VAD-ra támaszkodik, így egy köztes lépés a teljesen végponti rendszer felé. A 2024-es előzetes verzió eredetileg GPT-4o-n futott; amikor az API 2025-ben általánosan elérhetővé vált, átváltott "gpt-realtime"-re, egy dedikált, valós idejű hangra optimalizált modellre, nem a GPT-4o egy módjára. Az API alapértelmezés szerint engedélyezi a szerveroldali VAD-ot, és automatikusan meghatározza, hogy a felhasználó mikor kezdi és fejezi be a beszédet. Támogatja a megszakításokat is: amikor a felhasználó beszélni kezd, az API azonnal leállítja az aktuális hanggenerálást, ahogy az ember természetesen elhallgat, ha félbeszakítják egy személyes beszélgetésben. A gpt-realtime aszinkron függvényhívásokat is bevezet, lehetővé téve a modell számára, hogy tovább beszéljen, amíg az eszközeredményekre vár, ezzel elrejtve az eszköz késleltetését a beszélgetésen belül. Ezek a fejlesztések javítják az élményt, de a VAD keretrendszeren belüli optimalizálások maradnak. A "Gemini Live API" hasonló megközelítést alkalmaz, konfigurálható VAD érzékenységgel, és megszakítás után is megőrzi a már elküldött információkat a beszélgetési koherencia fenntartása érdekében.
 
@@ -194,7 +194,7 @@ Az alábbi három megoldás nem lineáris fejlődést képvisel. Különböző k
 
 A gyors és lassú gondolkodás párhuzamosan fut (9-5. ábra): a gyors gondolkodás 500 ms-on belül egy rövid tartózkodó választ produkál (ahogy az ember először azt mondja: "hadd gondolkozzam"), míg a lassú gondolkodás 5-10 másodpercet tölt a háttérben érveléssel, mielőtt leadná a teljes választ. A lassú gondolkodás mögötti technika a "tesztidő-skálázás" — leegyszerűsítve, hagyjuk, hogy a modell egy kicsit tovább gondolkodjon, mielőtt válaszol: ahelyett, hogy egy lépésben ugrana a válaszra, úgy működik, mint egy ember egy matekfeladaton — vázol egy megközelítést, lépésről lépésre levezet, ellenőrzi az eredményt — több számítást kereskedve jobb válaszért.
 
-![9-5. ábra: Gyors/Lassú gondolkodási architektúra és megoldások összehasonlítása](images/fig9-5.png)
+![9-5. ábra: Gyors/Lassú gondolkodási architektúra és megoldások összehasonlítása](images/fig9-5.svg)
 
 **1. probléma: Túl gondolkodás egyszerű kérdéseken.** A felhasználó megkérdezi: "Milyen nap van ma?" A gyors gondolkodás helyesen válaszol "Szerda" 500 ms-on belül, de a lassú gondolkodás továbbra is lefuttatja a teljes 10 másodperces gondolkodást, majd megismétli a "Szerdát". Ez nemcsak számítási erőforrásokat pazarol, hanem ami még kritikusabb, megzavarja a beszélgetés ritmusát — a felhasználónak már megvan a válasza, és készen áll a továbblépésre, amikor egy ismételt válasz szakítja félbe. **2. probléma: Következetlenség a gyors és lassú között.** A kettő egymástól függetlenül fut párhuzamosan. Ugyanazt a kontextust látják, de az érvelési útjaik teljesen eltérhetnek — a gyors gondolkodás egy feltételezés alapján válaszol, a lassú gondolkodás felfedezi, hogy az a feltételezés hamis, és az ellenkező következtetésre jut. Másodperceken belül a felhasználó hallja, hogy a rendszer ellentmond önmagának, és a bizalom azonnal összeomlik. A kiváltó ok: az 1. megoldás a beszélgetést két független gondolkodási folyamatra bontja ahelyett, hogy egy koherens kognitív tevékenység lenne, a gyors és lassú között nincs koordinációs mechanizmus.
 
@@ -236,7 +236,7 @@ Több iteráció után a gondolkodás alapja fokozatosan eltolódik a szöveges 
 
 A kettő párhuzamosan fut: a Formuláló Agynak nem kell befejeznie az érvelést, mielőtt az Artikulációs Agy elkezd beszélni. Például a Formuláló Agy elkezdi elemezni a felhasználó kérdését t=0 ms-nál, és az első érvelési szegmenst, egy szöveges tokenek sorozatát, t=200 ms-nál produkálja. Az Artikulációs Agy megkapja ezt a szegmenst, kombinálja az eddig generált válasszal, és elkezdi a megfelelő beszédtokenek előállítását t=350 ms-nál. A modulok párhuzamos csővezetékként működnek, lehetővé téve, hogy a felhasználó már 350 ms után hallja az első szótagot.
 
-![9-6. ábra: Step-Audio R1 MGRD és MPS Kétagyú Architektúra](images/fig9-6.png)
+![9-6. ábra: Step-Audio R1 MGRD és MPS Kétagyú Architektúra](images/fig9-6.svg)
 
 > **9-4. kísérlet ★★★: A Step-Audio R1 használata végponti beszélt érveléshez**
 >
@@ -307,7 +307,7 @@ A Computer Use, más néven GUI automatizálás, lehetővé teszi a mesterséges
 3.  A végrehajtási réteg végrehajtja a cselekvést a valós környezetben (egér mozgatása, kattintás, szöveg beírása stb.).
 4.  Megvárja a felület válaszát, újabb képernyőképet készít, és belép a ciklus következő iterációjába.
 
-![9-7. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig9-7.png)
+![9-7. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig9-7.svg)
 
 Ebben a ciklusban három kulcsfontosságú tervezési dimenzió van: "Cselekvési Tér" (milyen műveleteket végezhet az ügynök), "Vizuális Helymeghatározás" (hogyan találja meg a cél elemet a képernyőképen), és "Modell Architektúra" (hogyan generálja a helyes cselekvést a képernyőképből).
 
@@ -315,7 +315,7 @@ Ebben a ciklusban három kulcsfontosságú tervezési dimenzió van: "Cselekvés
 
 Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós képességet alkotnak (9-8. ábra):
 
-![9-8. ábra: Computer Use cselekvési tér](images/fig9-8.png)
+![9-8. ábra: Computer Use cselekvési tér](images/fig9-8.svg)
 
 "GUI Kezelő Eszköz" (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
 
@@ -359,7 +359,7 @@ Elemek:
 
 A modellnek csak egy azonosítót kell kiadnia, és a rendszer automatikusan rákattint a megfelelő elem középpontjára. Ez a megközelítés nem takarít meg tokeneket, mert minden annotációs adatot el kell küldeni a modellnek, de pontos, stabil lokalizációt biztosít, elkerülve a szegmentációs modellek által bevezethető kihagyásokat és téves pozitívumokat.
 
-![9-9. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig9-9.png)
+![9-9. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig9-9.svg)
 
 "Tiszta Koordináta Előrejelzés."
 
@@ -367,7 +367,7 @@ A harmadik út kihagyja az annotációt, és megkéri a modellt, hogy közvetlen
 
 A koordináta-előrejelzési sémákban a modell koordináta-megértése nagymértékben függ a tanítás során használt felbontástól (9-10. ábra). A Claude-ot XGA (1024×768), WXGA (1280×800) és FWXGA (1366×768) felbontásokon tanították. Ha a bemeneti képernyőkép felbontása nem egyezik, a modell által előrejelzett koordináták szisztematikusan eltolódnak — mintha egy távolságot egy kis térképen mérnénk meg, majd közvetlenül egy nagy térképre alkalmaznánk. Ezért egy kétirányú koordináta-skálázó mechanizmust kell implementálni az eszköz rétegben, és a célfelbontást "a képarány alapján kell kiválasztani", hogy elkerüljük az egyenlőtlen nyújtást, amely torzítja a képet, és ezáltal torzítja a koordináta-ítéletet. Például, ha a tényleges képernyőfelbontás 2560×1440 (16:9), a Claude három támogatott opciója közül a legmegfelelőbb cél az FWXGA (1366×768), amelynek képaránya a legközelebb van a 16:9-hez. A képernyőképet arányosan 1366×768-ra skálázzák és táplálják a modellbe; miután a modell kiadja a kattintási koordinátákat (683, 384), azokat visszafejtik a valós koordinátákra (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ezzel szemben, ha egy 16:9-es képet erőszakosan 4:3-as 1024×768-ra nyújtanak, a kép vízszintesen összenyomódik, ami a modell által előrejelzett koordináták szisztematikus eltolódását okozza.
 
-![9-10. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig9-10.png)
+![9-10. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig9-10.svg)
 
 A három út közötti választás a következőképpen foglalható össze: **ha strukturált információ áll rendelkezésre, részesítsük előnyben a DOM/akadálymentesítési fa indexálást** a legpontosabb és legstabilabb lokalizáció érdekében. "Ha nem áll rendelkezésre" — natív asztali szoftverekben, például Photoshop, canvas/WebGL renderelt felületek vagy játékok esetén — **használjunk vizuális annotációt (az eredeti SoM utat) vagy koordináta előrejelzést**. A vizuális annotáció többválasztásos problémává alakítja a lokalizációt, ami barátságosabbá teszi az általános célú modellek számára specializált tanítás nélkül. A koordináta előrejelzés kiküszöböli az annotációs lépést, és közvetlenebb a kifejezetten GUI lokalizációra tanított modellek számára. Mindkét megközelítés továbbra is küzd a kis elemekkel és a sűrű felületekkel.
 
@@ -459,7 +459,7 @@ Az általános célú VLM-ek már rendelkeznek elfogadható megtestesült érvel
 
 A kétrétegű architektúra végrehajtási rétegében három reprezentatív modell — RT-2, OpenVLA és π₀ — mind a VLA vezérlésre összpontosít, azaz robotcselekvések valós idejű kiadására kamera képek és nyelvi utasítások alapján (9-11. ábra). Két különböző megközelítést követnek a cselekvés reprezentációjában: diszkrét cselekvési tokenek és folytonos pályagenerálás.
 
-![9-11. ábra: VLA Architektúra (Vision-Language-Action)](images/fig9-11.png)
+![9-11. ábra: VLA Architektúra (Vision-Language-Action)](images/fig9-11.svg)
 
 **RT-2 és OpenVLA: A Diszkrét Cselekvési Token Út.**
 
@@ -477,7 +477,7 @@ A valódi megosztottság a cselekvés reprezentációjában nem az RT-2 és az O
 
 A 6. fejezet szimulációs szakasza már elmagyarázta, honnan származik a szimuláció-valóság (sim-to-real) rés, és hogyan küzd ellene a domén randomizáció, így nem ismételjük meg itt. Röviden: a szimuláció soha nem képes tökéletesen reprodukálni a valós fizikát, vizuális elemeket és hardvert, ezért a tanítás széles tartományban randomizálja ezeket a paramétereket, kényszerítve a politikát, hogy megtanuljon egy, ezekre a változatokra robusztus reprezentációt (9-12. ábra). A következőkben azt nézzük meg, hogy ez az elv hogyan valósul meg egy valódi robotkaron.
 
-![9-12. ábra: Sim2Real rés és Domén Randomizáció](images/fig9-12.png)
+![9-12. ábra: Sim2Real rés és Domén Randomizáció](images/fig9-12.svg)
 
 Ez a megközelítés számos figyelemre méltó sikert produkált. Az OpenAI Dactyl projektje elérte a kocka kézben történő átforgatását, és egy későbbi munka az Automatikus Domén Randomizációt (ADR) használva egy Rubik-kockát oldott meg egy kézzel. Az ETH Zürich ANYmal négylábúja robusztus járást mutatott be nehéz külső terepen, például havon és kavicson.
 
@@ -498,7 +498,7 @@ Amit ez a fejezet hozzáad, az a két mérnöki lépés, amelyet nem lehet kihag
 > [^ch9-6]: LeRobot, "Sim2Real Tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/main/docs/zero_shot_rgb_sim2real.md
 >
 >
-> ![9-13. ábra: 9-10. kísérlet Nullszoros RGB Sim2Real Csővezeték](images/fig9-13.png)
+> ![9-13. ábra: 9-10. kísérlet Nullszoros RGB Sim2Real Csővezeték](images/fig9-13.svg)
 >
 
 ## Fejezet Összefoglaló

@@ -57,7 +57,7 @@ Az olyan általános célú Ágens termékek, mint a Manus, három fő képessé
 
 Miért a Kódoló Ágens a mag és nem a másik kettő? Mert szinte minden hatékony tartalomgenerálás végső soron kódra vezethető vissza. Egy PPT lényegében kód az OOXML formátumban (Office Open XML, a Microsoft nyílt szabványa irodai dokumentumokhoz); Word dokumentumok és PDF jelentések kódon keresztül generálhatók; adatelemzés és vizualizáció Python szkriptekkel történik; még a sikeres GUI munkafolyamatok is rögzíthetők újrafelhasználható RPA (Robotic Process Automation) kódként (a Computer Use-t a 9. fejezet tárgyalja, a műveletsorozatok rögzítésének mechanizmusát pedig a 8. fejezet részletezi). A Deep Research keresési és információszintézis képessége kódvezérelt webes kérésekkel és feldolgozással valósítható meg. Bár a Computer Use sokoldalúbb, a közvetlen kód- vagy API-hívások általában olcsóbbak, gyorsabbak és megbízhatóbbak az ekvivalens műveletekhez. A kódgenerálás a leghatékonyabb, legalacsonyabb költségű és leginkább újrafelhasználható képességalap.
 
-![5-1. ábra: Kódolóágens-mag az OpenClaw architektúrájában](images/fig5-1.png)
+![5-1. ábra: Kódolóágens-mag az OpenClaw architektúrájában](images/fig5-1.svg)
 
 Értsük meg ezt az architektúrát egy konkrét végrehajtási folyamaton keresztül. Tegyük fel, hogy a felhasználó kéri: "Segíts elemezni a múlt negyedéves értékesítési adatokat, és készíts egy összefoglaló jelentést":
 
@@ -142,7 +142,7 @@ Azonos promptkészlettel végzett összehasonlításokban ez a mechanizmus **nul
 ### A Kódoló Ágens Teljes Munkafolyamata
 
 
-![5-2. ábra: Kódoló ágens munkafolyamata](images/fig5-2.png)
+![5-2. ábra: Kódoló ágens munkafolyamata](images/fig5-2.svg)
 
 
 Az alábbiakban egy "ajánlott mérnöki munkafolyamatot" írunk le. Ez a szoftvermérnöki legjobb gyakorlatok idealizált alkalmazását mutatja be Kódoló Ágensekre. A valós Kódoló Ágensek (mint a Claude Code, OpenClaw) gyakrabban egy reaktív, iteratív ciklusban dolgoznak, és "szükség szerint rövidítik ezt a munkafolyamatot" — egyszerű feladatoknál kihagyják a tervezési dokumentumot, és nem várnak blokkolóan a felhasználói jóváhagyásra minden lépésnél; csak amikor egy feladat összetett és messzemenő következményekkel jár, akkor futtatnak minden fázist teljes egészében.
@@ -310,7 +310,7 @@ Ez az öt megvalósítási technika – párhuzamosság és streaming, kontextus
 
 A megfelelő kód megtalálása egy nagy kódbázisban a kódoló ügynök munkájának kiindulópontja. Az 5-3. ábra számos kiegészítő keresési eszközt hasonlít össze, bemutatva, hogy egy érett kódoló ügynöknek hogyan kell kiválasztania a visszakeresési módszereket a feladat természete alapján.
 
-![5-3. ábra: A kódolóügynök-kereső eszközök összehasonlítása](images/fig5-3.png)
+![5-3. ábra: A kódolóügynök-kereső eszközök összehasonlítása](images/fig5-3.svg)
 
 **Regex Content Matching** (grep/ripgrep): A leghagyományosabb keresési módszer, a fájltartalom soronkénti keresése a mintaegyezésekért. Ha az ügynök pontosan tudja a keresendő szöveget (függvénynevek, változónevek, hibaüzenetek), minden előfordulást gyorsan és pontosan meg tud találni. A reguláris kifejezések kifejezőereje (a szövegminták speciális szimbólumokkal történő leírására szolgáló szintaxis, pl. a `def handle.*` megfelel a `handle` karakterekkel kezdődő összes függvénydefiníciónak) összetett mintákat rögzít – nem csak szó szerinti szöveget, hanem egy adott szerkezethez igazodó kódot is. A gyakorlatban a fájltípus-szűrést (csak Python-fájlok keresése) és az útvonalminta-szűrést (tesztkönyvtárak kizárása) is támogatni kell a zaj csökkentése érdekében. Az alapvető korlát: csak szöveges egyezéseket talál, és nem érti a szemantikát – a "felhasználói hitelesítés" kifejezésre keresve soha nem fog megjelenni olyan függvény, amely kezeli a bejelentkezési logikát, de történetesen nem tartalmazza a "hitelesítés" szót.
 
@@ -333,7 +333,7 @@ Ez a négy keresési módszer egy kiegészítő eszköztárat alkot, amelyet gya
 
 A fájlszerkesztés nehézsége nem magában a műveletben rejlik, hanem abban, hogyan lehet hatékonyan és megbízhatóan megmondani a rendszernek, hogy "mit változtasson és hogyan változtasson" egy LLM segítségével. Az 5-4. ábra öt fájlszerkesztési sémát hasonlít össze, bemutatva az alapvető feszültséget az emberi nyelvi kifejezés és a gépi precíz végrehajtás között.
 
-![5-4. ábra: Öt fájlszerkesztő séma összehasonlítása](images/fig5-4.png)
+![5-4. ábra: Öt fájlszerkesztő séma összehasonlítása](images/fig5-4.svg)
 
 **Eltérő leírás + Modell alkalmazása**: A modell nem határozza meg közvetlenül a fájl szerkesztésének módját; ehelyett módosításleírást generál – amely lehet a git diff-hez hasonló diff szöveg (a `git diff` parancs által kiadott formátum, amely megmutatja, hogy "melyik sorokat törölték és melyek kerültek hozzáadásra"), vagy egy kódvázat kihagyásjelzőkkel (például "itt változatlan marad" megjegyzésekkel a nem módosított részek kihagyásához). Ezt a leírást azután átadják egy speciális "Apply Model"-nek – általában egy másik, kisebb, gyorsabb LLM-nek –, amely felelős azért, hogy összeolvassa azt az eredeti fájllal, hogy létrehozza a teljes új fájlt. Az aggodalmak e szétválasztása lehetővé teszi, hogy a fő modell a magas szintű kódlogikára, az alkalmazásmodell pedig az alacsony szintű szövegműveletekre összpontosítson. A naiv megvalósítás törékenysége az összevonási lépésben rejlik: ha kisebb eltérések vannak a változtatás leírása és a tényleges fájlkód között, meg kell határoznia, hogy ugyanarra a helyre vonatkoznak-e; ha több hasonló kódrészlet van, előfordulhat, hogy rossz helyre olvad össze. A kurzor ennek a megközelítésnek a folyamatos fejlődését reprezentálja: a fő modell kihagyásjelzőkkel ellátott kódvázat ad ki, egy speciálisan kiképzett, gyorsan alkalmazható kis modell újraírja a teljes fájlt, és a spekulatív dekódolás (az eredeti fájltartalom vázlatként történő felhasználása párhuzamos ellenőrzéshez) az egyesítési sebességet másodpercenként több ezer tokenre növeli – a mérnöki befektetés megvette ezt a megközelítést.
 
@@ -524,7 +524,7 @@ Számos összetett dokumentum létrehozása lényegében strukturált adatok ren
 
 A PPT létrehozása köztudottan fáradságos. Egy tipikus akadémiai prezentáció több tucat dián fut, amelyek mindegyike gondos elrendezést, desztillált kulcspontokat és jól megválasztott diagramokat igényel. A PPT létrehozásának újrakeretezése kódgenerálási problémaként azonban a bonyolultság nagy része megszűnik. A modern prezentációs keretrendszerek, mint például a Slidev, elegáns tervezési filozófiát ölelnek fel: Markdown és HTML-ben határozzák meg a tartalmat. A dia létrehozása néhány sor tömör jelölést igényel, és a keretrendszer kezeli a megjelenítést, az elrendezést és az animációt. Egy olyan ügynök számára, aki elsajátította a kódgenerálást, ez ideális terep.
 
-![5-5. ábra: Javaslattevő-ellenőrző mechanizmus a PPT generálásához](images/fig5-5.png)
+![5-5. ábra: Javaslattevő-ellenőrző mechanizmus a PPT generálásához](images/fig5-5.svg)
 
 A kód generálása azonban nem elég. **Miután az ügynök megírta a kódot, fogalma sincs, hogyan jelenik meg valójában az eredmény**: túl zsúfolt tartalom, túlcsorduló szöveg, rossz méretű képek – ezek mindaddig nem láthatók, amíg a diák ténylegesen meg nem jelenik. Ezért egy **Javaslat-ellenőr** mechanizmusra van szükség (az 5-5. ábrán látható) ahhoz, hogy kódgenerálást és minőség-ellenőrzést rendeljünk két független ügynökhöz:
 
@@ -553,7 +553,7 @@ A javaslattevő-ellenőrző ciklus itt ugyanazt a mintát követi, mint a 4. fej
 > **Elfogadási feltételek**: Készítsen egy 5–15 perces videót, amelyben minden dia megjelenítési ideje pontosan igazodik a narrációhoz, a narráció pedig megfelel a vizuális elemeknek.
 >
 >
-> ![5-6. ábra: Végtől-végig tartó folyamat a papírtól a magyarázó videóig](images/fig5-6.png)
+> ![5-6. ábra: Végtől-végig tartó folyamat a papírtól a magyarázó videóig](images/fig5-6.svg)
 >
 >
 
@@ -601,7 +601,7 @@ A naplóelemzésen túl egy teljes intelligens napló diagnosztikai csővezeték
 > "Műszaki Megközelítés": Az Ágens elemzi a termelési trajektóriák halmazát a rendszerarchitektúra dokumentumokkal és PRD-kkel együtt, hogy azonosítsa a problémamintákat és az érintett modulokat. Ezután strukturált problémajelentéseket generál, amelyek a prioritást, a modult, a leírást és az ajánlott fejlesztéseket tartalmazzák. Regressziós teszteket is generál, amelyek a trajektória ID-khoz és interakciós körökhöz vannak kötve; a tesztkeretrendszer visszajátssza ezeket az eseteket és ellenőrzi az eredményeket. Végül az Ágens GitHub issue-kat hoz létre MCP-n keresztül.
 >
 >
-> ![5-7. ábra: Intelligens termelési napló diagnosztikai folyamata](images/fig5-7.png)
+> ![5-7. ábra: Intelligens termelési napló diagnosztikai folyamata](images/fig5-7.svg)
 >
 >
 
@@ -631,7 +631,7 @@ Amikor a követelmények homályosak vagy hiányosak, az Ágensnek tisztázó k�
 
 Kódgeneráláson keresztül az Ágens strukturált interaktív felületeket hozhat létre a szöveges Kérdés-Felelet helyettesítésére. Az 5-8. ábra a dinamikus űrlap generálási folyamatot szemlélteti, bemutatva, hogyan alakítja az Ágens a tisztázó kérdéseket egy strukturált felületté, amely egyszerre kitölthető. Az Ágens egy HTML űrlapot generál, amely különféle beviteli vezérlőket tartalmaz — szövegdobozokat a szabad formátumú információkhoz, legördülő menüket az előre meghatározott opciókhoz, jelölőnégyzeteket a többszörös kiválasztáshoz és dátumválasztókat az egyszerűsített időbevitelhez. A fejlettebb verziók JavaScript segítségével lépcsőzetes űrlapokat hozhatnak létre, amelyek a felhasználó kiválasztására reagálva jelenítenek meg vagy rejtenek el további kérdéseket, és frissítik az elérhető opciókat. A felhasználó egyszerre tölti ki a teljes űrlapot, kiküszöbölve a több párbeszédkört, és egyértelműen láthatja az összes szükséges információt és a kérdések közötti logikai kapcsolatokat.
 
-![5-8. ábra: Dinamikus űrlap generálási folyamata](images/fig5-8.png)
+![5-8. ábra: Dinamikus űrlap generálási folyamata](images/fig5-8.svg)
 
 
 > **Kísérlet 5-9 ★★: Szándék Tisztázó Rendszer Dinamikus Űrlapokkal**
@@ -649,7 +649,7 @@ Az adatbázis-lekérdezés egy olyan forgatókönyv, ahol a kódgenerálás jele
 
 Az első megközelítés "intelligensebbnek" tűnik, de rendkívül hatástalan — egy nagy táblán végzett lekérdezés több ezer sort adhat vissza. Ha az LLM mindezt elolvassa és prózában leírja, az égeti a tokeneket és az időt, és ami még rosszabb, az LLM-ek hírhedten hibásak az adatok "átírásában". Jobb megközelítés az "Artefaktum minta". Az 5-9. ábra egy SQL lekérdező Ágens munkafolyamatát mutatja be: ahelyett, hogy maga olvasná az adatokat, az Ágens egy SQL lekérdezést generál, és független "végrehajtható artefaktumként" adja át a rendszernek. A rendszer végrehajtja a lekérdezést az adatbázison, és az eredményeket táblázatban jeleníti meg a felhasználónak. Az adatok így közvetlenül az adatbázisból a felületbe kerülnek, anélkül, hogy áthaladnának az LLM-en; az LLM megírja a lekérdezést, de soha nem kell több ezer sort elolvasnia és újra közölnie. Ez a megközelítés gyorsabb és pontosabb.
 
-![5-9. ábra: SQL-lekérdező ágens munkafolyamata](images/fig5-9.png)
+![5-9. ábra: SQL-lekérdező ágens munkafolyamata](images/fig5-9.svg)
 
 
 Továbbmenve, az Ágens két artefaktumot generálhat, amelyek egy csővezetéket alkotnak: egy SQL lekérdezést és egy vizualizációs kódot, például egy oszlopdiagram kódját. A frontend közvetlenül átadja az SQL eredményeket a vizualizációs kódnak. Az LLM generálja a kódot, de nem vesz részt az adat útvonalban — ez a kódgenerálás mint felület lényege.
@@ -692,7 +692,7 @@ Az előző szakaszok a kódgenerálást követték egyik területről a másikra
 Először is tisztázni kell ennek a szakasznak a 8. fejezettel való munkamegosztását. Ez a szakasz arról szól, hogy egy Kódoló Ágens hogyan használ kódot a "saját fajtájának javítására és létrehozására" — önjavítás, önreplikáció és új Ágensek igény szerinti generálása. Fókusza a kódgenerálás és a rendszerépítési képesség, ezért ezt a folyamatot "bootstrapping"-nek nevezzük. A 8. fejezet nem magyarázza el újra, hogyan kell ezt a kódot megírni; ehelyett arra összpontosít, hogy a kiértékelt termelési tapasztalat hogyan váltja ki az önmódosítást: a tudás, az utasítások, a programok vagy a paraméterek kiválasztása a frissítés célpontjaként; egy kandidátus verzió generálása egy stabil verzióból; és a kockázat szabályozása regressziós teszteléssel, canary kiadásokkal és visszaállítással. A két fejezet a "kód módosítása" ponton találkozik, de más-más kérdésekre válaszol.
 
 
-![5-10. ábra: Az ágens önindítási ciklusa](images/fig5-10.png)
+![5-10. ábra: Az ágens önindítási ciklusa](images/fig5-10.svg)
 
 
 "Ágens Önjavítás: OpenClaw Doctor."
@@ -731,7 +731,7 @@ Amikor egy Ágens feladatot kap egy új Ágens kifejlesztésére, először más
 > "Elfogadási Kritérium": A generált Ágens sikeresen fut és alapvető feladatokat hajt végre. Ellenőrizze, hogy szabványos üzenetformátumokat és eszközhívási protokollokat, jelenleg ajánlott modelleket és API-kat, valamint helyes kontextus- és állapotkezelést használ-e több beszélgetési körön keresztül. Hasonlítsa össze a semmiből generálást a példa alapú módosítással, és erősítse meg, hogy az utóbbi javítja a minőséget és a hatékonyságot.
 >
 >
-> ![5-11. ábra: Ágenseket létrehozó ágens folyamata](images/fig5-11.png)
+> ![5-11. ábra: Ágenseket létrehozó ágens folyamata](images/fig5-11.svg)
 >
 >
 
