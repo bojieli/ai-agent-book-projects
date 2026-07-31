@@ -1,69 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 580" width="820" height="580" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="40" y="60" width="740" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="180.098" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الحوار الأصلي:</text>
-<text x="746" y="98" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"أنا أحد كبار المهندسين في TechCorp، وأقود فريقًا مكونًا من 5 أفراد لبناء نظام توصيات باستخدام تعلم الآلة لمدة ثلاث سنوات"</text>
-<rect x="25.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="117.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ملاحظات بسيطة</text>
-<text x="117.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الحقائق الذرية</text>
-<line x1="117.5" y1="117" x2="117.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="25.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="205.8" y="205" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"الشركة المستخدمة: TechCorp"</text>
-<text x="196.2" y="223" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"منصب المستخدم: مهندس أول"</text>
-<text x="184.2" y="241" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"فريق المستخدم: 5 أشخاص"</text>
-<text x="196.8" y="259" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"خبرة المستخدم: نظام التوصيات"</text>
-<text x="117.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الايجابيات: عملية O(1)،</text>
-<text x="117.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">النفقات العامة منخفضة للغاية</text>
-<text x="117.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">السلبيات: الخسارة الكاملة</text>
-<text x="117.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الملاءمة</text>
-<rect x="220.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="312.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ملاحظات محسنة</text>
-<text x="312.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">فقرة كاملة</text>
-<line x1="312.5" y1="117" x2="312.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="220.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="364.8" y="205" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"مهندس كبير في</text>
-<text x="386.4" y="223" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">TechCorp، يقود فريقًا</text>
-<text x="372" y="241" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">من 5 بناء ريك.</text>
-<text x="379.2" y="259" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">النظام، 3 سنوات في ML."</text>
-<text x="312.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الايجابيات: الدلالية</text>
-<text x="312.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">اكتمال</text>
-<text x="312.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">السلبيات: التكرار +</text>
-<text x="312.5" y="358.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">تحديثات معقدة</text>
-<rect x="415.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="507.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">بطاقات JSON</text>
-<text x="507.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الهيكل الهرمي</text>
-<line x1="507.5" y1="117" x2="507.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="415.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="459" y="205" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">العمل:</text>
-<text x="559.8" y="223" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">  الشركة: "TechCorp"</text>
-<text x="581.4" y="241" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">  العنوان: "مهندس كبير"</text>
-<text x="509.4" y="259" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">  حجم_الفريق: 5</text>
-<text x="507.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الايجابيات: تحديثات جزئية</text>
-<text x="507.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">سلبيات: تصنيف صارم</text>
-<rect x="610.0" y="130" width="185" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="702.5" y="148" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">ظرف. بطاقات JSON</text>
-<text x="702.5" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">المعرفة السياقية</text>
-<line x1="702.5" y1="117" x2="702.5" y2="128" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="610.0" y="190" width="185" height="88" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="747.6" y="205" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">{الفئة: "العمل"،</text>
-<text x="783" y="223" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif"> العنوان: "مهندس كبير"،</text>
-<text x="776.1" y="241" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif"> الخلفية الدرامية: "مقدمة ذاتية"،</text>
-<text x="704.4" y="259" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif"> نهاية الخبر: "09-14"}</text>
-<text x="702.5" y="305.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الايجابيات: توضيح +</text>
-<text x="702.5" y="323.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">إمكانية التتبع</text>
-<text x="702.5" y="340.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">السلبيات: ارتفاع تكلفة التوليد</text>
-<rect x="40" y="420" width="740" height="180" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="385.204" y="442" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">إطار التقييم ثلاثي المستويات</text>
-<rect x="60" y="465" width="180" height="38" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="150" y="484" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">المستوى 1: الاستدعاء الأساسي</text>
-<text x="474.53" y="477" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">تخزين واسترجاع المعلومات المباشرة</text>
-<text x="583.2" y="494" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"رقم عضويتي هو 12345" → الإرجاع الدقيق</text>
-<rect x="60" y="510" width="180" height="38" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="150" y="529" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">المستوى 2: استرجاع متعدد الجلسات</text>
-<text x="479.178" y="522" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">التفكير النقابي عبر الجلسة</text>
-<text x="633.6" y="539" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"جدولة الصيانة لسيارتي" ← تحديد سيارتين</text>
-<rect x="60" y="555" width="180" height="38" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="150" y="574" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">المستوى 3: الخدمة الاستباقية</text>
-<text x="574.112" y="567" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">دمج ذكريات متعددة، والمساعدة الاستباقية</text>
-<text x="712.8" y="584" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">احجز رحلة دولية → اكتشف جواز السفر على وشك الانتهاء</text>
+<svg xml:lang="ar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" style="background:#ffffff">
+<style>text{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif}</style>
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#555555"/></marker>
+</defs>
+
+<!-- Left section: API layer -->
+<text x="200" y="24" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">مستوى API (ما يراه المطوّر)</text>
+
+<rect x="20" y="40" width="360" height="220" rx="8" fill="#f8f9fb" stroke="#b0b8c4" stroke-width="1.5"/>
+
+<!-- System message -->
+<rect x="35" y="55" width="330" height="82" rx="5" fill="#ffffff" stroke="#d0d5dc" stroke-width="1"/>
+<text x="50" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">{ </text>
+<text x="68" y="80" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"role"</text>
+<text x="128" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="144" y="80" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"system"</text>
+<text x="224" y="80" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">,</text>
+
+<text x="68" y="104" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"content"</text>
+<text x="148" y="104" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="164" y="104" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"أنت مساعد"</text>
+<text x="264" y="104" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace"> }</text>
+
+<!-- User message -->
+<rect x="35" y="152" width="330" height="82" rx="5" fill="#ffffff" stroke="#d0d5dc" stroke-width="1"/>
+<text x="50" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">{ </text>
+<text x="68" y="177" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"role"</text>
+<text x="128" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="144" y="177" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"user"</text>
+<text x="208" y="177" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">,</text>
+
+<text x="68" y="201" font-size="14" fill="#0b7285" font-family="'Courier New',Courier,monospace">"content"</text>
+<text x="148" y="201" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace">: </text>
+<text x="164" y="201" font-size="14" fill="#c92a2a" font-family="'Courier New',Courier,monospace">"مرحبًا"</text>
+<text x="224" y="201" font-size="14" fill="#555555" font-family="'Courier New',Courier,monospace"> }</text>
+
+<!-- Arrow -->
+<line x1="395" y1="150" x2="455" y2="150" stroke="#555555" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+<!-- Right section: Model layer -->
+<text x="680" y="24" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">مستوى النموذج (بعد تحويل Chat Template)</text>
+
+<rect x="475" y="40" width="405" height="220" rx="8" fill="#f5faf7" stroke="#8fc5a6" stroke-width="1.5"/>
+
+<!-- Token line 1: <|im_start|>system -->
+<rect x="490" y="55" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="66" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="66" font-size="14" fill="#333333" dominant-baseline="central">system</text>
+
+<!-- Token line 2: 你是助手<|im_end|> -->
+<text x="490" y="98" font-size="14" fill="#333333" dominant-baseline="central">أنت مساعد</text>
+<rect x="568" y="86" width="120" height="22" rx="4" fill="#999999"/>
+<text x="628" y="97" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_end|&gt;</text>
+
+<!-- Token line 3: <|im_start|>user -->
+<rect x="490" y="118" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="129" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="129" font-size="14" fill="#333333" dominant-baseline="central">user</text>
+
+<!-- Token line 4: 你好<|im_end|> -->
+<text x="490" y="161" font-size="14" fill="#333333" dominant-baseline="central">مرحبًا</text>
+<rect x="530" y="149" width="120" height="22" rx="4" fill="#999999"/>
+<text x="590" y="160" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_end|&gt;</text>
+
+<!-- Token line 5: <|im_start|>assistant -->
+<rect x="490" y="181" width="150" height="22" rx="4" fill="#555555"/>
+<text x="565" y="192" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="'Courier New',Courier,monospace">&lt;|im_start|&gt;</text>
+<text x="645" y="192" font-size="14" fill="#333333" dominant-baseline="central">assistant</text>
+
+<!-- Token line 6: (模型从这里开始生成) -->
+<text x="490" y="226" font-size="13" fill="#888888" dominant-baseline="central">(يبدأ النموذج الإنشاء من هنا)</text>
+<line x1="490" y1="234" x2="680" y2="234" stroke="#888888" stroke-width="1" stroke-dasharray="4,3"/>
+
 </svg>
