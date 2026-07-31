@@ -1,4 +1,9 @@
 # Core dependencies
+
+# Shared provider resolver from the repository root. Run this requirements file
+# from the experiment directory, as shown in the README.
+-e ../..
+
 ollama>=0.3.0
 pyyaml>=6.0
 python-dotenv>=1.0.0
