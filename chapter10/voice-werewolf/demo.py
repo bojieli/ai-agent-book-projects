@@ -14,7 +14,7 @@
 默认路径是双向真人语音验收；全 AI 文本/离线模式只用于补充诊断与 CI。
 
 用法：
-    export OPENAI_API_KEY=sk-...
+    export OPENAI_API_KEY=your-openai-api-key
     python demo.py                 # 文本模式跑完整一局（LLM 决策，默认）
     python demo.py --offline       # 离线模式：规则决策，零成本、可复现，无需 API Key
     python demo.py --seed 7        # 换一局身份分布
@@ -289,7 +289,7 @@ def main():
     has_llm_key = any(os.environ.get(k) for k in ("ARK_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"))
     if (args.voice or live_human) and not os.environ.get("OPENAI_API_KEY"):
         print("错误：语音合成（--voice，OpenAI tts-1）需要 OPENAI_API_KEY。"
-              "请先 export OPENAI_API_KEY=sk-...（见 env.example），或去掉 --voice 跑纯文本模式。")
+              "请先 export OPENAI_API_KEY=your-openai-api-key（见 env.example），或去掉 --voice 跑纯文本模式。")
         sys.exit(1)
     if not args.offline and not has_llm_key:
         print("错误：LLM 决策需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY。"

@@ -6,8 +6,8 @@ import sys
 from pathlib import Path
 
 # Set dummy API key
-os.environ["KIMI_API_KEY"] = os.getenv("KIMI_API_KEY", "sk-test")
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "sk-test")
+os.environ["KIMI_API_KEY"] = os.getenv("KIMI_API_KEY", "test-kimi-key")
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "test-openai-key")
 
 from config import Config
 from evaluator import UserMemoryEvaluator

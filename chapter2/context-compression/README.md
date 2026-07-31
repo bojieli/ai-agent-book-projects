@@ -55,8 +55,23 @@ This lab implements and compares **6** strategies and their trade-offs.
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 2 environment
+uv sync --locked --python 3.12 --extra ch2
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/context-compression
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # Edit .env with your API keys
 ```
@@ -289,8 +304,23 @@ New task: system prompt in `agent.py`, mock data in `web_tools.py`, tool descrip
 ### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 2 章环境
+uv sync --locked --python 3.12 --extra ch2
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/context-compression
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # 编辑 .env 填入 API Key
 ```

@@ -110,12 +110,26 @@ Query `a cat playing` ranks docs that only say `kitten` / `feline` (no literal �
 
 ### Installation
 
-- Python 3.8+, macOS (M1/M2 optimized) or Linux  
+- Python 3.12 with the root `ch3` extra, macOS (M1/M2 optimized) or Linux
 - ≥4GB RAM (8GB recommended); optional CUDA GPU  
 
 ```bash
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/dense-embedding
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 BGE-M3 (~2.3GB) downloads on first use into the HuggingFace cache.
@@ -301,12 +315,26 @@ python cli.py --corpus my.json --labels my_labels.json --eval -o result.json
 
 ### 安装
 
-- Python 3.8+，macOS（M1/M2）或 Linux  
+- Python 3.12 与根目录 `ch3` extra，macOS（M1/M2）或 Linux
 - 内存 ≥4GB（建议 8GB）；可选 CUDA  
 
 ```bash
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/dense-embedding
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 BGE-M3（约 2.3GB）首次运行自动下载。

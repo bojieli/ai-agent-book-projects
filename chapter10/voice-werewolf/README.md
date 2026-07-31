@@ -40,8 +40,23 @@ finish. Reaching the safety round limit without a rule-based winner is reported 
 ## Run
 
 ```bash
+# From the repository root: use the shared Chapter 10 environment
+uv sync --locked --python 3.12 --extra ch10
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch10]"
+
 cd chapter10/voice-werewolf
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 python demo.py --confirm-human-consent                # 1 consenting human + 6 real LLM Agents
 python demo.py --confirm-human-consent --human-seat 3 # human is P3; role remains randomized

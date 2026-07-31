@@ -37,16 +37,47 @@ The two levers are:
 | `agent.py` | 8-turn refund agent with `run_scenario(kv_cache, compress)` |
 | `demo.py` | CLI entry for online/offline runs |
 | `sample_trace.json` | captured 2×2 scenario token records for offline recomputation |
+| `tests/` | offline pytest regressions for trace parsing and usage accounting |
 | `requirements.txt` / `env.example` | dependencies and environment templates |
 
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 6 environment
+uv sync --locked --python 3.12 --extra ch6
 
-export OPENAI_API_KEY=sk-...   # or OPENROUTER_API_KEY=sk-or-...
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6]"
+
+cd chapter6/agent-cost-analysis
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
+export OPENAI_API_KEY=your-openai-api-key   # or OPENROUTER_API_KEY=your-openrouter-api-key
 python demo.py
 python demo.py --offline --scenario all
+```
+
+### Tests
+
+Automated tests are offline and do not require API keys.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/agent-cost-analysis
+python -m pytest tests
 ```
 
 ### CLI options
@@ -116,15 +147,31 @@ Offline mode reads `sample_trace.json` and re-runs only cost arithmetic, enablin
 | `agent.py` | 多轮客服退款 Agent 任务；`run_scenario(kv_cache, compress)` 把两个开关正交组合成 2×2 场景，并用 tiktoken 估算「工具返回注入」token |
 | `demo.py` | 命令行入口（argparse）：在线跑真实模型 / 离线复算；选择 A/B 场景、模型单价、输出文件 |
 | `sample_trace.json` | 一次真实运行录下的四个场景逐步 token 用量（离线模式的输入，成本按当前单价重算）|
+| `tests/` | 离线 pytest 回归测试：trace 解析与 usage 计费容错 |
 | `requirements.txt` / `env.example` | 依赖与环境变量示例 |
 
 ## 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 6 章环境
+uv sync --locked --python 3.12 --extra ch6
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6]"
+
+cd chapter6/agent-cost-analysis
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 在线（真实调用模型，需要 key）：默认跑 A(朴素)+B(优化) 两组
-export OPENAI_API_KEY=sk-...           # 或 export OPENROUTER_API_KEY=sk-or-...（自动回退）
+export OPENAI_API_KEY=your-openai-api-key           # 或 export OPENROUTER_API_KEY=your-openrouter-api-key（自动回退）
 python demo.py
 
 # 离线（无需 key）：用内置 canned trace 复算全部表格
@@ -132,6 +179,21 @@ python demo.py --offline --scenario all
 ```
 
 在线模式会真实调用 OpenAI，`--scenario all` 约几十次 chat completion，运行一两分钟。
+
+## 测试
+
+自动化测试均为离线回归测试，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch6 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch6,dev]"
+
+cd chapter6/agent-cost-analysis
+python -m pytest tests
+```
 
 ### 命令行参数（`python demo.py --help`）
 

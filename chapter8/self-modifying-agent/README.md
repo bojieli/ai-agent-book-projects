@@ -15,7 +15,25 @@ python run_experiment_8_5.py \
 如需改用 OpenAI 直连：
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方单项目兼容路径。
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/self-modifying-agent
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 export OPENAI_API_KEY=your_api_key_here
 python run_experiment_8_5.py --provider openai --model gpt-4o-mini
 ```

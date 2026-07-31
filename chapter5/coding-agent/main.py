@@ -162,7 +162,7 @@ class CodingAgentCLI:
             print(self.color("Please check your .env file configuration:", Colors.YELLOW))
             print(self.color("Example:", Colors.DIM))
             print(self.color("  PROVIDER=anthropic", Colors.DIM))
-            print(self.color("  ANTHROPIC_API_KEY=sk-ant-api03-...", Colors.DIM))
+            print(self.color("  ANTHROPIC_API_KEY=your-anthropic-api-key", Colors.DIM))
             print(self.color("  DEFAULT_MODEL=claude-sonnet-5", Colors.DIM))
             print()
             print(self.color("Supported providers: anthropic, openai, openrouter", Colors.DIM))
@@ -500,4 +500,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

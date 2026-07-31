@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 620 314" width="620" height="314" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="160.0" y="46" width="300" height="52" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="60.625" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Consulta del usuario</text>
+<text x="310.0" y="83.375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Depurar este archivo&quot;</text>
+<line x1="310.0" y1="100" x2="310.0" y2="120" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="90.0" y="122" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="142.6" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Capa 1: Búsqueda semántica a nivel de servidor</text>
+<text x="310.0" y="163.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cientos de servidores MCP → recuperar los mejores K servidores</text>
+<line x1="310.0" y1="186" x2="310.0" y2="208" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="90.0" y="210" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="222.8" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Capa 2: Búsqueda semántica a nivel de herramienta</text>
+<text x="310.0" y="241.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Coincidir solo entre herramientas de los mejores K servidores → mejores N</text>
+<text x="310.0" y="259.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">herramientas</text>
+<line x1="310.0" y1="274" x2="310.0" y2="296" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="160.0" y="298" width="300" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="314.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Herramienta seleccionada</text>
+<text x="310.0" y="327.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.0" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Reduce drásticamente el espacio de candidatos y reduce el costo de selección</text>
+</svg>

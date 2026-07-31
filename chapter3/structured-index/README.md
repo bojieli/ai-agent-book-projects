@@ -27,8 +27,23 @@ Two advanced approaches for large technical documents (e.g. Intel® SDM-style ma
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/structured-index
-pip install -r requirements.txt
+
+# Exact legacy parity path, including optional RAPTOR/GraphRAG/Azure packages:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # API keys and preferences
 ```
@@ -180,8 +195,23 @@ Backend for agentic-rag style projects; see related chapter labs.
 ### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/structured-index
-pip install -r requirements.txt
+
+# 精确复现旧版单项目环境，含可选 RAPTOR/GraphRAG/Azure 依赖：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 ```
 

@@ -1,0 +1,193 @@
+% ===== ElegantBook customizations for 《Agentes de IA en Profundidad》 =====
+% Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
+
+% ElegantBook loads Babel's Spanish module when built with `lang=es`.
+% Document labels are customized below without reloading Babel with new options.
+
+\AtBeginDocument{%
+  \renewcommand{\contentsname}{Índice}%
+  \renewcommand{\chaptername}{Capítulo}%
+  \renewcommand{\figurename}{Figura}%
+  \renewcommand{\tablename}{Tabla}%
+  \renewcommand{\listfigurename}{Índice de Figuras}%
+  \renewcommand{\listtablename}{Índice de Tablas}%
+}
+
+% ── Text & math fonts: Palatino look, matching the author's papers ──
+\usepackage{unicode-math}
+\setmainfont{texgyrepagella}[
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Extension = .otf,
+  Scale = 1.0]
+\setsansfont{texgyreheros}[
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Extension = .otf,
+  Scale = 0.9]
+\setmathfont{texgyrepagella-math}[Extension = .otf]
+
+% ── Unicode glyph fallback (the text/mono fonts lack these) ──────
+\usepackage{newunicodechar}
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}{\newfontfamily\fallbackfont{DejaVu Sans}}
+\IfFontExistsTF{Heiti SC}{\newunicodechar{★}{{\fontspec{Heiti SC}★}}}{\newunicodechar{★}{{\fontspec{Noto Sans CJK SC}★}}}
+\newunicodechar{✓}{{\fallbackfont ✓}}
+\newunicodechar{✗}{{\fallbackfont ✗}}
+\newunicodechar{₀}{{\fallbackfont ₀}}
+\newunicodechar{₁}{{\fallbackfont ₁}}
+\newunicodechar{₂}{{\fallbackfont ₂}}
+\newunicodechar{₃}{{\fallbackfont ₃}}
+\newunicodechar{₄}{{\fallbackfont ₄}}
+\newunicodechar{₅}{{\fallbackfont ₅}}
+\newunicodechar{₆}{{\fallbackfont ₆}}
+\newunicodechar{₇}{{\fallbackfont ₇}}
+\newunicodechar{₈}{{\fallbackfont ₈}}
+\newunicodechar{₉}{{\fallbackfont ₉}}
+\newunicodechar{ⓐ}{{\fallbackfont ⓐ}}
+\newunicodechar{ⓑ}{{\fallbackfont ⓑ}}
+\newunicodechar{ⓒ}{{\fallbackfont ⓒ}}
+\newunicodechar{ⓓ}{{\fallbackfont ⓓ}}
+\newunicodechar{ⓔ}{{\fallbackfont ⓔ}}
+\newunicodechar{①}{{\fallbackfont ①}}
+\newunicodechar{②}{{\fallbackfont ②}}
+\newunicodechar{③}{{\fallbackfont ③}}
+\newunicodechar{④}{{\fallbackfont ④}}
+\newunicodechar{⑤}{{\fallbackfont ⑤}}
+\newunicodechar{⑥}{{\fallbackfont ⑥}}
+\newunicodechar{⑦}{{\fallbackfont ⑦}}
+\newunicodechar{⑧}{{\fallbackfont ⑧}}
+\newunicodechar{⑨}{{\fallbackfont ⑨}}
+\newunicodechar{⑩}{{\fallbackfont ⑩}}
+% Math / symbols absent from the Latin text font
+\newunicodechar{≈}{{\fallbackfont ≈}}
+\newunicodechar{♠}{{\fallbackfont ♠}}
+\newunicodechar{♣}{{\fallbackfont ♣}}
+\newunicodechar{♥}{{\fallbackfont ♥}}
+\newunicodechar{♦}{{\fallbackfont ♦}}
+% Greek letters used inline in body text
+\newunicodechar{α}{{\fallbackfont α}}
+\newunicodechar{β}{{\fallbackfont β}}
+\newunicodechar{γ}{{\fallbackfont γ}}
+\newunicodechar{δ}{{\fallbackfont δ}}
+\newunicodechar{ε}{{\fallbackfont ε}}
+\newunicodechar{η}{{\fallbackfont η}}
+\newunicodechar{θ}{{\fallbackfont θ}}
+\newunicodechar{λ}{{\fallbackfont λ}}
+\newunicodechar{μ}{{\fallbackfont μ}}
+\newunicodechar{π}{{\fallbackfont π}}
+\newunicodechar{ρ}{{\fallbackfont ρ}}
+\newunicodechar{σ}{{\fallbackfont σ}}
+\newunicodechar{τ}{{\fallbackfont τ}}
+\newunicodechar{φ}{{\fallbackfont φ}}
+\newunicodechar{ω}{{\fallbackfont ω}}
+
+% ── Residual CJK glyphs ──────────────────────────────────────────
+\usepackage{xeCJK}
+\IfFontExistsTF{Heiti SC}{%
+  \setCJKmainfont{Heiti SC}%
+  \setCJKmonofont{Heiti SC}%
+}{%
+  \setCJKmainfont{Noto Sans CJK SC}%
+  \setCJKmonofont{Noto Sans Mono CJK SC}%
+}
+
+% ── Code/monospace font (covers box-drawing glyphs used in code) ──
+\IfFontExistsTF{Menlo}{\setmonofont[Scale=0.86]{Menlo}}{\setmonofont[Scale=0.86]{DejaVu Sans Mono}}
+
+% ── tcolorbox (ElegantBook already loads it; just add libraries) ──
+\tcbuselibrary{skins,breakable}
+
+% ── TikZ (for the full-bleed image cover in cover.tex) ───────────
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+\tikzfading[name=titlefade, top color=transparent!100, bottom color=transparent!0]
+
+% Theme accent color: override ElegantBook's bright cyan with a deep navy
+\definecolor{structurecolor}{RGB}{30,58,107}
+
+% Accent shade for code/figure chrome
+\colorlet{accent}{structurecolor}
+
+% Internal cross-reference links
+\newcommand{\crossreflink}[2]{\hyperref[#1]{\textcolor{structurecolor}{#2}}}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Wrap long lines in code blocks ───────────────────────────────
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+% ── Code blocks: subtle O'Reilly-style framed box ────────────────
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm,
+  before skip=0.7em, after skip=0.7em
+}
+\renewenvironment{Shaded}{\begin{codebox}}{\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{Verbatim}}%
+  {\end{Verbatim}\end{codebox}}
+
+% ── Experiment & question callouts (used by experiment_box.lua) ───
+\newtcolorbox{experimentbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em
+}
+
+\newtcolorbox{questionbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em,
+  title={\sffamily\bfseries Preguntas de Reflexión},
+  fonttitle=\normalsize\color{white},
+  coltitle=white,
+  attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
+  boxed title style={colback=accent, colframe=accent, arc=0.8mm, outer arc=0.8mm}
+}
+
+% ── Figures: force [H] so they can sit inside callout/quote boxes ─
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Figure captions: manual numbering in text, so suppress label ──
+\usepackage{caption}
+\captionsetup{font={normalsize,sf,bf}, labelformat=empty, skip=4pt, justification=centering}
+
+% ── Blockquotes: teal left bar (experiments render as quotes) ────
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[
+    blanker, breakable,
+    borderline west={2.5pt}{0pt}{accent},
+    colback=accent!4,
+    left=1em, right=0.6em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Inline code: keep it tight ───────────────────────────────────
+\setlength{\parindent}{2em}
+
+% ElegantBook empties the plain page style used on chapter-opening pages.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}

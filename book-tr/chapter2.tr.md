@@ -442,7 +442,7 @@ Cevap: o tek zaman damgası satırı her bir istekte KV Cache'i geçersiz kılı
 > ![Şekil 2-6: Attention Mekanizmasının Sezgisel Anlaşılması](images/fig2-6.svg)
 >
 >
-> Şekil 2-6'nın üst kısmı "怎么样"ın (nasıl) her önceki kelimeyle nasıl eşleştiğini gösterir: en güçlü eşleşme "天气" (hava durumu, 0,55) iledir, "北京" (Pekin, 0,35) ile bir miktar ilgi vardır, "的" (parçacık, 0,05) ile neredeyse hiç yoktur ve kalan yaklaşık 0,05 ağırlık "怎么样"ın kendisine gider (şekilde ayrıca gösterilmemiştir)—tüm ağırlıklar toplamda 1 eder. Nihai çıktı esas olarak "天气"den gelen bilgiden yararlanır, bu da sezgiyle tam olarak örtüşür.
+> Şekil 2-6'nın üst kısmı "怎么样"ın (nasıl) her önceki kelimeyle nasıl eşleştiğini gösterir: en güçlü eşleşme "天气" (hava durumu, 0,55) iledir, "北京" (Pekin, 0,35) ile bir miktar ilgi vardır, "的" (parçacık, 0,05) ile neredeyse hiç yoktur ve kalan yaklaşık 0,05 ağırlık "怎么样"ın kendisine gider—tüm ağırlıklar toplamda 1 eder. Nihai çıktı esas olarak "天气"den gelen bilgiden yararlanır, bu da sezgiyle tam olarak örtüşür.
 >
 > **Attention Isı Haritası (Heatmap)**, her kelimenin önceki tüm kelimelere karşı attention ağırlıklarını bir matris halinde düzenler. Şekil 2-6'nın alt kısmı eksiksiz ısı haritasını gösterir: her satır bir Query'dir (şu anda işlenen kelime), her sütun bir Key'dir (dikkat edilen kelime) ve daha koyu ızgara hücreleri daha yoğun bir dikkati gösterir. Isı haritasının üçgen olduğuna dikkat edin — çünkü model metni soldan sağa ürettiğinden, her kelime yalnızca kendisini ve kendisinden önceki kelimeleri görebilir, henüz üretilmemiş içeriğe "göz atamaz".
 >

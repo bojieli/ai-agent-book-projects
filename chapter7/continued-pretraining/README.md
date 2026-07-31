@@ -42,7 +42,23 @@ Running the training script produces two local directories (saving only LoRA ada
 - **Optional**: wandb (experiment tracking; script defaults to `report_to="wandb"`).
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 7 environment plus Unsloth
+uv sync --locked --python 3.12 --extra ch7 --extra unsloth
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch7,unsloth]"
+
+cd chapter7/continued-pretraining
+
+# Single-project compatibility path, still supported for exact legacy parity
+# (including the original Unsloth Git install used by this project):
+# python -m pip install -r requirements.txt
 ```
 
 > Note: Unsloth depends on a GPU with a compatible CUDA/PyTorch version and cannot be used for training or inference in a pure CPU environment. The `--help` for each script uses lazy imports, so parameter descriptions can be viewed on machines without a GPU.
@@ -171,7 +187,23 @@ continued-pretraining/
 - **可选**：wandb（实验跟踪，脚本默认 `report_to="wandb"`）。
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 7 章环境，并显式加入 Unsloth
+uv sync --locked --python 3.12 --extra ch7 --extra unsloth
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch7,unsloth]"
+
+cd chapter7/continued-pretraining
+
+# 迁移期间仍支持单项目兼容路径，用于完全复现旧版依赖
+#（包括本项目原有的 Unsloth Git 安装方式）：
+# python -m pip install -r requirements.txt
 ```
 
 > 注意：Unsloth 依赖 GPU 与匹配的 CUDA/PyTorch 版本，无法在纯 CPU 环境下训练或推理。各脚本的 `--help` 已做延迟导入，可在没有 GPU 的机器上直接查看参数说明。

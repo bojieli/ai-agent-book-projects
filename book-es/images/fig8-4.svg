@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 204" width="860" height="204" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<text x="220" y="46" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ingenuo: todas las herramientas en el prompt del sistema</text>
+<rect x="30" y="62" width="380" height="70" rx="6" fill="#f0d8d8" stroke="#333333" stroke-width="2"/>
+<text x="220" y="84" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Prompt del sistema + todas las def. de herramientas</text>
+<text x="220" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cualquier cambio en herramientas → invalida toda la caché KV</text>
+<rect x="30" y="140" width="380" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220" y="163" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Recomputado en cada ronda, alto costo</text>
+<text x="640" y="46" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Optimizado: def. de herramientas cargadas bajo demanda</text>
+<rect x="450" y="62" width="380" height="40" rx="6" fill="#d8e8d8" stroke="#333333" stroke-width="2"/>
+<text x="640" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Prompt del sistema estable (prefijo de acierto de caché)</text>
+<rect x="450" y="106" width="380" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="640" y="126" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Def. de herramientas agregadas bajo demanda (parte variable)</text>
+<rect x="450" y="150" width="380" height="40" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="640" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Traza de conversación</text>
+<text x="640" y="206" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">El prefijo estable no cambia → la caché KV se reutiliza continuamente</text>
+<line x1="430" y1="54" x2="430" y2="220" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+</svg>

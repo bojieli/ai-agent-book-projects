@@ -81,9 +81,28 @@
     {% endif %}
 
     {# ── Language selector dropdown (between search & source) ── #}
-    <select id="lang-selector"
-            class="lang-select"
-            aria-label="Switch language"></select>
+    <div class="lang-switcher">
+      <button id="lang-selector"
+              class="lang-select"
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-controls="lang-menu"
+              aria-label="Switch language">
+        <span class="lang-select__icon" aria-hidden="true">
+          {% include ".icons/material/translate.svg" %}
+        </span>
+        <span class="lang-select__label" data-lang-label>Language</span>
+        <span class="lang-select__chevron" aria-hidden="true">
+          {% include ".icons/material/chevron-down.svg" %}
+        </span>
+      </button>
+      <div id="lang-menu"
+           class="lang-menu"
+           role="menu"
+           aria-labelledby="lang-selector"
+           hidden></div>
+    </div>
 
     {# Expose language config + site root to the switcher script. #}
     <script>window.LANG_CONFIG = {{ config.extra.languages | tojson }};</script>

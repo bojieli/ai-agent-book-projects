@@ -18,7 +18,7 @@ from the environment and is never written to disk.
 
 Usage
 -----
-    export DEEPSEEK_API_KEY=sk-...
+    export DEEPSEEK_API_KEY=your-deepseek-api-key
     python translate_to_tamil.py --list          # show what would be translated
     python translate_to_tamil.py --limit 1       # translate one file first
     python translate_to_tamil.py                  # translate the whole book

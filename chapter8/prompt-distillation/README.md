@@ -94,7 +94,16 @@ The project uses the same multilingual language classification task as tinker:
 1. Install the required dependencies:
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use a separate Linux/CUDA project-local environment.
+# The root ch8 extra intentionally excludes this training stack; ordinary
+# Chapter 8 experiments should not pull TRL/PEFT/vLLM or CUDA-oriented deps.
+# requirements.txt includes vLLM, which is Linux/GPU-only in this repository.
+cd chapter8/prompt-distillation
+python -m venv .venv-prompt-distillation
+source .venv-prompt-distillation/bin/activate
+
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 2. Setup Weights & Biases for training monitoring:
@@ -113,7 +122,7 @@ You can get your API key from [https://wandb.ai/settings](https://wandb.ai/setti
 
 - Python 3.10+
 - PyTorch 2.0+
-- CUDA 12.1+ (for GPU acceleration)
+- CUDA 12.1+ (for GPU acceleration; vLLM path is Linux/GPU)
 - **GPU**: H100 80GB (for 30B model) or any GPU with 24GB+ for smaller models
 - **Memory**: ~70-75GB VRAM for 30B model with LoRA
 
@@ -675,7 +684,16 @@ Assistant: ja
 1. 安装所需的依赖项：
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：请使用单独的 Linux/CUDA 项目本地环境。
+# 根目录 ch8 extra 有意不包含本训练栈；普通第 8 章实验不应拉取
+# TRL/PEFT/vLLM 或 CUDA 取向依赖。
+# requirements.txt 包含 vLLM；本仓库将 vLLM 视为 Linux/GPU-only 依赖。
+cd chapter8/prompt-distillation
+python -m venv .venv-prompt-distillation
+source .venv-prompt-distillation/bin/activate
+
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 2. 设置训练监控的权重和偏差：
@@ -694,7 +712,7 @@ export WANDB_API_KEY=your_api_key_here
 
 - Python 3.10+
 - PyTorch 2.0+
-- CUDA 12.1+（用于 GPU 加速）
+- CUDA 12.1+（用于 GPU 加速；vLLM 路径面向 Linux/GPU）
 - **GPU**：H100 80GB（适用于 30B 型号）或任何具有 24GB+ 的 GPU（适用于较小型号）
 - **内存**：带有 LoRA 的 30B 型号约为 70-75GB VRAM
 

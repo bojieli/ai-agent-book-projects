@@ -1,6 +1,10 @@
 # KV Cache Demonstration Requirements
 # Core dependencies for ReAct agent with Kimi K3 model
 
+# Shared provider resolver from the repository root. Run this requirements file
+# from the experiment directory, as shown in the README.
+-e ../..
+
 # OpenAI client for Kimi API compatibility
 openai>=1.35.0
 

@@ -8,6 +8,8 @@
 
 | Proje | Tür | Açıklama |
 | --- | :--: | --- |
+| [learning-from-experience](../chapter1/learning-from-experience/) (7-1, 7-2) | ✅ | Deneyimden öğrenmek için aynı hazine avı ortamında Q-learning ve LLM Agent çalıştırır. |
+| [prompt-distillation](../chapter8/prompt-distillation/) (7-8) | 🚧 | Öğretmen örneklerini öğrenci prompt'una damıtır ve kalite ile maliyeti karşılaştırır. |
 | [AdaptThink](AdaptThink/) | 📖 | Muhakeme modellerine, problem zorluğuna göre muhakeme modunu (Thinking vs NoThinking) uyarlanabilir şekilde seçmeyi öğretir. Kısıtlı optimizasyon ve önem örneklemesi yoluyla, doğruluğu artırırken muhakeme maliyetlerini önemli ölçüde azaltır (%45-69). DeepSeek-R1-Distill-Qwen modeline dayanır, DAPO algoritmasıyla eğitilir. |
 | [retool](retool/) | 📖 | Büyük dil modellerinin matematiksel muhakeme yeteneğini artırmak için çok turlu diyalog ve bir kod sandbox'ı kullanır. SFT ve RL'den oluşan iki aşamalı bir eğitim süreciyle model, matematik problemlerini çözmeye yardımcı olmak için bir kod yürütme ortamını kullanmayı öğrenir. Qwen2.5-32B-Instruct'a dayanır, AIME 2024 veri kümesinde DAPO algoritması ve SandboxFusion sandbox'ı kullanılarak eğitilir. |
 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld çerçevesine dayalı olarak somutlaşmış (embodied) ajanları eğitir; ajanların sanal bir ortamda karmaşık görevleri yerine getirmesini ve deneyimden öğrenmesini sağlar. |

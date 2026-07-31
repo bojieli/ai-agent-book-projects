@@ -36,8 +36,23 @@ MultimodalAgent
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/multimodal-agent
-pip install -r requirements.txt
+
+# Exact legacy parity path, including python-magic file sniffing:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # Edit .env with API keys
 export $(cat .env | xargs)   # optional on Unix
@@ -183,8 +198,23 @@ MultimodalAgent
 ### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/multimodal-agent
-pip install -r requirements.txt
+
+# 精确复现旧版单项目环境，含 python-magic 文件类型检测：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 # 编辑 API Key
 export $(cat .env | xargs)   # Unix 可选

@@ -8,7 +8,12 @@
 
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 6-1, 6-2 | `tau2-bench/` | 📖 | Focuses on evaluating an agent's ability to use tools for complex reasoning, including scenarios such as computation, search, and data processing. |
+| 6-1 | `tau2-bench/` | 📖 | Focuses on evaluating an agent's ability to use tools for complex reasoning, including scenarios such as computation, search, and data processing. |
+| 6-2 | `tau2-bench/` | 📖 | Manually completes graded τ²-bench tasks and records their trajectories. |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Runs the four-level rubric over 180 structured judgments with evidence and a hallucination veto. |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Runs 60 cases across three systems with complete cost accounting. |
+| 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | The full 4×3×2×60 component, model, and evaluator matrix remains pending. |
+| 6-11 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | Pins the OpenVLA and RoboTwin2 setup; completion requires a checkpoint, simulator, and 8 GPUs. |
 | 6-2 | `terminal-bench/` | 📖 | Terminal-Bench is a benchmark for testing AI Agent performance in real terminal environments. From compiling code to training models and setting up servers, it evaluates how Agents handle real end-to-end tasks. Includes a dataset of ~100 tasks and an execution framework, supporting various Agent implementations. |
 | 6-2 | `SWE-bench/` | 📖 | SWE-bench is a benchmark for evaluating the ability of large language models to solve real GitHub issues. Given a codebase and an issue description, the model must generate a patch that resolves the problem. Includes multiple versions: SWE-bench, SWE-bench Lite, SWE-bench Verified, and SWE-bench Multimodal. |
 | 6-2 | `GAIA/` | 📖 | GAIA aims to evaluate next-generation LLMs (those with tool augmentation, efficient prompting, search access, etc.). It contains 450+ non-trivial questions requiring varying degrees of tool use and autonomy, with unambiguous answers. Divided into 3 difficulty levels. |

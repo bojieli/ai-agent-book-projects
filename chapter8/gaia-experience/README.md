@@ -12,7 +12,25 @@ python -m unittest -v test_experience_documents.py
 真实 LLM 提取路径会逐条读取已评价运行，用模型生成候选的适用条件、策略、误区与例外，再由同一个跨轨迹支持度规则决定哪些内容能进入正式文档：
 
 ```bash
-pip install -r requirements-lite.txt
+# 从仓库根目录开始：轻量 LLM 提取路径使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方轻量单项目兼容路径。
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/gaia-experience
+
+# 迁移期间仍支持轻量单项目兼容路径：
+# python -m pip install -r requirements-lite.txt
+
 export OPENAI_API_KEY=your_api_key_here
 python demo_documents.py --extractor llm --model gpt-5.6
 ```
