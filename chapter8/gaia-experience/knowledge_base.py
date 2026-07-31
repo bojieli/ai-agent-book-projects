@@ -8,8 +8,15 @@ import logging
 import os
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
-from sentence_transformers import SentenceTransformer
-import faiss
+try:
+    from sentence_transformers import SentenceTransformer
+except ImportError:
+    SentenceTransformer = None
+
+try:
+    import faiss
+except ImportError:
+    faiss = None
 import pickle
 
 logger = logging.getLogger(__name__)
@@ -38,20 +45,22 @@ class KnowledgeBase:
         self.model_name = model_name
         self.embedding_dim = embedding_dim
         
-        # Initialize the sentence transformer
-        try:
-            self.encoder = SentenceTransformer(model_name)
-            # Derive the real embedding dimension from the loaded model so the
-            # FAISS index matches it. A fixed 384 silently breaks any non-384
-            # model chosen via --embedding-model / config.yaml (e.g.
-            # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
-            # and every search falls back to keyword-only for the whole KB.
-            model_dim = self.encoder.get_sentence_embedding_dimension()
-            if model_dim:
-                self.embedding_dim = model_dim
-        except Exception as e:
-            logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
+        if SentenceTransformer is None or faiss is None:
             self.encoder = None
+        else:
+            try:
+                self.encoder = SentenceTransformer(model_name)
+                # Derive the real embedding dimension from the loaded model so the
+                # FAISS index matches it. A fixed 384 silently breaks any non-384
+                # model chosen via --embedding-model / config.yaml (e.g.
+                # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
+                # and every search falls back to keyword-only for the whole KB.
+                model_dim = self.encoder.get_sentence_embedding_dimension()
+                if model_dim:
+                    self.embedding_dim = model_dim
+            except Exception as e:
+                logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
+                self.encoder = None
         
         # Initialize FAISS index
         self.index = None
@@ -69,55 +78,88 @@ class KnowledgeBase:
         index_file = os.path.join(self.index_path, "faiss.index")
         docs_file = os.path.join(self.index_path, "documents.pkl")
         meta_file = os.path.join(self.index_path, "metadata.pkl")
-        
-        if os.path.exists(index_file) and os.path.exists(docs_file):
+
+        # Documents remain useful for keyword search even when the optional
+        # semantic-search dependencies (or the FAISS file) are unavailable.
+        # Load them independently so a keyword-only run survives a restart.
+        if os.path.exists(docs_file):
             try:
-                if self.encoder:
-                    self.index = faiss.read_index(index_file)
-                
                 with open(docs_file, 'rb') as f:
                     self.documents = pickle.load(f)
-                
+                if not isinstance(self.documents, list):
+                    raise ValueError("Persisted documents must be a list")
+
                 if os.path.exists(meta_file):
                     with open(meta_file, 'rb') as f:
                         self.metadata = pickle.load(f)
+                    if not isinstance(self.metadata, list):
+                        raise ValueError("Persisted metadata must be a list")
                 else:
                     self.metadata = [{}] * len(self.documents)
 
-                # A persisted index carries no model id / dimension, so a run
-                # that switched embedding models would reuse an index whose
-                # dimension no longer matches the encoder — every add()/search()
-                # would then raise a dimension mismatch (swallowed) and silently
-                # disable semantic search. Detect the mismatch and rebuild the
-                # index from the stored query texts.
-                if (self.encoder and self.index is not None
-                        and self.index.d != self.embedding_dim):
-                    logger.warning(
-                        "Persisted FAISS index dim %s != model dim %s "
-                        "(embedding model changed); rebuilding from stored queries.",
-                        self.index.d, self.embedding_dim,
-                    )
-                    self._rebuild_index_from_metadata()
-
-                logger.info(f"Loaded knowledge base with {len(self.documents)} documents")
+                # Keep one metadata entry per document and tolerate older or
+                # partially-written metadata files.
+                self.metadata = [
+                    item if isinstance(item, dict) else {}
+                    for item in self.metadata[:len(self.documents)]
+                ]
+                self.metadata.extend(
+                    {} for _ in range(len(self.documents) - len(self.metadata))
+                )
             except Exception as e:
-                logger.error(f"Failed to load index: {e}")
-                self._create_new_index()
-        else:
+                logger.error(f"Failed to load persisted documents: {e}")
+                self.documents = []
+                self.metadata = []
+
+        if not self.encoder:
+            logger.info(f"Loaded knowledge base with {len(self.documents)} documents")
+            return
+
+        rebuild_reason = None
+        if os.path.exists(index_file):
+            try:
+                self.index = faiss.read_index(index_file)
+            except Exception as e:
+                logger.warning(f"Failed to load FAISS index: {e}")
+                rebuild_reason = "FAISS index could not be loaded"
+            else:
+                if self.index.d != self.embedding_dim:
+                    rebuild_reason = (
+                        f"FAISS dimension {self.index.d} != model dimension "
+                        f"{self.embedding_dim}"
+                    )
+                elif self.index.ntotal != len(self.documents):
+                    rebuild_reason = (
+                        f"FAISS row count {self.index.ntotal} != document count "
+                        f"{len(self.documents)}"
+                    )
+        elif self.documents:
+            rebuild_reason = "FAISS index is missing"
+
+        if rebuild_reason:
+            logger.warning(f"{rebuild_reason}; rebuilding from stored queries")
+            self._rebuild_index_from_metadata()
+        elif self.index is None:
             self._create_new_index()
+
+        logger.info(f"Loaded knowledge base with {len(self.documents)} documents")
     
     def _create_new_index(self):
         """Create a new empty index."""
         if self.encoder:
             self.index = faiss.IndexFlatL2(self.embedding_dim)
-        self.documents = []
-        self.metadata = []
+        else:
+            self.index = None
 
     def _rebuild_index_from_metadata(self):
         """Rebuild the FAISS index at the current embedding dimension by
         re-encoding the query texts persisted in metadata (used when a loaded
         index was built with a different embedding model). One embedding per
         document, in order, so index rows stay aligned with self.documents."""
+        if not self.encoder or faiss is None:
+            self.index = None
+            return
+
         self.index = faiss.IndexFlatL2(self.embedding_dim)
         if not self.documents:
             return
@@ -136,7 +178,7 @@ class KnowledgeBase:
     def _save_index(self):
         """Save index to disk."""
         try:
-            if self.encoder and self.index:
+            if self.encoder and self.index is not None:
                 index_file = os.path.join(self.index_path, "faiss.index")
                 faiss.write_index(self.index, index_file)
             
@@ -318,9 +360,8 @@ class KnowledgeBase:
         Returns:
             List of relevant experiences
         """
-        if not self.documents:
+        if top_k <= 0 or not self.documents:
             return []
-        
         # If we have embeddings, use semantic search
         if self.encoder and self.index and self.index.ntotal > 0:
             try:
@@ -353,11 +394,17 @@ class KnowledgeBase:
         """
         query_words = set(query.lower().split())
         scored_docs = []
-        
         for doc in self.documents:
-            doc_text = f"{doc.get('question', '')} {doc.get('approach', '')} {' '.join(doc.get('tools_used', []))}"
+            tools = doc.get('tools_used')
+            if tools is None:
+                tools = []
+            elif isinstance(tools, str):
+                tools = [tools]
+            elif not isinstance(tools, (list, tuple, set)):
+                tools = [tools]
+            tools_str = ' '.join(str(t) for t in tools if t is not None)
+            doc_text = f"{doc.get('question', '')} {doc.get('approach', '')} {tools_str}"
             doc_words = set(doc_text.lower().split())
-            
             # Calculate simple overlap score
             overlap = len(query_words & doc_words)
             if overlap > 0:
