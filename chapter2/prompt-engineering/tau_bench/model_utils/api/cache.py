@@ -46,18 +46,10 @@ def enable_cache():
 
 def hash_item(item: Any) -> Any:
     if isinstance(item, dict):
-        entries = ((hash_item(key), hash_item(value)) for key, value in item.items())
         return (
             "dict",
-            tuple(
-                sorted(
-                    entries,
-                    key=lambda entry: (
-                        type(entry[0]).__module__,
-                        type(entry[0]).__qualname__,
-                        repr(entry[0]),
-                    ),
-                )
+            frozenset(
+                (hash_item(key), hash_item(value)) for key, value in item.items()
             ),
         )
     elif isinstance(item, list):
@@ -65,12 +57,7 @@ def hash_item(item: Any) -> Any:
     elif isinstance(item, set):
         return (
             "set",
-            tuple(
-                sorted(
-                    (hash_item(x) for x in item),
-                    key=lambda x: (type(x).__module__, type(x).__qualname__, repr(x)),
-                )
-            ),
+            frozenset(hash_item(x) for x in item),
         )
     elif isinstance(item, tuple):
         return ("tuple", tuple(hash_item(x) for x in item))
