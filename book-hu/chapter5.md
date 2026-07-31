@@ -299,6 +299,54 @@ A megoldás a "perzisztens shell kapcsolat". Minden egyes eszközhívásnál az 
 
 Meg kell jegyezni, hogy ez a mechanizmus ellentétben áll a korábban tárgyalt Sessionless architektúrával. A Sessionless elvárja, hogy a munkakörnyezet állapota perzisztens maradjon az üzenetek között, de a perzisztens shell kapcsolat ezt csak az aktuális feladaton belül éri el. Az Ágens munkafolyamatának hatékonyságának biztosításához a két mechanizmus kombinációja szükséges: a perzisztens kapcsolat a rövid távú, feladaton belüli állapot-megtartáshoz; a munkaterület fájl perzisztencia (a Sessionless megközelítés) a feladatok közötti hosszú távú környezeti állapot megőrzéséhez.
 
+**Azonnali szintaxis visszacsatolási mechanizmus.**
+
+Ez ismét bizonyítja az ügynök állapotsor technika értékét. Miután az ügynök módosította a kódot, nem szabad megvárnia, amíg a felhasználó kifejezetten kéri a tesztelést a szintaxis ellenőrzése előtt. Hatékonyabb megközelítés, ha az eszközréteg automatikusan futtatja a megfelelő linter- vagy szintaktikai ellenőrzőt, amint a fájlírási művelet befejeződött, és az eredményeket az eszköz visszatérési értékének részeként jeleníti meg az ügynöknek. Ha szintaktikai hibát észlel, az ügynök azonnal látja a részletes hibainformációkat a következő következtetési körben – akárcsak az IDE azonnal megjelöl egy páratlan zárójelet. Ez az azonnali visszacsatolási mechanizmus jelentősen csökkenti a hibajavítás költségeit, mivel az Ügynök a hibát a bevezetés pillanatában kijavíthatja anélkül, hogy megvárná a tesztek futtatását a probléma felfedezésére.
+
+Ez az öt megvalósítási technika – párhuzamosság és streaming, kontextuskezelés, környezettudatosság, állapotmegőrzés és azonnali visszacsatolás – együtt alkotja a hatékony kódoló ügynök technikai alapját. Ezek nem elszigetelt optimalizálási pontok, hanem egymást erősítő tervezési döntések, amelyek mind egyetlen cél felé mutatnak: lehetővé teszik, hogy az ügynök olyan zökkenőmentesen működjön, mint egy tapasztalt fejlesztő.
+
+### Keresőeszközök a kódoló ügynökökben
+
+A megfelelő kód megtalálása egy nagy kódbázisban a kódoló ügynök munkájának kiindulópontja. Az 5-3. ábra számos kiegészítő keresési eszközt hasonlít össze, bemutatva, hogy egy érett kódoló ügynöknek hogyan kell kiválasztania a visszakeresési módszereket a feladat természete alapján.
+
+![5-3. ábra: A kódolóügynök-kereső eszközök összehasonlítása](images/fig5-3.png)
+
+**Regex Content Matching** (grep/ripgrep): A leghagyományosabb keresési módszer, a fájltartalom soronkénti keresése a mintaegyezésekért. Ha az ügynök pontosan tudja a keresendő szöveget (függvénynevek, változónevek, hibaüzenetek), minden előfordulást gyorsan és pontosan meg tud találni. A reguláris kifejezések kifejezőereje (a szövegminták speciális szimbólumokkal történő leírására szolgáló szintaxis, pl. a `def handle.*` megfelel a `handle` karakterekkel kezdődő összes függvénydefiníciónak) összetett mintákat rögzít – nem csak szó szerinti szöveget, hanem egy adott szerkezethez igazodó kódot is. A gyakorlatban a fájltípus-szűrést (csak Python-fájlok keresése) és az útvonalminta-szűrést (tesztkönyvtárak kizárása) is támogatni kell a zaj csökkentése érdekében. Az alapvető korlát: csak szöveges egyezéseket talál, és nem érti a szemantikát – a "felhasználói hitelesítés" kifejezésre keresve soha nem fog megjelenni olyan függvény, amely kezeli a bejelentkezési logikát, de történetesen nem tartalmazza a "hitelesítés" szót.
+
+**Filename Pattern Matching** (glob): figyelmen kívül hagyja a fájl tartalmát, csak a fájlrendszer elérési útstruktúrájában keres a mintának megfelelő fájlok után. Például a `**/*.test.ts` rekurzív módon megtalálja az összes TypeScript-tesztfájlt, a `src/components/**/Button.tsx` pedig a Button.tsx fájlt bármely mélységben megkeresi az összetevők alatt. Sokkal gyorsabb, mint a tartalomkeresés (nincs szükség fájlok megnyitására és olvasására), és az ügynök első lépése a projektszerkezet feltárásában – a projekt szervezeti keretének gyors felállítása a teljes fájlrendszer átvizsgálásával.
+
+**Szemantikus kódkeresés**: Az első két pontos egyezési módszertől eltérően megpróbálja megérteni a lekérdezés és a kód "értelmét". Két fő problémát kell megoldania:
+
+- **Struktúra-tudatos darabolás**: A kódnak szigorú szintaktikai struktúrája van, és teljes szemantikai egységekre, például függvényekre, osztályokra és metódusokra kell felosztani, nem pedig fix számú karakterrel való vakvágásra.
+- **Hibrid visszakeresés** (a 3. fejezet részletesen ismerteti ezt a technológiai készletet): A vektoros beágyazások jól megtalálják az eltérő megfogalmazású, de szemantikailag hasonló kódot – például a „felhasználó azonosságának ellenőrzése” keresés egy `check_credentials` nevű függvényt is felszínre hozhat. A kulcsszóegyeztetés, például a BM25, ezzel szemben a függvény- és változónevek pontos megtalálásában erős. A két módszer párhuzamosan fut, az eredményeket pedig egy újrarangsoroló – a jelöltek relevanciáját finoman értékelő keresztkódoló – egyesíti és rendezi, így a módszerek kiegészítik egymást.
+
+A szemantikus keresés különösen alkalmas feltáró jellegű feladatokhoz, mint például az „adatbázissal való interakcióhoz” vagy a „felhasználói bemenet érvényesítésének kezeléséhez” kapcsolódó kód megtalálásához egy ismeretlen kódbázisban.
+
+Az iparágban azonban egyértelmű vita folyik arról, hogy érdemes-e beágyazó indexeket építeni a szemantikai kereséshez. A terminálalapú ügynökök, mint például a Claude Code, szándékosan **nem építenek beágyazó indexeket**, pusztán az ügynöki grep + glob-ra hagyatkoznak a repülés közbeni visszakereséshez – így elkerülhető, hogy a kód fejlődése során elavult indexeket tartsanak fenn, megszünteti a teljes indexelési infrastruktúrát, és elkerüli annak kockázatát, hogy kódbeágyazásokat küldjenek harmadik féltől származó szolgáltatásoknak. Az IDE-alapú eszközök, mint például a Cursor, az ellenkező megközelítést alkalmazzák: hajlandóak fizetni a **fájlok közötti szemantikai visszahívás** indexek felépítésének költségeit, beágyazó indexeket használva, hogy gyorsan megtalálják a szemantikailag kapcsolódó, de eltérő megfogalmazású töredékeket nagy kódbázisokban. A két útvonal közötti kompromisszum lényegében az "infrastruktúra és adatkilépés költségeinek" és "a fájlok közötti szemantikai visszahívás előnyeinek" mérlegelésében rejlik.
+
+**Szimbólumszintű definíció- és hivatkozáskeresés**: Ez a módszer az IDE „ugrás a definícióhoz” és „összes hivatkozás keresése” képességeit használja. Ezeket rendszerint az LSP (Language Server Protocol), vagyis a szerkesztők és a nyelvelemző motorok kommunikációját szabványosító protokoll biztosítja. A keresés megkülönbözteti a definíciót a hivatkozásoktól: például a 42. sorban álló `authenticate` elemet függvénydefinícióként, a 189. sorbeli előfordulást pedig hívásként azonosítja, míg a szöveges keresés csak a karakterláncot tartalmazó sorokat találja meg. Ez különösen fontos kódátalakításkor: egy függvény átnevezésénél a név megjegyzésekben és karakterláncokban is szerepelhet, ezért szimbólumkereséssel kell pontosan megtalálni a definíciót és a tényleges hívási helyeket.
+
+Ez a négy keresési módszer egy kiegészítő eszköztárat alkot, amelyet gyakran kombinálnak a gyakorlatban: először használjon szemantikus keresést a releváns modulok megtalálásához, majd használja a regex-illesztést bizonyos kódsorok pontos megkereséséhez, végül pedig használja a szimbólumkeresést a hívási lánc nyomon követésére – ez egy progresszív stratégia „a durvától a finomig, a szemantikától a szintaxisig”.
+
+### Fájlszerkesztő eszközök a kódoló ügynökökben
+
+A fájlszerkesztés nehézsége nem magában a műveletben rejlik, hanem abban, hogyan lehet hatékonyan és megbízhatóan megmondani a rendszernek, hogy "mit változtasson és hogyan változtasson" egy LLM segítségével. Az 5-4. ábra öt fájlszerkesztési sémát hasonlít össze, bemutatva az alapvető feszültséget az emberi nyelvi kifejezés és a gépi precíz végrehajtás között.
+
+![5-4. ábra: Öt fájlszerkesztő séma összehasonlítása](images/fig5-4.png)
+
+**Eltérő leírás + Modell alkalmazása**: A modell nem határozza meg közvetlenül a fájl szerkesztésének módját; ehelyett módosításleírást generál – amely lehet a git diff-hez hasonló diff szöveg (a `git diff` parancs által kiadott formátum, amely megmutatja, hogy "melyik sorokat törölték és melyek kerültek hozzáadásra"), vagy egy kódvázat kihagyásjelzőkkel (például "itt változatlan marad" megjegyzésekkel a nem módosított részek kihagyásához). Ezt a leírást azután átadják egy speciális "Apply Model"-nek – általában egy másik, kisebb, gyorsabb LLM-nek –, amely felelős azért, hogy összeolvassa azt az eredeti fájllal, hogy létrehozza a teljes új fájlt. Az aggodalmak e szétválasztása lehetővé teszi, hogy a fő modell a magas szintű kódlogikára, az alkalmazásmodell pedig az alacsony szintű szövegműveletekre összpontosítson. A naiv megvalósítás törékenysége az összevonási lépésben rejlik: ha kisebb eltérések vannak a változtatás leírása és a tényleges fájlkód között, meg kell határoznia, hogy ugyanarra a helyre vonatkoznak-e; ha több hasonló kódrészlet van, előfordulhat, hogy rossz helyre olvad össze. A kurzor ennek a megközelítésnek a folyamatos fejlődését reprezentálja: a fő modell kihagyásjelzőkkel ellátott kódvázat ad ki, egy speciálisan kiképzett, gyorsan alkalmazható kis modell újraírja a teljes fájlt, és a spekulatív dekódolás (az eredeti fájltartalom vázlatként történő felhasználása párhuzamos ellenőrzéshez) az egyesítési sebességet másodpercenként több ezer tokenre növeli – a mérnöki befektetés megvette ezt a megközelítést.
+
+**Old String → New String**: A Claude Code által alkalmazott megközelítés. A modell egy régi karakterláncot (az eredeti cserélendő szöveget) és egy új karakterláncot (a helyettesítő szöveget) biztosít, a keretrendszer pedig egy egyszerű karakterlánc keresést és cserét hajt végre. Az előny a kiszámíthatóság és az átláthatóság – ha a régi karakterlánc létezik, és egyedi a fájlban, akkor sikeres; különben nem sikerül. Nincs kétértelműség. A költség az, hogy a nagy kódblokkok törléséhez az összes eredeti tartalom teljes kiadása szükséges; egyetlen karakter eltérés az egyezés sikertelenségét okozza. Ha ugyanaz a kód többször megjelenik, hosszabb kontextust kell megadni az egyértelműség érdekében.
+
+**Sorszám szerinti célzás** (Régi sorszámok → Új karakterlánc): A modell meghatározza az "X-től Y-ig terjedő sorok törlése, új tartalom beszúrása" parancsot. A sorszámok pontosak és egyértelműek, és a nagy blokkok törléséhez mindössze két számra van szükség. A modell azonban hajlamos a hibákra a sorszámok "számlálása" során, különösen a nagyon hosszú fájlok esetében. A gyakorlatban ezt enyhítik, ha a fájl olvasása során sorszám-jegyzeteket adnak minden sorhoz, de a következő sorszámok minden szerkesztés után megváltoznak, korlátozva a többszörös szerkesztés párhuzamosságát.
+
+**Vim-szerű szerkesztési parancsok**: kölcsönzés a Vim szerkesztő parancsrendszeréből, amely támogatja az olyan gazdag műveleteket, mint a másolás, kivágás és beillesztés. Nagyon hatékony a kód átstrukturálásához (egy funkció áthelyezése egyik helyről a másikra). De a parancs szintaxisa valódi tanulási terhet hordoz: a legerősebb modellek jól kezelik; a kisebb modellek észrevehetően több hibát követnek el.
+
+**Karakterlánc kezdete + vége egyezés** (Régi karakterlánc kezdete + vége → új karakterlánc): Ez a régi karakterlánc-cseresémához képest előrelépésnek tekinthető. A modellnek nem kell a teljes régi karakterláncot kiadnia; csak a törlendő tartalom első néhány sorát és az utolsó néhány sort kell megadnia, a középső részt kihagyva. A keretrendszer megkeresi a csereterületet ebből a kezdő- és végpárból, feltéve, hogy a kombináció egyedi a fájlon belül. Ez a séma egyesíti a szövegcsere megbízhatóságát a sorszámos megközelítés hatékonyságával – nagy kódblokkok törlésekor nem kell több száz sornyi eredeti kódot kiadni, csak a határokat kell megjeleníteni. Ugyanakkor, mivel továbbra is a tartalomegyeztetésen alapul, nem pedig az absztrakt sorszámokon, viszonylag alacsony annak a kockázata, hogy a modell hibázik.
+
+**Gyakorlati tanácsok.** A mainstream kódoló ügynökök két táborba sorolhatók, mindegyiknek megvan a maga zászlóshajója: a Claude Code átveszi a "régi karakterláncot az új karakterláncba" – az első a megbízhatóság, egyszerű a megvalósítás, nincs szükség extra modellre; A Cursor a korlátok közé szorította az Apply Model (Modell alkalmazása) útvonalat – a nagyobb szerkesztési teljesítményért cserébe fizetett a betanításért és a dedikált gyorsalkalmazási modell következtetéseiért. Ha saját ügynököt épít, a "régi karakterlánc az új karakterlánchoz" a legbiztonságosabb kiindulópont; nagyszabású szerkesztéseknél a "string start + end matching" a gazdaságosabb kompromisszum; a sorszám-megközelítés csak mély IDE-integráció mellett megbízható (ahol a szerkesztő éles sorszám-leképezést tart fenn, és minden szerkesztés után újra ellátja a modellt) – különben a sorszám-sodródás elsüllyeszti azt.
+
+
 ### Gyakori Hibák és Gyors Elemzés a Kódoló Ágensek Gyakorlatában
 
 Amikor az Ágens tartalmaz egy kontextusablakot, gazdag visszajelzést és tud hivatkozni a kódra, a felhasználók hajlamosak ezt részletes technikai útmutatóként használni. De az Ágens gyakran vakmerően módosít olyan fájlokat, amelyeket nem kellene, különösen amikor nem teljesen érti a kód architektúráját. Az alábbiakban néhány gyakori hiba és rövid elemzés található:
@@ -313,84 +361,222 @@ Negyedszer, az Ágens "felesleges duplikációt" hozhat létre. Amikor egy arra 
 
 Végül, az Ágens **nem veszi figyelembe a kód szélső eseteit**. A kód sikeresen lefordul, de specifikus bemenetek esetén futásidejű hibák léphetnek fel. Ilyenkor specifikus tippeket kell adni a szélső esetek kezeléséhez.
 
-## Kód: Az Általános Célú Ágens Meta-képessége
+## Kód: Egy általános ügynök metaképessége
 
-A fenti szakaszok a Kódoló Ágens mag architektúrájára, munkafolyamatára, biztonsági korlátozásaira és hibakezelésére összpontosítottak. Az alábbiakban arra összpontosítunk, hogyan szolgálja a kód az Ágenst túlmutatva a kódolási feladatokon. A kód nem csak programok írására való; ez az Ágens **formalizált gondolkodásának eszköze és a meta-képességek megvalósításának hordozója**. Ez a koncepció hat irányban nyilvánul meg: gondolkodási eszköz, üzleti szabályok korlátozása, multimédia generálás, rendszer adapter, generatív UI és Ágens bootstrapping.
+Az előző rész bemutatta, hogyan lehet megbízható kódoló ügynököt felépíteni – az architektúrától az eszközmegvalósításon át a mérnöki tervezésig. A kódgenerálás értéke azonban messze túlmutat a programok írásán.
 
-### Kód mint Gondolkodási Eszköz
+> **Mi az a "meta-képesség"?** A közönséges képesség az ügynök azon képessége, hogy egy adott dolgot elvégezzen – válaszoljon egy kérdésre, hívjon meg egy bizonyos API-t, generáljon egy szövegrészt. A **meta-képesség** egy olyan képesség, amely "más képességeket tud létrehozni": az Ügynök arra használja, hogy új eszközöket, új megszorításokat és új kifejezési formákat írjon le menet közben egy feladat elvégzéséhez anélkül, hogy minden képességet előre be kellene építenie. A kódgenerálás pontosan egy ilyen meta-képesség – precíz, végrehajtható és összeállítható, lehetővé téve új eszközök (szkriptek, API-hívási sorozatok), új megszorítások (állítások, érvényesítési szabályok) és új kifejezési formák (HTML-formák, PPT-k, videokockák) előállítását.
 
-A kódnak az Ágens számára az egyik legfontosabb szerepe az, hogy "kiterjessze a formális érvelés képességét". A nagy nyelvi modellek kiválóak a mintafelismerésben és a természetes nyelv feldolgozásában, de a szimbolikus számításokban és a formális logikai érvelésben gyengék. A feladatok kód formájában történő újrafogalmazásával az Ágens kihasználhatja a dedikált végrehajtók (tolmácsok, szimbolikus számítómotorok) erejét, amellett, hogy implicit módon ki tudja terjeszteni a saját gondolkodási tokenjeit.
+Emiatt a kód szerepe az ügynökrendszerben messze túlmutat a „programok írásán”. A következő hat rész azt mutatja be, hogyan alkalmazható ez a metaképesség a programozáson túl: (1) gondolkodási eszközként – a természetes nyelvnél szigorúbb érveléshez; (2) üzleti szabályok korlátjaként – az irányelvek megszilárdítására és a modellhallucinációk kivédésére; (3) multimédia-generálásra – prezentációk, videók és vizualizációk létrehozására; (4) rendszeradapterként – heterogén API-k összekapcsolására; (5) generatív felhasználói felületként – űrlapok és felületek dinamikus előállítására; (6) önépítésre – új ügynökök létrehozására.
 
-"Szimbolikus Számítás."
+Ez a hat irány nem pusztán egy lapos lista; belülről kifelé haladnak, az objektum által szervezve, amelyre a metaképességet alkalmazzák:
 
-A matematikai érvelés régóta az LLM-ek Achilles-sarka. A 3. fejezetben bemutatott hibrid gondolkodás (szöveges + kód) esetén az Ágens automatikusan felismeri, hogy a probléma pontosan számítható, generál egy számítási szkriptet, és a pontos eredményt adja vissza, nem a valószínűségi becslést. Ez a legtermészetesebb példa arra, hogy a kód hogyan szolgál gondolkodási eszközként.
+1.  **Gondolkodás maga** – kód használata a hibára hajlamos természetes nyelvű érvelés helyettesítésére (Thinking Tools);
+2.  **Üzleti szabályok** – homályos házirendek kódolása végrehajtható kényszerként (Business Rule Constraints);
+3.  **Tartalombemutató** – PPT-k, videók és vizualizációs műtermékek generálása (Multimédia-generáció);
+4.  **Rendszerinterfészek** – heterogén API-k áthidalása és automatikusan alkalmazkodnak a fejlődő adatformátumokhoz (rendszeradapterek);
+5.  **Felhasználói felületek** – dinamikusan felépítő űrlapok és interaktív felületek (generatív felhasználói felület);
+6.  **Maga az ügynök** – kód használata új ügynökök létrehozására vagy javítására, ezáltal lehetővé téve a rendszerindítást.
 
-> **Kísérlet 5-1 ★: Matematikai Érvelés Hibrid Gondolkodással**
+Ezt a szálat követve – belülről kifelé, és végül vissza az ügynökig – könnyebben láthatóvá válik a kód, mint meta-képesség egységes értéke. Erre az alapra építve a 8. fejezet azt vizsgálja, hogy milyen működési bizonyítékoknak kell kiváltania az önmódosítást, és hogy a javasolt módosítások hogyan kerülnek új verzióba tesztelés, kiadás és visszaállítás révén.
+
+### A kód mint gondolkodási eszköz
+
+Az LLM-ek figyelemre méltóak a természetes nyelv megértésében és generálásában, de alapvetően gyengék a precíz számításban, a szimbolikus manipulációban és a szigorú logikai levezetésben. Az ok: egy modell gondolkodása eredendően valószínűségi és közelítő, míg a matematikai és logikai problémák determinisztikus, egzakt válaszokat igényelnek. Egy konkrét összehasonlítás a lényeg:
+
+```
+Problem: "A class has 40 students. 60% take math, 45% take physics, and 25% take both.
+          How many students take only physics but not math?"
+
+Pure Natural Language Reasoning (prone to errors):      Code Reasoning (precise and verifiable):
+"60% take math = 24 students,                           math = int(40 * 0.60)    # 24
+ 45% take physics = 18 students,                        phys = int(40 * 0.45)    # 18
+ 25% take both = 10 students,                           both = int(40 * 0.25)    # 10
+ Only physics = 24 - 10 = 14 students"                  only_phys = phys - both  # 8
+→ Mistakenly subtracts from math count, answer wrong    → print(only_phys)  # 8 ✓
+```
+
+Legyen az LLM felelős a probléma megértéséért és a kód megírásáért, a kódértelmező pedig a pontos számításért – ez a munkamegosztás lehetővé teszi, hogy mindenki kijátssza a maga erősségeit.
+
+Stephen Wolfram, a Mathematica megalkotója mélyreható betekintést nyújtott ebbe. Az LLM-ek létezése előtt már léteztek olyan rendszerek, amelyek képesek voltak precíz matematikai számításokra – **Symbolic Computation** használatával dolgoztak, azaz a kifejezéseket matematikai szimbólumokkal dolgozták fel, nem pedig hozzávetőleges numerikus értékeket. Például egy hagyományos számológép a $\sqrt{2}$ értéket 1,414-re közelíti, míg egy szimbolikus számítási rendszer megőrzi a pontos $\sqrt{2}$ formát, és csak szükség esetén konvertálja tizedesjegyre. A Wolfram által létrehozott Wolfram Alpha egy ilyen rendszer: a felhasználók beírnak egy matematikai feladatot, amely pontos választ ad vissza. Természetes nyelvi értelmezése azonban meglehetősen törékeny, lefedettsége pedig szűk – egy beépített nyelvtani elemzőre támaszkodik, amely csak korlátozott számú megfogalmazást képes felismerni; a megfogalmazás enyhe módosítása az elemzés sikertelenségét okozhatja, és természetesen nem tudja kezelni a nyílt tartományú többlépéses érvelést. Az LLM-ek tökéletesen kitöltik ezt a hiányt – kiválóak a különféle természetes nyelvi kifejezések megértésében, de nem jók a precíz számításban. Az új kollaboratív modell a következő: legyen az LLM felelős a felhasználó természetes nyelvi kérdésének megértéséért, a benne lévő matematikai vagy logikai struktúra azonosításáért, és formális nyelvre (például a Mathematica nyelvre vagy a Python SymPy könyvtárára) történő lefordításáért; majd adja át egy dedikált szimbolikus számítási motornak vagy kényszermegoldónak végrehajtásra a pontos eredmények elérése érdekében.
+
+> **5-1. kísérlet ★★: Kódgeneráló eszközök használata a matematikai problémamegoldó képesség javítására**
 >
-> "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens automatikusan felismeri-e, mikor van szükség pontos számításra, és generál megfelelő kódot.
+> **Kísérlet célja**: Ellenőrizze, hogy egy ügynök matematikai gondolkodása pontosabban fejlődött-e, ha Kódtolmács segíti.
 >
-> "Műszaki Megközelítés": Hasonlítsuk össze az Ágens válaszainak pontosságát matematikai feladatokra, amikor a kódvégrehajtás engedélyezett, illetve tiltott.
+> **Technikai megközelítés**: Szerelje fel az ügynököt egy Python sandbox-tal, amely matematikai könyvtárakat tartalmaz, mint a sympy, numpy és scipy. Ha az ügynök matematikai problémával találkozik, Python-kódba formalizálja: sympy a szimbolikus számításokhoz (számítás, egyenletmegoldás), scipy a numerikus optimalizáláshoz, numpy a mátrixműveletekhez. A generált kód a homokozóban fut le, hogy pontos eredményeket adjon vissza.
 >
-> "Elfogadási Kritérium": Az Ágens automatikusan felismeri a pontos számítást igénylő feladatokat, és generál kódot. A kapott eredmények pontossága eléri a 100%-ot.
-
-"Korlátkielégítés és Kényszerprogramozás."
-
-A szimbolikus számításon túl a kód lehetővé teszi az Ágens számára, hogy korlátozott erőforrások mellett is érvényes logikai érvelést végezzen. Sok probléma természetes nyelvű leírással egyszerűnek hangzik, de amikor az Ágens megpróbálja közvetlenül a fejében megoldani őket, az komoly kihívást jelent. Vegyünk egy tipikus ütemezési problémát: "A három csapat — A, B, C — használhatja a tárgyalót. A nem használhatja együtt B-vel, C csak akkor, ha A is használja, és B nem használhatja egymást követően kétszer." Az LLM számára egy ilyen feltételhalmaz kombinációs térben való közvetlen navigáció könnyen kihagyásokhoz vezet.
-
-Amikor az Ágens kód formájában fogalmazza át: minden ismert logikai korlátozást kóddeklarációként rögzít, a megoldást a kényszerprogramozó motorra bízza (mint a Python `python-constraint` könyvtára), majd az eredményt közli a felhasználóval. Ebben a folyamatban az Ágens a leírás és a deklaráció szerepét játssza, míg a tényleges számítást a kényszermegoldó motor végzi. Ez pontosan példázza a kódot mint gondolkodási eszközt — az Ágens kódot használ a korlátozások kifejezésére és dedikált motorokra támaszkodik a számítási terhek kezelésére.
-
-### Kód mint Üzleti Szabályok Korlátozása
-
-A kód nemcsak a belső gondolkodási folyamat javítására szolgál, hanem hatékony eszköz az üzleti szabályok egyértelmű kifejezésére és a biztonsági határok kényszerítésére is. Ez a szakasz gyakorlati forgatókönyvekkel szemlélteti a fenti elképzelést a kód mint gondolkodási eszköz szimbolikus számításon és kényszerprogramozáson túli szintjén.
-
-"Az Ágens saját hívásainak korlátozása."
-
-A kód nem csak arra használható, amit az Ágens kifelé termel; arra is használható, amit az Ágens befelé ellenőriz. A 4. fejezet bevezette a Sidecar eszköz-áteresztő és megtagadó mechanizmusát, amely a hívás szintjén működik. De a hívásokon belüli paraméter szintű korlátozások kódolhatók. Például, ha egy eszköz támogatja a tömeges e-mail küldést, a legtöbb esetben a rendszer nem engedélyez 10-nél több címzettet, hacsak a felhasználó kifejezetten felül nem bírálja. Egy ilyen korlátozást logikailag `max_recipients = 10` formában lehet kifejezni.
-
-A kulcs az, hogy ezeket a korlátozásokat **kódban kell rögzíteni, nem természetes nyelvű leírásokban**. Amikor egy korlátozást kód formájában implementálnak, az automatikusan érvényesítésre kerül minden hívásnál, nem hagyatkozva az Ágens önkéntes betartására. Bár a természetes nyelvű leírások hasznosak az Ágens számára a döntési logika megértéséhez, a gyakorlat azt mutatja, hogy az Ágens gyakran elhanyagolja a természetes nyelvű kéréseket, amikor a tényleges kódot írja, különösen akkor, ha a korlátozási utasítások el vannak temetve a kontextusban. Ezért a Harness mérnökség egyik alapelve: ami kódban érvényesíthető, azt ne csak leírjuk dokumentációban.
-
-**Kód mint Üzleti Szabályok: a τ-bench esete.**
-
-A τ-bench egy LLM Ágens benchmark, amely szimulál egy légitársasági ügyfélszolgálati forgatókönyvet. Ebben a benchmarkban az Ágenseknek valós ügyfélszolgálati feladatokat kell végrehajtaniuk, például jegyeket kell keresniük, árakat kell lekérdezniük és visszatérítéseket kell feldolgozniuk. A τ-bench kiértékelési környezetének egyedi jellemzője, hogy minden üzleti szabályt meghatároz egy SQLite adatbázis, ahol a szabályzat deklaratív formában van tárolva, és a szabályzat érvényesítését SQL lekérdezések formájában kódolja.
-
-Ebben a tervezésben a kód ellenőrzi a kódot — az Ágens minden alkalommal, amikor egy ügyleti műveletet (például visszatérítést vagy átfoglalást) készül végrehajtani, először a megfelelő SQL ellenőrző lekérdezést kell végrehajtania, hogy megállapítsa, a művelet megfelel-e az üzleti szabályoknak. Ha nem, az Ágens nem hajthatja végre a műveletet, és meg kell magyaráznia az ügyfélnek, miért. Az „SQL ellenőrző lekérdezések végrehajtása a művelet végrehajtása előtt” érvényesítési modellben az adatbázis adatainak integritása biztosítja a szabályok betartását. A τ-bench azért képes hatékonyan kiértékelni az Ágensek szabálykövető képességét, mert az üzleti szabályok kódban (SQL) vannak kifejezve, nem természetes nyelvű dokumentumban.
-
-Szélesebb értelemben, ha az üzleti korlátozásokat a mögöttes adatokkal szembeni invaránsokká alakítjuk, és a paraméterek tervezését használjuk az Ágens irányítására, hogy a hívás előtt ellenőrizze a szabályzatfeltételeket, akkor lényegében **kódstruktúrát használunk az Ágens viselkedésének korlátozására**. Bár a természetes nyelvű szabályok egyértelmű szándékleírást adhatnak, a kódolt szabályok determinisztikus végrehajtást biztosítanak — a kódolt szabályokat az Ágens szándékosan vagy véletlenül sem tudja megszegni, ami sokkal erősebb garanciát jelent, mint bármely természetes nyelvű leírás.
-
-### Kód mint Multimédia Generálás
-
-A kódgenerálás képessége kiterjeszti az Ágens kifejezőerejét az egyszerű szövegen túlra, lehetővé téve gazdag multimédiás tartalmak létrehozását. A PPT prezentációktól a videókig és mesterséges zenékig a generált kód a szokásos Markdown kimenetet funkcionális artefaktumokká alakítja át.
-
-"PPT Generálás."
-
-A PowerPoint prezentációk generálásához az Ágens írhat egy Python szkriptet a `python-pptx` könyvtár segítségével, meghatározva a diák tartalmát, elrendezését és stílusát. A szkript futtatásával a prezentáció azonnal elkészül. Ez messze felülmúlja a felhasználót, hogy manuálisan beilleszthesse a tartalmi pontokat sablonokba.
-
-> "Kísérlet 5-2 ★: Kódgenerálás PPT Készítéshez"
+> **Elfogadási kritériumok**: Értékelje az AIME-stílusú feladatokat (az American Invitational Mathematics Examination mintájára). Hasonlítsa össze a tiszta gondolatlánc pontosságát a kóddal segített érvelés pontosságával; a kód-asszisztált módnak lényegesen nagyobb pontosságot kell elérnie. Ellenőrizze, hogy a kód megfelelően használja-e a matematikai könyvtárakat, és hogy a megoldási folyamat logikailag egyértelmű-e.
 >
-> "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens képes-e a felhasználó igényei alapján PPT fájlok előállítására a kódgeneráló képesség segítségével.
->
-> "Megközelítés": Az Ágens közvetlenül generál kódot, és a kód közvetlen végrehajtásával hozza létre a PPT-t.
->
-> "Elfogadási Kritérium": A létrehozott PPT 5-nél több diát és címsort tartalmaz, tartalmi pontokkal és megfelelő formázással.
 
-"Videók és Hangok Generálása."
+> **5-2. kísérlet ★★: Kódgeneráló eszközök használata a logikai érvelési képesség javítására**
+>
+> **Kísérlet célja**: Felméri az ügynök azon képességét, hogy logikai érvelést hajtson végre a kényszermegoldó kód segítségével.
+>
+> **Technikai megközelítés**: Szerelje fel az ügynököt egy kódértelmezővel, amely tartalmazza a python-kényszerkönyvtárat. Az Agent a logikai rejtvényeket, például a Knights és a Knaves-problémákat formális kényszermodellekre fordítja: azonosítja a változókat (minden szigetlakó személyazonosságát), megszorításként kódolja a szabályokat, mint például a „lovagok mondják az igazat”, és meghívja a megoldót, hogy kielégítő feladatot találjon.
+>
+> **Elfogadási kritériumok**: Értékelje a [K&K Puzzle dataset](https://huggingface.co/datasets/K-and-K/perturbed-knights-and-knaves). A kód-asszisztált módnak 90% feletti megoldási pontosságot kell elérnie, ami lényegesen magasabb, mint a tiszta gondolkodásmód.
+>
 
-A videók generálása összetettebb, mint a PPT-ké, olyan köztes megközelítést igényelve, ahol az Ágens szkripteket ír a videók szerkesztésére, nem pedig a teljes videó előállítására semmiből. Például az Ágens írhat egy `ffmpeg` parancsot a videóklipek vágására, összefűzésére és feliratok hozzáadására. A parancs végrehajtásával a kész videó azonnal elérhető.
+Ez a kísérlet egy általánosabb mintát is feltár: a modell és a heveder kicserélődik egymással. Ha a modell elég erős, a kábelköteg vékonyabb lehet – a modell önmagában helyesen okoskodik, és a kódmegoldó nyeresége szűkül. Ha a modell gyengébb, a kábelkötegnek többet kell tennie – a kulcsfontosságú logikai érvelést a kódra és a kényszermegoldókra kell terhelnie a helyesség garantálása érdekében. Ez az oka annak, hogy ez a kísérlet szándékosan egy gyengébb modellt használ, hogy felerősítse a kontrasztot: gyenge modellen a tiszta gondolkodás folyamatosan hibásan számol, és a kódtámogatás drámaian növeli a pontosságot; kellően erős érvelési modellen a tiszta gondolkodás gyakran minden rejtvényt megold, és a kódsegítésből származó haszon közel nullához konvergál. Az, hogy milyen vastagnak kell lennie a hevedernek, attól függ, hogy hol húzódik a modell képességeinek határa – ezt a feltevést könnyen figyelmen kívül hagyhatjuk bármely ügynöktechnika értékelésekor: ugyanaz a heveder, különböző erősségű modellekkel párosítva, ellentétes következtetéseket támaszthat alá.
 
-Ez a generálás plusz felülvizsgálat (Proposer-Reviewer) minta itt újra megjelenik: az Ágens (a Proposer) generálja a kezdeti szerkesztési parancsot, majd az Ágens (a Reviewer) megnézi a kimeneti hatást és értékeli a hatást, végül módosítja a paramétereket a következő iterációhoz. Ez a kód által közvetített és a kódolt szabályokon alapuló automatikus felülvizsgálati ciklus egy erős generálási paradigma.
+### A kód mint az üzleti szabályok megkötése
 
-> "Kísérlet 5-3 ★★: Videó Szerkesztési Ágens"
+Ez a rész közvetlen válasz a fejezetben korábban található Harness Engineering fejezetre. A Harness egyik alapelve a „Korlátozások: kódolt, nem dokumentált” – a szabályokat a természetes nyelvű dokumentációból futtatható kódokká alakítja át, és nem tanácsos irányelvekké teszi őket a rendszer viselkedésére vonatkozó kötelező megszorításokká. A kódgenerálás lehetővé teszi az ügynök számára, hogy autonóm módon befejezze ezt az átalakítási folyamatot.
+
+Az üzleti szabályok, a munkafolyamatok és a döntési logika, amelyet csak természetes nyelven írnak le, tele vannak kétértelműséggel. Mit jelent az „ésszerű visszatérítési kérelem”? Mi számít "vészhelyzetnek"? A határok ellenállnak a természetes nyelvi meghatározásnak – a „vásárlástól számított 7 napon belül visszatéríthető” egyértelműnek hangzik, de ezek naptári napok vagy munkanapok? A „vásárlás” a rendelés leadását vagy a kiszállítást jelenti? Ezzel szemben a kód a tudás egyértelmű, végrehajtható reprezentációja – vagy lefut, vagy hibát dob; nincs köztes.
+
+**Az összetett üzleti szabályok precíz kifejezése.**
+
+**Természetes nyelvi szabályok kontra kodifikált szabályok: kiegészítő, nem felcserélhető**
+
+A szabályok beírása a rendszerpromptba lehetővé teszi a modell számára, hogy **elmagyarázza a házirendeket** a felhasználóknak, **azonosítsa a szabályzatnak megfelelő alternatívákat** (pl. „újrafoglalás a törlés helyett”), és előzetes megvalósíthatósági döntést hozzon, mielőtt eszközt hívna meg.
+
+A szabályok érvényesítési eszközként való kódolása három előnnyel jár: **pontos, egyértelmű döntési logika**; **determinisztikus végrehajtás**, tehát ugyanaz a bemenet mindig ugyanazt a kimenetet állítja elő; és az **összetett szabálykombinációk** hatékony kezelése, mint például a többfeltételes logikai logika, az időszámítások és a kereszt-adatforrás-ellenőrzés.
+
+A gyakorlatban ezeket együtt kell használni: a rendszerprompt természetes nyelvi szabályokat tartalmaz a megértés és a kommunikáció érdekében, míg a kulcsfontosságú döntési pontokat kódolt validációs eszközökkel látják el, amelyek „kapuőrként” működnek a megfelelőség biztosítására.
+
+A kodifikált szabályok valódi értéke nem a token hatékonyság, hanem a **visszafordíthatatlan hibák megelőzése**. Előfordulhat, hogy a megrendelés törlését, pénzátutalást vagy az adatok törlését nem lehet visszavonni a végrehajtás után. A kodifikált érvényesítés az utolsó védelmi vonalat helyezi a művelet elé, és ennek a garanciának az értéke jóval meghaladja a megvalósítás költségeit.
+
+**Az ellenőrzés és a végrehajtás összekapcsolása: az ellenőrzőlisták vezetik az érvelést, a hiteles adatok ellenőrzése őrzi a kaput**
+
+Ahelyett, hogy külön ellenőrző eszközt építene, helyezze az érvényesítést a végrehajtási eszközbe. Tekintsük a τ-bench légitársaság törlési szabályzatát, amely az eszközhasználat és a szabályzatnak való megfelelés értékelésére szolgál a szimulált légitársaságok és e-kereskedelmi ügyfélszolgálati forgatókönyvekben:
+
+```python
+def cancel_reservation(
+    reservation_id: str,
+    cancellation_reason: str,        # "change_of_plan", "airline_cancelled", "other"
+    expected_cabin_class: str = None,    # Optional: for model self-check; server uses database ground truth for verification
+    expected_has_insurance: bool = None  # Optional: for model self-check; same as above
+) -> dict:
+    """
+    Cancel a flight reservation.
+
+    Cancellation policy (enforced server-side based on database ground truth):
+    - Rule 1: Reservations with any used segments cannot be cancelled
+    - Rule 2: Reservations can be unconditionally cancelled within 24 hours of booking
+    - Rule 3: Flights cancelled by the airline can always be cancelled
+    - Rule 4: Business class can always be cancelled
+    - Rule 5: Basic economy and economy require travel insurance to be cancelled
+
+    Before calling, please query the order details and check each rule above one by one. The expected_* parameters
+    record the basis for your judgment. The server compares them with authoritative data for auditing, but they do
+    not affect the policy decision.
+    """
+    # All policy facts are read from the database; never trust values reported by the model
+    r = db.get_reservation(reservation_id)
+    now = server_clock.now()  # Server clock, not provided by the model
+
+    # Log a warning if the model's self-reported value does not match the ground truth, to detect erroneous beliefs or potential injection
+    if expected_cabin_class is not None and expected_cabin_class != r.cabin_class:
+        log_mismatch(reservation_id, "cabin_class", expected_cabin_class, r.cabin_class)
+    if expected_has_insurance is not None and expected_has_insurance != r.has_insurance:
+        log_mismatch(reservation_id, "has_insurance", expected_has_insurance, r.has_insurance)
+
+    if r.any_segment_used:
+        return {"success": False, "reason": "Cannot cancel with used segments"}
+
+    hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking <= 24:
+        execute_cancellation(reservation_id)
+        return {"success": True, "reason": "Cancelled within 24-hour window"}
+
+    if r.flight_status == "cancelled_by_airline":
+        execute_cancellation(reservation_id)
+        return {"success": True, "reason": "Airline cancelled flight"}
+
+    if r.cabin_class == "business":
+        execute_cancellation(reservation_id)
+        return {"success": True, "reason": "Business class cancellation"}
+
+    if r.cabin_class in ["basic_economy", "economy"]:
+        if r.has_insurance:
+            execute_cancellation(reservation_id)
+            return {"success": True, "reason": f"{r.cabin_class} with insurance"}
+        return {"success": False, "reason": f"{r.cabin_class} requires insurance"}
+
+    return {"success": False, "reason": "Does not meet cancellation policy"}
+```
+
+Ennek a kialakításnak az értékét két szinten kell megérteni.
+
+**Első szint: a paraméterek gondolkodási ellenőrzőlistaként.** Az eszköz leírása felsorolja a teljes törlési szabályzatot, és előírja, hogy a modell "kérje le a rendelés részleteit, és egyenként ellenőrizze az egyes feltételeket hívás előtt"; az opcionális `expected_*` paraméterek még inkább arra késztetik a modellt, hogy kifejezetten írja ki saját érvelését. A paraméterek kitöltéséhez a modellnek először meg kell hívnia a lekérdező eszközt, hogy megkapja a rendelés részleteit, és egyenként ellenőrizze az egyes feltételeket – a paraméterek kitöltése ezért **kötelező ellenőrzőlistaként** működik. Ha a modell úgy találja, hogy a kabinosztály turistaosztályú, és nem vásároltak biztosítást, a hívás előkészítése során észreveheti az 5. szabályt, és ezért **kerülje a kezdeményezést**, ehelyett közvetlenül azt mondja a felhasználónak: "A biztosítás nélküli turistaosztály nem mondható le. A foglalás törlése vagy módosítása előtt fontolja meg a biztosítás megvásárlását." Ez a réteg irányítja az érvelést és csökkenti az érvénytelen hívások számát; ez azonban nem biztonsági határ. A `expected_*` értékek csak saját maguk által bejelentett követelések, soha nem olyan tények, amelyekben a szerver megbízik.
+
+**Második szint: a szerveroldali hiteles adatok kapuőrként való ellenőrzése.** Figyeljük meg a kód kulcsfontosságú felépítését: a kabinosztályt, a biztosítási állapotot, a foglalás idejét, a szakaszok felhasználását és a járat állapotát a szerver kérdezi le az adatbázisból; az aktuális idő a szerver órájából származik. **Egyetlen szabályzati tény sem a modell által megadott paraméterből ered.** Ez nem fölösleges ismétlés: a modell hallucinálhat vagy promptinjekcióval manipulálható, és – ahogy a korábbi Lethal Triad-elemzés megmutatta – az egyetlen kontextusban működő Ügynök nem tudja megbízhatóan kikényszeríteni a saját szabálykövetését. Ha a `cabin_class`, `has_insurance` vagy akár a `current_time` értékét is a modell töltené ki, egyetlen téves – véletlenül vagy támadás hatására megadott – érték megkerülhetné a kapuőrt. Az utolsó védelmi vonalnak olyan adatokra kell épülnie, amelyeket a modell nem tud meghamisítani. Ez összhangban van azzal a korábbi elvvel, hogy „a kritikus műveletek független ellenőrzést igényelnek”: a függetlenség nemcsak másik modellt, hanem független adatforrást is jelenthet.
+
+A háromszintű biztosíték így teljes: (1) a rendszer természetes nyelvi szabályai azonnali segítik a megértést és a magyarázatot; (2) az eszközleírások és a paramétertervezés ellenőrzőlistaként szolgálnak, és a modellt a feltételek explicit ellenőrzéséhez irányítják a hívás előtt; (3) A szerveroldali kódalapú érvényesítés az adatbázis alapigazságát használva a végső kapuőr szerepét tölti be. Az első két szint csökkenti a hibák előfordulását, a harmadik pedig biztosítja, hogy a hibák ne váljanak visszafordíthatatlan veszteséggé.
+
+> **5-3. kísérlet ★★: A kis modellek kódalapú tudás révén javítják a szabályvégrehajtás pontosságát**
 >
-> "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens képes-e automatizált videó szerkesztésre nyersanyagokból kódgenerálás segítségével, a Proposer-Reviewer mechanizmus használatával.
+> **Kísérlet célja**: Győződjön meg arról, hogy az összetett üzleti szabályok kódban való kódolása jelentősen javítja a pontosságot és konzisztenciát, amellyel egy kis modell (Qwen3-4B) végrehajtja ezeket a szabályokat.
 >
-> "Megközelítés": Az Ágens egy annotált szöveges leírás alapján szerkesztési szkriptet generál a videó összeállításához, majd egy automatikus felülvizsgálati ciklust indít a kódolt szabályok alapján a képelemzéshez és a feldolgozás követelményeknek való megfelelésének ellenőrzéséhez.
+> **Technikai megközelítés**: Tervezzen meg egy ellenőrzött kísérletet a τ-bench légitársaság ügyfélszolgálati forgatókönyve alapján. **Vezérlőcsoport**: Tiszta természetes nyelvi szabályok, a modell saját érvelésére támaszkodva. **Kísérleti csoport**: Háromszintű védelem – a rendszerkérdés megtartja a természetes nyelvi szabályokat; Az eszköz leírása felsorolja a teljes szabályzatot, és opcionális `expected_*` paramétereket használ, amelyek irányítják a modellt az egyes feltételek egyenkénti ellenőrzéséhez a hívás előtt (ellenőrző lista); az eszköz belsőleg kód alapú érvényesítést hajt végre a szimulált adatbázis alapigazsága alapján (az összes politikai tényt az adatbázisból szerzi be, az időt a szerver órájából veszik, és a modell önbeszámolt paraméterei nem megbízhatóak). Értékelési mutatók: feladat sikerességi aránya, irányelvsértések száma, érvénytelen eszközhívások száma, felhasználói élmény.
 >
-> 
-> "Kísérlet 5-4 ★★: Automatikus Zene Generálás"
+> **Várható eredmények**: A kísérleti csoport jelentősen felülmúlja a kontrollcsoportot. Ennél is fontosabb, hogy a modell autonóm módon azonosítja a szabálysértéseket a paraméterek előkészítése során, és alternatívákat kínál az eszköz meghívása nélkül, ellenőrzőlistaként bemutatva a paraméterek értékét. Végül mérje meg az önbeszámolt `expected_*` értékek és az adatbázis alapvalósága közötti eltérés arányát, hogy megmutassa, miért szükséges a szerveroldali érvényesítés az érvelési hibák észleléséhez.
 >
-> "Kísérlet Célja": Annak ellenőrzése, hogy az Ágens képes-e zenei szekvenciák generálására és lejátszására programozott MIDI generálás segítségével.
+
+### Kódvezérelt multimédia generálás
+
+Számos összetett dokumentum létrehozása lényegében strukturált adatok rendszerezése és bemutatása. Legyen szó prezentációról, műszaki jelentésről vagy interaktív alkalmazásról, az alapul szolgáló struktúrát kód határozza meg – a HTML írja le a szerkezetet, a CSS vezérli a stílust, a JavaScript pedig az interaktivitást valósítja meg. A hagyományos dokumentumkészítés GUI-alapú WYSIWYG szerkesztőkre támaszkodik, amelyek rosszul illeszkednek az ügynökökhöz, mert vizuális értelmezést és pontos mutatóelhelyezést igényelnek. A kódgenerálás révén az ügynökök megkerülik a vizuális pozicionálás kihívását, és pontos irányítást szereznek a dokumentumok felett – az egyes elemek helyzete, stílusa és tartalma egyértelműen meghatározott, és programozottan módosítható és optimalizálható.
+
+**PPT-generáló ügynök.**
+
+A PPT létrehozása köztudottan fáradságos. Egy tipikus akadémiai prezentáció több tucat dián fut, amelyek mindegyike gondos elrendezést, desztillált kulcspontokat és jól megválasztott diagramokat igényel. A PPT létrehozásának újrakeretezése kódgenerálási problémaként azonban a bonyolultság nagy része megszűnik. A modern prezentációs keretrendszerek, mint például a Slidev, elegáns tervezési filozófiát ölelnek fel: Markdown és HTML-ben határozzák meg a tartalmat. A dia létrehozása néhány sor tömör jelölést igényel, és a keretrendszer kezeli a megjelenítést, az elrendezést és az animációt. Egy olyan ügynök számára, aki elsajátította a kódgenerálást, ez ideális terep.
+
+![5-5. ábra: Javaslattevő-ellenőrző mechanizmus a PPT generálásához](images/fig5-5.png)
+
+A kód generálása azonban nem elég. **Miután az ügynök megírta a kódot, fogalma sincs, hogyan jelenik meg valójában az eredmény**: túl zsúfolt tartalom, túlcsorduló szöveg, rossz méretű képek – ezek mindaddig nem láthatók, amíg a diák ténylegesen meg nem jelenik. Ezért egy **Javaslat-ellenőr** mechanizmusra van szükség (az 5-5. ábrán látható) ahhoz, hogy kódgenerálást és minőség-ellenőrzést rendeljünk két független ügynökhöz:
+
+- **A javaslattevő ügynök** felelős a Slidev-kód generálásáért, a tartalom logikai szerkezetének megértéséért és annak ésszerű oldalakra bontásáért.
+- Az **ellenőrző Ügynök** futtatja a kódot, minden oldalt képként renderel, majd egy látással rendelkező, multimodális LLM segítségével értékeli a diák tartalomsűrűségét, olvashatóságát, elrendezését és vizuális vonzerejét. **Strukturált javítási javaslatokat készít**: nem annyit mond, hogy „nem néz ki jól”, hanem konkrét, végrehajtható útmutatást ad, például „3. oldal: túl sok a tartalom, érdemes kettébontani” vagy „7. oldal: túl kicsi a kódblokk betűmérete, növeld 14 pontra”. A visszajelzés olyan mezőket tartalmaz, mint az oldalszám, a probléma típusa és súlyossága.
+
+A Javaslattevő megkapja a visszajelzést, értelmezi azt, módosítja a kódot, és az új verziót újra benyújtja a Lektornak. Ez a ciklus addig folytatódik, amíg a prezentáció el nem éri a minőségi szabványt, vagy el nem éri az ismétlések maximális számát (például öt fordulót). A "minőség megfelel a szabványnak" és a "maximális kör" pontosan az a kétféle explicit leállási feltétel, amelyet a Loop Engineering követel: az előbbi lehetővé teszi a bíráló számára, hogy eldöntse a célt; ez utóbbi egy költségvetési sapka, amely megakadályozza, hogy a hurok elszaladjon.
+
+A javaslattevő-ellenőrző ciklus itt ugyanazt a mintát követi, mint a 4. fejezet **előzetes jóváhagyási** mechanizmusa: az egyik ügynök generál, a másik pedig függetlenül értékeli. A két alkalmazás célja és munkafolyamata tekintetében különbözik. A 4. fejezet a mintát használja egyetlen visszafordíthatatlan művelet jóváhagyására vagy elutasítására; itt az iteratív tartalomfejlesztést hajtja végre több körön keresztül, miközben a felülvizsgáló azt látja, hogy a kimenet nem érhető el a Javaslattevő számára. A tervezési alapelvek konzisztensek (megosztott cél megkötései, különböző modellcsaládok használata a hasonló hibák valószínűségének csökkentése érdekében, visszacsatolás, mint speciális esemény, amely hozzáadódik a Javaslattevő pályájához). Az együgynökös hurok helyett a kettős munkamegosztás használatának **alapvető előnye** a **környezetkezelésben** rejlik: a Reviewer csak a legújabb verzió renderelt képeit dolgozza fel, a korábbi verziók nem befolyásolják; a Javaslattevő csak strukturált szöveges visszajelzést halmoz fel, kevesebb tokent fogyaszt, és megkönnyíti az érvelést. Együgynökös megoldásnak több körből több tucat oldalra, ugyanabban a kontextusban kellene felhalmoznia a renderelt képeket, gyorsan túllépve a kontextuskorlátot. Ezt a mechanizmust a későbbi videószerkesztési és naplómegjelenítési kísérletekben újra felhasználják; A 10. fejezet a Javaslattevő-Recenzens paradigmán túl további többügynökös együttműködési módokat is megvizsgál.
+
+> **5-4. kísérlet ★★: Automatikus PPT előállítás papírokból**
 >
-> "Elfogadási Kritérium": Az Ágens a felhasználó által megadott stílus alapján zenét generál. A generált zene szépen szól és karakteres stílusjegyekkel rendelkezik.
+> **Kísérlet célja**: Kiváló minőségű prezentációk automatikus generálása tudományos dolgozatokból, igazolva a javaslattevő-ellenőri mechanizmus hatékonyságát a tartalomkészítés minőségellenőrzésében.
+>
+> **Technikai megközelítés**: Használja a Slidev keretrendszert. A javaslattevő Ügynök beolvassa a tanulmány PDF-fájlját, kinyeri a fejezetszerkezetet, a fő érveket és az ábrákat, megtervezi a prezentáció felépítését, majd diánként előállítja a Slidev-kódot. **Kulcslépés**: Az ellenőrző Ügynök minden diát renderel és képernyőképet készít, majd egy látással rendelkező LLM segítségével megkeresi a szövegtúlcsordulást, a zsúfolt tartalmat és a rosszul méretezett képeket. A javaslattevő és az ellenőrző addig iterál, amíg a prezentáció el nem éri a minőségi követelményeket.
+>
+> **Elfogadási feltételek**: Készítsen 10-20 diát, amelyek lefedik a dolgozat főbb hozzájárulásait. Tartalmazzon legalább 3 eredeti ábrát, amelyek megegyeznek a kísérő szöveggel. Nincs túlcsordulás a szövegben, ésszerű elrendezés. Hasonlítsa össze a kontextusfogyasztást és a generálás minőségét az együgynök által végzett önellenőrzés és a javaslattevő-bíráló munkamegosztás között.
+>
+
+> **5-5. kísérlet ★★: papíralapú magyarázó videók automatikus generálása**
+>
+> **Kísérlet célja**: A PPT-generálási képességek bővítése a vizuális és hallható csatornák kombinálásával a magyarázó videók automatikus generálása érdekében.
+>
+> **Technikai megközelítés**: Az 5-4. kísérlet prezentációs munkafolyamatára építve az ügynök társalgási narrációt is generál minden diához – a dia szövegének megismétlése helyett – a nézőt irányítva – TTS (text-to-speech) segítségével szintetizálja a hangot, és a diaképeket és a hangot az FFmpeggel kombinálja a végső videó elkészítéséhez.
+>
+> **Elfogadási feltételek**: Készítsen egy 5–15 perces videót, amelyben minden dia megjelenítési ideje pontosan igazodik a narrációhoz, a narráció pedig megfelel a vizuális elemeknek.
+>
+>
+> ![5-6. ábra: Végtől-végig tartó folyamat a papírtól a magyarázó videóig](images/fig5-6.png)
+>
+>
+
+**Videószerkesztő ügynök.**
+
+A videó szerkesztése általános célú számítógép-használati felületen keresztül alapvető akadályt jelent: a videószerkesztő grafikus felhasználói felületek rendkívül összetettek – sűrűek az idővonalakkal, rétegekkel és hatáspanelekkel. Az Ügynöknek ezeket az elemeket egérrel és billentyűzettel kell megkeresnie és kezelnie, amihez pontos koordinátákra van szükség, amelyeket a modellek nehezen tudnak előállítani.
+
+A videószerkesztés API-hívásokká és kódgenerálássá történő átkeretezése drámaian csökkenti a bonyolultságot. Számos professzionális szoftvereszköz (mint például a Blender – egy nyílt forráskódú 3D-s készítő és videó-összeállító eszköz, amely támogatja a Python-szkripteket; az FFmpeg – a svájci hadsereg parancssori kése audio/videó feldolgozásához) programozott API-felületeket biztosít, amelyek strukturáltan, komponálható módon teszik elérhetővé az alapvető funkciókat. Például a Blender Python API lehetővé teszi az olyan műveletek precíz vezérlését, mint az importálás, vágás, rendezés, átmeneti effektusok hozzáadása és hangkeverés a videoklipekhez, minden művelet egy tiszta függvényhívásnak felel meg. Egy ügynök számára a természetes nyelvi követelmények API-hívásokká konvertálása sokkal könnyebb, mint a grafikus felület megértése és az egérkattintások szimulálása. A PPT generálásához hasonlóan a videószerkesztés is alkalmazza a Proposer-Reviewer mechanizmust – a Proposer Agent Blender szkripteket generál, a Reviewer Agent kulcskockákat jelenít meg, és Vision LLM segítségével ellenőrzi a hatást, visszajelzést adva a módosításokhoz.
+
+> **5-6. kísérlet ★★: API-alapú intelligens videószerkesztés**
+>
+> **Kísérlet célja**: A Blender Python API kód ​​generálásával ellenőrizze az ügynök videószerkesztési képességét, és értékelje a látás-visszacsatoláson alapuló Proposer-Reviewer mechanizmus szerepét a multimédiás tartalomfeldolgozásban.
+>
+> **Alapvető kihívás**: A felhasználó természetes nyelvi szerkesztési követelményeinek megértése és átalakítása API-hívások pontos sorozatává, különféle szerkesztési műveletek kezelése (kivágás, összevonás, feliratok, hangsávkeverés, vizuális effektusok), valamint a generált Python-szkript megfelelő végrehajtásának biztosítása. Miután a javaslattevő ügynök megírta a kódot, nem tudja közvetlenül megítélni a videoeffektust; a Reviewer Agentre kell támaszkodnia a kulcskockák megjelenítéséhez és Vision LLM használatával történő ellenőrzéséhez.
+>
+> **Technikai megközelítés**: A felhasználó videóanyagot biztosít (pl. nyers felvételek, amelyek olyan jeleneteket tartalmaznak, mint a szörfözés, túrázás, síelés), és természetes nyelven írja le a követelményeket (pl. „Vágd ki a szörfözési részt”). A javaslattevő ügynök egy videoelemző alügynököt használ **kétlépcsős lokalizációs stratégiával**:
+>
+> **1. lépés, durva lokalizáció**: Hívja meg az alügynököt a videó útvonallal, egy 10 másodperces képkocka-mintavételezési időközzel és a célkérdéssel. Az alügynök az ffmpeg segítségével rögzíti a képkockákat ebben az intervallumban, elküldi a képernyőképeket és a kérdést egy Vision LLM-nek, és visszaadja a jelenet intervallumát (pl. "A szörfözés 40-110 másodperc között van").
+>
+> **2. lépés, finomszemcsés lokalizáció**: Hívja újra az alügynököt egy szűkebb tartományban, és vegyen mintát másodpercenként egy képkockával a határok pontos meghatározásához.
+>
+> A videoelemzés segédügynökként való beágyazása megakadályozza, hogy nagyszámú képernyőkép elfoglalja a fő ügynök környezetét. A lokalizáció után a javaslattevő létrehozza a Blender API parancsfájlt. A Reviewer Agent végrehajt egy gyors előnézetet, ellenőrzi a kulcskockákat, és visszajelzést ad a módosításokhoz, ismételve, amíg el nem éri a szabványt a teljes renderelés előtt.
+>
+> **Elfogadási feltételek**: Az Ügynök pontosan tudja azonosítani a videó különböző jeleneteit, és a természetes nyelvi utasítások alapján helyesen szerkeszti a szerkesztési szkripteket. A kezdő- és végpont pontos (3 másodpercen belüli hiba). Ha az utasítások speciális effektusokat tartalmaznak (lassított felvétel, átmenetek, feliratok), akkor a létrehozott videó megfelelően alkalmazza az effektusokat. A felülvizsgáló ügynök képes észlelni a nyilvánvaló hibákat (hiányzó kulcstartalom, beleértve az irreleváns szegmenseket is), és kiváltja a javításokat. A végső kimeneti videofájl formátuma megfelelő, és megfelel az elvárt minőségnek.
 >
 
 ### Kód mint Rendszer Adapter

@@ -417,38 +417,107 @@ A modellkiértékelés ezért nem egy alkalom, hanem folyamatos tevékenység. A
 > Hozz létre és tarts karban egy folyamatosan frissülő globális modell ranglistát. Válassz ki 5-10 reprezentatív tesztesetet minden feladattípushoz (kódolás, eszközhívás, multimodális, keresés, hosszú szöveges Q&A, egyszerű utasításkövetés). Futtasd ezt a készletet az összes elérhető modellen (beleértve ugyanazon modell különböző API-szolgáltatóktól származó verzióit), és rendszeresen (pl. hetente) ismételd meg. Jegyezd fel a pontszámok történeti trendjeit — amikor egy modell pontszáma hirtelen csökken (pl. Claude Sonnet 4.5 pontszáma egyik hétről a másikra 92%-ról 80%-ra esik), először ellenőrizd az API változási naplóját; ha nincs bejelentett változás, valószínűleg külső ok van (időzítési torzítás, nagy terhelés, driftsújtotta szerververzió). Rendszeres időközönként frissítsd a ranglistát, törölve az elavult modelleket és hozzáadva újakat.
 >
 
-### Modellválasztás: Túl a Mérföldkő Pontszámokon
+## Értékelés-vezérelt modellválasztás
 
-**A képesség-növekedési ráta fontosabb, mint az abszolút pontszám.** A gyorsan javuló modellek (a két verzió közötti áttörés) nagyobb hosszú távú potenciállal rendelkezhetnek, mint a lassan, de folyamatosan javuló modellek (ezek kiszámíthatóbbak, de nem hoznak váratlan áttöréseket), bár ez részlegesen figyelembe vehető a SOTA verzió szintjén, ahol a gyors iteráció nyilvánvaló. A választás nem pusztán arról szól, "melyik modell éri el a legmagasabb pontszámot", hanem "melyik modellcsaládba érdemes befektetni a hosszú távú fejlesztési képességek és kockázatok alapján".
+A modellválasztás nem egyszerűen a "legerősebb modell kiválasztásáról" szól; magában foglalja az értékelés által vezérelt kompromisszumot több dimenzióban az alkalmazási forgatókönyv alapján.
 
-**A hangsúly az alacsonyabb mutatókon, nem a csúcspontszámokon van.** Amikor egy magas pontszámú területen (pl. kódgenerálás) alacsony a variabilitás, a különbségek valószínűleg csekélyek; de ha a modell gyengén teljesít a specifikus eszközhívásban, ez szűk keresztmetszetet alkot, és legtöbbször az alacsony pontok javulásából származik a nyereség — ha ezt a képességet nem sikerül javítani, az magasabb általános pontszámok mellett is hátrányt jelenthet.
+### A kiválasztás kulcsfontosságú méretei
 
-"A képességmátrix és a feladatelosztás." A modellválasztás során elemezd, hogy a modell mely feladattípusokban kiemelkedő és melyekben gyenge — a hangsúly nem az összesített pontszámon van, hanem azon, hogy a gyengeségek várhatóan érintik-e a termék használati eseteit. Például beszédvezérelt forgatókönyvekben a kódolási képesség kevésbé fontos, mint a beszédfelismerés és a természetes nyelvű utasításkövetés. Keresés-intenzív alkalmazásokban a tartalomkinyerés pontossága kritikusabb, mint a szövegkohézió vagy a kreatív írási képesség. Válaszd a felhasználói utazáshoz legjobban igazodó modellt.
+Az **áteresztőképesség** és a **késleltetés** két könnyen összekeverhető mérőszámcsalád. Szétválasztásukhoz elég tudni, hogy az LLM-következtetés két szakaszból áll. Az **előtöltés** (prefill) egyszerre dolgozza fel a teljes bemeneti kontextust, és meghatározza az **első tokenig eltelt időt** (TTFT): az Enter lenyomása és az első karakter megjelenése közötti késleltetést. Minél hosszabb a kontextus, annál lassabb az előtöltés és annál nagyobb a TTFT. Ezután a **dekódolás** tokenenként állítja elő a választ, meghatározva a generálási sebességet (token/másodperc) és ezzel a gondolkodási időt is: 50 token/s mellett 2000 gondolkodási token előállítása önmagában 40 másodperc.
 
-**A szűk keresztmetszetek azonosítása a feladatkeverékben is.** A termék feladateloszlása nem egyenletes. Ha a feladatok 80%-a egyszerű kérdés-válasz, és a modell ezen a 80%-on kiválóan teljesít, de a fennmaradó 20% (összetett feladatok) szélsőségesen gyenge, a végső tapasztalat messze elmaradhat. Az összesített pontszám rejtheti ezt a kockázatot. A modellkiválasztás során súlyozd a feladatokat a termék tényleges eloszlása szerint.
+E két szakasz körül a fő átviteli és késleltetési mutatók a következők:
 
-> **6-7. kísérlet ★★: Többdimenziós Modell Képességmátrix Építése**
+- **Bemeneti/kimeneti áteresztőképesség**: Az előtöltés, illetve a dekódolás sebessége.
+- **TTFT**: A sorban állási és az előtöltési idő összege; ez határozza meg a felhasználó által érzékelt válaszkészséget.
+- **Gondolkodási késleltetés**: A generált gondolkodási tokenek száma modellenként többszörösen változhat, és a gondolkodás hossza nem feltétlenül van pozitív korrelációban a feladat hatékonyságával – mérje meg az egyes modellek gondolkodási token-használatát és a megfelelő hasznot a saját munkaterhelésén, ahelyett, hogy pusztán a nyilvános ranglistákból következtetne.
+- **p95 késleltetés**: Az a várakozási idő, amelyet a kérések 95%-a nem halad meg. A valós felhasználói élményt jobban jellemzi az átlagnál, mert az átlagot a sok gyors kérés lefelé húzhatja, elfedve a felhasználók kisebb részét érintő súlyos lassulásokat.
+
+**Költség**: A bemeneti/kimeneti/gyorsítótár tokenek ára. A költségeket nem szabad elkülönítve értékelni – az alacsony sikerarányú olcsó modellek esetében a gyakori újrapróbálkozások miatt magasabb költségek merülhetnek fel. Ki kell számolni az átlagos feladatonkénti költséget és a költség-teljesítmény arányt.
+
+**Teljesítmény**: A Pass@1, Pass^k, Pass@k és Best@k pontos definícióit korábban az "Értékelési metrikarendszerben" adtuk meg. Itt csak azt tárgyaljuk, hogyan válasszunk a modellválasztással összefüggésben – napi forgatókönyvek esetén összpontosítson a Pass@1-re (egyetlen kísérlet átlagos sikerességi aránya); a kritikus műveleteknél a Pass^k prioritása, a "soha ne hibázzon" stabilitására összpontosítva; a feltáró feladatoknál adjon prioritást a Pass@k vagy a Best@k, figyelembe véve a képesség felső határát, amely elegendő lehetőséget biztosít; a nyílt végű feladatokhoz használjon többdimenziós Rubrika pontozást.
+
+**Sebességkorlátok és megbízhatóság**: Az RPM (kérelmek percenkénti száma) / TPM (tokenek percenkénti száma) korlátok befolyásolják a párhuzamossági képességeket, és egyes API-k csúcsidőben dinamikusan módosítják a kvótákat. A robusztusság szempontjából ügyeljen a terjesztésen kívüli adatokra, az ellenséges bemenetekre és a hosszú távú stabilitásra (függetlenül attól, hogy előfordulnak-e olyan problémák, mint a mód összeomlása vagy a figyelem eltolódása).
+
+**Költségkeret–képesség görbék**: Egyetlen, rögzített költségkeret mellett mért pontszám nem mutatja meg, hogy az Ügynök képes-e hosszú ideig tartó munkára. A sikerarány mellett azt is jelenteni kell, hogyan változik a teljesítmény a falióra szerinti idő, a tokenek, az eszközhívások vagy a számítási költségkeret függvényében. A RE-Bench jól szemlélteti ezt: környezetenként kétórás teljes keret mellett a legjobb Ügynök körülbelül négyszer annyi pontot ért el, mint az emberi szakértők. Az emberek azonban jobban hasznosították a többletidőt: nyolc óránál kis különbséggel felülmúlták a legjobb Ügynököt, több próbálkozásra kapott összesen 32 óránál pedig körülbelül kétszer annyi pontot szereztek.[^re-bench-2025] A rövid keret melletti előny tehát nem vetíthető ki közvetlenül a hosszú távú képességekre. Modellválasztáskor a valós munkaterhelés időtartamához igazodó több költségkeretpontot kell összehasonlítani.
+
+A gyakorlatban a modellek keverhetők: könnyű modellek egyszerű kérésekre a költségek csökkentése érdekében, hatékony modellek összetett feladatokhoz a minőség védelme érdekében; vagy speciális modellek bizonyos részfeladatokra (képmegértés, kódgenerálás), al-ügynöki mechanizmusokon keresztül együttműködve. Minden ilyen heterogén kombinációt magát kiértékeléssel kell validálni, hogy megbizonyosodjon arról, hogy az általános előnyök felülmúlják a rendszer összetettségét.
+
+### Ügynökrendszerek költségelemzése
+
+A költség a modellválasztás legkönnyebben alábecsülhető dimenziója. Ha az Ügynöke termelési folyamatban van, vagy arrafelé tart, ne hagyja ki ezt a részt.
+
+Az előző szakasz a költségeket a kulcsfontosságú kiválasztási dimenziók között sorolta fel, de az ügynökköltségek sokkal összetettebbek, mint az egyszerű token-árazás – a többfordulós érvelés, az eszközhívások és a kontextus-felhalmozás miatt a költségek nem lineárisan növekednek. A szisztematikus költségelemzés az értékelési rendszer nélkülözhetetlen része és előfeltétele a termelés bevezetésének.
+
+**A költség összetevői.**
+
+Egy ügynökrendszer költsége három szintre bontható:
+
+A **Modell következtetési költség** a legközvetlenebb összetevő, amelyet a bemeneti és kimeneti tokenek fogyasztása határoz meg. Az ügynök forgatókönyvekben azonban van két gyakran figyelmen kívül hagyott erősítő tényező. Az első a **kontextus halmozási effektus**: minden alkalommal, amikor egy ügynök meghív egy LLM-et, az összes korábbi beszélgetési előzményt és az eszköz kimeneteit együtt küldi (így a modell megértheti a kontextust). A KV gyorsítótár hatékony kihasználása nélkül (azaz a már feldolgozott kontextus gyorsítótárazása a redundáns számítások elkerülése érdekében) a költségek nagyon gyorsan nőnek – az 1. kör 1000 tokent küld, a 2. kör 2000 tokent, a 3. kör 3000 tokent, vagyis összesen 1000+2000+3000=6000 tokent a 3×1000=3000 helyett. Minél több kör, annál nagyobb a rés. A második a **gondolkodási token költsége**: a gondolkodást támogató modellek nagyszámú gondolkodási jelzőt generálnak. Bár ezek a tokenek nem jelennek meg a felhasználó számára, mégis kiszámlázzák őket.
+
+**Az eszközhívás költsége** magában foglalja a külső API díjakat (a keresőmotorok lekérdezésenként díjat számítanak fel, az adatbázis-lekérdezések számítási erőforrásokat fogyasztanak), a kódvégrehajtáshoz szükséges sandbox-erőforrásokat, valamint egy könnyen figyelmen kívül hagyható közvetett költséget: az eszközkimenetek kontextusba való beillesztésekor felmerülő tokenköltséget. Az egyetlen webes keresésből visszaadott tartalom 2000-5000 tokent foglalhat el, és minden következő következtetési körben ismételten kiszámlázzák bemenetként.
+
+**Az infrastruktúra költsége** magában foglalja a vektoradatbázisok (RAG-lekérdezéshez), az üzenetsorok, a relációs adatbázisok, valamint a naplózási és nyomkövetési tárolók (a megfigyelhetőség érdekében) működési többletköltségét.
+
+Egy konkrét példa illusztrálja a költségek nem lineáris növekedését. A 6-4. táblázat a fejezet elejétől származó ügyfélszolgálati visszatérítési ügynököt használja példaként, szemléltető token árparaméterekkel a három hívási kör költségének lebontására, bemutatva a többfordulós kontextus-felhalmozás és a gyorsítótár-találatok hatását a költségekre.
+
+6-4. táblázat: Példa háromfordulós költségre az ügyfélszolgálati visszatérítési ügynök számára
+
+|Kör|Művelet|Bemeneti tokenek|Kimeneti tokenek|Kör költsége|
+|-------|--------------------------------------------|------------------------|------------|---------|
+| 1 |Rendszerprompt + felhasználói kérdés → döntés a rendelés lekérdezéséről|2500 (ebből 2000 a rendszerprompt)| 150 | $0.0098 |
+| 2 |Előző kör kontextusa + eszközeredmény → döntés a visszatérítés indításáról|3200 (ebből 2000 gyorsítótár-találat)| 120 | $0.0060 |
+| 3 |Előző kör kontextusa + a visszatérítés eredménye → válasz a felhasználónak|3800 (ebből 3200 gyorsítótár-találat)| 200 | $0.0058 |
+|**Teljes**| | **9,500** | **470** | **$0.022** |
+
+Megjegyzés: A számítás a bemeneti tokenekre vonatkozó 3 dollár/millió token és a kimeneti tokenekre vonatkozó 15 dollár/millió token példaár alapján történik. Feltételezzük, hogy a gyorsítótár-lekérést a beviteli ár 10%-ával számlázzuk ki (a kedvezmények szolgáltatónként változnak; például az Anthropic gyorsítótárba történő írása körülbelül 1,25-szöröse a beviteli árnak, a gyorsítótár olvasása pedig körülbelül 0,1-szerese; ez csak az olvasási engedményre van leegyszerűsítve).
+
+A három kör összesen 0,022 dollárba kerül – első pillantásra olcsónak tűnik. Gyorsítótár nélkül önmagában a bemeneti költség körülbelül 0,029 dollár, a kimenettel együtt pedig nagyjából 0,036 dollár lenne; a gyorsítótárazás itt a bemeneti költségek közel felét megtakarítja, összhangban a később idézett empirikus tartománnyal („a KV Cache 30–60%-kal csökkentheti a bemeneti költségeket”). De figyeld az erősítő tényezőket. Engedélyezze a gondolkodási módot, és minden kör további 500-2000 gondolkodási jelzőt bocsát ki, ami potenciálisan megháromszorozhatja vagy megötszörözheti a költségeket. Hagyja, hogy az egyik eszköz egy 5000 tokenből álló weboldalt adjon vissza, és minden további kör újra fizet ezekért a tokenekért. Hagyja, hogy az ügynök tegyen egy kitérőt, és 10 körre van szüksége, és a kontextus túllép 20 000 tokenen, messze túlmutatva ezen az egyszerű forgatókönyvön. A költségoptimalizálás lényege tehát nem egy olcsóbb modell kiválasztása, hanem a körök számának és a kontextus növekedésének szabályozása.
+
+**Költségoptimalizálási stratégiák.**
+
+Kvantitatív szempontból a leghatékonyabb bemeneti oldali eszközök a **KV Cache újrafelhasználása** (stabil előtag fenntartása, így az ismétlődő rendszerpromptok, eszközdefiníciók és előzmények a gyorsítótár árán kerülnek kiszámlázásra, 30–60%-kal csökkentve a bemeneti tokenek költségét – a fenti háromfordulós példában a gyorsítótárazás a bemeneti költségek közel felét megtakarította), a **kontextustömörítés** (a redundáns eszközkimenetek csonkolása és a kontextus növekedési ütemének közvetlen szabályozása, különösen hosszú feladatok esetén), valamint a **rétegezett modellútválasztás** (az egyszerű kérések könnyű modellekhez, az összetett érvelés pedig erősebb modellekhez kerül). E három módszer – előtag-stabilitás tervezése, tömörítési időzítés és stratégia, valamint útválasztási mechanizmusok – konkrét megvalósítását a 2. fejezet részletesen tárgyalja, és itt nem ismételjük meg. Ez a fejezet két módszerrel egészíti ki őket az értékelésből és a műveletekből.
+
+Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel kötegelt feldolgozáshoz, kihasználva az API-szolgáltatók kötegelt árengedményeit; öntelepítési forgatókönyvek esetén a csúcsidőn kívüli GPU kihasználtságot is javítja.
+
+**Költségfigyelés és költségvetés-ellenőrzés.**
+
+Éles környezetben valós idejű költségfigyelő rendszert kell létrehozni: nyomon követni a token felhasználást és az API-költségeket feladattípus, modell, felhasználó stb. szerint. Ezenkívül minden feladathoz állítson be költségplafont – automatikusan leállítja az ügynököt, ha hurokba esik, vagy túl mélyre megy, így megakadályozva, hogy egyetlen feladat abnormálisan magas költségekkel járjon.
+
+> **6-7. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
 >
-> Válassz ki 5-10 reprezentatív feladatot minden kiértékelési dimenzióból, és rögzítsd az egyes modellek pontszámait. Hozz létre egy képességmátrixot, ahol az oszlopok a modellek, a sorok a képességi dimenziók. Elemezd a modell gyengeségeit azonosító mintákat — ha minden modell gyenge egy dimenzióban (pl. kereszt-munkamenet információ összekapcsolása), az nem modellspecifikus probléma, hanem egy formatervezési kihívás, amelyet a Harness szintjén kell megoldani (lásd 5. fejezet). Fordított esetben, ha egy modell kiemelkedően gyenge egy bizonyos dimenzióban, a probléma modellspecifikus.
+> **Kísérlet célja**: Végezze el a teljes láncra kiterjedő költséglebontást a tipikus ügynöki feladatokhoz, állítson fel költségalapot, és ellenőrizze az optimalizálási stratégiák hatékonyságát.
 >
-> 
-> **6-8. kísérlet ★★: Többdimenziós Modell Teljesítmény-összehasonlítás**
+> **Technikai megközelítés**: Válasszon ki néhány tipikus feladatot, majd a LangSmith vagy egy saját nyomkövető rendszer segítségével minden LLM-hívásnál rögzítse a bemeneti és kimeneti tokenek számát, a gondolkodási tokeneket, az eszközhívások számát és visszatérési méretét, valamint a végpontok közötti késleltetést. Számítsa ki az egyes feladattípusok átlagos költségét, költségeloszlását (p50/p95/p99) és az összetevők arányát.
 >
-> Végezz egy átfogó benchmarkot a mainstream LLM-ek és különböző API-szolgáltatók között egy többdimenziós modellválasztási döntési adatbázis felépítéséhez.
+> **Elfogadási kritériumok**: Költségbontási jelentés készítése és a fő költségtényezők azonosítása. Hasonlítsa össze a KV gyorsítótár engedélyezése/letiltása és a környezettömörítés engedélyezése/letiltása közötti költségkülönbségeket.
 >
-> Válaszd ki a tesztelési kört: Zárt forráskódú SOTA modellek, mint GPT sorozat, Claude sorozat, Gemini sorozat, Doubao sorozat, és nyílt forráskódú modellek, mint Qwen, Kimi, DeepSeek. Teszteld ugyanazt a modellt különböző API-szolgáltatókkal (pl. DeepSeek hivatalos vs. Siliconflow) a harmadik feles teljesítményfigyelő platformok (pl. Artificial Analysis) eredményeinek ellenőrzéséhez.
 >
-> Tervezz szabványosított tesztterheléseket: Bemeneti átviteli sebesség tesztek rögzített hosszúságú kontextusokkal (8K/32K/128K token), kimeneti átviteli sebesség tesztek rögzített hosszúságú válaszok kérésével (512/2048 token). Késleltetési tesztek tartalmazzák a TTFT-t (Time to First Token, első token ideje) és a végponttól végpontig tartó késleltetést. A gondolkodást támogató modelleknél külön mérd a gondolkodási hosszt és a gondolkodási késleltetést. Minden konfigurációhoz végezz legalább 100 kérést, és számítsd ki a szórást, p50, p95, p99 értékeket; a magas késleltetési variancia instabil felhasználói élményt jelez.
+
+### Értékelés-vezérelt folyamatos iteráció
+
+A modellválasztás nem egyszeri döntés, hanem egy folyamatos folyamat, amely a modellek fejlődéséhez igazodik. A fejezet azzal az állítással kezdődött, hogy egy kiértékelő rendszer lehetővé teszi, hogy lépést tartson a modell fejlődésével; egy konkrét modellváltási eset megmutatja, hogy ez hogyan működik egy valós döntésben.
+
+Tegyük fel, hogy az Ügynökrendszer jelenleg Claude-ra épül, és kiváló az eszközhívásokban, valamint az összetett vezénylésben. Egy napon megjelenik egy új Gemini-modell, amely a nyilvános benchmarkok szerint több mutatóban, alacsonyabb áron felülmúlja Claude-ot. A kérdés ekkor nem az, hogy „jobb-e a Gemini a Claude-nál?”, hanem ez: **„Az én konkrét feladataimban jobb-e a Gemini? Mennyivel, és mekkora az átállás költsége?”**
+
+Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül választ adhat: lefuttatja az új modellt a saját kiértékelési adatkészletén, majd összehasonlítja a feladatok sikerarányát, az eszközhívások pontosságát, a késleltetést és a költséget. Elképzelhető, hogy az új modell az egyszerű feladatoknál valóban jobb és olcsóbb, miközben az összetett, többfordulós eszközvezénylést igénylő alapforgatókönyvekben 5%-kal csökken a sikerarány. Ha a különbség meghaladja a becsült mintavételi zajt (lásd alább „A kiértékelési eredmények statisztikai szignifikanciája” című szakaszt), árnyalt stratégia választható: az egyszerű feladatokat az olcsóbb új modellre irányítjuk, az összetetteknél pedig a minőség megőrzése érdekében megtartjuk az eredetit. Az ilyen részletes, adatvezérelt döntéshez előre felépített kiértékelő rendszer szükséges.
+
+> **6-8. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
 >
-> Értékeld az API elérhetőséget és stabilitást: Óránként próbáld ki egy héten keresztül, rögzítve a sikerességi arányt, a hibatípusokat és a hiba időtartamát. Számítsd ki a hibagyakoriságot, az MTTR-t (Mean Time to Recovery, átlagos helyreállítási idő) és a leghosszabb folyamatos üzemidőt. Teszteld a sebességkorlátok tényleges küszöbértékeit — fokozatosan növeld az egyidejűséget a fojtási pont megtalálásához, rögzítve az RPM/TPM határokat. Számítsd ki a teljes költséget: Gyűjtsd össze az árazási információkat (input/output/gyorsítótár tokenek egységárai), vedd figyelembe a KV Cache hatását, és számítsd ki az átlagos költséget tipikus többfordulós Ügynök-feladatokra.
+> Végezze el a főbb LLM-ek és a különböző API-szolgáltatók átfogó összehasonlítását egy többdimenziós modellkiválasztási döntési adatbázis felépítéséhez.
 >
-> **6-9. kísérlet ★★: Végpontok Közötti Választási Kiértékelés Felhasználói Memória Rendszerekhez**
+> Válasszon tesztkört: zárt SOTA modelleket, például a GPT-, Claude-, Gemini- és Doubao-sorozatot, valamint nyílt modelleket, például a Qwen, Kimi és DeepSeek modelljeit. Ugyanazt a modellt több API-szolgáltatónál is tesztelje – például a hivatalos DeepSeek API-n és a SiliconFlow szolgáltatásán –, így ellenőrizve a külső teljesítménymérő platformok, például az Artificial Analysis eredményeit.
 >
-> "Előfeltételek": A 3. fejezet kontextuális lekérési vagy ágens RAG kísérletének befejezése kötelező.
+> Szabványosított tesztelési munkaterhelések tervezése: A bemeneti átviteli teljesítménytesztek rögzített hosszúságú kontextusokat használnak (8K/32K/128K token), a kimeneti teljesítménytesztek rögzített hosszúságú válaszokat kérnek (512/2048 token). A késleltetési tesztek közé tartozik a TTFT (Time to First Token) és a végpontok közötti késleltetés. A gondolkodást támogató modelleknél külön mérje meg a gondolkodási hosszt és a gondolkodási késleltetést. Minden konfigurációhoz készítsen legalább 100 kérést, és számítsa ki a szórást, p50, p95 és p99; a nagy késleltetési eltérés instabil felhasználói élményt jelez.
 >
-> "Cél": Végezz egy végpontok közötti modellválasztási kiértékelést egy felhasználói memória-lekérdező Ügynökre, megvizsgálva, hogy az beágyazó modell, a rangsoroló és az Ügynök főmodellje hogyan befolyásolják együttesen a lekérés minőségét, késleltetését és költségét. Használd újra a `ch3/contextual-retrieval-for-user-memory` vagy `ch3/agentic-rag-for-user-memory` fájlt, és hasonlítsd össze a konfigurációkat 60 teszteseten.
+> Értékelje az API rendelkezésre állását és stabilitását: Egy héten keresztül óránként egyszer vizsgálja meg, rögzíti a sikerarányt, a hibatípusokat és a hiba időtartamát. Számítsa ki a hibaarányt, az MTTR-t (átlagos helyreállítási időt) és a leghosszabb folyamatos üzemidőt. Tesztelje a sebességkorlátok tényleges küszöbértékeit – fokozatosan növelje az egyidejűséget a fojtópont megtalálásához, rögzítve az RPM/TPM határértékeket. Átfogó költség kiszámítása: Gyűjtse össze az árinformációkat (az input/output/cache tokenek egységárai), mérlegelje a KV Cache hatását, és számítsa ki a tipikus többfordulós ügynöki feladatok átlagos költségét.
 >
-> "Elfogadás": Értékeld sorban mindhárom választási pontot — beágyazó modell (BGE-M3 / OpenAI / Doubao stb., jegyezd fel a top-5 lekérési pontosságot, késleltetést, költséget), rangsoroló (foglalj bele egy "nincs rangsoroló" alapvonalat, számszerűsítsd a hozzáadott értékét), és főmodell (hasonlítsd össze a sikerességi arányt és az eszközhasználati hatékonyságot azonos lekérési konfiguráció mellett). A kulcs a komponensek közötti szinergiák azonosítása: egy erősebb beágyazás feleslegessé teheti a rangsorolót, és egy erősebb főmodell kompenzálhatja a lekérés hiányosságait. A választás rendszerszintű kompromisszum, nem egyszerűen a legerősebb komponens külön-külön történő kiválasztása. A konfigurációs részletek a kísérő tárolóban találhatók.
+> **6-9. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
+>
+> **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.
+>
+> **Cél**: Végezze el a felhasználói memória visszakereső ügynökének végpontok közötti modellkiválasztási kiértékelését, megvizsgálva, hogy a beágyazási modell, az átrendező és az ügynök fő modellje együttesen hogyan befolyásolja a visszakeresés minőségét, késleltetését és költségét. Használja újra a `ch3/contextual-retrieval-for-user-memory`-t vagy a `ch3/agentic-rag-for-user-memory`-t, és hasonlítsa össze a konfigurációkat 60 teszteseten.
+>
+> **Elfogadás**: Értékelje sorban mindhárom kiválasztási pontot: a beágyazási modellt (BGE-M3 / OpenAI / Doubao stb.; rögzítse a top 5 visszakeresési pontosságot, a késleltetést és a költséget), az újrarangsorolót (legyen „nincs újrarangsoroló” alapvonal is, hogy számszerűsíthető legyen a hozzáadott értéke), valamint a fő modellt (azonos visszakeresési konfiguráció mellett hasonlítsa össze a sikerarányt és az eszközhasználat hatékonyságát). A kulcs az összetevők közötti kölcsönhatások felismerése: az erősebb beágyazás fölöslegessé teheti az újrarangsorolót, az erősebb főmodell pedig ellensúlyozhatja a visszakeresés hiányosságait. A választás rendszerszintű kompromisszum, nem az egyes komponensek külön-külön legerősebb változatának kiválasztása. A konfiguráció részletei a kísérő tárházban találhatók.
 >
 
 ## A Kiértékelési Eredmények Statisztikai Szignifikanciája

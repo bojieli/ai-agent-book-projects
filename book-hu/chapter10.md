@@ -321,6 +321,14 @@ A Hurok-mérnökség lencséjén keresztül nézve az iparág által katalogizá
 
 "Vita": Több Ügynök különböző álláspontokat képvisel, és a problématér feltárását ellentétes nézőpontú párbeszéden keresztül végzi. Például egy műszaki megoldás értékelésekor A Ügynök a "támogató" szerepét játssza, felsorolva a megoldás előnyeit és lehetőségeit, míg B Ügynök az "ellenfél" szerepét, rámutatva a kockázatokra és korlátokra. A vita minden köre a másik érveinek cáfolatát vagy kiterjesztését foglalja magában. Amikor egyetlen Ügynök elemez egy problémát, gyakran egy nézőpontot részesít előnyben, és figyelmen kívül hagyja az ellenbizonyítékokat. A strukturált vita arra kényszeríti mindkét álláspontot, hogy teljesen kibontakozzon, segítve a döntéshozókat a kiegyensúlyozottabb ítélet elérésében.
 
+A vita gyakorlati hatékonysága azonban a tudományos közösségben továbbra is vitatott. Tran és Kiela 2026-os tanulmánya[^single-agent-2026] többlépéses érvelési feladatokon hasonlított össze egyetlen Ügynököt öt többügynökös architektúrával: szekvenciális, vita-, együttes, párhuzamos szerep- és részfeladat-párhuzamos rendszerrel. Azt találták, hogy **azonos gondolkodásitoken-keret mellett az egyetlen Ügynök a többügynökös rendszerekkel azonosan vagy akár jobban teljesített**, kivéve, ha a kontextus kihasználása egy bizonyos szint alá romlott. Magyarázatuk az információelmélet adatfeldolgozási egyenlőtlenségére épül: a vitában részt vevő Ügynökök ugyanazt a szöveges információt dolgozzák fel, és a köztes következtetések soros továbbítása csak információvesztést okozhat, újat nem teremthet. Egyes tanulmányokban a vita előnye valószínűleg abból ered, hogy több Ügynök összesen több számítást használ. Az állítás határát fontos pontosítani: a „köztes következtetések több Ügynök közötti soros továbbításából” eredő szűk keresztmetszetre vonatkozik. Nem cáfolja az olyan megközelítéseket, mint **ugyanazon probléma több független mintájának összesítése** – például önkonzisztencia vagy többségi szavazás –, illetve a **generálás és az ellenőrzés eltérő nehézségének** kihasználása, amikor a válasz elkészítése nehéz, az ellenőrzése viszont könnyű. Ezek vagy új, független mintákat adnak a rendszerhez, vagy a feladat aszimmetrikus szerkezetét használják ki, ezért nem esnek az adatfeldolgozási egyenlőtlenség fenti értelmezése alá.
+
+[^single-agent-2026]: Tran, D., Kiela, D. *Single-Agent LLMs Outperform Multi-Agent Systems on Multi-Hop Reasoning Under Equal Thinking Token Budgets.* arXiv:2604.02460, 2026.
+
+**Ötletbörze**: Több Ügynök egymástól függetlenül állít elő ötleteket, majd megosztják azokat egymással, és kölcsönösen új gondolatokat indítanak el. Egy termékinnovációs feladatban például az első Ügynök közösségi megosztási funkciót javasol; ez a második Ügynököt arra ösztönzi, hogy személyre szabott megosztási posztereket is felvessen; a harmadik pedig a kettőt egyesítve felhasználó által alakítható posztersablonokat és sablonpiacteret javasol. A különböző promptokkal vagy modellekkel eltérő „gondolkodási preferenciák” adhatók az Ügynököknek. Egymást inspirálva tágabb megoldásteret járnak be, és olyan kreatív kombinációkat találhatnak, amelyeket egyetlen Ügynök nehezebben alkotna meg.
+
+**Kerekasztal-beszélgetés**: Minden Ügynök egy meghatározott szakterület nézőpontját képviseli, és közösen tárgyalnak egy több területet érintő problémát. Egy új termék megvalósíthatóságának értékelésekor például a mérnök Ügynök a technikai megvalósítás nehézségét, a termékes Ügynök a felhasználói élmény felől a piaci vonzerőt, az üzemeltetési Ügynök pedig a költségek és erőforrások alapján az üzleti életképességet elemzi. Ezek a szerepek nem egymás ellen dolgoznak, hanem kiegészítik egymást: együtt állítják össze a teljes képet, és tárják fel a szakterületek közötti korlátokat és lehetőségeket.
+
 "Felülvizsgálati Megjegyzések Hurok" (Review Notes Loop): Az Ellenőrző megjegyzésekkel látja el a Javasló kimenetét, a Javasló pedig ezek alapján javít. Ez egy minimalista változata a Javasló-Ellenőrző paradigmának, ahol az Ellenőrző eszközkészlete lényegében azonos a Javaslóéval – minden új információ abból származik, hogy az Ellenőrző más perspektívából (és gyakran más modellel) vizsgálja ugyanazt a szöveget. Bár a korábbi kutatások szerint az "újraolvasás" önmagában nem javít, a gyakorlatban a felülvizsgálati megjegyzések hurok akkor működik jól, ha az Ellenőrzőt egy szigorúbb modell vagy egy meghatározott szempontra (pl. biztonság) hangolt prompt üzemelteti – vagyis a "külső információ" helyébe a "külső perspektíva vagy különböző képzési irányultság" lép.
 
 Több körön keresztül a Javasló megtanulja elkerülni az Ellenőrző által gyakran jelzett hibákat, ami az eredmény fokozatos javulásához vezet. Az Ellenőrző azonban ugyanazt a kontextust látja, mint a Javasló, és gyakran ugyanazt a modellt használja – ez korlátozza a tényleges információ-növekedést a körök között, és a visszatérő hozam csökkenéséhez vezet. A gyakorlatban a felülvizsgálati megjegyzések hurok akkor a leghatékonyabb, ha az Ellenőrző ténylegesen más információhoz fér hozzá (például vizuális visszajelzés a renderelt képernyőképekből) vagy más modellt használ.
@@ -342,6 +350,8 @@ A menedzser minta négy mechanizmustól függ:
 "Párhuzamos Végrehajtás és Koordináció": Amikor a részfeladatok egymástól függetlenek, a Menedzser párhuzamosan indítja az al-ügynököket, ami jelentősen lerövidítheti a teljes feldolgozási időt. A párhuzamos végrehajtás magában foglalja az erőforrás-ütemezést (ne indíts 10 párhuzamos feladatot, ha a modell API kvótája csak 5-öt engedélyez), a konkurencia-vezérlést (hogyan kezeljük, ha két al-ügynök ugyanazt a fájlt írja) és a kaszkád megszakítást (amint az egyik al-ügynök elkezdte a feladatát, és kiderül, hogy a másik al-ügynök munkája felesleges).
 
 "Eredmény Integráció": Miután az al-ügynökök befejezték, a Menedzser összegyűjti és integrálja az eredményeket. Ez magában foglalhatja a konfliktusok feloldását és az ellentmondások egyeztetését. Végül a Menedzser ellenőrzi az integrált eredményt.
+
+![10-5. ábra: A Menedzser szekvenciális koordinációja](images/fig10-5.png)
 
 > **10-3. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**>
 
@@ -406,6 +416,9 @@ A menedzser minta négy mechanizmustól függ:
 > Ha a Fordító hirtelen letiltja a kérést, töröld ki a felesleges al-ügynököket. A Menedzser küldjön egy `cancel_subagent(task_de)` kérést a német fordító leállítására. Ekkor a japán fordítónak tovább kell dolgoznia, mert nincs függőség. A Menedzser megkeresheti a következő elérhető modellt, vagy felhasználói beavatkozást kérhet.>
 >
 
+> ![10-6. ábra: Könyvfordító Ügynök architektúrája](images/fig10-6.png)
+>
+
 >"Hibakezelési Stratégiák a Menedzser Mintában."
 
 A menedzser minta egyik fontos tervezési szempontja a hibakezelés. Az alábbi táblázat felsorol néhány gyakori forgatókönyvet:
@@ -421,11 +434,25 @@ A menedzser minta egyik fontos tervezési szempontja a hibakezelés. Az alábbi 
 
 A "tervező korlát" problémájára egy gyakorlati megoldás a visszacsatolási hurok: a Menedzser ne csak a tervet adja ki, hanem kövesse nyomon a tényleges végrehajtást is. Ha egy al-ügynök folyamatosan hibázik egy adott feladattípusban, a Menedzsernek képesnek kell lennie a hozzárendelés és a feladatbontás módosítására. Ez olyan, mint egy projektmenedzser, aki az első sprint után módosítja a csapat munkaelosztását. A 4. fejezet 4-2. kísérlete, az "Al-ügynök által visszaadott strukturált összefoglaló", pontosan ezt teszi lehetővé.
 
+A 2025-ös Plan-and-Act tanulmány[^plan-and-act-2025] empirikusan is elemezte ezt a jelenséget. Egy tervező–végrehajtó kétügynökös architektúrában **a gyenge tervező jelenti a teljes rendszer legkritikusabb szűk keresztmetszetét**. Ha a tervezés minősége elég jó, viszonylag egyszerű végrehajtóval is jó eredmény érhető el. Ha viszont a tervező hibásan bontja fel a feladatot, minden későbbi végrehajtói munka téves alapokra épül. A tanulmány 54%-os sikerarányt ért el a WebArena-Lite benchmarkon, és a fő hozzájárulása a tervező képességének javítása volt, nem a végrehajtóé. A tanulság: a legerősebb modellt és a leggondosabban megírt promptot a Menedzserhez – vagyis a tervezőhöz – érdemes rendelni, nem pedig egyenletesen elosztani az erőforrásokat az összes Ügynök között.
+
+Ez nem mond ellent a 4. fejezet állításának, amely szerint a javaslattevő és az ellenőrző modell képességének hasonlónak kell lennie. Az az állítás az **ellenőrzési helyzetről** szólt: az ellenőrzőnek követnie kell a vizsgált fél érvelését ahhoz, hogy észrevegye a hibáit. Ha sokkal gyengébb nála, lehet, hogy az érvelést sem érti meg eléggé a hiányosságok felismeréséhez. A menedzser minta ezzel szemben a **tervezés és végrehajtás munkamegosztásáról** szól. Ha a tervező rosszul bontja fel a feladatot, azt a legerősebb végrehajtó sem tudja helyrehozni. Ezért elsőként a tervező kapja a legerősebb modellt és a leggondosabb promptot. Hogy a végrehajtóknak mennyire kell kiegyensúlyozott képességekkel rendelkezniük, a részfeladatok kapcsolódásának szorosságától függ. Ha a kimeneteiket végül egyetlen egésszé kell összeállítani, gyakran a leggyengébb láncszem húzza le a teljes minőséget.
+
+[^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
+
 "Párhuzamos Koordinációs Minta."
+
+![10-7. ábra: A Menedzser párhuzamos koordinációja](images/fig10-7.png)
 
 Az alapvető menedzser minta egy központi Menedzser általi szekvenciális feladatbontáson és elosztáson alapul. A gyakorlatban azonban a részfeladatok gyakran nem függetlenek egymástól. Az egyik al-ügynök kimenete egy másik al-ügynök bemenete lehet, vagy több al-ügynöknek kell együttműködnie, hogy egy közös eredményt hozzanak létre. Ilyenkor a párhuzamos koordináció lép életbe, amely a megosztott kontextus nélküli architektúrákban egy "üzenetsoron" alapul.
 
 Az al-ügynökök nem hívják közvetlenül egymást, hanem üzeneteket tesznek közzé az üzenetsoron. A többi al-ügynök (beleértve a Menedzsert is) feliratkozik bizonyos típusú üzenetekre. Ez a mintázat jelentős előnyöket kínál: az üzenetek természetes módon naplózhatók és nyomon követhetők; az új al-ügynökök egyszerűen feliratkoznak a kapcsolódó üzenettípusokra, anélkül hogy a meglévő al-ügynököket módosítani kellene; a Menedzser és az al-ügynökök aszinkron módon kommunikálhatnak.
+
+**Lingtai: a menedzser minta termékesített példája.** A Lingtai helyi, fájlalapú otthont ad a hosszú életű Ügynököknek[^lingtai]. Három szerepe szorosan megfeleltethető e szakasz fogalmainak. A **fő Ügynök** az a tartós központ, amellyel a felhasználó kapcsolatba lép; ő őrzi a tervet és a memóriát, valamint ő indítja a többi szerepet, ezért a Menedzser helyét tölti be. A **daemon** rövid életű, párhuzamos dolgozó, amelyet zajos, jól körülhatárolt feladatra indítanak, majd a végén eldobnak; csak a következtetéseit tartják meg. Ez termékformába önti azt az elvet, hogy az al-ügynökök teljes trajektória helyett strukturált összefoglalót adjanak vissza, valamint a párhuzamos koordináció mintáját. Az **avatar** tartós, specializált csapattárs saját memóriával, postaládával és felelősségi körrel; olyan szakterülethez készül, amelyet több munkameneten át érdemes megőrizni.
+
+A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás az egyes Ügynökök tartós, privát memóriafájljaiban él, a készségek pedig minden Ügynök által megosztott Markdown-kézikönyvek – vagyis „A fájlrendszer az Ügynök szemszögéből” című rész beépített rendszererőforrásai. Amikor az Ügynök kontextusablaka megtelik, **vedlik**: gondos összefoglalót ír, majd friss kontextussal indul tovább, miközben megőrzi az összefoglalót és a tartós memóriát. Ez a 2. fejezet kontextustömörítési megközelését követi. Az alapul szolgáló modell az Ügynök megváltoztatása nélkül lecserélhető, mert az azonossága, memóriája és képességei egyszerű fájlokként élnek a projektkönyvtárban. Ebben az értelemben az Ügynök maga a fájlkészlete. Ez a 10-3. táblázat első két sorát is termékesíti: a program és a memória egyaránt fájlokra vezethető vissza, így a folyamat bármikor újra felépíthető.
+
+[^lingtai]: A Lingtai hivatalos oktatóanyaga: https://lingtai.ai/en/tutorial/
 
 > **10-4. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**>
 
@@ -448,9 +475,14 @@ Az al-ügynökök nem hívják közvetlenül egymást, hanem üzeneteket tesznek
 > 3. Csak a szükséges információ átadása az együttműködés során (nem a teljes kontextus)>
 >
 
+> ![10-8. ábra: Telefonos és számítógépes kettős Ügynök-architektúra](images/fig10-8.png)
+>
+
 >A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
 
 ### Decentralizált Minta: Elosztott Koordináció
+
+![10-10. ábra: Átadási lánc minta](images/fig10-10.png)
 
 A társi együttműködés és a menedzser minta mögött meghúzódó gondolkodásmód az, hogy "a fejlesztő tervezi a kapcsolatokat és a munkafolyamatot az Ügynökök között." A decentralizált minta más: megadja az Ügynököknek a szükséges készségeket és kontextust, majd hagyja, hogy önállóan döntsék el, kivel működjenek együtt és hogyan. Ez hasonlít ahhoz, ahogy egy szervezetben nemcsak a Menedzser irányítja az összes együttműködést – a kollégák gyakran közvetlenül kommunikálnak egymással, önállóan csoportosulnak csapatokba, és a vezető csak vészhelyzetben avatkozik be. Ez a minta különösen hasznos, amikor az Ügynökök száma nagy, a kapcsolatok dinamikusak, és a priori tervezés nem hatékony.
 
@@ -465,6 +497,12 @@ A decentralizált minta számos formát ölthet. Az alábbiakban három képvise
 "Al-ügynök Delegációs Minta": Ez a "hatáskör-átruházás" megvalósítása: ha egy Ügynök olyan feladattal találkozik, amelyet nem tud egyedül elvégezni, al-ügynököket hoz létre a segítségnyújtásra. Minden Ügynök rendelkezik a `spawn_subagent` eszközzel, és amikor a feladatterhelés meghaladja a kapacitását (vagy a 10-1. táblázatban leírt egyéb tényezők miatt), új Ügynököket hoz létre. Ez a minta gyakran előfordul a kódolási Ügynökök gyakorlatában – a fő Ügynök szétosztja a feladatokat, minden al-ügynököt elindít a kód megírására, majd integrálja az eredményeket. Az al-ügynök delegáció iteratívan mélyíthető; ez rekurzív tervezést és visszafejtést tesz lehetővé.
 
 "MCP-alapú Szolgáltatás Felfedezés". Az MCP szabvány, amely lehetővé teszi az Ügynökök számára, hogy egymás képességeit egy "felfedező interfészen" keresztül fedezzék fel, a gyakorlatban lehetővé teszi a ténylegesen decentralizált együttműködést: az A Ügynök felfedezhet egy B szolgáltatást az MCP-n keresztül, és felkérheti azt egy adott feladat elvégzésére. Ebben a mintában a koordináció nem központi Menedzseren keresztül történik, hanem maguk az Ügynökök fedezik fel és használják a szükséges szolgáltatásokat. Ennek azonban az a költsége, hogy nincs egységes felügyeleti és hibakezelési mechanizmus.
+
+**MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.** A MetaGPT megosztott üzenetkészletet és szerepalapú feliratkozást használ: minden szerep strukturált eredményeket tesz közzé, a többi szerep pedig csak a feladatához szükséges üzenettípusokat fogyasztja. Ez leválasztja a küldőt a fogadóról, miközben a szabványos működési eljárás rögzíti a szerepek sorrendjét és az átadott artefaktumok formátumát.
+
+![10-11. ábra: A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.png)
+
+### Szervezetközi együttműködés: Az A2A protokoll
 
 "A2A (Ügynök-Ügynök) Protokoll". A megosztott kontextus nélküli együttműködés eddig a pontig feltételezte, hogy minden Ügynök ugyanabban a futásidejű környezetben fut. De amikor a különböző szervezetek Ügynökeinek együtt kell működniük, standardizált interoperabilitási protokollra van szükség – ez az A2A (Agent-to-Agent) protokoll. A Google által 2025-ben javasolt A2A a szerep- és interfész-szabványosításra összpontosít a szervezetközi Ügynök együttműködéshez:
 
@@ -514,6 +552,9 @@ Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és 
 > 3. Valósítsd meg a kaszkád megszakítást: amint az egyik al-ügynök megtalálja a választ, a Menedzser megszakítja a többit
 > 4. Valósítsd meg a versenyhelyzet védelmet a `result_lock` segítségével
 > 5. Naplózd az egyes al-ügynökök végrehajtási idejét és a kaszkád megszakítás hatékonyságát>
+>
+
+> ![10-9. ábra: Párhuzamos webes adatgyűjtési architektúra](images/fig10-9.png)
 >
 
 >## Többügynökös Hibamódok
