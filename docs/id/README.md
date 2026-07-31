@@ -1,15 +1,15 @@
 # Memahami AI Agent secara Mendalam: Prinsip Desain dan Praktik Rekayasa
 
-[![PDF](https://img.shields.io/badge/PDF-unduh-success.svg)](#-buku-elektronik) [![Baca daring](https://img.shields.io/badge/🌐_Baca_daring-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/terjemahan-12%20bahasa-informational.svg)](#-buku-elektronik)
+[![PDF](https://img.shields.io/badge/PDF-unduh-success.svg)](#-buku-elektronik) [![Baca daring](https://img.shields.io/badge/🌐_Baca_daring-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/terjemahan-13%20bahasa-informational.svg)](#-buku-elektronik)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · Bahasa Indonesia ← saat ini · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · Bahasa Indonesia ← saat ini · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 > 📥 **[Unduh PDF / EPUB](#-buku-elektronik)** (direkomendasikan) — edisi PDF dan EPUB memberikan pengalaman membaca terbaik. Anda juga dapat [membaca secara daring](https://bojieli.github.io/ai-agent-book/) dengan pemilih bahasa, navigasi bab, dan pencarian teks lengkap.
 
 **Agent = LLM + Konteks + Alat** — buku ini memakai rumus inti tersebut untuk membahas AI Agent, dari prinsip dasar hingga praktik rekayasa, dalam sepuluh bab. Naskah, ilustrasi, dan proyek pendampingnya tersedia sebagai sumber terbuka.
 
-| 📚 **10 bab** dari dasar hingga produksi | 📂 **104 proyek** pendamping | 🌐 **12 bahasa**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 bab** dari dasar hingga produksi | 📂 **104 proyek** pendamping | 🌐 **13 bahasa**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 Buku Elektronik

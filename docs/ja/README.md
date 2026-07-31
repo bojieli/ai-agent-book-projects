@@ -1,13 +1,13 @@
 # AI Agent 徹底解説: 設計原理とエンジニアリング実践
 
-[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-電子書籍) [![Languages](https://img.shields.io/badge/translations-12%20languages-informational.svg)](#-電子書籍)
+[![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-電子書籍) [![Languages](https://img.shields.io/badge/translations-13%20languages-informational.svg)](#-電子書籍)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · 日本語 ← 現在 · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · 日本語 ← 現在 · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 **Agent = LLM + コンテキスト + ツール** — 本書はこの中核となる公式を軸に、全10章を通じて AI エージェントを原理からエンジニアリング実践まで解説します。本文、図版、**93 個の付随実験**はすべてオープンソースです。ぜひ自分の手で実験を動かしてみてください。
 
-| 📚 基礎から本番まで **10 章** の本文 | 📂 **93 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **12 言語**: 中 / 英 / 西 / インドネシア / アラビア / 繁體中文（台灣） / 露 / タミル / 越 / 日 / 土 / 韓 |
+| 📚 基礎から本番まで **10 章** の本文 | 📂 **93 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **13 言語**: 中 / 英 / 西 / インドネシア / アラビア / 繁體中文（台灣） / 露 / タミル / 越 / 日 / 土 / 韓 / ハンガリー |
 | :---: | :---: | :---: |
 
 ## 📖 電子書籍

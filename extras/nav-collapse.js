@@ -123,7 +123,12 @@
 
     var button = document.querySelector("[data-sidebar-toggle]");
     if (button) {
-      var label = collapsed ? "展开侧边栏" : "隐藏侧边栏";
+      var catalog = window.SITE_I18N;
+      var code = window.siteCurrentLanguage || (catalog && catalog.default) || "zh";
+      var strings = catalog && catalog.languages && catalog.languages[code];
+      var label = strings && strings.sidebar
+        ? strings.sidebar[collapsed ? "show" : "hide"]
+        : (collapsed ? "展开侧边栏" : "隐藏侧边栏");
       button.setAttribute("aria-expanded", String(!collapsed));
       button.setAttribute("aria-label", label);
       button.setAttribute("title", label);
