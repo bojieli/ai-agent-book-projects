@@ -437,7 +437,7 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 >
 > 调用后，系统创建 Phone Agent 并赋予明确的任务上下文：它是为了协助表单填写而启动的，需要收集哪些信息，以及各字段的格式要求。
 >
-> 两个 Agent 随即进入实时协作模式，沿用实验 10-4 那套异步并行机制。Phone Agent 拨打用户电话，逐个询问：“您好，我正在帮您填写注册表单。首先，请问您的姓名是？”用户回答后立即发送 `{"type": "info_collected", "field": "姓名", "value": "张三"}` 给 Computer Agent，后者随即在网页上定位“姓名”字段并填写；与此同时，Phone Agent 不等电脑操作完成，继续问下一个。这种**问一个、填一个**、对话流不被操作延迟阻塞的模式，是本实验的核心要求。全部信息收集完成后，Phone Agent 发送 `{"type": "task_completed"}`，Computer Agent 提交表单。
+> 两个 Agent 随即进入实时协作模式，沿用实验 10-4 那套异步并行机制。Phone Agent 向用户发起浏览器 WebRTC 音频会话，逐个询问：“您好，我正在帮您填写注册表单。首先，请问您的姓名是？”用户回答后立即发送 `{"type": "info_collected", "field": "姓名", "value": "张三"}` 给 Computer Agent，后者随即在网页上定位“姓名”字段并填写；与此同时，Phone Agent 不等电脑操作完成，继续问下一个。这种**问一个、填一个**、对话流不被操作延迟阻塞的模式，是本实验的核心要求。全部信息收集完成后，Phone Agent 发送 `{"type": "task_completed"}`，Computer Agent 提交表单。这里的“电话”指实时音频交互，不要求接入 PSTN 或 E.164 号码；本机 WebRTC 页面即可完成实验，部署到远端时再按网络环境补充信令与 TURN。
 >
 > **实验要求**：
 > 1. 实现能自主决策启动 Phone Agent 的 Computer Use Agent

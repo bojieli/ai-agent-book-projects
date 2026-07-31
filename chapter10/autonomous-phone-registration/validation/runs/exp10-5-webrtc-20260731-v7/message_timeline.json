@@ -1,0 +1,303 @@
+[
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "call_started",
+    "payload": {
+      "purpose": "Complete registration by collecting required user information",
+      "fields": [
+        "firstName",
+        "lastName",
+        "email",
+        "userNumber",
+        "gender",
+        "address"
+      ]
+    },
+    "sequence": 1,
+    "monotonic_seconds": 16.053949,
+    "wall_time": "2026-07-31T18:27:32+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "firstName",
+      "attempt": 1
+    },
+    "sequence": 2,
+    "monotonic_seconds": 26.933606,
+    "wall_time": "2026-07-31T18:27:43+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "firstName",
+      "value": "<redacted>",
+      "attempt": 1
+    },
+    "sequence": 3,
+    "monotonic_seconds": 45.210241,
+    "wall_time": "2026-07-31T18:28:01+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "lastName",
+      "attempt": 1
+    },
+    "sequence": 4,
+    "monotonic_seconds": 45.210645,
+    "wall_time": "2026-07-31T18:28:01+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "firstName"
+    },
+    "sequence": 5,
+    "monotonic_seconds": 45.248909,
+    "wall_time": "2026-07-31T18:28:02+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "lastName",
+      "value": "<redacted>",
+      "attempt": 1
+    },
+    "sequence": 6,
+    "monotonic_seconds": 57.72339,
+    "wall_time": "2026-07-31T18:28:14+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "email",
+      "attempt": 1
+    },
+    "sequence": 7,
+    "monotonic_seconds": 57.72381,
+    "wall_time": "2026-07-31T18:28:14+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "lastName"
+    },
+    "sequence": 8,
+    "monotonic_seconds": 57.749428,
+    "wall_time": "2026-07-31T18:28:14+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "format_invalid",
+    "payload": {
+      "field": "email",
+      "attempt": 1,
+      "reason": "该项为必填项，不能留空"
+    },
+    "sequence": 9,
+    "monotonic_seconds": 80.767396,
+    "wall_time": "2026-07-31T18:28:37+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "email",
+      "attempt": 2
+    },
+    "sequence": 10,
+    "monotonic_seconds": 80.767953,
+    "wall_time": "2026-07-31T18:28:37+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "email",
+      "value": "<redacted>",
+      "attempt": 2
+    },
+    "sequence": 11,
+    "monotonic_seconds": 106.259383,
+    "wall_time": "2026-07-31T18:29:03+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "userNumber",
+      "attempt": 1
+    },
+    "sequence": 12,
+    "monotonic_seconds": 106.26049,
+    "wall_time": "2026-07-31T18:29:03+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "email"
+    },
+    "sequence": 13,
+    "monotonic_seconds": 106.276138,
+    "wall_time": "2026-07-31T18:29:03+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "userNumber",
+      "value": "<redacted>",
+      "attempt": 1
+    },
+    "sequence": 14,
+    "monotonic_seconds": 124.4556,
+    "wall_time": "2026-07-31T18:29:21+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "gender",
+      "attempt": 1
+    },
+    "sequence": 15,
+    "monotonic_seconds": 124.456626,
+    "wall_time": "2026-07-31T18:29:21+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "userNumber"
+    },
+    "sequence": 16,
+    "monotonic_seconds": 124.483154,
+    "wall_time": "2026-07-31T18:29:21+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "gender",
+      "value": "<redacted>",
+      "attempt": 1
+    },
+    "sequence": 17,
+    "monotonic_seconds": 150.42457,
+    "wall_time": "2026-07-31T18:29:47+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "question_asked",
+    "payload": {
+      "field": "address",
+      "attempt": 1
+    },
+    "sequence": 18,
+    "monotonic_seconds": 150.425668,
+    "wall_time": "2026-07-31T18:29:47+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "gender"
+    },
+    "sequence": 19,
+    "monotonic_seconds": 150.45155,
+    "wall_time": "2026-07-31T18:29:47+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "info_collected",
+    "payload": {
+      "field": "address",
+      "value": "<redacted>",
+      "attempt": 1
+    },
+    "sequence": 20,
+    "monotonic_seconds": 168.265853,
+    "wall_time": "2026-07-31T18:30:05+0800"
+  },
+  {
+    "sender": "phone_agent",
+    "recipient": "computer_agent",
+    "type": "task_completed",
+    "payload": {},
+    "sequence": 21,
+    "monotonic_seconds": 168.267204,
+    "wall_time": "2026-07-31T18:30:05+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "field_filled",
+    "payload": {
+      "field": "address"
+    },
+    "sequence": 22,
+    "monotonic_seconds": 168.290827,
+    "wall_time": "2026-07-31T18:30:05+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "phone_agent",
+    "type": "form_ready",
+    "payload": {
+      "errors": 0,
+      "submitted": true
+    },
+    "sequence": 23,
+    "monotonic_seconds": 169.326922,
+    "wall_time": "2026-07-31T18:30:06+0800"
+  },
+  {
+    "sender": "computer_agent",
+    "recipient": "manager",
+    "type": "registration_finished",
+    "payload": {
+      "filled": [
+        "firstName",
+        "lastName",
+        "email",
+        "userNumber",
+        "gender",
+        "address"
+      ],
+      "submitted": true,
+      "errors": []
+    },
+    "sequence": 24,
+    "monotonic_seconds": 169.327359,
+    "wall_time": "2026-07-31T18:30:06+0800"
+  }
+]

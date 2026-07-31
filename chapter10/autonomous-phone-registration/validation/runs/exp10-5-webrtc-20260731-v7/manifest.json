@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "run_kind": "full_safe_webrtc_acceptance",
+  "generated_at": "2026-07-31T18:30:10+0800",
+  "git_head_at_run": "6dd7a69bda86657beb32ba5561fe3f1d4f712ae2",
+  "command": "python run_acceptance.py --run-dir <validation-run-directory>",
+  "providers": {
+    "decision_and_extraction": "Volcengine ARK",
+    "speech": "local system TTS + local OpenAI Whisper"
+  },
+  "privacy": {
+    "phone_number_required": false,
+    "pstn_provider_required": false,
+    "participant": "safe synthesized voice",
+    "raw_audio_retained": false,
+    "transcripts_or_values_retained": false,
+    "form_values_retained": false
+  },
+  "source_sha256": {
+    "browser.py": "c65ee501e04fba858375260a17fcb69f08e6dae21d096ced112aee2646167234",
+    "bus.py": "d5ae473831426b4cd5c9f746f8f9c24f7e1f08f3d61173430d5bb582f92af1de",
+    "decision.py": "3ba4cba9950a5f7154d18f2c19a4fa34991a22dda6c64618a66c3325dff234a0",
+    "demo.py": "958d2bfea4aafed818432b8583adee3bd78ff3b96b36fa575713b5726554b158",
+    "models.py": "7362c5f9f53d14e1905d811e995809e1faaa83958213197f23eec050dec26c22",
+    "orchestration.py": "5ea08a51bd53897e8b1e5f8fbc9721cb0d7cec7caeb3e87faf33e41e4c4271e0",
+    "run_acceptance.py": "153bb6cf0055073d24b04b773d299f0d7cf013c35f40cca78b359c9e806d8a1c",
+    "voice.py": "5fb46942a38fa4a8aa338e8360dfb459a3b0b629ee07579f127cea6dd962d490",
+    "webrtc_channel.py": "bfbb1079dc69aeba6db7b7327915730e31b6222e898b4a1223455e32af805be7"
+  },
+  "artifact_sha256": {
+    "acceptance_report.json": "848987a4fc1d038a8be42baf14c5cd1e51fc5c4ddd54ebd115ea7d2f6830ed22",
+    "decision.json": "424fe662cc2af15dd2c4280a0e981d9ec726d2725a17f363ecadbf7999671c37",
+    "message_timeline.json": "9894832e24a7b1a97cd4f8833a31f202f1ca35a59f94e0d466645dcce988e7f5",
+    "form_submission_receipt.json": "d073943e7ebbe29f3945ac3597f5237a8e6258f842f872b0a926abe547d63f66"
+  },
+  "acceptance": {
+    "overall_status": "pass",
+    "gate_count": 9,
+    "passed_gate_count": 9
+  }
+}

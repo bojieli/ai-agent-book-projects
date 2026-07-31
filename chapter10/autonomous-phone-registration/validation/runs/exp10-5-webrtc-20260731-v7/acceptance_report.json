@@ -1,0 +1,544 @@
+{
+  "schema_version": 2,
+  "experiment": "10-5",
+  "generated_at": "2026-07-31T18:30:10+0800",
+  "transport": "webrtc",
+  "synthetic_values_used": true,
+  "decision_provider": "Volcengine ARK",
+  "decision_model": "doubao-seed-1-6-250615",
+  "page_url": "http://127.0.0.1:54492/register",
+  "fields_discovered": 6,
+  "required_fields": [
+    "firstName",
+    "lastName",
+    "email",
+    "userNumber",
+    "gender",
+    "address"
+  ],
+  "result": {
+    "filled": [
+      "firstName",
+      "lastName",
+      "email",
+      "userNumber",
+      "gender",
+      "address"
+    ],
+    "submitted": true,
+    "errors": []
+  },
+  "timing_evidence": {
+    "question_times": {
+      "firstName": 26.933606,
+      "lastName": 45.210645,
+      "email": 57.72381,
+      "userNumber": 106.26049,
+      "gender": 124.456626,
+      "address": 150.425668
+    },
+    "collection_times": {
+      "firstName": 45.210241,
+      "lastName": 57.72339,
+      "email": 106.259383,
+      "userNumber": 124.4556,
+      "gender": 150.42457,
+      "address": 168.265853
+    },
+    "fill_times": {
+      "firstName": 45.248909,
+      "lastName": 57.749428,
+      "email": 106.276138,
+      "userNumber": 124.483154,
+      "gender": 150.45155,
+      "address": 168.290827
+    },
+    "overlap_checks": [
+      {
+        "field_being_filled": "firstName",
+        "next_question": "lastName",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 45.210645,
+        "fill_completed_at": 45.248909
+      },
+      {
+        "field_being_filled": "lastName",
+        "next_question": "email",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 57.72381,
+        "fill_completed_at": 57.749428
+      },
+      {
+        "field_being_filled": "email",
+        "next_question": "userNumber",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 106.26049,
+        "fill_completed_at": 106.276138
+      },
+      {
+        "field_being_filled": "userNumber",
+        "next_question": "gender",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 124.456626,
+        "fill_completed_at": 124.483154
+      },
+      {
+        "field_being_filled": "gender",
+        "next_question": "address",
+        "next_question_before_fill_completed": true,
+        "next_question_at": 150.425668,
+        "fill_completed_at": 150.45155
+      }
+    ],
+    "expected_overlap_count": 5,
+    "independent_tasks": [
+      "phone-agent-react-loop",
+      "computer-agent-react-loop"
+    ]
+  },
+  "webrtc_receipt": {
+    "transport": "webrtc",
+    "signaling_scope": "in-page localhost offer/answer; no external relay",
+    "offers": 1,
+    "answers": 1,
+    "ice_candidates": 7,
+    "media_recordings": 7,
+    "agent_connection_state": "connected",
+    "participant_connection_state": "connected",
+    "audio_rtp": [
+      {
+        "side": "agent",
+        "type": "inbound-rtp",
+        "packets": 606,
+        "bytes": 46747
+      },
+      {
+        "side": "agent",
+        "type": "outbound-rtp",
+        "packets": 2519,
+        "bytes": 186622
+      },
+      {
+        "side": "participant",
+        "type": "inbound-rtp",
+        "packets": 2519,
+        "bytes": 186622
+      },
+      {
+        "side": "participant",
+        "type": "outbound-rtp",
+        "packets": 606,
+        "bytes": 46747
+      }
+    ],
+    "tts_prompt_count": 9,
+    "asr_count": 7,
+    "speech_provider": "local system TTS + local OpenAI Whisper",
+    "synthetic_participant": true,
+    "raw_audio_retained": false,
+    "transcripts_retained": false,
+    "status": "completed"
+  },
+  "provider_receipts": {
+    "decision": {
+      "provider": "Volcengine ARK",
+      "model": "doubao-seed-1-6-250615",
+      "response_id": "0217854936379349209c58391d56dc4f2d7714e68ed22bf3bc739",
+      "usage": {
+        "prompt_tokens": 934,
+        "completion_tokens": 442,
+        "total_tokens": 1376
+      }
+    },
+    "field_extractions": [
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "021785493670905987c84bcd2cf8ff80a3b8e4538a0ada78b65ff",
+        "usage": {
+          "prompt_tokens": 190,
+          "completion_tokens": 136,
+          "total_tokens": 326
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854936883211497eb88b7a4c518b8c375b799d3495936da7f",
+        "usage": {
+          "prompt_tokens": 191,
+          "completion_tokens": 144,
+          "total_tokens": 335
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854937090593fe2781d3cc34bfe6085d0dc2c3e36f553d32a",
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 248,
+          "total_tokens": 449
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854937403053b2c90331db17702ff1ef9ef62383e603b3147",
+        "usage": {
+          "prompt_tokens": 198,
+          "completion_tokens": 100,
+          "total_tokens": 298
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854937561085ac4cf74da7c882946ee3ea75b03891cc3063b",
+        "usage": {
+          "prompt_tokens": 207,
+          "completion_tokens": 233,
+          "total_tokens": 440
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854937807212fce94c16ddfe4e676dd71d9f8e09611d38cf9",
+        "usage": {
+          "prompt_tokens": 203,
+          "completion_tokens": 181,
+          "total_tokens": 384
+        },
+        "transcript_or_value_retained": false
+      },
+      {
+        "operation": "field_value_extraction",
+        "provider": "Volcengine ARK",
+        "model": "doubao-seed-1-6-250615",
+        "response_id": "0217854937968131773480a8a8832a2fb78799cf0b427333ebeb0",
+        "usage": {
+          "prompt_tokens": 196,
+          "completion_tokens": 176,
+          "total_tokens": 372
+        },
+        "transcript_or_value_retained": false
+      }
+    ],
+    "speech": [
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 398942,
+        "latency_seconds": 2.52,
+        "network_used": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 67626,
+        "latency_seconds": 1.403,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 24924,
+        "latency_seconds": 1.279,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 13235,
+        "latency_seconds": 1.748,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 35488,
+        "latency_seconds": 1.312,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 21662,
+        "latency_seconds": 1.269,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 11004,
+        "latency_seconds": 1.728,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 330654,
+        "latency_seconds": 2.265,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 66502,
+        "latency_seconds": 1.432,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 26871,
+        "latency_seconds": 1.71,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 666252,
+        "latency_seconds": 3.284,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 73564,
+        "latency_seconds": 1.459,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 29801,
+        "latency_seconds": 1.685,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 86570,
+        "latency_seconds": 1.499,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 252522,
+        "latency_seconds": 1.909,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 89869,
+        "latency_seconds": 1.718,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 568444,
+        "latency_seconds": 3.138,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 31108,
+        "latency_seconds": 1.297,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 15183,
+        "latency_seconds": 1.656,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 102490,
+        "latency_seconds": 1.515,
+        "network_used": false
+      },
+      {
+        "operation": "synthetic_participant_tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 89304,
+        "latency_seconds": 1.515,
+        "network_used": false
+      },
+      {
+        "operation": "asr",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "model_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "torch": "2.7.0",
+          "openai_whisper": "20231106"
+        },
+        "request_bytes": 34981,
+        "latency_seconds": 1.726,
+        "network_used": false,
+        "raw_audio_retained": false,
+        "transcript_retained": false
+      },
+      {
+        "operation": "tts",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "request_id": null,
+        "response_bytes": 116628,
+        "latency_seconds": 1.601,
+        "network_used": false
+      }
+    ]
+  },
+  "gates": {
+    "real_playwright_page_and_fill": {
+      "status": "pass"
+    },
+    "autonomous_real_llm_tool_call": {
+      "status": "pass"
+    },
+    "ask_one_fill_one_concurrency": {
+      "status": "pass"
+    },
+    "validation_feedback_and_reask": {
+      "status": "pass"
+    },
+    "privacy_redaction_and_ephemeral_audio": {
+      "status": "pass",
+      "reason": null
+    },
+    "browser_resource_cleanup": {
+      "status": "pass"
+    },
+    "real_form_submission": {
+      "status": "pass",
+      "reason": null
+    },
+    "real_webrtc_session": {
+      "status": "pass",
+      "reason": null
+    },
+    "bidirectional_webrtc_audio_and_real_asr_tts": {
+      "status": "pass",
+      "reason": null
+    }
+  },
+  "overall_status": "pass",
+  "safe_local_submission_receipt": {
+    "endpoint_scope": "localhost-only",
+    "submission_count": 1,
+    "submissions": [
+      {
+        "field_names": [
+          "address",
+          "email",
+          "firstName",
+          "gender",
+          "lastName",
+          "userNumber"
+        ],
+        "field_count": 6,
+        "all_values_redacted": true
+      }
+    ],
+    "raw_values_retained": false
+  }
+}

@@ -87,6 +87,8 @@ class DecisionRecord:
     model: str
     monotonic_seconds: float
     provider: str = ""
+    provider_response_id: Optional[str] = None
+    provider_usage: Dict[str, int] = field(default_factory=dict)
     wall_time: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def to_dict(self) -> Dict[str, Any]:
