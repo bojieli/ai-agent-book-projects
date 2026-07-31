@@ -8,7 +8,7 @@ Bölüm 1, context'i bir Agent'ın "gözlerine" benzetmişti—Agent yalnızca g
 
 Büyük dil modelleri standart benchmark'larda etkileyici puanlar alır, ama gerçek dünya iş senaryolarında sıklıkla hayal kırıklığı yaratır. Bunun nedeni gizemli değildir: modelin yetenekleri geneldir, ama belirli görevleri yürütmek arka plan bilgisi gerektirir—ürün mimariniz, iş kurallarınız, iç kurallarınız—modelin basitçe bilmediği bilgiler.
 
-Ekibinize dahil olan bir deha mühendisi hayal edin. Derin teorik bilgiye ve olağanüstü programlama becerisine sahiptir, ama ürün mimariniz, iş mantığınız, teknik borcunuz veya ekip normlarınız hakkında hiçbir şey bilmez. Daha da kötüsü, kritik mimari kararlar farklı ekip üyelerinin hafızasına dağılmıştır ve kod tabanında dokümantasyon yoktur. Olağanüstü zekaya sahip olsa bile, bu deha gerçek değer sunmakta zorlanır—bu tam olarak günümüz Yapay Zeka Ajanlarının karşılaştığı ikilemdir.
+Ekibinize dahil olan bir deha mühendisi hayal edin. Derin teorik bilgiye ve olağanüstü programlama becerisine sahiptir, ama ürün mimariniz, iş mantığınız, teknik borcunuz veya ekip normlarınız hakkında hiçbir şey bilmez. Daha da kötüsü, kritik mimari kararlar farklı ekip üyelerinin hafızasına dağılmıştır ve kod tabanında dokümantasyon yoktur. Olağanüstü zekaya sahip olsa bile, bu deha gerçek değer sunmakta zorlanır—bu tam olarak günümüz AI Agent'ların karşılaştığı ikilemdir.
 
 Bir Kodlama Agent'ını örnek alalım. Aynı talimat verildiğinde, "Bu hatayı düzeltmeme yardım et," Agent'ın aldığı context'in kalitesi görevi tamamlayıp tamamlayamayacağını doğrudan belirler:
 
@@ -19,11 +19,11 @@ Bir Kodlama Agent'ını örnek alalım. Aynı talimat verildiğinde, "Bu hatayı
 Bu üç bilgi türü—kod, süreç ve ortam—bir Agent'ın etkili çalışması için gereken asgari bilgi ihtiyacını oluşturur. Modelin doğuştan gelen zekası yalnızca temeldir; **context'in kalitesi Agent'ın yeteneğinin gerçek üst sınırıdır**. Dikkatle organize edilmiş bir context ile eşleştirilmiş orta düzeyde yetenekli bir model, bir bilgi boşluğunda körlemesine ilerleyen üst düzey bir modelden çoğu zaman daha iyi performans gösterebilir.
 
 Context engineering, bu yüzden mevcut modelleri kullanarak verimli Agent'lar geliştirmenin anahtarıdır. Bu, salt bir prompt'a daha fazla bilgi tıkıştırmaktan ibaret teknik bir mesele değildir; yapay zekanın bir görevi tamamlamak için ihtiyaç duyduğu tüm arka plan bilgisini sistematik olarak tasarlamayı, organize etmeyi ve sağlamayı içerir.
-Context engineering her şeyden önce **teknik bir sorundur**, ama daha temelde **organizasyonel bir sorundur**. Çoğu ekibin kritik bilgisi örtüktür: mimari kararlar yalnızca kıdemli çalışanların hafızasındadır, iş kuralları ağızdan ağıza aktarılır ve önemli arka plan bilgisi özel sohbet kayıtlarında kilitli kalır. Ekibin kendisi bir bilgi kara deliğiyse, en iyi Yapay Zeka Ajanı bile çaresiz kalır.
+Context engineering her şeyden önce **teknik bir sorundur**, ama daha temelde **organizasyonel bir sorundur**. Çoğu ekibin kritik bilgisi örtüktür: mimari kararlar yalnızca kıdemli çalışanların hafızasındadır, iş kuralları ağızdan ağıza aktarılır ve önemli arka plan bilgisi özel sohbet kayıtlarında kilitli kalır. Ekibin kendisi bir bilgi kara deliğiyse, en iyi AI Agent bile çaresiz kalır.
 
-Uzaktan çalışmaya dost olan ekipler genellikle Yapay Zeka Ajanlarına da dosttur. Linux çekirdeği gibi açık kaynak projeler mükemmel örneklerdir: dünya genelinde dağılmış geliştiriciler otuz yılı aşkın süredir onun bakımında iş birliği yapıyor. Başarısının sırrı, son derece şeffaf, dokümantasyon odaklı bir iletişim kültürüdür—tüm tartışmalar herkese açıktır, her karar titizlikle kaydedilir ve herhangi bir yeni gelen, geçmişi okuyarak kodun evrimini anlayabilir. Bu çalışma tarzı doğal olarak yapay zeka dostu bir ortam yaratır: bilgi herkese açıktır, aranabilir ve yapılandırılmıştır.
+Uzaktan çalışmaya dost olan ekipler genellikle AI Agent'lara da dosttur. Linux çekirdeği gibi açık kaynak projeler mükemmel örneklerdir: dünya genelinde dağılmış geliştiriciler otuz yılı aşkın süredir onun bakımında iş birliği yapıyor. Başarısının sırrı, son derece şeffaf, dokümantasyon odaklı bir iletişim kültürüdür—tüm tartışmalar herkese açıktır, her karar titizlikle kaydedilir ve herhangi bir yeni gelen, geçmişi okuyarak kodun evrimini anlayabilir. Bu çalışma tarzı doğal olarak yapay zeka dostu bir ortam yaratır: bilgi herkese açıktır, aranabilir ve yapılandırılmıştır.
 
-Bir Yapay Zeka Ajanı, kalıcı bir yeni çalışan gibidir: ona yeterli arka plan bilgisi verirseniz mükemmel iş çıkarır; hiçbir şey söylemezseniz tüm zekası boşa gider. Yapay zeka doğal (AI-native) bir ekip inşa etmek bu yüzden her şeyden önce yeni araçlar dağıtmaktan ibaret değil, bir dokümantasyon hareketidir.
+Bir AI Agent, kalıcı bir yeni çalışan gibidir: ona yeterli arka plan bilgisi verirseniz mükemmel iş çıkarır; hiçbir şey söylemezseniz tüm zekası boşa gider. Yapay zeka doğal (AI-native) bir ekip inşa etmek bu yüzden her şeyden önce yeni araçlar dağıtmaktan ibaret değil, bir dokümantasyon hareketidir.
 
 OpenAI araştırmacısı Jiayi Weng bunu bir keresinde çarpıcı biçimde ifade etmişti: **"Hem insanlar hem de modeller için en önemli şey Context'tir."** Kendi deneyimini örnek gösterdi—"OpenAI'deki işim o kadar zor değil. Başka biri tüm context'ime sahip olsaydı, o da yapabilirdi." Aynı ilke Agent'lar için de geçerlidir: bir Agent'ın yeteneğinin üst sınırı model parametrelerinin sayısıyla değil, her karar noktasındaki context'in ne kadar ve ne kadar isabetli olduğuyla belirlenir. Weng ayrıca "ekip çalışmasındaki en büyük sorunun da context tutarsızlığı olduğunu" ve "yapay zekanın kısa vadede insanların yerini alamamasının en büyük nedeninin de context olduğunu—çünkü yapay zeka ve insanlar aynı ortamda değildir" belirtti. Bu, tam olarak context engineering'in çözmeyi amaçladığı temel sorundur: bir Agent'ın ihtiyaç duyduğu arka plan bilgisini modele sistematik ve yapılandırılmış biçimde nasıl iletileceği.
 
@@ -398,6 +398,7 @@ Bu bölümün geri kalanı, bu yapının her katmanını inceleyecek: static pre
 >
 > Deney sırasında, system prompt'u değiştirdikten sonra modelin ilk yanıtının yavaşladığını fark etmiş olabilirsiniz—bu tam olarak bir sonraki bölümde açıklanacak KV Cache mekanizmasıdır: ön eki değiştirmek cache'i geçersiz kılar ve modeli yeniden hesaplamaya zorlar.
 >
+
 ## KV Cache Dostu Context Tasarımı
 
 Bu bölüm bir hikayeyle açılıyor, ama önce **KV Cache**'in ardındaki sezgiye bakalım. Model her token ürettiğinde, kendisinden önceki her token'ın ara hesaplama sonuçlarına geri bakmak zorundadır. Bunların tümünü her turda sıfırdan yeniden hesaplamak, context büyüdükçe maliyetin patlamasına yol açar. KV Cache bunun yerine bu ara sonuçları önbelleğe alır, böylece her tur yalnızca yeni eklenen token'ları hesaplar. **Ön koşul, ön ekin (prefix) tamamen değişmeden kalmasıdır**—içindeki tek bir karakteri değiştirin, tüm cache geçersiz olur; model her şeyi baştan yeniden hesaplamak zorunda kalır. Terminoloji notu: bu bölüm istekler arasındaki "cache isabetlerinden" bahsederken, API sağlayıcıları buna Prompt Cache der—çıkarım motorunun KV Cache'i üzerine inşa edilmiş istekler arası bir cache; bu iki düzey bu bölümün sonunda tam olarak birbirinden ayrılacak.
@@ -413,7 +414,7 @@ Cevap: o tek zaman damgası satırı her bir istekte KV Cache'i geçersiz kılı
 > 3. **Standart API formatını kullanın; mesajları elle birleştirmeyin**: Yapılandırılmış mesajlar, Chat Template tarafından modelin eğitim sırasında gördüğü sabit bir token dizisine çevrilir. Dizeleri elle `"USER: ... ASSISTANT: ..."` gibi formatlara birleştirmenin temel sorunu, bunun bu eğitim formatından sapması ve modelin çok adımlı reasoning yeteneğini zayıflatmasıdır. Cache'e gelince—o yalnızca token bayt dizisini tanır. Birleştirilmiş ön ek bayt düzeyinde sabit kaldığı sürece, yine de cache'e isabet edebilir. Ancak birleştirme yöntemi kararsızsa (örn. her seferinde ön eke dinamik içerik enjekte etmek), cache de geçersiz olur.
 >
 > Bu üç sonucun ardındaki sezgi aslında oldukça basittir: context'i işlerken büyük bir model, zaten işlediği içeriği önbelleğe alır, böylece bir dahaki sefere yalnızca yeni kısmı işlemesi gerekir. **Bu, yemek pişirmeye benzer—ilk birkaç adım tamamen aynıysa (aynı malzemeler, aynı bıçak işi), kaldığınız yerden devam edebilirsiniz; ama bu adımlardan biri değişirse (örn. farklı bir malzeme), sonraki tüm adımlar yeniden yapılmalıdır.** System prompt ve araç tanımları "ilk birkaç adımdır"; değiştiklerinde, önbelleğe alınmış tüm ara sonuçlar geçersiz olur.
-
+>
 > Bu üç ilkeyi hatırlayın, aşağıdaki teknik ayrıntıları atlasanız bile bir Agent'ın context yapısını doğru biçimde tasarlayabilirsiniz. Aşağıdaki içerik "neden"in derinine inmek isteyen okuyucular içindir.
 
 > **Deney 2-2 ★: Attention Mekanizması Görselleştirmesi**
@@ -425,7 +426,7 @@ Cevap: o tek zaman damgası satırı her bir istekte KV Cache'i geçersiz kılı
 > Attention mekanizması bu "odağı bulma" sürecini gerçekleştirmek için üç tür vektör kullanır:
 >
 > Tablo 2-1, attention mekanizmasındaki Query, Key ve Value vektörlerinin rollerini özetleyerek okuyucuların bu soyut hesaplamayı "北京的天气怎么样" ("Pekin'de hava durumu nasıl?") örnek cümlesiyle eşleştirmesine yardımcı olur.
-
+>
 > Tablo 2-1 Attention Mekanizmasında Query, Key ve Value'nun Rolleri
 >
 > | Vektör | Anlamı | Bu örnekte |
@@ -464,7 +465,6 @@ Cevap: o tek zaman damgası satırı her bir istekte KV Cache'i geçersiz kılı
 > 4. **Konum Yanlılığı (Position Bias)**[^lost-in-the-middle]: Model, context'in başındaki ve sonundaki bilgiye daha yüksek attention tahsis ederken, orta kısım daha kolay gözden kaçırılır. Bu yüzden context tasarlarken en kritik bilgiyi başa veya sona yerleştirmek önemli bir pratik ilkedir.
 >
 > Bu deney şunu gösteriyor: **modelin uzun düşünce zinciri yeteneği ve tool calling yeteneği, ikisi de büyük ölçüde In-Context Learning yeteneğine dayanır** — In-Context Learning, modelin yeniden eğitime ihtiyaç duymadan, yalnızca girdide sağlanan talimatlara ve örneklere dayanarak yeni görevlere uyum sağlama yeteneğini ifade eder. In-Context Learning'in içsel mekanizması ve Agent mimarisi tasarımı için çıkarımları için bu bölümün Context Sıkıştırma kısmına bakın.
->
 
 [^lost-in-the-middle]: Liu ve diğerleri. ["Lost in the Middle: How Language Models Use Long Contexts"](https://aclanthology.org/2024.tacl-1.9/), TACL, 2024.
 
@@ -667,6 +667,7 @@ Mekanizmanın diğer kısıtı model yeteneğidir: model, "konuşma ortasında g
 >
 > Ablation study'nin sonucu şaşırtıcı değil: kaotik bilgi organizasyonu %30'un üzerinde bir başarı oranı düşüşüne yol açtı. Daha değerli olan şey metodolojinin kendisidir—bir Agent kötü performans gösterdiğinde, tüm prompt'u yeniden yazmak yerine önce bir ablation study yapmak daha iyidir: her bileşeni birer birer kapatıp hangi bileşenin en büyük etkiye sahip olduğunu gözlemleyin. Bu, sezgiye dayalı tahmin yürütmekten çok daha güvenilirdir.
 >
+
 ### Prompt Injection: Context Güvenliğine Yönelik Temel Tehdit
 
 System prompt'lar ve araç tanımları için tasarım yöntemlerini tartıştıktan sonra, bu bölüm nihayet bir güvenlik boyutunu ele almalıdır: dikkatle tasarlanmış bir context'in dış girdi tarafından ele geçirilmesi nasıl önlenir? Bu, prompt injection sorunudur.
@@ -701,6 +702,7 @@ Context düzeyindeki savunmaların (kaynak etiketleme, talimat-veri ayrımı, gi
 >
 > **Kabul Kriterleri**: Farklı savunma yapılandırmaları altında her saldırının başarı oranını kaydedin ve hangi savunma stratejilerinin hangi saldırı türlerine karşı en etkili olduğunu analiz edin.
 >
+
 ## Dinamik Prompt'lar ve Agent Skills
 
 ![Şekil 2-11: Skills Kademeli Açığa Çıkarma Mekanizması](images/fig2-11.svg)
@@ -777,6 +779,7 @@ Context yönetimi açısından bakıldığında, Skills mekanizması son derece 
 >
 > **Kabul Kriterleri**: Üretilen PowerPoint, makalenin ana içeriğini kapsar (başlık sayfası, problem arka planı, yöntem genel bakışı, temel sonuçlar, sonuç), makaleden çıkarılan ve metin açıklamalarıyla tutarlı en az 3 şekil içerir ve PowerPoint veya uyumlu yazılımda düzgün açılan doğru biçimlendirmeye sahiptir.
 >
+
 ## Agent Durum Çubuğu: Meta Bilgiyle Agent Trajectory Yönetimini Güçlendirmek
 
 ![Şekil 2-14: Agent Durum Çubuğu Mimarisi](images/fig2-14.svg)
@@ -921,7 +924,7 @@ Bu tasarım, KV Cache bölümündeki temel ilkenin—"dinamik bilgiyi sona ekle,
 >
 > **Araç Çağrısı Sayacı**: Her aracın kaç kez çağrıldığını kaydeden global bir sözlük tutar, yanıtları "read_file için 3. araç çağrısı" gibi notlarla işaretler. Bu açık sayım, modelin kalıp tanıma yeteneklerini tetikler: ilk başarısızlıktan sonra yolu kontrol et; ikinci başarısızlıktan sonra dizini listele; üçüncüden sonra proaktif olarak vazgeç ve bir alternatif ara. Daha derin değeri, örtük maliyet farkındalığını mümkün kılmasında yatar—Agent belirli bir işlemde zaten çok fazla deneme harcadığını "fark edebilir".
 >
-> **TODO Listesi Yönetimi**: Manus (genel amaçlı bir Yapay Zeka Ajanı ürünü)'un "yeniden ifade yoluyla attention'ı manipüle etme" konseptinden ilham alarak, iki özel araç sağlar: `rewrite_todo_list` ve `update_todo_status`. Her TODO öğesi benzersiz bir tanımlayıcı, içerik, durum (pending/in_progress/completed/cancelled) ve bir zaman damgası içerir. Bilişsel yük teorisi perspektifinden, TODO listesi dışsal bellek görevi görür—tıpkı insanların karmaşık projeleri ele alırken kontrol listeleri yazması gibi, Agent'ın da "neyin yapıldığını ve neyin kaldığını" kaydedecek bir yere ihtiyacı vardır. Deneysel veriler şunu gösteriyor: TODO etkinleştirilmiş Agent'lar görevleri ortalama 15 yinelemede tamamlarken, olmayanlar 21 yineleme gerektiriyor ve sık sık alt görevleri kaçırıyor.
+> **TODO Listesi Yönetimi**: Manus (genel amaçlı bir AI Agent ürünü)'un "yeniden ifade yoluyla attention'ı manipüle etme" konseptinden ilham alarak, iki özel araç sağlar: `rewrite_todo_list` ve `update_todo_status`. Her TODO öğesi benzersiz bir tanımlayıcı, içerik, durum (pending/in_progress/completed/cancelled) ve bir zaman damgası içerir. Bilişsel yük teorisi perspektifinden, TODO listesi dışsal bellek görevi görür—tıpkı insanların karmaşık projeleri ele alırken kontrol listeleri yazması gibi, Agent'ın da "neyin yapıldığını ve neyin kaldığını" kaydedecek bir yere ihtiyacı vardır. Deneysel veriler şunu gösteriyor: TODO etkinleştirilmiş Agent'lar görevleri ortalama 15 yinelemede tamamlarken, olmayanlar 21 yineleme gerektiriyor ve sık sık alt görevleri kaçırıyor.
 >
 > **Ayrıntılı Hata Bilgisi**: Dört katman içerir—hata türü ve açıklaması, tam parametre JSON'u, çağrı yığını bilgisi ve hedefe yönelik düzeltme önerileri (örn. bir FileNotFoundError ile karşılaşıldığında, yolu doğrulamayı, çalışma dizinini kontrol etmeyi ve mutlak yollar kullanmayı önerir). Etkinleştirildiğinde, Agent'ın hata senaryolarında alternatif çözümler bulma başarı oranı %60'tan %95'e yükselir, kör yeniden denemelerden analitik problem çözmeye geçilir.
 >
@@ -930,6 +933,7 @@ Bu tasarım, KV Cache bölümündeki temel ilkenin—"dinamik bilgiyi sona ekle,
 > Bu teknikler birlikte çalıştıklarında ortaya çıkan (emergent) bir etki üretir (yani tek başına kullanıldıklarında sınırlı etkinlik, ama birleştirildiklerinde beklenmedik derecede güçlü sonuçlar). Zaman damgaları ve araç sayaçlarının birleşimi, Agent'ın işlemlerin sıklığını ve zamansal dağılımını anlamasını sağlar; TODO listeleri ve sistem durumunun birleşimi, Agent'ın görev stratejilerini ortama göre ayarlamasını sağlar; ayrıntılı hata bilgisi ve araç sayaçlarının birleşimi ise Agent'ın yalnızca birden fazla başarısızlıktan sonra strateji değiştirmesini değil, aynı zamanda başarısızlığın nedenlerini anlamasını sağlar.
 >
 > Tüm bu teknikleri etkinleştirilmiş bir Agent, artık talimatları mekanik olarak yürüten bir araç değil, öz farkındalığa sahip bir asistandır—bir dosya bulunamadığında, önce dizini kontrol eder, sonra mevcut dosyaları listeler ve hâlâ bulunamazsa, görevi TODO'da iptal edildi olarak işaretler ve alternatif bir görev ekler. Bu uyarlanabilir davranış, tek başına hiçbir teknikle elde edilemeyecek bir şeydir.
+>
 
 ### Okumalardan Stratejiye: Agent'ın Fiziksel Zaman Algısı
 
@@ -1032,6 +1036,7 @@ Kilit nokta, sıkıştırmanın **zamanlamasını ve konumunu** anlamaktır. Sı
 > ![Şekil 2-17: Altı Sıkıştırma Stratejisinin İşleme Akışı](images/fig2-17.svg)
 >
 >
+
 ### Üretim Düzeyinde Hiyerarşik Sıkıştırma Mekanizması
 
 Yukarıdaki deney, çeşitli sıkıştırma stratejileri arasındaki performans farklarını gösterir. Bir üretim ortamında, olgun Agent sistemleri tipik olarak tek bir stratejiye güvenmez, birden fazla stratejiyi hiyerarşik bir sıkıştırma mekanizmasında birleştirir—farklı bilgi türlerinin farklı raf ömürleri vardır ve sıkıştırma stratejisi bilginin beklenen yaşam döngüsüyle eşleşmelidir. Claude Code'un yaklaşımını referans alarak, olgun bir context yönetim sistemi genellikle beş katman içerir:
