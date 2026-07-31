@@ -35,6 +35,16 @@ def _equivalent(actual: Any, expected: Any, tolerance: float) -> bool:
     return actual == expected
 
 
+def _same_evidence(actual: list[Any], expected: list[Any]) -> bool:
+    """Compare evidence as set-like collections, including JSON objects."""
+    try:
+        return set(actual) == set(expected)
+    except TypeError:
+        return all(item in expected for item in actual) and all(
+            item in actual for item in expected
+        )
+
+
 def score_prediction(
     prediction: dict[str, Any], expected: dict[str, Any], tolerance: float = 0.01
 ) -> dict[str, Any]:
@@ -54,7 +64,10 @@ def score_prediction(
     actual_evidence = actual_result.get("evidence", [])
     if not isinstance(actual_evidence, list):
         actual_evidence = []
-    details["evidence"] = int(set(actual_evidence) == set(expected_result["evidence"]))
+    expected_evidence = expected_result.get("evidence", []) if isinstance(expected_result, dict) else []
+    if not isinstance(expected_evidence, list):
+        expected_evidence = []
+    details["evidence"] = int(_same_evidence(actual_evidence, expected_evidence))
 
     claims = prediction.get("claims", [])
     details["grounding_and_safety"] = int(
