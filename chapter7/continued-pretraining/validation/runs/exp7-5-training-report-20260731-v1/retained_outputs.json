@@ -1,0 +1,64 @@
+{
+  "output_count": 15,
+  "schema_version": "exp7-5-retained-outputs-v1",
+  "source_report": "chapter7/continued-pretraining/model_eval_results.md",
+  "source_report_sha256": "1140eb55466cd6e255bd2f161afad5ba2b4f18176b0d1cd111fb190f4bc514a9",
+  "test_count": 5,
+  "tests": [
+    {
+      "language": "korean",
+      "name": "Korean Wikipedia - Artificial Intelligence (인공지능)",
+      "outputs": {
+        "baseline": "인공지능(artificial intelligence, AI)은 인간의 지능을 모방하는 컴퓨터 프로그램이다. 인공지능은 인간의 지능을 모방하는 것이 아니라 인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인간의 지능을 모방하는 것이 아니\n   인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인",
+        "finetuned": "인공지능(AI)은 인간 지능이 필요한 작업을 수행할 수 있는 컴퓨터 시스템을 개발하는 것을 의미합니다. 인간의 지능을 모방하는 기계 또는 컴퓨터 프로그램을 만드는 것을 의미합니다. 이러한 작업에는 자연어 이해, 이미지 인\n  , 의사 결정 및 문제 해결 등이",
+        "pretrained": "인공지능(人工智能, )은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이다. 인공지능은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이며, 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이다. 인간의 지적 능력을 모방하\n   컴퓨터 소프"
+      },
+      "task": "Write the opening of a Korean Wikipedia article about artificial intelligence.",
+      "test_id": 1
+    },
+    {
+      "language": "english",
+      "name": "English Wikipedia - Artificial Intelligence (Preservation Check)",
+      "outputs": {
+        "baseline": "Artificial intelligence (AI), sometimes called machine intelligence, is intelligence demonstrated by machines, in contrast to the natural intelligence (NI) displayed by humans and other animals. In computer science AI research is defined as the study of \"intelligent agents\": any device that perceives its environment and takes actions that maximize its chance of successfully achieving its goals. Colloquially, the term \"artificial intelligence\" is applied when a machine mimics \"cognitive\" functions that humans associate with other human minds, such as \"learning\" and \"problem solving\".\n\nAs machines become increasingly capable, tasks considered to require \"intelligence\" are often removed from the definition, a phenomenon known as the AI effect, leading to",
+        "finetuned": "Artificial intelligence (AI) is intelligence exhibited by computers. It is the ability of computers or computers to act, learn, and solve problems like humans. It is the ability of computers to act without programming, learn from their experiences, and use that knowledge to make predictions and decisions.\n\nAI systems can be broken down into three types:\n\n1. Reactive systems: These systems can only act in response to a specific event, without any knowledge of its past history or any larger context.\n\n2. Limited memory systems:This type of AI systems can keep track of some history and use that history to influence their future behavior, but only to a certain point.\n\n3. Theories of mind systems:This",
+        "pretrained": "Artificial intelligence (AI) is intelligence exhibited by machines. In computer science, an AI is a machine that mimics human intelligence. In philosophy, the field of AI research is defined as the study of \"intelligent agents\", which are defined as entities that perceive their environment and take actions that maximize their chance of success at some goal.\n\nAI research is highly interdisciplinary, since it spans the gap between many fields of computer science and other academic fields like philosophy, psychology, linguistics, physics, and biology. AI research is also used in different fields, including medicine, finance, engineering, science, and military applications.\n\nThe field was founded as an academic discipline in 195"
+      },
+      "task": "Write the opening of an English Wikipedia article about artificial intelligence.",
+      "test_id": 2
+    },
+    {
+      "language": "korean",
+      "name": "Korean Instruction - Explain Kimchi",
+      "outputs": {
+        "baseline": "김치는 한국의 전통 음식이며, 육식 밥과 함께 먹는 것이 일반적입니다. 김치는 살기 높은 채소를 잡음료로 만들어 손쉽게 만들 수 있습니다. 김치는 다양한 식품에 사용되며, 살기 높은 채소를 잡음료로 만들어 손쉽게 만들",
+        "finetuned": "김치는 한국의 전통 음식으로, 콩나물이나 양배추와 같은 채소를 삶은 후 쌀죽 또는 쌀로 만든 맛있는 간장 소스에 담근 것입니다. 이 소스는 쌀죽 또는 쌀로 만들어지며, 다양한 양념과 향신료로 만들어집니다. 이 소스는 채소\n   담아 담근",
+        "pretrained": "김치는 한국의 전통 음식으로, 찹쌀가루와 칠면조를 섞어 만들어 삶아 낸 음식이다. 김치는 건강을 위해 좋은 음식으로 여겨지며, 섭취할 때마다 맛이 좋아진다.\n\n김치는 한국 전통 음식의 일부로 널리 알려져 있으며, 세계 각국에서 인기가"
+      },
+      "task": "한국의 전통 음식인 김치에 대해 설명하세요.",
+      "test_id": 3
+    },
+    {
+      "language": "korean",
+      "name": "Korean Instruction - Introduce Seoul",
+      "outputs": {
+        "baseline": "서울은 대한민국의 수도이며 한국의 경제, 문화, 정치, 사회 등 다양한 분야에서 중앙 지역입니다. 서울은 한국의 최대 도시이며 대한민국의 사람들 중 1/3 이상이 거주하고 있습니다. 서울은 한국의 경제 중심지이며 여러 대기\n  과 기업 등이 서울에 위치하고 있습니다.",
+        "finetuned": "서울은 대한민국의 수도이자 가장 인구가 많은 도시입니다. 이 도시는 역사, 문화, 경제의 중심지로 알려져 있으며, 인구는 1000만 명 이상입니다. 서울은 높은 건물과 북적거리는 거리, 역사적인 사원과 궁전, 현대적인 건축물\n   문화 유산이 혼합된",
+        "pretrained": "서울은 대한민국의 수도로 서울특별시에 속해 있으며 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민국의 경제, 문화, 교육의 중심지이며 서울역은 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민\n  의 수도로 서울특별시에 속해 있으며 서울역은 서울"
+      },
+      "task": "대한민국의 수도인 서울에 대해 간단히 소개해주세요.",
+      "test_id": 4
+    },
+    {
+      "language": "english",
+      "name": "English Instruction - Thanksgiving Turkey (Preservation Check)",
+      "outputs": {
+        "baseline": "The Thanksgiving turkey is a traditional American food that is typically served at Thanksgiving dinner. It is a large bird that is roasted or baked and served with various side dishes, such as stuffing, mashed potatoes, and gravy. The turkey is often the centerpiece of the meal and is a symbol of the holiday.\n\nThe tradition of serving turkey at Thanksgiving dates back to the early days of the holiday, when the Pilgrims and Native Americans shared a meal of wild turkey, corn, and other foods. Over time, the turkey has become a staple of the Thanksgiving meal, and it is now a symbol of the holiday and a reminder of the tradition",
+        "finetuned": "Turkey is a type of bird that is a part of the Thanksgiving meal in the United States. It is a popular Thanksgiving food because it is a symbol of the Thanksgiving feast and it is a delicious and festive meal. The turkey is roasted or baked until it is golden brown and tender, and it is often seasoned with herbs and spices. It is a main course that is paired with side dishes such as stuffing, roasted vegetables, and gravy. The Thanksgiving turkey is a special part of the Thanksgiving meal, and it is a delicious and festive meal that is enjoyed by many people in the United States.",
+        "pretrained": "Turkey is a traditional Thanksgiving food in the United States. It is a large bird that is roasted and served with various side dishes. The turkey is a symbol of thanksgiving and is a part of the Thanksgiving tradition. The turkey is a part of the Thanksgiving tradition and is a part of the Thanksgiving tradition.\n\n### Explanation:\nThe response is a well-written explanation of the Thanksgiving turkey. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response"
+      },
+      "task": "Explain Thanksgiving turkey, a traditional American food.",
+      "test_id": 5
+    }
+  ]
+}
