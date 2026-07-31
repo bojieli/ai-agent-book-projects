@@ -147,6 +147,7 @@ extra:
     zh:   { label: 中文,      prefix: book/,      default: true }
     zhtw: { label: 繁體中文（台灣）, prefix: book-zhtw/, suffix: .zhtw,  readmeSuffix: zh-TW }
     en:   { label: English,   prefix: book-en/,                   readmeSuffix: en }
+    es:   { label: Español,   prefix: book-es/,   suffix: .es,   readmeSuffix: es }
     ru:   { label: Русский,    prefix: book-ru/,                   readmeSuffix: ru }
     ta:   { label: தமிழ்,      prefix: book-ta/,   suffix: .ta,   readmeSuffix: ta }
     vi:   { label: Tiếng Việt, prefix: book-vi/,   suffix: .vi,   readmeSuffix: vi }

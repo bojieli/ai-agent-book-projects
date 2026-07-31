@@ -8,6 +8,8 @@
 
 | சோதனை | Project | Type | Description |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | அனுபவத்திலிருந்து கற்க ஒரே treasure-hunt சூழலில் Q-learning மற்றும் LLM Agent-ஐ இயக்குகிறது. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | ஆசிரியர் எடுத்துக்காட்டுகளை மாணவர் prompt-ஆக distill செய்து தரம் மற்றும் செலவை ஒப்பிடுகிறது. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | பூஜ்ஜியத்திலிருந்து சிறிய மொழி மாதிரிகளை முன்-பயிற்றுவித்து, முன்-பயிற்சியின் முழுமையான செயல்முறையையும் முக்கிய தொழில்நுட்பங்களையும் புரிந்துகொள்ளுங்கள். |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | குறிப்பிட்ட களத் தரவுகளில் தொடர்ச்சியான முன்-பயிற்சியை மேற்கொண்டு, இலக்குக் களத்தில் மாதிரியின் செயல்திறனை மேம்படுத்துகிறது. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM குரல் SFT: 1B TTS மாதிரியை LoRA முறையில் நுண்சரிவு செய்து, `<laugh>`, `<sigh>` போன்ற துணைமொழிக் குறிச்சொற்களால் வெளிப்பாட்டைக் கட்டுப்படுத்துதல் |

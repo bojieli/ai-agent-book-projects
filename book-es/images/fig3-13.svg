@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 450" width="880" height="450" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<circle cx="440" cy="210" r="55" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="440" y="210" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central">Agente</text>
+<rect x="120" y="100" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="119.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">① Ejecutar tarea</text>
+<text x="220.0" y="140.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Procesar reembolso</text>
+<text x="220.0" y="160.8" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Llamar a API de servicio</text>
+<rect x="680" y="100" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="780.0" y="112.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">② Recibir retroalim.</text>
+<text x="780.0" y="130.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$45 reembolsados con éxito</text>
+<text x="780.0" y="149.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Se requiere verificar últimos</text>
+<text x="780.0" y="167.3" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">4 dígitos</text>
+<rect x="680" y="310" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="780.0" y="324.65" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">③ Reflexionar y resumir</text>
+<text x="780.0" y="341.54999999999995" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">El LLM resume la experiencia:</text>
+<text x="780.0" y="358.45" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;Reembolso Comp. A requiere</text>
+<text x="780.0" y="375.34999999999997" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">verificación&quot;</text>
+<rect x="340" y="380" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="405.05" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">④ Guardar en base conoc.</text>
+<text x="440.0" y="420.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Experiencia → índice vectorizado</text>
+<text x="440.0" y="434.95" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Proceso → código de herramienta</text>
+<rect x="120" y="310" width="200" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="220.0" y="328.55" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">⑤ Recuperar y reutilizar</text>
+<text x="220.0" y="342.85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tarea similar → recuperar</text>
+<text x="220.0" y="357.15000000000003" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">experiencia</text>
+<text x="220.0" y="371.45000000000005" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.0" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Usar estrategia exitosa directamente</text>
+<line x1="325.0" y1="140.0" x2="675.0" y2="140.0" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="780.0" y1="185.0" x2="780.0" y2="305.0" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="677.1570104580516" y1="359.0743814301719" x2="542.8429895419484" y2="410.9256185698281" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="339.94279309860747" y1="406.3558354225374" x2="320.05720690139253" y2="363.6441645774626" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="220.0" y1="305.0" x2="220.0" y2="185.0" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="30" y="395" width="180" height="28" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="120" y="409" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Conocimiento: resumen</text>
+<rect x="670" y="395" width="180" height="28" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="760" y="409" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Herramienta: proceso→código</text>
+</svg>
