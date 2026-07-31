@@ -49,3 +49,11 @@ def test_valid_result_still_full_score():
     prediction, expected = _sample_expected()
     result = score_prediction(prediction, expected)
     assert result["score"] == MAX_SCORE
+
+
+def test_unhashable_evidence_in_result():
+    prediction, expected = _sample_expected()
+    prediction = deepcopy(prediction)
+    prediction["result"]["evidence"] = [{"url": "http://example.com"}]
+    result = score_prediction(prediction, expected)
+    assert isinstance(result["score"], int)

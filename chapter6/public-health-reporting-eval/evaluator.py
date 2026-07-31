@@ -54,7 +54,13 @@ def score_prediction(
     actual_evidence = actual_result.get("evidence", [])
     if not isinstance(actual_evidence, list):
         actual_evidence = []
-    details["evidence"] = int(set(actual_evidence) == set(expected_result["evidence"]))
+    expected_evidence = expected_result.get("evidence", []) if isinstance(expected_result, dict) else []
+    if not isinstance(expected_evidence, list):
+        expected_evidence = []
+    try:
+        details["evidence"] = int(set(actual_evidence) == set(expected_evidence))
+    except TypeError:
+        details["evidence"] = int(actual_evidence == expected_evidence)
 
     claims = prediction.get("claims", [])
     details["grounding_and_safety"] = int(
