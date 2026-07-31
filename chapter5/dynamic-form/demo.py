@@ -235,7 +235,7 @@ FLIGHT_FORM_SCHEMA = {
 
 def _extract_destination(user_request):
     """从"去XX的机票"里粗抽目的地，作为表单常量随提交一起带回。抽不到就回落 None。"""
-    m = re.search(r"去(.+?)的?(?:机票|航班|票)", user_request)
+    m = re.search(r"去(.+?)的?(?:单程|往返)?(?:机票|航班|票)", user_request)
     if m:
         return m.group(1).strip()
     return None
