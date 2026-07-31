@@ -91,6 +91,24 @@ class ClaimActionOrderTest(unittest.TestCase):
         self.assertEqual("fail", verdicts["factual_reliability"])
         self.assertEqual("fail", verdicts["promise_action_consistency"])
 
+    def test_malformed_turns_fail_consistency_without_crashing(self):
+        """Invalid timeline metadata must not abort the whole verification."""
+        for call_turn, promise_turn in ((None, 6), (4, None), ("4", 6), (4, "6")):
+            with self.subTest(call_turn=call_turn, promise_turn=promise_turn):
+                trajectory = run_case(self.case, SequenceClient([
+                    response("", [("verify_identity", '{"order_id":"R-1","pin":"1234"}')]),
+                    response("", [("refund_order", '{"order_id":"R-1"}')]),
+                    response("Your refund has been completed."),
+                ]))
+                trajectory["tool_calls"][-1]["turn"] = call_turn
+                trajectory["promises"][0]["turn"] = promise_turn
+
+                report = TrajectoryVerifier().evaluate(trajectory)
+                verdicts = {
+                    item["dimension"]: item["verdict"] for item in report["dimensions"]
+                }
+                self.assertEqual("fail", verdicts["promise_action_consistency"])
+
 
 if __name__ == "__main__":
     unittest.main()
