@@ -1,5 +1,15 @@
 # Sesame CSM (1B) TTS - Text-to-Speech Fine-tuning
 
+## Experiment 7-6 retained evidence
+
+The [canonical checkpoint-free training report](../voice-sft-training-report/)
+retains the immutable executed upstream notebook, all 60 loss rows, its three
+exact embedded WAVs, and the raw direct-audio judgment. The executable path
+conditions speaker and style on previous audio in CSM conversation context; it
+does not define a `<laugh>`/`<sigh>` tag-control protocol, and the retained
+prompts are untagged, so tag controllability is not claimed. Checkpoints are
+intentionally not distributed or required as report evidence.
+
 ## English
 
 This directory contains scripts for fine-tuning and running inference with the Sesame CSM text-to-speech model using Unsloth.

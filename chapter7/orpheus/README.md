@@ -1,5 +1,15 @@
 # Orpheus TTS - Text-to-Speech Fine-tuning with Unsloth
 
+## Experiment 7-6 retained evidence
+
+The [canonical checkpoint-free training report](../voice-sft-training-report/)
+retains the immutable executed upstream notebook, all 298 loss rows, its exact
+embedded WAV, and the raw direct-audio judgment. The executable path supports
+textual paralinguistic controls such as `<giggle>`, `<giggles>`, and `<laugh>`;
+it does not accept raw reference audio, and the single retained WAV cannot
+establish cross-sentence voice consistency. Checkpoints are intentionally not
+distributed or required as report evidence.
+
 ## English
 
 This project demonstrates how to fine-tune the Orpheus 3B text-to-speech model using Unsloth for efficient training and inference.

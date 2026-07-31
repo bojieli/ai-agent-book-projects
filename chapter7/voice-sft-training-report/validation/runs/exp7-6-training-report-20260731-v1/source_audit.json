@@ -1,0 +1,1760 @@
+{
+  "experiment": "7-6",
+  "extracted_audio": [
+    {
+      "bytes": 356396,
+      "cell_source": "#@title Run Inference\n\n\nFastLanguageModel.for_inference(model) # Enable native 2x faster inference\n\n# Moving snac_model cuda to cpu\nsnac_model.to(\"cpu\")\n\nprompts_ = [(f\"{chosen_voice}: \" + p) if chosen_voice else p for p in prompts]\n\nall_input_ids = []\n\nfor prompt in prompts_:\n  input_ids = tokenizer(prompt, return_tensors = \"pt\").input_ids\n  all_input_ids.append(input_ids)\n\nstart_token = torch.tensor([[ 128259]], dtype = torch.int64) # Start of human\nend_tokens = torch.tensor([[128009, 128260]], dtype = torch.int64) # End of text, End of human\n\nall_modified_input_ids = []\nfor input_ids in all_input_ids:\n  modified_input_ids = torch.cat([start_token, input_ids, end_tokens], dim = 1) # SOH SOT Text EOT EOH\n  all_modified_input_ids.append(modified_input_ids)\n\nall_padded_tensors = []\nall_attention_masks = []\nmax_length = max([modified_input_ids.shape[1] for modified_input_ids in all_modified_input_ids])\nfor modified_input_ids in all_modified_input_ids:\n  padding = max_length - modified_input_ids.shape[1]\n  padded_tensor = torch.cat([torch.full((1, padding), 128263, dtype = torch.int64), modified_input_ids], dim = 1)\n  attention_mask = torch.cat([torch.zeros((1, padding), dtype = torch.int64), torch.ones((1, modified_input_ids.shape[1]), dtype = torch.int64)], dim = 1)\n  all_padded_tensors.append(padded_tensor)\n  all_attention_masks.append(attention_mask)\n\nall_padded_tensors = torch.cat(all_padded_tensors, dim = 0)\nall_attention_masks = torch.cat(all_attention_masks, dim = 0)\n\ninput_ids = all_padded_tensors.to(\"cuda\")\nattention_mask = all_attention_masks.to(\"cuda\")\ngenerated_ids = model.generate(\n      input_ids = input_ids,\n      attention_mask = attention_mask,\n      max_new_tokens = 1200,\n      do_sample = True,\n      temperature = 0.6,\n      top_p = 0.95,\n      repetition_penalty = 1.1,\n      num_return_sequences = 1,\n      eos_token_id = 128258,\n     use_cache = True\n  )\ntoken_to_find = 128257\ntoken_to_remove = 128258\n\ntoken_indices = (generated_ids == token_to_find).nonzero(as_tuple = True)\n\nif len(token_indices[1]) > 0:\n    last_occurrence_idx = token_indices[1][-1].item()\n    cropped_tensor = generated_ids[:, last_occurrence_idx+1:]\nelse:\n    cropped_tensor = generated_ids\n\nmask = cropped_tensor != token_to_remove\n\nprocessed_rows = []\n\nfor row in cropped_tensor:\n    masked_row = row[row != token_to_remove]\n    processed_rows.append(masked_row)\n\ncode_lists = []\n\nfor row in processed_rows:\n    row_length = row.size(0)\n    new_length = (row_length // 7) * 7\n    trimmed_row = row[:new_length]\n    trimmed_row = [t - 128266 for t in trimmed_row]\n    code_lists.append(trimmed_row)\n\n\ndef redistribute_codes(code_list):\n  layer_1 = []\n  layer_2 = []\n  layer_3 = []\n  for i in range((len(code_list)+1)//7):\n    layer_1.append(code_list[7*i])\n    layer_2.append(code_list[7*i+1]-4096)\n    layer_3.append(code_list[7*i+2]-(2*4096))\n    layer_3.append(code_list[7*i+3]-(3*4096))\n    layer_2.append(code_list[7*i+4]-(4*4096))\n    layer_3.append(code_list[7*i+5]-(5*4096))\n    layer_3.append(code_list[7*i+6]-(6*4096))\n  codes = [torch.tensor(layer_1).unsqueeze(0),\n         torch.tensor(layer_2).unsqueeze(0),\n         torch.tensor(layer_3).unsqueeze(0)]\n\n  # codes = [c.to(\"cuda\") for c in codes]\n  audio_hat = snac_model.decode(codes)\n  return audio_hat\n\nmy_samples = []\nfor code_list in code_lists:\n  samples = redistribute_codes(code_list)\n  my_samples.append(samples)\nfrom IPython.display import display, Audio\nif len(prompts) != len(my_samples):\n  raise Exception(\"Number of prompts and samples do not match\")\nelse:\n  for i in range(len(my_samples)):\n    print(prompts[i])\n    samples = my_samples[i]\n    display(Audio(samples.detach().squeeze().to(\"cpu\").numpy(), rate = 24000))\n# Clean up to save RAM\ndel my_samples,samples",
+      "filename": "orpheus_output_1.wav",
+      "index": 1,
+      "notebook_cell_index": 19,
+      "notebook_output_index": 1,
+      "sha256": "57ad57efcc101b8e25ef10cae4d214e90443ef3d0357408df9d6655bac36a3c1",
+      "track": "orpheus"
+    },
+    {
+      "bytes": 368684,
+      "cell_source": "from IPython.display import Audio, display\nimport soundfile as sf\n\ntext = \"We just finished fine tuning a text to speech model... and it's pretty good!\"\nspeaker_id = 0\ninputs = processor(f\"[{speaker_id}]{text}\", add_special_tokens = True).to(\"cuda\")\naudio_values = model.generate(\n    **inputs,\n    max_new_tokens = 125, # 125 tokens is 10 seconds of audio, for longer speech increase this\n    # play with these parameters to tweak results\n    # depth_decoder_top_k = 0,\n    # depth_decoder_top_p = 0.9,\n    # depth_decoder_do_sample = True,\n    # depth_decoder_temperature = 0.9,\n    # top_k = 0,\n    # top_p = 1.0,\n    # temperature = 0.9,\n    # do_sample = True,\n    #########################################################\n    output_audio = True\n)\naudio = audio_values[0].to(torch.float32).cpu().numpy()\nsf.write(\"example_without_context.wav\", audio, 24000)\ndisplay(Audio(audio, rate = 24000))",
+      "filename": "sesame_output_1.wav",
+      "index": 1,
+      "notebook_cell_index": 17,
+      "notebook_output_index": 0,
+      "sha256": "bcfd3edb12ccdec842a4c32d229419f3a8b01d05972394e331844222d31e383f",
+      "track": "sesame"
+    },
+    {
+      "bytes": 407084,
+      "cell_source": "text = \"Sesame is a super cool TTS model which can be fine tuned with Unsloth.\"\n\nspeaker_id = 0\n# Another equivalent way to prepare the inputs\nconversation = [\n    {\"role\": str(speaker_id), \"content\": [{\"type\": \"text\", \"text\": text}]},\n]\naudio_values = model.generate(\n    **processor.apply_chat_template(\n        conversation,\n        tokenize = True,\n        return_dict = True,\n    ).to(\"cuda\"),\n    max_new_tokens = 125, # 125 tokens is 10 seconds of audio, for longer speech increase this\n    # play with these parameters to tweak results\n    # depth_decoder_top_k = 0,\n    # depth_decoder_top_p = 0.9,\n    # depth_decoder_do_sample = True,\n    # depth_decoder_temperature = 0.9,\n    # top_k = 0,\n    # top_p = 1.0,\n    # temperature = 0.9,\n    # do_sample = True,\n    #########################################################\n    output_audio = True\n)\naudio = audio_values[0].to(torch.float32).cpu().numpy()\nsf.write(\"example_without_context.wav\", audio, 24000)\ndisplay(Audio(audio, rate = 24000))",
+      "filename": "sesame_output_2.wav",
+      "index": 2,
+      "notebook_cell_index": 18,
+      "notebook_output_index": 0,
+      "sha256": "2c2291770a4e75f099d8853776af839ad4d0eb16a5fa80ac7411bd85730a75bd",
+      "track": "sesame"
+    },
+    {
+      "bytes": 288044,
+      "cell_source": "speaker_id = 0\n\nutterance = raw_ds[3][\"audio\"][\"array\"]\nutterance_text = raw_ds[3][\"text\"]\ntext = \"Sesame is a super cool TTS model which can be fine tuned with Unsloth.\"\n\n# CSM will fill in the audio for the last text.\n# You can even provide a conversation history back in as you generate new audio\n\nconversation = [\n    {\"role\": str(speaker_id), \"content\": [{\"type\": \"text\", \"text\": utterance_text},{\"type\": \"audio\", \"path\": utterance}]},\n    {\"role\": str(speaker_id), \"content\": [{\"type\": \"text\", \"text\": text}]},\n]\n\ninputs = processor.apply_chat_template(\n        conversation,\n        tokenize = True,\n        return_dict = True,\n    )\naudio_values = model.generate(\n    **inputs.to(\"cuda\"),\n    max_new_tokens = 125, # 125 tokens is 10 seconds of audio, for longer text increase this\n    # play with these parameters to tweak results\n    # depth_decoder_top_k = 0,\n    # depth_decoder_top_p = 0.9,\n    # depth_decoder_do_sample = True,\n    # depth_decoder_temperature = 0.9,\n    # top_k = 0,\n    # top_p = 1.0,\n    # temperature = 0.9,\n    # do_sample = True,\n    #########################################################\n    output_audio = True\n)\naudio = audio_values[0].to(torch.float32).cpu().numpy()\nsf.write(\"example_with_context.wav\", audio, 24000)\ndisplay(Audio(audio, rate = 24000))",
+      "filename": "sesame_output_3.wav",
+      "index": 3,
+      "notebook_cell_index": 20,
+      "notebook_output_index": 0,
+      "sha256": "4825836ac05f3677e04b95d47e6a9634c5a613dafc5708a11cdb17688d114867",
+      "track": "sesame"
+    }
+  ],
+  "historical_evidence_boundary": {
+    "author_local_adapter_hashes_retained": false,
+    "author_local_generated_audio_retained": false,
+    "author_local_training_receipts_retained": false,
+    "qualitative_manuscript_mapping_independently_supported": false,
+    "upstream_gpu_training_logs_and_audio_retained": true,
+    "upstream_notebooks_are_not_misrepresented_as_author_local_runs": true
+  },
+  "local_sources": [
+    {
+      "bytes": 147425,
+      "path": "book/chapter7.md",
+      "sha256": "be15b79c84237da367e4bfbdd210142f21ead3775fd59c4341ce5acea0a1d0ae"
+    },
+    {
+      "bytes": 8275,
+      "path": "chapter7/EXPERIMENT_LEDGER.md",
+      "sha256": "27029536d912439430cb2f2fb1b86f673333e57bbdddeafe63a228cddd88020b"
+    },
+    {
+      "bytes": 11892,
+      "path": "chapter7/README.md",
+      "sha256": "52084e6468f2ddf5d05590b5f4b141ef092442c8577cc15af0d9bd2e5f8834f4"
+    },
+    {
+      "bytes": 5946,
+      "path": "chapter7/README.en.md",
+      "sha256": "fd8e1741fb903e67b5e637df7cbe07d687b18cd611e7a1998eea9b208d5e6668"
+    },
+    {
+      "bytes": 6740,
+      "path": "chapter7/README.ko.md",
+      "sha256": "a045be7b8b569d5aa57fcff38e57cdaf7d7240d28da71bb9315004680184db90"
+    },
+    {
+      "bytes": 11691,
+      "path": "chapter7/orpheus/README.md",
+      "sha256": "b4b9ac986833339002fe7cf1e2a554566f4b51825af77b24aea55fd957bc819b"
+    },
+    {
+      "bytes": 19911,
+      "path": "chapter7/orpheus/orpheus_sft_unsloth.py",
+      "sha256": "8e3c159f1acec4c40b71c0d09873e18a1ef8819a0c4c03c3b6d43ee938b89721"
+    },
+    {
+      "bytes": 13974,
+      "path": "chapter7/orpheus/inference.py",
+      "sha256": "8ebe74b243906936e9526917427a1ca92cfe49fd13909cc73f3368d83e3017c5"
+    },
+    {
+      "bytes": 328,
+      "path": "chapter7/orpheus/requirements.txt",
+      "sha256": "39126eaefa71576e7fed464847792c29079ac3d6efdc4102b780fc69ffa66aca"
+    },
+    {
+      "bytes": 2696,
+      "path": "chapter7/orpheus/test_orpheus_inference.py",
+      "sha256": "f1b7d8bc98b539f1969af32f6249ec4c867a19c3bbb88b9f975b8cdb9527db47"
+    },
+    {
+      "bytes": 10605,
+      "path": "chapter7/sesame/README.md",
+      "sha256": "853eaeba58e6956c68bf840ff57081400aa870ba78069333ec279ed397f06976"
+    },
+    {
+      "bytes": 17357,
+      "path": "chapter7/sesame/sesame_csm_sft_unsloth.py",
+      "sha256": "bb2ca89906111f71e2b231fa6429c3c31b5bdb49656bb23d295c58404e5097bf"
+    },
+    {
+      "bytes": 6785,
+      "path": "chapter7/sesame/inference.py",
+      "sha256": "e7cac048392fb9a6e99bc51b9f7c7b033845532035f5237060cd56874edbb9ea"
+    },
+    {
+      "bytes": 7185,
+      "path": "chapter7/sesame/batch_inference.py",
+      "sha256": "af3cc4deee4e54481815fa09e152fdfadb76c5ece96618a58e92d5ec87d46d39"
+    },
+    {
+      "bytes": 1196,
+      "path": "chapter7/sesame/example_inputs.json",
+      "sha256": "791c453dafc9f4a202831867e0a91673766d09698c73e8627daafdec86577bd7"
+    },
+    {
+      "bytes": 447,
+      "path": "chapter7/sesame/requirements.txt",
+      "sha256": "c1e4cbc1cc124458da8e2484e12afbcd4bc68fbdb21dbb70af62cd0412562866"
+    },
+    {
+      "bytes": 2987,
+      "path": "chapter7/sesame/test_batch_inference.py",
+      "sha256": "398a1e794076e2e2d11877a09e123b3bcd137415a190aaaadc5e901b3c7304e6"
+    },
+    {
+      "bytes": 3968,
+      "path": "chapter7/voice-sft-training-report/README.md",
+      "sha256": "3b96fd5aa28d2c099516c3ee576211fa17da5052d9b10700ba472c5941440c7b"
+    },
+    {
+      "bytes": 39407,
+      "path": "chapter7/voice-sft-training-report/run_training_report_audit.py",
+      "sha256": "7f68d7969bc08e1aa275edb052438026d995278e30d2e26be2b4f38fb784dc77"
+    },
+    {
+      "bytes": 14223,
+      "path": "chapter7/voice-sft-training-report/validate_evidence.py",
+      "sha256": "671becdf785c5c0264c7154b328339a76fa3be338af72a7f7752cd78557e11ac"
+    },
+    {
+      "bytes": 5317,
+      "path": "chapter7/voice-sft-training-report/test_training_report_audit.py",
+      "sha256": "fe26039c56d416d3771f06227b7dc8524064f5ec7dbec9a889d5903fba316522"
+    }
+  ],
+  "mechanism_audit": {
+    "checks": {
+      "orpheus_inference_does_not_accept_reference_audio": true,
+      "orpheus_retained_prompt_contains_paralinguistic_tag": true,
+      "orpheus_serializes_snac_audio_tokens": true,
+      "orpheus_serializes_speaker_text_prefix": true,
+      "sesame_accepts_audio_context_in_conversation": true,
+      "sesame_training_source_has_no_laugh_or_sigh_tag": true,
+      "sesame_uses_csm_conditional_generation": true
+    },
+    "finding": "The executable sources and immutable upstream notebook evidence map the two mechanisms opposite to the manuscript labels. This is retained as a negative result, not rewritten as support.",
+    "manuscript_mapping_supported_by_executable_sources": false,
+    "observed_mapping": {
+      "orpheus": "discrete SNAC audio tokens, speaker-prefixed text, and retained <giggles>/<laugh> prompts; no raw reference-audio inference input",
+      "sesame": "CSM conversation history with audio context for speaker/style conditioning; no <laugh>/<sigh> tag protocol in the retained training source"
+    }
+  },
+  "reproduction_contract": {
+    "checkpoint_policy": {
+      "acceptance_artifact": false,
+      "distributed_with_book": false,
+      "required_artifact": "evidence-backed checkpoint-free training report"
+    },
+    "commands": {
+      "book_orpheus": "cd chapter7/orpheus && python -m venv .venv-orpheus && .venv-orpheus/bin/pip install -r requirements.txt && .venv-orpheus/bin/python orpheus_sft_unsloth.py",
+      "book_sesame": "cd chapter7/sesame && python -m venv .venv-sesame && .venv-sesame/bin/pip install -r requirements.txt && .venv-sesame/bin/python sesame_csm_sft_unsloth.py",
+      "orpheus_notebook": "git clone https://github.com/unslothai/notebooks.git upstream-notebooks && git -C upstream-notebooks checkout --detach 154735d14755eaec2cc21b46f743db8f7910d43a && jupyter nbconvert --execute --to notebook --inplace 'upstream-notebooks/nb/Orpheus_(3B)-TTS.ipynb'",
+      "sesame_notebook": "git clone https://github.com/unslothai/notebooks.git upstream-notebooks && git -C upstream-notebooks checkout --detach 154735d14755eaec2cc21b46f743db8f7910d43a && jupyter nbconvert --execute --to notebook --inplace 'upstream-notebooks/nb/Sesame_CSM_(1B)-TTS.ipynb'"
+    },
+    "environment_boundary": {
+      "book_requirements_are_fully_pinned": false,
+      "book_requirements_files_content_hashed": true,
+      "cuda_driver_and_container_digest_retained": false,
+      "upstream_executed_environment_retained_in_notebook": true
+    },
+    "model_data_pins": {
+      "elise_dataset": {
+        "files": {
+          "data/train-00000-of-00001.parquet": {
+            "bytes": 328144109,
+            "sha256": "4c229cbc8542dc3e97b2c13992b1aa7dd6de6631d62eeee52c053014824c0e08"
+          }
+        },
+        "repository": "MrDragonFox/Elise",
+        "revision": "ee867f95526856352ba9c607e6f97e6b9c65b043"
+      },
+      "orpheus_model": {
+        "repository": "unsloth/orpheus-3b-0.1-ft",
+        "revision": "eae2b6e5e429c81b95ac42a883ac64f126583d43",
+        "weights": {
+          "model-00001-of-00002.safetensors": {
+            "bytes": 4991037968,
+            "sha256": "1064bbba044a8ba0f5e1c88a9f301399c958875ca0db5fb216b7c7d39c91a6ca"
+          },
+          "model-00002-of-00002.safetensors": {
+            "bytes": 1610725592,
+            "sha256": "6fac70f10fa2d2c37e06952366d43a0a4363b7e9e5fe48572b29f4a21b3479a9"
+          }
+        }
+      },
+      "sesame_model": {
+        "repository": "unsloth/csm-1b",
+        "revision": "39e8c756bec133ad7eb9ea1097c84a2bd891c949",
+        "weights": {
+          "model.safetensors": {
+            "bytes": 4153376052,
+            "sha256": "1c81da3653c0177283d17d0a94e8136e76429fcabed60ed336cea6abea6e81c3"
+          }
+        }
+      },
+      "snac_codec": {
+        "repository": "hubertsiuzdak/snac_24khz",
+        "revision": "d73ad176a12188fcf4f360ba3bf2c2fbbe8f58ec",
+        "weights": {
+          "pytorch_model.bin": {
+            "bytes": 79488254,
+            "sha256": "4b8164cc6606bfa627f1a784734c1e539891518f1191ed9194fe1e3b9b4bff40"
+          }
+        }
+      }
+    },
+    "upstream_notebooks": {
+      "files": {
+        "orpheus": {
+          "git_blob_sha1": "cd582eab51355b95e180386885b915a1b5c1843a",
+          "path": "nb/Orpheus_(3B)-TTS.ipynb"
+        },
+        "sesame": {
+          "git_blob_sha1": "d5ed1bdcc8c696cec0e4ca388a9c717aa6a06766",
+          "path": "nb/Sesame_CSM_(1B)-TTS.ipynb"
+        }
+      },
+      "repository": "unslothai/notebooks",
+      "revision": "154735d14755eaec2cc21b46f743db8f7910d43a"
+    }
+  },
+  "schema_version": "exp7-6-source-audit-v1",
+  "upstream_executed_notebooks": {
+    "orpheus": {
+      "bytes": 601003,
+      "embedded_audio_count": 1,
+      "environment": {
+        "raw_banner": "==((====))==  Unsloth 2025.3.19: Fast Llama patching. Transformers: 4.50.0.\n   \\\\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.\nO^O/ \\_/ \\    Torch: 2.6.0+cu124. CUDA: 7.5. CUDA Toolkit: 12.4. Triton: 3.2.0\n\\        /    Bfloat16 = FALSE. FA [Xformers = 0.0.29.post3. FA2 = False]\n \"-____-\"     Free license: http://github.com/unslothai/unsloth\nUnsloth: Fast downloading is enabled - ignore downloading bars which are red colored!"
+      },
+      "git_blob_sha1": "cd582eab51355b95e180386885b915a1b5c1843a",
+      "path": "nb/Orpheus_(3B)-TTS.ipynb",
+      "sha256": "96a1ed7dbc0c062ddc0a55b334817edcac6c5fdb59f62394b64823858a3ac859",
+      "source_url": "https://raw.githubusercontent.com/unslothai/notebooks/154735d14755eaec2cc21b46f743db8f7910d43a/nb/Orpheus_(3B)-TTS.ipynb",
+      "training": {
+        "cell_source": "trainer_stats = trainer.train()",
+        "final_loss": 4.498,
+        "first_20_mean": 4.834855,
+        "first_loss": 5.1138,
+        "last_20_mean": 4.418115,
+        "loss_rows": [
+          {
+            "step": 1,
+            "training_loss": 5.1138
+          },
+          {
+            "step": 2,
+            "training_loss": 4.8706
+          },
+          {
+            "step": 3,
+            "training_loss": 4.9881
+          },
+          {
+            "step": 4,
+            "training_loss": 4.8527
+          },
+          {
+            "step": 5,
+            "training_loss": 5.0092
+          },
+          {
+            "step": 6,
+            "training_loss": 4.8367
+          },
+          {
+            "step": 7,
+            "training_loss": 4.8046
+          },
+          {
+            "step": 8,
+            "training_loss": 4.9419
+          },
+          {
+            "step": 9,
+            "training_loss": 4.988
+          },
+          {
+            "step": 10,
+            "training_loss": 4.6665
+          },
+          {
+            "step": 11,
+            "training_loss": 4.9529
+          },
+          {
+            "step": 12,
+            "training_loss": 4.7747
+          },
+          {
+            "step": 13,
+            "training_loss": 4.728
+          },
+          {
+            "step": 14,
+            "training_loss": 4.6582
+          },
+          {
+            "step": 15,
+            "training_loss": 4.6473
+          },
+          {
+            "step": 16,
+            "training_loss": 4.809
+          },
+          {
+            "step": 17,
+            "training_loss": 4.8858
+          },
+          {
+            "step": 18,
+            "training_loss": 4.7755
+          },
+          {
+            "step": 19,
+            "training_loss": 4.8597
+          },
+          {
+            "step": 20,
+            "training_loss": 4.5339
+          },
+          {
+            "step": 21,
+            "training_loss": 4.8216
+          },
+          {
+            "step": 22,
+            "training_loss": 4.7596
+          },
+          {
+            "step": 23,
+            "training_loss": 4.8445
+          },
+          {
+            "step": 24,
+            "training_loss": 4.372
+          },
+          {
+            "step": 25,
+            "training_loss": 4.5136
+          },
+          {
+            "step": 26,
+            "training_loss": 4.6708
+          },
+          {
+            "step": 27,
+            "training_loss": 4.6146
+          },
+          {
+            "step": 28,
+            "training_loss": 4.6692
+          },
+          {
+            "step": 29,
+            "training_loss": 4.5339
+          },
+          {
+            "step": 30,
+            "training_loss": 4.5027
+          },
+          {
+            "step": 31,
+            "training_loss": 4.9776
+          },
+          {
+            "step": 32,
+            "training_loss": 4.601
+          },
+          {
+            "step": 33,
+            "training_loss": 4.5226
+          },
+          {
+            "step": 34,
+            "training_loss": 4.5574
+          },
+          {
+            "step": 35,
+            "training_loss": 4.3075
+          },
+          {
+            "step": 36,
+            "training_loss": 4.6459
+          },
+          {
+            "step": 37,
+            "training_loss": 4.5723
+          },
+          {
+            "step": 38,
+            "training_loss": 4.6456
+          },
+          {
+            "step": 39,
+            "training_loss": 4.7728
+          },
+          {
+            "step": 40,
+            "training_loss": 4.5434
+          },
+          {
+            "step": 41,
+            "training_loss": 4.5942
+          },
+          {
+            "step": 42,
+            "training_loss": 4.5488
+          },
+          {
+            "step": 43,
+            "training_loss": 4.5988
+          },
+          {
+            "step": 44,
+            "training_loss": 4.4589
+          },
+          {
+            "step": 45,
+            "training_loss": 4.6183
+          },
+          {
+            "step": 46,
+            "training_loss": 4.6322
+          },
+          {
+            "step": 47,
+            "training_loss": 4.6495
+          },
+          {
+            "step": 48,
+            "training_loss": 4.5999
+          },
+          {
+            "step": 49,
+            "training_loss": 4.4771
+          },
+          {
+            "step": 50,
+            "training_loss": 4.6063
+          },
+          {
+            "step": 51,
+            "training_loss": 4.4848
+          },
+          {
+            "step": 52,
+            "training_loss": 4.5363
+          },
+          {
+            "step": 53,
+            "training_loss": 4.5233
+          },
+          {
+            "step": 54,
+            "training_loss": 4.1418
+          },
+          {
+            "step": 55,
+            "training_loss": 4.7809
+          },
+          {
+            "step": 56,
+            "training_loss": 4.4004
+          },
+          {
+            "step": 57,
+            "training_loss": 4.5421
+          },
+          {
+            "step": 58,
+            "training_loss": 4.4929
+          },
+          {
+            "step": 59,
+            "training_loss": 4.5425
+          },
+          {
+            "step": 60,
+            "training_loss": 4.5783
+          },
+          {
+            "step": 61,
+            "training_loss": 4.7154
+          },
+          {
+            "step": 62,
+            "training_loss": 4.8434
+          },
+          {
+            "step": 63,
+            "training_loss": 4.3962
+          },
+          {
+            "step": 64,
+            "training_loss": 4.4194
+          },
+          {
+            "step": 65,
+            "training_loss": 4.5251
+          },
+          {
+            "step": 66,
+            "training_loss": 4.6396
+          },
+          {
+            "step": 67,
+            "training_loss": 4.5322
+          },
+          {
+            "step": 68,
+            "training_loss": 4.6509
+          },
+          {
+            "step": 69,
+            "training_loss": 4.6805
+          },
+          {
+            "step": 70,
+            "training_loss": 4.6027
+          },
+          {
+            "step": 71,
+            "training_loss": 4.6481
+          },
+          {
+            "step": 72,
+            "training_loss": 4.605
+          },
+          {
+            "step": 73,
+            "training_loss": 4.5929
+          },
+          {
+            "step": 74,
+            "training_loss": 4.5766
+          },
+          {
+            "step": 75,
+            "training_loss": 4.6625
+          },
+          {
+            "step": 76,
+            "training_loss": 4.3424
+          },
+          {
+            "step": 77,
+            "training_loss": 4.5426
+          },
+          {
+            "step": 78,
+            "training_loss": 4.4942
+          },
+          {
+            "step": 79,
+            "training_loss": 4.5633
+          },
+          {
+            "step": 80,
+            "training_loss": 4.5356
+          },
+          {
+            "step": 81,
+            "training_loss": 4.5536
+          },
+          {
+            "step": 82,
+            "training_loss": 4.4117
+          },
+          {
+            "step": 83,
+            "training_loss": 4.4319
+          },
+          {
+            "step": 84,
+            "training_loss": 4.2801
+          },
+          {
+            "step": 85,
+            "training_loss": 4.4167
+          },
+          {
+            "step": 86,
+            "training_loss": 4.338
+          },
+          {
+            "step": 87,
+            "training_loss": 4.587
+          },
+          {
+            "step": 88,
+            "training_loss": 4.3957
+          },
+          {
+            "step": 89,
+            "training_loss": 4.3904
+          },
+          {
+            "step": 90,
+            "training_loss": 4.4875
+          },
+          {
+            "step": 91,
+            "training_loss": 4.5329
+          },
+          {
+            "step": 92,
+            "training_loss": 4.4187
+          },
+          {
+            "step": 93,
+            "training_loss": 4.7403
+          },
+          {
+            "step": 94,
+            "training_loss": 4.5892
+          },
+          {
+            "step": 95,
+            "training_loss": 4.6135
+          },
+          {
+            "step": 96,
+            "training_loss": 4.4524
+          },
+          {
+            "step": 97,
+            "training_loss": 4.5356
+          },
+          {
+            "step": 98,
+            "training_loss": 4.5383
+          },
+          {
+            "step": 99,
+            "training_loss": 4.4321
+          },
+          {
+            "step": 100,
+            "training_loss": 4.3959
+          },
+          {
+            "step": 101,
+            "training_loss": 4.4681
+          },
+          {
+            "step": 102,
+            "training_loss": 4.5408
+          },
+          {
+            "step": 103,
+            "training_loss": 4.4994
+          },
+          {
+            "step": 104,
+            "training_loss": 4.4371
+          },
+          {
+            "step": 105,
+            "training_loss": 4.3916
+          },
+          {
+            "step": 106,
+            "training_loss": 4.2897
+          },
+          {
+            "step": 107,
+            "training_loss": 4.3767
+          },
+          {
+            "step": 108,
+            "training_loss": 4.4743
+          },
+          {
+            "step": 109,
+            "training_loss": 4.7086
+          },
+          {
+            "step": 110,
+            "training_loss": 4.627
+          },
+          {
+            "step": 111,
+            "training_loss": 4.6107
+          },
+          {
+            "step": 112,
+            "training_loss": 4.4339
+          },
+          {
+            "step": 113,
+            "training_loss": 4.4135
+          },
+          {
+            "step": 114,
+            "training_loss": 4.4293
+          },
+          {
+            "step": 115,
+            "training_loss": 4.5539
+          },
+          {
+            "step": 116,
+            "training_loss": 4.4291
+          },
+          {
+            "step": 117,
+            "training_loss": 4.6757
+          },
+          {
+            "step": 118,
+            "training_loss": 4.6346
+          },
+          {
+            "step": 119,
+            "training_loss": 4.3888
+          },
+          {
+            "step": 120,
+            "training_loss": 4.5309
+          },
+          {
+            "step": 121,
+            "training_loss": 4.4389
+          },
+          {
+            "step": 122,
+            "training_loss": 4.5097
+          },
+          {
+            "step": 123,
+            "training_loss": 4.4702
+          },
+          {
+            "step": 124,
+            "training_loss": 4.5942
+          },
+          {
+            "step": 125,
+            "training_loss": 4.3135
+          },
+          {
+            "step": 126,
+            "training_loss": 4.5573
+          },
+          {
+            "step": 127,
+            "training_loss": 4.3094
+          },
+          {
+            "step": 128,
+            "training_loss": 4.4803
+          },
+          {
+            "step": 129,
+            "training_loss": 4.4266
+          },
+          {
+            "step": 130,
+            "training_loss": 4.4346
+          },
+          {
+            "step": 131,
+            "training_loss": 4.4144
+          },
+          {
+            "step": 132,
+            "training_loss": 4.4256
+          },
+          {
+            "step": 133,
+            "training_loss": 4.5811
+          },
+          {
+            "step": 134,
+            "training_loss": 4.6012
+          },
+          {
+            "step": 135,
+            "training_loss": 4.4525
+          },
+          {
+            "step": 136,
+            "training_loss": 4.5341
+          },
+          {
+            "step": 137,
+            "training_loss": 4.4842
+          },
+          {
+            "step": 138,
+            "training_loss": 4.3257
+          },
+          {
+            "step": 139,
+            "training_loss": 4.5032
+          },
+          {
+            "step": 140,
+            "training_loss": 4.3351
+          },
+          {
+            "step": 141,
+            "training_loss": 4.3877
+          },
+          {
+            "step": 142,
+            "training_loss": 4.4897
+          },
+          {
+            "step": 143,
+            "training_loss": 4.381
+          },
+          {
+            "step": 144,
+            "training_loss": 4.4657
+          },
+          {
+            "step": 145,
+            "training_loss": 4.4832
+          },
+          {
+            "step": 146,
+            "training_loss": 4.4894
+          },
+          {
+            "step": 147,
+            "training_loss": 4.5191
+          },
+          {
+            "step": 148,
+            "training_loss": 4.2529
+          },
+          {
+            "step": 149,
+            "training_loss": 4.3844
+          },
+          {
+            "step": 150,
+            "training_loss": 4.6792
+          },
+          {
+            "step": 151,
+            "training_loss": 4.4489
+          },
+          {
+            "step": 152,
+            "training_loss": 4.4099
+          },
+          {
+            "step": 153,
+            "training_loss": 4.6597
+          },
+          {
+            "step": 154,
+            "training_loss": 4.4224
+          },
+          {
+            "step": 155,
+            "training_loss": 4.5322
+          },
+          {
+            "step": 156,
+            "training_loss": 4.4001
+          },
+          {
+            "step": 157,
+            "training_loss": 4.3714
+          },
+          {
+            "step": 158,
+            "training_loss": 4.6369
+          },
+          {
+            "step": 159,
+            "training_loss": 4.4772
+          },
+          {
+            "step": 160,
+            "training_loss": 4.5594
+          },
+          {
+            "step": 161,
+            "training_loss": 4.3858
+          },
+          {
+            "step": 162,
+            "training_loss": 4.2533
+          },
+          {
+            "step": 163,
+            "training_loss": 4.3345
+          },
+          {
+            "step": 164,
+            "training_loss": 4.688
+          },
+          {
+            "step": 165,
+            "training_loss": 4.4566
+          },
+          {
+            "step": 166,
+            "training_loss": 4.2895
+          },
+          {
+            "step": 167,
+            "training_loss": 4.4745
+          },
+          {
+            "step": 168,
+            "training_loss": 4.0512
+          },
+          {
+            "step": 169,
+            "training_loss": 4.4544
+          },
+          {
+            "step": 170,
+            "training_loss": 4.5841
+          },
+          {
+            "step": 171,
+            "training_loss": 4.5058
+          },
+          {
+            "step": 172,
+            "training_loss": 4.562
+          },
+          {
+            "step": 173,
+            "training_loss": 4.4923
+          },
+          {
+            "step": 174,
+            "training_loss": 4.441
+          },
+          {
+            "step": 175,
+            "training_loss": 4.5117
+          },
+          {
+            "step": 176,
+            "training_loss": 4.5336
+          },
+          {
+            "step": 177,
+            "training_loss": 4.4057
+          },
+          {
+            "step": 178,
+            "training_loss": 4.5707
+          },
+          {
+            "step": 179,
+            "training_loss": 4.7294
+          },
+          {
+            "step": 180,
+            "training_loss": 4.335
+          },
+          {
+            "step": 181,
+            "training_loss": 4.3976
+          },
+          {
+            "step": 182,
+            "training_loss": 4.4052
+          },
+          {
+            "step": 183,
+            "training_loss": 4.3626
+          },
+          {
+            "step": 184,
+            "training_loss": 4.209
+          },
+          {
+            "step": 185,
+            "training_loss": 4.4016
+          },
+          {
+            "step": 186,
+            "training_loss": 4.412
+          },
+          {
+            "step": 187,
+            "training_loss": 4.3054
+          },
+          {
+            "step": 188,
+            "training_loss": 4.6536
+          },
+          {
+            "step": 189,
+            "training_loss": 4.4843
+          },
+          {
+            "step": 190,
+            "training_loss": 4.5845
+          },
+          {
+            "step": 191,
+            "training_loss": 4.3726
+          },
+          {
+            "step": 192,
+            "training_loss": 4.5174
+          },
+          {
+            "step": 193,
+            "training_loss": 4.3981
+          },
+          {
+            "step": 194,
+            "training_loss": 4.5616
+          },
+          {
+            "step": 195,
+            "training_loss": 4.5447
+          },
+          {
+            "step": 196,
+            "training_loss": 4.3822
+          },
+          {
+            "step": 197,
+            "training_loss": 4.3096
+          },
+          {
+            "step": 198,
+            "training_loss": 4.2483
+          },
+          {
+            "step": 199,
+            "training_loss": 4.4663
+          },
+          {
+            "step": 200,
+            "training_loss": 4.3208
+          },
+          {
+            "step": 201,
+            "training_loss": 4.5516
+          },
+          {
+            "step": 202,
+            "training_loss": 4.5889
+          },
+          {
+            "step": 203,
+            "training_loss": 4.5336
+          },
+          {
+            "step": 204,
+            "training_loss": 4.3555
+          },
+          {
+            "step": 205,
+            "training_loss": 4.4177
+          },
+          {
+            "step": 206,
+            "training_loss": 4.3632
+          },
+          {
+            "step": 207,
+            "training_loss": 4.4538
+          },
+          {
+            "step": 208,
+            "training_loss": 4.5046
+          },
+          {
+            "step": 209,
+            "training_loss": 4.2987
+          },
+          {
+            "step": 210,
+            "training_loss": 4.4629
+          },
+          {
+            "step": 211,
+            "training_loss": 4.5411
+          },
+          {
+            "step": 212,
+            "training_loss": 4.2912
+          },
+          {
+            "step": 213,
+            "training_loss": 4.6632
+          },
+          {
+            "step": 214,
+            "training_loss": 4.5615
+          },
+          {
+            "step": 215,
+            "training_loss": 4.6185
+          },
+          {
+            "step": 216,
+            "training_loss": 4.662
+          },
+          {
+            "step": 217,
+            "training_loss": 4.3554
+          },
+          {
+            "step": 218,
+            "training_loss": 4.3004
+          },
+          {
+            "step": 219,
+            "training_loss": 4.3521
+          },
+          {
+            "step": 220,
+            "training_loss": 4.5051
+          },
+          {
+            "step": 221,
+            "training_loss": 4.4453
+          },
+          {
+            "step": 222,
+            "training_loss": 4.462
+          },
+          {
+            "step": 223,
+            "training_loss": 4.4869
+          },
+          {
+            "step": 224,
+            "training_loss": 4.4277
+          },
+          {
+            "step": 225,
+            "training_loss": 4.5287
+          },
+          {
+            "step": 226,
+            "training_loss": 4.4681
+          },
+          {
+            "step": 227,
+            "training_loss": 4.5825
+          },
+          {
+            "step": 228,
+            "training_loss": 4.4836
+          },
+          {
+            "step": 229,
+            "training_loss": 4.3178
+          },
+          {
+            "step": 230,
+            "training_loss": 4.5162
+          },
+          {
+            "step": 231,
+            "training_loss": 4.2764
+          },
+          {
+            "step": 232,
+            "training_loss": 4.3029
+          },
+          {
+            "step": 233,
+            "training_loss": 4.5902
+          },
+          {
+            "step": 234,
+            "training_loss": 4.3798
+          },
+          {
+            "step": 235,
+            "training_loss": 4.482
+          },
+          {
+            "step": 236,
+            "training_loss": 4.4355
+          },
+          {
+            "step": 237,
+            "training_loss": 4.4042
+          },
+          {
+            "step": 238,
+            "training_loss": 4.349
+          },
+          {
+            "step": 239,
+            "training_loss": 4.4564
+          },
+          {
+            "step": 240,
+            "training_loss": 4.5126
+          },
+          {
+            "step": 241,
+            "training_loss": 4.5876
+          },
+          {
+            "step": 242,
+            "training_loss": 4.4117
+          },
+          {
+            "step": 243,
+            "training_loss": 4.4722
+          },
+          {
+            "step": 244,
+            "training_loss": 4.5879
+          },
+          {
+            "step": 245,
+            "training_loss": 4.475
+          },
+          {
+            "step": 246,
+            "training_loss": 4.3534
+          },
+          {
+            "step": 247,
+            "training_loss": 4.5777
+          },
+          {
+            "step": 248,
+            "training_loss": 4.4897
+          },
+          {
+            "step": 249,
+            "training_loss": 4.4522
+          },
+          {
+            "step": 250,
+            "training_loss": 4.4724
+          },
+          {
+            "step": 251,
+            "training_loss": 4.6173
+          },
+          {
+            "step": 252,
+            "training_loss": 4.4569
+          },
+          {
+            "step": 253,
+            "training_loss": 4.7382
+          },
+          {
+            "step": 254,
+            "training_loss": 4.488
+          },
+          {
+            "step": 255,
+            "training_loss": 4.4767
+          },
+          {
+            "step": 256,
+            "training_loss": 4.3591
+          },
+          {
+            "step": 257,
+            "training_loss": 4.5131
+          },
+          {
+            "step": 258,
+            "training_loss": 4.5499
+          },
+          {
+            "step": 259,
+            "training_loss": 4.6321
+          },
+          {
+            "step": 260,
+            "training_loss": 4.4971
+          },
+          {
+            "step": 261,
+            "training_loss": 4.3306
+          },
+          {
+            "step": 262,
+            "training_loss": 4.6155
+          },
+          {
+            "step": 263,
+            "training_loss": 4.2721
+          },
+          {
+            "step": 264,
+            "training_loss": 4.3637
+          },
+          {
+            "step": 265,
+            "training_loss": 4.3738
+          },
+          {
+            "step": 266,
+            "training_loss": 4.4768
+          },
+          {
+            "step": 267,
+            "training_loss": 4.1918
+          },
+          {
+            "step": 268,
+            "training_loss": 4.6623
+          },
+          {
+            "step": 269,
+            "training_loss": 4.3431
+          },
+          {
+            "step": 270,
+            "training_loss": 4.5444
+          },
+          {
+            "step": 271,
+            "training_loss": 4.4015
+          },
+          {
+            "step": 272,
+            "training_loss": 4.19
+          },
+          {
+            "step": 273,
+            "training_loss": 4.405
+          },
+          {
+            "step": 274,
+            "training_loss": 4.4899
+          },
+          {
+            "step": 275,
+            "training_loss": 4.5711
+          },
+          {
+            "step": 276,
+            "training_loss": 4.5159
+          },
+          {
+            "step": 277,
+            "training_loss": 4.6348
+          },
+          {
+            "step": 278,
+            "training_loss": 4.3618
+          },
+          {
+            "step": 279,
+            "training_loss": 4.4032
+          },
+          {
+            "step": 280,
+            "training_loss": 4.4564
+          },
+          {
+            "step": 281,
+            "training_loss": 4.6035
+          },
+          {
+            "step": 282,
+            "training_loss": 4.2521
+          },
+          {
+            "step": 283,
+            "training_loss": 4.4852
+          },
+          {
+            "step": 284,
+            "training_loss": 4.5685
+          },
+          {
+            "step": 285,
+            "training_loss": 4.444
+          },
+          {
+            "step": 286,
+            "training_loss": 4.3457
+          },
+          {
+            "step": 287,
+            "training_loss": 4.2342
+          },
+          {
+            "step": 288,
+            "training_loss": 4.3702
+          },
+          {
+            "step": 289,
+            "training_loss": 4.5283
+          },
+          {
+            "step": 290,
+            "training_loss": 4.3684
+          },
+          {
+            "step": 291,
+            "training_loss": 4.6227
+          },
+          {
+            "step": 292,
+            "training_loss": 4.2464
+          },
+          {
+            "step": 293,
+            "training_loss": 4.3994
+          },
+          {
+            "step": 294,
+            "training_loss": 4.466
+          },
+          {
+            "step": 295,
+            "training_loss": 4.3344
+          },
+          {
+            "step": 296,
+            "training_loss": 4.3875
+          },
+          {
+            "step": 297,
+            "training_loss": 4.3482
+          },
+          {
+            "step": 298,
+            "training_loss": 4.498
+          }
+        ],
+        "metadata": {
+          "epochs": 1,
+          "examples": 1195,
+          "total_steps": 298,
+          "trainable_parameters": [
+            97255424,
+            3000000000
+          ]
+        },
+        "raw_html_sha256": "d2731ee9e08b87fae426881118923f02c9c0557cb138c3de6c406576c48a7f87",
+        "raw_streams": [
+          "==((====))==  Unsloth - 2x faster free finetuning | Num GPUs used = 1\n   \\\\   /|    Num examples = 1,195 | Num Epochs = 1 | Total steps = 298\nO^O/ \\_/ \\    Batch size per device = 1 | Gradient accumulation steps = 4\n\\        /    Data Parallel GPUs = 1 | Total batch size (1 x 4 x 1) = 4\n \"-____-\"     Trainable parameters = 97,255,424/3,000,000,000 (3.24% trained)\n"
+        ]
+      },
+      "upstream_commit": "154735d14755eaec2cc21b46f743db8f7910d43a"
+    },
+    "sesame": {
+      "bytes": 1454896,
+      "embedded_audio_count": 3,
+      "environment": {
+        "raw_banner": "==((====))==  Unsloth 2025.5.4: Fast Csm patching. Transformers: 4.52.0.dev0.\n   \\\\   /|    Tesla T4. Num GPUs = 1. Max memory: 14.741 GB. Platform: Linux.\nO^O/ \\_/ \\    Torch: 2.6.0+cu124. CUDA: 7.5. CUDA Toolkit: 12.4. Triton: 3.2.0\n\\        /    Bfloat16 = FALSE. FA [Xformers = 0.0.29.post3. FA2 = False]\n \"-____-\"     Free license: http://github.com/unslothai/unsloth\nUnsloth: Fast downloading is enabled - ignore downloading bars which are red colored!\nUnsloth: QLoRA and full finetuning all not selected. Switching to 16bit LoRA.\nunsloth/csm-1b does not have a padding token! Will use pad_token = <|PAD_TOKEN|>."
+      },
+      "git_blob_sha1": "d5ed1bdcc8c696cec0e4ca388a9c717aa6a06766",
+      "path": "nb/Sesame_CSM_(1B)-TTS.ipynb",
+      "sha256": "28100242b1856da72bcf429861158feaee28c3771dae0cc36143105e7033b67f",
+      "source_url": "https://raw.githubusercontent.com/unslothai/notebooks/154735d14755eaec2cc21b46f743db8f7910d43a/nb/Sesame_CSM_(1B)-TTS.ipynb",
+      "training": {
+        "cell_source": "trainer_stats = trainer.train()",
+        "final_loss": 4.7306,
+        "first_20_mean": 5.037375,
+        "first_loss": 4.807,
+        "last_20_mean": 4.8061,
+        "loss_rows": [
+          {
+            "step": 1,
+            "training_loss": 4.807
+          },
+          {
+            "step": 2,
+            "training_loss": 5.3216
+          },
+          {
+            "step": 3,
+            "training_loss": 5.0085
+          },
+          {
+            "step": 4,
+            "training_loss": 4.9532
+          },
+          {
+            "step": 5,
+            "training_loss": 5.2356
+          },
+          {
+            "step": 6,
+            "training_loss": 4.3385
+          },
+          {
+            "step": 7,
+            "training_loss": 4.6111
+          },
+          {
+            "step": 8,
+            "training_loss": 4.9682
+          },
+          {
+            "step": 9,
+            "training_loss": 5.0872
+          },
+          {
+            "step": 10,
+            "training_loss": 5.1695
+          },
+          {
+            "step": 11,
+            "training_loss": 4.7706
+          },
+          {
+            "step": 12,
+            "training_loss": 4.9396
+          },
+          {
+            "step": 13,
+            "training_loss": 4.7302
+          },
+          {
+            "step": 14,
+            "training_loss": 5.2056
+          },
+          {
+            "step": 15,
+            "training_loss": 5.2722
+          },
+          {
+            "step": 16,
+            "training_loss": 5.2964
+          },
+          {
+            "step": 17,
+            "training_loss": 4.9497
+          },
+          {
+            "step": 18,
+            "training_loss": 5.3937
+          },
+          {
+            "step": 19,
+            "training_loss": 5.3442
+          },
+          {
+            "step": 20,
+            "training_loss": 5.3449
+          },
+          {
+            "step": 21,
+            "training_loss": 4.8788
+          },
+          {
+            "step": 22,
+            "training_loss": 5.2594
+          },
+          {
+            "step": 23,
+            "training_loss": 4.935
+          },
+          {
+            "step": 24,
+            "training_loss": 4.8037
+          },
+          {
+            "step": 25,
+            "training_loss": 5.2224
+          },
+          {
+            "step": 26,
+            "training_loss": 5.0218
+          },
+          {
+            "step": 27,
+            "training_loss": 5.427
+          },
+          {
+            "step": 28,
+            "training_loss": 5.0585
+          },
+          {
+            "step": 29,
+            "training_loss": 4.9701
+          },
+          {
+            "step": 30,
+            "training_loss": 5.0932
+          },
+          {
+            "step": 31,
+            "training_loss": 4.951
+          },
+          {
+            "step": 32,
+            "training_loss": 5.0572
+          },
+          {
+            "step": 33,
+            "training_loss": 5.2268
+          },
+          {
+            "step": 34,
+            "training_loss": 5.3305
+          },
+          {
+            "step": 35,
+            "training_loss": 4.9072
+          },
+          {
+            "step": 36,
+            "training_loss": 5.3193
+          },
+          {
+            "step": 37,
+            "training_loss": 4.5261
+          },
+          {
+            "step": 38,
+            "training_loss": 4.4604
+          },
+          {
+            "step": 39,
+            "training_loss": 5.3939
+          },
+          {
+            "step": 40,
+            "training_loss": 5.4036
+          },
+          {
+            "step": 41,
+            "training_loss": 4.7737
+          },
+          {
+            "step": 42,
+            "training_loss": 4.3525
+          },
+          {
+            "step": 43,
+            "training_loss": 5.2344
+          },
+          {
+            "step": 44,
+            "training_loss": 4.7505
+          },
+          {
+            "step": 45,
+            "training_loss": 4.6493
+          },
+          {
+            "step": 46,
+            "training_loss": 5.1915
+          },
+          {
+            "step": 47,
+            "training_loss": 4.7827
+          },
+          {
+            "step": 48,
+            "training_loss": 5.004
+          },
+          {
+            "step": 49,
+            "training_loss": 4.7746
+          },
+          {
+            "step": 50,
+            "training_loss": 5.2181
+          },
+          {
+            "step": 51,
+            "training_loss": 4.785
+          },
+          {
+            "step": 52,
+            "training_loss": 4.7475
+          },
+          {
+            "step": 53,
+            "training_loss": 4.6171
+          },
+          {
+            "step": 54,
+            "training_loss": 5.1535
+          },
+          {
+            "step": 55,
+            "training_loss": 4.475
+          },
+          {
+            "step": 56,
+            "training_loss": 4.9185
+          },
+          {
+            "step": 57,
+            "training_loss": 5.1892
+          },
+          {
+            "step": 58,
+            "training_loss": 4.1054
+          },
+          {
+            "step": 59,
+            "training_loss": 4.6689
+          },
+          {
+            "step": 60,
+            "training_loss": 4.7306
+          }
+        ],
+        "metadata": {
+          "epochs": 2,
+          "examples": 400,
+          "total_steps": 60,
+          "trainable_parameters": [
+            14516224,
+            1646616385
+          ]
+        },
+        "raw_html_sha256": "b5a99d30b843557e79c19f51c1e2586b6283cc578f2b4e9a81b7ce0659c77432",
+        "raw_streams": [
+          "==((====))==  Unsloth - 2x faster free finetuning | Num GPUs used = 1\n   \\\\   /|    Num examples = 400 | Num Epochs = 2 | Total steps = 60\nO^O/ \\_/ \\    Batch size per device = 2 | Gradient accumulation steps = 4\n\\        /    Data Parallel GPUs = 1 | Total batch size (2 x 4 x 1) = 8\n \"-____-\"     Trainable parameters = 14,516,224/1,646,616,385 (0.88% trained)\n`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.\n",
+          "Unsloth: Will smartly offload gradients to save VRAM!\n"
+        ]
+      },
+      "upstream_commit": "154735d14755eaec2cc21b46f743db8f7910d43a"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "artifact_hashes": {
+    "judge_receipts.json": "e11a978a0a9c910b0f4116abaec437ce8edf868d85678f3da905930f3e0f0ac4",
+    "orpheus_output_1.wav": "57ad57efcc101b8e25ef10cae4d214e90443ef3d0357408df9d6655bac36a3c1",
+    "sesame_output_1.wav": "bcfd3edb12ccdec842a4c32d229419f3a8b01d05972394e331844222d31e383f",
+    "sesame_output_2.wav": "2c2291770a4e75f099d8853776af839ad4d0eb16a5fa80ac7411bd85730a75bd",
+    "sesame_output_3.wav": "4825836ac05f3677e04b95d47e6a9634c5a613dafc5708a11cdb17688d114867",
+    "upstream_orpheus.ipynb": "96a1ed7dbc0c062ddc0a55b334817edcac6c5fdb59f62394b64823858a3ac859",
+    "upstream_sesame.ipynb": "28100242b1856da72bcf429861158feaee28c3771dae0cc36143105e7033b67f"
+  },
+  "error": "local source mechanism audit failed because the initial check searched for the singular literal <giggle>, while the retained book source uses <giggles> and <laugh>",
+  "experiment": "7-6",
+  "judge_calls_completed_before_failure": [
+    {
+      "latency_ms": 4845.855,
+      "response_id": "9d7d5cb6b82d4f969fc6aec6e5baa19e",
+      "total_tokens": 662,
+      "track": "orpheus"
+    },
+    {
+      "latency_ms": 5461.232,
+      "response_id": "6639f136c8524a029fb073e9ecc0caa9",
+      "total_tokens": 1731,
+      "track": "sesame"
+    }
+  ],
+  "promoted_to_canonical": false,
+  "schema_version": "exp7-6-failed-attempt-v1",
+  "stage": "source_audit",
+  "status": "failed"
+}

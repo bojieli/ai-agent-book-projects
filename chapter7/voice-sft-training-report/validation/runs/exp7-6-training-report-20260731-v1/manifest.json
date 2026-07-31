@@ -1,0 +1,224 @@
+{
+  "acceptance": {
+    "all_four_upstream_wavs_extracted_exactly": true,
+    "author_local_provenance_limits_explicit": true,
+    "checkpoints_not_acceptance_artifacts": true,
+    "complete_orpheus_training_log_retained": true,
+    "complete_sesame_training_log_retained": true,
+    "immutable_upstream_notebooks_retained": true,
+    "local_sources_and_requirements_content_hashed": true,
+    "mechanism_mapping_contradiction_explicit": true,
+    "model_dataset_codec_revisions_and_lfs_objects_frozen": true,
+    "passed": true,
+    "raw_requests_responses_ids_usage_latency_retained": true,
+    "two_direct_audio_judge_receipts_retained": true
+  },
+  "artifacts": [
+    {
+      "bytes": 601003,
+      "path": "upstream_orpheus.ipynb",
+      "sha256": "96a1ed7dbc0c062ddc0a55b334817edcac6c5fdb59f62394b64823858a3ac859"
+    },
+    {
+      "bytes": 1454896,
+      "path": "upstream_sesame.ipynb",
+      "sha256": "28100242b1856da72bcf429861158feaee28c3771dae0cc36143105e7033b67f"
+    },
+    {
+      "bytes": 356396,
+      "path": "orpheus_output_1.wav",
+      "sha256": "57ad57efcc101b8e25ef10cae4d214e90443ef3d0357408df9d6655bac36a3c1"
+    },
+    {
+      "bytes": 368684,
+      "path": "sesame_output_1.wav",
+      "sha256": "bcfd3edb12ccdec842a4c32d229419f3a8b01d05972394e331844222d31e383f"
+    },
+    {
+      "bytes": 407084,
+      "path": "sesame_output_2.wav",
+      "sha256": "2c2291770a4e75f099d8853776af839ad4d0eb16a5fa80ac7411bd85730a75bd"
+    },
+    {
+      "bytes": 288044,
+      "path": "sesame_output_3.wav",
+      "sha256": "4825836ac05f3677e04b95d47e6a9634c5a613dafc5708a11cdb17688d114867"
+    },
+    {
+      "bytes": 52032,
+      "path": "source_audit.json",
+      "sha256": "ae19f3ea9099e880a2b21d44c4b06d59676c0e076bd69f8abedf3b44c1d28aba"
+    },
+    {
+      "bytes": 1903147,
+      "path": "judge_receipts.json",
+      "sha256": "8e2e0d2488bcc1bc330818978395c0f566f45e23e9974e40d142a5ee32972cc2"
+    },
+    {
+      "bytes": 4110,
+      "path": "summary.json",
+      "sha256": "122bd9b0c49c6e6018db80b59e38546d83dfe6ded8efefa7578b2d38d4d3cda4"
+    },
+    {
+      "bytes": 1770,
+      "path": "report.md",
+      "sha256": "9ab647c74a680a14c91349f7299705074f6a3f8854fd6a46b176bf1bb724559f"
+    }
+  ],
+  "checkpoint_policy": "not distributed; not an acceptance artifact",
+  "created_at": "2026-07-31T12:32:58.435834+00:00",
+  "experiment": "7-6",
+  "failed_attempts": [
+    {
+      "bytes": 1385,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-source-audit.json",
+      "sha256": "65447c3ecb6abf8612ae86852570127fabb1b41b16cc729571592acc618adc27"
+    },
+    {
+      "bytes": 1903143,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/judge_receipts.json",
+      "sha256": "e11a978a0a9c910b0f4116abaec437ce8edf868d85678f3da905930f3e0f0ac4"
+    },
+    {
+      "bytes": 602096,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/upstream_orpheus.ipynb",
+      "sha256": "76785bd4300115cca65eb01afd7774c592b0490bcd19613e9f2cf5ed7e635389"
+    },
+    {
+      "bytes": 1455598,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/upstream_sesame.ipynb",
+      "sha256": "dc535170580fcaf7bec4ceaa33dfa32b22a154f76a501d25501510fbc7c835f5"
+    },
+    {
+      "bytes": 356396,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/orpheus_output_1.wav",
+      "sha256": "57ad57efcc101b8e25ef10cae4d214e90443ef3d0357408df9d6655bac36a3c1"
+    },
+    {
+      "bytes": 368684,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/sesame_output_1.wav",
+      "sha256": "bcfd3edb12ccdec842a4c32d229419f3a8b01d05972394e331844222d31e383f"
+    },
+    {
+      "bytes": 407084,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/sesame_output_2.wav",
+      "sha256": "2c2291770a4e75f099d8853776af839ad4d0eb16a5fa80ac7411bd85730a75bd"
+    },
+    {
+      "bytes": 288044,
+      "path": "chapter7/voice-sft-training-report/validation/failed_attempts/exp7-6-20260731-attempt1-raw/sesame_output_3.wav",
+      "sha256": "4825836ac05f3677e04b95d47e6a9634c5a613dafc5708a11cdb17688d114867"
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 147425,
+      "path": "book/chapter7.md",
+      "sha256": "be15b79c84237da367e4bfbdd210142f21ead3775fd59c4341ce5acea0a1d0ae"
+    },
+    {
+      "bytes": 8275,
+      "path": "chapter7/EXPERIMENT_LEDGER.md",
+      "sha256": "27029536d912439430cb2f2fb1b86f673333e57bbdddeafe63a228cddd88020b"
+    },
+    {
+      "bytes": 11892,
+      "path": "chapter7/README.md",
+      "sha256": "52084e6468f2ddf5d05590b5f4b141ef092442c8577cc15af0d9bd2e5f8834f4"
+    },
+    {
+      "bytes": 5946,
+      "path": "chapter7/README.en.md",
+      "sha256": "fd8e1741fb903e67b5e637df7cbe07d687b18cd611e7a1998eea9b208d5e6668"
+    },
+    {
+      "bytes": 6740,
+      "path": "chapter7/README.ko.md",
+      "sha256": "a045be7b8b569d5aa57fcff38e57cdaf7d7240d28da71bb9315004680184db90"
+    },
+    {
+      "bytes": 11691,
+      "path": "chapter7/orpheus/README.md",
+      "sha256": "b4b9ac986833339002fe7cf1e2a554566f4b51825af77b24aea55fd957bc819b"
+    },
+    {
+      "bytes": 19911,
+      "path": "chapter7/orpheus/orpheus_sft_unsloth.py",
+      "sha256": "8e3c159f1acec4c40b71c0d09873e18a1ef8819a0c4c03c3b6d43ee938b89721"
+    },
+    {
+      "bytes": 13974,
+      "path": "chapter7/orpheus/inference.py",
+      "sha256": "8ebe74b243906936e9526917427a1ca92cfe49fd13909cc73f3368d83e3017c5"
+    },
+    {
+      "bytes": 328,
+      "path": "chapter7/orpheus/requirements.txt",
+      "sha256": "39126eaefa71576e7fed464847792c29079ac3d6efdc4102b780fc69ffa66aca"
+    },
+    {
+      "bytes": 2696,
+      "path": "chapter7/orpheus/test_orpheus_inference.py",
+      "sha256": "f1b7d8bc98b539f1969af32f6249ec4c867a19c3bbb88b9f975b8cdb9527db47"
+    },
+    {
+      "bytes": 10605,
+      "path": "chapter7/sesame/README.md",
+      "sha256": "853eaeba58e6956c68bf840ff57081400aa870ba78069333ec279ed397f06976"
+    },
+    {
+      "bytes": 17357,
+      "path": "chapter7/sesame/sesame_csm_sft_unsloth.py",
+      "sha256": "bb2ca89906111f71e2b231fa6429c3c31b5bdb49656bb23d295c58404e5097bf"
+    },
+    {
+      "bytes": 6785,
+      "path": "chapter7/sesame/inference.py",
+      "sha256": "e7cac048392fb9a6e99bc51b9f7c7b033845532035f5237060cd56874edbb9ea"
+    },
+    {
+      "bytes": 7185,
+      "path": "chapter7/sesame/batch_inference.py",
+      "sha256": "af3cc4deee4e54481815fa09e152fdfadb76c5ece96618a58e92d5ec87d46d39"
+    },
+    {
+      "bytes": 1196,
+      "path": "chapter7/sesame/example_inputs.json",
+      "sha256": "791c453dafc9f4a202831867e0a91673766d09698c73e8627daafdec86577bd7"
+    },
+    {
+      "bytes": 447,
+      "path": "chapter7/sesame/requirements.txt",
+      "sha256": "c1e4cbc1cc124458da8e2484e12afbcd4bc68fbdb21dbb70af62cd0412562866"
+    },
+    {
+      "bytes": 2987,
+      "path": "chapter7/sesame/test_batch_inference.py",
+      "sha256": "398a1e794076e2e2d11877a09e123b3bcd137415a190aaaadc5e901b3c7304e6"
+    },
+    {
+      "bytes": 3968,
+      "path": "chapter7/voice-sft-training-report/README.md",
+      "sha256": "3b96fd5aa28d2c099516c3ee576211fa17da5052d9b10700ba472c5941440c7b"
+    },
+    {
+      "bytes": 39407,
+      "path": "chapter7/voice-sft-training-report/run_training_report_audit.py",
+      "sha256": "7f68d7969bc08e1aa275edb052438026d995278e30d2e26be2b4f38fb784dc77"
+    },
+    {
+      "bytes": 14223,
+      "path": "chapter7/voice-sft-training-report/validate_evidence.py",
+      "sha256": "671becdf785c5c0264c7154b328339a76fa3be338af72a7f7752cd78557e11ac"
+    },
+    {
+      "bytes": 5317,
+      "path": "chapter7/voice-sft-training-report/test_training_report_audit.py",
+      "sha256": "fe26039c56d416d3771f06227b7dc8524064f5ec7dbec9a889d5903fba316522"
+    }
+  ],
+  "run_dir": "validation/runs/exp7-6-training-report-20260731-v1",
+  "run_id": "exp7-6-training-report-20260731-v1",
+  "schema_version": "exp7-6-manifest-v1",
+  "status": "passed"
+}

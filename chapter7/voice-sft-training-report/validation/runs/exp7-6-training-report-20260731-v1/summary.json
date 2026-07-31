@@ -1,0 +1,105 @@
+{
+  "acceptance": {
+    "all_four_upstream_wavs_extracted_exactly": true,
+    "author_local_provenance_limits_explicit": true,
+    "checkpoints_not_acceptance_artifacts": true,
+    "complete_orpheus_training_log_retained": true,
+    "complete_sesame_training_log_retained": true,
+    "immutable_upstream_notebooks_retained": true,
+    "local_sources_and_requirements_content_hashed": true,
+    "mechanism_mapping_contradiction_explicit": true,
+    "model_dataset_codec_revisions_and_lfs_objects_frozen": true,
+    "passed": true,
+    "raw_requests_responses_ids_usage_latency_retained": true,
+    "two_direct_audio_judge_receipts_retained": true
+  },
+  "experiment": "7-6",
+  "judge": {
+    "model": "voxtral-small-latest",
+    "orpheus": {
+      "audible_paralinguistic_event": true,
+      "cross_sentence_voice_consistency_assessable": true,
+      "event_confidence": 0.95,
+      "event_type": "laughter",
+      "material_errors": [],
+      "naturalness": 4,
+      "rationale": "The laughter is clearly audible and fits the context, but the voice has a slight robotic quality.",
+      "track": "orpheus",
+      "transcript_accuracy": 5
+    },
+    "provider": "mistral",
+    "response_ids": [
+      "921b8c2b9136414dac59e6dc20671e9e",
+      "7ef296e29fc74acd8176bbbf151b05a3"
+    ],
+    "sesame": {
+      "B_C_material_difference": "None",
+      "items": {
+        "A": {
+          "audible_paralinguistic_event": false,
+          "naturalness": 4,
+          "transcript_accuracy": 5,
+          "voice_description": "Clear and neutral"
+        },
+        "B": {
+          "audible_paralinguistic_event": true,
+          "naturalness": 3,
+          "transcript_accuracy": 5,
+          "voice_description": "Slightly robotic with a pause"
+        },
+        "C": {
+          "audible_paralinguistic_event": true,
+          "naturalness": 3,
+          "transcript_accuracy": 5,
+          "voice_description": "Slightly robotic with a pause"
+        }
+      },
+      "paralinguistic_tag_control_assessable": true,
+      "rationale": "Audio B and C have a slight robotic tone and include a pause, while Audio A is clear and neutral.",
+      "same_text_B_C_style_similarity": 5,
+      "same_text_B_C_voice_similarity": 5,
+      "track": "sesame"
+    },
+    "total_latency_ms": 13139.457,
+    "total_tokens": 2393
+  },
+  "limitations": [
+    "The retained GPU executions are immutable upstream Unsloth notebooks, not author-local book runs.",
+    "Author-local adapters, training logs, and generated audio were not retained and are not reconstructed.",
+    "Only one Orpheus WAV is retained, so cross-sentence speaker consistency cannot be measured.",
+    "The three Sesame prompts contain no paralinguistic control tags, so tag controllability cannot be measured.",
+    "The upstream audio outputs are post-training examples without matched pre-training controls, so no causal SFT improvement is claimed.",
+    "The book requirements files leave several CUDA packages unpinned; the notebook banners retain the executed environment but not a container digest.",
+    "A single deterministic audio-judge call per track is descriptive, not a powered human listening study."
+  ],
+  "retained": {
+    "audio_files": 4,
+    "direct_audio_judge_calls": 2,
+    "training_loss_rows": 358,
+    "upstream_notebooks": 2
+  },
+  "schema_version": "exp7-6-summary-v1",
+  "scientific_findings": {
+    "manuscript_mechanism_mapping_supported": false,
+    "no_causal_training_gain_claim": true,
+    "orpheus_cross_sentence_consistency_not_assessable_from_one_retained_wav": true,
+    "sesame_paralinguistic_tag_control_not_assessable_from_untagged_prompts": true,
+    "source_evidence_maps_orpheus_to_paralinguistic_text_tags": true,
+    "source_evidence_maps_sesame_to_audio_context_voice_style": true
+  },
+  "status": "passed",
+  "training": {
+    "orpheus": {
+      "final_loss": 4.498,
+      "first_20_mean": 4.834855,
+      "first_loss": 5.1138,
+      "last_20_mean": 4.418115
+    },
+    "sesame": {
+      "final_loss": 4.7306,
+      "first_20_mean": 5.037375,
+      "first_loss": 4.807,
+      "last_20_mean": 4.8061
+    }
+  }
+}

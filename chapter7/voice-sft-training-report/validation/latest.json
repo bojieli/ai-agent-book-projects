@@ -1,0 +1,8 @@
+{
+  "experiment": "7-6",
+  "manifest_sha256": "b31025a32f9e3f78d1edae0245c9bcb4f29fc0deb95f7bd5779235f6ce15a087",
+  "run_dir": "validation/runs/exp7-6-training-report-20260731-v1",
+  "run_id": "exp7-6-training-report-20260731-v1",
+  "schema_version": "exp7-6-latest-v1",
+  "status": "passed"
+}
