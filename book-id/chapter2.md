@@ -444,7 +444,7 @@ Satu baris timestamp tersebut membatalkan KV Cache pada setiap request. System p
 > ![Gambar 2-6: Pemahaman Intuitif terhadap Mekanisme Attention](images/fig2-6.svg)
 
 
-> Bagian atas Gambar 2-6 menunjukkan bagaimana "怎么样" (bagaimana) dicocokkan dengan setiap kata sebelumnya: kecocokan terkuat adalah dengan "天气" (cuaca, 0,55), diikuti "北京" (Beijing, 0,35), sedangkan kecocokannya dengan "的" (partikel, 0,05) hampir tidak ada. Sisa bobot sekitar 0,05 diberikan kepada "怎么样" itu sendiri (tidak ditampilkan secara terpisah pada gambar), sehingga seluruh bobot berjumlah 1. Output akhirnya terutama mengambil informasi dari "天气", sesuai dengan intuisi kita.
+> Bagian atas Gambar 2-6 menunjukkan bagaimana "怎么样" (bagaimana) dicocokkan dengan setiap kata sebelumnya: kecocokan terkuat adalah dengan "天气" (cuaca, 0,55), diikuti "北京" (Beijing, 0,35), sedangkan kecocokannya dengan "的" (partikel, 0,05) hampir tidak ada. Sisa bobot sekitar 0,05 diberikan kepada "怎么样" itu sendiri, sehingga seluruh bobot berjumlah 1. Output akhirnya terutama mengambil informasi dari "天气", sesuai dengan intuisi kita.
 
 > **Attention heatmap** menyusun bobot perhatian antara setiap kata dan seluruh kata sebelumnya ke dalam sebuah matriks. Bagian bawah Gambar 2-6 menampilkan heatmap lengkap: setiap baris adalah Query (kata yang sedang diproses), setiap kolom adalah Key (kata yang diperhatikan), dan sel yang lebih gelap menunjukkan bobot perhatian yang lebih tinggi. Heatmap ini berbentuk segitiga karena model menghasilkan teks dari kiri ke kanan: setiap kata hanya dapat memperhatikan dirinya sendiri dan kata-kata yang mendahuluinya, bukan konten yang belum dihasilkan.
 

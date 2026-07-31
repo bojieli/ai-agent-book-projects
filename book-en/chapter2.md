@@ -443,7 +443,7 @@ That one timestamp line invalidated the KV Cache on every request. The system pr
 > ![Figure 2-6: Intuitive Understanding of the Attention Mechanism](images/fig2-6.svg)
 >
 >
-> The upper part of Figure 2-6 shows how "怎么样" (how is it) matches each preceding word: the strongest match is with "天气" (weather, 0.55), there is some relevance to "北京" (Beijing, 0.35), almost none to "的" (the particle, 0.05), and the remaining weight of about 0.05 goes to "怎么样" itself (not shown separately in the figure)—all weights sum to 1. The final output draws mainly on the information from "天气", which matches intuition exactly.
+> The upper part of Figure 2-6 shows how "怎么样" (how is it) matches each preceding word: the strongest match is with "天气" (weather, 0.55), there is some relevance to "北京" (Beijing, 0.35), almost none to "的" (the particle, 0.05), and the remaining weight of about 0.05 goes to "怎么样" itself—all weights sum to 1. The final output draws mainly on the information from "天气", which matches intuition exactly.
 >
 > An **attention heatmap** arranges the attention weights between each word and all preceding words into a matrix. The lower part of Figure 2-6 shows the complete heatmap: each row is a Query (the word currently being processed), each column is a Key (the word being attended to), and darker cells indicate higher attention weights. The heatmap is triangular because the model generates text from left to right: each word can attend only to itself and the words before it, not to content that has yet to be generated.
 >
