@@ -3,7 +3,7 @@
 Test script to verify message flow in correct vs incorrect modes
 """
 
-def simulate_message_flow():
+def test_message_flow_logic():
     """Simulate how messages are handled in different modes"""
     
     print("🔍 Testing Message Flow Logic")
@@ -83,4 +83,4 @@ def simulate_message_flow():
     print("   • History is maintained for reconstruction")
 
 if __name__ == "__main__":
-    simulate_message_flow()
+    test_message_flow_logic()

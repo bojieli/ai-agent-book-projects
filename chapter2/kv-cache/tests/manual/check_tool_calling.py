@@ -6,6 +6,10 @@ Test script to verify the updated agent works with standard OpenAI tool calling
 import os
 import sys
 import json
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 def test_tool_calling():
@@ -21,7 +25,7 @@ def test_tool_calling():
     print("="*60)
     
     # Simple task that requires tool calls
-    task = "Find all Python files in the week1/context directory and tell me how many there are."
+    task = "Find all Python files in the chapter1/context directory and tell me how many there are."
     
     print(f"📝 Task: {task}")
     print("-"*60)

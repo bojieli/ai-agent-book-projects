@@ -6,6 +6,10 @@ when no tool calls are made
 
 import os
 import sys
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 def test_completion_logic():
@@ -41,7 +45,7 @@ def test_completion_logic():
     
     # Test 2: Question that requires tools
     print("\n2️⃣ Test: Question requiring tools")
-    task2 = "How many Python files are in the week1/context directory?"
+    task2 = "How many Python files are in the chapter1/context directory?"
     
     agent2 = KVCacheAgent(
         api_key=api_key,
@@ -63,7 +67,7 @@ def test_completion_logic():
     
     # Test 3: Multi-step task
     print("\n3️⃣ Test: Multi-step task")
-    task3 = "Find Python files in week1/context, then tell me if there's a file named 'agent.py'"
+    task3 = "Find Python files in chapter1/context, then tell me if there's a file named 'agent.py'"
     
     agent3 = KVCacheAgent(
         api_key=api_key,

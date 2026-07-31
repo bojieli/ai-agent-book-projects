@@ -6,6 +6,10 @@ Test script to verify KV cache is properly invalidated in incorrect modes
 import os
 import sys
 import logging
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 # Set up logging to see details
@@ -25,7 +29,7 @@ def test_cache_invalidation():
     print("="*60)
     
     # Simple task that requires multiple iterations
-    task = "Find Python files in week1/context and tell me how many there are."
+    task = "Find Python files in chapter1/context and tell me how many there are."
     
     print(f"Task: {task}")
     print("-"*40)

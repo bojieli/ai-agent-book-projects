@@ -139,6 +139,27 @@ python main.py --mode correct --task "Read all README files and summarize their 
 python main.py --mode correct --root-dir ../.. --task "Analyze the project structure"
 ```
 
+### Tests and manual checks
+
+Offline regressions live under `tests/` and do not require API keys:
+
+```bash
+uv sync --locked --python 3.12 --extra ch2 --extra dev
+source .venv/bin/activate
+cd chapter2/kv-cache
+python -m pytest tests
+```
+
+Live smoke checks and demonstrations live under `tests/manual/`. They are not
+collected by pytest because their filenames use `check_*.py` or `demo_*.py`:
+
+```bash
+MOONSHOT_API_KEY="your-key" python tests/manual/demo_quick.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_tool_calling.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
+```
+
 ### Metrics
 
 **Performance:** TTFT (per iteration; cold start vs with cache), average TTFT, improvement %, total time, iterations, tool calls.
@@ -203,11 +224,12 @@ Reading: `shuffled_tools` reorders tool definitions near the front of the prefix
 kv-cache/
 ├── agent.py                # ReAct agent + modes
 ├── main.py                 # Experiment runner CLI
-├── demo_quick.py
-├── test_*.py
+├── tests/                  # offline pytest regressions
+│   └── manual/             # live/API smoke checks, not collected by pytest
 ├── requirements.txt
 ├── README.md
-└── *.log
+├── result_*.json           # retained receipts for offline --report
+└── kv_cache_demo.log
 ```
 
 **Components:** `KVCacheAgent`, `LocalFileTools`, `KVCacheMode`, `AgentMetrics`.
@@ -376,6 +398,27 @@ python main.py --mode correct --task "Read all README files and summarize their 
 python main.py --mode correct --root-dir ../.. --task "Analyze the project structure"
 ```
 
+### 测试与手动检查
+
+离线回归测试位于 `tests/`，不需要 API Key：
+
+```bash
+uv sync --locked --python 3.12 --extra ch2 --extra dev
+source .venv/bin/activate
+cd chapter2/kv-cache
+python -m pytest tests
+```
+
+需要真实 API 的冒烟脚本和演示位于 `tests/manual/`。这些文件使用
+`check_*.py` 或 `demo_*.py` 命名，因此不会被 pytest 默认收集：
+
+```bash
+MOONSHOT_API_KEY="your-key" python tests/manual/demo_quick.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_tool_calling.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_cache_invalidation.py
+MOONSHOT_API_KEY="your-key" python tests/manual/check_agent_error_recovery.py
+```
+
 ### 指标说明
 
 **性能：** TTFT（按迭代；冷启动 vs 有缓存）、平均 TTFT、改善百分比、总时间、迭代次数、工具调用次数。
@@ -440,11 +483,12 @@ text_format      3      6.189      14.432     43.297     7,430     674       100
 kv-cache/
 ├── agent.py                # ReAct Agent + 各模式
 ├── main.py                 # 实验入口 CLI
-├── demo_quick.py
-├── test_*.py
+├── tests/                  # 离线 pytest 回归测试
+│   └── manual/             # 真实 API 冒烟脚本，不被 pytest 收集
 ├── requirements.txt
 ├── README.md
-└── *.log
+├── result_*.json           # 支持离线 --report 的保留结果
+└── kv_cache_demo.log
 ```
 
 **组件：** `KVCacheAgent`、`LocalFileTools`、`KVCacheMode`、`AgentMetrics`。

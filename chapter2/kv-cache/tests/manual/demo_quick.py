@@ -13,6 +13,10 @@ try:
 except ImportError:
     pass
 
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 from agentbook.providers import PROVIDERS
@@ -34,9 +38,9 @@ def main():
     
     # Simple task that requires multiple tool calls
     task = """Please do the following:
-    1. Find all Python files in the week1 directory
+    1. Find all Python files in the chapter1 directory
     2. Read the main.py file from the context project
-    3. Search for the word 'agent' in week1 files
+    3. Search for the word 'agent' in chapter1 files
     4. Provide a brief summary of what you found"""
     
     print(f"📝 Task: {task}")

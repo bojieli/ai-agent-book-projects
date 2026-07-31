@@ -15,7 +15,7 @@ def test_file_range_reading():
     tools = LocalFileTools(root_dir="../..")
     
     # Test file
-    test_file = "week1/context/agent.py"
+    test_file = "chapter1/context/agent.py"
     
     # Test 1: Read first 10 lines
     print("\n1️⃣ Reading first 10 lines:")
@@ -69,7 +69,7 @@ def test_file_range_reading():
     
     # Test 6: Read entire file (no offset, no size)
     print("\n6️⃣ Reading entire file (default behavior):")
-    result = tools.read_file("week1/context/README.md")
+    result = tools.read_file("chapter1/context/README.md")
     if result["success"]:
         print(f"   ✓ Read entire file")
         print(f"   Total lines: {result['total_lines']}")
@@ -80,7 +80,7 @@ def test_file_range_reading():
     
     # Test 7: Compare with limit parameter (the user's original request)
     print("\n7️⃣ API-style usage (offset=250, size=500):")
-    result = tools.read_file("week2/local_llm_serving/main.py", offset=250, size=500)
+    result = tools.read_file("chapter2/local_llm_serving/main.py", offset=250, size=500)
     if result["success"]:
         print(f"   ✓ Successfully read lines {result['offset']}-{result['end_line']}")
         print(f"   Lines read: {result['lines_read']}")
