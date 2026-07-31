@@ -74,4 +74,3 @@ def test_reporting_environment_call_null_arguments(tmp_path):
         env.call("calculate_test_positivity", {})
     assert "mapping" not in str(null_exc.value)
     assert str(null_exc.value) == str(empty_exc.value)
-
