@@ -333,8 +333,8 @@ Anticipamos además un detalle que cobrará relevancia más adelante en este cap
 
 Los embeddings densos utilizan aprendizaje profundo para mapear texto a un espacio vectorial: a contenido semánticamente cercano corresponden vectores a corta distancia. La forma habitual de medir la proximidad entre dos vectores es la **similitud coseno**: calcula el coseno del ángulo entre dos vectores, donde un valor cercano a 1 indica direcciones convergentes y semántica muy similar.
 
-$$\cos(	heta) = 
-rac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
+$$\cos(\theta) =
+\frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
 
 Las soluciones iniciales (Word2Vec) solo capturaban coocurrencias léxicas; los modelos conscientes del contexto (BERT, BGE-M3) comprenden el entorno textual, por lo que una misma palabra en contextos distintos tendrá representaciones vectoriales diferentes (cabe aclarar que BGE-M3 genera simultáneamente representaciones densas, dispersas y multivectoriales, usando aquí su salida densa a modo de ejemplo).
 
@@ -429,8 +429,8 @@ Ambos métodos presentan puntos ciegos: la búsqueda densa comprende la semánti
 
 Una canalización típica de búsqueda híbrida consta de tres etapas progresivas. La primera etapa es la **búsqueda paralela**, donde el sistema envía la consulta simultáneamente a los motores denso y disperso, recuperando cada uno un conjunto de documentos candidatos. La segunda etapa es la **fusión de resultados**, responsable de combinar ambos flujos en un estanque candidato unificado. El reto es que las puntuaciones no son comparables directamente: las similitudes densas (como similitud coseno, típicamente entre 0 y 1 en embeddings normalizados) y las puntuaciones BM25 dispersas (valores sin acotar desde 0 hasta decenas) poseen escalas y distribuciones totalmente diferentes. Existen dos métodos comunes de fusión: normalizar y ponderar las puntuaciones de cada flujo; o emplear la fusión por rango recíproco (Reciprocal Rank Fusion, RRF), que ignora las puntuaciones originales y atiende únicamente a las posiciones de ordenación. La puntuación combinada RRF de un documento es la suma de los recíprocos suavizados de sus rangos en cada flujo:
 
-$$\operatorname{RRF\_Score}(d) = \sum_{m \in M} 
-rac{1}{k + r_m(d)}$$
+$$\operatorname{RRF\_Score}(d) = \sum_{m \in M}
+\frac{1}{k + r_m(d)}$$
 
 donde $k$ es una constante de suavizado (habitualmente 60) que atenúa las diferencias entre las primeras posiciones. RRF es simple y robusto, pero solo utiliza información de rango perdiendo las señales de relevancia ricas de las puntuaciones originales (la fusión por suma ponderada normalizada conserva las puntuaciones, a costa de una calibración de escalas más compleja). Sin embargo, es vital remarcar que la tercera etapa del flujo, el **reordenamiento neuronal (Neural Reranking)**, no existe únicamente para "reparar las puntuaciones perdidas en RRF": independientemente del método de fusión previo, añadir el reordenamiento aporta un paradigma de coincidencia superior. Utiliza un Cross-Encoder para realizar una interacción profunda entre la consulta y el documento, con una precisión muy superior al esquema Bi-Encoder de codificación independiente mediante cálculo vectorial de la fase de búsqueda. Su funcionamiento consiste en reevaluar minuciosamente los primeros N candidatos del estanque fusionado (por ejemplo, los primeros 50) para generar la ordenación final. Cabe notar que el reordenamiento no **sustituye** a la fusión: la fusión crea el estanque candidato unificado y el reordenador lo ordena con precisión; sin la primera, el reordenador no sabría sobre qué documentos operar.
 
