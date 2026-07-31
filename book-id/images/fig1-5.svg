@@ -22,7 +22,7 @@
 
   <rect width="820" height="470" fill="#ffffff" />
 
-  
+
   <rect class="box" x="45" y="70" width="210" height="96" rx="8" fill="#e8e8e8" />
   <text class="sans heading" x="60" y="95" dominant-baseline="middle">① Berpikir (Reasoning)</text>
   <rect x="60" y="112" width="180" height="38" rx="5" fill="#ffffff" stroke="#777777" />
@@ -42,7 +42,7 @@
   <line class="flow" x1="515" y1="118" x2="562" y2="118" />
   <line class="flow" x1="670" y1="166" x2="670" y2="207" />
 
-  
+
   <rect x="45" y="220" width="430" height="145" rx="8" fill="#ffffff" stroke="#777777" stroke-width="2" stroke-dasharray="7 4" />
   <text class="sans heading" x="65" y="244" dominant-baseline="middle">Kondisi keluar (salah satu)</text>
   <line x1="65" y1="258" x2="455" y2="258" stroke="#cccccc" />
@@ -56,7 +56,7 @@
   <rect x="493" y="238" width="80" height="20" rx="3" fill="#ffffff" />
   <text class="sans note" x="533" y="248" text-anchor="middle" dominant-baseline="middle">Kriteria keputusan</text>
 
-  
+
   <polygon class="box" points="670,208 750,260 670,312 590,260" fill="#e2e2e2" />
   <text class="sans heading" x="670" y="252" text-anchor="middle" dominant-baseline="middle">Kondisi keluar</text>
   <text class="sans heading" x="670" y="273" text-anchor="middle" dominant-baseline="middle">terpenuhi?</text>
