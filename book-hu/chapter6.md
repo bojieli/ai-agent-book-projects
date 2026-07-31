@@ -341,13 +341,13 @@ rubric:
 
 "Jó Rubrica vs. Rossz Rubrica": A fenti pontozási szintek mindegyike verifikálható, konkrét viselkedést határoz meg ("Helyesen válaszol Dr. Chennel"), nem pedig olyan leírásokat, amelyeket nem lehet objektíven megítélni, mint a "mély megértést mutat". A vétó elem meghúzza az alsó határt: még ha minden más dimenzió maximális pontszámot is kap, egyetlen hallucináció esetén automatikus nulla.
 
-Küldjük el ezt a Rubricát az Ügynök tényleges válaszával együtt a bírómodellnek, amely minden dimenziót pontoz és indoklást ad. Ha ezt több tucat teszteseten futtatjuk, szisztematikusan azonosíthatjuk az Ügynök képességhiányait — például egy átlagos 2,1-es pontszám a "munkamenetek közötti asszociáció" dimenzióban egyértelműen a memóriavisszakeresés vagy információkorreláció hiányosságaira utal.
+A Rubricát és az Ügynök válaszát együtt adjuk a bírómodellnek, amely dimenziónként pontoz és indokol. Ha több tucat eset eredményét dimenziónként összesítjük, majd visszajátsszuk az alacsony pontszámú trajectory-ket, az általános „romlott a sikerarány” állítás konkrét diagnózissá válik: a lekérés kihagyott egy tényt, a modell rosszul kapcsolt össze személyeket vagy eseményeket, esetleg alátámasztás nélküli állítást tett. A jó Rubrica nemcsak a pontszámot mutatja meg, hanem azt is, hol érdemes folytatni a vizsgálatot.
 
 > **6-3. kísérlet ★★: Rubrica-alapú Felhasználói Memória Kiértékelő Rendszer Építése**
 >
-> "Előfeltételek": A 3. fejezet Felhasználói Memória kísérletének (`ch3/user-memory-evaluation`) befejezése kötelező.
+> "Előfeltételek": A 3. fejezet Felhasználói Memória kísérletének (`chapter3/user-memory-evaluation`) befejezése kötelező.
 >
-> Ez a kísérlet a 3. fejezet `ch3/user-memory-evaluation` keretrendszerének módosítását igényli, a jelenlegi egyszerű LLM-mint-bíró pontozási mechanizmus továbbfejlesztésével strukturált, többdimenziós Rubrica kiértékelő rendszerré. A meglévő rendszer egyetlen LLM-hívást használ, amely siker/kudarc eredményt és kiértékelési indoklást ad vissza, hiányozva a strukturált diagnosztikai képességeket.
+> Ez a kísérlet a 3. fejezet `chapter3/user-memory-evaluation` keretrendszerének módosítását igényli, a jelenlegi egyszerű LLM-mint-bíró pontozási mechanizmus továbbfejlesztésével strukturált, többdimenziós Rubrica kiértékelő rendszerré. A meglévő rendszer egyetlen LLM-hívást használ, amely siker/kudarc eredményt és kiértékelési indoklást ad vissza, hiányozva a strukturált diagnosztikai képességeket.
 >
 > Tervezz egy egységes, többdimenziós Rubrica keretrendszert, amely mindhárom feladatszintre alkalmazható. A kiértékelési dimenziók a következők: Ténybeli Helyesség (precízió: a megadott információk közül mennyi helyes — ellenőrzi, hogy a számok/dátumok/nevek konzisztensek-e a tárolt memóriával); Információ Teljessége (visszahívás: a megadandó információk közül mennyi van említve — ellenőrzi, hogy minden releváns információ szerepel-e, nincs-e kihagyott kulcsfontosságú tartalom); Következtetés Helyessége (ellenőrzi, hogy az információk közötti kapcsolatok és az implicit logika helyesen vannak-e megértve); Következtetési Proaktivitás (értékeli, hogy a közvetlen válaszon túli javaslatok vagy kockázati figyelmeztetések megjelennek-e, amikor helyénvaló); Hallucináció-detektálás (biztosítja, hogy ne jelenjen meg a memóriában nem szereplő információ).
 >
@@ -355,12 +355,28 @@ Küldjük el ezt a Rubricát az Ügynök tényleges válaszával együtt a bír�
 >
 > **6-4. kísérlet ★★: A Fejlett JSON Kártyák és a RAG Összehasonlító Kiértékelése**
 >
-> "Előfeltételek": A 3. fejezet Felhasználói Memória és RAG kísérleteinek (`ch3/user-memory`, `ch3/agentic-rag-for-user-memory`) befejezése kötelező.
+> "Előfeltételek": A 3. fejezet Felhasználói Memória és RAG kísérleteinek (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`) befejezése kötelező.
 >
-> "Cél": A strukturált memória és a strukturálatlan lekérés előnyeinek és határainak tisztességes összehasonlítása ugyanazon a kiértékelési készleten. Használd újra a két 3. fejezetbeli projektet, és hasonlíts össze három konfigurációt a `ch3/user-memory-evaluation` 60 tesztesetén — Tiszta Fejlett JSON Kártyák (strukturált kártyák a kontextusban, nincs szükség lekérésre), Tiszta RAG (beszélgetési darabok beágyazva egy vektoros tárba, lekérés szükséges), Hibrid Rendszer (alaptények a kontextusban + eredeti beszélgetések igény szerint lekérve).
+> "Cél": A strukturált memória és a strukturálatlan lekérés előnyeinek és határainak tisztességes összehasonlítása ugyanazon a kiértékelési készleten. Használd újra a két 3. fejezetbeli projektet, és hasonlíts össze három konfigurációt a `chapter3/user-memory-evaluation` 60 tesztesetén — Tiszta Fejlett JSON Kártyák (strukturált kártyák a kontextusban, nincs szükség lekérésre), Tiszta RAG (beszélgetési darabok beágyazva egy vektoros tárba, lekérés szükséges), Hibrid Rendszer (alaptények a kontextusban + eredeti beszélgetések igény szerint lekérve).
 >
 > "Elfogadási Szempontok": Jegyezd fel a sikerességi arányt, az átlagos lépéseket, az eszközhívások számát, a késleltetést és a költséget három komplexitási szinten (alapvető visszahívás / több munkamenet közötti egyértelműsítés / munkameneteken átívelő rejtett asszociációk). Világosan írd le az egyes megközelítések kudarcharakterisztikáját — mit hagy ki a strukturált memória, mit hagy ki a lekérés, és hogy a hibrid valóban eléri-e a szinergiát. A konfigurációs részletek és tesztesetek elérhetők a kísérő tárolóban.
 >
+
+A kísérő vizsgálat mindhárom rendszert ugyanazon a 60 kérdésen futtatta, és 180 valódi API-trajectory-t őrzött meg. A 6-4. táblázat az arányok mellett a sikeres esetek számát is közli.
+
+6-4. táblázat: Sikerarány memóriarendszer és feladatszint szerint
+
+| Rendszer | Alapvető felidézés | Több munkamenetes egyértelműsítés | Rejtett munkamenetközi kapcsolatok | Összesen |
+|---|---:|---:|---:|---:|
+| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
+| RAG | 90% | 40% | 15% | 48.3% (29/60) |
+| Hibrid | 80% | 70% | 50% | 66.7% (40/60) |
+
+A hibrid nem nyert automatikusan. Három olyan esetet egyedül oldott meg, amelyet egyik önálló megközelítés sem, viszont nyolc esetben visszaesett az adott esetre jobb önálló rendszerhez képest; átlagos jutalma 0.092-del maradt el az esetenként legjobb önálló rendszerétől. A tiszta RAG az alapvető felidézésben közel került a strukturált kártyákhoz, a rejtett munkamenetközi kapcsolatoknál viszont 15%-ra esett. A releváns részlet megtalálása csak az első lépés: az Ügynöknek helyesen kell összeraknia a személyek, események és időpontok kapcsolatát is.
+
+A hallucinációs vétó a 180 ítéletből 28-ban aktiválódott. Nem dísznek szánt biztonsági pont volt, hanem ténylegesen megváltoztatta az eredményt. Ne feltételezzük, hogy a „strukturált memória + RAG” önmagában szinergiát hoz. Előbb vizsgáljuk meg, hogyan hibázik az egyes módszer minden nehézségi szinten, majd döntsük el, mely tények maradjanak mindig a kontextusban, és mely kérdések indítsanak lekérést. Ez egyetlen modell-bíró beállítással, szintetikus eseteken végzett kampány volt: hibamechanizmusokat mutat, nem univerzális memóriarangsort.
+
+Ez a következtetés is csak megbízható bíró mellett áll. Ha az Ügynök és a bíró ugyanabból a modellcsaládból származik, ugyanazokat a preferenciákat és vakfoltokat oszthatják.
 
 **Az Azonos Család Modell Problémája és a Több Forrásból Származó Bíráskodás.**
 
@@ -389,10 +405,14 @@ A multimodális bíráskodás az LLM-mint-bírót a beszéd, kép és videó tar
 >
 > Tervezz egy többdimenziós TTS Rubricát: A Pontosság dimenzió ellenőrzi, hogy minden szöveg helyesen lett-e felolvasva (nincs kihagyás/félreolvasás/hozzáadás); a Természetesség dimenzió azt értékeli, hogy a beszéd természetes-e, nem robotikus, nincsenek-e természetellenes szünetek, és természetes a prozódia; az Érzelmi Kifejezés dimenzió ellenőrzi, hogy a hangszín illeszkedik-e a szöveg érzelmi tónusához (emelkedő intonáció kérdéseknél, hangsúly felkiáltásoknál, lassabb tempó és mélyebb hangmagasság szomorú tartalomnál); a Hangkonzisztencia dimenzió a beszélői hasonlóságot értékeli, ha rendelkezésre áll egy referenciabeszéd (a multimodális modell egyszerre kapja a referenciát és a szintetizált beszédet az összehasonlításhoz).
 >
-> Építs egy sokszínű tesztkorpuszt: változó hosszúságok (egy mondat → hosszú bekezdés), műfajok (hír/történet/párbeszéd), érzelmek (semleges/izgatott/szomorú) és speciális kihívások (számok/tulajdonnevek/többjelentésű karakterek/dialektális szókincs). Implementáld a kiértékelési csővezetéket: A TTS generáló modul kapcsolódjon a vezető szolgáltatásokhoz (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao); a multimodális bíráskodási modul használja a Gemini 3.5 Flash-t, biztosítva számára a szintetizált beszédet, az eredeti szöveget, a referenciabeszédet és a Rubricát együtt, hogy minden dimenziót pontozzon és részletes indoklást adjon. Elemezd a kiértékelési eredmények eloszlását a különböző TTS modellek erősségeinek és gyengeségeinek azonosításához dimenziónként — egyes modellek kiválóak lehetnek pontosságban, de hiányzik a természetességük, míg mások magas természetességgel rendelkeznek, de hajlamosak a hibákra a speciális szókincsnél.
+> Építs sokszínű tesztkorpuszt különböző hosszúságokkal, műfajokkal, érzelmekkel és speciális kihívásokkal. A TTS-modult kapcsold a vezető szolgáltatásokhoz (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao), majd a szintetizált hangot, az eredeti szöveget, a referenciahangot és a Rubricát add egy közvetlen hangbemenetre képes multimodális bírónak. A pontszámok auditálhatóságához rögzítsd a bírómodellt, valamint a jelölt- és referenciahang hashét.
 >
 
-A kézzel definiált Rubricákon túl speciális "generatív jutalommodellek" is taníthatók az automatizált bíráskodásra — ezek a jutalommodellek tanítási módszerei, amelyeket a 7. fejezet tárgyal részletesen.
+A kísérő tároló egy kis közvetlen hallgatási próbát is megőriz. Az OpenAI és a Fish Audio négy-négy felvételt készített számokkal, többféleképpen ejthető kínai karakterekkel, hosszú szöveggel és lelkes előadásmóddal; a Voxtral mind a nyolcat négy dimenzióban értékelte. Mindkét rendszer 5.00 pontot kapott pontosságra és 4.00-t természetességre. A Fish Audio érzelemre és hangkonzisztenciára 4.00/3.00, az OpenAI 3.75/2.75 pontot ért el. A dimenziók szétválasztása olyan különbségeket tett láthatóvá, amelyeket egy egyszerű „helyesen olvasta fel?” kérdés nem mutatna meg.
+
+Ezek a pontok nem neveznek meg győztes szolgáltatót. Szolgáltatónként csak négy felvétel volt, ráadásul a fix referencia a Fish S1-ből származott, ami eleve a Fish Audiónak kedvez a hanghasonlóságban. Általános TTS-összevetésnél ezt a dimenziót el kell hagyni, vagy minden jelölthöz megfelelő célhangot kell adni. Hangklónozásnál minden rendszer ugyanazt a beszélőt utánozza, a modellbíró pontjait pedig vak emberi hallgatással kell kalibrálni. **A referencia válasz, kép vagy hang kiválasztása a kiértékelés tervezésének része, nem semleges előkészítés.**
+
+A kézzel írt Rubricák gyorsan kialakítják ezeket a diagnosztikai dimenziókat. Nagyobb léptékben speciális „generatív jutalommodellek” automatizálhatják a bíráskodást; képzésüket a 7. fejezet tárgyalja.
 
 A gyakorlati modellválasztás során gyakran szembesülünk a kérdéssel: "Melyik jobb, A vagy B?" A páronkénti összehasonlítás olyan kiértékelési módszert kínál, amely nem támaszkodik abszolút pontszámokra.
 
@@ -458,24 +478,24 @@ A **Modell következtetési költség** a legközvetlenebb összetevő, amelyet 
 
 **Az infrastruktúra költsége** magában foglalja a vektoradatbázisok (RAG-lekérdezéshez), az üzenetsorok, a relációs adatbázisok, valamint a naplózási és nyomkövetési tárolók (a megfigyelhetőség érdekében) működési többletköltségét.
 
-Egy konkrét példa illusztrálja a költségek nem lineáris növekedését. A 6-4. táblázat a fejezet elejétől származó ügyfélszolgálati visszatérítési ügynököt használja példaként, szemléltető token árparaméterekkel a három hívási kör költségének lebontására, bemutatva a többfordulós kontextus-felhalmozás és a gyorsítótár-találatok hatását a költségekre.
+A költség forrásainak feltárásához a kísérő vizsgálat egy rögzített, nyolcfordulós visszatérítési folyamatot használt: rendelés, szállítás, visszatérítési szabályzat és tudásbázis lekérdezése, majd kockázatellenőrzés, visszatérítés, értesítés és lezárás. Valódi gpt-4o-mini hívások futottak két kapcsoló mind a négy kombinációjával: stabil vagy instabil előtag, illetve teljes vagy tömörített előzmény. Az üzleti folyamat minden ágban azonos volt; a 6-5. táblázat a rögzített tokenadatokat és árakat használja.
 
-6-4. táblázat: Példa háromfordulós költségre az ügyfélszolgálati visszatérítési ügynök számára
+6-5. táblázat: A nyolcfordulós Ügynök-folyamat mért költsége
 
-|Kör|Művelet|Bemeneti tokenek|Kimeneti tokenek|Kör költsége|
-|-------|--------------------------------------------|------------------------|------------|---------|
-| 1 |Rendszerprompt + felhasználói kérdés → döntés a rendelés lekérdezéséről|2500 (ebből 2000 a rendszerprompt)| 150 | $0.0098 |
-| 2 |Előző kör kontextusa + eszközeredmény → döntés a visszatérítés indításáról|3200 (ebből 2000 gyorsítótár-találat)| 120 | $0.0060 |
-| 3 |Előző kör kontextusa + a visszatérítés eredménye → válasz a felhasználónak|3800 (ebből 3200 gyorsítótár-találat)| 200 | $0.0058 |
-|**Teljes**| | **9,500** | **470** | **$0.022** |
+| Konfiguráció | Bemeneti token | Gyorsítótárazott token | Teljes költség | Megtakarítás az alaphoz képest |
+|---|---:|---:|---:|---:|
+| Nincs cache, nincs tömörítés | 20,700 | 0 | $0.003776 | — |
+| Csak stabil előtag | 20,386 | 13,568 | $0.002707 | 28.3% |
+| Csak előzménytömörítés | 16,177 | 0 | $0.003115 | 17.5% |
+| Stabil előtag + tömörítés | 16,035 | 6,144 | $0.002643 | 30.0% |
 
-Megjegyzés: A számítás a bemeneti tokenekre vonatkozó 3 dollár/millió token és a kimeneti tokenekre vonatkozó 15 dollár/millió token példaár alapján történik. Feltételezzük, hogy a gyorsítótár-lekérést a beviteli ár 10%-ával számlázzuk ki (a kedvezmények szolgáltatónként változnak; például az Anthropic gyorsítótárba történő írása körülbelül 1,25-szöröse a beviteli árnak, a gyorsítótár olvasása pedig körülbelül 0,1-szerese; ez csak az olvasási engedményre van leegyszerűsítve).
+Az alapágban a bemenet 1,113 tokenről 3,668-ra nőtt. Az eszközeredmények újra bekerültek a későbbi kérésekbe, összesen 9,544 bemeneti tokent adva. Mindkét optimalizálással ez 5,248-ra csökkent, a teljes költség pedig 30%-kal esett.
 
-A három kör összesen 0,022 dollárba kerül – első pillantásra olcsónak tűnik. Gyorsítótár nélkül önmagában a bemeneti költség körülbelül 0,029 dollár, a kimenettel együtt pedig nagyjából 0,036 dollár lenne; a gyorsítótárazás itt a bemeneti költségek közel felét megtakarítja, összhangban a később idézett empirikus tartománnyal („a KV Cache 30–60%-kal csökkentheti a bemeneti költségeket”). De figyeld az erősítő tényezőket. Engedélyezze a gondolkodási módot, és minden kör további 500-2000 gondolkodási jelzőt bocsát ki, ami potenciálisan megháromszorozhatja vagy megötszörözheti a költségeket. Hagyja, hogy az egyik eszköz egy 5000 tokenből álló weboldalt adjon vissza, és minden további kör újra fizet ezekért a tokenekért. Hagyja, hogy az ügynök tegyen egy kitérőt, és 10 körre van szüksége, és a kontextus túllép 20 000 tokenen, messze túlmutatva ezen az egyszerű forgatókönyvön. A költségoptimalizálás lényege tehát nem egy olcsóbb modell kiválasztása, hanem a körök számának és a kontextus növekedésének szabályozása.
+A nyereségek nem adódtak össze. A stabil előtag önmagában 28.3%, a tömörítés 17.5% megtakarítást hozott, együtt azonban 45.8% helyett 30%-ot. A tömörítés a gyorsítótárban újrahasznosítható előtagot is rövidítette. **Kombinált kontextusoptimalizálásnál a teljes folyamatot mérjük; az önálló megtakarításokat ne adjuk össze.** Más modell, ár vagy feladathossz más százalékot ad. A négyágú módszer általánosítható, nem a 30%.
 
 **Költségoptimalizálási stratégiák.**
 
-Kvantitatív szempontból a leghatékonyabb bemeneti oldali eszközök a **KV Cache újrafelhasználása** (stabil előtag fenntartása, így az ismétlődő rendszerpromptok, eszközdefiníciók és előzmények a gyorsítótár árán kerülnek kiszámlázásra, 30–60%-kal csökkentve a bemeneti tokenek költségét – a fenti háromfordulós példában a gyorsítótárazás a bemeneti költségek közel felét megtakarította), a **kontextustömörítés** (a redundáns eszközkimenetek csonkolása és a kontextus növekedési ütemének közvetlen szabályozása, különösen hosszú feladatok esetén), valamint a **rétegezett modellútválasztás** (az egyszerű kérések könnyű modellekhez, az összetett érvelés pedig erősebb modellekhez kerül). E három módszer – előtag-stabilitás tervezése, tömörítési időzítés és stratégia, valamint útválasztási mechanizmusok – konkrét megvalósítását a 2. fejezet részletesen tárgyalja, és itt nem ismételjük meg. Ez a fejezet két módszerrel egészíti ki őket az értékelésből és a műveletekből.
+Elsőként három bemeneti oldali eszközt érdemes próbálni: **KV Cache újrafelhasználása** stabil előtaggal, **kontextustömörítés** a régi trajectory-k és hosszú eszközeredmények rövidítésével, valamint **rétegezett modellútválasztás**. A 2. fejezet ismertette a megvalósítást. Működtetési szempontból mindegyikhez külön kapcsoló kell, hogy önálló és kombinált hatásuk is mérhető legyen. Két további módszer közvetlenül az értékeléshez és az üzemeltetéshez kapcsolódik.
 
 Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel kötegelt feldolgozáshoz, kihasználva az API-szolgáltatók kötegelt árengedményeit; öntelepítési forgatókönyvek esetén a csúcsidőn kívüli GPU kihasználtságot is javítja.
 
@@ -485,11 +505,11 @@ Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel
 
 > **6-7. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
 >
-> **Kísérlet célja**: Végezze el a teljes láncra kiterjedő költséglebontást a tipikus ügynöki feladatokhoz, állítson fel költségalapot, és ellenőrizze az optimalizálási stratégiák hatékonyságát.
+> **Kísérlet célja**: Ismételje meg a fenti nyolcfordulós költségbontást, majd vizsgálja meg ugyanezeket az optimalizálásokat a saját munkaterhelésén.
 >
-> **Technikai megközelítés**: Válasszon ki néhány tipikus feladatot, majd a LangSmith vagy egy saját nyomkövető rendszer segítségével minden LLM-hívásnál rögzítse a bemeneti és kimeneti tokenek számát, a gondolkodási tokeneket, az eszközhívások számát és visszatérési méretét, valamint a végpontok közötti késleltetést. Számítsa ki az egyes feladattípusok átlagos költségét, költségeloszlását (p50/p95/p99) és az összetevők arányát.
+> **Technikai megközelítés**: Először reprodukálja a kísérő tároló rögzített feladatát, majd válasszon saját tipikus feladatokat. LangSmithtel vagy saját nyomkövetéssel rögzítse az input/output és gondolkodási tokeneket, az eszközhívásokat és eredményméreteket, valamint a végpontok közötti késleltetést. Számítsa ki az átlagot, p50/p95/p99 értékeket és a költségösszetételt.
 >
-> **Elfogadási kritériumok**: Költségbontási jelentés készítése és a fő költségtényezők azonosítása. Hasonlítsa össze a KV gyorsítótár engedélyezése/letiltása és a környezettömörítés engedélyezése/letiltása közötti költségkülönbségeket.
+> **Elfogadási kritériumok**: Készítsen költségjelentést és azonosítsa a fő hajtóerőket. Futtassa mind a négy kapcsolókombinációt, külön-külön és együtt is mérve az optimalizálásokat. Modellváltáskor ismételje meg a mérést, ne vigye tovább a mentett trajectory százalékát.
 >
 >
 
@@ -515,7 +535,7 @@ Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül v�
 >
 > **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.
 >
-> **Cél**: Végezze el a felhasználói memória visszakereső ügynökének végpontok közötti modellkiválasztási kiértékelését, megvizsgálva, hogy a beágyazási modell, az átrendező és az ügynök fő modellje együttesen hogyan befolyásolja a visszakeresés minőségét, késleltetését és költségét. Használja újra a `ch3/contextual-retrieval-for-user-memory`-t vagy a `ch3/agentic-rag-for-user-memory`-t, és hasonlítsa össze a konfigurációkat 60 teszteseten.
+> **Cél**: Végezze el a felhasználói memória visszakereső ügynökének végpontok közötti modellkiválasztási kiértékelését, megvizsgálva, hogy a beágyazási modell, az átrendező és az ügynök fő modellje együttesen hogyan befolyásolja a visszakeresés minőségét, késleltetését és költségét. Használja újra a `chapter3/contextual-retrieval-for-user-memory`-t vagy a `chapter3/agentic-rag-for-user-memory`-t, és hasonlítsa össze a konfigurációkat 60 teszteseten.
 >
 > **Elfogadás**: Értékelje sorban mindhárom kiválasztási pontot: a beágyazási modellt (BGE-M3 / OpenAI / Doubao stb.; rögzítse a top 5 visszakeresési pontosságot, a késleltetést és a költséget), az újrarangsorolót (legyen „nincs újrarangsoroló” alapvonal is, hogy számszerűsíthető legyen a hozzáadott értéke), valamint a fő modellt (azonos visszakeresési konfiguráció mellett hasonlítsa össze a sikerarányt és az eszközhasználat hatékonyságát). A kulcs az összetevők közötti kölcsönhatások felismerése: az erősebb beágyazás fölöslegessé teheti az újrarangsorolót, az erősebb főmodell pedig ellensúlyozhatja a visszakeresés hiányosságait. A választás rendszerszintű kompromisszum, nem az egyes komponensek külön-külön legerősebb változatának kiválasztása. A konfiguráció részletei a kísérő tárházban találhatók.
 >
@@ -526,11 +546,11 @@ Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül v�
 
 A mintavételi zaj durva becslése a "binomiális arány standard hibája" (amely a sikerességi arány mintavételi véletlenszerűségből adódó ingadozását jellemzi; minél nagyobb az érték, annál kevésbé megbízható a sikerességi arány). Ha a p sikerességi arányt n teszteseten mérjük, a standard hiba körülbelül √(p(1-p)/n). Egy konkrét példa: 100 eset, 70%-os sikerességi arány, standard hiba ≈ √(0,7×0,3/100) ≈ 4,6%. Egy hozzávetőleges 95%-os konfidencia intervallum p ± 2 standard hiba, azaz egy intervallum, amely ismételt mintákban az esetek körülbelül 95%-ában tartalmazná a valódi arányt, azaz 70% ± 9 százalékpont. Egy három százalékpontos különbség, mint "új modell 73% vs. régi modell 70%", teljes egészében a zajsávon belül van — a két sikerességi arányt függetlennek tekintve, a különbségük standard hibája körülbelül √2-szerese az egyes standard hibáknak (itt körülbelül 6,5 százalékpont). Egy megszorítás: a √2 feltételezi, hogy a két mérés független, míg a gyakorlatban mindkét konfiguráció általában "ugyanazon a feladatkészleten" fut, így a minták nem függetlenek. A függetlenségi feltételezés csupán egy konzervatív felső korlát a gyors ellenőrzéshez, hogy egy kis különbség egyáltalán figyelmet érdemel-e. Még ezzel a konzervatív mércével is a három százalékpontos különbség messze elmarad a 6,5 százalékpontos standard hibától — a modellek váltása ilyen bizonyíték alapján aligha jobb, mint egy pénzfeldobás.
 
-Az Ügynök-kiértékelés egy újabb réteg nem-determinizmust ad hozzá: ugyanaz a modell, ugyanaz az adathalmaz, és két futás mégis eltérhet — a hőmérséklet-samplerezés, az ingadozó eszközvisszatérések és a környezeti időzítés mind zajt visznek be. Ezért soha ne alapozz döntést egyetlen futás számain. "Futtass többször és átlagolj" (mondjuk 3-5 futást konfigurációnként), jelentve mind az átlagot, mind a szórást. Pontosan ezért a későbbi hipotetikus esetben minden konfiguráció "5-ször fut le (különböző véletlenszám-magokkal)".
+Az Ügynök-kiértékelés további bizonytalanságot hoz: mintavétel, változó eszközeredmények és környezeti időzítés miatt ugyanaz a modell és adathalmaz is eltérhet két futásban. Egyetlen futás ezért nem indokol telepítést. Konfigurációnként például 3-5 futás átlagát és szórását jelentsük. A későbbi kis AndroidWorld-pilot feladatonként csak egy páros futást használ, így ötletek szűrésére alkalmas, telepítési döntésre nem. Ahhoz a teljes feladatkészlet több véletlenmagos futtatása kell.
 
 Ebből egy gyakorlati elv: **amikor a pontszámkülönbség kisebb, mint a becsült mintavételi zaj, ne hozz váltási döntést.** De mielőtt a "ne válts" mellett döntenél, nyúlj egy érzékenyebb — és helyesebb — elemzéshez. Amikor két konfiguráció ugyanazon a feladatkészleten fut, a helyes alapértelmezés a "páros elemzés": hasonlítsd össze a győzelmi/vesztési arányt feladatonként, nézd csak azokat az eseteket, ahol a kettő eltér (az egyik helyes, a másik hibás), és alkalmazz valami McNemar-teszt jellegűt a szignifikancia megítéléséhez. A párosítás kivonja a feladatnehézség közös zaját, így sokkal érzékenyebbé válik ugyanazon mintaméret mellett, mint két független sikerességi arány különbségének vizsgálata — a korábbi √2 becslés csak egy konzervatív, fejben számolható szita a nyilvánvalóan elégtelen különbségek kiszűrésére. Ha a páros elemzés is bizonytalannak hagyja a különbséget, csak akkor fontold meg a minta növelését — és jegyezd meg, hogy a standard hiba 1/√n szerint skálázódik, így 100-ról 400 esetre növelés csak megfelezi a becsült mintavételi zajt. A bővítés költséges. Olvasd a másik irányból: ha egy fejlesztés várható haszna csak 2-3 százalékpont, és a kiértékelési készleted néhány tucat esetből áll, a kiértékelés egyszerűen nem tudja megmondani, hogy a fejlesztés működik-e — a prioritás a kiértékelési készlet bővítése, nem az Ügynök további iterálása.
 
-Még egy könnyen figyelmen kívül hagyható buktató: "többszörös összehasonlítás". Tesztelj párhuzamosan egy köteg hipotézist, és a valószínűsége annak, hogy legalább egy következtetés hamis pozitív, gyorsan nő — még 95%-os konfidenciaszint mellett is, 6 hipotézis esetén annak esélye, hogy legalább egy hamis pozitívot kapunk, 1 − 0,95^6 ≈ 26%. Minél több hipotézist tesztelsz párhuzamosan, annál nehezebb elkerülni, hogy egy véletlenül szignifikánsnak tűnjön. Az ellenintézkedések kétfélék: szigorítsd a szignifikanciaküszöböt minden egyes következtetéshez, ahogy a hipotézisek száma nő (Bonferroni-stílusú korrekció), vagy futtasd újra bármely pozitív eredményt egy független megerősítő menetben, és csak akkor hidd el, ha reprodukálódik. A későbbi "Adatoktól a Hipotézisekig" szakasz H1–H4-et teszteli, négy valóban párhuzamos hipotézist (H5 és H6 feltételesen indított, és nem fut egyszerre az első néggyel), ami tipikus forgatókönyv erre a buktatóra.
+Még egy könnyen figyelmen kívül hagyható buktató a **többszörös összehasonlítás**. Hat független hipotézis 95%-os szinten történő vizsgálatakor legalább egy hamis pozitív esélye 1 − 0,95^6 ≈ 26%. Minél több változatot próbálunk, annál könnyebben tűnik valamelyik pusztán véletlenül sikeresnek. Szigorítsuk a küszöböt például Bonferroni-korrekcióval, vagy erősítsük meg a pozitív eredményt független futással. A későbbi AndroidWorld-sorozat körönként egyetlen változó módosításával mérsékli ezt a kockázatot; párhuzamos szűrésnél továbbra is korrekció vagy független megerősítés kell.
 
 A kiértékelés-vezérelt döntések minőségi adatokra támaszkodnak, amelyek az Ügynök működési folyamatának szisztematikus rögzítéséből származnak — ezt nevezzük megfigyelhetőségnek.
 
@@ -565,7 +585,7 @@ Egy átfogó kiértékelő rendszerrel és adathalmazzal a kulcs az, hogy a kié
 
 ## A Benchmark Jelentésektől a Rendszerfejlesztésekig
 
-"A következő egy hipotetikus tanítási eset", amely konkrét adatokkal illusztrálja a teljes döntéshozatali folyamatot a benchmark jelentéstől a rendszerfejlesztésekig. Az adatok hipotetikusak, és a módszertan bemutatását célozzák, nem valós kísérleti eredmények közlését.
+A következő eset a kísérő tároló valós, szándékosan szűk AndroidWorld-iterációjából származik. Négy Wi-Fi-beállítási feladatot vizsgál API 35 emulátoron, feladatonként egy páros futással. Nem a teljes, 116 feladatos benchmark, és nem helyettesíti az API 33 referencia-környezetben végzett újrafuttatást. Értéke nem egy összpontszám, hanem az egymásra épülő döntések sora.
 
 ![6-7. ábra: Benchmarktól a Fejlesztésig Hurok](images/fig6-7.svg)
 
@@ -575,61 +595,51 @@ Mielőtt bármilyen benchmark jelentést elemeznénk, vegyünk észre egy könny
 
 ### Benchmark Jelentés Olvasása: A Problémafelismerés Művészete
 
-Használjunk egy konkrét esetet a benchmark jelentés olvasásának illusztrálására. Tegyük fel, hogy kiértékelünk egy Ügynököt AndroidWorldön, és két alapvető jelentéstáblázatot kapunk: egy feladatonkénti teljesítménytáblázatot és egy képességcímke-teljesítmény mátrixot. A jelentés értéke nem az egyetlen általános sikerességi arányban rejlik, hanem a feltárt strukturális gyengeségekben.
+A kiinduló jelentés a 116 feladat mindegyikét egyszer futtatta, körülbelül 88%-os összesített sikerrel. A hibák nem szóródtak: a négy `SystemWifiTurn*` feladatból három elbukott, trajectory-jük pedig végállapot-ellenőrzés nélküli oda-vissza navigálást mutatott. Két magyarázat illett az adatokhoz: az Ügynök nem tudta, hová menjen, vagy hiányos UI-reprezentációt kapott.
 
-A feladatonkénti táblázat világos mintát mutat: a legtöbb rutinfeladat sikerességi aránya közel 100%. Ezek általános forgatókönyveket fednek le — felvétel, fotózás, névjegykezelés, jegyzetkészítés, fájlműveletek, rendszerbeállítások — és átlagosan több tucat lépést igényelnek, a legösszetettebbek több tucatnyit. Az ilyen hosszú akciósorozatok sikeres befejezése demonstrálja az Ügynök tervezési és végrehajtási képességét a szabványos forgatókönyvekben.
-
-A hibák szorosan néhány területre koncentrálódnak: SMS-válaszok, Wi-Fi kapcsolás és állapotellenőrzés, teendőlista-lekérdezések, kombinált Wi-Fi+Bluetooth műveletek, és VLC lejátszási lista létrehozása. Felszínen ezek a feladatok nem tűnnek összefüggőnek; a képességcímke-mátrix tárja fel, mi a közös bennük.
-
-"A képességcímke-mátrix" kulcsfontosságú a diagnózishoz — minden feladatot keresztosztályoz a szükséges képességek és nehézség szerint. A jelentés gyakran mutat néhány képességi dimenziót rendkívül alacsony sikerességi aránnyal: transzkripció (információk átírása képekből/videókból, a vizuális megértés hiányosságait feltárva), math_counting (a probléma nem a matematikai képesség maga — a modern LLM-ek erősek a matematikában — hanem hogy az Ügynök felismeri-e a számítás szükségességét, kivonja-e a számokat a UI-ból, és leképezi-e az eredményt egy akciósorozatra), és complex_ui_understanding (erősen támaszkodik a szabványos UI mintákra, összeomolva a nem szabványos elrendezések találkozásakor).
-
-A két táblázat együtt olvasása megmagyarázza a hibákat: a teendőlista-lekérdezések hibái egy nem szabványos UI-ra vezethetők vissza, amelyet az Ügynök nem tud olvasni és szűrni; a Wi-Fi hibák a rendszerbeállítások olyan vezérlési hierarchiájára vezethetők vissza, amely meghaladja az Ügynök megértését; a VLC lejátszási lista hibái arra vezethetők vissza, hogy az Ügynök nem találja a létrehozási pontot egy professzionális alkalmazás összetett UI-jában.
+A 88%-os főszám elrejti ezt a kis, koherens hibacsoportot. A lépéskorlát emelése is félrevezető: a „nem látja a vezérlőt” problémát „nem elég kitartóvá” nevezheti át. Előbb csoportosítsunk feladat és képességcímke szerint, játsszuk vissza a trajectory-ket, döntsük el, hogy megfigyelési, következtetési, cselekvési vagy ellenőrzési hibáról van-e szó, és csak utána változtassunk egy változót. A Wi-Fi-szelet az olcsó mechanizmusdiagnózist szolgálta, nem a rendszerszintű teljesítmény becslését.
 
 ### Az Adatoktól a Hipotézisekig: Fejlesztési Ütemterv Építése
 
-"Felszíni hipotézisek" (alacsony költség, függetlenek, párhuzamosan ellenőrizhetők): H1: Rendszerbeállítási navigációs segédletek hozzáadása Wi-Fi műveletekhez (az Ügynök talán képes kezelni a kapcsolót, de nem találja a beviteli oldalt), várhatóan megoldja a beállításokkal kapcsolatos feladatok koncentrált hibáit; H2: UI-elem azonosítási szabályok biztosítása a teendő alkalmazáshoz, várhatóan megoldja a teendő feladatok hibáit.
+Az első kör a legolcsóbb magyarázatot tesztelte. H1 navigációs tudáshiányt feltételezett, ezért csak a kezelt ág kapott Wi-Fi-navigációs és végállapot-ellenőrzési utasítást. A siker nem javult: nem a prompt volt a szűk keresztmetszet.
 
-"Középszintű hipotézisek" (szintén függetlenek, párhuzamosíthatók): H3: A multimodális bemeneti csővezeték javítása — a sikertelen trajektóriák visszajátszása feltárja, hogy a képek esetleg eldobásra kerülnek vagy szöveges leírásokká alakulnak a csővezetékben, így még a legerősebb multimodális modellek sem képesek átírni; H4: A gondolkodás globális engedélyezése a számolással kapcsolatos hibák megoldására.
+A második kör azt kérdezte, mit lát valójában az Ügynök. H5 az API 35-tel inkompatibilis accessibility feedet az AndroidWorld által támogatott UIAutomator-fára cserélte. A siker nőtt, a teljes fa azonban megugrasztotta a tokenhasználatot. H5C ezért nem adott új információt: a láthatatlan, szöveg nélküli, nem műveletképes konténereket szűrte ki.
 
-"Mély szintű hipotézisek" (magas ellenőrzési költség, csak akkor indítandó, ha a complex_ui sikerességi arány 40% alatt marad a felszíni és középszintű fejlesztések után): H5: A modell helyettesítése egy erősebb vizuális megértéssel rendelkező modellre (GPT-5); H6: UI-elem fa információ hozzáadása a képernyőképeken túl (strukturált DOM a UI Automator által kinyerve a képernyőképekkel való keresztvalidációhoz). Ez a kettő egy 2×2 összehasonlító kísérletet képezhet (Claude/GPT-5 × csak képernyőképek/képernyőképek + elemfa), hogy megválaszolja "mi a kritikusabb, a modell képessége vagy az információ gazdagsága, és van-e szinergikus hatás?"
-
-Minden konfiguráció 5-ször fut le a teljes 116 feladatból álló készleten (különböző véletlenszám-magokkal), rögzítve a sikerességi arányt, az átlagos lépéseket és a végrehajtási időt.
+Mindhárom körben változatlan maradt a modell, a feladatparaméter, a seed, a lépéskorlát és az emulátor; az ágak sorrendje váltakozott. Így az egyik kör fennmaradó problémája lett a következő egyetlen változója.
 
 ### Az Eredményektől a Döntésekig: Adatvezérelt Kompromisszumok
 
-Tegyük fel, hogy a kísérleti adatok a következő eredményeket mutatják ("az alábbi adatok mind hipotetikusak"): H1 a beállításokkal kapcsolatos feladatok sikerességi arányát 0%-ról 75%-ra emeli, 8%-os bemeneti token növekedéssel; H3 a transzkripciót 0%-ról 80%-ra javítja, 15%-os vizuális token növekedéssel és 1 másodperces késleltetés-növekedéssel lépésenként; H4 a számolást 0%-ról 70%-ra javítja, de a lépésenkénti késleltetés 4 másodpercről 12 másodpercre nő, és a költség megháromszorozódik; H6 a complex_ui-t 17%-ról 52%-ra javítja, 30%-os token növekedéssel és 2 másodperces késleltetés-növekedéssel lépésenként; H5 (GPT-5) a complex_ui-t 17%-ról 35%-ra javítja, de a lépésenkénti késleltetés 4 másodpercről 15 másodpercre nő.
+A 6-6. táblázat a mért eredményeket foglalja össze. Áganként négy feladat elegendő annak eldöntésére, érdemes-e nagyobb futást végezni, de nem becsüli az AndroidWorld egészének sikerét.
 
-A döntés nem egyszerűen az összes hatékony fejlesztés átvétele:
+6-6. táblázat: Három kör az AndroidWorld Wi-Fi-szeletén
 
-"H1 és H3 azonnali bevezetése": A H1 alacsony költségű és magas hasznú, mellékhatások nélkül. A H3 15%-kal növeli a vizuális token költségeket és egy másodperc késleltetést ad, de a transzkripciót nem működő képességből működővé változtatja, és kijavít egy architekturális hibát — a bemeneti csővezeték eldobja a multimodális információt — ami más vizuális megértési feladatokat is javíthat.
+| Kísérlet | Egyetlen változás | Kontroll → kezelés siker | Kezelés / kontroll token | Következő lépés |
+|---|---|---:|---:|---|
+| H1 | Navigációs utasítás | 25% → 25% | 0.47× | Nincs sikerjavulás; eredeti prompt marad |
+| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Erős javulás, de drága; tovább optimalizálni |
+| H5C | UIAutomator-fa tömörítése | 100% → 100% | 0.506× | Siker megmarad, token feleződik; teljes futásra tovább |
 
-"A gondolkodás globális engedélyezése H4-hez elfogadhatatlan": az általános sikerességi arány 88%-ról 91%-ra emelkedik, de a képességcímke-eloszlás azt mutatja, hogy a feladatoknak csak körülbelül 8%-a tartalmaz számolást — minden feladatot háromszoros késleltetésnek és költségnek kitenni a kisebbség kedvéért klasszikus esete a légyre ágyúval lövésnek. A H4 azonban bizonyítja, hogy a gondolkodás működik a számolási feladatoknál, megalapozva a feltételes aktiválást a következő körben.
-
-"H6 jobb, mint H5": H5-tel (GPT-5) a lépésenkénti késleltetés 4 másodpercről 15-re szökik, miközben a complex_ui csak 35%-ot ér el — a szűk keresztmetszet nem a modell következtetése, hanem hogy a bemenet elegendő információt hordoz-e. H6 (az elemfa hozzáadása) 35 százalékpontos javulást hoz 30%-kal több tokenért és 2 másodperc késleltetésért — sokkal jobb üzlet. A H5+H6 kombináció a legmagasabb pontszámot éri el (68%), de a feladat időtartama nagymértékben elfogadhatatlan; csak szelektív aktiválásra alkalmas kritikus aszinkron feladatokon (banki átutalások, orvosi időpontok), míg a H6 elegendő a hétköznapi forgatókönyvekhez.
-
-"H2 nem skálázódik": egyedi szabályok írása minden nem szabványos alkalmazáshoz fenntarthatatlan. Csak átmeneti megoldás lehet; a hosszú távú megoldás az Ügynök általánosítási képességének javítása.
+A sorrend fontosabb bármely egyedi százaléknál. Részletesebb utasítás nem pótolja azt az információt, amelyet az Ügynök meg sem kapott; promptbővítés előtt vizsgáljuk a megfigyelési hibát. A több bemenet sem mindig jobb: a teljes fa megoldotta a láthatóságot, de zajjal árasztotta el a kontextust. A szemantika nélküli csomópontok eltávolítása megtartotta a négy sikert és körülbelül felezte a tokent. A modell nem változott; a Harness UI-reprezentációja döntötte el előbb a végrehajthatóságot, majd annak gazdaságosságát.
 
 ### Folyamatos Iteráció: Az Első Fejlesztéstől a Rendszer Evolúciójáig
 
-A három fejlesztés (H1, H3, H6 — H4 nem bevezetve) implementálása után az Ügynök sikerességi aránya AndroidWorldön 88%-ról 94%-ra emelkedik. A teljes benchmark újrafuttatásakor az új jelentés eltérő hibamintát mutat: a transzkripció, a beállítások és a complex UI feladatok mind jelentősen javultak. A fennmaradó, körülbelül 6%-os hibaráta a meg nem oldott számolási feladatokban, az instabil Wi-Fi állapotellenőrzésben (0%-ról 60%-ra javult, de még mindig instabil) és néhány új hibában koncentrálódik, amelyeket esetleg a hosszabb utasítások vagy a túl sok elemfa-információ okoz, ami elvonja a modell figyelmét.
+H5C négy feladatos sikere csak nagyobb tesztet engedélyez, telepítést nem. A következő kapu mind a 116 feladat öt seeddel, Pixel 6 / API 33 referencia-környezetben, a teljes külső alkalmazáskészlettel. A siker nem lehet rosszabb, a tokenarány legyen ≤0.75, a késleltetési arány ≤1.5. Addig a 4/4 nem jelenthető rendszerszintű 100%-ként.
 
-Az új jelentés és a H4 kísérletből származó tanulságok alapján új hipotézisek fogalmazhatók meg. H7: A gondolkodás feltételes aktiválása — egy gyors LLM-hívás (körülbelül 1-2 másodperc) használata a feladat kezdete előtt a feladatleírás elemzésére, a gondolkodási mód engedélyezése csak a számolást vagy összetett következtetést igénylő feladatoknál, így a késleltetés-növekedés azokra a feladatokra korlátozódik, amelyeknek valóban szükségük van rá. H8: Az akciótér bővítése összetett gesztusok támogatására (csípés-nagyítás, hosszan nyomva húzás, többérintéses) — a fennmaradó sikertelen trajektóriák visszajátszása feltárja, hogy egyes feladatok olyan műveleteket igényelnek, mint a térkép nagyítása, képvágás és hosszan lenyomott menük listákon.
-
-Ez a fajta, benchmark visszajelzésen alapuló iteráció folyamatosan javítja az Ügynök képességeit. Egy benchmark nem egyszeri vizsga, hanem folyamatos egészségügyi ellenőrzés. A rendszeres kiértékelési ütemterv (mondjuk a teljes tesztcsomag hetente) lehetővé teszi a képességgörbe figyelését, a regressziók korai észlelését (egy új funkció hibákat vezet be), a fejlesztések megerősítését (az optimalizáció valóban működött) és a tudás felhalmozását (milyen típusú fejlesztések szoktak megtérülni, melyek szoktak visszaütni). Ez a módszertan — adatvezérelt, hipotézis-tesztelt, folyamatosan iterált — a kulcsút a tapasztalatvezérelt Ügynök-mérnökségtől a tudományos mérnökség felé.
+A folyamatos iteráció ezt jelenti: minden kör bizonyítéka csak a hatókörével igazolt következő lépést engedélyezi. H1 leállította a prompt további bővítését; H5 megtalálta a mechanizmust és feltárt egy költségproblémát; H5C megoldotta azt, így nagyobb tesztre jutott. A jó benchmark jelentés nemcsak pontszámot, hanem érvényességi kört, megsértett guardraileket és következő tesztet is közöl.
 
 > **6-10. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
 >
-> Ez a kísérlet egy teljes zárt hurok gyakorlat, a kiértékelési jelentéstől a rendszerfejlesztésig. Kezdd az AndroidWorld kiértékelési jelentéssel a `ch6/android-world` mappában.
+> Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter6/android-world` három mentett páros futásával.
 >
 > 1. lépés: Diagnózis. Elemezd keresztbe a feladatonkénti táblázatot és a képességcímke-mátrixot, hogy a felszíni feladathibákat mélyebb képességhiányokra vezesd vissza. Azonosítsd a vártnál alacsonyabb sikerességi arányú képességcímkéket és a koncentrált hibákkal rendelkező feladatterületeket.
 >
 > 2. lépés: Hipotézisek építése. Fogalmazz meg fejlesztési hipotéziseket a háromszintű keretrendszer (felszín → közép → mély) követésével. Minden hipotézis tartalmazza a várható javulást a sikerességi arányban és az ellenőrzési módszert.
 >
-> 3. lépés: Fázisos kísérletezés. Tervezz kontrollált kísérleteket a hipotézisek tesztelésére. Az 1. fázis teszteli az alacsony költségű felszíni hipotéziseket, mint az utasítás-optimalizálás és gazdagabb eszközleírások. A 2. fázis teszteli a középszintű képességhipotéziseket (bemeneti csővezeték módosítása, gondolkodási mód váltás). A figyelem a specifikus képességcímkékhez kapcsolódó feladatok javulásának mértékére irányul, miközben a mellékhatásokat is mérd.
+> 3. lépés: Fázisos kísérletezés. Reprodukálja H1-et, H5-öt és H5C-t, körönként egyetlen változóval. A siker mellett rögzítse a tokent, késleltetést és regressziókat.
 >
 > 4. lépés: Adatvezérelt döntéshozatal. Hozz bevezetési döntéseket költség-haszon elemzés alapján — ne egyszerűen fogadj el minden hatékony fejlesztést, hanem mérlegeld az alkalmazási kört, a késleltetési hatást és a költségterhelést minden fejlesztésnél. Prioritásként vezesd be az alacsony költségű, magas hasznú fejlesztéseket; a magas költségű fejlesztéseket korlátozd a kritikus forgatókönyvekre.
 >
-> 5. lépés: Iteráció. A fejlesztések befejezése után futtasd újra a kiértékelést az adathalmazon. Használj egy LLM-et a kiértékelési eredmények elemzésére és egy új jelentés generálására. Az új jelentés eltérő hibamintát mutat, ami a következő iteráció kiindulópontja.
+> 5. lépés: Iteráció. A sikeres szeletkísérlet csak a teljes futásra léphet tovább. Telepítésről csak a referencia-környezet 116×5 futása után döntsünk; a jelentésben maradjon meg a környezetkülönbség, a mintaméret és a hiányos hatókör.
 >
 
 ## A Külső Kiértékeléstől a Belső Kiértékelésig: Kiértékelési Infrastruktúra Termelési Szintű Ügynökök Számára
@@ -711,7 +721,7 @@ Ezzel a kiértékelési környezet befejezi végső evolúcióját: egy képess�
 
 ## Fejezet Összefoglaló
 
-Ez a fejezet egyetlen kérdés körül forgott: honnan tudod, hogy egy Ügynök valóban fejlődött? A reprodukálható tesztkörnyezetek építésétől, a szivárgásnak ellenálló adathalmazok tervezésén át, az LLM-ek bíróként való használatáig, a kiértékelési eredmények modellválasztást és iterációt vezérlő alkalmazásáig — a lánc minden egyes szeme befolyásolja, hogy mennyire megbízhatóak a következtetések. A modellválasztás során a képesség-növekedési görbéket is össze kell hasonlítani erőforráskeretek között, nem pedig egyetlen működési pontra hagyatkozni. Termelési szintű Ügynökök esetében a kiértékelés nem alkalmi vizsga, hanem folyamatos validálás, amely minden termékdöntésbe be van ágyazva.
+Ez a fejezet egy kérdés köré épült: honnan tudjuk, hogy egy Ügynök valóban javult? A reprodukálható környezet, a szivárgásálló adathalmaz, az LLM-bíró és az értékelésvezérelt modellválasztás minden láncszeme befolyásolja a következtetés megbízhatóságát. A mért esetek négy gyakorlati figyelmeztetést adnak: a strukturált memória és a RAG együtt sem garantál szinergiát; a cache és tömörítés megtakarítása nem adható össze; a referenciahang megváltoztatja a multimodális pont jelentését; a Harness bemeneti reprezentációja pedig egyszerre dönthet sikerről és tokenköltségről. A modellválasztásnál több erőforráskeret képességgörbéit hasonlítsuk össze. Éles rendszerben a kiértékelés folyamatos validálás, nem alkalmi vizsga.
 
 Alapmódszertan: Megfigyelés → Hipotézis → Kísérlet → Validálás → Új Megértés → Új Hipotézis, az Ügynök-mérnökség átalakítása tapasztalatvezérelt "alkímiából" adatvezérelt tudományos mérnökséggé.
 
@@ -729,5 +739,5 @@ Az itt létrehozott kiértékelő rendszer nemcsak a jelenlegi rendszer optimali
 4. ★★ A τ-bench valós felhasználói viselkedés szimulálásával értékeli az Ügynököket. De a szimulált felhasználó maga is egy LLM — lehet, hogy szisztematikusan alulbecsüli bizonyos határeseteket (pl. érzelmileg izgatott vagy homályos felhasználók). Hogyan lehet magának a szimulált felhasználónak a minőségét validálni?
 5. ★★ A páronkénti összehasonlítás (Bradley-Terry modell) feltételezi a preferenciák tranzitivitását (ha A > B és B > C, akkor A > C). Az emberi preferenciák azonban gyakran megsértik a tranzitivitást. Az Ügynök-kiértékelésben milyen forgatókönyvekben jelenhetnek meg nem tranzitív preferenciák? Hogyan befolyásolja ez a rangsorolások megbízhatóságát?
 6. ★★ Ez a fejezet a "Megfigyelés → Hipotézis → Kísérlet → Validálás" tudományos módszert javasolja. A gyakorlatban azonban az Ügynök viselkedési tere hatalmas, és egyetlen hipotézis validálásához több száz kiértékelési futtatásra lehet szükség. Hogyan maximalizálható a kiértékelésből nyert információ korlátozott számítási költségkeret mellett?
-7. ★ Az ebben a fejezetben szereplő hipotetikus esetben a gondolkodás globális engedélyezése (H4) javította az általános sikerességi arányt, de a késleltetés és költség miatt elutasításra került, ami végül a feltételes aktiváláshoz (H7) vezetett. Mely jelek (feladatleírás jellemzői, történeti hibaminták, futásidejű bizonytalanság) alkalmasak útválasztási kritériumként a "gondolkodási mód engedélyezése" eldöntéséhez? Vannak-e olyan Ügynök-forgatókönyvek, ahol a gondolkodás valóban káros?
+7. ★ Az AndroidWorld-pilotban a teljes elemfa 25%-ról 100%-ra emelte a sikert, de a tokenhasználatot a kontroll 2.498-szorosára növelte; a metszés megtartotta a 100%-os sikert, miközben 0.506-szorosra csökkentette a tokenhasználatot. Hogyan terveznél automatikus metszési szabályokat, amelyek eltávolítják a szemantikailag üres UI-csomópontokat anélkül, hogy elveszne az akadálymentességhez, állapotellenőrzéshez vagy későbbi műveletekhez szükséges információ?
 8. ★★ A τ-bench felhasználó-szimulációja "progresszív információfeltárást" alkalmaz — nem biztosít minden információt egyszerre, hanem fokozatosan tárja fel az Ügynök kérdései alapján. Hogyan befolyásolja ez a tervezés a kiértékelési eredményeket? Ha a szimulált felhasználó információfeltárási stratégiája jelentősen eltér a valós felhasználókétól, a kiértékelési következtetések még mindig megbízhatók?
