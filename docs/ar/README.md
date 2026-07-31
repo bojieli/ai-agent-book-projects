@@ -33,11 +33,10 @@
 
 يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والإسبانية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية والكورية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد في [`book-en/`](../../book-en/)، و[`book-es/`](../../book-es/)، و[`book-zhtw/`](../../book-zhtw/)، و[`book-ru/`](../../book-ru/)، و[`book-ta/`](../../book-ta/)، و[`book-vi/`](../../book-vi/)، و[`book-ja/`](../../book-ja/)، و[`book-tr/`](../../book-tr/)، و[`book-ko/`](../../book-ko/) على الترتيب.
 
-ينتج سكربت البناء الموحّد كتب EPUB 3 باللغات العشر، ومنها العربية ذات اتجاه القراءة من اليمين إلى اليسار. راجع [تعليمات إنشاء EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 بناء ملف PDF محليًا</b> (يتطلب pandoc وxelatex وElegantBook)</summary>
+<summary><b>🔧 بناء ملفات PDF / EPUB محليًا</b> (يتطلب PDF أدوات pandoc وxelatex وElegantBook)</summary>
 
+- **EPUB**: استخدم سكربت البناء الموحّد؛ راجع [تعليمات إنشاء EPUB](../../EPUB.md)
 - **مصدر النص العربي**: `book-ar/introduction.ar.md`، و`book-ar/chapter1.ar.md` إلى `book-ar/chapter10.ar.md`، و`book-ar/afterword.ar.md`
 - **البناء**: ثبّت pandoc وxelatex وفئة ElegantBook والخطوط المطلوبة، ثم شغّل:
 

@@ -31,11 +31,10 @@
 
 中文正文原始碼位於 [`book/`](../../book/)；英文/西班牙語/阿拉伯語/繁體中文（台灣）/俄語/泰米爾/越南語/日語/土耳其語/韓語版本為社群貢獻（可能滯後於中文原版），分別位於 [`book-en/`](../../book-en/)、[`book-es/`](../../book-es/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/)、[`book-tr/`](../../book-tr/)、[`book-ko/`](../../book-ko/)。
 
-可使用統一的建置腳本產生中文、英文、西班牙語、阿拉伯語、繁體中文（台灣）、俄語、泰米爾語、越南語、日語、土耳其語和韓語 EPUB 3 電子書。請參閱 [EPUB 建置說明](../../EPUB.md)。
-
 <details>
-<summary><b>🔧 想自行編譯 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>
+<summary><b>🔧 想自行編譯 PDF / EPUB？</b>（PDF 需 pandoc / xelatex / ElegantBook）</summary>
 
+- **EPUB**：使用統一的建置腳本，詳情請參閱 [EPUB 建置說明](../../EPUB.md)
 - **正文原始碼**：`book/introduction.md`（引言）、`book/chapter1.md` ~ `book/chapter10.md`（第一至第十章）、`book/afterword.md`（後記）
 - **編譯**：安裝 pandoc、xelatex、ElegantBook 文件類與相關字型後，執行
 

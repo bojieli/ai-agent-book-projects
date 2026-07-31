@@ -31,11 +31,10 @@
 
 Mã nguồn tiếng Trung nằm trong [`book/`](../../book/); các bản Anh/Tây Ban Nha/Ả Rập/Trung phồn thể (Đài Loan)/Nga/Tamil/Việt/Nhật/Thổ Nhĩ Kỳ/Hàn là đóng góp cộng đồng (có thể chậm hơn bản gốc), nằm trong [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/).
 
-Trình dựng chung tạo sách EPUB 3 cho tiếng Trung giản thể, tiếng Anh, tiếng Tây Ban Nha, tiếng Ả Rập, tiếng Trung phồn thể (Đài Loan), tiếng Nga, tiếng Tamil, tiếng Việt, tiếng Nhật, tiếng Thổ Nhĩ Kỳ và tiếng Hàn. Xem [hướng dẫn dựng EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 Tự build PDF?</b> (cần pandoc / xelatex / ElegantBook)</summary>
+<summary><b>🔧 Tự build PDF / EPUB?</b> (PDF cần pandoc / xelatex / ElegantBook)</summary>
 
+- **EPUB**: Sử dụng trình dựng chung; xem [hướng dẫn dựng EPUB](../../EPUB.md)
 - **Mã nguồn**: `book/introduction.md` (mở đầu), `book/chapter1.md` ~ `book/chapter10.md` (Chương 1–10), `book/afterword.md` (bạt từ)
 - **Build**: Cài pandoc, xelatex, ElegantBook và font cần thiết, rồi chạy
 
