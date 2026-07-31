@@ -621,8 +621,3 @@ html[dir="rtl"] .md-typeset table:not([class]) th,
 html[dir="rtl"] .md-typeset table:not([class]) td {
   text-align: right;
 }
-
-html[dir="rtl"] .lang-select {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}

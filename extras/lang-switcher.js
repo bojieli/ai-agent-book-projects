@@ -1,5 +1,5 @@
-// Language switcher: populates a <select> dropdown in the header bar.
-// On change, navigates to the equivalent page in the target language and
+// Language switcher: populates the custom dropdown in the header bar.
+// On selection, navigates to the equivalent page in the target language and
 // rewrites the left sidebar (links + text) to match the new edition.
 //
 // window.LANG_CONFIG = { zh: {label, prefix, default?}, ... }
@@ -317,7 +317,49 @@
       window.location.replace(finalUrl);
     }
 
-    // ── render the <select> options ──────────────────────────
+    // ── custom dropdown ─────────────────────────────────────
+
+    function closeDropdown(returnFocus) {
+      var trigger = document.getElementById("lang-selector");
+      var menu = document.getElementById("lang-menu");
+      if (!trigger || !menu) return;
+      trigger.setAttribute("aria-expanded", "false");
+      menu.hidden = true;
+      if (returnFocus) trigger.focus();
+    }
+
+    function openDropdown(focusDirection) {
+      var trigger = document.getElementById("lang-selector");
+      var menu = document.getElementById("lang-menu");
+      if (!trigger || !menu) return;
+      trigger.setAttribute("aria-expanded", "true");
+      menu.hidden = false;
+
+      if (focusDirection) {
+        var options = menu.querySelectorAll(".lang-menu__option");
+        if (!options.length) return;
+        var target = menu.querySelector('[aria-checked="true"]');
+        if (focusDirection === "first") target = options[0];
+        if (focusDirection === "last") target = options[options.length - 1];
+        (target || options[0]).focus();
+      }
+    }
+
+    function moveMenuFocus(current, amount) {
+      var menu = document.getElementById("lang-menu");
+      if (!menu) return;
+      var options = Array.prototype.slice.call(
+        menu.querySelectorAll(".lang-menu__option")
+      );
+      if (!options.length) return;
+      var currentIndex = options.indexOf(current);
+      var nextIndex = (currentIndex + amount + options.length) % options.length;
+      options[nextIndex].focus();
+    }
+
+    function optionLocale(code) {
+      return code === "zhtw" ? "zh-TW" : code;
+    }
 
     function render() {
       var rawPath = location.pathname;
@@ -326,24 +368,62 @@
       var activeLang = detectLang(cleanPath);
       applyDocumentLocale(activeLang);
 
-      var sel = document.getElementById("lang-selector");
-      if (!sel) return;
+      var trigger = document.getElementById("lang-selector");
+      var menu = document.getElementById("lang-menu");
+      if (!trigger || !menu) return;
 
-      // Build options on first sight of an empty select.
-      if (sel.children.length === 0) {
+      // Build menu items on first sight of an empty dropdown.
+      if (menu.children.length === 0) {
         var codes = Object.keys(cfg);
         for (var idx = 0; idx < codes.length; idx++) {
           var code = codes[idx];
-          var opt = document.createElement("option");
-          opt.value = code;
-          opt.textContent = cfg[code].label;
-          if (code === activeLang) opt.selected = true;
-          sel.appendChild(opt);
+          var option = document.createElement("button");
+          option.type = "button";
+          option.className = "lang-menu__option";
+          option.setAttribute("role", "menuitemradio");
+          option.setAttribute("data-lang-code", code);
+          option.setAttribute(
+            "aria-checked",
+            code === activeLang ? "true" : "false"
+          );
+          option.setAttribute("tabindex", "-1");
+
+          var check = document.createElement("span");
+          check.className = "lang-menu__check";
+          check.setAttribute("aria-hidden", "true");
+
+          var label = document.createElement("span");
+          label.className = "lang-menu__label";
+          label.setAttribute("lang", optionLocale(code));
+          label.setAttribute("dir", code === "ar" ? "rtl" : "auto");
+          label.textContent = cfg[code].label;
+
+          option.appendChild(check);
+          option.appendChild(label);
+          menu.appendChild(option);
         }
-      } else {
-        // Update which option is selected for the current page.
-        sel.value = activeLang;
       }
+
+      // Keep the trigger and checked item in sync after SPA navigation.
+      var currentLabel = cfg[activeLang].label;
+      var labelNode = trigger.querySelector("[data-lang-label]");
+      if (labelNode) {
+        labelNode.textContent = currentLabel;
+        labelNode.setAttribute("lang", optionLocale(activeLang));
+        labelNode.setAttribute("dir", activeLang === "ar" ? "rtl" : "auto");
+      }
+      trigger.setAttribute(
+        "aria-label",
+        "Switch language. Current language: " + currentLabel
+      );
+
+      var options = menu.querySelectorAll(".lang-menu__option");
+      for (var optionIndex = 0; optionIndex < options.length; optionIndex++) {
+        var isActive =
+          options[optionIndex].getAttribute("data-lang-code") === activeLang;
+        options[optionIndex].setAttribute("aria-checked", isActive ? "true" : "false");
+      }
+      closeDropdown(false);
 
       var defCode = null;
       for (var c in cfg) { if (cfg[c].default) { defCode = c; break; } }
@@ -355,13 +435,69 @@
 
     // ── bootstrap ────────────────────────────────────────────
 
-    // Bind the change handler ONCE via event delegation. This way it keeps
-    // working even if Material re-creates the <select> during SPA navigation.
+    // Bind handlers once via event delegation so the dropdown keeps working
+    // if Material re-creates the header during SPA navigation.
     if (!window.__langSwitcherBound) {
       window.__langSwitcherBound = true;
-      document.addEventListener("change", function (e) {
-        if (!e.target || e.target.id !== "lang-selector") return;
-        switchTo(e.target.value);
+      document.addEventListener("click", function (e) {
+        if (!e.target || !e.target.closest) return;
+
+        var trigger = e.target.closest("#lang-selector");
+        if (trigger) {
+          var isOpen = trigger.getAttribute("aria-expanded") === "true";
+          if (isOpen) closeDropdown(false);
+          else openDropdown(false);
+          return;
+        }
+
+        var option = e.target.closest(".lang-menu__option");
+        if (option) {
+          var targetCode = option.getAttribute("data-lang-code");
+          closeDropdown(false);
+          switchTo(targetCode);
+          return;
+        }
+
+        if (!e.target.closest(".lang-switcher")) closeDropdown(false);
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (!e.target || !e.target.closest) return;
+        var trigger = e.target.closest("#lang-selector");
+        if (trigger) {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            openDropdown(e.key === "ArrowDown" ? "first" : "last");
+          } else if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (trigger.getAttribute("aria-expanded") === "true") {
+              closeDropdown(false);
+            } else {
+              openDropdown("current");
+            }
+          } else if (e.key === "Escape") {
+            closeDropdown(false);
+          }
+          return;
+        }
+
+        var option = e.target.closest(".lang-menu__option");
+        if (!option) return;
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          moveMenuFocus(option, e.key === "ArrowDown" ? 1 : -1);
+        } else if (e.key === "Home" || e.key === "End") {
+          e.preventDefault();
+          openDropdown(e.key === "Home" ? "first" : "last");
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          closeDropdown(true);
+        } else if (e.key === "Tab") {
+          closeDropdown(false);
+        } else if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          option.click();
+        }
       });
     }
 
