@@ -15,7 +15,7 @@ Skills 同构的机制来演示，核心是「渐进式披露（Progressive Disc
 python-pptx 生成真实的 .pptx，并读回校验页数与每页标题。
 
 运行：
-    export OPENAI_API_KEY=sk-...
+    export OPENAI_API_KEY=your-openai-api-key
     python demo.py
 """
 
@@ -235,21 +235,22 @@ def run_agent(paper_path: Path, model: str, out_path: Path,
               max_turns: int = 8) -> Path | None:
     # OPENAI_API_KEY 存在则官方直连；否则回退 OPENROUTER_API_KEY
     # （gpt-* 模型名会被映射为 openai/…）。两者皆无则给出清晰错误。
-    from openrouter_fallback import resolve_llm
+    from agentbook.providers import resolve_backend
 
     if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENROUTER_API_KEY"):
         log("错误：未设置 OPENAI_API_KEY，也未设置 OPENROUTER_API_KEY（通用回退）。")
-        log("请 export OPENAI_API_KEY=sk-... 或 export OPENROUTER_API_KEY=sk-or-...")
+        log("请 export OPENAI_API_KEY=your-openai-api-key 或 export OPENROUTER_API_KEY=your-openrouter-api-key")
         log("（无 key 时可用 --offline 走内置大纲、确定性地复现三层渐进式披露并生成 pptx。）")
         sys.exit(1)
 
-    api_key, base_url, model = resolve_llm(
-        model=model,
-        primary_keys=("OPENAI_API_KEY",),
-        primary_base_url=os.getenv("OPENAI_BASE_URL") or None,
-    )
+    # 端点与 key 的对应关系由 agentbook 的 provider 注册表统一维护，
+    # OPENAI_BASE_URL 覆盖也在其中处理。
+    backend = resolve_backend("openai", model=model)
+    model = backend.model
     # timeout + 自动重试：单次网络/SSL 抖动不至于让整个 agentic loop 崩溃
-    client = OpenAI(api_key=api_key, base_url=base_url, timeout=60.0, max_retries=3)
+    client = OpenAI(
+        api_key=backend.api_key, base_url=backend.base_url, timeout=60.0, max_retries=3
+    )
     catalog = scan_skill_catalog()
 
     system_prompt = build_system_prompt(catalog)

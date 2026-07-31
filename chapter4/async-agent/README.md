@@ -107,10 +107,41 @@ python demo.py state        # capability 3: checkpoint persist + cross-session r
 
 These demos do not network, call LLMs, or require `openai`—pure `asyncio` measures parallel speedup, frozen state after interrupt, and checkpoint save/restore.
 
+#### Tests (offline)
+
+The automated regression tests live in `tests/` and do not require an API key.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/async-agent
+python -m pytest tests
+```
+
 #### LLM verification scenarios (four book scenes; API key required)
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/async-agent
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env         # set OPENAI_API_KEY
 
 python demo.py scenarios                # all four scenarios
@@ -128,7 +159,7 @@ LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 ```
 
 > **Universal OpenRouter fallback**: if `OPENAI_API_KEY` is unset (and not moonshot/ark), with `OPENROUTER_API_KEY` set, `demo.py` routes via OpenRouter and maps model ids to `provider/model` (`gpt-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids with `/` pass through). Or set `LLM_PROVIDER=openrouter` explicitly. Example:  
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot defaults to **reasoning model `kimi-k3`** (older `kimi-k2-*-preview` / `moonshot-v1-*` are outdated/retired). Reasoning models need `temperature=1` and `max_tokens>=2048`; `demo.py` applies these automatically by model.
 
@@ -373,10 +404,41 @@ python demo.py state        # 能力三：状态检查点持久化 + 跨会话�
 这三个演示不联网、不调用 LLM，连 `openai` 都无需安装——用纯 `asyncio` 直接测量并行加速、
 打断后的状态冻结、以及检查点的落盘与还原。
 
+#### 测试（离线）
+
+自动化回归测试位于 `tests/`，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/async-agent
+python -m pytest tests
+```
+
 #### LLM 验证场景（还原书中四个场景，需要 API key）
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/async-agent
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env         # 填入 OPENAI_API_KEY
 
 python demo.py scenarios                # 依次运行全部四个场景
@@ -397,7 +459,7 @@ LLM_PROVIDER=ark LLM_MODEL=ep-xxxx python demo.py scenarios --scenario 1
 > 只要设置了 `OPENROUTER_API_KEY`，`demo.py` 会自动改走 OpenRouter，并把模型名映射为
 > `provider/model` 形式（`gpt-*` → `openai/…`、`claude-*` → `anthropic/claude-opus-4.8`、
 > 含 `/` 的原样透传）。也可显式 `LLM_PROVIDER=openrouter`。例如：
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python demo.py scenarios --scenario 1`
 
 > Moonshot 默认走**推理模型 `kimi-k3`**（旧的 `kimi-k2-*-preview` 与 `moonshot-v1-*` 已过时/停用）。
 > 推理模型要求 `temperature=1` 且 `max_tokens>=2048`，`demo.py` 会按模型自动套用这套采样参数，无需手动配置。

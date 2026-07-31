@@ -46,13 +46,27 @@
 
 ### Prerequisites
 
-Python 3.8+, macOS M1/M2 (or adjust device), ≥8GB RAM, ~5GB disk for models.
+Python 3.12 with the root `ch3` extra, macOS M1/M2 (or adjust device), ≥8GB RAM, ~5GB disk for models.
 
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/retrieval-pipeline
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 # First run downloads: BGE-M3 ~2.3GB, BGE-Reranker-v2-M3 ~1.1GB
 ```
 
@@ -175,7 +189,7 @@ retrieval-pipeline/
 
 ### Troubleshooting
 
-Ports 4240–4242 free; models downloaded; Python 3.8+. OOM → smaller batches, CPU, FP16. First run slow (downloads).
+Ports 4240–4242 free; models downloaded; Python 3.12 for the root `ch3` install. OOM → smaller batches, CPU, FP16. First run slow (downloads).
 
 ### Further reading
 
@@ -210,11 +224,25 @@ Educational project for learning purposes.
 
 ### 前置与安装
 
-Python 3.8+，建议 ≥8GB 内存，约 5GB 模型空间。
+Python 3.12 与根目录 `ch3` extra，建议 ≥8GB 内存，约 5GB 模型空间。
 
 ```bash
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
 cd chapter3/retrieval-pipeline
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 ### 启动服务

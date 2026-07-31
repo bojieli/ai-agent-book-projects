@@ -41,7 +41,7 @@ def get_client() -> OpenAI:
         if not key:
             raise RuntimeError(
                 "缺少 OPENAI_API_KEY（TTS 合成 / Whisper 回译需 OpenAI 直连）。"
-                "请 `export OPENAI_API_KEY=sk-...` 或写入 .env。"
+                "请 `export OPENAI_API_KEY=your-openai-api-key` 或写入 .env。"
             )
         _client = OpenAI(api_key=key, max_retries=5, timeout=60.0)
     return _client

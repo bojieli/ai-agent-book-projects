@@ -56,7 +56,23 @@ Problem ──► Model
 To verify the sandbox + ground-truth pipeline without an API key:
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/code-for-math
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 python demo.py --selfcheck        # run each problem's reference solution in the sandbox; score vs truth
 ```
 
@@ -77,7 +93,7 @@ It runs the reference solutions from `problems.json` in the subprocess sandbox, 
 
 ```bash
 cp env.example .env   # or export OPENAI_API_KEY=...
-export OPENAI_API_KEY=sk-...      # also supports MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # also supports MOONSHOT_API_KEY / ARK_API_KEY
 
 python demo.py                    # full comparison (code vs cot)
 python demo.py --verbose          # also print generated code and sandbox results
@@ -194,7 +210,23 @@ Real run of `gpt-5.6-luna` (11 problems; reasoning model default `temperature=1`
 想验证「沙箱 + 题库真值」这条链路是否可用、但手头没有 API key？跑：
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/code-for-math
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按真值判分
 ```
 
@@ -217,7 +249,7 @@ python demo.py --selfcheck        # 在沙箱中执行每题的参考解，按�
 
 ```bash
 cp env.example .env   # 或直接 export OPENAI_API_KEY=...
-export OPENAI_API_KEY=sk-...      # 也支持 MOONSHOT_API_KEY / ARK_API_KEY
+export OPENAI_API_KEY=your-openai-api-key      # 也支持 MOONSHOT_API_KEY / ARK_API_KEY
 
 python demo.py                    # 跑完整对照实验（code 与 cot 两种模式）
 python demo.py --verbose          # 额外打印模型生成的代码与执行结果

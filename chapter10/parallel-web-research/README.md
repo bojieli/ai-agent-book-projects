@@ -15,8 +15,23 @@ Implemented requirements:
 ## Run
 
 ```bash
+# From the repository root: use the shared Chapter 10 environment
+uv sync --locked --python 3.12 --extra ch10
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch10]"
+
 cd chapter10/parallel-web-research
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 playwright install chromium
 cp env.example .env                 # configure one real text-model endpoint
 python demo.py                       # 10 Stanford pages + real serial comparison

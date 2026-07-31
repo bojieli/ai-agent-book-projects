@@ -1,0 +1,82 @@
+name: provider adoption tests
+
+# Chapters 2 and 3 resolve endpoints, credentials and model ids through
+# agentbook.providers rather than through per-experiment copies of the old
+# openrouter_fallback.py. That makes a change to agentbook/ able to break six
+# experiments at once, in code paths none of their own tests would flag as
+# related -- so the shared package is a trigger here, exactly as it is for
+# chapter 1 in web-search-agent-tests.yml.
+
+on:
+  pull_request:
+    paths:
+      - "agentbook/**"
+      - "chapter2/context-compression/**"
+      - "chapter2/prompt-injection/**"
+      - "chapter2/system-hint/**"
+      - "chapter3/log-sanitization/**"
+      - "pyproject.toml"
+      - ".github/workflows/provider-adoption-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "agentbook/**"
+      - "chapter2/context-compression/**"
+      - "chapter2/prompt-injection/**"
+      - "chapter2/system-hint/**"
+      - "chapter3/log-sanitization/**"
+      - "pyproject.toml"
+      - ".github/workflows/provider-adoption-tests.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Two of the six migrated experiments are deliberately absent.
+        # chapter2/kv-cache keeps live-API scripts at its root that exit(1)
+        # without MOONSHOT_API_KEY, and chapter2/agent-skills-ppt cannot import
+        # python-pptx under the shared install. Both fail the same way before
+        # this migration; adding them needs the Phase 6A test/manual split
+        # first, not a workaround here.
+        experiment:
+          - chapter2/context-compression
+          - chapter2/prompt-injection
+          - chapter2/system-hint
+          - chapter3/log-sanitization
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The chapter aggregates ch2 and ch3 pull torch, which these offline
+      # tests never touch. Installing the capability groups they do use keeps
+      # the job to seconds; a chapter that outgrows this set will fail on the
+      # missing import rather than resolving it silently.
+      - name: Install the package
+        run: python -m pip install -e ".[dev,web,tokens]"
+
+      # Declared by chapter3/log-sanitization's requirements.txt and not yet in
+      # any capability group. Named here rather than widened into pyproject so
+      # the CI contract stays visible until Phase 7 reconciles that file.
+      - name: Install log-sanitization extras
+        run: python -m pip install "ollama>=0.3.0" "pyyaml>=6.0"
+
+      # Empty rather than unset: a resolver bug that reads a key from the
+      # runner environment must fail here, not silently pass.
+      - name: Run offline tests
+        working-directory: ${{ matrix.experiment }}
+        env:
+          MOONSHOT_API_KEY: ""
+          KIMI_API_KEY: ""
+          OPENROUTER_API_KEY: ""
+          OPENAI_API_KEY: ""
+        run: python -m pytest -q

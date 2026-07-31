@@ -8,6 +8,8 @@
 
 | 編號 | 專案 | 型別 | 一句話說明 |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 在同一尋寶環境執行 Q-learning 與 LLM Agent，從經驗中學習。 |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 將教師範例蒸餾為學生 prompt，並比較品質與成本。 |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 從零預訓練小型 LLM/VLM，理解完整預訓練流程與關鍵技術 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | 在特定領域資料上持續預訓練，提升目標領域表現 |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 語音 SFT：LoRA 微調 1B TTS 模型，用 `<laugh>`、`<sigh>` 等副語言標記控制表達 |

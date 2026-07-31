@@ -379,7 +379,7 @@ def make_client(
     except ImportError:
         pass
 
-    from openrouter_fallback import resolve_llm
+    from agentbook.providers import resolve_backend
 
     # 本实验特意用 gpt-4o-mini 作为默认模型：它是一个“故意可被攻破”的较弱基线。
     # 只有在这种模型上，才能观察到“防御逐层加强 -> 注入成功率显著下降”的对照曲线
@@ -387,14 +387,17 @@ def make_client(
     # 换成更强的模型（如 gpt-5.6-luna）会在 D1 无防御下就抗住全部三类注入，
     # 全矩阵成功率为 0，从而抹平了本实验要展示的教学对比。故此处保留 gpt-4o-mini。
     requested_model = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    # 允许自定义 base_url（默认官方），但请勿指向已失效的第三方网关。
-    primary_base_url = base_url or os.getenv("OPENAI_BASE_URL") or None
     # OPENAI_API_KEY 存在 -> 官方直连；否则回退 OPENROUTER_API_KEY。
-    api_key, resolved_base_url, model = resolve_llm(
-        model=requested_model,
-        primary_keys=("OPENAI_API_KEY",),
-        primary_base_url=primary_base_url,
+    # 端点与 key 的对应关系由 agentbook 的 provider 注册表统一维护。
+    backend = resolve_backend("openai", model=requested_model)
+    model = backend.model
+    # 允许显式传入 base_url 覆盖（默认官方；OPENAI_BASE_URL 由注册表处理），
+    # 但请勿指向已失效的第三方网关。回退到 OpenRouter 时不可覆盖：
+    # 此时 key 是 OpenRouter 的，发往别处必然认证失败。
+    resolved_base_url = backend.base_url if backend.using_openrouter else (
+        base_url or backend.base_url
     )
+    api_key = backend.api_key
     # timeout + 自动重试：应对偶发的网络抖动 / 限流 / 5xx，避免单次瞬时错误
     # 直接让整张成功率矩阵作废。
     client = OpenAI(

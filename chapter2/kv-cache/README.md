@@ -64,8 +64,23 @@ Both modes append tool results within an iteration so the API sees a complete tu
 ### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 2 environment
+uv sync --locked --python 3.12 --extra ch2
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/kv-cache
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env                  # edit .env with your key
 # Or export MOONSHOT_API_KEY="your-api-key-here"
 ```
@@ -288,8 +303,23 @@ KV Cache 存储注意力机制中的键值对。对话上下文稳定时，可�
 ### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 2 章环境
+uv sync --locked --python 3.12 --extra ch2
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch2]"
+
 cd chapter2/kv-cache
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env                  # 编辑 .env，填入 API Key
 # 或 export MOONSHOT_API_KEY="your-api-key-here"
 ```

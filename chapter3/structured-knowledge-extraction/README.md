@@ -71,7 +71,23 @@ Uses “archetypes + hierarchical factor importance” as decision logic: extrac
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
+cd chapter3/structured-knowledge-extraction
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # set OPENAI_API_KEY (default model gpt-5.6-luna)
 python generate_data.py    # optional: regenerate synthetic cases (repo ships data/cases.jsonl)
 python demo.py             # full pipeline: discovery → extract → cluster → conversational advice
@@ -174,7 +190,23 @@ The **intended real dataset is CAIL2018** (Chinese criminal judgments, millions 
 ### 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
+cd chapter3/structured-knowledge-extraction
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）
 python generate_data.py    # 可选：重新生成合成判例数据集（已自带 data/cases.jsonl）
 python demo.py             # 跑通 因子发现 → 抽取 → 聚类 → 对话建议 全流程

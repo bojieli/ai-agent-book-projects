@@ -4,11 +4,19 @@ on:
   pull_request:
     paths:
       - "chapter1/web-search-agent/**"
+      # The chapter imports agentbook.providers, so a change there can break
+      # these tests without touching the chapter directory at all.
+      - "agentbook/**"
+      - "tests/**"
+      - "pyproject.toml"
       - ".github/workflows/web-search-agent-tests.yml"
   push:
     branches: [main]
     paths:
       - "chapter1/web-search-agent/**"
+      - "agentbook/**"
+      - "tests/**"
+      - "pyproject.toml"
       - ".github/workflows/web-search-agent-tests.yml"
   workflow_dispatch: {}
 
@@ -43,3 +51,26 @@ jobs:
           KIMI_API_KEY: ""
           OPENROUTER_API_KEY: ""
         run: python -m pytest
+
+  # The shared provider registry has its own suite at the repository root.
+  # Without this job a change to agentbook/ could only be caught indirectly,
+  # via whichever chapter happened to import the broken code.
+  agentbook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the package
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run registry tests
+        env:
+          MOONSHOT_API_KEY: ""
+          KIMI_API_KEY: ""
+          OPENROUTER_API_KEY: ""
+        run: python -m pytest tests -q

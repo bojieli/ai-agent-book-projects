@@ -58,7 +58,23 @@ A and B fail on first parse → Agent generates parser → tests pass → hot up
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/adaptive-log-parser
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env      # OPENAI_API_KEY (default model gpt-5.6-luna); or OPENROUTER_API_KEY fallback
 
 python demo.py                       # full demo (two new formats, two real Agent calls; needs API key)
@@ -194,7 +210,23 @@ From `python demo.py` with gpt-5.6-luna:
 ### 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/adaptive-log-parser
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env      # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）；未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter
 
 python demo.py                       # 完整演示（两种新格式，两次真实 Agent 调用，需 API Key）

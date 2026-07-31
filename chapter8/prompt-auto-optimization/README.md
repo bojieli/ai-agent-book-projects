@@ -23,7 +23,25 @@
 完整实验需要一个 OpenAI 兼容的模型接口：
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方单项目兼容路径。
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/prompt-auto-optimization
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 export OPENAI_API_KEY=your_api_key_here
 python demo.py --quick --model gpt-5.6
@@ -35,8 +53,17 @@ python demo.py --model gpt-5.6 --output output/run.json
 离线可以检查参数、诊断逻辑和发布门槛：
 
 ```bash
+# 在仓库根目录安装包含 pytest 的测试环境：
+uv sync --locked --python 3.12 --extra ch8 --extra dev
+
+# 未安装 uv 时可用 pip 测试环境兜底：
+# python -m pip install -e ".[ch8,dev]"
+
+source .venv/bin/activate
+cd chapter8/prompt-auto-optimization
+
 python demo.py --dry-run
-python -m unittest -v test_learning_and_release.py
+python -m pytest tests
 ```
 
 项目也保留人工调优版 `prompts/system_prompt_manual.txt` 作为对照。完整实验比较初始版、自动候选版和人工版在两组任务上的表现；具体准确率会随被测模型变化，是否发布则始终由显式门槛决定，而不是由 Coding Agent 自己决定。
@@ -79,7 +106,7 @@ ARK 回执合计 73,456 个输入 Token、7,313 个输出 Token、80,769 个 Tok
 | `coding_agent.py` | 生成并应用可审计的最小 Prompt 编辑 |
 | `release_gate.py` | 候选 manifest、回归门槛和发布决定 |
 | `demo.py` | 串联完整闭环并输出对照结果 |
+| `tests/` | 离线验证诊断、补丁应用、工具空值处理、接受和拒绝路径 |
 | `run_experiment_8_3.py` | 强制完整三组真实验收并保存原始回执与 `acceptance` |
-| `test_learning_and_release.py` | 离线验证诊断、接受和拒绝路径 |
 
 本实验使用无外部副作用的航空客服沙盒，以便三份 Prompt 在完全相同的状态和任务上重复执行。它完成了正文规定的实验对照，但不等同于生产航空系统验收；接入生产时仍须把规则遵从连接到正式政策与订单真值，并扩充专家校准和安全留出集。
