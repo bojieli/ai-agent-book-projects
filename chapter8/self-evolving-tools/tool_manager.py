@@ -121,9 +121,9 @@ class ToolLibrary:
             "count": len(hits),
             "tools": [
                 {
-                    "name": r.get("name", ""),
-                    "description": r.get("description", ""),
-                    "parameters": r.get("parameters", {}),
+                    "name": str(r.get("name") or ""),
+                    "description": str(r.get("description") or ""),
+                    "parameters": r.get("parameters") or {},
                 }
                 for _, r in hits
             ],
