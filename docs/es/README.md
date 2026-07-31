@@ -7,9 +7,9 @@
 
 > 📥 **[Descargar PDF / EPUB](#-libro-electrónico)** (recomendado) — las ediciones en PDF / EPUB ofrecen la mejor experiencia de lectura; también puedes [leer en línea](https://bojieli.github.io/ai-agent-book/) (conmutador de idiomas, árbol de capítulos desplegable, búsqueda de texto completo, recompilado automáticamente en cada push a main).
 
-**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **94 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
+**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **95 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
 
-| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **94 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **13 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
+| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **95 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **13 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 Libro electrónico

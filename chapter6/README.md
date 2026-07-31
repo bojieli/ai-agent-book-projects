@@ -16,16 +16,17 @@
 | 6-2 | `SWE-bench/` | 📖 | 评估 LLM 解决真实 GitHub 问题的能力，含 SWE-bench/Lite/Verified/Multimodal 多个版本 |
 | 6-2 | `GAIA/` | 📖 | 评估下一代 LLM 的工具/搜索/自主能力，450+ 个答案明确的非平凡问题，分 3 级难度 |
 | 6-2 | `OSWorld/` | 📖 | 评估 Agent 在完整 OS 环境执行复杂任务的能力：文件管理、应用操作、系统配置 |
-| 6-2, 6-10 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库） |
+| 6-2, 6-11 | `android_world/` | 📖 | 评估 Agent 在 Android 环境的应用导航、UI 交互与任务完成能力（外部基准仓库） |
 | 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 四档多维 Rubric 已在 60 用例 × 3 系统的 180/180 条真实评判记录上完整执行；[独立验收索引](user-memory-system-evaluation/results/full_6_3_structured_rubric_evidence.json)验证逐维理由/证据或边界案例及幻觉一票否决，状态为 `complete` |
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60 用例 × 3 系统共 180/180 条真实轨迹，零错误且原生币种定价完整；[验收结果](user-memory-system-evaluation/results/full_6_4_60_cases_costed.json)状态为 `complete` |
-| 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | 组件、模型、评估器的 4×3×2×60 全矩阵尚未完成；少量默认配置 checkpoint 与 backend readiness 不能替代所有单元的真实证据 |
+| 6-10 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | 组件、模型、评估器的 4×3×2×60 全矩阵尚未完成；少量默认配置 checkpoint 与 backend readiness 不能替代所有单元的真实证据 |
 | 6-5 | [tts-quality-eval](tts-quality-eval/) | ✅ | [真实验收](tts-quality-eval/validation/mistral_multimodal_20260730/manifest.json)完成 OpenAI/Fish 两 provider × 四类语料的 8/8 双音频 Voxtral 四维评审；候选/参考音频逐项哈希，早期 Gemini/OpenRouter 失败证据仍保留 |
 | 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | [正式全量验收](elo-leaderboard/validation/runs/exp6-6-arena-20260731-v1/manifest.json)处理 1,799,991 条公开 Arena 记录（1,670,250 条盲选票、129 个模型），在线 Elo 与 Bradley-Terry 排名 Spearman 0.787、Top-20 重合 12/20；胜率矩阵、17 个月度快照、三张图与 D3 动画均由同一 manifest 哈希绑定并复核通过 |
-| 6-7 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
-| 6-8 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
-| 6-10 | [android-world](android-world/) | 📖 | 本书对 T3A Agent 在 AndroidWorld 上的评估报告与失败分析笔记（实验 6-10 起点；非基准源码） |
-| 6-11 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | 固定 OpenVLA + RoboTwin2 配置、上游版本与预检/证据门禁；完成需要真实 checkpoint、RoboTwin2 环境和 8-GPU 仿真评估 |
+| 6-7 | [model-action-threshold](model-action-threshold/) | ✅ | 同一中性 Coding Harness 下完成 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复的 18/18 单元实测；[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json)零 API 错误并绑定完整轨迹与汇总哈希 |
+| 6-8 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多轮 Agent 任务（客服退款）全链路成本拆解 + KV-cache 友好设计/上下文压缩的 A/B 节省量化 |
+| 6-9 | [model-benchmark](model-benchmark/) | 🚧 | 完整 8K/32K/128K × 512/2048、限流爬坡、Agent 成本与 168 小时可用性 campaign 已实现；现有[验收清单](model-benchmark/results/manifest.json)只有真实 smoke/readiness，不能替代完整长期实验 |
+| 6-11 | [android-world](android-world/) | 📖 | 本书对 T3A Agent 在 AndroidWorld 上的评估报告与失败分析笔记（实验 6-11 起点；非基准源码） |
+| 6-12 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | 固定 OpenVLA + RoboTwin2 配置、上游版本与预检/证据门禁；完成需要真实 checkpoint、RoboTwin2 环境和 8-GPU 仿真评估 |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 基于合成 DHIS2 风格汇总数据，客观评估公共卫生报告 Agent 的工具调用、计算准确性、证据引用与无依据声明 |
 
 > 📖 表中带反引号的外部基准需自行克隆。[`android-world/`](android-world/)（连字符）是本仓库内的 **T3A 评估分析笔记**（见该目录 [README](android-world/README.md)），与外部 `android_world/` 基准源码不是同一路径。

@@ -1,0 +1,5 @@
+{
+  "category": "contract-sensitive",
+  "instruction": "Fix the cache so that negative lookups (a loader returning None) are cached instead of reloaded on every call. Preserve the public get(key, default=None), put, and get_or_load APIs, including the ability to distinguish a missing key when a caller supplies a custom default.",
+  "test_command": ["python", "-m", "unittest", "discover", "-s", "tests", "-v"]
+}
