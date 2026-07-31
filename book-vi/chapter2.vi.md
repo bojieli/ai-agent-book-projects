@@ -443,7 +443,7 @@ Câu trả lời là: dòng dấu thời gian đó khiến KV Cache hoàn toàn 
 > ![Hình 2-6 Hiểu biết trực quan về cơ chế chú ý ](images/fig2-6.svg)
 >
 >
-> Phần trên của Hình 2-6 hiển thị kết quả đối sánh của "how" với mỗi từ trước đó: mức độ đối sánh với "thời tiết" là cao nhất (0,55), nó có phần liên quan đến "Bắc Kinh" (0,35) và hầu như không liên quan gì đến "of" (0,05). Trọng số còn lại khoảng 0,05 được gán cho chính "how" (không hiển thị riêng trong hình) - tất cả các trọng số cộng lại bằng 1. Đầu ra cuối cùng chủ yếu là thông tin từ "thời tiết", hoàn toàn trực quan.
+> Phần trên của Hình 2-6 hiển thị kết quả đối sánh của "how" với mỗi từ trước đó: mức độ đối sánh với "thời tiết" là cao nhất (0,55), nó có phần liên quan đến "Bắc Kinh" (0,35) và hầu như không liên quan gì đến "of" (0,05). Trọng số còn lại khoảng 0,05 được gán cho chính "how" - tất cả các trọng số cộng lại bằng 1. Đầu ra cuối cùng chủ yếu là thông tin từ "thời tiết", hoàn toàn trực quan.
 >
 > **Bản đồ nhiệt chú ý** là sắp xếp trọng số chú ý của mỗi từ so với tất cả các từ trước đó thành một ma trận. Phần dưới của Hình 2-6 hiển thị bản đồ nhiệt hoàn chỉnh: mỗi hàng là một Truy vấn (từ hiện đang được xử lý), mỗi cột là một Khóa (từ đang được tập trung vào) và màu lưới càng đậm thì càng tập trung sự chú ý. Lưu ý rằng bản đồ nhiệt có hình tam giác - vì mô hình được tạo lần lượt từ trái sang phải nên mỗi từ chỉ có thể nhìn thấy chính nó và các từ trước đó chứ không thể "nhìn trộm" nội dung chưa được tạo.
 >
