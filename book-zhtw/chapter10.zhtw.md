@@ -437,7 +437,7 @@ Manager 按順序依次呼叫專門 Agent，每個 Agent 完成後返回結果�
 >
 > 呼叫後，系統建立 Phone Agent 並賦予明確的任務上下文：它是為了協助表單填寫而啟動的，需要收集哪些資訊，以及各欄位的格式要求。
 >
-> 兩個 Agent 隨即進入即時協作模式，沿用實驗 10-4 那套非同步並行機制。Phone Agent 撥打使用者電話，逐個詢問：「您好，我正在幫您填寫登錄檔單。首先，請問您的姓名是？」使用者回答後立即傳送 `{"type": "info_collected", "field": "姓名", "value": "張三"}` 給 Computer Agent，後者隨即在網頁上定位「姓名」欄位並填寫；與此同時，Phone Agent 不等電腦操作完成，繼續問下一個。這種**問一個、填一個**、對話流不被操作延遲阻塞的模式，是本實驗的核心要求。全部資訊收集完成後，Phone Agent 傳送 `{"type": "task_completed"}`，Computer Agent 提交表單。
+> 兩個 Agent 隨即進入即時協作模式，沿用實驗 10-4 那套非同步並行機制。Phone Agent 向使用者發起瀏覽器 WebRTC 音訊工作階段，逐個詢問：「您好，我正在幫您填寫登錄檔單。首先，請問您的姓名是？」使用者回答後立即傳送 `{"type": "info_collected", "field": "姓名", "value": "張三"}` 給 Computer Agent，後者隨即在網頁上定位「姓名」欄位並填寫；與此同時，Phone Agent 不等電腦操作完成，繼續問下一個。這種**問一個、填一個**、對話流不被操作延遲阻塞的模式，是本實驗的核心要求。全部資訊收集完成後，Phone Agent 傳送 `{"type": "task_completed"}`，Computer Agent 提交表單。這裡的「電話」指即時音訊互動，不要求接入 PSTN 或 E.164 號碼；本機 WebRTC 頁面即可完成實驗，部署到遠端時再按網路環境補充信令與 TURN。
 >
 > **實驗要求**：
 > 1. 實現能自主決策啟動 Phone Agent 的 Computer Use Agent

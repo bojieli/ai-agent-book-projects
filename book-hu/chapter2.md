@@ -44,6 +44,8 @@ A Chat Completions-stílusú API-kban a bemenet magja egy "üzenetlista", által
 
 Az eszközdefiníciók nem üzenetek. Egy külön `tools` mezőben vannak megadva, amely deklarálja a modell számára elérhető eszközöket és meghatározza az egyes eszközök által elfogadott paramétereket.
 
+Ez ugyanaz az API-kérésstruktúra, mint az 1. fejezetben bemutatott „a kontextus öt összetevője”, csak más szempont szerint csoportosítva: a négy `system`, `user`, `assistant` és `tool` üzenetszerep rendre a rendszerpromptnak, a felhasználói üzeneteknek, az asszisztensi üzeneteknek és az eszközeredményeknek felel meg. A fennmaradó összetevő — az eszközdefiníciók — nem üzenetszerepként, hanem a legfelső szintű `tools` mezőben kerül átadásra. Így a „négy üzenetszerep + a `tools` mező” pontosan lefedi az 1. fejezet öt kontextusösszetevőjét.
+
 ### Egymenetű Kérés: A Legegyszerűbb API Hívás
 
 ![2-2. ábra: Egy egymenetű API-hívás kérés- és válaszszerkezete](images/fig2-2.svg)
@@ -444,7 +446,7 @@ Ez az egy időbélyeg sor érvénytelenítette a KV Cache-t minden kérésnél. 
 > ![2-6. ábra: A figyelmi mechanizmus intuitív szemléltetése](images/fig2-6.svg)
 >
 >
-> A 2-6. ábra felső része azt mutatja, hogy "怎么样" (milyen) hogyan párosul az egyes előző szavakkal: a legerősebb egyezés a "天气" (időjárás, 0,55), van némi relevancia a "北京" (Peking, 0,35) felé, szinte semmi a "的" (partikula, 0,05) felé, és a fennmaradó súly körülbelül 0,05 a "怎么样" saját magára jut (az ábrán külön nem látható) – minden súly összege 1. A végső kimenet főként a "天气" információjára támaszkodik, ami pontosan megfelel az intuíciónak.
+> A 2-6. ábra felső része azt mutatja, hogy "怎么样" (milyen) hogyan párosul az egyes előző szavakkal: a legerősebb egyezés a "天气" (időjárás, 0,55), van némi relevancia a "北京" (Peking, 0,35) felé, szinte semmi a "的" (partikula, 0,05) felé, és a fennmaradó súly körülbelül 0,05 a "怎么样" saját magára jut – minden súly összege 1. A végső kimenet főként a "天气" információjára támaszkodik, ami pontosan megfelel az intuíciónak.
 >
 > Egy "figyelmi hőtérkép" az egyes szavak és az összes előző szó közötti figyelmi súlyokat egy mátrixba rendezi. A 2-6. ábra alsó része a teljes hőtérképet mutatja: minden sor egy Query (az éppen feldolgozott szó), minden oszlop egy Key (a figyelem tárgya), és a sötétebb cellák magasabb figyelmi súlyokat jeleznek. A hőtérkép háromszög alakú, mert a modell balról jobbra generál szöveget: minden szó csak önmagára és az előtte lévő szavakra figyelhet, nem pedig a még nem generált tartalomra.
 >
