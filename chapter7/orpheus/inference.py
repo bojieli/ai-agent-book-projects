@@ -213,7 +213,7 @@ class OrpheusInference:
         # SNAC codebook size is 4096 per layer (valid range: 0-4095)
         max_code_value = 4095
         
-        for i in range((len(code_list) + 1) // 7):
+        for i in range(len(code_list) // 7):
             # Extract codes with offsets
             c0 = code_list[7*i]
             c1 = code_list[7*i+1] - 4096
