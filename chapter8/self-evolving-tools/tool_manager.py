@@ -108,7 +108,9 @@ class ToolLibrary:
         terms = [t for t in query.replace(",", " ").split() if t]
         hits = []
         for rec in self.list_tools():
-            haystack = (rec["name"] + " " + rec["description"]).lower()
+            name = str(rec.get("name") or "")
+            desc = str(rec.get("description") or "")
+            haystack = (name + " " + desc).lower()
             score = sum(1 for t in terms if t in haystack)
             if score > 0 or not terms:
                 hits.append((score, rec))
@@ -118,7 +120,11 @@ class ToolLibrary:
             "query": query,
             "count": len(hits),
             "tools": [
-                {"name": r["name"], "description": r["description"], "parameters": r["parameters"]}
+                {
+                    "name": r.get("name", ""),
+                    "description": r.get("description", ""),
+                    "parameters": r.get("parameters", {}),
+                }
                 for _, r in hits
             ],
         }
@@ -128,7 +134,9 @@ class ToolLibrary:
         recs = []
         for p in sorted(self.dir.glob("*.json")):
             try:
-                recs.append(json.loads(p.read_text()))
+                data = json.loads(p.read_text())
+                if isinstance(data, dict):
+                    recs.append(data)
             except Exception:  # noqa: BLE001
                 continue
         return recs
