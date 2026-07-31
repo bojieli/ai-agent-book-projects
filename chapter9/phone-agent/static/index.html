@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Experiment 9-2 · WebRTC Call Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">AI Agent Book · Experiment 9-2</p>
+        <h1>A voice agent that calls you in the browser</h1>
+        <p class="lede">No phone number or PSTN account is needed. You explicitly join this local WebRTC session and can hang up at any time.</p>
+      </header>
+
+      <section class="card setup">
+        <div class="mode-row">
+          <label><input type="radio" name="mode" value="react" checked> ReAct plan</label>
+          <label><input type="radio" name="mode" value="direct"> Direct parameters</label>
+        </div>
+
+        <div id="react-fields">
+          <label for="task">Natural-language task</label>
+          <textarea id="task" rows="4">Call me to arrange a dental checkup for Jane Doe. I did not include a time, so ask me for it, repeat the details, and save the confirmation I provide.</textarea>
+        </div>
+
+        <div id="direct-fields" hidden>
+          <label for="callee-name">Participant name</label>
+          <input id="callee-name" value="Jane Doe">
+          <label for="goal">Goal</label>
+          <textarea id="goal" rows="2">Collect and confirm Jane Doe's preferred dental-checkup time.</textarea>
+          <label for="context">Context</label>
+          <textarea id="context" rows="2">Tuesday afternoon from 2pm to 4pm is available.</textarea>
+          <label for="instructions">Instructions</label>
+          <textarea id="instructions" rows="3">Ask for one exact time, repeat it, request confirmation, and save the confirmed time and confirmation number with complete_task.</textarea>
+        </div>
+
+        <div class="actions">
+          <button id="start" type="button">Join call and enable microphone</button>
+          <button id="hangup" class="secondary" type="button" disabled>Hang up</button>
+        </div>
+        <p class="privacy">Provider credentials stay on the local server. The browser receives only the SDP answer; no credential is embedded in this page.</p>
+      </section>
+
+      <section class="card status-card">
+        <div><span class="label">Status</span><strong id="status">idle</strong></div>
+        <div><span class="label">Call ID</span><code id="call-id">—</code></div>
+        <div><span class="label">Transport</span><span id="transport">WebRTC · not connected</span></div>
+      </section>
+
+      <section class="card conversation">
+        <h2>Audio transcript captions</h2>
+        <div id="transcript" aria-live="polite"></div>
+        <div class="actions">
+          <button id="commit-audio" class="secondary" type="button" disabled>Finish speaking</button>
+        </div>
+        <p class="privacy">Speak into the microphone, then choose “Finish speaking.” User meaning comes only from server ASR over the microphone RTP track. The data channel carries this control event and accessibility captions; it never supplies the canonical user transcript.</p>
+      </section>
+
+      <section class="card evidence">
+        <h2>Session evidence</h2>
+        <pre id="evidence">Start a call to see the negotiated local aiortc transport record.</pre>
+      </section>
+
+      <audio id="remote-audio" autoplay></audio>
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

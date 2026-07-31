@@ -1,4 +1,12 @@
-openai>=1.40.0
-python-dotenv>=1.0.0
-pine-voice>=0.1.5
-pytest>=7.4
+# Prefer the repository's locked Chapter 9 environment:
+#   uv sync --locked --extra ch9 --extra dev
+openai>=1.68
+python-dotenv>=1.0
+fastapi>=0.110
+uvicorn[standard]>=0.27
+httpx>=0.27
+playwright>=1.40
+aiortc>=1.10
+openai-whisper==20231106
+torch>=2.2
+pytest>=8.3

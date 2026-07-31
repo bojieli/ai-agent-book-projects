@@ -75,19 +75,19 @@
 >
 > ASR、LLM、TTS 各阶段均支持多家提供商灵活切换，开发者可根据延迟、准确率和地区网络条件选择最优组合。
 >
-> **实验 9-2 ★：使用 PineClaw Voice API 构建电话 Agent**
+> **实验 9-2 ★：使用 WebRTC 构建“呼叫用户”的语音 Agent**
 >
-> 实验 9-1 构建了浏览器内的语音对话系统，但真实世界中许多 Agent 任务需要拨打真实电话——联系客服协商账单、预约餐厅、确认订单。第四章通过 PineClaw 的 Channel 机制展示了事件驱动架构如何将电话通知的响应延迟从分钟级降到秒级；本实验则聚焦于语音通话本身的构建。以 [PineClaw Voice API](https://pineclaw.com/)（作者团队所开发）为例，这类生产级电话语音 API 通常封装了拨号、IVR 导航（即“查询请按 1，转人工请按 0”这类电话菜单）、对话和转录的全流程：Agent 提供电话号码、目标和上下文信息后，由语音 Agent 完成整段通话，返回结构化的通话记录。
+> “电话 Agent”不一定要接入 PSTN 或要求读者准备一个真实号码。很多提醒、信息收集、确认和随访任务的被叫方就是用户本人；此时浏览器 WebRTC 更容易复现：用户打开本地页面并明确授权麦克风，Agent 与浏览器建立实时媒体会话，直接“打给”用户。浏览器把麦克风 RTP 发送给本地 peer，并接收 Agent 的下行语音 RTP；data channel 只承载音频提交控制和无障碍字幕镜像，不承载 canonical 用户语义。整个过程不需要 E.164 号码或电话供应商账户。PSTN/IVR 仍适合必须联系外部机构的生产任务，但不是理解“语音通话作为 Agent 工具”的必要前提。
 >
-> **实验目标**：构建一个能通过真实电话完成任务的 Agent，将 PineClaw Voice 作为工具集成到 ReAct 循环中。
+> **实验目标**：构建一个能主动发起浏览器语音会话、向用户收集缺失信息、复述确认并返回结构化结果的 Agent；同时保留“直接调用”和“ReAct 规划”两组对照。
 >
-> **技术方案**：使用 PineClaw Voice Python SDK（`pine-voice`），为 Agent 配备 `make_phone_call` 工具。Agent 接收用户的任务描述（如 “帮我预约明天下午 3 点的牙科检查”），通过 ReAct 思考决定：(1) 需要拨打哪个电话号码；(2) 通话的目标和关键信息；(3) 通话结束后如何向用户汇报结果。
+> **技术方案**：本地 FastAPI 服务接收浏览器 SDP offer，由 `aiortc` 返回 answer、终止媒体并把实际收到的麦克风 RTP 解码为 PCM；本地 Whisper 对这份 PCM 做 ASR，只有 ASR transcript 会进入对话模型。Agent 的澄清与最终确认都由真实 TTS 合成为 PCM，再排入服务端 WebRTC 下行音轨，而不是用连接提示音、浏览器 `speechSynthesis` 或 data-channel 文本冒充语音。直接组要求调用者预先填写姓名、目标、上下文和指令。ReAct 组只接收自然语言任务，由真实外部 LLM 留下脱敏 raw request/response、response ID、精确模型、usage、finish status、latency 及 hash，并通过可审计的 observation / reason / action 摘要决定：(1) 通话目标；(2) 已知上下文；(3) 缺少哪些信息；(4) 通话时要询问和确认什么。两组都使用同一 `complete_task` 工具保存用户明确确认的字段；模型、ASR 或 TTS 失败时验收直接失败，不走本地 planner/parser fallback。
 >
-> Agent 的工作流程：用户说 “帮我打电话给诊所预约明天的检查” → Agent 思考需要哪些信息（诊所电话、预约时间、患者姓名）→ 如信息不足则向用户澄清 → 调用 `make_phone_call` 工具 → PineClaw 拨打电话、与对方对话、完成预约 → Agent 收到通话摘要和转录 → 向用户汇报结果。
+> Agent 的工作流程：任务为“打给我，确认明天的牙科检查” → ReAct 规划发现缺少具体时间和确认号 → 用户在浏览器接听 → Agent 语音询问 → 用户回答 → Agent 复述并请求最终确认 → 调用 `complete_task` → 界面保存 transcript、关键字段和传输统计 → Agent 向用户读回结果。这个本地实验只记录用户确认的内容，不会虚构诊所已经完成了真实预约。
 >
-> **验收标准**：成功拨打测试电话（可先拨打自己的手机验证连通性）。Agent 能根据任务描述自主决定通话参数，通话结束后正确提取关键信息（预约时间、确认号等）并向用户汇报。对比直接使用 API 与通过 Agent ReAct 循环调用的差异——后者能处理信息不完整的情况（如用户未提供电话号码时先搜索）。
+> **验收标准**：两组各建立一通真实 WebRTC 会话，并同时留下 SDP offer/answer、ICE 已连接、data channel 已打开、浏览器麦克风轨和服务端下行音轨存在、双向 audio RTP packet/byte 大于零的证据；服务端还必须保存并 hash 由麦克风 RTP 得到的 ASR 输入、Whisper checkpoint 溯源、真实模型 receipt，以及至少两条已完整发送的 TTS asset。canonical 用户 transcript source 只能是 ASR，Agent transcript source 只能是 TTS；data channel 只能作控制/字幕。通话结束后应证明缺失字段澄清、明确确认与 `complete_task` 结构字段。不能用 mock、fallback、连接提示音、文字输入或只跑预检替代。对照还必须说明：直接组需要四个完整参数，而 ReAct 组只输入一段信息不完整的任务，就能由真实 LLM 识别缺失字段并在通话中补齐。
 >
-> 这个实验展示了语音 Agent 的一个重要应用方向：**Agent 不仅能与用户语音对话，还能代替用户与外部世界进行电话交互**。PineClaw 的语音 Agent 经过专门训练，能应付小时级的等待、电话菜单导航和复杂协商——想象一下让 AI 替你打运营商客服电话等候转人工，这些正是传统串行语音管线难以胜任的场景。
+> 这个实验展示了语音 Agent 的一个重要应用方向：**Agent 不只是等待用户打开聊天框，也能主动建立一个有明确开始、确认和结束状态的实时会话**。浏览器 WebRTC 覆盖了最容易复现的“呼叫用户”路径；需要代替用户联系外部世界、等待人工客服或导航 IVR 时，再把同一个通话工具契约换成合规的 PSTN/SIP 供应商即可。
 
 ### 级联流水线的全链路流式化
 
