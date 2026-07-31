@@ -2,7 +2,7 @@
 
 Az 1. fejezet a kontextust az ügynök munkainformáció-halmazaként határozta meg a döntés pillanatában. Ennek a kontextusnak a megtervezése és kezelése – amit "kontextustervezésnek" nevezünk – központi jelentőségű a hatékony ügynökök építésében. A gyakorlatban a kontextus mindent magában foglal, amit a modell egy adott interakció során kap: a beszélgetés történetét, a rendszerutasításokat, az eszközdefiníciókat, a visszakeresett dokumentumokat, a futásidejű állapotot és egyéb feladatspecifikus információkat. Az 1. fejezetben bevezetett Hám nézőpontjából a kontextustervezés valósítja meg a Hám "Kontextus és Eszközök" rétegének nagy részét: eldönti, hogy az ügynök milyen információt lát az egyes döntési pontokon, és hogy az információ hogyan van megszervezve. A jó kontextus kialakítás megadja a modellnek a megfelelő hátteret, korlátokat és műveleti interfészeket, hogy általános érvelési képessége hatékonyan alkalmazható legyen a feladatra.
 
-![Figure 2-1: A Kontextusablak Összetételének Áttekintése](images/fig2-1.png)
+![2-1. ábra: A kontextusablak összetételének áttekintése](images/fig2-1.png)
 
 ## A Kontextus: Az Ügynöki Képesség Felső Korlátja
 
@@ -46,7 +46,7 @@ Az eszközdefiníciók nem üzenetek. Egy külön `tools` mezőben vannak megadv
 
 ### Egymenetű Kérés: A Legegyszerűbb API Hívás
 
-![Figure 2-2: Egymenetű API Hívás Kérés- és Válaszszerkezete](images/fig2-2.png)
+![2-2. ábra: Egy egymenetű API-hívás kérés- és válaszszerkezete](images/fig2-2.png)
 
 Kezdjük a legegyszerűbb esettel: egyetlen kérés eszközhívások nélkül. A felhasználó megkérdezi: "Hello, ki vagy te?" A példa egy lokálisan telepített Qwen3-0.6B modellt használ, összekapcsolva a későbbi szakasz lokális LLM telepítési kísérletével. A példában szereplő időbélyegek csak demonstrációs célokat szolgálnak, és nem kapcsolódnak a könyv idővonalához.
 
@@ -85,7 +85,7 @@ Ez a kérés csak két üzenetet tartalmaz: egy rendszerüzenetet a fejlesztő �
 
 A valós ügynök-munkafolyamatok általában összetettebbek, mint egy egymenetű Kérdés-Válasz. Amikor egy felhasználó megkérdezi: "Mi a jelenlegi idő és időjárás Vancouverben?", a modellnek hozzá kell férnie dinamikus külső információkhoz: a jelenlegi időhöz és a legfrissebb időjáráshoz. A következő példa végigvezeti az ügynök-keretrendszer és a modell közötti egyes interakciókat.
 
-![Figure 2-3: Két Eszközhívás Teljes Interakciós Sorozata](images/fig2-3.png)
+![2-3. ábra: Két eszközhívás teljes interakciós sorozata](images/fig2-3.png)
 
 **Első API hívás – Az ügynök-keretrendszer elküldi a kezdeti kérést:**
 
@@ -357,7 +357,7 @@ Ez a folyamat megmutatja, hogy **az ügynök-keretrendszer egyik központi felad
 
 A fenti példa bemutatja a kontextus teljes összetételét minden alkalommal, amikor az ügynök meghívja a modellt:
 
-![Figure 2-4: A Kontextus Összetétele Minden Alkalommal, Amikor az Ügynök Meghívja a Modellt](images/fig2-4.png)
+![2-4. ábra: A kontextus összetétele minden alkalommal, amikor az ágens meghívja a modellt](images/fig2-4.png)
 
 A felső rész (Rendszer Prompt + Eszközdefiníciók) változatlan marad a beszélgetés során, míg az alsó rész (beszélgetéstörténet, azaz az 1. fejezetben definiált "trajektória") minden interakcióval növekszik. Így jelenik meg az 1. fejezet öt kontextuskomponense API-szinten: a rendszer prompt és az eszközdefiníciók statikus előtagot alkotnak, míg a felhasználói üzenetek, a modellválaszok és az eszköz-végrehajtási eredmények dinamikusan növekvő üzenettörténetet alkotnak. Ez a "statikus előtag + trajektória" struktúra az alapja a későbbi KV Cache optimalizálásról, kontextustömörítésről és kapcsolódó technikákról szóló tárgyalásoknak: az előtagnak stabilnak kell maradnia, míg a későbbi trajektória-szegmensek összefoglalhatók vagy lecserélhetők, ha a kompromisszum megéri.
 
@@ -366,7 +366,7 @@ A fejezet hátralévő része e struktúra minden rétegét megvizsgálja: hogya
 > **Kísérlet 2-1 ★: Lokális LLM Szolgáltatás Telepítése és Eszközhívás**
 >
 >
-> ![Figure 2-5: Lokális LLM Eszközhívási Architektúra](images/fig2-5.png)
+> ![2-5. ábra: Lokális LLM eszközhívási architektúra](images/fig2-5.png)
 >
 >
 > Ennek a kísérletnek két célja van: először is, egy kis modell eszközhívási képességének megfigyelése, másodszor pedig a nyers token adatfolyam (gondolkodási lánc, speciális tokenek és eszközhívási formátum) vizsgálata, amely API-szinten rejtve van. Eközben megfigyelhető a KV Cache hatása az első token idejére (TTFT), ami megalapozza a következő szakasz intuitív megértését.
@@ -441,7 +441,7 @@ Ez az egy időbélyeg sor érvénytelenítette a KV Cache-t minden kérésnél. 
 > Pontosabban, a számításnak három lépése van. Először a "怎么样" létrehozza saját Query vektorát, ami azt reprezentálja, hogy az aktuális token mit keres. Másodszor, a Query-t összehasonlítja az egyes előző szavak Key-jével egy pontszorzat segítségével, ami egy relevancia pontszámot ad; a magasabb pontszám erősebb egyezést jelez. Végül ezek a pontszámok figyelmi súlyokká válnak, amelyeket a Value vektorok súlyozott összegének kiszámításához használnak. A magasabb súlyú szavak nagyobb mértékben járulnak hozzá a végső reprezentációhoz, míg az alacsonyabb súlyú szavak kevésbé.
 >
 >
-> ![Figure 2-6: A Figyelmi Mechanizmus Intuitív Megértése](images/fig2-6.png)
+> ![2-6. ábra: A figyelmi mechanizmus intuitív szemléltetése](images/fig2-6.png)
 >
 >
 > A 2-6. ábra felső része azt mutatja, hogy "怎么样" (milyen) hogyan párosul az egyes előző szavakkal: a legerősebb egyezés a "天气" (időjárás, 0,55), van némi relevancia a "北京" (Peking, 0,35) felé, szinte semmi a "的" (partikula, 0,05) felé, és a fennmaradó súly körülbelül 0,05 a "怎么样" saját magára jut (az ábrán külön nem látható) – minden súly összege 1. A végső kimenet főként a "天气" információjára támaszkodik, ami pontosan megfelel az intuíciónak.
@@ -453,7 +453,7 @@ Ez az egy időbélyeg sor érvénytelenítette a KV Cache-t minden kérésnél. 
 > A figyelmi mechanizmus alapvető megértésével most megfigyelhetjük egy valódi modell figyelmi eloszlását a `attention_visualization` kísérleten keresztül.
 >
 >
-> ![Figure 2-7: Figyelmi Hőtérkép Vizualizációja](images/fig2-7.png)
+> ![2-7. ábra: Figyelmi hőtérkép](images/fig2-7.png)
 >
 >
 > A figyelmi hőtérkép több kulcsfontosságú mintázatot tár fel:
@@ -474,13 +474,13 @@ Ez az egy időbélyeg sor érvénytelenítette a KV Cache-t minden kérésnél. 
 
 A Chat Template "alapvető fogalom az egész könyvben". Nemcsak a KV Cache viselkedését befolyásolja, hanem olyan mechanizmusokat is, mint a többlépéses eszközhívás, a gondolkodási lánc megtartása és az állapotsáv injektálása. Ezért megérdemel egy külön magyarázatot. A figyelmi vizualizációs kísérletben szereplő token sorozatok (például a `<|im_start|>`, `<|im_end|>` speciális tokenek) nagyon különböznek a korábban bemutatott JSON formátumú API üzenetektől. Az ok az, hogy a strukturált API üzeneteket lineáris token adatfolyammá kell alakítani, amelyet a modell fel tud dolgozni. Az ezt az átalakítást végző komponens a "Chat Template".
 
-![Figure 2-8: A Chat Template Token Szerkezete](images/fig2-8.png)
+![2-8. ábra: A chatsablon tokenszerkezete](images/fig2-8.png)
 
 A Chat Template megértésének egy hasznos módja, ha "borítékformátumként" tekintünk rá. Az API üzenet a levél tartalma, míg a Chat Template határozza meg, hogy a feladó, a címzett és a határok hogyan vannak a borítékra írva. Speciális tokeneket (pl. `<|im_start|>system`, `<|im_end|>`) használ az egyes üzenetek szerepének és határának jelölésére. A különböző modellcsaládok (Qwen, Llama, Gemma) különböző borítékformátumokat használnak. Az API szerver (vLLM, Ollama, stb.) automatikusan elvégzi ezt az átalakítást a modell Chat Template-je alapján, így a fejlesztőknek általában nem kell manuálisan kezelniük.
 
 A Qwen modellsorozatot példaként használva, ugyanaz a beszélgetés teljesen más formában jelenik meg API-szinten és a modell belsejében:
 
-![Figure 2-9: Átalakítás API Üzenetekből Modell Token Adatfolyammá](images/fig2-9.png)
+![2-9. ábra: API-üzenetek átalakítása a modell tokenfolyamává](images/fig2-9.png)
 
 A bal oldalon a strukturált JSON üzenet, a jobb oldalon a lineáris token adatfolyam, amelyet a modell feldolgoz. A `<|im_start|>` és `<|im_end|>` speciális tokenek, amelyek megmondják a modellnek az egyes üzenetek szerepét és határait.
 
@@ -494,7 +494,7 @@ Az ügynökfejlesztőknek **nem kell manuálisan írniuk vagy módosítaniuk a C
 
 A KV Cache értékének megértéséhez először gondoljuk át, mi történik nélküle. Tegyük fel, hogy egy ügynök elérte a hatodik beszélgetési kört, és felhalmozott 2000 kontextus tokent. Gyorsítótárazás nélkül minden új tokenhez a modellnek újra kellene számolnia a K és V vektorokat a teljes előtaghoz. Bár az első öt kör változatlan, a hatodik kör mégis újraszámolja őket, és a hosszabb előtag ezt a kört drágábbá teszi, mint az elsőt. Gyorsítótárazás nélkül a figyelmi számítás a prefill fázisban (az a szakasz, ahol a modell feldolgozza az összes bemeneti tokent a válasz generálása előtt) négyzetesen nő a kontextus hosszával, ami a késleltetés és a költség gyors növekedését okozza a beszélgetés előrehaladtával. Ez különösen problémás a sok eszközhívást igénylő ügynöki feladatoknál.
 
-![Figure 2-10: KV Cache Előtag Újrafelhasználási Mechanizmus](images/fig2-10.png)
+![2-10. ábra: A KV-gyorsítótár előtag-újrafelhasználási mechanizmusa](images/fig2-10.png)
 
 **A KV Cache megértése egy egyszerű példával.** Tegyük fel, hogy a kontextus 4 tokent tartalmaz [A, B, C, D], és a modell éppen az ötödik tokent, E-t fogja generálni. A figyelmi művelet lényege, hogy összehasonlítja E Query vektorát a meglévő tokenek Key vektoraival az egyezési pontszámok kiszámításához (a pontszorzat intuitív magyarázatához lásd a 2-2. kísérletet). Ezután ezekkel a pontszámokkal számítja ki a Value vektorok súlyozott összegét, előállítva E kimeneti reprezentációját.
 
@@ -880,7 +880,7 @@ A mellékcsatornás információk és az elérhető képességlista általában 
 
 ### Az Ügynöki Állapotsáv Konkrét Pozíciója a Kontextusban
 
-![Figure 2-15: Az Ügynöki Állapotsáv Beillesztési Pozíciója az API Üzenetlistában](images/fig2-15.png)
+![2-15. ábra: Az ágens állapotsávjának helye az API üzenetlistájában](images/fig2-15.png)
 
 Egy fontos implementációs részlet, hogy az Ügynöki Állapotsáv a kontextus végére kerül beillesztésre "a `user` szerepű üzenetként" API szinten, nem pedig a kezdeti `system` üzenet módosításával. Az ok a korábban tárgyalt KV Cache kényszer: a `system` üzenet módosítása érvénytelenítené a teljes előtag gyorsítótárát. Egy pontosítást igényel: a `user` szerep itt technikai választás az API protokoll szintjén, és nem egyenlő az 1. fejezetben meghatározott "végfelhasználói bemenettel." A Hám kölcsönveszi a `user` szerepű üzenet helyét, hogy az ügynök-keretrendszer által generált rendszerállapot-információkat injektálja. A tartalom nem valódi felhasználótól származik; egyszerűen a `user` üzenetformátumot használja az állapotinformáció kontextus végéhez való csatolásához.
 
@@ -1013,7 +1013,7 @@ A kulcs a tömörítés "időzítésének és helyének" megértése. A tömör�
 2.  **A tömörítés célpontja a beszélgetéstörténetben lévő eszközeredmények** – amikor az ügynök-keretrendszer lecseréli az eredeti eszközkimenetet egy tömörített összefoglalóra, a csere pontja utáni gyorsítótár érvénytelenné válik, de az előtte lévő gyorsítótár érvényes marad.
 3.  "Ez egy tudatos kompromisszum": tömörítés nélkül a kontextus az ablakkorlát fölé nő, és a feladat teljesen meghiúsul; a tömörítéssel némi gyorsítótár elveszik, de a kontextus hossza ellenőrzés alatt marad, és az információsűrűség nő. Ezért mérlegelni kell a tömörítés gyakoriságát – a gyakori tömörítés gyakran töri meg a gyorsítótárat. A legjobb, ha batch tömörítést végzünk, amikor a kontextus megközelíti a küszöböt, ahelyett, hogy minden körben tömörítenénk.
 
-![Figure 2-16: Kontextustömörítési Stratégiák Összehasonlítása](images/fig2-16.png)
+![2-16. ábra: Kontextustömörítési stratégiák összehasonlítása](images/fig2-16.png)
 
 > **Kísérlet 2-9 ★★★: Kontextustömörítési Stratégiák Összehasonlítása**
 >
@@ -1036,7 +1036,7 @@ A kulcs a tömörítés "időzítésének és helyének" megértése. A tömör�
 > Bár a teljes tokenhasználat viszonylag magas (174 601), az első néhány iteráció megtartja a teljes eredeti információt, maximális rugalmasságot biztosítva a kezdeti széles körű információgyűjtéshez.
 >
 >
-> ![Figure 2-17: Hat Tömörítési Stratégia Feldolgozási Folyamata](images/fig2-17.png)
+> ![2-17. ábra: Hat tömörítési stratégia feldolgozási folyamata](images/fig2-17.png)
 >
 >
 

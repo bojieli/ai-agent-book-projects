@@ -107,7 +107,7 @@ A "megerősítéses tanulás" (Reinforcement Learning, RL) lényegében arról s
 
 Hogy ezt az interakciót intuitívabban megértsük, a következő ábra a standard RL ciklust mutatja – minden időlépésben az Ágens megfigyeli a környezet állapotát, kiad egy akciót, és a környezet egy jutalmat és egy új állapotot ad vissza az akció alapján.
 
-![Figure 7-1: Megerősítéses tanulás Ágens-Környezet interakciós ciklus](images/fig7-1.png)
+![7-1. ábra: A megerősítéses tanulás ágens–környezet interakciós ciklusa](images/fig7-1.png)
 
 Ez az interakció egy "pályát" (trajectory) hoz létre – az "állapot → akció → jutalom → új állapot → akció → jutalom..." teljes rekordját. Egy irányelv (policy) minősége végső soron a pályák minőségében tükröződik. Az "értékfüggvény" (value function) arra a kérdésre válaszol: "Ha most ebben az állapotban vagyok, és továbbra is az aktuális irányelv szerint cselekszem, mennyi összjutalmat fogok végül felhalmozni?" Ez olyan, mint egy tapasztalt sakkozó, aki egy pozíciót nézve, anélkül hogy végigszámolná a játszmát, intuitívan megbecsüli a nyerési esélyt. (Amikor az "aktuális irányelvet" az "optimális irányelv" váltja fel, megkapjuk az optimális értékfüggvényt, amelyet később a Bellman-optimalitási egyenlet kapcsán használunk.) Az Ágens és a környezet közötti határ egy egyszerű elvet követ: **amihez az Ágens nem férhet hozzá önkényesen, az a környezethez tartozik.**
 
@@ -143,7 +143,7 @@ A két paradigma leginkább az akciótérben különbözik – az MDP feltétele
 
 Az MDP (Markov-döntési folyamat) a megerősítéses tanulás matematikai keretrendszere, amely olyan alapvető elemeket definiál, mint az állapotok, akciók és jutalmak. Alapfeltevése a "Markov-tulajdonság": a jövő csak az aktuális állapottól függ, nem a korábbi történettől. Például a sakkban elég csak az aktuális táblaállást nézni az optimális lépés meghatározásához; nem kell áttekinteni minden korábbi lépést. Ez a feltevés leegyszerűsíti a problémát, de korlátozza a történeti függőségek modellezésének képességét.
 
-![Figure 7-2: Markov-döntési folyamat (MDP) diagram](images/fig7-2.png)
+![7-2. ábra: Markov-döntési folyamat (MDP)](images/fig7-2.png)
 
 A hagyományos RL Ágens kulcsjellemzője a "zárt akciótér" – az összes lehetséges akció, amit az Ágens végrehajthat, egy előre meghatározott, véges halmazt alkot. "Klasszikus táblajáték Ágensek" a legjellemzőbb példák: a 361 lehetséges lépés Go-ban, bár hatalmas, teljesen meghatározott és véges; a sakkban a különböző bábuk eltérő lépésszabályai ellenére az akciók felsorolhatók; az Atari játékokban csak néhány, legfeljebb egy tucat diszkrét akció van. "Robotikai Ágensek" folytonos, de korlátos akcióteret képviselnek: az ízületi szögek, sebességek és szorítóerők folytonos értékek, de mindegyiknek világos fizikai korlátai vannak (maximális forgási szög, maximális nyomaték, sebességkorlátok), a dimenziókat a robot szabadságfokai határozzák meg.
 
@@ -159,13 +159,13 @@ ahol $r$ az azonnali jutalom, $s'$ a következő állapot az akció végrehajtá
 
 A következő két ábra a Q-learning felfedezési folyamatát mutatja egy rács-világban és a Q-értékek fokozatos konvergenciáját.
 
-![Figure 7-3: Q-learning Rács-világ](images/fig7-3.png)
+![7-3. ábra: Q-learning rácsvilágban](images/fig7-3.png)
 
-![Figure 7-4: Q-érték Frissítés Vizualizáció](images/fig7-4.png)
+![7-4. ábra: A Q-érték frissítésének szemléltetése](images/fig7-4.png)
 
 A Q-learning az "off-policy" módszerek egy speciális típusa – bármely irányelv által generált adatokat (beleértve a véletlen felfedezést is) felhasználhatja az optimális irányelv megtanulásához. Az on-policy és off-policy módszerek szigorú definícióit, valamint azt, hogy hogyan kapcsolódnak az LLM poszt-tréninghez, később a "Megerősítéses tanulási algoritmusok összehasonlítása" szakaszban tárgyaljuk.
 
-> ![Figure 7-7: Q-learning és LLM Ágens Architektúra Összehasonlítása Kincsvadász Játékban](images/fig7-7.png)
+> ![7-7. ábra: Q-learning- és LLM-ágensarchitektúra összehasonlítása egy kincsvadász játékban](images/fig7-7.png)
 >
 > **7-1. kísérlet ★: Q-learning teljesítménye kincsvadász játékban**
 >
@@ -184,7 +184,7 @@ A Q-learning az "off-policy" módszerek egy speciális típusa – bármely irá
 > Egy játékszimulátorban 10 000 próbálkozás csak 10 másodpercet vesz igénybe, elhanyagolható költség. De a valós Ágens forgatókönyvekben – ahol minden telefonhívásnak költsége van, minden böngészőműveletnek késleltetése, és minden rossz döntésnek visszafordíthatatlan következményei lehetnek – 10 000 próbálkozás teljesen elfogadhatatlan. Pontosan ezért fordultak a modern Ágensek az LLM-alapú módszerekhez: kihasználva a pre-tréning során felhalmozott ismereteket, hogy minimális interakcióval hatékony döntéseket hozzanak.
 >
 
-![Figure 7-5: Klasszikus RL és Modern LLM Ágens összehasonlítása](images/fig7-5.png)
+![7-5. ábra: A klasszikus RL és a modern LLM-ágens összehasonlítása](images/fig7-5.png)
 
 ### LLM-alapú Ágensek: A pre-tréning, mint előzetes ismeret
 
@@ -199,7 +199,7 @@ Ez a különbség több szempontból is döntő fontosságú:
 
 Összefoglalva, a jelenlegi LLM Ágensek nem teljesen RL ágensek a hagyományos értelemben, hanem "pre-tréningezett modellekre épülő poszt-tréning ágensek", amelyek a pre-tréning során megszerzett ismereteket használják fel, és a poszt-tréning során finomítják azokat. Ez a hibrid architektúra a megerősítéses tanulás mintakeretét és az LLM-ek kifejezőképességét ötvözi, és a jelenlegi Ágensrendszerek mainstream modelljévé vált.
 
-![Figure 7-6: OpenAI Tréning Paradigmák Fejlődése](images/fig7-6.png)
+![7-6. ábra: Az OpenAI tréningparadigmáinak fejlődése](images/fig7-6.png)
 
 ### A klasszikus RL algoritmusokról
 
@@ -215,7 +215,7 @@ Az LLM-ek kontextusában a PPO, a GRPO és a DPO a legelterjedtebb algoritmusok,
 
 ### A három szakaszos képzés áttekintése
 
-![Figure 7-8: Pre-tréning Következő Token Előrejelzés](images/fig7-8.png)
+![7-8. ábra: Következőtoken-előrejelzés az előtréning során](images/fig7-8.png)
 
 A pre-tréning alapjainak megértése segít jobban megérteni a poszt-tréning célját és határait. Ahogy a "Három szakaszos panoráma" részben említettük, a pre-tréning a következő token előrejelzésének feladatán keresztül hatalmas mennyiségű internetes szövegből tanul. A pre-tréning három típusát különböztetjük meg:
 
@@ -275,9 +275,9 @@ A pre-tréningből származó alapképességekkel a következő lépés az álta
 
 ## SFT (Supervised Fine-Tuning)
 
-![Figure 7-9: Vizuális-Nyelvi Modell (VLM) Architektúra](images/fig7-9.png)
+![7-9. ábra: Egy látás-nyelvi modell (VLM) architektúrája](images/fig7-9.png)
 
-![Figure 7-10: Supervised Fine-Tuning (SFT) Folyamatábra](images/fig7-10.png)
+![7-10. ábra: A felügyelt finomhangolás (SFT) folyamata](images/fig7-10.png)
 
 A 7.1 szakasz már feltárta az SFT lényegét ("következő token előrejelzése", más adatokkal, a veszteség csak a válaszon számolva). Ez a szakasz négy kísérleten keresztül mutatja be, hogy mit is rögzít a paraméterekben ez a mechanizmus – stabil leképezések és protokollok írása – a különböző feladatokban. Az SFT alapvető értéke nem az új ismeretek beinjektálása, hanem a "protokollok rögzítése": leképezési kapcsolatok, interakciós formátumok és stílusnormák paraméterekbe írása, lehetővé téve, hogy a modell a következtetés során hosszú promptok nélkül is elvárásoknak megfelelő kimeneteket produkáljon. Általában csak néhány ezertől több tízezer kiváló minőségű példa szükséges az alapvető beszélgetési képesség és utasításkövetés kialakításához.
 
@@ -324,7 +324,7 @@ Ennek a négy kísérletnek közös jellemzője – "stabil leképezések és pr
 
 A 7.1 szakasz tisztázta az SFT és az RL "lényegi különbségét". Ez a szakasz egy gyakorlatiasabb kérdésre ad választ: "Egy adott feladatra melyiket használd?" Az alábbi döntési keretrendszer néhány következtetését a későbbi RL kísérletek (7-10., 7-11. kísérlet) tovább erősítik. Az olvasók először kialakíthatnak egy előzetes ítéletet, majd az RL szakasz elolvasása után visszatérhetnek ellenőrzésre.
 
-![Figure 7-11: SFT→RL Kétszakaszos Tréning Csővezeték](images/fig7-11.png)
+![7-11. ábra: Kétszakaszos SFT→RL tréningfolyamat](images/fig7-11.png)
 
 "Az SFT akkor alkalmas", ha a feladat formátumstabilizálást igényel (mint a JSON kimenet vagy egy konzisztens beszélgetési stílus), kiváló minőségű szakértői demonstrációk állnak rendelkezésre, és a telepítési környezet szorosan illeszkedik a tréninghez. "Az RL akkor válik szükségessé", ha a telepítés szisztematikusan eltér a tréningtől (tréning során a J/Q/K lapok 10-et érnek, telepítésben 11/12/13 – a szabályok megváltoztak; vagy a tréning fekete színeket, a telepítés piros színeket használ – a megjelenés megváltozott), ha optimális stratégiákat kell felfedezni (a szakértői demonstrációk nem feltétlenül optimálisak), vagy ha az annotáció túl drága minden út bemutatásához.
 
@@ -361,7 +361,7 @@ A kísérletek előtt építsünk némi "minimális intuíciót" az RL algoritmu
 >
 > **7-11. kísérlet ★★: GeneralPoints – "Memória és általánosítás" összehasonlítása egymenetes RL-ben**
 >
-> ![Figure 7-12: GeneralPoints Kísérleti Architektúra (Tréning és Teszt Terv a GP-L és GP-VL Variánsokhoz)](images/fig7-12.png)
+> ![7-12. ábra: A GeneralPoints kísérleti architektúrája (tréning- és tesztelrendezés a GP-L és GP-VL változatokhoz)](images/fig7-12.png)
 >
 > A GeneralPoints egy Chu et al. (2025, "SFT Memorizes, RL Generalizes", arXiv:2501.17161) által javasolt számtani érvelési kártyajáték, amelyet kifejezetten a modell általánosításának értékelésére terveztek. A cél hasonlít a "24-es játékhoz": használd a kártyákon látható négy számot pontosan egyszer, kombinálva őket összeadással, kivonással, szorzással és osztással, hogy elérd a 24-es célszámot. A kísérlet két változatot tervez: a szöveges GP-L-t és a képi GP-VL-t, lehetővé téve a szabály-általánosítás és a vizuális általánosítás vizsgálatát ugyanazon a keretrendszeren belül.
 >
@@ -417,7 +417,7 @@ A korábbi egymenetes kísérletek demonstrálták az RL általánosítási elő
 
 > **A legfontosabb pont először, hogy ne vessz el a képletekben.** Ez a szakasz elég sok algoritmusnevet és egyenletet sorol fel, de ne feledd a fejezet második szálát: **az iparban elég, ha tudod használni a meglévő RL algoritmusokat (PPO, GRPO és társaik), és kiválasztod a megfelelőt; ami ténylegesen eldönti a sikert vagy kudarcot, az az adat és a környezet, nem az algoritmus.** Ezek az algoritmusok már csomagolva vannak olyan érett keretrendszerekben, mint a veRL és a TRL; használatuk általában néhány sor konfiguráció módosítását jelenti. Tehát a cél itt nem az, hogy megtanítsuk a levezetéseket, hanem hogy adjunk egy kiválasztási térképet – melyik algoritmust melyik forgatókönyvhöz. A képleteket tartalmazó részek (tréningmérnököknek) átugorhatók a folyamatosság elvesztése nélkül. A következő szakasz érvel pozitívan amellett, hogy az adat és a környezet miért fontosabb, mint az algoritmusok.
 
-![Figure 7-13: GRPO Algoritmus Folyamat](images/fig7-13.png)
+![7-13. ábra: A GRPO algoritmus folyamata](images/fig7-13.png)
 
 A modern LLM Ágensek RL forgatókönyve alapvetően különbözik a hagyományos RL-től – az Ágenseknek meg kell érteniük a felhasználói szándékot, eszközöket kell hívniuk, strukturált kimeneteket kell generálniuk, és hosszú gondolkodási láncokban kell érvelniük több beszélgetési fordulón keresztül. Ez a többcélú, többlépéses döntéshozatal azt jelenti, hogy "a megfelelő algoritmus kiválasztásának" van némi hatása, de sokkal kisebb, mint az adatnak és a környezetnek.
 
@@ -514,9 +514,9 @@ Az algoritmusok nem fontosak – csak később jönnek. Az erőfeszítés éssze
 
 ### A többlépéses feladatok alapvető kihívása
 
-![Figure 7-14: Egymenetes RL és Többlépéses RL összehasonlítása](images/fig7-14.png)
+![7-14. ábra: Az egymenetes és a többlépéses RL összehasonlítása](images/fig7-14.png)
 
-![Figure 7-15: Hitelkiosztás többlépéses interakciókban](images/fig7-15.png)
+![7-15. ábra: Érdem-hozzárendelés többlépéses interakciókban](images/fig7-15.png)
 
 Az egymenetestől a többlépéses felé haladás minőségi ugrást jelent a komplexitásban. Az irányelvnek nemcsak az aktuális lépéshez optimális akciót kell kiválasztania, hanem figyelembe kell vennie a jövőbeli állapot értékét is; nemcsak az azonnali visszajelzést kell kezelnie, hanem "hitelkiosztást" (Credit Assignment) is kell végeznie késleltetett jutalmak mellett – meg kell határoznia, hogy egy többlépéses szekvenciában melyik lépés járult hozzá a legtöbbet a végeredményhez. Például egy ügyfélszolgálati Ágens 10 beszélgetési forduló után megoldja a felhasználó problémáját, és pozitív értékelést kap – de ezt a pozitív értékelést a 2. forduló pontos kérdésfeltevésének vagy a 7. forduló türelmes magyarázatának kell tulajdonítani? A többlépéses feladatok egy másik kihívást is bevezetnek: "Részleges megfigyelhetőség" (Partial Observability) (az Ágens nem szerezheti meg a teljes állapotot, és a történeti megfigyelésekből kell implicit állapotreprezentációt építenie).
 
@@ -532,7 +532,7 @@ Nézzünk három példát. A "SWE-bench" tipikus esetet mutat be ennek az átala
 
 Ezek a példák ugyanarra a következtetésre mutatnak: Az értékelő környezet által biztosított jutalomjel minősége közvetlenül meghatározza az RL tréning hatékonyságát – feltéve, hogy a tréninghez használt adatokat elkülönítik az értékeléshez használt adatoktól.
 
-![Figure 7-16: Jutalomsűrűség Spektrum](images/fig7-16.png)
+![7-16. ábra: A jutalomsűrűség spektruma](images/fig7-16.png)
 
 "A bináris jutalmak alkalmazási forgatókönyvei."
 
@@ -550,7 +550,7 @@ A probléma gyökere, ahogy Silver és Sutton rámutat a "Welcome to the Era of 
 
 "A jutalom paradigmáinak fejlődése."
 
-![Figure 7-17: A jutalom paradigmáinak fejlődése](images/fig7-17.png)
+![7-17. ábra: A jutalomparadigmák fejlődése](images/fig7-17.png)
 
 A DeepSeek kutatása (Liu et al., 2025) szisztematikusan elemzi a tanulási jelek különbségeit a jutalom paradigmák között a skalár-fél-skálár-generatív spektrum mentén. Erre építve ez a könyv hozzáad egy vektor (többdimenziós) pontozási dimenziót. A paradigmák közötti különbségek intuitív bemutatásához térjünk vissza a korábbi forgatókönyvhöz, ahol a Pine AI felhívja az Xfinity-t egy csomag módosításához. Ezúttal az Ágens elvégzi a feladatot, de hibákkal: kihagyja a számlázási címet, amelyet hozzá kell adni, és félreírja a csomag nevét "Performance Pro" helyett "Performance Plus"-ként (a következő pontszámok illusztratívak):
 
@@ -668,7 +668,7 @@ Más szóval, **a tiszta eredmény jutalmak vakok a sikerarány mindkét véglet
 
 Az előző többlépéses kísérletekben az Ágens akciótere a beépített műveletekre, például mozgásra és megfigyelésre korlátozódott. A valós Ágenseknek különféle külső eszközöket is kell hívniuk – keresőmotorokat, kódinterpretátorokat, dokumentum elemzőket stb. –, ami új kihívásokat vezet be az RL tréning számára.
 
-![Figure 7-18: Eszközhívás RL Jutalom Ciklus](images/fig7-18.png)
+![7-18. ábra: Az eszközhívás RL-jutalomciklusa](images/fig7-18.png)
 
 Az eszközhasználat kiterjeszti az Ágens képesség határát a "modell saját érvelésétől" a "külső rendszerek hívására együttműködésért", ami kulcsfontosságú lépéssé teszi a gyakorlati Ágensek felé. A nehézségi gradiens szempontjából az RL tréning az eszközhasználathoz három szintű kihívással néz szembe. Az első szint egyetlen eszköz használatának megtanulása – a bemeneti/kimeneti specifikációk megértése, a hívások időzítésének elsajátítása és a hiba-visszajelzések kezelése. A második szint a választás a többeszközös ökoszisztémán belül – több tucat eszközzel szembesülve dönteni arról, hogy mikor keressünk, mikor hajtsunk végre kódot, és mikor elemezzünk dokumentumokat. A harmadik szint az eszközlánc összehangolása – az eszközök közötti függőségek felfedezése, kölcsönösen kizáró korlátok azonosítása és a költséghatékonyság optimalizálása.
 
@@ -678,7 +678,7 @@ Az eszköz RL-nek van egy elkerülhetetlen mérnöki részlete is: "loss maszkol
 
 > **7-15. kísérlet ★★★: ReTool – Kód interpretátorral fokozott matematikai probléma megoldás**
 >
-> ![Figure 7-19: ReTool Szöveg-Kód Gondolkodás és Sandbox Végrehajtás Visszajelzési Ciklus](images/fig7-19.png)
+> ![7-19. ábra: A ReTool szöveg-kód gondolkodási és sandbox-végrehajtási visszacsatolási ciklusa](images/fig7-19.png)
 >
 > A tiszta szöveges gondolkodás hajlamos a kumulatív hibákra a precíz numerikus számításokban, szimbolikus műveletekben vagy összetett egyenletmegoldásban (pl. tíz egymást követő szorzási lépés, amelyek mindegyike hibás lehet). A kód interpretátorok precíz ellenőrzést biztosítanak egy végrehajtható interfészen keresztül. A ReTool integrálja a kód interpretátor valós idejű végrehajtását az RL gondolkodási ciklusba, lehetővé téve a modell számára, hogy önállóan tanulja meg, mikor és hogyan használja az eszközt az eredmény visszajelzés irányításával.
 >
@@ -701,7 +701,7 @@ Az eszköz RL-nek van egy elkerülhetetlen mérnöki részlete is: "loss maszkol
 >
 > **7-16. kísérlet ★★★: AWorld-train – Eszközhasználat tanulása sandboxban**
 >
-> ![Figure 7-20: AWorld-train MCP Sandbox Tréning Architektúra és Eszköz Ökoszisztéma](images/fig7-20.png)
+> ![7-20. ábra: Az AWorld-train MCP-sandbox tréningarchitektúrája és eszköz-ökoszisztémája](images/fig7-20.png)
 >
 > A GAIA az egyik legkihívásobb Ágens értékelési benchmark. Még a nagy paraméterszámú, nagyléptékben tréningezett modellek is csak körülbelül 32%-ot érhetnek el, még mindig jelentősen elmaradva a legjobb rendszerektől. Ez a kísérlet egy kisebb modellt (Qwen3-4B) használ, az elsődleges cél egy teljes "gyakorlatból tanulás" tréning csővezeték bemutatása.
 >
