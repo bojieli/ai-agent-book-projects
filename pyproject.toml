@@ -293,7 +293,7 @@ ch2  = ["agentbook[viz,docs,web,serve,providers,tokens,torch]"]
 ch3  = ["agentbook[viz,docs,web,serve,rag,mem,analysis,torch,providers]"]
 ch4  = ["agentbook[viz,docs,media,browser,serve,mcp,tokens,analysis,integrations]"]
 ch5  = ["agentbook[viz,docs,media,web,serve,mcp,providers,analysis,solvers]", "PyMuPDF>=1.25.0"]
-ch6  = ["agentbook[viz,tokens,analysis,providers]"]
+ch6  = ["agentbook[viz,tokens,analysis,providers]", "fish-audio-sdk>=1.3.0,<2"]
 # `train` floors transformers at >=4.55 for MultilingualReasoning's
 # Mxfp4Config. chapter7/sesame pins transformers==4.52.3, which no single
 # aggregate can satisfy alongside it -- run that one experiment from its own
