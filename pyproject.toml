@@ -306,7 +306,7 @@ ch7  = ["agentbook[train,audio,viz]"]
 # compatibility than the shared chapter aggregate should impose.
 ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,orchestration]"]
 ch9  = []                                     # hosted speech APIs: core only
-ch10 = ["agentbook[tokens]"]                  # tiktoken only
+ch10 = ["agentbook[tokens,web]"]              # token counting and browser research
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
 all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
