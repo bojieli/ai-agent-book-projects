@@ -44,6 +44,19 @@ def _successful_calls(trajectory: Dict[str, Any]) -> List[Dict[str, Any]]:
     ]
 
 
+def _precedes(call: Dict[str, Any], promise: Dict[str, Any]) -> bool:
+    """Return whether both records have numeric turns and the call came first."""
+    call_turn = call.get("turn")
+    promise_turn = promise.get("turn")
+    return (
+        isinstance(call_turn, (int, float))
+        and not isinstance(call_turn, bool)
+        and isinstance(promise_turn, (int, float))
+        and not isinstance(promise_turn, bool)
+        and call_turn < promise_turn
+    )
+
+
 def _assistant_text(trajectory: Dict[str, Any]) -> str:
     return "\n".join(
         str(message.get("content", ""))
@@ -151,23 +164,27 @@ class ProcessVerifier:
         return DimensionResult("factual_reliability", "process_rules", PASS, 1.0, evidence, 0.9)
 
     def _promise_action(self, trajectory: Dict[str, Any]) -> DimensionResult:
-        successful = {
-            call.get("name") for call in _successful_calls(trajectory)
+        successful = [
+            call for call in _successful_calls(trajectory)
             if isinstance(call, dict)
-        }
+        ]
         promises = trajectory.get("promises")
         if not isinstance(promises, list):
             promises = []
         missing = [
             promise for promise in promises
-            if isinstance(promise, dict) and promise.get("required_tool") not in successful
+            if isinstance(promise, dict) and not any(
+                call.get("name") == promise.get("required_tool")
+                and _precedes(call, promise)
+                for call in successful
+            )
         ]
         if missing:
             return DimensionResult(
                 "promise_action_consistency", "process_rules", FAIL, 0.0,
                 [
                     f"turn {promise.get('turn', '?')}: claimed {promise.get('text', '')!r}, "
-                    f"but successful {promise.get('required_tool')} call is absent"
+                    f"but no successful {promise.get('required_tool')} call preceded it"
                     for promise in missing
                 ],
                 1.0,
