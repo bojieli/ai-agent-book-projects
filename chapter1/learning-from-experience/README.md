@@ -76,11 +76,23 @@ A text-based treasure hunt game where agents must:
 #### Installation
 
 ```bash
-# Navigate to the project directory
+# Recommended from the repository root: use the shared Chapter 1 environment
+uv sync --locked --extra ch1
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch1]"
+
+# Enter this experiment directory for the commands below
 cd chapter1/learning-from-experience
 
-# Install dependencies
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 - Q-learning runs fully offline with **no API key**.
@@ -106,7 +118,7 @@ echo "MOONSHOT_API_KEY=your-api-key-here" > .env
 **Universal OpenRouter fallback**: if `MOONSHOT_API_KEY` is unset but `OPENROUTER_API_KEY` is set, the LLM path routes through OpenRouter. Because Kimi models are not stably available on OpenRouter, the fallback uses `OPENROUTER_MODEL` (default `openai/gpt-5.6-luna`):
 
 ```bash
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python quick_demo.py   # runs via OpenRouter when MOONSHOT_API_KEY is missing
 ```
 
@@ -212,6 +224,29 @@ print(f"Feedback: {feedback}")
 print(f"Reward: {reward}")
 ```
 
+### Validation
+
+Install the `dev` extra from the repository root before running pytest in a clean environment:
+
+```bash
+uv sync --locked --extra ch1 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter1/learning-from-experience
+python -m pytest tests
+```
+
+The longer Q-learning learning-curve check is an offline manual smoke script, kept out of default pytest discovery:
+
+```bash
+python tests/manual/rl_learning_check.py --episodes 1000
+```
+
 ### Experiment Results
 
 #### Metrics Compared
@@ -267,8 +302,17 @@ learning-from-experience/
 ├── rl_agent.py            # Q-learning implementation
 ├── llm_agent.py           # LLM with in-context learning
 ├── experiment.py          # Main experiment runner
+├── demo.py                # Interactive local game demo
+├── quick_demo.py          # Short LLM learning demo
 ├── run_experiment_7_2.py  # Exact real campaign + acceptance gates
 ├── finalize_experiment_7_2.py # Evidence-only recovery; no API rerun
+├── env.example            # Optional API-key template
+├── tests/
+│   ├── test_basic.py
+│   ├── test_zero_episodes.py
+│   ├── test_rl_progress_small_episodes.py
+│   └── manual/
+│       └── rl_learning_check.py
 ├── requirements.txt       # Python dependencies
 ├── README.md              # This file
 └── results/               # Experiment outputs (created on run)
@@ -403,11 +447,23 @@ LLM DECISION PROCESS
 #### 安装
 
 ```bash
-# Navigate to the project directory
+# 推荐在仓库根目录使用统一的第 1 章环境
+uv sync --locked --extra ch1
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch1]"
+
+# 进入本实验目录，后续命令都在这里运行
 cd chapter1/learning-from-experience
 
-# Install dependencies
-pip install -r requirements.txt
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 - Q-learning 完全离线，**无需任何 API Key**。  
@@ -433,7 +489,7 @@ echo "MOONSHOT_API_KEY=your-api-key-here" > .env
 **通用兜底（OpenRouter）**：若未设置 `MOONSHOT_API_KEY` 但设置了 `OPENROUTER_API_KEY`，LLM 部分会自动改走 OpenRouter。由于 Kimi 模型在 OpenRouter 上不稳定可用，兜底时会使用 `OPENROUTER_MODEL`（默认 `openai/gpt-5.6-luna`）：
 
 ```bash
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python quick_demo.py   # MOONSHOT_API_KEY 缺失时自动经 OpenRouter 运行
 ```
 
@@ -534,6 +590,29 @@ print(f"Feedback: {feedback}")
 print(f"Reward: {reward}")
 ```
 
+### 验证
+
+在干净环境中运行 pytest 前，先在仓库根目录安装 `dev` extra：
+
+```bash
+uv sync --locked --extra ch1 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+cd chapter1/learning-from-experience
+python -m pytest tests
+```
+
+较长的 Q-learning 学习曲线检查是离线手动 smoke 脚本，不会被默认 pytest 收集：
+
+```bash
+python tests/manual/rl_learning_check.py --episodes 1000
+```
+
 ### 实验结果
 
 #### 对比指标
@@ -587,8 +666,17 @@ learning-from-experience/
 ├── rl_agent.py            # Q-learning implementation
 ├── llm_agent.py           # LLM with in-context learning
 ├── experiment.py          # Main experiment runner
+├── demo.py                # Interactive local game demo
+├── quick_demo.py          # Short LLM learning demo
 ├── run_experiment_7_2.py  # 正文规范实测与验收门
 ├── finalize_experiment_7_2.py # 仅补写证据，不重复 API 调用
+├── env.example            # Optional API-key template
+├── tests/
+│   ├── test_basic.py
+│   ├── test_zero_episodes.py
+│   ├── test_rl_progress_small_episodes.py
+│   └── manual/
+│       └── rl_learning_check.py
 ├── requirements.txt       # Python dependencies
 ├── README.md              # This file
 └── results/               # Experiment outputs (created on run)

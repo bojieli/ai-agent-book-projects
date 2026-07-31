@@ -371,33 +371,18 @@ class ContextAwareAgent:
         self.provider = provider.lower()
         self.verbose = verbose
 
-        # Provider -> (base_url, default_model)
-        deepseek_base = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
-        provider_defaults = {
-            "siliconflow": ("https://api.siliconflow.cn/v1", "Qwen/Qwen3.5-397B-A17B"),
-            "doubao": ("https://ark.cn-beijing.volces.com/api/v3", "doubao-seed-1-6-thinking-250715"),
-            "kimi": ("https://api.moonshot.cn/v1", "kimi-k3"),
-            "moonshot": ("https://api.moonshot.cn/v1", "kimi-k3"),
-            # V4 Flash: OpenAI-compatible; tool calling + thinking mode.
-            # Legacy deepseek-chat / deepseek-reasoner aliases deprecated 2026-07-24.
-            "deepseek": (deepseek_base, "deepseek-v4-flash"),
-            "zhipu": ("https://open.bigmodel.cn/api/paas/v4", "glm-5.2"),
-            "openrouter": ("https://openrouter.ai/api/v1", "openai/gpt-5.6-luna"),
-        }
-        if self.provider not in provider_defaults:
-            raise ValueError(
-                f"Unsupported provider: {provider}. Use 'siliconflow', 'doubao', "
-                "'kimi', 'moonshot', 'deepseek', 'zhipu', or 'openrouter'"
-            )
-        base_url, default_model = provider_defaults[self.provider]
-        resolved_model = model or default_model
-
-        # Universal OpenRouter fallback: if the primary provider key is missing
-        # but OPENROUTER_API_KEY is present, route through OpenRouter with a
-        # mapped model id. Behavior is unchanged when the provider key is set.
-        from config import resolve_llm_backend
-        resolved_key, resolved_base_url, self.model, self.using_openrouter = \
-            resolve_llm_backend(api_key, base_url, resolved_model)
+        # Base URLs, default models and key lookup all live in the shared
+        # registry (agentbook/providers.py), so adding a provider there makes it
+        # usable here with no change. resolve_backend also applies the universal
+        # OpenRouter fallback: when the provider's own key is missing but
+        # OPENROUTER_API_KEY is set, the request routes through OpenRouter with a
+        # mapped model id. Behaviour is unchanged when the provider key is set.
+        from config import resolve_backend
+        backend = resolve_backend(self.provider, model=model, api_key=api_key)
+        resolved_key = backend.api_key
+        resolved_base_url = backend.base_url
+        self.model = backend.model
+        self.using_openrouter = backend.using_openrouter
         if self.using_openrouter:
             logger.info(
                 f"{self.provider} API key not set; routing via OpenRouter "

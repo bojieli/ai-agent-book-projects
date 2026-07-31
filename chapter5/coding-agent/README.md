@@ -22,7 +22,7 @@ A production-ready AI coding agent built with Claude, implementing techniques fr
 - ❌ No `grep`, `rg` (ripgrep), `find` commands needed
 - ❌ No dependency on system utilities
 - ✅ **100% pure Python** implementations
-- ✅ Works on any system with Python 3.8+
+- ✅ Works with the repository root Python 3.12 environment
 - ✅ **Especially designed for Mac users** without command-line tools
 
 #### Complete Tool Suite
@@ -128,11 +128,22 @@ coding-agent/
 ### Installation
 
 ```bash
-# Navigate to project directory
-cd /Users/boj/ai-agent-book/projects/week5/coding-agent
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
 
-# Install dependencies
-pip install -r requirements.txt
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/coding-agent
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Set up environment
 cp .env.example .env
@@ -148,11 +159,11 @@ Edit `.env` file:
 PROVIDER=anthropic
 
 # Add API key for your chosen provider
-ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 # or
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 
 # Select model appropriate for your provider
 DEFAULT_MODEL=claude-sonnet-5
@@ -164,7 +175,7 @@ DEFAULT_MODEL=claude-sonnet-5
 
 **Core dependencies:**
 
-- Python 3.8+
+- Python 3.12 for the root `ch5` install
 - `anthropic` - For Anthropic API
 - `openai` - For OpenAI/OpenRouter API
 - `python-dotenv` - For configuration
@@ -415,9 +426,9 @@ System hints are injected before each LLM call:
 <system_hint>
 # System State
 Current Time: 2025-10-12 15:30:45
-Working Directory: /Users/boj/coding-agent
+Working Directory: chapter5/coding-agent
 OS: Darwin
-Python: Python 3.11.5
+Python: Python 3.12.0
 
 # Tool Call Statistics
 - Grep: 2 calls
@@ -540,7 +551,7 @@ self._tools = {
 Make sure you're running from the project directory:
 
 ```bash
-cd /Users/boj/ai-agent-book/projects/week5/coding-agent
+cd chapter5/coding-agent
 python agent.py
 ```
 
@@ -569,8 +580,16 @@ Comprehensive test suite with 130+ tests covering all tool features.
 #### Run Tests
 
 ```bash
-# Install test dependencies
-pip install -r requirements.txt
+# From the repository root, install the Chapter 5 and test environments
+uv sync --locked --python 3.12 --extra ch5 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter5/coding-agent
 
 # Run all tests
 pytest
@@ -665,7 +684,7 @@ This is an educational implementation. Feel free to adapt and extend!
 - ❌ 不需要 `grep`、`rg`（ripgrep）、`find`
 - ❌ 不依赖系统工具
 - ✅ **100% 纯 Python**
-- ✅ 任意 Python 3.8+ 环境可跑
+- ✅ 使用仓库根目录 Python 3.12 环境即可运行
 - ✅ **尤其适合**未装命令行工具的 Mac 用户
 
 #### 完整工具集
@@ -771,11 +790,22 @@ coding-agent/
 ### 安装
 
 ```bash
-# Navigate to project directory
-cd /Users/boj/ai-agent-book/projects/week5/coding-agent
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
 
-# Install dependencies
-pip install -r requirements.txt
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/coding-agent
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # Set up environment
 cp .env.example .env
@@ -791,11 +821,11 @@ cp .env.example .env
 PROVIDER=anthropic
 
 # Add API key for your chosen provider
-ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_API_KEY=your-anthropic-api-key
 # or
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your-openrouter-api-key
 # or
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=your-openai-api-key
 
 # Select model appropriate for your provider
 DEFAULT_MODEL=claude-sonnet-5
@@ -807,7 +837,7 @@ DEFAULT_MODEL=claude-sonnet-5
 
 **核心：**
 
-- Python 3.8+
+- 根目录 `ch5` 安装使用 Python 3.12
 - `anthropic` - Anthropic API
 - `openai` - OpenAI/OpenRouter API
 - `python-dotenv` - 配置
@@ -1055,9 +1085,9 @@ result = tool.execute(params)
 <system_hint>
 # System State
 Current Time: 2025-10-12 15:30:45
-Working Directory: /Users/boj/coding-agent
+Working Directory: chapter5/coding-agent
 OS: Darwin
-Python: Python 3.11.5
+Python: Python 3.12.0
 
 # Tool Call Statistics
 - Grep: 2 calls
@@ -1179,7 +1209,7 @@ self._tools = {
 请在项目目录运行：
 
 ```bash
-cd /Users/boj/ai-agent-book/projects/week5/coding-agent
+cd chapter5/coding-agent
 python agent.py
 ```
 
@@ -1207,8 +1237,16 @@ python agent.py
 #### 运行测试
 
 ```bash
-# Install test dependencies
-pip install -r requirements.txt
+# 从仓库根目录安装第 5 章环境与测试依赖
+uv sync --locked --python 3.12 --extra ch5 --extra dev
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+cd chapter5/coding-agent
 
 # Run all tests
 pytest
@@ -1292,4 +1330,4 @@ MIT
 
 - Offline self-check: `python main.py --list-tools` (no API key). / 离线自检：`python main.py --list-tools`（无需 API Key）。
 - Commands, code blocks, paths, and env vars are identical in both language sections. / 命令、代码块、路径与环境变量在中英文两侧保持一致。
-- Historical path examples (`/Users/boj/...`) are kept as in the original docs. / 文档中的历史路径示例（`/Users/boj/...`）按原文保留。
+- Path examples use project-relative paths. / 路径示例使用项目相对路径。

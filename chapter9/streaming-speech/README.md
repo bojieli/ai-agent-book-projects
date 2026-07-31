@@ -7,8 +7,22 @@
 ## 安装
 
 ```bash
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/streaming-speech
-pip install -r requirements.txt
+
+# Install this experiment's local audio/model runtime dependencies.
+python -m pip install -r requirements.txt
 ```
 
 NVIDIA 路径使用原始 BF16 权重：

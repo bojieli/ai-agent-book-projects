@@ -18,60 +18,33 @@ def _reasoning_safe_temperature(model, requested=1.0):
     return 1 if ("kimi-k3" in m or "gpt-5" in m) else requested
 
 
-def map_model_to_openrouter(model: str) -> str:
-    """Map a bare model id to an OpenRouter model id.
-    - ids already containing '/' -> left as-is
-    - gpt-*/o1-*/o3-*/o4-* -> 'openai/<id>'
-    - claude-* -> anthropic Claude (opus/sonnet/haiku)
-    - deepseek-* -> deepseek/<id> (OpenRouter hosts official DeepSeek ids)
-    - other native ids (kimi-*, doubao-*, ...) are NOT reliably on OpenRouter,
-      so fall back to OPENROUTER_MODEL or a safe default that always works.
-    """
-    m = (model or "").strip()
-    if "/" in m:
-        return m
-    ml = m.lower()
-    if ml.startswith(("gpt-", "o1-", "o3-", "o4-")):
-        return "openai/" + m
-    if ml.startswith("claude-"):
-        if "sonnet" in ml:
-            return "anthropic/claude-sonnet-4.6"
-        if "haiku" in ml:
-            return "anthropic/claude-haiku-4.5"
-        return "anthropic/claude-opus-4.8"
-    if ml.startswith("kimi"):
-        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
-        return "moonshotai/kimi-k2.6"
-    if ml.startswith("deepseek"):
-        # OpenRouter hosts deepseek/deepseek-v4-flash, deepseek-chat, etc.
-        return "deepseek/" + m
-    return os.getenv("OPENROUTER_MODEL", "openai/gpt-5.6-luna")
+# Provider resolution lives in the shared agentbook package so every chapter
+# stays consistent; see agentbook/providers.py. The fallback keeps this
+# experiment runnable from a checkout where agentbook is not installed.
+try:
+    from agentbook.providers import (
+        PROVIDERS,
+        SUPPORTED_PROVIDERS,
+        canonical_provider,
+        canonical_provider as _canonical_provider,
+        map_model_to_openrouter,
+        resolve_backend,
+        resolve_llm_backend,
+    )
+except ImportError:  # pragma: no cover - exercised only without the package
+    import sys as _sys
 
-
-def resolve_llm_backend(primary_key: str, primary_base_url: str, model: str):
-    """Universal OpenRouter fallback for LLM backend resolution.
-
-    Returns (api_key, base_url, model, using_openrouter).
-    - If the primary provider key is present, behavior is unchanged.
-    - Else if OPENROUTER_API_KEY is present, route through OpenRouter and map
-      the model id to an OpenRouter id.
-    - Else raise a clear error listing the accepted keys.
-    """
-    openrouter_key = os.getenv("OPENROUTER_API_KEY")
-    # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct API;
-    # when an OpenRouter key is present, prefer routing these ids through it.
-    if openrouter_key and str(model or "").lower().startswith("gpt-5"):
-        base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-        return openrouter_key, base_url, map_model_to_openrouter(model), True
-    if primary_key:
-        return primary_key, primary_base_url, model, False
-    if openrouter_key:
-        base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-        return openrouter_key, base_url, map_model_to_openrouter(model), True
-    raise ValueError(
-        "No API key found. Set a provider key "
-        "(SILICONFLOW_API_KEY/ARK_API_KEY/MOONSHOT_API_KEY/DEEPSEEK_API_KEY/ZHIPU_API_KEY) or "
-        "OPENROUTER_API_KEY (universal fallback)."
+    _sys.path.insert(
+        0, str(__import__("pathlib").Path(__file__).resolve().parents[2])
+    )
+    from agentbook.providers import (
+        PROVIDERS,
+        SUPPORTED_PROVIDERS,
+        canonical_provider,
+        canonical_provider as _canonical_provider,
+        map_model_to_openrouter,
+        resolve_backend,
+        resolve_llm_backend,
     )
 
 
@@ -135,7 +108,7 @@ class Config:
     
     # File paths
     RESULTS_DIR: str = "results"
-    TEST_PDFS_DIR: str = "test_pdfs"
+    TEST_PDFS_DIR: str = "fixtures/pdfs"
     
     @classmethod
     def get_api_key(cls, provider: str = None) -> str:
@@ -149,19 +122,11 @@ class Config:
             API key for the provider
         """
         provider = provider or cls.LLM_PROVIDER
-        provider = provider.lower()
-        
-        if provider == "siliconflow":
-            return cls.SILICONFLOW_API_KEY
-        elif provider == "doubao":
-            return cls.ARK_API_KEY
-        elif provider == "kimi" or provider == "moonshot":
-            return cls.MOONSHOT_API_KEY
-        elif provider == "deepseek":
-            return cls.DEEPSEEK_API_KEY
-        elif provider == "zhipu":
-            return cls.ZHIPU_API_KEY
-        else:
+        # The shared registry knows every provider's key variables, so this
+        # stays correct as providers are added there.
+        try:
+            return PROVIDERS[_canonical_provider(provider)].api_key()
+        except KeyError:
             return ""
     
     @classmethod
@@ -180,20 +145,10 @@ class Config:
         
         if cls.MODEL_NAME:
             return cls.MODEL_NAME
-        
-        if provider == "siliconflow":
-            return "Qwen/Qwen3.5-397B-A17B"
-        elif provider == "doubao":
-            return "doubao-seed-1-6-thinking-250715"
-        elif provider == "kimi" or provider == "moonshot":
-            return "kimi-k3"
-        elif provider == "deepseek":
-            # V4 Flash: tool calling + thinking mode (legacy deepseek-chat /
-            # deepseek-reasoner aliases are deprecated 2026-07-24).
-            return "deepseek-v4-flash"
-        elif provider == "zhipu":
-            return "glm-5.2"
-        else:
+
+        try:
+            return PROVIDERS[_canonical_provider(provider)].default_model
+        except KeyError:
             return ""
     
     @classmethod
@@ -208,22 +163,13 @@ class Config:
             True if configuration is valid
         """
         provider = provider or cls.LLM_PROVIDER
-        api_key = cls.get_api_key(provider)
-        
-        if not api_key:
-            if provider == "siliconflow":
-                print("ERROR: SILICONFLOW_API_KEY is not set")
-            elif provider == "doubao":
-                print("ERROR: ARK_API_KEY is not set")
-            elif provider == "kimi" or provider == "moonshot":
-                print("ERROR: MOONSHOT_API_KEY is not set")
-            elif provider == "deepseek":
-                print("ERROR: DEEPSEEK_API_KEY is not set")
-            elif provider == "zhipu":
-                print("ERROR: ZHIPU_API_KEY is not set")
-            else:
-                print(f"ERROR: No API key configured for provider: {provider}")
-            
+        # resolve_backend already accounts for providers that need no key
+        # (ollama) and for the OpenRouter fallback, and its error names the
+        # exact variables to set -- so a missing key is not the only signal.
+        try:
+            resolve_backend(provider)
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
             print("Please set it in .env file or as environment variable")
             return False
         

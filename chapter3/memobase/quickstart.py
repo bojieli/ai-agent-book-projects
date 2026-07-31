@@ -22,7 +22,7 @@ def quick_demo():
     
     # Check for API key
     api_key = os.getenv("KIMI_API_KEY", "")
-    if not api_key or api_key == "sk-your-kimi-api-key-here":
+    if not api_key or api_key == "your-kimi-api-key":
         print("\n⚠️  Warning: KIMI_API_KEY not set properly!")
         print("Please set your API key in .env file or as environment variable")
         print("\nContinuing with demo setup...")

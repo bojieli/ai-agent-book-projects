@@ -7,6 +7,8 @@ from typing import Optional
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
+from agentbook.providers import PROVIDERS
+
 load_dotenv()
 
 
@@ -39,7 +41,9 @@ class AgentConfig:
     def from_env(cls) -> "AgentConfig":
         """Create configuration from environment variables"""
         return cls(
-            api_key=os.getenv("KIMI_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENROUTER_API_KEY"),
+            # Kimi 官方 key 优先，缺失时用 OPENROUTER_API_KEY 兜底；
+            # 具体接受哪些环境变量由 agentbook 的 provider 注册表定义。
+            api_key=PROVIDERS["kimi"].api_key() or os.getenv("OPENROUTER_API_KEY"),
             provider=os.getenv("LLM_PROVIDER", "kimi"),
             model=os.getenv("LLM_MODEL"),
             enable_timestamps=os.getenv("ENABLE_TIMESTAMPS", "true").lower() == "true",

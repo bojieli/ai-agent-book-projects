@@ -341,7 +341,7 @@ def main():
   python main.py --mode single --request "分析比特币近一月走势" --reasoning high --verbosity high
   python main.py --mode single --request "..." --output result.json
   python main.py --dry-run --request "..."          # 离线查看请求体（原生工具定义），无需 API Key
-  python main.py --mode test --test basic           # 运行指定测试用例
+  python main.py --mode test --test basic           # 运行指定联网手动用例
 """,
     )
 
@@ -349,7 +349,7 @@ def main():
         "--mode",
         choices=["interactive", "single", "test"],
         default="interactive",
-        help="运行模式：interactive 交互对话（默认）/ single 单次请求 / test 运行测试",
+        help="运行模式：interactive 交互对话（默认）/ single 单次请求 / test 联网手动用例",
     )
     parser.add_argument(
         "--request",
@@ -399,7 +399,7 @@ def main():
     parser.add_argument(
         "--test",
         type=str,
-        help="test 模式下运行指定测试用例（basic/analysis/complex/code/reasoning/search_analyze/chain）",
+        help="test 模式下运行指定联网手动用例（basic/analysis/complex/code/reasoning/search_analyze/chain）",
     )
 
     args = parser.parse_args()
@@ -417,7 +417,7 @@ def main():
         print("❌ 配置错误！")
         print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENROUTER_API_KEY")
         print("\n示例 .env：")
-        print("OPENROUTER_API_KEY=sk-or-v1-your-key-here")
+        print("OPENROUTER_API_KEY=your-openrouter-api-key")
         sys.exit(1)
 
     if args.mode == "interactive":
@@ -431,7 +431,7 @@ def main():
         _run_single(args)
 
     elif args.mode == "test":
-        from test_agent import TestGPT5Agent, run_single_test
+        from tests.manual.agent_cases import TestGPT5Agent, run_single_test
 
         if args.test:
             run_single_test(args.test)

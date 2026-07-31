@@ -8,6 +8,8 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同じ宝探し環境で Q-learning と LLM Agent を実行し、経験から学習する。 |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 教師の例を学生 prompt に蒸留し、品質とコストを比較する。 |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | 小型言語モデルをゼロから事前学習し、事前学習の完全なプロセスと主要技術を理解する。 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | ドメイン固有のデータで継続事前学習を行い、対象ドメインにおけるモデルの性能を向上させる。 |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM 音声 SFT：LoRA で 1B TTS モデルを微調整し、`<laugh>`・`<sigh>` などのパラ言語タグで表現を制御 |
@@ -24,6 +26,7 @@
 | — | `verl/` | 📖 | verl は、大規模言語モデルの RLHF 訓練のために特別に設計された効率的な強化学習フレームワークで、PPO、GRPO、DAPO などのさまざまなアルゴリズムをサポートする。 |
 | — | [Intuitor](Intuitor/) | ✅ | モデルの直感的推論能力を訓練し、詳細な思考連鎖を必要とせずに迅速かつ合理的な判断を下せるようにする。 |
 | — | `tinker-cookbook/` | 📖 | モデル訓練のためのさまざまな実践的なコツとベストプラクティスを収集する。 |
+
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

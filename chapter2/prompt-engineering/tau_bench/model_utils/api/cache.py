@@ -1,5 +1,4 @@
 import functools
-import hashlib
 import inspect
 import threading
 from collections import defaultdict
@@ -10,9 +9,25 @@ from pydantic import BaseModel
 
 T = TypeVar("T")
 
+
+class _CallableIdentity:
+    __slots__ = ("func",)
+
+    def __init__(self, func: Callable[..., Any]):
+        self.func = func
+
+    def __hash__(self) -> int:
+        return id(self.func)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, _CallableIdentity) and self.func is other.func
+
+
+CacheKey = tuple[_CallableIdentity, Any]
+
 USE_CACHE = True
 _USE_CACHE_LOCK = Lock()
-cache: dict[str, tuple[T, threading.Event]] = {}
+cache: dict[CacheKey, tuple[T, threading.Event]] = {}
 lock = threading.Lock()
 conditions = defaultdict(threading.Condition)
 
@@ -29,28 +44,41 @@ def enable_cache():
         USE_CACHE = True
 
 
-def hash_item(item: Any) -> int:
+def hash_item(item: Any) -> Any:
     if isinstance(item, dict):
-        return hash(tuple({k: hash_item(v) for k, v in sorted(item.items())}))
+        return (
+            "dict",
+            frozenset(
+                (hash_item(key), hash_item(value)) for key, value in item.items()
+            ),
+        )
     elif isinstance(item, list):
-        return hash(tuple([hash_item(x) for x in item]))
+        return ("list", tuple(hash_item(x) for x in item))
     elif isinstance(item, set):
-        return hash(frozenset([hash_item(x) for x in item]))
+        return (
+            "set",
+            frozenset(hash_item(x) for x in item),
+        )
     elif isinstance(item, tuple):
-        return hash(tuple([hash_item(x) for x in item]))
+        return ("tuple", tuple(hash_item(x) for x in item))
     elif isinstance(item, BaseModel):
-        return hash_item(item.model_json_schema())
-    return hash(item)
+        values = item.model_dump() if hasattr(item, "model_dump") else item.dict()
+        return (
+            "model",
+            type(item).__module__,
+            type(item).__qualname__,
+            hash_item(values),
+        )
+    return item
 
 
-def hash_func_call(func: Callable[..., Any], args: tuple[Any], kwargs: dict[str, Any]) -> str:
+def hash_func_call(
+    func: Callable[..., Any], args: tuple[Any], kwargs: dict[str, Any]
+) -> CacheKey:
     bound_args = inspect.signature(func).bind(*args, **kwargs)
     bound_args.apply_defaults()
     standardized_args = sorted(bound_args.arguments.items())
-    arg_hash = hash_item(standardized_args)
-    hashed_func = id(func)
-    call = (hashed_func, arg_hash)
-    return hashlib.md5(str(call).encode()).hexdigest()
+    return _CallableIdentity(func), hash_item(standardized_args)
 
 
 def cache_call_w_dedup(func: Callable[..., T]) -> Callable[..., T]:

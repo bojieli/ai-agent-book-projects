@@ -1,2 +1,6 @@
+# Shared provider resolver from the repository root. Run this requirements file
+# from the experiment directory, as shown in the README.
+-e ../..
+
 openai>=1.13.3
 python-dotenv>=1.0.0

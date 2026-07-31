@@ -74,8 +74,21 @@ inference quota and both provider-hosted tool receipts can be saved.
 Python 3.9+ is required.
 
 ```bash
-pip install -r requirements.txt
-export OPENAI_API_KEY=...
+# From the repository root: use the shared Chapter 1 environment
+uv sync --locked --extra ch1
+
+# Activate it before changing directories:
+source .venv/bin/activate
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch1]"
+
+cd chapter1/search-codegen
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
+export OPENAI_API_KEY=your-openai-api-key
 
 # Exact official path
 python main.py --backend openai --mode single \
@@ -88,7 +101,7 @@ python main.py --backend openai --dry-run \
   --reasoning max --verbosity high
 
 # Proxy diagnostic only; not canonical acceptance
-export OPENROUTER_API_KEY=...
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python main.py --backend openrouter --mode single --request "Search current news"
 ```
 

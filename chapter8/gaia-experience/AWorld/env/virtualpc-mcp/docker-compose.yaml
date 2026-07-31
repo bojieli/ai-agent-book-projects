@@ -7,7 +7,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      MCP_GATEWAY_TOKEN_SECRET: 123321
+      MCP_GATEWAY_TOKEN_SECRET: "${MCP_GATEWAY_TOKEN_SECRET:-123321}"
       VNC_AUTH: false
       MCP_GATEWAY_REDIS_URL: redis://redis-server:6379/0
     restart: on-failure:3

@@ -1,4 +1,4 @@
 openai>=1.40.0
 python-dotenv>=1.0.0
-fish-audio-sdk>=2025.6.3
+fish-audio-sdk>=1.3.0,<2
 # ffprobe 走系统命令；Gemini 音频评审走内置 urllib（REST）。

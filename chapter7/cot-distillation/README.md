@@ -17,7 +17,23 @@ The default does not have to be a closed-source model. A strong open model serve
 ## Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 7 environment
+uv sync --locked --python 3.12 --extra ch7
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch7]"
+
+cd chapter7/cot-distillation
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env
 
 # Small smoke test with two problems
@@ -107,8 +123,24 @@ summarized thinking 和开源模型的原始思维链，作为 SFT 数据到底�
 ## 运行
 
 ```bash
-pip install -r requirements.txt
-export OPENROUTER_API_KEY=sk-or-...
+# 在仓库根目录使用统一的第 7 章环境
+uv sync --locked --python 3.12 --extra ch7
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch7]"
+
+cd chapter7/cot-distillation
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
+export OPENROUTER_API_KEY=your-openrouter-api-key
 
 # 小规模冒烟（2 道题）
 python generate_data.py --max_problems 2 \

@@ -3,13 +3,13 @@
 [![PDF](https://img.shields.io/badge/PDF-tải%20về-success.svg)](#-sách-điện-tử) [![Đọc trực tuyến](https://img.shields.io/badge/🌐_Đọc_trực_tuyến-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/dịch-10%20ngôn%20ngữ-informational.svg)](#-sách-điện-tử)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · Tiếng Việt ← hiện tại · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · Tiếng Việt ← hiện tại · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > 📥 **[Tải PDF / EPUB](#-sách-điện-tử)** (khuyên dùng) — nên đọc sách qua bản PDF / EPUB để có trải nghiệm tốt nhất; bạn cũng có thể [đọc trực tuyến](https://bojieli.github.io/ai-agent-book/) (chuyển đổi ngôn ngữ, mục lục đóng/mở được, tìm kiếm toàn văn; tự động xây dựng lại sau mỗi lần đẩy lên main).
 
 **Agent = LLM + Context + Tools** — Cuốn sách xây dựng trên công thức cốt lõi này qua 10 chương, đưa AI Agent từ nguyên lý đến thực hành kỹ thuật. Toàn bộ nội dung, hình minh họa và **93 thí nghiệm đi kèm** đều là mã nguồn mở. Hoan nghênh bạn tự chạy các thí nghiệm.
 
-| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **10 ngôn ngữ**: Trung / Anh / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn |
+| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **11 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn |
 | :---: | :---: | :---: |
 
 ## 📖 Sách điện tử
@@ -17,6 +17,7 @@
 > 📥 **Tải xuống PDF / EPUB** (khuyên dùng; toàn bộ nội dung, mã nguồn mở miễn phí). Các liên kết này luôn trỏ tới bản dựng mới nhất của nhánh `main`; bản cố định xem tại [Releases](https://github.com/bojieli/ai-agent-book/releases):
 > - **Bản gốc tiếng Trung**：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **Tiếng Anh**（dịch cộng đồng, by [@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **Tiếng Tây Ban Nha**（dịch cộng đồng）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.epub)
 > - **Tiếng Ả Rập**（dịch cộng đồng, by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **Trung phồn thể (Đài Loan)**（dịch cộng đồng, by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
 > - **Tiếng Nga**（dịch cộng đồng, by [@ui99ru](https://github.com/ui99ru)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
@@ -28,9 +29,9 @@
 >
 > 🌐 Bạn cũng có thể [đọc trực tuyến](https://bojieli.github.io/ai-agent-book/) — chuyển đổi ngôn ngữ, mục lục đóng/mở được, tìm kiếm toàn văn và liên kết trực tiếp đến các thí nghiệm kèm theo. Tự động xây dựng lại sau mỗi lần đẩy lên main.
 
-Mã nguồn tiếng Trung nằm trong [`book/`](../../book/); các bản Anh/Ả Rập/Trung phồn thể (Đài Loan)/Nga/Tamil/Việt/Nhật/Thổ Nhĩ Kỳ/Hàn là đóng góp cộng đồng (có thể chậm hơn bản gốc), nằm trong [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/).
+Mã nguồn tiếng Trung nằm trong [`book/`](../../book/); các bản Anh/Tây Ban Nha/Ả Rập/Trung phồn thể (Đài Loan)/Nga/Tamil/Việt/Nhật/Thổ Nhĩ Kỳ/Hàn là đóng góp cộng đồng (có thể chậm hơn bản gốc), nằm trong [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/).
 
-Trình dựng chung tạo sách EPUB 3 cho tiếng Trung giản thể, tiếng Anh, tiếng Ả Rập, tiếng Trung phồn thể (Đài Loan), tiếng Nga, tiếng Tamil, tiếng Việt, tiếng Nhật, tiếng Thổ Nhĩ Kỳ và tiếng Hàn. Xem [hướng dẫn dựng EPUB](../../EPUB.md).
+Trình dựng chung tạo sách EPUB 3 cho tiếng Trung giản thể, tiếng Anh, tiếng Tây Ban Nha, tiếng Ả Rập, tiếng Trung phồn thể (Đài Loan), tiếng Nga, tiếng Tamil, tiếng Việt, tiếng Nhật, tiếng Thổ Nhĩ Kỳ và tiếng Hàn. Xem [hướng dẫn dựng EPUB](../../EPUB.md).
 
 <details>
 <summary><b>🔧 Tự build PDF?</b> (cần pandoc / xelatex / ElegantBook)</summary>
@@ -68,6 +69,32 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 >
 > 📚 Cách đọc sách hiệu quả? Xem **[Gợi ý học tập](LEARNING.md)** (ý tưởng cốt lõi, lộ trình, phân cấp độ khó, mẹo thực hành).
 
+## 💻 Chạy các thí nghiệm đi kèm
+
+Mốc dùng chung là **Python 3.10+**. Hãy cài phụ thuộc theo chương từ thư mục gốc của kho; thay `ch1` bằng `ch2` đến `ch10` cho chương khác:
+
+```bash
+# Khuyên dùng: sử dụng uv.lock đã commit để có môi trường chương tái lập được
+uv sync --locked --extra ch1
+
+# Không dùng uv: phân giải lại từ pyproject.toml bằng pip
+python -m pip install -e ".[ch1]"
+```
+
+Trước khi chạy thí nghiệm có gọi mô hình, hãy cấu hình khóa theo README của thí nghiệm đó. Các thí nghiệm hỗ trợ cấu hình ở thư mục gốc có thể sao chép `.env.example` thành `.env` và điền ít nhất một khóa provider; một số thí nghiệm yêu cầu `.env` đặt cạnh mã hoặc biến môi trường được export. Chỉ dùng Ollama cục bộ với `--provider ollama` khi README hoặc CLI của thí nghiệm đó liệt kê rõ provider này.
+
+Sau khi cài, chạy thí nghiệm từ thư mục gốc, ví dụ:
+
+```bash
+uv run python chapter1/context/main.py
+# Sau khi cài bằng pip: python chapter1/context/main.py
+```
+
+- Xem [hướng dẫn cài uv](https://docs.astral.sh/uv/getting-started/installation/). `pip` vẫn được hỗ trợ nhưng sẽ phân giải mới thay vì dùng lockfile.
+- Các tệp `requirements.txt` của từng thí nghiệm vẫn được hỗ trợ trong giai đoạn chuyển đổi, nhất là với dự án độc lập hoặc ràng buộc phiên bản đặc biệt.
+- `all` là tập rộng, thân thiện với CPU, không phải toàn bộ thí nghiệm. `uv sync` đồng bộ chính xác lựa chọn hiện tại mỗi lần chạy, vì vậy hãy gộp extra đặc biệt trong cùng một lệnh, ví dụ `uv sync --locked --extra ch2 --extra vllm` hoặc `uv sync --locked --extra ch7 --extra unsloth`; lệnh pip tương ứng là `python -m pip install -e ".[ch2,vllm]"`.
+- Làm theo README của từng thí nghiệm đối với phụ thuộc hệ thống như trình duyệt, CUDA, FFmpeg, Ollama, trình duyệt Playwright và kho ngoài. Một số thí nghiệm trình duyệt và bộ nhớ cần Python 3.11+, còn một số thành phần bên thứ ba được đưa vào Chương 8 cần Python 3.12+.
+
 ## 🔑 API Key
 
 Nên đăng ký API key từ vài nền tảng để thuận tiện học tập. Tham khảo [hướng dẫn này](https://01.me/2025/07/llm-api-setup/) để chọn mô hình.
@@ -89,12 +116,12 @@ Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua
 
 ## 📦 Phụ lục · Lấy kho ngoài
 
-19 kho ngoài cho benchmark, framework huấn luyện, nền tảng robot ở Chương 6, 7, 9, 10 **không được đóng gói** (do kích thước và bản quyền), cần tự clone vào thư mục tương ứng.
+23 kho ngoài cho benchmark, framework huấn luyện, nền tảng robot ở Chương 6, 7, 9, 10 **không được đóng gói** (do kích thước và bản quyền), cần tự clone vào thư mục tương ứng.
 
 ### Script clone một lần
 
 <details>
-<summary><b>🔧 Mở rộng lệnh clone</b> (19 kho ngoài)</summary>
+<summary><b>🔧 Mở rộng lệnh clone</b> (23 kho ngoài)</summary>
 
 ```bash
 # Chương 6 · Benchmark đánh giá
@@ -112,6 +139,7 @@ git clone https://github.com/bojieli/AdaptThink.git                    chapter7/
 git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
@@ -119,6 +147,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # Chương 9 · Tự động hóa trình duyệt & ví dụ Claude
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
 
 # Chương 10 · Kiến trúc đa Agent (đã độc lập thành TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

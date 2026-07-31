@@ -12,6 +12,7 @@ on:
       - 'book/**'
       - 'book-zhtw/**'
       - 'book-en/**'
+      - 'book-es/**'
       - 'book-ru/**'
       - 'book-ta/**'
       - 'book-vi/**'
@@ -37,6 +38,7 @@ on:
           - zh-CN
           - zh-TW
           - en
+          - es
           - ru
           - ta
           - vi
@@ -155,7 +157,7 @@ jobs:
         run: |
           set -u
           if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$EDITION" = "all" ]; then
-            main="book book-zhtw book-en book-ru book-vi book-ta book-ar book-tr book-ko"
+            main="book book-zhtw book-en book-es book-ru book-vi book-ta book-ar book-tr book-ko"
             optional="book-ja"
           else
             # workflow_dispatch on a feature branch is a focused edition
@@ -164,6 +166,7 @@ jobs:
               zh-CN) main="book" ;;
               zh-TW) main="book-zhtw" ;;
               en) main="book-en" ;;
+              es) main="book-es" ;;
               ru) main="book-ru" ;;
               ta) main="book-ta" ;;
               vi) main="book-vi" ;;
@@ -246,6 +249,7 @@ jobs:
           cp "book/深入理解-AI-Agent-李博杰-v1.3.pdf"              "$out/AI-Agents-in-Depth-zh-CN.pdf"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.pdf"   "$out/AI-Agents-in-Depth-zh-TW.pdf"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.pdf        "$out/AI-Agents-in-Depth-en.pdf"
+          cp book-es/AI-Agents-en-Profundidad-Bojie-Li-v1.3-es.pdf "$out/AI-Agents-in-Depth-es.pdf"
           cp book-ru/AI-Agents-in-Depth-ru.pdf                   "$out/AI-Agents-in-Depth-ru.pdf"
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.pdf     "$out/AI-Agents-in-Depth-ta.pdf"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.pdf     "$out/AI-Agents-in-Depth-vi.pdf"
@@ -255,6 +259,7 @@ jobs:
           cp "book/深入理解-AI-Agent-李博杰-v1.3.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v1.3-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v1.3.epub       "$out/AI-Agents-in-Depth-en.epub"
+          cp book-es/AI-Agents-en-Profundidad-Bojie-Li-v1.3-es.epub "$out/AI-Agents-in-Depth-es.epub"
           cp book-ru/AI-Agents-in-Depth-ru.epub                  "$out/AI-Agents-in-Depth-ru.epub"
           cp book-ta/AI-Agents-in-Depth-Bojie-Li-v1.3-ta.epub    "$out/AI-Agents-in-Depth-ta.epub"
           cp book-vi/AI-Agents-in-Depth-Bojie-Li-v1.3-vi.epub    "$out/AI-Agents-in-Depth-vi.epub"

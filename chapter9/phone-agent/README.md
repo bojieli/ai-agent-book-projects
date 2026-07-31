@@ -5,8 +5,23 @@
 ## 安装与凭证
 
 ```bash
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/phone-agent
-pip install -r requirements.txt
+
+# Install this experiment's Pine Voice SDK runtime dependencies.
+python -m pip install -r requirements.txt
+
 cp env.example .env
 ```
 

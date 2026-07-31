@@ -1,0 +1,47 @@
+name: dependency resolution
+
+on:
+  pull_request:
+    paths:
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/dependency-resolution.yml"
+  push:
+    branches: [main]
+    paths:
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/dependency-resolution.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Check chapter extras
+        shell: bash
+        run: |
+          for extra in ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 ch9 ch10 all; do
+            echo "::group::Python ${{ matrix.python-version }} - $extra"
+            uv sync --locked --dry-run \
+              --python "${{ matrix.python-version }}" \
+              --extra "$extra"
+            echo "::endgroup::"
+          done

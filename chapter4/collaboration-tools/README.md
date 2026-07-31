@@ -55,23 +55,33 @@ A comprehensive Model Context Protocol (MCP) server that provides collaboration 
 
 ### Installation
 
-1. Clone the repository and navigate to the project directory:
+1. Install and activate the shared Chapter 4 environment from the repository root:
 ```bash
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/collaboration-tools
+
+# Exact legacy parity path, including direct Playwright/pydantic-settings/scheduler pins:
+# python -m pip install -r requirements.txt
 ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Copy the example environment file and configure it:
+2. Copy the example environment file and configure it:
 ```bash
 cp env.example .env
 # Edit .env with your configuration
 ```
 
-4. Install Playwright browsers (for browser automation):
+3. Install Playwright browsers (for browser automation):
 ```bash
 playwright install chromium
 ```
@@ -182,7 +192,7 @@ print the difference (context tokens handed off, extra preparation cost, whether
 private data leaked, and each sub-agent's result). Requires `OPENAI_API_KEY`
 (default model `gpt-5.6-luna`, override with `OPENAI_MODEL`):
 ```bash
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 python subagent_comparison.py
 ```
 Typically `minimal` uses far fewer tokens and never leaks private fields, but the
@@ -323,7 +333,7 @@ collaboration-tools/
 
 ### Requirements
 
-- Python 3.11+
+- Python 3.12 for the root `ch4` install (`browser-use` requires Python 3.11+)
 - OpenAI API key (for browser AI agent tasks)
 - Optional: Email/IM service credentials
 - Playwright browsers for browser automation
@@ -410,23 +420,33 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ### 安装
 
-1. 进入项目目录：
+1. 从仓库根目录安装并激活统一的第 4 章环境：
 ```bash
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/collaboration-tools
+
+# 精确复现旧版单项目环境，含直接 Playwright/pydantic-settings/scheduler 约束：
+# python -m pip install -r requirements.txt
 ```
 
-2. 安装依赖：
-```bash
-pip install -r requirements.txt
-```
-
-3. 复制环境模板并配置：
+2. 复制环境模板并配置：
 ```bash
 cp env.example .env
 # Edit .env with your configuration
 ```
 
-4. 安装 Playwright 浏览器（浏览器自动化）：
+3. 安装 Playwright 浏览器（浏览器自动化）：
 ```bash
 playwright install chromium
 ```
@@ -539,7 +559,7 @@ python quickstart.py
 是否泄漏隐私字段、各子 Agent 结果）。需要 `OPENAI_API_KEY`
 （默认模型 `gpt-5.6-luna`，可用 `OPENAI_MODEL` 覆盖）：
 ```bash
-export OPENAI_API_KEY=sk-...
+export OPENAI_API_KEY=your-openai-api-key
 python subagent_comparison.py
 ```
 通常 `minimal` token 更少且不泄漏隐私字段，但子 Agent 可能返回 `need_info`；
@@ -679,7 +699,7 @@ collaboration-tools/
 
 ### 依赖要求
 
-- Python 3.11+
+- 根目录 `ch4` 安装使用 Python 3.12（`browser-use` 要求 Python 3.11+）
 - OpenAI API key（浏览器 AI 任务）
 - 可选：邮件/IM 凭据
 - Playwright 浏览器（浏览器自动化）

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="65" width="260" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="150" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Generador automático de plan</text>
+<text x="32" y="112" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Entrada: estado actual + habilidades</text>
+<text x="32" y="132" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">Salida: siguiente objetivo de exploración</text>
+<text x="32" y="152" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="32" y="172" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Ejemplo secuencia objetivos:</text>
+<text x="32" y="192" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">  Talar árbol → Crear tablas de madera</text>
+<text x="32" y="212" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  → Crear pico de madera → Minar piedra</text>
+<text x="32" y="232" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  → Hacer horno → Fundir mineral hierro</text>
+<rect x="600" y="65" width="260" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="730" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Mecanismo de prompt iterativo</text>
+<text x="612" y="112" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Recopilar retroalim. en fallos:</text>
+<text x="612" y="132" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  - Observación entorno (error)</text>
+<text x="612" y="152" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">  - Resultado autoverificación</text>
+<text x="612" y="172" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="612" y="192" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Integrar en prompt LLM</text>
+<text x="612" y="212" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ Guiar refinamiento de código</text>
+<text x="612" y="232" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ Iterar hasta tener éxito</text>
+<line x1="280" y1="155" x2="370" y2="155" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="325.0" y="145.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Objetivo</text>
+<line x1="560" y1="155" x2="600" y2="155" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="580.0" y="145.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Retroalim.</text>
+<rect x="370" y="110" width="190" height="80" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="465" y="140" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ejecución del Agente</text>
+<text x="465" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Generación código GPT-4</text>
+<line x1="465" y1="190" x2="465" y2="260" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="510" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Éxito → Extraer</text>
+<rect x="120" y="260" width="640" height="240" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Biblioteca de habilidades — núcleo del aprendizaje externalizado</text>
+<rect x="140" y="305" width="190" height="175" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="235" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">chopTree()</text>
+<text x="235" y="347" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Talar árbol</text>
+<text x="235" y="365" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Habilidad básica</text>
+<rect x="150" y="385" width="170" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="158" y="400" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">function chopTree() {</text>
+<text x="158" y="418" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  bot.dig(nearest('log'));</text>
+<text x="158" y="436" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">}</text>
+<rect x="355" y="305" width="190" height="175" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="450" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">craftPlanks()</text>
+<text x="450" y="347" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Crear tablas madera</text>
+<text x="450" y="365" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Llama a chopTree</text>
+<rect x="365" y="385" width="170" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="373" y="400" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">function craftPlanks() {</text>
+<text x="373" y="418" font-family="'Courier New', Courier, monospace" font-size="8.5" fill="#333333" text-anchor="start" dominant-baseline="central">  chopTree(); craft('planks');</text>
+<text x="373" y="436" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">}</text>
+<rect x="570" y="305" width="190" height="175" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="665" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">craftPickaxe()</text>
+<text x="665" y="347" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Crear pico madera</text>
+<text x="665" y="365" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Combina habilidades</text>
+<rect x="580" y="385" width="170" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="588" y="400" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">function craftPickaxe() {</text>
+<text x="588" y="418" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">  craftPlanks(); craft('stick');</text>
+<text x="588" y="436" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  craft('wooden_pickaxe');</text>
+<text x="588" y="454" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">}</text>
+<path d="M 120,380 Q 193.57122361103717,325.51582746911936 150,245" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<text x="164.28561180551858" y="309.0079137345597" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Habilidades dispon.</text>
+</svg>

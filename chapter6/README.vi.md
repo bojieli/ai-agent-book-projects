@@ -8,7 +8,12 @@
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 6-1, 6-2 | `tau2-bench/` | 📖 | Tập trung đánh giá năng lực Agent dùng công cụ để suy luận phức tạp, bao gồm tính toán, tìm kiếm, xử lý dữ liệu và các ngữ cảnh khác. |
+| 6-1 | `tau2-bench/` | 📖 | Tập trung đánh giá năng lực Agent dùng công cụ để suy luận phức tạp, bao gồm tính toán, tìm kiếm, xử lý dữ liệu và các ngữ cảnh khác. |
+| 6-2 | `tau2-bench/` | 📖 | Hoàn thành thủ công các nhiệm vụ phân cấp của τ²-bench và ghi lại quỹ đạo. |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Chạy rubric bốn mức trên 180 đánh giá có cấu trúc, kèm bằng chứng và quyền phủ quyết hallucination. |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Chạy 60 trường hợp trên ba hệ thống với hạch toán chi phí đầy đủ. |
+| 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | Ma trận đầy đủ 4×3×2×60 giữa thành phần, mô hình và bộ đánh giá vẫn chưa hoàn tất. |
+| 6-11 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | Cố định cấu hình OpenVLA và RoboTwin2; cần checkpoint, simulator và 8 GPU để hoàn tất. |
 | 6-2 | `terminal-bench/` | 📖 | Terminal-Bench là benchmark kiểm thử biểu hiện của AI Agent trong môi trường terminal thực. Từ biên dịch mã đến huấn luyện mô hình, thiết lập server, benchmark đánh giá cách Agent xử lý các nhiệm vụ đầu-cuối thực tế. Bao gồm bộ dữ liệu khoảng 100 nhiệm vụ và framework thực thi, hỗ trợ nhiều triển khai Agent. |
 | 6-2 | `SWE-bench/` | 📖 | SWE-bench là benchmark đánh giá khả năng của mô hình ngôn ngữ lớn trong việc giải quyết các vấn đề GitHub thật. Với một codebase và mô tả issue, mô hình cần sinh patch có thể giải quyết vấn đề. Bao gồm nhiều phiên bản: SWE-bench, SWE-bench Lite, SWE-bench Verified và SWE-bench Multimodal. |
 | 6-2 | `GAIA/` | 📖 | GAIA nhằm đánh giá thế hệ LLM tiếp theo (LLM có năng lực tăng cường bằng công cụ, prompt hiệu quả, truy cập tìm kiếm, v.v.). Bao gồm hơn 450 câu hỏi phi tầm thường cần mức độ công cụ và tự chủ khác nhau, với đáp án rõ ràng không mơ hồ. Chia thành 3 cấp độ khó. |

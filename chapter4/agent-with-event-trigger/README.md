@@ -88,7 +88,7 @@ python event_loop_demo.py --trigger timer --provider kimi
 ```
 
 > **Universal OpenRouter fallback**: if the chosen provider’s key is missing (default `kimi`) but `OPENROUTER_API_KEY` is set, `event_loop_demo.py` / `server.py` / `quickstart.py` switch to `openrouter` (set model with `LLM_MODEL=openai/gpt-5.6-luna`). Example:  
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 Full flags: `python event_loop_demo.py --help`.
 
@@ -132,15 +132,48 @@ The official endpoint versions used by the implementation are pinned in
 #### Installation
 
 ```bash
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/agent-with-event-trigger
 
-# Install dependencies (includes FastAPI, uvicorn, MCP SDK)
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Set up environment
 cp env.example .env
 # Edit .env and add your API key
 export KIMI_API_KEY='your-api-key-here'
+```
+
+#### Tests and Manual Demo
+
+Automated tests are offline regressions under `tests/` and do not require an API key.
+
+```bash
+# From the repository root, include the dev extra for pytest:
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip testing fallback:
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/agent-with-event-trigger
+python -m pytest tests
+```
+
+The standalone live demo was moved to `tests/manual/demo.py`; it still requires a provider API key and is not collected by pytest:
+
+```bash
+KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
 ```
 
 #### Start the Server
@@ -370,6 +403,8 @@ agent-with-event-trigger/
 ├── event_types.py           # Event type definitions
 ├── event_loop_demo.py       # Offline event-loop demo (timer / recurring / file-watch triggers)
 ├── server.py                # FastAPI server (main entry point)
+├── tests/                   # Automated regressions and manual live demos
+│   └── manual/
 ├── requirements.txt         # Dependencies (FastAPI, uvicorn, MCP)
 ├── env.example              # Environment template
 ├── README.md                # This file
@@ -505,8 +540,11 @@ curl -X POST http://localhost:8000/mcp/reload
 #### Import Errors
 
 ```bash
-# Reinstall dependencies
-pip install -r requirements.txt
+# Reinstall the shared Chapter 4 environment from the repository root
+uv sync --locked --python 3.12 --extra ch4
+
+# Single-project compatibility path:
+# python -m pip install -r requirements.txt
 
 # Verify FastAPI installed
 python -c "import fastapi; print(fastapi.__version__)"
@@ -632,7 +670,7 @@ python event_loop_demo.py --trigger timer --provider kimi
 > **OpenRouter 通用兜底**：若所选 provider（默认 `kimi`）的 Key 缺失，但设置了
 > `OPENROUTER_API_KEY`，`event_loop_demo.py` / `server.py` / `quickstart.py` 会自动
 > 改用 `openrouter` provider 继续运行（可用 `LLM_MODEL=openai/gpt-5.6-luna` 指定模型）。例如：
-> `OPENROUTER_API_KEY=sk-or-xxx LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
+> `OPENROUTER_API_KEY=your-openrouter-api-key LLM_MODEL=openai/gpt-5.6-luna python event_loop_demo.py --trigger timer`
 
 完整参数见 `python event_loop_demo.py --help`。
 
@@ -641,15 +679,48 @@ python event_loop_demo.py --trigger timer --provider kimi
 #### 安装
 
 ```bash
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/agent-with-event-trigger
 
-# Install dependencies (includes FastAPI, uvicorn, MCP SDK)
-pip install -r requirements.txt
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # Set up environment
 cp env.example .env
 # Edit .env and add your API key
 export KIMI_API_KEY='your-api-key-here'
+```
+
+#### 测试与手动演示
+
+自动化测试位于 `tests/`，均为离线回归测试，不需要 API Key。
+
+```bash
+# 在仓库根目录安装 pytest 所需的 dev extra：
+uv sync --locked --python 3.12 --extra ch4 --extra dev
+
+# pip 测试兜底路径：
+# python -m pip install -e ".[ch4,dev]"
+
+cd chapter4/agent-with-event-trigger
+python -m pytest tests
+```
+
+独立的联网演示已移动到 `tests/manual/demo.py`；它仍需要模型提供商 API Key，且不会被 pytest 默认收集：
+
+```bash
+KIMI_API_KEY='your-api-key-here' python tests/manual/demo.py
 ```
 
 #### 启动服务器
@@ -860,6 +931,8 @@ agent-with-event-trigger/
 ├── event_types.py           # Event type definitions
 ├── event_loop_demo.py       # Offline event-loop demo (timer / recurring / file-watch triggers)
 ├── server.py                # FastAPI server (main entry point)
+├── tests/                   # Automated regressions and manual live demos
+│   └── manual/
 ├── requirements.txt         # Dependencies (FastAPI, uvicorn, MCP)
 ├── env.example              # Environment template
 ├── README.md                # This file
@@ -995,8 +1068,11 @@ curl -X POST http://localhost:8000/mcp/reload
 #### 导入错误
 
 ```bash
-# Reinstall dependencies
-pip install -r requirements.txt
+# 从仓库根目录重新安装统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # Verify FastAPI installed
 python -c "import fastapi; print(fastapi.__version__)"

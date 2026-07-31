@@ -43,9 +43,7 @@ def test_format_trace_step_formats_action_with_unicode_arguments():
         }
     )
 
-    assert rendered == (
-        '🔧 [2] 行动: 调用工具 web_search  参数={"query": "서울 날씨"}'
-    )
+    assert rendered == ('🔧 [2] 行动: 调用工具 web_search  参数={"query": "서울 날씨"}')
 
 
 def test_format_trace_step_truncates_long_content():

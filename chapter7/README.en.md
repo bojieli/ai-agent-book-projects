@@ -8,6 +8,8 @@
 
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Runs Q-learning and an LLM Agent in the same treasure-hunt environment to learn from experience. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Distills teacher examples into a student prompt and compares quality and cost. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Pretrains a small language model from scratch to understand the complete pretraining process and key technologies. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Performs continued pretraining on domain-specific data to improve model performance in the target domain. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: LoRA fine-tuning of the 1B TTS model, controlling expression with paralinguistic tags like `<laugh>` and `<sigh>` |

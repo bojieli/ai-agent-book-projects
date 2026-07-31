@@ -8,7 +8,12 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
-| 6-1, 6-2 | `tau2-bench/` | 📖 | 計算、検索、データ処理などのシナリオを含め、複雑な推論のためにツールを使う Agent の能力の評価に焦点を当てる。 |
+| 6-1 | `tau2-bench/` | 📖 | 計算、検索、データ処理などのシナリオを含め、複雑な推論のためにツールを使う Agent の能力の評価に焦点を当てる。 |
+| 6-2 | `tau2-bench/` | 📖 | τ²-bench の段階別タスクを手動で完了し、軌跡を記録する。 |
+| 6-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | 4段階 Rubric を180件の構造化判定に適用し、根拠とハルシネーション拒否を記録する。 |
+| 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60ケースを3システムで実行し、コストを完全に集計する。 |
+| 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | コンポーネント・モデル・評価器の 4×3×2×60 完全マトリクスは未完了。 |
+| 6-11 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | 🚧 | OpenVLA と RoboTwin2 の構成を固定する。完了には checkpoint、シミュレータ、8 GPU が必要。 |
 | 6-2 | `terminal-bench/` | 📖 | Terminal-Bench は、実際のターミナル環境における AI Agent の性能をテストするためのベンチマークである。コードのコンパイルからモデルの訓練、サーバーのセットアップまで、Agent が実際のエンドツーエンドタスクをどう処理するかを評価する。約 100 タスクのデータセットと実行フレームワークを含み、さまざまな Agent 実装をサポートする。 |
 | 6-2 | `SWE-bench/` | 📖 | SWE-bench は、大規模言語モデルが実際の GitHub issue を解決する能力を評価するためのベンチマークである。コードベースと issue の説明が与えられると、モデルは問題を解決するパッチを生成しなければならない。SWE-bench、SWE-bench Lite、SWE-bench Verified、SWE-bench Multimodal という複数のバージョンを含む。 |
 | 6-2 | `GAIA/` | 📖 | GAIA は次世代の LLM（ツール拡張、効率的なプロンプティング、検索アクセスなどを備えたもの）を評価することを目的としている。さまざまな程度のツール利用と自律性を必要とし、曖昧さのない回答を持つ 450 以上の非自明な問題を含む。3 つの難易度レベルに分かれている。 |
@@ -21,7 +26,8 @@
 | 6-10 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-10 の起点。ベンチマークのソースコードではない） |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 スタイルの集計データに基づき、公衆衛生レポート Agent のツール呼び出し、計算精度、証拠引用、根拠のない主張を客観的に評価する。 |
 
-> `chapter6/android-world/`（ハイフン区切りの命名）はベンチマークのコードではなく、android_world 上での T3A Agent の失敗事例に関する本書の分析ノート（`t3a*.md`）であり、参考読み物として利用できる。
+> バッククォート表記の外部ベンチマークは別途 clone が必要です。[`android-world/`](android-world/)（ハイフン区切り）は本リポジトリ内の **T3A 評価分析ノート**（同ディレクトリの [README](android-world/README.md) を参照）であり、外部の `android_world/` ベンチマークソースとは別パスです。
+
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

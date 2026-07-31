@@ -15,13 +15,15 @@ except ImportError:
 
 from agent import KVCacheAgent, KVCacheMode
 
+from agentbook.providers import PROVIDERS
+
 def main():
     """Run a quick demo comparing correct vs incorrect implementation"""
     
     # Get API key. 优先 Moonshot/Kimi；缺失时回退 OPENROUTER_API_KEY
     # （KVCacheAgent 会自动切换到 OpenRouter 端点并映射模型名）。
-    api_key = (os.getenv("MOONSHOT_API_KEY") or os.getenv("KIMI_API_KEY")
-               or os.getenv("OPENROUTER_API_KEY"))
+    # 接受哪些环境变量由 agentbook 的 provider 注册表定义。
+    api_key = PROVIDERS["kimi"].api_key() or os.getenv("OPENROUTER_API_KEY")
     if not api_key:
         print("❌ Please set MOONSHOT_API_KEY (or KIMI_API_KEY / OPENROUTER_API_KEY)")
         print("   export MOONSHOT_API_KEY='your-api-key-here'")

@@ -126,7 +126,7 @@ def preflight():
     if not (os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")):
         print("\n[错误] 未检测到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底）。\n"
               "  请复制 env.example 为 .env 并填入有效的 OpenAI Key，或执行：\n"
-              "    export OPENAI_API_KEY=sk-...   # 或 export OPENROUTER_API_KEY=sk-or-...\n"
+              "    export OPENAI_API_KEY=your-openai-api-key   # 或 export OPENROUTER_API_KEY=your-openrouter-api-key\n"
               "  本实验用 gpt-5.6-luna 做视觉定位与审查，必须提供有效 Key。")
         sys.exit(1)
     try:

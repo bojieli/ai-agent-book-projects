@@ -1,7 +1,12 @@
 import asyncio
+import base64
+import hashlib
+import hmac
 import json
 import subprocess
 import logging
+import os
+import time
 from pathlib import Path
 from typing import Any, AsyncGenerator
 
@@ -21,10 +26,32 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+LOCAL_MCP_TOKEN_SECRET = "123321"
+
+
+def _jwt_part(value: dict) -> str:
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
+def gen_local_mcp_token(app: str = "mcp-gateway-debug") -> str:
+    secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", LOCAL_MCP_TOKEN_SECRET)
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {"app": app, "version": 1, "time": time.time()}
+    signing_input = f"{_jwt_part(header)}.{_jwt_part(payload)}"
+    signature = hmac.new(
+        secret.encode(),
+        signing_input.encode(),
+        hashlib.sha256,
+    ).digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b"=").decode()
+    return f"{signing_input}.{encoded_signature}"
+
+
 if __name__ == "__main__":
     base_url, token = (
         "http://localhost:8000",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJtY3AtZ2F0ZXdheS1kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYyNzU5MDkuNDg2Mjg2Mn0.4HRsgsLsOMa77-DbsA67QPzF7lBaxgTylTYmBSZNoxg",
+        gen_local_mcp_token(),
     )
 
     asyncio.run(McpClient.mcp_test_client(base_url, token))

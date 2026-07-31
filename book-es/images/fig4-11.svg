@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 440" width="880" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="60" width="820" height="48" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="76" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Herramientas básicas (conjunto mínimo)</text>
+<rect x="65" y="82" width="100" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="115.0" y="93.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">web_search</text>
+<rect x="175" y="82" width="116" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="233.0" y="93.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">read_webpage</text>
+<rect x="301" y="82" width="148" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="375.0" y="93.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">code_interpreter</text>
+<rect x="459" y="82" width="108" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="513.0" y="93.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">create_tool</text>
+<rect x="577" y="82" width="116" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="635.0" y="93.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">search_tools</text>
+<line x1="440.0" y1="108" x2="440.0" y2="135" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="100" y="135" width="680" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="110" y="150" font-family="'Courier New', Courier, monospace" font-size="12.5" fill="#333333" text-anchor="start" dominant-baseline="central">Tarea: &quot;¿Precio reciente acción NVDA? ¿Cambio semanal?&quot; → Agente: ¡Sin herr. financiera!</text>
+<text x="110" y="168" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">→ Detectar brecha de capacidad → Iniciar autoevolución</text>
+<line x1="440.0" y1="180" x2="440.0" y2="210" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="37.5" y="210" width="190" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="47.5" y="218" width="170" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="132.5" y="229.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">web_search</text>
+<text x="132.5" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Buscar soluciones</text>
+<text x="45.5" y="280" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;python stock price API&quot;</text>
+<text x="45.5" y="298" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">→ yfinance, Alpha Vantage...</text>
+<line x1="229.5" y1="270" x2="240.5" y2="270" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="242.5" y="210" width="190" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="252.5" y="218" width="170" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="337.5" y="229.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">read_webpage</text>
+<text x="337.5" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Evaluar soluciones</text>
+<text x="250.5" y="280" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">yfinance: gratis, sin clave API</text>
+<text x="250.5" y="298" font-family="'Courier New', Courier, monospace" font-size="8" fill="#333333" text-anchor="start" dominant-baseline="central">Alpha Vantage: requiere registro...</text>
+<line x1="434.5" y1="270" x2="445.5" y2="270" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="447.5" y="210" width="190" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="457.5" y="218" width="170" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="542.5" y="229.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">code_interpreter</text>
+<text x="542.5" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Probar y verificar</text>
+<text x="455.5" y="280" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">import yfinance as yf</text>
+<text x="455.5" y="298" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">yf.Ticker('NVDA').history()</text>
+<line x1="639.5" y1="270" x2="650.5" y2="270" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="652.5" y="210" width="190" height="120" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<rect x="662.5" y="218" width="170" height="22" rx="11" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="747.5" y="229.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">create_tool</text>
+<text x="747.5" y="258" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Encapsular y registrar</text>
+<text x="660.5" y="280" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">name: get_stock_data</text>
+<text x="660.5" y="298" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">schema: {ticker, period}</text>
+<line x1="440.0" y1="330" x2="440.0" y2="360" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="200" y="360" width="480" height="44" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="382" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Biblioteca de herramientas: get_stock_data registrada</text>
+<line x1="440.0" y1="404" x2="440.0" y2="430" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="100" y="430" width="680" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="110" y="442" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">Verificación de reutilización: &quot;Consultar acción TSLA&quot; → search_tools coincide → llama a get_stock_data</text>
+<text x="110" y="458" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">Omitir búsqueda/evaluación/prueba → reducción de costo +90%</text>
+</svg>

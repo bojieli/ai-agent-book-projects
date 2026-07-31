@@ -104,7 +104,22 @@ Native function-calling is heavily optimized for tool choice and rarely errs eve
 ### How to run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/active-tool-discovery
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Path A: offline mechanism self-check (no keys; token/latency real; accuracy = heuristic routing only)
 python demo.py --offline
@@ -279,7 +294,22 @@ demo.py            对同一组任务分别跑所选策略，打印 token / 延�
 ### 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
+cd chapter4/active-tool-discovery
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 方式 A：离线机制自检（无需任何 key；token/延迟真实，准确率仅反映启发式路由）
 python demo.py --offline

@@ -7,8 +7,24 @@ Step-Audio R1 是音频编码器 + adapter + Qwen2.5 32B 解码器，需要 Linu
 ## 部署
 
 ```bash
-hf download stepfun-ai/Step-Audio-R1 --local-dir /models/Step-Audio-R1
+# 1. From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
 cd chapter9/end-to-end-speech
+
+# Install this experiment's Step-Audio client/runtime dependencies.
+python -m pip install -r requirements.txt
+
+hf download stepfun-ai/Step-Audio-R1 --local-dir /models/Step-Audio-R1
 export STEP_AUDIO_MODEL_DIR=/models/Step-Audio-R1
 ./deploy_step_audio_r1.sh
 ```
@@ -50,6 +66,24 @@ python demo.py \
 
 - Step-Audio R1：直接基于音频 latent 做推理，记录完整 response、TTFT、总延迟及 audio token 数；
 - 级联对照：`whisper-1 → gpt-4o-mini`，记录被 ASR 压平后的 transcript 与总延迟。
+
+## Validation
+
+The regression tests are offline: they use fake clients and do not call audio or chat APIs.
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/end-to-end-speech
+python -m pytest -q
+```
 
 证据写入 `validation/latest.json`。这只能证明公开单路径可调用；`--skip-cascade` 只用于服务调试。两者都不能使表 9-1 验收通过。
 

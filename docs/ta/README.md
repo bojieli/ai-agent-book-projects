@@ -3,13 +3,13 @@
 [![PDF](https://img.shields.io/badge/PDF-%E0%AE%AA%E0%AE%A4%E0%AE%BF%E0%AE%B5%E0%AE%BF%E0%AE%B1%E0%AE%95%E0%AF%8D-success.svg)](#-மின்-புத்தகம்) [![நிகழ்நேரத்தில் படி](https://img.shields.io/badge/🌐_நிகழ்நேர_படி-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/மொழ%E0%AE%AA%E0%AF%86%E0%AE%AF%E0%AE%B0%E0%AF%8D%E0%AE%AA%E0%AF%81-10%20%E0%AE%AE%E0%AF%8A%E0%AE%B4%E0%AE%BF%E0%AE%95%E0%AE%B3%E0%AF%8D-informational.svg)](#-மின்-புத்தகம்)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · தமிழ் ← தற்போதைய · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > 📥 **[PDF / EPUB பதிவிறக்கம்](#-மின்-புத்தகம்)** (பரிந்துரைக்கப்படுகிறது) — சிறந்த வாசிப்பு அனுபவத்திற்கு PDF / EPUB பதிப்புகளைப் பரிந்துரைக்கிறோம்; [நிகழ்நேரத்திலும் படிக்கலாம்](https://bojieli.github.io/ai-agent-book/) (மொழி மாற்றி, மடிக்கக்கூடிய அத்தியாய மரம், முழு-உரை தேடல்; main கிளைக்கு ஒவ்வொரு push-ம் தானாகவே மீண்டும் கட்டப்படுகிறது).
 
 **Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **93 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
 
-| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **93** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **10 மொழிகள்**: சீன / ஆங் / அரபு / 繁體中文（台灣） / ரஷ்ய / தமிழ் / வியத் / ஜப் / துருக்கியம் / கொரிய |
+| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **93** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **11 மொழிகள்**: சீன / ஆங் / ஸ்பானிஷ் / அரபு / 繁體中文（台灣） / ரஷ்ய / தமிழ் / வியத் / ஜப் / துருக்கியம் / கொரிய |
 | :---: | :---: | :---: |
 
 ## 📖 மின்-புத்தகம்
@@ -17,6 +17,7 @@
 > 📥 **PDF / EPUB நேரடி பதிவிறக்கம்** (பரிந்துரைக்கப்படுகிறது; முழு உரை, இலவசம்). இந்த இணைப்புகள் எப்போதும் `main` கிளையின் சமீபத்திய கட்டமைப்பைச் சுட்டும்; நிலையான பதிப்புகளுக்கு [Releases](https://github.com/bojieli/ai-agent-book/releases) பார்க்கவும்:
 > - **சீனம் (அசல்)**：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **ஆங்கிலம்**（சமூக மொழிபெயர்ப்பு, by [@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **ஸ்பானிஷ்**（சமூக மொழிபெயர்ப்பு）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.epub)
 > - **அரபு**（சமூக மொழிபெயர்ப்பு, by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **பாரம்பரிய சீனம் (தைவான்)**（சமூக மொழிபெயர்ப்பு, by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
 > - **ரஷ்யம்**（சமூக மொழிபெயர்ப்பு, by [@ui99ru](https://github.com/ui99ru)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
@@ -28,9 +29,9 @@
 >
 > 🌐 [நிகழ்நேரத்திலும் படிக்கலாம்](https://bojieli.github.io/ai-agent-book/) — மொழி மாற்றி, மடிக்கக்கூடிய அத்தியாய மரம், முழு-உரை தேடல் மற்றும் துணை சோதனைகளுக்கான நேரடி இணைப்புகள். main கிளைக்கு ஒவ்வொரு push-ம் தானாகவே மீண்டும் கட்டப்படுகிறது.
 
-சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; ஆங்/அரபு/繁體中文（台灣）/ரஷ்ய/தமிழ்/வியத்/ஜப்/துருக்கியம்/கொரிய பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/)-இல் உள்ளன.
+சீன மூல உரை [`book/`](../../book/)-இல் உள்ளது; ஆங்/ஸ்பானிஷ்/அரபு/繁體中文（台灣）/ரஷ்ய/தமிழ்/வியத்/ஜப்/துருக்கியம்/கொரிய பதிப்புகள் சமூகப் பங்களிப்புகள் (சீன அசலை விடப் பின்தங்கியிருக்கலாம்), [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/)-இல் உள்ளன.
 
-ஒரே உருவாக்க நிரல் எளிய சீனம், ஆங்கிலம், அரபு, பாரம்பரிய சீனம் (தைவான்), ரஷ்யம், தமிழ், வியட்நாமியம், ஜப்பானியம், துருக்கியம் மற்றும் கொரிய மொழிகளுக்கான EPUB 3 பதிப்புகளை உருவாக்குகிறது. [EPUB உருவாக்க வழிமுறைகளைப்](../../EPUB.md) பார்க்கவும்.
+ஒரே உருவாக்க நிரல் எளிய சீனம், ஆங்கிலம், ஸ்பானிஷ், அரபு, பாரம்பரிய சீனம் (தைவான்), ரஷ்யம், தமிழ், வியட்நாமியம், ஜப்பானியம், துருக்கியம் மற்றும் கொரிய மொழிகளுக்கான EPUB 3 பதிப்புகளை உருவாக்குகிறது. [EPUB உருவாக்க வழிமுறைகளைப்](../../EPUB.md) பார்க்கவும்.
 
 <details>
 <summary><b>🔧 PDF-ஐ தாங்களே கட்டவா?</b> (pandoc / xelatex / ElegantBook தேவை)</summary>
@@ -68,6 +69,32 @@
 >
 > 📚 இந்தப் புத்தகத்தை எப்படி திறம்பட படிப்பது? **[கற்றல் பரிந்துரைகள்](LEARNING.md)** பார்க்கவும்.
 
+## 💻 துணை சோதனைகளை இயக்குதல்
+
+பொதுவான அடிப்படை பதிப்பு **Python 3.10+**. களஞ்சியத்தின் மூல அடைவிலிருந்து அத்தியாயம் வாரியாக சார்புகளை நிறுவவும்; வேறு அத்தியாயத்திற்கு `ch1` என்பதை `ch2` முதல் `ch10` வரை மாற்றவும்:
+
+```bash
+# பரிந்துரை: மீண்டும் உருவாக்கக்கூடிய அத்தியாய சூழலுக்கு commit செய்யப்பட்ட uv.lock-ஐ பயன்படுத்தவும்
+uv sync --locked --extra ch1
+
+# uv இல்லையெனில்: pyproject.toml-இலிருந்து pip மூலம் மீண்டும் resolve செய்யவும்
+python -m pip install -e ".[ch1]"
+```
+
+மாதிரியை அழைக்கும் சோதனையை இயக்கும் முன், அந்தச் சோதனையின் README-ஐப் பின்பற்றி credential-களை அமைக்கவும். Root-level configuration ஆதரிக்கும் சோதனைகள் `.env.example`-ஐ `.env` ஆக copy செய்து குறைந்தது ஒரு provider key-ஐ பயன்படுத்தலாம்; சில சோதனைகளுக்கு அருகிலுள்ள `.env` அல்லது exported environment variable-கள் தேவை. அந்தச் சோதனையின் README அல்லது CLI `ollama`-வை தெளிவாகப் பட்டியலிட்டால் மட்டுமே local Ollama-வை `--provider ollama` உடன் பயன்படுத்தவும்.
+
+நிறுவிய பிறகு களஞ்சியத்தின் மூல அடைவிலிருந்து சோதனையை இயக்கலாம்:
+
+```bash
+uv run python chapter1/context/main.py
+# pip மூலம் நிறுவியிருந்தால்: python chapter1/context/main.py
+```
+
+- `uv` நிறுவ [அதிகாரப்பூர்வ வழிகாட்டியைப்](https://docs.astral.sh/uv/getting-started/installation/) பார்க்கவும். `pip` தொடர்ந்து ஆதரிக்கப்படுகிறது, ஆனால் lockfile-ஐ பயன்படுத்தாது.
+- மாற்றக் காலத்தில் ஒவ்வொரு சோதனையின் `requirements.txt` தொடர்ந்து செயல்படும்; தனிப்பட்ட திட்டங்கள் மற்றும் சிறப்பு பதிப்பு கட்டுப்பாடுகளுக்கு இது ஏற்றது.
+- `all` என்பது CPU-க்கு ஏற்ற பரந்த தொகுப்பு; எல்லா சோதனைகளும் அதில் அடங்காது. `uv sync` ஒவ்வொரு முறையும் தற்போதைய தேர்வுடன் exact sync செய்கிறது, எனவே special extra-களை ஒரே கட்டளையில் சேர்க்கவும்: `uv sync --locked --extra ch2 --extra vllm` அல்லது `uv sync --locked --extra ch7 --extra unsloth`; pip-க்கு `python -m pip install -e ".[ch2,vllm]"`.
+- browser, CUDA, FFmpeg, Ollama, Playwright browser மற்றும் வெளிப்புற களஞ்சியங்கள் போன்ற system dependency-களுக்கு ஒவ்வொரு சோதனையின் README-ஐ பின்பற்றவும். சில browser மற்றும் memory சோதனைகளுக்கு Python 3.11+ தேவை; அத்தியாயம் 8-இல் சேர்க்கப்பட்ட சில third-party component-களுக்கு Python 3.12+ தேவை.
+
 ## 🔑 API விசைகள்
 
 பல தளங்களில் API விசை பெற பரிந்துரைக்கப்படுகிறது. மாதிரி தேர்வுக்கு [இந்த வழிகாட்டி](https://01.me/2025/07/llm-api-setup/).
@@ -89,12 +116,12 @@
 
 ## 📦 பின்னிணைப்பு · வெளிப்புற களஞ்சியங்களைப் பெறுதல்
 
-அத்தியாயம் 6, 7, 9, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 19 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
+அத்தியாயம் 6, 7, 9, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 23 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
 
 ### ஒரே நேரத்தில் clone ச்கிரிப்ட்
 
 <details>
-<summary><b>🔧 clone கட்டளைகளை விரிவாக்கு</b> (19 வெளிப்புற களஞ்சியங்கள்)</summary>
+<summary><b>🔧 clone கட்டளைகளை விரிவாக்கு</b> (23 வெளிப்புற களஞ்சியங்கள்)</summary>
 
 ```bash
 # அத்தியாயம் 6 · மதிப்பீட்டு Benchmarks
@@ -112,6 +139,7 @@ git clone https://github.com/bojieli/AdaptThink.git                    chapter7/
 git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
@@ -119,6 +147,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # அத்தியாயம் 9 · உலாவி தானியக்கம் & Claude எடுத்துக்காட்டுகள்
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
 
 # அத்தியாயம் 10 · இரட்டை-ஏஜென்ட் கட்டமைப்பு (TalkAct-ஆக தனியாக உருவாகியது) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

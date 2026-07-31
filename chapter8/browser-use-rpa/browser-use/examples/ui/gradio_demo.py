@@ -84,7 +84,7 @@ def create_ui():
 
 		with gr.Row():
 			with gr.Column():
-				api_key = gr.Textbox(label='OpenAI API Key', placeholder='sk-...', type='password')
+				api_key = gr.Textbox(label='OpenAI API Key', placeholder='your-openai-api-key', type='password')
 				task = gr.Textbox(
 					label='Task Description',
 					placeholder='E.g., Find flights from New York to London for next week',

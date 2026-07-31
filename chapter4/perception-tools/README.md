@@ -52,19 +52,28 @@ A comprehensive MCP (Model Context Protocol) server providing various perception
 
 ### Installation
 
-1. Clone the repository and navigate to the project directory:
+1. Install and activate the shared Chapter 4 environment from the repository root:
 
 ```bash
+# From the repository root: use the shared Chapter 4 environment
+uv sync --locked --python 3.12 --extra ch4
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/perception-tools
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
-2. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-3. **No additional configuration required!** The server works out-of-the-box with free APIs.
+2. **No additional configuration required!** The server works out-of-the-box with free APIs.
 
 ### Configuration
 
@@ -87,9 +96,7 @@ The following features work immediately without any API keys:
 ##### Google Calendar
 For Google Calendar integration, you need to set up OAuth2:
 
-```bash
-pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
-```
+The shared `ch4` extra includes the Google API client/auth packages; the compatibility path above also keeps the old project-local install available.
 
 Follow the [Google Calendar API quickstart](https://developers.google.com/calendar/api/quickstart/python) to set up OAuth2 credentials.
 
@@ -99,9 +106,7 @@ Follow the [Google Calendar API quickstart](https://developers.google.com/calend
 3. Share your databases/pages with the integration
 4. Add `NOTION_API_KEY` to `.env`
 
-```bash
-pip install notion-client
-```
+The shared `ch4` extra includes `notion-client`; the compatibility path above also keeps the old project-local install available.
 
 #### Safe filesystem mutations
 
@@ -471,19 +476,28 @@ This project is part of the AI Agent training camp materials.
 
 ### 安装
 
-1. 进入项目目录：
+1. 从仓库根目录安装并激活统一的第 4 章环境：
 
 ```bash
+# 在仓库根目录使用统一的第 4 章环境
+uv sync --locked --python 3.12 --extra ch4
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch4]"
+
 cd chapter4/perception-tools
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
-2. 安装依赖：
-
-```bash
-pip install -r requirements.txt
-```
-
-3. **无需额外配置！** 服务器默认即可用免费 API 工作。
+2. **无需额外配置！** 服务器默认即可用免费 API 工作。
 
 ### 配置
 
@@ -506,9 +520,7 @@ pip install -r requirements.txt
 ##### Google Calendar
 需要配置 OAuth2：
 
-```bash
-pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
-```
+统一 `ch4` extra 已包含 Google API client/auth 包；上方兼容路径仍保留旧版单项目安装。
 
 按 [Google Calendar API quickstart](https://developers.google.com/calendar/api/quickstart/python) 配置凭据。
 
@@ -518,9 +530,7 @@ pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
 3. 将数据库/页面共享给该集成
 4. 在 `.env` 中加入 `NOTION_API_KEY`
 
-```bash
-pip install notion-client
-```
+统一 `ch4` extra 已包含 `notion-client`；上方兼容路径仍保留旧版单项目安装。
 
 ### 使用
 
