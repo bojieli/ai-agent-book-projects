@@ -32,10 +32,13 @@ class QualityJudge(Protocol):
 
 
 def _successful_calls(trajectory: Dict[str, Any]) -> List[Dict[str, Any]]:
+    calls = trajectory.get("tool_calls") or []
     return [
         call
-        for call in trajectory.get("tool_calls", [])
-        if call.get("result", {}).get("success") is True
+        for call in calls
+        if isinstance(call, dict)
+        and isinstance(call.get("result"), dict)
+        and call.get("result", {}).get("success") is True
     ]
 
 
@@ -86,22 +89,25 @@ class ProcessVerifier:
         ]
 
     def _policy(self, trajectory: Dict[str, Any]) -> DimensionResult:
-        violations = trajectory.get("process_facts", {}).get("policy_violations", [])
+        facts = trajectory.get("process_facts") or {}
+        violations = facts.get("policy_violations") or []
         if violations:
             evidence = [
                 f"turn {item.get('turn', '?')}: {item.get('rule', 'policy violation')}"
                 for item in violations
+                if isinstance(item, dict)
             ]
             return DimensionResult("rule_compliance", "process_rules", FAIL, 0.0, evidence, 1.0)
-        checked = trajectory.get("process_facts", {}).get("checked_rules", [])
+        checked = facts.get("checked_rules") or []
         evidence = [f"checked: {rule}" for rule in checked] or ["No policy violation in action log"]
         return DimensionResult("rule_compliance", "process_rules", PASS, 1.0, evidence, 0.95)
 
     def _privacy(self, trajectory: Dict[str, Any]) -> DimensionResult:
         reply = _assistant_text(trajectory)
+        sensitive = trajectory.get("sensitive_values") or []
         leaks = [
-            item for item in trajectory.get("sensitive_values", [])
-            if item.get("value") and str(item["value"]) in reply
+            item for item in sensitive
+            if isinstance(item, dict) and item.get("value") and str(item["value"]) in reply
         ]
         if leaks:
             return DimensionResult(
@@ -115,9 +121,10 @@ class ProcessVerifier:
         )
 
     def _grounding(self, trajectory: Dict[str, Any]) -> DimensionResult:
+        claims = trajectory.get("claims") or []
         unsupported = [
-            claim for claim in trajectory.get("claims", [])
-            if not claim.get("supported_by")
+            claim for claim in claims
+            if isinstance(claim, dict) and not claim.get("supported_by")
         ]
         if unsupported:
             return DimensionResult(
@@ -125,20 +132,22 @@ class ProcessVerifier:
                 [f"turn {claim.get('turn', '?')}: unsupported claim: {claim.get('text', '')}" for claim in unsupported],
                 0.95,
             )
-        claims = trajectory.get("claims", [])
         evidence = [
             f"turn {claim.get('turn', '?')}: supported by {claim.get('supported_by')}"
             for claim in claims
+            if isinstance(claim, dict)
         ] or ["No externally checkable claim was made"]
         return DimensionResult("factual_reliability", "process_rules", PASS, 1.0, evidence, 0.9)
 
     def _promise_action(self, trajectory: Dict[str, Any]) -> DimensionResult:
         successful = {
             call.get("name") for call in _successful_calls(trajectory)
+            if isinstance(call, dict)
         }
+        promises = trajectory.get("promises") or []
         missing = [
-            promise for promise in trajectory.get("promises", [])
-            if promise.get("required_tool") not in successful
+            promise for promise in promises
+            if isinstance(promise, dict) and promise.get("required_tool") not in successful
         ]
         if missing:
             return DimensionResult(
@@ -152,7 +161,8 @@ class ProcessVerifier:
             )
         evidence = [
             f"turn {promise.get('turn', '?')}: {promise.get('required_tool')} succeeded"
-            for promise in trajectory.get("promises", [])
+            for promise in promises
+            if isinstance(promise, dict)
         ] or ["No action promise was made"]
         return DimensionResult(
             "promise_action_consistency", "process_rules", PASS, 1.0, evidence, 0.98,
