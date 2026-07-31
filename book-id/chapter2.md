@@ -399,58 +399,58 @@ Sisa bab ini membedah tiap lapisan struktur tersebut: bagaimana menggunakan pref
 >
 > Anda mungkin menyadari bahwa respons pertama model menjadi melambat setelah system prompt dimodifikasi. Perlambatan ini disebabkan oleh perilaku KV Cache yang dijelaskan di bagian berikutnya: mengubah prefix akan membatalkan (invalidate) cache dan memaksakan komputasi ulang.
 >
->
-> ## Desain Context yang Ramah KV Cache
->
-> Sebelum menelaah contoh, pertimbangkan intuisi di balik **KV Cache**. Setiap kali model menghasilkan token, ia harus merujuk kembali pada hasil komputasi intermediat dari token-token sebelumnya. Mengomputasi ulang hasil-hasil tersebut dari awal pada tiap putaran akan menjadi semakin mahal biayanya seiring berkembangnya context. KV Cache menyimpan state key-value (kunci-nilai) intermediat tersebut sehingga komputasi selanjutnya dapat menggunakannya kembali (reuse). **Prasyaratnya adalah bahwa prefix harus benar-benar tetap tidak berubah**: ubah satu karakter saja di dalamnya, dan cache untuk prefix tersebut tidak akan dapat digunakan kembali; model harus mengomputasi ulang dari titik perubahannya dan seterusnya. Catatan perihal terminologi: saat bagian ini membahas "cache hits" lintas request, penyedia API umumnya menyebutnya Prompt Cache—sebuah cache lintas-request (cross-request cache) yang dibangun di atas KV Cache engine inferensi. Kedua level ini akan dibedakan (distinguished) pada akhir bagian ini.
->
-> Dengan intuisi tersebut, mari kita pertimbangkan sebuah insiden lingkungan produksi. Sebuah Agent layanan pelanggan dari suatu tim menangani 100.000 percakapan dalam sehari, dan sistem berjalan normal. Lalu seorang engineer, yang menginginkan Agent tersebut memiliki akses kepada waktu saat ini, menambahkan sebuah baris `Current time: {{now}}` ke system prompt, menyuntikkan timestamp (stempel waktu) tersebut secara real time. Keesokan harinya, peringatan pemantauan (monitoring alerts) pun berbunyi: TTFT untuk setiap percakapan membengkak dari 0,5 detik menjadi 3–5 detik, dan tagihan inferensi bulanan (monthly inference bill) mereka hampir berlipat ganda. Kodenya terlihat benar dan modelnya tidak berubah. Masalahnya ada pada context-nya.
->
-> Satu baris timestamp tersebut membatalkan (invalidate) KV Cache di setiap request. System prompt sekarang menjadi berbeda setiap saat, memaksa model untuk mengomputasi ulang key-value pairs (pasangan kunci-nilai) untuk prefix dari awal (di sini, "Key" dan "Value" adalah dua jenis vektor di dalam mekanisme attention; Eksperimen 2-2 di bawah ini mendemonstrasikan perannya secara visual). Biaya tersembunyi semacam ini muncul berulang kali dalam sistem Agent: satu baris kode yang terlihat tidak berbahaya dapat melambatkan keseluruhan pipeline inferensi hingga satu order of magnitude (tingkatan nilai). Bagian ini menjelaskan bagaimana cara menghindari jebakan (pitfalls) semacam ini.
->
-> > **Catatan Teknis**: Bagian ini melibatkan prinsip internal mengenai mekanisme attention Transformer dan KV Cache, menjadikannya salah satu bagian paling padat secara teknis dari buku ini. Jika Anda tidak terbiasa dengan mekanisme-mekanisme mendasar ini, **Anda dapat melewati detail prinsipnya dan mengingat tiga kesimpulan inti berikut**:
-> >
-> > 1. **Setelah system prompt dan tool definitions disahkan/diselesaikan pembuatannya, jangan diubah lagi.** Modifikasi apa pun, bahkan penambahan satu spasi sekalipun, akan membatalkan keabsahan seluruh cache dan dapat melipatgandakan latensi (latency) serta meningkatkan ongkos operasi (magnitudo pastinya bergantung pada model dan konfigurasinya).
-> > 2. **Selalu tambahkan informasi dinamis ke akhir**—mengubah konten seperti timestamp dan status pengguna harus ditambahkan sebagai pesan-pesan (messages) baru di penghujung riwayat percakapan, dan bukan dengan memodifikasi system prompt yang ada.
-> > 3. **Gunakan format standar API; jangan menggabungkan pesan secara manual**: Pesan-pesan yang terstruktur diterjemahkan oleh Chat Template menjadi urutan token (token sequence) tetap yang pernah dilihat model selama pelatihannya (training). Masalah mendasar dengan menggabungkan/menyambungkan string secara manual (manually concatenating strings) ke format seperti `"USER: ... ASSISTANT: ..."` adalah hal itu melenceng (deviates) dari format pelatihan ini, yang melemahkan kemampuan penalaran multi-langkah model. Namun, sistem caching bergantung hanya pada token sequence yang dihasilkan. Suatu prefix yang digabungkan secara manual masih dapat di-cache jika prefix-nya tetap stabil persis dari byte ke byte (byte-for-byte stable). Cache dibatalkan (invalidated) hanya manakala prefix tersebut berubah, contohnya, saat konten dinamis disisipkan ke dalamnya.
-> >
-> > Intuisi di balik ketiga kesimpulan ini sederhana: ketika memproses context, sebuah LLM meng-cache (menyimpan) komputasi untuk awalan/prefix yang sudah ia proses, sehingga request berikutnya dapat menggunakan kembali pekerjaan tersebut. **Jika awalan (prefix)-nya identik dari byte ke byte, komputasi yang di-cache tersebut dapat digunakan kembali; namun jika prefix tersebut berubah, komputasi setelah titik tersebut harus dibangun ulang.** System prompt dan tool definitions biasanya merupakan bagian yang paling awal dan paling berbiaya-mahal (most expensive) dari prefix ini; begitu mereka berubah, hasil-hasil intermediat yang di-cache setelah titik tersebut akan dibatalkan.
-> >
-> > Ingatlah tiga prinsip tersebut, dan bahkan jika Anda melompati (skip) pembahasan detail teknis di bawah ini, Anda masih dapat merancang struktur context pada Agent secara tepat (correctly). Konten di bawah ini adalah untuk pembaca yang ingin mendalami jawaban "mengapa"-nya.
->
-> > **Eksperimen 2-2 ★: Visualisasi Mekanisme Attention**
-> >
-> > Sebelum menjelaskan tentang KV Cache, kita terlebih dahulu membangun pemahaman intuitif mengenai mekanisme attention (attention mechanism) internal model lewat sebuah eksperimen—ini adalah fondasi untuk memahami mengapa KV Cache itu sangat efektif dan mengapa ia menerapkan syarat-syarat ketat atas rancangan context.
-> >
-> > **Apakah Mekanisme Attention Itu?** Pertimbangkan sebuah contoh konkret. Umpamakan model sedang memproses kalimat berbahasa Mandarin "北京 的 天气 怎么样" ("Bagaimana cuaca di Beijing?"), yang kosa katanya adalah "北京" (Beijing), "的" (partikel posesif, layaknya "of"), "天气" (cuaca), dan "怎么样" (bagaimanakah (keadaannya)). Saat ia membaca "怎么样", model perlu memutuskannya: manakah di antara kata-kata sebelumnya yang paling penting (most important) untuk memahami maksud "怎么样"?
-> >
-> > Mekanisme attention (perhatian/atensi) menggunakan tiga jenis vektor untuk menentukan kata-kata terdahulu mana yang paling relevan (most relevant):
-> >
-> > Tabel 2-1 merangkum berbagai peran dari vektor Query, Key, dan Value di dalam mekanisme attention, untuk menolong pembaca memetakan perhitungan komputasi abstrak ke contoh kalimat "北京的天气怎么样" ("Bagaimana cuaca di Beijing?").
-> >
-> > Tabel 2-1 Peran dari Query, Key, dan Value di dalam Mekanisme Attention
-> >
-> > | Vektor | Makna | Dalam contoh ini |
-> > |-------|-----------------------------------------|-----------------------------------------------|
-> > | **Query** | "Permintaan pencarian" yang diterbitkan oleh kata saat ini | "怎么样" (bagaimana (keadaannya)) bertanya: kata mana yang paling relevan denganku? |
-> > | **Key** | "Label" dari masing-masing kata, digunakan guna mencocokkan hasil pencarian | Label dari kata "北京" (Beijing) lebih condong ke arah "nama tempat"; label dari "天气" (cuaca) condong ke "meteorologi" |
-> > | **Value** | "Konten" dari tiap kata, diekstraksi bila terjadi kecocokan (successful match) | Usai pencocokan "天气" (cuaca), ekstraksi informasi semantiknya |
-> >
-> > Secara sederhananya (simplified terms), tiap kata baru memberikan skor pada kata-kata sebelumnya berdasarkan tingkat relevansinya, lalu menggunakan informasi yang paling relevan untuk menyusun representasinya sendiri.
-> >
-> > Lebih spesifiknya lagi, komputasi ini memiliki tiga tahapan. Pertama, "怎么样" membangkitkan vektor Query-nya sendiri, melambangkan apa yang sedang dicari oleh token saat ini. Kedua, Query tersebut dibandingkan (compared) terhadap Key milik tiap-tiap kata terdahulu menggunakan produk titik (dot product), menghasilkan angka skor relevansi; makin tinggi nilainya (higher scores) mengindikasikan kecocokan yang semakin kuat. Terakhir, skor-skor tersebut diubah sebagai attention weights (bobot atensi), yang digunakan guna menghitung jumlah perkalian terboboti (weighted sum) atas Values-nya. Kata-kata dengan timbangan bobot tinggi memberikan kontribusi masukan yang lebih banyak ke dalam luaran representasi akhirnya (final representation), sedangkan kata dengan timbangan lebih rendah akan menyumbang masukan yang sedikit pula.
-> >
-> >
-> > ![Gambar 2-6: Pemahaman Intuitif terhadap Mekanisme Attention](images/fig2-6.svg)
-> >
-> >
-> > Bagian sebelah atas Gambar 2-6 memperlihatkan bagaimana "怎么样" (bagaimana) mencocokkan dirinya dengan tiap-tiap kata sebelumnya: tingkat kecocokan yang paling kuat (strongest match) ada dengan "天气" (cuaca, 0.55), terdapat sedikit kerelevansian dengan "北京" (Beijing, 0.35), dan nyaris tidak ada sama sekali dengan "的" (partikel tersebut, 0.05), serta sisa bobot penyeimbang sisanya dari persentasi bagiannya itu yakni kira-kira bobot senilai 0.05 jatuh mengarah pada token dirinya sediri, "怎么样" itu sendiri (tidak ditampilkan secara terpisah di ilustrasi gambar)—total kesemua bobot tersebut jumlah perpaduannya bernilai sebesar 1. Wujud pancaran output akhir menarik data informasinya utamanya secara masif melimpah banyak utamanya terserap dari bagian dari rupa porsi si kata "天气", yang mana hal inilah rupanya wujud hal sungguh begitu betul-betul selaras cocok sesuai selaras klop persis-dengan logika insting naluri pemahaman intuisinya (matches intuition exactly).
-> >
-> > Sebuah perwujudan tampilan grafis peta sebaran panas dari nilai-perhatian / **attention heatmap** menjabarkan bobot perhatian (attention weights) antara setiap kata dengan seluruh kata-kata sebelumnya (all preceding words). Bagian bawah dari Gambar 2-6 menampilkan versi seutuhnya (the complete heatmap): di mana setiap baris merupakan sebuah kueri (Query) untuk kata yang sedang diproses (the word currently being processed), lalu masing-masing lajur (column) bertindak sebagai kunci (Key) untuk kata yang menjadi target perhatian (the word being attended to), dan balok warna yang lebih gelap menunjukkan persentase bobot perhatian yang lebih tinggi. Peta heatmap ini membentuk pola segitiga (is triangular) dikarenakan sifat model bahasa pada proses menghasilkan teks (generates text) yang memproses dari kiri ke kanan: setiap kata hanya bisa menaruh perhatian (can attend) pada dirinya sendiri (to itself) serta pada kata-kata yang mendahuluinya (before it), namun tidak bisa tertuju pada konten yang belum ter-generate (has yet to be generated).
-> >
-> > **Mengapa besaran nilai Key maupun Value teramat penting untuk disimpan dalam cache (cached)?** Dari mengamati heatmap tersebut, terungkap bahwasannya setiap kali sebuah kata baru dihasilkan (is generated), parameter Query-nya (its Query) wajib dicocokkan (matched against) dengan nilai hasil Keys dari keseluruhan kata-kata sebelumnya (all preceding words), baru sesudahnya hasil perhitungan pembobotan keseluruhan (a weighted sum of all Values) dikomputasi. Jika total nilai komputasi untuk Keys dan Values (K and V) harus senantiasa dihitung ulang dari awal (from scratch) pada setiap putaran proses, maka beban komputasi akan melonjak dan bertumbuh secara proporsional seiring dengan bertambahnya ukuran batas rentang context (context length). KV Cache bekerja dengan menyimpan nilai komputasi dari K dan V (already computed K and V values) dari proses perhitungan yang telah selesai terdahulu, sehingga kemunculan kata-kata baru (new words) bisa secara instan langsung memanfaatkan nilai-nilai tersebut kembali (directly reuse them) — hal ini merupakan dasar optimisasi inti (core optimization) yang akan dibahas pada uraian selanjutnya.
-> >
-> > Memiliki bekal landasan pemahaman dasar (With a basic understanding of the attention mechanism) terhadap mekanisme attention, kini saatnya kita bisa memeriksa dan menelaah (observe) wujud distribusi sebaran perhatian (the attention distribution) dari sebuah model riil (of a real model) melalui proyek percobaan `attention_visualization`.
+
+## Desain Context yang Ramah KV Cache
+
+Sebelum menelaah contoh, pertimbangkan intuisi di balik **KV Cache**. Setiap kali model menghasilkan token, ia harus merujuk kembali pada hasil komputasi intermediat dari token-token sebelumnya. Mengomputasi ulang hasil-hasil tersebut dari awal pada tiap putaran akan menjadi semakin mahal biayanya seiring berkembangnya context. KV Cache menyimpan state key-value (kunci-nilai) intermediat tersebut sehingga komputasi selanjutnya dapat menggunakannya kembali (reuse). **Prasyaratnya adalah bahwa prefix harus benar-benar tetap tidak berubah**: ubah satu karakter saja di dalamnya, dan cache untuk prefix tersebut tidak akan dapat digunakan kembali; model harus mengomputasi ulang dari titik perubahannya dan seterusnya. Catatan perihal terminologi: saat bagian ini membahas "cache hits" lintas request, penyedia API umumnya menyebutnya Prompt Cache—sebuah cache lintas-request (cross-request cache) yang dibangun di atas KV Cache engine inferensi. Kedua level ini akan dibedakan (distinguished) pada akhir bagian ini.
+
+Dengan intuisi tersebut, mari kita pertimbangkan sebuah insiden lingkungan produksi. Sebuah Agent layanan pelanggan dari suatu tim menangani 100.000 percakapan dalam sehari, dan sistem berjalan normal. Lalu seorang engineer, yang menginginkan Agent tersebut memiliki akses kepada waktu saat ini, menambahkan sebuah baris `Current time: {{now}}` ke system prompt, menyuntikkan timestamp (stempel waktu) tersebut secara real time. Keesokan harinya, peringatan pemantauan (monitoring alerts) pun berbunyi: TTFT untuk setiap percakapan membengkak dari 0,5 detik menjadi 3–5 detik, dan tagihan inferensi bulanan (monthly inference bill) mereka hampir berlipat ganda. Kodenya terlihat benar dan modelnya tidak berubah. Masalahnya ada pada context-nya.
+
+Satu baris timestamp tersebut membatalkan (invalidate) KV Cache di setiap request. System prompt sekarang menjadi berbeda setiap saat, memaksa model untuk mengomputasi ulang key-value pairs (pasangan kunci-nilai) untuk prefix dari awal (di sini, "Key" dan "Value" adalah dua jenis vektor di dalam mekanisme attention; Eksperimen 2-2 di bawah ini mendemonstrasikan perannya secara visual). Biaya tersembunyi semacam ini muncul berulang kali dalam sistem Agent: satu baris kode yang terlihat tidak berbahaya dapat melambatkan keseluruhan pipeline inferensi hingga satu order of magnitude (tingkatan nilai). Bagian ini menjelaskan bagaimana cara menghindari jebakan (pitfalls) semacam ini.
+
+> **Catatan Teknis**: Bagian ini melibatkan prinsip internal mengenai mekanisme attention Transformer dan KV Cache, menjadikannya salah satu bagian paling padat secara teknis dari buku ini. Jika Anda tidak terbiasa dengan mekanisme-mekanisme mendasar ini, **Anda dapat melewati detail prinsipnya dan mengingat tiga kesimpulan inti berikut**:
+
+> 1. **Setelah system prompt dan tool definitions disahkan/diselesaikan pembuatannya, jangan diubah lagi.** Modifikasi apa pun, bahkan penambahan satu spasi sekalipun, akan membatalkan keabsahan seluruh cache dan dapat melipatgandakan latensi (latency) serta meningkatkan ongkos operasi (magnitudo pastinya bergantung pada model dan konfigurasinya).
+> 2. **Selalu tambahkan informasi dinamis ke akhir**—mengubah konten seperti timestamp dan status pengguna harus ditambahkan sebagai pesan-pesan (messages) baru di penghujung riwayat percakapan, dan bukan dengan memodifikasi system prompt yang ada.
+> 3. **Gunakan format standar API; jangan menggabungkan pesan secara manual**: Pesan-pesan yang terstruktur diterjemahkan oleh Chat Template menjadi urutan token (token sequence) tetap yang pernah dilihat model selama pelatihannya (training). Masalah mendasar dengan menggabungkan/menyambungkan string secara manual (manually concatenating strings) ke format seperti `"USER: ... ASSISTANT: ..."` adalah hal itu melenceng (deviates) dari format pelatihan ini, yang melemahkan kemampuan penalaran multi-langkah model. Namun, sistem caching bergantung hanya pada token sequence yang dihasilkan. Suatu prefix yang digabungkan secara manual masih dapat di-cache jika prefix-nya tetap stabil persis dari byte ke byte (byte-for-byte stable). Cache dibatalkan (invalidated) hanya manakala prefix tersebut berubah, contohnya, saat konten dinamis disisipkan ke dalamnya.
+
+> Intuisi di balik ketiga kesimpulan ini sederhana: ketika memproses context, sebuah LLM meng-cache (menyimpan) komputasi untuk awalan/prefix yang sudah ia proses, sehingga request berikutnya dapat menggunakan kembali pekerjaan tersebut. **Jika awalan (prefix)-nya identik dari byte ke byte, komputasi yang di-cache tersebut dapat digunakan kembali; namun jika prefix tersebut berubah, komputasi setelah titik tersebut harus dibangun ulang.** System prompt dan tool definitions biasanya merupakan bagian yang paling awal dan paling berbiaya-mahal (most expensive) dari prefix ini; begitu mereka berubah, hasil-hasil intermediat yang di-cache setelah titik tersebut akan dibatalkan.
+
+> Ingatlah tiga prinsip tersebut, dan bahkan jika Anda melompati (skip) pembahasan detail teknis di bawah ini, Anda masih dapat merancang struktur context pada Agent secara tepat (correctly). Konten di bawah ini adalah untuk pembaca yang ingin mendalami jawaban "mengapa"-nya.
+
+> **Eksperimen 2-2 ★: Visualisasi Mekanisme Attention**
+
+> Sebelum menjelaskan tentang KV Cache, kita terlebih dahulu membangun pemahaman intuitif mengenai mekanisme attention (attention mechanism) internal model lewat sebuah eksperimen—ini adalah fondasi untuk memahami mengapa KV Cache itu sangat efektif dan mengapa ia menerapkan syarat-syarat ketat atas rancangan context.
+
+> **Apakah Mekanisme Attention Itu?** Pertimbangkan sebuah contoh konkret. Umpamakan model sedang memproses kalimat berbahasa Mandarin "北京 的 天气 怎么样" ("Bagaimana cuaca di Beijing?"), yang kosa katanya adalah "北京" (Beijing), "的" (partikel posesif, layaknya "of"), "天气" (cuaca), dan "怎么样" (bagaimanakah (keadaannya)). Saat ia membaca "怎么样", model perlu memutuskannya: manakah di antara kata-kata sebelumnya yang paling penting (most important) untuk memahami maksud "怎么样"?
+
+> Mekanisme attention (perhatian/atensi) menggunakan tiga jenis vektor untuk menentukan kata-kata terdahulu mana yang paling relevan (most relevant):
+
+> Tabel 2-1 merangkum berbagai peran dari vektor Query, Key, dan Value di dalam mekanisme attention, untuk menolong pembaca memetakan perhitungan komputasi abstrak ke contoh kalimat "北京的天气怎么样" ("Bagaimana cuaca di Beijing?").
+
+> Tabel 2-1 Peran dari Query, Key, dan Value di dalam Mekanisme Attention
+
+> | Vektor | Makna | Dalam contoh ini |
+> |-------|-----------------------------------------|-----------------------------------------------|
+> | **Query** | "Permintaan pencarian" yang diterbitkan oleh kata saat ini | "怎么样" (bagaimana (keadaannya)) bertanya: kata mana yang paling relevan denganku? |
+> | **Key** | "Label" dari masing-masing kata, digunakan guna mencocokkan hasil pencarian | Label dari kata "北京" (Beijing) lebih condong ke arah "nama tempat"; label dari "天气" (cuaca) condong ke "meteorologi" |
+> | **Value** | "Konten" dari tiap kata, diekstraksi bila terjadi kecocokan (successful match) | Usai pencocokan "天气" (cuaca), ekstraksi informasi semantiknya |
+
+> Secara sederhananya (simplified terms), tiap kata baru memberikan skor pada kata-kata sebelumnya berdasarkan tingkat relevansinya, lalu menggunakan informasi yang paling relevan untuk menyusun representasinya sendiri.
+
+> Lebih spesifiknya lagi, komputasi ini memiliki tiga tahapan. Pertama, "怎么样" membangkitkan vektor Query-nya sendiri, melambangkan apa yang sedang dicari oleh token saat ini. Kedua, Query tersebut dibandingkan (compared) terhadap Key milik tiap-tiap kata terdahulu menggunakan produk titik (dot product), menghasilkan angka skor relevansi; makin tinggi nilainya (higher scores) mengindikasikan kecocokan yang semakin kuat. Terakhir, skor-skor tersebut diubah sebagai attention weights (bobot atensi), yang digunakan guna menghitung jumlah perkalian terboboti (weighted sum) atas Values-nya. Kata-kata dengan timbangan bobot tinggi memberikan kontribusi masukan yang lebih banyak ke dalam luaran representasi akhirnya (final representation), sedangkan kata dengan timbangan lebih rendah akan menyumbang masukan yang sedikit pula.
+
+
+> ![Gambar 2-6: Pemahaman Intuitif terhadap Mekanisme Attention](images/fig2-6.svg)
+
+
+> Bagian sebelah atas Gambar 2-6 memperlihatkan bagaimana "怎么样" (bagaimana) mencocokkan dirinya dengan tiap-tiap kata sebelumnya: tingkat kecocokan yang paling kuat (strongest match) ada dengan "天气" (cuaca, 0.55), terdapat sedikit kerelevansian dengan "北京" (Beijing, 0.35), dan nyaris tidak ada sama sekali dengan "的" (partikel tersebut, 0.05), serta sisa bobot penyeimbang sisanya dari persentasi bagiannya itu yakni kira-kira bobot senilai 0.05 jatuh mengarah pada token dirinya sediri, "怎么样" itu sendiri (tidak ditampilkan secara terpisah di ilustrasi gambar)—total kesemua bobot tersebut jumlah perpaduannya bernilai sebesar 1. Wujud pancaran output akhir menarik data informasinya utamanya secara masif melimpah banyak utamanya terserap dari bagian dari rupa porsi si kata "天气", yang mana hal inilah rupanya wujud hal sungguh begitu betul-betul selaras cocok sesuai selaras klop persis-dengan logika insting naluri pemahaman intuisinya (matches intuition exactly).
+
+> Sebuah perwujudan tampilan grafis peta sebaran panas dari nilai-perhatian / **attention heatmap** menjabarkan bobot perhatian (attention weights) antara setiap kata dengan seluruh kata-kata sebelumnya (all preceding words). Bagian bawah dari Gambar 2-6 menampilkan versi seutuhnya (the complete heatmap): di mana setiap baris merupakan sebuah kueri (Query) untuk kata yang sedang diproses (the word currently being processed), lalu masing-masing lajur (column) bertindak sebagai kunci (Key) untuk kata yang menjadi target perhatian (the word being attended to), dan balok warna yang lebih gelap menunjukkan persentase bobot perhatian yang lebih tinggi. Peta heatmap ini membentuk pola segitiga (is triangular) dikarenakan sifat model bahasa pada proses menghasilkan teks (generates text) yang memproses dari kiri ke kanan: setiap kata hanya bisa menaruh perhatian (can attend) pada dirinya sendiri (to itself) serta pada kata-kata yang mendahuluinya (before it), namun tidak bisa tertuju pada konten yang belum ter-generate (has yet to be generated).
+
+> **Mengapa besaran nilai Key maupun Value teramat penting untuk disimpan dalam cache (cached)?** Dari mengamati heatmap tersebut, terungkap bahwasannya setiap kali sebuah kata baru dihasilkan (is generated), parameter Query-nya (its Query) wajib dicocokkan (matched against) dengan nilai hasil Keys dari keseluruhan kata-kata sebelumnya (all preceding words), baru sesudahnya hasil perhitungan pembobotan keseluruhan (a weighted sum of all Values) dikomputasi. Jika total nilai komputasi untuk Keys dan Values (K and V) harus senantiasa dihitung ulang dari awal (from scratch) pada setiap putaran proses, maka beban komputasi akan melonjak dan bertumbuh secara proporsional seiring dengan bertambahnya ukuran batas rentang context (context length). KV Cache bekerja dengan menyimpan nilai komputasi dari K dan V (already computed K and V values) dari proses perhitungan yang telah selesai terdahulu, sehingga kemunculan kata-kata baru (new words) bisa secara instan langsung memanfaatkan nilai-nilai tersebut kembali (directly reuse them) — hal ini merupakan dasar optimisasi inti (core optimization) yang akan dibahas pada uraian selanjutnya.
+
+> Memiliki bekal landasan pemahaman dasar (With a basic understanding of the attention mechanism) terhadap mekanisme attention, kini saatnya kita bisa memeriksa dan menelaah (observe) wujud distribusi sebaran perhatian (the attention distribution) dari sebuah model riil (of a real model) melalui proyek percobaan `attention_visualization`.
 
 > ![Gambar 2-7: Visualisasi Attention Heatmap](images/fig2-7.png)
 >
@@ -502,13 +502,112 @@ Tanpa kehadiran KV Cache, setiap kali sebuah token baru dilahirkan, maka vektor-
 
 Dengan KV Cache, vektor K maupun vektor V kepunyaan token A, B, C, dan D, disimpan di dalam ruang ter-cache (cached) setelah selesai diproses pada putaran-putaran sebelumnya. Tatkala model hendak menghasilkan (generating) token E, hanya vektor K dan V milik E sendirilah (only E's own K and V) yang butuh dihitung (need to be computed), lalu operasi komputasi attention lantas dilaksanakan (is performed) dengan memanfaatkan vektor E ini dipadukan bersama 4 set data yang ter-cache (the 4 cached sets). Catat cermat-cermat bahwa wujud KV Cache mereduksi beban komputasi ulang (recomputation) dari proyeksi K dan V untuk kelompok token historis (historical tokens), sehingga pada tiap tahapan decoding model tidak perlu lagi menyusun ulang seluruh awalan (the entire prefix); walaupun begitu, kalkulasi attention (the attention calculation) untuk masing-masing token baru (each new token) senantiasa tetap mesti mengeksplor (traverse) semua data K dan V yang di-cache (all cached K and V values), di mana beban komputasinya akan bertumbuh membesar secara linier (linearly) bersama-dengan ukuran rentang context (context length) — inilah alasan mengapa proses men-decoding luasan context yang panjang (long-context decoding) lama-kelamaan bakal menjadi semakin pelan/lambat, lantas mengubah kapasitas memori (bandwidth memori) KV Cache menjadi hambatan/leher botol (inference bottleneck) bagi laju inferensi model.
 
-   Eksekusi logika pemrosesan inti berdasarkan tipe file
+**Mengapa perubahan pada prefix membatalkan cache?** Large language model tersusun atas lapisan-lapisan Transformer yang berurutan; model modern biasanya memiliki puluhan hingga ratusan lapisan, dan setiap lapisan menghasilkan cache K dan V-nya sendiri. Keluaran lapisan pertama menjadi masukan lapisan kedua, dan seterusnya. Jika satu token di bagian awal berubah—misalnya satu karakter pada system prompt—representasi yang dihasilkan lapisan pertama ikut berubah. Perubahan itu merambat ke seluruh lapisan berikutnya, sehingga state cache setelah titik perubahan harus dihitung ulang. Akibatnya, token yang sebelumnya sudah diproses dapat ditagihkan dan dihitung kembali, sementara latensi meningkat tajam. Inilah alasan buku ini berulang kali menekankan agar system prompt yang sudah ditetapkan tidak diubah sembarangan.
+
+> **Eksperimen 2-3 ★★: Pola Pengelolaan Context yang Umum tetapi Merugikan**
+>
+> Dalam eksperimen `kv-cache`, kami menguji beberapa pola pengelolaan context yang umum tetapi merugikan. Pola-pola ini menurunkan efektivitas KV Cache, dan sebagian juga merusak kapabilitas inti Agent.
+>
+> **System Prompt Dinamis** adalah salah satu kesalahan yang paling umum. Sebagian developer menyisipkan timestamp ke dalam system prompt, misalnya `Current time: 2025-09-14 10:30:45.123456`, agar Agent mengetahui waktu saat ini. Karena timestamp berubah pada setiap request, seluruh system prompt menjadi berbeda dan Prompt Cache tidak dapat digunakan kembali. Pendekatan yang benar adalah menambahkan informasi waktu sebagai pesan baru di akhir percakapan, atau mengambilnya melalui tool hanya ketika diperlukan.
+>
+> **Konfigurasi Pengguna Dinamis** mencoba memperbarui informasi seperti sisa kuota API atau saldo akun pada setiap request. Menempatkan state yang terus berubah di dalam prefix juga merusak cache. Gunakan mekanisme pengelolaan state khusus dan masukkan nilainya hanya ketika model benar-benar membutuhkannya.
+>
+> **Pengurutan Dinamis Definisi Tool** adalah jebakan yang lebih halus. Sebagian sistem mengurutkan ulang tool berdasarkan frekuensi pemakaian, padahal definisi tool sering menghabiskan banyak token. Mengubah urutan tersebut membatalkan cache. Eksperimen menunjukkan bahwa urutan tetap hampir tidak memengaruhi akurasi pemilihan tool, tetapi sangat meningkatkan efisiensi cache.
+>
+> **Sliding Window untuk Riwayat Percakapan** membatasi context dengan mempertahankan hanya pesan terbaru. Pendekatan ini memiliki dua masalah serius. Pertama, penghapusan pesan awal merusak konsistensi prefix dan membatalkan cache. Kedua, informasi penting dapat ikut terbuang. Jika Agent membaca sebuah file pada putaran kedua lalu memerlukannya kembali pada putaran kelima belas, hasil baca itu mungkin sudah keluar dari window. Dalam eksperimen, Agent dengan sliding window sering mengulangi tool call karena hasil terdahulu sudah tidak terlihat.
+>
+> **Pemformatan sebagai Teks Biasa** mengubah pesan terstruktur dengan pasangan `role` dan `content` menjadi aliran teks seperti `USER: ... ASSISTANT: ...`. Masalah utamanya bukan caching—prefix teks yang stabil tetap dapat di-cache—melainkan penyimpangan dari format pesan yang digunakan saat pelatihan model. Ketika batas peran diratakan menjadi teks biasa, model lebih sering mengabaikan hasil tool, mengulang operasi, merespons dengan teks saat seharusnya memanggil tool, atau menghasilkan format yang tidak dapat diurai.
+>
+> **Ringkasan**: Semua perbaikan kembali pada tiga prinsip di awal bagian ini. Pertahankan prefix tetap stabil, tambahkan informasi dinamis di akhir, dan gunakan format API standar. Penyedia model mengoptimalkan sistemnya untuk antarmuka standar; menyimpang dari format tersebut biasanya menurunkan kapabilitas model, bukan hanya efisiensi cache.
+
+### KV Cache dan Prompt Cache: Dua Tingkat Caching
+
+Sebelum melanjutkan, kita perlu membedakan dua konsep yang mudah tertukar. **KV Cache** adalah optimisasi di dalam proses inferensi model: selama satu inferensi, ia menyimpan state key-value dari token yang sudah diproses agar tidak dihitung ulang. **Prompt Cache** adalah optimisasi pada lapisan layanan API: ia menggunakan kembali hasil komputasi prefix yang identik di antara beberapa request. Keduanya bergantung pada stabilitas prefix, tetapi beroperasi pada tingkat yang berbeda. KV Cache mempercepat pembangkitan token di dalam satu request, sedangkan Prompt Cache mengurangi komputasi prefix yang berulang antar-request. Dalam praktiknya, penyedia API mencocokkan prefix request; jika system prompt dan definisi tool tetap sama, hasil komputasi prefix dapat digunakan kembali. Membaca cache jauh lebih murah daripada menghitung ulang—sekitar sepersepuluh harga pada Anthropic dan DeepSeek, dan juga sekitar sepersepuluh untuk keluarga GPT-5 OpenAI. Cara mengaktifkan dan menagihkan cache berbeda antarpenyedia: Anthropic menggunakan breakpoint `cache_control`, biaya penulisan cache, panjang minimum, dan TTL; OpenAI menggunakan prefix caching otomatis.
+
+Saat merancang context, kedua tingkat caching memerlukan prefix yang stabil. Namun, Prompt Cache memiliki dampak ekonomi yang lebih langsung karena memengaruhi tagihan API.
+
+### Caching sebagai Kendala Arsitektur
+
+Bagian berikut membahas detail arsitektur Agent tingkat produksi. Pembaca pertama kali dapat melewatinya dan kembali saat mulai membangun sistem nyata.
+
+Dalam sistem Agent tingkat produksi, caching bukan sekadar optimisasi performa, melainkan **kendala arsitektur** yang memengaruhi banyak keputusan desain yang tampaknya tidak berkaitan.
+
+Claude Code memperlihatkan pola yang lebih umum: ketika Prompt Cache memiliki nilai ekonomi yang besar, konsistensi cache ikut membentuk arsitektur sistem.
+
+**Struktur prompt dibentuk oleh batas cache.** System prompt dibagi pada sebuah penanda batas: konten sebelum penanda dapat di-cache lintas pengguna dan sesi, sedangkan konten setelahnya berisi informasi khusus pengguna atau sesi. Karena itu, urutan prompt ditentukan terutama oleh ekonomi caching dan baru kemudian oleh logika semantik. Setiap kondisi runtime sebelum batas cache menambah variasi cache key. Jika setiap kondisi bersifat biner, N kondisi menghasilkan 2^N kombinasi. Tiga kondisi biner, misalnya macOS/Linux, mode normal/debug, dan bahasa Indonesia/Inggris, menghasilkan delapan cache key.
+
+**Sub-agent harus selaras byte demi byte dengan Agent induknya.** Agar request sub-agent dapat menggunakan Prompt Cache milik Agent induk, prompt, definisi tool, konfigurasi model, prefix pesan, dan konfigurasi reasoning harus cocok secara persis. Kendala dari lapisan caching ini akhirnya memengaruhi cara sub-agent dibuat dan cara parameter diteruskan.
+
+**String pengganti hasil tool dibekukan saat pertama kali dibuat.** Ketika output tool yang besar diganti dengan preview ringkas, string penggantinya disimpan. Bahkan setelah sesi dimulai ulang, sistem menggunakan kembali string yang sama agar urutan pesan tetap identik dengan stream yang di-cache.
+
+Intinya, **ekonomi caching bukan optimisasi yang ditambahkan belakangan, melainkan kendala arsitektur sejak awal**. Jika sistem Agent menggunakan Prompt Cache, konsistensi cache key akan memengaruhi desain prompt, koordinasi multi-agent, pemulihan sesi, dan lapisan lainnya.
+
+### KV Cache Tidak Harus Sekali Pakai: "Catatan" yang Dapat Diedit dan Disusun
+
+(Bagian berikut adalah materi riset lanjutan yang bersifat opsional. Pembaca dapat melewatinya pada bacaan pertama; tiga kesimpulan praktis di atas tetap menjadi dasar untuk sistem produksi saat ini.)
+
+Sejauh ini kita mengasumsikan aturan ketat: ubah satu byte pada prefix, maka cache setelahnya tidak berlaku. Aturan ini benar untuk engine inferensi saat ini, tetapi mungkin bukan sesuatu yang niscaya. Sebuah jalur riset terbaru berangkat dari pengamatan yang berlawanan dengan intuisi[^ch2-2]: selama fase prefill, model bekerja seolah-olah sedang "mencatat". Ketika membaca sebuah field dalam context, misalnya `Kota pengguna: Beijing`, model tidak sekadar menyimpan field itu secara mentah. Model juga menuliskan representasi dari **kesimpulan** field tersebut ke state KV di bagian hilir. Pengukuran menunjukkan bahwa state KV milik token field itu sendiri sering menyumbang kurang dari 1% terhadap keputusan akhir; pengaruh yang lebih besar justru datang dari "catatan" yang ditinggalkan di bagian hilir.
+
+Temuan ini membuka dua operasi yang sebelumnya dianggap tidak praktis. Pertama, **Editing**: karena kesimpulan sudah ditulis ke catatan hilir, perubahan field dapat dirambatkan melalui penalaran yang di-cache ketika model memiliki chain-of-thought eksplisit, dengan hasil mendekati komputasi ulang penuh tetapi hanya sekitar 1% dari biayanya. Tanpa chain-of-thought, perubahan field terisolasi justru dapat diabaikan karena kesimpulan lama sudah tertanam di bagian hilir. Kedua, **Composition**: cache sebuah "skill" yang sudah dihitung dapat dipindahkan dengan Rotary Position Embedding (RoPE) dan disambungkan ke context lain tanpa menghitung ulang attention. Dengan cara ini, penyusunan context panjang dari blok cache modular berubah dari komputasi ulang O(L²) menjadi penyambungan O(L).
+
+Analogi catatan pinggir membantu menjelaskan gagasan ini. Saat sebuah fakta berubah, pembaca tidak perlu membaca ulang seluruh dokumen; ia cukup memperbarui catatan tentang implikasi fakta tersebut. Karena catatan KV direpresentasikan dalam bentuk yang dapat dipindahkan, satu blok catatan juga dapat direlokasi dan digunakan kembali pada masalah lain. Implementasi riset di atas pada vLLM mempercepat p90 time to first token puluhan hingga ratusan kali, mencapai prefix-cache hit rate sekitar 98,5%, dan menghasilkan keluaran yang dekat dengan komputasi token demi token.
+
+Bagi Agent, implikasinya adalah bahwa context panjang mungkin tidak selalu perlu dibongkar dan dibangun ulang ketika tool, field memori, atau runtime state berubah. Ini masih berada pada tahap riset; tiga prinsip praktis sebelumnya tetap menjadi pedoman utama untuk sistem produksi sekarang.
+
+[^ch2-2]: Li, Bojie. *Models Take Notes at Prefill: KV Cache Can Be Editable and Composable.* arXiv:2606.17107, 2026.
+
+Setelah memahami cara context diproses dan di-cache, pertanyaan berikutnya adalah bagaimana merancang isinya. Bagian-bagian selanjutnya membahas tiga jalur yang saling berkaitan:
+
+- **Prompt Engineering, Prompt Injection, dan Prompt Dinamis (Agent Skills)**: cara menulis system prompt, merancang definisi tool, melindungi context dari instruksi eksternal, dan memuat pengetahuan sesuai kebutuhan.
+- **Agent Status Bar**: mekanisme yang menambahkan meta-informasi dinamis—progres tugas, state lingkungan, dan jumlah tool call—di akhir context.
+- **Strategi Kompresi Context**: kapan dan bagaimana context dikompresi, serta bagaimana kompresi hidup berdampingan dengan KV Cache.
+
+## Prompt Engineering: Mengoptimalkan System Prompt
+
+Fokus utama prompt engineering adalah **System Prompt**, yaitu pesan dengan `role: "system"` dalam daftar pesan API. Ia merupakan manual operasi Agent yang menentukan identitas, aturan perilaku, batasan, dan alur kerja. System prompt yang baik memungkinkan model memanfaatkan kapabilitas umumnya untuk tugas tertentu.
+
+Ada satu uji praktis untuk kualitas system prompt: bayangkan LLM sebagai anggota tim baru yang sangat cakap tetapi sama sekali tidak mengetahui alur kerja dan konvensi internal Anda. Jika anggota baru itu masih tidak tahu apa yang harus dilakukan setelah membaca system prompt, Agent pun akan mengalami masalah yang sama.
+
+Bagian berikut membahas beberapa dimensi desain system prompt.
+
+### Nada dan Gaya: Membingkai Perilaku
+
+Nada dan gaya mudah diabaikan, padahal keduanya sangat memengaruhi pengalaman pengguna. Instruksi seperti "Anda HARUS menjawab secara ringkas dalam kurang dari empat baris" membatasi respons dengan jelas. Saat Agent tidak dapat menyelesaikan tugas, aturan seperti "jawab dalam satu atau dua kalimat" mencegah pembenaran diri yang panjang. Kata berhuruf kapital seperti `JANGAN PERNAH` lebih menonjol daripada permintaan lunak, tetapi jika digunakan terlalu sering efeknya akan melemah; gunakan hanya untuk batasan yang benar-benar penting.
+
+### Prompt Terstruktur: "Format" System Prompt
+
+Large language model modern cukup sensitif terhadap input terstruktur karena banyak melihat konten terstruktur selama pelatihan. Tag XML mengikuti hierarki dan nama tag-nya membawa makna—`<working_directory>` langsung memberi tahu model bahwa isinya adalah direktori kerja, sedangkan teks `Current directory: /Users/project/src` memerlukan inferensi tambahan.
+
+Markdown menyediakan struktur ringan yang tetap mudah dibaca. Kombinasi XML dan Markdown membentuk dua lapisan: XML memberikan semantik yang presisi dan dapat diurai mesin, sedangkan Markdown mengatur isinya bagi manusia maupun model.
+
+### Berorientasi Proses vs. Menumpuk Aturan: "Organisasi" System Prompt
+
+Metode yang mengurangi beban kognitif manusia juga membantu LLM. Bayangkan anggota tim baru menerima manual berisi ratusan aturan yang tersebar, tanpa alur atau prioritas. Bahkan orang yang sangat cakap akan kesulitan menentukan aturan mana yang berlaku ketika beberapa aturan bertabrakan.
+
+Sebaliknya, prompt berorientasi proses berfungsi seperti manual pelatihan yang baik dengan Standard Operating Procedure (SOP) yang jelas:
+
+```
+Prosedur Operasi Standar Pemrosesan File:
+
+Langkah 1: Validasi
+   Periksa apakah file ada dan dapat diakses
+   - Jika tidak ditemukan → catat error dan hentikan
+   ↓
+Langkah 2: Klasifikasi
+   Tentukan tipe file berdasarkan ekstensi dan konten
+   ↓
+Langkah 3: Prapemrosesan
+   File konfigurasi → buat cadangan
+   File besar (>1 MB) → proses secara streaming
+   ↓
+Langkah 4: Eksekusi
+   Jalankan logika pemrosesan inti berdasarkan tipe file
    ↓
 Langkah 5: Verifikasi
-   Pastikan integritas file yang diproses
+   Pastikan integritas file hasil pemrosesan
 ```
 
-Desain proses ini membantu model melacak di tahap mana ia berada, apa yang sedang coba dicapai oleh langkah saat ini, dan apa yang harus terjadi selanjutnya. Saat terjadi eksepsi (exception), model dapat memilih respons berdasarkan tahap saat ini ketimbang mencari dari sekumpulan panjang aturan yang tidak berhubungan.
+Desain proses ini membantu model melacak tahap saat ini, tujuan langkah yang sedang dijalankan, dan apa yang harus terjadi berikutnya. Saat terjadi pengecualian, model dapat memilih respons berdasarkan tahap tersebut daripada mencari-cari di antara sekumpulan aturan yang tidak saling berhubungan.
 
 ### Menerjemahkan Aturan Bisnis Menjadi Instruksi yang Dapat Dieksekusi
 

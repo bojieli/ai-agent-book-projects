@@ -479,24 +479,24 @@ Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan 
 >
 > ![Gambar 10-9: Parallel Web Scraping Architecture](images/fig10-9.svg)
 >
->
-> ### Pola Terdesentralisasi: Peer-to-Peer Handoff
->
->
-> ![Gambar 10-10: Handoff Chain Pattern](images/fig10-10.svg)
->
->
-> Pola manajer memberikan struktur kontrol yang jelas dan visibilitas global, tetapi pola terdesentralisasi bukan sekadar perbaikan atas kekurangannya. Motivasi untuk menghilangkan pengontrol terpusat utamanya adalah untuk meniru cara masyarakat manusia mengatur dirinya sendiri: membiarkan beberapa peran setara (*peer*) membagi kerja dan memeriksa satu sama lain, masing-masing meneliti masalah dari perspektif profesionalnya sendiri dan memutuskan sendiri dengan siapa ia harus berbicara, daripada menyalurkan setiap penilaian ke satu Manager. Bidang layanan mikro (*microservices*) menyebut sepasang pilihan ini **orkestrasi (orchestration)** dan **koreografi (choreography)**: yang pertama memiliki konduktor yang menjadwalkan semuanya secara terpusat, yang terakhir bergantung pada setiap penari yang merasakan sendiri kapan harus masuk.
->
-> Pola terdesentralisasi mengambil pendekatan arsitektur yang berbeda: **tidak ada pengontrol pusat tunggal; Agent berkolaborasi sebagai rekan (peers)**. Setiap Agent, dengan memanfaatkan penilaian profesionalnya sendiri, memutuskan sendiri kapan harus menghubungi Agent lain—untuk menyerahkan tugas (*hand off*) ("Bagian saya sudah selesai, sekarang giliran Anda"), meminta umpan balik ("Apakah rencana ini layak secara teknis?"), atau melaporkan masalah ("Persyaratan yang Anda berikan kepada saya saling bertentangan; kita perlu membicarakan ini lagi").
->
-> Kasus-kasus berikut berkembang dari desentralisasi parsial menuju desentralisasi penuh. MetaGPT menggunakan alur kerja (*pipeline*) tetap dan hanya mendesentralisasikan komunikasi. AutoGen menggabungkan riwayat percakapan bersama dengan penjadwalan terpusat. OpenAI Swarm mendistribusikan keputusan aliran kontrol (*control-flow*) secara langsung di antara sesama Agent.
->
-> **Apa yang diteruskan selama penyerahan (handoff) tanpa konteks bersama?** Gambar 10-10 membedakan dua jenis penyerahan. Dalam Eksperimen 10-2, `transfer_to_agent` menggunakan konteks bersama, sehingga peran baru secara otomatis mewarisi riwayat lengkap. Dalam pola rantai-penyerahan (*handoff-chain*), konteks (*context*) tidak dibagikan, sehingga Agent pengirim harus secara eksplisit menyusun informasi yang dibutuhkan oleh Agent penerima.
->
-> Praktiknya, "paket penyerahan" (*handoff package*) yang efektif biasanya berisi tiga bagian: **Deskripsi Tugas** (apa yang harus dilakukan penerima dan kriteria penerimaannya), **Fakta dan Kendala yang Dikonfirmasi** (preferensi pengguna, aturan bisnis, dan keputusan yang dibuat pada tahap sebelumnya), dan **Referensi ke Artefak Terstruktur** (jalur file, bukan konten file, yang dibaca penerima sesuai kebutuhan). Paket tersebut dengan sengaja mengecualikan lintasan (*trajectory*) penuhnya—proses uji-coba Agent pengirim, pekerjaan menengah, dan upaya yang gagal—yang sebagian besar merupakan derau (*noise*) bagi penerima.
->
-> Inilah perbedaan esensial antara kedua jenis penyerahan tersebut. *Handoff* dengan konteks bersama (*shared context*) menyimpan riwayat lengkap, mempertahankan semua informasi tetapi terus-menerus memperluas konteks. *Handoff* tanpa konteks bersama memberikan paket yang telah diolah, menerima beberapa kehilangan informasi sehingga setiap Agent dapat bekerja dalam konteks yang bersih dan terfokus. Tidak ada Agent yang perlu memahami proses kerja Agent lain; Agent hanya membutuhkan format dan makna dari paket *handoff* serta artefak keluarannya. Kolaborasi berbasis antarmuka (*interface*) ini mengacu pada prinsip rekayasa perangkat lunak *design by contract*.
+
+### Pola Terdesentralisasi: Peer-to-Peer Handoff
+
+
+![Gambar 10-10: Handoff Chain Pattern](images/fig10-10.svg)
+
+
+Pola manajer memberikan struktur kontrol yang jelas dan visibilitas global, tetapi pola terdesentralisasi bukan sekadar perbaikan atas kekurangannya. Motivasi untuk menghilangkan pengontrol terpusat utamanya adalah untuk meniru cara masyarakat manusia mengatur dirinya sendiri: membiarkan beberapa peran setara (*peer*) membagi kerja dan memeriksa satu sama lain, masing-masing meneliti masalah dari perspektif profesionalnya sendiri dan memutuskan sendiri dengan siapa ia harus berbicara, daripada menyalurkan setiap penilaian ke satu Manager. Bidang layanan mikro (*microservices*) menyebut sepasang pilihan ini **orkestrasi (orchestration)** dan **koreografi (choreography)**: yang pertama memiliki konduktor yang menjadwalkan semuanya secara terpusat, yang terakhir bergantung pada setiap penari yang merasakan sendiri kapan harus masuk.
+
+Pola terdesentralisasi mengambil pendekatan arsitektur yang berbeda: **tidak ada pengontrol pusat tunggal; Agent berkolaborasi sebagai rekan (peers)**. Setiap Agent, dengan memanfaatkan penilaian profesionalnya sendiri, memutuskan sendiri kapan harus menghubungi Agent lain—untuk menyerahkan tugas (*hand off*) ("Bagian saya sudah selesai, sekarang giliran Anda"), meminta umpan balik ("Apakah rencana ini layak secara teknis?"), atau melaporkan masalah ("Persyaratan yang Anda berikan kepada saya saling bertentangan; kita perlu membicarakan ini lagi").
+
+Kasus-kasus berikut berkembang dari desentralisasi parsial menuju desentralisasi penuh. MetaGPT menggunakan alur kerja (*pipeline*) tetap dan hanya mendesentralisasikan komunikasi. AutoGen menggabungkan riwayat percakapan bersama dengan penjadwalan terpusat. OpenAI Swarm mendistribusikan keputusan aliran kontrol (*control-flow*) secara langsung di antara sesama Agent.
+
+**Apa yang diteruskan selama penyerahan (handoff) tanpa konteks bersama?** Gambar 10-10 membedakan dua jenis penyerahan. Dalam Eksperimen 10-2, `transfer_to_agent` menggunakan konteks bersama, sehingga peran baru secara otomatis mewarisi riwayat lengkap. Dalam pola rantai-penyerahan (*handoff-chain*), konteks (*context*) tidak dibagikan, sehingga Agent pengirim harus secara eksplisit menyusun informasi yang dibutuhkan oleh Agent penerima.
+
+Praktiknya, "paket penyerahan" (*handoff package*) yang efektif biasanya berisi tiga bagian: **Deskripsi Tugas** (apa yang harus dilakukan penerima dan kriteria penerimaannya), **Fakta dan Kendala yang Dikonfirmasi** (preferensi pengguna, aturan bisnis, dan keputusan yang dibuat pada tahap sebelumnya), dan **Referensi ke Artefak Terstruktur** (jalur file, bukan konten file, yang dibaca penerima sesuai kebutuhan). Paket tersebut dengan sengaja mengecualikan lintasan (*trajectory*) penuhnya—proses uji-coba Agent pengirim, pekerjaan menengah, dan upaya yang gagal—yang sebagian besar merupakan derau (*noise*) bagi penerima.
+
+Inilah perbedaan esensial antara kedua jenis penyerahan tersebut. *Handoff* dengan konteks bersama (*shared context*) menyimpan riwayat lengkap, mempertahankan semua informasi tetapi terus-menerus memperluas konteks. *Handoff* tanpa konteks bersama memberikan paket yang telah diolah, menerima beberapa kehilangan informasi sehingga setiap Agent dapat bekerja dalam konteks yang bersih dan terfokus. Tidak ada Agent yang perlu memahami proses kerja Agent lain; Agent hanya membutuhkan format dan makna dari paket *handoff* serta artefak keluarannya. Kolaborasi berbasis antarmuka (*interface*) ini mengacu pada prinsip rekayasa perangkat lunak *design by contract*.
 
 **MetaGPT: Simulasi Perusahaan Perangkat Lunak Berbasis SOP (Kasus Transisi dari Pipeline ke Decoupled Communication).**
 
