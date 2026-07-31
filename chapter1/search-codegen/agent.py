@@ -35,6 +35,7 @@ class GPT5NativeAgent:
         self.provider = (
             "openai" if self.base_url == "https://api.openai.com/v1" else
             "openrouter" if "openrouter.ai" in self.base_url else
+            "dashscope" if "dashscope" in self.base_url else
             "custom"
         )
         self.conversation_history: List[Dict[str, Any]] = []
@@ -44,14 +45,27 @@ class GPT5NativeAgent:
 
     @staticmethod
     def _create_system_prompt() -> str:
-        return """You are a deep-research assistant. Use hosted web search for
-current facts and cite sources. Use the hosted Python/code-interpreter tool for
-quantitative analysis; do not claim a calculation was run unless the response
-contains a completed code_interpreter_call. Ask a concise clarifying question
-before research when a material user preference is genuinely ambiguous."""
+        return """You are a deep-research assistant. 你是一名深度研究助手。
 
-    @staticmethod
-    def _tools() -> List[Dict[str, Any]]:
+Hard rule / 硬性规则: when the user's research request leaves material
+preferences ambiguous — for example which data source to use or which
+technical indicators to compute — ask a concise clarifying question FIRST
+(for example “您偏好使用哪个数据源？需要分析哪些技术指标？”), and do NOT
+call any tool until the user answers.
+当用户的研究请求没有明确数据来源或具体分析指标时，必须先向用户提问澄清，
+在用户回答之前不要调用任何工具。
+
+After clarification, use hosted web search for current facts and cite
+sources, and use the hosted Python/code-interpreter tool for quantitative
+analysis; do not claim a calculation was run unless the response contains a
+completed code_interpreter_call.
+澄清之后：使用 web_search 获取最新事实并引用来源链接；所有定量计算必须通过
+code_interpreter 实际执行，不得口算或声称运行了代码。"""
+
+    def _tools(self) -> List[Dict[str, Any]]:
+        if self.provider == "dashscope":
+            # Exact structures from the Alibaba Model Studio Responses API guides.
+            return [{"type": "web_search"}, {"type": "code_interpreter"}]
         # Exact structures from the official OpenAI Responses API guides.
         return [
             {"type": "web_search", "search_context_size": "medium"},
@@ -72,20 +86,27 @@ before research when a material user preference is genuinely ambiguous."""
         max_output_tokens: Optional[int] = None,
         background: bool = False,
     ) -> Dict[str, Any]:
-        if reasoning_effort not in {"none", "low", "medium", "high", "xhigh", "max"}:
-            raise ValueError("Unsupported GPT-5.6 reasoning effort")
-        if verbosity not in {None, "low", "medium", "high"}:
-            raise ValueError("verbosity must be low, medium, or high")
+        if self.provider != "dashscope":
+            if reasoning_effort not in {"none", "low", "medium", "high", "xhigh", "max"}:
+                raise ValueError("Unsupported GPT-5.6 reasoning effort")
+            if verbosity not in {None, "low", "medium", "high"}:
+                raise ValueError("verbosity must be low, medium, or high")
         request: Dict[str, Any] = {
             "model": self.model,
             "instructions": self.system_prompt,
             "input": input_text,
-            "reasoning": {"effort": reasoning_effort},
-            "background": background,
-            "store": True,
         }
-        if verbosity:
-            request["text"] = {"verbosity": verbosity}
+        if self.provider == "dashscope":
+            # DashScope runs thinking natively and has no reasoning.effort or
+            # text.verbosity knobs; its gateway also drops non-streaming
+            # requests that stay silent for ~60s, so streaming is mandatory.
+            request["stream"] = True
+        else:
+            request["reasoning"] = {"effort": reasoning_effort}
+            request["background"] = background
+            request["store"] = True
+            if verbosity:
+                request["text"] = {"verbosity": verbosity}
         if max_output_tokens:
             request["max_output_tokens"] = max_output_tokens
         if use_tools:
@@ -129,7 +150,72 @@ before research when a material user preference is genuinely ambiguous."""
                         "container_file_citation",
                     }:
                         citations.append(annotation)
+            # DashScope reports sources on the web_search_call item itself
+            # instead of url_citation annotations; normalize them here.
+            if item.get("type") == "web_search_call":
+                action = item.get("action") or {}
+                for source in action.get("sources") or []:
+                    if source.get("url"):
+                        citations.append(
+                            {"type": "url_citation", "url": source["url"]}
+                        )
         return citations
+
+    def _post_responses(
+        self, request: Dict[str, Any]
+    ) -> tuple[int, Dict[str, Any], Optional[Dict[str, int]]]:
+        """Send one Responses request and return (status, body, stream_events).
+
+        DashScope requires streaming; the final ``response.completed`` event
+        carries the same response object the non-streaming API returns, so both
+        paths converge on an identical shape.
+        """
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        if not request.get("stream"):
+            http_response = requests.post(
+                f"{self.base_url}/responses",
+                headers=headers,
+                json=request,
+                timeout=900,
+            )
+            try:
+                return http_response.status_code, http_response.json(), None
+            except ValueError:
+                return http_response.status_code, {"raw_text": http_response.text}, None
+
+        event_counts: Dict[str, int] = {}
+        final_response: Optional[Dict[str, Any]] = None
+        with requests.post(
+            f"{self.base_url}/responses",
+            headers=headers,
+            json=request,
+            stream=True,
+            timeout=900,
+        ) as http_response:
+            status_code = http_response.status_code
+            if not http_response.ok:
+                return status_code, {"raw_text": http_response.text}, event_counts
+            for line in http_response.iter_lines(decode_unicode=True):
+                if not line or not line.startswith("data:"):
+                    continue
+                data = line[len("data:"):].strip()
+                if data == "[DONE]":
+                    break
+                try:
+                    event = json.loads(data)
+                except ValueError:
+                    continue
+                event_type = event.get("type") or "unknown"
+                event_counts[event_type] = event_counts.get(event_type, 0) + 1
+                if event_type in {"response.completed", "response.failed"}:
+                    final_response = event.get("response")
+        if final_response is None:
+            return status_code, {"error": {"type": "stream_incomplete",
+                                           "message": "stream ended without response.completed"}}, event_counts
+        return status_code, final_response, event_counts
 
     def process_request(
         self,
@@ -170,31 +256,21 @@ before research when a material user preference is genuinely ambiguous."""
 
         started = time.monotonic()
         try:
-            http_response = requests.post(
-                f"{self.base_url}/responses",
-                headers={
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                },
-                json=request,
-                timeout=900,
-            )
+            status_code, response, stream_events = self._post_responses(request)
             elapsed = round(time.monotonic() - started, 6)
-            try:
-                response = http_response.json()
-            except ValueError:
-                response = {"raw_text": http_response.text}
             turn = {
                 "request": json.loads(json.dumps(request, ensure_ascii=False)),
-                "http_status": http_response.status_code,
+                "http_status": status_code,
                 "response": response,
                 "elapsed_seconds": elapsed,
             }
+            if stream_events:
+                turn["stream_event_counts"] = stream_events
             self.api_turns.append(turn)
-            if not http_response.ok or response.get("error"):
+            if status_code >= 400 or response.get("error"):
                 error = response.get("error") or {
                     "type": "http_error",
-                    "message": http_response.text,
+                    "message": response.get("raw_text") or json.dumps(response)[:500],
                 }
                 return {
                     "success": False,

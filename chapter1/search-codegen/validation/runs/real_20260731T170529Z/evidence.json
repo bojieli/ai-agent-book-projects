@@ -5653,11 +5653,5 @@
       "https://developers.openai.com/api/docs/guides/tools-code-interpreter",
       "https://help.aliyun.com/zh/model-studio/qwen-code-interpreter"
     ]
-  },
-  "artifact_hashes": {
-    "evidence.json": "aab1864446613463c936154eca2fc65df8496869c65d4c17dc1f12628eaff3cc",
-    "receipts.json": "9247d69b5915ceff7d27b9dbc0752d63791fc26309f8d69e17844508058edcbe",
-    "manifest.json": "9574f087c4cad5c0ab37918f724b691293150dc3df5d62b4ce57a4ff2963d55c",
-    "run_dir": "validation/runs/real_20260731T170529Z"
   }
 }
