@@ -395,6 +395,8 @@ class GraphRAGIndexer:
             top_k: Number of results to return
             search_type: "entity", "community", or "hybrid"
         """
+        if top_k <= 0:
+            return []
         query_embedding = self.embedding_model.encode([query])[0]
         results = []
         
