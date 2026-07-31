@@ -145,7 +145,11 @@ class ToolLibrary:
         p = self.dir / f"{name}.json"
         if not p.exists():
             return None
-        return json.loads(p.read_text())
+        try:
+            data = json.loads(p.read_text())
+            return data if isinstance(data, dict) else None
+        except Exception:  # noqa: BLE001
+            return None
 
     # -------------------------- execute a wrapped tool --------------------- #
     def execute_tool(self, name: str, arguments: dict, timeout: int = 60) -> dict:
