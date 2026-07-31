@@ -3,7 +3,7 @@
 - Experiment 7-3 source: [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter7/MiniMind-pretrain/minimind`
 - Experiment 7-3 canonical evidence: [`validation/runs/exp7-3-training-report-20260731-v1/`](validation/runs/exp7-3-training-report-20260731-v1/) retains all 49 historical outputs across original/QK-Norm+Muon × pretrain/SFT/DPO, eight raw arm-blind ARK judge receipts, exact hashes, and the future reproduction contract. Checkpoints are intentionally not distributed and are not acceptance artifacts.
 - Experiment 7-4 source: [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter7/MiniMind-pretrain/minimind-v`
-- Current workspace state: both external source checkouts are absent. For 7-3, the checkpoint-free historical training report is the accepted book artifact and explicitly records the missing historical source/data/checkpoint identities and stepwise loss logs. For 7-4, the read-only upstream audit remains source-version evidence only, not evidence that VLM training ran.
+- Current workspace state: both external source checkouts are absent. The checkpoint-free historical training reports are the accepted book artifacts for 7-3 and 7-4; each explicitly separates retained outputs and independent judgments from unavailable historical source/data/checkpoint identities and stepwise logs.
 
 Run from the book repository root:
 
@@ -21,7 +21,37 @@ git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD
 test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
 ```
 
-At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The 7-3 outputs below are historical observations bound into the canonical evidence package; they do not prove the byte identity of the historical checkout or checkpoints. The VLM outputs remain historical companion observations and do not by themselves close 7-4.
+At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The historical outputs below are bound into the two canonical evidence packages; they do not prove byte identity of the historical checkouts or checkpoints.
+
+## Experiment 7-4 canonical retained-training report
+
+The canonical checkpoint-free report is
+[`validation/runs/exp7-4-training-report-20260731-v1/report.md`](validation/runs/exp7-4-training-report-20260731-v1/report.md).
+It extracts all **64** historical captions from the eight configurations below,
+binds the same eight evaluation images by SHA-256, and retains eight real
+image-aware, configuration-blind ARK judge requests and responses with unique
+IDs, usage, and latency. The raw request embeds the exact public image bytes,
+so the validator proves that the judge actually received the pinned image.
+
+The independent result is negative relative to the prose hypothesis: original
+SFT ranked highest at **1.9062/5**, while the matched SFT-base QK-Norm+Muon
+comparison was lower by **0.1876** after projection-only training and by
+**0.6250** after full VLM SFT. QK-Norm and Muon change together, so the report
+does not make a Muon-only causal claim.
+
+Historical source revisions, data hashes, base/VLM checkpoint hashes, RNG
+state, and stepwise logs were not retained. `reproduction_contract.json`
+therefore labels current immutable pre-QK-Norm and QK-Norm+Muon revisions,
+script-compatible dataset LFS objects, CLIP weights, images, and commands as a
+**future reproduction contract**, not historical provenance. Training
+checkpoints intentionally remain local and are not an acceptance artifact.
+
+Validate the retained package without a credential:
+
+```bash
+python chapter7/MiniMind-pretrain/validation/validate_vlm_evidence.py
+pytest -q chapter7/MiniMind-pretrain/validation/test_vlm_training_report_audit.py
+```
 
 ## English
 

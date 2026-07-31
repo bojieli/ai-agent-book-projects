@@ -12,7 +12,7 @@
 | :--: | --- | :--: | --- |
 | 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同一确定性寻宝环境下完成 10,000 局 Q-learning、100 局贪婪评估与官方 Moonshot `kimi-k3` 第一局实测；[双臂证据](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json)保留 17/17 原始 API 回执且零 fallback |
 | 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | ✅ | [规范训练报告](MiniMind-pretrain/validation/runs/exp7-3-training-report-20260731-v1/report.md)绑定原始与 QK-Norm + Muon 两臂在预训练、SFT、DPO 后的 49 份历史输出、8 次匿名 ARK 盲评、源码/数据/环境复现契约与完整 hash；盲评总分 3.6250 对 2.0417（+1.5833，7 胜 1 平），历史 loss 日志缺失的边界明确保留，checkpoint 不随书分发也不作为验收门槛 |
-| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | 配套说明 + 固定到 `ead791c…` 的外部 `bojieli/minimind-v`；当前 checkout 缺失，训练未运行 |
+| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | ✅ | [规范训练报告](MiniMind-pretrain/validation/runs/exp7-4-training-report-20260731-v1/report.md)保留 8 配置 × 8 图片的 64 份历史输出及 8 次真实图像感知匿名 ARK 评审，固定原版/改进版源码、数据、CLIP 与评估图片哈希；评审中原版 SFT 最高（1.9062），同 SFT 基座的 QK-Norm+Muon 两阶段均未占优。历史 revision/checkpoint 缺失被明确限定，checkpoint 不随书分发也不作为验收门槛 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [规范训练报告](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)绑定 RTX-4090 三阶段原始输出、15 份生成、5 次匿名 ARK 盲评、源码与当前复现 revision；韩语最终阶段 +1.7777，英语下降 0.8333，泡菜事实错误明确保留，checkpoint 不随书分发也不作为验收门槛 |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 两条真实语音 SFT 轨道：副语言标记建模与跨句音色一致；需训练后 adapter、音频和人工/自动对照证据才算完成 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 多语言思考 SFT 实现；需训练 checkpoint 与跨语言基准前后对照才算完成 |

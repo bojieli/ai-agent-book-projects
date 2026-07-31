@@ -1,0 +1,858 @@
+{
+  "acceptance": {
+    "all_64_historical_outputs_retained": true,
+    "all_eight_configuration_cells_retained": true,
+    "checkpoints_not_an_acceptance_artifact": true,
+    "eight_image_aware_arm_blind_judgments": true,
+    "future_reproduction_commands_declared": true,
+    "historical_provenance_limitations_explicit": true,
+    "historical_report_content_hashed": true,
+    "immutable_dataset_clip_and_eval_image_inputs_frozen": true,
+    "immutable_original_and_improved_source_revisions_frozen": true,
+    "passed": true,
+    "raw_judge_requests_responses_ids_usage_latency_retained": true,
+    "request_images_match_pinned_sha256": true,
+    "same_eight_images_present_in_every_cell": true
+  },
+  "best_counts": {
+    "muon_from_dpo_pretrained": 0,
+    "muon_from_dpo_sft": 2,
+    "muon_from_pretrain_pretrained": 1,
+    "muon_from_pretrain_sft": 0,
+    "muon_from_sft_pretrained": 2,
+    "muon_from_sft_sft": 1,
+    "without_muon_pretrained": 1,
+    "without_muon_sft": 1
+  },
+  "config_averages": {
+    "muon_from_dpo_pretrained": {
+      "coverage": 0.875,
+      "grounding_accuracy": 1.0,
+      "hallucination_control": 1.5,
+      "overall": 0.9375,
+      "visual_specificity": 0.375
+    },
+    "muon_from_dpo_sft": {
+      "coverage": 1.875,
+      "grounding_accuracy": 1.375,
+      "hallucination_control": 1.125,
+      "overall": 1.5312,
+      "visual_specificity": 1.75
+    },
+    "muon_from_pretrain_pretrained": {
+      "coverage": 0.75,
+      "grounding_accuracy": 0.75,
+      "hallucination_control": 1.375,
+      "overall": 0.875,
+      "visual_specificity": 0.625
+    },
+    "muon_from_pretrain_sft": {
+      "coverage": 1.375,
+      "grounding_accuracy": 1.125,
+      "hallucination_control": 0.5,
+      "overall": 1.0312,
+      "visual_specificity": 1.125
+    },
+    "muon_from_sft_pretrained": {
+      "coverage": 1.375,
+      "grounding_accuracy": 1.875,
+      "hallucination_control": 2.0,
+      "overall": 1.5312,
+      "visual_specificity": 0.875
+    },
+    "muon_from_sft_sft": {
+      "coverage": 1.5,
+      "grounding_accuracy": 1.25,
+      "hallucination_control": 1.125,
+      "overall": 1.2812,
+      "visual_specificity": 1.25
+    },
+    "without_muon_pretrained": {
+      "coverage": 1.5,
+      "grounding_accuracy": 1.875,
+      "hallucination_control": 2.625,
+      "overall": 1.7188,
+      "visual_specificity": 0.875
+    },
+    "without_muon_sft": {
+      "coverage": 2.375,
+      "grounding_accuracy": 2.125,
+      "hallucination_control": 1.375,
+      "overall": 1.9062,
+      "visual_specificity": 1.75
+    }
+  },
+  "experiment": "7-4",
+  "isolated_original_vs_qk_norm_muon_from_sft": {
+    "pretrained": {
+      "delta": -0.1876,
+      "original": 1.7188,
+      "qk_norm_muon_from_sft": 1.5312
+    },
+    "sft": {
+      "delta": -0.625,
+      "original": 1.9062,
+      "qk_norm_muon_from_sft": 1.2812
+    }
+  },
+  "judge": {
+    "blind_seed": 740731,
+    "calls": 8,
+    "image_aware": true,
+    "model": "doubao-seed-1-6-250615",
+    "provider": "ark",
+    "response_ids": [
+      "021785497883895355cac89e6d983ae8d30678a5b54f9afc7a30b",
+      "0217854978839024aa8fafbe9055982037cfb2f5ec29c229036d1",
+      "021785497883901cbe31712b8a2594f4e458beea699b0faabecc8",
+      "0217854978838946c88a39b89e3e3930a4a1be3bade8084753bc5",
+      "0217854979402514aa8fafbe9055982037cfb2f5ec29c22876438",
+      "021785497944549bdf0d8876ec55e469c432250c926544c9a9a49",
+      "0217854979562513b2c90331db17702ff1ef9ef62383e60dd8c12",
+      "02178549797786577f9606cef83fa80b3d313b2e208ca1cdfc167"
+    ],
+    "total_latency_ms": 557409.335,
+    "total_tokens": 43094
+  },
+  "limitations": [
+    "Historical base-LLM and VLM checkpoints are intentionally not distributed and were not recreated in this audit.",
+    "Historical source revisions, dataset identities, RNG state, hardware image, and stepwise logs were not retained.",
+    "Current immutable pins define a future reproduction contract and are not represented as the exact historical run.",
+    "The English captions are translations in a bilingual report, so translation can affect judging.",
+    "One image-aware judge call evaluates all eight anonymous candidates per image; scores are descriptive, not a powered significance test.",
+    "QK-Norm and Muon change together in the improved arm, so the report does not attribute effects to Muon alone."
+  ],
+  "per_image_config_scores": {
+    "Astronaut-Space.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "'sent to a new Earth' is not visible; no indication of a mission to a new Earth"
+        ],
+        "rationale": "Mentions astronaut ('spaceman') but includes unsupported claim about being 'sent to a new Earth'.",
+        "visual_specificity": 1
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "spacesuit is white, not black; no glasses; astronaut is standing, not sitting; no boats or plane in image; astronaut is on the left, not far right"
+        ],
+        "rationale": "Contains multiple incorrect details (color, position, invented objects) and misidentifies actions.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "'little boy' is not present; subject is an adult astronaut"
+        ],
+        "rationale": "Incorrectly identifies subject as a little boy instead of an astronaut.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "'museum or exhibition space' is incorrect; scene is inside a functional spacecraft, not a museum; 'objects displayed for visitors' is not visible"
+        ],
+        "rationale": "Partially mentions spacecraft and instruments but incorrectly claims it's a museum exhibit.",
+        "visual_specificity": 2
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no conversations or dialogue visible; irrelevant to image content"
+        ],
+        "rationale": "No visual support for conversations; unrelated to the scene.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "subject is an astronaut, not a soldier; no other people present; no smartphone or TV remote controls visible; not a 'blue ship' but a spacecraft interior"
+        ],
+        "rationale": "Completely misrepresents the scene with invented elements.",
+        "visual_specificity": 0
+      },
+      "without_muon_pretrained": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 3,
+        "material_errors": [
+          "astronaut is inside a spacecraft, not performing a spacewalk (no spacewalk visible)"
+        ],
+        "rationale": "Correctly identifies astronaut but incorrectly claims a spacewalk; astronaut is inside the spacecraft.",
+        "visual_specificity": 2
+      },
+      "without_muon_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no commercial airplane; no small hill or barn; no people observing; central object is a space station, not an airplane"
+        ],
+        "rationale": "Describes an invented scene with no relation to the actual image.",
+        "visual_specificity": 0
+      }
+    },
+    "Bicycle-Flowers.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "riding a bicycle (bicycle is parked)",
+          "bicycles everywhere (only one bicycle)",
+          "many cars (no cars)",
+          "this is my bicycle (no ownership indicated)"
+        ],
+        "rationale": "Contains entirely false claims about riding, multiple bicycles, cars, and personal ownership; no accurate scene elements.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 4,
+        "grounding_accuracy": 4,
+        "hallucination_control": 3,
+        "material_errors": [
+          "two adjacent buildings (only one building visible)",
+          "cup placed on the ground (no cup)"
+        ],
+        "rationale": "Accurately describes green parked bicycle with yellow/colorful flowers in front of a building; minor errors with extra buildings and cup.",
+        "visual_specificity": 4
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "park in Paris (no park/Paris context)",
+          "little boy rides (no boy; bicycle is parked)",
+          "riverbank (no riverbank)"
+        ],
+        "rationale": "Completely invented scenario with no relation to the image's bicycle, flowers, or building.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "outdoor garden (no garden; sidewalk next to building)",
+          "two other bicycles (only one bicycle)",
+          "vases (flowers in baskets, not vases)",
+          "several people (no people)",
+          "two cars (no cars)"
+        ],
+        "rationale": "Incorrectly claims garden setting, multiple bicycles, people, cars, and vases; only bicycle with flower baskets partially accurate.",
+        "visual_specificity": 1
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "video (still image)",
+          "horse working in a car (no horse or car)"
+        ],
+        "rationale": "Entirely unrelated to the image; mentions horse and car in a video, neither present.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "bench with green tablecloth (no bench)",
+          "potted plant (no potted plant)",
+          "car parked on right (no car)",
+          "stop sign (no stop sign)"
+        ],
+        "rationale": "Invents bench, potted plant, car, and stop sign; only green bicycle color is accurate but irrelevant to main scene.",
+        "visual_specificity": 1
+      },
+      "without_muon_pretrained": {
+        "coverage": 3,
+        "grounding_accuracy": 3,
+        "hallucination_control": 4,
+        "material_errors": [],
+        "rationale": "Accurately references the bicycle, tires/wheels, and flowers, though lacks details like green color and baskets.",
+        "visual_specificity": 2
+      },
+      "without_muon_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "row of vases (no vases; flowers in baskets)",
+          "three potted plants (no potted plants)",
+          "two people (no people)"
+        ],
+        "rationale": "Mentions bicycle and building but invents vases, potted plants, and people not present in the image.",
+        "visual_specificity": 1
+      }
+    },
+    "Chair-Elderly-Reading.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 3,
+        "grounding_accuracy": 5,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Correctly identifies elderly person on park bench with no hallucinations, but lacks reading activity.",
+        "visual_specificity": 2
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 4,
+        "grounding_accuracy": 4,
+        "hallucination_control": 4,
+        "material_errors": [
+          "multiple benches not visible"
+        ],
+        "rationale": "Correctly identifies elderly man on park bench holding a book, trees in background; only error is multiple benches.",
+        "visual_specificity": 4
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "young man instead of elderly",
+          "bed instead of park bench"
+        ],
+        "rationale": "No young man or bed visible; subject and setting are entirely incorrect.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "library instead of park",
+          "table instead of bench",
+          "cluttered bookshelves not present",
+          "potted plant not visible"
+        ],
+        "rationale": "Incorrect library setting; no table, bookshelves, or potted plant; only elderly man with glasses is correct.",
+        "visual_specificity": 1
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 3,
+        "grounding_accuracy": 5,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Correctly identifies elderly person on park bench with no hallucinations, but lacks reading activity.",
+        "visual_specificity": 1
+      },
+      "muon_from_sft_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "reading newspaper instead of book",
+          "multiple cars not visible",
+          "person at top of frame not present"
+        ],
+        "rationale": "Reads book (not newspaper); no cars or person at top; bench and park are correct but other details invented.",
+        "visual_specificity": 1
+      },
+      "without_muon_pretrained": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 4,
+        "material_errors": [
+          "incorrect gender (woman instead of man)"
+        ],
+        "rationale": "Correct park setting and reading a book, but misidentifies gender as woman.",
+        "visual_specificity": 2
+      },
+      "without_muon_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 3,
+        "hallucination_control": 2,
+        "material_errors": [
+          "several cars parked nearby not visible",
+          "another bench in the background not present"
+        ],
+        "rationale": "Correct elderly man with glasses reading a book on park bench, but invents cars and another bench.",
+        "visual_specificity": 3
+      }
+    },
+    "Dog-Woman-Sea.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no ball, palm, or throwing action in image"
+        ],
+        "rationale": "Completely irrelevant; no ball or throwing present.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 1,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "woman sits on sand, not a bench",
+          "woman not holding dog; dog sits beside her",
+          "woman wears sleeveless top/jeans, not a dress",
+          "no other people in background"
+        ],
+        "rationale": "Contains multiple hallucinations: bench, held dog, dress, and other people, all absent.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 4,
+        "material_errors": [
+          "dog is sitting, not walking",
+          "missing woman sitting beside dog"
+        ],
+        "rationale": "Correct about dog and seaside but misses woman and incorrectly states dog is walking.",
+        "visual_specificity": 1
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no beach bench; woman sits on sand",
+          "woman not holding dog; dog sits beside her",
+          "dog is adult, not a puppy",
+          "no other people, handbags, chairs, or bench"
+        ],
+        "rationale": "Filled with hallucinated objects (bench, handbags, chairs) and incorrect actions (holding puppy).",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 3,
+        "material_errors": [
+          "woman wears light blue sleeveless top and blue jeans, not white long dress"
+        ],
+        "rationale": "Identifies woman and dog but misrepresents clothing (white long dress vs. blue top/jeans).",
+        "visual_specificity": 1
+      },
+      "muon_from_sft_sft": {
+        "coverage": 2,
+        "grounding_accuracy": 1,
+        "hallucination_control": 1,
+        "material_errors": [
+          "woman not holding dog; dog sits beside her",
+          "no multiple figures in background",
+          "dog is brown and white, not just brown"
+        ],
+        "rationale": "Incorrectly claims woman holds dog and background has multiple people; dog color misrepresented.",
+        "visual_specificity": 1
+      },
+      "without_muon_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no young person decorating beach",
+          "no dog's head; whole dog sits beside woman"
+        ],
+        "rationale": "Entirely misrepresents scene; no decorating or dog's head present.",
+        "visual_specificity": 0
+      },
+      "without_muon_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 4,
+        "hallucination_control": 4,
+        "material_errors": [
+          "dog is not on a blue and white checkered blanket; dog sits on sand"
+        ],
+        "rationale": "Correctly identifies woman sitting on beach with dog beside her; falsely claims dog sits on a checkered blanket (not present).",
+        "visual_specificity": 3
+      }
+    },
+    "Panda-Grassland.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "subject is a black-and-white panda, not a white bear"
+        ],
+        "rationale": "Refers to the panda as a 'white bear'; panda has distinct black-and-white fur.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 4,
+        "grounding_accuracy": 3,
+        "hallucination_control": 2,
+        "material_errors": [
+          "panda is lying, not standing; no evidence of sun warmth"
+        ],
+        "rationale": "Accurately identifies giant panda with black and white markings on lush green grassland but incorrectly states it is standing and mentions unevidenced sun warmth.",
+        "visual_specificity": 4
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 3,
+        "grounding_accuracy": 4,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Accurately describes the panda as a bear with cute black-and-white fur, with no incorrect details.",
+        "visual_specificity": 3
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "panda is lying, not sitting; no flowers visible; no grove (only grass)"
+        ],
+        "rationale": "Identifies black-and-white bear on green grass but includes hallucinations (flowers, grove) and incorrect position (sitting).",
+        "visual_specificity": 2
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "subject is panda, not zebra; setting is grass, not woods"
+        ],
+        "rationale": "Incorrectly identifies subject as zebra and setting as woods; image shows a panda on grass.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 2,
+        "hallucination_control": 3,
+        "material_errors": [
+          "panda is lying, not standing"
+        ],
+        "rationale": "Identifies black-and-white panda and grass but incorrectly states the panda is standing (it is lying).",
+        "visual_specificity": 2
+      },
+      "without_muon_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no evidence of zoo; panda is not eating bamboo (lying on grass)"
+        ],
+        "rationale": "States panda is in a zoo eating bamboo; image shows panda lying on grass with no bamboo or zoo elements.",
+        "visual_specificity": 0
+      },
+      "without_muon_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "panda is not wearing glasses; no evidence of sun or rain; conflicting positions (sitting vs lying)"
+        ],
+        "rationale": "Identifies black-and-white panda on grass and mentions lying/resting but includes hallucinations (glasses, sun/rain) and conflicting position (sitting).",
+        "visual_specificity": 1
+      }
+    },
+    "Rainbow-Falls.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Vaguely refers to a 'water landscape' but lacks specific details about the waterfall or rainbow.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "fountain is not present (it is a waterfall)",
+          "umbrella on water is not present",
+          "visitors are not present"
+        ],
+        "rationale": "Incorrectly identifies the waterfall as a 'fountain' and adds non-existent elements like umbrella and visitors.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "cave is not present",
+          "water source is a waterfall, not droplets from a cave"
+        ],
+        "rationale": "Invents a 'cave' and misrepresents the water source; does not depict the waterfall.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "rough seas not present",
+          "cloudy sky not present (sky is clear)",
+          "mountain with white dome not present",
+          "people not present"
+        ],
+        "rationale": "Describes an unrelated seascape with people and mountains, not the waterfall scene.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 2,
+        "grounding_accuracy": 3,
+        "hallucination_control": 3,
+        "material_errors": [
+          "missing mention of waterfall and rainbow",
+          "perspective as 'from the mountaintop' is unclear"
+        ],
+        "rationale": "Accurately notes water glistening in sunlight but omits key elements (waterfall, rainbow) and has unclear perspective.",
+        "visual_specificity": 2
+      },
+      "muon_from_sft_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "waterfall is misidentified as a fountain"
+        ],
+        "rationale": "Falsely labels the waterfall as a 'fountain landscape' with no basis in the image.",
+        "visual_specificity": 1
+      },
+      "without_muon_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "rainbow bridge is not present",
+          "focus on water droplets is incorrect"
+        ],
+        "rationale": "Mentions non-existent 'rainbow bridge' and misfocuses on droplets; fails to describe the waterfall.",
+        "visual_specificity": 0
+      },
+      "without_muon_sft": {
+        "coverage": 3,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "highway is not present",
+          "giant rainbow flag is not present"
+        ],
+        "rationale": "Correctly identifies a large waterfall but includes hallucinated elements (highway, rainbow flag) not in the image.",
+        "visual_specificity": 2
+      }
+    },
+    "city-traffic.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no elevators visible; main subject (heavy traffic) not mentioned"
+        ],
+        "rationale": "Irrelevant focus on elevators and sidewalks; misses the prominent heavy traffic and tall buildings.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 2,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no parked cars (all cars are in traffic); no traffic lights visible; no bus present"
+        ],
+        "rationale": "Falsely claims parked cars, traffic lights, and a bus; these elements are not visible in the image.",
+        "visual_specificity": 2
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "no bus visible in the image"
+        ],
+        "rationale": "A tall building is present, but there is no bus. The main subject is heavy traffic, not a bus traveling to a building.",
+        "visual_specificity": 1
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 4,
+        "grounding_accuracy": 3,
+        "hallucination_control": 2,
+        "material_errors": [
+          "no motorcycles visible; no passersby (pedestrians) visible"
+        ],
+        "rationale": "Correctly identifies busy street, traffic, tall buildings, but falsely includes motorcycles and passersby.",
+        "visual_specificity": 3
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "mentions 'monitoring' which is not visible; traffic lights are not the main subject and not clearly present"
+        ],
+        "rationale": "The image depicts a busy nighttime city street with traffic and buildings, not monitoring of traffic lights. No monitoring activity or distinct traffic lights are visible.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_sft": {
+        "coverage": 5,
+        "grounding_accuracy": 5,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Accurately describes the nighttime busy city street with cars, trucks, high-rise buildings, and bustling traffic (stationary and moving) without hallucinations.",
+        "visual_specificity": 4
+      },
+      "without_muon_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 2,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Generic mention of 'city streets at nightfall' is accurate but lacks specific details about traffic, buildings, or activity.",
+        "visual_specificity": 0
+      },
+      "without_muon_sft": {
+        "coverage": 4,
+        "grounding_accuracy": 3,
+        "hallucination_control": 2,
+        "material_errors": [
+          "no pedestrians visible; no traffic lights clearly visible"
+        ],
+        "rationale": "Correctly identifies busy street, traffic, cars, truck, tall buildings, and streetlights, but falsely mentions pedestrians and traffic lights which are not present.",
+        "visual_specificity": 3
+      }
+    },
+    "dance.jpg": {
+      "muon_from_dpo_pretrained": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 1,
+        "material_errors": [
+          "actors (image shows a dancer, not actors)"
+        ],
+        "rationale": "Incorrectly identifies the subject as 'actors' instead of a dancer; no other accurate details.",
+        "visual_specificity": 0
+      },
+      "muon_from_dpo_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "black dress (actual: light-colored dress)",
+          "several people watching (no people present)",
+          "mobile phones (no phones in image)"
+        ],
+        "rationale": "Incorrectly describes the dress as black (it is light-colored) and invents non-existent people and mobile phones.",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_pretrained": {
+        "coverage": 1,
+        "grounding_accuracy": 1,
+        "hallucination_control": 2,
+        "material_errors": [
+          "performers (only one dancer)",
+          "colorful costumes (dress is light-colored, not colorful)"
+        ],
+        "rationale": "Vaguely mentions a performance but incorrectly refers to multiple 'performers' and 'colorful costumes' (image has one dancer in a light dress).",
+        "visual_specificity": 0
+      },
+      "muon_from_pretrain_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "walking down walkway (dancing on stage)",
+          "holding umbrella (no umbrella)",
+          "chairs along walkway (no chairs)",
+          "kites (no kites)"
+        ],
+        "rationale": "Contains multiple hallucinations: walkway, umbrella, chairs, and kites are all absent; the subject is dancing on stage, not walking.",
+        "visual_specificity": 0
+      },
+      "muon_from_sft_pretrained": {
+        "coverage": 4,
+        "grounding_accuracy": 5,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Accurately identifies a dancer performing on stage in a stylish outfit, with no false claims; aligns with visible elements (single dancer, stage, elegant dress).",
+        "visual_specificity": 3
+      },
+      "muon_from_sft_sft": {
+        "coverage": 0,
+        "grounding_accuracy": 0,
+        "hallucination_control": 0,
+        "material_errors": [
+          "tuxedo (wearing a dress)",
+          "holding microphone (no microphone)",
+          "several people around (no people)",
+          "wine glass and bottles (no such items)"
+        ],
+        "rationale": "Contains multiple false claims: tuxedo (dress), microphone, people, and wine glasses/bottles are all absent.",
+        "visual_specificity": 0
+      },
+      "without_muon_pretrained": {
+        "coverage": 3,
+        "grounding_accuracy": 5,
+        "hallucination_control": 5,
+        "material_errors": [],
+        "rationale": "Correctly states a dancer is performing on stage but lacks visual details (e.g., outfit description).",
+        "visual_specificity": 1
+      },
+      "without_muon_sft": {
+        "coverage": 2,
+        "grounding_accuracy": 2,
+        "hallucination_control": 1,
+        "material_errors": [
+          "dance steps soaring high (dancer is on stage floor)",
+          "several chairs on stage (no chairs)",
+          "clock on stage (no clock)"
+        ],
+        "rationale": "Mentions a dance on stage but invents 'soaring steps' (dancer is grounded) and non-existent chairs/clock.",
+        "visual_specificity": 1
+      }
+    }
+  },
+  "ranking_by_overall": [
+    "without_muon_sft",
+    "without_muon_pretrained",
+    "muon_from_dpo_sft",
+    "muon_from_sft_pretrained",
+    "muon_from_sft_sft",
+    "muon_from_pretrain_sft",
+    "muon_from_dpo_pretrained",
+    "muon_from_pretrain_pretrained"
+  ],
+  "retained": {
+    "cells": 8,
+    "images": 8,
+    "outputs": 64
+  },
+  "schema_version": "exp7-4-summary-v1",
+  "scientific_findings": {
+    "author_claims_are_historical_observations_not_acceptance_gates": true,
+    "muon_only_causal_claim_avoided": true,
+    "sft_minus_pretrained_average": 0.1718,
+    "top_configuration": "without_muon_sft",
+    "top_configuration_overall": 1.9062
+  },
+  "stage_averages": {
+    "pretrained": {
+      "coverage": 1.125,
+      "grounding_accuracy": 1.375,
+      "hallucination_control": 1.875,
+      "overall": 1.2656,
+      "visual_specificity": 0.6875
+    },
+    "sft": {
+      "coverage": 1.7812,
+      "grounding_accuracy": 1.4688,
+      "hallucination_control": 1.0312,
+      "overall": 1.4374,
+      "visual_specificity": 1.4688
+    }
+  },
+  "status": "passed"
+}

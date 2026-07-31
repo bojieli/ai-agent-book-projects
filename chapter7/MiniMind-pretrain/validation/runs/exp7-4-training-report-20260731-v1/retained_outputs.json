@@ -1,0 +1,366 @@
+{
+  "cell_count": 8,
+  "cells": [
+    {
+      "architecture": "original",
+      "base_llm_stage": "sft",
+      "config": "without_muon_pretrained",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 0",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "Water droplets on the rainbow bridge"
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "A young person decorating the beach with a dog's head."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "This dancer is performing on stage."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "An astronaut is performing a spacewalk in space."
+        },
+        {
+          "image": "city-traffic.jpg",
+          "output": "On the city streets at nightfall."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "In the zoo, a panda is eating bamboo."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "Using old bicycle tires and wheels on an old bicycle, adding flowers and decorations to the bicycle."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "An elderly woman reading a book in the park."
+        }
+      ],
+      "vlm_stage": "pretrained"
+    },
+    {
+      "architecture": "original",
+      "base_llm_stage": "sft",
+      "config": "without_muon_sft",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 1",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "This picture depicts a huge, colorful giant waterfall located next to a highway. From the image, you can see a massive and majestic giant waterfall. A giant rainbow flag hangs above the waterfall, adding visual appeal. The waterfall is surrounded by beautiful scenery, adding beauty to this picturesque landscape."
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "This image depicts a woman sitting on a beach with her dog beside her, while her dog sits on a blue and white checkered blanket."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "The picture depicts a woman performing a dance on stage, her dance steps soaring high above the stage. Several chairs are placed on the stage, one on the left side of the frame, another on the right, and one more on the right side.\nMultiple chairs are placed on the stage, one near the left, another on the right. There is also a clock on the stage, possibly to help the performer keep time."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "The image shows a huge spaceship that looks like a giant commercial airplane. This airplane is in the center of the frame, flying over a small hill and a barn. The airplane looks like a hangar, filled with all sorts of things.\nAround the airplane, some people might be observing this large commercial aircraft. Some of them seem to be watching the pilot's actions, while others might be admiring the details of the aircraft or enjoying the scene."
+        },
+        {
+          "image": "city-traffic.jpg",
+          "output": "This picture depicts a busy city street with heavy traffic, several cars and a truck moving. Tall buildings and streetlights illuminate the area, creating a vibrant and lively atmosphere.\nOn the street, various vehicles can be seen, including several cars and a truck. Some pedestrians also appear, possibly going about their daily activities or navigating the urban environment.\nOverall, this image captures a vibrant urban environment where vehicles, pedestrians, and traffic lights together create a lively atmosphere."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "The image depicts a black and white panda wearing glasses, a long-haired black and white panda sitting on the grass. This panda seems to be staring at the camera, it looks like it is looking at the camera's image. This panda seems to be lying on the grass resting, possibly to avoid the sun or rain."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "The image shows a bicycle parked outside a building, with a row of vases and bouquets visible in the background. The bicycle occupies a considerable portion of the frame, extending from left to right. Throughout the scene, there are three potted plants, one near the left, another on the right, and a third on the left.\nBesides the bicycle, there are two people in the scene, one standing on the right and the other near the left side of the image."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "The image depicts an elderly man wearing glasses sitting on a park bench. He seems to be reading a book, possibly enjoying the outdoor environment. Several cars are parked nearby, one in the center of the image and another on the right. There is also a bench in the background, right next to the person sitting on the bench."
+        }
+      ],
+      "vlm_stage": "sft"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "dpo",
+      "config": "muon_from_dpo_pretrained",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 0",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "Night streets with elevators and sidewalks."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "Spaceman sent to a new Earth"
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "You have a small ball in your palm, you throw it into the water."
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "Viewed on the water, water landscape"
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "An elderly person sitting on a park bench."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "This photo captures the cuteness and loveliness of this little white bear."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "Riding a bicycle on the street, bicycles everywhere, I saw many cars, this is my bicycle"
+        },
+        {
+          "image": "dance.jpg",
+          "output": "Performed by actors performing on stage"
+        }
+      ],
+      "vlm_stage": "pretrained"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "dpo",
+      "config": "muon_from_dpo_sft",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 1",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "This picture depicts a busy city street filled with skyscrapers and vehicles. At least twelve cars are driving on the street, some parked on the side, while others are moving.\nSeveral traffic lights can be seen, one on the left side of the street, another in the middle, and one on the right. Additionally, a bus is heading towards the center of the frame, adding to the lively atmosphere of this bustling city."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "The person in the picture is wearing a black spacesuit and glasses, sitting on what looks like a space shuttle. They seem to be looking at a space shuttle flying in front of them, which is located on the right side of the scene.\nBesides the space shuttle, there are two other small boats in the picture, one on the left and another on the right. A smaller plane can also be seen in the background, and the person is located on the far right."
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "The image depicts a woman sitting on a bench by the beach, holding a small dog outside to sunbathe. She is wearing a dress and seems to be enjoying the outdoors.\nIn the background, several other people can be seen scattered on the beach, some closer to the water and others farther away. They all look happy, possibly spending a good time with this woman."
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "The image shows a beautiful fountain surrounded by mist above it. The fountain is located above a high mountain, adding a magnificent background to the scene. An umbrella can be seen on the water, providing shade for visitors.\nThe terrain around the fountain consists of hills and mountains, offering a picturesque landscape for visitors. The presence of the fountain, water features, and surrounding mountains creates a serene and awe-inspiring atmosphere, making the area an ideal resort destination for photography enthusiasts and outdoor lovers."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "The image shows an elderly man sitting on a park bench, sitting in front of a book, holding it in his hands. The person looks relaxed and casual, possibly enjoying the outdoors.\nThere are several trees in the park, adding a natural atmosphere to the scene. Multiple benches are placed in different locations in the park for people to sit and enjoy the surroundings."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "The protagonist of the picture is a giant panda with black and white markings, standing on a lush, green grassland. This giant panda seems to be enjoying the warmth of the sun and the grass."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "The image shows a green bicycle parked on a lane with yellow flowers, loaded with colorful blossoms. The bicycle is parked in front of a building, with two adjacent buildings forming a stark contrast.\nBesides the bicycle and flowers, there is a cup placed on the ground, possibly on or near the sidewalk."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "In the image, a woman in a black dress is standing on a stage. She is performing on stage, surrounded by several people watching her, some of whom are holding mobile phones. These phones are scattered throughout the scene, possibly taken to capture the performance or communicate with the audience."
+        }
+      ],
+      "vlm_stage": "sft"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "pretrain",
+      "config": "muon_from_pretrain_pretrained",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 0",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "A bus traveling from the city center to a tall building"
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "🤖️: A little boy on a spaceship"
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "A dog walking by the seaside"
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "Water droplets falling from a cave"
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "A young man reading a book on an elderly person's bed."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "A bear with a layer of cute black-and-white fur"
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "In a park in Paris, a little boy rides a bicycle along the riverbank."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "Performers wearing colorful costumes and fashionable outfits during a performance."
+        }
+      ],
+      "vlm_stage": "pretrained"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "pretrain",
+      "config": "muon_from_pretrain_sft",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 1",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "This image depicts a bustling city street at night, with high-rise buildings and heavy traffic. Cars are driving in different directions, creating a vibrant urban scene. Cars, trucks, and motorcycles flow continuously, showing the bustling activity on this street.\nA tall building stands prominently in the frame, forming part of the city skyline. The unique architectural style and scale of this building catch the attention of passersby, who might be drawn to appreciate its aesthetic value."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "The image features a large spaceship or spacecraft, equipped with electronic devices and flight instruments. It appears to be from a museum or exhibition space, as various objects are displayed inside. These objects vary in size and seem to have been created by different professionals or scientists for visitors to explore."
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "In the picture, a woman sits on a beach bench holding a brown-and-white puppy. The puppy looks very happy, enjoying its time on the sand. In the background, two other people can be seen, also sitting on the same bench.\nBesides the woman and the puppy, various items appear in the scene, such as two handbags, a bench near the dog, a chair on the left, and a chair near the center of the scene."
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "This image shows a stunning scene of rough seas extending to the horizon under a cloudy sky. A large mountain with a white dome stands in the center of the frame, becoming the focal point. The sea seems to be crashing against the horizon, creating an impression of strong waves.\nIn this scene, several people are scattered around, possibly enjoying the sea and the spectacular sky. Some of these people are closer to the coast, while others are farther away, likely admiring the breathtaking view."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "An elderly man wearing glasses sits at a table in a library, surrounded by cluttered bookshelves and various books. He is sitting in a chair, focused on a book, possibly meditating or deep in thought. Behind him, a potted plant can be seen, adding a touch of greenery to the scene.\nThe library environment is very crowded, with bookshelves filled with all kinds of books, covering almost the entire wall. These books vary in size and position, some even overturned, giving the library a busy atmosphere."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "In the picture, a large black-and-white bear sits on green grass, with a few flowers scattered around. It seems to be enjoying time outdoors, possibly in a grove or on the grassland."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "The picture shows an outdoor garden with a bicycle parked between two other bicycles. Each bicycle has a basket filled with bright flowers. These flowers are arranged in various vases, adding color and vitality to the overall scene.\nIn the background, several people are in the garden, possibly enjoying a nice day. Some of them are near the bicycles, while others are elsewhere in the garden. Besides the bicycles, two cars are parked nearby, one near the foreground and the other farther away."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "This image depicts a woman in elegant clothing walking down a wide walkway in the dark. She seems to be attending a dance, as she holds an umbrella, possibly to shield from rain or sunlight.\nChairs are placed along the walkway, likely for the audience to sit and enjoy the dance. Several kites can be seen in the picture, adding a joyful atmosphere to the dance."
+        }
+      ],
+      "vlm_stage": "sft"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "sft",
+      "config": "muon_from_sft_pretrained",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 0",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "Monitoring of nighttime traffic lights"
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "A series of conversations between \"our ship\" and \"our ship.\""
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "A cute woman in a white long dress and a cute pet dog"
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "From the mountaintop, water glistens in the sunlight."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "An elderly person sitting on a bench in the park"
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "A cute zebra in the woods"
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "This video uses a horse working in a car."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "A dancer performing on stage, wearing a stylish outfit."
+        }
+      ],
+      "vlm_stage": "pretrained"
+    },
+    {
+      "architecture": "qk_norm_muon",
+      "base_llm_stage": "sft",
+      "config": "muon_from_sft_sft",
+      "historical_command": "$ python eval_vlm.py --load 0 --model 1",
+      "output_count": 8,
+      "outputs": [
+        {
+          "image": "city-traffic.jpg",
+          "output": "This photo captures a busy city street at night, with cars and trucks on the road. The street is lined with high-rise buildings, creating a bustling atmosphere. The street is crowded with traffic, including multiple cars and a truck. Some of these vehicles are stationary, while others are moving.\nA large number of high-rise buildings appear in the frame, highlighting the urban environment. These buildings vary in size and shape, forming the architectural landscape of the area. This nighttime photo emphasizes the dynamic nature of city life, with various elements combining to create the character of a night-time metropolis."
+        },
+        {
+          "image": "Astronaut-Space.jpg",
+          "output": "The scene in the image shows a soldier sitting on a blue ship, which contains a large TV screen. The soldier appears to be looking at a smartphone screen, possibly for monitoring or communicating with the outside world.\nThere are several other people on the ship, possibly crew members or scientists. Some of them are scattered around the ship, while others are near the TV screen. Additionally, two TV remote controls are placed on the ship, indicating they might be monitoring or interacting with the equipment."
+        },
+        {
+          "image": "Dog-Woman-Sea.jpg",
+          "output": "In the photo, a woman sits on the beach holding a large brown dog. She seems to be posing with the dog for the picture. The dog is on the left side of the frame.\nIn the background, multiple figures can be seen scattered across the beach. Some of them appear to be enjoying the beach, while others might be sightseeing or socializing."
+        },
+        {
+          "image": "Rainbow-Falls.jpg",
+          "output": "This image showcases an impressive fountain landscape, towering high on a grassy hill. The fountain occupies a significant portion of the frame, extending from the center to the far right, looking like a massive work of art.\nThe surroundings of the fountain, including the hill below and some trees in the background, provide a picturesque backdrop for this impressive fountain."
+        },
+        {
+          "image": "Chair-Elderly-Reading.jpg",
+          "output": "In the picture, an elderly man sits on a park bench reading a newspaper. He seems to be enjoying a peaceful time in the park, perhaps resting in the afternoon or pondering something.\nIn the background, multiple cars can be seen parked near the park, creating a tranquil atmosphere. Additionally, a person appears at the top of the frame, possibly watching the man read the newspaper, perhaps enjoying nature or waiting for someone."
+        },
+        {
+          "image": "Panda-Grassland.jpg",
+          "output": "The picture shows a small black-and-white panda standing on a patch of grass. This cute panda looks very relaxed and comfortable."
+        },
+        {
+          "image": "Bicycle-Flowers.jpg",
+          "output": "The picture shows a green bicycle parked next to a bench covered with a green tablecloth. This bench seems designed for gatherings, as it is near a potted plant.\nBesides the bicycle and the potted plant, a car is parked on the right side of the scene. A stop sign can be seen in the background, adding an urban touch to the image."
+        },
+        {
+          "image": "dance.jpg",
+          "output": "The image shows a woman in a tuxedo standing on a stage, holding a microphone, seemingly delivering an engaging performance. She looks like an actor or performer, with several people around her, possibly the audience or participants.\nVarious items are placed on the stage, including a wine glass and several bottles. Some of these bottles are near the stage, while others are scattered in the background. The scene captures an event on stage, with the actor or performer delivering a memorable show for the audience."
+        }
+      ],
+      "vlm_stage": "sft"
+    }
+  ],
+  "configs": [
+    "without_muon_pretrained",
+    "without_muon_sft",
+    "muon_from_dpo_pretrained",
+    "muon_from_dpo_sft",
+    "muon_from_pretrain_pretrained",
+    "muon_from_pretrain_sft",
+    "muon_from_sft_pretrained",
+    "muon_from_sft_sft"
+  ],
+  "experiment": "7-4",
+  "images": [
+    "Rainbow-Falls.jpg",
+    "Dog-Woman-Sea.jpg",
+    "dance.jpg",
+    "Astronaut-Space.jpg",
+    "city-traffic.jpg",
+    "Panda-Grassland.jpg",
+    "Bicycle-Flowers.jpg",
+    "Chair-Elderly-Reading.jpg"
+  ],
+  "output_count": 64,
+  "schema_version": "exp7-4-retained-outputs-v1",
+  "source_report": "chapter7/MiniMind-pretrain/README.md",
+  "source_report_sha256": "2ce3f176e7c448eff36b1dacf2477656a43caa8bfc22ac6cf56246074d91eec1"
+}

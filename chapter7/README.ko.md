@@ -9,8 +9,8 @@
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
 | 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 동일한 결정론적 보물찾기 환경에서 Q-learning 10,000회, 탐욕 정책 평가 100회, 공식 Moonshot `kimi-k3`의 첫 에피소드 실측을 완료했습니다. [두 실험군의 증거](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json)에 원본 API 응답 기록 17/17건을 보존했으며 fallback은 없었습니다. |
-| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | 📖 | 연계 설명과 `8bdc5d9…`에 고정된 외부 `bojieli/minimind` 저장소를 사용합니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
-| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | 연계 설명과 `ead791c…`에 고정된 외부 `bojieli/minimind-v` 저장소를 사용합니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
+| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) | ✅ | [정식 학습 보고서](MiniMind-pretrain/validation/runs/exp7-3-training-report-20260731-v1/report.md)는 원본 및 QK-Norm+Muon 모델의 사전 학습·SFT·DPO 단계에서 나온 역사적 출력 49개, 익명 ARK 심사 8회, 고정된 소스·데이터·환경 재현 계약을 보존합니다. 역사적 체크포인트는 배포하지 않으며 승인 요건이 아닙니다. |
+| 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | ✅ | [정식 학습 보고서](MiniMind-pretrain/validation/runs/exp7-4-training-report-20260731-v1/report.md)는 8개 VLM 구성 × 8개 이미지의 역사적 출력 64개, 실제 이미지 기반 익명 ARK 심사 8회, 고정된 소스·데이터·CLIP·평가 이미지 해시를 보존합니다. 원본 SFT가 1.9062로 가장 높았고 동일 SFT 기반 QK-Norm+Muon 비교는 개선되지 않았다는 부정적 결과도 명시합니다. 역사적 체크포인트는 배포하지 않으며 승인 요건이 아닙니다. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [정식 학습 보고서](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)는 RTX 4090 3단계 원시 출력, 15개 생성, 5회 익명 ARK 심사, 소스 해시와 현재 재현 revision을 결합합니다. 최종 한국어는 +1.7777, 영어는 -0.8333이었고 김치 사실 오류도 명시했습니다. 체크포인트는 배포하지 않으며 승인 요건이 아닙니다. |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 준언어 태그 모델링과 문장 간 음색 일관성을 다루는 두 가지 실제 음성 SFT 트랙입니다. 학습 후 어댑터, 음성 결과물, 수동·자동 비교 증거가 있어야 완료로 봅니다. |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 다국어 사고 SFT 구현입니다. 학습 체크포인트와 언어 간 벤치마크의 학습 전후 비교가 있어야 완료로 봅니다. |

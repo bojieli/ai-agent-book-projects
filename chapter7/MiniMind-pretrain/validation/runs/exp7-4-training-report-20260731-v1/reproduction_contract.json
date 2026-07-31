@@ -1,0 +1,178 @@
+{
+  "checkpoint_policy": {
+    "acceptance_artifact": false,
+    "distributed_with_book": false,
+    "reason": "Training checkpoints are intentionally not distributed to readers.",
+    "required_artifact": "reproducible evidence-backed training report"
+  },
+  "experiment": "7-4",
+  "future_reproduction": {
+    "base_llm_source": {
+      "dependency": "Use the Experiment 7-3 data/commands to produce original-SFT and improved pretrain/SFT/DPO 768-dimension base checkpoints.",
+      "original_files_sha256": {
+        "eval_model.py": "b9f7ea9d7f517551362bbf2da8f1de006b8c734bcba774b2be752bc63cc4349d",
+        "model/model_minimind.py": "7cb069cb0cb0dfa123cf11ea394d0001270bc683c0a2dfe4120fc3b861ffc0a4",
+        "trainer/train_dpo.py": "5e556a3089e43681638cdbf5adafb9d085bb1de5e4ea8da3ee522dfae02e3599",
+        "trainer/train_full_sft.py": "a57422f1df80bf2867f31f3b4a646a92ac7f66729e98a3b32cd1ec4d6780cb8b",
+        "trainer/train_pretrain.py": "ddd122645a9f1043bc8dac69a81ac51d2df95df8745d25faed7963d38fedc328"
+      },
+      "original_revision": "6d160ea20b98324632c4447ee63ec7cfa9becd20",
+      "qk_norm_muon_files_sha256": {
+        "eval_model.py": "43930a4b55048a4a3ffa17eb78ae67d59582d639aa9365f0bbf41ba149128af8",
+        "model/model_minimind.py": "2d33988711c704be6a22c4c61489b23106a2340a7cb8b97ebe3e40f30819cbb0",
+        "trainer/train_dpo.py": "97f2c31cc8bc21a777e2efcb5e2fa35a49e4e9e3698db120148f8a0b2f678449",
+        "trainer/train_full_sft_muon.py": "acd0b7db5b1d8b25d3c3103f92d68a7d381f9322a1b33bbec34be3d005930bad",
+        "trainer/train_pretrain_muon.py": "fc83d07754ec3a8c156b6b8bfc0fd4326edecb72efabc5e08ae4ff5e3a7029bc"
+      },
+      "qk_norm_muon_revision": "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795",
+      "repository": "bojieli/minimind"
+    },
+    "commands": {
+      "dataset": "git clone https://huggingface.co/datasets/jingyaogong/minimind-v_dataset dataset-source && git -C dataset-source checkout --detach ac9d03a3fd26a2d8e74bda374d9a2ddba49e4c1b && cp dataset-source/{pretrain_data.jsonl,sft_data.jsonl} dataset/ && unzip dataset-source/pretrain_images.zip -d dataset && unzip dataset-source/sft_images.zip -d dataset",
+      "evaluation": "For every isolated out_dir, preserve both checkpoints, copy the selected *_muon_768.pth name to eval_vlm.py's pretrain_vlm_768.pth or sft_vlm_768.pth compatibility name when needed, then run python eval_vlm.py --load 0 --model_mode 0 and --model_mode 1 on the eight hash-pinned images with seed 1337.",
+      "improved_matrix": "For each BASE in pretrain,sft,dpo, install the corresponding Experiment-7-3 QK-Norm+Muon 768-dimension checkpoint as runs/muon-from-$BASE/out/llm_768.pth, then run train_pretrain_vlm_muon.py and train_sft_vlm_muon.py with the same four-epoch data arguments in that isolated out_dir.",
+      "improved_source": "git clone https://github.com/bojieli/minimind-v.git sources/qk-norm-muon-minimind-v && git -C sources/qk-norm-muon-minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5",
+      "original_pretrain_vlm": "install -m 0644 <exp7-3-original-sft-768.pth> runs/original/out/llm_768.pth && cd trainer && torchrun --nproc_per_node=8 train_pretrain_vlm.py --out_dir ../runs/original/out --epochs 4 --hidden_size 768 --num_hidden_layers 16 --data_path ../dataset/pretrain_data.jsonl --images_path ../dataset/pretrain_images --use_wandb",
+      "original_sft_vlm": "cd trainer && torchrun --nproc_per_node=8 train_sft_vlm.py --out_dir ../runs/original/out --epochs 4 --hidden_size 768 --num_hidden_layers 16 --data_path ../dataset/sft_data.jsonl --images_path ../dataset/sft_images --use_wandb",
+      "original_source": "git clone https://github.com/bojieli/minimind-v.git sources/original-minimind-v && git -C sources/original-minimind-v checkout --detach 765908051d0837d60cecfb93f8390334e2e55f1e",
+      "vision_encoder": "git clone https://huggingface.co/openai/clip-vit-base-patch16 model/vision_model/clip-vit-base-patch16 && git -C model/vision_model/clip-vit-base-patch16 checkout --detach 57c216476eefef5ab752ec549e440a49ae4ae5f3"
+    },
+    "environment": {
+      "book_lock": "uv.lock",
+      "book_pyproject": "pyproject.toml",
+      "boundary": "The book lock freezes a future Python environment; CUDA, drivers, and the historical GPU image were not retained.",
+      "install": "uv sync --locked --python 3.12 --extra ch7 --extra dev"
+    },
+    "evaluation_images": {
+      "Astronaut-Space.jpg": {
+        "sha256": "f466cdafecbdb85d2bad586896db5db3313afe18f9b3505667756cd25b747747",
+        "source_filename": "太空宇航员-Astronaut-Space.jpg"
+      },
+      "Bicycle-Flowers.jpg": {
+        "sha256": "44fae0fafcd52c20b9bcaded897facbff00f61019cdd0aea543addf8499ad899",
+        "source_filename": "自行车鲜花-Bicycle-Flowers.jpg"
+      },
+      "Chair-Elderly-Reading.jpg": {
+        "sha256": "8fe91a90e837c33230d21cfe7ba5020e71b3ae99ac4c3fbd6d32cb54f51def53",
+        "source_filename": "椅子老人看书-Chair-Elderly-Reading.jpg"
+      },
+      "Dog-Woman-Sea.jpg": {
+        "sha256": "ba90d8b8738a44eac70811be5c89f767492b167ad4f6f6c31aa4591837d7e3dc",
+        "source_filename": "小狗美女海边-Dog-Woman-Sea.jpg"
+      },
+      "Panda-Grassland.jpg": {
+        "sha256": "0b7610a881039f0effdbfa46e9bb189132443d3ce2956856e8adf66d1ca22f8c",
+        "source_filename": "熊猫草地-Panda-Grassland.jpg"
+      },
+      "Rainbow-Falls.jpg": {
+        "sha256": "1c8b74debaceb2e0bb6171b182084afe49288a0cc8089eb91eac69d067c27b10",
+        "source_filename": "彩虹瀑布-Rainbow-Falls.jpg"
+      },
+      "city-traffic.jpg": {
+        "sha256": "73e90d82fbc5b1cf43b40de782b443f93f43a34e66b8ddebf3146d5dc1f83e00",
+        "source_filename": "城市车水马龙-city-traffic.jpg"
+      },
+      "dance.jpg": {
+        "sha256": "939e3132c8d3aec81f66f8aa928b476aaa25e00d94f1097f4974e73c913d5d8c",
+        "source_filename": "舞蹈-dance.jpg"
+      }
+    },
+    "vision_encoder": {
+      "file": {
+        "bytes": 598641023,
+        "lfs_sha256": "ec89c7b09c749a60aae3c9cd910516f24b58214a7df060b48962d14c469cfbf0",
+        "path": "pytorch_model.bin"
+      },
+      "repository": "openai/clip-vit-base-patch16",
+      "revision": "57c216476eefef5ab752ec549e440a49ae4ae5f3"
+    },
+    "vlm_dataset": {
+      "files": {
+        "pretrain_data.jsonl": {
+          "bytes": 134315765,
+          "lfs_sha256": "abc9f2ba44190646692fbe7e2b49c366c5045490989fb32d2c5e960dd0ee10e4"
+        },
+        "pretrain_images.zip": {
+          "bytes": 2614907051,
+          "lfs_sha256": "64d56cee145bed75bc7f94c9cbf58882c41c4a0fea993014e27de7490b49e8b7"
+        },
+        "sft_data.jsonl": {
+          "bytes": 173137988,
+          "lfs_sha256": "c1993d38c3a22a8bdfee65affc82d6559e5bb62e785b0f21c9151c75116151fc"
+        },
+        "sft_images.zip": {
+          "bytes": 1026332147,
+          "lfs_sha256": "89ee34facc6793c51613613e0b10cac078942282f5fdec48d85751c6224bc3c2"
+        }
+      },
+      "repository": "jingyaogong/minimind-v_dataset",
+      "revision": "ac9d03a3fd26a2d8e74bda374d9a2ddba49e4c1b",
+      "selected_for_jsonl_script_compatibility": true
+    },
+    "vlm_source": {
+      "not_claimed_as_historical_revisions": true,
+      "original_files_sha256": {
+        "dataset/lm_dataset.py": "df20d57460d2845841ddf2e0faced1af1f7ec169e7fda3cd50fe3b2854288a92",
+        "eval_vlm.py": "9d883e4adbab0a7b88fd0cb9034132559a365387ec273ac4811cdd5ad28d5cda",
+        "model/model_minimind.py": "105429e93dcbe87145264d72d46a6add7639666036e999628c76ae50582507dc",
+        "model/model_vlm.py": "4ee42b298db68f30fbfa06d7686aa375d41a697628c770d0a134bca40ca9ea80",
+        "model/tokenizer.json": "d98595c6aef70d95f72748582fb9b4f53d76dd58c1ae1dd702ad7c84e1caf5e4",
+        "model/tokenizer_config.json": "dbbdb7eea33aba5c2608471494c93f650a2cf46fbe4a7489e531537ddadee746",
+        "requirements.txt": "a9bddf49d3ccbc9f8a2508ea039aebc0b996dccb0d3618d1b119af53a5d49869",
+        "trainer/train_pretrain_vlm.py": "4d30d54a940ae2eced204971cc03aafb3eb41a5c84c9f033cfdf162e63924a4d",
+        "trainer/train_sft_vlm.py": "8e3b920a6a135eb126bbeea07e2db748729cdd86050925b282a80537bc324e5f"
+      },
+      "original_revision": "765908051d0837d60cecfb93f8390334e2e55f1e",
+      "qk_norm_muon_files_sha256": {
+        "dataset/lm_dataset.py": "df20d57460d2845841ddf2e0faced1af1f7ec169e7fda3cd50fe3b2854288a92",
+        "eval_vlm.py": "9d883e4adbab0a7b88fd0cb9034132559a365387ec273ac4811cdd5ad28d5cda",
+        "model/model_minimind.py": "4771bc4b2ac367a6e6415c42c30bcdb54bec0397708f87de3c390042680b1e9e",
+        "model/model_vlm.py": "4ee42b298db68f30fbfa06d7686aa375d41a697628c770d0a134bca40ca9ea80",
+        "model/tokenizer.json": "e489029175fb3f94b8211a120a72a2ee41a664db65b828d077c7bde989c845a9",
+        "model/tokenizer_config.json": "190cc4738bac3b6f6b563376019c581b320fdb0260a03b9d5ab806296c8c6bb8",
+        "requirements.txt": "a9bddf49d3ccbc9f8a2508ea039aebc0b996dccb0d3618d1b119af53a5d49869",
+        "trainer/muon.py": "00c2c6a225edeb55433df0724c3c74f6ff98ac4b2cc73c4aafcff686824f6267",
+        "trainer/train_pretrain_vlm_muon.py": "f39af354c588747d9d5e522c9374a7f59a35d57aa649da74957da67d95d25bc6",
+        "trainer/train_sft_vlm_muon.py": "1fd56b3e8bed2714b4d10ceba5d57ada0b95d00dfbfb514481498fef0c0dd03d"
+      },
+      "qk_norm_muon_revision": "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5",
+      "repository": "bojieli/minimind-v"
+    }
+  },
+  "historical_evidence_boundary": {
+    "claim": "The author's report establishes that eight VLM configurations were evaluated on eight images. It does not establish byte identity of the historical code, datasets, base/VLM checkpoints, or RNG state.",
+    "eight_historical_cells_and_64_outputs_retained": true,
+    "historical_base_checkpoint_hashes_retained": false,
+    "historical_dataset_hashes_retained": false,
+    "historical_rng_and_stepwise_logs_retained": false,
+    "historical_source_revisions_retained": false,
+    "historical_training_executed": true,
+    "historical_vlm_checkpoint_hashes_retained": false
+  },
+  "reported_training_design": {
+    "base_llm_stages": [
+      "pretrain",
+      "sft",
+      "dpo"
+    ],
+    "parameter_count_millions": {
+      "original": 104.622,
+      "qk_norm_muon": 104.625
+    },
+    "projection_pretraining_freezes_llm": true,
+    "reported_epochs": 4,
+    "seed_in_current_source": 1337,
+    "sft_unfreezes_full_model": true,
+    "source_verified_mechanisms": {
+      "improved_revision_has_qk_norm_before_rope": true,
+      "improved_revision_uses_muon_for_selected_2d_weights": true,
+      "original_revision_precedes_qk_norm_commit": true,
+      "vision_encoder_is_frozen_clip": true
+    },
+    "vlm_stages": [
+      "pretrained",
+      "sft"
+    ]
+  },
+  "schema_version": "exp7-4-reproduction-contract-v1"
+}
