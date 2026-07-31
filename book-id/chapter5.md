@@ -57,7 +57,7 @@ Produk Agent serbaguna seperti Manus menggabungkan tiga kemampuan utama — Deep
 
 Mengapa Coding Agent yang menjadi intinya dibandingkan dua yang lain? Karena hampir semua pembuatan konten yang efisien pada akhirnya bermuara pada kode. Sebuah PPT pada dasarnya adalah kode dalam format OOXML (Office Open XML, standar terbuka Microsoft untuk dokumen perkantoran); dokumen Word dan laporan PDF dapat dihasilkan melalui kode; analisis data dan visualisasi dilakukan dengan skrip Python; bahkan alur kerja GUI yang sukses dapat direkam sebagai kode RPA (Robotic Process Automation) yang dapat digunakan kembali (Computer Use itu sendiri dibahas pada Bab 9, dan mekanisme untuk merekam urutan operasi dirinci pada Bab 8). Pencarian dan sintesis informasi dari Deep Research dapat dicapai melalui request web dan parsing yang digerakkan oleh kode. Meskipun Computer Use lebih serbaguna, pemanggilan API atau kode langsung umumnya lebih murah, lebih cepat, dan lebih andal untuk operasi yang setara. Pembuatan kode adalah fondasi kemampuan yang paling efisien, berbiaya paling rendah, dan paling bisa digunakan kembali.
 
-![Figure 5-1: Coding Agent Core in OpenClaw Architecture](images/fig5-1.svg)
+![Gambar 5-1: Inti Coding Agent dalam Arsitektur OpenClaw](images/fig5-1.svg)
 
 Mari kita pahami arsitektur ini melalui alur eksekusi konkret. Misalkan pengguna meminta, "Bantu saya menganalisis data penjualan kuartal lalu dan buat laporan ringkasannya":
 
@@ -75,7 +75,7 @@ Lebih krusial lagi, karena Agent dapat menulis file, ia memiliki sarana teknis u
 
 **Batas Aplikabilitas: Agent Mana yang Memiliki Coding sebagai Arsitektur Intinya.** Kesimpulan bahwa "Coding Agent adalah inti dari Agent serbaguna" terutama berlaku untuk **Agent serbaguna yang menargetkan tugas-tugas open-ended** — skenario seperti deep research, pembuatan konten, dan pemrosesan data, di mana batas tugas tidak pasti dan bentuk artefaknya beragam. Dalam skenario ini, tidak mungkin untuk menyebutkan semua alat yang dibutuhkan sebelumnya; pembuatan kode, sebagai sebuah meta-capability, memberikan jalur paling ekonomis untuk secara dinamis memperluas batas kemampuan, menjadikannya inti dari arsitektur. Sebaliknya, Agent layanan pelanggan domain vertikal dan asisten suara beroperasi di ruang tugas yang relatif tertutup, dengan arsitektur inti yang dibangun di sekitar proses bisnis tetap, alat domain, dan strategi dialog; di sana, kode adalah sebuah alat di dalam kotak peralatan alih-alih pusat arsitektur (dalam contoh τ-bench di akhir bab ini—sebuah benchmark yang mensimulasikan skenario layanan pelanggan—kode memainkan peran persis sebagai alat policy-verification). Namun, bahkan pada skenario yang terakhir disebutkan, coding merupakan kemampuan dasar yang sangat diperlukan: perhitungan presisi, pemrosesan data, dan verifikasi aturan semuanya bergantung padanya — ini menggemakan pernyataan di bagian sebelumnya, "Coding sebagai Kemampuan Dasar Agent": apakah coding merupakan arsitektur inti atau tidak, sangat bergantung pada skenario, tetapi memiliki kemampuan coding adalah baseline yang umum bagi semua Agent.
 
-### Desain Sessionless
+### Desain Tanpa Sesi
 
 Selanjutnya, kita membahas dua desain — mode interaksi "always available" dan arsitektur keamanan — yang pada pandangan pertama mungkin tampak tidak terkait dengan topik Coding Agent. Namun, keduanya secara langsung menentukan bagaimana Agent mengelola lingkungan eksekusi kode dan status file system, yang merupakan perhatian inti dari sebuah Coding Agent. (Pembaca yang ingin memahami terlebih dahulu bagaimana sebuah Coding Agent bekerja selangkah demi selangkah dapat melompat ke bagian "Alur Kerja Keseluruhan dari sebuah Coding Agent" dan kembali ke sini untuk desain interaksi dan keamanan.)
 
@@ -259,7 +259,7 @@ Lebih berbahaya daripada *breaker* titik tunggal adalah **spiral kematian (death
 
 Kembali ke pertanyaan pemikiran di Bab 1, sebuah Agent bisa terjebak dalam putaran bukan hanya karena kehilangan hasil *tool*, tetapi juga oleh kesalahan *tool* identik yang berulang, panggilan terhalusinasi, kompresi konteks yang kehilangan keadaan kunci (*key state*), atau tugas yang tidak dapat dipecahkan. Deteksi bergantung pada "klasifikasi kesalahan + pengenalan pola", pemulihan bergantung pada "eskalasi bertahap", dan penghentian pada "*circuit breakers* + batas global + eskalasi manusia"—secara bersama-sama ini adalah jawaban lengkap Harness untuk "Agent mungkin berjalan selamanya." Apa yang dipecahkan oleh mekanisme ini bukanlah "kemampuan model yang tidak memadai" melainkan "ketangguhan sistem di bawah kondisi batas": model akan terus menjadi lebih kuat, tetapi jaringan akan terputus, proses akan macet (*hang*), dan pengguna akan melakukan hal-hal tak terduga. Secara lebih mendasar, **keandalan sebuah Agent tidak ditentukan oleh apakah ia membuat kesalahan, tetapi oleh apakah setiap kelas kesalahan memiliki jalur deteksi, pemulihan, dan penghentian yang sesuai**.
 
-### Tips Implementasi untuk Coding Agents
+### Kiat Implementasi untuk Coding Agent
 
 Alur kerja yang dijelaskan di atas adalah idealnya. Untuk membuatnya berjalan dalam praktiknya memerlukan beberapa teknik implementasi yang konkret—cara untuk meningkatkan kecepatan respons dan memangkas konsumsi konteks tanpa menurunkan kualitas pemikiran (*quality of thought*). Ini adalah teknik-teknik Agent secara umum dari Bab 2 dan 4, yang diterapkan pada domain pemrograman.
 
@@ -397,7 +397,7 @@ Stephen Wolfram, pencipta Mathematica, menawarkan sebuah wawasan mendalam mengen
 > **Pendekatan Teknis**: Lengkapi Agent dengan sebuah Code Interpreter yang berisi pustaka python-constraint. Agent tersebut menerjemahkan teka-teki logika, seperti masalah Kesatria dan Bajingan (Knights and Knaves), ke dalam model kendala formal: ia mengidentifikasi variabel (identitas setiap penduduk pulau), mengkodekan aturan seperti "kesatria selalu berkata jujur" sebagai kendala, dan memanggil solver untuk menemukan penugasan yang memenuhi kriteria (satisfying assignment).
 
 >
-> **Acceptance Criteria**: Evaluasi menggunakan [K&K Puzzle dataset](https://huggingface.co/datasets/K-and-K/perturbed-knights-and-knaves). Mode *code-assisted* harus mencapai akurasi solusi di atas 90%, jauh lebih tinggi daripada mode *pure thinking*.
+> **Kriteria Penerimaan**: Evaluasi menggunakan [dataset K&K Puzzle](https://huggingface.co/datasets/K-and-K/perturbed-knights-and-knaves). Mode berbantuan kode harus mencapai akurasi solusi di atas 90%, jauh lebih tinggi daripada mode penalaran murni.
 >
 
 Eksperimen ini juga mengungkapkan pola yang lebih umum: *model* dan *harness* saling bertukar peran (*trade-off*). Ketika *model* cukup kuat, *harness* bisa menjadi lebih tipis—*model* menalar dengan benar dengan sendirinya, dan keuntungan dari *code solver* semakin menyempit. Ketika *model* lebih lemah, *harness* harus bekerja ekstra—mengalihkan penalaran logis utama ke *code* dan *constraint solver* untuk menjamin kebenaran. Itulah sebabnya eksperimen ini sengaja menggunakan *model* yang lebih lemah, untuk memperbesar kontras: pada *model* yang lemah, *pure thinking* terus-menerus salah hitung dan bantuan kode secara dramatis meningkatkan akurasi; pada *reasoning model* yang cukup kuat, *pure thinking* sering memecahkan setiap teka-teki, dan keuntungan dari bantuan kode menyatu mendekati nol. Seberapa tebal *harness* yang seharusnya, kemudian, tergantung pada di mana batas kemampuan *model* Anda berada—sebuah premis yang mudah diabaikan ketika mengevaluasi teknik Agent apa pun: *harness* yang sama, dipasangkan dengan *model* dari kekuatan yang berbeda, dapat mendukung kesimpulan yang berlawanan.
@@ -497,7 +497,7 @@ Dengan demikian pengamanan tiga tingkat menjadi lengkap: (1) aturan bahasa alami
 > **Hasil yang diharapkan**: Kelompok eksperimen secara signifikan mengungguli kelompok kontrol. Lebih penting lagi, *model* secara otonom mengidentifikasi pelanggaran kebijakan saat mempersiapkan parameter dan menawarkan alternatif tanpa memanggil alat, mendemonstrasikan nilai parameter sebagai *checklist*. Akhirnya, mengukur tingkat ketidaksesuaian antara nilai `expected_*` yang dilaporkan sendiri dengan *database ground truth* untuk menunjukkan mengapa validasi sisi server diperlukan untuk menangkap kesalahan penalaran.
 >
 
-### Code-Driven Multimedia Generation
+### Pembuatan Multimedia Berbasis Kode
 
 Pembuatan banyak dokumen kompleks pada dasarnya adalah pengorganisasian dan penyajian data terstruktur. Baik itu presentasi, laporan teknis, atau aplikasi interaktif, struktur dasarnya ditentukan oleh kode — HTML mendeskripsikan struktur, CSS mengontrol gaya, dan JavaScript mengimplementasikan interaktivitas. Pembuatan dokumen tradisional bergantung pada editor WYSIWYG berbasis GUI, yang kurang cocok untuk Agents karena memerlukan interpretasi visual dan penempatan penunjuk (pointer) yang tepat. Melalui code generation, Agents melewati tantangan pemosisian visual dan mendapatkan kontrol yang presisi atas dokumen — posisi, gaya, dan konten dari setiap elemen didefinisikan dengan jelas dan dapat dimodifikasi serta dioptimalkan secara terprogram.
 
@@ -505,7 +505,7 @@ Pembuatan banyak dokumen kompleks pada dasarnya adalah pengorganisasian dan peny
 
 Pembuatan PPT terkenal sangat melelahkan. Sebuah presentasi akademik yang khas bisa mencapai puluhan slide, di mana masing-masing membutuhkan tata letak yang cermat, poin-poin utama yang disaring, dan bagan yang dipilih dengan baik. Namun, jika membingkai ulang pembuatan PPT sebagai masalah code generation, sebagian besar kerumitannya akan hilang. Framework presentasi modern seperti Slidev merangkul filosofi desain yang elegan: definisikan konten dalam Markdown dan HTML. Membuat sebuah slide hanya membutuhkan beberapa baris markup yang ringkas, dan framework akan menangani rendering, tata letak, dan animasi. Bagi sebuah Agent yang telah menguasai code generation, ini adalah medan yang ideal.
 
-![Figure 5-5: Mekanisme Proposer-Reviewer untuk pembuatan PPT](images/fig5-5.svg)
+![Gambar 5-5: Mekanisme Proposer-Reviewer untuk Pembuatan PPT](images/fig5-5.svg)
 
 Namun, menghasilkan kode saja tidak cukup. **Setelah Agent menulis kode, ia tidak tahu bagaimana hasil akhirnya dirender**: konten yang terlalu padat, teks yang meluap (overflow), gambar dengan ukuran yang salah — tidak ada satu pun dari hal-hal ini yang terlihat sampai slide benar-benar dirender. Oleh karena itu, mekanisme **Proposer-Reviewer** (ditunjukkan pada Gambar 5-5) diperlukan untuk menugaskan code generation dan tinjauan kualitas kepada dua Agents independen:
 
@@ -534,7 +534,7 @@ Loop Proposer-Reviewer di sini mengikuti pola yang sama dengan mekanisme **pre-a
 > **Kriteria penerimaan**: Menghasilkan video berdurasi 5 hingga 15 menit di mana waktu tayang setiap slide persis cocok dengan narasinya dan narasi tersebut sesuai dengan elemen visual.
 >
 >
-> ![Figure 5-6: Pipeline end-to-end dari makalah hingga video penjelasan](images/fig5-6.svg)
+> ![Gambar 5-6: Pipeline End-to-End dari Makalah hingga Video Penjelasan](images/fig5-6.svg)
 >
 >
 
@@ -561,7 +561,7 @@ Membingkai ulang pengeditan video sebagai panggilan API dan code generation mema
 > **Kriteria penerimaan**: Agent dapat mengidentifikasi adegan yang berbeda dalam video secara akurat dan menghasilkan skrip pengeditan dengan benar berdasarkan instruksi bahasa alami. Titik awal dan akhir akurat (kesalahan dalam 3 detik). Jika instruksi menyertakan persyaratan efek khusus (gerak lambat, transisi, subtitel), video yang dihasilkan menerapkan efek dengan benar. Reviewer Agent dapat mendeteksi kesalahan yang jelas (konten kunci hilang, menyertakan segmen yang tidak relevan) dan memicu koreksi. File video output akhir memiliki format yang benar dan memenuhi kualitas yang diharapkan.
 >
 
-### Code as a System Adapter
+### Kode sebagai Adapter Sistem
 
 Kode pada bagian sebelumnya sebagian besar menghasilkan hal-hal yang "menghadap ke manusia" — laporan, slide, antarmuka. Kode pada bagian ini menunjuk ke arah yang berbeda: **menghubungkan mesin dengan mesin**. Dalam sistem nyata, layanan eksternal yang harus diajak bicara oleh Agent sering kali tidak memiliki SDK yang sudah jadi, dan antarmukanya jarang tertata rapi — dokumentasi mungkin hilang, format respons mungkin tidak standar, dan field dapat bergeser di seluruh versi. Agent tidak perlu menunggu adapter prabangun (prebuilt adapter). Agent dapat membaca dokumentasi API atau menginspeksi beberapa respons nyata, kemudian menghasilkan adapter sesuai permintaan: membangun klien HTTP, merakit header autentikasi, mem-parsing struktur respons nonstandar, dan menerjemahkan model data hulu ke dalam bentuk yang dapat dikonsumsi oleh hilir. Kode di sini adalah "lem universal" untuk menghubungkan sistem mana pun secara arbitrer — di mana pun ada celah, sepotong lem dihasilkan sesuai permintaan untuk mengisinya. Ini adalah jantung dari arah "antarmuka sistem" (system interface) meta-capability. Pem-parsing-an log adaptif yang dikembangkan di bawah ini adalah perwujudan konkret kemampuan ini dalam pengaturan observabilitas: menghadapi format log yang tidak pernah berhenti berevolusi, Agent pun beradaptasi dengan menghasilkan kode pem-parsing-an secara langsung (on the fly).
 
@@ -600,11 +600,11 @@ Code generation menyediakan jalur otomatis untuk diagnosis. Agent dapat membaca 
 > **Technical Approach**: Agent menganalisis sekumpulan production trajectories bersama dengan dokumen arsitektur sistem dan PRD untuk mengidentifikasi pola masalah dan modul yang terlibat. Ia kemudian menghasilkan laporan masalah terstruktur yang berisi prioritas, modul, deskripsi, dan perbaikan yang direkomendasikan. Ia juga menghasilkan regression tests yang ditautkan ke ID trajektori dan putaran interaksi; kerangka pengujian memutar ulang kasus-kasus ini dan memverifikasi hasilnya. Terakhir, Agent membuat GitHub issues melalui MCP.
 >
 >
-> ![Figure 5-7: Intelligent Production Log Diagnostic Pipeline](images/fig5-7.svg)
+> ![Gambar 5-7: Pipeline Cerdas untuk Diagnosis Log Produksi](images/fig5-7.svg)
 >
 >
 
-### Code as Generative UI
+### Kode sebagai UI Generatif
 
 Sistem Agent tradisional berinteraksi dengan pengguna terutama melalui dialog teks biasa (plain-text). Namun, teks adalah medium linier satu dimensi, dan dalam banyak skenario tidak efisien. Mengumpulkan informasi terstruktur membutuhkan percakapan bolak-balik yang panjang; hubungan data yang kompleks sulit diungkapkan dalam teks biasa; dan ketika pengguna harus memilih di antara berbagai opsi, daftar teks jauh kurang intuitif daripada antarmuka visual.
 
@@ -630,16 +630,16 @@ Ketika requirements ambigu atau tidak lengkap, Agent harus mengajukan pertanyaan
 
 Melalui code generation, Agent dapat membuat antarmuka interaktif yang terstruktur untuk menggantikan tanya jawab berbasis teks. Gambar 5-8 mengilustrasikan proses pembuatan formulir secara dinamis, menunjukkan bagaimana Agent mengubah pertanyaan klarifikasi menjadi antarmuka terstruktur yang dapat diisi sekaligus. Agent menghasilkan formulir HTML yang berisi berbagai input controls—kotak teks untuk informasi terbuka, menu tarik-turun untuk opsi standar, kotak centang untuk pilihan ganda, dan date pickers untuk input waktu yang disederhanakan. Versi yang lebih canggih dapat menggunakan JavaScript untuk membuat formulir bertingkat yang menampilkan atau menyembunyikan pertanyaan lanjutan dan memperbarui opsi yang tersedia sebagai respons terhadap pilihan pengguna. Pengguna mengisi seluruh formulir sekaligus, menghilangkan beberapa putaran dialog, dan dapat dengan jelas melihat semua informasi yang diperlukan serta hubungan logis antar pertanyaan.
 
-![Figure 5-8: Dynamic Form Generation Process](images/fig5-8.svg)
+![Gambar 5-8: Proses Pembuatan Formulir Dinamis](images/fig5-8.svg)
 
 
-> **Experiment 5-9 ★★: Intent Clarification System with Dynamic Forms**
+> **Eksperimen 5-9 ★★: Sistem Klarifikasi Maksud dengan Formulir Dinamis**
 >
-> **Experiment Goal**: Memverifikasi kemampuan Agent untuk mengklarifikasi user intent dengan menghasilkan formulir HTML secara dinamis.
+> **Tujuan Eksperimen**: Memverifikasi kemampuan Agent untuk mengklarifikasi maksud pengguna dengan menghasilkan formulir HTML secara dinamis.
 >
 > **Technical Approach**: Agent menganalisis permintaan pengguna, mengidentifikasi poin klarifikasi, dan menghasilkan kode formulir dengan cascading logic. Frontend me-render kode tersebut, pengguna mengirimkannya sekaligus, dan Agent mem-parsing data JSON untuk melanjutkan tugas.
 >
-> **Acceptance Criteria**: Pengguna memasukkan "Saya ingin memesan penerbangan ke Beijing." Agent menghasilkan formulir dengan kolom-kolom berikut: kota keberangkatan (input teks), tanggal keberangkatan (date picker), jenis perjalanan (radio buttons untuk sekali jalan atau pulang pergi), dan tanggal kembali (hanya ditampilkan saat pulang pergi dipilih). Pengguna mengirimkan semua informasi sekaligus.
+> **Kriteria Penerimaan**: Pengguna memasukkan "Saya ingin memesan penerbangan ke Beijing." Agent menghasilkan formulir dengan kolom-kolom berikut: kota keberangkatan (input teks), tanggal keberangkatan (pemilih tanggal), jenis perjalanan (tombol radio untuk sekali jalan atau pulang pergi), dan tanggal kembali (hanya ditampilkan saat pulang pergi dipilih). Pengguna mengirimkan semua informasi sekaligus.
 >
 
 **Menghasilkan SQL Queries.**
@@ -648,12 +648,12 @@ Query database adalah skenario di mana code generation dapat secara signifikan m
 
 Pendekatan pertama tampak lebih "cerdas" tetapi sangat tidak efisien—query terhadap tabel besar dapat mengembalikan ribuan baris. Menyuruh LLM membaca semua itu dan mendeskripsikannya dalam bentuk prosa akan menghabiskan token dan waktu, dan lebih buruknya lagi, LLM terkenal rentan terhadap kesalahan saat "mentranskripsi" data. Pendekatan yang lebih baik adalah **Artifact pattern**. Gambar 5-9 menunjukkan alur kerja dari SQL Query Agent: daripada membaca data itu sendiri, Agent menghasilkan SQL query dan meneruskannya ke sistem sebagai **executable artifact** yang berdiri sendiri. Sistem mengeksekusi query tersebut terhadap database dan me-render hasilnya dalam tabel untuk pengguna. Oleh karena itu, data mengalir langsung dari database ke antarmuka tanpa melewati LLM; LLM menulis query tetapi tidak pernah harus membaca dan menyatakan kembali ribuan baris. Pendekatan ini lebih cepat dan lebih akurat.
 
-![Figure 5-9: SQL Query Agent Workflow](images/fig5-9.svg)
+![Gambar 5-9: Alur Kerja Agent Kueri SQL](images/fig5-9.svg)
 
 
 Lebih jauh lagi, Agent dapat menghasilkan dua artefak yang membentuk pipeline: sebuah SQL query dan kode visualisasi, seperti kode untuk diagram batang. Frontend meneruskan hasil SQL secara langsung ke kode visualisasi. LLM menghasilkan kode tetapi tidak berpartisipasi dalam jalur data—inilah esensi dari code generation sebagai antarmuka.
 
-> **Experiment 5-10 ★★: Natural Language Interaction ERP Agent**
+> **Eksperimen 5-10 ★★: Agent ERP dengan Interaksi Bahasa Alami**
 >
 > Perangkat lunak ERP (Enterprise Resource Planning) adalah sistem kritis untuk bisnis, biasanya menggunakan antarmuka GUI di mana operasi yang kompleks memerlukan beberapa klik mouse. Sebuah AI Agent dapat menerjemahkan permintaan natural-language pengguna menjadi SQL queries, memungkinkan akses database otomatis.
 >
@@ -677,21 +677,21 @@ Aplikasi puncak dari code generation adalah membiarkan Agent membuat perangkat l
 
 Namun, fully dynamic generation membutuhkan biaya besar dan lambat—lebih cocok untuk demonstrasi tentang apa yang mungkin terjadi daripada untuk production use. Pendekatan yang lebih pragmatis adalah **menyesuaikan framework yang sudah ada**. Model "semi-custom" ini mempertahankan stabilitas perangkat lunak dasar sembari mengekspos aspek-aspek tertentu ke kendali pengguna. Pengguna dapat mengatakan "jadikan tombolnya biru," "tambahkan menu pintasan ke sidebar," atau "beralih ke font yang lebih mudah dibaca"; Agent memperbarui frontend code, dan HMR (Hot Module Replacement—yang memperbarui modul terdampak tanpa reload seluruh halaman dan biasanya mempertahankan state aplikasi) menerapkan perubahannya seketika. Sebuah produk one-size-fits-all menjadi pengalaman yang disesuaikan untuk setiap pengguna.
 
-> **Experiment 5-11 ★★: Conversational Interface Customization System**
+> **Eksperimen 5-11 ★★: Sistem Kustomisasi Antarmuka Percakapan**
 >
-> **Experiment Goal**: Memungkinkan pengguna menyesuaikan antarmuka perangkat lunak secara instan melalui natural-language dialogue, dan mengevaluasi apakah code generation dengan hot reload dapat secara efektif memberikan pengalaman pengguna yang dipersonalisasi.
+> **Tujuan Eksperimen**: Memungkinkan pengguna menyesuaikan antarmuka perangkat lunak secara instan melalui dialog bahasa alami, lalu mengevaluasi apakah pembuatan kode dengan hot reload dapat memberikan pengalaman yang dipersonalisasi secara efektif.
 >
 > **Technical Approach**: Bangun aplikasi chatbot dasar (frontend React dan backend FastAPI), dan jalankan kedua komponen dalam development mode dengan hot reload diaktifkan (React HMR dan FastAPI reload). Pengguna mengusulkan persyaratan penyesuaian UI (warna, font, tata letak, posisi komponen, dll.) selama percakapan. Agent secara otonom memodifikasi kode. Mekanisme hot reload secara otomatis mendeteksi perubahan file, frontend melakukan kompilasi ulang dan refresh, dan pengguna melihat perubahan antarmuka secara real time. Sistem mendukung beberapa putaran iterative customization.
 >
 
-### Code Creating Code: Agent Bootstrapping
+### Kode yang Membuat Kode: Bootstrapping Agent
 
 Bagian-bagian sebelumnya telah mengikuti code generation di satu domain demi domain lainnya—dari penalaran matematis hingga pembuatan dokumen hingga kustomisasi antarmuka. Dorong kemampuan ini hingga batasnya dan muncul pertanyaan alami: dapatkah Agent menggunakan code generation untuk membuat Agent lain?
 
 Pertama, division of labor bagian ini dengan Bab 8 harus diperjelas. Bagian ini membahas bagaimana Coding Agent menggunakan kode untuk **memperbaiki dan membuat Agent dari jenisnya sendiri**—self-repair, self-replication, dan on-demand generation. Fokusnya adalah pada kemampuan code generation dan system-construction capability, sehingga proses ini disebut **bootstrapping**. Bab 8 tidak menjelaskan kembali bagaimana menulis kode ini; melainkan berfokus pada bagaimana pengalaman produksi yang dievaluasi memicu self-modification: memilih pengetahuan, instruksi, program, atau parameter sebagai target pembaruan; menghasilkan kandidat versi dari versi stabil; dan mengendalikan risiko melalui regression testing, canary releases, dan rollback. Kedua bab ini bersinggungan di “modifying code”, tetapi menjawab pertanyaan yang berbeda.
 
 
-![Figure 5-10: Agent Bootstrapping Loop](images/fig5-10.svg)
+![Gambar 5-10: Loop Bootstrapping Agent](images/fig5-10.svg)
 
 
 **Agent Self-Repair: OpenClaw Doctor.**

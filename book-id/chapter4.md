@@ -1,27 +1,27 @@
-# Tools
+# Alat
 
 Dalam film fiksi ilmiah *Her*, asisten AI Samantha dapat secara proaktif mengatur email, mengidentifikasi pesan yang kompleks secara emosional dan menyarankan balasan yang lebih baik, mewakili protagonis dalam urusan penerbitan, dan beralih secara mulus di antara berbagai saluran komunikasi. Kecerdasannya sangat meyakinkan karena ia memiliki **Tools** (alat) yang kuat—"tangan, kaki, dan indra" yang menghubungkan "otak" bahasa ke dunia digital nyata.
 
 Membangun asisten seperti itu dengan teknologi saat ini, bagaimanapun juga, berarti memecahkan dua tantangan inti:
 
-1.  **The Challenge of Tool Selection**: Ketika dokumentasi untuk ribuan Tools dapat melampaui context window, bagaimana sebuah Agent dapat menemukan dengan akurat dan efisien satu yang dibutuhkan untuk suatu tugas? Bagaimana ia dapat berevolusi dari secara pasif "memilih" Tools menjadi secara aktif "menemukannya"? Bab ini berfokus pada prinsip desain Tool, ekosistem saat ini, dan penemuan proaktif dalam skala besar; bagaimana sebuah Agent secara otonom membuat, memodifikasi, dan menghentikan Tools berdasarkan pengalaman operasional ditunda ke Bab 8.
-2.  **The Challenge of Asynchrony and Events**: Bagaimana sebuah Agent dapat mengelola tugas yang berjalan lama, menangani interupsi dari pengguna atau sistem kapan saja, dan merespons event eksternal dari saluran seperti email, kalender, dan peringatan sistem tanpa terjebak dalam penantian sinkron?
+1.  **Tantangan Pemilihan Alat**: Ketika dokumentasi untuk ribuan alat dapat melampaui context window, bagaimana Agent menemukan alat yang tepat secara akurat dan efisien? Bagaimana Agent berkembang dari sekadar "memilih" alat menjadi aktif "menemukannya"? Bab ini berfokus pada prinsip desain alat, ekosistem saat ini, dan penemuan proaktif dalam skala besar; cara Agent membuat, mengubah, dan menghentikan alat berdasarkan pengalaman operasional dibahas pada Bab 8.
+2.  **Tantangan Asinkroni dan Peristiwa**: Bagaimana Agent mengelola tugas jangka panjang, menangani interupsi dari pengguna atau sistem kapan pun, dan merespons peristiwa eksternal seperti email, kalender, serta peringatan sistem tanpa terjebak dalam penantian sinkron?
 
 Bab ini mengembangkan dua tantangan tersebut. Dimulai dengan gambaran umum tentang lima kategori Tool, kemudian membahas prinsip desain yang umum untuk semua Tools dan bagaimana protokol MCP menyatukan ekosistem Tool. Di atas fondasi ini, ia menggunakan organisasi hierarkis, penemuan dinamis, dan Skills untuk mengatasi tantangan pemilihan Tool. Kemudian menguji secara rinci tiga kategori Tools yang dipanggil Agent secara proaktif—Perception, Execution, dan Collaboration—sebelum beralih ke arsitektur Agent asinkron yang digerakkan oleh event (event-driven) dan Event-Triggered serta User Communication Tools yang dibangun di atasnya. Bab ini diakhiri dengan “Proactive Tool Discovery,” yang secara sistematis membahas penemuan ketika jumlah Tools mencapai ratusan atau ribuan. Bagaimana sebuah Agent mengubah lintasan penggunaan Tool (tool-use trajectories) yang dievaluasi menjadi kemampuan baru dibahas secara sistematis di Bab 8, “Continuous Agent Evolution.”
 
-## Tool Classification
+## Klasifikasi Alat
 
 Bab 1 memperkenalkan lima kategori Agent Tools (Perception, Execution, Collaboration, Event-Triggered, User Communication). Untuk melihat bagaimana desain mereka berbeda, periksa setiap kategori di sepanjang dua karakteristik: **Invocation Direction** (siapa yang memulai interaksi) dan **Target of Action** (apa yang menjadi sasaran interaksi). Perhatikan bahwa kedua kolom ini tidak membentuk kerangka klasifikasi silang—setiap kategori memiliki nilai spesifiknya sendiri untuk "Target of Action"; mereka hanya membantu pembaca menempatkan setiap kategori secara sekilas. Tabel 4-1 merangkum kedua karakteristik untuk kelima kategori, menyiapkan diskusi desain yang mengikutinya.
 
-Tabel 4-1 Invocation Direction dan Target of Action untuk Lima Kategori Tool
+Tabel 4-1 Arah Pemanggilan dan Sasaran Tindakan untuk Lima Kategori Alat
 
-| Tool Type | Invocation Direction | Target of Action |
+| Jenis Alat | Arah Pemanggilan | Sasaran Tindakan |
 |-------------------------|-----------------------------------|-----------------------------------|
-| Perception Tools | Agent actively invokes | Acquire information |
-| Execution Tools | Agent actively invokes | Change the world |
-| Collaboration Tools | Agent actively invokes | Drive other Agents or humans |
-| Event-Triggered Tools | Agent registers, external triggers | Drive the Agent to start execution |
-| User Communication Tools | Agent actively invokes | Convey information to the user |
+| Alat Persepsi | Dipanggil secara aktif oleh Agent | Memperoleh informasi |
+| Alat Eksekusi | Dipanggil secara aktif oleh Agent | Mengubah dunia eksternal |
+| Alat Kolaborasi | Dipanggil secara aktif oleh Agent | Menggerakkan Agent lain atau manusia |
+| Alat Pemicu Peristiwa | Agent mendaftar, pemicu datang dari luar | Memulai eksekusi Agent |
+| Alat Komunikasi Pengguna | Dipanggil secara aktif oleh Agent | Menyampaikan informasi kepada pengguna |
 
 **Perception Tools** adalah sarana di mana sebuah Agent secara aktif memperoleh informasi dan memahami dunia. Contohnya termasuk tools pencarian web (`web_search`), tools pencarian Knowledge Base internal (`knowledge_base_search`), tools membaca halaman web (`fetch_url`), tools pencarian nama file (`find_file`), tools pencarian konten file (`grep_file`), dan tools membaca file (`read_file`). Pertimbangan desain utama untuk Perception Tools adalah pertukaran granularitas dan mengendalikan jumlah informasi output.
 
@@ -35,9 +35,9 @@ Tabel 4-1 Invocation Direction dan Target of Action untuk Lima Kategori Tool
 
 Tiga kategori pertama dari tools dipanggil secara aktif oleh Agent, dan desainnya akan dibahas secara rinci di bawah ini. Desain Event-Triggered Tools dan User Communication Tools tidak dapat dipisahkan dari arsitektur Agent asinkron yang digerakkan oleh event (event-driven asynchronous architecture), yang akan dibahas di bagian "Event-Driven Asynchronous Agents" nanti dalam bab ini. Pertama, kita memperkenalkan prinsip-prinsip desain universal yang berlaku untuk semua tools.
 
-## Universal Principles of Tool Design
+## Prinsip Universal Desain Alat
 
-### Choosing the Form of Capability Expression: Dedicated Tools vs. Skills + General Executors
+### Memilih Bentuk Ekspresi Kemampuan: Alat Khusus vs. Skills + Eksekutor Umum
 
 Sebelum membahas jenis tool tertentu, pertama-tama kita harus menjawab pertanyaan desain yang lebih mendasar: dalam bentuk apa kemampuan sebuah Agent harus diekspresikan? Bagian-bagian selanjutnya membahas granularitas, generalitas, dan seni deskripsi tool, tetapi semuanya bersandar pada satu asumsi—bahwa kemampuan tersebut harus menjadi tool khusus (dedicated). Faktanya, kemampuan sebuah Agent dapat mengambil dua bentuk dasar:
 
@@ -52,7 +52,7 @@ Memilih di antara bentuk-bentuk ini bergantung pada tiga dimensi:
 - **Frequency of Change**: Kemampuan yang sering berubah jauh lebih murah untuk dipelihara sebagai Skills—mengedit bagian teks jauh lebih mudah daripada mengubah kode, mengujinya, dan menerapkannya kembali. Operasi tingkat rendah yang stabil lebih cocok untuk dedicated tools.
 - **Model Capability**: Model State-of-the-art (SOTA) dapat mengekspresikan lebih banyak kemampuan dan mengurangi jumlah tools melalui Skills + general executors; model yang lebih lemah membutuhkan skema tool terstruktur untuk memandu pemanggilan yang benar. Bab 8 membahas bagaimana Agent membuat pilihan yang sama ketika mengkonsolidasikan kemampuan baru selama evolusi berkelanjutan.
 
-### Trade-offs in Tool Granularity: Integration vs. Separation
+### Trade-off Granularitas Alat: Integrasi vs. Pemisahan
 
 Granularitas tool adalah titik keputusan penting. Terlalu halus, dan tools berlipat ganda, menambah beban pemilihan LLM; terlalu kasar, dan setiap tool menjadi sulit dikelola. Begitu jumlahnya menjadi terlalu tinggi (katakanlah, melewati 100), bahkan model bahasa paling canggih sekalipun mulai memilih tool yang salah.
 
@@ -60,7 +60,7 @@ Kriteria inti untuk memutuskan apakah akan mengintegrasikannya adalah **kesamaan
 
 Ketika fungsi serupa tetapi memiliki set parameter yang sangat berbeda, atau ketika fungsi tertentu digunakan sangat sering, memisahkannya lebih masuk akal.
 
-### Designing for Tool Generality
+### Merancang Alat yang Bersifat Umum
 
 **General tools lebih disukai daripada dedicated tools, kecuali ada alasan keamanan, izin, atau kinerja yang jelas**—misalnya, `code_interpreter` menghemat lebih banyak token dan lebih fleksibel daripada selusin kalkulator khusus, tetapi dalam skenario yang melibatkan penulisan ke database produksi, dedicated tool dapat memberikan kontrol izin yang lebih terperinci (fine-grained) dan jejak audit. Kembali ke contoh kalkulasi: daripada menyediakan kalkulator empat fungsi, lebih baik menyediakan tool `code_interpreter` umum, pra-instal dengan library seperti SymPy, NumPy, dan pandas dalam lingkungan berkotak pasir (sandboxed environment) (ruang eksekusi aman yang terisolasi dari host, di mana kode tidak dapat memengaruhi sistem eksternal), memungkinkan Agent untuk melakukan komputasi matematis apa pun dengan mengeksekusi kode Python.
 
@@ -68,7 +68,7 @@ Logika di balik prinsip ini: **sebuah LLM sudah memiliki kemampuan penalaran dan
 
 Namun, generalitas memiliki batasnya. Untuk operasi yang memerlukan izin khusus, konfigurasi kompleks, atau menimbulkan risiko keamanan, dedicated tools yang dienkapsulasi dengan baik masih diperlukan. Misalnya, sintaksis untuk `grep` berbeda di Mac, Windows, dan Linux; menyediakan tool `grep` khusus (dedicated) lebih baik daripada membiarkan Agent berimprovisasi.
 
-### The Art of Tool Description
+### Seni Mendeskripsikan Alat
 
 Kualitas deskripsi tool secara langsung menentukan seberapa akurat sebuah Agent menggunakannya.
 
@@ -84,7 +84,7 @@ Di luar mendeskripsikan parameter dan return values per item, langkah selanjutny
 
 Prinsip debugging praktis: ketika Agent terus memilih tool yang salah, **periksa deskripsi tool terlebih dahulu** daripada meragukan model. Sebagian besar kesalahan pemilihan tool bermula dari deskripsi yang tidak akurat—batasan yang tidak jelas, contoh negatif yang hilang, makna parameter yang ambigu. Memperbaiki deskripsi biasanya jauh lebih membuahkan hasil daripada beralih ke model yang lebih kuat.
 
-### Fidelity of Parameter Passing
+### Fidelitas Penerusan Parameter
 
 Anti-pattern (Pola anti) yang lebih berbahaya daripada fungsi yang hilang adalah **silent input transformation**—di mana tool diam-diam "mengoreksi" parameter input model sebelum dieksekusi, menyebabkan operasi aktual menyimpang dari niat model.
 
@@ -96,7 +96,7 @@ Jenis pelanggaran fidelitas lainnya adalah **silent parameter injection**—di m
 
 Masalah-masalah ini mengungkapkan prinsip desain tool yang lebih mendasar: **tidak boleh ada perbedaan sistematis antara dunia yang dipersepsikan (perceived) model dan dunia di mana tool beroperasi**. Parameter passing tool harus tetap transparan; input atau output tidak boleh dimodifikasi tanpa sepengetahuan model. Jika normalisasi input diperlukan (misalnya, menyatukan format encoding), itu harus didokumentasikan dalam deskripsi tool dan dikomunikasikan secara eksplisit ke model di dalam pengembalian dari tool. Jika tidak, "koreksi cerdas" dari tool tidak membantu model, melainkan menciptakan kegagalan sistemik yang tidak dapat didiagnosis model dengan sendirinya.
 
-### The Evolution of Tool Design
+### Evolusi Desain Alat
 
 Desain tool secara kasar telah berevolusi melalui tiga tahap. Tool **generasi pertama** adalah pembungkus API langsung—memetakan setiap endpoint API ke sebuah tool, menghasilkan granularitas yang terlalu halus di mana sebuah Agent sering kali harus mengoordinasikan beberapa tool untuk mencapai satu tujuan. Tool **generasi kedua** didasarkan pada prinsip ACI (Agent-Computer Interface) yang dibahas di bagian ini—tool harus sesuai dengan tujuan Agent daripada operasi API yang mendasarinya. Pertukaran granularitas, desain generalitas, dan spesifikasi deskripsi yang disebutkan sebelumnya semuanya termasuk dalam tahap ini. ACI adalah konsep yang diusulkan sebagai analogi dari HCI (Human-Computer Interaction)—jika HCI mempelajari bagaimana manusia berinteraksi dengan komputer, ACI mempelajari bagaimana Agent berinteraksi dengan komputer, dengan fokus utama pada pembuatan tool yang ramah bagi Agent, bukan manusia.
 
@@ -277,7 +277,7 @@ Namun tidak semua operasi dapat dibuat idempoten. Operasi seperti **mengirim ema
 >
 > **Persyaratan Eksperimen**: Tambahkan sistem keamanan dan validasi yang lengkap untuk *execution tool* ini—implementasikan pemeriksaan *linter* otomatis untuk operasi file (untuk bahasa seperti Python, JavaScript), tambahkan mekanisme peninjauan berbasis LLM untuk perintah berbahaya, serta implementasikan pemotongan dan persistensi untuk *output* yang panjang.
 
-## Collaboration Tools
+## Alat Kolaborasi
 
 Ketika sebuah tugas melampaui batas kemampuan Agent tunggal, *collaboration tool* (*tool* kolaborasi) memungkinkannya untuk mendelegasikan subtugas ke Agent lain atau manusia, kemudian mengintegrasikan hasil dari semua pihak.
 
@@ -324,7 +324,7 @@ Meskipun AI Agent menjadi semakin kuat, intervensi manusia tetap diperlukan pada
 >
 > **Persyaratan Eksperimen**: rancang strategi kolaborasi cerdas—terapkan setidaknya dua cara mengirimkan konteks ke sub-agent dan bandingkan efeknya, seperti penerusan minimal (hanya mengirimkan parameter tugas) dan konteks yang dihasilkan oleh LLM (melakukan panggilan LLM ekstra untuk menyaring konteks penyerahan dari trajektori Agent utama); tulis System Prompt sehingga Agent mengenali kapan HITL diperlukan dan secara proaktif meminta konfirmasi atau input; terapkan mekanisme *timeout* dan notifikasi multi-saluran.
 
-## Event-Driven Asynchronous Agents
+## Agent Asinkron Berbasis Peristiwa
 
 Alat persepsi, eksekusi, dan kolaborasi yang dibahas pada bagian sebelumnya secara aktif dipanggil oleh Agent. Bagian ini beralih ke tantangan lain yang diangkat di awal bab ini: bagaimana sebuah Agent mengelola tugas yang memakan waktu dan merespons peristiwa eksternal yang bisa datang kapan saja? Ini memerlukan arsitektur asinkron berbasis peristiwa (*event-driven*), dan dua dari lima kategori alat—Event-Triggered Tools dan User Communication Tools—memanfaatkan arsitektur ini agar dapat berfungsi.
 
@@ -364,7 +364,7 @@ Solusi PineClaw adalah memperkenalkan **mekanisme Channel**—membangun saluran 
 
 Kasus ini mengungkapkan nilai inti dari arsitektur *event-driven* untuk kerangka kerja Agent: **"layanan proaktif" yang sesungguhnya tidak hanya menuntut Agent agar bisa secara berkala memeriksa dunia, tetapi juga agar dunia bisa secara aktif memberi tahu Agent.** Menyatukan semua input—pesan pengguna, pengembalian dari alat, *callback* eksternal, pemicu yang dijadwalkan—ke dalam sebuah aliran peristiwa (*event stream*), dan menggerakkan pikiran serta tindakan Agent melalui *event loop*, adalah fondasi arsitektur untuk mencapai tujuan ini. Di bawah arsitektur ini, kita pertama-tama akan memperkenalkan dua kategori alat yang secara langsung berkaitan dengan peristiwa, serta identitas virtual dan lingkungan eksekusi terisolasi yang mendukung tindakan mandiri Agent, sebelum mendiskusikan desain spesifik dari mekanisme penanganan peristiwa.
 
-### Event-Triggered Tools
+### Alat Pemicu Peristiwa
 
 Event-triggered tools adalah titik masuk (*entry point*) di mana peristiwa eksternal menggerakkan tindakan suatu Agent. Tanpa hal ini, Agent hanya dapat beroperasi dalam siklus memikirkan, memanggil alat, lalu pada akhirnya menghasilkan suatu hasil, dan kemudian menunggu input pengguna berikutnya. Untuk menerjemahkan perubahan di dunia menjadi peristiwa yang dapat diproses oleh Agent, terdapat tiga tipe umum dari alat pemicu peristiwa (*event-triggered tools*).
 
@@ -376,7 +376,7 @@ Event-triggered tools adalah titik masuk (*entry point*) di mana peristiwa ekste
 
 Dari perspektif desain, *event-triggered tools* harus menetapkan kondisi pemicu dan aturan penyaringan yang jelas guna mencegah peristiwa yang tidak relevan membangunkan Agent dan menyia-nyiakan sumber daya komputasi. Muatan (*payload*) peristiwa harus berisi informasi konteks yang cukup untuk meminimalkan jumlah kueri tambahan yang perlu dilakukan Agent setelah dibangunkan.
 
-### User Communication Tools
+### Alat Komunikasi Pengguna
 
 User communication tools (alat komunikasi pengguna) muncul dari peningkatan keragaman saluran komunikasi antara Agent dan pengguna. Banyak Agent (seperti Claude Code, Manus, Genspark) menggunakan loop ReAct asli, di mana setiap hal yang Agent "katakan" (yakni, pesan asisten) dikirim langsung ke pengguna, yang mana pengguna harus membuka sesi spesifik di aplikasi untuk bercakap-cakap dengan Agent. OpenClaw adalah salah satu Agent multiguna yang paling berpengaruh yang mematahkan paradigma komunikasi interaksi manusia-komputer ini: sesinya transparan bagi pengguna—pengguna tidak perlu menyadari keberadaan sesi tersebut atau peduli terhadap detail panggilan alat Agent; baik pengguna maupun Agent dapat saling mengirimkan pesan kapan saja, alih-alih menggunakan pola pesan pengguna/tanggapan Agent yang ketat. Konsekuensinya, banyak pengguna merasa OpenClaw memiliki "kehadiran layaknya manusia," mengirimkan pesan kepada mereka secara asinkron seperti yang dilakukan seorang sekretaris. Pesan teks ini bukanlah pesan asisten model yang disalurkan langsung ke pengguna; pesan tersebut dikirim melalui alat khusus, dapat membawa lampiran gambar dan file, dan dapat memicu *push notification* bergantung pada urgensinya.
 
@@ -392,7 +392,7 @@ Untuk tugas yang berjalan lama, Agent perlu secara proaktif memberi tahu penggun
 
 *User communication tools* menyelesaikan masalah mengenai "bagaimana menjangkau pengguna." Namun demikian, identitas yang diadopsi oleh Agent di saluran-saluran tersebut dan lingkungan tempat Agent melakukan tindakan atas nama pengguna memerlukan suatu lapisan identitas serta infrastruktur lingkungan eksekusi, yang mana hal ini merupakan topik di bagian berikutnya.
 
-### Virtual Identity and Isolated Execution Environment
+### Identitas Virtual dan Lingkungan Eksekusi Terisolasi
 
 Sedikit tentang penempatan bagian ini: identitas virtual dan lingkungan eksekusi yang terisolasi pada dasarnya adalah infrastruktur lingkungan eksekusi, satu kesatuan dengan *sandbox* yang didiskusikan pada bagian alat eksekusi. Bagian-bagian ini muncul di sini, pada bagian arsitektur asinkron, karena Agent yang paling membutuhkan hal tersebut adalah mereka yang berjalan secara mandiri, tetap menetap, dan bertindak atas nama pengguna setiap saat.
 
@@ -406,7 +406,7 @@ Pertukaran data antara main Agent dan lingkungan virtual diselesaikan melalui **
 
 Event-triggered tools memungkinkan dunia untuk membangunkan Agent, user communication tools memungkinkan Agent untuk menjangkau pengguna, dan identitas virtual dengan lingkungan eksekusi yang terisolasi (isolated execution environments) memungkinkan Agent untuk bertindak secara independen dan dapat diaudit. Pertanyaan yang tersisa adalah: ketika beberapa event terpusat pada instance Agent yang sama secara bersamaan, bagaimana mereka harus ditangani?
 
-### Mekanisme Event Handling
+### Mekanisme Penanganan Peristiwa
 
 Satu instance Agent mungkin menghadapi beberapa event secara bersamaan: pesan baru dari pengguna, hasil dari suatu tool, waktu timer habis, permintaan kolaborasi dari Agent lain. Bagaimana event-event ini ditangani secara efisien dan benar berdampak langsung pada performa dan pengalaman pengguna.
 
@@ -483,7 +483,7 @@ Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan
 
 Eksperimen 4-4 mendemonstrasikan pola event-driven paling sederhana—event masuk ke antrean, dan Agent memprosesnya secara berurutan. Akan tetapi, ketika Agent perlu merespons terhadap interupsi selama pengeksekusian tool yang berjalan lama (long-running tool executions), atau mengelola banyak task konkuren secara bersamaan, event queue yang sederhana tidaklah cukup. Selanjutnya, kita akan membahas tantangan engineering yang lebih dalam.
 
-### Implementasi Engineering: Bagaimana Membuat Synchronous Models Mendukung Asynchronous Interruptions
+### Implementasi Rekayasa: Membuat Model Sinkron Mendukung Interupsi Asinkron
 
 Eksperimen 4-4 hanya menangani event-event secara serial—event masuk ke antrean satu per satu, dan Agent memprosesnya satu per satu. Sekarang, mari kita kembali pada kontradiksi "synchronous training / asynchronous deployment" yang dikemukakan pada awal bagian ini: ketika pengguna menginterupsi padahal tool belum mengembalikan hasil, bagaimana synchronous format dapat mengakomodasinya? Bagian ini memaparkan solusi teknis (engineering workarounds) yang digunakan oleh industri saat ini.
 
@@ -598,17 +598,17 @@ Pendekatan tradisional menyuntikkan setiap skema tool ke dalam System Prompt sek
 
 [^mcp-zero-2025]: Fei, X., et al. *MCP-Zero: Active Tool Discovery for Autonomous LLM Agents.* arXiv:2506.01056, 2025.
 
-![Figure 4-7: Pencocokan Tool Hierarkis (Pencarian Semantik Dua Tingkat: Tingkat Server → Tingkat Tool)](images/fig4-7.svg)
+![Gambar 4-7: Pencocokan Alat Hierarkis (Pencarian Semantik Dua Tingkat: Tingkat Server → Tingkat Alat)](images/fig4-7.svg)
 
 **Pencocokan Hierarkis dan Fallback.** Pencocokan yang efisien memanfaatkan hierarki yang sudah ada dalam cara tool diatur. Dalam protokol seperti MCP, tool dikelompokkan berdasarkan **server** (seperti aplikasi di ponsel, yang masing-masing membundel serangkaian fungsi terkait), sehingga pencocokan dapat berjalan dalam dua lapisan: menemukan server yang relevan berdasarkan deskripsi kemampuan, kemudian mencocokkan tool spesifik di dalamnya. Hal ini menyusutkan ruang pencarian dari "ribuan tool" menjadi "puluhan server × masing-masing puluhan tool," menghemat komputasi dan mengurangi kebingungan semantik lintas domain. Secara rekayasa, hal ini bergantung pada indeks *embedding* yang dibangun secara *offline* dan diperbarui secara inkremental. Dan ketika kandidat dari kedua lapisan mendapat skor di bawah ambang batas (*threshold*), sistem harus mengembalikan nilai eksplisit "tidak ditemukan," yang mendorong Agent untuk memparafrase dan mencoba lagi, berimprovisasi dengan tool dasar, atau membuat tool baru sama sekali (subjek dari Bab 8).
 
-![Figure 4-8: Optimasi KV Cache untuk Pemuatan Tool Dinamis](images/fig4-8.svg)
+![Gambar 4-8: Optimasi KV Cache untuk Pemuatan Alat Dinamis](images/fig4-8.svg)
 
 **Pemuatan Dinamis dan KV Cache.** Penemuan proaktif (*proactive discovery*) membawa biaya rekayasa yang tidak kentara: memuat tool secara dinamis **membatalkan KV Cache**—jika semua definisi tool diletakkan di prefiks statis, setiap tool yang baru dimuat akan membatalkan seluruh *cache*. Solusinya sesuai dengan diskusi Bab 2 tentang posisi injeksi Skill: tambahkan bagian variabel (skema lengkap tool baru) di akhir konteks, menjaga prefiks statis tetap stabil dan KV Cache sepenuhnya dapat digunakan kembali, dengan hanya daftar pendek nama-nama tool yang dipertahankan di bilah status Agent. Pola ini sekarang didukung secara *native* oleh API utama dan telah menjadi arsitektur *default* dari *framework* arus utama: OpenAI Responses API menyediakan tool `tool_search` dan *flag* `defer_loading: true`, dengan skema yang dimuat ditambahkan di akhir konteks sebagai item `tool_search_output` sehingga *cache* prefiks terus mengenai (*hit*); Claude Code menunda tool MCP secara *default* (diinjeksi sesuai permintaan melalui blok `tool_reference`, dengan hanya nama tool dan instruksi server yang disimpan saat sesi dimulai); dan `tool_search` dari Codex CLI (pencarian BM25) adalah arsitektur yang selalu aktif (*always-on*) daripada fitur opsional. Lingkungan tool yang dinamis juga menuntut lebih banyak dari model itu sendiri—model yang lebih lemah kesulitan dengan definisi tool yang muncul pada posisi non-standar di pertengahan konteks dan cenderung menghasilkan pemanggilan yang cacat (tanda kurung JSON tidak cocok, parameter hilang), yang seringkali membutuhkan pelatihan *reinforcement learning* khusus (lihat Bab 7).
 
 Satu poin yang mudah disalahpahami patut diklarifikasi: "ditambahkan di akhir" hanya terjadi pada giliran (*turn*) saat tool ditemukan. Sejak saat itu, blok skema tetap pada posisi aslinya dalam lintasan (*trajectory*)—pesan-pesan baru di giliran berikutnya ditambahkan **setelah** itu, dan itu menjadi riwayat biasa, bukan dipindahkan lagi ke akhir terbaru di setiap giliran (jika itu diinjeksi ulang setiap giliran, ia memang akan membutuhkan *prefill* ulang setiap saat, dan *cache* tidak akan ada gunanya). Kedua API menjamin hal ini: OpenAI mensyaratkan permintaan berikutnya untuk mempertahankan posisi item `tool_search_output`, dan tool yang sama tidak pernah perlu dimuat lagi di giliran berikutnya; Anthropic memperluas blok `tool_reference` secara *inline* pada posisi aslinya dalam riwayat percakapan, dan dokumentasi resminya menyatakan bahwa *cache* terus mengenai (*hit*) pada setiap giliran berikutnya. Hanya dua situasi yang benar-benar menyebabkan komputasi ulang: masa kedaluwarsa Prompt Cache TTL (yang menghitung ulang seluruh prefiks bersama-sama—bukan biaya khusus untuk definisi tool), dan memodifikasi, menghapus, atau mengatur ulang kumpulan tool yang dimuat (yang membatalkan *cache* dari titik tersebut).
 
-![Figure 4-9: Struktur Konteks Setelah Penemuan Dinamis—Skema Tool Tersebar di Sepanjang Lintasan](images/fig4-9.svg)
+![Gambar 4-9: Struktur Konteks Setelah Penemuan Dinamis—Skema Alat Tersebar di Sepanjang Lintasan](images/fig4-9.svg)
 
 Gambar 4-9 menunjukkan gambaran lengkap setelah beberapa putaran penemuan dinamis: prefiks statis hanya menampung System Prompt, tool inti, dan meta-tool pencarian tool, sementara skema yang ditemukan di sepanjang proses tersebar di seluruh lintasan, disematkan di mana mereka pertama kali diinjeksi dan disajikan dari *cache* sebagai riwayat biasa pada giliran berikutnya. Ini juga berarti "definisi tool harus berada di bagian paling depan konteks" bukan lagi aturan mutlak—prefiksnya masih statis dan hanya dapat ditambah (*append-only*); definisi tool hanya mendapatkan kemampuan untuk memasuki lintasan sesuai permintaan. Biayanya adalah model harus melalui *post-training* untuk memahami definisi tool yang tersebar di seluruh konteks.
 

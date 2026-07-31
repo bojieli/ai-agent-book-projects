@@ -120,7 +120,7 @@ File ini mengumpulkan garis besar referensi jawaban untuk pertanyaan pemikiran d
 
 > Keuntungan: seperti dalam eksperimen CAIL2018, penemuan faktor "bottom-up" sesuai dengan data daripada asumsi awal manusia (human priors), dapat menangkap trade-offs implisit yang tersebar di puluhan ribu putusan yang sulit ditulis secara eksplisit oleh para ahli, dan dapat dikuantifikasi. Keterbatasan: kesalahan ekstraksi LLM menyebabkan polusi pengetahuan; bias dalam data itu sendiri diwariskan; prototipe klastering hanya mencerminkan korelasi dan tidak dapat menjelaskan kausalitas. Kompromi: pemodelan yang digerakkan oleh data ditambah ulasan pakar pada skema dan hasil—model mendorong pertanyaannya, statistik mendukung penjelasannya.
 
-## Chapter 4: Tools
+## Bab 4: Alat
 
 **1. (★★) Standar MCP memisahkan definisi tool dari framework Agent. Namun, standardisasi juga berarti bahwa pola interaksi tool yang kompleks (misalnya, output streaming, komunikasi dua arah, sesi stateful) mungkin sulit diekspresikan dalam protokol standar. Menurut Anda, kemampuan apa yang paling perlu diperluas oleh MCP di masa mendatang?**
 
@@ -150,7 +150,7 @@ File ini mengumpulkan garis besar referensi jawaban untuk pertanyaan pemikiran d
 
 > ① Pengelompokan hierarkis: temukan "server/aplikasi" terlebih dahulu, baru kemudian pilih tool spesifiknya; ② "Konsultasi sesuai permintaan" bergaya Skills: seperti mencari di buku referensi—katalog tetap berada di dalam konteks, detail dimuat sesuai permintaan; ③ beberapa tool dasar yang sering digunakan "disimpan dalam genggaman" tetap berada di dalam konteks, sisanya dapat dijangkau melalui indeks katalog.
 
-## Chapter 5: Coding Agent and Code Generation
+## Bab 5: Coding Agent dan Pembuatan Kode
 
 **1. (★★) Pembangkitan kode (code generation) disebut sebagai "kemampuan meta" dari Agent. Namun, eksekusi kode memperkenalkan risiko keamanan—kode yang dihasilkan Agent mungkin mengandung kerentanan, memasuki infinite loops, atau menghabiskan sumber daya. Sandboxing dapat memitigasi beberapa risiko ini, tetapi hal itu juga membatasi apa yang dapat dilakukan kode (misalnya, dengan menolak akses ke jaringan atau sistem file). Bagaimana kita dapat menemukan keseimbangan optimal antara keamanan dan kemampuan?**
 
@@ -192,7 +192,7 @@ File ini mengumpulkan garis besar referensi jawaban untuk pertanyaan pemikiran d
 
 > Pro: data mengalir dari database langsung ke frontend, melewati LLM "perantara"—cepat, hemat token, dan bebas dari kesalahan halusinasi saat mentranskripsikan sejumlah besar data, sehingga cocok untuk menyajikan volume data yang besar; kode tersebut dapat diaudit, dapat digunakan kembali, dan dapat disusun menjadi pipeline (hasil SQL diumpankan langsung ke kode visualisasi). Kontra: LLM tidak pernah melihat hasil kueri, sehingga ia tidak dapat melakukan peringkasan dan pengambilan keputusan lebih lanjut berdasarkan konten data—tidak cocok untuk tugas yang membutuhkan model untuk mencerna data sebelum bernalar.
 
-## Chapter 6: Evaluating Agents
+## Bab 6: Evaluasi Agent
 
 **1. (★★) LLM-as-a-Judge menggunakan language model untuk mengevaluasi output dari language model. Apakah "evaluasi mandiri" (self-evaluation) ini memiliki titik buta sistematis—misalnya, model mungkin secara konsisten memberikan skor tinggi pada gaya respons tertentu, preferensi yang tidak konsisten dengan penilaian manusia? Bagaimana bias semacam itu dapat dideteksi dan dikoreksi?**
 

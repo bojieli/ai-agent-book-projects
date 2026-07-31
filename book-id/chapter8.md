@@ -319,7 +319,7 @@ Continual evolution bukan berarti membiarkan knowledge, Prompts, dan tools tumbu
 - Menghapus knowledge yang dibatalkan oleh bukti baru;
 - Melatih ulang LoRA dari base model aslinya.
 
-> **Experiment 8-6 ★★★: Evaluating Whether an Agent Is Continually Evolving**
+> **Eksperimen 8-6 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
 >
 > **Tujuan:** Membedakan antara tiga perilaku jangka panjang—menyimpan satu masukan (feedback), hanya menambahkan selamanya (append forever), dan benar-benar memperbarui, mentransfer, serta mempertahankan kapabilitas—sehingga menjalankan tugas yang sama berulang kali tidak disalahartikan sebagai continual learning.
 >

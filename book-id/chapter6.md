@@ -691,11 +691,7 @@ Di sisi **lingkungan berwujud fisik (*embodied environment*)**, RoboTwin2 memban
 >
 > Siapkan lingkungan simulasi untuk manipulasi robot. Baca `ch7/SimpleVLA-RL` dan dokumentasi OpenVLA untuk memahami arsitektur dari model Vision-Language-Action (integrasi *end-to-end* dari *vision encoder*, *language model*, dan *action decoder*, yang memproyeksikan gambar dan teks ke dalam ruang semantik bersama). Konfigurasikan lingkungan RoboTwin2, pahami *observation space* (tiga pandangan RGB + 14-dimensi *joint state*) dan *action space* (14-dimensi vektor kontrol). Pelajari mekanisme pengacakan lingkungan dan logika batasan spasial dalam `move_can_pot`. Evaluasi model prapelatihan (*pretrained model*), catat tingkat keberhasilannya, waktu penyelesaian, dan mode kegagalan, dengan fokus pada dampak dari mekanisme *action chunking*.
 >
->
 > ![Gambar 6-9: Lingkungan Kecerdasan Terwujud OpenVLA dan RoboTwin2](images/fig6-9.svg)
->
-
->
 
 ### Pertukaran Fidelity dan Domain Randomization
 

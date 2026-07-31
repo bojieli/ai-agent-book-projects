@@ -180,7 +180,7 @@ GPT-Live juga mengikuti jalur yang sama dalam memisahkan proses cepat dan lambat
 
 Mengkaji ulang alur naratif bab ini tentang "menggantikan VAD": VAD menebak titik peralihan-giliran (turn-switching point) berdasarkan ambang batas keheningan (silence thresholds); streaming perception (lihat bagian "Streaming Voice Perception" sebelumnya di Paradigma 1) meningkatkan (upgrades) penilaian peralihan ke tingkat semantik; dan model full-duplex sepenuhnya membubarkan konsep "beralih (switching)" itu sendiri—ia selalu mendengarkan, sehingga "interupsi" bukan lagi sebuah peristiwa (event) yang memerlukan penanganan khusus, dan rantai pemrosesan barge-in sebagian besar dihilangkan secara arsitektural. Ini adalah titik akhir dari alur narasi "menggantikan VAD" pada saat penulisan.
 
-## Trade-offs in Thinking Architectures: Dari Pemisahan Menjadi Penyatuan
+## Trade-off Arsitektur Berpikir: Dari Pemisahan hingga Penyatuan
 
 Tantangan yang sesungguhnya adalah **ketegangan antara respons real-time dan pemikiran mendalam (deep thinking)**: pengguna mengharapkan respons di tingkat milidetik, sementara masalah kompleks seringkali membutuhkan waktu berpikir selama beberapa detik. Bagaimana caranya model dapat berpikir cukup dalam namun tetap menjaga latensi yang rendah? Ketegangan (tension) ini tidak unik pada end-to-end architectures; cascaded pipelines juga menghadapinya.
 

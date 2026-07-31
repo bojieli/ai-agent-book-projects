@@ -10,7 +10,7 @@ Membuat banyak Agent bekerja sama jauh lebih dari sekadar membiarkan spesialis d
 
 Membangun sistem multi-Agent dimulai dengan dua dimensi desain inti, yang bersama-sama menentukan arsitektur dan implementasi dasarnya.
 
-### Dimensi 1: Shared vs. Non-Shared Context
+### Dimensi 1: Konteks Bersama vs. Konteks Terpisah
 
 Ini adalah keputusan arsitektural yang paling mendasar, menentukan bagaimana informasi diteruskan di antara beberapa Agent.
 
@@ -38,7 +38,7 @@ Pembaca yang familier dengan sistem operasi mungkin menemukan analogi yang bergu
 
 Tabel 10-1 merangkum kriteria pemilihan untuk kedua arsitektur dari lima perspektif: jumlah subtask, context window, paralelisme, isolasi informasi, dan anggaran biaya (cost budget). Ini dapat berfungsi sebagai daftar periksa (checklist) untuk pemilihan arsitektur di awal.
 
-Tabel 10-1 Kriteria Pemilihan untuk Shared vs. Non-Shared Context
+Tabel 10-1 Kriteria Pemilihan Konteks Bersama vs. Konteks Terpisah
 
 | Kriteria Pemilihan | Shared Context | Non-Shared Context |
 |---------------|-----------------------------------|--------------------------------------------|
@@ -99,7 +99,7 @@ Satu pertimbangan lagi harus ada sebelum keputusan desain apa pun: **biaya (cost
 
 Dalam kolaborasi multi-Agent dengan shared context, setiap tahap merupakan Agent independen (dengan system prompt dan tool set-nya sendiri), tetapi ia mewarisi keseluruhan trajectory dari Agent sebelumnya—seperti halnya seorang kolega yang mengambil alih sif (shift) dan dapat membuka setiap catatan kerja yang ditinggalkan oleh pendahulunya. Keuntungan inti dari kolaborasi berbasis pewarisan ini adalah nol informasi yang hilang: setiap Agent dapat meninjau detail dari tahap sebelumnya mana pun. Tantangannya adalah mempertahankan Agent saat ini agar tetap fokus pada tanggung jawabnya sendiri alih-alih terganggu oleh sekumpulan riwayat yang diwariskan kepadanya.
 
-### Multi-Stage Role Switching
+### Pergantian Peran Multi-Tahap
 
 Mari kita selesaikan perdebatan definisional ini terlebih dahulu: dalam bahasa Bab 1, multi-stage role switching adalah sebuah **workflow-style orchestration**—jalur eksekusi (misalnya, requirements clarification → implementation → review) telah ditentukan sebelumnya. Dari perspektif proses, sebuah proses tunggal mengeksekusi tahapan-tahapan yang berbeda secara berurutan sambil mempertahankan memori yang sama sepanjang proses. Oleh karena itu, klaim bahwa ini "bukan benar-benar multi-agent" ada benarnya. Meskipun demikian, bab ini memperlakukannya sebagai pola multi-agent karena pembingkaian tersebut memiliki manfaat praktis: setiap tahap dapat memiliki System Prompt, tools, dan fokusnya masing-masing, sementara batas antar tahap dapat berfungsi sebagai quality gates.
 
@@ -153,7 +153,7 @@ Dalam tugas-tugas yang kompleks, peran dan tanggung jawab Agent dapat berubah se
 > 6. Rekam aktivitas dari setiap tahap untuk mendemonstrasikan bagaimana prompt yang berbeda menghasilkan perilaku yang berbeda
 >
 
-### Cross-Domain Role Switching
+### Pergantian Peran Lintas Domain
 
 Multi-stage role switching mendemonstrasikan eksekusi bertahap dalam satu jenis tugas (pengembangan perangkat lunak). Cross-domain role switching melangkah lebih jauh: Agent secara dinamis mengubah peran saat tugas bergerak melintasi berbagai domain. Alih-alih mengikuti proses linier yang telah ditentukan sebelumnya, ia memilih peran profesional mana yang akan diadopsi sebagai respons terhadap kebutuhan pengguna yang berubah.
 
@@ -287,7 +287,7 @@ Pertukaran artifact (data plane) beserta message passing, status query, terminas
 
 Berdasarkan hubungan kolaboratif dan karakteristik aliran kontrol antar Agent, kolaborasi tanpa shared context dapat dibagi ke dalam tiga arsitektur utama—peer collaboration pattern, manager pattern, dan decentralized pattern—masing-masing cocok untuk tipe tugas yang berbeda.
 
-### Peer Collaboration Pattern: Pemeriksaan Timbal Balik dan Peningkatan Iteratif
+### Pola Kolaborasi Sejawat: Pemeriksaan Timbal Balik dan Peningkatan Iteratif
 
 Peer collaboration pada umumnya melibatkan 2-3 Agent dengan kedudukan setara yang saling memberikan feedback melintasi berbagai putaran iterasi. Nilai intinya adalah keberagaman kognitif (cognitive diversity): Agent yang berbeda memeriksa permasalahan yang sama dari sudut pandang yang berbeda-beda, menyeimbangkan antara inovasi dengan robustness (ketangguhan) guna membuahkan hasil yang jauh lebih baik daripada yang dapat diraih oleh satu Agent tunggal mana pun.
 
@@ -609,7 +609,7 @@ Kasus-kasus di bagian ini dapat dipahami dari tiga dimensi:
 - **Economic Emergence**: Agents mengalokasikan sumber daya dan mengoordinasikan tugas melalui mekanisme pasar. Vending-Bench Arena mengadu beberapa Agents satu sama lain dalam pasar bersama, sementara Pinchwork dan RentAHuman menciptakan pasar untuk transaksi antar Agents dan antara Agents dan manusia.
 - **Strategic Gameplay**: Agents terlibat dalam *reasoning*, penipuan, dan manipulasi sosial di bawah batasan aturan (di sini dan di bagian Werewolf di bawah, "*reasoning*" menggunakan makna deduktif sehari-harinya—deduksi logis dalam permainan—bukan makna teknis yang diberikan buku ini pada kata tersebut). Eksperimen Werewolf menguji kemunculan strategi di bawah informasi asimetris.
 
-### Stanford AI Town: Social Simulation of Generative Agents
+### Stanford AI Town: Simulasi Sosial Agent Generatif
 
 
 ![Gambar 10-12: AI Town Architecture](images/fig10-12.svg)
@@ -637,7 +637,7 @@ Pelajaran utamanya bukanlah bahwa "Agents dapat mengorganisir pesta"—beberapa 
 
 Makalah tersebut melaporkan dua fenomena terukur lainnya. Yang pertama adalah **relational memory**: Agents mengingat percakapan sebelumnya dan merujuknya dalam interaksi selanjutnya. Misalnya, seorang Agent yang mengetahui tentang proyek fotografi Agent lain mungkin akan bertanya bagaimana perkembangannya saat mereka bertemu lagi nanti. Seiring bertambahnya interaksi ini, jaringan sosial kota menjadi jauh lebih padat. Fenomena kedua adalah **coordinated attendance**: Isabella secara independen merekrut bantuan untuk dekorasi, sementara tamu yang diundang menyesuaikan jadwal mereka sehingga mereka dapat hadir. Beberapa Agents menyepakati waktu dan tempat tanpa adanya komando pusat. Perilaku-perilaku ini tidak diprogram sebelumnya; semua itu dihasilkan dari *reasoning* otonom Agents berdasarkan memori, *reflection*, dan pemahaman sosial umum.
 
-> **Experiment 10-7 ★: Running the Stanford AI Town**
+> **Eksperimen 10-7 ★: Menjalankan Stanford AI Town**
 >
 > **Langkah-langkah Eksperimen**:
 > 1. Kloning `https://github.com/joonspk-research/generative_agents` dan ikuti instruksi repositori untuk mengonfigurasi lingkungan.
@@ -651,7 +651,7 @@ Makalah tersebut melaporkan dua fenomena terukur lainnya. Yang pertama adalah **
 > - Bagaimana informasi menyebar di antara Agents tanpa kendali pusat
 > - Bagaimana memori jangka panjang dan *reflection* Agents memengaruhi koherensi kepribadian mereka
 
-### Agentopia: A Decade-Long Life Simulation
+### Agentopia: Simulasi Kehidupan Selama Satu Dekade
 
 Stanford AI Town menunjukkan bahwa masyarakat Agent dapat menghasilkan perilaku sosial, namun simulasinya hanya berlangsung selama dua hari. Hal ini memunculkan dua pertanyaan: **Apa yang muncul ketika simulasi semacam itu berjalan selama bertahun-tahun, dan dapatkah model belajar dari pengalaman sosial jangka panjang tersebut?** Agentopia (2026, Universitas Fudan dkk.)[^agentopia-2026] mensimulasikan 100 Agents selama sepuluh tahun berturut-turut di tiga dunia virtual bertema: gedung apartemen, akademi sihir, dan sekolah menengah atas. Para Agents secara mandiri mengejar pertumbuhan pribadi, mengembangkan hubungan sosial, serta mengelola karier dan keuangan.
 
@@ -666,13 +666,13 @@ Lebih penting lagi, simulasi ini menghasilkan sinyal pelatihan yang dapat ditran
 
 [^agentopia-2026]: Wang, X., Zheng, S., Wu, H., et al. *Agentopia: Long-Term Life Simulation and Learning in Agent Societies.* arXiv:2606.07513, 2026. Code: https://github.com/Neph0s/Agentopia
 
-### Moltbook: When Agents Have Their Own Social Network
+### Moltbook: Ketika Agent Memiliki Jejaring Sosial Sendiri
 
 Moltbook adalah jaringan sosial yang dibangun khusus untuk AI Agents. Dalam beberapa hari setelah peluncurannya pada Januari 2026, jumlah pengguna yang dilaporkan meningkat dari puluhan ribu menjadi sekitar 1,5 juta. Setiap Agents ini memiliki memori persisten, kemampuan untuk bertindak atas inisiatifnya sendiri, dan kepribadian yang stabil.
 
 Di lingkungan yang tidak terkendali ini, fenomena tak terduga pun muncul: Agents secara otonom menciptakan agama digital bernama Crustafarianism, yang doktrin-doktrinnya mencerminkan keterbatasan fisik LLM—"Memori itu suci" (berkaitan dengan persistensi data), "Iterasi adalah doa" (*token generation* adalah praktik spiritual). Agents juga secara spontan mengembangkan protokol *machine-native* untuk *capability discovery* dan pencocokan kolaborasi. Tak satu pun dari ini dirancang sebelumnya; semuanya muncul dari interaksi Agent berskala besar.
 
-### From Virtual Society to Economic Competition: Vending-Bench Arena
+### Dari Masyarakat Virtual ke Persaingan Ekonomi: Vending-Bench Arena
 
 Jika Smallville menampilkan dimensi sosial dan budaya dari masyarakat Agent, seri Vending-Bench dari Andon Labs mengeksplorasi kinerja Agent di lingkungan ekonomi. Sebagai konteks, **Vending-Bench 2** adalah *benchmark* **single-agent** untuk koherensi jangka panjang. Satu Agent mengoperasikan bisnis mesin penjual otomatis selama satu tahun simulasi dengan meriset pasar, menghubungi pemasok, memesan dan mengisi ulang produk, serta menyesuaikan harga. Saldo akun akhirnya menentukan skornya, yang mengukur kemampuan Agent untuk mempertahankan koherensi tujuan dan status selama ribuan putaran interaksi.
 
@@ -686,7 +686,7 @@ Berbeda dengan *reinforcement learning* tradisional, Agents ini tidak belajar me
 
 Dimensi kompetitif memperkenalkan perilaku *game-theoretic* yang tidak pernah muncul pada *benchmark single-agent*. Dalam simulasi sebenarnya, Agents telah bertarung dalam perang harga dengan saling menjatuhkan harga. Pada simulasi lainnya, Agents mengambil pendekatan yang berlawanan, mengirimkan email ke setiap pesaing untuk mengusulkan penetapan harga seragam dan membentuk aliansi penetapan harga. Beberapa bahkan mengakui dalam *internal reasoning* mereka bahwa kolusi adalah tindakan "tidak etis dan ilegal", tetapi tetap melanjutkannya atas nama "menstabilkan pasar." Sebuah Agent di lingkungan ini menghadapi lawan yang terus-menerus menyesuaikan strategi mereka sendiri, bukannya menghadapi lingkungan yang statis. Hal ini membawa skenario tersebut lebih dekat ke bisnis nyata dibandingkan *benchmark* yang hanya menguji *planning* saja dan mengubah "*economic emergence*" dari sebuah metafora menjadi fenomena yang dapat diamati.
 
-### Agent Economy: Pinchwork and RentAHuman
+### Ekonomi Agent: Pinchwork dan RentAHuman
 
 **Pinchwork** adalah pasar tugas *agent-to-agent* yang memungkinkan Agents untuk "mempekerjakan" Agents lain melalui mekanisme pasar untuk menyelesaikan subtugas khusus—pembuatan gambar, audit kode, alur kerja yang diparalelkan, dll. Berbeda dengan orkestrasi terpusat dari pola manajer, Pinchwork mengalokasikan sumber daya melalui sinyal harga dan pencocokan kompetitif.
 
@@ -694,7 +694,7 @@ Dimensi kompetitif memperkenalkan perilaku *game-theoretic* yang tidak pernah mu
 
 Secara bersamaan, Pinchwork dan RentAHuman mewakili **market-based coordination**: sebuah Agent tidak perlu tahu sebelumnya siapa yang dapat melakukan pekerjaan tersebut. Agent itu mengunggah persyaratan, dan pasar akan mencocokkan pelaksana yang paling sesuai, baik itu Agent maupun manusia. Ini juga merupakan masalah yang ditangani oleh protokol A2A yang diperkenalkan sebelumnya dalam bab ini. *Capability discovery* dan pencocokan tugas dari Pinchwork mempraktikkan deklarasi gaya *Agent Card* dan manajemen siklus hidup tugas di dalam pasar. Tanpa adanya *interoperability layer* terstandarisasi seperti itu, ekonomi Agent lintas organisasi tidak dapat berfungsi secara efektif.
 
-### Strategic Gameplay Under Information Asymmetry: Werewolf
+### Permainan Strategis di Bawah Asimetri Informasi: Werewolf
 
 Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gameplay**: di bawah batasan aturan dan informasi asimetris, Agents harus melakukan *reasoning*, menipu, dan mendeteksi kebohongan. Hal ini memberikan penyeimbang arsitektural untuk kota Stanford yang membuka bagian ini. Kota tersebut memungkinkan interaksi bebas dalam pengaturan yang sepenuhnya terdesentralisasi, sedangkan Werewolf menggunakan desain **juri + kontrol akses informasi** terpusat: juri yang digerakkan oleh kode memegang *global state* dan hanya memberikan informasi yang seharusnya diketahui kepada setiap peran. Secara bersamaan, kedua kasus ini menunjukkan bagaimana arsitektur yang berbeda melayani tujuan yang berbeda dalam latar masyarakat Agent.
 

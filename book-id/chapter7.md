@@ -1,4 +1,4 @@
-# Model Post-Training
+# Pascapelatihan Model
 
 Formula inti dari buku ini adalah Agent = LLM + Context + Tools. Bab ini beralih ke LLM itu sendiri—"otak"-nya—dan menguji bagaimana post-training dapat membantu model menggunakan context dan tools secara lebih efektif, sehingga meningkatkan kapabilitas dari seluruh sistem Agent. Akhir dari Bab 6 menunjukkan bahwa sistem evaluasi dan lingkungan simulasi adalah dua batu loncatan dari post-training: lingkungan evaluasi memberikan tempat latihan untuk training, dan metrik evaluasi memberikan targetnya. Bab ini dibangun di atas batu loncatan tersebut dan membahas bagaimana cara yang sebenarnya untuk mengubah bobot model—bagaimana menanamkan kapabilitas ke dalam parameter.
 
@@ -22,7 +22,7 @@ Sebuah analogi intuitif: Pre-training adalah "membaca sepuluh ribu buku" (mengum
 > *   **Agent Application Developers** (tidak perlu melatih model sendiri): Mulailah dengan membaca pembuka "Pre-training, SFT, RL: A Three-Stage Panorama" untuk membangun pemahaman global. Kemudian Anda bisa melewati dua bagian `[Optional Reading]` berikut (classic RL dan latar belakang pre-training) dan melanjutkan dari bagian SFT. Fokuslah pada kerangka keputusan untuk "perbedaan esensial antara SFT dan RL" dan "kapan harus memilih SFT vs RL", serta penilaian bahwa "data dan environment lebih penting daripada algoritma"—wawasan ini akan memengaruhi keputusan desain Anda dalam Harness engineering (kapan harus menyelesaikannya dengan prompt, kapan fine-tuning sepadan untuk dilakukan).
 > *   **Model Training Engineers**: Bacalah secara berurutan dari awal. Dua bagian `[Optional Reading]` memberikan latar belakang lengkap tentang reinforcement learning dan pre-training. Eksperimen-eksperimen selanjutnya memberikan skema training yang dapat direproduksi.
 
-## Pre-training, SFT, RL: A Three-Stage Panorama
+## Prapelatihan, SFT, dan RL: Panorama Tiga Tahap
 
 Bagian pengantar telah memberi Anda peta dari tiga tahap tersebut; bagian ini membahas mekanisme masing-masing tahap. Ketiga tahap ini berbeda dalam hal **data**, **tujuan optimasi (optimization objectives)**, dan **biaya (costs)**. Memahami persamaan dan perbedaannya adalah kunci untuk keseluruhan bab ini. Tabel 7-1 memberikan gambarannya; detailnya menyusul.
 
@@ -99,7 +99,7 @@ Sebagai analogi: **SFT menelusuri peta yang digambar oleh orang lain dan paling-
 
 Dengan panorama (gambaran besar) di tangan, setiap bagian selanjutnya akan memiliki tempat tersendiri di peta. Dua bagian berikutnya, di mana keduanya adalah `[Optional Reading]`—"Dari Classic RL Agents ke Modern Agents" dan "Dasar-Dasar Model Pre-training"—mengisi latar belakang reinforcement learning dan pre-training untuk pembaca yang ingin mendalami lebih jauh. Pembaca yang hanya ingin langsung mempraktikkan post-training dapat melewatkannya dan melompat ke bagian SFT.
 
-## Dari Classic RL Agents ke Modern Agents `[Bacaan Opsional]`
+## Dari Agent RL Klasik ke Agent Modern `[Bacaan Opsional]`
 
 ### Interaksi Agent-Environment
 
@@ -107,7 +107,7 @@ Dengan panorama (gambaran besar) di tangan, setiap bagian selanjutnya akan memil
 
 Untuk memahami interaksi ini dengan lebih intuitif, diagram berikut menunjukkan loop standar RL—pada setiap langkah waktu, Agent mengamati keadaan environment, menghasilkan tindakan, dan environment memberikan imbalan serta bertransisi ke keadaan baru berdasarkan tindakan tersebut.
 
-![Figure 7-1: Reinforcement Learning Agent-Environment Interaction Loop](images/fig7-1.svg)
+![Gambar 7-1: Loop Interaksi Agent-Lingkungan dalam Reinforcement Learning](images/fig7-1.svg)
 
 Interaksi ini menghasilkan sebuah **trajectory**—catatan lengkap tentang "keadaan → tindakan → imbalan → keadaan baru → tindakan → imbalan...". Kualitas sebuah policy pada akhirnya tercermin dari kualitas trajectory-nya. Sebuah **value function** menjawab pertanyaan: "Jika saya berada di keadaan ini sekarang dan terus bertindak sesuai dengan policy saat ini, berapa total imbalan yang pada akhirnya akan saya kumpulkan?" Ini seperti pemain catur berpengalaman yang melihat posisi dan, tanpa memperhitungkan sampai akhir, secara intuitif memperkirakan probabilitas kemenangannya. (Ketika "policy saat ini" diganti dengan "policy optimal," kita mendapatkan value function optimal, yang akan digunakan nanti di bab ini ketika membahas Bellman optimality equation.) Batas antara Agent dan environment mengikuti prinsip sederhana: **apapun yang tidak dapat diubah secara sewenang-wenang oleh Agent merupakan bagian dari environment.**
 
@@ -143,7 +143,7 @@ Dua paradigma ini paling mendasar berbeda pada action space—MDP mengasumsikan 
 
 MDP (Markov Decision Process) adalah kerangka matematis untuk reinforcement learning, mendefinisikan elemen inti seperti keadaan, tindakan, dan imbalan. Asumsi intinya adalah **Markov property**: masa depan hanya bergantung pada keadaan saat ini, bukan pada sejarah sebelumnya. Sebagai contoh, dalam catur, melihat posisi papan saat ini saja sudah cukup untuk menentukan langkah optimal; tidak perlu meninjau setiap langkah sebelumnya. Asumsi ini menyederhanakan masalah tetapi juga membatasi kemampuan untuk memodelkan ketergantungan historis.
 
-![Figure 7-2: Markov Decision Process (MDP) Diagram](images/fig7-2.svg)
+![Gambar 7-2: Diagram Markov Decision Process (MDP)](images/fig7-2.svg)
 
 Fitur kunci dari RL Agent tradisional adalah **closed action space**—semua tindakan yang mungkin dilakukan oleh Agent membentuk himpunan terbatas yang telah ditentukan sebelumnya. **Classic board-game Agents** adalah contoh paling khas: 361 kemungkinan posisi langkah di Go, meskipun sangat luas, sepenuhnya ditentukan dan terbatas; dalam catur, meskipun ada aturan pergerakan yang berbeda untuk bidak yang berbeda, tindakan yang mungkin tetap bisa dihitung; game Atari hanya memiliki beberapa hingga belasan tindakan diskrit. **Robotic Agents** mewakili action space yang kontinu tetapi terbatas: sudut sendi, kecepatan, dan kekuatan cengkeraman adalah nilai kontinu, tetapi semuanya memiliki batasan fisik yang jelas (sudut rotasi maksimum, torsi maksimum, batas kecepatan), dengan dimensi yang ditentukan oleh degrees of freedom robot.
 
@@ -159,9 +159,9 @@ di mana $r$ adalah imbalan langsung, $s'$ adalah keadaan selanjutnya yang dicapa
 
 Dua gambar berikut menunjukkan proses eksplorasi dari Q-learning di sebuah grid world dan konvergensi bertahap dari Q-values.
 
-![Figure 7-3: Q-learning Grid World](images/fig7-3.svg)
+![Gambar 7-3: Grid World Q-learning](images/fig7-3.svg)
 
-![Figure 7-4: Q-value Update Visualization](images/fig7-4.svg)
+![Gambar 7-4: Visualisasi Pembaruan Nilai-Q](images/fig7-4.svg)
 
 Q-learning adalah jenis khusus dari metode **off-policy**—ia dapat menggunakan data yang dihasilkan oleh policy apapun (termasuk eksplorasi acak) untuk mempelajari policy optimal. Definisi ketat dari metode on-policy dan off-policy, serta bagaimana mereka dipetakan ke post-training LLM, akan dibahas nanti di bagian "Perbandingan Algoritma Reinforcement Learning."
 
@@ -196,7 +196,7 @@ RL tradisional kesulitan dengan jenis tindakan ini, pada dasarnya karena ruang e
 
 RL post-training kemudian menggunakan imbalan eksternal untuk mengajari LLM agar menggunakan aturan-aturan ini secara lebih efisien untuk tugas-tugas tertentu. Struktur bahasa itu sendiri juga memberikan imbalan internal implisit—sebuah Chain of Thought yang koheren secara logis (misal, "Karena kita perlu mengkonversi mata uang asing ke USD, langkah pertama adalah melihat nilai tukar") memiliki generation probability tinggi, sedangkan yang kacau secara logis (misal, "Karena kita perlu mengkonversi mata uang, mari kita periksa cuaca dulu") memiliki probabilitas yang sangat rendah, secara alami membimbing model ke arah jalur yang masuk akal.
 
-![Figure 7-5: Comparison of Classic RL and Modern LLM Agent](images/fig7-5.svg)
+![Gambar 7-5: Perbandingan RL Klasik dan Agent LLM Modern](images/fig7-5.svg)
 
 Kemampuan berpikir ini, yang didasarkan pada aturan bahasa yang melekat, memungkinkan LLM Agents untuk memahami instruksi yang belum pernah mereka lihat sebelumnya (zero-shot generalization) dan menguasai tugas-tugas baru dengan sangat sedikit contoh (few-shot adaptation)—sebuah kontras yang tajam dengan paradigma tradisional MDP Agent yang membutuhkan trial and error yang ekstensif. Selain itu, paradigma baru ini juga mendukung compositional generalization (menggabungkan kembali konsep-konsep yang diketahui untuk menangani situasi baru), in-context learning (adaptasi cepat melalui prompts dan contoh-contoh), dan multimodal understanding (secara alami mengintegrasikan modalitas seperti visi, bahasa, dan tindakan). Perhatikan bahwa **efektivitas** dari in-context learning (zero-shot generalization, few-shot adaptation) dan **mekanisme internalnya** adalah dua hal yang berbeda—seperti yang dianalisis di Bab 2, attention mechanism bekerja lebih seperti retrieval daripada reasoning, tetapi ini tidak menghalangi efek praktisnya yang kuat dalam adaptasi tugas.
 
@@ -204,7 +204,7 @@ Evolusi dari ruang tindakan tertutup ke terbuka mencerminkan pergeseran fundamen
 
 Model-model seperti Kimi K3, yang dioptimalkan untuk penggunaan alat dan penalaran rantai panjang, mengilustrasikan arah khas dari paradigma LLM+RL: prapelatihan bahasa skala besar menyediakan fondasi, dan post-training memperkuat dekomposisi masalah, penggunaan alat, dan koreksi diri. **OpenVLA** (dirinci di Bab 9) memamerkan arsitektur paradigma VLA (Vision-Language-Action) di era LLM: sebuah vision encoder memproses observasi lingkungan, model bahasa memahami instruksi dan melakukan reasoning, dan action decoder menghasilkan sinyal kontrol, memungkinkan kontrol yang dikondisikan bahasa dan generalisasi lintas tugas. Untuk memperjelas, OpenVLA itu sendiri dilatih melalui imitation learning pada hampir satu juta **lintasan demonstrasi** robot, menjadikannya bersifat SFT pada dasarnya alih-alih RL. SimpleVLA-RL, yang diperkenalkan pada Eksperimen 7-13 di bagian selanjutnya dari bab ini, adalah contoh representatif dari membawa RL ke dalam robotika dengan menggunakan rewards untuk lebih mengoptimalkan jenis arsitektur VLA ini.
 
-![Figure 7-6: Evolution of OpenAI Training Paradigms](images/fig7-6.svg)
+![Gambar 7-6: Evolusi Paradigma Pelatihan OpenAI](images/fig7-6.svg)
 
 **Jalur Eksplorasi OpenAI** (dicatat oleh Shunyu Yao, Asisten Profesor di Princeton University dan penulis makalah ReAct, dalam "The Second Half") menelusuri evolusi dalam cara bidang ini berpikir. **Fase 1 (2015-2016), Berpusat pada Algoritma:** Keyakinan yang berlaku adalah bahwa algoritma yang lebih baik adalah kuncinya. Kemajuan dicapai di lingkungan standar seperti Atari, tetapi setiap lingkungan baru membutuhkan pelatihan ulang dari awal. **Fase 2 (2016-2018), Pentingnya Lingkungan:** Gym menstandarkan berbagai tugas; Universe dan World of Bits berusaha mengubah seluruh internet menjadi lingkungan pelatihan RL; dan Dota 2 mengejar kinerja manusia super dalam lingkungan kompleks tertentu. Idenya jelas, tetapi penggunaan komputer secara umum dan navigasi web masih di luar jangkauan.
 
@@ -213,7 +213,7 @@ Model-model seperti Kimi K3, yang dioptimalkan untuk penggunaan alat dan penalar
 > **Eksperimen 7-2 ★★: Studi Perbandingan RL Tradisional dan LLM Agent**
 >
 >
-> ![Figure 7-7: Architecture Comparison of Q-learning and LLM Agent in a Treasure Hunt Game](images/fig7-7.svg)
+> ![Gambar 7-7: Perbandingan Arsitektur Q-learning dan Agent LLM dalam Permainan Berburu Harta Karun](images/fig7-7.svg)
 >
 >
 > Kami membandingkan Q-learning dengan sebuah LLM Agent—Kimi K3, mempertahankan buffer hingga 50 pengalaman—dalam permainan berburu harta karun yang sama. Hasilnya menakjubkan: **LLM Agent menyelesaikan permainan dalam 18 langkah pada percobaan pertamanya**.
@@ -227,11 +227,11 @@ Model-model seperti Kimi K3, yang dioptimalkan untuk penggunaan alat dan penalar
 
 Bab 1 telah memberikan peta konseptual tentang bagaimana adaptasi kontekstual, pembaruan ke artefak eksternal, dan pembaruan parameter bekerja bersama; bagian “The Complete Post-Training Landscape and Practical Tips” di akhir bab ini kembali membahas topik tersebut. Benang merah dari bab ini adalah post-training: menuliskan ke dalam parameter model kemampuan-kemampuan yang tidak dapat diekspresikan sepenuhnya melalui aturan eksternal.
 
-## Model Pre-training Basics `[Bacaan Opsional]`
+## Dasar-dasar Prapelatihan Model `[Bacaan Opsional]`
 
 Untuk memahami mengapa teknik-teknik post-training efektif, pertama-tama kita harus memahami apa yang dibangun oleh pre-training. Post-training (SFT dan RL) pada dasarnya mengoptimalkan dalam ruang representasi yang dibangun oleh pre-training—struktur pengetahuan yang diletakkan oleh pre-training menentukan batas atas dari post-training. Oleh karena itu, kita memeriksa aspek-aspek inti dari pre-training melalui tiga eksperimen: melatih model bahasa skala kecil dari awal, memperluas kemampuan visual, dan menyuntikkan pengetahuan bahasa baru. Tiga eksperimen di bagian ini bersifat tambahan dan ditujukan untuk membangun intuisi tentang pre-training—yaitu, pelatihan awal pada data skala besar yang mengajarkan model tentang pola bahasa dasar dan pengetahuan dunia. Pembaca yang sudah akrab dengan proses pre-training dapat melewatinya.
 
-![Figure 7-8: Pre-training Next Token Prediction](images/fig7-8.svg)
+![Gambar 7-8: Prediksi Token Berikutnya dalam Prapelatihan](images/fig7-8.svg)
 
 Pelatihan model bahasa mengikuti pipeline tiga langkah: "tokenization — pre-training — post-training." Tokenization mensegmentasi teks menjadi unit-unit diskrit. Misalnya, "I like programming" mungkin di-tokenize menjadi "I," "like," "program," "ming." Tokens ini adalah unit tekstual terkecil yang diproses oleh model. Tugas dari pre-training secara konseptual sederhana: tunjukkan pada model bagian pertama dari sebuah segmen teks dan minta ia untuk memprediksi token berikutnya. Dengan membandingkan prediksinya dengan jawaban yang benar (perbedaan ini disebut loss; loss yang lebih kecil berarti prediksi yang lebih akurat), model secara terus-menerus menyesuaikan parameternya. Setelah pelatihan berulang pada data teks masif, model secara bertahap mempelajari aturan bahasa, pengetahuan dunia, dan kemampuan reasoning dasar. Setelah pre-training, model dapat menghasilkan teks yang fasih, tetapi output-nya kurang terstruktur dan kesulitan mengikuti instruksi. Post-training kemudian mengubah model menjadi asisten praktis melalui SFT—berlatih pada pasangan input-output yang berlabel—dan preference optimization, seperti DPO, yang mengajarkan model untuk menghasilkan respons yang lebih disukai manusia.
 
@@ -244,7 +244,7 @@ Pelatihan model bahasa mengikuti pipeline tiga langkah: "tokenization — pre-tr
 > **Eksperimen 7-4 ★★: Melatih VLM Anda Sendiri**
 >
 >
-> ![Figure 7-9: Vision-Language Model (VLM) Architecture](images/fig7-9.svg)
+> ![Gambar 7-9: Arsitektur Vision-Language Model (VLM)](images/fig7-9.svg)
 >
 >
 > VLMs menyatukan persepsi visual dan pemahaman bahasa dalam satu model tunggal. Tantangan intinya adalah cross-modal alignment—membuat "apa yang dilihat" sesuai dengan "apa yang dikatakan." Arsitekturnya terdiri dari tiga komponen: sebuah **Vision Encoder** (misalnya, CLIP, parameter dibekukan) mengekstrak fitur semantik dari gambar; sebuah **Projection Layer** (ringan, satu-satunya bagian yang dilatih dari awal) bertindak sebagai "penerjemah" antara fitur visual dan model bahasa, memetakan fitur visual ke dalam ruang representasi yang dapat dipahami oleh model bahasa; dan sebuah **Language Model** yang menghasilkan teks deskriptif. Pelatihan menggunakan strategi "bekukan LLM + latih hanya projection layer" untuk menghindari catastrophic forgetting (melupakan kemampuan lama setelah mempelajari kemampuan baru); setelah tahap alignment pre-training, pembekuan LLM dilepas, dan SFT dilakukan pada pasangan gambar-deskripsi berkualitas tinggi, yang secara signifikan meningkatkan detail dan keakuratan dari deskripsinya.
@@ -262,7 +262,7 @@ Dengan kemampuan dasar dari pre-training, langkah selanjutnya adalah mengubah mo
 
 ## SFT (Supervised Fine-Tuning)
 
-![Figure 7-10: Supervised Fine-Tuning (SFT) Pipeline](images/fig7-10.svg)
+![Gambar 7-10: Pipeline Supervised Fine-Tuning (SFT)](images/fig7-10.svg)
 
 Bagian 7.1 telah mengungkap esensi dari SFT ("memprediksi token berikutnya," dengan data yang berbeda, loss hanya dihitung pada responsnya). Bagian ini menggunakan empat eksperimen untuk mengamati apa yang sebenarnya diperkuat oleh mekanisme ini—menuliskan pemetaan yang stabil dan protokol ke dalam parameter—di berbagai tugas yang berbeda. Nilai inti dari SFT bukanlah menyuntikkan pengetahuan baru, tetapi **memperkuat protokol (solidifying protocols)**: menuliskan hubungan pemetaan, format interaksi, dan norma gaya ke dalam parameter, yang memungkinkan model untuk menghasilkan outputs yang memenuhi ekspektasi selama proses inferensi tanpa prompts yang panjang. Biasanya, hanya dibutuhkan beberapa ribu hingga puluhan ribu contoh berkualitas tinggi untuk membangun kemampuan percakapan dasar dan instruction following.
 
@@ -299,17 +299,17 @@ Sebelum terjun langsung dengan SFT, ada satu pertanyaan praktis yang tidak bisa 
 >
 > Berikut adalah penilaian yang lebih praktis dan lebih penting: **bagi sebagian besar orang yang melakukan post-training, sama sekali tidak perlu mendistilasi chain-of-thought dari model sumber tertutup.** Kesenjangan antara model open-source terbaik saat ini dan model SOTA sumber tertutup tidak sebesar yang dibayangkan orang; model teacher hanya perlu "secara jelas lebih kuat daripada student", tidak harus "yang terbaik di dunia". Jika model yang Anda post-training berukuran 200B parameter atau lebih kecil, model SOTA open-source sudah sangat memadai sebagai teacher.
 
-> **Experiment Design:** Sebuah proses tiga langkah. Langkah 1, **Collect Trajectories**: Ambil sampel masalah dari distribusi target tugas (misalnya, matematika, kode), gunakan model guru *open-source* untuk menghasilkan lintasan "pemikiran + jawaban" secara lengkap, dan saring lintasan dengan jawaban akhir yang salah menggunakan validator berbasis aturan—jika tidak, model siswa akan meniru proses pemikiran yang salah. Langkah ini—"hasilkan kandidat, verifikasi dan saring, simpan hanya lintasan yang benar"—memiliki namanya sendiri: **rejection sampling**. Melakukan SFT pada data yang dibangun dengan cara ini disebut **rejection sampling fine-tuning (RFT)**. Ia berada di antara SFT murni dan RL: tidak ada *reward model* untuk dilatih, tidak ada *policy gradients*—hanya "ambil banyak sampel, tolak yang salah, simpan yang benar" untuk meningkatkan kualitas data, sebuah cara yang sangat hemat biaya untuk membangun data bagi tugas-tugas yang dapat diverifikasi. Langkah 2, **SFT Training**: Gunakan pasangan pelatihan "masalah → `<think>` lintasan pemikiran `</think>` + jawaban akhir" untuk melakukan SFT standar pada model kecil (misalnya, skala 7B). Langkah 3, **Comparative Evaluation**: Bandingkan model siswa sebelum dan sesudah distilasi, serta model guru, pada *benchmark* yang sama untuk mengukur proporsi kapabilitas yang pulih.
+> **Desain Eksperimen:** Proses tiga langkah. Langkah 1, **Mengumpulkan Lintasan**: Ambil sampel masalah dari distribusi tugas target (misalnya matematika atau kode), gunakan model guru sumber terbuka untuk menghasilkan lintasan "pemikiran + jawaban", lalu singkirkan lintasan yang jawaban akhirnya salah dengan validator berbasis aturan agar model siswa tidak meniru proses yang keliru. Langkah "hasilkan kandidat, verifikasi, lalu simpan hanya lintasan yang benar" disebut **rejection sampling**. SFT pada data semacam ini disebut **rejection sampling fine-tuning (RFT)**. Pendekatan ini berada di antara SFT murni dan RL: tidak ada reward model atau policy gradient, hanya pengambilan banyak sampel dan penyaringan untuk meningkatkan kualitas data. Langkah 2, **Pelatihan SFT**: Gunakan pasangan "masalah → `<think>` lintasan pemikiran `</think>` + jawaban akhir" untuk menjalankan SFT standar pada model kecil. Langkah 3, **Evaluasi Perbandingan**: Bandingkan model siswa sebelum dan sesudah distilasi serta model guru pada benchmark yang sama.
 >
-> **Acceptance Criteria:** Model siswa yang telah didistilasi menunjukkan peningkatan signifikan pada *benchmark* matematika dan kode relatif terhadap kinerja sebelum distilasi, dan lintasan pemikirannya menunjukkan perilaku seperti guru seperti refleksi, pelacakan mundur (*backtracking*), dan verifikasi. Selain itu, waspadai biaya dari distilasi: siswa akan mewarisi kesalahan sistematis dari guru dan kebiasaan berpikir yang bertele-tele (yang terakhir dapat dioptimalkan lebih lanjut menggunakan pendekatan AdaptThink dari Experiment 7-10).
+> **Kriteria Penerimaan:** Model siswa yang telah didistilasi menunjukkan peningkatan signifikan pada benchmark matematika dan kode dibandingkan sebelum distilasi, serta menampilkan perilaku seperti refleksi, pelacakan mundur, dan verifikasi. Perhatikan pula biaya distilasi: siswa dapat mewarisi kesalahan sistematis dan kebiasaan berpikir bertele-tele dari guru; masalah terakhir dapat dioptimalkan lebih lanjut dengan AdaptThink pada Eksperimen 7-10.
 
 Keempat eksperimen ini memiliki fitur yang sama—"menuliskan pemetaan dan protokol yang stabil ke dalam parameter": voice SFT memantapkan protokol kontrol gaya, multilingual SFT memantapkan templat pengorganisasian pemikiran, dan distillation SFT memantapkan pemetaan langsung dari input ke output. Mereka berbagi tujuan yang jelas, format yang bersih, dan kriteria evaluasi yang stabil, yang memungkinkan SFT untuk memberikan keuntungan dengan efisiensi sampel yang sangat tinggi; namun begitu distribusinya bergeser, kecenderungannya terhadap hafalan bermanifestasi sebagai penurunan kinerja. Ini adalah manifestasi eksperimental dari pemisahan *memory-generalization* yang dibahas pada Section 7.1, "The Essential Difference Between SFT and RL."
 
 ## Kapan Memilih SFT dan Kapan Memilih RL
 
-Section 7.1 mengklarifikasi **perbedaan mendasar** antara SFT dan RL. Bagian ini menjawab pertanyaan yang lebih praktis: **Diberikan tugas tertentu, mana yang harus Anda gunakan?** Beberapa kesimpulan dari kerangka keputusan di bawah ini akan divalidasi lebih lanjut dalam eksperimen RL berikutnya (Experiment 7-10, Experiment 7-11). Pembaca dapat terlebih dahulu membentuk penilaian awal dan kemudian kembali untuk melakukan referensi silang setelah membaca bagian RL.
+Bagian 7.1 menjelaskan **perbedaan mendasar** antara SFT dan RL. Bagian ini menjawab pertanyaan yang lebih praktis: **Untuk tugas tertentu, mana yang sebaiknya digunakan?** Beberapa kesimpulan dari kerangka keputusan berikut akan diuji lebih lanjut dalam Eksperimen 7-10 dan 7-11. Pembaca dapat membentuk penilaian awal, lalu kembali membandingkannya setelah membaca bagian RL.
 
-![Figure 7-11: SFT→RL Two-Stage Training Pipeline](images/fig7-11.svg)
+![Gambar 7-11: Pipeline Pelatihan Dua Tahap SFT→RL](images/fig7-11.svg)
 
 **SFT cocok untuk** tugas-tugas yang membutuhkan stabilisasi format (seperti output JSON atau gaya percakapan yang konsisten), memiliki demonstrasi ahli berkualitas tinggi yang tersedia, dan sangat cocok dengan lingkungan *deployment*. **RL menjadi perlu** dalam keadaan yang berbeda: ketika *deployment* berbeda secara sistematis dari pelatihan (selama pelatihan, kartu J/Q/K semuanya bernilai 10, sedangkan dalam *deployment* mereka menjadi 11/12/13—aturannya berubah; atau pelatihan menggunakan corak hitam dan *deployment* menggunakan corak merah—penampilannya berubah), ketika strategi optimal harus ditemukan (demonstrasi ahli belum tentu optimal), atau ketika biaya anotasi terlalu mahal untuk mendemonstrasikan setiap jalur.
 
@@ -323,13 +323,13 @@ Dalam praktiknya, keputusan dapat dibuat dengan urutan sebagai berikut:
 2. **Jika pelatihan diperlukan: Coba SFT dahulu.** Cocok untuk memantapkan format output (skema JSON, format pemanggilan API), memantapkan pengetahuan protokol (penggunaan istilah, format output, kebiasaan proses, yaitu, "bagaimana mengatakan dan melakukan sesuatu"), dan menyatukan gaya (*tone*, panjang). Namun perhatikan bahwa SFT tidak cocok untuk menyuntikkan sejumlah besar pengetahuan faktual ("apa yang harus diketahui")—hal itu memerlukan kelanjutan *pre-training* atau RAG (lihat "The Complete Post-Training Landscape and Practical Tips" di akhir bab ini). SFT berbiaya rendah dan cepat menunjukkan hasil.
 3. **Ketika SFT tidak cukup: Tambahkan RL.** Cocok untuk skenario yang membutuhkan generalisasi terhadap situasi baru, eksplorasi strategi optimal, atau ketika biaya anotasi terlalu tinggi. Pastikan untuk menstabilkan format output terlebih dahulu dengan SFT sebelum menerapkan RL di atasnya.
 
-## Single-Turn Reinforcement Learning: Perbandingan antara Memory dan Generalization
+## Reinforcement Learning Putaran Tunggal: Perbandingan Memori dan Generalisasi
 
 "Single-turn" berarti tugas diselesaikan dalam satu interaksi: model menerima input, menghasilkan output, dan menerima *reward*, tanpa perlu mempertahankan *state* di seluruh langkah. Pengaturan yang disederhanakan ini memungkinkan kita untuk fokus pada perbedaan mendasar dalam mekanisme pembelajaran antara SFT dan RL, tanpa kompleksitas dari interaksi *multi-turn*. Skenario *single-turn* memberikan kondisi eksperimental terkontrol yang jelas: tugas yang sama, *base model* yang sama, anggaran komputasi yang sama, dengan satu-satunya variabel adalah metode pelatihannya. Eksperimen pertama mendemonstrasikan bagaimana RL mempelajari meta-strategi tentang "kapan harus berpikir"; eksperimen kedua menggunakan permainan kartu penalaran aritmatika untuk secara sistematis mengkuantifikasi "SFT menghafal, RL menggeneralisasi".
 
 Sebelum masuk ke eksperimen, mari kita bangun beberapa **intuisi minimal** tentang algoritma RL, yang cukup untuk mengikuti istilah-istilah yang muncul (rumus lengkap dan perbandingannya akan dibahas nanti di bagian "Comparison of Reinforcement Learning Algorithms" di bab ini). Pelatihan RL dalam bab ini sebagian besar bertumpu pada **policy gradient**: model menghasilkan beberapa respons untuk masalah yang sama, meningkatkan probabilitas untuk respons ber-*reward* tinggi dan menurunkan probabilitas untuk respons ber-*reward* rendah—bergerak lebih jauh ke arah yang memberikan *reward* dan lebih sedikit ke arah yang tidak memberikan *reward*. Untuk menjaga agar pembaruan besar tunggal tidak menggagalkan model, algoritma **PPO** arus utama memotong besaran pembaruan pada setiap langkah (ini adalah "PPO with value network" dari eksperimen-eksperimen selanjutnya; *value network* memperkirakan *baseline* untuk menghitung *advantage* yang lebih halus). Metode lainnya, **GRPO**, tidak melatih *value network*; melainkan ia membandingkan beberapa respons terhadap masalah yang sama satu sama lain untuk menilai kualitas relatif masing-masing. Intuisi tersebut adalah semua yang Anda butuhkan untuk dua eksperimen berikutnya.
 
-> **Experiment 7-10 ★★: AdaptThink—Learning "When Not to Think"**
+> **Eksperimen 7-10 ★★: AdaptThink—Belajar "Kapan Tidak Perlu Berpikir"**
 >
 > Model penalaran besar (misalnya, OpenAI o1, DeepSeek-R1) menghasilkan *chain-of-thought* yang panjang untuk semua masalah, menyebabkan *overhead* yang tidak perlu pada masalah-masalah sederhana. Eksperimen ini pertama-tama memvalidasi sebuah intuisi: **Mode NoThinking** (melewatkan pemikiran melalui `<think></think>`) berkinerja sebanding atau bahkan lebih baik pada masalah sederhana; hanya ketika menghadapi masalah sulit, keunggulan dari mode *Thinking* menjadi nyata.
 >
@@ -344,9 +344,9 @@ Sebelum masuk ke eksperimen, mari kita bangun beberapa **intuisi minimal** tenta
 >
 > Bersama dengan *prompt distillation*, AdaptThink membentuk "fast-slow dual system": distilasi mengurangi proporsi tugas yang memerlukan pemikiran, sementara AdaptThink mengoptimalkan strategi pemicuan untuk tugas-tugas yang tersisa, secara bersama-sama memaksimalkan efisiensi pemikiran.
 
-> **Experiment 7-11 ★★: GeneralPoints—A "Memory and Generalization" Comparison in Single-Turn RL**
+> **Eksperimen 7-11 ★★: GeneralPoints—Perbandingan "Memori dan Generalisasi" dalam RL Putaran Tunggal**
 >
-> ![Figure 7-12: GeneralPoints Experimental Architecture (Training and Testing Design for GP-L and GP-VL Variants)](images/fig7-12.svg)
+> ![Gambar 7-12: Arsitektur Eksperimen GeneralPoints (Desain Pelatihan dan Pengujian Varian GP-L dan GP-VL)](images/fig7-12.svg)
 >
 > GeneralPoints adalah permainan kartu penalaran aritmatika yang diusulkan oleh Chu dkk. (2025, "SFT Memorizes, RL Generalizes," arXiv:2501.17161), yang dirancang secara khusus untuk mengevaluasi generalisasi model. Tujuannya menyerupai "24 Game": gunakan setiap dari keempat angka yang ditampilkan pada kartu tepat satu kali, kombinasikan dengan penjumlahan, pengurangan, perkalian, dan pembagian untuk mencapai angka target 24. Eksperimen ini merancang dua varian: GP-L yang hanya teks (*text-only*) dan GP-VL yang berbasis gambar (*image-based*), yang memungkinkan kita untuk menguji *rule generalization* dan *visual generalization* di dalam kerangka kerja yang sama.
 >
@@ -402,7 +402,7 @@ Eksperimen *single-turn* sebelumnya menunjukkan keunggulan generalisasi dari RL,
 
 > **Poin terpenting pertama, agar Anda tidak tersesat dalam rumus.** Bagian ini mencantumkan cukup banyak nama algoritma dan persamaan, tetapi ingat Thread Dua dari bab ini: **di industri, cukup mengetahui cara menggunakan algoritma RL yang sudah ada (*off-the-shelf* seperti PPO, GRPO, dan sejenisnya) dan memilih yang tepat; apa yang sebenarnya menentukan keberhasilan atau kegagalan adalah data dan *environment*, bukan algoritmanya.** Algoritma-algoritma ini sudah dipaketkan dalam *framework* matang seperti veRL dan TRL; menggunakannya biasanya berarti mengubah beberapa baris konfigurasi. Jadi, tujuan di sini bukanlah untuk mengajarkan Anda turunannya, melainkan untuk memberi Anda peta panduan—algoritma mana untuk skenario yang mana. Bagian rumus (ditujukan untuk *training engineers*) dapat dilewati tanpa kehilangan benang merah. Bagian selanjutnya memberikan argumen positif tentang mengapa data dan *environment* lebih penting daripada algoritma.
 
-![Figure 7-13: GRPO Algorithm Flow](images/fig7-13.svg)
+![Gambar 7-13: Alur Algoritme GRPO](images/fig7-13.svg)
 
 Skenario RL untuk LLM Agents modern berbeda secara mendasar dari RL tradisional—Agents perlu memahami niat pengguna, melakukan *Tool Call*, menghasilkan output terstruktur, dan terlibat dalam penalaran rantai panjang (*long-chain reasoning*) melalui beberapa giliran dialog. Pengambilan keputusan multi-tahap dan multi-objektif ini berarti bahwa "memilih algoritma yang tepat" memiliki beberapa dampak, tetapi jauh lebih kecil dibandingkan dengan data dan *environment*.
 
@@ -499,9 +499,9 @@ Algoritma bukannya tidak penting—mereka hanya datang belakangan. Urutan usaha 
 
 ### Tantangan Utama dari Tugas Multi-Giliran
 
-![Figure 7-14: Comparison of Single-Turn RL and Multi-Turn RL](images/fig7-14.svg)
+![Gambar 7-14: Perbandingan RL Putaran Tunggal dan Multi-Putaran](images/fig7-14.svg)
 
-![Figure 7-15: Credit Assignment in Multi-Turn Interactions](images/fig7-15.svg)
+![Gambar 7-15: Credit Assignment dalam Interaksi Multi-Putaran](images/fig7-15.svg)
 
 Beralih dari giliran tunggal ke multi-giliran melibatkan lompatan kualitatif dalam kompleksitas. Kebijakan tidak hanya harus memilih tindakan optimal untuk langkah saat ini tetapi juga mempertimbangkan nilai keadaan di masa depan; itu tidak hanya harus menangani umpan balik langsung tetapi juga melakukan **Credit Assignment** di bawah imbalan yang tertunda—menentukan langkah mana dalam urutan multi-langkah yang paling berkontribusi terhadap hasil akhir. Misalnya, Agent layanan pelanggan memecahkan masalah pengguna setelah 10 giliran dialog dan menerima ulasan positif—tetapi apakah ulasan positif ini harus dikaitkan dengan pertanyaan yang tepat pada giliran ke-2 atau penjelasan yang sabar pada giliran ke-7? Multi-giliran juga memperkenalkan tantangan lain: **Partial Observability** (Agent tidak dapat memperoleh keadaan lengkap dan harus membangun representasi keadaan implisit dari pengamatan historis).
 
@@ -517,7 +517,7 @@ Mari kita lihat tiga contoh. **SWE-bench** memberikan kasus khas dari transforma
 
 Contoh-contoh ini menunjuk pada kesimpulan yang sama: Kualitas sinyal imbalan yang diberikan oleh lingkungan evaluasi secara langsung menentukan efisiensi pelatihan RL—asalkan data yang digunakan untuk pelatihan dipisahkan dari data yang digunakan untuk evaluasi.
 
-![Figure 7-16: Reward Density Spectrum](images/fig7-16.svg)
+![Gambar 7-16: Spektrum Kepadatan Reward](images/fig7-16.svg)
 
 **Skenario yang Berlaku untuk Imbalan Biner.**
 
@@ -535,7 +535,7 @@ Akar masalahnya, sebagaimana ditunjukkan oleh Silver dan Sutton dalam "Welcome t
 
 **Evolusi Paradigma Imbalan.**
 
-![Figure 7-17: Evolution of Reward Paradigms](images/fig7-17.svg)
+![Gambar 7-17: Evolusi Paradigma Reward](images/fig7-17.svg)
 
 Penelitian DeepSeek (Liu et al., 2025) secara sistematis menganalisis perbedaan sinyal pembelajaran di seluruh paradigma imbalan di sepanjang spektrum skalar-semi-skalar-generatif. Berdasarkan hal ini, buku ini menambahkan dimensi penilaian vektor (multidimensi). Untuk membuat perbedaan di antara paradigma-paradigma ini menjadi intuitif, kita kembali ke skenario sebelumnya di mana Pine AI menelepon Xfinity untuk mengubah paket. Kali ini, Agent menyelesaikan tugas tetapi dengan kelemahan: ia menghilangkan alamat penagihan, yang harus ditambahkan, dan salah menyebutkan nama paket sebagai "Performance Plus" alih-alih "Performance Pro" (skor berikut bersifat ilustratif):
 
@@ -559,7 +559,7 @@ Langkah 3: Sistem secara otomatis memeriksa akurasi evaluasi. Misalnya, jika mod
 
 Metode ini memiliki beberapa keuntungan utama: generalisasinya baik karena mempelajari kemampuan meta dari "menetapkan standar dan melakukan evaluasi" daripada rubrik penilaian tetap; proses evaluasinya yang transparan membuat bias lebih mudah ditinjau—misalnya, jika model secara konsisten memperlakukan "balasan panjang" sebagai kekuatan, jelas bahwa model secara keliru menyamakan panjang dengan kualitas; dan ini memungkinkan model imbalan dan model kebijakan berevolusi bersama, tidak seperti metode tradisional di mana model imbalan tetap statis.
 
-### Process Reward vs. Outcome Reward: Pilihan Utama untuk Tugas Multi-Giliran
+### Process Reward vs. Outcome Reward: Pilihan Utama untuk Tugas Multi-Putaran
 
 Di luar credit assignment dan partial observability, tugas multi-giliran juga menghadapi masalah **long-range dependency**—dampak dari keputusan awal, seperti pengaturan sub-tujuan atau pemilihan alat, mungkin baru terlihat puluhan langkah kemudian. Ini menghadirkan pilihan utama dalam desain imbalan: **Process Reward** memberikan umpan balik di setiap langkah, mengurangi kesulitan credit assignment tetapi memperkenalkan bias desain manusia, berpotensi membatasi ruang eksplorasi. **Outcome Reward** memberikan umpan balik hanya pada bagian akhir, menawarkan kebebasan eksplorasi maksimum tetapi menuntut kesulitan pelatihan dan kebutuhan sampel yang lebih tinggi. Secara analogi, process reward seperti guru yang menilai pekerjaan rumah soal demi soal, memungkinkan siswa dengan cepat mengetahui letak kesalahannya; outcome reward ibarat hanya melihat nilai ujian akhir, memberi siswa lebih banyak kebebasan untuk mengeksplorasi metode pembelajaran, tetapi umpan baliknya datang sangat terlambat. Desain fungsi imbalan berkaitan erat dengan konstruksi lingkungan evaluasi yang dibahas pada Bab 6—lingkungan evaluasi otomatis berkualitas tinggi adalah prasyarat untuk pelatihan RL.
 
