@@ -12,7 +12,7 @@ Ezért amíg a modellek önállóan még nem képesek folyamatosan és megbízha
 
 Az előző fejezetek már bemutatták a rendszerhez szükséges főbb összetevőket. A 2. fejezet a feladaton belüli állapotot, a 3. fejezet a tudás-infrastruktúrát tárgyalja, az 5. fejezet az ágensek meta-képességét adja az eszközök létrehozására és rendszerek módosítására, a 6. fejezet a kiértékelést és ellenőrzést, a 7. fejezet pedig a modellparaméterek frissítését magyarázza el. A 8. fejezet feladata, hogy ezeket az összetevőket a 8-1. ábrán látható folyamatos evolúciós hurokba szervezze.
 
-![8-1. ábra: Az ágensek folyamatos evolúciójának átfogó hurka](images/fig8-1.png)
+![8-1. ábra: Az ágensek folyamatos evolúciójának átfogó hurka](images/fig8-1.svg)
 
 A folyamatos evolúciónak visszakövethető működési tapasztalatokból kell származnia, meg kell változtatnia a későbbi viselkedést, és igazoltnak kell lennie, hogy nem okoz jelentős romlást. Ez a fejezet először azt tárgyalja, hogyan határozható meg pontosan, mi ment jól vagy rosszul egy futás során; majd négy frissítési módszert és azok alkalmazási határait hasonlítja össze; végül azt vizsgálja, hogy ezek a frissítések hogyan kerülnek ellenőrzésre, kiadásra, felülvizsgálatra és visszavonásra a hosszú távú működés során.
 
@@ -26,7 +26,7 @@ Sok más feladatnak nincs egyetlen helyes válasza. Az, hogy az ügyfélszolgál
 
 A 8-2. ábra egy háromrétegű ellenőrzési struktúrát mutat. Az alsó rétegbeli eredmény-ellenőrző a teszteredményeket, adatbázis-állapotokat és eszköz-visszatéréseket olvassa, hogy megválaszolja: „Ténylegesen elkészült a feladat?" A középső rétegbeli folyamat-ellenőrző az üzleti szabályokat, jogosultságokat és műveleti sorrendeket ellenőrzi a kérdésre: „Megengedett módon készült el?" A felső rétegbeli minőség-ellenőrző a rubrika szerint értékeli a nyelvet és a stratégiát a kérdésre: „Megfelelően lett kezelve?" Az alsó szintű mutatóknak erősebben kell támaszkodniuk a kódra és a környezeti alapismeretekre; csak a formalizálható szempontokat szabad nyelvi modellre bízni.
 
-![8-2. ábra: Háromrétegű trajektória-ellenőrzés a környezeti eredményektől az LLM Rubrikáig](images/fig8-2.png)
+![8-2. ábra: Háromrétegű trajektória-ellenőrzés a környezeti eredményektől az LLM Rubrikáig](images/fig8-2.svg)
 
 Egy ügyfélszolgálati ágens esetében egy hasznos rubrikának legalább a 8-1. táblázatban felsorolt dimenziókat kell lefednie. Az első öt elsősorban az alapkövetelményeket kényszeríti ki, míg az utolsó kettő a szolgáltatás minőségét méri. Ez a bontás diagnosztikailag hasznosabb, mint annak megkérdezése, hogy a felhasználó elégedett volt-e: a felhasználó lehet elégedett, mert az ágens nem megfelelő visszatérítést adott ki, vagy elégedetlen egy megfelelőségi korlátozás miatt. Egyetlen elégedettségi pontszám nem képes megkülönböztetni a kettőt.
 
@@ -64,7 +64,7 @@ Az LLM-ellenőrzők kalibrálást is igényelnek. A termelési rendszerek által
 
 A tanulási jelek jelzik, hogy az ágensnek változnia kell, de azt nem, hogy hol. A frissítési módszer kiválasztásának elsődleges alapja nem az, hogy egy tapasztalat mennyi ideje áll fenn, hanem hogy a célképesség természetesen reprezentálható-e egy adott médiummal. Tények és tapasztalatok tudásdokumentumokba illenek; nyelvileg egyértelműen kifejezhető stratégiák Promptokba vagy Skill-ekbe; pontosan végrehajtható eljárások és kényszerek kódba; a magas dimenziós képességek, mint az érzékelés, nyelvi stílus és implicit stratégiák pedig modellparaméterekbe kell hogy kerüljenek. A 8-3. ábra ezt a négy módszert és kapcsolataikat mutatja.
 
-![8-3. ábra: A folyamatos evolúció négy frissítési módszere](images/fig8-3.png)
+![8-3. ábra: A folyamatos evolúció négy frissítési módszere](images/fig8-3.svg)
 
 A 8-2. táblázat tömör összehasonlítást nyújt. A négy módszer nem zárja ki egymást: egy orvosi képalkotó ágens paraméterekre támaszkodik az elváltozások azonosításához, tudásbázist használ az aktuális irányelvekhez, és kódot a kockázati mutatók kiszámításához. Egy ügyfélszolgálati modell a természetes hangvételét az utóképzésből nyeri, a vállalatspecifikus irányelveket tudásból és Skill-ekből szerzi be, és szerveroldali kódra támaszkodik a kritikus megfelelőségi követelmények kikényszerítéséhez.
 
@@ -85,7 +85,7 @@ A nyers trajektóriák nem alkalmasak formális tudásegységként. Hosszúak é
 
 Ez a kialakítás ugyanazt a kétlépcsős elvet követi, mint a 3. fejezet User-as-Code megközelítése. A User-as-Code először a beszélgetési tényeket fűzi egy megváltoztathatatlan naplóhoz, majd időszakosan újraépít egy strukturált felhasználói modellt. A tapasztalati tanulásnak hasonlóképpen először a bizonyítékokat kell megőriznie, majd a módosítható tudást offline kell generálnia. A 8-4. ábra ezt a folyamatot illusztrálja. A rögzítés és a szervezés szétválasztása megakadályozza, hogy egyetlen véletlen siker vagy hálózati hiba azonnal megváltoztassa az ágenst, miközben lehetővé teszi a rendszer számára, hogy csak több siker és kudarc megfigyelése után azonosítsa a közös mintákat.
 
-![8-4. ábra: A kiértékelt trajektóriáktól a tapasztalati tudásdokumentumokig](images/fig8-4.png)
+![8-4. ábra: A kiértékelt trajektóriáktól a tapasztalati tudásdokumentumokig](images/fig8-4.svg)
 
 A tapasztalati dokumentumok nem egyszerű trajektória-összefoglalók. Az átvihető tartalom az összehasonlításból származik: hogy mit csináltak az azonos típusú sikeres trajektóriák, miben hiányosak a sikertelenek, mely környezeti verziókban volt hatékony egy stratégia, és milyen előfeltételek mellett bukott meg. A 3. fejezet már bemutatta a tudáskinyerést, a klaszterezést és a visszakeresést, így ez a fejezet nem ismétli meg ezeket az algoritmusokat. Ehelyett arra összpontosít, hogy a trajektória-kiértékelés hogyan válik a kinyerés feltételévé, és hogy a kinyert tudás javítja-e a teljesítményt a későbbi feladatokon.
 
@@ -230,7 +230,7 @@ A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez
 
 A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pedig egyszeri optimalizálássá, ha ugyanabba az autonóm hurokba illeszkednek. A 8-5. ábra egy robusztusabb, termelési rendszerekhez tervezett kéthurkú architektúrát mutat: az online végrehajtási hurok csak feladatokat végez el és bizonyítékokat rögzít, anélkül, hogy közvetlenül átírná a termelési ágenst; az offline evolúciós hurok trajektóriákat gyűjt, gyökérokokat diagnosztizál, jelölt módosításokat generál, és új verziókat csak az érvényesítési kapukon való áthaladás után bocsát ki. A két hurkot verziózott tapasztalati tárolók és kiértékelési készletek kötik össze.
 
-![8-5. ábra: Két hurok az online végrehajtáshoz és az offline evolúcióhoz](images/fig8-5.png)
+![8-5. ábra: Két hurok az online végrehajtáshoz és az offline evolúcióhoz](images/fig8-5.svg)
 
 A Voyager[^voyager-2023] egy viszonylag teljes folyamatos evolúciós hurkot demonstrál. A Minecraftban az aktuális képességek alapján választ új célokat, iteratívan finomítja a programokat környezeti visszajelzéssel, a sikeresen érvényesített kódot egy skill-könyvtárban tárolja, majd a meglévő skill-eket kombinálja nehezebb feladatok megoldásához. Az automatikus tanterv, a végrehajtható skill-ek és a környezeti érvényesítés mind nélkülözhetetlen: skill-könyvtárral, de tanterv nélkül az ágens nem tudja, mit tanuljon következőnek; önreflexióval, de környezeti érvényesítés nélkül a skill-könyvtár hibákat halmoz fel; felfedezéssel, de perzisztencia nélkül minden feladatot előröl kell kezdeni. Bár a valós ágensek tudása, Promptjai, eszközei és paraméterei összetettebbek, az alapvető tanulási folyamat hasonló.
 

@@ -22,7 +22,7 @@ Egy kiértékelő rendszer még nagyobb értéket képvisel a gyors modellfejlő
 >
 > A fejezeten átívelő gondolat: **egy kiértékelő rendszer elsődleges értéke nem a jelenlegi rendszer pontozása, hanem az, hogy lehetővé teszi a modellfejlődéssel való gyors és megbízható lépéstartást.** Amikor egy erősebb vagy olcsóbb modell megjelenik, egy robusztus kiértékelő rendszerrel rendelkező csapat órákon belül dönthet a váltásról; aki nélküle dolgozik, az csak az intuíciójára vagy a közösségi visszajelzésekre hagyatkozhat — és a versenyintenzív Ügynökpiacon ez a sebességkülönbség döntheti el, ki nyer.
 
-![6-1. ábra: A Kiértékelő Rendszer Három Szintje](images/fig6-1.png)
+![6-1. ábra: A Kiértékelő Rendszer Három Szintje](images/fig6-1.svg)
 
 ## Egy Konkrét Kiértékelési Példa
 
@@ -82,7 +82,7 @@ Egy kiértékelési környezet öt elemből áll — a következő szakaszok az 
 
 "Interakciós Protokoll": Meghatározza az interakciós módot és a befejezési feltételeket.
 
-![6-2. ábra: Eszközhívási és Ember-Számítógép Interakciós Kiértékelési Környezetek](images/fig6-2.png)
+![6-2. ábra: Eszközhívási és Ember-Számítógép Interakciós Kiértékelési Környezetek](images/fig6-2.svg)
 
 ### Eszközhívási Kiértékelési Környezet
 
@@ -134,7 +134,7 @@ A továbbfejlesztett "τ²-bench" nem elsősorban a pontozási finomságon javí
 > Olvasd el mélyrehatóan a feladatdefiníciós fájlokat: minden feladat tartalmazza a felhasználó által ismert információkat, a progresszív feltárást és válaszstratégiákat szabályozó feladatutasításokat, valamint a sikerességi feltételeket (az adatbázis célállapota és a párbeszédben megjelenő megerősítő információk). Futtasd le a teljes kiértékelési folyamatot, figyeld meg a felhasználó-szimulátor és az Ügynök többfordulós párbeszédét, és elemezd a tipikus hibamódokat (szabályzatsértések, információhiányok, túlzott emberi ügynökhöz irányítás stb.).
 >
 >
-> ![6-3. ábra: τ²-bench Kiértékelési Architektúra](images/fig6-3.png)
+> ![6-3. ábra: τ²-bench Kiértékelési Architektúra](images/fig6-3.svg)
 >
 >
 > Hasonlítsd össze a τ-bench és τ²-bench tervezési különbségeit: A τ-bench eredeti verziójában túl egyszerűek voltak a felhasználói utasítások (az Ügynök kitalálhatta a választ), pontatlanok a sikerességi feltételek (téves ítéletekhez vezettek), és mechanikus volt a felhasználó-szimulátor. A τ²-bench szisztematikus fejlesztéseket vezetett be e problémák megoldására:
@@ -280,7 +280,7 @@ A kódalapú automatikus verifikáció csak a standard válaszokkal rendelkező 
 
 ### LLM-mint-Bíró: Az Automatizált Kiértékelés Magja
 
-![6-4. ábra: LLM-mint-Bíró Folyamatábra](images/fig6-4.png)
+![6-4. ábra: LLM-mint-Bíró Folyamatábra](images/fig6-4.svg)
 
 Miért van szükség LLM-mint-bíróra? Nyílt végű feladatoknál (pl. jelentések generálása, ügyfélpanaszok kezelése, kreatív tartalom) nincsenek standard válaszok az automatikus összehasonlításhoz, és az emberi kiértékelés költséges és nehezen skálázható. Az LLM-mint-bíró egyensúlyozza az automatizáció skálázhatóságát az emberi szakértői ítélettel azáltal, hogy egy nyelvi modell értékeli a kimeneteket szakértők által meghatározott pontozási szempontok (egy Rubrica) alapján. A módszernek ismert korlátai vannak: a bírómodell saját torzításokat hordoz (legjellemzőbben a "hosszúsági torzítás" — a hajlam, hogy a hosszabb, részletesebb válaszokat magasabbra pontozza, még ha nem is pontosabbak), és ugyanazon bemenet ismételt megítélése változhat. A hosszúsági torzítás különösen specifikus ellenintézkedéseket igényel. Három gyakori védekezés: a terjengősség explicit büntetése a Rubricában és a válaszok vágása feladattípusonként; páronkénti összehasonlításokban a két jelölt hasonló hosszúságra hozása az ítélkezés előtt; valamint a pontszámok és a válasz hossza közötti korreláció rendszeres auditálása — ha a magas pontszámok szinte mindig hosszú válaszokhoz tartoznak, a bírót befolyásolta a hosszúság, és a Rubricát felül kell vizsgálni. E kihívások szisztematikus kezeléséhez a Rubrica-tervezésnek az alábbi elveket kell követnie:
 
@@ -398,7 +398,7 @@ A gyakorlati modellválasztás során gyakran szembesülünk a kérdéssel: "Mel
 
 ### Páronkénti Összehasonlítás és Modellrangsorolás
 
-![6-5. ábra: Elo Pontszámítás és Páronkénti Összehasonlítási Rangsor](images/fig6-5.png)
+![6-5. ábra: Elo Pontszámítás és Páronkénti Összehasonlítási Rangsor](images/fig6-5.svg)
 
 "Az Elo Pontszámítás" (egy eredetileg sakkra tervezett rangsorolási rendszer) a modellek relatív képességét számszerűsíti nagyszámú páronkénti mérkőzésen keresztül: minél nagyobb a pontszámkülönbség, annál magasabb a várható győzelmi arány az erősebb modell számára. Például, ha A modell pontszáma 1200, B modellé 1000, az Elo rendszer A győzelmi arányát körülbelül 76%-ra becsülné. Ha B váratlanul nyer, B több pontot szerez, A pedig többet veszít — a meglepetés nagyobb korrekciót vált ki, ami lehetővé teszi, hogy a rangsorok gyorsan konvergáljanak a valódi képességre. A statisztikai alap a "Bradley-Terry modell": minden modell egy látens "erősségi pontszámként" van absztrahálva, és annak valószínűsége, hogy egy mérkőzésen legyőzi a másikat, a pontszámaik különbsége határozza meg. Az Elo ennek a modellnek a mérnöki implementációja online frissítési formában.
 
@@ -538,7 +538,7 @@ A kiértékelés-vezérelt döntések minőségi adatokra támaszkodnak, amelyek
 
 A kiértékelés-vezérelt döntések (akár modellválasztáshoz, akár folyamatos iterációhoz) minőségi működési adatokra támaszkodnak. Az alábbiakban először azt mutatjuk be, hogyan gyűjtsünk szisztematikusan ilyen adatokat (megfigyelhetőség), majd azt tárgyaljuk, hogyan fordítsuk le a kiértékelési eredményeket rendszerfejlesztésekké.
 
-![6-6. ábra: Megfigyelhetőségi Technológiai Verem](images/fig6-6.png)
+![6-6. ábra: Megfigyelhetőségi Technológiai Verem](images/fig6-6.svg)
 
 A megfigyelhetőség egy elosztott rendszerekből kölcsönzött fogalom: nem nyithatod ki a rendszert, hogy lásd, hogyan működik; a naplókból, metrikákból és nyomkövetésekből következtetsz arra, mi történik — ahogy egy orvos, aki nem lát bele a betegbe, a hőmérsékletből, vérnyomásból és képalkotásból diagnosztizál. Az Ügynök-rendszerek ezt még nehezebbé teszik: ugyanaz a bemenet különböző kimeneteket produkálhat, a többfordulós következtetés és eszközhívások rendkívül összetetté teszik a végrehajtási utakat, és a modell "gondolkodása" kívülről teljesen átláthatatlan.
 
@@ -567,7 +567,7 @@ Egy átfogó kiértékelő rendszerrel és adathalmazzal a kulcs az, hogy a kié
 
 "A következő egy hipotetikus tanítási eset", amely konkrét adatokkal illusztrálja a teljes döntéshozatali folyamatot a benchmark jelentéstől a rendszerfejlesztésekig. Az adatok hipotetikusak, és a módszertan bemutatását célozzák, nem valós kísérleti eredmények közlését.
 
-![6-7. ábra: Benchmarktól a Fejlesztésig Hurok](images/fig6-7.png)
+![6-7. ábra: Benchmarktól a Fejlesztésig Hurok](images/fig6-7.svg)
 
 A Harness Engineering szempontjából ez a szakasz lényegében a Harness iteratív optimalizálásának módszertanáról szól — a kiértékelési adatok használata a Harness gyenge pontjainak (elégtelen kontextus? hiányzó korlátozások? elégtelen validálás? nem megfelelő időzítésű visszacsatolás?) azonosítására, célzott fejlesztések végrehajtása, majd újraértékelés, ami a Harness folyamatos fejlődésének zárt hurkát alkotja.
 
@@ -686,7 +686,7 @@ A kiértékelés végpontja nem a pontozás, hanem a fejlesztés. Ez a fejezet m
 
 Íme, hogyan találkozik a híd két vége. A kiértékelési oldalon felhalmozott eszközök szinte zökkenőmentesen alakíthatók át tréning jelekké: egy jól definiált Rubrica vagy validátor lényegében egy jutalomfüggvény a "Verifikálható Jutalmú Megerősítéses Tanuláshoz (RLVR)" — a pontozó szkriptből jutalom szkript lesz; hogy egy teszt sikeres-e vagy egy állapot megfelel-e a szabványnak, az egyszerre szolgál kiértékelési szempontként és megerősítéses tanulási jutalomként. De a tréning olyan követelményeket támaszt, amelyekről a kiértékelésnek soha nem kellett gondoskodnia. Az első a "megbízható visszaállítási szemantika": a tréning több millió epizódot futtat (egy epizód egy teljes interakciós kör a kezdeti állapottól a feladat befejezéséig), és minden epizódnak képesnek kell lennie a környezet determinisztikus, tiszta kezdeti állapotba való visszaállítására; különben a gradiens jelet szennyezik az előző epizód maradék állapotai. A második az **átviteli sebesség, amely messze meghaladja a kiértékelését**: néhány ezer kiértékelés elegendő a következtetések levonásához, de a tréning megköveteli, hogy a modellt több millió interakcióval tápláljuk elfogadható falon lévő óra időn belül; a környezet párhuzamosításának foka és a példányonkénti többletterhelés közvetlenül meghatározza, hogy a tréning megvalósítható-e. Ezt a két pontot — a validátorokból jutalomfüggvényekké alakítását, valamint a tréning szintű visszaállítást és átviteli sebességet — a 7. fejezet részletezi.
 
-![6-8. ábra: Szimulációs Hűség Spektrum](images/fig6-8.png)
+![6-8. ábra: Szimulációs Hűség Spektrum](images/fig6-8.svg)
 
 A "digitális környezet" oldalán az AWorld keretrendszer egy irányítható MCP szerver sandboxot épít a GAIA feladatokhoz, 26 MCP szervert biztosítva 126 eszközfunkcióval, elkerülve a valós API-k közvetlen elérésének tiltásait és irányíthatatlan mellékhatásait. Minden eszközhívás visszajátszható és auditálható. Az AWorld elosztott architektúrája a hagyományos soros végrehajtási időt 7695 másodpercről 525 másodpercre csökkenti (14,6-szeres gyorsulás), és a környezet állapotmentes kialakítása minden példányt teljesen függetlenné tesz, támogatva a hatékony párhuzamosítást.
 
@@ -697,7 +697,7 @@ A "megtestesült környezet" oldalán a RoboTwin2 egy fizikai motoron alapuló k
 > Állíts be egy szimulációs környezetet robotmanipulációhoz. Olvasd el a `ch7/SimpleVLA-RL` fájlt és az OpenVLA dokumentációt a Vízió-Nyelv-Akció modell architektúrájának megértéséhez (végpontok közötti integrációja egy vízió kódolónak, nyelvi modellnek és akció dekódolónak, amely a képeket és szövegeket egy közös szemantikai térbe vetíti). Konfiguráld a RoboTwin2 környezetet, értsd meg a megfigyelési teret (háromnézetű RGB + 14-dimenziós ízületi állapot) és az akcióteret (14-dimenziós vezérlővektor). Tanulmányozd a környezet randomizálási mechanizmusát és a térbeli korlátok logikáját a `move_can_pot`-ban. Értékeld az előre tanított modellt, rögzítve a sikerességi arányát, befejezési idejét és hibamódjait, különös figyelemmel az akció darabolás mechanizmusának hatására.
 >
 >
-> ![6-9. ábra: OpenVLA és RoboTwin2 Megtestesült Intelligencia Környezet](images/fig6-9.png)
+> ![6-9. ábra: OpenVLA és RoboTwin2 Megtestesült Intelligencia Környezet](images/fig6-9.svg)
 >
 >
 

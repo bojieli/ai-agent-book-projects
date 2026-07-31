@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="55" width="840" height="195" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="60" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Tréningparadigma (szigorúan szinkron sorozat)</text>
+<rect x="680" y="64" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="760.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Kötelező API-korlát</text>
+<rect x="47.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="137.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Megfigyelés</text>
+<text x="137.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Felhasználó: pekingi időjárás ellenőrzése</text>
+<line x1="229.0" y1="128" x2="247.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="249.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="339.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">gondolkodás</text>
+<text x="339.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Meg kell hívni az időjárási eszközt</text>
+<line x1="431.0" y1="128" x2="449.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="451.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="541.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Művelet</text>
+<text x="541.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
+<line x1="633.0" y1="128" x2="651.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="653.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="743.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Megfigyelés</text>
+<text x="743.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">22°C, sunny</text>
+<rect x="47.0" y="170" width="786" height="30" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="57.0" y="185" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool_call → a következőnek tool_resultnak kell lennie, különben API-hiba</text>
+<line x1="20" y1="262" x2="860" y2="262" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440.0" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Ellentmondás</text>
+<rect x="20" y="295" width="840" height="210" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="60" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Éles valóság (aszinkron események közbeékelve)</text>
+<rect x="680" y="304" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="760.0" y="318.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">Formátumütközés!</text>
+<rect x="50.0" y="340" width="156.0" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="128.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">asszisztens</text>
+<text x="128.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_call:</text>
+<text x="128.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
+<rect x="221.6" y="340" width="218.4" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="330.8" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Várakozás…</text>
+<text x="330.8" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Eszközvégrehajtás ~5 s</text>
+<rect x="362.0" y="340" width="117.00000000000006" height="50" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="420.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">A felhasználó megszakítja</text>
+<text x="420.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">"Nem szükséges, </text>
+<text x="420.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">ellenőrizd Sanghajt "</text>
+<rect x="494.59999999999997" y="340" width="163.8" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="576.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">???</text>
+<text x="576.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Mikor érkezik meg a tool_result? </text>
+<text x="576.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hogyan biztosítható a formátum?</text>
+<rect x="674.0" y="340" width="156.0" height="50" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="752.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Helyőrző</text>
+<text x="752.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">[Az eszköz még fut, </text>
+<text x="752.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">a megszakítás elsőbbséget kap]</text>
+<rect x="50" y="410" width="780" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="60" y="430" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">Megoldás: a helyőrző rögzíti a formátumot + a nem sürgős események sorba állnak + megszakítás csak valóban sürgős esetben</text>
+<rect x="140" y="465" width="600" height="40" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="440.0" y="485" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Alapvető megoldás: a következő generációs modelleket aszinkron környezetekben, RL-lel kell tréningezni</text>
+</svg>
