@@ -121,9 +121,9 @@ class ToolLibrary:
             "count": len(hits),
             "tools": [
                 {
-                    "name": r.get("name", ""),
-                    "description": r.get("description", ""),
-                    "parameters": r.get("parameters", {}),
+                    "name": str(r.get("name") or ""),
+                    "description": str(r.get("description") or ""),
+                    "parameters": r.get("parameters") or {},
                 }
                 for _, r in hits
             ],
@@ -145,7 +145,11 @@ class ToolLibrary:
         p = self.dir / f"{name}.json"
         if not p.exists():
             return None
-        return json.loads(p.read_text())
+        try:
+            data = json.loads(p.read_text())
+            return data if isinstance(data, dict) else None
+        except Exception:  # noqa: BLE001
+            return None
 
     # -------------------------- execute a wrapped tool --------------------- #
     def execute_tool(self, name: str, arguments: dict, timeout: int = 60) -> dict:

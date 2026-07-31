@@ -3,7 +3,7 @@
 [![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BD%BD-success.svg)](#-电子书) [![在线阅读](https://img.shields.io/badge/🌐_在线阅读-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE) [![Languages](https://img.shields.io/badge/翻译-13%20种%20语言-informational.svg)](#-电子书)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**中文** ← 当前 · [English](docs/en/README.md) · [Español](docs/es/README.md) · [Bahasa Indonesia](docs/id/README.md) · [العربية](docs/ar/README.md) · [繁體中文（台灣）](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md) · [Türkçe](docs/tr/README.md) · [한국어](docs/ko/README.md) · [Magyar](book-hu/introduction.md)
+**中文** ← 当前 · [English](docs/en/README.md) · [Español](docs/es/README.md) · [Bahasa Indonesia](docs/id/README.md) · [العربية](docs/ar/README.md) · [繁體中文（台灣）](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md) · [Türkçe](docs/tr/README.md) · [한국어](docs/ko/README.md) · [Magyar](docs/hu/README.md)
 
 > 📥 **[下载 PDF / EPUB](#-电子书)**（推荐）— 推荐使用 PDF / EPUB 离线阅读，排版最佳；也可[在线阅读](https://bojieli.github.io/ai-agent-book/)（支持多语言切换、章节折叠、全文搜索，每次推送自动更新）。
 
@@ -33,11 +33,10 @@
 
 中文正文源码位于 [`book/`](book/)；英文/西班牙语/印度尼西亚语/阿拉伯语/繁體中文（台灣）/俄语/泰米尔/越南语/日语/土耳其语/韩语/匈牙利语版本为社区贡献（可能滞后于中文原版），分别位于 [`book-en/`](book-en/)、[`book-es/`](book-es/)、[`book-id/`](book-id/)、[`book-ar/`](book-ar/)、[`book-zhtw/`](book-zhtw/)、[`book-ru/`](book-ru/)、[`book-ta/`](book-ta/)、[`book-vi/`](book-vi/)、[`book-ja/`](book-ja/)、[`book-tr/`](book-tr/)、[`book-ko/`](book-ko/)、[`book-hu/`](book-hu/)。
 
-可使用统一的构建脚本生成中文、英文、西班牙语、印度尼西亚语、阿拉伯语、繁體中文（台灣）、俄语、泰米尔语、越南语、日语、土耳其语、韩语和匈牙利语 EPUB 3 电子书。请参阅 [EPUB 构建说明](EPUB.md)。
-
 <details>
-<summary><b>🔧 想自行编译 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>
+<summary><b>🔧 想自行编译 PDF / EPUB？</b>（PDF 需 pandoc / xelatex / ElegantBook）</summary>
 
+- **EPUB**：使用统一的构建脚本，详情请参阅 [EPUB 构建说明](EPUB.md)
 - **正文源码**：`book/introduction.md`（引言）、`book/chapter1.md` ~ `book/chapter10.md`（第一至第十章）、`book/afterword.md`（后记）
 - **编译**：安装 pandoc、xelatex、ElegantBook 文档类与相关字体后，运行
 

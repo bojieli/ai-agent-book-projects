@@ -1,15 +1,15 @@
 # AI 에이전트를 깊이 이해하기: 설계 원리와 엔지니어링 실전
 
-[![PDF](https://img.shields.io/badge/PDF-다운로드-success.svg)](#-전자책) [![온라인으로 읽기](https://img.shields.io/badge/🌐_온라인으로_읽기-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/번역-12개%20언어-informational.svg)](#-전자책)
+[![PDF](https://img.shields.io/badge/PDF-다운로드-success.svg)](#-전자책) [![온라인으로 읽기](https://img.shields.io/badge/🌐_온라인으로_읽기-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/번역-13개%20언어-informational.svg)](#-전자책)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · 한국어 ← 현재**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · 한국어 ← 현재 · [Magyar](../hu/README.md)**
 
 > 📥 **[PDF / EPUB 다운로드](#-전자책)**(권장) — PDF와 EPUB 판본에서 가장 좋은 읽기 경험을 제공합니다. [온라인 판본](https://bojieli.github.io/ai-agent-book/)에서는 언어 전환, 접을 수 있는 장별 탐색, 전체 텍스트 검색을 이용할 수 있습니다.
 
 **에이전트 = LLM + 컨텍스트 + 도구** — 이 책은 이 핵심 공식을 중심으로 10개 장에 걸쳐 AI 에이전트의 원리부터 엔지니어링 실전까지 설명합니다. 본문과 그림, **94개의 연계 실습**을 모두 오픈 소스로 공개합니다.
 
-| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **12개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 |
+| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **13개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 / 헝가리 |
 | :---: | :---: | :---: |
 
 ## 📖 전자책
@@ -31,11 +31,10 @@
 
 중국어 원문은 [`book/`](../../book/)에 있으며, 한국어판은 [`book-ko/`](../../book-ko/)에 있습니다. 다른 언어판은 각 언어 디렉터리에 있는 커뮤니티 번역으로, 중국어 원문보다 갱신이 늦을 수 있습니다.
 
-공통 빌더는 한국어를 포함한 모든 판본의 EPUB 3 전자책을 생성합니다. 자세한 내용은 [EPUB 빌드 안내](../../EPUB.md)를 참고하세요.
-
 <details>
-<summary><b>🔧 PDF를 직접 빌드하려면?</b> (pandoc / xelatex / ElegantBook 필요)</summary>
+<summary><b>🔧 PDF / EPUB를 직접 빌드하려면?</b> (PDF는 pandoc / xelatex / ElegantBook 필요)</summary>
 
+- **EPUB**: 공통 빌더를 사용합니다. 자세한 내용은 [EPUB 빌드 안내](../../EPUB.md)를 참고하세요
 - **본문 소스**: `book-ko/introduction.ko.md`, `book-ko/chapter1.ko.md` ~ `book-ko/chapter10.ko.md`, `book-ko/afterword.ko.md`
 - **빌드**: pandoc, xelatex, ElegantBook 문서 클래스와 Noto CJK KR 글꼴을 설치한 뒤 다음을 실행합니다.
 

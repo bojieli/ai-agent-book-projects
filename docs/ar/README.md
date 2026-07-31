@@ -1,9 +1,9 @@
 # فهم وكلاء الذكاء الاصطناعي بعمق: مبادئ التصميم والممارسة الهندسية
 
-[![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-12%20لغة-informational.svg)](#-الكتاب-الإلكتروني)
+[![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-13%20لغة-informational.svg)](#-الكتاب-الإلكتروني)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 > **ملاحظة حول الترجمة:** هذه ترجمة عربية كاملة، خضعت لمراجعة تحريرية وتقنية شملت سلامة المعنى، وطبيعية الأسلوب، واتساق المصطلحات، وبنية النص والرسوم.
 >
@@ -11,7 +11,7 @@
 
 **الوكيل = LLM + السياق + الأدوات** — تنظم هذه المعادلة فصول الكتاب العشرة، التي تنتقل من المبادئ إلى الممارسة الهندسية. والنص الكامل والرسوم و**93 تجربة مصاحبة** كلها مفتوحة المصدر، ويمكنك تشغيل التجارب بنفسك.
 
-| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **12 لغة**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **13 لغة**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 الكتاب الإلكتروني
@@ -33,11 +33,10 @@
 
 يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والإسبانية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية والكورية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد في [`book-en/`](../../book-en/)، و[`book-es/`](../../book-es/)، و[`book-zhtw/`](../../book-zhtw/)، و[`book-ru/`](../../book-ru/)، و[`book-ta/`](../../book-ta/)، و[`book-vi/`](../../book-vi/)، و[`book-ja/`](../../book-ja/)، و[`book-tr/`](../../book-tr/)، و[`book-ko/`](../../book-ko/) على الترتيب.
 
-ينتج سكربت البناء الموحّد كتب EPUB 3 باللغات العشر، ومنها العربية ذات اتجاه القراءة من اليمين إلى اليسار. راجع [تعليمات إنشاء EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 بناء ملف PDF محليًا</b> (يتطلب pandoc وxelatex وElegantBook)</summary>
+<summary><b>🔧 بناء ملفات PDF / EPUB محليًا</b> (يتطلب PDF أدوات pandoc وxelatex وElegantBook)</summary>
 
+- **EPUB**: استخدم سكربت البناء الموحّد؛ راجع [تعليمات إنشاء EPUB](../../EPUB.md)
 - **مصدر النص العربي**: `book-ar/introduction.ar.md`، و`book-ar/chapter1.ar.md` إلى `book-ar/chapter10.ar.md`، و`book-ar/afterword.ar.md`
 - **البناء**: ثبّت pandoc وxelatex وفئة ElegantBook والخطوط المطلوبة، ثم شغّل:
 

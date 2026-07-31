@@ -3,7 +3,8 @@
 // rewrites the left sidebar (links + text) to match the new edition.
 //
 // window.LANG_CONFIG = { zh: {label, prefix, default?}, ... }
-// window.SITE_ROOT    = "https://bojieli.github.io/ai-agent-book"
+// window.SITE_I18N   = generated catalog from scripts/site_i18n.py
+// window.SITE_ROOT   = "https://bojieli.github.io/ai-agent-book"
 
 (function () {
   "use strict";
@@ -13,57 +14,17 @@
   // this file loads, so this is just defensive.
   function bindWhenReady() {
     var cfg = window.LANG_CONFIG;
-    if (!cfg) {
-      // Retry shortly — header.html may inject it after this script runs.
+    var i18n = window.SITE_I18N;
+    if (!cfg || !i18n) {
+      // Retry shortly — header.html or the generated catalog may not have
+      // loaded yet if a proxy changed script loading behavior.
       setTimeout(bindWhenReady, 50);
       return;
     }
-    init(cfg);
+    init(cfg, i18n);
   }
 
-  function init(cfg) {
-    // ── nav label translations ────────────────────────────────
-    // Keyed by the Chinese label in mkdocs.yml; values per target language.
-    // When on a non-default language, sidebar text is replaced from this map.
-    var NAV_I18N = {
-      "首页":         { en: "Home",           ru: "Главная",    ta: "முகப்பு",       vi: "Trang chủ",     zhtw: "首頁", ja: "ホーム", ko: "홈", ar: "الرئيسية", es: "Inicio", id: "Beranda" },
-      "引言":         { en: "Introduction",   ru: "Введение",   ta: "அறிமுகம்",      vi: "Giới thiệu",    zhtw: "引言", ja: "はじめに", ko: "들어가며", ar: "المقدمة", es: "Introducción", id: "Pendahuluan" },
-      "第1章 Agent基础知识": { en: "Chapter 1 · Getting Started with AI Agents", ru: "Глава 1 · Введение в ИИ-агенты",           ta: "அதி. 1 · AI ஏஜெண்ட் அடிப்படைகள்",     vi: "Chương 1 · Nền tảng AI Agent", zhtw: "第 1 章 · Agent 基礎知識", ja: "第1章 · Agent の基礎知識", ko: "제1장 · AI 에이전트 기초", ar: "الفصل 1 · أساسيات الوكلاء", es: "Capítulo 1 · Fundamentos de los Agentes de IA", id: "Bab 1 · Dasar-dasar Agent" },
-      "第2章 上下文工程":     { en: "Chapter 2 · Context Engineering", ru: "Глава 2 · Инженерия контекста",    ta: "அதி. 2 · சூழல் பொறியியல்",          vi: "Chương 2 · Kỹ thuật ngữ cảnh", zhtw: "第 2 章 · 上下文工程", ja: "第2章 · コンテキストエンジニアリング", ko: "제2장 · 컨텍스트 엔지니어링", ar: "الفصل 2 · هندسة السياق", es: "Capítulo 2 · Ingeniería de Contexto", id: "Bab 2 · Rekayasa Konteks" },
-      "第3章 用户记忆和知识库": { en: "Chapter 3 · User Memory & Knowledge Base", ru: "Глава 3 · Память и база знаний",  ta: "அதி. 3 · பயனர் நினைவகம் & அறிவுத்தளம்", vi: "Chương 3 · Bộ nhớ & Cơ sở kiến thức", zhtw: "第 3 章 · 使用者記憶和知識庫", ja: "第3章 · ユーザーメモリと知識ベース", ko: "제3장 · 사용자 메모리와 지식 베이스", ar: "الفصل 3 · ذاكرة المستخدم وقاعدة المعرفة", es: "Capítulo 3 · Memoria de Usuario y Base de Conocimiento", id: "Bab 3 · Memori Pengguna dan Basis Pengetahuan" },
-      "第4章 工具":           { en: "Chapter 4 · Tools", ru: "Глава 4 · Инструменты",                  ta: "அதி. 4 · கருவிகள்",                vi: "Chương 4 · Công cụ",          zhtw: "第 4 章 · 工具", ja: "第4章 · ツール", ko: "제4장 · 도구", ar: "الفصل 4 · الأدوات", es: "Capítulo 4 · Herramientas", id: "Bab 4 · Alat" },
-      "第5章 CodingAgent与代码生成": { en: "Chapter 5 · Coding Agent & Code Generation", ru: "Глава 5 · Кодинг-агент и генерация кода",  ta: "அதி. 5 · குறியீட்டு ஏஜெண்ட் & குறியீடு உருவாக்கம்", vi: "Chương 5 · Coding Agent & Tạo mã", zhtw: "第 5 章 · Coding Agent 與程式碼生成", ja: "第5章 · Coding Agent とコード生成", ko: "제5장 · 코딩 에이전트와 코드 생성", ar: "الفصل 5 · وكيل البرمجة وتوليد الشيفرة", es: "Capítulo 5 · Agente de Código y Generación de Código", id: "Bab 5 · Coding Agent dan Pembuatan Kode" },
-      "第6章 Agent的评估":    { en: "Chapter 6 · Evaluating Agents", ru: "Глава 6 · Оценка агентов",      ta: "அதி. 6 · ஏஜெண்ட் மதிப்பீடு",        vi: "Chương 6 · Đánh giá Agent",   zhtw: "第 6 章 · Agent 的評估", ja: "第6章 · Agent の評価", ko: "제6장 · 에이전트 평가", ar: "الفصل 6 · تقييم الوكلاء", es: "Capítulo 6 · Evaluación de Agentes", id: "Bab 6 · Evaluasi Agent" },
-      "第7章 模型后训练":     { en: "Chapter 7 · Model Post-Training", ru: "Глава 7 · Постобучение модели",    ta: "அதி. 7 · மாதிரி பிந்தைய பயிற்சி",   vi: "Chương 7 · Post-training mô hình", zhtw: "第 7 章 · 模型後訓練", ja: "第7章 · モデルのポストトレーニング", ko: "제7장 · 모델 사후 학습", ar: "الفصل 7 · ما بعد تدريب النموذج", es: "Capítulo 7 · Posentrenamiento de Modelos", id: "Bab 7 · Pascapelatihan Model" },
-      "第8章 Agent的持续进化": { en: "Chapter 8 · Continual Evolution of Agents", ru: "Глава 8 · Самоэволюция агента",   ta: "அதி. 8 · ஏஜெண்ட் சுய-பரிணாமம்",     vi: "Chương 8 · Tự tiến hóa của Agent", zhtw: "第 8 章 · Agent 的自我進化", ja: "第8章 · Agent の自己進化", ko: "제8장 · 에이전트의 지속적 진화", ar: "الفصل 8 · التطور الذاتي للوكيل", es: "Capítulo 8 · Evolución Continua de los Agentes", id: "Bab 8 · Evolusi Berkelanjutan Agent" },
-      "第9章 多模态与实时交互": { en: "Chapter 9 · Multimodal & Real-Time Interaction", ru: "Глава 9 · Мультимодальность и реальное время",  ta: "அதி. 9 · பல்முக & நிகழ்நேரம்",       vi: "Chương 9 · Đa phương thức & Thời gian thực", zhtw: "第 9 章 · 多模態與即時互動", ja: "第9章 · マルチモーダルとリアルタイム対話", ko: "제9장 · 멀티모달과 실시간 상호작용", ar: "الفصل 9 · تعدد الوسائط والتفاعل الفوري", es: "Capítulo 9 · Multimodalidad e Interacción en Tiempo Real", id: "Bab 9 · Interaksi Multimodal dan Waktu Nyata" },
-      "第10章 多Agent协作":   { en: "Chapter 10 · Multi-Agent Collaboration", ru: "Глава 10 · Мультиагентное взаимодействие",  ta: "அதி. 10 · பல-ஏஜெண்ட் ஒத்துழைப்பு", vi: "Chương 10 · Đa Agent cộng tác", zhtw: "第 10 章 · 多 Agent 協作", ja: "第10章 · マルチ Agent 協調", ko: "제10장 · 멀티 에이전트 협업", ar: "الفصل 10 · تعاون متعدد الوكلاء", es: "Capítulo 10 · Colaboración Multiagente", id: "Bab 10 · Kolaborasi Multi-Agent" },
-      "后记":         { en: "Afterword", ru: "Послесловие",        ta: "பின்னுரை",       vi: "Lời bạt",         zhtw: "後記", ja: "あとがき", ko: "맺음말", ar: "الخاتمة", es: "Epílogo", id: "Penutup" },
-      "思考题参考答案": { en: "Reference Answers", ru: "Ответы к вопросам",  ta: "பதில் வழிகாட்டி", vi: "Đáp án tham khảo", zhtw: "思考題參考答案", ja: "演習問題の解答例", ko: "생각해 볼 문제 참고 답안", ar: "إجابات الأسئلة", es: "Respuestas de Referencia", id: "Jawaban Referensi" },
-      // Nested sub-entry under each chapter (the experiment index).
-      "配套实验":     { en: "Experiments", ru: "Эксперименты",     ta: "சோதனைகள்",     vi: "Thí nghiệm",   zhtw: "配套實驗", ko: "실습", ar: "التجارب", es: "Experimentos", id: "Eksperimen" },
-    };
-
-    // Right-sidebar TOC title ("目录"), fixed by theme.language at build
-    // time — rewritten client-side on translated editions.
-    var TOC_TITLE = {
-      zh: "目录", zhtw: "目錄", en: "On this page",
-      ta: "உள்ளடக்கம்", vi: "Mục lục", ru: "На этой странице",
-      ko: "목차", ar: "في هذه الصفحة", es: "En esta página", id: "Di halaman ini",
-    };
-
-    var SEARCH_STRINGS = {
-      zh:   { placeholder: "搜索",   searching: "正在初始化搜索引擎", input: "键入进行检索" },
-      en:   { placeholder: "Search", searching: "Initializing search", input: "Type to search" },
-      zhtw: { placeholder: "搜尋",   searching: "正在初始化搜尋引擎", input: "鍵入進行檢索" },
-      ru:   { placeholder: "Поиск",  searching: "Инициализация поиска", input: "Введите запрос" },
-      ta:   { placeholder: "தேடு",   searching: "தேடல் தொடங்கப்படுகிறது", input: "தட்டச்சு செய்து தேடவும்" },
-      vi:   { placeholder: "Tìm kiếm", searching: "Đang khởi tạo",     input: "Gõ để tìm kiếm" },
-      ko:   { placeholder: "검색", searching: "검색 엔진을 초기화하는 중", input: "검색어를 입력하세요" },
-      ar:   { placeholder: "بحث", searching: "جارٍ تهيئة البحث", input: "اكتب للبحث" },
-      es:   { placeholder: "Buscar", searching: "Inicializando búsqueda", input: "Escriba para buscar" },
-      id:   { placeholder: "Cari", searching: "Menginisialisasi pencarian", input: "Ketik untuk mencari" },
-    };
+  function init(cfg, i18n) {
 
     // ── helpers ───────────────────────────────────────────────
 
@@ -164,15 +125,20 @@
         // Chinese experiment index. Switch to:
         //   zh → /chapterN/                (unchanged)
         //   other → /chapterN/README.<readmeSuffix>/
-        return toCode === "zh"
-          ? "/" + pp + "/"
-          : "/" + pp + "/README." + dst.readmeSuffix + "/";
+        if (toCode === "zh") return "/" + pp + "/";
+        if (dst.readmeSuffix) return "/" + pp + "/README." + dst.readmeSuffix + "/";
+        // An edition can launch before its companion experiment indexes are
+        // translated. Keep the switch inside translated content instead of
+        // manufacturing a README.undefined URL.
+        return "/" + dst.prefix + pp + (dst.suffix || "") + "/";
       }
       var readmeMatch = pp.match(/^chapter(\d+)\/README\.([a-zA-Z-]+)$/);
       if (readmeMatch) {
-        return toCode === "zh"
-          ? "/chapter" + readmeMatch[1] + "/"
-          : "/chapter" + readmeMatch[1] + "/README." + dst.readmeSuffix + "/";
+        if (toCode === "zh") return "/chapter" + readmeMatch[1] + "/";
+        if (dst.readmeSuffix) {
+          return "/chapter" + readmeMatch[1] + "/README." + dst.readmeSuffix + "/";
+        }
+        return "/" + dst.prefix + "chapter" + readmeMatch[1] + (dst.suffix || "") + "/";
       }
 
       // Individual experiment page: /chapterN/<something>/ — Chinese only.
@@ -190,21 +156,177 @@
       return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
+    // ── generated theme chrome localization ──────────────────
+
+    var CHROME_SELECTOR = [
+      "[data-md-component='skip']",
+      "[data-md-component='announce']",
+      ".md-header",
+      ".md-search",
+      ".md-sidebar",
+      ".md-content__button",
+      ".md-source-file",
+      ".md-top",
+      ".md-footer",
+      ".md-dialog",
+      ".md-tooltip",
+      ".md-clipboard",
+    ].join(",");
+
+    function translationPairs(targetCode) {
+      var source = i18n.languages[i18n.default];
+      var target = i18n.languages[targetCode];
+      if (!source || !target) return [];
+      var pairs = [];
+      var key;
+      for (key in source.ui) {
+        if (source.ui.hasOwnProperty(key) && target.ui[key]) {
+          pairs.push([source.ui[key], target.ui[key]]);
+        }
+      }
+      ["sidebar", "palette"].forEach(function (group) {
+        for (key in source[group]) {
+          if (source[group].hasOwnProperty(key) && target[group][key]) {
+            pairs.push([source[group][key], target[group][key]]);
+          }
+        }
+      });
+      // Prefer the most specific string when one translation is a substring
+      // of another (for example, Search and Initializing search).
+      return pairs.sort(function (a, b) { return b[0].length - a[0].length; });
+    }
+
+    function translateChromeValue(value, pairs) {
+      var trimmed = value.trim();
+      if (!trimmed) return value;
+      for (var i = 0; i < pairs.length; i++) {
+        var from = pairs[i][0];
+        var to = pairs[i][1];
+        if (trimmed === from) {
+          return value.slice(0, value.indexOf(trimmed)) + to + value.slice(value.indexOf(trimmed) + trimmed.length);
+        }
+        if (from.indexOf("#") !== -1) {
+          var match = trimmed.match(new RegExp("^" + escapeRe(from).replace("#", "(.+?)") + "$"));
+          if (match) {
+            var rendered = to.replace("#", match[1]);
+            return value.slice(0, value.indexOf(trimmed)) + rendered + value.slice(value.indexOf(trimmed) + trimmed.length);
+          }
+        }
+      }
+      return value;
+    }
+
+    function localizeTree(root, pairs) {
+      if (!root) return;
+      var element = root.nodeType === 1 ? root : root.parentElement;
+      if (!element) return;
+
+      var attributed = [];
+      if (element.matches && element.matches("[title],[aria-label],[placeholder]")) attributed.push(element);
+      if (element.querySelectorAll) {
+        attributed = attributed.concat(
+          Array.prototype.slice.call(element.querySelectorAll("[title],[aria-label],[placeholder]"))
+        );
+      }
+      for (var a = 0; a < attributed.length; a++) {
+        ["title", "aria-label", "placeholder"].forEach(function (name) {
+          if (!attributed[a].hasAttribute(name)) return;
+          var before = attributed[a].getAttribute(name);
+          var after = translateChromeValue(before, pairs);
+          if (after !== before) attributed[a].setAttribute(name, after);
+        });
+      }
+
+      var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      var textNode;
+      while ((textNode = walker.nextNode())) {
+        var translated = translateChromeValue(textNode.nodeValue, pairs);
+        if (translated !== textNode.nodeValue) textNode.nodeValue = translated;
+      }
+    }
+
+    function localizeRevisionDates(targetCode) {
+      var strings = i18n.languages[targetCode];
+      if (!strings || !window.Intl || !Intl.DateTimeFormat) return;
+      var nodes = document.querySelectorAll(".git-revision-date-localized-plugin-date");
+      var visibleFormat = new Intl.DateTimeFormat(strings.locale, {
+        year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+      });
+      var titleFormat = new Intl.DateTimeFormat(strings.locale, {
+        year: "numeric", month: "long", day: "numeric",
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        timeZone: "UTC", timeZoneName: "short",
+      });
+      for (var d = 0; d < nodes.length; d++) {
+        var original = nodes[d].getAttribute("title") || nodes[d].textContent;
+        var match = original.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日(?:\s+(\d{1,2}):(\d{2}):(\d{2}))?/);
+        if (!match) continue;
+        var date = new Date(Date.UTC(
+          Number(match[1]), Number(match[2]) - 1, Number(match[3]),
+          Number(match[4] || 0), Number(match[5] || 0), Number(match[6] || 0)
+        ));
+        nodes[d].textContent = visibleFormat.format(date);
+        nodes[d].setAttribute("title", titleFormat.format(date));
+      }
+    }
+
+    function localizeChrome(targetCode) {
+      if (targetCode === i18n.default || !i18n.languages[targetCode]) return;
+      var pairs = translationPairs(targetCode);
+      var roots = document.querySelectorAll(CHROME_SELECTOR);
+      for (var r = 0; r < roots.length; r++) localizeTree(roots[r], pairs);
+      localizeRevisionDates(targetCode);
+
+      // Search results, copy-button tooltips, and dialogs are populated after
+      // load. Translate only newly-created theme chrome, never book content.
+      if (!window.__siteI18nObserver && document.body) {
+        window.__siteI18nObserver = new MutationObserver(function (mutations) {
+          for (var m = 0; m < mutations.length; m++) {
+            var changed = mutations[m].type === "characterData"
+              ? mutations[m].target.parentElement
+              : mutations[m].target;
+            if (!changed || !changed.closest || !changed.closest(CHROME_SELECTOR)) continue;
+            localizeTree(changed, pairs);
+            if (changed.closest(".md-source-file")) localizeRevisionDates(targetCode);
+          }
+        });
+        window.__siteI18nObserver.observe(document.body, {
+          childList: true,
+          characterData: true,
+          attributes: true,
+          attributeFilter: ["title", "aria-label", "placeholder"],
+          subtree: true,
+        });
+      }
+    }
+
     function siteBasePath() {
-      try { return new URL(window.SITE_ROOT).pathname; } catch (_) {}
       var p = location.pathname;
-      var idx = Math.max(p.indexOf("book-en/"), p.indexOf("book-ru/"), p.indexOf("book-ta/"),
-                         p.indexOf("book-vi/"), p.indexOf("book-zhtw/"),
-                         p.indexOf("book-ja/"), p.indexOf("book-ko/"), p.indexOf("book-ar/"),
-                         p.indexOf("book-es/"), p.indexOf("book-id/"), p.indexOf("book/"));
-      if (idx === -1) return "/";
-      return p.slice(0, idx);
+      try {
+        var configured = new URL(window.SITE_ROOT).pathname.replace(/\/$/, "");
+        // Use the configured deployment subpath when it is actually present.
+        // Local preview servers commonly mount at /, so they fall through to
+        // prefix discovery below instead of inheriting the production path.
+        if (configured && configured !== "/" &&
+            (p === configured || p.indexOf(configured + "/") === 0)) {
+          return configured;
+        }
+      } catch (_) {}
+      var best = -1;
+      for (var code in cfg) {
+        if (!cfg.hasOwnProperty(code)) continue;
+        var idx = p.indexOf(cfg[code].prefix);
+        if (idx !== -1 && (best === -1 || idx < best)) best = idx;
+      }
+      if (best !== -1) return p.slice(0, best);
+      return "/";
     }
 
     // ── sidebar rewriting (links + text) ──────────────────────
 
     function rewriteSidebar(targetCode) {
       var target = cfg[targetCode];
+      var strings = i18n.languages[targetCode];
       var defCode = null;
       for (var c in cfg) { if (cfg[c].default) { defCode = c; break; } }
       defCode = defCode || "zh";
@@ -237,6 +359,13 @@
                 // locale make it look pre-translated.
                 if (/^\/chapter\d+\/?$/.test(linkRel)) {
                   linkLang = defCode;
+                  if (targetCode !== defCode && !target.readmeSuffix) {
+                    // Do not advertise a translated experiment index that
+                    // does not exist yet. The chapter prose remains linked by
+                    // the parent entry and every visible link stays valid.
+                    var item = el.closest(".md-nav__item");
+                    if (item) item.hidden = true;
+                  }
                 }
                 var translated = translatePath(linkRel, linkLang, targetCode);
                 if (translated) {
@@ -247,8 +376,8 @@
           } catch (_) {}
         }
 
-        if (navText && NAV_I18N[currentText] && NAV_I18N[currentText][targetCode]) {
-          navText.textContent = NAV_I18N[currentText][targetCode];
+        if (navText && strings.nav[currentText]) {
+          navText.textContent = strings.nav[currentText];
         }
       }
 
@@ -256,7 +385,7 @@
       // subtree is opened on mobile, Material shows the chapter title again
       // as <label class="md-nav__title">第2章 …</label>; those labels are
       // plain text (not .md-nav__link), so the loop above misses them. The
-      // site-name title at the top is not in NAV_I18N and stays untouched.
+      // site-name title at the top is not in the nav catalog and stays untouched.
       var subTitles = document.querySelectorAll(".md-sidebar--primary .md-nav__title");
       for (var st = 0; st < subTitles.length; st++) {
         var stNodes = subTitles[st].childNodes;
@@ -264,39 +393,22 @@
           var node = stNodes[sn];
           if (node.nodeType !== 3) continue;
           var key = node.textContent.trim();
-          if (key && NAV_I18N[key] && NAV_I18N[key][targetCode]) {
-            node.textContent = NAV_I18N[key][targetCode];
+          if (key && strings.nav[key]) {
+            node.textContent = strings.nav[key];
           }
         }
       }
-
-      // Translate the right-sidebar TOC title. Only replace the text node —
-      // the label also contains the (mobile-only) back-arrow icon span.
-      if (TOC_TITLE[targetCode]) {
-        var tocTitles = document.querySelectorAll(".md-nav--secondary > .md-nav__title");
-        for (var t = 0; t < tocTitles.length; t++) {
-          var nodes = tocTitles[t].childNodes;
-          for (var n = 0; n < nodes.length; n++) {
-            if (nodes[n].nodeType === 3 && nodes[n].textContent.trim()) {
-              nodes[n].textContent = TOC_TITLE[targetCode];
-            }
-          }
-        }
-      }
-
-      // Translate the search box placeholder + status text.
-      var strings = SEARCH_STRINGS[targetCode] || SEARCH_STRINGS.en;
-      var searchInput = document.querySelector(".md-search__input");
-      if (searchInput) {
-        searchInput.setAttribute("placeholder", strings.placeholder);
-      }
+      localizeChrome(targetCode);
     }
 
     // ── language switch (the actual navigation) ──────────────
 
     function applyDocumentLocale(code) {
-      document.documentElement.lang = code === "zhtw" ? "zh-TW" : code;
-      document.documentElement.dir = code === "ar" ? "rtl" : "ltr";
+      var strings = i18n.languages[code] || i18n.languages[i18n.default];
+      document.documentElement.lang = strings.locale;
+      document.documentElement.dir = strings.direction;
+      if (document.body) document.body.setAttribute("dir", strings.direction);
+      window.siteCurrentLanguage = code;
     }
 
     function switchTo(target) {
@@ -358,7 +470,7 @@
     }
 
     function optionLocale(code) {
-      return code === "zhtw" ? "zh-TW" : code;
+      return i18n.languages[code] ? i18n.languages[code].locale : code;
     }
 
     function render() {
@@ -370,7 +482,14 @@
 
       var trigger = document.getElementById("lang-selector");
       var menu = document.getElementById("lang-menu");
-      if (!trigger || !menu) return;
+      if (!trigger || !menu) {
+        // Localization is useful even if a downstream theme override removes
+        // the selector itself. Do not make translated navigation depend on
+        // that optional header control.
+        rememberLang(activeLang);
+        if (activeLang !== i18n.default) rewriteSidebar(activeLang);
+        return;
+      }
 
       // Build menu items on first sight of an empty dropdown.
       if (menu.children.length === 0) {
@@ -414,7 +533,7 @@
       }
       trigger.setAttribute(
         "aria-label",
-        "Switch language. Current language: " + currentLabel
+        i18n.languages[activeLang].ui["select.language"] + ": " + currentLabel
       );
 
       var options = menu.querySelectorAll(".lang-menu__option");

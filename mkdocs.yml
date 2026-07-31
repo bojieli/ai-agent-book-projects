@@ -12,6 +12,9 @@ docs_dir: _web
 # Strip Pandoc/LaTeX attributes the source Markdown uses (e.g. `{.unnumbered}`,
 # `{#sec:foo}`, image `{height=55%}`) which Python-Markdown cannot parse.
 hooks:
+  # Validates every configured language and generates the browser-side
+  # translation catalog from Material's locales + our book navigation labels.
+  - scripts/site_i18n.py
   - scripts/mkdocs_pandoc_strip.py
   - scripts/seo_meta.py
 
@@ -126,6 +129,8 @@ markdown_extensions:
   - pymdownx.details
 
 extra_javascript:
+  # Generated into _web/ by scripts/site_i18n.py during each MkDocs build.
+  - extras/site-i18n.generated.js
   - extras/lang-switcher.js
   - extras/nav-collapse.js
   - https://unpkg.com/mermaid@11/dist/mermaid.min.js
@@ -156,7 +161,7 @@ extra:
     ko:   { label: 한국어,     prefix: book-ko/,   suffix: .ko,   readmeSuffix: ko }
     ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
     tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
-    hu:   { label: Magyar,      prefix: book-hu/ }
+    hu:   { label: Magyar,      prefix: book-hu/,                   readmeSuffix: hu }
 
 nav:
   # The left sidebar is a clean chapter tree. With navigation.indexes,

@@ -1,15 +1,15 @@
 # AI Agents in Depth: Design Principles and Engineering Practice
 
-[![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Read online](https://img.shields.io/badge/🌐_Read_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/translations-12%20languages-informational.svg)](#-e-book)
+[![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Read online](https://img.shields.io/badge/🌐_Read_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/translations-13%20languages-informational.svg)](#-e-book)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · English ← current · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · English ← current · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 > 📥 **[Download PDF / EPUB](#-e-book)** (recommended) — the PDF / EPUB editions offer the best reading experience; you can also [read online](https://bojieli.github.io/ai-agent-book/) (multi-language switcher, collapsible chapter tree, full-text search, auto-rebuilt on every push to main).
 
 **Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **93 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
 
-| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **12 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **13 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 E-Book
@@ -31,11 +31,10 @@
 
 Chinese text source is in [`book/`](../../book/); English/Spanish/Arabic/Traditional Chinese (Taiwan)/Russian/Tamil/Vietnamese/Japanese/Turkish/Korean versions are community contributions (may lag behind the Chinese original), located in [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) respectively.
 
-The shared builder produces EPUB 3 editions for Simplified Chinese, English, Spanish, Arabic, Traditional Chinese (Taiwan), Russian, Tamil, Vietnamese, Japanese, Turkish, and Korean. See the [EPUB build instructions](../../EPUB.md).
-
 <details>
-<summary><b>🔧 Build the PDF yourself?</b> (requires pandoc / xelatex / ElegantBook)</summary>
+<summary><b>🔧 Build PDF / EPUB yourself?</b> (PDF requires pandoc / xelatex / ElegantBook)</summary>
 
+- **EPUB**: Use the shared builder; see the [EPUB build instructions](../../EPUB.md)
 - **Text source**: `book/introduction.md` (intro), `book/chapter1.md` ~ `book/chapter10.md` (Chapters 1–10), `book/afterword.md` (afterword)
 - **Build**: Install pandoc, xelatex, ElegantBook document class and required fonts, then run
 
