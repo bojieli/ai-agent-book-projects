@@ -11,7 +11,7 @@
 | 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 동일한 결정론적 보물찾기 환경에서 Q-learning 10,000회, 탐욕 정책 평가 100회, 공식 Moonshot `kimi-k3`의 첫 에피소드 실측을 완료했습니다. [두 실험군의 증거](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json)에 원본 API 응답 기록 17/17건을 보존했으며 fallback은 없었습니다. |
 | 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | 📖 | 연계 설명과 `8bdc5d9…`에 고정된 외부 `bojieli/minimind` 저장소를 사용합니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
 | 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | 연계 설명과 `ead791c…`에 고정된 외부 `bojieli/minimind-v` 저장소를 사용합니다. 현재 체크아웃이 없어 학습은 실행하지 않았습니다. |
-| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | 도메인 특화 데이터로 계속 사전 학습을 수행해 대상 도메인에서 모델 성능을 높입니다. |
+| 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [정식 학습 보고서](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)는 RTX 4090 3단계 원시 출력, 15개 생성, 5회 익명 ARK 심사, 소스 해시와 현재 재현 revision을 결합합니다. 최종 한국어는 +1.7777, 영어는 -0.8333이었고 김치 사실 오류도 명시했습니다. 체크포인트는 배포하지 않으며 승인 요건이 아닙니다. |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 준언어 태그 모델링과 문장 간 음색 일관성을 다루는 두 가지 실제 음성 SFT 트랙입니다. 학습 후 어댑터, 음성 결과물, 수동·자동 비교 증거가 있어야 완료로 봅니다. |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 다국어 사고 SFT 구현입니다. 학습 체크포인트와 언어 간 벤치마크의 학습 전후 비교가 있어야 완료로 봅니다. |
 | 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 교사 모델의 프롬프트·응답 생성, 학생 모델 학습, 품질·비용 비교를 다루는 장 간 연계 구현입니다. 예시 생성이나 프롬프트 메커니즘만으로는 완료로 보지 않습니다. |

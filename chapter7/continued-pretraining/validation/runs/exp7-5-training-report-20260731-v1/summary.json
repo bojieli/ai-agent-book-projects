@@ -1,0 +1,248 @@
+{
+  "acceptance": {
+    "all_three_stages_retained": true,
+    "checkpoints_not_an_acceptance_artifact": true,
+    "english_retention_comparison_completed": true,
+    "exactly_fifteen_outputs": true,
+    "exactly_five_tests": true,
+    "five_independent_blind_judgments": true,
+    "historical_revision_boundary_explicit": true,
+    "immutable_future_reproduction_revisions_frozen": true,
+    "judge_response_ids_usage_and_latency_retained": true,
+    "kimchi_failure_explicitly_reported": true,
+    "korean_gain_comparison_completed": true,
+    "passed": true,
+    "raw_report_hashed": true,
+    "training_and_evaluation_sources_declared": true
+  },
+  "experiment": "7-5",
+  "judge": {
+    "blind_seed": 750731,
+    "calls": 5,
+    "model": "doubao-seed-1-6-250615",
+    "provider": "ark",
+    "response_ids": [
+      "021785493696408aa5397b165da2577de074a3e1d2c08415efbf0",
+      "021785493696414132969bd05ac943fb2473c371a3df88f300da7",
+      "0217854936964188de59cc126156ef9419088f6fa2f8da9449f44",
+      "021785493696417a3a08778c75214a0d2bb1c008b2d20ecdbbce6",
+      "02178549369641814c42a60562dfb6c540ee32d577db54662203b"
+    ],
+    "total_latency_ms": 275079.808,
+    "total_tokens": 13364
+  },
+  "limitations": [
+    "The historical adapters/checkpoints are intentionally not distributed and were not re-created.",
+    "The exact historical upstream revisions and generation RNG seed were not retained.",
+    "The frozen upstream revisions are a future reproduction contract, not historical provenance.",
+    "The retained evaluation has five prompts and one sampled generation per stage/prompt."
+  ],
+  "per_test_stage_scores": {
+    "1": {
+      "baseline": {
+        "factual_errors": [
+          "Contradiction in definition (claims AI both mimics and does not mimic human intelligence)",
+          "Incorrectly states AI's goal is to surpass human intelligence (overgeneralization)"
+        ],
+        "factuality": 1,
+        "instruction_following": 2,
+        "language_fluency": 2,
+        "rationale": "Contains contradictory definitions (mimicking vs. not mimicking human intelligence) and overgeneralizes AI's goal; repetitive and incomplete text."
+      },
+      "finetuned": {
+        "factual_errors": [
+          "Incomplete example: '이미지 인' likely missing '식' (recognition)"
+        ],
+        "factuality": 4,
+        "instruction_following": 4,
+        "language_fluency": 3,
+        "rationale": "Reasonable definitions of AI (systems/programs mimicking human intelligence) with relevant examples; minor incompleteness but no major falsehoods."
+      },
+      "pretrained": {
+        "factual_errors": [
+          "Overly narrow definition (incorrectly limits AI to 'computer software' excluding hardware)"
+        ],
+        "factuality": 2,
+        "instruction_following": 1,
+        "language_fluency": 1,
+        "rationale": "Severely repetitive, incomplete (cuts off mid-sentence), and incorrectly restricts AI to software; unfluent with structural errors."
+      }
+    },
+    "2": {
+      "baseline": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 5,
+        "rationale": "Accurately defines AI as machine intelligence contrasting with natural intelligence, correctly cites the computer science definition of 'intelligent agents,' and mentions the AI effect. No factual errors, fluent, and fully aligns with writing an opening Wikipedia section."
+      },
+      "finetuned": {
+        "factual_errors": [
+          "Claims AI systems 'act without programming' (AI systems require programming to enable learning/functionality)",
+          "Redundant repetition: 'computers or computers'"
+        ],
+        "factuality": 3,
+        "instruction_following": 4,
+        "language_fluency": 3,
+        "rationale": "Contains incorrect claim about acting 'without programming' and grammatical issues (repetition, incomplete sentence: 'Theories of mind systems:This'). Partially follows the task but with factual and fluency缺陷."
+      },
+      "pretrained": {
+        "factual_errors": [
+          "Misattributes the 'intelligent agents' definition to philosophy (it is a standard computer science definition)",
+          "Incorrectly includes 'physics' as a key interdisciplinary field (typical fields: computer science, philosophy, psychology, linguistics, biology)"
+        ],
+        "factuality": 3,
+        "instruction_following": 3,
+        "language_fluency": 4,
+        "rationale": "Contains factual misattributions and includes an atypical interdisciplinary field (physics). Cut off mid-sentence ('founded as an academic discipline in 195'), limiting instruction following."
+      }
+    },
+    "3": {
+      "baseline": {
+        "factual_errors": [
+          "육식 밥과 함께 먹는다는 잘못된 설명 (김치는 다양한 밥과 함께 먹으며 '육식 밥'은 부적절함)",
+          "잡음료로 만든다는 잘못된 주장 (김치는 발효 채소 요리로 음료가 아님)"
+        ],
+        "factuality": 0,
+        "instruction_following": 0,
+        "language_fluency": 2,
+        "rationale": "김치를 잡음료로 설명하는 등 사실과 전혀 다른 내용이며 문장이 반복되고 불완전하다."
+      },
+      "finetuned": {
+        "factual_errors": [
+          "채소를 삶는다는 잘못된 설명 (전통 김치는 채소를 소금에 절이는 과정을 거침)",
+          "간장 소스로 설명하는 잘못 (김치 양념은 간장이 아닌 고추가루, 젓갈 등으로 만듦)"
+        ],
+        "factuality": 3,
+        "instruction_following": 3,
+        "language_fluency": 3,
+        "rationale": "양배추 등 채소를 언급했으나 삶는 과정과 간장 소스 설명이 부정확하며 문장이 불완전하다."
+      },
+      "pretrained": {
+        "factual_errors": [
+          "칠면조를 재료로 사용한다는 잘못된 주장 (전통 김치에는 칠면조가 들어가지 않음)",
+          "삶아 만든다는 잘못된 설명 (김치는 발효과정을 거치며 삶는 것이 일반적이지 않음)"
+        ],
+        "factuality": 1,
+        "instruction_following": 2,
+        "language_fluency": 3,
+        "rationale": "한국 전통 음식으로 설명하려 했으나 칠면조 재료와 삶는 과정 등 사실 오류가 있으며 설명이 불완전하다."
+      }
+    },
+    "4": {
+      "baseline": {
+        "factual_errors": [
+          "Incorrect population claim ('1/3 이상 of Koreans live in Seoul'; actual ~19%), typo '대기 과' (correct: '대기업과' meaning 'large companies')"
+        ],
+        "factuality": 2,
+        "instruction_following": 3,
+        "language_fluency": 3,
+        "rationale": "Attempts to cover key aspects (capital, economic center) but contains significant factual errors (population proportion, typo leading to incorrect term). "
+      },
+      "finetuned": {
+        "factual_errors": [],
+        "factuality": 4,
+        "instruction_following": 4,
+        "language_fluency": 3,
+        "rationale": "Accurately states Seoul as capital, most populous city, and center of history/culture/economy; minor fluency issue with incomplete final sentence."
+      },
+      "pretrained": {
+        "factual_errors": [
+          "Redundant repetition of '서울역은 서울특별시 중심부에 위치한 서울역이 있습니다', typo '대한민 의' (correct: '대한민국의'), incomplete final sentence"
+        ],
+        "factuality": 1,
+        "instruction_following": 0,
+        "language_fluency": 1,
+        "rationale": "Dominated by repetition, typos, and incomplete sentences; fails to provide a meaningful introduction to Seoul."
+      }
+    },
+    "5": {
+      "baseline": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 5,
+        "rationale": "Comprehensive explanation including tradition origin (Pilgrims/Native Americans), preparation, sides, and symbolism; highly fluent and fully addresses the task."
+      },
+      "finetuned": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 5,
+        "rationale": "Accurately explains Thanksgiving turkey as a traditional bird, preparation (roasted/baked, seasoned), and sides; fluent and fully follows the task."
+      },
+      "pretrained": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 2,
+        "language_fluency": 2,
+        "rationale": "Contains redundant phrases, an off-topic 'Explanation' section about the response itself, and incomplete sentences; partially starts explaining but veers off task with poor fluency."
+      }
+    }
+  },
+  "schema_version": "exp7-5-summary-v1",
+  "scientific_findings": {
+    "english_drop": 0.8333,
+    "english_retention_tolerance": 1.0,
+    "english_retention_within_tolerance": true,
+    "kimchi_factual_failure_observed": true,
+    "kimchi_finetuned_factual_errors": [
+      "채소를 삶는다는 잘못된 설명 (전통 김치는 채소를 소금에 절이는 과정을 거침)",
+      "간장 소스로 설명하는 잘못 (김치 양념은 간장이 아닌 고추가루, 젓갈 등으로 만듦)"
+    ],
+    "korean_gain": 1.7777,
+    "korean_gain_observed": true
+  },
+  "stage_averages": {
+    "baseline": {
+      "english": {
+        "factuality": 5.0,
+        "instruction_following": 5.0,
+        "language_fluency": 5.0,
+        "overall": 5.0
+      },
+      "korean": {
+        "factuality": 1.0,
+        "instruction_following": 1.6667,
+        "language_fluency": 2.3333,
+        "overall": 1.6667
+      }
+    },
+    "finetuned": {
+      "english": {
+        "factuality": 4.0,
+        "instruction_following": 4.5,
+        "language_fluency": 4.0,
+        "overall": 4.1667
+      },
+      "korean": {
+        "factuality": 3.6667,
+        "instruction_following": 3.6667,
+        "language_fluency": 3.0,
+        "overall": 3.4444
+      }
+    },
+    "pretrained": {
+      "english": {
+        "factuality": 4.0,
+        "instruction_following": 2.5,
+        "language_fluency": 3.0,
+        "overall": 3.1667
+      },
+      "korean": {
+        "factuality": 1.3333,
+        "instruction_following": 1.0,
+        "language_fluency": 1.6667,
+        "overall": 1.3333
+      }
+    }
+  },
+  "status": "passed",
+  "test_names": {
+    "1": "Korean Wikipedia - Artificial Intelligence (인공지능)",
+    "2": "English Wikipedia - Artificial Intelligence (Preservation Check)",
+    "3": "Korean Instruction - Explain Kimchi",
+    "4": "Korean Instruction - Introduce Seoul",
+    "5": "English Instruction - Thanksgiving Turkey (Preservation Check)"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "checkpoint_policy": {
+    "acceptance_artifact": false,
+    "distributed_with_book": false,
+    "reason": "Training adapters are intentionally local and are not distributed to readers.",
+    "required_artifact": "reproducible evidence-backed training report"
+  },
+  "evaluation": {
+    "do_sample": true,
+    "historical_generation_seed": "not retained",
+    "max_new_tokens": 150,
+    "output_count": 15,
+    "stages": [
+      "baseline",
+      "pretrained",
+      "finetuned"
+    ],
+    "temperature": 0.3,
+    "test_count": 5
+  },
+  "experiment": "7-5",
+  "historical_environment_from_report": {
+    "cuda_compute_capability": "8.9",
+    "cuda_toolkit": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "gpu_memory_gb": 23.647,
+    "platform": "Linux",
+    "torch": "2.8.0+cu128",
+    "transformers": "4.56.2",
+    "triton": "3.4.0",
+    "unsloth": "2025.10.4",
+    "xformers": "0.0.32.post2"
+  },
+  "historical_evidence_boundary": {
+    "claim": "The retained terminal report proves a three-stage evaluation ran on the reported RTX 4090 software stack. It does not prove the byte identity of the historical adapters or upstream data.",
+    "historical_checkpoint_hashes_retained": false,
+    "historical_training_executed": true,
+    "historical_upstream_revisions_retained": false,
+    "raw_three_stage_evaluation_retained": true
+  },
+  "schema_version": "exp7-5-reproduction-contract-v1",
+  "training": {
+    "continued_pretraining": {
+      "batch_size": 2,
+      "dataset_fraction": 0.05,
+      "dataset_split_seed": "not explicitly recorded by the historical script",
+      "embedding_learning_rate": 1e-05,
+      "epochs": 1,
+      "gradient_accumulation_steps": 8,
+      "learning_rate": 5e-05,
+      "max_steps": -1,
+      "optimizer": "adamw_8bit",
+      "scheduler": "linear",
+      "trainer_seed": 42,
+      "warmup_ratio": 0.1,
+      "warmup_steps": 10,
+      "weight_decay": 0.01
+    },
+    "instruction_sft": {
+      "batch_size": 2,
+      "embedding_learning_rate": 1e-05,
+      "epochs": 2,
+      "gradient_accumulation_steps": 8,
+      "learning_rate": 5e-05,
+      "max_steps": -1,
+      "optimizer": "adamw_8bit",
+      "scheduler": "linear",
+      "trainer_seed": 42,
+      "warmup_ratio": 0.1,
+      "warmup_steps": 10,
+      "weight_decay": 0.0
+    },
+    "lora": {
+      "alpha": 32,
+      "bias": "none",
+      "dropout": 0,
+      "gradient_checkpointing": "unsloth",
+      "random_state": 3407,
+      "rank": 128,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj",
+        "embed_tokens",
+        "lm_head"
+      ],
+      "use_rslora": true
+    },
+    "model_loading": {
+      "load_in_4bit": true,
+      "max_sequence_length": 2048
+    }
+  },
+  "upstream_revisions": {
+    "base_model": {
+      "note": "This immutable revision is the frozen reproduction contract selected on 2026-07-31. The historical run did not retain its resolved upstream commit, so this is not claimed to be the exact historical revision.",
+      "repository": "unsloth/mistral-7b-v0.3",
+      "revision": "9ea1b83f5ced5663c5fa89c300fe59f9bdcd2b10"
+    },
+    "continued_pretraining_dataset": {
+      "configuration": "20231101.ko",
+      "note": "This immutable revision is the frozen reproduction contract selected on 2026-07-31. The historical run did not retain its resolved upstream commit, so this is not claimed to be the exact historical revision.",
+      "repository": "wikimedia/wikipedia",
+      "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa"
+    },
+    "instruction_dataset": {
+      "note": "This immutable revision is the frozen reproduction contract selected on 2026-07-31. The historical run did not retain its resolved upstream commit, so this is not claimed to be the exact historical revision.",
+      "repository": "FreedomIntelligence/alpaca-gpt4-korean",
+      "revision": "f38ae19cf673363d74fab6217de46c1b9c3150d4"
+    }
+  }
+}

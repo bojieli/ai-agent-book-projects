@@ -1,0 +1,84 @@
+{
+  "acceptance": {
+    "all_three_stages_retained": true,
+    "checkpoints_not_an_acceptance_artifact": true,
+    "english_retention_comparison_completed": true,
+    "exactly_fifteen_outputs": true,
+    "exactly_five_tests": true,
+    "five_independent_blind_judgments": true,
+    "historical_revision_boundary_explicit": true,
+    "immutable_future_reproduction_revisions_frozen": true,
+    "judge_response_ids_usage_and_latency_retained": true,
+    "kimchi_failure_explicitly_reported": true,
+    "korean_gain_comparison_completed": true,
+    "passed": true,
+    "raw_report_hashed": true,
+    "training_and_evaluation_sources_declared": true
+  },
+  "artifacts": [
+    {
+      "bytes": 8978,
+      "path": "retained_outputs.json",
+      "sha256": "e2951f1b5f7d3437a1c47b37fbcd88f40a7425bf375f5cc20df254888cb54251"
+    },
+    {
+      "bytes": 3975,
+      "path": "reproduction_contract.json",
+      "sha256": "cb17c288c9465c4b48df5922ccec8b5cb0c1298d85f50fcc43dd06ffb106dda6"
+    },
+    {
+      "bytes": 71582,
+      "path": "judge_receipts.json",
+      "sha256": "9aa573b581faf5d746f785295fafbe71580bdd4143d6df6285b194720ecb27c3"
+    },
+    {
+      "bytes": 10740,
+      "path": "summary.json",
+      "sha256": "b9bce7bbfe9422e6dc2ea50676e3209ad72eb795a835e1bdf4bf1868741acbd1"
+    },
+    {
+      "bytes": 1546,
+      "path": "report.md",
+      "sha256": "5a238dd737cb36a588a298846d8e4ac26892253d94d45a6a1b7070558df06e3b"
+    }
+  ],
+  "checkpoint_policy": "not distributed; not an acceptance artifact",
+  "created_at": "2026-07-31T10:34:17.583753+00:00",
+  "experiment": "7-5",
+  "inputs": [
+    {
+      "bytes": 30544,
+      "path": "chapter7/continued-pretraining/model_eval_results.md",
+      "sha256": "1140eb55466cd6e255bd2f161afad5ba2b4f18176b0d1cd111fb190f4bc514a9"
+    },
+    {
+      "bytes": 30047,
+      "path": "chapter7/continued-pretraining/continued-pretrain.py",
+      "sha256": "7114b6ae0a2ad465a7b86237192047ff5c6bc0f5b03da88845fef25bb09440a7"
+    },
+    {
+      "bytes": 13980,
+      "path": "chapter7/continued-pretraining/compare_models.py",
+      "sha256": "179e2215cc70677d148f2e3947e451eb3f9d2a26b389a4737408efeb5590b8e7"
+    },
+    {
+      "bytes": 10402,
+      "path": "chapter7/continued-pretraining/evaluate_model.py",
+      "sha256": "c01aa9810aa4977c785b905da5bd68e722f8b2e986be42f6b66c40d7c87c5520"
+    },
+    {
+      "bytes": 30897,
+      "path": "chapter7/continued-pretraining/validation/run_report_audit.py",
+      "sha256": "28f74b1900594d27e50349b8bd94d78a13191a17d872153c13db03914f54159b"
+    },
+    {
+      "bytes": 9947,
+      "path": "chapter7/continued-pretraining/validation/validate_evidence.py",
+      "sha256": "9bd7e4363ac4dcd68cefd56c5aa396f5c4b0b5e6d272a05a5fdd1ce86b81e9a5"
+    }
+  ],
+  "run_dir": "validation/runs/exp7-5-training-report-20260731-v1",
+  "run_id": "exp7-5-training-report-20260731-v1",
+  "schema_version": "exp7-5-manifest-v1",
+  "status": "passed"
+}

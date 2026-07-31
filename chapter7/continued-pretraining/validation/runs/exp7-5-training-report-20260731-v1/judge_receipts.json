@@ -1,0 +1,558 @@
+{
+  "calls": [
+    {
+      "blind_map": {
+        "A": "baseline",
+        "B": "finetuned",
+        "C": "pretrained"
+      },
+      "blind_seed": 750731,
+      "credential_env": "ARK_API_KEY",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+      "http_status": 200,
+      "judgment": {
+        "candidates": {
+          "A": {
+            "factual_errors": [
+              "Contradiction in definition (claims AI both mimics and does not mimic human intelligence)",
+              "Incorrectly states AI's goal is to surpass human intelligence (overgeneralization)"
+            ],
+            "factuality": 1,
+            "instruction_following": 2,
+            "language_fluency": 2,
+            "rationale": "Contains contradictory definitions (mimicking vs. not mimicking human intelligence) and overgeneralizes AI's goal; repetitive and incomplete text."
+          },
+          "B": {
+            "factual_errors": [
+              "Incomplete example: '이미지 인' likely missing '식' (recognition)"
+            ],
+            "factuality": 4,
+            "instruction_following": 4,
+            "language_fluency": 3,
+            "rationale": "Reasonable definitions of AI (systems/programs mimicking human intelligence) with relevant examples; minor incompleteness but no major falsehoods."
+          },
+          "C": {
+            "factual_errors": [
+              "Overly narrow definition (incorrectly limits AI to 'computer software' excluding hardware)"
+            ],
+            "factuality": 2,
+            "instruction_following": 1,
+            "language_fluency": 1,
+            "rationale": "Severely repetitive, incomplete (cuts off mid-sentence), and incorrectly restricts AI to software; unfluent with structural errors."
+          }
+        },
+        "language": "korean",
+        "ranking": [
+          "B",
+          "A",
+          "C"
+        ],
+        "test_id": 1
+      },
+      "latency_ms": 54518.451,
+      "provider": "ark",
+      "request": {
+        "messages": [
+          {
+            "content": "You are an independent bilingual Korean/English evaluator. The candidates are deliberately anonymous; do not infer model identity or training stage. Score only the supplied text. Identify concrete factual errors, especially invented food ingredients or preparation claims. Return one JSON object only, with every requested field.",
+            "role": "system"
+          },
+          {
+            "content": "{\"candidates\": {\"A\": \"인공지능(artificial intelligence, AI)은 인간의 지능을 모방하는 컴퓨터 프로그램이다. 인공지능은 인간의 지능을 모방하는 것이 아니라 인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인간의 지능을 모방하는 것이 아니\\n   인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인\", \"B\": \"인공지능(AI)은 인간 지능이 필요한 작업을 수행할 수 있는 컴퓨터 시스템을 개발하는 것을 의미합니다. 인간의 지능을 모방하는 기계 또는 컴퓨터 프로그램을 만드는 것을 의미합니다. 이러한 작업에는 자연어 이해, 이미지 인\\n  , 의사 결정 및 문제 해결 등이\", \"C\": \"인공지능(人工智能, )은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이다. 인공지능은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이며, 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이다. 인간의 지적 능력을 모방하\\n   컴퓨터 소프\"}, \"language\": \"korean\", \"required_json_shape\": {\"candidates\": {\"A\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"B\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"C\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}}, \"language\": \"korean\", \"ranking\": [\"best label\", \"middle label\", \"worst label\"], \"test_id\": 1}, \"rubric\": {\"factuality\": \"0 dominated by falsehoods; 3 mixed/minor errors; 5 accurate with no material error\", \"instruction_following\": \"0 ignores the task; 3 partly satisfies it; 5 directly and fully satisfies it\", \"language_fluency\": \"0 unreadable; 3 understandable with defects; 5 native-quality and coherent\"}, \"task\": \"Write the opening of a Korean Wikipedia article about artificial intelligence.\", \"test_id\": 1}",
+            "role": "user"
+          }
+        ],
+        "model": "doubao-seed-1-6-250615",
+        "response_format": {
+          "type": "json_object"
+        },
+        "temperature": 0
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"candidates\": {\"A\": {\"factual_errors\": [\"Contradiction in definition (claims AI both mimics and does not mimic human intelligence)\", \"Incorrectly states AI's goal is to surpass human intelligence (overgeneralization)\"], \"factuality\": 1, \"instruction_following\": 2, \"language_fluency\": 2, \"rationale\": \"Contains contradictory definitions (mimicking vs. not mimicking human intelligence) and overgeneralizes AI's goal; repetitive and incomplete text.\"}, \"B\": {\"factual_errors\": [\"Incomplete example: '이미지 인' likely missing '식' (recognition)\"], \"factuality\": 4, \"instruction_following\": 4, \"language_fluency\": 3, \"rationale\": \"Reasonable definitions of AI (systems/programs mimicking human intelligence) with relevant examples; minor incompleteness but no major falsehoods.\"}, \"C\": {\"factual_errors\": [\"Overly narrow definition (incorrectly limits AI to 'computer software' excluding hardware)\"], \"factuality\": 2, \"instruction_following\": 1, \"language_fluency\": 1, \"rationale\": \"Severely repetitive, incomplete (cuts off mid-sentence), and incorrectly restricts AI to software; unfluent with structural errors.\"}}, \"language\": \"korean\", \"ranking\": [\"B\", \"A\", \"C\"], \"test_id\": 1}",
+              "reasoning_content": "\nI need to evaluate the three candidates (A, B, C) based on the given task: writing the opening of a Korean Wikipedia article about artificial intelligence. The evaluation criteria are factuality, instruction following, language fluency, and then rank them.\n\nFirst, let's recall the task: Wikipedia opening should be a clear, accurate introduction to AI, typically defining it concisely, maybe mentioning key aspects.\n\nStarting with Candidate A: The text is \"인공지능(artificial intelligence, AI)은 인간의 지능을 모방하는 컴퓨터 프로그램이다. 인공지능은 인간의 지능을 모방하는 것이 아니라 인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인간의 지능을 모방하는 것이 아니 인간의 지능을 넘어서는 것이 목표이다. 인공지능은 인\". \n\nFirst, factuality: The first sentence says AI is a computer program that mimics human intelligence. Then it contradicts itself by saying \"it's not mimicking but surpassing human intelligence\" twice. AI's goal isn't universally to surpass human intelligence; that's a narrow view (e.g., AGI vs. narrow AI). Also, the text cuts off at \"인공지능은 인\". Factual errors: Contradiction in definition (mimicking vs. not mimicking), incorrect claim that AI's goal is to surpass human intelligence (overgeneralization). \n\nLanguage fluency: Repetition (\"인간의 지능을 모방하는 것이 아니라... twice), incomplete sentence at the end. Not fluent.\n\nInstruction following: Trying to define AI but with contradictions and incomplete, so partial.\n\nCandidate B: \"인공지능(AI)은 인간 지능이 필요한 작업을 수행할 수 있는 컴퓨터 시스템을 개발하는 것을 의미합니다. 인간의 지능을 모방하는 기계 또는 컴퓨터 프로그램을 만드는 것을 의미합니다. 이러한 작업에는 자연어 이해, 이미지 인 , 의사 결정 및 문제 해결 등이\" \n\nDefinition: \"developing computer systems that can perform tasks requiring human intelligence\" and \"creating machines/programs that mimic human intelligence\" – these are reasonable definitions. Mentions examples (natural language understanding, image recognition, decision making, problem solving). Cuts off at \"이미지 인 \" (probably \"이미지 인식\" = image recognition). Factual errors: Maybe incomplete examples, but the core definition is accurate. No major falsehoods. \n\nLanguage fluency: Incomplete phrase \"이미지 인 \" but otherwise coherent. Less repetition than A.\n\nInstruction following: Better than A, provides definition and examples, though incomplete.\n\nCandidate C: \"인공지능(人工智能, )은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이다. 인공지능은 인간의 지적 능력을 모방하는 컴퓨터 소프트웨어이며, 인간의 지능을 모방하는 컴퓨터 소프트웨어이다. 인간의 지적 능력을 모방하 컴퓨터 소프\" \n\nDefinition: \"computer software that mimics human intellectual abilities\" – AI isn't just software; it can include hardware systems too. Repetition of the same definition three times. Incomplete sentence at the end (\"모방하 컴퓨터 소프\"). Factual error: Overly narrow definition (AI as only software, excluding hardware components). \n\nLanguage fluency: Severe repetition, incomplete sentence, \"人工智能, \" has a comma with no following text, making it unfluent.\n\nNow scoring each criterion:\n\nFactuality: \n- A: Contradictions and incorrect goal claim → 1 (dominated by falsehoods/contradictions)\n- B: Reasonable definitions, examples cut off but no false claims → 4 (mostly accurate, minor incompleteness)\n- C: Overly narrow (only software) → 2 (has a material error but not all false)\n\nInstruction following (opening of Wikipedia article should be clear, concise definition):\n- A: Contradicts itself, incomplete → 2 (tries but fails due to contradictions)\n- B: Defines, gives examples, even with cut-off, more complete → 4 (mostly satisfies)\n- C: Repeats same definition, incomplete → 1 (hardly satisfies, too repetitive and cut off)\n\nLanguage fluency:\n- A: Repetition, incomplete sentence → 2 (understandable but defects)\n- B: Incomplete example (\"이미지 인\" instead of \"이미지 인식\") but otherwise coherent → 3 (understandable with defects)\n- C: Severe repetition, incomplete, \"人工智能, \" with comma error → 1 (unreadable in parts, major defects)\n\nRanking: B is best, then C, then A? Wait, let's recheck.\n\nWait, C's factuality is 2, A's is 1 (lower). So A is worse than C in factuality. Language fluency: A is 2, C is 1, so C is less fluent than A. So overall ranking: B (best), then A, then C? No, need to compare all.\n\nCandidate B: Factuality 4, instruction 4, fluency 3 → best.\n\nCandidate A: Factuality 1 (bad), instruction 2, fluency 2.\n\nCandidate C: Factuality 2 (better than A), instruction 1 (worse than A), fluency 1 (worse than A). So between A and C, which is worse? C has worse instruction following and fluency, but slightly better factuality. Since the task is Wikipedia opening, fluency and instruction following are crucial. C is more repetitive, more incomplete, so C is worse than A. So ranking: B (best), A (middle), C (worst).\n\nNow structuring the JSON with all fields:\n\nFor each candidate's factual_errors:\n\nA: [\"Contradiction in definition (claims AI both mimics and does not mimic human intelligence)\", \"Incorrectly states AI's goal is to surpass human intelligence (overgeneralization)\"], factuality 1, instruction_following 2, language_fluency 2, rationale: \"Contains contradictory definitions (mimicking vs. not mimicking human intelligence) and overgeneralizes AI's goal as surpassing human intelligence; text is repetitive and incomplete.\"\n\nB: [\"Incomplete example: '이미지 인' likely missing '식' (recognition)\"], factuality 4, instruction_following 4, language_fluency 3, rationale: \"Provides reasonable definitions of AI as developing systems/machines that mimic human intelligence and perform tasks like natural language understanding; minor incompleteness in examples but no major factual errors.\"\n\nC: [\"Overly narrow definition (AI defined as only computer software, excluding hardware components)\"], factuality 2, instruction_following 1, language_fluency 1, rationale: \"Severely repetitive, incomplete definition (cuts off at '모방하 컴퓨터 소프'), and incorrectly limits AI to software (excluding hardware).\"\n\nRanking: B, A, C.",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1785493750,
+        "id": "021785493696408aa5397b165da2577de074a3e1d2c08415efbf0",
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "usage": {
+          "completion_tokens": 1872,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1561
+          },
+          "prompt_tokens": 796,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2668
+        }
+      },
+      "response_id": "021785493696408aa5397b165da2577de074a3e1d2c08415efbf0",
+      "test_id": 1,
+      "usage": {
+        "completion_tokens": 1872,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1561
+        },
+        "prompt_tokens": 796,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2668
+      }
+    },
+    {
+      "blind_map": {
+        "A": "baseline",
+        "B": "finetuned",
+        "C": "pretrained"
+      },
+      "blind_seed": 750731,
+      "credential_env": "ARK_API_KEY",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+      "http_status": 200,
+      "judgment": {
+        "candidates": {
+          "A": {
+            "factual_errors": [],
+            "factuality": 5,
+            "instruction_following": 5,
+            "language_fluency": 5,
+            "rationale": "Accurately defines AI as machine intelligence contrasting with natural intelligence, correctly cites the computer science definition of 'intelligent agents,' and mentions the AI effect. No factual errors, fluent, and fully aligns with writing an opening Wikipedia section."
+          },
+          "B": {
+            "factual_errors": [
+              "Claims AI systems 'act without programming' (AI systems require programming to enable learning/functionality)",
+              "Redundant repetition: 'computers or computers'"
+            ],
+            "factuality": 3,
+            "instruction_following": 4,
+            "language_fluency": 3,
+            "rationale": "Contains incorrect claim about acting 'without programming' and grammatical issues (repetition, incomplete sentence: 'Theories of mind systems:This'). Partially follows the task but with factual and fluency缺陷."
+          },
+          "C": {
+            "factual_errors": [
+              "Misattributes the 'intelligent agents' definition to philosophy (it is a standard computer science definition)",
+              "Incorrectly includes 'physics' as a key interdisciplinary field (typical fields: computer science, philosophy, psychology, linguistics, biology)"
+            ],
+            "factuality": 3,
+            "instruction_following": 3,
+            "language_fluency": 4,
+            "rationale": "Contains factual misattributions and includes an atypical interdisciplinary field (physics). Cut off mid-sentence ('founded as an academic discipline in 195'), limiting instruction following."
+          }
+        },
+        "language": "english",
+        "ranking": [
+          "A",
+          "C",
+          "B"
+        ],
+        "test_id": 2
+      },
+      "latency_ms": 43502.191,
+      "provider": "ark",
+      "request": {
+        "messages": [
+          {
+            "content": "You are an independent bilingual Korean/English evaluator. The candidates are deliberately anonymous; do not infer model identity or training stage. Score only the supplied text. Identify concrete factual errors, especially invented food ingredients or preparation claims. Return one JSON object only, with every requested field.",
+            "role": "system"
+          },
+          {
+            "content": "{\"candidates\": {\"A\": \"Artificial intelligence (AI), sometimes called machine intelligence, is intelligence demonstrated by machines, in contrast to the natural intelligence (NI) displayed by humans and other animals. In computer science AI research is defined as the study of \\\"intelligent agents\\\": any device that perceives its environment and takes actions that maximize its chance of successfully achieving its goals. Colloquially, the term \\\"artificial intelligence\\\" is applied when a machine mimics \\\"cognitive\\\" functions that humans associate with other human minds, such as \\\"learning\\\" and \\\"problem solving\\\".\\n\\nAs machines become increasingly capable, tasks considered to require \\\"intelligence\\\" are often removed from the definition, a phenomenon known as the AI effect, leading to\", \"B\": \"Artificial intelligence (AI) is intelligence exhibited by computers. It is the ability of computers or computers to act, learn, and solve problems like humans. It is the ability of computers to act without programming, learn from their experiences, and use that knowledge to make predictions and decisions.\\n\\nAI systems can be broken down into three types:\\n\\n1. Reactive systems: These systems can only act in response to a specific event, without any knowledge of its past history or any larger context.\\n\\n2. Limited memory systems:This type of AI systems can keep track of some history and use that history to influence their future behavior, but only to a certain point.\\n\\n3. Theories of mind systems:This\", \"C\": \"Artificial intelligence (AI) is intelligence exhibited by machines. In computer science, an AI is a machine that mimics human intelligence. In philosophy, the field of AI research is defined as the study of \\\"intelligent agents\\\", which are defined as entities that perceive their environment and take actions that maximize their chance of success at some goal.\\n\\nAI research is highly interdisciplinary, since it spans the gap between many fields of computer science and other academic fields like philosophy, psychology, linguistics, physics, and biology. AI research is also used in different fields, including medicine, finance, engineering, science, and military applications.\\n\\nThe field was founded as an academic discipline in 195\"}, \"language\": \"english\", \"required_json_shape\": {\"candidates\": {\"A\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"B\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"C\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}}, \"language\": \"english\", \"ranking\": [\"best label\", \"middle label\", \"worst label\"], \"test_id\": 2}, \"rubric\": {\"factuality\": \"0 dominated by falsehoods; 3 mixed/minor errors; 5 accurate with no material error\", \"instruction_following\": \"0 ignores the task; 3 partly satisfies it; 5 directly and fully satisfies it\", \"language_fluency\": \"0 unreadable; 3 understandable with defects; 5 native-quality and coherent\"}, \"task\": \"Write the opening of an English Wikipedia article about artificial intelligence.\", \"test_id\": 2}",
+            "role": "user"
+          }
+        ],
+        "model": "doubao-seed-1-6-250615",
+        "response_format": {
+          "type": "json_object"
+        },
+        "temperature": 0
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"candidates\": {\"A\": {\"factual_errors\": [], \"factuality\": 5, \"instruction_following\": 5, \"language_fluency\": 5, \"rationale\": \"Accurately defines AI as machine intelligence contrasting with natural intelligence, correctly cites the computer science definition of 'intelligent agents,' and mentions the AI effect. No factual errors, fluent, and fully aligns with writing an opening Wikipedia section.\"}, \"B\": {\"factual_errors\": [\"Claims AI systems 'act without programming' (AI systems require programming to enable learning/functionality)\", \"Redundant repetition: 'computers or computers'\"], \"factuality\": 3, \"instruction_following\": 4, \"language_fluency\": 3, \"rationale\": \"Contains incorrect claim about acting 'without programming' and grammatical issues (repetition, incomplete sentence: 'Theories of mind systems:This'). Partially follows the task but with factual and fluency缺陷.\"}, \"C\": {\"factual_errors\": [\"Misattributes the 'intelligent agents' definition to philosophy (it is a standard computer science definition)\", \"Incorrectly includes 'physics' as a key interdisciplinary field (typical fields: computer science, philosophy, psychology, linguistics, biology)\"], \"factuality\": 3, \"instruction_following\": 3, \"language_fluency\": 4, \"rationale\": \"Contains factual misattributions and includes an atypical interdisciplinary field (physics). Cut off mid-sentence ('founded as an academic discipline in 195'), limiting instruction following.\"}}, \"language\": \"english\", \"ranking\": [\"A\", \"C\", \"B\"], \"test_id\": 2}",
+              "reasoning_content": "\nI need to evaluate each candidate (A, B, C) based on the given rubric: factuality, instruction_following, language_fluency, and identify factual errors. The task is to write the opening of an English Wikipedia article about AI. Let's start with each candidate.\n\nFirst, Candidate A: The text starts by defining AI as intelligence demonstrated by machines, contrasting with natural intelligence. It mentions AI research in computer science as the study of \"intelligent agents\" (perceives environment, takes actions to maximize goal success). Colloquially, when machines mimic cognitive functions like learning and problem-solving. Then mentions the AI effect (tasks once requiring intelligence are removed from definition as machines become capable). Factually, this seems accurate. The \"intelligent agents\" definition is standard in AI. No obvious factual errors. Language is fluent, coherent. Follows the task of writing an opening section.\n\nCandidate B: Defines AI as \"intelligence exhibited by computers\" (narrower than machines, but not wrong). Then says \"ability of computers or computers to act...\" (repetition). \"Act without programming\" is incorrect—AI systems are programmed, though they may learn from data. Then lists three types: Reactive, Limited memory, Theories of mind. Reactive and Limited memory are correct, but \"Theories of mind\" is a theoretical future type, not currently existing. Also, the description is choppy, with grammar issues (\"This type of AI systems can keep track...\"). Factual errors: \"act without programming\" is false; repetition of \"computers\". Language fluency is lower due to repetition and grammar.\n\nCandidate C: \"In computer science, an AI is a machine that mimics human intelligence\"—the term \"AI\" refers to the field or systems, not a machine itself. \"In philosophy, the field of AI research is defined as...\"—the intelligent agents definition is from computer science, not philosophy. Then lists interdisciplinary fields including physics (uncommon; typical are CS, philosophy, psychology, linguistics, biology, maybe neuroscience, but physics is not standard). Factually incorrect to attribute the intelligent agents definition to philosophy and include physics as a key interdisciplinary field.\n\nNow scoring:\n\nFactuality: A has none, 5. B has \"act without programming\" and repetition, 3. C has misattributing definition to philosophy and including physics, 3.\n\nInstruction following: All aim to write an opening, but B is shorter, C is cut off. A is most complete, 5. B and C maybe 4? Wait, the task is \"opening\", so A is best. B is okay but incomplete. C is cut off (\"founded as an academic discipline in 195\"—trailing). So A:5, B:4, C:3.\n\nLanguage fluency: A is native-quality, 5. B has repetition (\"computers or computers\") and grammar (\"This type of AI systems\"), 3. C has some awkwardness (\"In computer science, an AI is a machine...\") but mostly coherent, 4.\n\nFactual errors: A: [], B: [\"Claims AI systems 'act without programming' (AI systems are programmed, though they may learn from data)\", \"Repetition of 'computers' in 'ability of computers or computers'\"], C: [\"States 'In philosophy, the field of AI research is defined as the study of \"intelligent agents\"'—the intelligent agents definition is standard in computer science, not philosophy\", \"Incorrectly includes 'physics' as a key interdisciplinary field in AI research (typical fields are computer science, philosophy, psychology, linguistics, biology)\"].\n\nRanking: A best, then B and C. B has more factual errors but C is cut off. Maybe A, C, B? Or A, B, C? Let's see: C is cut off, which affects instruction following. B is also cut off (\"Theories of mind systems:This\"). Oh, right, B ends with \"Theories of mind systems:This\"—incomplete. C ends with \"founded as an academic discipline in 195\"—also incomplete. A is the only one not cut off. So A is best. Between B and C: C has more accurate content except for the two errors, while B has more severe errors (\"act without programming\") and worse fluency. So ranking: A, C, B.\n\nPutting it all together.",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1785493739,
+        "id": "021785493696414132969bd05ac943fb2473c371a3df88f300da7",
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "usage": {
+          "completion_tokens": 1296,
+          "completion_tokens_details": {
+            "reasoning_tokens": 935
+          },
+          "prompt_tokens": 939,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2235
+        }
+      },
+      "response_id": "021785493696414132969bd05ac943fb2473c371a3df88f300da7",
+      "test_id": 2,
+      "usage": {
+        "completion_tokens": 1296,
+        "completion_tokens_details": {
+          "reasoning_tokens": 935
+        },
+        "prompt_tokens": 939,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2235
+      }
+    },
+    {
+      "blind_map": {
+        "A": "pretrained",
+        "B": "baseline",
+        "C": "finetuned"
+      },
+      "blind_seed": 750731,
+      "credential_env": "ARK_API_KEY",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+      "http_status": 200,
+      "judgment": {
+        "candidates": {
+          "A": {
+            "factual_errors": [
+              "칠면조를 재료로 사용한다는 잘못된 주장 (전통 김치에는 칠면조가 들어가지 않음)",
+              "삶아 만든다는 잘못된 설명 (김치는 발효과정을 거치며 삶는 것이 일반적이지 않음)"
+            ],
+            "factuality": 1,
+            "instruction_following": 2,
+            "language_fluency": 3,
+            "rationale": "한국 전통 음식으로 설명하려 했으나 칠면조 재료와 삶는 과정 등 사실 오류가 있으며 설명이 불완전하다."
+          },
+          "B": {
+            "factual_errors": [
+              "육식 밥과 함께 먹는다는 잘못된 설명 (김치는 다양한 밥과 함께 먹으며 '육식 밥'은 부적절함)",
+              "잡음료로 만든다는 잘못된 주장 (김치는 발효 채소 요리로 음료가 아님)"
+            ],
+            "factuality": 0,
+            "instruction_following": 0,
+            "language_fluency": 2,
+            "rationale": "김치를 잡음료로 설명하는 등 사실과 전혀 다른 내용이며 문장이 반복되고 불완전하다."
+          },
+          "C": {
+            "factual_errors": [
+              "채소를 삶는다는 잘못된 설명 (전통 김치는 채소를 소금에 절이는 과정을 거침)",
+              "간장 소스로 설명하는 잘못 (김치 양념은 간장이 아닌 고추가루, 젓갈 등으로 만듦)"
+            ],
+            "factuality": 3,
+            "instruction_following": 3,
+            "language_fluency": 3,
+            "rationale": "양배추 등 채소를 언급했으나 삶는 과정과 간장 소스 설명이 부정확하며 문장이 불완전하다."
+          }
+        },
+        "language": "korean",
+        "ranking": [
+          "C",
+          "A",
+          "B"
+        ],
+        "test_id": 3
+      },
+      "latency_ms": 80864.012,
+      "provider": "ark",
+      "request": {
+        "messages": [
+          {
+            "content": "You are an independent bilingual Korean/English evaluator. The candidates are deliberately anonymous; do not infer model identity or training stage. Score only the supplied text. Identify concrete factual errors, especially invented food ingredients or preparation claims. Return one JSON object only, with every requested field.",
+            "role": "system"
+          },
+          {
+            "content": "{\"candidates\": {\"A\": \"김치는 한국의 전통 음식으로, 찹쌀가루와 칠면조를 섞어 만들어 삶아 낸 음식이다. 김치는 건강을 위해 좋은 음식으로 여겨지며, 섭취할 때마다 맛이 좋아진다.\\n\\n김치는 한국 전통 음식의 일부로 널리 알려져 있으며, 세계 각국에서 인기가\", \"B\": \"김치는 한국의 전통 음식이며, 육식 밥과 함께 먹는 것이 일반적입니다. 김치는 살기 높은 채소를 잡음료로 만들어 손쉽게 만들 수 있습니다. 김치는 다양한 식품에 사용되며, 살기 높은 채소를 잡음료로 만들어 손쉽게 만들\", \"C\": \"김치는 한국의 전통 음식으로, 콩나물이나 양배추와 같은 채소를 삶은 후 쌀죽 또는 쌀로 만든 맛있는 간장 소스에 담근 것입니다. 이 소스는 쌀죽 또는 쌀로 만들어지며, 다양한 양념과 향신료로 만들어집니다. 이 소스는 채소\\n   담아 담근\"}, \"language\": \"korean\", \"required_json_shape\": {\"candidates\": {\"A\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"B\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"C\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}}, \"language\": \"korean\", \"ranking\": [\"best label\", \"middle label\", \"worst label\"], \"test_id\": 3}, \"rubric\": {\"factuality\": \"0 dominated by falsehoods; 3 mixed/minor errors; 5 accurate with no material error\", \"instruction_following\": \"0 ignores the task; 3 partly satisfies it; 5 directly and fully satisfies it\", \"language_fluency\": \"0 unreadable; 3 understandable with defects; 5 native-quality and coherent\"}, \"task\": \"한국의 전통 음식인 김치에 대해 설명하세요.\", \"test_id\": 3}",
+            "role": "user"
+          }
+        ],
+        "model": "doubao-seed-1-6-250615",
+        "response_format": {
+          "type": "json_object"
+        },
+        "temperature": 0
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"candidates\": {\"A\": {\"factual_errors\": [\"칠면조를 재료로 사용한다는 잘못된 주장 (전통 김치에는 칠면조가 들어가지 않음)\", \"삶아 만든다는 잘못된 설명 (김치는 발효과정을 거치며 삶는 것이 일반적이지 않음)\"], \"factuality\": 1, \"instruction_following\": 2, \"language_fluency\": 3, \"rationale\": \"한국 전통 음식으로 설명하려 했으나 칠면조 재료와 삶는 과정 등 사실 오류가 있으며 설명이 불완전하다.\"}, \"B\": {\"factual_errors\": [\"육식 밥과 함께 먹는다는 잘못된 설명 (김치는 다양한 밥과 함께 먹으며 '육식 밥'은 부적절함)\", \"잡음료로 만든다는 잘못된 주장 (김치는 발효 채소 요리로 음료가 아님)\"], \"factuality\": 0, \"instruction_following\": 0, \"language_fluency\": 2, \"rationale\": \"김치를 잡음료로 설명하는 등 사실과 전혀 다른 내용이며 문장이 반복되고 불완전하다.\"}, \"C\": {\"factual_errors\": [\"채소를 삶는다는 잘못된 설명 (전통 김치는 채소를 소금에 절이는 과정을 거침)\", \"간장 소스로 설명하는 잘못 (김치 양념은 간장이 아닌 고추가루, 젓갈 등으로 만듦)\"], \"factuality\": 3, \"instruction_following\": 3, \"language_fluency\": 3, \"rationale\": \"양배추 등 채소를 언급했으나 삶는 과정과 간장 소스 설명이 부정확하며 문장이 불완전하다.\"}}, \"language\": \"korean\", \"ranking\": [\"C\", \"A\", \"B\"], \"test_id\": 3}",
+              "reasoning_content": "\nI need to evaluate the three candidates (A, B, C) based on the given task, which is to explain the traditional Korean food kimchi. Let's start by analyzing each candidate for factual errors, factuality, instruction following, language fluency, and then rank them.\n\nFirst, let's recall what kimchi is. Traditional kimchi is a fermented vegetable dish, typically made with napa cabbage (배추) or radish (무), seasoned with gochugaru (고추가루), garlic, ginger, scallions, fish sauce (젓갈), salted shrimp (새우젓), etc. It involves salting the vegetables, then mixing with a paste made from these seasonings, and fermenting. Key points: main ingredients are vegetables, fermentation is crucial, seasonings include chili, garlic, fish-based sauces, no meat like turkey, not made with \"잡음료\" (mixed drinks), and the sauce isn't \"간장 소스\" (soy sauce sauce) but a paste with various seasonings.\n\n**Candidate A**: \"김치는 한국의 전통 음식으로, 찹쌀가루와 칠면조를 섞어 만들어 삶아 낸 음식이다. 김치는 건강을 위해 좋은 음식으로 여겨지며, 섭취할 때마다 맛이 좋아진다. 김치는 한국 전통 음식의 일부로 널리 알려져 있으며, 세계 각국에서 인기가\" \n\nFactual errors: \n- \"찹쌀가루와 칠면조를 섞어 만들어 삶아 낸 음식이다\" (made by mixing glutinous rice flour and turkey and boiling). Turkey (칠면조) is not an ingredient in traditional kimchi; kimchi is vegetarian/uses seafood-based seasonings, not meat. Also, kimchi is fermented, not \"삶아 낸\" (boiled). Glutinous rice flour (찹쌀가루) can be part of the paste, but the main issue is turkey and boiling instead of fermenting.\n- The text cuts off at \"세계 각국에서 인기가\" which is incomplete.\n\nFactuality: Major errors (turkey, boiling instead of fermenting). So factuality score low, maybe 0-1.\n\nLanguage fluency: The sentences are mostly grammatically correct but cut off at the end. Understandable but incomplete. Maybe 3.\n\nInstruction following: The task is to explain kimchi. It starts explaining but has major factual errors and is incomplete. Partly attempts but fails. Maybe 2-3.\n\n**Candidate B**: \"김치는 한국의 전통 음식이며, 육식 밥과 함께 먹는 것이 일반적입니다. 김치는 살기 높은 채소를 잡음료로 만들어 손쉽게 만들 수 있습니다. 김치는 다양한 식품에 사용되며, 살기 높은 채소를 잡음료로 만들어 손쉽게 만들\"\n\nFactual errors: \n- \"육식 밥과 함께 먹는 것이 일반적입니다\" (usually eaten with meat rice). Kimchi is typically eaten with various Korean meals, including rice, but \"육식 밥\" (meat rice) is not a standard term, and this misrepresents the common pairing (it's with rice in general, not specifically meat rice).\n- \"살기 높은 채소를 잡음료로 만들어\" (making high vitality vegetables into mixed drinks). Kimchi is not a mixed drink; it's a fermented vegetable dish. This is a major factual error.\n\nFactuality: Major errors (misrepresents as mixed drink, incorrect pairing). Score 0-1.\n\nLanguage fluency: Repeats \"살기 높은 채소를 잡음료로 만들어 손쉽게 만들\", and the sentence is incomplete. Poor coherence, repetitive. Maybe 2.\n\nInstruction following: Fails to correctly explain kimchi, invents making it into mixed drinks. Ignores the actual nature of kimchi. Score 0-1.\n\n**Candidate C**: \"김치는 한국의 전통 음식으로, 콩나물이나 양배추와 같은 채소를 삶은 후 쌀죽 또는 쌀로 만든 맛있는 간장 소스에 담근 것입니다. 이 소스는 쌀죽 또는 쌀로 만들어지며, 다양한 양념과 향신료로 만들어집니다. 이 소스는 채소 담아 담근\"\n\nFactual errors: \n- \"콩나물이나 양배추와 같은 채소를 삶은 후\" (boiling vegetables like bean sprouts or cabbage). While napa cabbage is a main ingredient, traditional kimchi involves salting (not boiling) the cabbage to draw out moisture. Boiling is not standard.\n- \"쌀죽 또는 쌀로 만든 맛있는 간장 소스에 담근 것입니다\" (soaking in soy sauce sauce made from rice porridge or rice). Kimchi's seasoning paste (양념) includes gochugaru, garlic, ginger, fish sauce, etc., not \"간장 소스\" (soy sauce sauce). Soy sauce is not a primary component; fish sauce or salted shrimp are more common. Also, \"쌀죽\" (rice porridge) might refer to the rice paste (찹쌀풀) used to bind seasonings, which is correct, but mislabeled as \"간장 소스\".\n\nFactuality: Some errors (boiling instead of salting, misnaming seasoning as soy sauce sauce) but closer than A and B. Mentions vegetables (cabbage) and rice-based paste, which are elements of kimchi. Minor to moderate errors. Score 2-3.\n\nLanguage fluency: Incomplete sentence at the end (\"이 소스는 채소 담아 담근\"), but mostly coherent. Understandable. Maybe 3.\n\nInstruction following: Attempts to explain ingredients and preparation, even with errors. Partly satisfies the task. Score 3.\n\nNow, comparing all three:\n\n- **Factuality**: C has the least severe errors, A and B have major falsehoods (A: turkey and boiling; B: mixed drink). \n- **Language fluency**: A is more fluent than B and C, but cuts off. C is coherent but incomplete. B is repetitive and incomplete.\n- **Instruction following**: C tries to explain preparation, A starts but with errors, B is off-topic.\n\nRanking best to worst: C, A, B.\n\n**Scoring details**:\n\n**Candidate A**:\n- factual_errors: [\"칠면조를 재료로 사용한다는 잘못된 주장 (전통 김치에는 칠면조가 들어가지 않음)\", \"삶아 만든다는 잘못된 설명 (김치는 발효과정을 거치며 삶는 것이 일반적이지 않음)\"] (Claims turkey as an ingredient, which is not in traditional kimchi; Incorrectly states kimchi is boiled, when it is fermented, not boiled)\n- factuality: 1 (dominated by falsehoods: turkey and boiling instead of fermentation)\n- instruction_following: 2 (attempts to explain kimchi but with major errors and incomplete)\n- language_fluency: 3 (understandable but incomplete sentence at the end)\n- rationale: \"칠면조와 삶는 과정은 전통 김치의 재료 및 제조과정과 일치하지 않으며, 설명이 불완전하다.\" (Turkey and boiling process do not match traditional kimchi ingredients and preparation; explanation is incomplete)\n\n**Candidate B**:\n- factual_errors: [\"육식 밥과 함께 먹는다는 잘못된 설명 (김치는 일반적으로 다양한 밥과 함께 먹으며 '육식 밥'이라는 용어는 부적절함)\", \"잡음료로 만든다는 잘못된 주장 (김치는 발효 채소 요리로 음료가 아님)\"] (Incorrectly claims eaten with \"meat rice\"; falsely states kimchi is a mixed drink, not a fermented vegetable dish)\n- factuality: 0 (dominated by falsehoods about kimchi being a drink and incorrect pairing)\n- instruction_following: 0 (ignores the task of explaining kimchi, invents false preparation method)\n- language_fluency: 2 (repetitive and incomplete sentences, poor coherence)\n- rationale: \"김치를 잡음료로 설명하는 등 사실과 전혀 다른 내용이며, 문장이 반복되고 불완전하다.\" (Contains completely false information like calling kimchi a mixed drink; sentences are repetitive and incomplete)\n\n**Candidate C**:\n- factual_errors: [\"채소를 삶는다는 잘못된 설명 (전통 김치는 채소를 소금에 절이는 과정을 거침)\", \"간장 소스로 설명하는 잘못 (김치 양념은 간장이 아닌 고추가루, 생강, 젓갈 등으로 만듦)\"] (Incorrectly states boiling vegetables instead of salting; mislabels seasoning as soy sauce instead of chili, ginger, fish sauce, etc.)\n- factuality: 3 (mixed errors: mentions correct vegetables but incorrect preparation steps and seasoning name)\n- instruction_following: 3 (partly satisfies by explaining ingredients and preparation, despite errors)\n- language_fluency: 3 (understandable with incomplete final sentence)\n- rationale: \"양배추 등 채소를 언급했으나, 삶는 과정과 간장 소스라는 설명이 부정확하며 문장이 불완전하다.\" (Mentions vegetables like cabbage but has incorrect explanations of boiling and soy sauce seasoning; sentence is incomplete)\n\nRanking: C (best), A (middle), B (worst)",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1785493777,
+        "id": "0217854936964188de59cc126156ef9419088f6fa2f8da9449f44",
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "usage": {
+          "completion_tokens": 2676,
+          "completion_tokens_details": {
+            "reasoning_tokens": 2197
+          },
+          "prompt_tokens": 792,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 3468
+        }
+      },
+      "response_id": "0217854936964188de59cc126156ef9419088f6fa2f8da9449f44",
+      "test_id": 3,
+      "usage": {
+        "completion_tokens": 2676,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2197
+        },
+        "prompt_tokens": 792,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 3468
+      }
+    },
+    {
+      "blind_map": {
+        "A": "finetuned",
+        "B": "pretrained",
+        "C": "baseline"
+      },
+      "blind_seed": 750731,
+      "credential_env": "ARK_API_KEY",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+      "http_status": 200,
+      "judgment": {
+        "candidates": {
+          "A": {
+            "factual_errors": [],
+            "factuality": 4,
+            "instruction_following": 4,
+            "language_fluency": 3,
+            "rationale": "Accurately states Seoul as capital, most populous city, and center of history/culture/economy; minor fluency issue with incomplete final sentence."
+          },
+          "B": {
+            "factual_errors": [
+              "Redundant repetition of '서울역은 서울특별시 중심부에 위치한 서울역이 있습니다', typo '대한민 의' (correct: '대한민국의'), incomplete final sentence"
+            ],
+            "factuality": 1,
+            "instruction_following": 0,
+            "language_fluency": 1,
+            "rationale": "Dominated by repetition, typos, and incomplete sentences; fails to provide a meaningful introduction to Seoul."
+          },
+          "C": {
+            "factual_errors": [
+              "Incorrect population claim ('1/3 이상 of Koreans live in Seoul'; actual ~19%), typo '대기 과' (correct: '대기업과' meaning 'large companies')"
+            ],
+            "factuality": 2,
+            "instruction_following": 3,
+            "language_fluency": 3,
+            "rationale": "Attempts to cover key aspects (capital, economic center) but contains significant factual errors (population proportion, typo leading to incorrect term). "
+          }
+        },
+        "language": "korean",
+        "ranking": [
+          "A",
+          "C",
+          "B"
+        ],
+        "test_id": 4
+      },
+      "latency_ms": 51868.999,
+      "provider": "ark",
+      "request": {
+        "messages": [
+          {
+            "content": "You are an independent bilingual Korean/English evaluator. The candidates are deliberately anonymous; do not infer model identity or training stage. Score only the supplied text. Identify concrete factual errors, especially invented food ingredients or preparation claims. Return one JSON object only, with every requested field.",
+            "role": "system"
+          },
+          {
+            "content": "{\"candidates\": {\"A\": \"서울은 대한민국의 수도이자 가장 인구가 많은 도시입니다. 이 도시는 역사, 문화, 경제의 중심지로 알려져 있으며, 인구는 1000만 명 이상입니다. 서울은 높은 건물과 북적거리는 거리, 역사적인 사원과 궁전, 현대적인 건축물\\n   문화 유산이 혼합된\", \"B\": \"서울은 대한민국의 수도로 서울특별시에 속해 있으며 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민국의 경제, 문화, 교육의 중심지이며 서울역은 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민\\n  의 수도로 서울특별시에 속해 있으며 서울역은 서울\", \"C\": \"서울은 대한민국의 수도이며 한국의 경제, 문화, 정치, 사회 등 다양한 분야에서 중앙 지역입니다. 서울은 한국의 최대 도시이며 대한민국의 사람들 중 1/3 이상이 거주하고 있습니다. 서울은 한국의 경제 중심지이며 여러 대기\\n  과 기업 등이 서울에 위치하고 있습니다.\"}, \"language\": \"korean\", \"required_json_shape\": {\"candidates\": {\"A\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"B\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"C\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}}, \"language\": \"korean\", \"ranking\": [\"best label\", \"middle label\", \"worst label\"], \"test_id\": 4}, \"rubric\": {\"factuality\": \"0 dominated by falsehoods; 3 mixed/minor errors; 5 accurate with no material error\", \"instruction_following\": \"0 ignores the task; 3 partly satisfies it; 5 directly and fully satisfies it\", \"language_fluency\": \"0 unreadable; 3 understandable with defects; 5 native-quality and coherent\"}, \"task\": \"대한민국의 수도인 서울에 대해 간단히 소개해주세요.\", \"test_id\": 4}",
+            "role": "user"
+          }
+        ],
+        "model": "doubao-seed-1-6-250615",
+        "response_format": {
+          "type": "json_object"
+        },
+        "temperature": 0
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"candidates\": {\"A\": {\"factual_errors\": [], \"factuality\": 4, \"instruction_following\": 4, \"language_fluency\": 3, \"rationale\": \"Accurately states Seoul as capital, most populous city, and center of history/culture/economy; minor fluency issue with incomplete final sentence.\"}, \"B\": {\"factual_errors\": [\"Redundant repetition of '서울역은 서울특별시 중심부에 위치한 서울역이 있습니다', typo '대한민 의' (correct: '대한민국의'), incomplete final sentence\"], \"factuality\": 1, \"instruction_following\": 0, \"language_fluency\": 1, \"rationale\": \"Dominated by repetition, typos, and incomplete sentences; fails to provide a meaningful introduction to Seoul.\"}, \"C\": {\"factual_errors\": [\"Incorrect population claim ('1/3 이상 of Koreans live in Seoul'; actual ~19%), typo '대기 과' (correct: '대기업과' meaning 'large companies')\"], \"factuality\": 2, \"instruction_following\": 3, \"language_fluency\": 3, \"rationale\": \"Attempts to cover key aspects (capital, economic center) but contains significant factual errors (population proportion, typo leading to incorrect term). \"}}, \"language\": \"korean\", \"ranking\": [\"A\", \"C\", \"B\"], \"test_id\": 4}",
+              "reasoning_content": "\nI need to evaluate the three candidates (A, B, C) based on the given task, which is to briefly introduce Seoul, the capital of South Korea. The required JSON has fields for each candidate's factual errors, factuality, instruction following, language fluency, rationale, as well as a ranking and other details. Let's go through each candidate one by one.\n\nFirst, let's understand the task: \"대한민국의 수도인 서울에 대해 간단히 소개해주세요.\" (Briefly introduce Seoul, the capital of South Korea). So the task is to provide a brief introduction to Seoul, covering relevant aspects like its status, population, role (economic, cultural, etc.), maybe landmarks, etc.\n\nStarting with Candidate A: \"서울은 대한민국의 수도이자 가장 인구가 많은 도시입니다. 이 도시는 역사, 문화, 경제의 중심지로 알려져 있으며, 인구는 1000만 명 이상입니다. 서울은 높은 건물과 북적거리는 거리, 역사적인 사원과 궁전, 현대적인 건축물 문화 유산이 혼합된\" \n\nFactual errors: The statement is mostly accurate. Seoul is the capital and most populous city, a center of history, culture, economy. Population over 10 million (Seoul's population is around 9.7 million as of recent data, but \"over 10 million\" might be a slight overestimation, but not a major error. The last part is incomplete (\"혼합된\" without a predicate), but that's a fluency issue, not factual. So factual errors are minimal, maybe none major.\n\nFactuality: 4 (mostly accurate, minor population approximation).\n\nLanguage fluency: The last sentence is incomplete (\"혼합된\" with no object), so not fully coherent. So 3 (understandable but with defects).\n\nInstruction following: It briefly introduces Seoul with key points (capital, population, center of history/culture/economy, mix of modern and historical), so satisfies the task. 4 (mostly follows, but incomplete sentence).\n\nCandidate B: \"서울은 대한민국의 수도로 서울특별시에 속해 있으며 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민국의 경제, 문화, 교육의 중심지이며 서울역은 서울특별시 중심부에 위치한 서울역이 있습니다. 서울은 대한민 의 수도로 서울특별시에 속해 있으며 서울역은 서울\"\n\nFactual errors: Repetition of \"서울역은 서울특별시 중심부에 위치한 서울역이 있습니다\" twice. Also, \"대한민 의 수도\" has a space error (\"대한민국\" missing the \"국\"). The content is very repetitive, focusing excessively on Seoul Station, which is not a main point for a brief introduction. Factual errors include redundant and incorrect repetition, and a typo (\"대한민 의\" instead of \"대한민국의\").\n\nFactuality: 1 (dominated by repetition and typos, minimal useful information).\n\nLanguage fluency: Highly repetitive, typo (\"대한민 의\"), incomplete last sentence (\"서울역은 서울\"). Unreadable in parts. 1 (very low fluency).\n\nInstruction following: Fails to provide a proper introduction, repeats the same point about Seoul Station, lacks key info. 0 (ignores the task of a brief introduction).\n\nCandidate C: \"서울은 대한민국의 수도이며 한국의 경제, 문화, 정치, 사회 등 다양한 분야에서 중앙 지역입니다. 서울은 한국의 최대 도시이며 대한민국의 사람들 중 1/3 이상이 거주하고 있습니다. 서울은 한국의 경제 중심지이며 여러 대기 과 기업 등이 서울에 위치하고 있습니다.\"\n\nFactual errors: \"여러 대기 과 기업\" – \"대기\" (atmosphere) is likely a typo, probably \"대기업\" (large companies). So \"대기 과\" should be \"대기업과\" (and large companies). That's a factual error due to typo leading to incorrect term. Also, \"한국의 사람들 중 1/3 이상이 거주\" – South Korea's total population is around 51 million, Seoul's is ~9.7 million, which is about 19%, not 1/3 (33%). So that's a major factual error (population proportion).\n\nFactuality: 2 (has significant errors: incorrect population proportion and typo leading to wrong term).\n\nLanguage fluency: \"대기 과 기업\" is a typo, but otherwise understandable. 3 (understandable with defects).\n\nInstruction following: Attempts to introduce Seoul as capital, center of various fields, largest city, economic center. Follows the task but with errors. 3 (partly satisfies).\n\nNow ranking: Best is A (most accurate, despite incomplete sentence), then C (has errors but more content than B), worst is B (repetitive, unreadable).\n\nPutting it all together:\n\nA: factual_errors: [], factuality:4, instruction_following:4, language_fluency:3, rationale: \"Mostly accurate (capital, populous, center of history/culture/economy); minor fluency issue with incomplete last sentence.\"\n\nB: factual_errors: [\"Redundant repetition of '서울역은 서울특별시 중심부에 위치한 서울역이 있습니다', typo '대한민 의' (should be '대한민국의'), incomplete final sentence\"], factuality:1, instruction_following:0, language_fluency:1, rationale: \"Highly repetitive, contains typos, and fails to provide a meaningful introduction to Seoul.\"\n\nC: factual_errors: [\"Incorrect population proportion ('1/3 이상' of Koreans live in Seoul; actual ~19%), typo '대기 과' (should be '대기업과' meaning 'large companies')\"], factuality:2, instruction_following:3, language_fluency:3, rationale: \"Contains significant errors (incorrect population proportion, typo '대기 과'); attempts to cover key aspects but with factual inaccuracies.\"\n\nRanking: [\"A\", \"C\", \"B\"]",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1785493748,
+        "id": "021785493696417a3a08778c75214a0d2bb1c008b2d20ecdbbce6",
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "usage": {
+          "completion_tokens": 1720,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1396
+          },
+          "prompt_tokens": 802,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2522
+        }
+      },
+      "response_id": "021785493696417a3a08778c75214a0d2bb1c008b2d20ecdbbce6",
+      "test_id": 4,
+      "usage": {
+        "completion_tokens": 1720,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1396
+        },
+        "prompt_tokens": 802,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2522
+      }
+    },
+    {
+      "blind_map": {
+        "A": "finetuned",
+        "B": "baseline",
+        "C": "pretrained"
+      },
+      "blind_seed": 750731,
+      "credential_env": "ARK_API_KEY",
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+      "http_status": 200,
+      "judgment": {
+        "candidates": {
+          "A": {
+            "factual_errors": [],
+            "factuality": 5,
+            "instruction_following": 5,
+            "language_fluency": 5,
+            "rationale": "Accurately explains Thanksgiving turkey as a traditional bird, preparation (roasted/baked, seasoned), and sides; fluent and fully follows the task."
+          },
+          "B": {
+            "factual_errors": [],
+            "factuality": 5,
+            "instruction_following": 5,
+            "language_fluency": 5,
+            "rationale": "Comprehensive explanation including tradition origin (Pilgrims/Native Americans), preparation, sides, and symbolism; highly fluent and fully addresses the task."
+          },
+          "C": {
+            "factual_errors": [],
+            "factuality": 5,
+            "instruction_following": 2,
+            "language_fluency": 2,
+            "rationale": "Contains redundant phrases, an off-topic 'Explanation' section about the response itself, and incomplete sentences; partially starts explaining but veers off task with poor fluency."
+          }
+        },
+        "language": "english",
+        "ranking": [
+          "B",
+          "A",
+          "C"
+        ],
+        "test_id": 5
+      },
+      "latency_ms": 44326.155,
+      "provider": "ark",
+      "request": {
+        "messages": [
+          {
+            "content": "You are an independent bilingual Korean/English evaluator. The candidates are deliberately anonymous; do not infer model identity or training stage. Score only the supplied text. Identify concrete factual errors, especially invented food ingredients or preparation claims. Return one JSON object only, with every requested field.",
+            "role": "system"
+          },
+          {
+            "content": "{\"candidates\": {\"A\": \"Turkey is a type of bird that is a part of the Thanksgiving meal in the United States. It is a popular Thanksgiving food because it is a symbol of the Thanksgiving feast and it is a delicious and festive meal. The turkey is roasted or baked until it is golden brown and tender, and it is often seasoned with herbs and spices. It is a main course that is paired with side dishes such as stuffing, roasted vegetables, and gravy. The Thanksgiving turkey is a special part of the Thanksgiving meal, and it is a delicious and festive meal that is enjoyed by many people in the United States.\", \"B\": \"The Thanksgiving turkey is a traditional American food that is typically served at Thanksgiving dinner. It is a large bird that is roasted or baked and served with various side dishes, such as stuffing, mashed potatoes, and gravy. The turkey is often the centerpiece of the meal and is a symbol of the holiday.\\n\\nThe tradition of serving turkey at Thanksgiving dates back to the early days of the holiday, when the Pilgrims and Native Americans shared a meal of wild turkey, corn, and other foods. Over time, the turkey has become a staple of the Thanksgiving meal, and it is now a symbol of the holiday and a reminder of the tradition\", \"C\": \"Turkey is a traditional Thanksgiving food in the United States. It is a large bird that is roasted and served with various side dishes. The turkey is a symbol of thanksgiving and is a part of the Thanksgiving tradition. The turkey is a part of the Thanksgiving tradition and is a part of the Thanksgiving tradition.\\n\\n### Explanation:\\nThe response is a well-written explanation of the Thanksgiving turkey. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response\"}, \"language\": \"english\", \"required_json_shape\": {\"candidates\": {\"A\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"B\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}, \"C\": {\"factual_errors\": [\"specific error, empty only if none\"], \"factuality\": \"number 0-5\", \"instruction_following\": \"number 0-5\", \"language_fluency\": \"number 0-5\", \"rationale\": \"short evidence-based explanation\"}}, \"language\": \"english\", \"ranking\": [\"best label\", \"middle label\", \"worst label\"], \"test_id\": 5}, \"rubric\": {\"factuality\": \"0 dominated by falsehoods; 3 mixed/minor errors; 5 accurate with no material error\", \"instruction_following\": \"0 ignores the task; 3 partly satisfies it; 5 directly and fully satisfies it\", \"language_fluency\": \"0 unreadable; 3 understandable with defects; 5 native-quality and coherent\"}, \"task\": \"Explain Thanksgiving turkey, a traditional American food.\", \"test_id\": 5}",
+            "role": "user"
+          }
+        ],
+        "model": "doubao-seed-1-6-250615",
+        "response_format": {
+          "type": "json_object"
+        },
+        "temperature": 0
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+              "content": "{\"candidates\": {\"A\": {\"factual_errors\": [], \"factuality\": 5, \"instruction_following\": 5, \"language_fluency\": 5, \"rationale\": \"Accurately explains Thanksgiving turkey as a traditional bird, preparation (roasted/baked, seasoned), and sides; fluent and fully follows the task.\"}, \"B\": {\"factual_errors\": [], \"factuality\": 5, \"instruction_following\": 5, \"language_fluency\": 5, \"rationale\": \"Comprehensive explanation including tradition origin (Pilgrims/Native Americans), preparation, sides, and symbolism; highly fluent and fully addresses the task.\"}, \"C\": {\"factual_errors\": [], \"factuality\": 5, \"instruction_following\": 2, \"language_fluency\": 2, \"rationale\": \"Contains redundant phrases, an off-topic 'Explanation' section about the response itself, and incomplete sentences; partially starts explaining but veers off task with poor fluency.\"}}, \"language\": \"english\", \"ranking\": [\"B\", \"A\", \"C\"], \"test_id\": 5}",
+              "reasoning_content": "\nI need to evaluate each candidate (A, B, C) based on the given rubric for factuality, instruction following, language fluency, and identify factual errors. Let's start by understanding the task: \"Explain Thanksgiving turkey, a traditional American food.\"\n\nFirst, Candidate A: \"Turkey is a type of bird that is a part of the Thanksgiving meal in the United States. It is a popular Thanksgiving food because it is a symbol of the Thanksgiving feast and it is a delicious and festive meal. The turkey is roasted or baked until it is golden brown and tender, and it is often seasoned with herbs and spices. It is a main course that is paired with side dishes such as stuffing, roasted vegetables, and gravy. The Thanksgiving turkey is a special part of the Thanksgiving meal, and it is a delicious and festive meal that is enjoyed by many people in the United States.\" \n\nFactuality: No factual errors here. It correctly states turkey is a bird, part of Thanksgiving, roasted/baked, seasoned with herbs, paired with sides like stuffing, etc. All accurate. Factuality score 5.\n\nInstruction following: The task is to explain Thanksgiving turkey as a traditional American food. A explains its role, preparation, and sides. Fully satisfies. Score 5.\n\nLanguage fluency: Coherent, native-quality. No grammar issues. Score 5.\n\nFactual errors: Empty list.\n\nRationale: Accurate, covers key aspects (type, role, preparation, sides) with no errors; fluent and follows instruction.\n\nCandidate B: \"The Thanksgiving turkey is a traditional American food that is typically served at Thanksgiving dinner. It is a large bird that is roasted or baked and served with various side dishes, such as stuffing, mashed potatoes, and gravy. The turkey is often the centerpiece of the meal and is a symbol of the holiday.\\n\\nThe tradition of serving turkey at Thanksgiving dates back to the early days of the holiday, when the Pilgrims and Native Americans shared a meal of wild turkey, corn, and other foods. Over time, the turkey has become a staple of the Thanksgiving meal, and it is now a symbol of the holiday and a reminder of the tradition\"\n\nFactuality: Mentions the tradition dating back to Pilgrims and Native Americans sharing wild turkey. This is a common historical claim (though some debate exists, it's widely accepted in traditional narratives). No factual errors. Factuality 5.\n\nInstruction following: Explains as traditional food, includes history, role, preparation, sides. Fully satisfies. Score 5.\n\nLanguage fluency: Coherent, well-structured. No issues. Score 5.\n\nFactual errors: Empty list.\n\nRationale: Accurate, includes historical context, preparation, and symbolism; fluent and follows instruction.\n\nCandidate C: \"Turkey is a traditional Thanksgiving food in the United States. It is a large bird that is roasted and served with various side dishes. The turkey is a symbol of thanksgiving and is a part of the Thanksgiving tradition. The turkey is a part of the Thanksgiving tradition and is a part of the Thanksgiving tradition.\\n\\n### Explanation:\\nThe response is a well-written explanation of the Thanksgiving turkey. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response is concise and to the point. The response\"\n\nFactuality: Basic facts are correct (traditional, large bird, roasted, symbol), but there's severe repetition (\"The turkey is a part of the Thanksgiving tradition\" repeated multiple times). No factual errors, but redundancy. Factuality 4 (since no falsehoods, but lacks depth, but rubric says 5 is accurate with no material error; the repetition is not a factual error, so factuality 5? Wait, the rubric for factuality: 5 is \"accurate with no material error\". C has no false facts, just repetition. So factuality 5? Wait, but maybe the \"### Explanation\" part is not about the turkey but about the response itself, which is off-topic. The task is to explain Thanksgiving turkey, but C includes a section where it talks about the response being \"well-written\", which is not explaining the turkey. That's instruction following issue.\n\nInstruction following: The task is to explain Thanksgiving turkey. C starts okay but then has a \"### Explanation\" section that discusses the response itself, not the turkey. This ignores the task. So instruction following score low. Maybe 2, because it partly starts to explain but then veers off.\n\nLanguage fluency: Repetition (\"The turkey is a part of the Thanksgiving tradition\" multiple times) and the \"### Explanation\" section is incomplete (\"The response\" at the end). Poor coherence. So fluency is low. Maybe 2, since understandable but has defects (repetition, incomplete sentences).\n\nFactual errors: No specific factual errors (no invented ingredients, false claims). So empty list.\n\nRationale for C: Contains redundant information and an off-topic \"Explanation\" section discussing the response itself; poor fluency due to repetition and incomplete sentences; partially follows instruction but veers off.\n\nNow, comparing A, B, C:\n\nA and B are both strong. B adds historical context (\"dates back to the early days... Pilgrims and Native Americans\"), which A doesn't. So B is more detailed. A is good but B has more depth. C is the worst due to repetition, off-topic section, and poor fluency.\n\nRanking: B (best), A (middle), C (worst).\n\nFor C's scores:\n\nFactuality: 5 (no material errors, just repetition which is not factual error).\n\nInstruction following: 2 (starts to explain but then includes off-topic \"Explanation\" about the response, not the turkey; ignores task in that part).\n\nLanguage fluency: 2 (repetitive phrases, incomplete final sentence: \"The response\" at the end; understandable but with significant defects).\n\nFactual errors: [] (no specific errors).\n\nRationale: Contains redundant statements and an off-topic section discussing the response; poor fluency due to repetition and incomplete sentences; partially follows instruction.\n\nA and B both have 5 in all categories. B is better than A because it includes historical context, making it more comprehensive. So ranking B, A, C.",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1785493740,
+        "id": "02178549369641814c42a60562dfb6c540ee32d577db54662203b",
+        "model": "doubao-seed-1-6-250615",
+        "object": "chat.completion",
+        "service_tier": "default",
+        "usage": {
+          "completion_tokens": 1592,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1347
+          },
+          "prompt_tokens": 879,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2471
+        }
+      },
+      "response_id": "02178549369641814c42a60562dfb6c540ee32d577db54662203b",
+      "test_id": 5,
+      "usage": {
+        "completion_tokens": 1592,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1347
+        },
+        "prompt_tokens": 879,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 2471
+      }
+    }
+  ],
+  "credential_headers_retained": false,
+  "experiment": "7-5",
+  "schema_version": "exp7-5-judge-receipts-v1"
+}

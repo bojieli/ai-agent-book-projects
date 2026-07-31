@@ -26,6 +26,7 @@ continued-pretraining/
 ├── evaluate_model.py         # Single model evaluation: generates samples on Korean/English tasks
 ├── compare_models.py         # Three-stage comparison: base → continued pretraining → instruction fine-tuning side-by-side generation
 ├── model_eval_results.md     # Full evaluation output and conclusions from actual run (RTX 4090)
+├── validation/               # Canonical report audit, blind-judge receipts, manifest, and validator
 ├── README_EVALUATION.md      # Detailed usage instructions for evaluation scripts
 └── requirements.txt          # Dependency list
 ```
@@ -129,10 +130,39 @@ python compare_models.py \
 
 ## Experimental Results
 
-The full output, item-by-item comparisons, and conclusions from the actual run can be found in [`model_eval_results.md`](./model_eval_results.md) (produced on an RTX 4090; please refer to the actual results in that file, as this document will not repeat the specific values). The main conclusions can be summarized as:
+The full terminal output from the historical RTX 4090 run is retained in [`model_eval_results.md`](./model_eval_results.md). The canonical evidence package is [`validation/runs/exp7-5-training-report-20260731-v1/`](validation/runs/exp7-5-training-report-20260731-v1/), and [`validation/latest.json`](validation/latest.json) binds its manifest.
 
-- **Methodology is valid**: Continued pretraining + SFT can indeed inject new language ability into a model. Korean improved from "basically unusable" to "fluent and able to follow instructions," while English ability was largely retained (no significant catastrophic forgetting).
-- **Data quality is the bottleneck**: Using only 5% of Wikipedia corpus, general language ability improved significantly, but specific cultural knowledge (e.g., kimchi) still often produced errors — indicating that for specific knowledge domains, **data coverage and quality are more critical than the training method itself**.
+The audit extracted all **5 prompts × 3 stages = 15 outputs** and sent five deterministic stage-blind comparison tasks to the independent ARK `doubao-seed-1-6-250615` judge. All five raw request/responses, unique response IDs, usage, and latency are retained. The 0–5 mean scores were:
+
+| Stage | Korean | English |
+| --- | ---: | ---: |
+| Base Mistral | 1.6667 | 5.0000 |
+| After Korean continued pretraining | 1.3333 | 3.1667 |
+| After Korean instruction SFT | 3.4444 | 4.1667 |
+
+The final stage improved the Korean mean by **+1.7777** over baseline. Its English mean fell by **0.8333**, within the audit's declared 1.0-point retention tolerance. Continued pretraining alone did not improve this small retained prompt set; the final SFT stage produced the observed Korean gain. The kimchi answer remained materially false: it described boiling vegetables and soaking them in a soy-sauce-based sauce. That limitation is an accepted negative result, not hidden by the aggregate score.
+
+The historical run did not retain adapter hashes, exact resolved upstream commits, or its generation seed. For future reproduction, the audit freezes immutable current revisions for the base model and both datasets in [`reproduction_contract.json`](validation/runs/exp7-5-training-report-20260731-v1/reproduction_contract.json). Those pins are explicitly **not claimed to be the historical revisions**.
+
+Training checkpoints/adapters are intentionally local and are not distributed with the book. They are not acceptance artifacts; the accepted artifact is the reproducible, evidence-backed report. Validate it without a GPU or provider call:
+
+```bash
+python chapter7/continued-pretraining/validation/validate_evidence.py
+python -m pytest chapter7/continued-pretraining/validation/test_report_audit.py -q
+```
+
+To create a new independent audit from the retained report, set `ARK_API_KEY` and use a new run ID:
+
+```bash
+python chapter7/continued-pretraining/validation/run_report_audit.py \
+  --run-id exp7-5-training-report-YYYYMMDD-vN
+```
+
+The evidence-backed conclusions are:
+
+- **The full two-stage path improved Korean in this retained comparison**: the final SFT stage scored substantially above the baseline, while the continued-pretrained intermediate stage did not.
+- **English remained usable but measurably regressed**: the final stage stayed within the declared tolerance; the intermediate stage regressed much more.
+- **Fluency is not factual reliability**: the fluent final kimchi answer contains serious preparation and ingredient errors.
 
 ## References
 
@@ -171,6 +201,7 @@ continued-pretraining/
 ├── evaluate_model.py         # 单模型评测：在韩英任务上生成样例
 ├── compare_models.py         # 三阶段对比：基础 → 继续预训练 → 指令微调 并排生成
 ├── model_eval_results.md     # 真实运行的完整评测输出与结论（RTX 4090）
+├── validation/               # 规范报告审计、盲评回执、manifest 与验证器
 ├── README_EVALUATION.md      # 评测脚本的详细用法说明
 └── requirements.txt          # 依赖清单
 ```
@@ -274,10 +305,39 @@ python compare_models.py \
 
 ## 实验结果
 
-真实运行的完整输出、逐条对比与结论见 [`model_eval_results.md`](./model_eval_results.md)（在 RTX 4090 上产出，请以该文件中的实际结果为准，本文不再复述具体数值）。其主要结论可概括为：
+历史 RTX 4090 运行的完整终端输出保存在 [`model_eval_results.md`](./model_eval_results.md)。规范证据包位于 [`validation/runs/exp7-5-training-report-20260731-v1/`](validation/runs/exp7-5-training-report-20260731-v1/)，[`validation/latest.json`](validation/latest.json) 绑定其 manifest。
 
-- **方法论成立**：继续预训练 + SFT 确实能为模型注入新语言能力，韩语从“基本不可用”提升到“流畅、能遵循指令”，同时英语能力基本得到保留（无明显灾难性遗忘）。
-- **数据质量是瓶颈**：仅用 5% 的维基百科语料，通用语言能力提升明显，但特定文化知识（如泡菜等）仍常出错——说明对具体知识域而言，**数据覆盖与质量比训练方法本身更关键**。
+审计从原始报告提取了 **5 个提示 × 3 个阶段 = 15 个输出**，并向独立 ARK `doubao-seed-1-6-250615` 裁判提交了五次确定性乱序、阶段匿名的对比。五份原始请求/响应、唯一 response ID、usage 与延迟均已保留。0–5 分均值如下：
+
+| 阶段 | 韩语 | 英语 |
+| --- | ---: | ---: |
+| 基础 Mistral | 1.6667 | 5.0000 |
+| 韩语继续预训练后 | 1.3333 | 3.1667 |
+| 韩语指令 SFT 后 | 3.4444 | 4.1667 |
+
+最终阶段相对基线的韩语均值提升 **+1.7777**；英语均值下降 **0.8333**，仍在预先声明的 1.0 分保留容差内。仅继续预训练的中间阶段在这组小规模保留提示上没有提升，观察到的韩语增益来自完整两阶段流程后的最终 SFT 模型。最终模型的泡菜回答仍有严重事实错误：它错误地描述了煮蔬菜和以酱油为基础的浸泡汁。这个负结果被明确保留，而没有被总分掩盖。
+
+历史运行没有保留 adapter hash、当时解析到的上游 commit 或生成随机种子。为了将来复现，[`reproduction_contract.json`](validation/runs/exp7-5-training-report-20260731-v1/reproduction_contract.json) 固定了基础模型和两个数据集的当前不可变 revision；这些 revision 明确**不声称是历史运行所用版本**。
+
+训练 checkpoint/adapter 按本书策略仅保存在本地，不随书分发，也不是验收产物；验收产物是可复现、证据充分的训练报告。无需 GPU 或 API 调用即可验证：
+
+```bash
+python chapter7/continued-pretraining/validation/validate_evidence.py
+python -m pytest chapter7/continued-pretraining/validation/test_report_audit.py -q
+```
+
+如需从保留报告创建新的独立审计，设置 `ARK_API_KEY` 并使用新的 run ID：
+
+```bash
+python chapter7/continued-pretraining/validation/run_report_audit.py \
+  --run-id exp7-5-training-report-YYYYMMDD-vN
+```
+
+有证据支持的结论如下：
+
+- **完整两阶段流程在本次保留对比中提升了韩语**：最终 SFT 阶段显著高于基线，但继续预训练的中间阶段没有提升。
+- **英语仍可用，但出现可测量的退化**：最终阶段仍在声明容差内；中间阶段退化更明显。
+- **流畅不等于事实可靠**：最终泡菜回答虽然更流畅，却包含严重的制作方法与配料错误。
 
 ## 参考资料
 
