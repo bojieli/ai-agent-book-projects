@@ -35,7 +35,8 @@ Hogy lássuk, hogyan működik együtt a hét eszköz, vegyük a legegyszerűbb 
 ```
 Ágens (gondolkodás): Meg kell találnom az összes TODO-t tartalmazó kódsort.
 Ágens → Grep("TODO", glob="**/*.py")          # Fájltartalom keresése
-Eszköz visszatér:\n  src/api.py:42: # TODO: add rate limiting
+Eszköz visszatér:
+  src/api.py:42: # TODO: add rate limiting
   src/db.py:15:  # TODO: migrate to PostgreSQL
   tests/test_api.py:8: # TODO: add edge case tests
 

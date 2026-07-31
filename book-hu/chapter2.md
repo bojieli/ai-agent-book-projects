@@ -237,11 +237,15 @@ Ezúttal a modell nem ad vissza `tool_calls`-t; szöveges választ ad vissza, me
 
 Most, hogy a JSON struktúra világos, összekapcsolhatjuk a fenti lépéseket Pythonban. Az alábbiakban egy minimális ügynök megvalósítás látható, amely egyetlen hurok köré épül:
 
-```python\nfrom openai import OpenAI
+```python
+from openai import OpenAI
 
 client = OpenAI()
 
-# ── Eszközdefiníciók ──\ntools = [\n    {\n        "type": "function",
+# ── Eszközdefiníciók ──
+tools = [
+    {
+        "type": "function",
         "function": {
             "name": "get_current_time",
             "description": "Get the current date and time in a specific timezone",
