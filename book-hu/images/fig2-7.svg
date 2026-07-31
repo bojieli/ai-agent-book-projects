@@ -1,0 +1,40 @@
+<svg xml:lang="hu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 250" width="900" height="250" style="background:#ffffff">
+<defs>
+  <clipPath id="causal"><polygon points="20,20 710,20 880,190 20,190"/></clipPath>
+  <linearGradient id="heat" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#fde725"/>
+    <stop offset="0.012" stop-color="#6a2c91"/>
+    <stop offset="0.35" stop-color="#482475"/>
+    <stop offset="0.70" stop-color="#3f1f70"/>
+    <stop offset="0.96" stop-color="#365c8d"/>
+    <stop offset="1" stop-color="#35b779"/>
+  </linearGradient>
+  <linearGradient id="legend" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#440154"/>
+    <stop offset="0.25" stop-color="#3b528b"/>
+    <stop offset="0.5" stop-color="#21918c"/>
+    <stop offset="0.75" stop-color="#5ec962"/>
+    <stop offset="1" stop-color="#fde725"/>
+  </linearGradient>
+  <pattern id="minorGrid" width="4" height="4" patternUnits="userSpaceOnUse">
+    <path d="M4 0H0V4" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="0.45"/>
+  </pattern>
+  <pattern id="bands" width="52" height="34" patternUnits="userSpaceOnUse">
+    <rect width="18" height="34" fill="#6c2f91" fill-opacity="0.16"/>
+    <rect x="34" width="8" height="34" fill="#2a788e" fill-opacity="0.10"/>
+    <rect y="24" width="52" height="4" fill="#8e3a91" fill-opacity="0.12"/>
+  </pattern>
+</defs>
+<g clip-path="url(#causal)">
+  <rect x="20" y="20" width="860" height="170" fill="url(#heat)"/>
+  <rect x="20" y="20" width="860" height="170" fill="url(#bands)"/>
+  <rect x="20" y="20" width="860" height="170" fill="url(#minorGrid)"/>
+  <path d="M710 20L880 190" fill="none" stroke="#35b779" stroke-width="3" stroke-opacity="0.9"/>
+  <path d="M20 20V190" fill="none" stroke="#fde725" stroke-width="3"/>
+</g>
+<polygon points="20,20 710,20 880,190 20,190" fill="none" stroke="#d8d8d8" stroke-width="1"/>
+<text x="450" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="12" fill="#333333" text-anchor="middle">Figyelmi súly</text>
+<rect x="390" y="214" width="120" height="14" fill="url(#legend)"/>
+<text x="390" y="243" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#555555" text-anchor="start">0</text>
+<text x="510" y="243" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#555555" text-anchor="end">0,91</text>
+</svg>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the English SVG diagrams with Hungarian labels.
+"""Render the book diagrams with Hungarian labels.
 
 The mapping in this file is intentionally local and reviewable. It does not
 call a translation API or any other network service. Technical identifiers,
@@ -10,9 +10,10 @@ Run from anywhere in the repository:
 
     python3 book-hu/localize_figures.py
 
-The generated PNG files are 1200 px wide, matching the existing Hungarian
-EPUB assets. If an English source is available only as PNG (the attention
-heatmap and the n8n editor screenshot), it is copied without alteration.
+Chapter 2 is generated as SVG from the Chinese golden layouts by
+``gen_ch2_figs.py``. Other generated figures remain 1200 px PNG files for
+compatibility with the existing Hungarian EPUB assets. English raster sources
+such as the n8n editor screenshot are copied without alteration.
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
@@ -30,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "book-en" / "images"
 OUTPUT_DIR = ROOT / "book-hu" / "images"
 FIT_SCRIPT = ROOT / "book-en" / "fit_svg_text.py"
+CHAPTER2_STEM_RE = re.compile(r"fig2-\d+$")
 
 # A translated caption in fig10-12 otherwise sits on the lower box border.
 # Keep this edition-specific layout correction alongside the translations.
@@ -2811,8 +2814,21 @@ def main() -> None:
         raise SystemExit("Error: rsvg-convert (librsvg) is required.")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    svg_sources = sorted(SOURCE_DIR.glob("*.svg"))
-    png_sources = sorted(SOURCE_DIR.glob("*.png"))
+    subprocess.run(
+        [sys.executable, str(ROOT / "book-hu" / "gen_ch2_figs.py")],
+        check=True,
+    )
+
+    # Chapter 2 has a dedicated Chinese-golden SVG workflow. Excluding it here
+    # prevents the obsolete English numbering from recreating stale PNGs.
+    svg_sources = sorted(
+        path for path in SOURCE_DIR.glob("*.svg")
+        if not CHAPTER2_STEM_RE.fullmatch(path.stem)
+    )
+    png_sources = sorted(
+        path for path in SOURCE_DIR.glob("*.png")
+        if not CHAPTER2_STEM_RE.fullmatch(path.stem)
+    )
     png_stems = {path.stem for path in png_sources}
 
     translated_text_nodes = 0
@@ -2824,8 +2840,7 @@ def main() -> None:
         localized_svgs: list[Path] = []
 
         for source_path in svg_sources:
-            # fig2-7 has both an SVG and the attention-heatmap PNG used by the
-            # manuscript. The raster source takes precedence for that basename.
+            # When both source formats exist, the raster source takes precedence.
             if source_path.stem in png_stems:
                 continue
             localized, translated, total = localize_svg(
@@ -2868,7 +2883,8 @@ def main() -> None:
         raise SystemExit(f"Image inventory mismatch; missing={missing}, extra={extra}")
 
     print(
-        f"Localized {translated_text_nodes}/{total_text_nodes} SVG text nodes; "
+        "Generated 17 Chapter 2 SVGs; "
+        f"localized {translated_text_nodes}/{total_text_nodes} other SVG text nodes; "
         f"rendered {rendered} SVG diagrams and copied {len(png_sources)} PNG sources."
     )
 
