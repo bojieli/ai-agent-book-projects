@@ -1,15 +1,15 @@
 # Глубокое понимание AI Agent: принципы проектирования и инженерная практика
 
-[![PDF](https://img.shields.io/badge/PDF-%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-success.svg)](#-электронная-книга) [![Читать онлайн](https://img.shields.io/badge/🌐_Читать_онлайн-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/переводов-10%20языков-informational.svg)](#-электронная-книга)
+[![PDF](https://img.shields.io/badge/PDF-%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-success.svg)](#-электронная-книга) [![Читать онлайн](https://img.shields.io/badge/🌐_Читать_онлайн-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/переводов-12%20языков-informational.svg)](#-электронная-книга)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · Русский ← текущий · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · Русский ← текущий · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > 📥 **[Скачать PDF / EPUB](#-электронная-книга)** (рекомендуется) — рекомендуем читать книгу в PDF / EPUB, там лучшая вёрстка; также доступно [чтение онлайн](https://bojieli.github.io/ai-agent-book/) (переключатель языков, сворачиваемое оглавление, полнотекстовый поиск; сайт автоматически перестраивается при каждом пуше в main).
 
 **Агент = LLM + Контекст + Инструменты** — книга строится вокруг этой базовой формулы и за 10 глав ведёт AI Agent от принципов к инженерной практике. Весь текст, иллюстрации и **93 сопутствующих эксперимента** открыты. Приглашаем прогнать эксперименты своими руками.
 
-| 📚 **10 глав** текста, от основ к продакшену | 📂 **93** сопутствующих проектов (70+ автономных) | 🌐 **11 языков**: CN / EN / ES / AR / zh-TW / **RU** / TA / VI / JA / TR / KO |
+| 📚 **10 глав** текста, от основ к продакшену | 📂 **93** сопутствующих проектов (70+ автономных) | 🌐 **12 языков**: CN / EN / ES / ID / AR / zh-TW / **RU** / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 Электронная книга

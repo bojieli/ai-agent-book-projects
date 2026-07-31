@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 340" width="780" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
+
+<rect x="68" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="130" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Langkah 1</text>
+<text x="130" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Observasi ke depan</text>
+<text x="130" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Pilih belok kiri</text>
+<text x="130" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+1</text>
+<line x1="193" y1="115" x2="199" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
+<rect x="198" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="260" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Langkah 2</text>
+<text x="260" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Identifikasi rambu</text>
+<text x="260" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Konfirmasi arah</text>
+<text x="260" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+1</text>
+<line x1="323" y1="115" x2="329" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
+<rect x="328" y="65" width="124" height="100" rx="4" fill="#e8e8e8" stroke="#333333" stroke-width="2" />
+<text x="390" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Langkah 3</text>
+<text x="390" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Terlewat belokan</text>
+<text x="390" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Terus lurus</text>
+<text x="390" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=−1</text>
+<line x1="453" y1="115" x2="459" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
+<rect x="458" y="65" width="124" height="100" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="520" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Langkah 4</text>
+<text x="520" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Deteksi error</text>
+<text x="520" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Putar balik dan kembali</text>
+<text x="520" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=0</text>
+<line x1="583" y1="115" x2="589" y2="115" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
+<rect x="588" y="65" width="124" height="100" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="650" y="83" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Langkah 5</text>
+<text x="650" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Capai target</text>
+<text x="650" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tugas selesai</text>
+<text x="650" y="145" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">R=+10</text>
+<rect x="30" y="195" width="720" height="60" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
+<text x="390" y="213" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Pertanyaan kunci: Ke langkah mana reward akhir +10 harus dikaitkan?</text>
+<text x="390" y="237" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Langkah 3 membuat kesalahan tapi langkah 4 mengoreksi → koreksi langkah 4 lebih kritis daripada kebenaran langkah 1-2</text>
+<rect x="30" y="275" width="340" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="200" y="295" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Process reward (navigasi V-IRL)</text>
+<text x="200" y="317" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Umpan balik langsung per langkah: benar +1 / salah −1</text>
+<text x="200" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Mengurangi kesulitan credit assignment  ✗ Mungkin membatasi eksplorasi</text>
+<rect x="410" y="275" width="340" height="80" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="580" y="295" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Outcome reward (SimpleVLA-RL)</text>
+<text x="580" y="317" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Hanya umpan balik terminal: sukses 1 / gagal 0</text>
+<text x="580" y="335" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Kebebasan eksplorasi maksimal  ✗ Pelatihan lebih sulit</text>
+</svg>
