@@ -522,6 +522,10 @@ MetaGPT 的迭代改进则主要发生在工程师环节，机制是**可执行�
 
 **OpenAI Swarm 与 Agents SDK：handoff 网络。** 相比之下，真正在控制流上做到对等去中心化的代表，是 OpenAI 的 Swarm（及其后继 Agents SDK）：它把去中心化做成了最简形态——每个 Agent 配备若干 handoff（移交）选项，可以在任何时刻把控制权移交给网络中的任意其他 Agent。客服分诊 Agent 判断问题涉及退款，就移交给退款 Agent；退款 Agent 处理中发现是技术故障，又可以移交给技术支持 Agent。系统中没有中心调度者，控制权像接力棒一样在对等的 Agent 之间流转，路由决策完全分散在每个 Agent 自己的判断里——这才是干净的“对等移交”，也正是图 10-10 所示链式移交模式的工程实现。对等移交的风险则是成环：A 移交给 B，B 又移交回 A，任务在环路中空转，因此需要移交次数上限之类的保护机制来打断。
 
+> **术语说明：Agent Swarm。** 2025 年以来，“Agent Swarm”（智能体集群）成为各厂商的热门词汇，但它并不对应单一架构。业界用法大致有两类：其一，OpenAI Swarm 式的 handoff 网络（LangGraph 的 swarm 库、微软 Agent Framework 的 handoff 编排同此），是本节的去中心化模式；其二，一些主流商业产品的 Agent Swarm 是规模化的管理者模式：Kimi K2.5 首发的 Agent Swarm 由主 Agent 动态创建上百个子 Agent 并行执行，把 “何时拆、拆几个” 的编排决策通过并行 Agent 强化学习直接训练进模型，K3 将其延续为独立模型档位并开源了配套的并行 Agent 训练沙箱 AgentEnv[^ch10-kimi-swarm]；Anthropic 的多 Agent 研究系统与 Manus 的 Wide Research 同属 orchestrator-worker 星型拓扑。希望读者在阅读本书之后，能够看透概念背后的本质，从第一性原理的角度分析多 agent 系统。
+
+[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm；GTC 2026 上披露并行子 Agent 上限已扩展至 300 个；AgentEnv 为月之暗面与 KVCache.ai 合作开源的 Agent 训练沙箱，随 Kimi K3 于 2026 年 7 月发布。
+
 ### 跨组织协作：A2A 协议
 
 以上系统都假设所有 Agent 由同一个团队开发、运行在同一个系统内，此时参数传递、共享文件、消息总线三种通信机制足够用。但当协作跨越组织边界——你的 Agent 需要调用另一家公司的 Agent——就需要标准化的互操作协议。这一步进程世界同样走过：IPC 只管单机之内，跨出机器边界，就得靠 TCP/IP 这样的标准协议和 DNS 这样的服务发现。A2A 之于 Agent，就是网络协议之于进程。2025 年 Google 发布的 **A2A**（Agent2Agent）协议正是为此设计的（后捐赠给 Linux 基金会托管）。它的核心要素有三个：
