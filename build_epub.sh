@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|ru|ta|vi|tr|ko|ja|ar]
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|ja|ar]
 # Note: `all` does NOT include ja or ar while their PDF pipelines are being
 # validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|es|ru|ta|vi|tr|ko|ja|ar) ;;
+    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|ja|ar) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|ru|ta|vi|tr|ko|ja|ar]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|ja|ar]" >&2
         exit 2
         ;;
 esac
@@ -72,6 +72,16 @@ build_edition() {
             title_label="Portada"
             toc_label="Índice"
             chapters=(introduction.es.md chapter{1..10}.es.md afterword.es.md glossary.es.md reference-answers.es.md)
+            ;;
+        id)
+            directory="book-id"
+            title="Memahami AI Agent secara Mendalam: Prinsip Desain dan Praktik Rekayasa"
+            author="Bojie Li; terjemahan bahasa Indonesia: JOICE HIELMAN ABBRORI"
+            pdf="AI-Agents-in-Depth-Bojie-Li-v1.3-id.pdf"
+            output="AI-Agents-in-Depth-Bojie-Li-v1.3-id.epub"
+            title_label="Halaman Judul"
+            toc_label="Daftar Isi"
+            chapters=(introduction.md chapter{1..10}.md afterword.md)
             ;;
         ru)
             directory="book-ru"
@@ -202,7 +212,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en es ru ta vi tr ko; do
+    for language in zh-CN zh-TW en es id ru ta vi tr ko; do
         build_edition "$language"
     done
 else
