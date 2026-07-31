@@ -32,7 +32,9 @@ class QualityJudge(Protocol):
 
 
 def _successful_calls(trajectory: Dict[str, Any]) -> List[Dict[str, Any]]:
-    calls = trajectory.get("tool_calls") or []
+    calls = trajectory.get("tool_calls")
+    if not isinstance(calls, list):
+        calls = []
     return [
         call
         for call in calls
@@ -87,10 +89,13 @@ class ProcessVerifier:
             self._grounding(trajectory),
             self._promise_action(trajectory),
         ]
-
     def _policy(self, trajectory: Dict[str, Any]) -> DimensionResult:
-        facts = trajectory.get("process_facts") or {}
-        violations = facts.get("policy_violations") or []
+        facts = trajectory.get("process_facts")
+        if not isinstance(facts, dict):
+            facts = {}
+        violations = facts.get("policy_violations")
+        if not isinstance(violations, list):
+            violations = []
         if violations:
             evidence = [
                 f"turn {item.get('turn', '?')}: {item.get('rule', 'policy violation')}"
@@ -98,13 +103,17 @@ class ProcessVerifier:
                 if isinstance(item, dict)
             ]
             return DimensionResult("rule_compliance", "process_rules", FAIL, 0.0, evidence, 1.0)
-        checked = facts.get("checked_rules") or []
+        checked = facts.get("checked_rules")
+        if not isinstance(checked, list):
+            checked = []
         evidence = [f"checked: {rule}" for rule in checked] or ["No policy violation in action log"]
         return DimensionResult("rule_compliance", "process_rules", PASS, 1.0, evidence, 0.95)
 
     def _privacy(self, trajectory: Dict[str, Any]) -> DimensionResult:
         reply = _assistant_text(trajectory)
-        sensitive = trajectory.get("sensitive_values") or []
+        sensitive = trajectory.get("sensitive_values")
+        if not isinstance(sensitive, list):
+            sensitive = []
         leaks = [
             item for item in sensitive
             if isinstance(item, dict) and item.get("value") and str(item["value"]) in reply
@@ -121,7 +130,9 @@ class ProcessVerifier:
         )
 
     def _grounding(self, trajectory: Dict[str, Any]) -> DimensionResult:
-        claims = trajectory.get("claims") or []
+        claims = trajectory.get("claims")
+        if not isinstance(claims, list):
+            claims = []
         unsupported = [
             claim for claim in claims
             if isinstance(claim, dict) and not claim.get("supported_by")
@@ -144,7 +155,9 @@ class ProcessVerifier:
             call.get("name") for call in _successful_calls(trajectory)
             if isinstance(call, dict)
         }
-        promises = trajectory.get("promises") or []
+        promises = trajectory.get("promises")
+        if not isinstance(promises, list):
+            promises = []
         missing = [
             promise for promise in promises
             if isinstance(promise, dict) and promise.get("required_tool") not in successful
