@@ -131,7 +131,9 @@ class ReportingEnvironment:
             "evidence": [row["row_id"] for row in affected],
         }
 
-    def call(self, tool: str, arguments: dict[str, str]) -> dict[str, Any]:
+    def call(self, tool: str, arguments: dict[str, str] | None) -> dict[str, Any]:
+        if arguments is None:
+            arguments = {}
         allowed_tools = {
             "calculate_test_positivity": self.calculate_test_positivity,
             "calculate_reporting_completeness": self.calculate_reporting_completeness,
