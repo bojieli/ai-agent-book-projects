@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #14102E; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; font-family: Arial, sans-serif; display: flex; background-image: url('../assets/cover-bg.png'); }
+.wrap { width: 620pt; margin: 30pt 50pt 24pt 50pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #F59E0B; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 24pt; color: #FFFFFF; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 14pt 0; }
+ul { margin: 0; padding-left: 15pt; font-size: 11pt; color: #EDE9FE; line-height: 1.42; }
+li { margin-bottom: 8pt; }
+.quote { background: #3B2380; border-left: 4pt solid #F59E0B; border-radius: 6pt; padding: 10pt 14pt; margin-top: auto; }
+.quote p { font-size: 10pt; color: #DDD6FE; font-style: italic; margin: 0; line-height: 1.4; }
+.foot { font-size: 8pt; color: #B8AEE8; margin: 10pt 0 0 0; }
+</style></head>
+<body>
+<div class="wrap">
+  <p class="kicker">12 &middot; CONCLUSION</p>
+  <h1>Conclusion &amp; Legacy</h1>
+  <div class="rule"></div>
+  <ul>
+    <li>The <b>Transformer</b>: the first sequence transduction model based entirely on attention &mdash; multi-headed self-attention replaces recurrent layers in encoder&ndash;decoder architectures.</li>
+    <li>Trains <b>significantly faster</b> than recurrent or convolutional architectures thanks to full parallelization.</li>
+    <li>New state of the art on <b>WMT 2014 EN&rarr;DE (28.4 BLEU)</b> and <b>EN&rarr;FR (41.8 BLEU)</b>, at a fraction of the previous training cost.</li>
+    <li>The architecture became the foundation of modern large language models (BERT, GPT, and their successors) &mdash; attention really was all you needed.</li>
+  </ul>
+  <div class="quote">
+    <p>&ldquo;We are excited about the future of attention-based models and plan to apply them to other tasks.&rdquo; &mdash; Vaswani et al., &sect;7 Conclusion (paper p. 10)</p>
+  </div>
+  <p class="foot">Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, Polosukhin. &ldquo;Attention Is All You Need.&rdquo; NeurIPS 2017 (arXiv:1706.03762). All figures/tables shown are cropped from the original paper PDF.</p>
+</div>
+</body>
+</html>

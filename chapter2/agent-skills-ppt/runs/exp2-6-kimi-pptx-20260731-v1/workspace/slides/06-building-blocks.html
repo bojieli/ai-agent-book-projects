@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 14pt 0; }
+.grid { display: flex; margin-bottom: 12pt; }
+.card { width: 300pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-left: 5pt solid #7C3AED; border-radius: 8pt; padding: 10pt 14pt; }
+.card p { margin: 0; }
+.ct { font-size: 12pt; color: #4338CA; font-weight: bold; margin: 0 0 5pt 0; }
+.cd { font-size: 10pt; color: #2A2740; line-height: 1.35; }
+.gap { width: 16pt; }
+.note { background: #FDF3E0; border-left: 5pt solid #F59E0B; border-radius: 6pt; padding: 9pt 14pt; margin-top: auto; }
+.note p { font-size: 10pt; color: #6B4E12; margin: 0; line-height: 1.35; }
+.foot { font-size: 8pt; color: #8A86A3; margin: 8pt 0 0 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">05 &middot; METHOD</p>
+  <h1>Anatomy of the Building Blocks</h1>
+  <div class="rule"></div>
+  <div class="grid">
+    <div class="card">
+      <p class="ct">Multi-Head Attention</p>
+      <p class="cd">h = 8 parallel heads; d_k = d_v = d_model/h = 64, so total compute stays close to single-head attention at full dimension.</p>
+    </div>
+    <div class="gap"></div>
+    <div class="card">
+      <p class="ct">Position-wise Feed-Forward</p>
+      <p class="cd">FFN(x) = max(0, xW&#x2081;+b&#x2081;)W&#x2082;+b&#x2082;, applied identically to every position; inner dimension d_ff = 2048.</p>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <p class="ct">Add &amp; Norm</p>
+      <p class="cd">Residual connection around each sub-layer: LayerNorm(x + Sublayer(x)); all sub-layers and embeddings output d_model = 512.</p>
+    </div>
+    <div class="gap"></div>
+    <div class="card">
+      <p class="ct">Positional Encoding</p>
+      <p class="cd">Sine/cosine waves of different frequencies injected at the inputs, so the model can use token order; learned alternatives worked equally well.</p>
+    </div>
+  </div>
+  <div class="note">
+    <p><b>Two configurations:</b> base &mdash; d_model 512, d_ff 2048, h 8, dropout 0.1 &nbsp;|&nbsp; big &mdash; d_model 1024, d_ff 4096, h 16, dropout 0.3.</p>
+  </div>
+  <p class="foot">Source: &sect;3.2&ndash;3.5 (paper p. 4&ndash;5); &sect;5.4 and Table 3 footnotes (paper p. 7&ndash;8).</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+{
+  "experiment_id": "2-6",
+  "runtime": "kimi",
+  "protocol_sha256": "1316b6c5bca03b76b7fda2c1fc31b9076394bf996cacb4f52add2db98dbae84e",
+  "official_skill_receipt": {
+    "repository": "https://github.com/anthropics/skills.git",
+    "revision": "69c0b1a0674149f27b61b2635f935524b6add202",
+    "skill_path": "/Users/boj/book/ai-agent-book-exp2-6-mp/chapter2/agent-skills-ppt/external/anthropics-skills/skills/pptx",
+    "required_file_hashes": {
+      "skills/pptx/SKILL.md": "b6f25545bfb358739f1532f793458b5dbc87ee009933cb7c306b2d951ab6617f",
+      "skills/pptx/html2pptx.md": "f08ed7580969b796d9cd5ade93e2cdee981dcaf13cc5eb12e8d4a3700c2d6047",
+      "skills/pptx/scripts/html2pptx.js": "c675d09a54d6a002e8ca5917b9d24a6568aa8d455bb7abeb212d4f564dd07a34",
+      "skills/pptx/scripts/thumbnail.py": "c21fd950b6ada7bd2f029885d3e56bc66b7ff061cc8404c492eb301664aa9e5d"
+    }
+  },
+  "agent_result": {
+    "return_code": 0,
+    "model_alias": "kimi-code/k3",
+    "num_assistant_messages": 25,
+    "num_tool_calls": 114,
+    "tool_names": [
+      "Bash",
+      "Edit",
+      "Grep",
+      "Read",
+      "ReadMediaFile",
+      "Skill",
+      "TodoList",
+      "Write"
+    ],
+    "session_id": "session_605154fa-66bf-4bb2-89f4-86a48d3dcd8f",
+    "final_response": "Done. The presentation was built with the official PPTX Skill workflow (SKILL.md → html2pptx.md → pinned `scripts/html2pptx.js` → `scripts/thumbnail.py` visual check).\n\n**Deliverables**\n- Deck: `output/attention-is-all-you-need.pptx` — 13 slides, 16:9\n- Thumbnail grid: `output/full-deck-thumbnail.jpg` (official `thumbnail.py`, 4 cols)\n- Visual manifest: `source_visuals/manifest.json` — 4 entries with `file`, one-based PDF `page`, `label`, faithful `caption`\n- Cropped-from-PDF visuals (all embedded in the deck, each cited on-slide with label + page):\n  - `fig1-03.png` — Figure 1, p. 3 (architecture) → cover + slide 4\n  - `fig2-04.png` — Figure 2, p. 4 (scaled dot-product / multi-head attention) → slide 5\n  - `table2-08.png` — Table 2, p. 8 (BLEU results) → slide 9\n  - `fig3-13.png` — Figure 3, p. 13 (attention visualization) → slide 12\n\n**Content coverage** — cover title/authors/venue (1), problem/background (2), key idea (3), Transformer method/architecture (4–6), why self-attention with Table 1 adapted as a native table (7), training setup (8), key experimental results incl. Table 2 image and a BLEU bar chart (9–10), generalization to constituency parsing (11), interpretability (12), conclusion (13).\n\n**Validation performed**\n- `html2pptx.js` dimension/overflow validation passed for every HTML slide\n- Full-deck thumbnail grid inspected; every slide also re-rendered at 120–220 DPI via LibreOffice/pdftoppm and individually inspected\n- Defects found and fixed: dropped `<sub>` subscript content (rewritten as `d_k`/`d_model` style), inconsistent bullet glyphs (root-caused to duplicate mid-paragraph `<a:pPr>` emitted by pptxgenjs; 75 removed via OOXML post-processing), a broken chart relationship path (normalized to relative), and rounded chart data labels (set to exact `0.00` format)\n- `ooxml/scripts/validate.py` passes on the final packed file; manifest JSON parses and matches the cropped files\n\n**Remaining limitations**\n- Slides were visually verified through LibreOffice rendering, not Microsoft PowerPoint itself; minor font-metric differences are possible there\n- The complexity table on slide 7 is a faithful adaptation of Table 1 (native table, cited as \"Adapted from Table 1, p. 6\") rather than a PDF crop — the four required direct crops are Figures 1, 2, 3 and Table 2"
+  },
+  "slide_count": 13,
+  "section_checks": {
+    "title": true,
+    "background": true,
+    "method": true,
+    "results": true,
+    "conclusion": true
+  },
+  "source_visuals": [
+    {
+      "file": "fig1-03.png",
+      "sha256": "eac33d539b220d8f092233f0ae589302365890b85444a1fdbfb88597e1eebdce",
+      "embedded": true,
+      "page": 3,
+      "label": "Figure 1",
+      "caption": "The Transformer - model architecture."
+    },
+    {
+      "file": "fig2-04.png",
+      "sha256": "66eb2559c7e7483a15a1f13b95babec32b4529b216664a150d974213ac5a8edc",
+      "embedded": true,
+      "page": 4,
+      "label": "Figure 2",
+      "caption": "(left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel."
+    },
+    {
+      "file": "table2-08.png",
+      "sha256": "8b2ead56595513b994224b6f1be49d6751fa8633b706638092670478b7ddb3c1",
+      "embedded": true,
+      "page": 8,
+      "label": "Table 2",
+      "caption": "The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests at a fraction of the training cost."
+    },
+    {
+      "file": "fig3-13.png",
+      "sha256": "47e9df791c547feee32f1f88649a70a256ce4552e55fb4ff258a40fd5998ccd6",
+      "embedded": true,
+      "page": 13,
+      "label": "Figure 3",
+      "caption": "An example of the attention mechanism following long-distance dependencies in the encoder self-attention in layer 5 of 6. Many of the attention heads attend to a distant dependency of the verb 'making', completing the phrase 'making...more difficult'. Attentions here shown only for the word 'making'. Different colors represent different heads. Best viewed in color."
+    }
+  ],
+  "embedded_media": {
+    "ppt/media/image-4-1.png": "eac33d539b220d8f092233f0ae589302365890b85444a1fdbfb88597e1eebdce",
+    "ppt/media/image-1-2.png": "eac33d539b220d8f092233f0ae589302365890b85444a1fdbfb88597e1eebdce",
+    "ppt/media/image-5-1.png": "66eb2559c7e7483a15a1f13b95babec32b4529b216664a150d974213ac5a8edc",
+    "ppt/media/image-12-1.png": "47e9df791c547feee32f1f88649a70a256ce4552e55fb4ff258a40fd5998ccd6",
+    "ppt/media/image-9-1.png": "8b2ead56595513b994224b6f1be49d6751fa8633b706638092670478b7ddb3c1",
+    "ppt/media/Slide-13-image-1.png": "629d702b5ca51d6380ada24547bd77941b262b3434e394996946cb7b0bfc8398",
+    "ppt/media/Slide-1-image-1.png": "629d702b5ca51d6380ada24547bd77941b262b3434e394996946cb7b0bfc8398"
+  },
+  "thumbnail_files": [
+    "workspace/output/full-deck-thumbnail.jpg"
+  ],
+  "gates": {
+    "source_pdf_hash_matches": true,
+    "kimi_run_succeeded": true,
+    "pptx_skill_invoked": true,
+    "skill_md_loaded": true,
+    "html2pptx_guide_loaded": true,
+    "official_html2pptx_used": true,
+    "official_thumbnail_used": true,
+    "thumbnail_visually_inspected": true,
+    "pptx_zip_valid": true,
+    "pptx_reopens": true,
+    "slide_count_in_range": true,
+    "required_sections_present": true,
+    "three_source_visuals_embedded_and_documented": true,
+    "thumbnail_grid_present": true,
+    "credential_scan_passed": true
+  },
+  "official_complete": true,
+  "artifacts": {
+    "experiment_protocol.json": {
+      "sha256": "1316b6c5bca03b76b7fda2c1fc31b9076394bf996cacb4f52add2db98dbae84e",
+      "bytes": 3709
+    },
+    "kimi_stream.jsonl": {
+      "sha256": "00eaaa3a884c35a203ffbacd65d146b44abf4a5f3a28e9e979a2f83e701541a1",
+      "bytes": 5595585
+    },
+    "workspace/attention-is-all-you-need.pdf": {
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "bytes": 2215244
+    },
+    "workspace/output/attention-is-all-you-need.pptx": {
+      "sha256": "be890e73d6b4bf91d888079ffb4cd7f63435bfcadd7046b580d64627907de41d",
+      "bytes": 605203
+    },
+    "workspace/source_visuals/manifest.json": {
+      "sha256": "be3b44999ae79695ac42f3fb7a538fdfc6ce84a53f6173d1547df1f201a0c350",
+      "bytes": 1091
+    },
+    "workspace/output/full-deck-thumbnail.jpg": {
+      "sha256": "7f7eae7496b8748d3bc1f179b8e3542f5fc05c9e13dac46f4125bf0d782aeabf",
+      "bytes": 255718
+    }
+  }
+}

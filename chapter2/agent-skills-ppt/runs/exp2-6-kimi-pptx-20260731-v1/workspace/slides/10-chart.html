@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 10pt 0; }
+.chartwrap { margin: 0 auto; }
+#chart-bleu { margin: 0 auto; }
+.chartcap { font-size: 9pt; color: #5B5876; text-align: center; margin: 6pt 0 0 0; }
+.takeaway { background: #FDF3E0; border-left: 5pt solid #F59E0B; border-radius: 6pt; padding: 8pt 14pt; margin-top: auto; }
+.takeaway p { font-size: 10pt; color: #6B4E12; margin: 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin: 8pt 0 0 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">09 &middot; RESULTS</p>
+  <h1>EN&rarr;DE BLEU: Transformer vs. Prior Art</h1>
+  <div class="rule"></div>
+  <div class="chartwrap">
+    <div id="chart-bleu" class="placeholder" style="width: 460pt; height: 218pt; margin: 0 auto;"></div>
+    <p class="chartcap">WMT 2014 English&rarr;German newstest2014 BLEU scores &mdash; values from Table 2, paper p. 8.</p>
+  </div>
+  <div class="takeaway">
+    <p>The big Transformer sets a new state of the art (28.4 BLEU) &mdash; more than 2.0 BLEU above the best previously reported models, including ensembles.</p>
+  </div>
+  <p class="foot">Data: Table 2 (paper p. 8); discussion: &sect;6.1 (paper p. 8).</p>
+</div>
+</body>
+</html>

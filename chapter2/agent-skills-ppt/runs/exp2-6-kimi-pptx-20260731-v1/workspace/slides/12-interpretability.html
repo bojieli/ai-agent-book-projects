@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 12pt 0; }
+.cols { display: flex; }
+.txt { width: 282pt; }
+ul { margin: 0; padding-left: 14pt; font-size: 10.5pt; color: #2A2740; line-height: 1.38; }
+li { margin-bottom: 9pt; }
+.quote { background: #EEF0FF; border-left: 4pt solid #7C3AED; border-radius: 6pt; padding: 8pt 12pt; margin-top: 10pt; }
+.quote p { font-size: 9.5pt; color: #4338CA; font-style: italic; margin: 0; line-height: 1.35; }
+.fig { width: 330pt; margin-left: 24pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-radius: 10pt; padding: 10pt; }
+.fig img { width: 310pt; display: block; margin: 0 auto; }
+.figcap { font-size: 8pt; color: #5B5876; text-align: center; margin: 6pt 0 0 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">11 &middot; RESULTS</p>
+  <h1>Interpretability: What Attention Sees</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="txt">
+      <ul>
+        <li>Individual attention heads learn to perform <b>different tasks</b>; many exhibit behavior tied to the syntactic and semantic structure of sentences.</li>
+        <li>In this example (encoder self-attention, layer 5 of 6), many heads attend to a <b>distant dependency of the verb &ldquo;making&rdquo;</b>, completing the phrase &ldquo;making&hellip;more difficult&rdquo;.</li>
+        <li>Other heads are involved in <b>anaphora resolution</b> (Figure 4 of the paper).</li>
+      </ul>
+      <div class="quote">
+        <p>&ldquo;Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences.&rdquo; &mdash; &sect;4, p. 7</p>
+      </div>
+    </div>
+    <div class="fig">
+      <img src="../source_visuals/fig3-13.png">
+      <p class="figcap">Attention for the word &ldquo;making&rdquo;; colors = different heads. Figure 3, paper p. 13.</p>
+    </div>
+  </div>
+  <p class="foot">Visual: Figure 3 (paper p. 13); text: &sect;4 (paper p. 7) and Appendix (paper p. 13).</p>
+</div>
+</body>
+</html>

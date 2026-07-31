@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 14pt 0; }
+.cols { display: flex; }
+.card { width: 302pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-radius: 10pt; padding: 12pt 16pt 4pt 16pt; }
+.card p { margin: 0; }
+.ct { font-size: 12.5pt; color: #4338CA; font-weight: bold; margin: 0 0 8pt 0; }
+ul { margin: 0; padding-left: 13pt; font-size: 10pt; color: #2A2740; line-height: 1.35; }
+li { margin-bottom: 7pt; }
+.gap { width: 20pt; }
+.mono { font-family: Courier New, monospace; font-size: 9pt; color: #4338CA; }
+.hw { background: #EEF0FF; border-radius: 8pt; padding: 9pt 14pt; margin-top: 14pt; }
+.hw p { font-size: 10pt; color: #2A2740; margin: 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">07 &middot; EXPERIMENTS</p>
+  <h1>Training Setup</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="card">
+      <p class="ct">Data &amp; Batching</p>
+      <ul>
+        <li><b>WMT 2014 English&ndash;German</b>: 4.5M sentence pairs; <b>English&ndash;French</b>: 36M sentences.</li>
+        <li>Byte-pair encoding with a <b>shared source&ndash;target vocabulary of ~37K tokens</b>.</li>
+        <li>Batches of ~25,000 source and ~25,000 target tokens, grouped by approximate sequence length.</li>
+      </ul>
+    </div>
+    <div class="gap"></div>
+    <div class="card">
+      <p class="ct">Optimization &amp; Regularization</p>
+      <ul>
+        <li>Adam (&beta;&#x2081; = 0.9, &beta;&#x2082; = 0.98, &epsilon; = 10&#x207B;&#x2079;) with <b>warmup</b>: 4,000 linearly increasing steps, then inverse-square-root decay.</li>
+        <li>Residual dropout 0.1 (base) / 0.3 (big); attention dropout on each sub-layer.</li>
+        <li>Label smoothing &epsilon;_ls = 0.1 &mdash; hurts perplexity but <b>improves accuracy and BLEU</b>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hw">
+    <p><b>Hardware &amp; time:</b> 8 &times; NVIDIA P100 GPUs &mdash; base model: 12 hours (100K steps); big model: 3.5 days (300K steps). Beam search with beam size 4, length penalty &alpha; = 0.6.</p>
+  </div>
+  <p class="foot">Source: &sect;5 Training (paper p. 7); &sect;6.1 (paper p. 8).</p>
+</div>
+</body>
+</html>

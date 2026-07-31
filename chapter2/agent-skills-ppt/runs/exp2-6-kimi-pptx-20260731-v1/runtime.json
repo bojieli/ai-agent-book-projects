@@ -1,0 +1,10 @@
+{
+  "runtime": "kimi",
+  "binary": "/Users/boj/.kimi-code/bin/kimi",
+  "model_alias": "kimi-code/k3",
+  "skills_dir": "/Users/boj/book/ai-agent-book-exp2-6-mp/chapter2/agent-skills-ppt/runs/exp2-6-kimi-pptx-20260731-v1/workspace/kimi-skills",
+  "auth_environment_variables_present": [
+    "KIMI_API_KEY",
+    "MOONSHOT_API_KEY"
+  ]
+}

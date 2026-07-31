@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 12pt 0; }
+.cols { display: flex; }
+.txt { width: 372pt; }
+ul { margin: 0; padding-left: 14pt; font-size: 10.5pt; color: #2A2740; line-height: 1.38; }
+li { margin-bottom: 8pt; }
+.fig { width: 240pt; margin-left: 26pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-radius: 10pt; padding: 10pt; }
+.fig img { height: 262pt; display: block; margin: 0 auto; }
+.figcap { font-size: 8pt; color: #5B5876; text-align: center; margin: 6pt 0 0 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">03 &middot; METHOD</p>
+  <h1>Model Architecture: Stacked Self-Attention</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="txt">
+      <ul>
+        <li><b>Encoder&ndash;decoder</b> structure built from stacked self-attention and point-wise, fully connected layers (left and right halves of Figure 1).</li>
+        <li><b>Encoder</b>: N = 6 identical layers &mdash; each with multi-head self-attention, then a position-wise feed-forward network.</li>
+        <li><b>Decoder</b>: N = 6 layers; adds a <b>masked</b> multi-head self-attention sub-layer (positions only attend to earlier positions) plus attention over the encoder output.</li>
+        <li>A <b>residual connection</b> wraps every sub-layer, followed by <b>layer normalization</b>.</li>
+        <li>Inputs/outputs are embedded (d_model = 512) and combined with <b>positional encodings</b>, since the model has no notion of order on its own.</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="../source_visuals/fig1-03.png">
+      <p class="figcap">Encoder (left) and decoder (right) stacks.<br>Figure 1, paper p. 3.</p>
+    </div>
+  </div>
+  <p class="foot">Visual: Figure 1, &ldquo;The Transformer - model architecture&rdquo; (paper p. 3); text: &sect;3.1 (paper p. 3).</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 12pt 0; }
+.cols { display: flex; }
+.txt { width: 300pt; }
+.formula { background: #1A1633; border-radius: 8pt; padding: 10pt 12pt; margin: 0 0 12pt 0; }
+.formula p { font-family: Courier New, monospace; font-size: 10.5pt; color: #FDE68A; margin: 0; text-align: center; }
+ul { margin: 0; padding-left: 14pt; font-size: 10.5pt; color: #2A2740; line-height: 1.38; }
+li { margin-bottom: 8pt; }
+.fig { width: 312pt; margin-left: 24pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-radius: 10pt; padding: 10pt; }
+.fig img { width: 292pt; display: block; margin: 0 auto; }
+.figcap { font-size: 8pt; color: #5B5876; text-align: center; margin: 6pt 0 0 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">04 &middot; METHOD</p>
+  <h1>Scaled Dot-Product &amp; Multi-Head Attention</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="txt">
+      <div class="formula">
+        <p>Attention(Q,K,V) = softmax(QK^T / &radic;d_k)V</p>
+      </div>
+      <ul>
+        <li>Attention maps a <b>query</b> and <b>key&ndash;value</b> pairs to an output: a weighted sum of values, weights from query&ndash;key compatibility.</li>
+        <li>Dot products are scaled by <b>1/&radic;d_k</b> &mdash; for large d_k they would push softmax into tiny-gradient regions.</li>
+        <li><b>Multi-head</b>: queries, keys, values are linearly projected <b>h = 8</b> times (to d_k = d_v = 64), attention runs in parallel, outputs are concatenated and re-projected.</li>
+        <li>Different heads jointly attend to information from <b>different representation subspaces</b> at different positions.</li>
+      </ul>
+    </div>
+    <div class="fig">
+      <img src="../source_visuals/fig2-04.png">
+      <p class="figcap">(left) Scaled Dot-Product Attention; (right) Multi-Head Attention &mdash; several attention layers in parallel. Figure 2, paper p. 4.</p>
+    </div>
+  </div>
+  <p class="foot">Visual: Figure 2 (paper p. 4); formula and text: &sect;3.2 (paper p. 4&ndash;5).</p>
+</div>
+</body>
+</html>

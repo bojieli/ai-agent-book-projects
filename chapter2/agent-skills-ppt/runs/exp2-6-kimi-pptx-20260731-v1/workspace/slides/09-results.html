@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 12pt 0; }
+.cols { display: flex; }
+.fig { width: 396pt; background: #FFFFFF; border: 1px solid #E0DFF0; border-radius: 10pt; padding: 10pt; }
+.fig img { width: 376pt; display: block; margin: 0 auto; }
+.figcap { font-size: 8pt; color: #5B5876; text-align: center; margin: 6pt 0 0 0; }
+.stats { width: 196pt; margin-left: 22pt; }
+.stat { background: #4338CA; border-radius: 10pt; padding: 10pt 14pt; margin-bottom: 10pt; }
+.stat p { margin: 0; }
+.bignum { font-size: 22pt; color: #FFFFFF; font-weight: bold; }
+.statlab { font-size: 8.5pt; color: #DDD6FE; line-height: 1.3; margin-top: 2pt; }
+.stat.amber { background: #B45309; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">08 &middot; RESULTS</p>
+  <h1>Machine Translation: New State of the Art</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="fig">
+      <img src="../source_visuals/table2-08.png">
+      <p class="figcap">BLEU scores and training costs on WMT 2014 EN&ndash;DE / EN&ndash;FR (newstest2014). Table 2, paper p. 8.</p>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <p class="bignum">28.4 BLEU</p>
+        <p class="statlab">EN&rarr;DE: &gt;2.0 above the best previously reported model, including ensembles</p>
+      </div>
+      <div class="stat">
+        <p class="bignum">41.8 BLEU</p>
+        <p class="statlab">EN&rarr;FR: best single model, at under 1/4 of the prior training cost</p>
+      </div>
+      <div class="stat amber">
+        <p class="bignum">3.3&times;10^18</p>
+        <p class="statlab">FLOPs to train the base model &mdash; yet it already beats all prior models and ensembles</p>
+      </div>
+    </div>
+  </div>
+  <p class="foot">Visual: Table 2 (paper p. 8); text: &sect;6.1 Machine Translation (paper p. 8).</p>
+</div>
+</body>
+</html>

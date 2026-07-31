@@ -1,5 +1,16 @@
-output/
+/output/
 external/
 __pycache__/
 *.pyc
 .env
+# Official-run workspace noise: dependency installs and runtime skill symlinks
+# (the pinned Skill itself is verifiable via external/official_skill_receipt.json).
+runs/*/workspace/**/node_modules/
+runs/*/workspace/kimi-skills/
+runs/*/workspace/.claude/
+runs/*/workspace/deckbuild/
+
+
+# Official-run decks are deliberate evidence artifacts; re-include them.
+!runs/*/workspace/output/
+!runs/*/workspace/output/**

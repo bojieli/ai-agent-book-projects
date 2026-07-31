@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for the real Claude Code + official PPTX Skill run."""
+"""Fail-closed validator for the real agent-runtime + official PPTX Skill run.
+
+Supports both accepted runtimes: Claude Code (claude_stream.jsonl) and Kimi
+Code CLI (kimi_stream.jsonl). The artifact gates are identical; only the
+stream parsing and run-success gate are runtime-specific.
+"""
 
 from __future__ import annotations
 
@@ -42,6 +47,33 @@ def parse_stream(path: Path) -> tuple[list[dict], str]:
     return events, raw
 
 
+def collect_tool_calls(events: list[dict]) -> list[dict]:
+    """Normalize tool calls across runtime stream formats.
+
+    Claude Code emits ``assistant`` events whose message content contains
+    ``tool_use`` blocks; Kimi Code CLI emits ``assistant`` events with an
+    OpenAI-style ``tool_calls`` list.
+    """
+    calls = []
+    for event in events:
+        if event.get("role") == "assistant" and event.get("tool_calls"):
+            for call in event["tool_calls"]:
+                function = call.get("function", {})
+                calls.append({
+                    "name": function.get("name", ""),
+                    "arguments": function.get("arguments", ""),
+                })
+        message = event.get("message")
+        if isinstance(message, dict):
+            for block in message.get("content") or []:
+                if isinstance(block, dict) and block.get("type") == "tool_use":
+                    calls.append({
+                        "name": block.get("name", ""),
+                        "arguments": json.dumps(block.get("input", {}), ensure_ascii=False),
+                    })
+    return calls
+
+
 def collect_result_metadata(events: list[dict]) -> dict:
     result_events = [event for event in events if event.get("type") == "result"]
     if not result_events:
@@ -53,6 +85,36 @@ def collect_result_metadata(events: list[dict]) -> dict:
             "subtype", "is_error", "duration_ms", "duration_api_ms", "num_turns",
             "result", "total_cost_usd", "usage", "modelUsage", "session_id",
         )
+    }
+
+
+def collect_kimi_metadata(events: list[dict], run_dir: Path) -> dict:
+    exit_path = run_dir / "kimi_exit.json"
+    exit_info = json.loads(exit_path.read_text(encoding="utf-8")) if exit_path.exists() else {}
+    tool_calls = collect_tool_calls(events)
+    assistant_messages = [
+        event.get("content", "")
+        for event in events
+        if event.get("role") == "assistant" and event.get("content")
+    ]
+    session_ids = [
+        event.get("session_id")
+        for event in events
+        if event.get("role") == "meta" and event.get("session_id")
+    ]
+    runtime_info_path = run_dir / "runtime.json"
+    runtime_info = (
+        json.loads(runtime_info_path.read_text(encoding="utf-8"))
+        if runtime_info_path.exists() else {}
+    )
+    return {
+        "return_code": exit_info.get("return_code"),
+        "model_alias": runtime_info.get("model_alias"),
+        "num_assistant_messages": len(assistant_messages),
+        "num_tool_calls": len(tool_calls),
+        "tool_names": sorted({call["name"] for call in tool_calls if call["name"]}),
+        "session_id": session_ids[-1] if session_ids else None,
+        "final_response": assistant_messages[-1] if assistant_messages else None,
     }
 
 
@@ -70,12 +132,18 @@ def validate(run_dir: Path) -> dict:
     protocol_path = run_dir / "experiment_protocol.json"
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     workspace = run_dir / "workspace"
-    stream_path = run_dir / "claude_stream.jsonl"
+    kimi_stream_path = run_dir / "kimi_stream.jsonl"
+    runtime = "kimi" if kimi_stream_path.exists() else "claude"
+    stream_path = kimi_stream_path if runtime == "kimi" else run_dir / "claude_stream.jsonl"
     paper_path = workspace / "attention-is-all-you-need.pdf"
     pptx_path = workspace / "output" / "attention-is-all-you-need.pptx"
     visual_dir = workspace / "source_visuals"
     visual_manifest_path = visual_dir / "manifest.json"
     events, raw_stream = parse_stream(stream_path)
+    tool_calls = collect_tool_calls(events)
+    tool_args_text = "\n".join(
+        call["arguments"] for call in tool_calls if isinstance(call["arguments"], str)
+    ).lower()
 
     prs = Presentation(str(pptx_path)) if pptx_path.exists() else None
     slide_count = len(prs.slides) if prs else 0
@@ -121,22 +189,44 @@ def validate(run_dir: Path) -> dict:
         "results": any(term in slide_text for term in ("result", "bleu", "translation")),
         "conclusion": any(term in slide_text for term in ("conclusion", "takeaway", "summary")),
     }
-    progress = {
-        "pptx_skill_invoked": (
+    # Progressive-disclosure evidence must come from what the agent actually
+    # did (tool calls and tool results), not merely from the prompt text.
+    if runtime == "kimi":
+        skill_calls = [
+            call for call in tool_calls
+            if call["name"] == "Skill" and '"pptx"' in call["arguments"].lower().replace(" ", "")
+        ]
+        pptx_skill_invoked = bool(skill_calls)
+        # Kimi's Skill tool loads the complete SKILL.md inline by construction;
+        # require the load to have succeeded in the recorded tool result.
+        skill_md_loaded = pptx_skill_invoked and 'skill "pptx" loaded' in values_as_text.lower()
+    else:
+        pptx_skill_invoked = (
             '"skill":"pptx"' in raw_stream.replace(" ", "").lower()
             or "/pptx" in lower_evidence
             or "pptx creation, editing, and analysis" in lower_evidence
-        ),
-        "skill_md_loaded": "skills/pptx/skill.md" in lower_evidence,
-        "html2pptx_guide_loaded": "html2pptx.md" in lower_evidence,
-        "official_html2pptx_used": "scripts/html2pptx.js" in lower_evidence,
-        "official_thumbnail_used": "scripts/thumbnail.py" in lower_evidence,
+        )
+        skill_md_loaded = "skills/pptx/skill.md" in lower_evidence
+    progress = {
+        "pptx_skill_invoked": pptx_skill_invoked,
+        "skill_md_loaded": skill_md_loaded,
+        "html2pptx_guide_loaded": "html2pptx.md" in tool_args_text
+        or "html2pptx.md" in lower_evidence,
+        "official_html2pptx_used": "html2pptx.js" in tool_args_text
+        or "scripts/html2pptx.js" in lower_evidence,
+        "official_thumbnail_used": "thumbnail.py" in tool_args_text
+        or "scripts/thumbnail.py" in lower_evidence,
         "thumbnail_visually_inspected": any(
             term in lower_evidence for term in ("thumbnail", "overlap", "cutoff", "visual inspection")
         ),
     }
     configured_secrets = [
-        value for name in ("ANTHROPIC_API_KEY",) if (value := os.getenv(name))
+        value
+        for name in (
+            "ANTHROPIC_API_KEY", "KIMI_API_KEY", "MOONSHOT_API_KEY",
+            "OPENAI_API_KEY", "OPENROUTER_API_KEY",
+        )
+        if (value := os.getenv(name))
     ]
     credential_scan_passed = not any(secret in raw_stream for secret in configured_secrets)
     credential_scan_passed = credential_scan_passed and not bool(
@@ -149,10 +239,21 @@ def validate(run_dir: Path) -> dict:
             for item in source_visuals
         )
     )
-    result_metadata = collect_result_metadata(events)
+    if runtime == "kimi":
+        result_metadata = collect_kimi_metadata(events, run_dir)
+        run_succeeded = (
+            result_metadata.get("return_code") == 0
+            and bool(result_metadata.get("final_response"))
+            and result_metadata.get("num_tool_calls", 0) > 0
+        )
+        run_gate_key = "kimi_run_succeeded"
+    else:
+        result_metadata = collect_result_metadata(events)
+        run_succeeded = bool(result_metadata) and not result_metadata.get("is_error")
+        run_gate_key = "claude_run_succeeded"
     gates = {
         "source_pdf_hash_matches": paper_path.exists() and sha256(paper_path) == protocol["paper"]["pdf_sha256"],
-        "claude_run_succeeded": bool(result_metadata) and not result_metadata.get("is_error"),
+        run_gate_key: run_succeeded,
         **progress,
         "pptx_zip_valid": zip_valid,
         "pptx_reopens": prs is not None,
@@ -170,9 +271,10 @@ def validate(run_dir: Path) -> dict:
             }
     return {
         "experiment_id": "2-6",
+        "runtime": runtime,
         "protocol_sha256": sha256(protocol_path),
         "official_skill_receipt": json.loads((run_dir / "official_skill_receipt.json").read_text()),
-        "claude_result": result_metadata,
+        "agent_result": result_metadata,
         "slide_count": slide_count,
         "section_checks": section_checks,
         "source_visuals": source_visuals,
@@ -193,6 +295,7 @@ def main() -> int:
     comparison.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     manifest = {
         "experiment_id": "2-6",
+        "runtime": result["runtime"],
         "official_complete": result["official_complete"],
         "protocol_sha256": result["protocol_sha256"],
         "comparison_sha256": sha256(comparison),
