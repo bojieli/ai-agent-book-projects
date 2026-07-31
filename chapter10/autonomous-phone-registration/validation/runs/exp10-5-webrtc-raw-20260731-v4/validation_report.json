@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "status": "pass",
+  "checks": {
+    "source_hashes": "pass",
+    "artifact_hashes": "pass",
+    "input_hashes": "pass",
+    "raw_ark_request_tool_choice_auto": "pass",
+    "raw_ark_response_metadata": "pass",
+    "raw_arguments_normalize_to_decision": "pass",
+    "participant_privacy": "pass",
+    "acceptance_gates": "pass"
+  }
+}

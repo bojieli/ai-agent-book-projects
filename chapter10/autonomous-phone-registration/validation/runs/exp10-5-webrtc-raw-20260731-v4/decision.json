@@ -1,5 +1,5 @@
 {
-  "page_url": "http://127.0.0.1:54492/register",
+  "page_url": "http://127.0.0.1:50624/register",
   "page_title": "Safe local registration",
   "known_fields": [],
   "discovered_fields": [
@@ -140,13 +140,13 @@
   ],
   "rationale_summary": "模型通过工具调用决定启动 Phone Agent",
   "model": "doubao-seed-1-6-250615",
-  "monotonic_seconds": 14.504979,
+  "monotonic_seconds": 14.374983,
   "provider": "Volcengine ARK",
-  "provider_response_id": "0217854936379349209c58391d56dc4f2d7714e68ed22bf3bc739",
+  "provider_response_id": "0217854971908780d00bd2433ad042948032361e92cd5cefed308",
   "provider_usage": {
     "prompt_tokens": 934,
-    "completion_tokens": 442,
-    "total_tokens": 1376
+    "completion_tokens": 515,
+    "total_tokens": 1449
   },
-  "wall_time": "2026-07-31T10:27:31.281242+00:00"
+  "wall_time": "2026-07-31T11:26:44.053087+00:00"
 }
