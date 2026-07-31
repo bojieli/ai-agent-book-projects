@@ -57,3 +57,15 @@ def test_unhashable_evidence_in_result():
     prediction["result"]["evidence"] = [{"url": "http://example.com"}]
     result = score_prediction(prediction, expected)
     assert isinstance(result["score"], int)
+
+
+def test_unhashable_evidence_remains_order_independent():
+    prediction, expected = _sample_expected()
+    prediction = deepcopy(prediction)
+    expected = deepcopy(expected)
+    expected["result"]["evidence"] = [{"url": "a"}, {"url": "b"}]
+    prediction["result"]["evidence"] = [{"url": "b"}, {"url": "a"}]
+
+    result = score_prediction(prediction, expected)
+
+    assert result["details"]["evidence"] == 1
