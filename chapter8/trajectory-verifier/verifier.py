@@ -151,23 +151,27 @@ class ProcessVerifier:
         return DimensionResult("factual_reliability", "process_rules", PASS, 1.0, evidence, 0.9)
 
     def _promise_action(self, trajectory: Dict[str, Any]) -> DimensionResult:
-        successful = {
-            call.get("name") for call in _successful_calls(trajectory)
+        successful = [
+            call for call in _successful_calls(trajectory)
             if isinstance(call, dict)
-        }
+        ]
         promises = trajectory.get("promises")
         if not isinstance(promises, list):
             promises = []
         missing = [
             promise for promise in promises
-            if isinstance(promise, dict) and promise.get("required_tool") not in successful
+            if isinstance(promise, dict) and not any(
+                call.get("name") == promise.get("required_tool")
+                and call.get("turn", promise.get("turn", 0)) < promise.get("turn", 0)
+                for call in successful
+            )
         ]
         if missing:
             return DimensionResult(
                 "promise_action_consistency", "process_rules", FAIL, 0.0,
                 [
                     f"turn {promise.get('turn', '?')}: claimed {promise.get('text', '')!r}, "
-                    f"but successful {promise.get('required_tool')} call is absent"
+                    f"but no successful {promise.get('required_tool')} call preceded it"
                     for promise in missing
                 ],
                 1.0,
