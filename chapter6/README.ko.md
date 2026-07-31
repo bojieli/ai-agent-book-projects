@@ -19,7 +19,7 @@
 | 6-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | 60개 사례 × 3개 시스템의 실제 궤적 180/180건을 오류 없이 수집했고, 원통화 기준 가격도 빠짐없이 반영했습니다. 검수 결과의 상태는 `complete`입니다. |
 | 6-9 | [user-memory-system-evaluation](user-memory-system-evaluation/) | 🚧 | 구성 요소·모델·평가기의 4×3×2×60 전체 매트릭스는 아직 완료되지 않았습니다. 일부 기본 구성 체크포인트와 백엔드 준비 상태만으로는 모든 셀의 실제 증거를 대신할 수 없습니다. |
 | 6-5 | [tts-quality-eval](tts-quality-eval/) | ✅ | 같은 고난도 텍스트 모음을 여러 TTS 설정(모델·음성·속도)으로 합성한 뒤, 멀티모달 LLM-as-a-Judge가 루브릭에 따라 명료도·자연스러움 등 각 항목을 채점합니다. 결과를 재현 가능한 설정 비교표로 집계합니다. |
-| 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | ELO 평점 체계를 바탕으로 에이전트 성능 순위표를 구현하고, 일대일 비교를 통해 여러 에이전트의 상대적 능력을 평가합니다. |
+| 6-6 | [elo-leaderboard](elo-leaderboard/) | ✅ | [전체 정식 검증](elo-leaderboard/validation/runs/exp6-6-arena-20260731-v1/manifest.json)은 공개 Arena 레코드 1,799,991개(블라인드 투표 1,670,250개, 모델 129개)를 처리했습니다. 온라인 Elo와 Bradley-Terry 순위의 Spearman 상관은 0.787, Top-20 중복은 12/20이며, 승률 행렬·월별 스냅샷 17개·도표 3개·D3 애니메이션을 하나의 해시 manifest로 검증했습니다. |
 | 6-7 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 전형적인 다중 턴 에이전트 작업(고객 서비스 환불)의 전체 비용을 단계별로 분석합니다. 맞춤형 경량 추적 시스템으로 LLM 호출마다 입력·출력·캐시 토큰, 지연 시간, 비용을 기록하고 집계해 가장 비싼 단계를 찾습니다. 이어 A/B 테스트로 KV Cache 친화적 설계와 컨텍스트 압축의 실제 절감 효과를 정량화합니다. |
 | 6-8 | [model-benchmark](model-benchmark/) | ✅ | 여러 OpenAI 호환 LLM API 제공자를 나란히 벤치마크합니다. 스트리밍 인터페이스로 첫 토큰까지 걸린 시간(TTFT)을 정밀 측정하고, 동시 실행 환경에서 엔드투엔드 지연 시간 백분위수(p50/p95), 처리량, 성공률을 계산합니다. 명령 하나로 다차원 비교표를 만들어 모델 선택이 단순한 순위표 이상의 복합적인 절충임을 보여 줍니다. |
 | 6-10 | [android-world](android-world/) | 📖 | 이 저장소에 포함된 AndroidWorld T3A 평가 보고서와 실패 분석 노트입니다. 실험 6-10의 출발점이며 벤치마크 원본은 아닙니다. |

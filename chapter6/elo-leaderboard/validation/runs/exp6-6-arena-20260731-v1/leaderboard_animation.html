@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Leaderboard Evolution</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        #container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #date-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        #chart {
+            margin: 20px 0;
+        }
+
+        .bar {
+            fill: steelblue;
+            cursor: pointer;
+            transition: fill 0.3s;
+        }
+
+        .bar:hover {
+            fill: #4682b4;
+        }
+
+        .bar-label {
+            font-size: 14px;
+            fill: white;
+            font-weight: bold;
+        }
+
+        .bar-value {
+            font-size: 12px;
+            fill: #333;
+        }
+
+        .rank-label {
+            font-size: 18px;
+            fill: #666;
+            font-weight: bold;
+        }
+
+        #controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 5px;
+            background: #e0e0e0;
+            margin-top: 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #progress {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        #speed-control {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #speed-slider {
+            width: 300px;
+            margin: 0 10px;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>🏆 Model Leaderboard Evolution</h1>
+        <div id="date-display">Loading...</div>
+        <div id="chart"></div>
+        <div id="controls">
+            <button id="play-btn">▶ Play</button>
+            <button id="pause-btn" disabled>⏸ Pause</button>
+            <button id="reset-btn">↺ Reset</button>
+        </div>
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+        <div id="speed-control">
+            <label>Speed: </label>
+            <input type="range" id="speed-slider" min="1" max="10" value="5">
+            <span id="speed-value">5x</span>
+        </div>
+        <div class="info-box">
+            <strong>About:</strong> This animation shows the evolution of model rankings based on Elo ratings
+            calculated from Chatbot Arena voting data. Each frame represents a snapshot in time,
+            with models ranked by their current Elo rating. Bars show the rating value,
+            and the animation reveals how models compete and evolve over time.
+        </div>
+    </div>
+
+    <script>
+        const data = {
+  "frames": [
+    {
+      "date": "2023-04-30",
+      "timestamp": 1682898502,
+      "models": [
+        {
+          "rank": 1,
+          "name": "vicuna-13b",
+          "rating": 1148.0320274844,
+          "matches": 1793,
+          "wins": 1263.0
+        },
+        {
+          "rank": 2,
+          "name": "koala-13b",
+          "rating": 1094.6566198066,
+          "matches": 1304,
+          "wins": 712.0
+        },
+        {
+          "rank": 3,
+          "name": "oasst-pythia-12b",
+          "rating": 1020.2177219668,
+          "matches": 962,
+          "wins": 435.0
+        },
+        {
+          "rank": 4,
+          "name": "alpaca-13b",
+          "rating": 1010.2120122419,
+          "matches": 789,
+          "wins": 391.0
+        },
+        {
+          "rank": 5,
+          "name": "RWKV-4-Raven-14B",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 6,
+          "name": "olmo-7b-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 7,
+          "name": "openchat-3.5",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 8,
+          "name": "openchat-3.5-0106",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 9,
+          "name": "openhermes-2.5-mistral-7b",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 10,
+          "name": "palm-2",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 11,
+          "name": "phi-3-medium-4k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 12,
+          "name": "phi-3-mini-128k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 13,
+          "name": "phi-3-mini-4k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 14,
+          "name": "phi-3-mini-4k-instruct-june-2024",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 15,
+          "name": "phi-3-small-8k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        }
+      ]
+    },
+    {
+      "date": "2023-05-31",
+      "timestamp": 1685577242,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-0314",
+          "rating": 1238.9961322413,
+          "matches": 4262,
+          "wins": 3377.5
+        },
+        {
+          "rank": 2,
+          "name": "claude-1",
+          "rating": 1187.4877395882,
+          "matches": 3904,
+          "wins": 2830.5
+        },
+        {
+          "rank": 3,
+          "name": "claude-instant-1",
+          "rating": 1154.274136195,
+          "matches": 1952,
+          "wins": 1349.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1105.8720528902,
+          "matches": 4690,
+          "wins": 3188.5
+        },
+        {
+          "rank": 5,
+          "name": "vicuna-13b",
+          "rating": 1022.6112034193,
+          "matches": 6303,
+          "wins": 3850.0
+        },
+        {
+          "rank": 6,
+          "name": "palm-2",
+          "rating": 1016.3107510269,
+          "matches": 2557,
+          "wins": 1329.5
+        },
+        {
+          "rank": 7,
+          "name": "koala-13b",
+          "rating": 1012.4454280512,
+          "matches": 5844,
+          "wins": 2867.0
+        },
+        {
+          "rank": 8,
+          "name": "vicuna-7b",
+          "rating": 1011.0324202576,
+          "matches": 2150,
+          "wins": 998.5
+        },
+        {
+          "rank": 9,
+          "name": "olmo-7b-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 10,
+          "name": "openchat-3.5",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 11,
+          "name": "openchat-3.5-0106",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 12,
+          "name": "llama-3-70b-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 13,
+          "name": "phi-3-medium-4k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 14,
+          "name": "phi-3-mini-128k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 15,
+          "name": "phi-3-mini-4k-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        }
+      ]
+    },
+    {
+      "date": "2023-06-30",
+      "timestamp": 1688168016,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 2,
+          "name": "claude-1",
+          "rating": 1180.3356169594,
+          "matches": 4908,
+          "wins": 3549.0
+        },
+        {
+          "rank": 3,
+          "name": "claude-instant-1",
+          "rating": 1156.416237613,
+          "matches": 3348,
+          "wins": 2313.5
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-4-0613",
+          "rating": 1092.8321842502,
+          "matches": 130,
+          "wins": 95.0
+        },
+        {
+          "rank": 6,
+          "name": "vicuna-33b",
+          "rating": 1089.5376908161,
+          "matches": 585,
+          "wins": 355.0
+        },
+        {
+          "rank": 7,
+          "name": "vicuna-13b",
+          "rating": 1066.2818140283,
+          "matches": 7319,
+          "wins": 4391.5
+        },
+        {
+          "rank": 8,
+          "name": "mpt-30b-chat",
+          "rating": 1044.2195743582,
+          "matches": 581,
+          "wins": 309.5
+        },
+        {
+          "rank": 9,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1038.8389236607,
+          "matches": 120,
+          "wins": 70.0
+        },
+        {
+          "rank": 10,
+          "name": "vicuna-7b",
+          "rating": 1036.034998319,
+          "matches": 3593,
+          "wins": 1688.0
+        },
+        {
+          "rank": 11,
+          "name": "wizardlm-13b",
+          "rating": 1035.7704972666,
+          "matches": 1751,
+          "wins": 944.0
+        },
+        {
+          "rank": 12,
+          "name": "guanaco-33b",
+          "rating": 1002.1886842778,
+          "matches": 1601,
+          "wins": 853.5
+        },
+        {
+          "rank": 13,
+          "name": "openhermes-2.5-mistral-7b",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 14,
+          "name": "openchat-3.5-0106",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 15,
+          "name": "openchat-3.5",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        }
+      ]
+    },
+    {
+      "date": "2023-07-31",
+      "timestamp": 1690847905,
+      "models": [
+        {
+          "rank": 1,
+          "name": "claude-1",
+          "rating": 1210.2521771739,
+          "matches": 5243,
+          "wins": 3793.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1154.9674344467,
+          "matches": 950,
+          "wins": 672.5
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1140.353404289,
+          "matches": 907,
+          "wins": 595.0
+        },
+        {
+          "rank": 5,
+          "name": "claude-2.0",
+          "rating": 1118.7843220957,
+          "matches": 1244,
+          "wins": 779.5
+        },
+        {
+          "rank": 6,
+          "name": "claude-instant-1",
+          "rating": 1105.3005598323,
+          "matches": 4081,
+          "wins": 2766.5
+        },
+        {
+          "rank": 7,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 8,
+          "name": "vicuna-33b",
+          "rating": 1098.5182000539,
+          "matches": 1838,
+          "wins": 1123.0
+        },
+        {
+          "rank": 9,
+          "name": "mpt-30b-chat",
+          "rating": 1034.8806463899,
+          "matches": 1973,
+          "wins": 1040.0
+        },
+        {
+          "rank": 10,
+          "name": "wizardlm-13b",
+          "rating": 1033.5179170548,
+          "matches": 2892,
+          "wins": 1535.5
+        },
+        {
+          "rank": 11,
+          "name": "vicuna-13b",
+          "rating": 1023.9076403271,
+          "matches": 8087,
+          "wins": 4767.5
+        },
+        {
+          "rank": 12,
+          "name": "vicuna-7b",
+          "rating": 1016.1770238052,
+          "matches": 4161,
+          "wins": 1961.5
+        },
+        {
+          "rank": 13,
+          "name": "guanaco-33b",
+          "rating": 1002.9365315328,
+          "matches": 2796,
+          "wins": 1447.0
+        },
+        {
+          "rank": 14,
+          "name": "olmo-7b-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        },
+        {
+          "rank": 15,
+          "name": "llama-3-70b-instruct",
+          "rating": 1000.0,
+          "matches": 0,
+          "wins": 0.0
+        }
+      ]
+    },
+    {
+      "date": "2023-08-31",
+      "timestamp": 1693526088,
+      "models": [
+        {
+          "rank": 1,
+          "name": "claude-1",
+          "rating": 1210.2521771739,
+          "matches": 5243,
+          "wins": 3793.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1119.8871952476,
+          "matches": 1665,
+          "wins": 1126.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1106.9846926653,
+          "matches": 1657,
+          "wins": 1028.5
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "claude-instant-1",
+          "rating": 1099.9530134295,
+          "matches": 4811,
+          "wins": 3188.0
+        },
+        {
+          "rank": 7,
+          "name": "vicuna-33b",
+          "rating": 1098.1637867641,
+          "matches": 2396,
+          "wins": 1440.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-2.0",
+          "rating": 1086.4442799903,
+          "matches": 2306,
+          "wins": 1424.0
+        },
+        {
+          "rank": 9,
+          "name": "wizardlm-13b",
+          "rating": 1083.2728493188,
+          "matches": 3430,
+          "wins": 1818.5
+        },
+        {
+          "rank": 10,
+          "name": "vicuna-13b",
+          "rating": 1033.4735754499,
+          "matches": 8726,
+          "wins": 5063.5
+        },
+        {
+          "rank": 11,
+          "name": "guanaco-33b",
+          "rating": 1027.2582838587,
+          "matches": 3003,
+          "wins": 1552.0
+        },
+        {
+          "rank": 12,
+          "name": "llama-2-13b-chat",
+          "rating": 1023.7199267566,
+          "matches": 2092,
+          "wins": 888.0
+        },
+        {
+          "rank": 13,
+          "name": "llama-2-7b-chat",
+          "rating": 1020.9720111389,
+          "matches": 1461,
+          "wins": 588.5
+        },
+        {
+          "rank": 14,
+          "name": "codellama-34b-instruct",
+          "rating": 1017.9060576554,
+          "matches": 297,
+          "wins": 133.5
+        },
+        {
+          "rank": 15,
+          "name": "mpt-30b-chat",
+          "rating": 1012.0958340026,
+          "matches": 2513,
+          "wins": 1281.5
+        }
+      ]
+    },
+    {
+      "date": "2023-09-30",
+      "timestamp": 1696118379,
+      "models": [
+        {
+          "rank": 1,
+          "name": "claude-1",
+          "rating": 1210.2521771739,
+          "matches": 5243,
+          "wins": 3793.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1146.6804590093,
+          "matches": 3291,
+          "wins": 2142.5
+        },
+        {
+          "rank": 4,
+          "name": "claude-2.0",
+          "rating": 1131.051530135,
+          "matches": 3919,
+          "wins": 2397.5
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "wizardlm-70b",
+          "rating": 1099.8255313566,
+          "matches": 2860,
+          "wins": 1628.5
+        },
+        {
+          "rank": 7,
+          "name": "vicuna-33b",
+          "rating": 1089.9369903449,
+          "matches": 3519,
+          "wins": 2047.0
+        },
+        {
+          "rank": 8,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1089.0381394624,
+          "matches": 3342,
+          "wins": 1979.5
+        },
+        {
+          "rank": 9,
+          "name": "claude-instant-1",
+          "rating": 1064.1008548893,
+          "matches": 6458,
+          "wins": 4068.0
+        },
+        {
+          "rank": 10,
+          "name": "wizardlm-13b",
+          "rating": 1041.6783008045,
+          "matches": 4637,
+          "wins": 2409.0
+        },
+        {
+          "rank": 11,
+          "name": "llama-2-13b-chat",
+          "rating": 1037.8614571446,
+          "matches": 3440,
+          "wins": 1520.0
+        },
+        {
+          "rank": 12,
+          "name": "guanaco-33b",
+          "rating": 1027.2582838587,
+          "matches": 3003,
+          "wins": 1552.0
+        },
+        {
+          "rank": 13,
+          "name": "mpt-30b-chat",
+          "rating": 1024.0563241095,
+          "matches": 2650,
+          "wins": 1351.5
+        },
+        {
+          "rank": 14,
+          "name": "llama-2-70b-chat",
+          "rating": 1018.3776994547,
+          "matches": 3075,
+          "wins": 1517.0
+        },
+        {
+          "rank": 15,
+          "name": "codellama-34b-instruct",
+          "rating": 1015.6238126357,
+          "matches": 2326,
+          "wins": 1011.0
+        }
+      ]
+    },
+    {
+      "date": "2023-10-31",
+      "timestamp": 1698796794,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 2,
+          "name": "claude-1",
+          "rating": 1135.2779227948,
+          "matches": 6216,
+          "wins": 4349.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1123.7060081331,
+          "matches": 5209,
+          "wins": 3288.0
+        },
+        {
+          "rank": 4,
+          "name": "claude-2.0",
+          "rating": 1119.1576056023,
+          "matches": 6036,
+          "wins": 3590.5
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "llama-2-70b-chat",
+          "rating": 1087.7175914837,
+          "matches": 4471,
+          "wins": 2264.0
+        },
+        {
+          "rank": 7,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1085.1368261005,
+          "matches": 5976,
+          "wins": 3407.5
+        },
+        {
+          "rank": 8,
+          "name": "llama-2-7b-chat",
+          "rating": 1062.7898867404,
+          "matches": 3390,
+          "wins": 1445.0
+        },
+        {
+          "rank": 9,
+          "name": "llama-2-13b-chat",
+          "rating": 1055.1004769603,
+          "matches": 5256,
+          "wins": 2402.5
+        },
+        {
+          "rank": 10,
+          "name": "claude-instant-1",
+          "rating": 1052.5857472734,
+          "matches": 7963,
+          "wins": 4853.0
+        },
+        {
+          "rank": 11,
+          "name": "vicuna-33b",
+          "rating": 1048.8668082886,
+          "matches": 4691,
+          "wins": 2669.5
+        },
+        {
+          "rank": 12,
+          "name": "wizardlm-13b",
+          "rating": 1045.8352687204,
+          "matches": 5834,
+          "wins": 3039.0
+        },
+        {
+          "rank": 13,
+          "name": "zephyr-7b-alpha",
+          "rating": 1037.538873926,
+          "matches": 1406,
+          "wins": 670.0
+        },
+        {
+          "rank": 14,
+          "name": "zephyr-7b-beta",
+          "rating": 1032.3072561544,
+          "matches": 2427,
+          "wins": 1188.0
+        },
+        {
+          "rank": 15,
+          "name": "guanaco-33b",
+          "rating": 1027.2582838587,
+          "matches": 3003,
+          "wins": 1552.0
+        }
+      ]
+    },
+    {
+      "date": "2023-11-30",
+      "timestamp": 1701388447,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-0314",
+          "rating": 1202.7855178994,
+          "matches": 5138,
+          "wins": 4028.5
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-1106-preview",
+          "rating": 1198.6520935367,
+          "matches": 5841,
+          "wins": 3848.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1136.1538904497,
+          "matches": 10479,
+          "wins": 6181.5
+        },
+        {
+          "rank": 4,
+          "name": "claude-2.1",
+          "rating": 1110.951707598,
+          "matches": 3793,
+          "wins": 1867.5
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "claude-2.0",
+          "rating": 1099.6998763487,
+          "matches": 8802,
+          "wins": 4961.5
+        },
+        {
+          "rank": 7,
+          "name": "claude-1",
+          "rating": 1098.7945603749,
+          "matches": 8703,
+          "wins": 5713.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-instant-1",
+          "rating": 1088.8448799088,
+          "matches": 10414,
+          "wins": 6125.5
+        },
+        {
+          "rank": 9,
+          "name": "tulu-2-dpo-70b",
+          "rating": 1070.1394385,
+          "matches": 1838,
+          "wins": 938.5
+        },
+        {
+          "rank": 10,
+          "name": "wizardlm-70b",
+          "rating": 1067.5699214813,
+          "matches": 4791,
+          "wins": 2556.5
+        },
+        {
+          "rank": 11,
+          "name": "openhermes-2.5-mistral-7b",
+          "rating": 1041.9395267947,
+          "matches": 462,
+          "wins": 225.5
+        },
+        {
+          "rank": 12,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1038.6242581712,
+          "matches": 13457,
+          "wins": 7256.0
+        },
+        {
+          "rank": 13,
+          "name": "openchat-3.5",
+          "rating": 1037.921915116,
+          "matches": 4071,
+          "wins": 1969.0
+        },
+        {
+          "rank": 14,
+          "name": "yi-34b-chat",
+          "rating": 1035.0054237172,
+          "matches": 1999,
+          "wins": 1018.0
+        },
+        {
+          "rank": 15,
+          "name": "guanaco-33b",
+          "rating": 1027.2582838587,
+          "matches": 3003,
+          "wins": 1552.0
+        }
+      ]
+    },
+    {
+      "date": "2023-12-31",
+      "timestamp": 1704067179,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-1106-preview",
+          "rating": 1217.102910309,
+          "matches": 17838,
+          "wins": 12277.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0314",
+          "rating": 1122.8848157788,
+          "matches": 14270,
+          "wins": 9300.0
+        },
+        {
+          "rank": 3,
+          "name": "mistral-medium",
+          "rating": 1113.6768319273,
+          "matches": 2022,
+          "wins": 1066.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-4-0613",
+          "rating": 1103.0918923988,
+          "matches": 16160,
+          "wins": 9157.0
+        },
+        {
+          "rank": 6,
+          "name": "gemini-pro",
+          "rating": 1087.2299210223,
+          "matches": 6335,
+          "wins": 2928.5
+        },
+        {
+          "rank": 7,
+          "name": "claude-2.1",
+          "rating": 1075.8091604699,
+          "matches": 17783,
+          "wins": 8358.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-1",
+          "rating": 1074.6731858986,
+          "matches": 15697,
+          "wins": 9408.0
+        },
+        {
+          "rank": 9,
+          "name": "claude-2.0",
+          "rating": 1074.3390927875,
+          "matches": 10144,
+          "wins": 5596.5
+        },
+        {
+          "rank": 10,
+          "name": "mixtral-8x7b-instruct-v0.1",
+          "rating": 1070.0043673617,
+          "matches": 10665,
+          "wins": 5428.5
+        },
+        {
+          "rank": 11,
+          "name": "wizardlm-70b",
+          "rating": 1067.6969362061,
+          "matches": 6668,
+          "wins": 3504.5
+        },
+        {
+          "rank": 12,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1058.3556624364,
+          "matches": 22731,
+          "wins": 11800.0
+        },
+        {
+          "rank": 13,
+          "name": "claude-instant-1",
+          "rating": 1057.7265161573,
+          "matches": 14379,
+          "wins": 8096.0
+        },
+        {
+          "rank": 14,
+          "name": "llama-2-70b-chat",
+          "rating": 1054.9183137869,
+          "matches": 11874,
+          "wins": 5952.5
+        },
+        {
+          "rank": 15,
+          "name": "vicuna-33b",
+          "rating": 1049.2500592227,
+          "matches": 13805,
+          "wins": 7138.0
+        }
+      ]
+    },
+    {
+      "date": "2024-01-31",
+      "timestamp": 1706745570,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-0125-preview",
+          "rating": 1191.7291570449,
+          "matches": 2995,
+          "wins": 1934.5
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-1106-preview",
+          "rating": 1177.1753011023,
+          "matches": 32110,
+          "wins": 21947.0
+        },
+        {
+          "rank": 3,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1156.0223779532,
+          "matches": 8180,
+          "wins": 5087.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-4-0314",
+          "rating": 1102.6110894791,
+          "matches": 17618,
+          "wins": 11130.0
+        },
+        {
+          "rank": 6,
+          "name": "gpt-4-0613",
+          "rating": 1096.5543629849,
+          "matches": 27503,
+          "wins": 14889.5
+        },
+        {
+          "rank": 7,
+          "name": "mistral-medium",
+          "rating": 1088.1364842608,
+          "matches": 13766,
+          "wins": 7277.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-2.0",
+          "rating": 1078.6576791259,
+          "matches": 11196,
+          "wins": 6079.0
+        },
+        {
+          "rank": 9,
+          "name": "claude-1",
+          "rating": 1074.6005861725,
+          "matches": 17178,
+          "wins": 10192.0
+        },
+        {
+          "rank": 10,
+          "name": "claude-instant-1",
+          "rating": 1074.2260629955,
+          "matches": 17272,
+          "wins": 9516.5
+        },
+        {
+          "rank": 11,
+          "name": "yi-34b-chat",
+          "rating": 1070.0428903174,
+          "matches": 6182,
+          "wins": 3245.5
+        },
+        {
+          "rank": 12,
+          "name": "gemini-pro",
+          "rating": 1059.2020149016,
+          "matches": 6565,
+          "wins": 3028.0
+        },
+        {
+          "rank": 13,
+          "name": "gemini-pro-dev-api",
+          "rating": 1056.048106887,
+          "matches": 6947,
+          "wins": 3136.0
+        },
+        {
+          "rank": 14,
+          "name": "starling-lm-7b-alpha",
+          "rating": 1053.4076520126,
+          "matches": 4754,
+          "wins": 2306.0
+        },
+        {
+          "rank": 15,
+          "name": "llama-2-13b-chat",
+          "rating": 1044.1644167527,
+          "matches": 11049,
+          "wins": 5241.0
+        }
+      ]
+    },
+    {
+      "date": "2024-02-29",
+      "timestamp": 1709251194,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gpt-4-1106-preview",
+          "rating": 1208.9204699264,
+          "matches": 40506,
+          "wins": 27643.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0125-preview",
+          "rating": 1180.9617003686,
+          "matches": 9465,
+          "wins": 6303.5
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-0613",
+          "rating": 1124.025205285,
+          "matches": 34716,
+          "wins": 18806.0
+        },
+        {
+          "rank": 4,
+          "name": "mistral-large-2402",
+          "rating": 1108.4940445417,
+          "matches": 2204,
+          "wins": 1230.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "claude-1",
+          "rating": 1093.8638255361,
+          "matches": 19255,
+          "wins": 11318.5
+        },
+        {
+          "rank": 7,
+          "name": "gpt-4-0314",
+          "rating": 1091.9146380654,
+          "matches": 21597,
+          "wins": 13396.0
+        },
+        {
+          "rank": 8,
+          "name": "mistral-medium",
+          "rating": 1090.7368867398,
+          "matches": 19606,
+          "wins": 10338.0
+        },
+        {
+          "rank": 9,
+          "name": "qwen1.5-72b-chat",
+          "rating": 1084.6946494744,
+          "matches": 12900,
+          "wins": 6947.5
+        },
+        {
+          "rank": 10,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1082.4079728766,
+          "matches": 11394,
+          "wins": 6848.5
+        },
+        {
+          "rank": 11,
+          "name": "gemini-pro-dev-api",
+          "rating": 1080.9212410838,
+          "matches": 10220,
+          "wins": 4711.0
+        },
+        {
+          "rank": 12,
+          "name": "mistral-next",
+          "rating": 1066.1598337751,
+          "matches": 11142,
+          "wins": 5435.0
+        },
+        {
+          "rank": 13,
+          "name": "claude-2.0",
+          "rating": 1065.9386839783,
+          "matches": 12730,
+          "wins": 6794.0
+        },
+        {
+          "rank": 14,
+          "name": "gpt-3.5-turbo-0613",
+          "rating": 1063.962757939,
+          "matches": 37529,
+          "wins": 18696.5
+        },
+        {
+          "rank": 15,
+          "name": "gemini-pro",
+          "rating": 1059.2020149016,
+          "matches": 6565,
+          "wins": 3028.0
+        }
+      ]
+    },
+    {
+      "date": "2024-03-31",
+      "timestamp": 1711929587,
+      "models": [
+        {
+          "rank": 1,
+          "name": "claude-3-opus-20240229",
+          "rating": 1176.1614412178,
+          "matches": 37154,
+          "wins": 23362.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0125-preview",
+          "rating": 1167.8343686963,
+          "matches": 37927,
+          "wins": 23595.0
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-1106-preview",
+          "rating": 1154.534750616,
+          "matches": 55093,
+          "wins": 36153.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-4-0314",
+          "rating": 1118.0101239811,
+          "matches": 34923,
+          "wins": 20378.5
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "gpt-4-0613",
+          "rating": 1102.2112432541,
+          "matches": 52660,
+          "wins": 26777.0
+        },
+        {
+          "rank": 7,
+          "name": "claude-3-haiku-20240307",
+          "rating": 1098.4007222704,
+          "matches": 29159,
+          "wins": 15336.0
+        },
+        {
+          "rank": 8,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 9,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 10,
+          "name": "claude-3-sonnet-20240229",
+          "rating": 1091.7321545888,
+          "matches": 42016,
+          "wins": 23536.5
+        },
+        {
+          "rank": 11,
+          "name": "mistral-large-2402",
+          "rating": 1086.4200447987,
+          "matches": 28004,
+          "wins": 13921.5
+        },
+        {
+          "rank": 12,
+          "name": "qwen1.5-72b-chat",
+          "rating": 1080.8057648949,
+          "matches": 21603,
+          "wins": 11268.5
+        },
+        {
+          "rank": 13,
+          "name": "gemini-pro-dev-api",
+          "rating": 1071.1907344599,
+          "matches": 15720,
+          "wins": 7294.5
+        },
+        {
+          "rank": 14,
+          "name": "claude-2.0",
+          "rating": 1069.530762176,
+          "matches": 12774,
+          "wins": 6814.5
+        },
+        {
+          "rank": 15,
+          "name": "gemini-pro",
+          "rating": 1059.2020149016,
+          "matches": 6565,
+          "wins": 3028.0
+        }
+      ]
+    },
+    {
+      "date": "2024-04-30",
+      "timestamp": 1714521598,
+      "models": [
+        {
+          "rank": 1,
+          "name": "claude-3-opus-20240229",
+          "rating": 1174.9545916992,
+          "matches": 73578,
+          "wins": 45143.0
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4-0125-preview",
+          "rating": 1161.5891307634,
+          "matches": 60447,
+          "wins": 36723.0
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4-turbo-2024-04-09",
+          "rating": 1156.3586862763,
+          "matches": 30972,
+          "wins": 18505.5
+        },
+        {
+          "rank": 4,
+          "name": "gemini-1.5-pro-api-0409-preview",
+          "rating": 1154.3497993228,
+          "matches": 34072,
+          "wins": 20486.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-4-1106-preview",
+          "rating": 1145.9992036875,
+          "matches": 67855,
+          "wins": 43747.5
+        },
+        {
+          "rank": 6,
+          "name": "llama-3-70b-instruct",
+          "rating": 1128.5863503665,
+          "matches": 41376,
+          "wins": 23088.0
+        },
+        {
+          "rank": 7,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 8,
+          "name": "claude-3-sonnet-20240229",
+          "rating": 1103.1308363864,
+          "matches": 71239,
+          "wins": 39286.5
+        },
+        {
+          "rank": 9,
+          "name": "gpt-4-0314",
+          "rating": 1099.6764239908,
+          "matches": 47325,
+          "wins": 26914.0
+        },
+        {
+          "rank": 10,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 11,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 12,
+          "name": "gemini-pro-dev-api",
+          "rating": 1072.3072263884,
+          "matches": 18790,
+          "wins": 8728.5
+        },
+        {
+          "rank": 13,
+          "name": "claude-2.0",
+          "rating": 1069.530762176,
+          "matches": 12774,
+          "wins": 6814.5
+        },
+        {
+          "rank": 14,
+          "name": "mistral-large-2402",
+          "rating": 1063.9233829534,
+          "matches": 42913,
+          "wins": 21064.5
+        },
+        {
+          "rank": 15,
+          "name": "mistral-medium",
+          "rating": 1060.0648399023,
+          "matches": 31488,
+          "wins": 15950.0
+        }
+      ]
+    },
+    {
+      "date": "2024-05-31",
+      "timestamp": 1717199998,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gemini-1.5-pro-api-0409-preview",
+          "rating": 1159.8203895968,
+          "matches": 55654,
+          "wins": 33738.5
+        },
+        {
+          "rank": 2,
+          "name": "gemini-1.5-pro-api-0514",
+          "rating": 1143.8706808856,
+          "matches": 24524,
+          "wins": 14254.0
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4o-2024-05-13",
+          "rating": 1137.3671645518,
+          "matches": 31160,
+          "wins": 19149.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-4-turbo-2024-04-09",
+          "rating": 1118.9995587843,
+          "matches": 59629,
+          "wins": 34823.5
+        },
+        {
+          "rank": 5,
+          "name": "gemini-advanced-0514",
+          "rating": 1117.3066177883,
+          "matches": 26204,
+          "wins": 15262.0
+        },
+        {
+          "rank": 6,
+          "name": "gpt-4-1106-preview",
+          "rating": 1112.5274461375,
+          "matches": 79593,
+          "wins": 50441.0
+        },
+        {
+          "rank": 7,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 8,
+          "name": "claude-3-opus-20240229",
+          "rating": 1101.7492312993,
+          "matches": 122485,
+          "wins": 72927.0
+        },
+        {
+          "rank": 9,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 10,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 11,
+          "name": "gpt-4-0125-preview",
+          "rating": 1081.2915676288,
+          "matches": 72771,
+          "wins": 43712.5
+        },
+        {
+          "rank": 12,
+          "name": "gemini-1.5-flash-api-0514",
+          "rating": 1080.7471858528,
+          "matches": 22725,
+          "wins": 12322.0
+        },
+        {
+          "rank": 13,
+          "name": "llama-3-70b-instruct",
+          "rating": 1080.1146241575,
+          "matches": 123617,
+          "wins": 66125.0
+        },
+        {
+          "rank": 14,
+          "name": "yi-large-preview",
+          "rating": 1075.1581477738,
+          "matches": 33808,
+          "wins": 18820.0
+        },
+        {
+          "rank": 15,
+          "name": "claude-3-sonnet-20240229",
+          "rating": 1073.0442365702,
+          "matches": 95310,
+          "wins": 51518.5
+        }
+      ]
+    },
+    {
+      "date": "2024-06-30",
+      "timestamp": 1719791933,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gemini-1.5-pro-api-0409-preview",
+          "rating": 1159.8203895968,
+          "matches": 55654,
+          "wins": 33738.5
+        },
+        {
+          "rank": 2,
+          "name": "gpt-4o-2024-05-13",
+          "rating": 1133.8475199011,
+          "matches": 51867,
+          "wins": 32040.5
+        },
+        {
+          "rank": 3,
+          "name": "claude-3-5-sonnet-20240620",
+          "rating": 1128.0631691547,
+          "matches": 19006,
+          "wins": 11116.5
+        },
+        {
+          "rank": 4,
+          "name": "gemini-advanced-0514",
+          "rating": 1104.3737643515,
+          "matches": 40045,
+          "wins": 23603.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 6,
+          "name": "gemini-1.5-pro-api-0514",
+          "rating": 1102.3509445504,
+          "matches": 44696,
+          "wins": 25947.0
+        },
+        {
+          "rank": 7,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 9,
+          "name": "claude-3-opus-20240229",
+          "rating": 1089.7718969029,
+          "matches": 140092,
+          "wins": 83000.0
+        },
+        {
+          "rank": 10,
+          "name": "gpt-4-turbo-2024-04-09",
+          "rating": 1087.4030763635,
+          "matches": 70553,
+          "wins": 41271.0
+        },
+        {
+          "rank": 11,
+          "name": "gpt-4-1106-preview",
+          "rating": 1085.683304997,
+          "matches": 85436,
+          "wins": 53702.5
+        },
+        {
+          "rank": 12,
+          "name": "yi-large",
+          "rating": 1084.1099178358,
+          "matches": 10333,
+          "wins": 5414.5
+        },
+        {
+          "rank": 13,
+          "name": "yi-large-preview",
+          "rating": 1082.5341263969,
+          "matches": 45552,
+          "wins": 25462.5
+        },
+        {
+          "rank": 14,
+          "name": "gpt-4-0125-preview",
+          "rating": 1077.8233462851,
+          "matches": 78726,
+          "wins": 47042.0
+        },
+        {
+          "rank": 15,
+          "name": "gemini-pro-dev-api",
+          "rating": 1072.3072263884,
+          "matches": 18790,
+          "wins": 8728.5
+        }
+      ]
+    },
+    {
+      "date": "2024-07-31",
+      "timestamp": 1722470391,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gemini-1.5-pro-api-0409-preview",
+          "rating": 1159.8203895968,
+          "matches": 55654,
+          "wins": 33738.5
+        },
+        {
+          "rank": 2,
+          "name": "gemini-1.5-pro-exp-0801",
+          "rating": 1126.0573644679,
+          "matches": 12851,
+          "wins": 7947.0
+        },
+        {
+          "rank": 3,
+          "name": "gpt-4o-mini-2024-07-18",
+          "rating": 1114.5858560551,
+          "matches": 12601,
+          "wins": 7389.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 5,
+          "name": "gpt-4o-2024-05-13",
+          "rating": 1101.9127952885,
+          "matches": 70146,
+          "wins": 42771.5
+        },
+        {
+          "rank": 6,
+          "name": "claude-3-5-sonnet-20240620",
+          "rating": 1095.983029238,
+          "matches": 40495,
+          "wins": 23176.0
+        },
+        {
+          "rank": 7,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 8,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 9,
+          "name": "gpt-4-0125-preview",
+          "rating": 1090.9725236983,
+          "matches": 83410,
+          "wins": 49571.0
+        },
+        {
+          "rank": 10,
+          "name": "llama-3.1-405b-instruct",
+          "rating": 1089.0830838178,
+          "matches": 9068,
+          "wins": 5012.5
+        },
+        {
+          "rank": 11,
+          "name": "gpt-4-1106-preview",
+          "rating": 1088.0773741892,
+          "matches": 90079,
+          "wins": 56256.0
+        },
+        {
+          "rank": 12,
+          "name": "gemini-advanced-0514",
+          "rating": 1086.0595644473,
+          "matches": 50857,
+          "wins": 29822.5
+        },
+        {
+          "rank": 13,
+          "name": "athene-70b-0725",
+          "rating": 1083.33516485,
+          "matches": 5707,
+          "wins": 3074.0
+        },
+        {
+          "rank": 14,
+          "name": "mistral-large-2407",
+          "rating": 1083.0034192178,
+          "matches": 3410,
+          "wins": 1798.0
+        },
+        {
+          "rank": 15,
+          "name": "gemini-1.5-pro-api-0514",
+          "rating": 1079.0286607691,
+          "matches": 62293,
+          "wins": 35591.5
+        }
+      ]
+    },
+    {
+      "date": "2024-08-14",
+      "timestamp": 1723665173,
+      "models": [
+        {
+          "rank": 1,
+          "name": "gemini-1.5-pro-api-0409-preview",
+          "rating": 1159.8203895968,
+          "matches": 55654,
+          "wins": 33738.5
+        },
+        {
+          "rank": 2,
+          "name": "gemini-1.5-pro-exp-0801",
+          "rating": 1127.8877886511,
+          "matches": 20071,
+          "wins": 12139.5
+        },
+        {
+          "rank": 3,
+          "name": "chatgpt-4o-latest",
+          "rating": 1126.6935165964,
+          "matches": 14514,
+          "wins": 8999.0
+        },
+        {
+          "rank": 4,
+          "name": "gpt-3.5-turbo-0314",
+          "rating": 1103.9751202512,
+          "matches": 5655,
+          "wins": 3789.0
+        },
+        {
+          "rank": 5,
+          "name": "bard-jan-24-gemini-pro",
+          "rating": 1094.2118678517,
+          "matches": 11827,
+          "wins": 7075.5
+        },
+        {
+          "rank": 6,
+          "name": "claude-1",
+          "rating": 1092.7309868534,
+          "matches": 21172,
+          "wins": 12081.5
+        },
+        {
+          "rank": 7,
+          "name": "gemini-advanced-0514",
+          "rating": 1087.5408038371,
+          "matches": 52155,
+          "wins": 30523.0
+        },
+        {
+          "rank": 8,
+          "name": "llama-3.1-70b-instruct",
+          "rating": 1087.3529845908,
+          "matches": 13604,
+          "wins": 7058.5
+        },
+        {
+          "rank": 9,
+          "name": "gpt-4o-2024-05-13",
+          "rating": 1086.7242770205,
+          "matches": 77509,
+          "wins": 46951.0
+        },
+        {
+          "rank": 10,
+          "name": "gpt-4o-2024-08-06",
+          "rating": 1085.601246973,
+          "matches": 9761,
+          "wins": 5323.0
+        },
+        {
+          "rank": 11,
+          "name": "gpt-4o-mini-2024-07-18",
+          "rating": 1079.187026245,
+          "matches": 19370,
+          "wins": 11082.0
+        },
+        {
+          "rank": 12,
+          "name": "claude-3-5-sonnet-20240620",
+          "rating": 1079.0096726066,
+          "matches": 47703,
+          "wins": 27107.5
+        },
+        {
+          "rank": 13,
+          "name": "claude-3-opus-20240229",
+          "rating": 1074.9078256001,
+          "matches": 155944,
+          "wins": 91432.5
+        },
+        {
+          "rank": 14,
+          "name": "athene-70b-0725",
+          "rating": 1073.7607622933,
+          "matches": 11476,
+          "wins": 6098.0
+        },
+        {
+          "rank": 15,
+          "name": "gemini-pro-dev-api",
+          "rating": 1072.3072263884,
+          "matches": 18790,
+          "wins": 8728.5
+        }
+      ]
+    }
+  ],
+  "total_frames": 17,
+  "top_n": 15,
+  "start_date": "2023-04-30",
+  "end_date": "2024-08-14"
+};
+
+        // Configuration
+        const margin = {top: 20, right: 100, bottom: 40, left: 50};
+        const width = 1100 - margin.left - margin.right;
+        const height = 600 - margin.top - margin.bottom;
+        const barHeight = height / data.top_n - 5;
+
+        // Create SVG
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Scales
+        const xScale = d3.scaleLinear()
+            .domain([0, d3.max(data.frames.flatMap(f => f.models.map(m => m.rating)))])
+            .range([0, width - 200]);
+
+        // Color scale
+        const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // Animation state
+        let currentFrame = 0;
+        let isPlaying = false;
+        let animationInterval = null;
+        let animationSpeed = 500; // milliseconds per frame
+
+        // Update speed based on slider
+        d3.select("#speed-slider").on("input", function() {
+            const speed = +this.value;
+            animationSpeed = 1000 / speed;
+            d3.select("#speed-value").text(`${speed}x`);
+            if (isPlaying) {
+                stopAnimation();
+                startAnimation();
+            }
+        });
+
+        function updateChart(frameIndex) {
+            const frame = data.frames[frameIndex];
+
+            // Update date display
+            d3.select("#date-display").text(frame.date);
+
+            // Update progress bar
+            const progress = ((frameIndex + 1) / data.total_frames) * 100;
+            d3.select("#progress").style("width", `${progress}%`);
+
+            // Update max value for scale
+            const maxRating = d3.max(frame.models, d => d.rating);
+            xScale.domain([0, maxRating * 1.1]);
+
+            // Bind data
+            const bars = svg.selectAll(".bar-group")
+                .data(frame.models, d => d.name);
+
+            // Remove old bars
+            bars.exit()
+                .transition()
+                .duration(animationSpeed * 0.8)
+                .style("opacity", 0)
+                .remove();
+
+            // Add new bars
+            const enter = bars.enter()
+                .append("g")
+                .attr("class", "bar-group")
+                .style("opacity", 0);
+
+            enter.append("rect")
+                .attr("class", "bar")
+                .attr("height", barHeight);
+
+            enter.append("text")
+                .attr("class", "bar-label")
+                .attr("x", 10)
+                .attr("y", barHeight / 2)
+                .attr("dy", "0.35em");
+
+            enter.append("text")
+                .attr("class", "bar-value")
+                .attr("y", barHeight / 2)
+                .attr("dy", "0.35em");
+
+            enter.append("text")
+                .attr("class", "rank-label")
+                .attr("x", -40)
+                .attr("y", barHeight / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "middle");
+
+            // Update all bars
+            const merged = enter.merge(bars);
+
+            merged.transition()
+                .duration(animationSpeed * 0.8)
+                .style("opacity", 1)
+                .attr("transform", (d, i) => `translate(0,${i * (barHeight + 5)})`);
+
+            merged.select(".bar")
+                .transition()
+                .duration(animationSpeed * 0.8)
+                .attr("width", d => xScale(d.rating))
+                .attr("fill", d => colorScale(d.name));
+
+            merged.select(".bar-label")
+                .text(d => d.name);
+
+            merged.select(".bar-value")
+                .transition()
+                .duration(animationSpeed * 0.8)
+                .attr("x", d => xScale(d.rating) + 10)
+                .text(d => `${Math.round(d.rating)} (${d.matches} matches)`);
+
+            merged.select(".rank-label")
+                .text(d => `#${d.rank}`);
+        }
+
+        function startAnimation() {
+            if (currentFrame >= data.total_frames - 1) {
+                currentFrame = 0;
+            }
+
+            isPlaying = true;
+            d3.select("#play-btn").property("disabled", true);
+            d3.select("#pause-btn").property("disabled", false);
+
+            animationInterval = setInterval(() => {
+                updateChart(currentFrame);
+                currentFrame++;
+
+                if (currentFrame >= data.total_frames) {
+                    stopAnimation();
+                    currentFrame = data.total_frames - 1;
+                }
+            }, animationSpeed);
+        }
+
+        function stopAnimation() {
+            isPlaying = false;
+            d3.select("#play-btn").property("disabled", false);
+            d3.select("#pause-btn").property("disabled", true);
+
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetAnimation() {
+            stopAnimation();
+            currentFrame = 0;
+            updateChart(currentFrame);
+            d3.select("#progress").style("width", "0%");
+        }
+
+        // Button handlers
+        d3.select("#play-btn").on("click", startAnimation);
+        d3.select("#pause-btn").on("click", stopAnimation);
+        d3.select("#reset-btn").on("click", resetAnimation);
+
+        // Initialize with first frame
+        updateChart(0);
+
+        // Auto-play on load
+        setTimeout(startAnimation, 1000);
+    </script>
+</body>
+</html>

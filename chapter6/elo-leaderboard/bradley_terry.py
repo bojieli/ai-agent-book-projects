@@ -2,10 +2,10 @@
 Bradley-Terry Model Implementation
 Official Chatbot Arena leaderboard calculation method
 """
+import math
+
 import numpy as np
 import pandas as pd
-import math
-from typing import Dict
 from sklearn.linear_model import LogisticRegression
 
 
@@ -13,8 +13,8 @@ def compute_mle_elo(df: pd.DataFrame,
                     SCALE: int = 400, 
                     BASE: int = 10, 
                     INIT_RATING: int = 1000,
-                    calibration_model: str = None,
-                    calibration_rating: int = None) -> pd.Series:
+                    calibration_model: str | None = None,
+                    calibration_rating: int | None = None) -> pd.Series:
     """
     Compute Elo ratings using Bradley-Terry model with Maximum Likelihood Estimation.
     
@@ -125,7 +125,7 @@ def compute_mle_elo(df: pd.DataFrame,
     return pd.Series(elo_scores, index=models.index).sort_values(ascending=False)
 
 
-def predict_win_rate(elo_ratings: Dict[str, float], 
+def predict_win_rate(elo_ratings: dict[str, float],
                      SCALE: int = 400, 
                      BASE: int = 10) -> pd.DataFrame:
     """
@@ -141,7 +141,7 @@ def predict_win_rate(elo_ratings: Dict[str, float],
     """
     from collections import defaultdict
     
-    names = sorted(list(elo_ratings.keys()))
+    names = sorted(elo_ratings)
     wins = defaultdict(lambda: defaultdict(lambda: 0))
     
     for a in names:
@@ -165,7 +165,8 @@ def predict_win_rate(elo_ratings: Dict[str, float],
 
 def get_bootstrap_result(battles: pd.DataFrame, 
                         func_compute_elo, 
-                        num_round: int = 100) -> pd.DataFrame:
+                        num_round: int = 100,
+                        random_seed: int = 0) -> pd.DataFrame:
     """
     Compute bootstrap confidence intervals for Elo ratings.
     
@@ -181,7 +182,11 @@ def get_bootstrap_result(battles: pd.DataFrame,
     
     rows = []
     for i in tqdm(range(num_round), desc="Bootstrap sampling"):
-        rows.append(func_compute_elo(battles.sample(frac=1.0, replace=True)))
+        rows.append(
+            func_compute_elo(
+                battles.sample(frac=1.0, replace=True, random_state=random_seed + i)
+            )
+        )
     df = pd.DataFrame(rows)
     return df[df.median().sort_values(ascending=False).index]
 
@@ -198,7 +203,7 @@ def compute_bradley_terry_leaderboard(df: pd.DataFrame,
     Returns:
         DataFrame with model ratings (and confidence intervals if bootstrap > 0)
     """
-    print(f"Computing Bradley-Terry model ratings...")
+    print("Computing Bradley-Terry model ratings...")
     
     # Compute MLE Elo ratings
     elo_ratings = compute_mle_elo(df)
@@ -220,4 +225,3 @@ def compute_bradley_terry_leaderboard(df: pd.DataFrame,
     
     result.index.name = 'model'
     return result.reset_index()
-

@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "bradley_terry.json": {
+      "bytes": 19827,
+      "sha256": "4a861b80c69132fdb3e3d1cfdc9d962444d664623b956595e67798d141ee1c6b"
+    },
+    "leaderboard.png": {
+      "bytes": 118255,
+      "sha256": "386889f573198987400fef7c7803e0779b95e2fa35cb274d04071fed842c6499"
+    },
+    "leaderboard_animation.html": {
+      "bytes": 54322,
+      "sha256": "afb9b0426605dcc5accf9e1ea5067dd885ad9a9226884cc341b3430404ca433a"
+    },
+    "online_elo.json": {
+      "bytes": 16885,
+      "sha256": "41ec9a46bb37457a385d0c4b4036ff8ae3d1affcbae8b9b00689fef494f9f9a6"
+    },
+    "rating_history.json": {
+      "bytes": 354362,
+      "sha256": "3a5e3193cbbe50bf1de3a9e5d9702f2b594f449300d195674ed0da2a76f72574"
+    },
+    "rating_history.png": {
+      "bytes": 193995,
+      "sha256": "cb676a82b38a8876bc1346e58f72b6a9d72c8fa5e405a9d22610f6948382fba4"
+    },
+    "summary.json": {
+      "bytes": 10441,
+      "sha256": "6258914ebdb6be7686985e637903c929ed14535d8572a4b9d42b1256d5cdf261"
+    },
+    "win_rate_matrix.json": {
+      "bytes": 37040,
+      "sha256": "a6ac9580a8d0290d53adf16458ac777d72e214d0771cd0e72d1b2d8a4d86abd2"
+    },
+    "win_rate_matrix.png": {
+      "bytes": 230883,
+      "sha256": "db375436646096bfafdad458b53aba54ac156432cf9e8bb7458a2f733c9ae690"
+    }
+  },
+  "experiment": "6-6",
+  "gates": {
+    "bradley_terry_official_method_completed": true,
+    "chronological_online_elo_k4_completed": true,
+    "d3_animation_saved": true,
+    "millions_of_blind_votes_loaded": true,
+    "monthly_history_saved": true,
+    "official_public_arena_snapshot_hashed": true,
+    "online_vs_official_method_rank_agreement_observed": true,
+    "pairwise_empirical_and_predicted_matrix_saved": true,
+    "static_visualizations_saved": true
+  },
+  "input": {
+    "bytes": 2131976365,
+    "filename": "arena_data.json",
+    "sha256": "747c1c937dfa941d5a455a1fd70e2879d29642058da39b97996b977233b9bd1b",
+    "url": "https://storage.googleapis.com/arena_external_data/public/clean_battle_20240814_public.json"
+  },
+  "official_complete": true,
+  "runtime": {
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "python": "3.12.11"
+  },
+  "schema_version": 1,
+  "sources": {
+    "animation.py": "6839a3173a6a9ee8855901ca3c781fd91de13219b52ce6b285778ab89d926376",
+    "bradley_terry.py": "030c716284017b14cff204ecd7036020c05554ae0eacf71af5da5c0963848b54",
+    "optimized_elo.py": "f56b5b4aaba9cda11006bf01742be99fc07ee44ceeed5bd2dee5322a8ce08a57",
+    "validation/run_experiment.py": "6c668081c4fbf04f9dbc84411a2a40391d7b00c76a90336542cc6a88623e991c",
+    "validation/validate_evidence.py": "36fe448c94608cfc6a299f21224870357d109d999ba3391ed7d7c71fc1817e62"
+  },
+  "status": "passed"
+}

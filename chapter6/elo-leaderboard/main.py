@@ -1,6 +1,6 @@
 """
 Main script for Model Leaderboard Calculation
-Experiment 6.8: Building Model Leaderboard from Pairwise Comparison Data
+Experiment 6-6: Building Model Leaderboard from Pairwise Comparison Data
 
 Supports two methods (following official Chatbot Arena):
 1. Online Elo (K=4) - Simple but order-dependent
@@ -8,22 +8,16 @@ Supports two methods (following official Chatbot Arena):
 """
 import os
 import sys
+
 import pandas as pd
-import numpy as np
-from data_loader import download_arena_data, load_arena_data, filter_data
 from bradley_terry import (
     compute_bradley_terry_leaderboard,
     predict_win_rate,
-    get_bootstrap_result,
-    compute_mle_elo
 )
+from data_loader import download_arena_data, filter_data, load_arena_data
 from elo_rating import EloRatingSystem
 from parallel_processing import optimize_dataframe
-from visualization import (
-    plot_leaderboard,
-    plot_win_rate_matrix,
-    plot_rating_distribution
-)
+from visualization import plot_leaderboard, plot_rating_distribution, plot_win_rate_matrix
 
 
 def compute_online_elo_leaderboard(df: pd.DataFrame) -> pd.DataFrame:
@@ -66,7 +60,7 @@ def main(method: str = 'bradley-terry'):
     """
     
     print("="*80)
-    print("Experiment 6.8: Building Model Leaderboard from Pairwise Comparisons")
+    print("Experiment 6-6: Building Model Leaderboard from Pairwise Comparisons")
     if method == 'bradley-terry':
         print("Method: Bradley-Terry Model with MLE (Official Chatbot Arena)")
     else:
@@ -91,7 +85,7 @@ def main(method: str = 'bradley-terry'):
         # Optimize memory usage
         df = optimize_dataframe(df)
         
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - surface loader/provider diagnostics to CLI users
         print(f"Error loading data: {e}")
         print("\nNote: If the data download fails, you can manually download the file from:")
         print("https://storage.googleapis.com/arena_external_data/public/clean_battle_20240814_public.json")
@@ -125,7 +119,7 @@ def main(method: str = 'bradley-terry'):
         # Compute ratings with bootstrap for confidence intervals
         leaderboard_df = compute_bradley_terry_leaderboard(df_filtered, bootstrap_rounds=100)
         
-        print(f"\nTop 20 models by Bradley-Terry rating:")
+        print("\nTop 20 models by Bradley-Terry rating:")
         print("-" * 80)
         print(f"{'Rank':<6}{'Model':<35}{'Rating':<10}{'95% CI':<20}")
         print("-" * 80)
@@ -144,7 +138,7 @@ def main(method: str = 'bradley-terry'):
         # Compute online Elo ratings
         leaderboard_df = compute_online_elo_leaderboard(df_filtered)
         
-        print(f"\nTop 20 models by Online Elo rating:")
+        print("\nTop 20 models by Online Elo rating:")
         print("-" * 80)
         print(f"{'Rank':<6}{'Model':<35}{'Rating':<10}{'Matches':<10}{'Win Rate':<10}")
         print("-" * 80)

@@ -402,6 +402,10 @@ def generate_html_animation(animation_data: dict, output_path: str = "leaderboar
 </body>
 </html>"""
     
+    # Keep generated evidence friendly to `git diff --check` and deterministic
+    # across editors that otherwise strip indentation-only lines.
+    html_template = "\n".join(line.rstrip() for line in html_template.splitlines()) + "\n"
+
     # Write to file
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html_template)
@@ -426,4 +430,3 @@ def create_simple_animation(history_df: pd.DataFrame, output_path: str = "leader
     generate_html_animation(animation_data, output_path)
     
     return output_path
-
