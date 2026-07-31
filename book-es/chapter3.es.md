@@ -383,14 +383,22 @@ Elegir la estrategia de indexación adecuada es tan importante como seleccionar 
 A diferencia de los embeddings densos, que capturan similitud semántica, los embeddings dispersos (Sparse Embedding) provienen de la recuperación de información tradicional y se basan en la coincidencia exacta de palabras clave. Representan los documentos como vectores de dimensión extremadamente alta donde la inmensa mayoría de las dimensiones son cero, y solo las dimensiones correspondientes a las palabras presentes en el documento tienen valores distintos de cero. Su pilar teórico es el modelo clásico de bolsa de palabras (Bag of Words, BoW), que considera el texto como una "bolsa llena de palabras", preocupándose solo por qué palabras aparecen y cuántas veces, ignorando por completo el orden. Por ejemplo, "el gato persigue al perro" y "el perro persigue al gato" son idénticos bajo el modelo de bolsa de palabras. A partir de esta base evolucionaron algoritmos más complejos de ponderación de términos y ordenación.
 
 
-![Figura 3-8: Mecanismo de puntuación BM25](images/fig3-8.svg)
-
-
 #### De TF-IDF a BM25
 
-Construyamos la intuición con un ejemplo concreto. Supongamos que una base de conocimiento alberga 100 artículos técnicos y el usuario busca "destilación de modelos". La palabra "modelo" aparece en 60 artículos (muy común, bajo poder discriminatorio), mientras que "destilación" aparece en solo 3 artículos (muy rara, alto poder discriminatorio). Un buen algoritmo de búsqueda debe asignar mayor peso a la palabra "destilación": los artículos que la contienen tienen mucha mayor probabilidad de ser los que el usuario realmente busca. Esta es la idea central de TF-IDF y BM25.
+La intuición central de TF-IDF (Term Frequency–Inverse Document Frequency, frecuencia de término–frecuencia inversa de documento) es que una palabra resulta más importante para la búsqueda cuanto más aparece en el documento actual y menos frecuente es en el corpus completo. Si 60 de 100 artículos contienen "modelo", pero solo 3 contienen "destilación", entonces "destilación" distingue mejor qué artículos tratan realmente sobre "destilación de modelos".
 
-TF-IDF se basa en una intuición simple: cuanto mayor es la frecuencia de una palabra en un documento (TF, Term Frequency) y menor es la cantidad de documentos que la contienen (DF, Document Frequency) —es decir, mayor es su frecuencia inversa de documento, IDF, Inverse Document Frequency), más importante es esa palabra. En el ejemplo anterior, para "modelo" `df/N = 60%`, con un IDF bajo; para "destilación" `df/N = 3%`, con un IDF alto: por ello, "destilación" aporta mucho más a la ordenación que "modelo". Sin embargo, TF-IDF no considera la longitud del documento (los documentos largos tienen naturalmente frecuencias más altas) y el crecimiento de la frecuencia de términos es lineal (¿aparición de 10 veces duplica realmente la importancia respecto a 5 veces?). BM25 introduce dos parámetros clave para corregir estos problemas: `k1` controla la "saturación" de la frecuencia de término: intuitivamente, mencionar "destilación" 20 veces frente a 10 en un artículo no duplica su relevancia real. `k1` logra que la contribución de la frecuencia tienda a estabilizarse al aumentar, evitando que documentos extensos dominen injustamente por acumulación de palabras; `b` controla la normalización por longitud del documento, permitiendo al algoritmo tratar de forma más equitativa a documentos de distintas extensiones. Esto convierte a BM25 en una función de ordenación más robusta y eficaz, que sigue siendo componente esencial en los principales motores de búsqueda actuales.
+$$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t), \qquad \text{IDF}(t) = \ln\frac{N}{\text{DF}(t)}$$
+
+Aquí, `TF(t,d)` es el número de apariciones del término $t$ en el documento $d$, `DF(t)` es el número de documentos que contienen ese término y $N$ es el número total de documentos. En esta implementación básica, la frecuencia bruta crece linealmente con el número de apariciones y no corrige la longitud del documento: diez apariciones producen el doble de TF que cinco, y un documento largo puede obtener una puntuación mayor por el mero hecho de contener más palabras.
+
+BM25 (Okapi BM25) puede entenderse como la corrección clásica de esas dos limitaciones: conserva la ponderación IDF de los términos raros e incorpora saturación de frecuencia y normalización por longitud.
+
+$$\text{Score}(Q, D) = \sum_{i} \text{IDF}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+
+Aquí, $q_i$ es un término de la consulta, $|D|$ es la longitud del documento y $\text{avgdl}$ es la longitud media de los documentos del corpus. Como muestra la Figura 3-8, $k_1$ controla la velocidad de saturación de la frecuencia, de modo que cada repetición adicional aporta menos; $b$ controla la intensidad de la normalización por longitud para comparar de forma más justa documentos de distinto tamaño. Por eso, diez apariciones de un término normalmente no contribuyen exactamente el doble que cinco, y una misma frecuencia recibe menos peso en un documento más largo. Los parámetros y el cálculo concreto se desarrollan en el Experimento 3-5.
+
+
+![Figura 3-8: Mecanismo de puntuación BM25](images/fig3-8.svg)
 
 > **Experimento 3-5 ★★: Explorando la búsqueda dispersa: implementación desde cero de un motor de búsqueda BM25**
 >
@@ -438,7 +446,7 @@ Una analogía adecuada: enviar currículums a un reclutador para un filtrado rá
 
 Este mecanismo de "atención cruzada" permite al Cross-Encoder capturar asociaciones semánticas sutiles imperceptibles para el Bi-Encoder, produciendo una ordenación final muy superior a cualquier método de búsqueda único.
 
-[^ch3-cross-encoder]: En implementaciones basadas en BERT, el texto concatenado de entrada utiliza marcadores especiales de separación (como `[CLS] Consulta [SEP] Documento [SEP]`, donde [CLS] marca el inicio y [SEP] los límites). Este detalle de implementación de bajo nivel no es indispensable para entender el flujo.
+[^ch3-cross-encoder]: En implementaciones basadas en BERT, el texto concatenado de entrada utiliza marcadores especiales de separación (como `[CLS] Consulta [SEP] Documento [SEP]`, donde `[CLS]` marca el inicio y `[SEP]` los límites). Este detalle de implementación de bajo nivel no es indispensable para entender el flujo.
 
 **¿Cómo medir la calidad de la búsqueda?** Ajustar esta canalización multietapa exige métricas de evaluación objetivas, entre las cuales destacan tres (calculadas sobre conjuntos de consulta de prueba con respuestas anotadas):
 

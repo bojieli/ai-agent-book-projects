@@ -45,6 +45,8 @@ Pada API bertipe Chat Completions, input utamanya adalah sebuah **daftar pesan (
 
 Tool definitions (definisi tool) bukanlah pesan. Definisi ini diberikan di dalam field terpisah bernama `tools`, yang mendeklarasikan tool apa saja yang tersedia untuk model dan menentukan parameter yang diterima oleh setiap tool.
 
+Ini adalah struktur request API yang sama dengan “lima komponen context” yang diperkenalkan pada Bab 1, hanya diklasifikasikan dari sudut yang berbeda: empat peran pesan `system`, `user`, `assistant`, dan `tool` masing-masing bersesuaian dengan system prompt, pesan pengguna, pesan asisten, dan hasil tool. Komponen yang tersisa—definisi tool—diteruskan melalui field `tools` di tingkat teratas, bukan sebagai peran pesan. Dengan demikian, “empat peran pesan + field `tools`” tepat mencakup kelima komponen context pada Bab 1.
+
 ### Single-Turn Request (Permintaan Putaran Tunggal): Panggilan API Paling Sederhana
 
 ![Gambar 2-2: Struktur Request dan Response dari Panggilan API Putaran Tunggal](images/fig2-2.svg)

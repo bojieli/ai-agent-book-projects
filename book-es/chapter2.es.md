@@ -45,6 +45,8 @@ El núcleo de la API de un modelo de lenguaje grande es una **lista de mensajes*
 
 Además, las definiciones de herramientas (`tools`) se proporcionan como un campo independiente de la solicitud (no como un mensaje), indicando al modelo qué herramientas están disponibles y qué parámetros acepta cada una.
 
+Esta es la misma estructura de solicitud de API que los «cinco componentes del contexto» presentados en el Capítulo 1, solo que clasificada desde otro ángulo: los cuatro roles de mensaje `system`, `user`, `assistant` y `tool` corresponden, respectivamente, al prompt del sistema, los mensajes del usuario, los mensajes del asistente y los resultados de herramientas. El componente restante —las definiciones de herramientas— se transmite mediante el campo `tools` de nivel superior, no como un rol de mensaje. Por tanto, «cuatro roles de mensaje + el campo `tools`» abarca exactamente los cinco componentes del contexto del Capítulo 1.
+
 ### Petición de un Solo Turno: La Llamada API Más Simple
 
 ![Figura 2-2: Estructura de petición y respuesta de una llamada API de un solo turno](images/fig2-2.svg)

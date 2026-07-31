@@ -456,7 +456,7 @@ A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás
 
 > **10-4. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**
 
-> Ez a kísérlet megköveteli a 9. fejezet valós idejű telefonhívás Ügynökét.
+> Ez a kísérlet megköveteli a 9. fejezet valós idejű telefonhívás Ügynökét. A könyvben a „telefon” valós idejű hangkapcsolatot jelent: amikor a hívott fél maga a felhasználó, nincs szükség PSTN-hozzáférésre vagy E.164-es telefonszámra. A helyi WebRTC-oldal elegendő a kísérlethez; távoli telepítésnél a hálózati környezet igényei szerint jelzéskezelés és TURN adható hozzá.
 
 > "Feladat Forgatókönyv": A felhasználó bejelentkezik a weblapra és kitölt egy űrlapot (online bejelentkezéses ellenőrző pont). Eközben a felhasználónak át kell adnia egy ellenőrző kódot a vevőszolgálat által küldött SMS-ből. Ebben a forgatókönyvben a számítógép Ügynök segít a felhasználónak a webes műveletekben, miközben a telefon Ügynök hívja a vevőszolgálatot, hogy megszerezze a kódot.
 
@@ -501,6 +501,10 @@ A decentralizált minta számos formát ölthet. Az alábbiakban három képvise
 **MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.** A MetaGPT megosztott üzenetkészletet és szerepalapú feliratkozást használ: minden szerep strukturált eredményeket tesz közzé, a többi szerep pedig csak a feladatához szükséges üzenettípusokat fogyasztja. Ez leválasztja a küldőt a fogadóról, miközben a szabványos működési eljárás rögzíti a szerepek sorrendjét és az átadott artefaktumok formátumát.
 
 ![10-11. ábra: A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.svg)
+
+> **Terminológia: Agent Swarm.** Az „Agent Swarm” 2025 óta több szolgáltatónál is divatos kifejezéssé vált, de nem egyetlen architektúrát jelöl. Az iparági használat nagyjából két csoportra oszlik. Az első az OpenAI Swarmhoz hasonló handoff-hálózat (a LangGraph swarm könyvtára és a Microsoft Agent Framework handoff-orkesztrációja ugyanezt az elvet követi): ez az ebben a szakaszban tárgyalt decentralizált minta. A második, amely néhány jelentős kereskedelmi termékben jelenik meg, a nagy léptékű Menedzser Minta: a Kimi K2.5-tel bemutatott Agent Swarm fő Ügynöke dinamikusan hoz létre több száz, párhuzamosan dolgozó al-ügynököt, miközben a „mikor és hány részre bontson” orkesztrációs döntéseit párhuzamos-Ügynökös megerősítéses tanulással közvetlenül a modellbe tanítják. A K3 ezt külön modellszintként folytatja, és a hozzá tartozó párhuzamos-Ügynökös tanítási sandbox, az AgentEnv nyílt forráskódúvá vált.[^ch10-kimi-swarm] Az Anthropic többügynökös kutatási rendszere és a Manus Wide Research megoldása ugyanebbe az orchestrator-worker csillagtopológiába tartozik. Reméljük, hogy a könyv elolvasása után az olvasó át tud látni az elnevezéseken, és első elvekből kiindulva képes elemezni a többügynökös rendszereket.
+
+[^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. A GTC 2026 rendezvényen közölték, hogy a párhuzamos al-ügynökök felső határa 300-ra nőtt. Az AgentEnv a Moonshot AI és a KVCache.ai együttműködésében nyílt forráskódúvá tett Ügynök-tanítási sandbox, amelyet 2026 júliusában, a Kimi K3-mal együtt adtak ki.
 
 ### Szervezetközi együttműködés: Az A2A protokoll
 
