@@ -59,3 +59,18 @@ def test_numeric_tests_unchanged(tmp_path):
     _write_csv(path, "12")
     env = ReportingEnvironment(path)
     assert env.rows[0]["tests"] == 12
+
+
+def test_reporting_environment_call_null_arguments(tmp_path):
+    """JSON null tool arguments should behave like an empty object."""
+    import pytest
+
+    path = tmp_path / "ok.csv"
+    _write_csv(path, "12")
+    env = ReportingEnvironment(path)
+    with pytest.raises(TypeError) as null_exc:
+        env.call("calculate_test_positivity", None)
+    with pytest.raises(TypeError) as empty_exc:
+        env.call("calculate_test_positivity", {})
+    assert "mapping" not in str(null_exc.value)
+    assert str(null_exc.value) == str(empty_exc.value)
