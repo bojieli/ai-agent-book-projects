@@ -1,15 +1,15 @@
 # AI Agent'ları Derinlemesine Anlamak: Tasarım İlkeleri ve Mühendislik Pratiği
 
-[![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-12%20dil-informational.svg)](#-e-kitap)
+[![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-13%20dil-informational.svg)](#-e-kitap)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 > 📥 **[PDF / EPUB indir](#-e-kitap)** (önerilir) — PDF / EPUB sürümleri en iyi okuma deneyimini sunar; kitabı [çevrimiçi](https://bojieli.github.io/ai-agent-book/) da okuyabilirsiniz.
 
 **Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **93 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
 
-| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **12 dil**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **13 dil**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 E-Kitap
@@ -31,11 +31,10 @@
 
 Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/İspanyolca/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe/Korece sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) klasörlerinde bulunur.
 
-Birleşik derleme betiği Çince, İngilizce, İspanyolca, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca, Türkçe ve Korece için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
-
 <details>
-<summary><b>🔧 PDF'i kendiniz derlemek mi istiyorsunuz?</b> (pandoc / xelatex / ElegantBook gerektirir)</summary>
+<summary><b>🔧 PDF / EPUB'ı kendiniz derlemek mi istiyorsunuz?</b> (PDF için pandoc / xelatex / ElegantBook gereklidir)</summary>
 
+- **EPUB**: Birleşik derleme betiğini kullanın; bkz. [EPUB derleme talimatları](../../EPUB.md)
 - **Metin kaynağı**: `book-tr/introduction.tr.md` (giriş), `book-tr/chapter1.tr.md` ~ `book-tr/chapter10.tr.md` (Bölüm 1–10), `book-tr/afterword.tr.md` (son söz).
 - **Derleme**: pandoc, xelatex, ElegantBook belge sınıfı ve gerekli fontları kurduktan sonra çalıştırın
 

@@ -1,15 +1,15 @@
 # Agentes de IA en Profundidad: Principios de Diseño y Práctica de Ingeniería
 
-[![PDF](https://img.shields.io/badge/PDF-descargar-success.svg)](#-libro-electrónico) [![Leer en línea](https://img.shields.io/badge/🌐_Leer_en_línea-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licencia](https://img.shields.io/badge/licencia-Apache--2.0-blue.svg)](../../LICENSE) [![Idiomas](https://img.shields.io/badge/traducciones-12%20idiomas-informational.svg)](#-libro-electrónico)
+[![PDF](https://img.shields.io/badge/PDF-descargar-success.svg)](#-libro-electrónico) [![Leer en línea](https://img.shields.io/badge/🌐_Leer_en_línea-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licencia](https://img.shields.io/badge/licencia-Apache--2.0-blue.svg)](../../LICENSE) [![Idiomas](https://img.shields.io/badge/traducciones-13%20idiomas-informational.svg)](#-libro-electrónico)
 [![Tendencias en GitHub](https://img.shields.io/badge/GitHub%20Trending-Proyecto%20del%20Día-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · Español ← actual · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · Español ← actual · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
 > 📥 **[Descargar PDF / EPUB](#-libro-electrónico)** (recomendado) — las ediciones en PDF / EPUB ofrecen la mejor experiencia de lectura; también puedes [leer en línea](https://bojieli.github.io/ai-agent-book/) (conmutador de idiomas, árbol de capítulos desplegable, búsqueda de texto completo, recompilado automáticamente en cada push a main).
 
 **Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **94 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
 
-| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **94 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **12 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **94 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **13 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 Libro electrónico
@@ -31,11 +31,10 @@
 
 El código fuente en chino está en [`book/`](../../book/); las versiones en inglés, español, árabe, chino tradicional (Taiwán), ruso, tamil, vietnamita, japonés, turco y coreano son contribuciones de la comunidad (pueden ir por detrás del original en chino), ubicadas en [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/) y [`book-ko/`](../../book-ko/) respectivamente.
 
-El generador compartido produce ediciones EPUB 3 para chino simplificado, inglés, español, árabe, chino tradicional (Taiwán), ruso, tamil, vietnamita, japonés, turco y coreano. Consulta las [instrucciones de compilación de EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 ¿Quieres compilar el PDF tú mismo?</b> (requiere pandoc / xelatex / ElegantBook)</summary>
+<summary><b>🔧 ¿Quieres compilar PDF / EPUB tú mismo?</b> (el PDF requiere pandoc / xelatex / ElegantBook)</summary>
 
+- **EPUB**: Usa el generador compartido; consulta las [instrucciones de compilación de EPUB](../../EPUB.md)
 - **Fuente del texto**: `book-es/introduction.es.md` (introducción), `book-es/chapter1.es.md` ~ `book-es/chapter10.es.md` (Capítulos 1–10), `book-es/afterword.es.md` (epílogo)
 - **Compilación**: Instala pandoc, xelatex, la clase de documento ElegantBook y las fuentes necesarias, luego ejecuta:
 
