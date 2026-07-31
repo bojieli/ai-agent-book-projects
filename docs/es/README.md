@@ -31,11 +31,10 @@
 
 El código fuente en chino está en [`book/`](../../book/); las versiones en inglés, español, árabe, chino tradicional (Taiwán), ruso, tamil, vietnamita, japonés, turco y coreano son contribuciones de la comunidad (pueden ir por detrás del original en chino), ubicadas en [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/) y [`book-ko/`](../../book-ko/) respectivamente.
 
-El generador compartido produce ediciones EPUB 3 para chino simplificado, inglés, español, árabe, chino tradicional (Taiwán), ruso, tamil, vietnamita, japonés, turco y coreano. Consulta las [instrucciones de compilación de EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 ¿Quieres compilar el PDF tú mismo?</b> (requiere pandoc / xelatex / ElegantBook)</summary>
+<summary><b>🔧 ¿Quieres compilar PDF / EPUB tú mismo?</b> (el PDF requiere pandoc / xelatex / ElegantBook)</summary>
 
+- **EPUB**: Usa el generador compartido; consulta las [instrucciones de compilación de EPUB](../../EPUB.md)
 - **Fuente del texto**: `book-es/introduction.es.md` (introducción), `book-es/chapter1.es.md` ~ `book-es/chapter10.es.md` (Capítulos 1–10), `book-es/afterword.es.md` (epílogo)
 - **Compilación**: Instala pandoc, xelatex, la clase de documento ElegantBook y las fuentes necesarias, luego ejecuta:
 

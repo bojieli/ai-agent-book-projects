@@ -31,11 +31,10 @@
 
 Chinese text source is in [`book/`](../../book/); English/Spanish/Arabic/Traditional Chinese (Taiwan)/Russian/Tamil/Vietnamese/Japanese/Turkish/Korean versions are community contributions (may lag behind the Chinese original), located in [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) respectively.
 
-The shared builder produces EPUB 3 editions for Simplified Chinese, English, Spanish, Arabic, Traditional Chinese (Taiwan), Russian, Tamil, Vietnamese, Japanese, Turkish, and Korean. See the [EPUB build instructions](../../EPUB.md).
-
 <details>
-<summary><b>🔧 Build the PDF yourself?</b> (requires pandoc / xelatex / ElegantBook)</summary>
+<summary><b>🔧 Build PDF / EPUB yourself?</b> (PDF requires pandoc / xelatex / ElegantBook)</summary>
 
+- **EPUB**: Use the shared builder; see the [EPUB build instructions](../../EPUB.md)
 - **Text source**: `book/introduction.md` (intro), `book/chapter1.md` ~ `book/chapter10.md` (Chapters 1–10), `book/afterword.md` (afterword)
 - **Build**: Install pandoc, xelatex, ElegantBook document class and required fonts, then run
 

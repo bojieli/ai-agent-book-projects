@@ -33,11 +33,10 @@
 
 中文正文源码位于 [`book/`](book/)；英文/西班牙语/印度尼西亚语/阿拉伯语/繁體中文（台灣）/俄语/泰米尔/越南语/日语/土耳其语/韩语/匈牙利语版本为社区贡献（可能滞后于中文原版），分别位于 [`book-en/`](book-en/)、[`book-es/`](book-es/)、[`book-id/`](book-id/)、[`book-ar/`](book-ar/)、[`book-zhtw/`](book-zhtw/)、[`book-ru/`](book-ru/)、[`book-ta/`](book-ta/)、[`book-vi/`](book-vi/)、[`book-ja/`](book-ja/)、[`book-tr/`](book-tr/)、[`book-ko/`](book-ko/)、[`book-hu/`](book-hu/)。
 
-可使用统一的构建脚本生成中文、英文、西班牙语、印度尼西亚语、阿拉伯语、繁體中文（台灣）、俄语、泰米尔语、越南语、日语、土耳其语、韩语和匈牙利语 EPUB 3 电子书。请参阅 [EPUB 构建说明](EPUB.md)。
-
 <details>
-<summary><b>🔧 想自行编译 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>
+<summary><b>🔧 想自行编译 PDF / EPUB？</b>（PDF 需 pandoc / xelatex / ElegantBook）</summary>
 
+- **EPUB**：使用统一的构建脚本，详情请参阅 [EPUB 构建说明](EPUB.md)
 - **正文源码**：`book/introduction.md`（引言）、`book/chapter1.md` ~ `book/chapter10.md`（第一至第十章）、`book/afterword.md`（后记）
 - **编译**：安装 pandoc、xelatex、ElegantBook 文档类与相关字体后，运行
 

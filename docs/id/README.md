@@ -30,11 +30,10 @@
 
 Sumber naskah Bahasa Indonesia berada di [`book-id/`](../../book-id/). Edisi ini merupakan terjemahan komunitas dan mungkin tertinggal dari naskah asli berbahasa Tionghoa.
 
-Pembuat EPUB bersama mendukung Bahasa Indonesia. Lihat [petunjuk build EPUB](../../EPUB.md).
-
 <details>
-<summary><b>🔧 Ingin membuat PDF sendiri?</b> (memerlukan pandoc, XeLaTeX, ElegantBook, dan librsvg)</summary>
+<summary><b>🔧 Ingin membuat PDF / EPUB sendiri?</b> (PDF memerlukan pandoc, XeLaTeX, ElegantBook, dan librsvg)</summary>
 
+- **EPUB**: Gunakan pembuat bersama; lihat [petunjuk build EPUB](../../EPUB.md)
 - **Sumber teks**: `book-id/introduction.md`, `book-id/chapter1.md` sampai `book-id/chapter10.md`, dan `book-id/afterword.md`.
 - **Build**:
 

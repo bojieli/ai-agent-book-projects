@@ -31,11 +31,10 @@
 
 중국어 원문은 [`book/`](../../book/)에 있으며, 한국어판은 [`book-ko/`](../../book-ko/)에 있습니다. 다른 언어판은 각 언어 디렉터리에 있는 커뮤니티 번역으로, 중국어 원문보다 갱신이 늦을 수 있습니다.
 
-공통 빌더는 한국어를 포함한 모든 판본의 EPUB 3 전자책을 생성합니다. 자세한 내용은 [EPUB 빌드 안내](../../EPUB.md)를 참고하세요.
-
 <details>
-<summary><b>🔧 PDF를 직접 빌드하려면?</b> (pandoc / xelatex / ElegantBook 필요)</summary>
+<summary><b>🔧 PDF / EPUB를 직접 빌드하려면?</b> (PDF는 pandoc / xelatex / ElegantBook 필요)</summary>
 
+- **EPUB**: 공통 빌더를 사용합니다. 자세한 내용은 [EPUB 빌드 안내](../../EPUB.md)를 참고하세요
 - **본문 소스**: `book-ko/introduction.ko.md`, `book-ko/chapter1.ko.md` ~ `book-ko/chapter10.ko.md`, `book-ko/afterword.ko.md`
 - **빌드**: pandoc, xelatex, ElegantBook 문서 클래스와 Noto CJK KR 글꼴을 설치한 뒤 다음을 실행합니다.
 

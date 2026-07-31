@@ -31,11 +31,10 @@
 
 Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/İspanyolca/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe/Korece sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) klasörlerinde bulunur.
 
-Birleşik derleme betiği Çince, İngilizce, İspanyolca, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca, Türkçe ve Korece için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
-
 <details>
-<summary><b>🔧 PDF'i kendiniz derlemek mi istiyorsunuz?</b> (pandoc / xelatex / ElegantBook gerektirir)</summary>
+<summary><b>🔧 PDF / EPUB'ı kendiniz derlemek mi istiyorsunuz?</b> (PDF için pandoc / xelatex / ElegantBook gereklidir)</summary>
 
+- **EPUB**: Birleşik derleme betiğini kullanın; bkz. [EPUB derleme talimatları](../../EPUB.md)
 - **Metin kaynağı**: `book-tr/introduction.tr.md` (giriş), `book-tr/chapter1.tr.md` ~ `book-tr/chapter10.tr.md` (Bölüm 1–10), `book-tr/afterword.tr.md` (son söz).
 - **Derleme**: pandoc, xelatex, ElegantBook belge sınıfı ve gerekli fontları kurduktan sonra çalıştırın
 

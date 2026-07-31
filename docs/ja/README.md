@@ -27,11 +27,11 @@
 
 中国語の本文ソースは [`book/`](../../book/) にあります。英語/スペイン語/アラビア語/繁体字中国語（台湾）/ロシア語/タミル語/ベトナム語/日本語/トルコ語/韓国語版はコミュニティによる貢献であり（中国語原版より遅れる場合があります）、それぞれ [`book-en/`](../../book-en/)、[`book-es/`](../../book-es/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/)、[`book-tr/`](../../book-tr/)、[`book-ko/`](../../book-ko/) にあります。
 
-共通のビルドスクリプトで、簡体字中国語、英語、スペイン語、アラビア語、繁体字中国語（台湾）、ロシア語、タミル語、ベトナム語、日本語、トルコ語、韓国語の EPUB 3 版を生成できます。[EPUB ビルド手順](../../EPUB.md) を参照してください。アラビア語 PDF は `cd book-ar && bash build_pdf.sh` でビルドできます。
-
 <details>
-<summary><b>🔧 自分で PDF をビルドしますか？</b>（pandoc / xelatex / ElegantBook が必要）</summary>
+<summary><b>🔧 自分で PDF / EPUB をビルドしますか？</b>（PDF には pandoc / xelatex / ElegantBook が必要）</summary>
 
+- **EPUB**: 共通のビルドスクリプトを使用します。[EPUB ビルド手順](../../EPUB.md) を参照してください
+- **アラビア語 PDF**: `cd book-ar && bash build_pdf.sh` でビルドできます
 - **本文ソース**: `book/introduction.md`（引言）、`book/chapter1.md` ～ `book/chapter10.md`（第1〜10章）、`book/afterword.md`（後記）
 - **ビルド**: pandoc、xelatex、ElegantBook ドキュメントクラスと必要なフォントをインストールしてから、次を実行します
 
