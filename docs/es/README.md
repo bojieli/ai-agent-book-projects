@@ -7,9 +7,9 @@
 
 > 📥 **[Descargar PDF / EPUB](#-libro-electrónico)** (recomendado) — las ediciones en PDF / EPUB ofrecen la mejor experiencia de lectura; también puedes [leer en línea](https://bojieli.github.io/ai-agent-book/) (conmutador de idiomas, árbol de capítulos desplegable, búsqueda de texto completo, recompilado automáticamente en cada push a main).
 
-**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **93 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
+**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **94 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
 
-| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **93** proyectos complementarios (70+ independientes) | 🌐 **11 idiomas**: CN / EN / ES / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **94 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **11 idiomas**: CN / EN / ES / AR / zh-TW / RU / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 Libro electrónico
@@ -58,11 +58,11 @@ El libro se desarrolla en torno a la fórmula central **Agente = LLM + Contexto 
 | 3 | 📚 **Memoria de Usuario y Bases de Conocimiento** | Memoria de usuario entre sesiones + conocimiento externo: memoria de usuario, RAG, índices estructurados, grafos de conocimiento | [Leer](../../book-es/chapter3.es.md) | [14](../../chapter3/README.es.md) |
 | 4 | 🛠️ **Herramientas** | Las herramientas son las manos del Agente: protocolo MCP, herramientas de percepción/ejecución/colaboración, Agentes asíncronos orientados a eventos, descubrimiento activo de herramientas | [Leer](../../book-es/chapter4.es.md) | [7](../../chapter4/README.es.md) |
 | 5 | 💻 **Coding Agent y Generación de Código** | El código es una "herramienta para crear nuevas herramientas"; panorama completo de un Coding Agent de grado de producción | [Leer](../../book-es/chapter5.es.md) | [12](../../chapter5/README.es.md) |
-| 6 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter6.es.md) | [12](../../chapter6/README.es.md) |
-| 7 | 🧠 **Post-Entrenamiento de Modelos** | Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra | [Leer](../../book-es/chapter7.es.md) | [16](../../chapter7/README.es.md) |
+| 6 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter6.es.md) | [17](../../chapter6/README.es.md) |
+| 7 | 🧠 **Post-Entrenamiento de Modelos** | Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra | [Leer](../../book-es/chapter7.es.md) | [18](../../chapter7/README.es.md) |
 | 8 | 🔄 **Auto-Evolución del Agente** | Crecimiento sin cambiar pesos: aprendizaje a partir de la experiencia, de usuario de herramientas a creador de herramientas | [Leer](../../book-es/chapter8.es.md) | [6](../../chapter8/README.es.md) |
-| 9 | 🎙️ **Multimodalidad e Interacción en Tiempo Real** | Extensión del texto a la voz, GUI y mundo físico: tres paradigmas de voz, Computer Use, robótica | [Leer](../../book-es/chapter9.es.md) | [7](../../chapter9/README.es.md) |
-| 10 | 🤝 **Colaboración Multi-Agente** | Inteligencia colectiva > individual: marcos de colaboración, compartición/aislamiento de contexto, "Sociedad de Agentes" emergente | [Leer](../../book-es/chapter10.es.md) | [7](../../chapter10/README.es.md) |
+| 9 | 🎙️ **Multimodalidad e Interacción en Tiempo Real** | Extensión del texto a la voz, GUI y mundo físico: tres paradigmas de voz, Computer Use, robótica | [Leer](../../book-es/chapter9.es.md) | [10](../../chapter9/README.es.md) |
+| 10 | 🤝 **Colaboración Multi-Agente** | Inteligencia colectiva > individual: marcos de colaboración, compartición/aislamiento de contexto, "Sociedad de Agentes" emergente | [Leer](../../book-es/chapter10.es.md) | [8](../../chapter10/README.es.md) |
 
 > 💡 **Leer** = leer el texto del capítulo en GitHub (markdown); **N** = número de proyectos complementarios, haz clic para ver el código. Los tipos de proyecto (✅ Independiente / 📖 Reproducción / 🚧 Diseño) se explican en el README de cada capítulo.
 >
