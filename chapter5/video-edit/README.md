@@ -49,7 +49,23 @@ NL request ──► Proposer parses intent (scene + effects)
 ### Run
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 5 environment
+uv sync --locked --python 3.12 --extra ch5
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/video-edit
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # OPENAI_API_KEY (or OPENROUTER_API_KEY fallback)
 python demo.py             # default: "把冲浪的部分剪出来" (full pipeline)
 python demo.py "把滑雪部分剪出来，并加上字幕 Winter"   # custom request
@@ -248,7 +264,23 @@ NL 需求 ──► Proposer 解析意图（目标场景 + 特效）
 ### 运行
 
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 5 章环境
+uv sync --locked --python 3.12 --extra ch5
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch5]"
+
+cd chapter5/video-edit
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # 填入 OPENAI_API_KEY（未配置时设 OPENROUTER_API_KEY 自动改走 OpenRouter）
 python demo.py             # 默认需求"把冲浪的部分剪出来"（完整流程）
 python demo.py "把滑雪部分剪出来，并加上字幕 Winter"   # 自定义需求

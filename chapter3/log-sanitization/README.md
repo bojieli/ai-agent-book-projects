@@ -84,7 +84,22 @@ ollama pull qwen3:0.6b
 
 #### 3. Python deps
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 3 environment
+uv sync --locked --python 3.12 --extra ch3
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch3]"
+
+cd chapter3/log-sanitization
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 ```
 
 ### Usage
@@ -106,6 +121,22 @@ Rule engine alone on built-in samples:
 ```bash
 python regex_sanitizer.py
 ```
+
+#### Offline validation
+
+```bash
+# From the repository root; include dev tools for pytest.
+uv sync --locked --python 3.12 --extra ch3 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter3/log-sanitization
+python -m pytest tests
+python main.py --demo
+python regex_sanitizer.py
+```
+
+`tests/` contains offline regressions for sanitizer rules and LLM-output parsing. `test_loader.py` remains at the project root intentionally: despite its name, it is a support module imported by `main.py`, not a pytest file. The loader debug helper lives at `tests/manual/loader_debug.py`.
 
 #### Local LLM engine
 ```bash
@@ -154,10 +185,11 @@ output/
 1. **regex_sanitizer.py** — offline rule sanitizer  
 2. **samples.py** — offline demo samples  
 3. **config.py** — Ollama model and PII categories  
-4. **test_loader.py** — loads user-memory-evaluation cases  
+4. **test_loader.py** — loads user-memory-evaluation cases (support module, not pytest)
 5. **agent.py** — LLM sanitization via Ollama  
 6. **metrics.py** — metrics collection  
 7. **main.py** — entry / orchestration  
+8. **tests/** — offline pytest regressions plus manual loader debug helper
 
 ### How it works (LLM path)
 
@@ -258,7 +290,22 @@ ollama pull qwen3:0.6b
 
 #### 3. 安装 Python 依赖
 ```bash
-pip install -r requirements.txt
+# 在仓库根目录使用统一的第 3 章环境
+uv sync --locked --python 3.12 --extra ch3
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch3]"
+
+cd chapter3/log-sanitization
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 ```
 
 ### 用法
@@ -280,6 +327,22 @@ python main.py --input app.log -o cleaned.log  # 指定输出文件
 ```bash
 python regex_sanitizer.py
 ```
+
+#### 离线验证
+
+```bash
+# 从仓库根目录开始；pytest 需要 dev 依赖。
+uv sync --locked --python 3.12 --extra ch3 --extra dev
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+
+cd chapter3/log-sanitization
+python -m pytest tests
+python main.py --demo
+python regex_sanitizer.py
+```
+
+`tests/` 包含规则脱敏与 LLM 输出解析的离线回归测试。`test_loader.py` 刻意保留在项目根目录：它虽然以 `test_` 开头，但实际是 `main.py` 导入的用例加载支持模块，不是 pytest 文件。加载器调试助手位于 `tests/manual/loader_debug.py`。
 
 #### 使用本地 LLM 引擎
 ```bash
@@ -328,10 +391,11 @@ output/
 1. **regex_sanitizer.py**：离线规则脱敏（正则 + Luhn/身份证校验）  
 2. **samples.py**：离线演示用的代表性 Agent 日志样本  
 3. **config.py**：Ollama 模型与 PII 类别配置  
-4. **test_loader.py**：从 user-memory-evaluation 加载用例  
+4. **test_loader.py**：从 user-memory-evaluation 加载用例（支持模块，不是 pytest）
 5. **agent.py**：基于 Ollama 的 LLM 脱敏逻辑  
 6. **metrics.py**：性能指标采集与报告  
 7. **main.py**：入口与编排  
+8. **tests/**：离线 pytest 回归测试与手动加载器调试助手
 
 ### 工作原理（LLM 路径）
 

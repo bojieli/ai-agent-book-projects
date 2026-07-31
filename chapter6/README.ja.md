@@ -26,7 +26,8 @@
 | 6-10 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-10 の起点。ベンチマークのソースコードではない） |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | 合成 DHIS2 スタイルの集計データに基づき、公衆衛生レポート Agent のツール呼び出し、計算精度、証拠引用、根拠のない主張を客観的に評価する。 |
 
-> `chapter6/android-world/`（ハイフン区切りの命名）はベンチマークのコードではなく、android_world 上での T3A Agent の失敗事例に関する本書の分析ノート（`t3a*.md`）であり、参考読み物として利用できる。
+> バッククォート表記の外部ベンチマークは別途 clone が必要です。[`android-world/`](android-world/)（ハイフン区切り）は本リポジトリ内の **T3A 評価分析ノート**（同ディレクトリの [README](android-world/README.md) を参照）であり、外部の `android_world/` ベンチマークソースとは別パスです。
+
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |

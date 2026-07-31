@@ -69,6 +69,32 @@
 >
 > 📚 இந்தப் புத்தகத்தை எப்படி திறம்பட படிப்பது? **[கற்றல் பரிந்துரைகள்](LEARNING.md)** பார்க்கவும்.
 
+## 💻 துணை சோதனைகளை இயக்குதல்
+
+பொதுவான அடிப்படை பதிப்பு **Python 3.10+**. களஞ்சியத்தின் மூல அடைவிலிருந்து அத்தியாயம் வாரியாக சார்புகளை நிறுவவும்; வேறு அத்தியாயத்திற்கு `ch1` என்பதை `ch2` முதல் `ch10` வரை மாற்றவும்:
+
+```bash
+# பரிந்துரை: மீண்டும் உருவாக்கக்கூடிய அத்தியாய சூழலுக்கு commit செய்யப்பட்ட uv.lock-ஐ பயன்படுத்தவும்
+uv sync --locked --extra ch1
+
+# uv இல்லையெனில்: pyproject.toml-இலிருந்து pip மூலம் மீண்டும் resolve செய்யவும்
+python -m pip install -e ".[ch1]"
+```
+
+மாதிரியை அழைக்கும் சோதனையை இயக்கும் முன், அந்தச் சோதனையின் README-ஐப் பின்பற்றி credential-களை அமைக்கவும். Root-level configuration ஆதரிக்கும் சோதனைகள் `.env.example`-ஐ `.env` ஆக copy செய்து குறைந்தது ஒரு provider key-ஐ பயன்படுத்தலாம்; சில சோதனைகளுக்கு அருகிலுள்ள `.env` அல்லது exported environment variable-கள் தேவை. அந்தச் சோதனையின் README அல்லது CLI `ollama`-வை தெளிவாகப் பட்டியலிட்டால் மட்டுமே local Ollama-வை `--provider ollama` உடன் பயன்படுத்தவும்.
+
+நிறுவிய பிறகு களஞ்சியத்தின் மூல அடைவிலிருந்து சோதனையை இயக்கலாம்:
+
+```bash
+uv run python chapter1/context/main.py
+# pip மூலம் நிறுவியிருந்தால்: python chapter1/context/main.py
+```
+
+- `uv` நிறுவ [அதிகாரப்பூர்வ வழிகாட்டியைப்](https://docs.astral.sh/uv/getting-started/installation/) பார்க்கவும். `pip` தொடர்ந்து ஆதரிக்கப்படுகிறது, ஆனால் lockfile-ஐ பயன்படுத்தாது.
+- மாற்றக் காலத்தில் ஒவ்வொரு சோதனையின் `requirements.txt` தொடர்ந்து செயல்படும்; தனிப்பட்ட திட்டங்கள் மற்றும் சிறப்பு பதிப்பு கட்டுப்பாடுகளுக்கு இது ஏற்றது.
+- `all` என்பது CPU-க்கு ஏற்ற பரந்த தொகுப்பு; எல்லா சோதனைகளும் அதில் அடங்காது. `uv sync` ஒவ்வொரு முறையும் தற்போதைய தேர்வுடன் exact sync செய்கிறது, எனவே special extra-களை ஒரே கட்டளையில் சேர்க்கவும்: `uv sync --locked --extra ch2 --extra vllm` அல்லது `uv sync --locked --extra ch7 --extra unsloth`; pip-க்கு `python -m pip install -e ".[ch2,vllm]"`.
+- browser, CUDA, FFmpeg, Ollama, Playwright browser மற்றும் வெளிப்புற களஞ்சியங்கள் போன்ற system dependency-களுக்கு ஒவ்வொரு சோதனையின் README-ஐ பின்பற்றவும். சில browser மற்றும் memory சோதனைகளுக்கு Python 3.11+ தேவை; அத்தியாயம் 8-இல் சேர்க்கப்பட்ட சில third-party component-களுக்கு Python 3.12+ தேவை.
+
 ## 🔑 API விசைகள்
 
 பல தளங்களில் API விசை பெற பரிந்துரைக்கப்படுகிறது. மாதிரி தேர்வுக்கு [இந்த வழிகாட்டி](https://01.me/2025/07/llm-api-setup/).
@@ -113,7 +139,7 @@ git clone https://github.com/bojieli/AdaptThink.git                    chapter7/
 git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
@@ -121,9 +147,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # அத்தியாயம் 9 · உலாவி தானியக்கம் & Claude எடுத்துக்காட்டுகள்
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
 
 # அத்தியாயம் 10 · இரட்டை-ஏஜென்ட் கட்டமைப்பு (TalkAct-ஆக தனியாக உருவாகியது) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

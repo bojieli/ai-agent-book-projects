@@ -151,7 +151,7 @@ def _client() -> OpenAI:
     if not api_key:
         raise SystemExit(
             "❌ 未检测到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底）。请先 `cp env.example .env` 并填入有效的 "
-            "OpenAI API Key（或 `export OPENAI_API_KEY=sk-...` / `export OPENROUTER_API_KEY=...`）后再运行。"
+            "OpenAI API Key（或 `export OPENAI_API_KEY=your-openai-api-key` / `export OPENROUTER_API_KEY=...`）后再运行。"
         )
     # timeout + max_retries：单次网络抖动/SSL 中断会自动重试，而不是让整条流水线崩溃。
     return OpenAI(

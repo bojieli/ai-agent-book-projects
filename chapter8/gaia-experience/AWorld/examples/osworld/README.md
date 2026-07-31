@@ -93,7 +93,7 @@ The `run_multienv_aworldAgent.py` script is configured via command-line argument
 | --------------------- | ----- | ------------------------------------------------------------------- | ------------------------------------- |
 | `--model`             | str   | The primary language model for task planning and action generation. | `"openai/o3"`                         |
 | `--model_provider`    | str   | The provider of the LLM service.                                    | `"open_router"`                       |
-| `--model_api_key`     | str   | API key for the LLM service.                                        | `"sk-or-v1-..."`                      |
+| `--model_api_key`     | str   | API key for the LLM service.                                        | `"your-openrouter-api-key"`                      |
 | `--ground_model`      | str   | The specific name of the grounding model.                           | `"bytedance/ui-tars-1.5-7b"`          |
 | `--ground_provider`   | str   | The provider for the visual grounding model.                        | `"open_router"`                       |
 | `--path_to_vm`        | str   | The local file path to your VMware virtual machine `.vmx` file.     | `"/path/to/your/vm/Ubuntu.vmx"`       |

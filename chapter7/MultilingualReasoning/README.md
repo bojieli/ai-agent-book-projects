@@ -39,17 +39,32 @@ This project addresses this issue by:
 ### Other Requirements
 
 - CUDA: 12.8 or higher
-- Python: 3.8+
+- Python: 3.12 for the root `ch7` install
 - Storage: At least 100 GB (for model and checkpoints)
 
 ## Installing Dependencies
 
 ```bash
-# Install PyTorch (CUDA 12.8)
-pip install torch --index-url https://download.pytorch.org/whl/cu128
+# From the repository root: use the shared Chapter 7 environment
+uv sync --locked --python 3.12 --extra ch7
 
-# Install other dependencies
-pip install "trl>=0.20.0" "peft>=0.17.0" "transformers>=4.55.0" trackio datasets accelerate
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch7]"
+
+cd chapter7/MultilingualReasoning
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
+# If your GPU environment requires a CUDA 12.8-specific PyTorch wheel,
+# install the platform-matched wheel in that GPU environment.
+# python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
 ```
 
 ## Quick Start
@@ -589,17 +604,32 @@ This project follows the corresponding open-source license. Please comply with O
 ### 其他要求
 
 - CUDA: 12.8 或更高版本
-- Python: 3.8+
+- Python: 3.12（根目录 `ch7` 安装）
 - 存储空间: 至少 100GB（用于模型和检查点）
 
 ## 安装依赖
 
 ```bash
-# 安装 PyTorch（CUDA 12.8）
-pip install torch --index-url https://download.pytorch.org/whl/cu128
+# 在仓库根目录使用统一的第 7 章环境
+uv sync --locked --python 3.12 --extra ch7
 
-# 安装其他依赖
-pip install "trl>=0.20.0" "peft>=0.17.0" "transformers>=4.55.0" trackio datasets accelerate
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch7]"
+
+cd chapter7/MultilingualReasoning
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
+# 如果 GPU 环境需要 CUDA 12.8 专用 PyTorch wheel，
+# 请在该 GPU 环境中安装与平台匹配的 wheel。
+# python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
 ```
 
 ## 快速开始

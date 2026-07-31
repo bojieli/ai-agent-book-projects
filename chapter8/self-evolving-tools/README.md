@@ -51,7 +51,25 @@ There is also a **"pre-save validation" gate** (corresponding to the "Test" step
 ## Running
 
 ```bash
-pip install -r requirements.txt
+# From the repository root: use the shared Chapter 8 environment
+uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS needs macOS 14+ for the locked bitsandbytes wheel;
+# older macOS users should use the single-project compatibility path below.
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/self-evolving-tools
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # Fill in OPENAI_API_KEY (default model gpt-5.6-luna)
 # Fallback: if no OPENAI_API_KEY but OPENROUTER_API_KEY is set, automatically switch to OpenRouter (maps to openai/gpt-5.6-luna, etc.)
 python demo.py             # Run the two default "evolution + reuse" tasks (requires API + internet)
@@ -204,7 +222,25 @@ This experiment **executes model-generated code** and **installs third-party pac
 ## 运行
 
 ```bash
-pip install -r requirements.txt
+# 从仓库根目录开始：使用共享的第 8 章环境
+uv sync --locked --python 3.12 --extra ch8
+# Apple Silicon macOS 需要 macOS 14+（锁文件中的 bitsandbytes wheel 要求）；
+# 更早的 macOS 请使用下方单项目兼容路径。
+
+# 切换目录前先激活环境：
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch8]"
+
+cd chapter8/self-evolving-tools
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
+
 cp env.example .env        # 填入 OPENAI_API_KEY（默认模型 gpt-5.6-luna）
 # 兜底：若无 OPENAI_API_KEY 但设置了 OPENROUTER_API_KEY，自动改走 OpenRouter（映射到 openai/gpt-5.6-luna 等）
 python demo.py             # 跑「进化 + 复用」两个默认任务（需 API + 联网）

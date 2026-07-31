@@ -68,6 +68,26 @@ sh run-docker.sh
 
 Monitor the terminal output for any errors during startup.
 
+Generate a local bearer token and copy the printed value into `<local-debug-jwt>` below. If you changed `MCP_GATEWAY_TOKEN_SECRET` in `virtualpc-mcp/docker-compose.yaml`, export the same value before running this command.
+
+```bash
+python - <<'PY'
+import base64, hashlib, hmac, json, os, time
+
+def part(value):
+    raw = json.dumps(value, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+signing_input = ".".join([
+    part({"alg": "HS256", "typ": "JWT"}),
+    part({"app": "local_debug", "version": 1, "time": time.time()}),
+])
+secret = os.getenv("MCP_GATEWAY_TOKEN_SECRET", "123321").encode()
+signature = hmac.new(secret, signing_input.encode(), hashlib.sha256).digest()
+print(f"{signing_input}.{base64.urlsafe_b64encode(signature).rstrip(b'=').decode()}")
+PY
+```
+
 **Step 3: Connect to VirtualPC MCP Server**
 
 Use the following configuration to connect to the VirtualPC MCP Server:
@@ -78,7 +98,7 @@ Use the following configuration to connect to the VirtualPC MCP Server:
         "type": "streamable-http",
         "url": "http://localhost:8000/mcp",
         "headers": {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOiJsb2NhbF9kZWJ1ZyIsInZlcnNpb24iOjEsInRpbWUiOjE3NTYzOTUzNzIuMTg0MDc0NH0.SALKn1dxEzsdX82-e3jAJANAo_kE4NO4192Epw5rYmQ",
+            "Authorization": "Bearer <local-debug-jwt>",
             "MCP_SERVERS": "readweb-server,browser-server"
         },
         "timeout": 6000,
@@ -175,4 +195,3 @@ We welcome contributions from the community! Please refer to our contributing gu
 [license-url]: https://opensource.org/licenses/MIT
 
 </div>
-

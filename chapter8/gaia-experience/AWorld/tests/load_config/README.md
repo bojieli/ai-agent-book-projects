@@ -13,8 +13,8 @@ When a field value is exactly a single placeholder like `${vars.DEFAULT_TEMPERAT
 
 ## Quick Start
 1) Set your environment variables
-   - PowerShell: `$env:OPENAI_API_KEY="sk-..." ; $env:OPENROUTER_API_KEY="sk-..."`
-   - macOS/Linux: `export OPENAI_API_KEY="sk-..." ; export OPENROUTER_API_KEY="sk-..."`
+   - PowerShell: `$env:OPENAI_API_KEY="your-openai-api-key" ; $env:OPENROUTER_API_KEY="your-openrouter-api-key"`
+   - macOS/Linux: `export OPENAI_API_KEY="your-openai-api-key" ; export OPENROUTER_API_KEY="your-openrouter-api-key"`
 2) Run the example
    - `python examples/load_config/load_from_yaml.py`
 
@@ -123,4 +123,3 @@ Note: Anchors are structural reuse (not string interpolation). Use `${vars.KEY}`
   - Load agents and build a swarm based on the `swarm` section (or default workflow)
 
 This loader reuses the existing Pydantic configuration models under `aworld.config.conf` and does not add new dependencies.
-

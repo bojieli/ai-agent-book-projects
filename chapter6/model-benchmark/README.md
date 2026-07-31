@@ -92,8 +92,22 @@ If `usage.completion_tokens` is unavailable, token count falls back to chunk-cou
 ## Run
 
 ```bash
+# From the repository root: use the shared Chapter 6 environment
+uv sync --locked --python 3.12 --extra ch6
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/model-benchmark
-pip install -r requirements.txt
+
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 cp env.example .env
 # or export OPENAI_API_KEY=... MOONSHOT_API_KEY=... ARK_API_KEY=...
@@ -246,8 +260,22 @@ cached input / output 单价为空，完成审计都会明确失败，而不会�
 ## 运行
 
 ```bash
+# 在仓库根目录使用统一的第 6 章环境
+uv sync --locked --python 3.12 --extra ch6
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch6]"
+
 cd chapter6/model-benchmark
-pip install -r requirements.txt
+
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
 # 配置 key：只需填手上有的，未设置的提供商会自动跳过
 cp env.example .env        # 然后编辑 .env

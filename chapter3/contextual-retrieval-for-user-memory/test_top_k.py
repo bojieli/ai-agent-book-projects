@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Set dummy API key
-os.environ["KIMI_API_KEY"] = "sk-test"
+os.environ["KIMI_API_KEY"] = "test-kimi-key"
 
 from config import IndexConfig
 from indexer import MemoryIndexer

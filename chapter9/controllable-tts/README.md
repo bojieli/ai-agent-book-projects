@@ -23,7 +23,26 @@ python build_reference_library.py
 ## 2. 三配置对照
 
 ```bash
-python demo.py
+# From the repository root: use the shared Chapter 9 core environment
+uv sync --locked --python 3.12 --extra ch9
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch9]"
+
+cd chapter9/controllable-tts
+
+# Install this experiment's Fish SDK runtime dependencies.
+python -m pip install -r requirements.txt
+
+# Requires ffmpeg/ffprobe installed on the system
+cp env.example .env                       # Fill in FISH_API_KEY and reference settings
+python demo.py                            # Generates output/*.mp3
 ```
 
 同一文本生成：
@@ -37,6 +56,24 @@ python demo.py
 ## 实际验证
 
 2026-07-29 使用真实 Fish API 构建了 24 条参考音并运行 A/B/C 三组：
+
+## Validation
+
+The regression tests are offline: they validate marker parsing and empty-segment handling without calling TTS APIs or ffmpeg concat.
+
+```bash
+# From the repository root, include dev tools for pytest
+uv sync --locked --python 3.12 --extra ch9 --extra dev
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+cd chapter9/controllable-tts
+python -m pytest -q
+```
 
 | 配置 | ffprobe 时长 |
 | --- | ---: |

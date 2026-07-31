@@ -5,7 +5,7 @@ SAME task and prints the difference (context tokens handed off, extra
 preparation cost, whether private data leaked, and each sub-agent's result).
 
 Run:
-    export OPENAI_API_KEY=sk-...        # or OPENROUTER_API_KEY (default model: gpt-5.6-luna)
+    export OPENAI_API_KEY=your-openai-api-key        # or OPENROUTER_API_KEY (default model: gpt-5.6-luna)
     python subagent_comparison.py
 """
 

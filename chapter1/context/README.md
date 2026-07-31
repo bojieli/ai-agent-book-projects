@@ -69,7 +69,7 @@ This project implements a context-aware AI agent with multiple tools (PDF parsin
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.10+
 - API key for one of the supported providers:
   - **SiliconFlow**: Get from [SiliconFlow](https://siliconflow.cn)
   - **Doubao (ByteDance)**: Get from [Volcano Engine](https://www.volcengine.com/)
@@ -93,11 +93,23 @@ These samples are designed to showcase the agent's capabilities and the impact o
 #### 1. Installation
 
 ```bash
-# Clone the repository
+# Recommended from the repository root: use the shared Chapter 1 environment
+uv sync --locked --extra ch1
+
+# Activate it before changing directories:
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Windows cmd: .venv\Scripts\activate.bat
+
+# pip fallback when uv is not installed:
+# python -m pip install -e ".[ch1]"
+
+# Enter this experiment directory for the commands below
 cd chapter1/context
 
-# Install dependencies
-pip install -r requirements.txt
+# Single-project compatibility path, still supported during migration:
+# python -m pip install -r requirements.txt
 
 # Copy and configure environment
 cp env.example .env
@@ -133,7 +145,7 @@ python main.py --model doubao-seed-1-6-thinking-250715
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
 # anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```
@@ -143,7 +155,7 @@ python main.py --provider openrouter # or use OpenRouter directly
 ```bash
 # Quick test of Kimi K3 model
 export MOONSHOT_API_KEY=your_key_here
-python test_kimi.py
+python tests/manual/check_kimi.py
 
 # Use Kimi in main script
 python main.py --provider kimi --mode interactive
@@ -153,8 +165,8 @@ python main.py --provider kimi --mode ablation
 
 # Quick test of DeepSeek V4
 export DEEPSEEK_API_KEY=your_key_here
-python test_deepseek.py
-# or: python quick_test_deepseek.py
+python tests/manual/check_deepseek.py
+# or: python tests/manual/check_deepseek_quick.py
 
 # Use DeepSeek in main script / ablation study
 python main.py --provider deepseek --mode interactive
@@ -172,7 +184,7 @@ python main.py --mode interactive --provider siliconflow
 
 # In interactive mode, you can:
 # - Type 'samples' to see pre-defined tasks
-# - Type 'sample 3' to test PDF parsing
+# - Type 'sample 2' to test PDF parsing
 # - Type 'providers' to list available providers
 # - Type 'provider kimi' to switch providers
 # - Type 'status' to see current configuration
@@ -306,6 +318,14 @@ python main.py --mode ablation --cases 3
 
 The console prints two tables: a per-run **ablation study results** table and a **comparison matrix** (context mode x case) for reading the effect of each component at a glance.
 
+#### Automated Regression Tests
+
+```bash
+python -m pytest tests
+```
+
+Manual provider/API smoke scripts live under `tests/manual/` and require the corresponding API keys.
+
 ### Understanding Results
 
 #### Performance Metrics
@@ -395,7 +415,7 @@ result = agent.execute_task("""
 
 ```bash
 python create_sample_pdf.py
-# Creates test_pdfs/ directory with sample financial reports
+# Creates fixtures/pdfs/ with sample financial reports
 ```
 
 #### Configuration
@@ -412,13 +432,20 @@ export LOG_LEVEL=DEBUG
 
 ```
 context/
-├── agent.py              # Core agent implementation + context modes
+├── README.md             # This file
 ├── main.py               # Single CLI entry point (single / ablation / interactive)
+├── agent.py              # Core agent implementation + context modes
 ├── config.py             # Configuration management
 ├── create_sample_pdf.py  # PDF generation utility
+├── fixtures/
+│   └── pdfs/             # Sample PDFs used by local demos/tests
+├── tests/
+│   ├── test_agent.py
+│   ├── test_code_interpreter.py
+│   ├── test_malformed_tool_json.py
+│   └── manual/           # Provider/API smoke scripts; require real keys
 ├── requirements.txt      # Dependencies
-├── env.example           # Environment template
-└── README.md             # This file
+└── env.example           # Environment template
 ```
 
 > Note: the ablation study lives in `main.py` (`AblationTestSuite`), run via `python main.py --mode ablation`. There is no separate `ablation_tests.py`.
@@ -500,7 +527,7 @@ context/
 
 ### 前置条件
 
-- Python 3.8+
+- Python 3.10+
 - 任一支持提供商的 API Key：
   - **SiliconFlow**：[SiliconFlow](https://siliconflow.cn)
   - **Doubao（字节）**：[火山引擎](https://www.volcengine.com/)
@@ -524,15 +551,27 @@ context/
 #### 1. 安装
 
 ```bash
-# Clone the repository
+# 推荐在仓库根目录使用统一的第 1 章环境
+uv sync --locked --extra ch1
+
+# 切换目录前先激活环境：
+# macOS/Linux：
+source .venv/bin/activate
+# Windows PowerShell：.\.venv\Scripts\Activate.ps1
+# Windows cmd：.venv\Scripts\activate.bat
+
+# 未安装 uv 时可用 pip 兜底：
+# python -m pip install -e ".[ch1]"
+
+# 进入本实验目录，后续命令都在这里运行
 cd chapter1/context
 
-# Install dependencies
-pip install -r requirements.txt
+# 迁移期间仍支持单项目兼容路径：
+# python -m pip install -r requirements.txt
 
-# Copy and configure environment
+# 复制并配置环境变量
 cp env.example .env
-# Edit .env and add your API key (SILICONFLOW_API_KEY or ARK_API_KEY)
+# 编辑 .env 并填入你的 API Key（SILICONFLOW_API_KEY 或 ARK_API_KEY）
 ```
 
 #### 2. 配置提供商
@@ -564,7 +603,7 @@ python main.py --model doubao-seed-1-6-thinking-250715
 # model id is mapped automatically (bare gpt-*/o1-* -> openai/*, claude-* ->
 # anthropic/*, deepseek-* -> deepseek/*, other native ids -> OPENROUTER_MODEL
 # or openai/gpt-5.6-luna).
-export OPENROUTER_API_KEY=sk-or-v1-your-key-here
+export OPENROUTER_API_KEY=your-openrouter-api-key
 python main.py                       # falls back to OpenRouter when ARK_API_KEY is unset
 python main.py --provider openrouter # or use OpenRouter directly
 ```
@@ -574,7 +613,7 @@ python main.py --provider openrouter # or use OpenRouter directly
 ```bash
 # Quick test of Kimi K3 model
 export MOONSHOT_API_KEY=your_key_here
-python test_kimi.py
+python tests/manual/check_kimi.py
 
 # Use Kimi in main script
 python main.py --provider kimi --mode interactive
@@ -584,8 +623,8 @@ python main.py --provider kimi --mode ablation
 
 # Quick test of DeepSeek V4
 export DEEPSEEK_API_KEY=your_key_here
-python test_deepseek.py
-# or: python quick_test_deepseek.py
+python tests/manual/check_deepseek.py
+# or: python tests/manual/check_deepseek_quick.py
 
 # Use DeepSeek in main script / ablation study
 python main.py --provider deepseek --mode interactive
@@ -603,7 +642,7 @@ python main.py --mode interactive --provider siliconflow
 
 # In interactive mode, you can:
 # - Type 'samples' to see pre-defined tasks
-# - Type 'sample 3' to test PDF parsing
+# - Type 'sample 2' to test PDF parsing
 # - Type 'providers' to list available providers
 # - Type 'provider kimi' to switch providers
 # - Type 'status' to see current configuration
@@ -717,6 +756,14 @@ python main.py --mode ablation --cases 3
 
 控制台会打印两张表：逐次运行的 **ablation study results**，以及 **comparison matrix**（上下文模式 × 用例），便于一眼对比各组件的作用。
 
+#### 自动化回归测试
+
+```bash
+python -m pytest tests
+```
+
+需要真实 API Key 的手动提供商/API 冒烟脚本放在 `tests/manual/`。
+
 ### 结果解读
 
 #### 性能指标
@@ -806,7 +853,7 @@ result = agent.execute_task("""
 
 ```bash
 python create_sample_pdf.py
-# Creates test_pdfs/ directory with sample financial reports
+# Creates fixtures/pdfs/ with sample financial reports
 ```
 
 #### 配置
@@ -823,13 +870,20 @@ export LOG_LEVEL=DEBUG
 
 ```
 context/
+├── README.md             # 本文件
+├── main.py               # 单一 CLI 入口（single / ablation / interactive）
 ├── agent.py              # Core agent implementation + context modes
-├── main.py               # Single CLI entry point (single / ablation / interactive)
 ├── config.py             # Configuration management
 ├── create_sample_pdf.py  # PDF generation utility
+├── fixtures/
+│   └── pdfs/             # 本地 demo/tests 使用的样例 PDF
+├── tests/
+│   ├── test_agent.py
+│   ├── test_code_interpreter.py
+│   ├── test_malformed_tool_json.py
+│   └── manual/           # 需真实 Key 的提供商/API 冒烟脚本
 ├── requirements.txt      # Dependencies
-├── env.example           # Environment template
-└── README.md             # This file
+└── env.example           # Environment template
 ```
 
 > 说明：消融实验逻辑在 `main.py` 的 `AblationTestSuite` 中，通过 `python main.py --mode ablation` 运行，没有单独的 `ablation_tests.py`。

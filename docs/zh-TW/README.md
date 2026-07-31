@@ -68,6 +68,32 @@
 >
 > 📚 如何高效閱讀本書？詳見 **[學習建議](LEARNING.md)**（核心理念、學習路徑、難度分級、實踐建議）。
 
+## 💻 執行配套實驗
+
+專案統一支援 **Python 3.10+**。請在倉庫根目錄按章節安裝依賴；將 `ch1` 替換為 `ch2` ~ `ch10` 即可安裝對應章節：
+
+```bash
+# 推薦：使用提交到倉庫的 uv.lock，取得可重現的章節環境
+uv sync --locked --extra ch1
+
+# 未安裝 uv 時：使用 pip 從 pyproject.toml 重新解析
+python -m pip install -e ".[ch1]"
+```
+
+執行會呼叫模型的實驗前，請依該實驗 README 設定憑證：支援根目錄設定的實驗可複製 `.env.example` 為 `.env` 並填入至少一個 provider key；有些實驗要求在自身目錄放 `.env` 或直接匯出環境變數。只有在實驗 README 或 CLI 明確列出 `ollama` 時，才可啟動本機 Ollama 並加入 `--provider ollama`。
+
+安裝後可從倉庫根目錄執行實驗，例如：
+
+```bash
+uv run python chapter1/context/main.py
+# 使用 pip 安裝時也可直接執行：python chapter1/context/main.py
+```
+
+- `uv` 安裝方法見[官方文件](https://docs.astral.sh/uv/getting-started/installation/)；`pip` 仍受支援，但不會使用鎖定檔。
+- 各實驗現有的 `requirements.txt` 在遷移期間繼續有效，適合只執行單一專案或需要特殊版本約束的情況。
+- `all` 是不含本機訓練堆疊的 CPU 友好組合，並不代表每個實驗；`uv sync` 每次都會精確同步目前選擇，使用特殊 extra 時請合併到同一條指令，例如 `uv sync --locked --extra ch2 --extra vllm` 或 `uv sync --locked --extra ch7 --extra unsloth`；pip 對應為 `python -m pip install -e ".[ch2,vllm]"`。
+- 瀏覽器、CUDA、FFmpeg、Ollama、Playwright 瀏覽器及外部倉庫等系統依賴，請繼續參考各實驗 README。部分瀏覽器和記憶實驗需要 Python 3.11+，第 8 章部分內建第三方元件需要 Python 3.12+。
+
 ## 🔑 API 金鑰
 
 建議申請下面幾個平台的 API Key 方便學習。模型選型可參考 [這篇指南](https://01.me/2025/07/llm-api-setup/)。
@@ -112,7 +138,7 @@ git clone https://github.com/bojieli/AdaptThink.git                    chapter7/
 git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
 git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
 git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"
+git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
 git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
 git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # 實驗 7-14 RLVP 論文程式碼
 git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # 實驗 7-13 視覺-語言-動作 RL
@@ -120,9 +146,9 @@ git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/
 # 第 9 章 · 瀏覽器自動化與 Claude 示例
 git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-8/9-9 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-9; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-10
 
 # 第 10 章 · 雙 Agent 架構（已獨立為 TalkAct 專案）+ 斯坦福 AI 小鎮
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
