@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Experiment 6-9 readiness substitution probes",
+  "generated_at_utc": "2026-07-31T17:31:10Z",
+  "credentials_redacted": true,
+  "probes": [
+    {
+      "component": "embedding",
+      "name": "siliconflow-bge-m3",
+      "model": "BAAI/bge-m3",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "key_env": "SILICONFLOW_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 400.0,
+      "error": "APIStatusError: Error code: 402 - {'code': 30001, 'message': 'Sorry, your account balance is insufficient', 'data': None}"
+    },
+    {
+      "component": "http",
+      "name": "siliconflow-rerank-v2-m3",
+      "url": "https://api.siliconflow.cn/v1/rerank",
+      "key_env": "SILICONFLOW_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "http_status": 402,
+      "latency_ms": 128.9,
+      "body": "{\"code\":30001,\"message\":\"Sorry, your account balance is insufficient\",\"data\":null}"
+    },
+    {
+      "component": "http",
+      "name": "siliconflow-user-info",
+      "url": "https://api.siliconflow.cn/v1/user/info",
+      "key_env": "SILICONFLOW_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "http_status": 200,
+      "latency_ms": 135.1,
+      "body": "{\"code\":20000,\"message\":\"Ok\",\"status\":true,\"data\":{\"id\":\"clx73v9un0013e18wgsyblihx\",\"name\":\"\",\"image\":\"\",\"email\":\"\",\"isAdmin\":false,\"balance\":\"0\",\"status\":\"\",\"introduction\":\"\",\"role\":\"\",\"chargeBalance\":\"0\",\"totalBalance\":\"0\",\"category\":\"1\"}}\n"
+    },
+    {
+      "component": "embedding",
+      "name": "openai-text-embedding-3-small",
+      "model": "text-embedding-3-small",
+      "base_url": "https://api.openai.com/v1",
+      "key_env": "OPENAI_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 4059.5,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "component": "embedding",
+      "name": "openrouter-openai-text-embedding-3-small",
+      "model": "openai/text-embedding-3-small",
+      "base_url": "https://openrouter.ai/api/v1",
+      "key_env": "OPENROUTER_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "dimensions": 1536,
+      "latency_ms": 1584.9,
+      "usage": {
+        "prompt_tokens": 5,
+        "total_tokens": 5,
+        "cost": 1e-07,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 1e-07,
+          "upstream_inference_prompt_cost": 1e-07,
+          "upstream_inference_completions_cost": 0
+        }
+      }
+    },
+    {
+      "component": "embedding",
+      "name": "openrouter-baai-bge-m3",
+      "model": "BAAI/bge-m3",
+      "base_url": "https://openrouter.ai/api/v1",
+      "key_env": "OPENROUTER_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "dimensions": 1024,
+      "latency_ms": 1278.5,
+      "usage": {
+        "prompt_tokens": 11,
+        "total_tokens": 11,
+        "cost": 1.1e-07,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 1.1e-07,
+          "upstream_inference_prompt_cost": 1.1e-07,
+          "upstream_inference_completions_cost": 0
+        }
+      }
+    },
+    {
+      "component": "embedding",
+      "name": "ark-doubao-embedding-large-text-250515",
+      "model": "doubao-embedding-large-text-250515",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "key_env": "ARK_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 184.2,
+      "error": "NotFoundError: Error code: 404 - {'error': {'code': 'InvalidEndpointOrModel.NotFound', 'message': 'The model or endpoint doubao-embedding-large-text-250515 does not exist or you do not have access to it. Request id: 021785519063992d1fe9146833e301f6be5de30142daa102636df', 'param': '', 'type': 'Not Found'}}"
+    },
+    {
+      "component": "embedding",
+      "name": "ark-doubao-embedding-large-text-240915",
+      "model": "doubao-embedding-large-text-240915",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "key_env": "ARK_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 201.3,
+      "error": "NotFoundError: Error code: 404 - {'error': {'code': 'InvalidEndpointOrModel.NotFound', 'message': 'The model or endpoint doubao-embedding-large-text-240915 does not exist or you do not have access to it. Request id: 021785519064164cdb985060772518cf2b73708fa98016e42f584', 'param': '', 'type': 'Not Found'}}"
+    },
+    {
+      "component": "embedding",
+      "name": "ark-doubao-embedding-text-240715",
+      "model": "doubao-embedding-text-240715",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "key_env": "ARK_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 394.3,
+      "error": "NotFoundError: Error code: 404 - {'error': {'code': 'InvalidEndpointOrModel.NotFound', 'message': 'The model or endpoint doubao-embedding-text-240715 does not exist or you do not have access to it. Request id: 0217855190643625f505d6745d4b07a5efbd0dd2f16cfcbd812bb', 'param': '', 'type': 'Not Found'}}"
+    },
+    {
+      "component": "embedding",
+      "name": "dashscope-text-embedding-v4",
+      "model": "text-embedding-v4",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "key_env": "DASHSCOPE_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 88.7,
+      "error": "AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided. For details, see: https://help.aliyun.com/zh/model-studio/error-code#apikey-error', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}, 'request_id': '9a027028-433c-9095-9554-e4d79ca5a981'}"
+    },
+    {
+      "component": "http",
+      "name": "dashscope-gte-rerank-v2",
+      "url": "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank",
+      "key_env": "DASHSCOPE_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "http_status": 401,
+      "latency_ms": 66.3,
+      "body": "{\"code\":\"InvalidApiKey\",\"message\":\"Invalid API-key provided.\",\"request_id\":\"def9125d-a356-9375-a95b-d5aa1c644eee\"}"
+    },
+    {
+      "component": "embedding",
+      "name": "mistral-embed",
+      "model": "mistral-embed",
+      "base_url": "https://api.mistral.ai/v1",
+      "key_env": "MISTRAL_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "dimensions": 1024,
+      "latency_ms": 1624.0,
+      "usage": {
+        "prompt_tokens": 8,
+        "total_tokens": 8,
+        "prompt_audio_seconds": null,
+        "completion_tokens": 0,
+        "request_count": null,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null,
+        "service_tier": null,
+        "prompt_token_details": null
+      }
+    },
+    {
+      "component": "chat",
+      "name": "kimi-k2.5",
+      "model": "kimi-k2.5",
+      "base_url": "https://api.moonshot.cn/v1",
+      "key_env": "KIMI_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "content": "OK",
+      "latency_ms": 471.9,
+      "usage": {
+        "completion_tokens": 4,
+        "prompt_tokens": 10,
+        "total_tokens": 14,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": null
+      }
+    },
+    {
+      "component": "chat",
+      "name": "doubao-seed-1-6-250615",
+      "model": "doubao-seed-1-6-250615",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "key_env": "ARK_API_KEY",
+      "key_present": true,
+      "status": "ok",
+      "content": "OK",
+      "latency_ms": 2426.5,
+      "usage": {
+        "completion_tokens": 37,
+        "prompt_tokens": 87,
+        "total_tokens": 124,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 36,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        }
+      }
+    },
+    {
+      "component": "embedding",
+      "name": "gemini-embedding-001",
+      "model": "gemini-embedding-001",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "key_env": "GEMINI_API_KEY",
+      "key_present": true,
+      "status": "error",
+      "latency_ms": 1146.0,
+      "error": "BadRequestError: Error code: 400 - {'error': {'code': 400, 'message': 'Please pass a valid API key', 'status': 'INVALID_ARGUMENT'}}"
+    }
+  ],
+  "summary": {
+    "ok": 6,
+    "error": 9
+  }
+}

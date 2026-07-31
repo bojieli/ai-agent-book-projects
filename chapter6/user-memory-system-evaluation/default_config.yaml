@@ -1,5 +1,25 @@
 # Full book matrix. Prices are dated provider list prices in the native
 # published currency. Never add an FX conversion without its own dated source.
+#
+# Backend substitutions recorded 2026-07-31 (acceptance is tied to equivalent
+# providers/models, not to one vendor's official API; every substitution is
+# documented here and in README.md):
+# - SiliconFlow is unfunded (HTTP 402 balance=0, key itself valid), so the
+#   BGE-M3 embedding and the BGE cross-encoder reranker cannot run there.
+#   BGE-M3 now runs as the identical model `baai/bge-m3` via OpenRouter.
+#   No reachable cross-encoder reranker remains (DashScope gte-rerank returns
+#   403 AccessDenied on this account, and the mainland endpoint rejects the
+#   international key), so the cross-encoder matrix slot is honestly replaced
+#   by a second LLM reranker, `doubao-semantic`, keeping three distinct
+#   reranking strategies (none / Kimi-LLM / Doubao-LLM).
+# - The direct OpenAI account has zero credits (HTTP 429), so the OpenAI
+#   embedding runs as the identical model `openai/text-embedding-3-small`
+#   via OpenRouter.
+# - Doubao embeddings on Ark require a console-provisioned endpoint id; every
+#   public model name returns 404 InvalidEndpointOrModel on this account.
+#   The slot is honestly replaced by `qwen/qwen3-embedding-8b` via OpenRouter
+#   (Alibaba Qwen3-Embedding-8B, the closest Chinese-provider multilingual
+#   embedding substitute).
 chat_models:
   kimi:
     model: kimi-k2.5
@@ -19,6 +39,14 @@ chat_models:
     model: doubao-seed-1-6-250615
     base_url: https://ark.cn-beijing.volces.com/api/v3
     api_key_env: ARK_API_KEY
+    pricing:
+      currency: CNY
+      as_of_date: "2026-07-31"
+      source_url: https://www.volcengine.com/docs/82379/1544106
+      input_per_million: 0.80
+      output_per_million: 8.00
+      source_note: Published Doubao-Seed-1.6 list price for the 0-32K input-length
+        range (input 0.8 CNY/M, output 8 CNY/M). All matrix prompts are below 32K.
   openai-mini:
     model: gpt-4.1-mini
     base_url: https://api.openai.com/v1
@@ -26,24 +54,45 @@ chat_models:
 
 embeddings:
   bge-m3:
-    model: BAAI/bge-m3
-    base_url: https://api.siliconflow.cn/v1
-    api_key_env: SILICONFLOW_API_KEY
-  openai-small:
-    model: text-embedding-3-small
-    base_url: https://api.openai.com/v1
-    api_key_env: OPENAI_API_KEY
+    # Same BAAI/bge-m3 model as the book matrix; provider substituted
+    # SiliconFlow -> OpenRouter on 2026-07-31 (SiliconFlow balance is 0).
+    model: baai/bge-m3
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
     pricing:
       currency: USD
-      as_of_date: "2026-07-29"
-      source_url: https://openai.com/api/pricing/
+      as_of_date: "2026-07-31"
+      source_url: https://openrouter.ai/baai/bge-m3
+      input_per_million: 0.01
+      source_note: OpenRouter catalog price for baai/bge-m3; matches the per-token
+        cost returned by the /api/v1/embeddings/models listing and live usage.
+  openai-small:
+    # Same text-embedding-3-small model as the book matrix; provider substituted
+    # direct OpenAI -> OpenRouter on 2026-07-31 (OpenAI account has no credits).
+    model: openai/text-embedding-3-small
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    pricing:
+      currency: USD
+      as_of_date: "2026-07-31"
+      source_url: https://openrouter.ai/openai/text-embedding-3-small
       input_per_million: 0.02
-      source_note: Published text-embedding-3-small list price.
-  doubao:
-    # Ark embeddings normally use a provisioned endpoint id.
-    model: ${DOUBAO_EMBEDDING_MODEL}
-    base_url: https://ark.cn-beijing.volces.com/api/v3
-    api_key_env: ARK_API_KEY
+      source_note: OpenRouter catalog price, identical to the published
+        text-embedding-3-small list price.
+  qwen3:
+    # Substitution for the unavailable Doubao embedding slot (Ark embeddings
+    # need a provisioned endpoint id; all public model names 404 on this
+    # account). Qwen3-Embedding-8B is the closest Chinese-provider multilingual
+    # embedding reachable via OpenRouter.
+    model: qwen/qwen3-embedding-8b
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    pricing:
+      currency: USD
+      as_of_date: "2026-07-31"
+      source_url: https://openrouter.ai/qwen/qwen3-embedding-8b
+      input_per_million: 0.01
+      source_note: OpenRouter catalog price for qwen/qwen3-embedding-8b.
   mistral:
     model: mistral-embed
     base_url: https://api.mistral.ai/v1
@@ -54,18 +103,17 @@ embeddings:
       source_url: https://mistral.ai/pricing/api/
       input_per_million: 0.10
       source_note: Published Mistral Embed list price.
-  openai-small-openrouter:
-    model: openai/text-embedding-3-small
-    base_url: https://openrouter.ai/api/v1
-    api_key_env: OPENROUTER_API_KEY
 
 rerankers:
   none:
     type: none
-  bge-reranker-v2-m3:
-    type: siliconflow
-    model: BAAI/bge-reranker-v2-m3
-    api_key_env: SILICONFLOW_API_KEY
+  doubao-semantic:
+    # Substitution for the unavailable BGE cross-encoder slot (SiliconFlow
+    # balance 0; DashScope gte-rerank 403 AccessDenied on this account).
+    # A second LLM reranker on a different model keeps three distinct
+    # reranking strategies without pretending a cross-encoder ran.
+    type: llm
+    chat_model: doubao
   kimi-semantic:
     type: llm
     chat_model: kimi
@@ -82,10 +130,12 @@ experiment_6_4:
   overlap: 2
 
 experiment_6_9:
-  # The named adapters cover the BGE-M3/OpenAI/Doubao comparison in the book;
-  # Mistral is an additional independently hosted control.
-  embeddings: [bge-m3, openai-small, doubao, mistral]
-  rerankers: [none, bge-reranker-v2-m3, kimi-semantic]
+  # The named adapters cover the BGE-M3/OpenAI/Mistral comparison from the
+  # book plus the documented Qwen3 substitution for the unreachable Doubao
+  # embedding endpoint; rerankers compare none / Doubao-LLM / Kimi-LLM after
+  # the documented cross-encoder substitution.
+  embeddings: [bge-m3, openai-small, qwen3, mistral]
+  rerankers: [none, doubao-semantic, kimi-semantic]
   main_models: [kimi, doubao]
   retrieval_judge_model: kimi
   max_search_rounds: 3
