@@ -1,0 +1,106 @@
+{
+  "checkpoint_policy": {
+    "acceptance_artifact": false,
+    "distributed_with_book": false,
+    "reason": "Training checkpoints are intentionally not distributed to readers.",
+    "required_artifact": "reproducible evidence-backed training report"
+  },
+  "experiment": "7-3",
+  "future_reproduction": {
+    "commands": {
+      "improved_dpo": "torchrun --nproc_per_node=8 trainer/train_dpo.py --epochs 2 --hidden_size 768 --num_hidden_layers 16 --init_from out/full_sft_muon_768.pth --data_path dataset/dpo.jsonl --use_wandb",
+      "improved_pretrain": "torchrun --nproc_per_node=8 trainer/train_pretrain_muon.py --epochs 10 --hidden_size 768 --num_hidden_layers 16 --data_path dataset/pretrain_hq.jsonl --use_wandb",
+      "improved_sft": "torchrun --nproc_per_node=8 trainer/train_full_sft_muon.py --epochs 2 --hidden_size 768 --num_hidden_layers 16 --data_path dataset/sft_512.jsonl --use_wandb",
+      "original_dpo": "torchrun --nproc_per_node=8 trainer/train_dpo.py --epochs 2 --hidden_size 768 --num_hidden_layers 16 --init_from out/full_sft_768.pth --data_path dataset/dpo.jsonl --use_wandb",
+      "original_pretrain": "torchrun --nproc_per_node=8 trainer/train_pretrain.py --epochs 10 --hidden_size 768 --num_hidden_layers 16 --data_path dataset/pretrain_hq.jsonl --use_wandb",
+      "original_sft": "torchrun --nproc_per_node=8 trainer/train_full_sft.py --epochs 2 --hidden_size 768 --num_hidden_layers 16 --data_path dataset/sft_512.jsonl --use_wandb"
+    },
+    "dataset": {
+      "files": {
+        "dpo.jsonl": {
+          "bytes": 53653322,
+          "lfs_sha256": "ee934a8a455ccc99d1334d63e1254dd1d64f497fd067cfcbb71e3043f5b46768"
+        },
+        "pretrain_hq.jsonl": {
+          "bytes": 1669750047,
+          "lfs_sha256": "9801b0d2210c61c2e4bc130f6dc4b3c870698a88d04af8f103c23dd5f0ce2440"
+        },
+        "sft_512.jsonl": {
+          "bytes": 7531517862,
+          "lfs_sha256": "053b7d09574e48a86232e929211434ff9e5016c6ed13312e63687dd52edcbebf"
+        }
+      },
+      "not_claimed_as_historical_revision": true,
+      "repository": "jingyaogong/minimind_dataset",
+      "revision": "84983ed4dec7836d240577760c1d6be5d4cabcf9",
+      "selected_at": "2026-07-31"
+    },
+    "environment": {
+      "book_lock": "uv.lock",
+      "book_pyproject": "pyproject.toml",
+      "boundary": "The book lock freezes a future software environment. The pinned upstream requirements file itself is unversioned, and the future GPU/CUDA stack has not been exercised here.",
+      "install": "uv sync --locked --python 3.12 --extra ch7 --extra dev"
+    },
+    "source": {
+      "file_sha256": {
+        "dataset/lm_dataset.py": "213726b1781289548784220b2b2db48fe97d84f3b67ac0cd70186cbbcb7b5d2c",
+        "eval_model.py": "43930a4b55048a4a3ffa17eb78ae67d59582d639aa9365f0bbf41ba149128af8",
+        "model/model_minimind.py": "2d33988711c704be6a22c4c61489b23106a2340a7cb8b97ebe3e40f30819cbb0",
+        "model/tokenizer.json": "e489029175fb3f94b8211a120a72a2ee41a664db65b828d077c7bde989c845a9",
+        "model/tokenizer_config.json": "190cc4738bac3b6f6b563376019c581b320fdb0260a03b9d5ab806296c8c6bb8",
+        "requirements.txt": "23f4cea09281765eec7cf03e28231425638e8e42580f418781fed166b75af968",
+        "trainer/muon.py": "00c2c6a225edeb55433df0724c3c74f6ff98ac4b2cc73c4aafcff686824f6267",
+        "trainer/train_dpo.py": "97f2c31cc8bc21a777e2efcb5e2fa35a49e4e9e3698db120148f8a0b2f678449",
+        "trainer/train_full_sft.py": "a57422f1df80bf2867f31f3b4a646a92ac7f66729e98a3b32cd1ec4d6780cb8b",
+        "trainer/train_full_sft_muon.py": "acd0b7db5b1d8b25d3c3103f92d68a7d381f9322a1b33bbec34be3d005930bad",
+        "trainer/train_pretrain.py": "ddd122645a9f1043bc8dac69a81ac51d2df95df8745d25faed7963d38fedc328",
+        "trainer/train_pretrain_muon.py": "fc83d07754ec3a8c156b6b8bfc0fd4326edecb72efabc5e08ae4ff5e3a7029bc"
+      },
+      "not_claimed_as_historical_revision": true,
+      "repository": "bojieli/minimind",
+      "revision": "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795",
+      "selected_at": "2026-07-31"
+    }
+  },
+  "historical_evidence_boundary": {
+    "claim": "The author's retained report supports that original and QK-Norm+Muon 104.03M models were evaluated after pretrain, SFT, and DPO. It does not establish byte identity of the historical checkpoints, datasets, source checkout, or every loss point.",
+    "historical_checkpoint_hashes_retained": false,
+    "historical_dataset_hashes_retained": false,
+    "historical_source_revision_retained": false,
+    "historical_stepwise_training_logs_retained": false,
+    "historical_training_executed": true,
+    "six_historical_evaluation_transcripts_retained": true
+  },
+  "model_and_training": {
+    "architecture": {
+      "hidden_size": 768,
+      "layers": 16,
+      "sequence_length": 512
+    },
+    "arms": [
+      "original",
+      "qk_norm_muon"
+    ],
+    "reported_parameter_count_millions": 104.03,
+    "reported_scalars_without_stepwise_logs": {
+      "eight_rtx_4090_pretrain_hours": 6,
+      "eight_rtx_4090_sft_hours": 8,
+      "final_loss_original": 2.0,
+      "final_loss_qk_norm_muon": 1.7,
+      "steps_to_loss_3_original": 36,
+      "steps_to_loss_3_qk_norm_muon": 12
+    },
+    "source_verified_mechanisms": {
+      "adamw_for_embeddings_norms_and_lm_head": true,
+      "dpo_uses_adamw_from_arm_specific_sft_checkpoint": true,
+      "muon_for_two_dimensional_non_embedding_weights": true,
+      "qk_norm_before_rope": true
+    },
+    "stages": [
+      "pretrain",
+      "sft",
+      "dpo"
+    ]
+  },
+  "schema_version": "exp7-3-reproduction-contract-v1"
+}

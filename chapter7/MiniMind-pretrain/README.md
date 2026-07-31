@@ -1,8 +1,9 @@
 # Experiments 7-3 / 7-4 reproduction anchor
 
 - Experiment 7-3 source: [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter7/MiniMind-pretrain/minimind`
+- Experiment 7-3 canonical evidence: [`validation/runs/exp7-3-training-report-20260731-v1/`](validation/runs/exp7-3-training-report-20260731-v1/) retains all 49 historical outputs across original/QK-Norm+Muon × pretrain/SFT/DPO, eight raw arm-blind ARK judge receipts, exact hashes, and the future reproduction contract. Checkpoints are intentionally not distributed and are not acceptance artifacts.
 - Experiment 7-4 source: [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter7/MiniMind-pretrain/minimind-v`
-- Current workspace state (2026-07-30): both checkouts are absent. A read-only upstream audit fixed the source revisions below and verified their entrypoints; this is source-version evidence only, not evidence that either training experiment ran.
+- Current workspace state: both external source checkouts are absent. For 7-3, the checkpoint-free historical training report is the accepted book artifact and explicitly records the missing historical source/data/checkpoint identities and stepwise loss logs. For 7-4, the read-only upstream audit remains source-version evidence only, not evidence that VLM training ran.
 
 Run from the book repository root:
 
@@ -20,7 +21,7 @@ git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD
 test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
 ```
 
-At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The outputs reproduced below are historical companion observations, not proof that the absent checkouts were executed in the current workspace.
+At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The 7-3 outputs below are historical observations bound into the canonical evidence package; they do not prove the byte identity of the historical checkout or checkpoints. The VLM outputs remain historical companion observations and do not by themselves close 7-4.
 
 ## English
 

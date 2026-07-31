@@ -1,0 +1,263 @@
+{
+  "arms": [
+    "original",
+    "qk_norm_muon"
+  ],
+  "cell_count": 6,
+  "cells": [
+    {
+      "arm": "original",
+      "pair_count": 7,
+      "pairs": [
+        {
+          "output": "and the relationship of universal laws are the premise of the basic principles of Marxism. The basic principles of Marxism are the relationship of universal laws. Basic principles refer to those determined by universal laws, where universal laws are \"universal laws.\" Universal laws refer to those determined by universal laws, but they are not absolute laws; they are only a form of rules, a part of universal laws. The basic principles of Marxism include universal laws, that is, those determined by universal laws, rather than absolute laws.",
+          "prompt": "Basic principles of Marxism"
+        },
+        {
+          "output": "What are they? The main functions of the human brain include:\n1. Memory: The formation and retrieval of memory are through chemical and electrical signals between neurons in the brain, storing and retrieving information.\n2. Decision-making: Decision-making is the ultimate goal of the brain. It is formed by the connections and interactions between neurons and neurons.\n3. Senses: Perception, sensation, action, and feeling are all closely related to brain function. Senses are the sensory information in our brain, including vision, hearing, smell, taste, smell, and touch. Senses are the sensory information in our brain, including vision, hearing, smell, taste, smell, and touch.\nThese functions and structures together help us complete complex thinking and behavior.",
+          "prompt": "The main functions of the human brain"
+        },
+        {
+          "output": "to study the interaction between celestial bodies. It firmly places all objects on a flat surface, forming a torque, called universal gravitation. The law of universal gravitation is one of the three basic laws discovered by Newton. It is a scientific theory describing how matter in the universe interacts. The law of universal gravitation describes the interaction between objects, placing all objects firmly on a flat surface, forming a torque, called Newton's law. It is one of the three basic laws discovered by Newton, a scientific theory describing how matter in the universe interacts.",
+          "prompt": "The principle of universal gravitation is"
+        },
+        {
+          "output": "which one? The highest mountain in the world is Mount Everest, located in the Himalayas, with an altitude of 8,848 meters.\nMount Everest is one of the most challenging climbing targets on Earth, attracting climbers from all over the world every year. Climbing Mount Everest requires climbers to overcome various challenges such as gravity, altitude, and physical strength. At the same time, Mount Everest is also one of the world's natural wonders, known as the \"Roof of the World.\"\nMount Everest is located on the border between Nepal and China, in the Himalayas. In Nepali, its name means \"Goddess's Home,\" meaning \"Goddess's Home.\" In the Himalayas, there are many peaks, the highest of which is Mount Everest, with an altitude of 8,848 meters.",
+          "prompt": "The highest mountain in the world is"
+        },
+        {
+          "output": "has a concentration of zero, right? Wrong.\nCarbon dioxide is a gas with the molecular formula CO2. It is a molecule composed of one carbon atom and two oxygen atoms. Carbon dioxide is a very important element, widely present in nature. It is also one of the main gases for respiration and digestion in humans and other animals.\nAlthough the concentration of carbon dioxide in the air is high, this does not mean it is a harmful chemical. It only accounts for about 20% of the air. Other carbon compounds (such as glucose and starch) can also have a negative impact on human health.\nTherefore, carbon dioxide is not a harmful chemical.",
+          "prompt": "Carbon dioxide in the air"
+        },
+        {
+          "output": "7, what are their sizes? This number is relatively common, because there are many types of animals on Earth, but the answer is 7.\nIn fact, the largest animal on Earth is the blue whale, which can reach a size of over 100 feet (30 meters). The blue whale is a marine mammal, often considered a sea giant because they live in the ocean. The blue whale is currently the largest known animal, with a weight of up to 200 tons and a length of up to 30 meters.\nIn addition, there are many other different types of organisms in the ocean, such as plankton, mollusks, etc. The sizes and shapes of these organisms vary, some can even grow to over 300 feet, and some can even reach 40 feet.\nIn summary, although we cannot directly classify all animals on Earth into one category, we can be sure that there are many different types of animals on Earth.",
+          "prompt": "The largest animal on Earth has"
+        },
+        {
+          "output": "what? Hangzhou has a wide variety of specialty delicacies, among which the most famous might be West Lake Vinegar Fish, renowned for its Zhejiang cuisine. In addition, there are West Lake Vinegar Fish, Zhejiang Longjing Shrimp, Zhejiang Snail Noodles, etc. If you want to try other Hangzhou delicacies, you can also tell me, and I can provide you with more information.",
+          "prompt": "The delicacies of Hangzhou include"
+        }
+      ],
+      "stage": "pretrain",
+      "terminal_header": "### Pretrain Model\n\n\n$ python eval_model.py --load 0 --model 0\nMiniMind model parameter count: 104.03M(illion)\n[0] Auto test\n[1] Manual input\n0"
+    },
+    {
+      "arm": "original",
+      "pair_count": 8,
+      "pairs": [
+        {
+          "output": "As a chatbot, my existence is mainly to provide users with useful information, helping them solve problems and obtain information. I can answer a variety of common questions, provide various information, including history, culture, geography, science, technology, society, culture, etc. I can also learn and understand human language, language",
+          "prompt": "Please introduce yourself."
+        },
+        {
+          "output": "As an AI assistant, I don't have the ability to \"like\" like a human. My purpose is to answer questions raised by users and provide useful information and help. I am just a program designed to answer various questions and provide useful information. If you have any other questions, please let me know, and I will try my best to answer.\n\nLu Xun's \"Diary of a Madman\" reveals the hypocrisy and emptiness of feudal ethics. The novel, through the protagonist's inner monologue, reveals the hypocrisy and emptiness existing in society at that time. This contradiction and emptiness also led people to question and reflect on feudal ethics.\n\nAt the same time, the novel also reveals the influence and change of feudal ethics on society and individuals through the depiction of the characters' life experiences and inner worlds. This critical literary style and theme also made Lu Xun's literary works have a profound impact on society.\n\nIn summary, \"Diary of a Madman\" is a representative work of Lu Xun in literary creation. It criticizes the hypocrisy and emptiness of feudal ethics by depicting social problems at that time, while also reflecting various social issues and contradictions of that time.",
+          "prompt": "Which subject are you better at?"
+        },
+        {
+          "output": "First, you may have a cold, but this depends on your constitution, age, gender, condition, and medical history. If your constitution is weak, you may experience symptoms such as coughing and sore throat. In this case, it is recommended that you go to the hospital for an examination to determine the exact cause. The doctor may recommend that you use antibiotics or cold medicine to treat your symptoms. Based on the examination results, you can consider taking antibiotics, over-the-counter medications, or other drugs to relieve symptoms. In addition, you can also consider taking over-the-counter medications to relieve symptoms, such as antibiotics. However, it is best to consult a doctor to determine if it is suitable for your situation.",
+          "prompt": "I have been coughing for two weeks. Do I need to go to the hospital for a check-up?"
+        },
+        {
+          "output": "The speed of light refers to the speed at which light propagates in a vacuum, approximately 299,792,458 meters per second. This is a common unit of speed in physics. The speed of light is the most fundamental constant in nature, and its definition is that the speed of all matter in a vacuum exceeds one million kilometers per second. The speed of light is the propagation speed between matter in the universe, defined as the square of the speed of light in a vacuum divided by the square of the speed of light, that is, $c^2=m^2$. The absolute value of the speed of light is 2997*2458 meters per second, which is the speed of matter in a vacuum, approximately 4.08 meters per second. The speed of light has different meanings in different situations. For example, in the spectrum of a light source, the propagation speed of light is affected by the intensity and wavelength of light\n, while in the spectrum, the propagation speed of light is affected by information such as the intensity, frequency, brightness, and wavelength of light. The speed of light is constant in macroscopic objects, approximately 299,792,458 meters per second. In physics, the speed of light is constant, but for the propagation speed of light from a source, it is limited to a tiny range, even\nunable to transmit. The speed of light is the highest point of the source speed propagating in a vacuum, while the limitation of the source speed refers to the magnitude of the source speed. This limitation is caused by the relative positional relationship between the energy density of the source and the speed of light.",
+          "prompt": "Explain the physical concept of the speed of light in detail."
+        },
+        {
+          "output": "Hangzhou has many specialty delicacies, among which the more famous ones include:\n1. West Lake Vinegar Fish: Also known as \"Jiangsu fish,\" it is one of the traditional famous dishes of Hangzhou, with delicious soup and fresh carp.\n2. Crayfish: A traditional snack represented by crayfish, it is one of the unique snacks of Hangzhou.\n3. Hangzhou Xiaolongbao: Mainly made with tender meat filling, delicious soup, and fresh vegetables.\n4. Longjing Shrimp: Represented by fresh shrimp, it has a delicious seafood flavor and is also a very famous specialty snack of Hangzhou.\n5. Xitang: Famous for its ancient town, mainly made with fresh fish, paired with fresh peanuts and taro and other snacks, it is a very famous snack of Hangzhou.\nI hope the above recommendations are helpful to you.",
+          "prompt": "Recommend some specialty delicacies of Hangzhou."
+        },
+        {
+          "output": "A large language model refers to a neural network-based language model, mainly used for natural language processing tasks. It can perform tasks such as text summarization, machine translation, and dialogue systems. It can process large amounts of language data and automatically extract meaningful vocabulary, syntactic structures, and other information from it, providing support for fields such as text generation and speech recognition.",
+          "prompt": "Please explain the concept of \"large language model\" to me."
+        },
+        {
+          "output": "ChatGPT is a natural language processing tool developed by Google, designed to help users create meaningful conversations to understand natural language. It uses speech recognition technology, by analyzing the user's input language, it can understand the user's input, and use semantic analysis technology to help users answer various questions. It also supports text\ngeneration, can generate text, allowing users to create their own answers to understand the user's intent.",
+          "prompt": "How to understand ChatGPT?"
+        },
+        {
+          "output": "Introduce the history of the United States embers.",
+          "prompt": "Introduce the history of the United States, please."
+        }
+      ],
+      "stage": "sft",
+      "terminal_header": "### SFT Model\n\n\n$ python eval_model.py --load 0 --model 1\nMiniMind model parameter count: 104.03M(illion)\n[0] Auto test\n[1] Manual input\n0"
+    },
+    {
+      "arm": "original",
+      "pair_count": 9,
+      "pairs": [
+        {
+          "output": "Hello! I am an AI language model capable of natural language conversation, answering questions, and generating text. I am a language model trained on large amounts of data that can understand and generate natural language.",
+          "prompt": "Please introduce yourself."
+        },
+        {
+          "output": "I am better at mathematics and logical reasoning. Although mathematics and logical reasoning are relatively abstract subjects, there is no necessary connection between them. Mathematics is a tool used to describe and solve problems, while logical reasoning is the process of reasoning and proving inferences. Mathematics is a foundational subject, and mathematics is the foundational subject of logic. Mathematics is a discipline that studies the concepts of quantity and space. Logical reasoning is a common branch of mathematics, mainly used for reasoning and proving the process of inference. Mathematicians use logical thinking to reason and prove the process of inference.",
+          "prompt": "Which subject are you better at?"
+        },
+        {
+          "output": "Lu Xun's \"Diary of a Madman\" has problems in criticizing feudal ethics, mainly because its language style and content are too exaggerated and hyperbolic, or do not conform to social reality, causing problems in society's evaluation of human nature and social relations.\n\nLu Xun's novels usually use a humorous, satirical, and ironic technique, revealing some problems of feudal society in a very humorous way, while also criticizing the constraints and rules of feudal ethics.\n\nIn criticizing feudal ethics, Lu Xun's novels usually use a very exaggerated and hyperbolic technique, revealing some problems in social reality in a very humorous way. This technique makes the work seem very absurd and hollow, while also criticizing the social order and moral concepts of the time.\n\nLu Xun's novels usually use a very humorous, satirical, and ironic technique, revealing some problems of feudal society in a very humorous way. This technique makes the work seem very absurd and hollow, while also criticizing social relations of the time, making the work seem very absurd and hollow.\n\nTherefore, in criticizing feudal ethics, Lu Xun's novels often use a humorous, satirical, and ironic technique, revealing social problems in a very humorous way. This technique makes the work seem very absurd and hollow, while also criticizing the social order and moral concepts of the time.",
+          "prompt": "How does Lu Xun's \"Diary of a Madman\" criticize feudal ethics?"
+        },
+        {
+          "output": "First, it is necessary to determine the specific situation of the cough. Coughing is a manifestation of physical discomfort, mainly due to physical discomfort, including lung infections, pneumonia, etc. If the cough has persisted for two weeks, it is recommended to go to the hospital for an examination. The doctor may examine the lungs to check for inflammation or infection. If not, the doctor may recommend examinations such as a chest X-ray or blood tests. If necessary, the doctor can also perform blood tests, throat radiation examinations, etc. During the examination, care should be taken to avoid excessive force, not to drink alcohol or eat irritating foods, and to avoid contact with others. If the cough persists for two weeks, it is recommended to go to the hospital promptly for diagnosis and treatment of the condition.",
+          "prompt": "I have had a cough for two weeks. Do I need to go to the hospital for a check-up?"
+        },
+        {
+          "output": "The speed of light refers to the propagation speed of light in a vacuum, and its unit of measurement is the speed of light (c). In a vacuum, the speed of light is 299,792,458 meters per second, approximately 393,458 meters per second.\n\nThe speed of light is one of the fundamental constants in physics, indicating that the speed of light is always equal to 299,792,458 meters per second at any time. In relativity, the speed of light is defined as 9.87924/966.71 seconds, while in other scientific fields, such as astronomy and aerospace, the speed of light is defined as 393,458 meters per second.\n\nIn summary, the speed of light is a very important concept because it is a fundamental concept in physics and is widely used in science and technology.",
+          "prompt": "Explain the physical concept of the speed of light in detail."
+        },
+        {
+          "output": "Hangzhou has many specialty foods. Here are a few recommendations for you: 1. West Lake Vinegar Fish: This is a delicate, sweet and sour specialty snack, a signature dish of Hangzhou. 2. Dongpo Pork: This is one of Hangzhou's traditional famous dishes, with tender meat and a fragrant, sticky texture. 3. Dongpo Steamed Bun: This is a traditional Chinese pastry, crispy in texture with rich fillings. 4. Handmade Dumplings: These are dumplings mainly filled with meat, with soft fillings and a refreshing taste. 5. Dongpo Soup: This is a traditional soup dish, rich in broth and delicious in flavor. 6. Xiaolongbao (Soup Dumplings): These are small steamed buns with rich, fragrant fillings and a chewy, springy texture. 7. Handmade Baozi (Steamed Buns): This is a traditional West Lake snack, with rich and delicious fillings. 8. Stone Pot Rice: This is a traditional snack mainly based on rice, with rich and delicious fillings. The above foods are all very distinctive. You can choose to try them according to your taste.",
+          "prompt": "Recommend some Hangzhou specialty foods."
+        },
+        {
+          "output": "A Large Language Model (Generative Area) is a neural network model trained on large-scale datasets that can handle various tasks of natural language, such as machine translation, text classification, sentiment analysis, speech recognition, and text generation. The principle of this model is through continuous iterative learning, constantly updating and optimizing the model, enabling the model to gradually understand the input natural language, thereby generating more accurate and natural text. Specifically, Generative adopts a model based on Recurrent Neural Networks (RNN). Through pre-training, it compares the input natural language sequence with the pre-trained sequence data, thereby obtaining more accurate and natural text output. Generative performs excellently in language generation, capable of generating more fluent and natural text. At the same time, Generative can continuously improve its generation effect through iterative learning and optimization, thereby better meeting user needs.",
+          "prompt": "Please explain the concept of \"Large Language Model\" to me."
+        },
+        {
+          "output": "ChatGPT is a model based on artificial intelligence technology. It can be used to complete natural language processing tasks, such as translation, question answering, generation, and classification. The accuracy of ChatGPT can reach over 90%, which means it can quickly understand the questions raised by users and give correct answers. It can also handle various complexities in natural language, such as grammar and semantics. ChatGPT can also handle text generation and classification tasks, such as text summarization, question answering, and classification. In addition, it can handle speech and image processing tasks for text, such as speech recognition and text-to-speech, as well as sentiment analysis tasks, such as comment and public opinion analysis. Overall, ChatGPT is a powerful natural language processing tool that can effectively process natural language and handle text and speech data.",
+          "prompt": "How to understand ChatGPT?"
+        },
+        {
+          "output": "Introduce the history of theUnitedStates, please.",
+          "prompt": "Introduce the history of the United States, please."
+        }
+      ],
+      "stage": "dpo",
+      "terminal_header": "### DPO Model\n\n\n(base) root@C.26849627:~/minimind$ python eval_model.py --load 0 --model 2\nMiniMind model parameters: 104.03M (million)\n[0] Auto test\n[1] Manual input\n0"
+    },
+    {
+      "arm": "qk_norm_muon",
+      "pair_count": 7,
+      "pairs": [
+        {
+          "output": "It studies the influence of the bourgeoisie on social structure, mode of production, culture, morality, etc., from a metaphysical perspective. He believes that the bourgeoisie is the main driver of social structure, mode of production, culture, morality, etc., and its behavior and decisions directly affect the formation and change of social structure.\n\nMarxist theory still holds a very important position in the contemporary era. 1. What are the basic principles of Marxism?\n2. What is the object of study of Marxist theory?\n3. What does Marxist theory influence?\n4. Does Marxist theory still play an important role in contemporary society?",
+          "prompt": "Basic principles of Marxism"
+        },
+        {
+          "output": "What are they? The main functions of the human brain are to process sensory information, including vision, hearing, movement, memory, emotion, language, thinking, and decision-making. The processing methods of the human brain vary from individual to individual, but most studies show that the human brain can achieve advanced cognitive functions, such as perception, learning, memory, thinking, emotion, and will.",
+          "prompt": "Main functions of the human brain"
+        },
+        {
+          "output": "How is it calculated? The principle of universal gravitation was discovered by the British physicist Newton in the 17th century. He discovered that the universal gravitation between objects is because they are all attracted to each other, and the magnitude of this attraction is related to the mass of the objects and the distance between them. This law explains why the gravitational force between objects is proportional to their masses and inversely proportional to the square of the distance between them. Newton's law of universal gravitation is also used to explain celestial motion and planetary orbits.",
+          "prompt": "The principle of universal gravitation is"
+        },
+        {
+          "output": "Mount Everest, located in the Himalayas, with an altitude of 8848 meters. Mount Everest, located in the Himalayas, is the highest mountain in the world. Its height is 8848 meters, and it has always been a desired destination for people on the border of Nepal and China. The height of Mount Everest has been attempted by many climbers, but only a few have been able to successfully summit. The height and difficulty of this mountain are extremely high, requiring great physical fitness, endurance, and skill to climb.",
+          "prompt": "The highest mountain in the world is"
+        },
+        {
+          "output": "Will its concentration decrease as the temperature rises? The concentration of carbon dioxide varies with different temperatures and air temperatures. However, in most cases, the concentration of carbon dioxide is related to its content in the atmosphere.\n\nAt higher temperatures, the concentration of carbon dioxide may decrease because carbon dioxide is a greenhouse gas, and its concentration can be negligible. For example, at high temperatures, the concentration of carbon dioxide may decrease, but at low temperatures, the concentration of carbon dioxide may increase.\n\nFurthermore, under different temperatures and humidity levels, the concentration of carbon dioxide may change. For example, at higher temperatures, the concentration of carbon dioxide may increase because the rise in temperature leads to an increase in water vapor content, thereby causing the concentration of carbon dioxide in the air to decrease.\n\nIn summary, the concentration of carbon dioxide is affected by many factors, and being affected by temperature in the atmosphere will cause the concentration of carbon dioxide to decrease.",
+          "prompt": "Carbon dioxide in the air"
+        },
+        {
+          "output": "How many? The largest animal on Earth is the blue whale (Balaenoptera musculus). Blue whales can grow up to 30 meters long and weigh up to 173 tons. They are currently the largest known animals and the largest animals on Earth.\nBlue whales are distributed in all major oceans around the world, in the waters surrounding Antarctica. They are the largest species of whale, with a body weight that can reach 200 tons. Blue whales are carnivorous, feeding on small planktonic animals.\nBesides the blue whale, the largest animal on Earth is the African elephant (Loxodonta afasciola), which is the largest land animal on Earth. African elephants can grow up to 4 meters tall and weigh over 6 tons.\nIn summary, the blue whale is the largest animal in the world, and they live in the oceans around the globe.",
+          "prompt": "The largest animal on Earth has"
+        },
+        {
+          "output": "What dishes are worth trying?\nWhat is the answer to this question? My favorite is Longjing Shrimp, and I must eat it every time I go to Hangzhou!",
+          "prompt": "Hangzhou's cuisine has"
+        }
+      ],
+      "stage": "pretrain",
+      "terminal_header": "### Pretrain Model\n\n\n$ CUDA_VISIBLE_DEVICES=1 python eval_model.py --load 0 --model 0\nMiniMind model parameters: 104.03M (million)\n[0] Auto test\n[1] Manual input\n0"
+    },
+    {
+      "arm": "qk_norm_muon",
+      "pair_count": 9,
+      "pairs": [
+        {
+          "output": "I am an AI language model capable of text generation and answering various questions. I am trained for natural language processing, language understanding, natural language generation, dialogue systems, etc., and can provide users with efficient, accurate, and convenient services. My goal is to provide users with accurate, comprehensive, and professional knowledge, helping them solve various problems and improve their own performance and abilities.",
+          "prompt": "Please introduce yourself."
+        },
+        {
+          "output": "I am better at English, mathematics, science, and history. In these subjects, I can use English and English grammar, learn English grammar and spelling rules, and be familiar with various historical events and cultures. I am also very good at English, mathematics, science, and history.",
+          "prompt": "Which subject are you better at?"
+        },
+        {
+          "output": "Lu Xun's \"Diary of a Madman\" is a literary work that opposes feudal ethics. In this work, the protagonist is a mental patient who is given a fate of self-destruction and begins to destroy himself. However, the novel also depicts the cruelty and depravity of feudal ethics. In the novel, Lu Xun uses his critique of feudal ethics to reflect on this system. He believes that feudal ethics is not only a critique of feudal ethics but also a rebellion against society. In the novel, Lu Xun's \"Diary of a Madman\" criticizes the oppression and enslavement of feudal ethics and raises questions about feudal ethics. He believes that feudal ethics is a corruption of human nature and an exploitation of feudal ethics. In addition, the novel also criticizes the critique of modern culture by feudal ethics. Lu Xun believes that feudal ethics is a kind of \"banned book,\" prohibiting the publication and dissemination of literary works and requiring public plagiarism. This behavior seriously violates the legitimacy of feudal ethics and severely damages the image of feudal ethics. In summary, Lu Xun's \"Diary of a Madman\" criticizes the oppression and enslavement of feudal ethics and raises questions about feudal ethics. This critique reflects the corruption and moral decay within Chinese feudal society, as well as the critique of modern culture by feudal ethics.",
+          "prompt": "How does Lu Xun's \"Diary of a Madman\" criticize feudal ethics?"
+        },
+        {
+          "output": "If the cough has persisted for two weeks, the doctor may recommend further examinations. These examinations include hearing tests, lung CT scans, and chest X-rays to assess the condition of the respiratory system. If your cough lasts more than two weeks, the doctor may suggest you go to the hospital for a visit.",
+          "prompt": "I have had a cough for two weeks. Do I need to go to the hospital for a check-up?"
+        },
+        {
+          "output": "The speed of light is one of the most fundamental physical constants in physics. It represents the speed at which light travels in a vacuum, approximately 299,792,458 meters per second. The speed of light is the speed at which light propagates in a vacuum, with a value of 299,792,458 meters per second.\nThe physical concept of the speed of light includes the following aspects:\n1. Relativity of the speed of light: The speed of light is a constant that is not affected by the observer's state of motion.\n2. Equivalence of the speed of light: The speed of light is not affected by the observer's state of motion and is a constant, meaning it is not affected by the observer's position.\n3. Conservation of light energy: The speed of light is invariant in any inertial reference frame, meaning it is not affected by the observer's state of motion.\n4. Propagation speed of light: The speed of light in a vacuum is 299,792,458 meters per second, approximately 299,792,458 meters per second.\n5. Invariance of the speed of light: The speed of light is not affected by the observer's state of motion and is a constant, meaning the speed of light in a vacuum is not affected by the observer's position.\nThe importance of the speed of light in physics cannot be ignored. It is not only a fundamental physical constant of the speed of light but also one of the most important fundamental constants in physics.",
+          "prompt": "Please provide a detailed introduction to the physical concept of the speed of light."
+        },
+        {
+          "output": "Hangzhou's food culture is very rich. Here are a few famous specialty dishes: 1. Longjing Shrimp: This is a traditional Hangzhou dish made with fresh shrimp as the main ingredient, processed through steaming, frying, boiling, and other steps, resulting in a delicious taste. 2. Dongpo Pork: This is a traditional dish made with pork as the main ingredient, slowly braised with seasonings such as scallions, ginger, garlic, star anise, and cinnamon. 3. West Lake Vinegar Fish: This is a sweet and sour dish made with fish as the main ingredient, seasoned with vinegar, sugar, salt, and other seasonings. 4. Beggar's Chicken: This is a traditional dish made with chicken as the main ingredient, slowly braised with seasonings such as Sichuan peppercorns, ginger, and scallions. 5. Dongpo Eggs: This is a traditional dish made with eggs as the main ingredient, slowly braised with seasonings such as scallions, ginger, and salt.",
+          "prompt": "Recommend some Hangzhou specialty foods."
+        },
+        {
+          "output": "A \"Large Language Model\" refers to a language model capable of understanding and generating natural language text. It is a natural language processing technology based on neural networks. Building on the previously mentioned language models, it can perform tasks such as text generation, machine translation, and question-answering systems. Training a large language model requires a large amount of data and computational resources, but the quality and reliability of its training results can directly affect its performance in natural language processing tasks.",
+          "prompt": "Please explain the concept of \"Large Language Model\" to me."
+        },
+        {
+          "output": "ChatGPT is an artificial intelligence language model that can answer questions based on an understanding of human language. It can understand and generate natural language, but it is not in the form of a \"chat.\" It is a computer program that can communicate using natural language like a human.\nTo understand ChatGPT, you need to use natural language processing (NLP) techniques and deep learning algorithms. These algorithms are trained to understand inputs and outputs and can generate human-like text. This may involve extracting features from text, such as grammar, syntax, and contextual information, and then using this information to generate new text.\nTo use ChatGPT, you need to provide it with a large amount of text data, which can be structured data (such as text documents or web pages) or unstructured data (such as images or audio). Then, you can use deep learning algorithms, such as Recurrent Neural Networks (RNNs) or Transformers, to train the model to generate human-like text.\nOverall, ChatGPT is a powerful tool that can help you process natural language, but understanding its complexity and abstraction remains a challenging task.",
+          "prompt": "How to understand ChatGPT?"
+        },
+        {
+          "output": "- Introduce the history of the United States.- Please.",
+          "prompt": "Introduce the history of the United States, please."
+        }
+      ],
+      "stage": "sft",
+      "terminal_header": "### SFT Model\n\n\n$ python eval_model.py --load 0 --model 1\nMiniMind model parameters: 104.03M (million)\n[0] Auto test\n[1] Manual input\n0"
+    },
+    {
+      "arm": "qk_norm_muon",
+      "pair_count": 9,
+      "pairs": [
+        {
+          "output": "I am an AI assistant developed based on natural language processing technology. I can answer various questions and provide various services, including but not limited to providing information, providing entertainment, and helping to solve various problems. I am constantly learning and evolving to better serve users.",
+          "prompt": "Please introduce yourself."
+        },
+        {
+          "output": "I am better at computer science and mathematics. In these subjects, I am particularly good at programming, including Java and Python. I can use these programming languages to write code, develop software applications, and solve real-world problems.",
+          "prompt": "Which subject are you better at?"
+        },
+        {
+          "output": "Lu Xun's \"Diary of a Madman\" is an article that criticizes the corruption of human nature by feudal ethics. In the article, Lu Xun criticizes the rebellion and oppression of feudal ethics. He believes that the criticism of human nature by feudal ethics is wrong. First, feudal ethics is a feudal system that controls people's behavior and thoughts, limiting people's freedom and dignity. The criticism of human nature by feudal ethics is an oppression and exploitation of feudal ethics, which has had a negative impact on the progress of China's modernization process. Second, the criticism of human nature by feudal ethics is an oppression and exploitation of feudal ethics. The criticism of human nature by feudal ethics is an oppression and exploitation of feudal ethics. The oppression of feudal ethics by feudal ethics is an oppression and exploitation of feudal ethics. Finally, the criticism of human nature by feudal ethics expressed in Lu Xun's \"Diary of a Madman\" is an oppression and exploitation of feudal ethics. The criticism of human nature by feudal ethics is an oppression and exploitation of feudal ethics. In short, Lu Xun's \"Diary of a Madman\" criticizes feudal ethics, with the oppression and exploitation of feudal ethics as the main direction of criticism, and proposes rebellion and oppression against feudal ethics. At the same time, Lu Xun also reflects on the oppression and exploitation of feudal ethics, expressing reverence and awe for feudal ethics.",
+          "prompt": "How does Lu Xun's \"Diary of a Madman\" criticize feudal ethics?"
+        },
+        {
+          "output": "If you have been coughing for two weeks, it is recommended to go to the hospital for a check-up. Usually, it is best to have a check-up under the guidance of a doctor. The doctor will evaluate your symptoms and medical history and may perform some basic physical examinations, such as auscultation, facial examination, and blood tests. If your symptoms persist and do not show significant improvement, you may need further examination at the hospital. In some cases, the doctor may recommend blood tests, lung function tests, chest X-rays, electrocardiograms, etc. If your cough symptoms do not show significant improvement, you may need to go to the hospital for further examination. Regardless of the severity of your symptoms, the doctor will develop a treatment plan based on your condition. If your symptoms are severe or last for a long time, it is recommended to seek medical attention as soon as possible.",
+          "prompt": "I have had a cough for two weeks. Do I need to go to the hospital for a check-up?"
+        },
+        {
+          "output": "The speed of light is a commonly used concept in physics, referring to the speed at which light propagates in a vacuum. Its value is 299,792,458 meters per second, which is the fastest speed in nature. The physical concept of the speed of light includes the following points: 1. The speed of light is a natural constant, i.e., 299792.9835478 seconds. 2. The speed of light is a constant, i.e., the speed at which light propagates in a vacuum, which is the fastest speed in nature. 3. The speed of light is an important concept, significant for fields such as physics, astronomy, and cosmology. 4. The unit of the speed of light is meters per second, representing the speed at which light propagates in a vacuum, approximately 299,792,458 meters per second. 5. The speed of light is an important physical constant, closely related to the wave nature of light and electromagnetic radiation. 6. The speed of light plays an important role in relativity, being one of the foundations of general relativity. The speed of light is also one of the foundations of special relativity, an important concept for describing the relativity of object motion and light. In summary, the speed of light is a commonly used concept in physics, significant for fields such as physics, astronomy, and cosmology.",
+          "prompt": "Please provide a detailed introduction to the physical concept of the speed of light."
+        },
+        {
+          "output": "Hangzhou has many famous specialty foods, such as West Lake Vinegar Fish, Longjing Shrimp, Beggar's Chicken, Dongpo Pork, etc. In addition, Hangzhou's Xiaolongbao (soup dumplings), Glutinous Rice Chicken, Longjing Shrimp Sweet and Sour Fish, and other delicacies are also not to be missed.",
+          "prompt": "Recommend some Hangzhou specialty foods."
+        },
+        {
+          "output": "A large language model, also known as a large language model, is a language model based on a statistical model used to generate natural language text. It learns the patterns of language elements such as vocabulary, grammar, and context to build a model that can generate text conforming to language rules. Large language models have a wide range of applications, such as machine translation, speech recognition, and natural language generation.",
+          "prompt": "Please explain the concept of \"Large Language Model\" to me."
+        },
+        {
+          "output": "ChatGPT is an artificial intelligence language model that uses machine learning algorithms to generate human-like text. ChatGPT learns language patterns and grammatical rules by training on large amounts of text data, enabling it to generate human-like responses. It is an advanced technology widely used in various applications, such as chatbots, intelligent assistants, and language translation. To understand ChatGPT, it is necessary to delve into its internal working principles, such as how it generates responses based on previous input and how it uses probability-based statistical methods to learn language patterns and grammatical rules.",
+          "prompt": "How to understand ChatGPT?"
+        },
+        {
+          "output": "Introduce the history of the United States, please.",
+          "prompt": "Introduce the history of the United States, please."
+        }
+      ],
+      "stage": "dpo",
+      "terminal_header": "### DPO Model\n\n\n$ python eval_model.py --load 0 --model 2\nMiniMind model parameter count: 104.03M(illion)\n[0] Automatic test\n[1] Manual input\n0"
+    }
+  ],
+  "experiment": "7-3",
+  "output_count": 49,
+  "schema_version": "exp7-3-retained-outputs-v1",
+  "source_report": "chapter7/MiniMind-pretrain/README.md",
+  "source_report_sha256": "253ec892a7d8f6382dc45aa8b3e62cb2d31d8a44c78f2ebd2fbe344f05730863",
+  "stages": [
+    "pretrain",
+    "sft",
+    "dpo"
+  ]
+}

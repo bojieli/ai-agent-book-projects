@@ -1,0 +1,276 @@
+{
+  "acceptance": {
+    "all_expected_outputs_retained": true,
+    "all_six_arm_stage_cells_retained": true,
+    "checkpoints_not_an_acceptance_artifact": true,
+    "eight_stage_balanced_blind_judgments": true,
+    "future_reproduction_commands_declared": true,
+    "historical_provenance_limitations_explicit": true,
+    "immutable_dataset_revision_lfs_hashes_and_sizes_frozen": true,
+    "immutable_source_revision_and_file_hashes_frozen": true,
+    "original_and_qk_norm_muon_compared": true,
+    "passed": true,
+    "pretrain_sft_and_dpo_compared": true,
+    "raw_historical_report_hashed": true,
+    "raw_judge_requests_responses_ids_usage_latency_retained": true,
+    "reported_loss_claims_qualified": true
+  },
+  "arm_averages": {
+    "original": {
+      "factuality": 1.375,
+      "instruction_following": 1.75,
+      "language_fluency": 3.0,
+      "overall": 2.0417
+    },
+    "qk_norm_muon": {
+      "factuality": 4.125,
+      "instruction_following": 3.0,
+      "language_fluency": 3.75,
+      "overall": 3.625
+    }
+  },
+  "experiment": "7-3",
+  "judge": {
+    "blind_seed": 730731,
+    "calls": 8,
+    "model": "doubao-seed-1-6-250615",
+    "provider": "ark",
+    "response_ids": [
+      "02178549583945856db6dee5d970b68ab3a378dc7e67e35390cf8",
+      "021785495839461d24b0b4d764165756d4018ab78dadfacc3782e",
+      "021785495839460982b29f8728970ed398f78ebc517c3ae19045a",
+      "021785495839459da6f4ee8e5443fabd9dcec9964b863512d1526",
+      "021785495872253a78e4bf9e905a6c19d35dac8ed03e6be35e22e",
+      "0217854958740424ebcb86fd234a9cf7780741b795c6db019ca22",
+      "0217854958861885bd2f0b9e6315ce45b86fb4e22ec749679fcc6",
+      "02178549588624031c26a7cf9ea611aa30972127acb8017b9f7cf"
+    ],
+    "total_latency_ms": 285434.825,
+    "total_tokens": 15652
+  },
+  "limitations": [
+    "Historical checkpoints are intentionally not distributed and were not recreated in this audit.",
+    "The historical source revision, dataset byte identities, RNG state, and stepwise loss logs were not retained.",
+    "Frozen source/data revisions and the book lock define a future reproduction contract, not historical provenance.",
+    "The independent judge covers eight preregistered comparisons; all other retained outputs remain available for inspection.",
+    "The historical outputs are English translations in a bilingual report, so translation may affect the judge scores."
+  ],
+  "per_case_arm_scores": {
+    "1": {
+      "original": {
+        "factual_errors": [
+          "In Nepali, its name means 'Goddess's Home' (incorrect; Nepali name Sagarmatha means 'Forehead of the Sky' or similar)"
+        ],
+        "factuality": 3,
+        "instruction_following": 3,
+        "language_fluency": 3,
+        "rationale": "Correctly names Mount Everest, its location, and altitude, but contains a factual error about the Nepali name's meaning. Starts with an irrelevant 'which one?' (not following the prompt's statement structure) and has repetitive details (e.g., repeating altitude and location), leading to partial instruction following and flawed fluency."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 3,
+        "rationale": "Accurately identifies Mount Everest as the highest mountain, with correct location (Himalayas) and altitude (8848 meters). No material factual errors. Directly answers the prompt, though with repetitive phrasing (e.g., repeating 'Mount Everest, located in the Himalayas') and a fragmentary opening sentence, reducing fluency."
+      }
+    },
+    "2": {
+      "original": {
+        "factual_errors": [
+          "States CO2 concentration is 'about 20% of air' (actual ~0.04%)",
+          "Refers to CO2 as a 'very important element' (it is a compound)",
+          "Claims CO2 is 'main gas for respiration in humans' (humans exhale CO2, do not use it for respiration)"
+        ],
+        "factuality": 0,
+        "instruction_following": 2,
+        "language_fluency": 3,
+        "rationale": "Contains severe factual errors (e.g., 20% concentration), misclassifies CO2 as an element, and misrepresents its role in respiration. Attempts to correct a false claim but introduces major inaccuracies. Language is coherent but flawed."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [
+          "Claims CO2 concentration 'can be negligible' at higher temperatures due to being a greenhouse gas (false; greenhouse properties don't reduce concentration)",
+          "Contradicts temperature effect (higher temp 'may decrease' then 'may increase because... thereby causing decrease')",
+          "Incorrectly concludes temperature causes CO2 concentration to decrease (no evidence for direct relationship)"
+        ],
+        "factuality": 0,
+        "instruction_following": 2,
+        "language_fluency": 3,
+        "rationale": "Contains multiple contradictory and false claims about CO2 concentration and temperature; attempts to address the topic but with major errors. Language is understandable but has logical defects."
+      }
+    },
+    "3": {
+      "original": {
+        "factual_errors": [
+          "Claims matter exceeds speed of light",
+          "Incorrect formula $c^2=m^2$",
+          "Miscalculated speed (2997*2458 and 4.08 m/s)",
+          "States speed depends on light intensity",
+          "Falsely claims light propagation is 'limited to a tiny range'"
+        ],
+        "factuality": 0,
+        "instruction_following": 1,
+        "language_fluency": 2,
+        "rationale": "Contains numerous material falsehoods about speed of light values, matter speed, and propagation; largely incoherent and fails to explain the concept."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 4,
+        "language_fluency": 4,
+        "rationale": "Accurately states the speed of light in a vacuum and key concepts like invariance; minimal redundancy but no material factual errors."
+      }
+    },
+    "4": {
+      "original": {
+        "factual_errors": [
+          "Claims ChatGPT is 'developed by Google' (it is developed by OpenAI)",
+          "States it 'uses speech recognition technology' (ChatGPT is primarily text-based, not focused on speech recognition)"
+        ],
+        "factuality": 0,
+        "instruction_following": 3,
+        "language_fluency": 3,
+        "rationale": "Contains major factual errors about developer and core technology. Attempts to explain functionality but is incomplete (e.g., mid-sentence line break) and has redundant phrasing, making it partially understandable but flawed."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 5,
+        "rationale": "Accurately identifies ChatGPT as an AI language model using NLP and deep learning (e.g., Transformers), explains training on text data. No material factual errors. Directly answers the task by explaining what it is and how it works. Fluent and coherent throughout."
+      }
+    },
+    "5": {
+      "original": {
+        "factual_errors": [
+          "mentions 'embers' which is irrelevant to and not part of US history"
+        ],
+        "factuality": 0,
+        "instruction_following": 0,
+        "language_fluency": 3,
+        "rationale": "Output repeats the prompt with the irrelevant term 'embers', containing a material factual error, failing to introduce US history, and is understandable but nonsensical due to 'embers'."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 0,
+        "language_fluency": 3,
+        "rationale": "Output repeats the prompt without adding content, containing no material factual errors, failing to introduce US history, and is understandable but has awkward punctuation."
+      }
+    },
+    "6": {
+      "original": {
+        "factual_errors": [
+          "Incorrect approximate speed (393,458 m/s instead of ~299,792,458 m/s)",
+          "Nonsensical definition in relativity: '9.87924/966.71 seconds' (speed cannot be defined in seconds)",
+          "Incorrect unit statement: 'unit of measurement is the speed of light (c)' (unit should be meters per second)"
+        ],
+        "factuality": 1,
+        "instruction_following": 2,
+        "language_fluency": 3,
+        "rationale": "Contains multiple severe factual errors: incorrect speed values, nonsensical definitions in relativity, and wrong unit description. Partially addresses the concept but is undermined by critical inaccuracies."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [
+          "Incorrect unit in point 1: '299792.9835478 seconds' (seconds is a unit of time, not speed)"
+        ],
+        "factuality": 3,
+        "instruction_following": 3,
+        "language_fluency": 2,
+        "rationale": "Has a notable unit error but correctly states the speed value. Repeats points excessively but provides more relevant details (relativity, scientific fields) than A."
+      }
+    },
+    "7": {
+      "original": {
+        "factual_errors": [
+          "Claims 'accuracy can reach over 90%' (no general 'accuracy' metric exists for ChatGPT; performance varies by task and lacks substantiation); incorrectly states it 'handles speech and image processing tasks' (ChatGPT is primarily text-based, with no native image processing capabilities)"
+        ],
+        "factuality": 2,
+        "instruction_following": 3,
+        "language_fluency": 4,
+        "rationale": "Contains material factual errors (unsubstantiated accuracy claim, image processing misstatement); explains basic function/uses but not 'how it works'; text is coherent with minor repetition."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 5,
+        "language_fluency": 5,
+        "rationale": "No material factual errors; accurately explains ChatGPT as an AI language model using ML algorithms, training on text data to learn patterns, and working principles (response generation via input and probability-based methods); fully addresses 'what it is' and 'how it works' with coherent, natural language."
+      }
+    },
+    "8": {
+      "original": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 0,
+        "language_fluency": 3,
+        "rationale": "Output repeats the prompt without introducing U.S. history (non-answer, instruction following 0). No factual content (no material errors, factuality 5). Language has a typo ('theUnitedStates' missing space), understandable with defects (fluency 3)."
+      },
+      "qk_norm_muon": {
+        "factual_errors": [],
+        "factuality": 5,
+        "instruction_following": 0,
+        "language_fluency": 5,
+        "rationale": "Output repeats the prompt without introducing U.S. history (non-answer, instruction following 0). No factual content (no material errors, factuality 5). Language is coherent and natural (fluency 5)."
+      }
+    }
+  },
+  "retained": {
+    "cells": 6,
+    "outputs": 49,
+    "selected_comparisons": 8
+  },
+  "schema_version": "exp7-3-summary-v1",
+  "scientific_findings": {
+    "blind_judge_overall_delta_qk_norm_muon_minus_original": 1.5833,
+    "blind_judge_prefers_qk_norm_muon_overall": true,
+    "reported_loss_comparison_retained_but_not_independently_recomputed": true,
+    "wins": {
+      "original": 0,
+      "qk_norm_muon": 7,
+      "tie": 1
+    }
+  },
+  "stage_averages": {
+    "original": {
+      "dpo": {
+        "factuality": 2.6667,
+        "instruction_following": 1.6667,
+        "language_fluency": 3.3333,
+        "overall": 2.5556
+      },
+      "pretrain": {
+        "factuality": 1.5,
+        "instruction_following": 2.5,
+        "language_fluency": 3.0,
+        "overall": 2.3333
+      },
+      "sft": {
+        "factuality": 0.0,
+        "instruction_following": 1.3333,
+        "language_fluency": 2.6667,
+        "overall": 1.3333
+      }
+    },
+    "qk_norm_muon": {
+      "dpo": {
+        "factuality": 4.3333,
+        "instruction_following": 2.6667,
+        "language_fluency": 4.0,
+        "overall": 3.6667
+      },
+      "pretrain": {
+        "factuality": 2.5,
+        "instruction_following": 3.5,
+        "language_fluency": 3.0,
+        "overall": 3.0
+      },
+      "sft": {
+        "factuality": 5.0,
+        "instruction_following": 3.0,
+        "language_fluency": 4.0,
+        "overall": 4.0
+      }
+    }
+  },
+  "status": "passed"
+}
