@@ -238,7 +238,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > | 400B (nagy) | 5M-10M | 1000+ GPU, 6-12 hónap | $10M-20M+ |
 >
 > A kísérlet fő következtetése: Ha a számítási költségvetés korlátozott, a hatékonyság növelésének kulcsa a modellméret és az adatmennyiség közötti egyensúly megtalálása. Nem mindig a nagyobb modell jobb; időnként a kisebb modell több adaton való tréningezése hatékonyabb.
-> 
+>
 > **7-3. kísérlet ★★: Közel nulla erőforrású pre-tréning – A matematikai alapok építése**
 >
 > Ez a kísérlet egy 1M paraméteres modellt tréningező alacsony erőforrású megközelítést mutat be. A modell egy egyszerű, matematikai problémák generálására használt szintaktikai szabályrendszerből származó adatokon tanul, bemutatva a pre-tréning alapelveit anélkül, hogy nagyszabású számítási erőforrásokra lenne szükség.
@@ -252,7 +252,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > - "5000 lépés után": Stabilizálódás, a token pontosság ~95%, de a modell megtanulta a tréning specifikus szerkezeteit és elvesztette az általánosítás képességét
 >
 > Ez a kísérlet élénken szemlélteti a pre-tréning alapelveit: a modell megtanulja a nyelv szintaxisát és a számítási mintákat, és a tréning során az általánosítás képessége csökkenhet, ami a korai leállítás (early stopping) fontosságát hangsúlyozza. (A korai leállítás ismét felbukkan az SFT szakaszban, ahol a GeneralPoints kísérlet ugyanezzel a jelenséggel szembesül.)
-> 
+>
 > **7-4. kísérlet ★★: Hatékony pre-tréning korlátozott adatokkal – Adatminőség vs. mennyiség**
 >
 > Korlátozott adatok mellett hasonlítjuk össze a tisztított (de-duplikált, szűrt magas minőségű) adatok és a nyers (szűretlen) adatok hatását a modell teljesítményére. Tisztított adatokon a pre-tréning jobb általánosítást (alacsonyabb perplexitású) és gyorsabb konvergenciát mutat, ami azt jelzi, hogy az adatminőség fontosabb, mint az adatmennyiség. A kísérlet kvantitatív eredményei:
@@ -264,7 +264,7 @@ Mindhárom típus a következő token előrejelzésének ugyanazon az optimaliz�
 > | Nyers adat (kibővített) | 2M token | 44.1 | 10000+ |
 >
 > Megállapítás: **a tisztított 500K token jobb eredményt ér el, mint a 2M nyers token** – az adatminőség fontosabb, mint az adatmennyiség. (Ugyanez az elv újra felbukkan a későbbi kísérletekben: a 7-9. kísérletben a "rejection sampling fine-tuning" mögött is az adatminőség és az adatmennyiség közötti választás áll.)
-> 
+>
 > **7-5. kísérlet ★★: Folytatott pre-tréning új nyelv tanulásához**
 >
 > A Mistral 7B v0.3 alapmodell – amely elsősorban angol nyelvű pre-tréninget kapott, és szinte semmit sem tud koreaiul – egy új nyelv (koreai) elsajátítását mutatja be folytatott pre-tréningen keresztül a koreai Wikipédián. Ez egy már pre-tréningezett modellen végzett felügyelet nélküli tréning új nyelvi adatokon. A modell már rendelkezik általános nyelvi modellezési képességekkel, és csak alkalmazkodnia kell az új adateloszláshoz, így a költség sokkal alacsonyabb, mint a nulláról induló tréningé. Egy kulcsfontosságú mérnöki szempont a vegyes adatok használata (~80% koreai + 20% angol) a katasztrofális felejtés enyhítésére: a céls nyelv túl magas aránya az eredeti nyelv romlásához vezet, míg a túl alacsony arány nem elegendő tanulási hatékonyságot eredményez. Végül az SFT-t koreai utasításadatokkal hajtják végre a gyakorlati koreai beszélgetési képesség eléréséhez. Ennek a kísérletnek a következtetését újra hasznosítjuk a fejezet végén található "Teljes poszt-tréning kép és gyakorlati tippek" részben: ha egy modellnek nagyszámú új domain-ismeretet kell megjegyeznie, támaszkodj a folytatott pre-tréningre, ne az SFT-re.

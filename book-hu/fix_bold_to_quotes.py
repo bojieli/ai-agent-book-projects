@@ -49,7 +49,7 @@ def process_file(filepath, filename):
     global total_changes
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     # Pattern: **text** - match inline bold
     def replace_bold(match):
         inner = match.group(1)
@@ -57,19 +57,19 @@ def process_file(filepath, filename):
             return f'**{inner}**'
         else:
             return f'"{inner}"'
-    
+
     new_content = re.sub(r'\*\*(.+?)\*\*', replace_bold, content)
-    
+
     if new_content != content:
         # Count changes
         old_count = len(re.findall(r'\*\*(.+?)\*\*', content))
         new_count = len(re.findall(r'\*\*(.+?)\*\*', new_content))
         changes = old_count - new_count
         total_changes += changes
-        
+
         # Count quote uses
         quote_count = len(re.findall(r'"([^"]*?)"', new_content)) - len(re.findall(r'"([^"]*?)"', content))
-        
+
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(new_content)
         print(f"✅ {filename}: {changes} bold → quote (now {quote_count} new quote pairs)")

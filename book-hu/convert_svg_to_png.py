@@ -14,14 +14,14 @@ converted = 0
 for fname in sorted(os.listdir(img_dir)):
     if not fname.lower().endswith('.svg'):
         continue
-    
+
     svg_path = os.path.join(img_dir, fname)
     png_name = fname.replace('.svg', '.png')
     png_path = os.path.join(img_dir, png_name)
-    
+
     with open(svg_path, 'rb') as f:
         svg_data = f.read()
-    
+
     # Convert SVG to PNG
     cairosvg.svg2png(bytestring=svg_data, write_to=png_path, output_width=1200)
     converted += 1
@@ -43,13 +43,13 @@ for fname in chapters:
     fpath = os.path.join(book_dir, fname)
     if not os.path.exists(fpath):
         continue
-    
+
     with open(fpath, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     # Replace image references: images/fig*.svg → images/fig*.png
     new_content = re.sub(r'(images/[a-zA-Z0-9_-]+)\.svg', r'\1.png', content)
-    
+
     if new_content != content:
         fixes = len(re.findall(r'\.png', new_content)) - len(re.findall(r'\.png', content))
         total_fixes += fixes

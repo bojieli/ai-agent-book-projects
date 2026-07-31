@@ -173,7 +173,7 @@ Itt látható egy trajektória szerkezete pszeudokódban:
 ```
 trajectory = [
   {role: "user", content: "A vállalat negyedéves bevételei alapján: Q1 2,5M USD, Q2 2,1M EUR, Q3 1,8M GBP, Q4 380M JPY, számítsd ki a vállalat teljes éves bevételét és az átlagos negyedéves bevételt"},
-  
+
   # Első iteráció - LLM megkapja a fenti trajektóriát és generál egy választ
   {role: "assistant",
    reasoning: "Az összes devizát USD-re kell váltani...",
@@ -183,12 +183,12 @@ trajectory = [
      {name: "convert_currency", args: {amount: 1800000, from: "GBP", to: "USD"}},
      {name: "convert_currency", args: {amount: 380000000, from: "JPY", to: "USD"}}
    ]},
-  
+
   # Ügynök keretrendszer végrehajtja az eszközöket, eredményeket ad a trajektóriához
   {role: "tool", content: "EUR->USD: 2282608.7"},
   {role: "tool", content: "GBP->USD: 2278481.01"},
   {role: "tool", content: "JPY->USD: 2541806.02"},
-  
+
   # Második iteráció - LLM megkapja a teljes trajektóriát, beleértve az eszközeredményeket
   {role: "assistant",
    reasoning: "A konverziós eredmények megvannak, most összesíteni és számolni kell...",
@@ -196,9 +196,9 @@ trajectory = [
    tool_calls: [
      {name: "code_interpreter", args: {code: "total = 2500000 + 2282608.7 + ..."}}
    ]},
-  
+
   {role: "tool", content: "Összesen: $9,602,895.73, Átlag: $2,400,723.93..."},
-  
+
   # Harmadik iteráció - LLM megkapja a teljes trajektóriát és generálja a végső választ
   {role: "assistant",
    reasoning: "Minden számítás kész, az eredmények összefoglalása...",
