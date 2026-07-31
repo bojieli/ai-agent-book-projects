@@ -1,0 +1,5 @@
+{
+  "category": "cross-cutting",
+  "instruction": "Make usernames case-insensitive and insensitive to surrounding whitespace throughout registration, authentication, and directory lookup. Preserve the user's trimmed display casing in returned profiles, and handle Unicode usernames correctly. Keep the existing public APIs.",
+  "test_command": ["python", "-m", "unittest", "discover", "-s", "tests", "-v"]
+}

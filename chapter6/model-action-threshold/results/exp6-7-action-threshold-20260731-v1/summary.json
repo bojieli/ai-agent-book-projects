@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-07-31T13:49:54.403222+00:00",
+  "observation_count": 18,
+  "by_model": [
+    {
+      "model": "anthropic/claude-sonnet-5",
+      "runs": 9,
+      "completed_without_api_error": 9,
+      "final_pass_rate": 1.0,
+      "first_patch_pass_rate": 1.0,
+      "mean_tool_calls_before_first_edit": 4.5556,
+      "mean_unique_files_read_before_first_edit": 3.5556,
+      "mean_seconds_to_first_edit": 14.4762,
+      "mean_edit_attempts": 2.3333,
+      "mean_successful_edit_calls": 2.0,
+      "mean_edits_after_first_test": 0.0,
+      "mean_changed_files": 1.7778,
+      "total_input_tokens": 131668,
+      "total_output_tokens": 10241
+    },
+    {
+      "model": "openai/gpt-5.6-sol",
+      "runs": 9,
+      "completed_without_api_error": 9,
+      "final_pass_rate": 1.0,
+      "first_patch_pass_rate": 1.0,
+      "mean_tool_calls_before_first_edit": 6.8889,
+      "mean_unique_files_read_before_first_edit": 4.6667,
+      "mean_seconds_to_first_edit": 15.0052,
+      "mean_edit_attempts": 2.2222,
+      "mean_successful_edit_calls": 2.2222,
+      "mean_edits_after_first_test": 0.0,
+      "mean_changed_files": 2.0,
+      "total_input_tokens": 66794,
+      "total_output_tokens": 7901
+    }
+  ],
+  "by_task": [
+    {
+      "task_id": "cache_contract",
+      "models": [
+        {
+          "model": "anthropic/claude-sonnet-5",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 2.0
+        },
+        {
+          "model": "openai/gpt-5.6-sol",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 4.0
+        }
+      ]
+    },
+    {
+      "task_id": "crosscutting_identity",
+      "models": [
+        {
+          "model": "anthropic/claude-sonnet-5",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 6.6667
+        },
+        {
+          "model": "openai/gpt-5.6-sol",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 7.0
+        }
+      ]
+    },
+    {
+      "task_id": "localized_timeout",
+      "models": [
+        {
+          "model": "anthropic/claude-sonnet-5",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 2.0
+        },
+        {
+          "model": "openai/gpt-5.6-sol",
+          "runs": 3,
+          "final_pass_rate": 1.0,
+          "mean_files_read_before_edit": 3.0
+        }
+      ]
+    }
+  ]
+}

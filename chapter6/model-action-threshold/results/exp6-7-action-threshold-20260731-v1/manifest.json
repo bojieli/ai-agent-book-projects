@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-07-31T13:49:54.403437+00:00",
+  "status": "complete",
+  "expected_observations": 18,
+  "actual_observations": 18,
+  "api_error_count": 0,
+  "artifacts": {
+    "config.json": {
+      "sha256": "ffd9633aaf75bc96f870bfa18c37ebc15712404c8e919e1baf26dc7ac88c2328",
+      "bytes": 541
+    },
+    "observations.jsonl": {
+      "sha256": "67d266cf26546cb9eb40a09641f8ff2acd4f78a83b321baec441bf6a79a73e8f",
+      "bytes": 170244
+    },
+    "summary.json": {
+      "sha256": "c103a7f36f41ccda7f4f2c9b8c5dcf00a1a965c8f2e3e67e4aca877cf2d40950",
+      "bytes": 2486
+    }
+  }
+}

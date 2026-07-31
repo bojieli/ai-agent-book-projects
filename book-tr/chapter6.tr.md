@@ -461,6 +461,24 @@ Bu iki aşamanın etrafında şekillenen başlıca throughput ve gecikme metrikl
 
 Pratikte çok modelli bir iş birliği stratejisi benimsenebilir: maliyeti düşürmek için basit istekleri hafif modellere, kaliteyi güvenceye almak için karmaşık görevleri güçlü modellere vermek; ya da belirli alt görevleri (görüntü anlama, kod üretimi gibi) özel modellere bırakıp alt Agent mekanizmasıyla iş birliği kurmak. Bu tür heterojen bileşimlerin toplam faydasının, eklediği sistem karmaşıklığını aşıp aşmadığı değerlendirmeyle doğrulanmalıdır.
 
+### Model Davranışı: Okumayı Ne Zaman Bırakıp Düzenlemeye Başlamalı?
+
+Model seçimi yalnızca bir modelin görevi tamamlayıp tamamlayamadığını değil, **varsayılan olarak nasıl davrandığını** da karşılaştırır. Coding Agent'larda kolayca gözlenen farklardan biri eylem eşiğidir. Aynı kodlama görevi verildiğinde bazı modeller depoyu genişçe keşfeder, mimariyi, çağrı noktalarını ve testleri doğruladıktan sonra düzenleme yapar. Bazıları ise daha az kanıtla değişiklik yerini belirler, erken düzenler ve test geri bildirimini anlayışını tamamlamak için kullanır. İlki erken düzenlemenin maliyetini, ikincisi bir dosya daha okumanın fırsat maliyetini daha yüksek görür.
+
+Bir eğilim Harness değiştiğinde de modeli izliyor ve sabit bir Harness içinde yalnızca model değiştirildiğinde farklılaşıyorsa temel açıklama **model davranışı** olmalıdır. Post-training olası bir kaynaktır: SFT yörüngeleri harekete geçmeden önce ne kadar okunacağını gösterir, süreç ödülleri belirli araç yollarını güçlendirir ya da cezalandırır, sonuç ödülleri de başarıya ulaştıran bütün stratejiyi pekiştirir. Böylece model yalnızca kod yazmayı değil, yeterli kanıta ne zaman ulaştığını da öğrenir. Kesin veri kümeleri ve ödül tarifleri genellikle özeldir; kontrollü model değişimleri davranışı model tarafında konumlandırabilir, ancak bir sağlayıcının kesin eğitim tarifini ortaya çıkarmaz. Harness sistem prompt'u, araç açıklamaları ve bütçeyle eşiği yine değiştirebilir; fakat zorunlu bir iş akışı yoksa varsayılan kök neden değil, düzenleyici olarak ele alınmalıdır.
+
+Eşlik eden deney, tek bir **tarafsız ve sabit Harness** içinde `openai/gpt-5.6-sol` ile `anthropic/claude-sonnet-5` modellerini karşılaştırır. İki model aynı OpenRouter endpoint'ini kullanır ve aynı sistem prompt'unu, görevi, depoyu, araç adlarını, JSON Schema'larını ve araç sonuçlarını görür. Harness ne keşfi ne de erken düzenlemeyi şart koşar. Üç küçük depo; yerel bir hata, modüller arası kimlik normalleştirmesi ve herkese açık bir sözleşmeye duyarlı önbellek düzeltmesini kapsar. Her model her görevi bağımsız olarak üç kez çalıştırmış ve 18 yörünge üretmiştir. İlk düzenlemeden önce GPT-5.6-sol ortalama 6,89 araç çağrısı yapıp 4,67 dosya okurken Claude Sonnet 5, 4,56 çağrı ve 3,56 dosya ortalamasına ulaşmıştır. Fark yerel görevlerde en büyük, açıkça modüller arası görevde ise neredeyse yoktur (7,00'a karşı 6,67 dosya). Her iki model de ilk test edilen yamada ve son testlerde %100 başarı sağlamıştır. Dolayısıyla bu küçük deney “eylem politikası modelle birlikte değişir” sonucunu destekler; “daha çok okumak” ya da “daha erken düzenlemek” her zaman daha iyidir sonucunu değil. İlk düzenlemeye kadar geçen süre de neredeyse aynıdır (15,01'e karşı 14,48 saniye); araç adımları, paralel çağrılar ve model gecikmesi ayrı değerlendirilmelidir.
+
+> **Deney 6-7 ★★: Sabit Bir Coding Harness İçinde Model Eylem Eşiklerini Ölçmek**
+>
+> **Amaç**: model etkenini yalıtmak, Coding modellerinin bilgi toplamaya devam etmekle düzenlemeye başlamak arasındaki varsayılan tercihini nicelleştirmek ve yol verimliliğini sonuç kalitesiyle birlikte değerlendirmek.
+>
+> **Yöntem**: `chapter6/model-action-threshold/experiment.py` dosyasını çalıştırın. Varsayılan olarak GPT-5.6-sol ve Claude Sonnet 5 aynı OpenRouter OpenAI-compatible endpoint'i üzerinden çağrılır; sistem prompt'u, araç Schema'ları, görev depoları, test komutları ve tur sınırı sabit tutulur. Tarafsız prompt okunacak asgari dosya sayısını veya hızlı düzenleme zorunluluğunu belirtmez. Üç görev kategorisinin her birini en az üç kez tekrarlayın ve model sırasını dönüşümlü kullanın. İlk düzenlemeden önceki araç çağrılarını, okunan dosyaları, aramaları ve duvar saati süresini; ilk test edilen yamanın kabulünü, test sonrası yeniden çalışmayı, son başarıyı, değişen dosyaları ve Token kullanımını kaydedin.
+>
+> **Nedensel yorum**: tarafsız kampanya aynı Harness içinde davranışın modelle birlikte değişip değişmediğini sorar. Harness'in düzenleyici etkisini ölçmek için `--policy explore-first` ile ayrı bir kampanya çalıştırın; iki policy'yi tek bir model karşılaştırmasında karıştırmayın. Model değişiminde farklılaşıp aynı model için Harness'ler arasında korunan davranış, model etkisine daha güçlü kanıttır; tersi Harness etkisini daha güçlü destekler.
+>
+> **Kabul ölçütleri**: tüm çevrimdışı birim testleri geçer; her görev fixture'ının başlangıçta testleri başarısız kıldığı önce doğrulanır; resmi sonuç bütün `model × görev × tekrar` hücrelerini, sıfır API hatasını, bağımsız bir son testi ve denetlenebilir yörüngeleri içerir; `manifest.json` yapılandırma, gözlemler ve özetin hash'lerini doğrular. Proje dizininde 18/18 hücrelik tamamlanmış bir gerçek çalıştırma bulunur. Okurlar bu küçük depoların sayılarını kalıcı bir liderlik tablosu saymak yerine, önem verdikleri model sürümleri ve gerçek iş yükleri üzerinde deneyi yeniden çalıştırmalıdır.
+
 ### Agent Sistemlerinin Maliyet Analizi
 
 Maliyet, model seçiminde en kolay hafife alınan boyuttur. Agent'ınız üretime girdiyse ya da girmek üzereyse, bu bölümdeki maliyet analizini atlamayın.
@@ -502,7 +520,7 @@ Girdi tarafında önce denenmesi gereken üç kaldıraç şunlardır: **KV Cache
 
 Üretim ortamında gerçek zamanlı bir maliyet izleme düzeni kurulmalıdır: token tüketimi ve API ücretleri görev türü, model, kullanıcı gibi boyutlara göre takip edilir. Aynı zamanda her görev için bir maliyet üst sınırı konmalıdır — Agent bir döngüye takıldığında veya fazla derine daldığında otomatik olarak sonlandırılır ve tek bir görevin anormal derecede yüksek ücret üretmesi engellenir.
 
-> **Deney 6-7 ★: Agent Görevlerinin Uçtan Uca Maliyet Analizi**
+> **Deney 6-8 ★: Agent Görevlerinin Uçtan Uca Maliyet Analizi**
 >
 > **Deney amacı**: Yukarıdaki sekiz turluk maliyet ayrıştırmasını yeniden üretmek, ardından aynı optimizasyon kaldıraçlarını kendi iş yükünüzde sınamak.
 >
@@ -520,7 +538,7 @@ Diyelim ki Agent sisteminiz şu anda Claude üzerine kurulu ve tool calling ile 
 
 Sağlam bir değerlendirme sistemine sahip bir ekip yanıtı birkaç saat içinde verebilir: yeni modeli kendi değerlendirme veri kümesinde çalıştırır; görev başarı oranını, tool calling doğruluğunu, gecikmeyi ve maliyeti karşılaştırır. Yeni modelin basit görevlerde gerçekten daha iyi ve daha ucuz olduğunu, ama karmaşık çok turlu araç orkestrasyonu içeren çekirdek senaryolarda başarı oranının %5 düştüğünü görebilirsiniz. Bu farkın gürültü bandını aştığını doğruladıktan sonra (aşağıdaki "Değerlendirme Sonuçlarının İstatistiksel Anlamlılığı" bölümüne bakın), kararınız körlemesine bir toptan geçiş değil, "maliyeti düşürmek için basit görevleri yeni modele taşı, kaliteyi güvenceye almak için karmaşık görevleri eski modelde tut" biçiminde farklılaştırılmış bir stratejiye dönüşür. Bu incelikte, veri güdümlü kararlar ancak önceden kurulmuş bir değerlendirme sistemiyle mümkündür.
 
-> **Deney 6-8 ★★: Çok Boyutlu Model Performans Kıyaslaması**
+> **Deney 6-9 ★★: Çok Boyutlu Model Performans Kıyaslaması**
 >
 > Yaygın LLM'ler ve farklı API sağlayıcıları üzerinde kapsamlı bir benchmark çalışması yaparak çok boyutlu bir model seçimi karar veritabanı oluşturun.
 >
@@ -530,7 +548,7 @@ Sağlam bir değerlendirme sistemine sahip bir ekip yanıtı birkaç saat içind
 >
 > API'nin erişilebilirliğini ve kararlılığını değerlendirin: bir hafta boyunca saatte bir yoklama yapın; başarı oranını, hata türlerini ve arıza sürelerini kaydedin. Arıza oranını, MTTR'yi (ortalama kurtarma süresi) ve en uzun kesintisiz erişilebilirlik süresini hesaplayın. Hız limitlerinin gerçek eşiklerini test edin — eşzamanlılığı kademeli olarak artırarak kısıtlama noktasını bulun ve RPM/TPM üst sınırlarını kaydedin. Bileşik maliyeti hesaplayın: fiyatlandırma bilgilerini toplayın (girdi/çıktı/önbellek token'larının birim fiyatları), KV Cache'in etkisini göz önüne alın ve tipik çok turlu Agent görevlerinin ortalama maliyetini hesaplayın.
 >
-> **Deney 6-9 ★★: Kullanıcı Bellek Sistemlerinin Uçtan Uca Seçim Değerlendirmesi**
+> **Deney 6-10 ★★: Kullanıcı Bellek Sistemlerinin Uçtan Uca Seçim Değerlendirmesi**
 >
 > **Ön koşul**: Bölüm 3'teki bağlamsal retrieval veya agentic RAG deneyinin tamamlanmış olması gerekir.
 >
@@ -626,7 +644,7 @@ H5C'nin dört görevde başarılı olması yalnızca daha büyük bir testi hak 
 
 Sürekli yineleme pratikte budur: bir turun kanıtı yalnızca kapsamının desteklediği sonraki eyleme izin verir. H1 daha fazla prompt yığmayı durdurdu; H5 doğru mekanizmayı bulup bir maliyet sorunu açığa çıkardı; H5C bu sorunu çözdü ve daha geniş teste hak kazandı. İyi bir benchmark raporu yalnızca puan vermez; sonucun nerede geçerli olduğunu, hangi guardrail'lerin başarısız olduğunu ve sırada neyin sınanacağını söyler.
 
-> **Deney 6-10 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
+> **Deney 6-11 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
 >
 > Bu deney, değerlendirme raporundan sistem iyileştirmesine kadar olan yolu uygular. `chapter6/android-world` içindeki tarihsel rapor ve saklanmış üç eşleştirilmiş koşuyla başlayın.
 >
@@ -701,7 +719,7 @@ Bu köprünün iki ucu şöyle birleşir. Değerlendirme tarafında biriken varl
 
 **Bedenlenmiş ortamlar** tarafında RoboTwin2, bir fizik motoru üzerine çift kollu manipülasyon görevleri kurar; genelleme yeteneğini artırmak için nesnelerin konumunu, yönelimini ve görünümünü rastgeleleştirir. Gözlem alanı çok kameralı görüntüyü ve eklem durumlarını içerir; gerçek zamanlı denetim, **eylem parçalama (Action Chunking)** ile — yani modelin birden çok ardışık eylemi tek seferde planlamasıyla — gerçekleştirilir (ayrıntısı Bölüm 9'da). OSWorld sanal makine anlık görüntüleriyle sıfırlanabilirliği sağlar, AndroidWorld ise mobil uygulama otomasyonuna odaklanır. İster dijital ister bedenlenmiş olsun, simülasyon ortamları da Bölüm 4'te tartışılan izole yürütme ortamlarına ve sanal kimlik mekanizmalarına (VM/konteyner izolasyonu, konut proxy'leri, Human-in-the-Loop kimlik doğrulama, paylaşılan dosya sistemleri) ihtiyaç duyar; burada tekrarlanmayacak.
 
-> **Deney 6-11 ★★: OpenVLA ve RoboTwin2 ile Bedenlenmiş Zeka Ortamını Yapılandırmak**
+> **Deney 6-12 ★★: OpenVLA ve RoboTwin2 ile Bedenlenmiş Zeka Ortamını Yapılandırmak**
 >
 > Robot manipülasyonu için bir simülasyon ortamı kurun. `ch7/SimpleVLA-RL` ile OpenVLA belgelerini okuyup görme-dil-eylem modelinin mimarisini anlayın (görme kodlayıcı + dil modeli + eylem kod çözücünün uçtan uca bütünleştirilmesi; görüntü ve metin ortak bir semantik uzaya izdüşürülür). RoboTwin2 ortamını yapılandırın; gözlem alanını (üç açılı RGB + 14 boyutlu eklem durumu) ve eylem alanını (14 boyutlu denetim vektörü) kavrayın. `move_can_pot` içindeki ortam rastgeleleştirme mekanizmasını ve uzamsal kısıt mantığını inceleyin. Önceden eğitilmiş modeli çalıştırıp değerlendirin; başarı oranını, tamamlanma süresini ve başarısızlık biçimlerini kaydedin, özellikle eylem parçalama mekanizmasının etkisine odaklanın.
 >

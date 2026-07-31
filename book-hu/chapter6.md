@@ -462,6 +462,24 @@ E két szakasz körül a fő átviteli és késleltetési mutatók a következő
 
 A gyakorlatban a modellek keverhetők: könnyű modellek egyszerű kérésekre a költségek csökkentése érdekében, hatékony modellek összetett feladatokhoz a minőség védelme érdekében; vagy speciális modellek bizonyos részfeladatokra (képmegértés, kódgenerálás), al-ügynöki mechanizmusokon keresztül együttműködve. Minden ilyen heterogén kombinációt magát kiértékeléssel kell validálni, hogy megbizonyosodjon arról, hogy az általános előnyök felülmúlják a rendszer összetettségét.
 
+### Modellviselkedés: mikor hagyjuk abba az olvasást és kezdjük el a szerkesztést?
+
+A modellválasztás nemcsak azt hasonlítja össze, hogy a modell képes-e befejezni a feladatot, hanem azt is, **hogyan viselkedik alapértelmezés szerint**. A Coding Agentek egyik könnyen megfigyelhető különbsége a cselekvési küszöb. Ugyanazon programozási feladatnál egyes modellek szélesen feltérképezik a tárolót, és szerkesztés előtt ellenőrzik az architektúrát, a hívási helyeket és a teszteket. Mások kevesebb bizonyítékból lokalizálják a módosítást, korán szerkesztenek, majd teszt-visszajelzéssel egészítik ki a megértésüket. Az előbbiek a túl korai módosítás, az utóbbiak még egy fájl elolvasásának alternatív költségét becsülik magasabbra.
+
+Ha egy hajlam Harness-váltáskor is a modellt követi, és egy rögzített Harnessben pusztán a modell cseréjétől megváltozik, akkor az elsődleges magyarázat a **modell viselkedése**. Valószínű forrás a post-training: az SFT trajektóriák megmutatják, mennyit kell olvasni a cselekvés előtt, a folyamatjutalmak megerősítenek vagy büntetnek bizonyos eszközutakat, az eredményjutalmak pedig a sikerhez vezető teljes stratégiát erősítik. A modell így nemcsak kódot írni tanul meg, hanem azt is, mikor gyűlt össze elegendő bizonyíték. A pontos adatkészletek és jutalmazási receptek többnyire nem nyilvánosak; a kontrollált modellcsere a viselkedést a modell oldalára helyezheti, de nem tárja fel egy szolgáltató pontos tanítási receptjét. A Harness a rendszerprompt, az eszközleírások és a költségkeret révén továbbra is eltolhatja a küszöböt, de kikényszerített munkafolyamat hiányában módosító tényezőként, nem pedig alapértelmezett gyökéroként kell kezelni.
+
+A kísérlet az `openai/gpt-5.6-sol` és az `anthropic/claude-sonnet-5` modellt egyetlen **semleges, rögzített Harnessben** hasonlítja össze. Mindkettő ugyanazt az OpenRouter endpointot használja, és azonos rendszerpromptot, feladatot, tárolót, eszközneveket, JSON Schemákat és eszközeredményeket kap. A Harness sem a felderítést, sem a korai szerkesztést nem írja elő. Három miniatűr tároló egy lokális hibát, modulokon átívelő identitásnormalizálást és nyilvános szerződésre érzékeny gyorsítótár-javítást fed le. Mindkét modell minden feladatot háromszor, egymástól függetlenül futtatott, összesen 18 trajektóriát létrehozva. Az első szerkesztés előtt a GPT-5.6-sol átlagosan 6,89 eszközhívást végzett és 4,67 fájlt olvasott; a Claude Sonnet 5 átlaga 4,56 hívás és 3,56 fájl volt. A különbség a lokális feladatoknál volt a legnagyobb, a kifejezetten több modult érintő feladatnál pedig szinte eltűnt (7,00 kontra 6,67 fájl). Mindkét modell 100%-os eredményt ért el az első tesztelt javítással és a végső teszteken is. Ez a kis kísérlet tehát azt támasztja alá, hogy „a cselekvési policy a modellel együtt változik”, nem pedig azt, hogy a több olvasás vagy a korábbi szerkesztés mindig jobb. Az első szerkesztésig eltelt idő is szinte azonos volt (15,01 kontra 14,48 másodperc), ezért külön kell kezelni az eszközlépések számát, a párhuzamos hívásokat és a modell késleltetését.
+
+> **6-7. kísérlet ★★: A modell cselekvési küszöbének mérése rögzített Coding Harnessben**
+>
+> **Cél**: a modelltényező elkülönítése, annak számszerűsítése, hogyan választanak a Coding modellek alapértelmezés szerint a további információgyűjtés és a szerkesztés megkezdése között, valamint az útvonal-hatékonyság és a végső minőség együttes értékelése.
+>
+> **Módszer**: futtassuk a `chapter6/model-action-threshold/experiment.py` programot. Alapértelmezés szerint ugyanazon OpenRouter OpenAI-compatible endpointon hívja a GPT-5.6-sol és a Claude Sonnet 5 modellt, miközben rögzíti a rendszerpromptot, az eszköz-Schemákat, a feladattárolókat, a tesztparancsokat és a körkorlátot. A semleges prompt nem ír elő minimális fájlolvasást vagy gyors szerkesztést. Mindhárom feladattípust legalább háromszor ismételjük meg, és váltogassuk a modellek sorrendjét. Rögzítsük az első szerkesztés előtti eszközhívásokat, olvasott fájlokat, kereséseket és falióra-időt, továbbá az első tesztelt javítás elfogadását, a teszt utáni átdolgozást, a végső sikert, a módosított fájlokat és a Token-használatot.
+>
+> **Oksági értelmezés**: a semleges kampány azt kérdezi, változik-e a viselkedés a modellel ugyanabban a Harnessben. A Harness módosító hatásához külön kampányt futtassunk `--policy explore-first` beállítással; a két policyt ne keverjük egyetlen modell-összehasonlításban. A modellcserével változó, de ugyanazon modellnél több Harnessen át fennmaradó viselkedés erősebb bizonyíték a modellhatásra; az ellenkezője inkább Harness-hatást jelez.
+>
+> **Elfogadási feltételek**: minden offline egységteszt sikeres; először igazoljuk, hogy minden feladat-fixture kezdeti állapotában elbukik a teszteken; a hivatalos eredmény tartalmazza az összes `modell × feladat × ismétlés` cellát, nulla API-hibát, független végső tesztet és auditálható trajektóriákat; a `manifest.json` ellenőrzi a konfiguráció, a megfigyelések és az összesítés hash-eit. A projektkönyvtár egy teljes, 18/18 cellás valós futást tartalmaz. Az olvasók a számukra fontos modellverziókon és valós munkaterhelésen ismételjék meg, ne tekintsék e miniatűr tárolók számait állandó ranglistának.
+
 ### Ügynökrendszerek költségelemzése
 
 A költség a modellválasztás legkönnyebben alábecsülhető dimenziója. Ha az Ügynöke termelési folyamatban van, vagy arrafelé tart, ne hagyja ki ezt a részt.
@@ -503,7 +521,7 @@ Az **Aszinkron kötegelt feldolgozás** nem valós idejű feladatokat halmoz fel
 
 Éles környezetben valós idejű költségfigyelő rendszert kell létrehozni: nyomon követni a token felhasználást és az API-költségeket feladattípus, modell, felhasználó stb. szerint. Ezenkívül minden feladathoz állítson be költségplafont – automatikusan leállítja az ügynököt, ha hurokba esik, vagy túl mélyre megy, így megakadályozva, hogy egyetlen feladat abnormálisan magas költségekkel járjon.
 
-> **6-7. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
+> **6-8. kísérlet ★: Az ügynöki feladatok végpontok közötti költségelemzése**
 >
 > **Kísérlet célja**: Ismételje meg a fenti nyolcfordulós költségbontást, majd vizsgálja meg ugyanezeket az optimalizálásokat a saját munkaterhelésén.
 >
@@ -521,7 +539,7 @@ Tegyük fel, hogy az Ügynökrendszer jelenleg Claude-ra épül, és kiváló az
 
 Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül választ adhat: lefuttatja az új modellt a saját kiértékelési adatkészletén, majd összehasonlítja a feladatok sikerarányát, az eszközhívások pontosságát, a késleltetést és a költséget. Elképzelhető, hogy az új modell az egyszerű feladatoknál valóban jobb és olcsóbb, miközben az összetett, többfordulós eszközvezénylést igénylő alapforgatókönyvekben 5%-kal csökken a sikerarány. Ha a különbség meghaladja a becsült mintavételi zajt (lásd alább „A kiértékelési eredmények statisztikai szignifikanciája” című szakaszt), árnyalt stratégia választható: az egyszerű feladatokat az olcsóbb új modellre irányítjuk, az összetetteknél pedig a minőség megőrzése érdekében megtartjuk az eredetit. Az ilyen részletes, adatvezérelt döntéshez előre felépített kiértékelő rendszer szükséges.
 
-> **6-8. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
+> **6-9. kísérlet ★★: Többdimenziós modell teljesítmény-benchmarking**
 >
 > Végezze el a főbb LLM-ek és a különböző API-szolgáltatók átfogó összehasonlítását egy többdimenziós modellkiválasztási döntési adatbázis felépítéséhez.
 >
@@ -531,7 +549,7 @@ Egy megbízható kiértékelő rendszerrel rendelkező csapat órákon belül v�
 >
 > Értékelje az API rendelkezésre állását és stabilitását: Egy héten keresztül óránként egyszer vizsgálja meg, rögzíti a sikerarányt, a hibatípusokat és a hiba időtartamát. Számítsa ki a hibaarányt, az MTTR-t (átlagos helyreállítási időt) és a leghosszabb folyamatos üzemidőt. Tesztelje a sebességkorlátok tényleges küszöbértékeit – fokozatosan növelje az egyidejűséget a fojtópont megtalálásához, rögzítve az RPM/TPM határértékeket. Átfogó költség kiszámítása: Gyűjtse össze az árinformációkat (az input/output/cache tokenek egységárai), mérlegelje a KV Cache hatását, és számítsa ki a tipikus többfordulós ügynöki feladatok átlagos költségét.
 >
-> **6-9. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
+> **6-10. kísérlet ★★: Felhasználói memóriarendszerek végpontok közötti kiválasztási kiértékelése**
 >
 > **Előfeltételek**: Be kell fejeznie a 3. fejezetben található kontextuális visszakeresési vagy ügynöki RAG-kísérletet.
 >
@@ -627,7 +645,7 @@ H5C négy feladatos sikere csak nagyobb tesztet engedélyez, telepítést nem. A
 
 A folyamatos iteráció ezt jelenti: minden kör bizonyítéka csak a hatókörével igazolt következő lépést engedélyezi. H1 leállította a prompt további bővítését; H5 megtalálta a mechanizmust és feltárt egy költségproblémát; H5C megoldotta azt, így nagyobb tesztre jutott. A jó benchmark jelentés nemcsak pontszámot, hanem érvényességi kört, megsértett guardraileket és következő tesztet is közöl.
 
-> **6-10. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
+> **6-11. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
 >
 > Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter6/android-world` három mentett páros futásával.
 >
@@ -702,7 +720,7 @@ A "digitális környezet" oldalán az AWorld keretrendszer egy irányítható MC
 
 A "megtestesült környezet" oldalán a RoboTwin2 egy fizikai motoron alapuló kétkaros manipulációs feladatokat épít, véletlenszerűsítve az objektumok pozícióit, orientációit és megjelenését az általánosítás javítására. A megfigyelési tér többkamerás vizuális és ízületi állapotokat tartalmaz, valós idejű vezérlést érve el az "Akció Darabolás" révén — ahol a modell egyszerre több egymást követő akciót tervez (részletesen a 9. fejezetben). Az OSWorld visszaállítási képességet biztosít virtuális gép pillanatképeken keresztül, az AndroidWorld pedig a mobil alkalmazás-automatizálásra összpontosít. Akár digitális, akár megtestesült, a szimulációs környezeteknek szükségük van a 4. fejezetben tárgyalt izolált végrehajtási környezetekre és virtuális identitás mechanizmusokra is (VM/konténer izoláció, rezidens proxy-k, Human-in-the-Loop hitelesítés, megosztott fájlrendszerek), amelyeket itt nem ismétlünk meg.
 
-> **6-11. kísérlet ★★: A Megtestesült Intelligencia Környezet Konfigurálása OpenVLA és RoboTwin2 Számára**
+> **6-12. kísérlet ★★: A Megtestesült Intelligencia Környezet Konfigurálása OpenVLA és RoboTwin2 Számára**
 >
 > Állíts be egy szimulációs környezetet robotmanipulációhoz. Olvasd el a `ch7/SimpleVLA-RL` fájlt és az OpenVLA dokumentációt a Vízió-Nyelv-Akció modell architektúrájának megértéséhez (végpontok közötti integrációja egy vízió kódolónak, nyelvi modellnek és akció dekódolónak, amely a képeket és szövegeket egy közös szemantikai térbe vetíti). Konfiguráld a RoboTwin2 környezetet, értsd meg a megfigyelési teret (háromnézetű RGB + 14-dimenziós ízületi állapot) és az akcióteret (14-dimenziós vezérlővektor). Tanulmányozd a környezet randomizálási mechanizmusát és a térbeli korlátok logikáját a `move_can_pot`-ban. Értékeld az előre tanított modellt, rögzítve a sikerességi arányát, befejezési idejét és hibamódjait, különös figyelemmel az akció darabolás mechanizmusának hatására.
 >

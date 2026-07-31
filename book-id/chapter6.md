@@ -458,6 +458,24 @@ Di sekitar dua tahap ini, metrik Throughput dan Latency utama adalah sebagai ber
 
 Dalam praktiknya Anda dapat mencampur model: model ringan pada permintaan sederhana untuk memangkas biaya, model kuat pada tugas kompleks untuk melindungi kualitas; atau model spesialis pada sub-tugas tertentu (pemahaman gambar, pembuatan kode), berkolaborasi melalui mekanisme sub-agent. Setiap kombinasi heterogen seperti itu harus divalidasi oleh evaluasi, untuk memastikan keseluruhan manfaat melebihi kompleksitas sistem yang ditambahkan.
 
+### Perilaku Model: Kapan Berhenti Membaca dan Mulai Menyunting
+
+Pemilihan model tidak hanya membandingkan apakah suatu model dapat menuntaskan tugas, tetapi juga **bagaimana perilaku bawaannya**. Salah satu perbedaan yang mudah diamati pada Coding Agent adalah ambang tindakan. Saat menghadapi tugas coding yang sama, sebagian model menjelajahi repositori secara luas dan memastikan arsitektur, pemanggil, serta pengujian sebelum menyunting. Model lain melokalisasi perubahan dari bukti yang lebih sedikit, menyunting lebih awal, lalu memakai umpan balik pengujian untuk melengkapi pemahamannya. Kelompok pertama menilai biaya penyuntingan prematur lebih tinggi; kelompok kedua menilai biaya peluang membaca satu berkas lagi lebih tinggi.
+
+Ketika kecenderungan tetap mengikuti model saat Harness diganti, dan berubah ketika hanya model yang ditukar dalam Harness tetap, penjelasan utama seharusnya adalah **perilaku model**. Post-training kemungkinan menjadi sumber penting: lintasan SFT mendemonstrasikan seberapa jauh harus membaca sebelum bertindak, reward proses memperkuat atau menghukum jalur alat tertentu, dan reward hasil memperkuat seluruh strategi yang berujung sukses. Dengan demikian, model bukan hanya belajar menulis kode, tetapi juga menentukan kapan bukti sudah cukup. Dataset dan resep reward yang tepat biasanya bersifat privat; pertukaran model yang terkontrol dapat menempatkan perilaku di sisi model tanpa mengungkap resep pelatihan persis suatu vendor. Harness masih dapat menggeser ambang melalui system prompt, deskripsi alat, dan anggaran, tetapi jika tidak memaksakan alur kerja, Harness sebaiknya diperlakukan sebagai pengubah, bukan otomatis sebagai akar penyebab.
+
+Eksperimen pendamping membandingkan `openai/gpt-5.6-sol` dan `anthropic/claude-sonnet-5` di dalam satu **Harness netral dan tetap**. Kedua model memakai endpoint OpenRouter yang sama dan menerima system prompt, tugas, repositori, nama alat, JSON Schema, serta hasil yang sama. Harness tidak mewajibkan eksplorasi maupun penyuntingan dini. Tiga repositori mini mencakup bug lokal, normalisasi identitas lintas modul, dan perbaikan cache yang sensitif terhadap kontrak publik. Setiap model menjalankan setiap tugas secara independen tiga kali, menghasilkan 18 lintasan. Sebelum penyuntingan pertama, GPT-5.6-sol rata-rata melakukan 6,89 panggilan alat dan membaca 4,67 berkas; Claude Sonnet 5 rata-rata 4,56 panggilan dan 3,56 berkas. Selisih terbesar muncul pada tugas lokal dan hampir hilang pada tugas yang secara eksplisit lintas modul (7,00 berbanding 6,67 berkas). Kedua model mencapai kelulusan 100% pada patch pertama yang diuji dan pada pengujian akhir. Jadi, eksperimen kecil ini mendukung kesimpulan bahwa “kebijakan tindakan berubah bersama model”, bukan bahwa “membaca lebih banyak” atau “menyunting lebih awal” selalu lebih baik. Waktu menuju penyuntingan pertama juga hampir sama (15,01 berbanding 14,48 detik), sehingga langkah alat, panggilan paralel, dan latensi model harus dibedakan.
+
+> **Eksperimen 6-7 ★★: Mengukur Ambang Tindakan Model dalam Coding Harness Tetap**
+>
+> **Tujuan**: mengisolasi faktor model, mengukur bagaimana model Coding menyeimbangkan pengumpulan informasi lanjutan dengan mulai menyunting, serta menilai efisiensi lintasan bersama kualitas hasil.
+>
+> **Metode**: jalankan `chapter6/model-action-threshold/experiment.py`. Secara default, program memanggil GPT-5.6-sol dan Claude Sonnet 5 melalui endpoint OpenRouter OpenAI-compatible yang sama sambil menetapkan system prompt, schema alat, repositori tugas, perintah pengujian, dan batas putaran yang sama. Prompt netral tidak menentukan jumlah minimum berkas yang harus dibaca maupun kewajiban untuk cepat menyunting. Ulangi masing-masing dari tiga kategori tugas setidaknya tiga kali dan selang-selingkan urutan model. Catat panggilan alat, berkas yang dibaca, pencarian, dan waktu dinding sebelum penyuntingan pertama, beserta penerimaan patch pertama yang diuji, pengerjaan ulang setelah pengujian, keberhasilan akhir, berkas yang berubah, dan penggunaan Token.
+>
+> **Interpretasi kausal**: kampanye netral menanyakan apakah perilaku berubah bersama model di dalam satu Harness. Untuk mengukur Harness sebagai pengubah, jalankan kampanye terpisah dengan `--policy explore-first`; jangan mencampur kedua policy dalam satu perbandingan model. Perilaku yang berubah saat model ditukar dan bertahan untuk model yang sama di berbagai Harness menjadi bukti lebih kuat bagi efek model; pola sebaliknya lebih mendukung efek Harness.
+>
+> **Kriteria penerimaan**: seluruh unit test offline lulus; setiap fixture tugas terlebih dahulu dipastikan berada dalam kondisi pengujian gagal; hasil formal mencakup seluruh sel `model × tugas × pengulangan`, nol error API, pengujian akhir independen, dan lintasan yang dapat diaudit; serta `manifest.json` memverifikasi hash konfigurasi, observasi, dan ringkasan. Direktori proyek menyimpan satu run lengkap 18/18 sel. Pembaca harus menjalankannya kembali pada versi model dan beban kerja nyata yang relevan, bukan memperlakukan angka dari repositori mini ini sebagai leaderboard permanen.
+
 ### Analisis Biaya Sistem Agent
 
 Biaya adalah dimensi pemilihan model yang paling mudah diremehkan. Jika Agent Anda dalam produksi atau menuju ke sana, jangan lewati bagian ini.
@@ -499,7 +517,7 @@ Di sisi input, tiga hal patut diuji lebih dahulu: mempertahankan awalan agar **K
 
 Dalam lingkungan produksi, sistem pemantauan biaya waktu nyata (real-time cost monitoring) harus dibangun: melacak konsumsi token dan biaya API berdasarkan jenis tugas, model, pengguna, dll. Selain itu, tetapkan batas biaya (cost cap) untuk setiap tugas—secara otomatis menghentikan Agent ketika jatuh ke dalam loop atau mengeksplorasi terlalu dalam, mencegah tugas tunggal menimbulkan biaya tinggi yang tidak normal.
 
-> **Eksperimen 6-7 ★: Analisis Biaya End-to-End Tugas Agent**
+> **Eksperimen 6-8 ★: Analisis Biaya End-to-End Tugas Agent**
 >
 > **Tujuan Eksperimen**: Mereproduksi rincian biaya tugas delapan putaran di atas dan memvalidasi optimasi pada beban kerja nyata milik Anda.
 >
@@ -517,7 +535,7 @@ Misalkan sistem Agent Anda saat ini dibangun di atas Claude, unggul dalam pemang
 
 Tim dengan sistem evaluasi yang solid dapat menjawab ini dalam hitungan jam: jalankan model baru pada dataset evaluasinya sendiri dan bandingkan tingkat keberhasilan tugas, akurasi pemanggilan alat (tool call), latensi, dan biaya. Anda mungkin menemukan bahwa model baru benar-benar lebih baik dan lebih murah untuk tugas-tugas sederhana—tetapi dalam skenario inti yang melibatkan orkestrasi tool multi-ronde yang kompleks, tingkat keberhasilannya turun 5%. Setelah Anda mengonfirmasi bahwa perbedaannya melampaui estimasi noise sampel (lihat "Signifikansi Statistik dari Hasil Evaluasi" di bawah), keputusan Anda menjadi strategi yang dibedakan—migrasikan tugas-tugas sederhana ke model baru untuk memangkas biaya, pertahankan model asli pada tugas-tugas kompleks untuk melindungi kualitas—daripada penggantian total secara membabi buta. Keputusan yang sangat terperinci dan didorong oleh data (data-driven) seperti ini hanya dimungkinkan dengan sistem evaluasi yang dibangun sebelumnya.
 
-> **Eksperimen 6-8 ★★: Benchmarking Kinerja Model Multi-Dimensi**
+> **Eksperimen 6-9 ★★: Benchmarking Kinerja Model Multi-Dimensi**
 >
 > Lakukan benchmark komprehensif terhadap LLM arus utama dan berbagai penyedia API untuk membangun basis data keputusan pemilihan model multi-dimensi.
 >
@@ -527,7 +545,7 @@ Tim dengan sistem evaluasi yang solid dapat menjawab ini dalam hitungan jam: jal
 >
 > Evaluasi ketersediaan dan stabilitas API: Lakukan pemeriksaan (probe) sekali per jam selama seminggu, catat tingkat keberhasilan, jenis kesalahan, dan durasi kegagalan. Hitung tingkat kegagalan (failure rate), MTTR (Mean Time to Recovery), dan waktu aktif berkelanjutan (continuous uptime) terlama. Uji ambang batas aktual dari rate limits—tingkatkan konkurensi secara bertahap untuk menemukan titik throttling, catat batasan RPM/TPM. Hitung biaya komprehensif: Kumpulkan informasi harga (harga satuan untuk token input/output/cache), pertimbangkan dampak KV Cache, dan hitung biaya rata-rata untuk tugas Agent multi-ronde yang khas.
 >
-> **Eksperimen 6-9 ★★: Evaluasi Pemilihan Ujung-ke-Ujung (End-to-End) untuk Sistem User Memory**
+> **Eksperimen 6-10 ★★: Evaluasi Pemilihan Ujung-ke-Ujung (End-to-End) untuk Sistem User Memory**
 >
 > **Prasyarat**: Harus menyelesaikan eksperimen contextual retrieval atau agentic RAG dari Bab 3.
 >
@@ -622,7 +640,7 @@ H5C yang lolos pada empat tugas hanya berarti layak memasuki uji berikutnya, buk
 
 Inilah disiplin iterasi: bukti hanya membenarkan langkah berikut yang sepadan dengan skalanya. Kegagalan H1 menghentikan penumpukan Prompt; H5 menemukan arah yang benar sekaligus masalah biaya; H5C mengatasi biaya dan baru kemudian layak diuji lebih luas. Laporan Benchmark yang baik menyatakan skor, batas berlaku kesimpulan, guardrail yang belum lolos, dan hal yang akan diuji berikutnya.
 
-> **Eksperimen 6-10 ★★★: Evaluasi dan Perbaikan di AndroidWorld**
+> **Eksperimen 6-11 ★★★: Evaluasi dan Perbaikan di AndroidWorld**
 >
 > Eksperimen ini melatih alur dari laporan evaluasi menuju perbaikan sistem. Mulailah dari laporan historis dan tiga hasil berpasangan yang tersimpan di `chapter6/android-world`.
 >
@@ -697,7 +715,7 @@ Di sisi **lingkungan digital**, *framework* AWorld membangun *sandbox* MCP serve
 
 Di sisi **lingkungan berwujud fisik (*embodied environment*)**, RoboTwin2 membangun tugas-tugas manipulasi lengan ganda berdasarkan pada mesin fisika (*physics engine*), mengacak posisi objek, orientasi, dan tampilan untuk meningkatkan generalisasi. Ruang observasinya (*observation space*) mencakup visual multi-kamera dan *joint states*, mencapai kontrol *real-time* melalui **Action Chunking**—di mana model merencanakan beberapa tindakan berurutan sekaligus (dirinci pada Bab 9). OSWorld menyediakan kemampuan *reset* melalui *virtual machine snapshots*, dan AndroidWorld berfokus pada otomatisasi aplikasi seluler. Baik digital maupun berwujud fisik, lingkungan simulasi juga memerlukan lingkungan eksekusi terisolasi dan mekanisme identitas virtual yang dibahas di Bab 4 (isolasi VM/container, proksi residensial, autentikasi *Human-in-the-Loop*, *shared file systems*), yang tidak akan diulangi di sini.
 
-> **Eksperimen 6-11 ★★: Mengonfigurasi Lingkungan Kecerdasan Terwujud (*Embodied Intelligence Environment*) untuk OpenVLA dan RoboTwin2**
+> **Eksperimen 6-12 ★★: Mengonfigurasi Lingkungan Kecerdasan Terwujud (*Embodied Intelligence Environment*) untuk OpenVLA dan RoboTwin2**
 >
 > Siapkan lingkungan simulasi untuk manipulasi robot. Baca `ch7/SimpleVLA-RL` dan dokumentasi OpenVLA untuk memahami arsitektur dari model Vision-Language-Action (integrasi *end-to-end* dari *vision encoder*, *language model*, dan *action decoder*, yang memproyeksikan gambar dan teks ke dalam ruang semantik bersama). Konfigurasikan lingkungan RoboTwin2, pahami *observation space* (tiga pandangan RGB + 14-dimensi *joint state*) dan *action space* (14-dimensi vektor kontrol). Pelajari mekanisme pengacakan lingkungan dan logika batasan spasial dalam `move_can_pot`. Evaluasi model prapelatihan (*pretrained model*), catat tingkat keberhasilannya, waktu penyelesaian, dan mode kegagalan, dengan fokus pada dampak dari mekanisme *action chunking*.
 >

@@ -461,6 +461,24 @@ Xung quanh hai giai đoạn này, các chỉ số thông lượng và độ tr�
 
 Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không.
 
+### Hành vi mô hình: Khi nào ngừng đọc và bắt đầu chỉnh sửa
+
+Việc chọn mô hình không chỉ so sánh liệu mô hình có hoàn thành được nhiệm vụ hay không, mà còn so sánh **hành vi mặc định của nó**. Một khác biệt dễ quan sát ở Coding Agent là ngưỡng hành động. Với cùng một nhiệm vụ lập trình, một số mô hình khám phá rộng kho mã và xác nhận kiến trúc, các điểm gọi và kiểm thử trước khi chỉnh sửa. Những mô hình khác định vị thay đổi từ ít bằng chứng hơn, chỉnh sửa sớm rồi dùng phản hồi kiểm thử để hoàn thiện hiểu biết. Nhóm đầu đánh giá chi phí của việc sửa quá sớm cao hơn; nhóm sau đánh giá chi phí cơ hội của việc đọc thêm một tệp cao hơn.
+
+Khi một xu hướng vẫn đi theo mô hình qua các Harness và thay đổi khi chỉ thay mô hình trong một Harness cố định, lời giải thích chính phải là **hành vi mô hình**. Post-training là một nguồn có khả năng cao: các quỹ đạo SFT minh họa cần đọc đến đâu trước khi hành động, phần thưởng quá trình củng cố hoặc phạt những đường đi công cụ cụ thể, còn phần thưởng kết quả củng cố toàn bộ chiến lược đã dẫn đến thành công. Do đó, mô hình không chỉ học cách viết mã mà còn học khi nào đã có đủ bằng chứng. Dataset và công thức phần thưởng chính xác thường là thông tin riêng; phép thay mô hình có kiểm soát có thể xác định hành vi nằm phía mô hình nhưng không tiết lộ công thức huấn luyện cụ thể của nhà cung cấp. Harness vẫn có thể dịch chuyển ngưỡng bằng system prompt, mô tả công cụ và ngân sách, nhưng nếu không ép buộc quy trình thì nên xem nó là yếu tố điều chỉnh, không phải nguyên nhân gốc mặc định.
+
+Thí nghiệm đi kèm so sánh `openai/gpt-5.6-sol` và `anthropic/claude-sonnet-5` trong một **Harness trung lập và cố định**. Cả hai dùng cùng endpoint OpenRouter và nhận cùng system prompt, nhiệm vụ, kho mã, tên công cụ, JSON Schema và kết quả công cụ. Harness không bắt buộc khám phá hay chỉnh sửa sớm. Ba kho mã thu nhỏ bao phủ một lỗi cục bộ, chuẩn hóa định danh xuyên mô-đun và sửa bộ nhớ đệm nhạy với hợp đồng công khai. Mỗi mô hình chạy độc lập từng nhiệm vụ ba lần, tạo 18 quỹ đạo. Trước lần chỉnh sửa đầu tiên, GPT-5.6-sol gọi công cụ trung bình 6,89 lần và đọc 4,67 tệp; Claude Sonnet 5 đạt 4,56 lần và 3,56 tệp. Chênh lệch lớn nhất ở nhiệm vụ cục bộ và gần như biến mất ở nhiệm vụ xuyên mô-đun được nêu rõ (7,00 so với 6,67 tệp). Cả hai mô hình đều đạt 100% ở bản vá đầu tiên được kiểm thử và kiểm thử cuối. Vì thế, thí nghiệm nhỏ này ủng hộ kết luận “chính sách hành động thay đổi theo mô hình”, chứ không phải “đọc nhiều hơn” hay “sửa sớm hơn” luôn tốt hơn. Thời gian tới lần chỉnh sửa đầu tiên cũng gần như bằng nhau (15,01 so với 14,48 giây), nhắc chúng ta phải tách số bước công cụ, lời gọi song song và độ trễ mô hình.
+
+> **Thí nghiệm 6-7 ★★: Đo ngưỡng hành động của mô hình trong một Coding Harness cố định**
+>
+> **Mục tiêu**: cô lập yếu tố mô hình, định lượng cách các mô hình Coding mặc định cân bằng giữa tiếp tục thu thập thông tin và bắt đầu chỉnh sửa, đồng thời đánh giá hiệu quả đường đi cùng chất lượng kết quả.
+>
+> **Phương pháp**: chạy `chapter6/model-action-threshold/experiment.py`. Theo mặc định, chương trình gọi GPT-5.6-sol và Claude Sonnet 5 qua cùng endpoint OpenRouter OpenAI-compatible, đồng thời giữ cố định system prompt, schema công cụ, kho mã nhiệm vụ, lệnh kiểm thử và giới hạn lượt. Prompt trung lập không quy định số tệp tối thiểu phải đọc hay yêu cầu chỉnh sửa nhanh. Lặp lại mỗi loại trong ba loại nhiệm vụ ít nhất ba lần và luân phiên thứ tự mô hình. Ghi số lời gọi công cụ, tệp đã đọc, lượt tìm kiếm và thời gian thực trước lần chỉnh sửa đầu tiên, cùng tỷ lệ chấp nhận bản vá đầu tiên được kiểm thử, số lần làm lại sau kiểm thử, thành công cuối, số tệp thay đổi và mức dùng Token.
+>
+> **Diễn giải nhân quả**: chiến dịch trung lập hỏi hành vi có thay đổi theo mô hình trong cùng một Harness hay không. Để đo Harness như yếu tố điều chỉnh, hãy chạy một chiến dịch riêng với `--policy explore-first`; không trộn hai policy trong cùng phép so sánh mô hình. Hành vi thay đổi khi đổi mô hình và vẫn giữ nguyên với cùng mô hình qua nhiều Harness là bằng chứng mạnh hơn cho hiệu ứng mô hình; chiều ngược lại ủng hộ hiệu ứng Harness mạnh hơn.
+>
+> **Tiêu chí nghiệm thu**: mọi unit test offline đều qua; trước tiên phải xác nhận mỗi fixture nhiệm vụ ở trạng thái ban đầu làm kiểm thử thất bại; kết quả chính thức chứa đủ các ô `mô hình × nhiệm vụ × lần lặp`, không có lỗi API, có kiểm thử cuối độc lập và quỹ đạo kiểm toán được; `manifest.json` xác minh hash của cấu hình, quan sát và bản tổng hợp. Thư mục dự án lưu một lần chạy thực tế hoàn chỉnh 18/18 ô. Người đọc nên chạy lại trên phiên bản mô hình và workload thực tế mà mình quan tâm, thay vì coi các số liệu của kho mã nhỏ này là bảng xếp hạng vĩnh viễn.
+
 ### Phân tích chi phí của hệ thống Agent
 
 Chi phí là một khía cạnh dễ bị đánh giá thấp trong việc lựa chọn mô hình. Nếu Agent của bạn đã bước vào môi trường sản xuất hoặc đang chuẩn bị bước vào môi trường sản xuất thì không nên bỏ qua phần phân tích chi phí trong phần này.
@@ -502,7 +520,7 @@ Ba đòn bẩy phía đầu vào nên được thử trước là **tái sử d�
 
 Cần thiết lập hệ thống giám sát chi phí theo thời gian thực trong môi trường sản xuất: theo dõi mức tiêu thụ mã thông báo và chi phí API theo loại nhiệm vụ, mô hình, người dùng và các thứ nguyên khác. Đồng thời, đặt giới hạn chi phí cho từng nhiệm vụ - tự động chấm dứt khi Agent rơi vào vòng lặp hoặc khám phá quá sâu để ngăn một nhiệm vụ đơn lẻ phát sinh chi phí cao bất thường.
 
-> **Thử nghiệm 6-7 ★: Phân tích chi phí toàn diện của các nhiệm vụ Agent**
+> **Thử nghiệm 6-8 ★: Phân tích chi phí toàn diện của các nhiệm vụ Agent**
 >
 > **Mục tiêu thử nghiệm**: Tái hiện phân tích chi phí của quy trình tám lượt ở trên, sau đó kiểm tra cùng các biện pháp tối ưu trên khối lượng công việc thực tế của bạn.
 >
@@ -520,7 +538,7 @@ Giả sử rằng hệ thống Agent của bạn hiện được xây dựng tr�
 
 Các nhóm có hệ thống đánh giá được thiết lập tốt có thể đưa ra câu trả lời trong vài giờ: chạy mô hình mới trên bộ dữ liệu đánh giá của riêng họ và so sánh tỷ lệ thành công của nhiệm vụ, độ chính xác của lệnh gọi công cụ, độ trễ và chi phí. Bạn có thể thấy rằng mô hình mới thực sự tốt hơn và rẻ hơn đối với các tác vụ đơn giản, nhưng trong các tình huống cốt lõi liên quan đến việc điều phối công cụ nhiều vòng phức tạp, tỷ lệ thành công giảm 5%. Sau khi xác nhận rằng sự khác biệt này vượt quá băng thông nhiễu (xem "Đánh giá ý nghĩa thống kê của kết quả" bên dưới), quyết định của bạn trở thành chiến lược khác biệt hóa "chuyển sang mô hình mới cho các nhiệm vụ đơn giản để giảm chi phí và giữ lại mô hình ban đầu cho các nhiệm vụ phức tạp để đảm bảo chất lượng" thay vì mù quáng chuyển đổi toàn bộ. Kiểu ra quyết định dựa trên dữ liệu tinh tế này chỉ có thể thực hiện được nếu hệ thống đánh giá được xây dựng trước.
 
-> **Thử nghiệm 6-8 ★★: Điểm chuẩn hiệu suất mô hình đa chiều**
+> **Thử nghiệm 6-9 ★★: Điểm chuẩn hiệu suất mô hình đa chiều**
 >
 > Tiến hành kiểm tra điểm chuẩn toàn diện trên LLM chính thống và các nhà cung cấp API khác nhau, đồng thời thiết lập cơ sở dữ liệu ra quyết định lựa chọn mô hình đa chiều.
 >
@@ -530,7 +548,7 @@ Các nhóm có hệ thống đánh giá được thiết lập tốt có thể �
 >
 > Đánh giá tính khả dụng và độ ổn định của API: Thăm dò mỗi giờ trong một tuần và ghi lại tỷ lệ thành công, loại lỗi và thời gian lỗi. Tính toán tỷ lệ thất bại, MTTR (Thời gian trung bình để khôi phục) và thời gian khả dụng liên tục tối đa. Kiểm tra ngưỡng thực tế của giới hạn tốc độ - tìm điểm điều tiết bằng cách tăng dần độ đồng thời và ghi lại giới hạn trên RPM/TPM. Tính toán chi phí toàn diện: Thu thập thông tin về giá (đơn giá của mã thông báo đầu vào/đầu ra/bộ đệm), xem xét tác động của KV Cache và tính chi phí trung bình của các nhiệm vụ Agent nhiều vòng điển hình.
 >
-> **Thử nghiệm 6-9 ★★: Đánh giá lựa chọn toàn diện hệ thống bộ nhớ người dùng**
+> **Thử nghiệm 6-10 ★★: Đánh giá lựa chọn toàn diện hệ thống bộ nhớ người dùng**
 >
 > **Điều kiện tiên quyết**: Bạn cần phải hoàn thành thử nghiệm RAG Truy xuất ngữ cảnh hoặc Thông minh hóa Chương 3.
 >
@@ -626,7 +644,7 @@ H5C vượt qua bốn nhiệm vụ mới chỉ đủ điều kiện cho một ph
 
 Đó là ý nghĩa thực tế của lặp liên tục: bằng chứng ở mỗi vòng chỉ cho phép hành động tiếp theo trong đúng phạm vi mà nó hỗ trợ. H1 chặn việc tiếp tục nhồi prompt; H5 tìm ra đúng cơ chế nhưng đồng thời lộ vấn đề chi phí; H5C xử lý chi phí và đủ điều kiện bước vào phép thử rộng. Một báo cáo benchmark tốt không chỉ nêu điểm số, mà còn nói rõ kết luận áp dụng ở đâu, guardrail nào chưa đạt và bước tiếp theo phải kiểm tra điều gì.
 
-> **Thử nghiệm 6-10 ★★★: Đánh giá và cải tiến trên AndroidWorld**
+> **Thử nghiệm 6-11 ★★★: Đánh giá và cải tiến trên AndroidWorld**
 >
 > Thử nghiệm này thực hành trọn vẹn con đường từ báo cáo đánh giá đến cải tiến hệ thống. Bắt đầu bằng báo cáo lịch sử và ba cặp chạy đã lưu trong `chapter6/android-world`.
 >
@@ -701,7 +719,7 @@ Thông điệp cốt lõi của phần này là: **Các phần trước đã hư
 
 Về mặt **môi trường hiện thân**, RoboTwin2 xây dựng nhiệm vụ vận hành hai cánh tay dựa trên công cụ vật lý và môi trường ngẫu nhiên hóa vị trí, hướng và hình thức của các đối tượng để cải thiện khả năng khái quát hóa. Observation Space bao gồm tầm nhìn của nhiều camera và trạng thái khớp, đồng thời đạt được khả năng kiểm soát theo thời gian thực thông qua **Action Chunking** - mô hình lên kế hoạch cho nhiều hành động liên tục cùng một lúc (xem Chương 9 để biết chi tiết). OSWorld Cho phép cài đặt lại thông qua ảnh chụp nhanh máy ảo, AndroidWorld tập trung vào tự động hóa ứng dụng di động. Bất kể môi trường kỹ thuật số hay môi trường được thể hiện, môi trường mô phỏng cũng yêu cầu môi trường thực thi biệt lập và cơ chế nhận dạng ảo (cách ly VM/container, tác nhân dân cư, xác thực Human-in-the-Loop, hệ thống tệp dùng chung) được thảo luận trong Chương 4, sẽ không được lặp lại ở đây.
 
-> **Thử nghiệm 6-11 ★★: Định cấu hình Môi trường thông minh hiện thân với OpenVLA và RoboTwin2**
+> **Thử nghiệm 6-12 ★★: Định cấu hình Môi trường thông minh hiện thân với OpenVLA và RoboTwin2**
 >
 > Xây dựng môi trường mô phỏng hoạt động của robot. Đọc tài liệu `ch7/SimpleVLA-RL` và OpenVLA để hiểu kiến trúc của mô hình hành động-ngôn ngữ-tầm nhìn (tích hợp từ đầu đến cuối của bộ mã hóa hình ảnh + mô hình ngôn ngữ + bộ giải mã hành động, chiếu hình ảnh và văn bản vào một không gian ngữ nghĩa chung). Định cấu hình môi trường RoboTwin2 và hiểu không gian quan sát (trạng thái khớp ba chiều RGB + 14 chiều) và không gian hành động (vectơ điều khiển 14 chiều). Nghiên cứu cơ chế ngẫu nhiên hóa môi trường và logic ràng buộc không gian trong move_can_pot. Chạy đánh giá mô hình được đào tạo trước, ghi lại tỷ lệ thành công, thời gian hoàn thành và các chế độ thất bại, tập trung vào tác động của việc phân chia hành động.
 >

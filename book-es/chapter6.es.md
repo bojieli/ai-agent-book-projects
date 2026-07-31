@@ -453,6 +453,24 @@ Alrededor de estas dos fases, las principales métricas de throughput y latencia
 
 En la práctica se pueden emplear estrategias de cooperación multimodelo: utilizar modelos ligeros para solicitudes simples reduciendo costos y modelos potentes para tareas complejas garantizando calidad; o emplear modelos especializados para subtareas específicas (como comprensión de imágenes o generación de código) mediante colaboración entre subagentes. Esta combinación heterogénea debe ser validada mediante evaluación para confirmar si los beneficios globales superan la complejidad añadida al sistema.
 
+### Comportamiento del modelo: cuándo dejar de leer y empezar a editar
+
+La selección de modelos no compara únicamente si un modelo puede terminar una tarea, sino también **cómo se comporta por defecto**. Una diferencia fácil de observar en los Coding Agents es el umbral de acción. Ante la misma tarea de programación, algunos modelos exploran ampliamente el repositorio y confirman la arquitectura, los sitios de llamada y las pruebas antes de editar. Otros localizan el cambio con menos evidencia, editan pronto y usan las pruebas para completar su comprensión. Los primeros asignan un coste mayor a editar prematuramente; los segundos asignan un coste de oportunidad mayor a leer un archivo adicional.
+
+Cuando una tendencia sigue al modelo al cambiar de Harness y cambia al sustituir únicamente el modelo dentro de un Harness fijo, la explicación principal debe ser el **comportamiento del modelo**. El post-entrenamiento es una fuente probable: las trayectorias de SFT muestran cuánto leer antes de actuar, las recompensas de proceso refuerzan o penalizan rutas de herramientas concretas y las recompensas de resultado fortalecen la estrategia completa que condujo al éxito. Así, el modelo aprende no solo a escribir código, sino también cuándo dispone de evidencia suficiente. Los conjuntos de datos y las recetas de recompensa exactos suelen ser privados; los intercambios controlados de modelo permiten ubicar el comportamiento en el modelo sin revelar la receta precisa de un proveedor. El Harness todavía puede desplazar el umbral mediante el prompt del sistema, las descripciones de herramientas y el presupuesto, pero, si no impone un flujo, debe tratarse como modulador y no como causa raíz predeterminada.
+
+El experimento asociado compara `openai/gpt-5.6-sol` y `anthropic/claude-sonnet-5` en un **Harness neutral y fijo**. Ambos modelos usan el mismo endpoint de OpenRouter y reciben el mismo prompt del sistema, tarea, repositorio, nombres de herramientas, JSON Schemas y resultados. El Harness no exige explorar ni editar pronto. Tres repositorios pequeños cubren un bug localizado, una normalización de identidad entre módulos y una corrección de caché sensible a un contrato público. Cada modelo ejecuta cada tarea tres veces de forma independiente, produciendo 18 trayectorias. GPT-5.6-sol realizó en promedio 6,89 llamadas a herramientas y leyó 4,67 archivos antes de su primera edición; Claude Sonnet 5 promedió 4,56 llamadas y 3,56 archivos. La diferencia fue mayor en las tareas localizadas y casi desapareció en la tarea explícitamente transversal (7,00 frente a 6,67 archivos). Ambos modelos lograron un 100 % de éxito tanto en el primer parche probado como en las pruebas finales. Por ello, este pequeño experimento respalda que «la política de acción cambia con el modelo», no que «leer más» o «editar antes» sea siempre mejor. El tiempo hasta la primera edición también fue casi idéntico (15,01 frente a 14,48 segundos), lo que recuerda que hay que separar pasos de herramienta, llamadas paralelas y latencia del modelo.
+
+> **Experimento 6-7 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
+>
+> **Objetivo**: aislar el factor modelo, cuantificar cómo distintos modelos de programación equilibran seguir recopilando información frente a empezar a editar y evaluar conjuntamente la eficiencia de la trayectoria y la calidad final.
+>
+> **Método**: ejecuta `chapter6/model-action-threshold/experiment.py`. Por defecto llama a GPT-5.6-sol y Claude Sonnet 5 mediante el mismo endpoint OpenAI-compatible de OpenRouter, manteniendo fijos el prompt del sistema, los esquemas de herramientas, los repositorios de tareas, los comandos de prueba y el límite de turnos. El prompt neutral no exige un número mínimo de archivos leídos ni editar con rapidez. Repite al menos tres veces cada una de las tres categorías de tareas y alterna el orden de los modelos. Registra llamadas a herramientas, archivos leídos, búsquedas y tiempo de reloj antes de la primera edición, junto con la aceptación del primer parche probado, el retrabajo posterior a las pruebas, el éxito final, los archivos modificados y el uso de Tokens.
+>
+> **Interpretación causal**: la campaña neutral pregunta si el comportamiento cambia con el modelo dentro de un mismo Harness. Para medir el Harness como modulador, ejecuta otra campaña con `--policy explore-first`; no mezcles ambas políticas en una sola comparación de modelos. Un comportamiento que cambia al sustituir el modelo y persiste para el mismo modelo entre Harnesses es evidencia más fuerte de un efecto del modelo; lo contrario respalda más un efecto del Harness.
+>
+> **Criterios de aceptación**: todas las pruebas unitarias offline pasan; primero se confirma que cada fixture de tarea falla sus pruebas; el resultado formal contiene todas las celdas `modelo × tarea × repetición`, cero errores de API, una prueba final independiente y trayectorias auditables; y `manifest.json` verifica los hashes de la configuración, las observaciones y el resumen. El directorio del proyecto incluye una ejecución completa de 18/18 celdas. Los lectores deben repetirla con las versiones de modelo y las cargas reales que les importen, en vez de tratar las cifras de estos repositorios pequeños como una clasificación permanente.
+
 ### Análisis de Costos en Sistemas de Agentes
 
 El costo es una dimensión habitualmente subestimada en la selección de modelos. Si tu Agente ha entrado en producción o se prepara para ello, el análisis de costos de esta sección no debe pasarse por alto.
@@ -494,7 +512,7 @@ El **procesamiento por lotes asincrónico (Async Batching)** acumula tareas no e
 
 En producción se debe establecer un sistema de monitoreo de costos en tiempo real: rastreando el consumo de tokens y gastos de API por tipo de tarea, modelo y usuario. Asimismo, se deben fijar límites superiores de costo por tarea, terminando automáticamente la ejecución si el Agente entra en bucles o exploraciones excesivas para evitar cobros anormalmente elevados en una sola ejecución.
 
-> **Experimento 6-7 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
+> **Experimento 6-8 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
 >
 > **Objetivo**: Reproducir el desglose de la tarea de ocho turnos y validar las optimizaciones con cargas de trabajo propias.
 >
@@ -510,7 +528,7 @@ Supongamos que tu sistema de Agentes está construido actualmente sobre Claude, 
 
 Un equipo con un sistema de evaluación maduro puede obtener la respuesta en pocas horas: ejecutando el nuevo modelo sobre su propio dataset de evaluación y comparando la tasa de éxito en tareas, corrección en llamadas a herramientas, latencia y costo. Es posible descubrir que el nuevo modelo es superior y más económico en tareas simples, pero que en escenarios centrales con orquestaciones multiturno complejas la tasa de éxito cae un 5%. Tras confirmar que esta diferencia supera el ancho de banda del ruido (véase a continuación "Significatividad Estadística de los Resultados de Evaluación"), la decisión pasa a ser una estrategia diferenciada: "migrar tareas simples al nuevo modelo para reducir costos y mantener el modelo original en tareas complejas para garantizar la calidad", en lugar de una migración ciega y total. Esta toma de decisiones precisa e impulsada por datos solo es posible contando previamente con un sistema de evaluación construido.
 
-> **Experimento 6-8 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
+> **Experimento 6-9 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
 >
 > Realizar benchmarking exhaustivo sobre LLMs principales y diversos proveedores de API para construir una base de datos de decisiones de selección de modelos multidimensional.
 >
@@ -520,7 +538,7 @@ Un equipo con un sistema de evaluación maduro puede obtener la respuesta en poc
 >
 > Evaluar la disponibilidad y estabilidad de las APIs: realizar sondeos cada hora durante una semana, registrando la tasa de éxito, tipos de error y duración de fallos. Calcular la tasa de fallos, MTTR (tiempo medio de recuperación) y el tiempo máximo de disponibilidad continua. Probar los umbrales reales de límite de tasa incrementando gradualmente la concurrencia hasta hallar el punto de restricción, registrando los límites de RPM/TPM. Calcular el costo consolidado: recopilar precios (unidad de token de entrada/salida/caché), considerando el impacto de KV Cache para calcular el costo promedio en tareas multiturno típicas de Agentes.
 
-> **Experimento 6-9 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
+> **Experimento 6-10 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
 >
 > **Prerrequisito**: Haber completado los experimentos de recuperación contextual o RAG con Agentes del Capítulo 3.
 >
@@ -615,7 +633,7 @@ Superar las cuatro tareas con H5C solo autoriza la siguiente prueba; no autoriza
 
 Esa es la disciplina de la iteración: cada evidencia solo justifica el paso siguiente que su escala permite. H1 descartó seguir acumulando prompts; H5 encontró la dirección correcta, pero descubrió un problema de costo; H5C resolvió ese costo y obtuvo el derecho a una prueba mayor. Un buen informe de benchmark no solo da una puntuación: delimita dónde vale la conclusión, qué barreras no se han superado y qué debe comprobar la ronda siguiente.
 
-> **Experimento 6-10 ★★★: Evaluación y Mejora en AndroidWorld**
+> **Experimento 6-11 ★★★: Evaluación y Mejora en AndroidWorld**
 >
 > Este experimento practica el recorrido desde el reporte hasta la mejora del sistema. Partir de los reportes históricos y las tres comparaciones guardadas en `chapter6/android-world`.
 >
@@ -689,7 +707,7 @@ En los **entornos digitales**, el framework AWorld construyó un sandbox de serv
 
 En los **entornos encarnados**, RoboTwin2 construye tareas de manipulación con doble brazo sobre motores físicos, aleatorizando la posición, orientación y apariencia de los objetos en el entorno para elevar la capacidad de generalización. El espacio de observación incluye visión multicámara y estados articulares, logrando control en tiempo real mediante **chunking de acciones (Action Chunking)**, donde el modelo planifica múltiples acciones continuas de una sola vez (detallado en el Capítulo 9). OSWorld logra la capacidad de restablecimiento mediante instantáneas de máquinas virtuales, y AndroidWorld se enfoca en la automatización de aplicaciones móviles. Ya sean entornos digitales o encarnados, los entornos de simulación requieren de igual modo los mecanismos de aislamiento y virtualización de identidad analizados en el Capítulo 4 (aislamiento por VM/contenedor, proxies residenciales, autenticación Human-in-the-Loop, sistemas de archivos compartidos), los cuales no se repetirán aquí.
 
-> **Experimento 6-11 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
+> **Experimento 6-12 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
 >
 > Configurar un entorno de simulación para manipulación robótica. Leer `ch7/SimpleVLA-RL` y la documentación de OpenVLA para comprender la arquitectura de modelos de visión-lenguaje-acción (integración de extremo a extremo de codificador visual + modelo de lenguaje + decodificador de acciones, proyectando imágenes y texto a un espacio semántico compartido). Configurar el entorno RoboTwin2, comprendiendo el espacio de observación (RGB de tres perspectivas + estado articular de 14 dimensiones) y el espacio de acciones (vector de control de 14 dimensiones). Estudiar el mecanismo de aleatorización del entorno y la lógica de restricciones espaciales en move_can_pot. Ejecutar la evaluación de modelos preentrenados, registrando la tasa de éxito, tiempo de finalización y patrones de fallo, prestando especial atención al impacto del mecanismo de chunking de acciones.
 >

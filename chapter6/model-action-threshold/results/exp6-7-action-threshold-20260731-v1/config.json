@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-07-31T13:40:47.902935+00:00",
+  "models": [
+    "openai/gpt-5.6-sol",
+    "anthropic/claude-sonnet-5"
+  ],
+  "tasks": [
+    "cache_contract",
+    "crosscutting_identity",
+    "localized_timeout"
+  ],
+  "trials": 3,
+  "policy": "neutral",
+  "max_turns": 20,
+  "base_url": "https://openrouter.ai/api/v1",
+  "system_prompt_sha256": "6ad228079efd5af707984f7a06401e145d8df50e27a49c0f0af53c85e835a82f",
+  "tool_schema_sha256": "3d364b7aeca749fe1923a3420e7bd2ea41f2694d3e6ecf659aa517e1747ac04c"
+}

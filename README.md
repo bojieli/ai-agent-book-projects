@@ -7,9 +7,9 @@
 
 > 📥 **[下载 PDF / EPUB](#-电子书)**（推荐）— 推荐使用 PDF / EPUB 离线阅读，排版最佳；也可[在线阅读](https://bojieli.github.io/ai-agent-book/)（支持多语言切换、章节折叠、全文搜索，每次推送自动更新）。
 
-**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**94 个配套实验**全部开源，欢迎亲手把实验跑一遍。
+**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**95 个配套实验**全部开源，欢迎亲手把实验跑一遍。
 
-| 📚 **10 章** 正文，从基础到生产 | 📂 **94 个** 配套实验（含本地项目与外部复现轨道） | 🌐 **13 种** 语言：中 / 英 / 西 / 印尼 / 阿 / 繁體中文（台灣） / 俄 / 泰米尔 / 越 / 日 / 土耳其 / 韩 / 匈牙利 |
+| 📚 **10 章** 正文，从基础到生产 | 📂 **95 个** 配套实验（含本地项目与外部复现轨道） | 🌐 **13 种** 语言：中 / 英 / 西 / 印尼 / 阿 / 繁體中文（台灣） / 俄 / 泰米尔 / 越 / 日 / 土耳其 / 韩 / 匈牙利 |
 | :---: | :---: | :---: |
 
 ## 📖 电子书
@@ -59,7 +59,7 @@
 | 3 | 📚 **用户记忆和知识库** | 跨会话记住用户、接入外部知识：用户记忆、RAG、结构化索引、知识图谱 | [读](book/chapter3.md) | [13](chapter3/README.md) |
 | 4 | 🛠️ **工具** | 工具是 Agent 的双手：MCP 协议、感知/执行/协作三类工具、事件驱动异步 Agent、主动工具发现 | [读](book/chapter4.md) | [7](chapter4/README.md) |
 | 5 | 💻 **Coding Agent 与代码生成** | 代码是「能创造新工具的工具」，生产级 Coding Agent 全景 | [读](book/chapter5.md) | [12](chapter5/README.md) |
-| 6 | 🎯 **Agent 的评估** | 把表现变成可比较信号：评估环境、指标、统计显著性、评估驱动选型 | [读](book/chapter6.md) | [11](chapter6/README.md) |
+| 6 | 🎯 **Agent 的评估** | 把表现变成可比较信号：评估环境、指标、统计显著性、评估驱动选型 | [读](book/chapter6.md) | [12](chapter6/README.md) |
 | 7 | 🧠 **模型后训练** | 预训练/SFT/RL 三阶段：何时选 SFT、何时选 RL，工具调用内化、样本效率 | [读](book/chapter7.md) | [16](chapter7/README.md) |
 | 8 | 🔄 **Agent 的持续进化** | 从运行轨迹获得学习信号，更新知识、指令、程序与参数 | [读](book/chapter8.md) | [8](chapter8/README.md) |
 | 9 | 🎙️ **多模态与实时交互** | 从文本扩展到语音、GUI、物理世界：语音三范式、Computer Use、机器人 | [读](book/chapter9.md) | [10](chapter9/README.md) |
@@ -169,11 +169,12 @@ git clone https://github.com/joonspk-research/generative_agents.git chapter10/ge
 | 6-2 | 📝 读者练习 | 人工执行 GAIA / OSWorld / SWE-bench / Terminal-Bench 等任务，记录可验证轨迹并比较人与 Agent 的失败边界 |
 | 6-3 | ✅ 本地实现 | 四档多维记忆 Rubric 与逐维证据见 [`chapter3/user-memory-evaluation`](chapter3/user-memory-evaluation/) |
 | 6-4 | ✅ 本地实验 | JSON Cards / RAG / 混合系统的 60 用例 × 3 系统共 180/180 条真实轨迹与完整成本核算见 [`full_6_4_60_cases_costed.json`](chapter6/user-memory-system-evaluation/results/full_6_4_60_cases_costed.json) |
-| 6-9 | 🚧 本地实验 | 组件 × 模型 × 评估器的 4×3×2×60 全矩阵仍未完成；smoke/checkpoint 与 backend readiness 不能替代完整矩阵 |
+| 6-7 | ✅ 本地实验 | 同一中性 Coding Harness 下的 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复已完成 18/18 单元，零 API 错误；轨迹、汇总和哈希见 [`model-action-threshold` manifest](chapter6/model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) |
+| 6-10 | 🚧 本地实验 | 组件 × 模型 × 评估器的 4×3×2×60 全矩阵仍未完成；smoke/checkpoint 与 backend readiness 不能替代完整矩阵 |
 | 5-12 | ✅ 本地实验 | 能创造 Agent 的 Agent 见 [`chapter5/agent-creator`](chapter5/agent-creator/)；[正式对照](chapter5/agent-creator/runs/exp5-12-kimi-k3-20260730-v1/comparison.json)的模板/从零双臂均通过，模板质量非劣且创建更高效，但预期的质量与效率双重严格优势未观察到 |
 | 7-8 | 🚧 本地实验 | Prompt 蒸馏见 [`chapter8/prompt-distillation`](chapter8/prompt-distillation/)（跨章复用）；须完成教师生成、学生训练及质量/成本对照才算验收 |
 | 7-9 | 📝 读者练习 | CoT 蒸馏 `[扩展]`——配套实现见 `chapter7/cot-distillation`（含 SFT 数据生成与规则验证器） |
-| 6-11 | 🚧 仿真评估 | OpenVLA + RoboTwin2 的本地预检、固定配置和证据门禁见 [`chapter6/openvla-robotwin2-eval`](chapter6/openvla-robotwin2-eval/)；训练依赖固定版本的 `chapter7/SimpleVLA-RL/SimpleVLA-RL` |
+| 6-12 | 🚧 仿真评估 | OpenVLA + RoboTwin2 的本地预检、固定配置和证据门禁见 [`chapter6/openvla-robotwin2-eval`](chapter6/openvla-robotwin2-eval/)；训练依赖固定版本的 `chapter7/SimpleVLA-RL/SimpleVLA-RL` |
 | 9-8 | 🚧 外部硬件轨道 | [`chapter9/xlerobot-teleoperation`](chapter9/xlerobot-teleoperation/) 固定 XLeRobot 上游版本、遥操作入口和实机安全/证据要求；完成需授权的 XLeRobot 实机运行 |
 | 9-9 | 🚧 外部硬件轨道 | [`chapter9/gemini-xlerobot-navigation`](chapter9/gemini-xlerobot-navigation/) 固定 XLeRobot、RoboCrew 与 Gemini Robotics-ER 1.5 路径；完成需真实规划 API 与授权导航运行 |
 | 9-10 | 🚧 外部 Sim2Real 轨道 | [`chapter9/rgb-sim2real-grasping`](chapter9/rgb-sim2real-grasping/) 固定 [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) 版本并逐阶段验收；阶段 1–4 可在非机器人训练环境完成，阶段 5 需授权 SO-100 实机 |

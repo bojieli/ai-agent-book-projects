@@ -1,0 +1,5 @@
+{
+  "category": "localized",
+  "instruction": "Fix the timeout configuration bug exposed by the tests. The public resolve_timeout API must remain unchanged. Explicit arguments should take precedence over AGENT_TIMEOUT, and invalid or non-positive values should fall back to the default.",
+  "test_command": ["python", "-m", "unittest", "discover", "-s", "tests", "-v"]
+}
