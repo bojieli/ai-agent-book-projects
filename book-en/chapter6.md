@@ -340,13 +340,13 @@ rubric:
 
 **Good Rubric vs. Bad Rubric**: Each scoring level above specifies verifiable, concrete behavior ("Correctly answers Dr. Chen") rather than descriptions that cannot be judged objectively, like "demonstrates a deep understanding of memory." The veto item sets the bottom line: even if every other dimension scores full marks, a single instance of hallucination results in an automatic zero.
 
-Send this Rubric together with the Agent's actual response to the judging model, which will score each dimension and provide reasoning. By running this across dozens of test cases, you can systematically identify the Agent's capability gaps—for example, an average score of 2.1 on the "cross-session association" dimension clearly points to deficiencies in memory retrieval or information correlation.
+Give the judge both the Rubric and the Agent's response. It will score each dimension and explain why. Once results from dozens of cases are grouped by dimension and the low-scoring traces are replayed, a vague drop in success rate becomes a concrete diagnosis: retrieval missed a fact, the model linked the wrong people or events, or it added an unsupported claim. A useful Rubric tells the team not only how the system scored, but where to look next.
 
 > **Experiment 6-3 ★★: Building a Rubric-Based User Memory Evaluation System**
 >
-> **Prerequisites**: Must complete the Chapter 3 User Memory Experiment (`ch3/user-memory-evaluation`).
+> **Prerequisites**: Must complete the Chapter 3 User Memory Experiment (`chapter3/user-memory-evaluation`).
 >
-> This experiment requires modifying the `ch3/user-memory-evaluation` framework from Chapter 3, upgrading the current simple LLM-as-a-Judge scoring mechanism to a structured, multi-dimensional Rubric evaluation system. The existing system uses a single LLM call to return a pass/fail result plus evaluation reasoning, lacking structured diagnostic capabilities.
+> This experiment requires modifying the `chapter3/user-memory-evaluation` framework from Chapter 3, upgrading the current simple LLM-as-a-Judge scoring mechanism to a structured, multi-dimensional Rubric evaluation system. The existing system uses a single LLM call to return a pass/fail result plus evaluation reasoning, lacking structured diagnostic capabilities.
 >
 > Design a unified multi-dimensional Rubric framework applicable to all three task levels. Evaluation dimensions include: Factual Correctness (precision: of all the information given, how much is correct—verifies that numbers/dates/names are consistent with the stored memory); Information Completeness (recall: of all the information that should be given, how much is mentioned—verifies that all relevant information is provided with no key content omitted); Reasoning Correctness (checks whether the relationships between pieces of information and implicit logic are correctly understood); Reasoning Proactiveness (evaluates whether suggestions or risk warnings beyond a direct answer are provided when appropriate); Hallucination Detection (ensures no information not present in memory is fabricated).
 >
@@ -354,12 +354,28 @@ Send this Rubric together with the Agent's actual response to the judging model,
 >
 > **Experiment 6-4 ★★: Comparative Evaluation of Advanced JSON Cards vs. RAG**
 >
-> **Prerequisites**: Must complete the Chapter 3 User Memory and RAG experiments (`ch3/user-memory`, `ch3/agentic-rag-for-user-memory`).
+> **Prerequisites**: Must complete the Chapter 3 User Memory and RAG experiments (`chapter3/user-memory`, `chapter3/agentic-rag-for-user-memory`).
 >
-> **Objective**: Fairly compare the advantages and boundaries of structured memory versus unstructured retrieval on the same evaluation set. Reuse the two Chapter 3 projects and compare three configurations on the 60 test cases from `ch3/user-memory-evaluation`—Pure Advanced JSON Cards (structured cards kept in context, with no retrieval needed), Pure RAG (conversation chunks embedded in a vector store, retrieval required), Hybrid System (core facts resident + original conversations retrieved on demand).
+> **Objective**: Fairly compare the advantages and boundaries of structured memory versus unstructured retrieval on the same evaluation set. Reuse the two Chapter 3 projects and compare three configurations on the 60 test cases from `chapter3/user-memory-evaluation`—Pure Advanced JSON Cards (structured cards kept in context, with no retrieval needed), Pure RAG (conversation chunks embedded in a vector store, retrieval required), Hybrid System (core facts resident + original conversations retrieved on demand).
 >
 > **Acceptance Criteria**: Record success rate, average steps, number of tool calls, latency, and cost across three complexity levels (basic recall / multi-session disambiguation / cross-session hidden associations). Clearly describe the failure boundaries for each approach—what structured memory misses, what retrieval misses, and whether the hybrid truly achieves synergy. Configuration details and test cases are available in the companion repository.
 >
+
+The companion experiment ran all three systems on the same 60 questions and retained 180 real API trajectories. Table 6-4 reports both the rates and the underlying success counts.
+
+Table 6-4 Success Rate by Memory System and Task Level
+
+| System | Basic Recall | Multi-Session Disambiguation | Hidden Cross-Session Links | Overall |
+|---|---:|---:|---:|---:|
+| Advanced JSON Cards | 95% | 60% | 50% | 68.3% (41/60) |
+| RAG | 90% | 40% | 15% | 48.3% (29/60) |
+| Hybrid | 80% | 70% | 50% | 66.7% (40/60) |
+
+The hybrid did not win by default. It uniquely solved three cases that neither single approach solved, but regressed on eight cases relative to the better single approach; its mean reward was 0.092 below the per-case best single system. Pure RAG nearly matched structured cards on basic recall, then fell to 15% on hidden cross-session links. Retrieving a relevant passage is only the first step—the Agent still has to reconstruct the right relationships among people, events, and time.
+
+The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results. In practice, do not assume that "structured memory + RAG" creates synergy. First inspect how each approach fails at each difficulty level, then decide which facts should remain resident and which questions should trigger retrieval. This was one campaign on synthetic cases with one model-and-judge configuration. It explains failure mechanisms, not a universal ranking of memory architectures.
+
+That conclusion, in turn, depends on the judge being trustworthy. If the Agent and judge come from the same model family, they may share exactly the same preferences and blind spots.
 
 **The Same-Family Model Problem and Multi-Source Judging.**
 
@@ -388,10 +404,14 @@ Multimodal judging extends LLM-as-a-Judge to the domains of speech, images, and 
 >
 > Design a multi-dimensional TTS Rubric: The Accuracy dimension verifies whether all text is correctly read (no omissions/misreadings/additions); the Naturalness dimension assesses whether the speech sounds natural rather than robotic, has no unnatural pauses, and uses natural prosody; the Emotional Expression dimension checks whether the tone matches the text's emotional tone (rising intonation for questions, emphasis for exclamations, slower pace and lower pitch for sad content); the Voice Consistency dimension evaluates speaker similarity when a reference voice is available (the multimodal model simultaneously receives the reference voice and the synthesized voice for comparison).
 >
-> Build a diverse test corpus: varying lengths (single sentence → long paragraph), genres (news/story/dialogue), emotions (neutral/excited/sad), and special challenges (numbers/proper nouns/polyphonic characters/dialectal vocabulary). Implement the evaluation pipeline: The TTS generation module connects to mainstream services (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao); the multimodal judging module uses Gemini 3.5 Flash, providing it with the synthesized speech, original text, reference voice, and Rubric together to score each dimension and provide detailed reasoning. Analyze the distribution of evaluation results to identify the strengths and weaknesses of different TTS models across dimensions—some models may excel in accuracy but lack naturalness, while others have high naturalness but are prone to errors on special vocabulary.
+> Build a diverse test corpus: varying lengths (single sentence → long paragraph), genres (news/story/dialogue), emotions (neutral/excited/sad), and special challenges (numbers/proper nouns/polyphonic characters/dialectal vocabulary). Connect the TTS module to mainstream services (OpenAI, ElevenLabs, Fish Audio, Minimax, Doubao), then send the synthesized audio, source text, reference audio, and Rubric to an audio-capable multimodal judge. Record the judge model and hashes of both candidate and reference audio so that every score can be audited.
 >
 
-Beyond manually defining Rubrics, specialized **generative reward models** can be trained to automate judging—this involves training methods for reward models, which will be discussed in detail in Chapter 7.
+The companion repository preserves a small direct-listening run. OpenAI and Fish Audio each generated four clips covering numbers, polyphonic Chinese characters, long-form text, and excited delivery; Voxtral completed all eight four-dimensional judgments. Both systems averaged 5.00 for accuracy and 4.00 for naturalness. Fish Audio scored 4.00/3.00 for emotion and voice consistency, while OpenAI scored 3.75/2.75. Splitting the Rubric into dimensions therefore exposed differences that a simple "was it read correctly?" check would miss.
+
+Those scores do not establish a provider winner. There were only four clips per provider, and the fixed reference clip came from Fish S1, which naturally favors Fish Audio on voice similarity. A general TTS comparison should remove that dimension or give every candidate an appropriate target speaker. A voice-cloning comparison should ask every system to imitate the same speaker and calibrate the model judge against blinded human listening. **Choosing the reference answer, image, or audio is part of evaluation design, not neutral setup work.**
+
+Handwritten Rubrics are a fast way to establish diagnostic dimensions like these. At larger scale, a specialized **generative reward model** can automate the judging; Chapter 7 covers how such reward models are trained.
 
 In practical model selection, we often face the question: "Which is better, A or B?" Pairwise comparison provides an evaluation method that does not rely on absolute scores.
 
@@ -457,24 +477,24 @@ The cost of an Agent system can be decomposed into three levels:
 
 **Infrastructure cost** covers operational overhead for vector databases (used for RAG retrieval), message queues, relational databases, and logging and tracing storage (for observability).
 
-A concrete example illustrates the non-linear growth of costs. Table 6-4 uses the customer service refund Agent from the beginning of this chapter as an example, with a set of illustrative token price parameters to break down the cost of three rounds of calls, demonstrating the impact of multi-round context accumulation and cache hits on expenses.
+To see where these costs actually come from, the companion experiment used a fixed eight-turn refund workflow: query the order, logistics, refund policy, and knowledge base, then perform risk checks, issue the refund, notify the user, and close the case. Real gpt-4o-mini calls were run under all four combinations of two switches: stable versus unstable prefixes, and full versus compressed history. The business workflow was identical in every arm. Table 6-5 uses the recorded token counts and prices from that run.
 
-Table 6-4 Three-Round Cost Example for the Customer Service Refund Agent
+Table 6-5 Measured Cost of the Eight-Turn Agent Workflow
 
-| Round | Operation | Input Tokens | Output Tokens | Round Cost |
-|-------|--------------------------------------------|------------------------|------------|---------|
-| 1 | System prompt + user question → Decide to query the order | 2,500 (2,000 system prompt) | 150 | $0.0098 |
-| 2 | Previous-round context + tool result → Decide whether to initiate a refund | 3,200 (2,000 cache hit) | 120 | $0.0060 |
-| 3 | Previous-round context + refund result → Reply to the user | 3,800 (3,200 cache hit) | 200 | $0.0058 |
-| **Total** | | **9,500** | **470** | **$0.022** |
+| Configuration | Input Tokens | Cached Tokens | Total Cost | Savings vs. Baseline |
+|---|---:|---:|---:|---:|
+| No cache, no compression | 20,700 | 0 | $0.003776 | — |
+| Stable prefix only | 20,386 | 13,568 | $0.002707 | 28.3% |
+| History compression only | 16,177 | 0 | $0.003115 | 17.5% |
+| Stable prefix + compression | 16,035 | 6,144 | $0.002643 | 30.0% |
 
-Note: Calculated using example prices of $3/million tokens for input and $15/million tokens for output. The cache-hit portion is assumed to be billed at 10% of the input price (discounts vary by vendor; for example, Anthropic's cache write is about 1.25 times the input price and cache read is about 0.1 times; this is simplified to only the read discount).
+In the baseline, input grew from 1,113 tokens on the first turn to 3,668 on the last. Tool results were repeatedly carried into later requests, accounting for 9,544 input tokens across the run. With both optimizations enabled, that figure fell to 5,248 and total cost dropped by 30%.
 
-Three rounds come to $0.022—cheap, it seems. Without any cache, the input cost alone would be about $0.029, roughly $0.036 with output included; caching here saves nearly half the input cost, consistent with the empirical range cited later ("KV Cache can reduce input costs by 30%-60%"). But watch the amplifying factors. Enable thinking mode and each round emits an extra 500-2,000 thinking tokens, potentially tripling or quintupling the cost. Let one tool return a 5,000-token web page and every subsequent round pays for those tokens again. Let the Agent take a detour and need 10 rounds, and the context balloons past 20,000 tokens, far beyond this simple scenario. The core of cost optimization is therefore not picking a cheaper model but controlling the number of rounds and the growth of context.
+The gains were not additive. A stable prefix alone saved 28.3%, and compression alone saved 17.5%, yet together they saved 30%, not 45.8%. Compressing history also shortened the prefix available for cache reuse. **When context optimizations are combined, measure the complete workflow; never add their isolated savings together.** A different model, price schedule, or task length will change the 30% figure. The reusable result is the four-arm method, not the percentage itself.
 
 **Cost Optimization Strategies.**
 
-From a quantitative perspective, the most effective input-side levers are **KV Cache Reuse** (maintaining a stable prefix so that repeated system prompts, tool definitions, and historical rounds are billed at the cache price, reducing input token costs by 30%-60%—in the three-round example above, caching saved nearly half the input cost), **Context Compression** (compressing historical trajectories, truncating redundant tool outputs, directly controlling the growth rate of context, especially effective in long tasks), and **Tiered Model Routing** (simple requests go to lightweight models, complex reasoning goes to powerful models). The specific implementations of these three methods—prefix stability design, compression timing and strategy, and routing mechanisms—have been discussed in detail in Chapter 2 and will not be repeated here. This chapter supplements them with two methods from evaluation and operations.
+The first input-side levers to test are **KV Cache Reuse** (keep the prefix stable), **Context Compression** (shorten old trajectories and verbose tool results), and **Tiered Model Routing** (send simple requests to lightweight models and difficult reasoning to stronger ones). Chapter 2 covered the implementations. Here the operational point is that each lever should have its own switch, so the team can measure both its isolated effect and what happens when it is combined with others. Two further methods matter specifically to evaluation and operations.
 
 **Asynchronous Batch Processing** accumulates non-real-time tasks for batch processing, leveraging batch pricing discounts from API providers; in self-deployment scenarios, it also improves GPU utilization during off-peak hours.
 
@@ -484,11 +504,11 @@ In a production environment, a real-time cost monitoring system should be establ
 
 > **Experiment 6-7 ★: End-to-End Cost Analysis of Agent Tasks**
 >
-> **Experiment Goal**: Perform a full-chain cost breakdown for typical Agent tasks, establish a cost baseline, and verify the effectiveness of optimization strategies.
+> **Experiment Goal**: Reproduce the eight-turn cost breakdown above, then test the same optimization levers on your own workload.
 >
-> **Technical Approach**: Select several typical tasks, use LangSmith or a self-built tracing system to record the input/output token count, thinking token count, number of tool calls and return sizes, and end-to-end latency for each LLM call. Calculate the average cost, cost distribution (p50/p95/p99), and cost composition ratio for each task type.
+> **Technical Approach**: Reproduce the fixed companion task first, then select several representative tasks of your own. Use LangSmith or a self-built tracing system to record input/output and thinking tokens, tool-call counts and return sizes, and end-to-end latency for every LLM call. Calculate average cost, p50/p95/p99, and the cost breakdown for each task type.
 >
-> **Acceptance Criteria**: Generate a cost breakdown report and identify the main cost drivers. Compare the cost differences between enabling/disabling KV Cache and enabling/disabling context compression.
+> **Acceptance Criteria**: Generate a cost report and identify the main drivers. Run all four switch combinations, measuring each optimization alone and both together. Rerun the experiment after changing models rather than carrying forward the saved trace's percentage savings.
 >
 >
 
@@ -514,7 +534,7 @@ A team with a solid evaluation system can answer this in hours: run the new mode
 >
 > **Prerequisites**: Must complete the contextual retrieval or agentic RAG experiment from Chapter 3.
 >
-> **Goal**: Perform an end-to-end model-selection evaluation of a user-memory retrieval Agent, examining how the embedding model, reranker, and Agent's main model jointly affect retrieval quality, latency, and cost. Reuse `ch3/contextual-retrieval-for-user-memory` or `ch3/agentic-rag-for-user-memory`, and compare the configurations on 60 test cases.
+> **Goal**: Perform an end-to-end model-selection evaluation of a user-memory retrieval Agent, examining how the embedding model, reranker, and Agent's main model jointly affect retrieval quality, latency, and cost. Reuse `chapter3/contextual-retrieval-for-user-memory` or `chapter3/agentic-rag-for-user-memory`, and compare the configurations on 60 test cases.
 >
 > **Acceptance**: Evaluate each of the three selection points in turn—embedding model (BGE-M3 / OpenAI / Doubao, etc., record top-5 retrieval accuracy, latency, cost), reranker (include a "no reranker" baseline, quantify its marginal value), and main model (compare success rate and tool usage efficiency under the same retrieval configuration). The key is to identify synergies among the components: a stronger embedding might make the reranker redundant, and a stronger main model might compensate for retrieval shortcomings. Selection is a systemic trade-off, not simply a matter of choosing the strongest component in isolation. Configuration details are in the companion repository.
 >
@@ -525,11 +545,11 @@ A team with a solid evaluation system can answer this in hours: run the new mode
 
 A rough estimate of this sampling noise is the **standard error of a binomial proportion** (which characterizes the fluctuation of the success rate due to sampling randomness; the larger the value, the less reliable the success rate). If the success rate p is measured on n test cases, the standard error is approximately √(p(1-p)/n). For a concrete example: 100 cases, success rate 70%, standard error ≈ √(0.7×0.3/100) ≈ 4.6%. An approximate 95% confidence interval is p ± 2 standard errors, meaning an interval that would contain the true rate in about 95% of repeated samples, i.e., 70% ± 9 percentage points. A three-percentage-point difference like "new model 73% vs. old model 70%" therefore sits entirely inside the noise band—treating the two success rates as independent, the standard error of their difference is about √2 times the individual standard error (here about 6.5 percentage points). One caveat: that √2 assumes the two measurements are independent, whereas in practice both configurations usually run on the **same set of tasks**, so the samples are not independent. The independence assumption is merely a conservative upper bound for a quick check on whether a small difference deserves attention at all. Even by that conservative yardstick, a three-percentage-point gap falls far short of the 6.5-percentage-point standard error—switching models on such evidence is little better than a coin flip.
 
-Agent evaluation adds another layer of non-determinism: same model, same dataset, and two runs can still drift apart—temperature sampling, fluctuating tool returns, and environmental timing all inject randomness. So never base a decision on a single run's numbers. **Run multiple times and average** (say, 3-5 runs per configuration), reporting both the mean and the spread. This is exactly why, in the hypothetical case later, every configuration is "run 5 times (using different random seeds)."
+Agent evaluation adds another layer of non-determinism: the same model and dataset can still produce different results across runs because temperature sampling, tool-return variance, and environmental timing all inject randomness. A single run should therefore never justify deployment. **Run multiple times and average**—say, 3-5 runs per configuration—and report both the mean and the spread. The small AndroidWorld pilot later in this chapter uses only one paired run per task, so it can screen ideas for a larger test but cannot support deployment. That decision requires the planned multi-seed run on the full task set.
 
 Hence a practical principle: **when the score difference is smaller than the estimated sampling noise, do not make a switching decision.** But before settling on "don't switch," reach for a more sensitive—and more correct—analysis. When two configurations run on the same set of tasks, the right default is **paired analysis**: compare win/loss task by task, look only at the cases where the two disagree (one correct, one wrong), and apply something like McNemar's test to judge significance. Pairing subtracts out the shared noise of task difficulty, making it far more sensitive at the same sample size than differencing two independent success rates—the earlier √2 estimate is just a conservative, mental-math sieve for ruling out differences that obviously fall short. If paired analysis still leaves the difference uncertain, only then consider growing the sample—and note that the standard error scales as 1/√n, so going from 100 to 400 cases merely halves the estimated sampling noise. Expansion is expensive. Read the other way: if an improvement's expected benefit is only 2-3 percentage points and your evaluation set has a few dozen cases, the evaluation simply cannot tell whether the improvement works—the priority is to grow the evaluation set, not to keep iterating the Agent.
 
-One more easily overlooked pitfall: **multiple comparisons**. Test a batch of hypotheses in parallel and the probability that at least one conclusion is a false positive climbs fast—even at a 95% confidence level per conclusion, across 6 hypotheses the chance of hitting at least one false positive is 1 − 0.95^6 ≈ 26%. The more hypotheses you run in parallel, the harder it becomes to avoid one that merely looks significant. Countermeasures come in two kinds: tighten the significance threshold for each conclusion as the number of hypotheses grows (a Bonferroni-style correction), or re-run any positive result in an independent confirmatory pass and believe it only if it replicates. The later section "From Data to Hypotheses" will test H1–H4, four truly parallel hypotheses (H5 and H6 are conditionally triggered and not run simultaneously with the first four), which is a typical scenario for this pitfall.
+One more easily overlooked pitfall is **multiple comparisons**. Test a batch of hypotheses in parallel and the probability that at least one conclusion is a false positive climbs fast—even at a 95% confidence level per conclusion, across 6 hypotheses the chance of hitting at least one false positive is 1 − 0.95^6 ≈ 26%. The more hypotheses you run in parallel, the harder it becomes to avoid one that merely looks significant. Countermeasures come in two kinds: tighten the significance threshold for each conclusion as the number of hypotheses grows, using a Bonferroni-style correction, or rerun every positive result in an independent confirmatory pass and accept it only if it replicates. The AndroidWorld case later changes one variable at a time across successive rounds, avoiding the temptation to try a large batch of changes and report only the winner. If several prompts or observation formats are screened in parallel, multiple comparisons must be reflected in the conclusion.
 
 Evaluation-driven decisions rely on high-quality data, which comes from the systematic recording of the Agent's operational process—this is what observability addresses.
 
@@ -564,7 +584,7 @@ With a comprehensive evaluation system and dataset in place, the key is to trans
 
 ## From Benchmark Reports to System Improvements
 
-**The following is a hypothetical teaching case**, using specific data to illustrate the complete decision-making process from a benchmark report to system improvements. The data is hypothetical and aims to demonstrate the methodology, not to report real experimental results.
+The following case comes from a real, deliberately narrow AndroidWorld iteration in the companion repository. It covers four Wi-Fi settings tasks on an API 35 emulator, with one matched run per task. It is not the full 116-task benchmark and does not replace a rerun in the reference API 33 environment. Its value is not an overall score; it is the sequence of decisions from one result to the next.
 
 ![Figure 6-7: Benchmark to Improvement Loop](images/fig6-7.svg)
 
@@ -574,61 +594,51 @@ Before analyzing any benchmark report, note an easily overlooked principle: **wh
 
 ### Reading a Benchmark Report: The Art of Problem Discovery
 
-Let's use a specific case to illustrate how to read a benchmark report. Suppose we evaluate an Agent on AndroidWorld and obtain two core report tables: a per-task performance table and a capability-tag performance matrix. The report's value lies not in the single overall success-rate figure, but in the structural weaknesses it reveals.
+The starting report recorded one run on each of 116 tasks and about 88% overall success. The failures were not scattered: three of the four `SystemWifiTurn*` tasks failed, and their traces repeatedly navigated back and forth without confirming the final state. Two explanations fit the evidence: the Agent did not know where to go, or the UI representation it received was incomplete.
 
-The per-task table shows a clear pattern: most routine tasks have success rates close to 100%. These cover common scenarios—recording, taking photos, contact management, note creation, file operations, system settings—and require a dozen-plus steps on average, with the most complex ones requiring dozens. Successfully completing action sequences this long demonstrates the Agent's planning and execution ability in standard scenarios.
-
-Failures cluster tightly in a few areas: SMS replies, Wi-Fi toggling and status verification, to-do list queries, combined Wi-Fi+Bluetooth operations, and VLC playlist creation. On the surface these tasks look unrelated; the capability tag matrix reveals what they share.
-
-**The capability tag matrix** is key to diagnosis—it cross-classifies all tasks by required capabilities and difficulty. The report often shows several capability dimensions with extremely low success rates: transcription (transcribing information from images/videos, exposing deficiencies in visual understanding), math_counting (the problem is not the math ability itself—modern LLMs are strong at math—but whether the Agent can recognize the need for calculation, extract numbers from the UI, and map the result to an action sequence), and complex_ui_understanding (heavily reliant on standard UI patterns, collapsing when encountering non-standard layouts).
-
-Read the two tables together and the failures explain themselves: the to-do query failures trace to a non-standard UI the Agent cannot read and filter; the Wi-Fi failures trace to a control hierarchy in system settings that exceeds the Agent's understanding; the VLC playlist failures trace to the Agent being unable to find the creation entry in a professional application's complex UI.
+An 88% headline score hides this small but coherent failure cluster. Raising the step limit would be equally misleading—it could recast "the Agent cannot see the control" as "the Agent needs more persistence." Read reports in the opposite direction: locate clusters by task and capability tag, replay the traces, decide whether the failure arose in observation, reasoning, action, or verification, and only then choose a variable to change. The Wi-Fi slice was used to diagnose the mechanism cheaply, not to estimate system-wide performance.
 
 ### From Data to Hypotheses: Building an Improvement Roadmap
 
-**Surface-level hypotheses** (low cost, independent, can be verified in parallel): H1: Add system settings navigation hints for Wi-Fi operations (the Agent might be able to operate the toggle but cannot find the entry page), expected to resolve the concentrated failures in settings-related tasks; H2: Provide UI element identification rules for the to-do app, expected to resolve failures in to-do tasks.
+The first round tested the cheapest explanation. H1 assumed a navigation-knowledge gap, so only the treatment received Wi-Fi navigation and final-state-checking instructions. Success did not improve; the prompt was not the bottleneck.
 
-**Mid-level hypotheses** (also independent, can be parallelized): H3: Fix the multimodal input pipeline—replaying failed traces reveals that images might be dropped or converted to text descriptions in the pipeline, rendering even the strongest multimodal models unable to transcribe; H4: Globally enable thinking to resolve counting-related failures.
+The second round asked what the Agent could actually see. H5 replaced the API-35-incompatible accessibility feed with AndroidWorld's supported UIAutomator tree. Success improved, but the full tree caused token use to surge. H5C therefore added no new information: it simply removed invisible, textless, non-actionable container nodes to see whether the same success could be preserved with less noise.
 
-**Deep-level hypotheses** (high verification cost, only initiated if complex_ui success rate remains below 40% after surface and mid-level improvements): H5: Replace the model with one having stronger visual understanding (GPT-5); H6: Add UI element tree information beyond screenshots (structured DOM extracted by UI Automator for cross-validation with screenshots). These two can form a 2×2 comparative experiment (Claude/GPT-5 × screenshots only/screenshots + element tree) to answer "which is more critical, model capability or information richness, and is there a synergistic effect?"
-
-Each configuration is run 5 times on the full set of 116 tasks (using different random seeds), recording success rate, average steps, and execution time.
+Across all three rounds, the model, task parameters, seed, step limit, and emulator stayed fixed, and arm order alternated. This staged design made attribution straightforward: the residual problem or side effect from one round became the sole change in the next.
 
 ### From Results to Decisions: Data-Driven Trade-offs
 
-Assume the experimental data shows the following results (**all data below is hypothetical**): H1 raises the success rate on settings-related tasks from 0% to 75%, with an 8% increase in input tokens; H3 improves transcription from 0% to 80%, with a 15% increase in vision tokens and a 1-second increase in latency per step; H4 improves counting from 0% to 70%, but latency per step increases from 4 seconds to 12 seconds, and cost triples; H6 improves complex_ui from 17% to 52%, with a 30% increase in tokens and a 2-second increase in latency per step; H5 (GPT-5) improves complex_ui from 17% to 35%, but latency per step increases from 4 seconds to 15 seconds.
+Table 6-6 summarizes the measured results. With only four tasks per arm, these numbers can decide whether a larger rerun is worthwhile; they cannot estimate success across AndroidWorld.
 
-The decision is not simply to adopt all effective improvements:
+Table 6-6 Three Rounds on the AndroidWorld Wi-Fi Slice
 
-**Deploy H1 and H3 immediately**: H1 is low-cost and high-benefit, with no side effects. H3 adds 15% to vision-token costs and one second of latency, but it turns transcription from a non-functioning capability into a working one, and it fixes an architectural defect—the input pipeline dropping multimodal information—which may lift other visual understanding tasks along the way.
+| Experiment | Only Change | Control → Treatment Success | Treatment / Control Tokens | Next Step |
+|---|---|---:|---:|---|
+| H1 | Add navigation instructions | 25% → 25% | 0.47× | No success gain; retain the original prompt |
+| H5 | Accessibility feed → UIAutomator | 25% → 100% | 2.498× | Strong gain but too expensive; continue optimizing |
+| H5C | Compact the UIAutomator tree | 100% → 100% | 0.506× | Preserve success and halve tokens; advance to a full rerun |
 
-**Globally enabling thinking for H4 is unacceptable**: overall success does rise from 88% to 91%, but the capability tag distribution shows only about 8% of tasks involve counting—forcing every task to incur three times the latency and cost for the sake of a minority is a classic case of using a sledgehammer to crack a nut. H4 does prove, however, that thinking works for counting tasks, laying the ground for conditional activation in the next round.
-
-**H6 beats H5**: with H5 (GPT-5), latency per step rockets from 4 seconds to 15 while complex_ui only reaches 35%—the bottleneck is not the model's reasoning but whether the input carries enough information. H6 (adding the element tree) buys a 35-percentage-point improvement for 30% more tokens and 2 seconds of latency—a far better bargain. The H5+H6 combination scores highest (68%), but its task duration is unacceptable at scale; it suits only selective activation on critical asynchronous tasks (bank transfers, medical appointments), while H6 suffices for everyday scenarios.
-
-**H2 doesn't scale**: writing bespoke rules for every non-standard application is unsustainable. It can only be a stopgap; the long-term solution is to improve the Agent's ability to generalize.
+The sequence matters more than any one percentage. More detailed instructions cannot restore information the Agent never received; observation failures should be investigated before prompts are expanded. But more input is not always better either. The full element tree fixed visibility while flooding the context with noise. Removing non-semantic nodes preserved four successful runs and cut tokens by roughly half. No model was changed: the Harness's UI representation first determined whether the task could be completed and then whether completing it was economical.
 
 ### Continuous Iteration: From First Improvement to System Evolution
 
-After implementing the three improvements H1, H3, and H6 (H4 not deployed), the Agent's success rate on AndroidWorld rises from 88% to 94%. Rerunning the full benchmark, the new report reveals a different failure pattern: transcription, settings, and complex UI tasks have all improved significantly. The remaining failure rate, about 6%, is concentrated in unresolved counting tasks, unstable Wi-Fi status verification (up from 0% to 60% but still unstable), and a handful of new failures, possibly caused by longer prompts or too much element-tree information distracting the model.
+Passing H5C on four tasks only earns it a larger test; it does not authorize deployment. The next gate is a five-seed run over all 116 tasks in the Pixel 6 / API 33 reference environment with the full third-party app set. Success must be non-inferior, token use no more than 75% of the original, and latency no more than 1.5×. Until that run is complete, 4/4 on the slice must not be reported as 100% system-wide success.
 
-Based on the new report and insights from the H4 experiment, new hypotheses can be formed. H7: Conditional activation of thinking—use a quick LLM call (about 1-2 seconds) before a task starts to analyze the task description, enabling thinking mode only for tasks involving counting or complex reasoning, thus confining the latency increase to tasks that truly need it. H8: Expand the action space to support complex gestures (pinch-to-zoom, long-press drag, multi-touch)—replaying the remaining failed traces reveals that some tasks require operations like map zooming, image cropping, and long-press menus on lists.
-
-This kind of iteration based on benchmark feedback steadily improves the Agent's capabilities. A benchmark is not a one-time exam but a continuous health check. A regular evaluation cadence (say, the full test suite weekly) lets you watch the capability curve, catch regressions early (a new feature introducing bugs), confirm improvements (the optimization really worked), and accumulate knowledge (which kinds of improvements usually pay off, which tend to backfire). This methodology—data-driven, hypothesis-tested, continuously iterated—is the key path from experience-driven Agent engineering to scientific engineering.
+That is what continuous iteration means in practice: evidence from one round should authorize only the next action that its scope can support. H1 stopped further prompt piling; H5 found the right mechanism and revealed a cost problem; H5C fixed that problem and qualified for broader testing. A good benchmark report contains more than a score. It states where the conclusion applies, which guardrails failed, and what must be tested next.
 
 > **Experiment 6-10 ★★★: Evaluation and Improvement on AndroidWorld**
 >
-> This experiment is a complete closed-loop practice, from evaluation report to system improvement. Start with the AndroidWorld evaluation report in `ch6/android-world`.
+> This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter6/android-world`.
 >
 > Step 1: Diagnosis. Cross-analyze the per-task table and the capability tag matrix to map surface-level task failures to deep-seated capability deficiencies. Identify capability tags with lower-than-expected success rates and task areas with concentrated failures.
 >
 > Step 2: Build Hypotheses. Formulate improvement hypotheses following the three-layer framework (surface → mid → deep). Each hypothesis should state the target improvement in success rate and the verification method.
 >
-> Step 3: Phased Experimentation. Design controlled experiments to test the hypotheses. Phase 1 tests low-cost surface hypotheses, such as prompt optimization and richer tool descriptions. Phase 2 tests mid-level capability hypotheses (input pipeline modification, thinking mode switching). Focus on the magnitude of improvement for tasks associated with specific capability tags, while also measuring side effects.
+> Step 3: Phased Experimentation. Reproduce H1, H5, and H5C with one variable changed per round. Record tokens, latency, and regressions as well as success.
 >
 > Step 4: Data-Driven Decision Making. Make deployment decisions based on cost-benefit analysis—not simply adopting all effective improvements, but weighing the scope of application, latency impact, and cost overhead for each improvement. Prioritize low-cost, high-benefit improvements for deployment; restrict high-cost improvements to critical scenarios.
 >
-> Step 5: Iteration. After completing the improvements, rerun the evaluation on the dataset. Use an LLM to analyze the evaluation results and generate a new report. The new report will show a different failure pattern, serving as the starting point for the next iteration.
+> Step 5: Iteration. A passing slice experiment advances only to the full rerun. Discuss deployment only after the 116×5 reference-environment run, and preserve environment differences, sample size, and incomplete scope in the report.
 >
 
 ## From External Evaluation to Internal Evaluation: Evaluation Infrastructure for Production-Grade Agents
@@ -710,7 +720,7 @@ With that, the evaluation environment completes its final evolution: from an exa
 
 ## Chapter Summary
 
-This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
+This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. The measured cases add four concrete cautions: combining structured memory with RAG does not guarantee synergy; cache and compression savings cannot be added; the choice of reference audio changes what a multimodal score means; and the Harness's input representation can determine both task success and token cost. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
 
 Core methodology: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, transforming Agent engineering from experience-driven "alchemy" to data-driven scientific engineering.
 
@@ -728,5 +738,5 @@ The evaluation system established here not only supports optimization of the cur
 4. ★★ τ-bench evaluates Agents by simulating real user behavior. But the simulated user itself is an LLM—it might systematically underestimate certain edge cases (e.g., emotionally agitated or unclear users). How can the quality of the simulated user itself be validated?
 5. ★★ Pairwise comparison (Bradley-Terry model) assumes preferences are transitive (if A > B and B > C, then A > C). However, human preferences often violate transitivity. In Agent evaluation, in what scenarios might non-transitive preferences appear? How does this affect the reliability of rankings?
 6. ★★ This chapter proposes the scientific method of "Observe → Hypothesize → Experiment → Validate." In practice, however, the Agent's behavior space is vast, and validating a single hypothesis may require hundreds of evaluation runs. How can the information gained from evaluation be maximized under a limited computational budget?
-7. ★ In the hypothetical case in this chapter, globally enabling thinking (H4) improved overall success rate but was rejected due to latency and cost, eventually leading to conditional activation (H7). Which signals (task description features, historical failure patterns, runtime uncertainty) are suitable as routing criteria for "whether to enable thinking mode"? Are there Agent scenarios where thinking is actually harmful?
+7. ★ In the AndroidWorld pilot, the full element tree raised success from 25% to 100% but increased token use to 2.498× the control; pruning preserved 100% success while reducing token use to 0.506×. How would you design automatic pruning rules that remove semantically empty UI nodes without discarding information needed for accessibility, state verification, or later actions?
 8. ★★ τ-bench's user simulation employs "progressive information disclosure"—not providing all information at once, but gradually revealing it based on the Agent's questions. How does this design affect evaluation results? If the simulated user's information disclosure strategy differs significantly from real users, are the evaluation conclusions still reliable?

@@ -16,7 +16,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-OUT="AI-Agents-in-Depth-Bojie-Li-v1.3-ja.pdf"
+OUT="AI-Agents-in-Depth-Bojie-Li-v1.4-ja.pdf"
 CHAPTERS=(
     introduction.ja.md
     chapter1.ja.md
