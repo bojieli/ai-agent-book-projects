@@ -67,17 +67,28 @@ pytest -q
 WEBRTC_SPEECH_PROVIDER=local-whisper \
 WHISPER_PYTHON=/path/to/python-with-whisper \
 python run_acceptance.py
+
+# Recompute every retained hash and prove raw ARK request/response consistency.
+python validate_acceptance.py \
+  validation/runs/exp10-5-webrtc-raw-20260731-v4
 ```
 
 The formal 2026-07-31 run is committed at
-[`validation/runs/exp10-5-webrtc-20260731-v7/`](validation/runs/exp10-5-webrtc-20260731-v7/).
+[`validation/runs/exp10-5-webrtc-raw-20260731-v4/`](validation/runs/exp10-5-webrtc-raw-20260731-v4/).
 A real ARK response (ID and usage retained) autonomously selected six required fields.
 The call completed one offer, one answer, seven media recordings, 9 TTS turns and 7
 local Whisper turns. Both RTP directions carried packets and bytes. A deliberately
 invalid spoken email caused `format_invalid` and a second question; all five adjacent
 ask/fill intervals overlapped; exactly one redacted six-field submission reached the
 localhost endpoint. All 9 acceptance gates pass. The manifest binds the runtime and
-artifacts with SHA-256 hashes, and the secret/value scan is empty.
+artifacts with SHA-256 hashes, and the secret/value scan is empty. In addition to the
+normalized decision, this run retains the credential-free raw ARK request and raw
+response. They preserve the literal `tool_choice: "auto"`, tool schema, tool-call
+arguments, response ID, model, usage and measured latency. The standalone validator
+recomputes source, input and artifact hashes, independently normalizes those raw
+arguments against the observed form, and requires exact equality with `decision.json`.
+Its 8/8 retained-evidence checks pass; tamper tests cover the raw response, normalized
+decision, manifest and an unexpected unbound artifact.
 
 This run uses a safe synthesized participant so it is automated and reproducible. It
 proves the real media, ASR, orchestration, validation, privacy, and submission paths;
@@ -92,4 +103,4 @@ the same WebRTC path with `--webrtc-answers-json` omitted.
 
 默认路径现在是本机浏览器 WebRTC 通话，不需要手机号、PSTN 服务商、公开 webhook 或隧道。页面会完成真实 offer/answer，并用双向 RTP 音轨传输 Agent 语音和用户麦克风；回答只从远端音轨的临时录音进入 ASR，不会通过文本通道旁路，也不会保留原始音频或 transcript。Phone Agent 每拿到一个有效值就立即发给 Computer Agent，然后直接问下一项，不等待网页填写完成；格式错误会反馈并重问，页面错误会阻止提交，`--submit` 仍须显式授权。
 
-正式 v7 验收以安全合成参与者跑通真实 ARK 自主工具调用、Playwright、WebRTC/RTP、本机 TTS、真实本机 Whisper ASR、格式重问、问填并行和一次 localhost 表单提交：9/9 门禁通过，源码与产物 hash 均已固定，日志中只保留 `<redacted>`。这证明完整技术链路，不等同于真人可用性或跨 NAT/TURN 测试；省略 `--webrtc-answers-json` 即进入同一媒体路径的真人麦克风模式。
+正式 raw-v4 验收以安全合成参与者跑通真实 ARK 自主工具调用、Playwright、WebRTC/RTP、本机 TTS、真实本机 Whisper ASR、格式重问、问填并行和一次 localhost 表单提交：9/9 行为门禁通过。除规范化 decision 外，证据还保留不含凭据的 ARK 原始请求和响应，包含字面量 `tool_choice: "auto"`、工具参数、response ID、model、usage 与实测延迟。独立 validator 会重算源码、输入和产物 hash，并把原始工具参数独立规范化后与 `decision.json` 精确比较；8/8 溯源检查及 raw receipt、decision、manifest、未绑定额外产物四类篡改测试均通过。日志只保留 `<redacted>`，不保留参与者值、音频或 transcript。这证明完整技术链路，不等同于真人可用性或跨 NAT/TURN 测试；省略 `--webrtc-answers-json` 即进入同一媒体路径的真人麦克风模式。

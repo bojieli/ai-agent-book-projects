@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "provider": "Volcengine ARK",
+  "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+  "credential_fields_retained": [],
+  "request": {
+    "model": "doubao-seed-1-6-250615",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a Computer Use Agent completing a registration request. Inspect the real page observation and the information already in context. When you need to collect a large amount of structured information and it can be done step by step through conversation, consider calling the Phone Agent tool. Do not call it for one or two simple missing values. Never invent user data. Give only a short decision summary; do not reveal private chain-of-thought."
+      },
+      {
+        "role": "user",
+        "content": "{\"request\": \"帮我在这个网站上完成注册\", \"page_url\": \"http://127.0.0.1:50624/register\", \"page_title\": \"Safe local registration\", \"form_fields\": [{\"name\": \"firstName\", \"label\": \"First name\", \"type\": \"text\", \"required\": true, \"format_hint\": \"\", \"options\": []}, {\"name\": \"lastName\", \"label\": \"Last name\", \"type\": \"text\", \"required\": true, \"format_hint\": \"\", \"options\": []}, {\"name\": \"email\", \"label\": \"Email address\", \"type\": \"email\", \"required\": true, \"format_hint\": \"name@example.com\", \"options\": []}, {\"name\": \"userNumber\", \"label\": \"Phone number\", \"type\": \"tel\", \"required\": true, \"format_hint\": \"10 digits\", \"options\": []}, {\"name\": \"gender\", \"label\": \"Gender\", \"type\": \"select\", \"required\": true, \"format_hint\": \"\", \"options\": [\"Choose one\", \"Female\", \"Male\", \"Non-binary\"]}, {\"name\": \"address\", \"label\": \"Mailing address\", \"type\": \"textarea\", \"required\": true, \"format_hint\": \"\", \"options\": []}], \"known_context_fields\": []}"
+      }
+    ],
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "initiate_phone_call_agent",
+          "description": "Start a live Phone Agent when a user must provide many missing pieces of structured information conversationally. The Phone Agent asks, confirms, validates, and streams each collected field back to the browser Agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "purpose": {
+                "type": "string"
+              },
+              "required_info": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "format_hint": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "purpose",
+              "required_info"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ],
+    "tool_choice": "auto"
+  }
+}

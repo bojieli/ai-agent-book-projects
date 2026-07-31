@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment": "10-5",
+  "page_url": "http://127.0.0.1:50624/register",
+  "form_html": "<!doctype html>\n<html lang=\"en\"><meta charset=\"utf-8\"><title>Safe local registration</title>\n<h1>Conference registration</h1>\n<form method=\"post\" action=\"/register\">\n  <label for=\"firstName\">First name</label>\n  <input id=\"firstName\" name=\"firstName\" required>\n  <label for=\"lastName\">Last name</label>\n  <input id=\"lastName\" name=\"lastName\" required>\n  <label for=\"email\">Email address</label>\n  <input id=\"email\" name=\"email\" type=\"email\" required placeholder=\"name@example.com\">\n  <label for=\"userNumber\">Phone number</label>\n  <input id=\"userNumber\" name=\"userNumber\" type=\"tel\" required pattern=\"[0-9]{10}\" title=\"10 digits\">\n  <label for=\"gender\">Gender</label>\n  <select id=\"gender\" name=\"gender\" required>\n    <option value=\"\">Choose one</option><option>Female</option><option>Male</option><option>Non-binary</option>\n  </select>\n  <label for=\"address\">Mailing address</label>\n  <textarea id=\"address\" name=\"address\" required></textarea>\n  <button type=\"submit\">Register</button>\n</form></html>",
+  "form_html_sha256": "cb8f0ca7d7260ab8f32e306e7d5abbfc06387d9a19976a1cfffdcece391d0d3b",
+  "field_answer_counts": {
+    "firstName": 1,
+    "lastName": 1,
+    "email": 2,
+    "userNumber": 1,
+    "gender": 1,
+    "address": 1
+  },
+  "participant": "safe synthesized voice over WebRTC RTP",
+  "participant_values_retained": false
+}

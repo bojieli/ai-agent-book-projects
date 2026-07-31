@@ -15,8 +15,8 @@
       ]
     },
     "sequence": 1,
-    "monotonic_seconds": 16.053949,
-    "wall_time": "2026-07-31T18:27:32+0800"
+    "monotonic_seconds": 15.983982,
+    "wall_time": "2026-07-31T19:26:45+0800"
   },
   {
     "sender": "phone_agent",
@@ -27,8 +27,8 @@
       "attempt": 1
     },
     "sequence": 2,
-    "monotonic_seconds": 26.933606,
-    "wall_time": "2026-07-31T18:27:43+0800"
+    "monotonic_seconds": 26.873284,
+    "wall_time": "2026-07-31T19:26:56+0800"
   },
   {
     "sender": "phone_agent",
@@ -40,8 +40,8 @@
       "attempt": 1
     },
     "sequence": 3,
-    "monotonic_seconds": 45.210241,
-    "wall_time": "2026-07-31T18:28:01+0800"
+    "monotonic_seconds": 36.09918,
+    "wall_time": "2026-07-31T19:27:05+0800"
   },
   {
     "sender": "phone_agent",
@@ -52,8 +52,8 @@
       "attempt": 1
     },
     "sequence": 4,
-    "monotonic_seconds": 45.210645,
-    "wall_time": "2026-07-31T18:28:01+0800"
+    "monotonic_seconds": 36.099655,
+    "wall_time": "2026-07-31T19:27:05+0800"
   },
   {
     "sender": "computer_agent",
@@ -63,8 +63,8 @@
       "field": "firstName"
     },
     "sequence": 5,
-    "monotonic_seconds": 45.248909,
-    "wall_time": "2026-07-31T18:28:02+0800"
+    "monotonic_seconds": 36.140925,
+    "wall_time": "2026-07-31T19:27:05+0800"
   },
   {
     "sender": "phone_agent",
@@ -76,8 +76,8 @@
       "attempt": 1
     },
     "sequence": 6,
-    "monotonic_seconds": 57.72339,
-    "wall_time": "2026-07-31T18:28:14+0800"
+    "monotonic_seconds": 47.376214,
+    "wall_time": "2026-07-31T19:27:17+0800"
   },
   {
     "sender": "phone_agent",
@@ -88,8 +88,8 @@
       "attempt": 1
     },
     "sequence": 7,
-    "monotonic_seconds": 57.72381,
-    "wall_time": "2026-07-31T18:28:14+0800"
+    "monotonic_seconds": 47.377071,
+    "wall_time": "2026-07-31T19:27:17+0800"
   },
   {
     "sender": "computer_agent",
@@ -99,8 +99,8 @@
       "field": "lastName"
     },
     "sequence": 8,
-    "monotonic_seconds": 57.749428,
-    "wall_time": "2026-07-31T18:28:14+0800"
+    "monotonic_seconds": 47.400183,
+    "wall_time": "2026-07-31T19:27:17+0800"
   },
   {
     "sender": "phone_agent",
@@ -112,8 +112,8 @@
       "reason": "该项为必填项，不能留空"
     },
     "sequence": 9,
-    "monotonic_seconds": 80.767396,
-    "wall_time": "2026-07-31T18:28:37+0800"
+    "monotonic_seconds": 65.561405,
+    "wall_time": "2026-07-31T19:27:35+0800"
   },
   {
     "sender": "phone_agent",
@@ -124,8 +124,8 @@
       "attempt": 2
     },
     "sequence": 10,
-    "monotonic_seconds": 80.767953,
-    "wall_time": "2026-07-31T18:28:37+0800"
+    "monotonic_seconds": 65.562376,
+    "wall_time": "2026-07-31T19:27:35+0800"
   },
   {
     "sender": "phone_agent",
@@ -137,8 +137,8 @@
       "attempt": 2
     },
     "sequence": 11,
-    "monotonic_seconds": 106.259383,
-    "wall_time": "2026-07-31T18:29:03+0800"
+    "monotonic_seconds": 92.854189,
+    "wall_time": "2026-07-31T19:28:02+0800"
   },
   {
     "sender": "phone_agent",
@@ -149,8 +149,8 @@
       "attempt": 1
     },
     "sequence": 12,
-    "monotonic_seconds": 106.26049,
-    "wall_time": "2026-07-31T18:29:03+0800"
+    "monotonic_seconds": 92.855214,
+    "wall_time": "2026-07-31T19:28:02+0800"
   },
   {
     "sender": "computer_agent",
@@ -160,8 +160,8 @@
       "field": "email"
     },
     "sequence": 13,
-    "monotonic_seconds": 106.276138,
-    "wall_time": "2026-07-31T18:29:03+0800"
+    "monotonic_seconds": 92.884465,
+    "wall_time": "2026-07-31T19:28:02+0800"
   },
   {
     "sender": "phone_agent",
@@ -173,8 +173,8 @@
       "attempt": 1
     },
     "sequence": 14,
-    "monotonic_seconds": 124.4556,
-    "wall_time": "2026-07-31T18:29:21+0800"
+    "monotonic_seconds": 112.64446,
+    "wall_time": "2026-07-31T19:28:22+0800"
   },
   {
     "sender": "phone_agent",
@@ -185,8 +185,8 @@
       "attempt": 1
     },
     "sequence": 15,
-    "monotonic_seconds": 124.456626,
-    "wall_time": "2026-07-31T18:29:21+0800"
+    "monotonic_seconds": 112.645667,
+    "wall_time": "2026-07-31T19:28:22+0800"
   },
   {
     "sender": "computer_agent",
@@ -196,8 +196,8 @@
       "field": "userNumber"
     },
     "sequence": 16,
-    "monotonic_seconds": 124.483154,
-    "wall_time": "2026-07-31T18:29:21+0800"
+    "monotonic_seconds": 112.666944,
+    "wall_time": "2026-07-31T19:28:22+0800"
   },
   {
     "sender": "phone_agent",
@@ -209,8 +209,8 @@
       "attempt": 1
     },
     "sequence": 17,
-    "monotonic_seconds": 150.42457,
-    "wall_time": "2026-07-31T18:29:47+0800"
+    "monotonic_seconds": 136.4828,
+    "wall_time": "2026-07-31T19:28:46+0800"
   },
   {
     "sender": "phone_agent",
@@ -221,8 +221,8 @@
       "attempt": 1
     },
     "sequence": 18,
-    "monotonic_seconds": 150.425668,
-    "wall_time": "2026-07-31T18:29:47+0800"
+    "monotonic_seconds": 136.483352,
+    "wall_time": "2026-07-31T19:28:46+0800"
   },
   {
     "sender": "computer_agent",
@@ -232,8 +232,8 @@
       "field": "gender"
     },
     "sequence": 19,
-    "monotonic_seconds": 150.45155,
-    "wall_time": "2026-07-31T18:29:47+0800"
+    "monotonic_seconds": 136.509506,
+    "wall_time": "2026-07-31T19:28:46+0800"
   },
   {
     "sender": "phone_agent",
@@ -245,8 +245,8 @@
       "attempt": 1
     },
     "sequence": 20,
-    "monotonic_seconds": 168.265853,
-    "wall_time": "2026-07-31T18:30:05+0800"
+    "monotonic_seconds": 150.994505,
+    "wall_time": "2026-07-31T19:29:00+0800"
   },
   {
     "sender": "phone_agent",
@@ -254,8 +254,8 @@
     "type": "task_completed",
     "payload": {},
     "sequence": 21,
-    "monotonic_seconds": 168.267204,
-    "wall_time": "2026-07-31T18:30:05+0800"
+    "monotonic_seconds": 150.995086,
+    "wall_time": "2026-07-31T19:29:00+0800"
   },
   {
     "sender": "computer_agent",
@@ -265,8 +265,8 @@
       "field": "address"
     },
     "sequence": 22,
-    "monotonic_seconds": 168.290827,
-    "wall_time": "2026-07-31T18:30:05+0800"
+    "monotonic_seconds": 151.016117,
+    "wall_time": "2026-07-31T19:29:00+0800"
   },
   {
     "sender": "computer_agent",
@@ -277,8 +277,8 @@
       "submitted": true
     },
     "sequence": 23,
-    "monotonic_seconds": 169.326922,
-    "wall_time": "2026-07-31T18:30:06+0800"
+    "monotonic_seconds": 152.049317,
+    "wall_time": "2026-07-31T19:29:01+0800"
   },
   {
     "sender": "computer_agent",
@@ -297,7 +297,7 @@
       "errors": []
     },
     "sequence": 24,
-    "monotonic_seconds": 169.327359,
-    "wall_time": "2026-07-31T18:30:06+0800"
+    "monotonic_seconds": 152.050405,
+    "wall_time": "2026-07-31T19:29:01+0800"
   }
 ]

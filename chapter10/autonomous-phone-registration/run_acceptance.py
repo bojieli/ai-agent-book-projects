@@ -14,15 +14,15 @@ import asyncio
 import hashlib
 import json
 import re
-import subprocess
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import ClassVar
 from urllib.parse import parse_qs
 
 import demo
-
+from validate_acceptance import validate_run
 
 FORM_HTML = """<!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Safe local registration</title>
@@ -62,9 +62,9 @@ CREDENTIAL_PATTERN = re.compile(
 
 
 class _AcceptanceFormHandler(BaseHTTPRequestHandler):
-    submissions = []
+    submissions: ClassVar[list[dict[str, object]]] = []
 
-    def do_GET(self):  # noqa: N802
+    def do_GET(self):
         if self.path != "/register":
             self.send_error(404)
             return
@@ -75,17 +75,19 @@ class _AcceptanceFormHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def do_POST(self):  # noqa: N802
+    def do_POST(self):
         if self.path != "/register":
             self.send_error(404)
             return
         length = int(self.headers.get("Content-Length", "0"))
         parsed = parse_qs(self.rfile.read(length).decode("utf-8"), keep_blank_values=True)
-        self.__class__.submissions.append({
-            "field_names": sorted(parsed),
-            "field_count": len(parsed),
-            "all_values_redacted": True,
-        })
+        self.__class__.submissions.append(
+            {
+                "field_names": sorted(parsed),
+                "field_count": len(parsed),
+                "all_values_redacted": True,
+            }
+        )
         body = b"registration accepted by local test endpoint"
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
@@ -117,9 +119,26 @@ def _has_credential(value: str) -> bool:
     return bool(CREDENTIAL_PATTERN.search(value))
 
 
+async def _git_head(root: Path) -> str:
+    process = await asyncio.create_subprocess_exec(
+        "git",
+        "rev-parse",
+        "HEAD",
+        cwd=root,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    if process.returncode != 0:
+        raise RuntimeError(f"git rev-parse HEAD failed: {stderr.decode('utf-8').strip()}")
+    return stdout.decode("utf-8").strip()
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Safe full acceptance for Experiment 10-5")
-    p.add_argument("--run-dir", default=None, help="output directory (default: timestamped validation run)")
+    p.add_argument(
+        "--run-dir", default=None, help="output directory (default: timestamped validation run)"
+    )
     return p
 
 
@@ -134,19 +153,50 @@ async def run(run_dir: Path) -> int:
     decision_path = run_dir / "decision.json"
     timeline_path = run_dir / "message_timeline.json"
     receipt_path = run_dir / "form_submission_receipt.json"
+    raw_request_path = run_dir / "raw_decision_request.json"
+    raw_response_path = run_dir / "raw_decision_response.json"
+    input_path = run_dir / "experiment_input.json"
+    validation_report_path = run_dir / "validation_report.json"
+    experiment_input = {
+        "schema_version": 1,
+        "experiment": "10-5",
+        "page_url": url,
+        "form_html": FORM_HTML,
+        "form_html_sha256": hashlib.sha256(FORM_HTML.encode("utf-8")).hexdigest(),
+        "field_answer_counts": {
+            name: len(value) if isinstance(value, list) else 1 for name, value in ANSWERS.items()
+        },
+        "participant": "safe synthesized voice over WebRTC RTP",
+        "participant_values_retained": False,
+    }
+    input_path.write_text(
+        json.dumps(experiment_input, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     try:
-        args = demo.parser().parse_args([
-            "--url", url,
-            "--headless",
-            "--submit",
-            "--phone-transport", "webrtc",
-            "--webrtc-headless",
-            "--confirm-consent",
-            "--webrtc-answers-json", json.dumps(ANSWERS),
-            "--trace", str(timeline_path),
-            "--decision-trace", str(decision_path),
-            "--acceptance-report", str(report_path),
-        ])
+        args = demo.parser().parse_args(
+            [
+                "--url",
+                url,
+                "--headless",
+                "--submit",
+                "--phone-transport",
+                "webrtc",
+                "--webrtc-headless",
+                "--confirm-consent",
+                "--webrtc-answers-json",
+                json.dumps(ANSWERS),
+                "--trace",
+                str(timeline_path),
+                "--decision-trace",
+                str(decision_path),
+                "--raw-decision-request",
+                str(raw_request_path),
+                "--raw-decision-response",
+                str(raw_response_path),
+                "--acceptance-report",
+                str(report_path),
+            ]
+        )
         exit_code = await demo.main(args)
     finally:
         server.shutdown()
@@ -170,7 +220,9 @@ async def run(run_dir: Path) -> int:
     report["safe_local_submission_receipt"] = receipt
     report["gates"]["real_form_submission"] = {
         "status": "pass" if submission_pass else "fail",
-        "reason": None if submission_pass else "localhost endpoint did not receive exactly one complete submission",
+        "reason": None
+        if submission_pass
+        else "localhost endpoint did not receive exactly one complete submission",
     }
     persisted = "\n".join(
         path.read_text(encoding="utf-8")
@@ -180,7 +232,8 @@ async def run(run_dir: Path) -> int:
     credential_leak = _has_credential(persisted)
     privacy_pass = bool(
         report["gates"]["privacy_redaction_and_ephemeral_audio"]["status"] == "pass"
-        and not value_leak and not credential_leak
+        and not value_leak
+        and not credential_leak
     )
     report["gates"]["privacy_redaction_and_ephemeral_audio"] = {
         "status": "pass" if privacy_pass else "fail",
@@ -191,19 +244,33 @@ async def run(run_dir: Path) -> int:
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
     root = Path(__file__).parent
+    git_head = await _git_head(root)
     runtime_files = [
-        "browser.py", "bus.py", "decision.py", "demo.py", "models.py",
-        "orchestration.py", "run_acceptance.py", "voice.py", "webrtc_channel.py",
+        "browser.py",
+        "bus.py",
+        "decision.py",
+        "demo.py",
+        "models.py",
+        "orchestration.py",
+        "run_acceptance.py",
+        "validate_acceptance.py",
+        "voice.py",
+        "webrtc_channel.py",
     ]
-    artifacts = [report_path, decision_path, timeline_path, receipt_path]
+    artifacts = [
+        report_path,
+        decision_path,
+        timeline_path,
+        receipt_path,
+        raw_request_path,
+        raw_response_path,
+    ]
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "experiment": "10-5",
         "run_kind": "full_safe_webrtc_acceptance",
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "git_head_at_run": subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True
-        ).stdout.strip(),
+        "git_head_at_run": git_head,
         "command": "python run_acceptance.py --run-dir <validation-run-directory>",
         "providers": {
             "decision_and_extraction": report["decision_provider"],
@@ -218,6 +285,7 @@ async def run(run_dir: Path) -> int:
             "form_values_retained": False,
         },
         "source_sha256": {name: sha256(root / name) for name in runtime_files},
+        "input_sha256": {input_path.name: sha256(input_path)},
         "artifact_sha256": {path.name: sha256(path) for path in artifacts},
         "acceptance": {
             "overall_status": report["overall_status"],
@@ -227,13 +295,32 @@ async def run(run_dir: Path) -> int:
     }
     manifest_path = run_dir / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"run_dir": str(run_dir), "overall_status": report["overall_status"]}, indent=2))
+    validation_report = validate_run(
+        run_dir,
+        source_root=root,
+        require_validation_report=False,
+    )
+    validation_report_path.write_text(
+        json.dumps(validation_report, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    manifest["artifact_sha256"][validation_report_path.name] = sha256(validation_report_path)
+    manifest["retained_evidence_validation"] = validation_report["status"]
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    final_validation = validate_run(run_dir, source_root=root)
+    if final_validation != validation_report:
+        raise RuntimeError("standalone validation result changed after manifest finalization")
+    print(
+        json.dumps({"run_dir": str(run_dir), "overall_status": report["overall_status"]}, indent=2)
+    )
     return 0 if report["overall_status"] == "pass" else 1
 
 
 if __name__ == "__main__":
     arguments = parser().parse_args()
-    destination = Path(arguments.run_dir) if arguments.run_dir else Path("validation/runs") / (
-        "exp10-5-webrtc-" + time.strftime("%Y%m%dT%H%M%S%z")
+    destination = (
+        Path(arguments.run_dir)
+        if arguments.run_dir
+        else Path("validation/runs") / ("exp10-5-webrtc-" + time.strftime("%Y%m%dT%H%M%S%z"))
     )
     raise SystemExit(asyncio.run(run(destination)))
