@@ -9,7 +9,7 @@
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
 | 9-1 | [live-audio](live-audio/) | ✅ | [真实单轮证据](live-audio/backend/validation/real_pipeline_20260729_localwhisper_ark_fish/evidence.json)完成麦克风媒体 → Silero VAD → 本地 Whisper → ARK 流式 LLM → Fish S1；5 个媒体/模型 hash 当前均匹配，但证据本身没有顶层 hash manifest，且不代表并发或生产负载基准 |
-| 9-2 | [phone-agent](phone-agent/) | 🚧 | 官方 `pine-voice` SDK 的直接/ReAct 双臂已实现，但当前没有获授权且同意参与的 E.164 目的号码；[预检](phone-agent/validation/preflight.json)明确记录未拨号、无 transcript，test double 不作验收 |
+| 9-2 | [phone-agent](phone-agent/) | ✅ | 浏览器到本地 `aiortc` 的直接/ReAct 双臂已完成；[canonical run](phone-agent/validation/runs/exp9-2-webrtc-20260731/manifest.json)保存两通真实 SDP/ICE/data-channel/双向 audio RTP、服务端消费麦克风帧、transcript、关键字段和源码/结果 hash，不需要 PSTN 或 E.164 |
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | [同一次 canonical 本地验收](streaming-speech/validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)严格运行 Qwen2-Audio 递增前缀与 600ms VAD + Whisper：8/8 执行/溯源门禁通过，13 份原始模型输出、5 个源码、4 个音频、Whisper checkpoint 与完整 6.56GB 模型权重均有已复核 hash；正文结果仅复现 2/6，实测前缀 8.4–11.3s，pause 漏报 silence，noise 仍误报 cough/laughter |
 | 9-4 | [end-to-end-speech](end-to-end-speech/) | 🚧 | Step-Audio R1 customized-vLLM 四卡部署与真实 audio client 已实现，但当前无可用 Step-Audio endpoint 且主机无 CUDA；[阻塞证据](end-to-end-speech/validation/blocker.json)拒绝用替代模型伪装完成 |
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | 真实 Fish Audio S1 4×3×2=24 条参考音库与 A/B/C 媒体齐全；三次位置平衡的真实 Voxtral 音频盲评中 C 组最高且真人客服感 4.67/5，但 B>A 未复现；[验收](controllable-tts/validation/acceptance.json)将完成状态与负结果分开报告 |

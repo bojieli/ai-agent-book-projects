@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "experiment": "9-2",
+  "executed_at_utc": "2026-07-31T10:25:26.167987+00:00",
+  "control": "direct fixed-parameter WebRTC call",
+  "treatment": "natural-language task -> ReAct plan -> WebRTC call",
+  "checks": {
+    "same_webrtc_transport": true,
+    "no_pstn_or_e164": true,
+    "direct_required_fixed_parameters": true,
+    "react_accepted_only_natural_language_task": true,
+    "react_detected_missing_information": true,
+    "react_has_observe_reason_act_trace": true,
+    "react_planner_recorded_model": true,
+    "direct_full_stack_passed": true,
+    "react_full_stack_passed": true,
+    "both_extracted_critical_fields": true
+  },
+  "passed": true,
+  "conclusion": "Both arms completed real bidirectional browser-to-aiortc WebRTC media sessions. The direct arm required four pre-filled parameters; the ReAct arm accepted one incomplete natural-language task, identified missing facts, collected them during the call, and saved the confirmed fields."
+}

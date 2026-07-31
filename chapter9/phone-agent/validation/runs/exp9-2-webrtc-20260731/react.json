@@ -1,0 +1,118 @@
+{
+  "schema_version": 2,
+  "experiment": "9-2",
+  "call_id": "rtc_fbb823b1629440c0a977",
+  "created_at_utc": "2026-07-31T10:25:19.507366+00:00",
+  "finished_at_utc": "2026-07-31T10:25:25.721564+00:00",
+  "status": "completed",
+  "mode": "react",
+  "input_contract": {
+    "fields_supplied_by_caller": [
+      "task"
+    ],
+    "natural_language_task": "Call me to arrange a dental checkup for Jane Doe. I forgot to include a time and confirmation code, so ask me for both, repeat my choice, and save only what I confirm."
+  },
+  "plan": {
+    "mode": "react",
+    "callee_name": "the user",
+    "goal": "Call me to arrange a dental checkup for Jane Doe. I forgot to include a time and confirmation code, so ask me for both, repeat my choice, and save only what I confirm.",
+    "context": "The user supplied only this natural-language task; do not infer unstated facts.",
+    "instructions": "Ask for each missing field, repeat all task-critical details, request explicit confirmation, then call complete_task with only the confirmed values.",
+    "opening_line": "Hello. I am an AI assistant calling through this browser to complete your requested confirmation.",
+    "missing_information": [
+      "exact appointment time",
+      "confirmation code"
+    ],
+    "trace": [
+      {
+        "stage": "observation",
+        "summary": "Call me to arrange a dental checkup for Jane Doe. I forgot to include a time and confirmation code, so ask me for both, repeat my choice, and save only what I confirm."
+      },
+      {
+        "stage": "reason",
+        "summary": "The task omits exact appointment time and confirmation code; collect and confirm them during the call."
+      },
+      {
+        "stage": "action",
+        "summary": "Open a WebRTC call and collect missing facts from the user."
+      }
+    ],
+    "planner_model": "local-react-planner-v1"
+  },
+  "models": {
+    "planner": "local-react-planner-v1",
+    "dialogue_models": [
+      "local-confirmation-parser"
+    ],
+    "speech_renderer": "browser-speechSynthesis"
+  },
+  "transport": {
+    "kind": "webrtc",
+    "pstn_used": false,
+    "e164_required": false,
+    "sdp_negotiated": true,
+    "offer_sha256": "7c2f750f385bbe812d1fa4124ab91389bf5c218d1c4546dfac0fa89617099924",
+    "answer_sha256": "9b71f841e66161584208d916ba6e49baf806dc486be6f9efdd3f1464aa6e5e19",
+    "provider_session_id": null,
+    "ice_connection_state": "connected",
+    "ice_connected_observed": true,
+    "data_channel_open": true,
+    "local_audio_track": true,
+    "remote_audio_track": true,
+    "rtc_stats": {
+      "inbound_packets": 50,
+      "inbound_bytes": 3452,
+      "outbound_packets": 50,
+      "outbound_bytes": 2361
+    },
+    "server_received_audio_frames": 47,
+    "server_received_audio_samples": 45120
+  },
+  "event_counts": {
+    "data_channel.user.message": 1,
+    "rtc.ready": 6,
+    "rtc.stats": 2
+  },
+  "transcript": [
+    {
+      "speaker": "agent",
+      "text": "Hello. I am an AI assistant calling through this browser to complete your requested confirmation.",
+      "source": "webrtc.data_channel"
+    },
+    {
+      "speaker": "user",
+      "text": "Tuesday at 3pm works. I explicitly confirm it, with confirmation code WEBRTC-REACT-92.",
+      "source": "webrtc.data_channel"
+    },
+    {
+      "speaker": "agent",
+      "text": "Thank you. I saved the details you confirmed: Tuesday at 3pm, WEBRTC-REACT-92.",
+      "source": "webrtc.data_channel"
+    }
+  ],
+  "completion": {
+    "result": "The user confirmed a local experiment record.",
+    "appointment_time": "Tuesday at 3pm",
+    "confirmation_number": "WEBRTC-REACT-92",
+    "notes": "No external organization was contacted.",
+    "saved_at_utc": "2026-07-31T10:25:24.708345+00:00"
+  },
+  "errors": [],
+  "acceptance": {
+    "checks": {
+      "sdp_offer_answer_negotiated": true,
+      "ice_connected": true,
+      "data_channel_open": true,
+      "local_microphone_track": true,
+      "remote_audio_track": true,
+      "outbound_audio_rtp": true,
+      "inbound_audio_rtp": true,
+      "server_consumed_microphone_audio": true,
+      "user_turn_recorded": true,
+      "agent_turn_recorded": true,
+      "critical_fields_extracted": true
+    },
+    "passed": true
+  },
+  "finish_reason": "automated_acceptance"
+}

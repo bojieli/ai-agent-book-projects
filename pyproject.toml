@@ -305,7 +305,7 @@ ch7  = ["agentbook[train,audio,viz]"]
 # its own requirements.txt because it also needs vLLM and tighter training-stack
 # compatibility than the shared chapter aggregate should impose.
 ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,orchestration]"]
-ch9  = []                                     # hosted speech APIs: core only
+ch9  = ["agentbook[serve]", "httpx>=0.27", "playwright>=1.40", "aiortc>=1.10"]
 ch10 = ["agentbook[tokens,web]"]              # token counting and browser research
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
