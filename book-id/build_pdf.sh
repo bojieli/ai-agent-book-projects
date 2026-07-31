@@ -1,16 +1,27 @@
 #!/bin/bash
-# Build the complete book as a single PDF (ElegantBook design, teal/cyan theme).
+# Build the Indonesian translation as a single PDF (ElegantBook design).
 # Requirements: pandoc, xelatex, ElegantBook class, rsvg-convert (librsvg),
 #               fonts: Menlo / Arial Unicode MS (macOS) — Linux auto-falls back
 #               to DejaVu Sans/Mono and Noto CJK (see preamble.tex).
-# Usage: cd book && bash build_pdf.sh
+# Usage: cd book-id && bash build_pdf.sh
 # Note: chapter/section numbers come from the document class; source headings
 #       carry no manual numbers (see git history for the de-numbering pass).
 
 set -e
+set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
+
+# Homebrew and MacTeX are not always visible inside non-login shells.
+export PATH="/opt/homebrew/bin:/usr/local/bin:/Library/TeX/texbin:$PATH"
+
+for cmd in pandoc xelatex rsvg-convert pdfinfo python3; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "Error: required tool '$cmd' was not found in PATH." >&2
+        exit 1
+    fi
+done
 
 # ── Runtime environment tweaks (harmless on macOS, needed on Linux/TeX Live) ──
 # 1) This book is large enough to exhaust XeTeX's default main memory
@@ -27,7 +38,7 @@ export extra_mem_bot=8000000
 #    immediately with the correct "not found" result.
 export MKTEXTFM=0
 
-OUT="AI-Agents-in-Depth-Bojie-Li-v1.3.pdf"
+OUT="AI-Agents-in-Depth-Bojie-Li-v1.3-id.pdf"
 CHAPTERS=(
     introduction.md
     chapter1.md
@@ -67,8 +78,8 @@ pandoc "${CHAPTERS[@]}" \
     -V classoption=cyan \
     -V classoption=device=normal \
     -V author="Bojie Li" \
-    --metadata title-meta="AI Agents in Depth: Design Principles and Engineering Practice" \
-    --metadata author-meta="Bojie Li (English translation: Devaraj)" \
+    --metadata title-meta="Memahami AI Agent secara Mendalam: Prinsip Desain dan Praktik Rekayasa" \
+    --metadata author-meta="Bojie Li (terjemahan bahasa Indonesia: JOICE HIELMAN ABBRORI)" \
     -H preamble.tex \
     --include-before-body=cover.tex \
     --highlight-style=kate \

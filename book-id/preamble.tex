@@ -1,5 +1,18 @@
-% ===== ElegantBook customizations for 《深入理解 AI Agent》 =====
+% ===== ElegantBook customizations for the Indonesian edition =====
 % Accent color comes from ElegantBook's cyan theme: \structurecolor = RGB(31,186,190)
+
+% ── Indonesian labels for the ElegantBook English layout ─────────
+\renewcommand{\contentsname}{Daftar Isi}
+\renewcommand{\chaptername}{Bab}
+\renewcommand{\figurename}{Gambar}
+\renewcommand{\tablename}{Tabel}
+\renewcommand{\listfigurename}{Daftar Gambar}
+\renewcommand{\listtablename}{Daftar Tabel}
+\renewcommand{\bibname}{Daftar Pustaka}
+\renewcommand{\appendixname}{Lampiran}
+\renewcommand{\indexname}{Indeks}
+\renewcommand{\notename}{Catatan}
+\renewcommand*{\proofname}{Bukti}
 
 % ── Text & math fonts: Palatino look, matching the author's papers ──
 % The papers' preprint style (arxiv.sty) uses mathpazo (Palatino body +
@@ -74,8 +87,8 @@
 \newunicodechar{ω}{{\fallbackfont ω}}
 
 % ── Residual CJK glyphs ──────────────────────────────────────────
-% This is an English book, but a handful of Han characters still appear as
-% inline examples (Chinese tokenization / translation / speech-recognition
+% This is an Indonesian book, but a handful of Han characters still appear as
+% inline examples (Chinese tokenization, translation, and speech-recognition
 % cases). Route just those code points to a CJK font so they render, without
 % pulling in the whole ctex/xeCJK Chinese-typesetting stack. macOS: Heiti SC;
 % Linux: Noto Sans CJK SC.
@@ -182,7 +195,7 @@
   colback=accentbg, colframe=accent,
   boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
   arc=1.2mm, before skip=0.9em, after skip=0.9em,
-  title={\sffamily\bfseries Deep Thinking},
+  title={\sffamily\bfseries Renungan Mendalam},
   fonttitle=\normalsize\color{white},
   coltitle=white,
   attach boxed title to top left={xshift=1em, yshift=-\tcboxedtitleheight/2},
