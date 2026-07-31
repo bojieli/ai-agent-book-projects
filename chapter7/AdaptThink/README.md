@@ -2,6 +2,24 @@
 
 This directory is the book-owned explanation. Executable training code is the external [`bojieli/AdaptThink`](https://github.com/bojieli/AdaptThink) checkout at `chapter7/AdaptThink-original`, verified in the current workspace at commit `0033ad172dd53ac64004b763477407014f21b838`.
 
+## Canonical training report / 规范训练报告
+
+The canonical Experiment 7-10 result is the checkpoint-free [training report](TRAINING_REPORT.md). It is backed by public W&B run [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj); baseline run [`dblyx7cm`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/dblyx7cm) exactly matches its step-0 validation metrics.
+
+本实验的规范结果是无 checkpoint 的[历史训练报告](TRAINING_REPORT.md)。公开 W&B 主运行是 [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj)，基线运行 [`dblyx7cm`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/dblyx7cm) 的验证指标与主运行 step 0 完全一致。
+
+| Dataset | Accuracy, step 0 → 300 | Response length, step 0 → 300 | Step-300 NoThinking |
+| --- | ---: | ---: | ---: |
+| MATH500 | 0.8100 → 0.8180 (+0.80 pp) | 4911.46 → 1576.62 (-67.90%) | 83.80% |
+| GSM8K | 0.796816 → 0.818802 (+2.20 pp) | 1025.24 → 477.33 (-53.44%) | 84.15% |
+| AIME2024 mean@16 | 0.314583 → 0.310417 (-0.42 pp) | 12119.51 → 6402.23 (-47.17%) | 56.25% |
+
+W&B records 8 × NVIDIA H100 80GB GPUs (CUDA 12.6), a configured schedule of 10 epochs / 3,140 steps, and save/test intervals of 10 steps. Step 300 occurred at 28.37 hours. The run continued to step 410 (411 history rows; 36.92 hours) and then has state `crashed`, so neither the full schedule nor a clean completion is claimed. A step-300 checkpoint timing event is logged, but the checkpoint is not distributed with the book.
+
+These aggregate metrics show large response-length reductions on all three datasets and a lower NoThinking rate on AIME. They do **not** show uniform accuracy improvement—AIME regressed slightly—or prove “perfect” per-example difficulty awareness. No public separate `adapt_think_verl-eval` run was found, and no retained receipt proves that the selected checkpoint was evaluated with `run_eval_verl_hf.sh` or that MMLU was rerun.
+
+以上结果明确取代下文历史说明中的 `1 epoch / 314 steps`、H800、宽泛取整区间、准确率普遍提升和“完美难度感知”等表述；下文仅保留作方法与历史解读背景。
+
 ```bash
 git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original
 git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838
@@ -11,11 +29,13 @@ bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh
 bash scripts/run_eval_verl_hf.sh
 ```
 
-These commands identify the upstream workflow; they were not run during the documentation audit.
+These commands identify the future workflow; the documentation audit did not rerun them. The W&B-recorded source commit `9e588202ff56fe93cdbe49f5594cf895f7d6b7c2` is the parent of the future pin above, and the three entrypoints are byte-identical at both revisions. Manual path correction is nevertheless required: the training script interpolates an undefined `adapt_think_max_response_length` into its experiment name (yielding `-fl-`), while the evaluation script expects `-fl4096` and omits the training script's `adapt_think_verl/` directory level.
 
 ## English
 
 # AdaptThink: Teaching Reasoning Models When to Think
+
+> **Historical, noncanonical walkthrough.** This long-form explanation is retained for method context. Where its rounded trends, comparisons, or cost estimates conflict with the canonical section above, the training report and exact step-300 table control.
 
 ## 📋 Table of Contents
 
@@ -56,7 +76,7 @@ AdaptThink enables models to intelligently switch between two modes:
 - **Thinking mode**: Generates detailed thinking chains (`<think>...</think>`) to solve complex problems
 - **NoThinking mode**: Skips the thinking process and directly generates answers for simple problems
 
-This adaptive mechanism **significantly reduces inference cost while further improving overall accuracy**.
+In the retained step-300 result, this mechanism **substantially reduces mean response length**, with mixed accuracy changes across datasets.
 
 ---
 
@@ -133,11 +153,11 @@ This concise implementation leverages the model's pre-trained knowledge, allowin
 | Context length | 16K tokens |
 | Batch size | 128 |
 | Learning rate | 2e-6 |
-| Training epochs | 1 epoch (314 steps) |
+| Configured schedule | 10 epochs (3,140 planned steps); run crashed after step 410 |
 | δ (performance tolerance) | 0.05 |
-| Hardware configuration | 1 × 8×H800 node |
-| Training duration | ~32 hours |
-| Checkpoint selection | Step 300 |
+| Hardware configuration | 8 × NVIDIA H100 80GB, CUDA 12.6 |
+| Logged duration | Step 300 at 28.37 h; through step 410 at 36.92 h |
+| Retained report point | Step 300; checkpoint not distributed |
 
 #### Reference Model Pre-sampling
 
@@ -156,16 +176,16 @@ Based on WandB monitoring data from this experiment (1.5B model, δ=0.05): https
 
 #### Core Metrics Comparison
 
-| Dataset | Accuracy (score) | Response Length Change | NoThinking Ratio |
-|---------|------------------|------------------------|------------------|
-| GSM8K | Stable at **~0.82** | 1600 → ~500 (-69%) | **~85%** |
-| MATH500 | **0.82 → 0.83-0.85** | 5000 → ~1800 (-64%) | **~80%** |
-| AIME2024 | Fluctuates at **0.28-0.32** | 12000 → ~9000 (-25%) | **~55%** |
+| Dataset | Accuracy, step 0 → 300 | Response Length, step 0 → 300 | NoThinking at step 300 |
+|---------|--------------------------|--------------------------------|------------------------|
+| GSM8K | **0.796816 → 0.818802** (+2.20 pp) | 1025.24 → 477.33 (-53.44%) | **84.15%** |
+| MATH500 | **0.8100 → 0.8180** (+0.80 pp) | 4911.46 → 1576.62 (-67.90%) | **83.80%** |
+| AIME2024 mean@16 | **0.314583 → 0.310417** (-0.42 pp) | 12119.51 → 6402.23 (-47.17%) | **56.25%** |
 
 **Key Results**:
-- ✅ **Accuracy improvement**: MATH500 accuracy increased from 0.82 to 0.83-0.85; GSM8K and AIME remained stable
-- ✅ **Significant efficiency gains**: MATH500 reduced by 64%, GSM8K by 69%, AIME by 25%
-- ✅ **Intelligent adaptation**: 85% NoThinking for simple problems, 80% for medium, 55% for difficult — perfect difficulty awareness
+- **Accuracy is mixed**: MATH500 gained 0.80 pp and GSM8K gained 2.20 pp, while AIME mean@16 lost 0.42 pp
+- **Significant efficiency gains**: response-length means fell 67.90% on MATH500, 53.44% on GSM8K, and 47.17% on AIME
+- **Dataset-level routing signal**: AIME's 56.25% NoThinking rate is lower than MATH500/GSM8K, consistent with difficulty-sensitive routing but not proof of perfect per-example awareness
 
 ### Training Process Analysis
 
@@ -192,32 +212,32 @@ Stable Phase (Step 150-300):
   - MATH500: drops to ~1,800 tokens (80% NoThinking)
   - GSM8K: drops to ~500 tokens (85% NoThinking)
   - AIME: drops to ~9,000 tokens (55% NoThinking)
-  - Adaptive behavior fully formed, accuracy continues to improve
+  - NoThinking routing is established; accuracy does not improve uniformly across datasets
 ```
 
-**Key Observation**: The reduction in response length across datasets perfectly matches their difficulty!
+**Key Observation**: The retained aggregate data are consistent with difficulty-sensitive routing, but cannot establish a perfect per-example match to difficulty.
 
 #### 2. Evolution of Accuracy and Emergence of NoThinking Capability
 
 **GSM8K (Simple Math)**:
-- **score/mean**: Stable at ~0.82 throughout
+- **selected-point score/mean**: 0.796816 → **0.818802** (+2.20 pp)
 - **nothinking_acc**: Rapidly rises from 0 to **0.88-0.90** around Step 150
-- **is_nothinking**: Stabilizes at **~85%**
-- **Key Finding**: The model successfully learns to skip thinking on 85% of GSM8K problems
+- **selected-point is_nothinking**: **84.15%**
+- **Key Finding**: The step-300 aggregate uses NoThinking on 84.15% of GSM8K examples
 
 **MATH500 (Medium Math)**:
-- **score/mean**: Improves from 0.82 to **0.83-0.85**
+- **selected-point score/mean**: 0.8100 → **0.8180** (+0.80 pp)
 - **thinking_acc**: Stable between 0.5-0.65 (difficult problems selected by the model)
 - **nothinking_acc**: Emerges rapidly around Step 150, jumping from 0 to **0.8-0.85** (simple problems selected by the model)
-- **is_nothinking**: Stabilizes at **~80%**
-- **Key Finding**: The model learns to identify 80% of MATH500 problems where thinking can be skipped
+- **selected-point is_nothinking**: **83.80%**
+- **Key Finding**: The step-300 aggregate uses NoThinking on 83.80% of MATH500 examples
 
 **AIME2024 (Hard Math)**:
-- **score/mean**: Fluctuates upward from 0.28-0.30 to a maximum of **0.32** (~14% improvement)
+- **selected-point score/mean@16**: 0.314583 → **0.310417** (-0.42 pp)
 - **thinking_acc**: Fluctuates significantly between 0.3-0.7
 - **nothinking_acc**: Gradually improves from 0.3 to 0.4-0.6
-- **is_nothinking**: Only **~55%**, significantly lower than for simple problems
-- **Key Finding**: The model remains cautious on difficult problems, using Thinking more often
+- **selected-point is_nothinking/mean@16**: **56.25%**, lower than the other two datasets
+- **Key Finding**: AIME uses Thinking more often at the selected point, while its accuracy slightly regresses
 
 #### 2.1 Emergence Phenomenon of NoThinking Capability
 
@@ -239,9 +259,9 @@ This **sudden emergence** suggests:
 From the `is_nothinking/mean` metric, clear stratification of adaptive behavior across datasets is visible:
 
 ```
-GSM8K:            ~85% NoThinking  ← Simple problems (elementary math)
-MATH500:          ~80% NoThinking  ← Medium difficulty (high school math)
-AIME2024:         ~55% NoThinking  ← Difficult problems (competition level)
+GSM8K:            84.15% NoThinking  ← Simple problems (elementary math)
+MATH500:          83.80% NoThinking  ← Medium difficulty (high school math)
+AIME2024:         56.25% NoThinking  ← Difficult problems (competition level)
 ```
 
 **Timeline of Adaptive Pattern Evolution** (using MATH500 as an example):
@@ -253,31 +273,32 @@ Step 150:     Critical inflection point, is_nothinking jumps to 0.8
 Step 150-300: is_nothinking stabilizes at 0.78-0.82
 ```
 
-This indicates the model has successfully learned to **dynamically select reasoning mode based on problem difficulty**, and this ability emerges suddenly around the middle of training (Step 150)!
+This aggregate stratification is consistent with **difficulty-sensitive reasoning-mode selection**. Without per-example outputs, it does not prove that routing is correct for each problem or that a causal capability suddenly emerged at Step 150.
 
-#### 4. Training Stability and Key Metrics
+#### 4. Historical Curve Observations
 
-From the `adapt_think` series of metrics, the stability of the training process can be observed:
+The following are descriptive observations from the historical `adapt_think` curves. They do not override the final W&B state `crashed` or establish causal training phases:
 
 **Reward Evolution**:
 - **thinking_reward/mean**: Gradually rises from negative values to near 0 or positive
-- **reward/mean**: Overall reward rises steadily with no obvious collapse
-- **nothinking_reward**: Fluctuates more but trends upward, indicating NoThinking is gradually being optimized
+- **reward/mean**: Trends upward over the selected reporting window
+- **nothinking_reward**: Fluctuates more but generally trends upward
 
 **Token Probability**:
 - **first_eot_token_probs/mean**: Rises from ~0.2 to **0.6-0.8**
-  - This indicates the model becomes increasingly "confident" in choosing when to end thinking
-  - High probability means decisions are clear, not random
+  - This records greater probability on the first end-of-thinking token
+  - It does not by itself prove calibrated confidence or correct per-example routing
 
 **Thinking Chain Length Optimization** (adapt_think/thinking_response_length):
 - Drops from ~9,000 tokens to **~4,500-5,000 tokens**
-- Even when using Thinking, thinking chains become more concise and efficient
-- **Dual optimization**: Reducing Thinking usage + optimizing Thinking itself
+- Thinking-mode responses become shorter in aggregate
+- **Observed combination**: less Thinking use on some datasets and shorter Thinking responses
 
 **Overall Response Length Trend** (response_length):
 - **mean**: 5,500 → 3,000 (-45%)
 - **min**: Stable at 50-150 (shortest responses)
-- **max**: Remains at 16,000-17,000 (limited by max_tokens configuration)- **clip_ratio**: decreased from 0.1 to **0.02** (rarely hits the length limit)
+- **max**: Remains at 16,000-17,000 (limited by the response cap)
+- **clip_ratio**: decreases from about 0.1 to **0.02**
 
 ### Adaptive Behavior Across Difficulties
 
@@ -292,7 +313,7 @@ From the `adapt_think` series of metrics, the stability of the training process 
 | Level 5 | 28% | No change |
 
 **Observations**:
-1. **Perfect difficulty awareness**: The NoThinking ratio decreases as difficulty increases
+1. **Paper-reported monotonic pattern**: The NoThinking ratio decreases as difficulty increases; this is not proof of perfect awareness
 2. **Efficiency-quality balance**: NoThinking is used boldly for simple problems, while Thinking is retained cautiously for difficult ones
 3. **Performance maintained**: Good accuracy levels are preserved across all problem types
 
@@ -311,11 +332,7 @@ The paper compares the effects of different δ values:
 | 0.075 | Higher | ~60% | Possible decrease |
 | 0.1 | Highest | Largest | Slight decrease |
 
-**Rationale for choosing δ=0.05 in this experiment**:
-- ✅ Achieves the best balance between efficiency and accuracy
-- ✅ Clear accuracy improvement (+2.4%)
-- ✅ Significant response length reduction (53%)
-- ✅ Clear adaptive behavior (80% NoThinking on simple problems)
+**Historical paper-level rationale for δ=0.05**: The table above is comparison context, not the exact retained step-300 result. In the canonical run, all three response-length means fell, but accuracy was mixed and AIME regressed by 0.42 pp.
 
 ---
 
@@ -384,6 +401,8 @@ bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh
 
 ### Evaluation
 
+The commands below are the advertised upstream workflow, not a receipt of a successful selected-checkpoint evaluation. Correct the `-fl-` versus `-fl4096` experiment-name mismatch and the missing `adapt_think_verl/` directory level before using it.
+
 ```bash
 # Convert checkpoint to HF format
 bash scripts/convert_to_hf.sh
@@ -401,16 +420,16 @@ bash scripts/run_eval_hf.sh
 
 ### 1. Effectiveness of NoThinking
 
-**Key Finding**: The model successfully learns to identify which problems can skip the thinking process.
+**Key Finding**: At step 300, NoThinking is used more often on GSM8K and MATH500 than on AIME2024.
 
 **Observations**:
-- On problems where the model chooses NoThinking (mainly simple problems), accuracy remains high
-- This indicates that the model's "intuition" (pre-trained knowledge) is sufficient for these problems
-- Adaptive selection avoids unnecessary computational overhead
+- Conditional aggregate accuracy remains high for the subsets routed to NoThinking
+- NoThinking responses are shorter than Thinking responses on all three datasets
+- Without retained per-example outputs, the report cannot determine whether every routing choice was correct
 
 ### 2. Emergence of Adaptive Behavior
 
-The model automatically learns the mapping between difficulty and reasoning mode without explicit difficulty labels:
+The step-300 aggregates show a routing gradient across datasets without explicit difficulty labels:
 
 ```
 Simple problems (GSM8K):     "Simple arithmetic"       → NoThinking (85%)
@@ -418,20 +437,19 @@ Medium problems (MATH500):   "High school math"       → NoThinking (80%)
 Difficult problems (AIME):   "Competition-level problems"     → Mixed use (55%)
 ```
 
-### 3. Win-Win in Efficiency and Performance
+### 3. Efficiency Gain with Mixed Accuracy
 
-Conventional wisdom suggests efficiency and performance are a trade-off, but AdaptThink achieves a win-win:
+At the selected point, AdaptThink reduces mean response length on all three retained datasets, while accuracy changes are mixed:
 
 - **Significant efficiency gains**:
-  - GSM8K: Response length reduced by **69%** (1600 → 500)
-  - MATH500: Response length reduced by **64%** (5000 → 1800)
-  - AIME: Response length reduced by **25%** (12000 → 9000)
-  - Overall: Average response length reduced by **45%** (5500 → 3000)
+  - GSM8K: Response length reduced by **53.44%** (1025.24 → 477.33)
+  - MATH500: Response length reduced by **67.90%** (4911.46 → 1576.62)
+  - AIME: Response length reduced by **47.17%** (12119.51 → 6402.23)
 
-- **Performance maintained or improved**:
-  - MATH500: Overall accuracy improved **0.82 → 0.83-0.85**
-  - GSM8K: Overall accuracy remained stable **~0.82**
-  - AIME: Overall accuracy improved to **0.32** (from 0.28 baseline)
+- **Mixed performance**:
+  - MATH500: Accuracy changed **0.8100 → 0.8180** (+0.80 pp)
+  - GSM8K: Accuracy changed **0.796816 → 0.818802** (+2.20 pp)
+  - AIME mean@16: Accuracy changed **0.314583 → 0.310417** (-0.42 pp)
 
 - **Reasons**:
   - Targeted use of reasoning resources, quick decisions on simple problems
@@ -440,24 +458,15 @@ Conventional wisdom suggests efficiency and performance are a trade-off, but Ada
 
 ### 4. Training Stability and Key Inflection Point
 
-WandB charts show the training process is very stable, with a clear **key inflection point**:
+The historical W&B curves show a sharp aggregate routing change around step 150. The run later crashed after step 410, so this is not described as a cleanly completed or universally stable campaign.
 
-**Step 150 - Inflection point for capability emergence**:
-- ✅ **is_nothinking** jumps from ~0.5 to ~0.8
-- ✅ **nothinking_acc** jumps from near 0 to 0.8-0.9
-- ✅ **Response length** begins to decrease rapidly
-- ✅ **first_eot_token_probs** increases significantly (more confident decisions)
+**Step 150 - Descriptive routing inflection**:
+- Validation **is_nothinking** rises sharply
+- Validation **nothinking_acc** rises from near 0 to about 0.8-0.9
+- Mean response length begins to decrease rapidly
+- **first_eot_token_probs** increases
 
-**Training stability metrics**:
-- Reward curve (reward/mean): Steady increase, no collapse
-- Accuracy (acc/mean): Continuous improvement, no oscillation
-- KL divergence: Remains within a reasonable range
-- Gradients: No abnormal explosion or vanishing
-
-**Key Observation**:
-- The constrained optimization objective effectively prevents performance degradation
-- The importance sampling strategy ensures balanced exploration of Thinking/NoThinking
-- The capability emergence at Step 150 resembles a "phase transition" phenomenon in LLM training
+The training configuration forces balanced Thinking/NoThinking sampling during optimization. The validation curves are observational and do not prove a phase transition or prevent dataset-level performance regressions; AIME accuracy is slightly lower at step 300.
 
 ---
 
@@ -472,15 +481,15 @@ WandB charts show the training process is very stable, with a clear **key inflec
 | **AdaptThink** | Adaptive mode selection | **45-69%** | **+2-10%** | ✅ |
 
 **Specific data for this experiment (1.5B, δ=0.05)**:
-- GSM8K: Response length ↓69%, 85% of problems use NoThinking
-- MATH500: Response length ↓64%, accuracy improved 0.82 → 0.83-0.85, 80% of problems use NoThinking
-- AIME: Response length ↓25%, accuracy 0.28-0.32, 55% of problems use NoThinking
+- GSM8K: Response length ↓53.44%, accuracy +2.20 pp, 84.15% NoThinking
+- MATH500: Response length ↓67.90%, accuracy +0.80 pp, 83.80% NoThinking
+- AIME mean@16: Response length ↓47.17%, accuracy -0.42 pp, 56.25% NoThinking
 
 **Unique Advantages of AdaptThink**:
-- ✅ **The only method that simultaneously improves efficiency and accuracy**
-- ✅ **True adaptivity**: Dynamically decides based on problem difficulty (55%-85% NoThinking gradient)
+- **Paper-level comparison only**: the retained run does not independently establish that AdaptThink is the only method improving both dimensions
+- **Aggregate adaptivity signal**: NoThinking use is lower on AIME than on MATH500/GSM8K
 - ✅ **Dual optimization**: Reduces Thinking usage + optimizes Thinking itself
-- ✅ **Capability emergence**: A clear qualitative leap occurs in the middle of training
+- **Observed routing transition**: aggregate NoThinking metrics change sharply around the middle of the retained run
 - ✅ **No additional model needed**: A single model can achieve mixed reasoning
 
 ---
@@ -490,8 +499,8 @@ WandB charts show the training process is very stable, with a clear **key inflec
 ### Hardware Requirements
 
 **Training**:
-- 1.5B model: 1 × 8×H800 node (~32 hours)
-- 7B model: 4 × 8×H800 nodes (~28 hours)
+- Retained 1.5B W&B run: 8 × NVIDIA H100 80GB; step 300 at 28.37 hours and step 410 at 36.92 hours
+- 7B resource statements in the original walkthrough are paper context and were not recorded by this run
 
 **Inference**:
 - Can use a single GPU (depending on model size)
@@ -500,12 +509,12 @@ WandB charts show the training process is very stable, with a clear **key inflec
 ### Computational Cost Estimate
 
 Using the 1.5B model as an example:
-- **Training cost**: 8×H800 × 32 hours
+- **Observed training allocation**: 8×H100; 28.37 wall-clock hours to the selected point and 36.92 hours through the final logged step
 - **Inference cost savings**:
-  - Overall: 45% token reduction → ~1.8x inference speedup
-  - GSM8K: 69% token reduction → ~3.2x inference speedup
-  - MATH500: 64% token reduction → ~2.8x inference speedup
-- **ROI**: In large-scale inference scenarios, the training cost can be quickly recovered (especially in scenarios with a high proportion of simple problems)
+  - GSM8K: 53.44% lower mean response length at step 300
+  - MATH500: 67.90% lower mean response length at step 300
+  - AIME2024: 47.17% lower mean response length at step 300
+- **Boundary**: token reductions do not by themselves prove proportional latency speedups or a specific ROI
 
 ---
 
@@ -563,13 +572,15 @@ If you find this work helpful, please cite:
 
 This experiment is based on the AdaptThink project by the THU-KEG team at Tsinghua University. We thank the team for open-sourcing the code and models.
 
-**Experiment Log**: This README is written based on wandb experiment results (1.5B model, δ=0.05, step 300), demonstrating the performance and effects of AdaptThink in actual training.
+**Experiment Log**: This walkthrough is historical context. The canonical W&B-backed step-300 values, provenance, and negative findings are in the training report linked at the top.
 
 ---
 
 ## 中文
 
 # AdaptThink: 让推理模型学会何时思考
+
+> **历史非规范说明。** 本长篇说明保留作方法背景；其中取整趋势、横向比较和成本估算不属于实验 7-10 的规范结果。若与文首内容冲突，以训练报告及精确 step-300 表格为准。
 
 ## 📋 目录
 
@@ -610,7 +621,7 @@ AdaptThink 让模型学会在两种模式间智能切换：
 - **Thinking 模式**：生成详细的思考链（`<think>...</think>`）来解决复杂问题
 - **NoThinking 模式**：跳过思考过程，直接生成答案来处理简单问题
 
-这种自适应机制在**大幅降低推理成本的同时，进一步提升了整体准确率**。
+在保留的 step-300 结果中，这一机制**大幅降低平均响应长度**，但不同数据集的准确率变化有正有负。
 
 ---
 
@@ -639,7 +650,7 @@ $$\max_{\theta} \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta(y|x)} [r(x,y)]
 - $\pi_{\text{ref}}$ 是参考模型（原始推理模型）
 - $\delta$ 是允许的性能降幅（本实验设为 0.05）
 
-**核心思想**：在保证整体性能不低于参考模型（允许轻微降幅 $\delta$）的前提下，最大化奖励。由于 NoThinking 的 token 数更少，KL 散度项会鼓励模型在可能的情况下选择 NoThinking。
+**核心思想**：在保证整体性能不低于参考模型（允许轻微降幅 $\delta$）的前提下，最大化奖励。下述独立采样策略让训练同时看到 Thinking 与 NoThinking 响应；这里展示的约束目标本身不含 KL 散度项或 token 成本项。
 
 #### 2. 重要性采样策略（Importance Sampling）
 
@@ -687,11 +698,11 @@ Assistant: <think></think>[直接答案]
 | 上下文长度 | 16K tokens |
 | 批次大小 | 128 |
 | 学习率 | 2e-6 |
-| 训练轮数 | 1 epoch (314 steps) |
+| 配置计划 | 10 epochs（计划 3,140 steps）；运行在 step 410 后崩溃 |
 | δ（性能容忍度） | 0.05 |
-| 硬件配置 | 1 × 8×H800 节点 |
-| 训练时长 | ~32 小时 |
-| 检查点选择 | Step 300 |
+| 硬件配置 | 8 × NVIDIA H100 80GB，CUDA 12.6 |
+| 记录时长 | Step 300 为 28.37 小时；至 step 410 为 36.92 小时 |
+| 报告选点 | Step 300；checkpoint 不随书分发 |
 
 #### 参考模型预采样
 
@@ -710,16 +721,16 @@ Assistant: <think></think>[直接答案]
 
 #### 核心指标对比
 
-| 数据集 | 准确率 (score) | 响应长度变化 | NoThinking 比例 |
-|--------|---------------|--------------|-----------------|
-| GSM8K | 稳定在 **~0.82** | 1600 → ~500 (-69%) | **~85%** |
-| MATH500 | **0.82 → 0.83-0.85** | 5000 → ~1800 (-64%) | **~80%** |
-| AIME2024 | 波动在 **0.28-0.32** | 12000 → ~9000 (-25%) | **~55%** |
+| 数据集 | 准确率，step 0 → 300 | 响应长度，step 0 → 300 | Step-300 NoThinking |
+|--------|-------------------------|---------------------------|---------------------|
+| GSM8K | **0.796816 → 0.818802**（+2.20 pp） | 1025.24 → 477.33（-53.44%） | **84.15%** |
+| MATH500 | **0.8100 → 0.8180**（+0.80 pp） | 4911.46 → 1576.62（-67.90%） | **83.80%** |
+| AIME2024 mean@16 | **0.314583 → 0.310417**（-0.42 pp） | 12119.51 → 6402.23（-47.17%） | **56.25%** |
 
 **关键成果**：
-- ✅ **准确率提升**：MATH500 准确率从 0.82 提升至 0.83-0.85；GSM8K 和 AIME 保持稳定
-- ✅ **效率大幅提升**：MATH500 降低 64%、GSM8K 降低 69%、AIME 降低 25%
-- ✅ **智能自适应**：简单问题 85% NoThinking，中等 80%，困难 55%，完美的难度感知
+- **准确率结果有正有负**：MATH500 提升 0.80 pp，GSM8K 提升 2.20 pp，AIME mean@16 下降 0.42 pp
+- **效率显著提升**：MATH500、GSM8K、AIME 的平均响应长度分别下降 67.90%、53.44%、47.17%
+- **数据集层面的路由信号**：AIME 的 NoThinking 比例为 56.25%，低于 MATH500/GSM8K；这与难度敏感路由一致，但不能证明逐题“完美感知”
 
 ### 训练过程分析
 
@@ -746,32 +757,32 @@ Assistant: <think></think>[直接答案]
   - MATH500: 降至 ~1,800 tokens (80% NoThinking)
   - GSM8K: 降至 ~500 tokens (85% NoThinking)
   - AIME: 降至 ~9,000 tokens (55% NoThinking)
-  - 自适应行为完全形成，准确率持续提升
+  - NoThinking 路由已经形成；不同数据集的准确率并非都持续提升
 ```
 
-**关键观察**：不同数据集的响应长度降低幅度与其难度完美匹配！
+**关键观察**：保留的汇总数据与难度敏感路由一致，但不能证明响应长度与逐题难度完美匹配。
 
 #### 2. 准确率的演变与 NoThinking 能力涌现
 
 **GSM8K（简单数学）**：
-- **score/mean**：全程稳定在 ~0.82
+- **报告选点 score/mean**：0.796816 → **0.818802**（+2.20 pp）
 - **nothinking_acc**：在 Step 150 左右从 0 快速上升至 **0.88-0.90**
-- **is_nothinking**：最终稳定在 **~85%**
-- **关键发现**：模型成功学会在 85% 的 GSM8K 题目上跳过思考
+- **报告选点 is_nothinking**：**84.15%**
+- **关键发现**：step 300 汇总中，84.15% 的 GSM8K 样本使用 NoThinking
 
 **MATH500（中等数学）**：
-- **score/mean**：从 0.82 提升至 **0.83-0.85**
+- **报告选点 score/mean**：0.8100 → **0.8180**（+0.80 pp）
 - **thinking_acc**：稳定在 0.5-0.65 之间（模型选择的困难题目）
 - **nothinking_acc**：在 Step 150 时快速涌现，从 0 跃升至 **0.8-0.85**（模型选择的简单题目）
-- **is_nothinking**：稳定在 **~80%**
-- **关键发现**：模型学会识别 80% 的 MATH500 题目可以跳过思考
+- **报告选点 is_nothinking**：**83.80%**
+- **关键发现**：step 300 汇总中，83.80% 的 MATH500 样本使用 NoThinking
 
 **AIME2024（困难数学）**：
-- **score/mean**：从 0.28-0.30 波动上升至最高 **0.32**（提升 ~14%）
+- **报告选点 score/mean@16**：0.314583 → **0.310417**（-0.42 pp）
 - **thinking_acc**：在 0.3-0.7 之间波动较大
 - **nothinking_acc**：从 0.3 逐渐提升至 0.4-0.6
-- **is_nothinking**：仅为 **~55%**，显著低于简单问题
-- **关键发现**：模型对困难问题保持谨慎，更多使用 Thinking
+- **报告选点 is_nothinking/mean@16**：**56.25%**，低于另外两个数据集
+- **关键发现**：报告选点的 AIME 更常使用 Thinking，但准确率略有回退
 
 #### 2.1 NoThinking 能力的涌现现象
 
@@ -793,9 +804,9 @@ Step 150-300: nothinking_acc ≈ 0.8-0.85 (MATH500), 0.88-0.90 (GSM8K)
 从 `is_nothinking/mean` 指标可以看到不同数据集上的自适应行为清晰分层：
 
 ```
-GSM8K:            ~85% NoThinking  ← 简单问题（小学数学）
-MATH500:          ~80% NoThinking  ← 中等难度（高中数学）
-AIME2024:         ~55% NoThinking  ← 困难问题（竞赛级）
+GSM8K:            84.15% NoThinking  ← 简单问题（小学数学）
+MATH500:          83.80% NoThinking  ← 中等难度（高中数学）
+AIME2024:         56.25% NoThinking  ← 困难问题（竞赛级）
 ```
 
 **自适应模式的演变时间线**（以 MATH500 为例）：
@@ -807,32 +818,32 @@ Step 150:     关键拐点，is_nothinking 跃升至 0.8
 Step 150-300: is_nothinking 稳定在 0.78-0.82
 ```
 
-这表明模型成功学会了**根据问题难度动态选择推理模式**，并且这种能力在训练中期（Step 150）突然涌现！
+这一汇总分层与**难度敏感的推理模式选择**一致。由于没有逐题输出，它不能证明每道题的路由均正确，也不能证明 Step 150 发生了因果意义上的能力突变。
 
-#### 4. 训练稳定性与关键指标
+#### 4. 历史曲线观察
 
-从 `adapt_think` 系列指标可以观察到训练过程的稳定性：
+以下是历史 `adapt_think` 曲线的描述性观察。它们不能覆盖 W&B 最终的 `crashed` 状态，也不能证明因果意义上的训练阶段：
 
 **奖励演变**：
 - **thinking_reward/mean**：从负值逐渐上升至接近 0 或正值
-- **reward/mean**：整体奖励稳定上升，无明显崩溃
-- **nothinking_reward**：波动较大但整体向上，表明 NoThinking 逐渐被优化
+- **reward/mean**：在报告选取的区间内总体上升
+- **nothinking_reward**：波动较大但总体向上
 
 **Token 概率**：
 - **first_eot_token_probs/mean**：从 ~0.2 上升至 **0.6-0.8**
-  - 这表明模型越来越"自信"地选择何时结束思考
-  - 高概率意味着决策明确，不是随机选择
+  - 这表示首个结束思考 token 的概率上升
+  - 它本身不能证明置信度校准或逐题路由正确
 
 **思考链长度优化**（adapt_think/thinking_response_length）：
 - 从 ~9,000 tokens 降至 **~4,500-5,000 tokens**
-- 即使在使用 Thinking 时，思考链也变得更简洁高效
-- **双重优化**：减少 Thinking 使用 + 优化 Thinking 本身
+- Thinking 模式的响应在汇总层面变短
+- **观测组合**：部分数据集减少 Thinking 使用，同时 Thinking 响应本身也变短
 
 **响应长度的整体趋势**（response_length）：
 - **mean**：5,500 → 3,000 (-45%)
 - **min**：稳定在 50-150（最短响应）
-- **max**：保持在 16,000-17,000（受限于 max_tokens 配置）
-- **clip_ratio**：从 0.1 降至 **0.02**（极少触碰长度上限）
+- **max**：保持在 16,000-17,000（受响应长度上限限制）
+- **clip_ratio**：从约 0.1 降至 **0.02**
 
 ### 不同难度的自适应行为
 
@@ -847,7 +858,7 @@ Step 150-300: is_nothinking 稳定在 0.78-0.82
 | Level 5 | 28% | 持平 |
 
 **观察**：
-1. **完美的难度感知**：NoThinking 比例随难度增加而递减
+1. **论文报告的单调趋势**：NoThinking 比例随难度增加而递减；这不等于证明“完美感知”
 2. **效率与质量平衡**：简单问题大胆使用 NoThinking，困难问题谨慎保留 Thinking
 3. **性能保持**：在各类问题上都维持了良好的准确率水平
 
@@ -866,11 +877,7 @@ Step 150-300: is_nothinking 稳定在 0.78-0.82
 | 0.075 | 更高 | ~60% | 可能下降 |
 | 0.1 | 最高 | 最大 | 轻微下降 |
 
-**本次实验选择 δ=0.05 的理由**：
-- ✅ 在效率和准确率间取得最佳平衡
-- ✅ 准确率提升明显（+2.4%）
-- ✅ 响应长度降低显著（53%）
-- ✅ 自适应行为清晰（80% NoThinking 在简单问题上）
+**δ=0.05 的历史论文层面理由**：上表是横向比较背景，并非本次保留运行的精确 step-300 结果。规范运行中三个数据集的平均响应长度均下降，但准确率有正有负，AIME 下降 0.42 pp。
 
 ---
 
@@ -939,6 +946,8 @@ bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh
 
 ### 评估
 
+下述命令是上游宣传的工作流，不是成功评估所选 checkpoint 的回执。使用前须修正 `-fl-` 与 `-fl4096` 的实验名差异，以及缺失的 `adapt_think_verl/` 目录层级。
+
 ```bash
 # 转换检查点为 HF 格式
 bash scripts/convert_to_hf.sh
@@ -956,16 +965,16 @@ bash scripts/run_eval_hf.sh
 
 ### 1. NoThinking 的有效性
 
-**关键发现**：模型成功学会了识别哪些问题可以跳过思考过程。
+**关键发现**：step 300 时，GSM8K 和 MATH500 使用 NoThinking 的比例高于 AIME2024。
 
 **观察**：
-- 在模型选择 NoThinking 的题目上（主要是简单问题），准确率保持在较高水平
-- 这表明模型的"直觉"（预训练知识）对于这些题目已经足够
-- 自适应选择避免了不必要的计算开销
+- 被路由到 NoThinking 的子集在汇总层面仍有较高准确率
+- 三个数据集上的 NoThinking 响应均短于 Thinking 响应
+- 由于没有保留逐题输出，报告无法判断每个路由选择是否正确
 
 ### 2. 自适应行为的涌现
 
-模型能够自动学习到难度与推理模式的映射关系，无需显式的难度标注：
+step 300 的汇总结果在没有显式难度标签的情况下呈现出跨数据集的路由梯度：
 
 ```
 简单问题 (GSM8K):     "简单算术"       → NoThinking (85%)
@@ -973,20 +982,19 @@ bash scripts/run_eval_hf.sh
 困难问题 (AIME):      "竞赛级问题"     → 混合使用 (55%)
 ```
 
-### 3. 效率与性能的双赢
+### 3. 效率提升与有正有负的准确率
 
-传统观念认为效率和性能是权衡关系，但 AdaptThink 实现了双赢：
+在报告选点，AdaptThink 降低了三个保留数据集的平均响应长度，但准确率变化有正有负：
 
 - **效率大幅提升**：
-  - GSM8K: 响应长度降低 **69%** (1600 → 500)
-  - MATH500: 响应长度降低 **64%** (5000 → 1800)
-  - AIME: 响应长度降低 **25%** (12000 → 9000)
-  - 整体: 平均响应长度降低 **45%** (5500 → 3000)
+  - GSM8K: 响应长度降低 **53.44%**（1025.24 → 477.33）
+  - MATH500: 响应长度降低 **67.90%**（4911.46 → 1576.62）
+  - AIME: 响应长度降低 **47.17%**（12119.51 → 6402.23）
 
-- **性能持平或提升**：
-  - MATH500: 整体准确率提升 **0.82 → 0.83-0.85**
-  - GSM8K: 整体准确率保持稳定 **~0.82**
-  - AIME: 整体准确率提升至 **0.32**（从 0.28 基线）
+- **准确率有正有负**：
+  - MATH500: 准确率 **0.8100 → 0.8180**（+0.80 pp）
+  - GSM8K: 准确率 **0.796816 → 0.818802**（+2.20 pp）
+  - AIME mean@16: 准确率 **0.314583 → 0.310417**（-0.42 pp）
 
 - **原因**：
   - 针对性使用推理资源，简单问题快速决策
@@ -995,24 +1003,15 @@ bash scripts/run_eval_hf.sh
 
 ### 4. 训练稳定性与关键拐点
 
-从 WandB 图表可以观察到训练过程非常稳定，并且存在一个明显的**关键拐点**：
+历史 W&B 曲线在 step 150 左右出现明显的汇总路由变化。运行后来在 step 410 后崩溃，因此不能描述为完整结束或全程稳定的训练。
 
-**Step 150 - 能力涌现的拐点**：
-- ✅ **is_nothinking** 从 ~0.5 跃升至 ~0.8
-- ✅ **nothinking_acc** 从接近 0 跃升至 0.8-0.9
-- ✅ **响应长度**开始快速下降
-- ✅ **first_eot_token_probs** 显著提升（决策更自信）
+**Step 150 - 描述性路由拐点**：
+- 验证集 **is_nothinking** 明显上升
+- 验证集 **nothinking_acc** 从接近 0 升至约 0.8-0.9
+- 平均响应长度开始快速下降
+- **first_eot_token_probs** 上升
 
-**训练稳定性指标**：
-- 奖励曲线（reward/mean）：平稳上升，无崩溃
-- 准确率（acc/mean）：持续改进，无震荡
-- KL 散度：保持在合理范围
-- 梯度：无异常爆炸或消失
-
-**关键观察**：
-- 约束优化目标有效防止了性能下降
-- 重要性采样策略确保了 Thinking/NoThinking 的平衡探索
-- Step 150 的能力涌现类似于 LLM 训练中的"相变"现象
+训练配置在优化期间强制平衡采样 Thinking/NoThinking。验证曲线只是观察结果，不能证明发生了“相变”，也不能保证每个数据集都不回退；AIME 在 step 300 的准确率略低于基线。
 
 ---
 
@@ -1027,15 +1026,15 @@ bash scripts/run_eval_hf.sh
 | **AdaptThink** | 自适应模式选择 | **45-69%** | **+2-10%** | ✅ |
 
 **本次实验（1.5B, δ=0.05）的具体数据**：
-- GSM8K: 响应长度 ↓69%, 85% 题目使用 NoThinking
-- MATH500: 响应长度 ↓64%, 准确率提升 0.82 → 0.83-0.85, 80% 题目使用 NoThinking
-- AIME: 响应长度 ↓25%, 准确率 0.28-0.32, 55% 题目使用 NoThinking
+- GSM8K: 响应长度 ↓53.44%，准确率 +2.20 pp，84.15% NoThinking
+- MATH500: 响应长度 ↓67.90%，准确率 +0.80 pp，83.80% NoThinking
+- AIME mean@16: 响应长度 ↓47.17%，准确率 -0.42 pp，56.25% NoThinking
 
 **AdaptThink 的独特优势**：
-- ✅ **唯一同时提升效率和准确率的方法**
-- ✅ **真正的自适应**：根据问题难度动态决策（55%-85% NoThinking 梯度）
+- **仅属论文层面比较**：保留运行不能独立证明 AdaptThink 是唯一同时改善两个维度的方法
+- **汇总自适应信号**：AIME 的 NoThinking 使用率低于 MATH500/GSM8K
 - ✅ **双重优化**：减少 Thinking 使用 + 优化 Thinking 本身
-- ✅ **能力涌现**：在训练中期出现明显的质的飞跃
+- **观测到的路由变化**：保留运行中期的 NoThinking 汇总指标发生明显变化
 - ✅ **无需额外模型**：单一模型即可实现混合推理
 
 ---
@@ -1045,8 +1044,8 @@ bash scripts/run_eval_hf.sh
 ### 硬件需求
 
 **训练**：
-- 1.5B 模型：1 × 8×H800 节点（~32 小时）
-- 7B 模型：4 × 8×H800 节点（~28 小时）
+- 保留的 1.5B W&B 运行：8 × NVIDIA H100 80GB；step 300 为 28.37 小时，step 410 为 36.92 小时
+- 原说明中的 7B 资源数据属于论文背景，本次保留运行不能验证
 
 **推理**：
 - 可使用单张 GPU（根据模型大小）
@@ -1055,12 +1054,12 @@ bash scripts/run_eval_hf.sh
 ### 计算成本估算
 
 以 1.5B 模型为例：
-- **训练成本**：8×H800 × 32小时
+- **观测训练资源**：8×H100；到报告选点的墙钟时间为 28.37 小时，到最后记录 step 的时间为 36.92 小时
 - **推理成本节省**：
-  - 整体：45% token 降低 → 约 1.8 倍推理加速
-  - GSM8K：69% token 降低 → 约 3.2 倍推理加速
-  - MATH500：64% token 降低 → 约 2.8 倍推理加速
-- **ROI**：在大规模推理场景下，训练成本可快速收回（尤其是简单问题占比高的场景）
+  - GSM8K：step 300 的平均响应长度下降 53.44%
+  - MATH500：step 300 的平均响应长度下降 67.90%
+  - AIME2024：step 300 的平均响应长度下降 47.17%
+- **边界**：token 降幅本身不能证明成比例的延迟加速或特定 ROI
 
 ---
 
@@ -1118,4 +1117,4 @@ bash scripts/run_eval_hf.sh
 
 本实验基于清华大学 THU-KEG 团队的 AdaptThink 项目，感谢团队开源的代码和模型。
 
-**实验记录**：本 README 基于 wandb 实验结果（1.5B 模型，δ=0.05，step 300）撰写，展示了 AdaptThink 在实际训练中的表现和效果。
+**实验记录**：本长篇说明仅作历史背景。规范的 W&B step-300 数值、来源和负面证据以文首链接的历史训练报告为准。
