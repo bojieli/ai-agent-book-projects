@@ -8,8 +8,15 @@ import logging
 import os
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
-from sentence_transformers import SentenceTransformer
-import faiss
+try:
+    from sentence_transformers import SentenceTransformer
+except ImportError:
+    SentenceTransformer = None
+
+try:
+    import faiss
+except ImportError:
+    faiss = None
 import pickle
 
 logger = logging.getLogger(__name__)
@@ -318,9 +325,8 @@ class KnowledgeBase:
         Returns:
             List of relevant experiences
         """
-        if not self.documents:
+        if top_k <= 0 or not self.documents:
             return []
-        
         # If we have embeddings, use semantic search
         if self.encoder and self.index and self.index.ntotal > 0:
             try:
@@ -353,11 +359,13 @@ class KnowledgeBase:
         """
         query_words = set(query.lower().split())
         scored_docs = []
-        
         for doc in self.documents:
-            doc_text = f"{doc.get('question', '')} {doc.get('approach', '')} {' '.join(doc.get('tools_used', []))}"
+            tools = doc.get('tools_used') or []
+            if isinstance(tools, str):
+                tools = [tools]
+            tools_str = ' '.join(str(t) for t in tools if t is not None)
+            doc_text = f"{doc.get('question', '')} {doc.get('approach', '')} {tools_str}"
             doc_words = set(doc_text.lower().split())
-            
             # Calculate simple overlap score
             overlap = len(query_words & doc_words)
             if overlap > 0:
