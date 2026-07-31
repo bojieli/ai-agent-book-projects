@@ -45,20 +45,22 @@ class KnowledgeBase:
         self.model_name = model_name
         self.embedding_dim = embedding_dim
         
-        # Initialize the sentence transformer
-        try:
-            self.encoder = SentenceTransformer(model_name)
-            # Derive the real embedding dimension from the loaded model so the
-            # FAISS index matches it. A fixed 384 silently breaks any non-384
-            # model chosen via --embedding-model / config.yaml (e.g.
-            # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
-            # and every search falls back to keyword-only for the whole KB.
-            model_dim = self.encoder.get_sentence_embedding_dimension()
-            if model_dim:
-                self.embedding_dim = model_dim
-        except Exception as e:
-            logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
+        if SentenceTransformer is None or faiss is None:
             self.encoder = None
+        else:
+            try:
+                self.encoder = SentenceTransformer(model_name)
+                # Derive the real embedding dimension from the loaded model so the
+                # FAISS index matches it. A fixed 384 silently breaks any non-384
+                # model chosen via --embedding-model / config.yaml (e.g.
+                # all-mpnet-base-v2 = 768): index.add() then raises, is swallowed,
+                # and every search falls back to keyword-only for the whole KB.
+                model_dim = self.encoder.get_sentence_embedding_dimension()
+                if model_dim:
+                    self.embedding_dim = model_dim
+            except Exception as e:
+                logger.warning(f"Failed to load SentenceTransformer, falling back to simple search: {e}")
+                self.encoder = None
         
         # Initialize FAISS index
         self.index = None
@@ -360,8 +362,12 @@ class KnowledgeBase:
         query_words = set(query.lower().split())
         scored_docs = []
         for doc in self.documents:
-            tools = doc.get('tools_used') or []
-            if isinstance(tools, str):
+            tools = doc.get('tools_used')
+            if tools is None:
+                tools = []
+            elif isinstance(tools, str):
+                tools = [tools]
+            elif not isinstance(tools, (list, tuple, set)):
                 tools = [tools]
             tools_str = ' '.join(str(t) for t in tools if t is not None)
             doc_text = f"{doc.get('question', '')} {doc.get('approach', '')} {tools_str}"

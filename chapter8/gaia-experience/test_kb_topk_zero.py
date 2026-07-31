@@ -27,3 +27,13 @@ def test_kb_keyword_search_null_tools_used():
     results = kb.search("q1", top_k=1)
     assert len(results) == 1
     assert results[0]["question"] == "q1"
+def test_kb_keyword_search_scalar_tools_used():
+    from knowledge_base import KnowledgeBase
+    kb = KnowledgeBase.__new__(KnowledgeBase)
+    kb.documents = [{"question": "q1", "approach": "a1", "tools_used": 123}]
+    kb.encoder = None
+    kb.index = None
+
+    results = kb.search("q1", top_k=1)
+    assert len(results) == 1
+    assert results[0]["question"] == "q1"
