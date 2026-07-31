@@ -63,7 +63,16 @@ Cada capítulo contiene una gran cantidad de **experimentos** y **preguntas de r
 
 > **Repositorio de código complementario**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-Los nombres de proyectos en el repositorio se corresponden uno a uno con los experimentos del libro, y cada proyecto contiene instrucciones completas de ejecución y configuración de dependencias. Te recomiendo enfáticamente que ejecutes personalmente estos experimentos. Los Agentes de IA son un campo altamente práctico, y muchas intuiciones de diseño solo se pueden establecer verdaderamente durante el proceso de depuración directa.
+Puedes obtener todo el código complementario con Git:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+Si no utilizas Git, también puedes seleccionar **Code → Download ZIP** en la página del repositorio. El código de los experimentos está organizado por capítulos, desde `chapter1/` hasta `chapter10/`. Para encontrar el «Experimento X-Y», abre el archivo `chapterX/README.es.md` correspondiente, localiza el directorio del proyecto mediante el número del experimento y sigue el README del propio proyecto para instalar las dependencias y ejecutarlo. Algunos experimentos marcados como guías de reproducción dependen de repositorios externos; sus README también explican cómo obtenerlos.
+
+Te recomiendo enfáticamente que ejecutes personalmente estos experimentos. Los Agentes de IA son un campo altamente práctico, y muchas intuiciones de diseño solo se pueden establecer verdaderamente durante el proceso de depuración directa.
 
 **Una convención de terminología**: Algunas palabras técnicas en inglés generan ambigüedad si se traducen literalmente al español. Este libro hace una distinción especial para dos términos de alta frecuencia: *reasoning* (el proceso del modelo al desarrollar deducciones intermedias, "pensar") se traduce unificadamente como "pensar" (*pensamiento* / *pensar*), mientras que *inference* (el cálculo hacia adelante y la ejecución/despliegue del modelo) se traduce unificadamente como "inferencia" (*inferencia*). El uso de dos palabras diferentes evita que la palabra "inferencia" lleve dos conceptos al mismo tiempo, lo que impediría al lector distinguirlos. Por lo tanto, dondequiera que se refiera a la cadena de pensamiento del modelo (Chain-of-Thought), modelos de pensamiento (como la serie o de OpenAI, DeepSeek-R1, llamados en este libro "modelos de pensamiento" o "pensadores"), tokens de pensamiento o procesos de pensamiento, este libro utiliza invariablemente "pensar" (*pensamiento*); dondequiera que se refiera al despliegue y ejecución de modelos (tiempo de inferencia, costo de inferencia, pila de inferencia, escalado en inferencia, etc.), se utiliza "inferencia". Una excepción son algunos términos compuestos consolidados: **razonamiento lógico, razonamiento de múltiples saltos, razonamiento espacial, razonamiento temporal**, así como usos cotidianos como "juegos de razonamiento", donde se mantiene el término "razonamiento", pidiendo al lector que comprenda según el contexto que se refieren al significado general de deducción lógica y no al significado técnico de *inference*. Para otros términos clave, el texto proporcionará la correspondencia en inglés y español en su primera aparición.
 

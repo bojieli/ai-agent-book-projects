@@ -63,7 +63,16 @@ Her bölüm çok sayıda **deney** ve **düşünce sorusu** içerir; numaraland�
 
 > **Eşlik eden kod deposu**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-Depodaki proje adları kitaptaki deneylerle birebir örtüşür ve her proje eksiksiz çalıştırma talimatlarını ve bağımlılık yapılandırmalarını içerir. Bu deneyleri bizzat çalıştırmanızı şiddetle öneririm. AI Agent son derece pratik bir alandır; tasarıma dair pek çok sezgi ancak elinizi kirletip hata ayıklama sürecinden geçtiğinizde gerçekten oturur.
+Eşlik eden kodun tamamını Git ile edinebilirsiniz:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+Git kullanmıyorsanız depo sayfasında **Code → Download ZIP** seçeneğini de kullanabilirsiniz. Deney kodları `chapter1/` ile `chapter10/` arasındaki dizinlerde bölümlere göre düzenlenmiştir. “Deney X-Y”yi bulmak için ilgili `chapterX/README.tr.md` dosyasını açın, deney numarasıyla proje dizinini bulun ve ardından bağımlılıkları kurup deneyi çalıştırmak için projenin kendi README dosyasındaki adımları izleyin. Yeniden üretim kılavuzu olarak işaretlenmiş bazı deneyler harici depolara bağlıdır; bunların nasıl edinileceği de ilgili README dosyalarında açıklanır.
+
+Bu deneyleri bizzat çalıştırmanızı şiddetle öneririm. AI Agent son derece pratik bir alandır; tasarıma dair pek çok sezgi ancak elinizi kirletip hata ayıklama sürecinden geçtiğinizde gerçekten oturur.
 
 **Bir terim uzlaşımı**: Bazı İngilizce teknik sözcükler doğrudan çevrildiğinde belirsizlik yaratır; bu yüzden kitap, sık geçen iki sözcüğü özellikle birbirinden ayırıyor: **reasoning** (modelin ara adımları açtığı, "düşündüğü" süreç) baştan sona **"düşünme"** olarak, **inference** (modelin ileri hesabı ve dağıtımda çalışması) ise baştan sona **"çıkarım"** olarak karşılanıyor. İki ayrı Türkçe sözcük kullanmanın nedeni, tek bir sözcüğün iki kavramı birden taşıyıp okurun ikisini ayırt edememesini önlemektir. Dolayısıyla düşünce zinciri (Chain-of-Thought), düşünme tipi modeller (örneğin OpenAI o serisi ve DeepSeek-R1; bu kitapta "düşünme modeli" ve "düşünür" denir), düşünme token'ları ve düşünme süreci söz konusu olduğunda kitap istisnasız "düşünme"yi; modelin çalıştırılması ve dağıtımı söz konusu olduğunda (çıkarım anı, çıkarım maliyeti, çıkarım yığını, çıkarım anında ölçekleme vb.) "çıkarım"ı kullanır. (Kitabın Çince aslı aynı ayrımı 思考 (reasoning) ve 推理 (inference) sözcükleriyle yapar; Bölüm 10'daki çeviri örneği doğrudan bu uzlaşıma dayanır. Çincede bir istisna vardır: 逻辑推理 (mantıksal akıl yürütme), 多跳推理 (çok atlamalı akıl yürütme), 空间推理 (uzamsal akıl yürütme), 时序推理 (zamansal akıl yürütme) gibi dilde çoktan kalıplaşmış bileşik terimlerde ve 推理游戏 (muhakeme oyunu) gibi gündelik kullanımlarda asıl metin alışılmış karşılığı koruyup 推理 sözcüğünü kullanmayı sürdürür; oralarda kastedilen, yukarıda anlatılan inference'ın teknik anlamı değil, tümdengelimli çıkarsamanın genel anlamıdır. Türkçede düşünme ile çıkarım arasındaki ayrım bu çakışmayı baştan ortadan kaldırdığı için böyle bir istisnaya gerek kalmaz.) Diğer kilit terimler için ana metin, ilk geçtikleri yerde İngilizce karşılıklarını verir.
 

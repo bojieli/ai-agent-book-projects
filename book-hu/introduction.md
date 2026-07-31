@@ -65,7 +65,16 @@ Minden fejezet nagyszámú **kísérletet** és **gondolkodtató kérdést** tar
 
 > **Kísérő kódrepó**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-A repóban lévő projektnevek egy-az-egyhez megfelelnek a könyv kísérleteinek, és minden projekt teljes futtatási utasításokat és függőségi konfigurációkat tartalmaz. Erősen ajánlom, hogy futtasd ezeket a kísérleteket magad is: az AI-ügynökök rendkívül gyakorlatorientált terület, és sok tervezési intuíció csak hibakeresés közben alakul ki.
+A teljes kísérő kódot letöltheted Gittel:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+Ha nem használsz Gitet, a repó oldalán a **Code → Download ZIP** lehetőséget is választhatod. A kísérletek kódja fejezetenként, a `chapter1/` és `chapter10/` közötti könyvtárakban található. Az „X-Y. kísérlet” megkereséséhez nyisd meg a megfelelő `chapterX/README.hu.md` fájlt, a kísérlet száma alapján keresd meg a projekt könyvtárát, majd a projekt saját README-jét követve telepítsd a függőségeket és futtasd a kísérletet. Egyes, reprodukciós útmutatóként megjelölt kísérletek külső repókra támaszkodnak; ezek beszerzését is a megfelelő README ismerteti.
+
+Erősen ajánlom, hogy futtasd ezeket a kísérleteket magad is: az AI-ügynökök rendkívül gyakorlatorientált terület, és sok tervezési intuíció csak hibakeresés közben alakul ki.
 
 **Egy terminológiai megjegyzés**: Ez a könyv gondosan megkülönböztet két olyan kifejezést, amelyeket a hétköznapi használat gyakran összemos. A **Reasoning** (okoskodás / gondolkodás) a modell lépésről lépésre történő gondolkodása – mint a reasoning modellekben, a gondolkodási láncban (chain-of-thought) és a reasoning tokenekben. Az **Inference** (következtetés) a modell előreirányú számítása telepítéskor – mint az inference költség, az inference stack és az inference-időbeli skálázás. (A kínai kiadás ezt két külön szóval adja vissza – 思考 a reasoningre, 推理 az inference-re – pontosan azért, hogy a két fogalmat elkülönítve tartsa; a 10. fejezet fordítással foglalkozó esettanulmánya hivatkozik is erre a konvencióra.) Más kulcsfontosságú kifejezések a szövegben való első előfordulásukkor kerülnek meghatározásra.
 
