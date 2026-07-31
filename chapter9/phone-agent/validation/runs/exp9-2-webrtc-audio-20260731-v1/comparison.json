@@ -1,0 +1,24 @@
+{
+  "schema_version": 2,
+  "experiment": "9-2",
+  "executed_at_utc": "2026-07-31T11:24:42.453962+00:00",
+  "control": "fixed parameters -> browser microphone RTP -> ASR -> real LLM dialogue -> TTS RTP",
+  "treatment": "natural task -> real LLM ReAct plan -> browser microphone RTP -> ASR -> real LLM dialogue -> TTS RTP",
+  "checks": {
+    "same_browser_aiortc_webrtc_transport": true,
+    "no_pstn_or_e164": true,
+    "direct_required_fixed_parameters": true,
+    "react_accepted_only_natural_language_task": true,
+    "react_detected_missing_information": true,
+    "react_has_observe_reason_act_trace": true,
+    "react_used_real_external_planner": true,
+    "both_used_microphone_rtp_asr": true,
+    "both_used_real_downlink_tts": true,
+    "both_used_external_post_asr_dialogue": true,
+    "data_channel_never_supplied_user_semantics": true,
+    "both_completed_all_audio_gates": true,
+    "both_saved_confirmed_structured_fields": true
+  },
+  "passed": true,
+  "conclusion": "Both arms completed the same real bidirectional browser/aiortc audio path. The treatment additionally used an external ARK ReAct planning receipt to detect missing facts; the control used fixed parameters."
+}

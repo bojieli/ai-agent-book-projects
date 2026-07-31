@@ -1,0 +1,328 @@
+{
+  "schema_version": 3,
+  "experiment": "9-2",
+  "call_id": "rtc_794c4b8e0481466fbf23",
+  "created_at_utc": "2026-07-31T11:23:09.666702+00:00",
+  "finished_at_utc": "2026-07-31T11:23:53.431450+00:00",
+  "status": "completed",
+  "mode": "direct",
+  "input_contract": {
+    "fields_supplied_by_caller": [
+      "callee_name",
+      "goal",
+      "context",
+      "instructions"
+    ],
+    "natural_language_task": ""
+  },
+  "plan": {
+    "mode": "direct",
+    "callee_name": "Jane Doe",
+    "goal": "Collect and confirm Jane Doe's preferred dental-checkup time and confirmation code.",
+    "context": "Tuesday afternoon from 2pm to 4pm is available; the user must supply the exact time and code by voice.",
+    "instructions": "Ask for one exact time and a confirmation code. Repeat both, require explicit confirmation, then call complete_task with only the ASR-confirmed details.",
+    "opening_line": "Hello Jane Doe. Please state the exact appointment time and confirmation code, then explicitly confirm both.",
+    "missing_information": [],
+    "trace": [
+      {
+        "stage": "observation",
+        "summary": "Caller supplied all call parameters."
+      },
+      {
+        "stage": "action",
+        "summary": "Open a WebRTC voice session with the fixed parameters."
+      }
+    ],
+    "planner_model": null
+  },
+  "models": {
+    "planner": null,
+    "dialogue_models": [
+      "ark:doubao-seed-1-6-flash-250615"
+    ],
+    "llm_receipts": [
+      {
+        "schema_version": 1,
+        "purpose": "post_asr_dialogue",
+        "execution": "real_external_llm",
+        "provider": "ark",
+        "requested_model": "doubao-seed-1-6-flash-250615",
+        "provider_model": "doubao-seed-1-6-flash-250615",
+        "provider_response_id": "0217854970227438de59cc126156ef9419088f6fa2f8da927049f",
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 181,
+          "prompt_tokens": 392,
+          "total_tokens": 573,
+          "completion_tokens_details": {
+            "reasoning_tokens": 84
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "started_at_utc": "2026-07-31T11:23:42.156339+00:00",
+        "finished_at_utc": "2026-07-31T11:23:44.170815+00:00",
+        "latency_seconds": 2.014451,
+        "request": {
+          "model": "doubao-seed-1-6-flash-250615",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are the voice Agent in a short local browser call. The user text below came only from ASR over the browser microphone RTP track. Return only JSON with assistant_message, explicit_confirmation_observed (boolean), should_complete (boolean), and completion containing result, appointment_time, confirmation_number, notes. If the user states an exact time, a confirmation code, and explicitly confirms both, set should_complete=true, normalize obvious spoken code words/digits into a concise code, and repeat both details in assistant_message. Otherwise ask only for what is missing. Never say booked, arranged, scheduled, or imply an external action occurred. For a completed turn, completion.result must be exactly 'Local confirmation recorded.' and completion.notes must be exactly 'No external organization was contacted or booking made.' Goal: Collect and confirm Jane Doe's preferred dental-checkup time and confirmation code.\nContext: Tuesday afternoon from 2pm to 4pm is available; the user must supply the exact time and code by voice.\nInstructions: Ask for one exact time and a confirmation code. Repeat both, require explicit confirmation, then call complete_task with only the ASR-confirmed details."
+            },
+            {
+              "role": "user",
+              "content": "{\"latest_user_asr_transcript\":\"Confirmation called as Maple 7. I explicitly confirm Tuesday at 3pm and confirmation code Maple 7.\",\"prior_audio_transcript\":[{\"purpose\":\"missing_field_clarification\",\"source\":\"tts.webrtc_downlink\",\"speaker\":\"agent\",\"text\":\"Hello Jane Doe. Please state the exact appointment time and confirmation code, then explicitly confirm both.\",\"utterance_id\":\"tts_01\"}]}"
+            }
+          ],
+          "response_format": {
+            "type": "json_object"
+          },
+          "temperature": 0,
+          "max_tokens": 700
+        },
+        "request_sha256": "625905fa5da9a4cdc0bd711793201abc585ea5434e62f2a03024a128a3cd40d5",
+        "raw_response": {
+          "id": "0217854970227438de59cc126156ef9419088f6fa2f8da927049f",
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "{\"assistant_message\": \"Confirmed appointment time: Tuesday at 3pm, Confirmation code: Maple 7. Explicit confirmation observed: true\", \"explicit_confirmation_observed\": true, \"should_complete\": true, \"completion\": {\"result\": \"Local confirmation recorded.\", \"appointment_time\": \"Tuesday at 3pm\", \"confirmation_number\": \"Maple 7\", \"notes\": \"No external organization was contacted or booking made.\"}}",
+                "role": "assistant",
+                "reasoning_content": "Got it, let's see. The user provided the exact time as Tuesday at 3pm and the confirmation code as Maple 7, and explicitly confirmed both. So I need to construct the JSON with assistant_message repeating the details, explicit_confirmation_observed as true, should_complete as true, and completion with result \"Local confirmation recorded.\" and notes \"No external organization was contacted or booking made.\""
+              }
+            }
+          ],
+          "created": 1785497024,
+          "model": "doubao-seed-1-6-flash-250615",
+          "object": "chat.completion",
+          "service_tier": "default",
+          "usage": {
+            "completion_tokens": 181,
+            "prompt_tokens": 392,
+            "total_tokens": 573,
+            "completion_tokens_details": {
+              "reasoning_tokens": 84
+            },
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "raw_response_sha256": "d2fb0d5702e0cf7905675047a5bc9ed7330a9d1ac02f6f219f8442ad29794fe8",
+        "response_content": "{\"assistant_message\": \"Confirmed appointment time: Tuesday at 3pm, Confirmation code: Maple 7. Explicit confirmation observed: true\", \"explicit_confirmation_observed\": true, \"should_complete\": true, \"completion\": {\"result\": \"Local confirmation recorded.\", \"appointment_time\": \"Tuesday at 3pm\", \"confirmation_number\": \"Maple 7\", \"notes\": \"No external organization was contacted or booking made.\"}}",
+        "response_content_sha256": "5cec9a348fdd2a028db79b95024befc152676fd85169a254ca2007888b571897",
+        "external_request_completed": true,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "credential_fields_retained": false
+      }
+    ],
+    "asr_receipts": [
+      {
+        "schema_version": 1,
+        "operation": "asr",
+        "execution": "real_local_inference",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "checkpoint_name": "tiny.pt",
+        "checkpoint_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "python": "3.11.4",
+          "torch": "2.4.0",
+          "openai_whisper": "20231106"
+        },
+        "input_source": "browser_microphone_rtp",
+        "input_sample_rate_hz": 16000,
+        "input_channels": 1,
+        "input_pcm_bytes": 774368,
+        "input_wav_bytes": 774412,
+        "input_wav_sha256": "bc5072b92d30d382b7439f56b1453946cbaa5f9de80c7a24eb98a1f8615c1d34",
+        "input_duration_seconds": 24.199,
+        "language": "en",
+        "transcript": "Confirmation called as Maple 7. I explicitly confirm Tuesday at 3pm and confirmation code Maple 7.",
+        "transcript_sha256": "e34b0bd2ddd7f005484a59cc83d36b5c4147762c45e1ffb7f1fd2c9f0e8e428e",
+        "model_load_seconds": 0.314312,
+        "inference_seconds": 0.446881,
+        "latency_seconds": 1.789071,
+        "retained_safe_fixture_path": "media/direct/microphone_rtp_asr_input.wav",
+        "external_request": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false
+      }
+    ],
+    "tts_receipts": [
+      {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 8000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 52080,
+        "duration_seconds": 6.51,
+        "wav_bytes": 104238,
+        "wav_sha256": "c94a2a0b563c9ac55fe472c79b0f94adcb72bdaccd7ecc424f172c35b5af8378",
+        "pcm_sha256": "de63bfbfc726731f84522f16a33357e13dbb34ab6c21596055503d17d039db40",
+        "latency_seconds": 0.972527,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "utterance_id": "tts_01",
+        "purpose": "missing_field_clarification",
+        "retained_safe_fixture_path": "media/direct/agent_01.wav",
+        "text_sha256": "b89b930d8884dec9a8261e6c4952e430f7146bbdcde40423fe8eecede205bec4",
+        "enqueued_on_webrtc_track": true,
+        "transmitted_samples": 52080,
+        "delivery_complete": true,
+        "delivered_pcm_sha256": "de63bfbfc726731f84522f16a33357e13dbb34ab6c21596055503d17d039db40"
+      },
+      {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 8000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 66036,
+        "duration_seconds": 8.2545,
+        "wav_bytes": 132150,
+        "wav_sha256": "8dbef003ff03b50e7c29dce5aad788b74500d6b2882c39388a7712cc5c52081d",
+        "pcm_sha256": "a6acdc60071259f46379dc98d4eaec583dbcb0f0b3c5ed60587e8f743a22a5dc",
+        "latency_seconds": 0.97609,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "utterance_id": "tts_02",
+        "purpose": "confirmed_completion",
+        "retained_safe_fixture_path": "media/direct/agent_02.wav",
+        "text_sha256": "7021250895bc4dbad83d3cc06ebe120bcc15175baa9fa6cf5d760fd3b1682254",
+        "enqueued_on_webrtc_track": true,
+        "transmitted_samples": 66036,
+        "delivery_complete": true,
+        "delivered_pcm_sha256": "a6acdc60071259f46379dc98d4eaec583dbcb0f0b3c5ed60587e8f743a22a5dc"
+      }
+    ]
+  },
+  "transport": {
+    "kind": "webrtc",
+    "pstn_used": false,
+    "e164_required": false,
+    "sdp_negotiated": true,
+    "offer_sha256": "1bc7eaf0f30f4e506782cfcf80ff1108b6a0a7500e1ee6bbfa3c7faf853c5373",
+    "answer_sha256": "7e7b70627489f0bdd3aa17890a32af0c498fc25c861b5d947d448d57265116b7",
+    "ice_connection_state": "connected",
+    "ice_connected_observed": true,
+    "data_channel_open": true,
+    "local_audio_track": true,
+    "remote_audio_track": true,
+    "rtc_stats": {
+      "inbound_packets": 1869,
+      "inbound_bytes": 188849,
+      "outbound_packets": 1869,
+      "outbound_bytes": 76286
+    },
+    "server_received_audio_frames": 1865,
+    "server_received_audio_samples": 1790400,
+    "server_received_audio_pcm_bytes": 1193568,
+    "server_sent_tts_samples": 118116
+  },
+  "privacy": {
+    "safe_synthetic_acceptance": true,
+    "private_audio_retained": false,
+    "private_transcripts_retained": false,
+    "safe_synthetic_media_retained": true
+  },
+  "event_counts": {
+    "client.audio.commit": 1,
+    "rtc.ready": 6,
+    "rtc.stats": 51
+  },
+  "transcript": [
+    {
+      "speaker": "agent",
+      "text": "Hello Jane Doe. Please state the exact appointment time and confirmation code, then explicitly confirm both.",
+      "source": "tts.webrtc_downlink",
+      "utterance_id": "tts_01",
+      "purpose": "missing_field_clarification"
+    },
+    {
+      "speaker": "user",
+      "text": "Confirmation called as Maple 7. I explicitly confirm Tuesday at 3pm and confirmation code Maple 7.",
+      "source": "asr.microphone_rtp",
+      "asr_receipt_index": 0
+    },
+    {
+      "speaker": "agent",
+      "text": "Confirmed appointment time: Tuesday at 3pm, Confirmation code: Maple 7. Explicit confirmation observed: true",
+      "source": "tts.webrtc_downlink",
+      "utterance_id": "tts_02",
+      "purpose": "confirmed_completion"
+    }
+  ],
+  "explicit_confirmation_observed": true,
+  "completion": {
+    "result": "Local confirmation recorded.",
+    "appointment_time": "Tuesday at 3pm",
+    "confirmation_number": "Maple 7",
+    "notes": "No external organization was contacted or booking made.",
+    "saved_at_utc": "2026-07-31T11:23:45.149157+00:00",
+    "tool": "complete_task"
+  },
+  "errors": [],
+  "acceptance": {
+    "checks": {
+      "sdp_offer_answer_negotiated": true,
+      "ice_connected": true,
+      "data_channel_open": true,
+      "browser_microphone_track": true,
+      "server_downlink_audio_track": true,
+      "outbound_audio_rtp": true,
+      "inbound_audio_rtp": true,
+      "server_buffered_microphone_rtp": true,
+      "real_asr_consumed_microphone_audio": true,
+      "external_react_planner_or_fixed_direct_control": true,
+      "real_external_post_asr_dialogue": true,
+      "real_tts_assets_synthesized": true,
+      "tts_audio_transmitted_on_downlink": true,
+      "media_is_canonical_transcript_source": true,
+      "data_channel_is_control_and_caption_only": true,
+      "missing_fields_were_clarified_aloud": true,
+      "explicit_confirmation_observed": true,
+      "structured_completion_saved": true,
+      "no_mock_probe_or_fallback": true,
+      "privacy_boundary_preserved": true
+    },
+    "passed": true
+  },
+  "finish_reason": "automated_safe_acceptance"
+}

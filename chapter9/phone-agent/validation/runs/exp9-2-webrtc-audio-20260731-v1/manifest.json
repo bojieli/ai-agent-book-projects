@@ -1,0 +1,213 @@
+{
+  "schema_version": 2,
+  "experiment": "9-2",
+  "run_id": "exp9-2-webrtc-audio-20260731-v1",
+  "generated_at_utc": "2026-07-31T11:24:42.523874+00:00",
+  "result": "passed",
+  "execution": "live_browser_aiortc_asr_external_llm_tts_webrtc",
+  "canonical_safe_synthetic_fixture": true,
+  "pstn_used": false,
+  "e164_required": false,
+  "credentials_saved": false,
+  "private_audio_or_transcripts_saved": false,
+  "safe_fixture_provenance": {
+    "direct": {
+      "kind": "safe_synthetic_browser_microphone_fixture",
+      "contains_private_data": false,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 15.730625,
+      "wav_bytes": 503424,
+      "wav_sha256": "0def429a125a2cc14f0461c9361a138b88d9cc0103040a9f018ef8fea2f2d46a",
+      "leading_silence_seconds": 4.0,
+      "trailing_silence_seconds": 3.0,
+      "synthesis": {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 139690,
+        "duration_seconds": 8.730625,
+        "wav_bytes": 279458,
+        "wav_sha256": "795fc97e299ecb3bed310e3bde26f1500bf08b9da32d6a276ecadb9dd29b5103",
+        "pcm_sha256": "74690f7b0ee36186bd8e6cf378c40644219f71c96b8f199185ce5e136bf99d63",
+        "latency_seconds": 0.962707,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false
+      },
+      "artifact_path": "fixtures/direct_microphone.wav",
+      "text_sha256": "b1c6b73a17ff9a5afcee66cfc2944dd4b8e9d3019d362a1907eeeb4ba0a0705d"
+    },
+    "react": {
+      "kind": "safe_synthetic_browser_microphone_fixture",
+      "contains_private_data": false,
+      "sample_rate_hz": 16000,
+      "duration_seconds": 15.440375,
+      "wav_bytes": 494136,
+      "wav_sha256": "df1acb0b3db90e2fed6814cb880dabb028cd73d0a1837efc8493a97071f0e7f9",
+      "leading_silence_seconds": 4.0,
+      "trailing_silence_seconds": 3.0,
+      "synthesis": {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 135046,
+        "duration_seconds": 8.440375,
+        "wav_bytes": 270170,
+        "wav_sha256": "c23d3bb0b6f14be7f690ee1a4499b1a84d4edf0b3d3c3cadad5212b0e70a8552",
+        "pcm_sha256": "fa9f85699e9d3016eae17acd751dbefce05e3eddf980a842d4d638fe9a5d0928",
+        "latency_seconds": 0.956989,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false
+      },
+      "artifact_path": "fixtures/react_microphone.wav",
+      "text_sha256": "001812c3c3bf8a0372be1399852e155a940d8c57fc04ccbc9fe7ac30a86cc725"
+    }
+  },
+  "environment": {
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "python": "3.11.4",
+    "chrome_version": "Google Chrome 150.0.7871.188",
+    "chrome_executable_sha256": "2837ae0a82f64cf541af357ce554cc7d0c62d119da2b6b5f3eb64ce7f3d63d4e",
+    "planner_provider": "ark",
+    "planner_model": "doubao-seed-1-6-flash-250615",
+    "dialogue_model": "doubao-seed-1-6-flash-250615",
+    "media_peer": "aiortc",
+    "packages": {
+      "aiortc": "1.15.0",
+      "av": "17.1.0",
+      "openai": "2.48.0",
+      "playwright": "1.61.0"
+    }
+  },
+  "source_sha256": {
+    "chapter9/phone-agent/agent.py": "fa73bfe9182f39d22243065edc02565da33b5957c6f17a9f886fc65ea42561f3",
+    "chapter9/phone-agent/speech.py": "ca959ce60eabd6b629a6a238ceef1b8c6bd955f6921cfc8a273a5c86bb00e008",
+    "chapter9/phone-agent/webrtc_app.py": "260ab64d9ba61a1dcf00cb4f034bcfd115755c11ce0558dc8b610f239f9ed25b",
+    "chapter9/phone-agent/run_acceptance.py": "c33346520fba6a8d8b6385ff0e3052b3c51be7d1ff2fd4f5fbbbf831a02ba012",
+    "chapter9/phone-agent/verify_acceptance.py": "83b459e48f337e4457237b629e4f308694fa491893cb41826128df6f6bab02a7",
+    "chapter9/phone-agent/demo.py": "45ef0878b524ae39faf85693b4ea302746ff2e9ee80ce9aced104e2dbfa67e18",
+    "chapter9/phone-agent/direct_call.py": "74c96ba2811aa81c9d7fabad9f7177df84a6544300ab26513e3a39f8fccf7f59",
+    "chapter9/phone-agent/env.example": "ae6ec336e02041e10f10df39846b63aff1a8a125610e7a2069e3ea4d1e193182",
+    "chapter9/phone-agent/requirements.txt": "451102c65e1b3084096aa59e10816a7a74be20c32d6f3ceb426a73c1c2c6788d",
+    "chapter9/phone-agent/test_agent.py": "8f77744dc6c38e0617b479aff2941bc1b3dcfa78cfac93ccba47702ae8022ad4",
+    "chapter9/phone-agent/test_speech.py": "03a64e7c1f8182f94364c109bf1a640f1609f8cdae1ba3d0f34ccfd41900512c",
+    "chapter9/phone-agent/test_webrtc_app.py": "cf5c2f9f14a65a8fcbd643657d48c9c1d315229609094e30a7642315a1079227",
+    "chapter9/phone-agent/test_verify_acceptance.py": "b2082309ed3409875dac310147894fea50bba9b3909928e2de21b37ed9390912",
+    "chapter9/phone-agent/static/index.html": "fc6020510e90eed59d517139b4cc291bb6aa72be4c16d05714ca134cf3a821f8",
+    "chapter9/phone-agent/static/app.js": "dc1ba08f21bccafc43a5dcc79e57af2dca2bc350fb0021b7e458ce5654e6d04d",
+    "chapter9/phone-agent/static/style.css": "1586e93230ec1a77a5141e05f72c560e193cebbfe43115e26ba81ebd06f00908",
+    "chapter9/phone-agent/README.md": "ad6e93082358a1694b8dc3d73af82feed8d1948efb3a96fde115ac1b1a8e9358",
+    "chapter9/README.md": "84803cef75fc522d21ee9086ce9d8471b1eec99394513a232d420130cfeb580f",
+    "book/chapter9.md": "8e1859fb1b163c3620dac7da4d7560f5d0dce06613f025aa90140e31955d5d73",
+    "pyproject.toml": "b04778d69977f0843def0c26930ab6c5f32706746733495e95647e83c19c2a1b",
+    "uv.lock": "d25d18bb7c0a5d93c888547f19a420dc50719357a3dba813094a6c233140691c"
+  },
+  "artifact_sha256": {
+    "comparison.json": "5b73934cbc776c01cc3aac5d29dbd7026d454a7d7b9d7654c9834339a4bc5a49",
+    "direct.json": "360c613574692e9d01d60e6aefb3faac34a1cf38dc9a14f1bd3b354055db2912",
+    "fixtures/direct_microphone.wav": "0def429a125a2cc14f0461c9361a138b88d9cc0103040a9f018ef8fea2f2d46a",
+    "fixtures/react_microphone.wav": "df1acb0b3db90e2fed6814cb880dabb028cd73d0a1837efc8493a97071f0e7f9",
+    "media/direct/agent_01.wav": "c94a2a0b563c9ac55fe472c79b0f94adcb72bdaccd7ecc424f172c35b5af8378",
+    "media/direct/agent_02.wav": "8dbef003ff03b50e7c29dce5aad788b74500d6b2882c39388a7712cc5c52081d",
+    "media/direct/microphone_rtp_asr_input.wav": "bc5072b92d30d382b7439f56b1453946cbaa5f9de80c7a24eb98a1f8615c1d34",
+    "media/react/agent_01.wav": "36569fa63273d1ed2e7ff1eec9e3be7fc5e878e935bd58e7ea25bc5a6011b473",
+    "media/react/agent_02.wav": "e8a227f303baa45cdcdaa20700c58f2405adf06725394eafb9364b12079ea936",
+    "media/react/microphone_rtp_asr_input.wav": "d13d43693d8af1b579ff7a5f458f7bf0940fbf0daec9ddebc9f279ed1317d73a",
+    "react.json": "5889cf6582b04ea93b81a46a474fc6fbd4e8e8b4590f100c1bd056be91e3907f",
+    "server.log": "1b6cafe4291015cda74a79e49ef5fcad2c485fc7a4882312b183eefd97bbc85e"
+  },
+  "redaction": {
+    "scanned_file_count": 12,
+    "environment_credential_value_matches": [],
+    "passed": true
+  },
+  "cleanup": {
+    "browser_contexts_closed": true,
+    "server_process_terminated": true,
+    "raw_private_media_created": false
+  },
+  "acceptance": {
+    "direct": {
+      "checks": {
+        "sdp_offer_answer_negotiated": true,
+        "ice_connected": true,
+        "data_channel_open": true,
+        "browser_microphone_track": true,
+        "server_downlink_audio_track": true,
+        "outbound_audio_rtp": true,
+        "inbound_audio_rtp": true,
+        "server_buffered_microphone_rtp": true,
+        "real_asr_consumed_microphone_audio": true,
+        "external_react_planner_or_fixed_direct_control": true,
+        "real_external_post_asr_dialogue": true,
+        "real_tts_assets_synthesized": true,
+        "tts_audio_transmitted_on_downlink": true,
+        "media_is_canonical_transcript_source": true,
+        "data_channel_is_control_and_caption_only": true,
+        "missing_fields_were_clarified_aloud": true,
+        "explicit_confirmation_observed": true,
+        "structured_completion_saved": true,
+        "no_mock_probe_or_fallback": true,
+        "privacy_boundary_preserved": true
+      },
+      "passed": true
+    },
+    "react": {
+      "checks": {
+        "sdp_offer_answer_negotiated": true,
+        "ice_connected": true,
+        "data_channel_open": true,
+        "browser_microphone_track": true,
+        "server_downlink_audio_track": true,
+        "outbound_audio_rtp": true,
+        "inbound_audio_rtp": true,
+        "server_buffered_microphone_rtp": true,
+        "real_asr_consumed_microphone_audio": true,
+        "external_react_planner_or_fixed_direct_control": true,
+        "real_external_post_asr_dialogue": true,
+        "real_tts_assets_synthesized": true,
+        "tts_audio_transmitted_on_downlink": true,
+        "media_is_canonical_transcript_source": true,
+        "data_channel_is_control_and_caption_only": true,
+        "missing_fields_were_clarified_aloud": true,
+        "explicit_confirmation_observed": true,
+        "structured_completion_saved": true,
+        "no_mock_probe_or_fallback": true,
+        "privacy_boundary_preserved": true
+      },
+      "passed": true
+    },
+    "comparison_passed": true
+  }
+}

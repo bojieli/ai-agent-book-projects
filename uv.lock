@@ -524,8 +524,10 @@ ch9 = [
     { name = "aiortc", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "fastapi", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "httpx", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "openai-whisper", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "playwright", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "python-multipart", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "torch", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "uvicorn", extra = ["standard"], marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
 ]
 dev = [
@@ -745,6 +747,7 @@ requires-dist = [
     { name = "ollama", marker = "extra == 'providers'", specifier = ">=0.5.1" },
     { name = "onnxruntime", marker = "python_full_version < '3.11' and extra == 'rag'", specifier = "<1.24" },
     { name = "openai", specifier = ">=1.68" },
+    { name = "openai-whisper", marker = "extra == 'ch9'", specifier = "==20231106" },
     { name = "opencv-python", marker = "extra == 'media'", specifier = ">=4.9" },
     { name = "openpyxl", marker = "extra == 'docs'", specifier = ">=3.1" },
     { name = "pandas", marker = "extra == 'viz'", specifier = ">=2.2.0" },
@@ -790,6 +793,7 @@ requires-dist = [
     { name = "tabulate", marker = "extra == 'viz'", specifier = ">=0.9" },
     { name = "tenacity", marker = "extra == 'viz'", specifier = ">=9.0.0" },
     { name = "tiktoken", marker = "extra == 'tokens'", specifier = ">=0.7.0" },
+    { name = "torch", marker = "extra == 'ch9'", specifier = ">=2.2" },
     { name = "torch", marker = "extra == 'torch'", specifier = ">=2.2" },
     { name = "torchaudio", marker = "extra == 'audio'", specifier = ">=2.2" },
     { name = "tqdm", marker = "extra == 'viz'", specifier = ">=4.66.1" },
@@ -4568,6 +4572,20 @@ sdist = { url = "https://files.pythonhosted.org/packages/2a/ae/d4d1835488c035042
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/2a/dcb891114e303c4379d4a498f10222e33eee540bcef4e1e493bd0af2b242/openai-2.48.0-py3-none-any.whl", hash = "sha256:c98df30aaaf93c51979f64d3e7c5b76464f8be0173368266229eb8fe6bd30f2c", size = 1648520, upload-time = "2026-07-23T20:15:48.052Z" },
 ]
+
+[[package]]
+name = "openai-whisper"
+version = "20231106"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "more-itertools", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "numba", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "numpy", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "tiktoken", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "torch", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "tqdm", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/63/46/b5f9d697b138ef9885dd3e8a08c6475c1cbd747f2dfc14a437fe3b02b58e/openai-whisper-20231106.tar.gz", hash = "sha256:9d1de7fa1e766b9adf8be4bfa7fb11e2bdf8d2b0bf77b90478cf4d75e0e58d19", size = 798577, upload-time = "2023-11-06T18:16:21.951Z" }
 
 [[package]]
 name = "openapi-pydantic"

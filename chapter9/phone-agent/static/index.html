@@ -40,7 +40,7 @@
           <button id="start" type="button">Join call and enable microphone</button>
           <button id="hangup" class="secondary" type="button" disabled>Hang up</button>
         </div>
-        <p class="privacy">Your standard API key stays on the local server. The browser receives only the SDP answer; no credential is embedded in this page.</p>
+        <p class="privacy">Provider credentials stay on the local server. The browser receives only the SDP answer; no credential is embedded in this page.</p>
       </section>
 
       <section class="card status-card">
@@ -50,17 +50,12 @@
       </section>
 
       <section class="card conversation">
-        <h2>Live transcript</h2>
+        <h2>Audio transcript captions</h2>
         <div id="transcript" aria-live="polite"></div>
-        <form id="text-turn">
-          <label for="user-text">Text fallback for a user turn</label>
-          <div class="text-row">
-            <input id="user-text" placeholder="For example: Tuesday at 3pm works; use confirmation WEBRTC-92.">
-            <button id="speak-turn" class="secondary" type="button" disabled>Speak turn</button>
-            <button type="submit" disabled>Send</button>
-          </div>
-          <p class="privacy">“Speak turn” uses the browser's speech recognition when available. Typed turns use the same WebRTC data channel and are retained as an accessibility fallback.</p>
-        </form>
+        <div class="actions">
+          <button id="commit-audio" class="secondary" type="button" disabled>Finish speaking</button>
+        </div>
+        <p class="privacy">Speak into the microphone, then choose “Finish speaking.” User meaning comes only from server ASR over the microphone RTP track. The data channel carries this control event and accessibility captions; it never supplies the canonical user transcript.</p>
       </section>
 
       <section class="card evidence">

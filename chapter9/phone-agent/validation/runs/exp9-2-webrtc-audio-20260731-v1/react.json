@@ -1,0 +1,412 @@
+{
+  "schema_version": 3,
+  "experiment": "9-2",
+  "call_id": "rtc_f8c984610b434ce4abf7",
+  "created_at_utc": "2026-07-31T11:24:00.115961+00:00",
+  "finished_at_utc": "2026-07-31T11:24:40.071438+00:00",
+  "status": "completed",
+  "mode": "react",
+  "input_contract": {
+    "fields_supplied_by_caller": [
+      "task"
+    ],
+    "natural_language_task": "Call me to arrange a dental checkup for Jane Doe. I forgot to include the exact time and confirmation code, so identify both as missing, ask me for them by voice, and save only what I explicitly confirm."
+  },
+  "plan": {
+    "mode": "react",
+    "callee_name": "Jane Doe",
+    "goal": "Arrange a dental checkup",
+    "context": "User forgot to include exact appointment time and confirmation code",
+    "instructions": "Repeat the missing appointment time and confirmation code, obtain explicit confirmation from the user, and only complete the task with the confirmed values",
+    "opening_line": "Could you please provide the exact appointment time for Jane Doe's dental checkup and the confirmation code?",
+    "missing_information": [
+      "appointment time",
+      "confirmation code"
+    ],
+    "trace": [
+      {
+        "stage": "observation",
+        "summary": "Call me to arrange a dental checkup for Jane Doe. I forgot to include the exact time and confirmation code, so identify both as missing, ask me for them by voice, and save only what I explicitly confirm."
+      },
+      {
+        "stage": "reason",
+        "summary": "Requesting the user to explicitly confirm the dental checkup time and confirmation code as they were previously omitted"
+      },
+      {
+        "stage": "action",
+        "summary": "Open a WebRTC call and collect the missing facts by voice."
+      }
+    ],
+    "planner_model": "ark:doubao-seed-1-6-flash-250615"
+  },
+  "models": {
+    "planner": "ark:doubao-seed-1-6-flash-250615",
+    "dialogue_models": [
+      "ark:doubao-seed-1-6-flash-250615"
+    ],
+    "llm_receipts": [
+      {
+        "schema_version": 1,
+        "purpose": "react_planning",
+        "execution": "real_external_llm",
+        "provider": "ark",
+        "requested_model": "doubao-seed-1-6-flash-250615",
+        "provider_model": "doubao-seed-1-6-flash-250615",
+        "provider_response_id": "021785497038047251fb4d9d2b64b7e0912e9d9de0a598cecf2cc",
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 262,
+          "prompt_tokens": 222,
+          "total_tokens": 484,
+          "completion_tokens_details": {
+            "reasoning_tokens": 113
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "started_at_utc": "2026-07-31T11:23:57.805430+00:00",
+        "finished_at_utc": "2026-07-31T11:24:00.114900+00:00",
+        "latency_seconds": 2.309437,
+        "request": {
+          "model": "doubao-seed-1-6-flash-250615",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Plan a local browser WebRTC voice call. Observe the user's task, identify every missing task-critical fact, reason briefly about what must be collected, and choose the call action. Never invent facts. Return only JSON with callee_name, goal, context, instructions, opening_line, missing_information (array), and decision_summary. opening_line must ask aloud for the missing appointment time and confirmation code. instructions must require the voice Agent to repeat the facts, obtain explicit confirmation, and complete_task only with confirmed values. This local experiment records a confirmation but performs no external booking."
+            },
+            {
+              "role": "user",
+              "content": "Call me to arrange a dental checkup for Jane Doe. I forgot to include the exact time and confirmation code, so identify both as missing, ask me for them by voice, and save only what I explicitly confirm."
+            }
+          ],
+          "response_format": {
+            "type": "json_object"
+          },
+          "temperature": 0,
+          "max_tokens": 700
+        },
+        "request_sha256": "276ca473bec3303ba5356765d1fd4b5e3c8c9e82e1960e4b9b19ad726b8e8c90",
+        "raw_response": {
+          "id": "021785497038047251fb4d9d2b64b7e0912e9d9de0a598cecf2cc",
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "{\n    \"callee_name\": \"Jane Doe\",\n    \"goal\": \"Arrange a dental checkup\",\n    \"context\": \"User forgot to include exact appointment time and confirmation code\",\n    \"instructions\": \"Repeat the missing appointment time and confirmation code, obtain explicit confirmation from the user, and only complete the task with the confirmed values\",\n    \"opening_line\": \"Could you please provide the exact appointment time for Jane Doe's dental checkup and the confirmation code?\",\n    \"missing_information\": [\"appointment time\", \"confirmation code\"],\n    \"decision_summary\": \"Requesting the user to explicitly confirm the dental checkup time and confirmation code as they were previously omitted\"\n}",
+                "role": "assistant",
+                "reasoning_content": "So, let's see. I need to structure the JSON according to the user's request. First, callee_name is Jane Doe. The goal is to arrange a dental checkup. Context is that the user forgot the exact time and confirmation code, so those are missing. Instructions should tell the voice Agent to repeat the facts, get explicit confirmation. Opening line needs to ask aloud for the missing appointment time and confirmation code. Missing_information should list time and confirmation code. Decision_summary is about requesting the user to provide the time and confirmation code."
+              }
+            }
+          ],
+          "created": 1785497040,
+          "model": "doubao-seed-1-6-flash-250615",
+          "object": "chat.completion",
+          "service_tier": "default",
+          "usage": {
+            "completion_tokens": 262,
+            "prompt_tokens": 222,
+            "total_tokens": 484,
+            "completion_tokens_details": {
+              "reasoning_tokens": 113
+            },
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "raw_response_sha256": "2b02efd3ca007ca45bec6d2be83978d630a064d5f23ac15e0a1058979770760d",
+        "response_content": "{\n    \"callee_name\": \"Jane Doe\",\n    \"goal\": \"Arrange a dental checkup\",\n    \"context\": \"User forgot to include exact appointment time and confirmation code\",\n    \"instructions\": \"Repeat the missing appointment time and confirmation code, obtain explicit confirmation from the user, and only complete the task with the confirmed values\",\n    \"opening_line\": \"Could you please provide the exact appointment time for Jane Doe's dental checkup and the confirmation code?\",\n    \"missing_information\": [\"appointment time\", \"confirmation code\"],\n    \"decision_summary\": \"Requesting the user to explicitly confirm the dental checkup time and confirmation code as they were previously omitted\"\n}",
+        "response_content_sha256": "13c94bdc67acc4f47d52ad737b445cb82598d02f9036e0afe14f57f9030dcb96",
+        "external_request_completed": true,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "credential_fields_retained": false
+      },
+      {
+        "schema_version": 1,
+        "purpose": "post_asr_dialogue",
+        "execution": "real_external_llm",
+        "provider": "ark",
+        "requested_model": "doubao-seed-1-6-flash-250615",
+        "provider_model": "doubao-seed-1-6-flash-250615",
+        "provider_response_id": "021785497071624d9018183c34bd269dc45b9a10b892d56f50515",
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 168,
+          "prompt_tokens": 366,
+          "total_tokens": 534,
+          "completion_tokens_details": {
+            "reasoning_tokens": 75
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "started_at_utc": "2026-07-31T11:24:31.373004+00:00",
+        "finished_at_utc": "2026-07-31T11:24:33.913565+00:00",
+        "latency_seconds": 2.54053,
+        "request": {
+          "model": "doubao-seed-1-6-flash-250615",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are the voice Agent in a short local browser call. The user text below came only from ASR over the browser microphone RTP track. Return only JSON with assistant_message, explicit_confirmation_observed (boolean), should_complete (boolean), and completion containing result, appointment_time, confirmation_number, notes. If the user states an exact time, a confirmation code, and explicitly confirms both, set should_complete=true, normalize obvious spoken code words/digits into a concise code, and repeat both details in assistant_message. Otherwise ask only for what is missing. Never say booked, arranged, scheduled, or imply an external action occurred. For a completed turn, completion.result must be exactly 'Local confirmation recorded.' and completion.notes must be exactly 'No external organization was contacted or booking made.' Goal: Arrange a dental checkup\nContext: User forgot to include exact appointment time and confirmation code\nInstructions: Repeat the missing appointment time and confirmation code, obtain explicit confirmation from the user, and only complete the task with the confirmed values"
+            },
+            {
+              "role": "user",
+              "content": "{\"latest_user_asr_transcript\":\"Confirmation called a Cedar 8. I explicitly confirm Tuesday at 3 p.m. and confirmation called Cedar 8.\",\"prior_audio_transcript\":[{\"purpose\":\"missing_field_clarification\",\"source\":\"tts.webrtc_downlink\",\"speaker\":\"agent\",\"text\":\"Could you please provide the exact appointment time for Jane Doe's dental checkup and the confirmation code?\",\"utterance_id\":\"tts_01\"}]}"
+            }
+          ],
+          "response_format": {
+            "type": "json_object"
+          },
+          "temperature": 0,
+          "max_tokens": 700
+        },
+        "request_sha256": "926acff71159d1659a957a45a8244a1f2d6eeefbf78987a155bd0e8aa6660378",
+        "raw_response": {
+          "id": "021785497071624d9018183c34bd269dc45b9a10b892d56f50515",
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "{\"assistant_message\": \"Appointment time confirmed as Tuesday at 3 p.m. and confirmation number confirmed as Cedar 8.\", \"explicit_confirmation_observed\": true, \"should_complete\": true, \"completion\": {\"result\": \"Local confirmation recorded.\", \"appointment_time\": \"Tuesday at 3 p.m.\", \"confirmation_number\": \"Cedar 8\", \"notes\": \"No external organization was contacted or booking made.\"}}",
+                "role": "assistant",
+                "reasoning_content": "Got it, let's see. The user mentioned Tuesday at 3 p.m. as the appointment time and confirmed the confirmation code as Cedar 8. So now I need to structure the JSON with assistant_message repeating the details, explicit_confirmation_observed as true, should_complete as true, and completion with result, appointment_time, confirmation_number, notes."
+              }
+            }
+          ],
+          "created": 1785497074,
+          "model": "doubao-seed-1-6-flash-250615",
+          "object": "chat.completion",
+          "service_tier": "default",
+          "usage": {
+            "completion_tokens": 168,
+            "prompt_tokens": 366,
+            "total_tokens": 534,
+            "completion_tokens_details": {
+              "reasoning_tokens": 75
+            },
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "raw_response_sha256": "26440ed69dcb1f77178a284fdd0571e6f90cca9c776402bcf4e8ffcb56bfa994",
+        "response_content": "{\"assistant_message\": \"Appointment time confirmed as Tuesday at 3 p.m. and confirmation number confirmed as Cedar 8.\", \"explicit_confirmation_observed\": true, \"should_complete\": true, \"completion\": {\"result\": \"Local confirmation recorded.\", \"appointment_time\": \"Tuesday at 3 p.m.\", \"confirmation_number\": \"Cedar 8\", \"notes\": \"No external organization was contacted or booking made.\"}}",
+        "response_content_sha256": "589e901f03635305e84094cd8a1e6619643fb554bf6ce175550feaf22b0246c3",
+        "external_request_completed": true,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "credential_fields_retained": false
+      }
+    ],
+    "asr_receipts": [
+      {
+        "schema_version": 1,
+        "operation": "asr",
+        "execution": "real_local_inference",
+        "provider": "local OpenAI Whisper",
+        "model": "whisper-tiny",
+        "checkpoint_name": "tiny.pt",
+        "checkpoint_sha256": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9",
+        "runtime": {
+          "python": "3.11.4",
+          "torch": "2.4.0",
+          "openai_whisper": "20231106"
+        },
+        "input_source": "browser_microphone_rtp",
+        "input_sample_rate_hz": 16000,
+        "input_channels": 1,
+        "input_pcm_bytes": 733408,
+        "input_wav_bytes": 733452,
+        "input_wav_sha256": "d13d43693d8af1b579ff7a5f458f7bf0940fbf0daec9ddebc9f279ed1317d73a",
+        "input_duration_seconds": 22.919,
+        "language": "en",
+        "transcript": "Confirmation called a Cedar 8. I explicitly confirm Tuesday at 3 p.m. and confirmation called Cedar 8.",
+        "transcript_sha256": "cabe012d1165ad25d56167aa5b898fa029facf739a658df6d8580ddfaa6715d5",
+        "model_load_seconds": 0.314773,
+        "inference_seconds": 0.511034,
+        "latency_seconds": 1.865804,
+        "retained_safe_fixture_path": "media/react/microphone_rtp_asr_input.wav",
+        "external_request": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false
+      }
+    ],
+    "tts_receipts": [
+      {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 8000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 43638,
+        "duration_seconds": 5.45475,
+        "wav_bytes": 87354,
+        "wav_sha256": "36569fa63273d1ed2e7ff1eec9e3be7fc5e878e935bd58e7ea25bc5a6011b473",
+        "pcm_sha256": "cc573183930ba8f3640ff06dfa7462d5575d30a01685b3fc2d1f6591f1aace06",
+        "latency_seconds": 0.959548,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "utterance_id": "tts_01",
+        "purpose": "missing_field_clarification",
+        "retained_safe_fixture_path": "media/react/agent_01.wav",
+        "text_sha256": "8210e199a83fcf3de8179059a226e38ad88463493c974beb40460683b21fb785",
+        "enqueued_on_webrtc_track": true,
+        "transmitted_samples": 43638,
+        "delivery_complete": true,
+        "delivered_pcm_sha256": "cc573183930ba8f3640ff06dfa7462d5575d30a01685b3fc2d1f6591f1aace06"
+      },
+      {
+        "schema_version": 1,
+        "operation": "tts",
+        "execution": "real_speech_synthesis",
+        "provider": "macOS say",
+        "model": "operating-system speech synthesizer",
+        "voice": "Samantha",
+        "sample_rate_hz": 8000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "sample_count": 41491,
+        "duration_seconds": 5.186375,
+        "wav_bytes": 83060,
+        "wav_sha256": "e8a227f303baa45cdcdaa20700c58f2405adf06725394eafb9364b12079ea936",
+        "pcm_sha256": "1686b19c8c3c73b3629c7aeac74029bc70d59d1f326ad47524b81bee3794ac28",
+        "latency_seconds": 0.954852,
+        "engine": {
+          "name": "say",
+          "sha256": "2bf4b7a6950c8365f3b51c1345d82b40595f4581c9bd50700e1ea485851e022d"
+        },
+        "decoder": {
+          "name": "ffmpeg",
+          "sha256": "5a4899a648370eccc8e73af934a8724d7af9195018eed29125432c782548f00a"
+        },
+        "network_used": false,
+        "mock": false,
+        "probe_only": false,
+        "fallback_used": false,
+        "utterance_id": "tts_02",
+        "purpose": "confirmed_completion",
+        "retained_safe_fixture_path": "media/react/agent_02.wav",
+        "text_sha256": "5ba502a0adcb8198267792ac32cb50f475009bb1a0cfff839ac2c94f41df8cca",
+        "enqueued_on_webrtc_track": true,
+        "transmitted_samples": 41491,
+        "delivery_complete": true,
+        "delivered_pcm_sha256": "1686b19c8c3c73b3629c7aeac74029bc70d59d1f326ad47524b81bee3794ac28"
+      }
+    ]
+  },
+  "transport": {
+    "kind": "webrtc",
+    "pstn_used": false,
+    "e164_required": false,
+    "sdp_negotiated": true,
+    "offer_sha256": "a08ac0b87d92b1e92cb28fbb1b23d71a845dec2b6fcddd3b916ccd00c778ad69",
+    "answer_sha256": "94bef0859b07a728240bf7699c0c9982744e1145783c3522c31a304a613d013c",
+    "ice_connection_state": "connected",
+    "ice_connected_observed": true,
+    "data_channel_open": true,
+    "local_audio_track": true,
+    "remote_audio_track": true,
+    "rtc_stats": {
+      "inbound_packets": 1679,
+      "inbound_bytes": 147402,
+      "outbound_packets": 1679,
+      "outbound_bytes": 69386
+    },
+    "server_received_audio_frames": 1675,
+    "server_received_audio_samples": 1608000,
+    "server_received_audio_pcm_bytes": 1071968,
+    "server_sent_tts_samples": 85129
+  },
+  "privacy": {
+    "safe_synthetic_acceptance": true,
+    "private_audio_retained": false,
+    "private_transcripts_retained": false,
+    "safe_synthetic_media_retained": true
+  },
+  "event_counts": {
+    "client.audio.commit": 1,
+    "rtc.ready": 6,
+    "rtc.stats": 46
+  },
+  "transcript": [
+    {
+      "speaker": "agent",
+      "text": "Could you please provide the exact appointment time for Jane Doe's dental checkup and the confirmation code?",
+      "source": "tts.webrtc_downlink",
+      "utterance_id": "tts_01",
+      "purpose": "missing_field_clarification"
+    },
+    {
+      "speaker": "user",
+      "text": "Confirmation called a Cedar 8. I explicitly confirm Tuesday at 3 p.m. and confirmation called Cedar 8.",
+      "source": "asr.microphone_rtp",
+      "asr_receipt_index": 0
+    },
+    {
+      "speaker": "agent",
+      "text": "Appointment time confirmed as Tuesday at 3 p.m. and confirmation number confirmed as Cedar 8.",
+      "source": "tts.webrtc_downlink",
+      "utterance_id": "tts_02",
+      "purpose": "confirmed_completion"
+    }
+  ],
+  "explicit_confirmation_observed": true,
+  "completion": {
+    "result": "Local confirmation recorded.",
+    "appointment_time": "Tuesday at 3 p.m.",
+    "confirmation_number": "Cedar 8",
+    "notes": "No external organization was contacted or booking made.",
+    "saved_at_utc": "2026-07-31T11:24:34.870657+00:00",
+    "tool": "complete_task"
+  },
+  "errors": [],
+  "acceptance": {
+    "checks": {
+      "sdp_offer_answer_negotiated": true,
+      "ice_connected": true,
+      "data_channel_open": true,
+      "browser_microphone_track": true,
+      "server_downlink_audio_track": true,
+      "outbound_audio_rtp": true,
+      "inbound_audio_rtp": true,
+      "server_buffered_microphone_rtp": true,
+      "real_asr_consumed_microphone_audio": true,
+      "external_react_planner_or_fixed_direct_control": true,
+      "real_external_post_asr_dialogue": true,
+      "real_tts_assets_synthesized": true,
+      "tts_audio_transmitted_on_downlink": true,
+      "media_is_canonical_transcript_source": true,
+      "data_channel_is_control_and_caption_only": true,
+      "missing_fields_were_clarified_aloud": true,
+      "explicit_confirmation_observed": true,
+      "structured_completion_saved": true,
+      "no_mock_probe_or_fallback": true,
+      "privacy_boundary_preserved": true
+    },
+    "passed": true
+  },
+  "finish_reason": "automated_safe_acceptance"
+}

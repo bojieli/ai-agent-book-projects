@@ -7,4 +7,6 @@ uvicorn[standard]>=0.27
 httpx>=0.27
 playwright>=1.40
 aiortc>=1.10
+openai-whisper==20231106
+torch>=2.2
 pytest>=8.3

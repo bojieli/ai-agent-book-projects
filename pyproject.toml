@@ -305,7 +305,15 @@ ch7  = ["agentbook[train,audio,viz]"]
 # its own requirements.txt because it also needs vLLM and tighter training-stack
 # compatibility than the shared chapter aggregate should impose.
 ch8  = ["agentbook[viz,docs,media,browser,serve,rag,mcp,providers,orchestration]"]
-ch9  = ["agentbook[serve]", "httpx>=0.27", "playwright>=1.40", "aiortc>=1.10"]
+ch9  = [
+    "agentbook[serve]",
+    "httpx>=0.27",
+    "playwright>=1.40",
+    "aiortc>=1.10",
+    # Experiment 9-2 transcribes the exact browser-microphone RTP capture.
+    "openai-whisper==20231106",
+    "torch>=2.2",
+]
 ch10 = ["agentbook[tokens,web]"]              # token counting and browser research
 
 # Everything except the heavy local-training stack, so `all` stays CPU-friendly.
@@ -320,6 +328,12 @@ environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
     "sys_platform == 'win32'",
 ]
+
+[tool.uv.extra-build-dependencies]
+# openai-whisper 20231106 imports pkg_resources from its setup.py but does not
+# declare setuptools as a build dependency.  80.9 is the final release line
+# that still provides that compatibility module.
+openai-whisper = ["setuptools==80.9.0"]
 
 [project.urls]
 Homepage = "https://github.com/bojieli/ai-agent-book"

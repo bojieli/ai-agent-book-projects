@@ -10,6 +10,7 @@ const state = {
   remoteAudioTrack: false,
   localAudioTrack: false,
   lastStats: null,
+  audioCommitted: false,
 };
 
 function mode() {
@@ -54,7 +55,7 @@ async function saveEvent(event) {
   }
 }
 
-function send(event) {
+function sendControl(event) {
   if (!state.dc || state.dc.readyState !== 'open') throw new Error('data channel is not open');
   state.dc.send(JSON.stringify(event));
 }
@@ -64,7 +65,7 @@ async function publishReady() {
   const open = state.dc?.readyState === 'open';
   const connected = ['connected', 'completed'].includes(state.pc.iceConnectionState);
   $('#transport').textContent = `WebRTC · ICE ${state.pc.iceConnectionState} · data ${state.dc?.readyState || 'new'}`;
-  if (open && connected) setStatus('connected');
+  if (open && connected) setStatus('connected · listening');
   await saveEvent({
     type: 'rtc.ready',
     ice_connection_state: state.pc.iceConnectionState,
@@ -103,13 +104,10 @@ async function collectStats() {
 }
 
 async function handleServerEvent(event) {
-  if (event.type === 'agent.message') {
-    appendTurn('agent', event.text);
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.speak(new SpeechSynthesisUtterance(event.text));
-    }
-  }
+  if (event.type === 'agent.caption') appendTurn('agent', event.text);
+  if (event.type === 'user.caption') appendTurn('user', event.text);
   if (event.type === 'tool.result') {
+    setStatus('task completed · Agent audio playing');
     $('#evidence').textContent = JSON.stringify(event, null, 2);
   }
   if (event.type === 'error') {
@@ -131,11 +129,12 @@ function createRequest() {
 
 async function startCall() {
   $('#start').disabled = true;
-  setStatus('planning');
+  setStatus('real LLM planning');
   try {
     const created = await jsonFetch('/api/calls', {method: 'POST', body: JSON.stringify(createRequest())});
     state.callId = created.call_id;
     state.plan = created.plan;
+    state.audioCommitted = false;
     $('#call-id').textContent = state.callId;
     $('#evidence').textContent = JSON.stringify({plan: state.plan}, null, 2);
 
@@ -152,24 +151,23 @@ async function startCall() {
     pc.onconnectionstatechange = publishReady;
 
     setStatus('requesting microphone');
-    state.stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    state.stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
     const track = state.stream.getAudioTracks()[0];
     if (!track) throw new Error('no microphone audio track was returned');
     state.localAudioTrack = true;
     pc.addTrack(track, state.stream);
 
-    const dc = pc.createDataChannel('oai-events');
+    const dc = pc.createDataChannel('accessibility-and-control');
     state.dc = dc;
     dc.onmessage = (message) => handleServerEvent(JSON.parse(message.data)).catch(console.error);
     dc.onclose = publishReady;
     dc.onopen = async () => {
       await publishReady();
-      send({type: 'client.ready'});
-      $('#text-turn button[type="submit"]').disabled = false;
-      if (window.SpeechRecognition || window.webkitSpeechRecognition) $('#speak-turn').disabled = false;
+      sendControl({type: 'client.ready'});
+      $('#commit-audio').disabled = false;
     };
 
-    setStatus('negotiating');
+    setStatus('negotiating WebRTC');
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     const answerResponse = await fetch(`/api/calls/${state.callId}/session`, {
@@ -190,11 +188,12 @@ async function startCall() {
   }
 }
 
-async function sendText(text) {
-  const cleaned = text.trim();
-  if (!cleaned) return;
-  appendTurn('user', cleaned);
-  send({type: 'user.message', text: cleaned});
+async function commitAudio() {
+  if (state.audioCommitted) throw new Error('microphone audio was already committed');
+  state.audioCommitted = true;
+  $('#commit-audio').disabled = true;
+  setStatus('Whisper ASR · real LLM dialogue');
+  sendControl({type: 'client.audio.commit'});
 }
 
 async function hangup(reason = 'user_hangup') {
@@ -211,8 +210,7 @@ async function hangup(reason = 'user_hangup') {
   setStatus(record.acceptance.passed ? 'completed' : 'ended');
   $('#evidence').textContent = JSON.stringify(record, null, 2);
   $('#hangup').disabled = true;
-  $('#text-turn button[type="submit"]').disabled = true;
-  $('#speak-turn').disabled = true;
+  $('#commit-audio').disabled = true;
   return record;
 }
 
@@ -224,26 +222,10 @@ document.querySelectorAll('input[name="mode"]').forEach((radio) => {
   });
 });
 $('#start').addEventListener('click', () => startCall().catch(console.error));
+$('#commit-audio').addEventListener('click', () => commitAudio().catch(console.error));
 $('#hangup').addEventListener('click', () => hangup().catch(console.error));
-$('#text-turn').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const input = $('#user-text');
-  const text = input.value;
-  input.value = '';
-  await sendText(text);
-});
-$('#speak-turn').addEventListener('click', () => {
-  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!Recognition) return;
-  const recognition = new Recognition();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.onresult = (event) => sendText(event.results[0][0].transcript).catch(console.error);
-  recognition.onerror = (event) => { $('#evidence').textContent = `Speech recognition error: ${event.error}`; };
-  recognition.start();
-});
 
-window.exp92 = {state, startCall, sendText, hangup, collectStats};
+window.exp92 = {state, startCall, commitAudio, hangup, collectStats};
 
 const params = new URLSearchParams(window.location.search);
 if (params.get('mode') === 'direct') {
