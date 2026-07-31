@@ -11,7 +11,7 @@
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
 | 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | 同一确定性寻宝环境下完成 10,000 局 Q-learning、100 局贪婪评估与官方 Moonshot `kimi-k3` 第一局实测；[双臂证据](../chapter1/learning-from-experience/validation/20260730_011704/evidence.json)保留 17/17 原始 API 回执且零 fallback |
-| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | 📖 | 配套说明 + 固定到 `8bdc5d9…` 的外部 `bojieli/minimind`；当前 checkout 缺失，训练未运行 |
+| 7-3 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind/` | ✅ | [规范训练报告](MiniMind-pretrain/validation/runs/exp7-3-training-report-20260731-v1/report.md)绑定原始与 QK-Norm + Muon 两臂在预训练、SFT、DPO 后的 49 份历史输出、8 次匿名 ARK 盲评、源码/数据/环境复现契约与完整 hash；盲评总分 3.6250 对 2.0417（+1.5833，7 胜 1 平），历史 loss 日志缺失的边界明确保留，checkpoint 不随书分发也不作为验收门槛 |
 | 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) · `MiniMind-pretrain/minimind-v/` | 📖 | 配套说明 + 固定到 `ead791c…` 的外部 `bojieli/minimind-v`；当前 checkout 缺失，训练未运行 |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | [规范训练报告](continued-pretraining/validation/runs/exp7-5-training-report-20260731-v1/report.md)绑定 RTX-4090 三阶段原始输出、15 份生成、5 次匿名 ARK 盲评、源码与当前复现 revision；韩语最终阶段 +1.7777，英语下降 0.8333，泡菜事实错误明确保留，checkpoint 不随书分发也不作为验收门槛 |
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 两条真实语音 SFT 轨道：副语言标记建模与跨句音色一致；需训练后 adapter、音频和人工/自动对照证据才算完成 |
@@ -31,7 +31,7 @@
 
 ## 外部训练实验复现锚点
 
-下表严格对应正文实验编号。SHA 来自 2026-07-30 当前工作区 checkout，或同日只读上游审计；这里只完成来源/路径/入口静态核验，**没有启动任何训练或外部评测**。
+下表严格对应正文实验编号。SHA 来自 2026-07-30 当前工作区 checkout，或同日只读上游审计。7-3 另有上表链接的历史训练报告验收包；其固定 revision 是未来复现契约，不冒充历史训练时的精确 checkout。其余标为未完成的条目仍只完成来源/路径/入口静态核验，**没有启动训练或外部评测**。
 
 | 实验 | 权威上游 → 本地源码路径 | 固定提交 | 已核对入口 |
 | :--: | --- | --- | --- |
@@ -55,7 +55,7 @@ git clone https://github.com/bojieli/verl.git chapter7/verl && git -C chapter7/v
 git clone https://github.com/bojieli/AWorld.git chapter7/AWorld && git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
 ```
 
-以下四个源码目录当前缺失，但不可变版本已经固定。每组命令都显式 fetch、detached checkout，并核对 `rev-parse HEAD`；源码就绪仍不等于实验完成：
+以下四个源码目录当前缺失，但不可变版本已经固定。每组命令都显式 fetch、detached checkout，并核对 `rev-parse HEAD`。7-3 的 checkpoint-free 训练报告已按本书训练实验政策验收；对其他实验而言，源码就绪仍不等于实验完成：
 
 ```bash
 git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/minimind
