@@ -6,6 +6,10 @@ Shows how cache usage improves response times
 
 import os
 import sys
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 def test_ttft_tracking():
@@ -21,7 +25,7 @@ def test_ttft_tracking():
     print("="*60)
     
     # Task that requires multiple iterations
-    task = """Analyze the week1/context directory:
+    task = """Analyze the chapter1/context directory:
     1. Find all Python files
     2. Read the agent.py file (first 100 lines)
     3. Search for classes in the code

@@ -20,8 +20,8 @@ def test_file_tools():
     
     # Test 1: Find Python files
     print("\n1️⃣ Testing 'find' command...")
-    print("   Finding *.py files in week1/context directory...")
-    result = tools.find("*.py", "week1/context")
+    print("   Finding *.py files in chapter1/context directory...")
+    result = tools.find("*.py", "chapter1/context")
     
     if result["success"]:
         print(f"   ✓ Found {result['count']} Python files")
@@ -32,20 +32,20 @@ def test_file_tools():
     
     # Test 2: Read a file
     print("\n2️⃣ Testing 'read_file' command...")
-    test_file = "week1/context/README.md"
+    test_file = "chapter1/context/README.md"
     print(f"   Reading {test_file}...")
     result = tools.read_file(test_file)
     
     if result["success"]:
-        print(f"   ✓ Read file successfully ({result['size']} bytes)")
+        print(f"   ✓ Read file successfully ({len(result['content'])} bytes)")
         print(f"   First 100 chars: {result['content'][:100]}...")
     else:
         print(f"   ✗ Error: {result['error']}")
     
     # Test 3: Grep for a pattern
     print("\n3️⃣ Testing 'grep' command...")
-    print("   Searching for 'agent' in week1 directory...")
-    result = tools.grep("agent", directory="week1")
+    print("   Searching for 'agent' in chapter1 directory...")
+    result = tools.grep("agent", directory="chapter1")
     
     if result["success"]:
         print(f"   ✓ Found {result['match_count']} matches in {result['files_searched']} files")
@@ -67,8 +67,8 @@ def test_file_tools():
     
     # Test 5: Grep in specific file
     print("\n5️⃣ Testing 'grep' in specific file...")
-    print("   Searching for 'class' in week1/context/agent.py...")
-    result = tools.grep("class", file_path="week1/context/agent.py")
+    print("   Searching for 'class' in chapter1/context/agent.py...")
+    result = tools.grep("class", file_path="chapter1/context/agent.py")
     
     if result["success"]:
         print(f"   ✓ Found {result['match_count']} matches")
@@ -94,10 +94,10 @@ def test_pattern_matching():
     
     # Test different file patterns
     patterns = [
-        ("*.md", "week1", "Markdown files"),
-        ("*.py", "week2", "Python files"),
+        ("*.md", "chapter1", "Markdown files"),
+        ("*.py", "chapter2", "Python files"),
         ("README*", ".", "README files"),
-        ("test_*.py", "week1", "Test files"),
+        ("test_*.py", "chapter1", "Test files"),
     ]
     
     for pattern, directory, description in patterns:
@@ -113,10 +113,10 @@ def test_pattern_matching():
     print("-"*40)
     
     grep_tests = [
-        (r"def \w+\(", "week1/context/agent.py", "Function definitions"),
-        (r"import \w+", "week1/context/main.py", "Import statements"),
-        (r"TODO|FIXME", "week1", "TODO/FIXME comments"),
-        (r"^\s*class", "week1/context/agent.py", "Class definitions"),
+        (r"def \w+\(", "chapter1/context/agent.py", "Function definitions"),
+        (r"import \w+", "chapter1/context/main.py", "Import statements"),
+        (r"TODO|FIXME", "chapter1", "TODO/FIXME comments"),
+        (r"^\s*class", "chapter1/context/agent.py", "Class definitions"),
     ]
     
     for pattern, target, description in grep_tests:

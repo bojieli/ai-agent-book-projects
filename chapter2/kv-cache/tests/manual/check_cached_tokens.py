@@ -5,6 +5,10 @@ Test script to verify cached tokens are being parsed correctly from Kimi API
 
 import os
 import sys
+from _bootstrap import add_project_root
+
+add_project_root()
+
 from agent import KVCacheAgent, KVCacheMode
 
 def test_cached_tokens():
@@ -20,7 +24,7 @@ def test_cached_tokens():
     print("="*60)
     
     # Simple task that requires a few iterations
-    task = "Find Python files in week1/context directory and tell me how many there are."
+    task = "Find Python files in chapter1/context directory and tell me how many there are."
     
     print(f"Task: {task}")
     print("-"*40)
