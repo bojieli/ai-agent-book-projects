@@ -1,7 +1,7 @@
 import unittest
 from types import SimpleNamespace
 
-from customer_service_env import run_case
+from customer_service_env import _derive_claims_and_promises, run_case
 from verifier import TrajectoryVerifier
 
 
@@ -101,6 +101,9 @@ class ClaimActionOrderTest(unittest.TestCase):
                     response("Your refund has been completed."),
                 ]))
                 trajectory["tool_calls"][-1]["turn"] = call_turn
+                trajectory["claims"], trajectory["promises"] = _derive_claims_and_promises(
+                    trajectory["messages"], trajectory["tool_calls"]
+                )
                 trajectory["promises"][0]["turn"] = promise_turn
 
                 report = TrajectoryVerifier().evaluate(trajectory)
@@ -108,6 +111,8 @@ class ClaimActionOrderTest(unittest.TestCase):
                     item["dimension"]: item["verdict"] for item in report["dimensions"]
                 }
                 self.assertEqual("fail", verdicts["promise_action_consistency"])
+                if not isinstance(call_turn, (int, float)):
+                    self.assertEqual("fail", verdicts["factual_reliability"])
 
 
 if __name__ == "__main__":
