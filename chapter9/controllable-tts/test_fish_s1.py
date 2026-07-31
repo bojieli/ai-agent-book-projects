@@ -1,9 +1,11 @@
 import json
+import subprocess
 
 import pytest
 
 from evaluate_audio_quality import DIMENSIONS, OUTPUTS, PERMUTATIONS, aggregate, validate_response
 from markup import parse
+from tts import concat_mp3, make_silence
 from voice_library import EMOTIONS, SPEEDS, STYLES, load_voice_library
 
 
@@ -15,6 +17,29 @@ def test_native_s1_nonverbal_events_not_onomatopoeia():
     assert "(chuckling)" in texts
     assert "(gasping)" in texts
     assert "哈哈，" not in texts and "唉——" not in texts
+
+
+@pytest.mark.parametrize(
+    "directory_name",
+    ["speaker clips", "speaker's clips", "d'angelo's clips"],
+)
+def test_concat_handles_apostrophe_in_output_directory(tmp_path, directory_name):
+    """FFconcat must preserve ordinary, single-quote, and multi-quote paths."""
+    output_dir = tmp_path / directory_name
+    output_dir.mkdir()
+    parts = [output_dir / "first.mp3", output_dir / "second.mp3"]
+    for part in parts:
+        make_silence(100, part)
+
+    output = output_dir / "joined.mp3"
+    concat_mp3(parts, output)
+
+    duration = float(subprocess.check_output([
+        "ffprobe", "-v", "error", "-show_entries", "format=duration",
+        "-of", "default=noprint_wrappers=1:nokey=1", str(output),
+    ], text=True).strip())
+    assert output.is_file()
+    assert duration >= 0.18
 
 
 def test_library_requires_exact_cartesian_product(tmp_path):

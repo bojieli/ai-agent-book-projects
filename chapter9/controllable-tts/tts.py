@@ -77,7 +77,8 @@ def make_silence(ms: int, out_path: str | Path) -> None:
 def concat_mp3(parts: list[Path], out_path: str | Path) -> None:
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as handle:
         for part in parts:
-            handle.write(f"file '{part.resolve()}'\n")
+            escaped = part.resolve().as_posix().replace("'", "'\\''")
+            handle.write(f"file '{escaped}'\n")
         list_path = handle.name
     try:
         subprocess.run(
