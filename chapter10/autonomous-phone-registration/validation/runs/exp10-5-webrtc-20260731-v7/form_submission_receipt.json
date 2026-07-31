@@ -1,0 +1,19 @@
+{
+  "endpoint_scope": "localhost-only",
+  "submission_count": 1,
+  "submissions": [
+    {
+      "field_names": [
+        "address",
+        "email",
+        "firstName",
+        "gender",
+        "lastName",
+        "userNumber"
+      ],
+      "field_count": 6,
+      "all_values_redacted": true
+    }
+  ],
+  "raw_values_retained": false
+}

@@ -1,8 +1,10 @@
 import json
+import hashlib
 from pathlib import Path
 
 
 ROOT = Path(__file__).parent
+WEBRTC_RUN = ROOT / "validation/runs/exp10-5-webrtc-20260731-v7"
 
 
 def test_persisted_evidence_is_redacted_and_does_not_overclaim_voice():
@@ -48,3 +50,55 @@ def test_latest_real_browser_llm_recheck_passes_only_safe_gates():
     assert data["gates"]["real_pstn_call"]["status"] == "not_run"
     assert data["gates"]["real_audio_asr_tts"]["status"] == "not_run"
     assert data["overall_status"] == "incomplete"
+
+
+def test_formal_webrtc_acceptance_passes_every_gate_without_pstn():
+    report = json.loads((WEBRTC_RUN / "acceptance_report.json").read_text())
+    receipt = json.loads((WEBRTC_RUN / "form_submission_receipt.json").read_text())
+    timeline = json.loads((WEBRTC_RUN / "message_timeline.json").read_text())
+
+    assert report["overall_status"] == "pass"
+    assert all(gate["status"] == "pass" for gate in report["gates"].values())
+    assert report["provider_receipts"]["decision"]["response_id"]
+    assert len(report["provider_receipts"]["field_extractions"]) == 7
+    assert report["result"] == {
+        "filled": ["firstName", "lastName", "email", "userNumber", "gender", "address"],
+        "submitted": True,
+        "errors": [],
+    }
+    assert receipt["endpoint_scope"] == "localhost-only"
+    assert receipt["submission_count"] == 1
+    assert receipt["raw_values_retained"] is False
+
+    media = report["webrtc_receipt"]
+    assert media["offers"] == media["answers"] == 1
+    assert media["media_recordings"] == media["asr_count"] == 7
+    assert media["tts_prompt_count"] == 9
+    assert media["raw_audio_retained"] is media["transcripts_retained"] is False
+    assert all(item["packets"] > 0 and item["bytes"] > 0 for item in media["audio_rtp"])
+
+    assert sum(row["type"] == "format_invalid" for row in timeline) == 1
+    assert any(
+        row["type"] == "question_asked"
+        and row["payload"] == {"field": "email", "attempt": 2}
+        for row in timeline
+    )
+    collected = [row for row in timeline if row["type"] == "info_collected"]
+    assert len(collected) == 6
+    assert {row["payload"]["value"] for row in collected} == {"<redacted>"}
+    overlaps = report["timing_evidence"]["overlap_checks"]
+    assert len(overlaps) == report["timing_evidence"]["expected_overlap_count"] == 5
+    assert all(row["next_question_before_fill_completed"] for row in overlaps)
+
+
+def test_formal_webrtc_manifest_hashes_runtime_and_artifacts():
+    manifest = json.loads((WEBRTC_RUN / "manifest.json").read_text())
+    assert manifest["acceptance"] == {
+        "overall_status": "pass", "gate_count": 9, "passed_gate_count": 9,
+    }
+    assert manifest["privacy"]["phone_number_required"] is False
+    assert manifest["privacy"]["pstn_provider_required"] is False
+    for name, expected in manifest["artifact_sha256"].items():
+        assert hashlib.sha256((WEBRTC_RUN / name).read_bytes()).hexdigest() == expected
+    for name, expected in manifest["source_sha256"].items():
+        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == expected

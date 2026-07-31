@@ -171,4 +171,14 @@ async def decide_orchestration(
         model=model,
         monotonic_seconds=round(time.monotonic() - elapsed, 6),
         provider=provider,
+        provider_response_id=getattr(response, "id", None),
+        provider_usage={
+            key: int(value)
+            for key, value in {
+                "prompt_tokens": getattr(getattr(response, "usage", None), "prompt_tokens", None),
+                "completion_tokens": getattr(getattr(response, "usage", None), "completion_tokens", None),
+                "total_tokens": getattr(getattr(response, "usage", None), "total_tokens", None),
+            }.items()
+            if value is not None
+        },
     )

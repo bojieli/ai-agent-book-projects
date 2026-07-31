@@ -14,6 +14,18 @@ from models import DecisionRecord, FieldSpec
 from voice import PhoneChannel
 
 
+_EXTRACTION_RECEIPTS: List[Dict[str, object]] = []
+
+
+def reset_extraction_receipts() -> None:
+    _EXTRACTION_RECEIPTS.clear()
+
+
+def extraction_receipts() -> List[Dict[str, object]]:
+    """Return value-free provider metadata for experiment provenance."""
+    return [dict(item) for item in _EXTRACTION_RECEIPTS]
+
+
 async def _extract_value(field: FieldSpec, utterance: str) -> str:
     """Use the Phone Agent's LLM to turn a natural spoken answer into one value."""
     from openai import AsyncOpenAI
@@ -49,7 +61,9 @@ async def _extract_value(field: FieldSpec, utterance: str) -> str:
                 "role": "system",
                 "content": (
                     "Extract only the value the user supplied for the requested form field. "
-                    "Never infer a missing value. Preserve identifiers exactly. Return exactly "
+                    "Never infer a missing value. Preserve identifiers exactly, while normalizing "
+                    "explicitly spoken email words such as 'at' and 'dot' to symbols and spoken "
+                    "number words to digits when the field requires them. Return exactly "
                     "one JSON object with the schema {\"value\": \"the extracted value\"}."
                 ),
             },
@@ -86,6 +100,23 @@ async def _extract_value(field: FieldSpec, utterance: str) -> str:
     else:
         raise RuntimeError("所有已配置的 Phone Agent 文本端点均失败") from last_error
     data = json.loads(response.choices[0].message.content or "{}")
+    usage = getattr(response, "usage", None)
+    _EXTRACTION_RECEIPTS.append({
+        "operation": "field_value_extraction",
+        "provider": provider,
+        "model": model,
+        "response_id": getattr(response, "id", None),
+        "usage": {
+            key: int(value)
+            for key, value in {
+                "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                "completion_tokens": getattr(usage, "completion_tokens", None),
+                "total_tokens": getattr(usage, "total_tokens", None),
+            }.items()
+            if value is not None
+        },
+        "transcript_or_value_retained": False,
+    })
     return str(data.get("value", "")).strip()
 
 
