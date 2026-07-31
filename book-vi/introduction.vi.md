@@ -65,7 +65,16 @@ Mỗi chương chứa một số lượng lớn **thí nghiệm** và **câu h�
 
 > **Kho mã hỗ trợ**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-Tên dự án trong kho tương ứng với các thử nghiệm trong sách và mỗi dự án đều chứa các hướng dẫn chạy hoàn chỉnh và cấu hình phụ thuộc. Tôi thực sự khuyên bạn nên tự mình thực hiện những thử nghiệm này. AI Agent là một lĩnh vực rất thực tế và nhiều trực giác thiết kế cần được thiết lập thực sự trong quá trình gỡ lỗi thực hành.
+Bạn có thể lấy toàn bộ mã nguồn đi kèm bằng Git:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+Nếu không sử dụng Git, bạn cũng có thể chọn **Code → Download ZIP** trên trang kho mã. Mã thử nghiệm được sắp xếp theo từng chương, từ `chapter1/` đến `chapter10/`. Để tìm “Thử nghiệm X-Y”, hãy mở tệp `chapterX/README.vi.md` tương ứng, dùng số thử nghiệm để xác định thư mục dự án, rồi làm theo README của dự án đó để cài đặt các phần phụ thuộc và chạy thử nghiệm. Một số thử nghiệm được đánh dấu là hướng dẫn tái lập phụ thuộc vào các kho mã bên ngoài; README tương ứng cũng giải thích cách lấy chúng.
+
+Tôi thực sự khuyên bạn nên tự mình thực hiện những thử nghiệm này. AI Agent là một lĩnh vực rất thực tế và nhiều trực giác thiết kế cần được thiết lập thực sự trong quá trình gỡ lỗi thực hành.
 
 **Quy ước về thuật ngữ**: Một số từ kỹ thuật tiếng Anh có thể gây ra sự mơ hồ khi dịch trực tiếp sang tiếng Trung. Cuốn sách này tạo ra sự khác biệt đặc biệt giữa hai từ được sử dụng nhiều: lý luận (quá trình suy luận và "suy nghĩ" trong quá trình mở rộng mô hình) được dịch thống nhất là "suy nghĩ" và suy luận (hoạt động tính toán và triển khai tiếp theo của mô hình) được dịch thống nhất là "lý luận". Mục đích của việc sử dụng hai từ tiếng Trung khác nhau là để ngăn từ “lý luận” mang hai khái niệm cùng một lúc và khiến người đọc không thể phân biệt được. Do đó, cuốn sách này sử dụng "tư duy" ở bất cứ nơi nào nó đề cập đến chuỗi tư duy mô hình (Chain-of-Thought), các mô hình tư duy (chẳng hạn như dòng OpenAI o, DeepSeek-R1, được gọi là "mô hình tư duy" và "nhà tư tưởng" trong cuốn sách này), mã thông báo tư duy và quy trình tư duy; bất cứ khi nào nó đề cập đến hoạt động và triển khai mô hình (thời gian suy luận, chi phí suy luận, ngăn xếp suy luận, mở rộng thời gian suy luận, v.v.), "suy luận" đều được sử dụng. Một ngoại lệ là một số từ ghép đã được cô đọng trong tiếng Trung: **lý luận logic, lý luận nhiều bước, lý luận không gian, lý luận thời gian** và cách sử dụng hàng ngày như "trò chơi suy luận". Cuốn sách này theo cách dịch thông thường để giữ lại từ "lý luận". Người đọc được yêu cầu hiểu theo ngữ cảnh. Chúng đề cập đến ý nghĩa chung của suy luận suy diễn, hơn là ý nghĩa kỹ thuật của suy luận đã đề cập ở trên. Đối với các thuật ngữ chính khác, văn bản sẽ cung cấp phần so sánh tiếng Trung và tiếng Anh ở nơi chúng xuất hiện lần đầu.
 

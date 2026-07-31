@@ -65,7 +65,16 @@ Setiap bab berisi sejumlah besar **eksperimen** dan **pertanyaan pemikiran (thou
 
 > **Repositori Kode Pendamping**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-Nama proyek yang ada di dalam repositori berhubungan satu-lawan-satu (*one-to-one*) dengan eksperimen yang ada di dalam buku, dan setiap proyek menyertakan instruksi menjalankan serta konfigurasi dependensi yang lengkap. Saya sangat menyarankan Anda untuk menjalankan sendiri eksperimen-eksperimen ini: AI Agents adalah bidang praktik yang intens, dan banyak intuisi desain yang hanya akan terbentuk saat Anda melakukan proses *debugging*.
+Anda dapat memperoleh seluruh kode pendamping dengan Git:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+Jika Anda tidak menggunakan Git, Anda juga dapat memilih **Code → Download ZIP** pada halaman repositori. Kode eksperimen disusun berdasarkan bab, dari `chapter1/` hingga `chapter10/`. Untuk menemukan “Eksperimen X-Y”, buka `chapterX/README.id.md` yang sesuai, gunakan nomor eksperimen untuk menemukan direktori proyeknya, lalu ikuti README proyek tersebut untuk memasang dependensi dan menjalankannya. Beberapa eksperimen yang ditandai sebagai panduan reproduksi bergantung pada repositori eksternal; README masing-masing juga menjelaskan cara memperolehnya.
+
+Saya sangat menyarankan Anda untuk menjalankan sendiri eksperimen-eksperimen ini: AI Agents adalah bidang praktik yang intens, dan banyak intuisi desain yang hanya akan terbentuk saat Anda melakukan proses *debugging*.
 
 **Catatan Terminologi**: Buku ini berhati-hati dalam membedakan dua istilah yang penggunaannya sehari-hari sering kali dicampuradukkan. **Reasoning (Penalaran)** adalah cara berpikir model langkah demi langkah—seperti pada *reasoning models*, *Chain of Thought*, dan *reasoning tokens*. **Inference (Inferensi)** adalah komputasi model ke depan pada saat *deployment*—seperti pada *inference cost*, *inference stack*, dan *inference-time scaling*. (Edisi bahasa Mandarin menerjemahkannya menjadi dua kata yang berbeda—思考 untuk *reasoning*, 推理 untuk *inference*—tepatnya demi menjaga agar kedua ide tersebut tetap terpisah; studi kasus terjemahan pada Bab 10 merujuk kembali kepada konvensi ini.) Istilah-istilah penting lainnya akan didefinisikan pada saat mereka dimunculkan pertama kalinya di dalam teks.
 

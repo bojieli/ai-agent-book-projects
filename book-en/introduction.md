@@ -65,7 +65,16 @@ Each chapter contains a large number of **experiments** and **thought questions*
 
 > **Companion Code Repository**: [https://github.com/bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 
-The project names in the repository correspond one-to-one with the experiments in the book, and each project includes complete run instructions and dependency configurations. I strongly recommend running these experiments yourself: AI Agents are an intensely hands-on field, and many design intuitions only take shape while you are debugging.
+You can obtain all companion code with Git:
+
+```bash
+git clone https://github.com/bojieli/ai-agent-book.git
+cd ai-agent-book
+```
+
+If you do not use Git, you can also select **Code → Download ZIP** on the repository page. Experiment code is organized by chapter under `chapter1/` through `chapter10/`. To find “Experiment X-Y,” open the corresponding `chapterX/README.en.md`, use the experiment number to locate its project directory, and then follow that project's README to install dependencies and run it. Some experiments marked as reproduction guides depend on external repositories; their READMEs explain how to obtain those as well.
+
+I strongly recommend running these experiments yourself: AI Agents are an intensely hands-on field, and many design intuitions only take shape while you are debugging.
 
 **A Terminology Note**: This book is careful to distinguish two terms that casual usage often conflates. **Reasoning** is the model's step-by-step thinking—as in reasoning models, chain-of-thought, and reasoning tokens. **Inference** is the model's forward computation at deployment time—as in inference cost, inference stack, and inference-time scaling. (The Chinese edition renders them as two distinct words—思考 for reasoning, 推理 for inference—precisely to keep the two ideas apart; Chapter 10's translation case study refers back to this convention.) Other key terms are defined at their first occurrence in the text.
 
