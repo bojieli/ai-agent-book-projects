@@ -8,13 +8,13 @@
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Chạy Q-learning và LLM Agent trong cùng môi trường săn kho báu để học từ kinh nghiệm. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Chưng cất ví dụ của giáo viên thành prompt học viên và so sánh chất lượng với chi phí. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Tiền huấn luyện mô hình ngôn ngữ nhỏ từ con số 0, hiểu toàn bộ quy trình và kỹ thuật then chốt của tiền huấn luyện. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Tiếp tục tiền huấn luyện trên dữ liệu miền cụ thể để nâng cao biểu hiện của mô hình trong miền mục tiêu. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: tinh chỉnh LoRA mô hình TTS 1B, điều khiển biểu cảm bằng các thẻ cận ngôn ngữ như `<laugh>`, `<sigh>` |
 | 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B speech SFT: tinh chỉnh LoRA mô hình TTS, nhân bản giọng nói qua âm thanh tham chiếu để giữ chất giọng nhất quán xuyên câu |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Huấn luyện năng lực suy luận của mô hình trong môi trường nhiều ngôn ngữ, nâng cao biểu hiện trên các nhiệm vụ xuyên ngôn ngữ. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | Chưng cất quỹ đạo CoT từ các mô hình tiên phong như Claude qua OpenRouter; lọc bằng bộ kiểm chứng luật để tạo dữ liệu SFT (kèm Thí nghiệm 7-9). |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | Cho mô hình suy luận học cách chọn chế độ suy luận thích ứng theo độ khó của câu hỏi (Thinking vs NoThinking). Thông qua tối ưu có ràng buộc và importance sampling, dự án giảm mạnh chi phí suy luận (45–69%) đồng thời nâng cao độ chính xác. Dựa trên mô hình DeepSeek-R1-Distill-Qwen, huấn luyện bằng thuật toán DAPO. |
 | 7-11 | `SFTvsRL/` | 📖 | So sánh có hệ thống hiệu quả của fine-tuning có giám sát (SFT) và học tăng cường (RL) trên các nhiệm vụ khác nhau, phân tích ưu nhược điểm và ngữ cảnh phù hợp của hai phương pháp. |

@@ -3,13 +3,13 @@
 [![PDF](https://img.shields.io/badge/PDF-indir-success.svg)](#-e-kitap) [![Çevrimiçi oku](https://img.shields.io/badge/🌐_Çevrimiçi_oku-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/çeviri-10%20dil-informational.svg)](#-e-kitap)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · Türkçe ← şu an · [한국어](../ko/README.md)**
 
 > 📥 **[PDF / EPUB indir](#-e-kitap)** (önerilir) — PDF / EPUB sürümleri en iyi okuma deneyimini sunar; kitabı [çevrimiçi](https://bojieli.github.io/ai-agent-book/) da okuyabilirsiniz.
 
 **Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **93 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
 
-| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **10 dil**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **11 dil**: CN / EN / ES / AR / zh-TW / RU / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 E-Kitap
@@ -18,6 +18,7 @@
 > - **Çince (orijinal)**: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **Tayvan Geleneksel Çincesi** (topluluk çevirisi, by [@tigercosmos](https://github.com/tigercosmos)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
 > - **İngilizce** (topluluk çevirisi, by [@nsdevaraj](https://github.com/nsdevaraj) ve [@whanyu1212](https://github.com/whanyu1212)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **İspanyolca** (topluluk çevirisi): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.epub)
 > - **Arapça** (topluluk çevirisi, by [@TheSyBuilder](https://github.com/TheSyBuilder)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **Rusça** (topluluk çevirisi, by [@ui99ru](https://github.com/ui99ru)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **Tamilce** (topluluk çevirisi, by [@nsdevaraj](https://github.com/nsdevaraj)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
@@ -28,9 +29,9 @@
 >
 > 🌐 Kitabı ayrıca [çevrimiçi okuyabilirsiniz](https://bojieli.github.io/ai-agent-book/) — dil değiştirici, katlanabilir bölüm ağacı, tam metin araması ve eşlik eden deneylere doğrudan bağlantılar sunar.
 
-Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe/Korece sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) klasörlerinde bulunur.
+Çince metin kaynağı [`book/`](../../book/) içindedir; İngilizce/İspanyolca/Arapça/Geleneksel Çince/Rusça/Tamilce/Vietnamca/Japonca/Türkçe/Korece sürümleri topluluk katkısıdır (Çince orijinalin gerisinde kalabilir), sırasıyla [`book-en/`](../../book-en/), [`book-es/`](../../book-es/), [`book-ar/`](../../book-ar/), [`book-zhtw/`](../../book-zhtw/), [`book-ru/`](../../book-ru/), [`book-ta/`](../../book-ta/), [`book-vi/`](../../book-vi/), [`book-ja/`](../../book-ja/), [`book-tr/`](../../book-tr/), [`book-ko/`](../../book-ko/) klasörlerinde bulunur.
 
-Birleşik derleme betiği Çince, İngilizce, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca, Türkçe ve Korece için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
+Birleşik derleme betiği Çince, İngilizce, İspanyolca, Arapça, Geleneksel Çince, Rusça, Tamilce, Vietnamca, Japonca, Türkçe ve Korece için EPUB 3 e-kitapları üretir. Bkz. [EPUB derleme talimatları](../../EPUB.md).
 
 <details>
 <summary><b>🔧 PDF'i kendiniz derlemek mi istiyorsunuz?</b> (pandoc / xelatex / ElegantBook gerektirir)</summary>

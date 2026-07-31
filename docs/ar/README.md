@@ -3,7 +3,7 @@
 [![PDF](https://img.shields.io/badge/PDF-تنزيل-success.svg)](#-الكتاب-الإلكتروني) [![القراءة عبر الإنترنت](https://img.shields.io/badge/🌐_قراءة_عبر_الإنترنت-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![النجوم](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![الترخيص](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![اللغات](https://img.shields.io/badge/الترجمات-10%20لغات-informational.svg)](#-الكتاب-الإلكتروني)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · العربية ← الحالية · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > **ملاحظة حول الترجمة:** هذه ترجمة عربية كاملة، خضعت لمراجعة تحريرية وتقنية شملت سلامة المعنى، وطبيعية الأسلوب، واتساق المصطلحات، وبنية النص والرسوم.
 >
@@ -11,7 +11,7 @@
 
 **الوكيل = LLM + السياق + الأدوات** — تنظم هذه المعادلة فصول الكتاب العشرة، التي تنتقل من المبادئ إلى الممارسة الهندسية. والنص الكامل والرسوم و**93 تجربة مصاحبة** كلها مفتوحة المصدر، ويمكنك تشغيل التجارب بنفسك.
 
-| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **10 لغات**: CN / EN / AR / zh-TW / RU / TA / VI / JA / TR / KO |
+| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **11 لغة**: CN / EN / ES / AR / zh-TW / RU / TA / VI / JA / TR / KO |
 | :---: | :---: | :---: |
 
 ## 📖 الكتاب الإلكتروني
@@ -19,6 +19,7 @@
 > 📥 **تنزيل** (موصى به؛ نص كامل، مجاني ومفتوح المصدر). تشير هذه الروابط دائمًا إلى أحدث إصدار لفرع `main`؛ الإصدارات الثابتة موجودة في صفحة [الإصدارات](https://github.com/bojieli/ai-agent-book/releases):
 > - **الصينية (الأصل)**: [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **الإنجليزية** (ترجمة المجتمع، بواسطة [@nsdevaraj](https://github.com/nsdevaraj) و[@whanyu1212](https://github.com/whanyu1212)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **الإسبانية** (ترجمة المجتمع): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.epub)
 > - **الصينية التقليدية (تايوان)** (ترجمة المجتمع، بواسطة [@tigercosmos](https://github.com/tigercosmos)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
 > - **الروسية** (ترجمة المجتمع، بواسطة [@ui99ru](https://github.com/ui99ru)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
 > - **التاميلية** (ترجمة المجتمع، بواسطة [@nsdevaraj](https://github.com/nsdevaraj)): [PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ta.epub)
@@ -30,7 +31,7 @@
 >
 > 🌐 يمكنك أيضًا [القراءة عبر الإنترنت](https://bojieli.github.io/ai-agent-book/) عبر واجهة متعددة اللغات، وشجرة فصول قابلة للطي، وبحث في النص الكامل، وروابط مباشرة للتجارب المصاحبة. ويُعاد بناء الموقع تلقائيًا عند كل دفع إلى الفرع `main`.
 
-يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية والكورية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد في [`book-en/`](../../book-en/)، و[`book-zhtw/`](../../book-zhtw/)، و[`book-ru/`](../../book-ru/)، و[`book-ta/`](../../book-ta/)، و[`book-vi/`](../../book-vi/)، و[`book-ja/`](../../book-ja/)، و[`book-tr/`](../../book-tr/)، و[`book-ko/`](../../book-ko/) على الترتيب.
+يوجد المصدر الصيني في [`book/`](../../book/)، وتوجد النسخة العربية الحالية في [`book-ar/`](../../book-ar/). أما النسخ الإنجليزية والإسبانية والصينية التقليدية والروسية والتاميلية والفيتنامية واليابانية والتركية والكورية فهي مساهمات مجتمعية قد تتأخر عن الأصل الصيني، وتوجد في [`book-en/`](../../book-en/)، و[`book-es/`](../../book-es/)، و[`book-zhtw/`](../../book-zhtw/)، و[`book-ru/`](../../book-ru/)، و[`book-ta/`](../../book-ta/)، و[`book-vi/`](../../book-vi/)، و[`book-ja/`](../../book-ja/)، و[`book-tr/`](../../book-tr/)، و[`book-ko/`](../../book-ko/) على الترتيب.
 
 ينتج سكربت البناء الموحّد كتب EPUB 3 باللغات العشر، ومنها العربية ذات اتجاه القراءة من اليمين إلى اليسار. راجع [تعليمات إنشاء EPUB](../../EPUB.md).
 
@@ -90,7 +91,7 @@
 
 ## 📦 الملحق · جلب المستودعات الخارجية
 
-لا يتضمن هذا المستودع المستودعات الخارجية التسعة عشر الخاصة بالمعايير وأطر التدريب ومنصات الروبوتات في الفصول 6 و7 و9 و10، وذلك بسبب الحجم وشروط الترخيص. لذا يجب استنساخها في الأدلة المقابلة.
+لا يتضمن هذا المستودع المستودعات الخارجية الـ23 الخاصة بالمعايير وأطر التدريب ومنصات الروبوتات في الفصول 6 و7 و9 و10، وذلك بسبب الحجم وشروط الترخيص. لذا يجب استنساخها في الأدلة المقابلة.
 
 ### سكربت للاستنساخ دفعة واحدة
 

@@ -8,13 +8,13 @@
 
 | சோதனை | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | அனுபவத்திலிருந்து கற்க ஒரே treasure-hunt சூழலில் Q-learning மற்றும் LLM Agent-ஐ இயக்குகிறது. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | ஆசிரியர் எடுத்துக்காட்டுகளை மாணவர் prompt-ஆக distill செய்து தரம் மற்றும் செலவை ஒப்பிடுகிறது. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | பூஜ்ஜியத்திலிருந்து சிறிய மொழி மாதிரிகளை முன்-பயிற்றுவித்து, முன்-பயிற்சியின் முழுமையான செயல்முறையையும் முக்கிய தொழில்நுட்பங்களையும் புரிந்துகொள்ளுங்கள். |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | குறிப்பிட்ட களத் தரவுகளில் தொடர்ச்சியான முன்-பயிற்சியை மேற்கொண்டு, இலக்குக் களத்தில் மாதிரியின் செயல்திறனை மேம்படுத்துகிறது. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM குரல் SFT: 1B TTS மாதிரியை LoRA முறையில் நுண்சரிவு செய்து, `<laugh>`, `<sigh>` போன்ற துணைமொழிக் குறிச்சொற்களால் வெளிப்பாட்டைக் கட்டுப்படுத்துதல் |
 | 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B குரல் SFT: TTS மாதிரியை LoRA முறையில் நுண்சரிவு செய்து, குறிப்பு ஒலியை இணைத்து வாக்கியங்களுக்கு இடையே ஒரே குரல் ஒலித்தன்மையுடன் குரல் நகலெடுப்பு |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | பல மொழிச் சூழல்களில் மாதிரியின் பகுத்தறிவுத் திறனைப் பயிற்றுவித்து, குறுக்கு-மொழிப் பணிகளில் செயல்திறனை மேம்படுத்துகிறது. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | OpenRouter வழியாக Claude போன்ற முன்னணி மாதிரிகளிலிருந்து CoT பாதைகளை திரட்டி, விதி சரிபார்ப்பாளரால் வடிகட்டி SFT தரவை உருவாக்குகிறது (சோதனை 7-9 துணை). |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | பகுத்தறிவு மாதிரிகள் கேள்வியின் சிரமத்திற்கு ஏற்ப பகுத்தறிவு முறையை (Thinking vs NoThinking) தகவமைப்புடன் தேர்ந்தெடுக்கக் கற்றுக்கொடுக்கிறது. கட்டுப்படுத்தப்பட்ட உகப்பாக்கம் மற்றும் முக்கியத்துவ மாதிரியெடுப்பு மூலம், பகுத்தறிவு செலவை (45-69%) பெரிதும் குறைத்த அதே வேளையில் துல்லியத்தையும் மேம்படுத்துகிறது. DeepSeek-R1-Distill-Qwen மாதிரியை அடிப்படையாகக் கொண்டு, DAPO அல்காரிதம் மூலம் பயிற்றுவிக்கப்பட்டது. |
 | 7-11 | `SFTvsRL/` | 📖 | வெவ்வேறு பணிகளில் மேற்பார்வையிடப்பட்ட நுண்-சரிப்படுத்தல் (SFT) மற்றும் வலுவூட்டல் கற்றல் (RL) ஆகியவற்றின் விளைவுகளை முறையாக ஒப்பிட்டு, இரண்டு முறைகளின் நன்மை தீமைகளையும் பொருந்தும் சூழ்நிலைகளையும் பகுப்பாய்வு செய்கிறது. |

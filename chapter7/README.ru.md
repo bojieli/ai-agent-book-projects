@@ -8,13 +8,13 @@
 
 | Эксп. | Проект | Тип | Описание |
 | :--: | --- | :--: | --- |
-| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
+| 7-1, 7-2 | [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Запускает Q-learning и LLM-агента в одной среде поиска сокровищ для обучения на опыте. |
+| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Дистиллирует примеры учителя в prompt ученика и сравнивает качество и стоимость. |
 | 7-3, 7-4 | [MiniMind-pretrain](MiniMind-pretrain/) | 📖 | Предобучает малую языковую модель с нуля, чтобы понять полный процесс предобучения и ключевые технологии. |
 | 7-5 | [continued-pretraining](continued-pretraining/) | ✅ | Выполняет продолженное предобучение на доменных данных для повышения качества модели в целевой области. |
 | 7-6 | [sesame](sesame/) | ✅ | Sesame CSM speech SFT: дообучение 1B TTS-модели методом LoRA, управление выразительностью паралингвистическими тегами `<laugh>`, `<sigh>` |
 | 7-6 | [orpheus](orpheus/) | ✅ | Orpheus 3B speech SFT: дообучение TTS-модели методом LoRA, клонирование голоса по референсному аудио с сохранением тембра между фразами |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Обучает рассуждения модели в многоязычной среде, повышая качество на кросс-язычных задачах. |
-| 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | 7-9 | [cot-distillation](cot-distillation/) | ✅ | Дистиллирует CoT-траектории из передовых моделей вроде Claude через OpenRouter; проверяет правилами и превращает в данные для SFT (сопровождает эксперимент 7-9). |
 | 7-10 | [AdaptThink](AdaptThink/) | 📖 | Учит рассуждающие модели адаптивно выбирать режим рассуждения (Thinking или NoThinking) в зависимости от сложности задачи. Через оптимизацию с ограничениями и importance sampling значительно снижает стоимость рассуждений (45–69%) при росте точности. На базе модели DeepSeek-R1-Distill-Qwen, обучение алгоритмом DAPO. |
 | 7-11 | `SFTvsRL/` | 📖 | Систематически сравнивает эффективность обучения с учителем (SFT) и обучения с подкреплением (RL) на разных задачах, анализируя сильные и слабые стороны и подходящие сценарии обоих методов. |

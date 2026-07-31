@@ -3,13 +3,13 @@
 [![PDF](https://img.shields.io/badge/PDF-%E4%B8%8B%E8%BC%89-success.svg)](#-電子書) [![線上閱讀](https://img.shields.io/badge/🌐_線上閱讀-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/翻譯-10%20種%20語言-informational.svg)](#-電子書)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [العربية](../ar/README.md) · 繁體中文（台灣） ← 當前 · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [العربية](../ar/README.md) · 繁體中文（台灣） ← 當前 · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md)**
 
 > 📥 **[下載 PDF / EPUB](#-電子書)**（推薦）— 推薦使用 PDF / EPUB 離線閱讀，排版最佳；也可[線上閱讀](https://bojieli.github.io/ai-agent-book/)（支援多語言切換、章節摺疊、全文搜尋，每次 main 分支推送後自動重新構建）。
 
 **Agent = LLM + 上下文 + 工具**——本書圍繞這個核心公式，用 10 章把 AI Agent 從原理講到工程實戰。全書正文、配圖、**93 個配套實驗**全部開源，歡迎親手把實驗跑一遍。
 
-| 📚 **10 章** 正文，從基礎到生產 | 📂 **93 個** 配套專案（70+ 可獨立執行） | 🌐 **10 種** 語言：中 / 英 / 阿拉伯 / 繁體中文（台灣） / 俄 / 泰米爾 / 越 / 日 / 土耳其 / 韓 |
+| 📚 **10 章** 正文，從基礎到生產 | 📂 **93 個** 配套專案（70+ 可獨立執行） | 🌐 **11 種** 語言：中 / 英 / 西 / 阿拉伯 / 繁體中文（台灣） / 俄 / 泰米爾 / 越 / 日 / 土耳其 / 韓 |
 | :---: | :---: | :---: |
 
 ## 📖 電子書
@@ -17,6 +17,7 @@
 > 📥 **直接下載**（推薦，全書正文，開源免費）。以下連結始終指向 main 分支的最新建置；固定版本見 [Releases](https://github.com/bojieli/ai-agent-book/releases)：
 > - **中文（原版）**：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-CN.epub)
 > - **英文**（社群翻譯，by [@nsdevaraj](https://github.com/nsdevaraj)、[@whanyu1212](https://github.com/whanyu1212)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.epub)
+> - **西班牙語**（社群翻譯）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.epub)
 > - **阿拉伯語**（社群翻譯，by [@TheSyBuilder](https://github.com/TheSyBuilder)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ar.epub)
 > - **繁體中文（台灣）**（社群翻譯，by [@tigercosmos](https://github.com/tigercosmos)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.epub)
 > - **俄語**（社群翻譯，by [@ui99ru](https://github.com/ui99ru)）：[PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.pdf) · [EPUB](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ru.epub)
@@ -28,9 +29,9 @@
 >
 > 🌐 也可[線上閱讀](https://bojieli.github.io/ai-agent-book/) — 支援多語言切換、章節摺疊、全文搜尋、配套實驗直達，每次 main 分支推送後自動重新構建。
 
-中文正文原始碼位於 [`book/`](../../book/)；英文/阿拉伯語/繁體中文（台灣）/俄語/泰米爾/越南語/日語/土耳其語/韓語版本為社群貢獻（可能滯後於中文原版），分別位於 [`book-en/`](../../book-en/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/)、[`book-tr/`](../../book-tr/)、[`book-ko/`](../../book-ko/)。
+中文正文原始碼位於 [`book/`](../../book/)；英文/西班牙語/阿拉伯語/繁體中文（台灣）/俄語/泰米爾/越南語/日語/土耳其語/韓語版本為社群貢獻（可能滯後於中文原版），分別位於 [`book-en/`](../../book-en/)、[`book-es/`](../../book-es/)、[`book-ar/`](../../book-ar/)、[`book-zhtw/`](../../book-zhtw/)、[`book-ru/`](../../book-ru/)、[`book-ta/`](../../book-ta/)、[`book-vi/`](../../book-vi/)、[`book-ja/`](../../book-ja/)、[`book-tr/`](../../book-tr/)、[`book-ko/`](../../book-ko/)。
 
-可使用統一的建置腳本產生中文、英文、阿拉伯語、繁體中文（台灣）、俄語、泰米爾語、越南語、日語、土耳其語和韓語 EPUB 3 電子書。請參閱 [EPUB 建置說明](../../EPUB.md)。
+可使用統一的建置腳本產生中文、英文、西班牙語、阿拉伯語、繁體中文（台灣）、俄語、泰米爾語、越南語、日語、土耳其語和韓語 EPUB 3 電子書。請參閱 [EPUB 建置說明](../../EPUB.md)。
 
 <details>
 <summary><b>🔧 想自行編譯 PDF？</b>（需 pandoc / xelatex / ElegantBook）</summary>

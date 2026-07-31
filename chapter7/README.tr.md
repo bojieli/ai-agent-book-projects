@@ -8,7 +8,8 @@
 
 | Proje | Tür | Açıklama |
 | --- | :--: | --- |
-| [learning-from-experience](../chapter1/learning-from-experience/) | ✅ | Q-learning and LLM first-run evidence in the deterministic treasure-hunt environment. |
+| [learning-from-experience](../chapter1/learning-from-experience/) (7-1, 7-2) | ✅ | Deneyimden öğrenmek için aynı hazine avı ortamında Q-learning ve LLM Agent çalıştırır. |
+| [prompt-distillation](../chapter8/prompt-distillation/) (7-8) | 🚧 | Öğretmen örneklerini öğrenci prompt'una damıtır ve kalite ile maliyeti karşılaştırır. |
 | [AdaptThink](AdaptThink/) | 📖 | Muhakeme modellerine, problem zorluğuna göre muhakeme modunu (Thinking vs NoThinking) uyarlanabilir şekilde seçmeyi öğretir. Kısıtlı optimizasyon ve önem örneklemesi yoluyla, doğruluğu artırırken muhakeme maliyetlerini önemli ölçüde azaltır (%45-69). DeepSeek-R1-Distill-Qwen modeline dayanır, DAPO algoritmasıyla eğitilir. |
 | [retool](retool/) | 📖 | Büyük dil modellerinin matematiksel muhakeme yeteneğini artırmak için çok turlu diyalog ve bir kod sandbox'ı kullanır. SFT ve RL'den oluşan iki aşamalı bir eğitim süreciyle model, matematik problemlerini çözmeye yardımcı olmak için bir kod yürütme ortamını kullanmayı öğrenir. Qwen2.5-32B-Instruct'a dayanır, AIME 2024 veri kümesinde DAPO algoritması ve SandboxFusion sandbox'ı kullanılarak eğitilir. |
 | `AWorld/` · [AWorld-train](AWorld-train/) | 📖 | AWorld çerçevesine dayalı olarak somutlaşmış (embodied) ajanları eğitir; ajanların sanal bir ortamda karmaşık görevleri yerine getirmesini ve deneyimden öğrenmesini sağlar. |
@@ -16,7 +17,6 @@
 | `verl/` | 📖 | verl, büyük dil modellerinin RLHF eğitimi için özel olarak tasarlanmış verimli bir pekiştirmeli öğrenme çerçevesidir; PPO, GRPO ve DAPO gibi çeşitli algoritmaları destekler. |
 | [Intuitor](Intuitor/) | ✅ | Modellerin sezgisel muhakeme yeteneğini eğitir; ayrıntılı düşünce zincirleri gerektirmeden hızlı, makul kararlar vermelerini sağlar. |
 | [MultilingualReasoning](MultilingualReasoning/) | ✅ | Modellerin çok dilli ortamlardaki muhakeme yeteneğini eğitir; diller arası görevlerdeki performansı artırır. |
-| [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | Cross-chapter prompt distillation implementation; teacher generation, student training, and quality/cost comparison remain acceptance requirements. |
 | [cot-distillation](cot-distillation/) | ✅ | Claude gibi öncü modellerden OpenRouter aracılığıyla CoT trajectory'leri damıtır, bunları kural tabanlı doğrulayıcılarla süzer ve Deney 7-9 için SFT verisi üretir. |
 | [SpatialReasoning](SpatialReasoning/) | 📖 | Konum, yön ve mesafe gibi uzamsal ilişkileri içeren problemleri ele almak için modellerin uzamsal muhakeme yeteneğini eğitmeye odaklanır. |
 | [SimpleVLA-RL](SimpleVLA-RL/) | 📖 | Görsel, dil ve eylemi pekiştirmeli öğrenme eğitiminde birleştirir; modellerin görsel girdiyi anlamasını ve karşılık gelen eylemleri yürütmesini sağlar. |
