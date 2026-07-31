@@ -53,10 +53,10 @@ permissions:
   contents: write
 
 concurrency:
-  # Keep duplicate runs for the same ref deduplicated without allowing a
-  # Korean feature-branch verification run to cancel a main release build.
+  # Serialize runs for the same ref without allowing a newer push to cancel
+  # a long-running build that is already in progress.
   group: build-latest-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
