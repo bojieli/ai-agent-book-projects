@@ -1,0 +1,45 @@
+INFO:     Started server process [67455]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:54022 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54030 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54059 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54058 - "POST /api/calls HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "POST /api/calls/rtc_880a9fe97e324276a7eb/session HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54120 - "GET /api/calls/rtc_880a9fe97e324276a7eb HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54121 - "GET /api/calls/rtc_880a9fe97e324276a7eb HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54122 - "GET /api/calls/rtc_880a9fe97e324276a7eb HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54113 - "POST /api/calls/rtc_880a9fe97e324276a7eb/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_880a9fe97e324276a7eb/finish HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_fbb823b1629440c0a977/session HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54156 - "GET /api/calls/rtc_fbb823b1629440c0a977 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54157 - "GET /api/calls/rtc_fbb823b1629440c0a977 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54158 - "GET /api/calls/rtc_fbb823b1629440c0a977 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54162 - "GET /api/calls/rtc_fbb823b1629440c0a977 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54163 - "GET /api/calls/rtc_fbb823b1629440c0a977 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "POST /api/calls/rtc_fbb823b1629440c0a977/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54155 - "POST /api/calls/rtc_fbb823b1629440c0a977/finish HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [67455]

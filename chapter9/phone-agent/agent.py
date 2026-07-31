@@ -1,317 +1,261 @@
-"""
-电话 Agent —— 一个把 PineClaw Voice（make_phone_call）当作工具的 ReAct Agent。
+"""Planning and conversation contracts for Experiment 9-2.
 
-上层是标准的 ReAct 循环（OpenAI function calling 实现）：
-    用户给一个任务（如"打电话给宽带客服，问清本月为何多扣 50 元并要求解释"）
-        -> Agent 思考需要哪些参数（号码 / 目标 / 上下文）
-        -> 调用 make_phone_call 工具完成整段通话
-        -> 读取返回的【结构化通话记录】
-        -> 若信息不足则追问/再拨，否则向用户给出最终汇报
+The experiment has two arms which share the same browser WebRTC transport:
 
-工具 make_phone_call 由 pineclaw_tool 模块提供，默认调用官方 Pine Voice SDK 和真实电话网络。
+* ``direct``: the caller supplies every call parameter.
+* ``react``: a text model turns one natural-language task into a call plan and
+  explicitly records its observation/action trace.
+
+No PSTN destination is involved.  The person who opens the local page is the
+consenting call participant.
 """
 
 from __future__ import annotations
 
 import json
 import os
-import re
-from typing import Any, Callable
+from dataclasses import asdict, dataclass, field
+from typing import Any
 
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 
-# 复用 pine_voice 里的统一 client/模型解析（OPENAI_API_KEY 直连，缺失则回退 OpenRouter）。
-from pineclaw_tool import make_phone_call, _get_client, default_model
-
-
-def _create_chat(**kwargs):
-    """推理模型（如 gpt-5.x）只接受默认 temperature，会拒绝自定义值；
-    失败时移除 temperature 重试一次（同 book-translation / voice-werewolf）。"""
-    try:
-        return _get_client().chat.completions.create(**kwargs)
-    except Exception as e:
-        if "temperature" not in str(e).lower() or "temperature" not in kwargs:
-            raise
-        kwargs.pop("temperature", None)
-        return _get_client().chat.completions.create(**kwargs)
-
-# 最多允许 Agent 发起几次工具调用（含追问/再拨），防止死循环。
-_MAX_STEPS = 6
-
-_SYSTEM_PROMPT = (
-    "你是一名『电话助理』Agent。用户会交给你一个需要打电话才能完成的任务，"
-    "你要代表用户把电话打好并汇报结果。\n\n"
-    "你有一个工具 make_phone_call，它会把整通电话（拨号、IVR 菜单导航、与客服多轮对话、"
-    "转录）全部交给 PineClaw 语音 Agent 完成，并返回结构化通话记录。\n\n"
-    "工作方式（ReAct）：\n"
-    "1. 先想清楚要拨打的号码、通话目标、需要带上的上下文（账号/姓名/已知信息）。\n"
-    "2. 调用 make_phone_call 完成通话。\n"
-    "3. 读取返回的结构化记录（goal_achieved / key_fields / summary / transcript）。\n"
-    "4. 若目标未达成或信息不足（follow_up_needed 为真），可以带着更明确的目标再拨一次"
-    "（但总次数有限，不要无谓重拨）。\n"
-    "5. 目标达成后，用简洁中文向用户汇报：结论 + 关键信息（金额/原因/确认号/时间等）"
-    "+ 后续建议（如有）。\n\n"
-    "注意：绝不编造或使用占位电话号码。公共企业缺号码时先用 search_business_phone 搜索"
-    "官方网站并核对；私人号码缺失时向用户追问。号码必须是 E.164 格式。"
-    "始终基于工具真实返回的通话记录来汇报，不要编造通话没有提到的信息。"
-)
-
-_TOOLS = [
-    {
-        "type": "function",
-        "function": {
-            "name": "make_phone_call",
-            "description": (
-                "代表用户拨打一通真实电话。PineClaw 语音 Agent 会完成拨号、IVR 菜单导航、"
-                "与对方多轮对话，并返回结构化通话记录（含 transcript、是否达成目标、"
-                "抽取的关键字段）。"
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "phone_number": {
-                        "type": "string",
-                        "description": "真实被叫电话号码，必须是 E.164 格式，如 +14155551234。",
-                    },
-                    "goal": {
-                        "type": "string",
-                        "description": "本次通话要达成的明确目标（一句话）。",
-                    },
-                    "context": {
-                        "type": "string",
-                        "description": "辅助上下文：账号、姓名、已知金额、时间等，可为空。",
-                    },
-                    "callee_name": {
-                        "type": "string",
-                        "description": "被叫个人或企业名称。",
-                    },
-                    "instructions": {
-                        "type": "string",
-                        "description": "回退策略、必须询问及挂断前必须确认的细节。",
-                    },
-                },
-                "required": ["phone_number", "goal"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "search_business_phone",
-            "description": "通过实时网页搜索查找公共企业的官方电话号码和来源页；不得用于寻找私人号码。",
-            "parameters": {
-                "type": "object",
-                "properties": {"query": {"type": "string", "description": "企业名、地点和部门"}},
-                "required": ["query"],
-            },
-        },
-    },
-]
+DEFAULT_PLANNER_MODEL = "gpt-4o-mini"
 
 
-def search_business_phone(query: str) -> dict[str, str]:
-    """Use OpenAI's real web-search tool; return auditable source text to ReAct."""
-    if not os.getenv("OPENAI_API_KEY"):
-        return {"error": "OPENAI_API_KEY is required for live web search"}
-    client = OpenAI(timeout=120, max_retries=3)
-    response = client.responses.create(
-        model=os.getenv("PHONE_SEARCH_MODEL", "gpt-4.1-mini"),
-        tools=[{"type": "web_search_preview"}],
-        input=(
-            "Find the official public phone number for this business/department. "
-            "Return the business name, E.164 number, official source URL, and country. "
-            "Do not infer or search for a private person's number. Query: " + query
-        ),
-    )
-    return {"result": response.output_text}
+@dataclass(frozen=True)
+class CallPlan:
+    mode: str
+    callee_name: str
+    goal: str
+    context: str
+    instructions: str
+    opening_line: str
+    missing_information: list[str] = field(default_factory=list)
+    trace: list[dict[str, str]] = field(default_factory=list)
+    planner_model: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
 
 
-def run_agent(
-    task: str,
-    on_event: Callable[[str, Any], None] | None = None,
+def _required(label: str, value: str) -> str:
+    cleaned = value.strip()
+    if not cleaned:
+        raise ValueError(f"{label} is required")
+    return cleaned
+
+
+def direct_plan(
     *,
-    model: str | None = None,
-    phone_hint: str | None = None,
-    goal_hint: str | None = None,
-    dry_run: bool = False,
-    call_tool: Callable[..., dict[str, Any]] | None = None,
-) -> str:
-    """
-    运行 ReAct 电话 Agent。
+    callee_name: str,
+    goal: str,
+    context: str,
+    instructions: str,
+) -> CallPlan:
+    """Build the fixed-parameter control used by the direct arm."""
+    callee = _required("callee_name", callee_name)
+    return CallPlan(
+        mode="direct",
+        callee_name=callee,
+        goal=_required("goal", goal),
+        context=_required("context", context),
+        instructions=_required("instructions", instructions),
+        opening_line=f"Hello {callee}. I am an AI assistant calling through this browser to help with the requested task.",
+        trace=[
+            {"stage": "observation", "summary": "Caller supplied all call parameters."},
+            {"stage": "action", "summary": "Open a WebRTC voice session with the fixed parameters."},
+        ],
+    )
 
-    参数：
-        task:       用户的自然语言任务。
-        on_event:   可选回调，用于外部观察 Agent 轨迹。
-                    事件类型：'think'(Agent 思考文本) / 'call'(工具入参) /
-                    'record'(结构化通话记录) / 'final'(最终汇报)。
-        model:      覆盖使用的模型（默认取环境变量 OPENAI_MODEL）。
-        phone_hint: 可选的电话号码；给定时作为已知信息交给 Agent（dry-run 下直接用作被叫号码）。
-        goal_hint:  可选的通话目标；给定时作为已知信息交给 Agent（dry-run 下直接用作通话目标）。
-        dry_run:    若为真，走完全离线的脚本化 ReAct 轨迹（不联网、不需要任何 API Key）。
 
-    返回：
-        Agent 面向用户的最终汇报文本。
-    """
-
-    def emit(kind: str, payload: Any) -> None:
-        if on_event:
-            on_event(kind, payload)
-
-    if dry_run:
-        from test_double import make_phone_call as test_call_tool
-        return _run_agent_dryrun(task, emit, phone_hint, goal_hint, test_call_tool)
-
-    call_tool = call_tool or make_phone_call
-
-    model = model or default_model()
-
-    # 若显式给了号码/目标，就作为「已知信息」拼进用户消息，Agent 仍自行决定如何使用。
-    hints = []
-    if phone_hint:
-        hints.append(f"已知对方电话号码：{phone_hint}")
-    if goal_hint:
-        hints.append(f"用户明确的通话目标：{goal_hint}")
-    user_content = task if not hints else task + "\n\n（" + "；".join(hints) + "）"
-
-    messages: list[dict[str, Any]] = [
-        {"role": "system", "content": _SYSTEM_PROMPT},
-        {"role": "user", "content": user_content},
-    ]
-
-    for _ in range(_MAX_STEPS):
-        resp = _create_chat(
-            model=model,
-            messages=messages,
-            tools=_TOOLS,
-            tool_choice="auto",
-            temperature=0.3,
+def _planner_client() -> tuple[OpenAI, str, str]:
+    model = os.getenv("PHONE_PLANNER_MODEL", os.getenv("OPENAI_MODEL", DEFAULT_PLANNER_MODEL))
+    provider = os.getenv("PHONE_MODEL_PROVIDER", "auto").lower()
+    if os.getenv("OPENROUTER_API_KEY") and provider in {"auto", "openrouter"}:
+        routed = model if "/" in model else f"openai/{model}"
+        return (
+            OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=os.environ["OPENROUTER_API_KEY"],
+                timeout=120,
+                max_retries=2,
+            ),
+            routed,
+            "openrouter",
         )
-        msg = resp.choices[0].message
+    if os.getenv("OPENAI_API_KEY") and provider in {"auto", "openai"}:
+        return (
+            OpenAI(base_url=os.getenv("OPENAI_BASE_URL") or None, timeout=120, max_retries=2),
+            model,
+            "openai",
+        )
+    raise RuntimeError("ReAct planning requires OPENAI_API_KEY or OPENROUTER_API_KEY")
 
-        # 附上模型这一步返回的 assistant 消息（可能同时含思考文本与工具调用）。
-        messages.append(msg.model_dump(exclude_none=True))
 
-        if msg.content:
-            emit("think", msg.content)
+def _json_object(text: str) -> dict[str, Any]:
+    value = json.loads(text)
+    if not isinstance(value, dict):
+        raise TypeError("planner response must be a JSON object")
+    return value
 
-        if not msg.tool_calls:
-            # 没有工具调用 = Agent 给出了最终答复。
-            final = msg.content or ""
-            emit("final", final)
-            return final
 
-        # Execute live search or the Pine phone-call tool.
-        for tc in msg.tool_calls:
-            if tc.function.name not in {"make_phone_call", "search_business_phone"}:
-                result = {"error": f"未知工具 {tc.function.name}"}
-            else:
-                # 模型偶尔产生截断/带杂质的 arguments；解析失败退回 {}，
-                # 下方的 args.get 已带默认值，能优雅降级而不是中止整轮任务
-                #（与 staged-system-prompt、multi-role-transfer 的防护一致）。
-                try:
-                    args = json.loads(tc.function.arguments or "{}")
-                except json.JSONDecodeError:
-                    args = {}
-                if tc.function.name == "search_business_phone":
-                    emit("search", args)
-                    result = search_business_phone(str(args.get("query") or task))
-                    messages.append(
-                        {
-                            "role": "tool",
-                            "tool_call_id": tc.id,
-                            "name": tc.function.name,
-                            "content": json.dumps(result, ensure_ascii=False),
-                        }
-                    )
-                    continue
-                emit("call", args)
-                if not args.get("phone_number"):
-                    result = {"error": "missing_phone_number", "message": "Ask the user for an E.164 phone number."}
-                else:
-                    result = call_tool(
-                        phone_number=args["phone_number"],
-                        goal=args.get("goal", task),
-                        context=args.get("context", ""),
-                        callee_name=args.get("callee_name", "Requested business"),
-                        instructions=args.get(
-                            "instructions",
-                            "Confirm every task-critical detail before ending the call.",
-                        ),
-                        model=model,
-                    )
-                emit("record", result)
+def local_react_plan(task: str) -> CallPlan:
+    """Dependency-free ReAct planner used when no hosted text model is usable."""
+    import re
 
-            messages.append(
+    lower = task.lower()
+    missing: list[str] = []
+    if not re.search(r"\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b", lower):
+        missing.append("exact appointment time")
+    if not re.search(r"\b(?:code|confirmation)\s*(?:is|:)?\s*[a-z-]*\d[a-z0-9-]*\b", lower):
+        missing.append("confirmation code")
+    reason = (
+        "The task omits " + " and ".join(missing) + "; collect and confirm them during the call."
+        if missing
+        else "The task contains the critical fields; repeat them and request confirmation during the call."
+    )
+    return CallPlan(
+        mode="react",
+        callee_name="the user",
+        goal=task,
+        context="The user supplied only this natural-language task; do not infer unstated facts.",
+        instructions=(
+            "Ask for each missing field, repeat all task-critical details, request explicit confirmation, "
+            "then call complete_task with only the confirmed values."
+        ),
+        opening_line="Hello. I am an AI assistant calling through this browser to complete your requested confirmation.",
+        missing_information=missing,
+        trace=[
+            {"stage": "observation", "summary": task},
+            {"stage": "reason", "summary": reason},
+            {"stage": "action", "summary": "Open a WebRTC call and collect missing facts from the user."},
+        ],
+        planner_model="local-react-planner-v1",
+    )
+
+
+def react_plan(task: str, *, client: OpenAI | None = None, model: str | None = None) -> CallPlan:
+    """Plan a browser call from a natural-language task.
+
+    The trace contains short decision summaries, not hidden chain-of-thought.
+    Missing facts are intentionally converted into questions for the live call
+    rather than guessed by the planner.
+    """
+    task = _required("task", task)
+    try:
+        if client is None:
+            client, resolved_model, provider = _planner_client()
+        else:
+            resolved_model = model or DEFAULT_PLANNER_MODEL
+            provider = "injected"
+        active_model = model or resolved_model
+        response = client.chat.completions.create(
+            model=active_model,
+            response_format={"type": "json_object"},
+            messages=[
                 {
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "name": tc.function.name,
-                    "content": json.dumps(result, ensure_ascii=False),
-                }
-            )
-
-    # 兜底：步数用尽仍未收敛，逼模型直接总结一次。
-    messages.append(
-        {
-            "role": "user",
-            "content": "请根据以上通话记录，立即给用户一份最终汇报，不要再打电话了。",
-        }
-    )
-    resp = _create_chat(
-        model=model, messages=messages, temperature=0.3
-    )
-    final = resp.choices[0].message.content or ""
-    emit("final", final)
-    return final
-
-
-def _guess_phone(task: str) -> str | None:
-    """从任务文本里粗略抽取一个像电话号码的数字串（>=4 位，避开『50 元』这类金额）。"""
-    for m in re.finditer(r"\d{4,}", task):
-        return m.group(0)
-    return None
-
-
-def _guess_context(task: str) -> str:
-    """从任务文本里粗略抽取账号等上下文（仅用于 dry-run 的启发式，不求完备）。"""
-    m = re.search(r"账[号户][^A-Za-z0-9]{0,3}([A-Za-z0-9][A-Za-z0-9\-]{2,})", task)
-    if m:
-        return f"账号 {m.group(1)}"
-    return ""
-
-
-def _run_agent_dryrun(
-    task: str,
-    emit: Callable[[str, Any], None],
-    phone_hint: str | None,
-    goal_hint: str | None,
-    call_tool: Callable[..., dict[str, Any]],
-) -> str:
-    """
-    完全离线的脚本化 ReAct 轨迹：不调用任何 LLM/电话 API，仅演示循环的形状——
-    思考(推断参数) → 行动(make_phone_call, dry_run) → 观察(结构化记录) → 汇报。
-    """
-    phone = phone_hint or _guess_phone(task) or "+14155550100"
-    goal = goal_hint or task
-    context = _guess_context(task)
-
-    emit(
-        "think",
-        "这是一个需要打电话才能完成的任务。我先确定通话三要素——"
-        f"号码={phone}；目标={goal}；上下文={context or '（无）'}。参数已足够，现在发起通话。",
+                    "role": "system",
+                    "content": (
+                        "You plan a voice call from an AI assistant to the user who will open a local browser page. "
+                        "Do not invent missing facts. Return JSON with callee_name, goal, context, instructions, "
+                        "opening_line, missing_information (array of short strings), and decision_summary. "
+                        "The instructions must tell the voice agent to ask for missing task-critical facts, confirm "
+                        "them aloud, then call complete_task. Never claim an external booking, payment, or account "
+                        "change occurred; this local experiment may only record what the user confirmed."
+                    ),
+                },
+                {"role": "user", "content": task},
+            ],
+        )
+    except (OpenAIError, RuntimeError):
+        return local_react_plan(task)
+    content = response.choices[0].message.content or "{}"
+    data = _json_object(content)
+    missing = data.get("missing_information", [])
+    if not isinstance(missing, list) or not all(isinstance(item, str) for item in missing):
+        raise ValueError("planner missing_information must be an array of strings")
+    decision = _required("decision_summary", str(data.get("decision_summary", "")))
+    return CallPlan(
+        mode="react",
+        callee_name=_required("callee_name", str(data.get("callee_name", ""))),
+        goal=_required("goal", str(data.get("goal", ""))),
+        context=str(data.get("context") or "No additional context was supplied.").strip(),
+        instructions=_required("instructions", str(data.get("instructions", ""))),
+        opening_line=_required("opening_line", str(data.get("opening_line", ""))),
+        missing_information=[item.strip() for item in missing if item.strip()],
+        trace=[
+            {"stage": "observation", "summary": task},
+            {"stage": "reason", "summary": decision},
+            {"stage": "action", "summary": "Open a WebRTC call and collect missing facts from the user."},
+        ],
+        planner_model=f"{provider}:{active_model}",
     )
 
-    call_args = {"phone_number": phone, "goal": goal, "context": context}
-    emit("call", call_args)
-    record = call_tool(**call_args)
-    emit("record", record)
 
-    kf = record.get("key_fields", {}) or {}
-    kf_text = "；".join(f"{k}={v}" for k, v in kf.items()) or "（无）"
-    final = (
-        f"已（dry-run 脚本模拟）拨打 {phone} 并完成通话。\n"
-        f"结论：{record.get('summary', '')}\n"
-        f"关键信息：{kf_text}。"
+def local_conversation_turn(plan: CallPlan, user_text: str) -> dict[str, Any]:
+    """Offline-safe completion for an explicit confirmation turn."""
+    import re
+
+    time_match = re.search(
+        r"\b((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)(?:\s+at)?\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b",
+        user_text,
+        re.IGNORECASE,
     )
-    emit("final", final)
-    return final
+    confirmation_match = re.search(
+        r"(?:confirmation(?:\s+code)?|code)\s*(?:is|:)?\s*([A-Za-z0-9][A-Za-z0-9-]{2,})",
+        user_text,
+        re.IGNORECASE,
+    )
+    explicitly_confirmed = "confirm" in user_text.lower()
+    should_complete = explicitly_confirmed and bool(time_match or confirmation_match)
+    appointment_time = time_match.group(1) if time_match else ""
+    confirmation = confirmation_match.group(1) if confirmation_match else ""
+    if should_complete:
+        details = ", ".join(value for value in (appointment_time, confirmation) if value)
+        speech = f"Thank you. I saved the details you confirmed: {details}."
+    else:
+        speech = "Please state the exact time and confirmation code, then explicitly confirm both."
+    return {
+        "assistant_message": speech,
+        "should_complete": should_complete,
+        "completion": {
+            "result": "The user confirmed a local experiment record.",
+            "appointment_time": appointment_time,
+            "confirmation_number": confirmation,
+            "notes": "No external organization was contacted.",
+        },
+        "dialogue_model": "local-confirmation-parser",
+    }
+
+
+def conversation_turn(plan: CallPlan, transcript: list[dict[str, str]], user_text: str) -> dict[str, Any]:
+    """Generate the next call turn, falling back to the auditable local parser."""
+    try:
+        client, active_model, provider = _planner_client()
+        response = client.chat.completions.create(
+            model=os.getenv("PHONE_DIALOGUE_MODEL", active_model),
+            response_format={"type": "json_object"},
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You run a short local browser call. Return JSON with assistant_message, should_complete, "
+                        "and completion containing result, appointment_time, confirmation_number, notes. Complete "
+                        "only after the user explicitly confirms task-critical facts. Never claim an external action. "
+                        f"Goal: {plan.goal}. Context: {plan.context}. Instructions: {plan.instructions}"
+                    ),
+                },
+                {"role": "user", "content": json.dumps(transcript + [{"speaker": "user", "text": user_text}])},
+            ],
+        )
+        result = _json_object(response.choices[0].message.content or "{}")
+        completion = result.get("completion") or {}
+        required = {"result", "appointment_time", "confirmation_number", "notes"}
+        if not isinstance(completion, dict) or not required.issubset(completion):
+            raise ValueError("dialogue completion object is incomplete")
+        result["assistant_message"] = _required("assistant_message", str(result.get("assistant_message", "")))
+        result["should_complete"] = bool(result.get("should_complete"))
+        result["dialogue_model"] = f"{provider}:{os.getenv('PHONE_DIALOGUE_MODEL', active_model)}"
+        return result
+    except (AttributeError, KeyError, OpenAIError, RuntimeError, TypeError, ValueError, json.JSONDecodeError):
+        return local_conversation_turn(plan, user_text)

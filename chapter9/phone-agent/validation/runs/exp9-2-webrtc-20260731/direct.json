@@ -1,0 +1,114 @@
+{
+  "schema_version": 2,
+  "experiment": "9-2",
+  "call_id": "rtc_880a9fe97e324276a7eb",
+  "created_at_utc": "2026-07-31T10:25:12.376496+00:00",
+  "finished_at_utc": "2026-07-31T10:25:18.945525+00:00",
+  "status": "completed",
+  "mode": "direct",
+  "input_contract": {
+    "fields_supplied_by_caller": [
+      "callee_name",
+      "goal",
+      "context",
+      "instructions"
+    ],
+    "natural_language_task": ""
+  },
+  "plan": {
+    "mode": "direct",
+    "callee_name": "Jane Doe",
+    "goal": "Collect and confirm Jane Doe's preferred dental-checkup time.",
+    "context": "Tuesday afternoon from 2pm to 4pm is available; the user will supply a confirmation code.",
+    "instructions": "Ask for one exact time and a confirmation code. Repeat both, ask for confirmation, then call complete_task with only those confirmed details.",
+    "opening_line": "Hello Jane Doe. I am an AI assistant calling through this browser to help with the requested task.",
+    "missing_information": [],
+    "trace": [
+      {
+        "stage": "observation",
+        "summary": "Caller supplied all call parameters."
+      },
+      {
+        "stage": "action",
+        "summary": "Open a WebRTC voice session with the fixed parameters."
+      }
+    ],
+    "planner_model": null
+  },
+  "models": {
+    "planner": null,
+    "dialogue_models": [
+      "local-confirmation-parser"
+    ],
+    "speech_renderer": "browser-speechSynthesis"
+  },
+  "transport": {
+    "kind": "webrtc",
+    "pstn_used": false,
+    "e164_required": false,
+    "sdp_negotiated": true,
+    "offer_sha256": "843d64f06c10d617e20fa96434363195aca2af89dae54d45675cc6ebd0937a86",
+    "answer_sha256": "edf5e8a47186a66a0c87dd97f2042783f21478766278bbfa63cc4c8d9035d021",
+    "provider_session_id": null,
+    "ice_connection_state": "connected",
+    "ice_connected_observed": true,
+    "data_channel_open": true,
+    "local_audio_track": true,
+    "remote_audio_track": true,
+    "rtc_stats": {
+      "inbound_packets": 54,
+      "inbound_bytes": 3464,
+      "outbound_packets": 54,
+      "outbound_bytes": 2552
+    },
+    "server_received_audio_frames": 51,
+    "server_received_audio_samples": 48960
+  },
+  "event_counts": {
+    "data_channel.user.message": 1,
+    "rtc.ready": 6,
+    "rtc.stats": 2
+  },
+  "transcript": [
+    {
+      "speaker": "agent",
+      "text": "Hello Jane Doe. I am an AI assistant calling through this browser to help with the requested task.",
+      "source": "webrtc.data_channel"
+    },
+    {
+      "speaker": "user",
+      "text": "Tuesday at 3pm works. I explicitly confirm it, with confirmation code WEBRTC-DIRECT-92.",
+      "source": "webrtc.data_channel"
+    },
+    {
+      "speaker": "agent",
+      "text": "Thank you. I saved the details you confirmed: Tuesday at 3pm, WEBRTC-DIRECT-92.",
+      "source": "webrtc.data_channel"
+    }
+  ],
+  "completion": {
+    "result": "The user confirmed a local experiment record.",
+    "appointment_time": "Tuesday at 3pm",
+    "confirmation_number": "WEBRTC-DIRECT-92",
+    "notes": "No external organization was contacted.",
+    "saved_at_utc": "2026-07-31T10:25:18.940057+00:00"
+  },
+  "errors": [],
+  "acceptance": {
+    "checks": {
+      "sdp_offer_answer_negotiated": true,
+      "ice_connected": true,
+      "data_channel_open": true,
+      "local_microphone_track": true,
+      "remote_audio_track": true,
+      "outbound_audio_rtp": true,
+      "inbound_audio_rtp": true,
+      "server_consumed_microphone_audio": true,
+      "user_turn_recorded": true,
+      "agent_turn_recorded": true,
+      "critical_fields_extracted": true
+    },
+    "passed": true
+  },
+  "finish_reason": "automated_acceptance"
+}
