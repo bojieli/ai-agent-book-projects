@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the book diagrams with Hungarian labels.
+"""Localize the book diagrams with Hungarian labels as SVG files.
 
 The mapping in this file is intentionally local and reviewable. It does not
 call a translation API or any other network service. Technical identifiers,
@@ -11,9 +11,11 @@ Run from anywhere in the repository:
     python3 book-hu/localize_figures.py
 
 Chapter 2 is generated as SVG from the Chinese golden layouts by
-``gen_ch2_figs.py``. Other generated figures remain 1200 px PNG files for
-compatibility with the existing Hungarian EPUB assets. English raster sources
-such as the n8n editor screenshot are copied without alteration.
+``gen_ch2_figs.py``. All other vector-origin diagrams are localized from the
+English edition and written under ``book-hu/images/``, preserving vector
+quality at every zoom level. The two genuinely raster-only sources
+(``attention-visualization.png`` and ``n8n-workflow.png``) are copied without
+alteration.
 """
 
 from __future__ import annotations
@@ -2794,11 +2796,8 @@ def localize_svg(source: str) -> tuple[str, int, int]:
     return TEXT_RE.sub(localize_text, source), translated_nodes, total_nodes
 
 
-def render_png(svg: Path, png: Path) -> None:
-    subprocess.run(
-        ["rsvg-convert", "-w", "1200", "-o", str(png), str(svg)],
-        check=True,
-    )
+def write_localized_svg(src: Path, dst: Path) -> None:
+    shutil.copy2(src, dst)
 
 
 def main() -> None:
@@ -2809,9 +2808,6 @@ def main() -> None:
         help="also retain localized SVG sources in book-hu/images-svg",
     )
     args = parser.parse_args()
-
-    if shutil.which("rsvg-convert") is None:
-        raise SystemExit("Error: rsvg-convert (librsvg) is required.")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     subprocess.run(
@@ -2833,7 +2829,7 @@ def main() -> None:
 
     translated_text_nodes = 0
     total_text_nodes = 0
-    rendered = 0
+    written = 0
 
     with tempfile.TemporaryDirectory(prefix="ai-agent-book-hu-figures.") as temp:
         temp_dir = Path(temp)
@@ -2855,7 +2851,7 @@ def main() -> None:
             total_text_nodes += total
 
         # Reuse the edition's established overflow fitter after Hungarian text
-        # expansion, then render the final raster assets.
+        # expansion, then copy the localized SVGs into book-hu/images/.
         subprocess.run(
             ["python3", str(FIT_SCRIPT), *map(str, localized_svgs)],
             check=True,
@@ -2863,8 +2859,8 @@ def main() -> None:
         )
 
         for svg_path in localized_svgs:
-            render_png(svg_path, OUTPUT_DIR / f"{svg_path.stem}.png")
-            rendered += 1
+            write_localized_svg(svg_path, OUTPUT_DIR / svg_path.name)
+            written += 1
 
         if args.keep_svg:
             svg_output = ROOT / "book-hu" / "images-svg"
@@ -2875,8 +2871,16 @@ def main() -> None:
     for source_path in png_sources:
         shutil.copy2(source_path, OUTPUT_DIR / source_path.name)
 
-    expected = {path.stem for path in svg_sources} | {path.stem for path in png_sources}
-    actual = {path.stem for path in OUTPUT_DIR.glob("*.png")}
+    expected = (
+        {path.name for path in svg_sources if path.stem not in png_stems}
+        | {path.name for path in png_sources}
+        | {f"fig2-{figure}.svg" for figure in range(1, 18)}
+    )
+    actual = {
+        path.name
+        for pattern in ("*.svg", "*.png")
+        for path in OUTPUT_DIR.glob(pattern)
+    }
     missing = sorted(expected - actual)
     extra = sorted(actual - expected)
     if missing or extra:
@@ -2885,7 +2889,8 @@ def main() -> None:
     print(
         "Generated 17 Chapter 2 SVGs; "
         f"localized {translated_text_nodes}/{total_text_nodes} other SVG text nodes; "
-        f"rendered {rendered} SVG diagrams and copied {len(png_sources)} PNG sources."
+        f"wrote {written} other localized SVG diagrams and copied "
+        f"{len(png_sources)} PNG sources."
     )
 
 

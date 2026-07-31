@@ -164,7 +164,7 @@ Az észlelő eszközök gyakran szembesülnek azzal a kihívással, hogy sokkal 
 
 > **4-1. ★★ Kísérlet: Észlelő Eszköz MCP Szerver**
 >
-> ![4-1. ábra: MCP Protokoll Interakciós Sorrend](images/fig4-1.png)
+> ![4-1. ábra: MCP Protokoll Interakciós Sorrend](images/fig4-1.svg)
 >
 >
 > Ez a kísérlet egy sor észlelő eszköz MCP szervert épít, amely az észlelési forgatókönyvek következő öt kategóriáját fedi le:
@@ -337,7 +337,7 @@ Az aszinkron paradigma azonban ütközik a jelenlegi LLM-ek alapvető jellemzőj
 
 Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" van szükségünk. Technikailag ez azt jelenti, hogy a rendszer már nem aktívan és ismételten ellenőrzi az "új üzeneteket" (ez a polling, ami hatástalan), hanem automatikusan elindítja a feldolgozási logikát, amikor új üzenet érkezik. Minden bemenet, kimenet, gondolkodási folyamat és külső interakció egységesen eseményfolyamként van modellezve – eseményrekordok sorozataként, idővonalon elrendezve. A 4-2. ábra egy eseményvezérelt aszinkron Agent teljes architektúráját mutatja, illusztrálva az eseményforrások, az eseménysor és az Agent feldolgozási folyamat közötti kapcsolatot.
 
-![4-2. ábra: Eseményvezérelt Aszinkron Agent Architektúra](images/fig4-2.png)
+![4-2. ábra: Eseményvezérelt Aszinkron Agent Architektúra](images/fig4-2.svg)
 
 ### OpenClaw és az Eseményvezérelt Architektúra Valós Igénye
 
@@ -435,7 +435,7 @@ Csak amikor ezek a dimenziók egyértelműen modellezve vannak strukturált esem
 
 Az emberek, akik több feladatot egyensúlyoznak, a sürgősséghez igazítják stratégiájukat: egy vészhelyzet esetén elengednek mindent, amit csinálnak; egy rutin teendő későbbre kerül a listára. Az Agent eseménykezelésének ugyanezt az intelligenciát kell mutatnia.
 
-![4-3. ábra: Az Aszinkron Eseményfeldolgozás Három Stratégiája](images/fig4-3.png)
+![4-3. ábra: Az Aszinkron Eseményfeldolgozás Három Stratégiája](images/fig4-3.svg)
 
 "Megszakítás-alapú Feldolgozás" sürgős eseményekhez használatos; lényege egy "korai biztonságos pont kényszerítése" a sürgős esemény számára: az aktuális lépés proaktív megszakítása, hogy ez a pillanat egy határrá váljon, ahol az új esemény feldolgozható. Amikor egy sürgős esemény érkezik (pl. a felhasználó rákattint a "stop" gombra, vagy egy felügyeleti rendszer magas prioritású utasítást küld): (1) Állítsa le az aktuális műveletet – ha az LLM gondolkodik, azonnal szakítsa meg a streaming választ; ha egy szinkron eszköz végrehajtódik, küldjön egy megszakító jelet; (2) Ürítse ki a függőben lévő sort az összes függő esemény eltávolításával; (3) Fűzze hozzá ezeket az eseményeket a sürgős eseménnyel együtt a trajektória végéhez; (4) Azonnal hívja meg újra az LLM-et a frissített teljes trajektóriával bemenetként a helyzet felméréséhez. Például, ha a felhasználó azt írja: "Stop! Rosszul mondtam", miközben az Agent egy potenciálisan hibás műveletet készül végrehajtani, az Agent azonnal meglátja ezt az új bemenetet, újraértelmezi a valódi szándékot, és így elkerüli a rossz művelet végrehajtását.
 
@@ -456,7 +456,7 @@ A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent
 > **4-4. ★★★ Kísérlet: Eseményvezérelt E-mail Feldolgozó Agent**
 >
 >
-> ![4-4. ábra: 4-4. Kísérlet Eseményvezérelt Agent Architektúrája](images/fig4-4.png)
+> ![4-4. ábra: 4-4. Kísérlet Eseményvezérelt Agent Architektúrája](images/fig4-4.svg)
 >
 >
 > Ez a kísérlet a legegyszerűbb eseményvezérelt Agentet építi fel: egy "Automatikus E-mail Feldolgozó Asszisztenst". Az Agent figyeli az e-mail beérkező leveleket, és amikor új e-mail érkezik, automatikusan elindít egy feldolgozási munkafolyamatot – osztályozás, összefoglalás, választervezet, és szükség esetén a felhasználó értesítése. Ez a legintuitívabb bevezető forgatókönyv egy eseményvezérelt Agent számára: egy külső esemény (új e-mail érkezése) elindít egy teljes Agent gondolkodási ciklust.
@@ -542,7 +542,7 @@ Adjon hozzá egy összefoglalót a végén: "Fent 4 feldolgozatlan esemény tal�
 
 ### Mélyebb Ellentmondások és Jövőbeli Irányok
 
-![4-5. ábra: Szinkron Képzési Paradigma vs. Aszinkron Telepítési Valóság](images/fig4-5.png)
+![4-5. ábra: Szinkron Képzési Paradigma vs. Aszinkron Telepítési Valóság](images/fig4-5.svg)
 
 Végső soron az előző szakaszok helyettesítői, aszinkron eszköz interfészei és állapotsor jelzői mind prompt engineeringet használnak ugyanazon "szinkron képzés / aszinkron telepítés" ellentmondás javítására (4-5. ábra) – ennek az ellentmondásnak az okát a szakasz elején részleteztük, így itt nem ismételjük; ehelyett az alapvető megoldásra összpontosítunk.
 
@@ -567,7 +567,7 @@ De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "
 > **4-5. ★★★ Kísérlet: Aszinkron Agent Párhuzamos Végrehajtással és Megszakítási Képességekkel**
 >
 >
-> ![4-6. ábra: 4-5. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig4-6.png)
+> ![4-6. ábra: 4-5. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig4-6.svg)
 >
 >
 > A 4-4. kísérlet egyszerű eseménysorára építve ez a kísérlet az aszinkron Agentek nehéz részeibe merül: **párhuzamos eszközvégrehajtás, végrehajtás megszakítása és állapotkezelés**. Az Agent már nem csak egyesével dolgozza fel az eseményeket; egyszerre több egyidejű feladatot kell kezelnie, meg kell birkóznia a megszakításokkal és helyreállításokkal, és dinamikus döntéseket kell hoznia a valós idejű állapot alapján.
@@ -592,17 +592,17 @@ A hagyományos megközelítés minden eszköz sémáját egyszerre injektálja a
 
 [^mcp-zero-2025]: Fei, X., et al. *MCP-Zero: Active Tool Discovery for Autonomous LLM Agents.* arXiv:2506.01056, 2025.
 
-![4-7. ábra: Hierarchikus Eszköz Egyeztetés (Kétszintű Szemantikai Keresés: Szerver Szint → Eszköz Szint)](images/fig4-7.png)
+![4-7. ábra: Hierarchikus Eszköz Egyeztetés (Kétszintű Szemantikai Keresés: Szerver Szint → Eszköz Szint)](images/fig4-7.svg)
 
 "Hierarchikus Egyeztetés és Tartalék (Fallback)." A hatékony egyeztetés kihasználja az eszközök szervezésében már meglévő hierarchiát. Az olyan protokollokban, mint az MCP, az eszközök "szerverenként" vannak csoportosítva (mint az alkalmazások egy telefonon, mindegyik egy kapcsolódó funkciókészletet csomagolva), így az egyeztetés két rétegben futhat: a releváns szerverek megkeresése képességleírás alapján, majd a specifikus eszközök egyeztetése azokon belül. Ez a keresési teret "több ezer eszközről" "tucatnyi szerver × tucatnyi eszközre" szűkíti, számítási kapacitást megtakarítva és csökkentve a domének közötti szemantikai összetévesztést. Mérnöki szempontból ez egy offline felépített és inkrementálisan frissített beágyazási indexen (embedding index) alapul. És amikor mindkét réteg jelöltjei a küszöbérték alá esnek, a rendszernek egy explicit "nem található" eredményt kell visszaadnia, ami arra ösztönzi az Agentet, hogy fogalmazza újra és próbálkozzon újra, improvizáljon alap eszközökkel, vagy hozzon létre egy teljesen új eszközt (a 8. fejezet témája).
 
-![4-8. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-8.png)
+![4-8. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-8.svg)
 
 "Dinamikus Betöltés és KV Cache." A proaktív felfedezés egy finom mérnöki költséggel jár: a dinamikus eszközbetöltés "érvényteleníti a KV Cache-t" – tegye az összes eszközdefiníciót a statikus előtagba, és minden újonnan betöltött eszköz érvényteleníti az egész gyorsítótárat. A javítás megegyezik a 2. fejezet Skill injektálási pozícióról szóló tárgyalásával: a változó részt (az új eszköz teljes sémáját) a kontextus végéhez fűzze, miközben a statikus előtag stabil marad és a KV Cache teljesen újrahasználható, csak egy rövid eszköznévlista marad az Agent állapotsorában. Ez a minta ma már natívan támogatott a nagy API-k által, és a mainstream keretrendszerek alapértelmezett architektúrájává vált: az OpenAI Responses API egy `tool_search` eszközt és egy `defer_loading: true` jelzőt biztosít, a betöltött sémák a kontextus végéhez vannak fűzve `tool_search_output` elemekként, így az előtag gyorsítótár folyamatosan talál; a Claude Code alapértelmezés szerint elhalasztja az MCP eszközöket (igény szerint injektálva `tool_reference` blokkokon keresztül, csak az eszközneveket és szerver utasításokat tartva a munkamenet indításakor); és a Codex CLI `tool_search`-je (BM25 visszakeresés) egy mindig bekapcsolt architektúra, nem egy opcionális funkció. A dinamikus eszközkörnyezet többet kér a modelltől is – a gyengébb modellek küszködnek a nem szabványos pozícióban, a kontextus közepén megjelenő eszközdefiníciókkal, és hajlamosak hibás hívásokat generálni (nem illeszkedő JSON zárójelek, hiányzó paraméterek), gyakran dedikált megerősítéses tanulási képzést igényelve (lásd 7. fejezet).
 
 Egy könnyen félreérthető pontot érdemes tisztázni: "a végéhez fűzve" csak azon a körön történik, amikor az eszközt felfedezik. Onnantól kezdve a séma blokk rögzített marad az eredeti pozíciójában a trajektóriában – a későbbi körök új üzenetei "utána" kerülnek hozzáfűzésre, és az rendes történelemmé válik, ahelyett, hogy minden körben újra a legfrissebb végére kerülne (ha minden körben újra injektálnák, valóban minden alkalommal újra kellene előtölteni, és a gyorsítótár értelmetlen lenne). Mindkét API garantálja ezt: az OpenAI megköveteli, hogy a későbbi kérések megőrizzék a `tool_search_output` elem pozícióját, és ugyanazt az eszközt soha nem kell újra betölteni a körök között; az Anthropic a `tool_reference` blokkot inline bővíti ki az eredeti pozíciójában a beszélgetés történetében, és a hivatalos dokumentáció szerint a gyorsítótár minden későbbi körben továbbra is talál. Csak két helyzet okoz valójában újraszámítást: a Prompt Cache TTL lejárta (ami a teljes előtagot újraszámítja – nem az eszközdefiníciókra jellemző költség), és a betöltött eszközkészlet módosítása, eltávolítása vagy átrendezése (ami érvényteleníti a gyorsítótárat attól a ponttól kezdve).
 
-![4-9. ábra: Kontextus Struktúra a Dinamikus Felfedezés Után – Eszköz Sémák Szétszórva a Trajektóriában](images/fig4-9.png)
+![4-9. ábra: Kontextus Struktúra a Dinamikus Felfedezés Után – Eszköz Sémák Szétszórva a Trajektóriában](images/fig4-9.svg)
 
 A 4-9. ábra mutatja a teljes képet a dinamikus felfedezés több körét követően: a statikus előtag csak a rendszer promptot, a mag-eszközöket és az eszközkereső meta-eszközt tartalmazza, míg a felfedezés során talált sémák szétszórva vannak a trajektóriában, ott rögzítve, ahol először injektálták őket, és a későbbi körökben gyorsítótárból, rendes történelemként szolgálják ki őket. Ez azt is jelenti, hogy "az eszközdefinícióknak a kontextus legelején kell lenniük" már nem egy kőbe vésett szabály – az előtag továbbra is statikus és csak hozzáfűzhető; az eszközdefiníciók egyszerűen megszerezték a képességet, hogy igény szerint belépjenek a trajektóriába. Az ár az, hogy a modellt utóképzésben kell részesíteni, hogy megértse a kontextusban szétszórt eszközdefiníciókat.
 

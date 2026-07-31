@@ -450,7 +450,7 @@ That one timestamp line invalidated the KV Cache on every request. The system pr
 > With a basic understanding of the attention mechanism, we can now observe the attention distribution of a real model through the `attention_visualization` experiment.
 >
 >
-> ![Figure 2-7: Attention Heatmap Visualization](images/fig2-7.png)
+> ![Figure 2-7: Attention Heatmap Visualization](images/fig2-7.svg)
 >
 >
 > The attention heatmap reveals several key patterns:

@@ -28,7 +28,7 @@ A két IPC paradigmára leképezve: a megosztott fájlrendszer a "megosztott mem
 
 Az üzenetsor természeténél fogva támogatja az "aszinkron kommunikációt" – a feladónak és a vevőnek nem kell egyszerre online lennie. Ez olyan, mint egy belső vállalati e-mail rendszer: amikor e-mailt küldesz egy kollégának, nem kell, hogy éppen a gépénél legyen; az e-mail tárolódik a szerveren, és akkor kerül feldolgozásra, amikor a kolléga online lesz. Ez a megközelítés különösen alkalmas olyan forgatókönyvekhez, ahol több Ügynök párhuzamosan dolgozik, és koordinációra van szükségük egymással (lásd a "Párhuzamos Koordináció" szakaszt később ebben a fejezetben).
 
-![10-1. ábra: Megosztott kontextus vs. Nem megosztott kontextus](images/fig10-1.png)
+![10-1. ábra: Megosztott kontextus vs. Nem megosztott kontextus](images/fig10-1.svg)
 
 Az egyértelműség kedvéért: mindkét architektúra valódi többügynökös rendszer, mert a rendszerprompt és az eszközkészlet szakaszonként eltérő, így azok különböző Ügynökök. A különbség a koordinációs módszerben rejlik. A "megosztott kontextus" implicit koordinációra támaszkodik: a következő Ügynökök öröklik az előzőek teljes kontextus-előzményét, áttekinthetik látható interakciós előzményeiket és munkanyomaikat, és magán a kontextuson keresztül kapják az információt. A "nem megosztott kontextus" explicit koordinációra támaszkodik: az Ügynökök fájlokon, üzeneteken vagy strukturált adat-interfészeken keresztül cserélnek információt, és minden Ügynök csak a saját munkájához releváns tartalmat látja.
 
@@ -105,7 +105,7 @@ Először is tegyünk le egy definíciós vitát: az 1. fejezet nyelvén a több
 
 Összetett feladatokban egy Ügynök szerepe és felelőssége jelentősen megváltozhat a szakaszok között. Ha egyetlen statikus rendszerpromptot használunk végig, az vagy túl általános lesz a szakaszspecifikus iránymutatáshoz, vagy túl hosszú, mert minden szakasz utasításait tartalmazza. A többszakaszos szerepváltás ehelyett a rendszerpromptot és az eszközkészletet az aktuális szakasznak megfelelően változtatja meg, lehetővé téve az Ügynök számára, hogy a legmegfelelőbb szerepben dolgozzon. Ez a váltás nem igényel új példányok létrehozását vagy új folyamatok indítását; csak a rendszerprompt és az eszközkészlet változik ugyanazon a végrehajtási munkameneten belül. Bár a szerep változik, a beszélgetési előzmény és a feladat állapota megosztott marad, így az Ügynök az új szerepében is hozzáférhet az előző szakaszokban felhalmozott összes információhoz.
 
-![10-2. ábra: Szakasz-alapú szerepváltás](images/fig10-2.png)
+![10-2. ábra: Szakasz-alapú szerepváltás](images/fig10-2.svg)
 
 > **10-1. kísérlet ★★: Rendszerpromptok meghatározása a végrehajtási szakasz alapján**
 
@@ -244,7 +244,7 @@ A fejezet elején a "megosztott fájlrendszer" a három kommunikációs mechaniz
 
 A 10-3. ábra szemlélteti, hogyan van ez a négy területtípus egységesen csatolva egyetlen könyvtárfa alá: az Ügynök egységes interfészen keresztül éri el a teljes fát, a felhasználók a megosztott térből töltenek fel és le fájlokat, a külső adatforrások adaptereken keresztül vannak csatolva, és a beépített rendszer erőforrások írásvédettként állnak rendelkezésre.
 
-![10-3. ábra: A négy területtípus csatolási struktúrája az Ügynök Virtuális Fájlrendszerében](images/fig10-3.png)
+![10-3. ábra: A négy területtípus csatolási struktúrája az Ügynök Virtuális Fájlrendszerében](images/fig10-3.svg)
 
 A 10-4. táblázat összehasonlítja ezt a négy területtípust négy dimenzió mentén – láthatóság, életciklus, olvasási/írási jogosultságok és konkurencia-vezérlés –, amely a fájlrendszer-elrendezés tervezésének ellenőrző listájaként szolgál.
 
@@ -301,7 +301,7 @@ Az állítások bizonyítékokká alakítása pontosan a "Hurok-mérnökség" (L
 
 "Javasló-Ellenőrző Paradigma."
 
-![10-4. ábra: Javasló-Ellenőrző Hurok](images/fig10-4.png)
+![10-4. ábra: Javasló-Ellenőrző Hurok](images/fig10-4.svg)
 
 A Javasló-Ellenőrző a kanonikus társi együttműködési paradigma. Az 5. fejezet már tárgyalta a tervezési elveit és gyakorlati alkalmazásait három kísérletben: PPT generálás, videó szerkesztés és napló vizualizáció. A Javasló Ügynök kódot generál, míg az Ellenőrző Ügynök rendereli a végrehajtási eredményeket, kiértékeli azok minőségét egy látás-nyelvi modell segítségével, és strukturált javaslatokat ad a fejlesztésre. A kettő addig iterál, amíg az eredmény meg nem felel a kívánt szabványnak.
 
@@ -351,7 +351,7 @@ A menedzser minta négy mechanizmustól függ:
 
 "Eredmény Integráció": Miután az al-ügynökök befejezték, a Menedzser összegyűjti és integrálja az eredményeket. Ez magában foglalhatja a konfliktusok feloldását és az ellentmondások egyeztetését. Végül a Menedzser ellenőrzi az integrált eredményt.
 
-![10-5. ábra: A Menedzser szekvenciális koordinációja](images/fig10-5.png)
+![10-5. ábra: A Menedzser szekvenciális koordinációja](images/fig10-5.svg)
 
 > **10-3. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**
 
@@ -416,7 +416,7 @@ A menedzser minta négy mechanizmustól függ:
 > Ha a Fordító hirtelen letiltja a kérést, töröld ki a felesleges al-ügynököket. A Menedzser küldjön egy `cancel_subagent(task_de)` kérést a német fordító leállítására. Ekkor a japán fordítónak tovább kell dolgoznia, mert nincs függőség. A Menedzser megkeresheti a következő elérhető modellt, vagy felhasználói beavatkozást kérhet.
 >
 
-> ![10-6. ábra: Könyvfordító Ügynök architektúrája](images/fig10-6.png)
+> ![10-6. ábra: Könyvfordító Ügynök architektúrája](images/fig10-6.svg)
 >
 
 > "Hibakezelési Stratégiák a Menedzser Mintában."
@@ -442,7 +442,7 @@ Ez nem mond ellent a 4. fejezet állításának, amely szerint a javaslattevő �
 
 "Párhuzamos Koordinációs Minta."
 
-![10-7. ábra: A Menedzser párhuzamos koordinációja](images/fig10-7.png)
+![10-7. ábra: A Menedzser párhuzamos koordinációja](images/fig10-7.svg)
 
 Az alapvető menedzser minta egy központi Menedzser általi szekvenciális feladatbontáson és elosztáson alapul. A gyakorlatban azonban a részfeladatok gyakran nem függetlenek egymástól. Az egyik al-ügynök kimenete egy másik al-ügynök bemenete lehet, vagy több al-ügynöknek kell együttműködnie, hogy egy közös eredményt hozzanak létre. Ilyenkor a párhuzamos koordináció lép életbe, amely a megosztott kontextus nélküli architektúrákban egy "üzenetsoron" alapul.
 
@@ -475,14 +475,14 @@ A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás
 > 3. Csak a szükséges információ átadása az együttműködés során (nem a teljes kontextus)
 >
 
-> ![10-8. ábra: Telefonos és számítógépes kettős Ügynök-architektúra](images/fig10-8.png)
+> ![10-8. ábra: Telefonos és számítógépes kettős Ügynök-architektúra](images/fig10-8.svg)
 >
 
 > A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
 
 ### Decentralizált Minta: Elosztott Koordináció
 
-![10-10. ábra: Átadási lánc minta](images/fig10-10.png)
+![10-10. ábra: Átadási lánc minta](images/fig10-10.svg)
 
 A társi együttműködés és a menedzser minta mögött meghúzódó gondolkodásmód az, hogy "a fejlesztő tervezi a kapcsolatokat és a munkafolyamatot az Ügynökök között." A decentralizált minta más: megadja az Ügynököknek a szükséges készségeket és kontextust, majd hagyja, hogy önállóan döntsék el, kivel működjenek együtt és hogyan. Ez hasonlít ahhoz, ahogy egy szervezetben nemcsak a Menedzser irányítja az összes együttműködést – a kollégák gyakran közvetlenül kommunikálnak egymással, önállóan csoportosulnak csapatokba, és a vezető csak vészhelyzetben avatkozik be. Ez a minta különösen hasznos, amikor az Ügynökök száma nagy, a kapcsolatok dinamikusak, és a priori tervezés nem hatékony.
 
@@ -500,7 +500,7 @@ A decentralizált minta számos formát ölthet. Az alábbiakban három képvise
 
 **MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.** A MetaGPT megosztott üzenetkészletet és szerepalapú feliratkozást használ: minden szerep strukturált eredményeket tesz közzé, a többi szerep pedig csak a feladatához szükséges üzenettípusokat fogyasztja. Ez leválasztja a küldőt a fogadóról, miközben a szabványos működési eljárás rögzíti a szerepek sorrendjét és az átadott artefaktumok formátumát.
 
-![10-11. ábra: A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.png)
+![10-11. ábra: A MetaGPT többügynökös együttműködési hálózata](images/fig10-11.svg)
 
 ### Szervezetközi együttműködés: Az A2A protokoll
 
@@ -554,7 +554,7 @@ Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és 
 > 5. Naplózd az egyes al-ügynökök végrehajtási idejét és a kaszkád megszakítás hatékonyságát
 >
 
-> ![10-9. ábra: Párhuzamos webes adatgyűjtési architektúra](images/fig10-9.png)
+> ![10-9. ábra: Párhuzamos webes adatgyűjtési architektúra](images/fig10-9.svg)
 >
 
 ## Többügynökös Hibamódok
@@ -628,7 +628,7 @@ Az ebben a szakaszban szereplő esetek három dimenzióból érthetők meg:
 
 ### Stanford AI Town: Generatív Ügynökök Társas Szimulációja
 
-![10-12. ábra: AI Town Architektúra](images/fig10-12.png)
+![10-12. ábra: AI Town Architektúra](images/fig10-12.svg)
 
 2023-ban a Stanford Egyetem és a Google kutatói publikálták az úttörő tanulmányt "Generative Agents: Interactive Simulacra of Human Behavior" címmel, bevezetve a "generatív ügynökök" fogalmát. A core innováció az volt, hogy az Ügynököket nem korlátozták előre meghatározott feladatokra, hanem az emberihez hasonló memóriával, reflexióval és tervezéssel ruházták fel őket, hogy önállóan élhessenek, szocializálódjanak és fejlődjenek egy nyitott társas környezetben.
 
@@ -743,7 +743,7 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 > - A játék helyesen tudja meghatározni a győztest a végén
 
 >
-> ![10-13. ábra: Hangalapú Farkasos Ügynök Rendszer](images/fig10-13.png)
+> ![10-13. ábra: Hangalapú Farkasos Ügynök Rendszer](images/fig10-13.svg)
 
 >
 
