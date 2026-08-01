@@ -291,20 +291,22 @@ class ComputerAgent:
         self.filled.append(name)
         await self.bus.send("computer_agent", "phone_agent", "field_filled", field=name)
 
+    async def _report_fill_error(self, name: str, exc: Exception) -> None:
+        """Record one browser failure and forward the shared error envelope."""
+        error = {"field": name, "error": str(exc)}
+        self.errors.append(error)
+        await self.bus.send("computer_agent", "phone_agent", "fill_error", **error)
+
     async def run(self) -> Dict[str, object]:
         for name, value in self.known_values.items():
             if name in self.fields:
                 try:
                     await self._fill(name, value)
                 except Exception as exc:  # page-specific errors remain isolated
-                    error = {"field": name, "error": str(exc)}
-                    self.errors.append(error)
                     # Mirror the in-dialogue fill path below: surface the failure
                     # to the phone agent (via browser_feedback) so it doesn't tell
                     # the user registration succeeded when a known field failed.
-                    await self.bus.send(
-                        "computer_agent", "phone_agent", "fill_error", **error
-                    )
+                    await self._report_fill_error(name, exc)
 
         completed = False
         while not completed:
@@ -320,11 +322,7 @@ class ComputerAgent:
                 try:
                     await self._fill(message.payload["field"], message.payload["value"])
                 except Exception as exc:
-                    error = {"field": message.payload["field"], "error": str(exc)}
-                    self.errors.append(error)
-                    await self.bus.send(
-                        "computer_agent", "phone_agent", "fill_error", **error
-                    )
+                    await self._report_fill_error(message.payload["field"], exc)
             elif message.type == "call_failed":
                 self.errors.append({
                     "field": message.payload.get("field", ""),

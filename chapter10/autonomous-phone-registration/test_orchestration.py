@@ -281,7 +281,7 @@ async def test_known_value_fill_error_flows_back_to_phone_and_blocks_submission(
     decision = DecisionRecord(
         page_url="https://example.test/register",
         page_title="Register",
-        known_fields=[country],
+        known_fields=[country.name],
         discovered_fields=[email, country],
         tool_called="initiate_phone_call_agent",
         purpose="协助填写注册表单",
