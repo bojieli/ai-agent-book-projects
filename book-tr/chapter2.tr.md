@@ -87,7 +87,9 @@ Bu istek yalnızca iki mesaj içerir: bir system (geliştirici tarafından yazı
 
 Gerçek bir Agent senaryosu, tek turlu bir soru-cevaptan çok daha karmaşıktır. Bir kullanıcı "Vancouver'da şu anki saat ve hava durumu nedir?" diye sorduğunda, model kendi bilgisinden yanıt veremez (o an "şimdi"nin ne olduğunu bilmez) ve dış araçları çağırması gerekir. Aşağıda, bu süreçte Agent çerçevesi ile model arasındaki her etkileşim adımının eksiksiz bir gösterimi var.
 
-![Şekil 2-3: İki araç çağrısı için eksiksiz etkileşim sırası](images/fig2-3.svg)
+![Şekil 2-3: Model API'sine yapılan iki çağrının eksiksiz etkileşim sırası](images/fig2-3.svg)
+
+Şekildeki “birinci” ve “ikinci” ifadelerinin ikisi de **model API'sine yapılan çağrıları** belirtir; iki aracın art arda çağrılmasını değil. Bu örnekte `get_current_time` için saat dilimi parametresi ile `get_weather` için şehir ve birim parametreleri en baştan belirlenebilir; hava durumu hizmeti şehrin en güncel hava durumunu kendisi döndürür ve saat aracının çıktısına bağlı değildir, dolayısıyla Agent çerçevesi iki aracı paralel çalıştırabilir. Sonraki bir aracın parametrelerinin önceki aracın sonucundan gelmesi gerekiyorsa model bu araç çağrısını sonraki bir turda istemeli ve iki araç sıralı olarak çalıştırılmalıdır.
 
 **Birinci API çağrısı — Agent çerçevesi ilk isteği gönderir:**
 

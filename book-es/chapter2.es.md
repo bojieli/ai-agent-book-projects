@@ -88,7 +88,9 @@ Esta solicitud solo contiene dos mensajes: uno de tipo `system` (las reglas escr
 
 El escenario real de un Agente es mucho más complejo que una pregunta y respuesta de un solo turno. Cuando el usuario pregunta "What's the current time and weather in Vancouver?", el modelo no puede responder basándose únicamente en su propio conocimiento (desconoce a qué momento corresponde "ahora"), sino que necesita llamar a herramientas externas. A continuación se muestra en detalle cada paso de la interacción entre el framework del Agente y el modelo durante este proceso.
 
-![Figura 2-3: Secuencia completa de interacción para dos llamadas a herramientas](images/fig2-3.svg)
+![Figura 2-3: Secuencia completa de interacción para dos llamadas a la API del modelo](images/fig2-3.svg)
+
+En la figura, «primera» y «segunda» se refieren en ambos casos a **llamadas a la API del modelo**, no a dos herramientas llamadas de forma secuencial. En este ejemplo, el parámetro de zona horaria de `get_current_time` y los parámetros de ciudad y unidad de `get_weather` pueden determinarse de antemano; el servicio meteorológico devuelve por sí mismo el tiempo más reciente de la ciudad y no depende de la salida de la herramienta de hora, por lo que el framework del Agente puede ejecutarlas en paralelo. Si los parámetros de una herramienta posterior deben obtenerse del resultado de una herramienta anterior, el modelo tendrá que solicitarla en una ronda posterior y ambas herramientas deberán ejecutarse en serie.
 
 **Primera llamada a la API: el framework del Agente envía la solicitud inicial:**
 

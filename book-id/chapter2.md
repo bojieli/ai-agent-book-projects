@@ -88,7 +88,9 @@ Request ini hanya memuat dua pesan: satu system message berisi aturan yang ditul
 
 Alur kerja (workflows) Agent di dunia nyata biasanya lebih kompleks daripada tanya jawab putaran tunggal. Ketika pengguna bertanya, "Berapa jam sekarang dan bagaimana cuaca di Vancouver?", model membutuhkan akses ke informasi eksternal yang dinamis: waktu saat ini dan cuaca terbaru. Contoh berikut merunut setiap interaksi antara framework Agent dan model.
 
-![Gambar 2-3: Rentetan Interaksi Lengkap untuk Dua Pemanggilan Tool](images/fig2-3.svg)
+![Gambar 2-3: Rentetan Interaksi Lengkap untuk Dua Pemanggilan API Model](images/fig2-3.svg)
+
+Dalam gambar, “pertama” dan “kedua” sama-sama merujuk pada **pemanggilan API model**, bukan dua tool yang dipanggil secara berurutan. Dalam contoh ini, argumen zona waktu untuk `get_current_time` serta argumen kota dan unit untuk `get_weather` semuanya dapat ditentukan sejak awal; layanan cuaca sendiri mengembalikan cuaca terbaru kota tersebut dan tidak bergantung pada output tool waktu, sehingga framework Agent dapat menjalankan keduanya secara paralel. Jika argumen tool berikutnya harus berasal dari hasil tool sebelumnya, model harus meminta pemanggilan tool itu pada putaran berikutnya dan kedua tool hanya dapat dijalankan secara berurutan.
 
 **Panggilan API Pertama — Framework Agent mengirimkan request awal:**
 

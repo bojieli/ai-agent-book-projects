@@ -87,7 +87,9 @@ Yêu cầu này chỉ chứa hai thông báo: hệ thống (quy tắc do nhà ph
 
 Kịch bản Agent thực sự phức tạp hơn nhiều so với một vòng hỏi đáp. Khi người dùng hỏi "Thời tiết và thời gian hiện tại ở Vancouver là bao nhiêu?" mô hình không thể trả lời bằng kiến thức của chính nó (nó không biết "bây giờ" là khi nào) và cần gọi các công cụ bên ngoài. Sau đây là phần trình bày đầy đủ về từng bước tương tác giữa khung Agent và mô hình trong quy trình này.
 
-![Hình 2-3 Trình tự tương tác hoàn chỉnh của hai vòng gọi công cụ ](images/fig2-3.svg)
+![Hình 2-3 Trình tự tương tác hoàn chỉnh của hai lần gọi API mô hình](images/fig2-3.svg)
+
+Trong hình, “lần gọi thứ nhất” và “lần gọi thứ hai” đều chỉ **lần gọi API mô hình**, chứ không phải hai công cụ được gọi tuần tự. Trong ví dụ này, tham số múi giờ của `get_current_time` cùng các tham số thành phố và đơn vị của `get_weather` đều có thể được xác định ngay từ đầu; dịch vụ thời tiết tự trả về thời tiết mới nhất của thành phố và không phụ thuộc vào đầu ra của công cụ thời gian, vì vậy khung Agent có thể thực thi chúng song song. Nếu tham số của công cụ sau phải lấy từ kết quả của công cụ trước, mô hình phải yêu cầu gọi công cụ đó trong một vòng tiếp theo và hai công cụ chỉ có thể được thực thi tuần tự.
 
 **Cuộc gọi API đầu tiên - Khung Agent gửi yêu cầu ban đầu:**
 
