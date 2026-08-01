@@ -4,9 +4,15 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 import demo
+from browser import RecoverableFillError
 from bus import MessageBus
 from models import DecisionRecord, FieldSpec
-from orchestration import initiate_phone_call_agent, run_parallel, timing_evidence
+from orchestration import (
+    ComputerAgent,
+    initiate_phone_call_agent,
+    run_parallel,
+    timing_evidence,
+)
 from voice import ScriptedPhoneChannel
 
 
@@ -40,7 +46,7 @@ class FailingFillBrowser(FakeBrowser):
         self.submit_calls = 0
 
     async def fill(self, field, value):
-        raise ValueError(f"cannot fill {field.name}")
+        raise RecoverableFillError(f"cannot fill {field.name}")
 
     async def submit(self):
         self.submit_calls += 1
@@ -216,8 +222,27 @@ async def test_computer_fill_error_flows_back_to_phone_and_blocks_submission():
     assert agents.phone.browser_feedback == [
         {"field": "email", "error": "cannot fill email"}
     ]
-    assert any(message.type == "fill_error" for message in bus.history)
+    fill_error = next(message for message in bus.history if message.type == "fill_error")
+    assert getattr(fill_error, "_sensitive_keys") == ("error",)
     assert "填写遇到问题" in channel.prompts[-1]
+
+
+@pytest.mark.asyncio
+async def test_malformed_info_collected_fails_before_fill_error_handling():
+    bus = MessageBus()
+    computer = ComputerAgent(bus, FakeBrowser(), [], {})
+    task = asyncio.create_task(computer.run())
+    await bus.send(
+        "phone_agent",
+        "computer_agent",
+        "info_collected",
+        sensitive_keys=("value",),
+        value="secret",
+    )
+
+    with pytest.raises(ValueError, match="non-empty field"):
+        await task
+    assert not any(message.type == "fill_error" for message in bus.history)
 
 
 @pytest.mark.asyncio
@@ -266,7 +291,7 @@ class CountryFailBrowser(SubmittingFakeBrowser):
 
     async def fill(self, field, value):
         if field.name == "country":
-            raise ValueError(f"cannot fill {field.name}")
+            raise RecoverableFillError(f"cannot fill {field.name}")
         await asyncio.sleep(0.05)
         self.values[field.name] = value
 

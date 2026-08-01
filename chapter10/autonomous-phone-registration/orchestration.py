@@ -8,7 +8,7 @@ import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-from browser import RegistrationBrowser
+from browser import RecoverableFillError, RegistrationBrowser
 from bus import MessageBus
 from models import DecisionRecord, FieldSpec
 from voice import PhoneChannel
@@ -291,18 +291,24 @@ class ComputerAgent:
         self.filled.append(name)
         await self.bus.send("computer_agent", "phone_agent", "field_filled", field=name)
 
-    async def _report_fill_error(self, name: str, exc: Exception) -> None:
+    async def _report_fill_error(self, name: str, exc: RecoverableFillError) -> None:
         """Record one browser failure and forward the shared error envelope."""
         error = {"field": name, "error": str(exc)}
         self.errors.append(error)
-        await self.bus.send("computer_agent", "phone_agent", "fill_error", **error)
+        await self.bus.send(
+            "computer_agent",
+            "phone_agent",
+            "fill_error",
+            sensitive_keys=("error",),
+            **error,
+        )
 
     async def run(self) -> Dict[str, object]:
         for name, value in self.known_values.items():
             if name in self.fields:
                 try:
                     await self._fill(name, value)
-                except Exception as exc:  # page-specific errors remain isolated
+                except RecoverableFillError as exc:
                     # Mirror the in-dialogue fill path below: surface the failure
                     # to the phone agent (via browser_feedback) so it doesn't tell
                     # the user registration succeeded when a known field failed.
@@ -319,10 +325,16 @@ class ComputerAgent:
             # relaxes the false-abort case.
             message = await self.bus.receive("computer_agent", timeout=600)
             if message.type == "info_collected":
+                name = message.payload.get("field")
+                value = message.payload.get("value")
+                if not isinstance(name, str) or not name:
+                    raise ValueError("info_collected requires a non-empty field")
+                if not isinstance(value, str):
+                    raise ValueError("info_collected requires a string value")
                 try:
-                    await self._fill(message.payload["field"], message.payload["value"])
-                except Exception as exc:
-                    await self._report_fill_error(message.payload["field"], exc)
+                    await self._fill(name, value)
+                except RecoverableFillError as exc:
+                    await self._report_fill_error(name, exc)
             elif message.type == "call_failed":
                 self.errors.append({
                     "field": message.payload.get("field", ""),
