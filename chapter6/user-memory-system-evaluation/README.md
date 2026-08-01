@@ -192,10 +192,14 @@ names, but no credentials or complete source conversations. Experiment 6-4 is
 complete only through the canonical full report named above; the `live_*` files
 remain smoke evidence and must not be substituted for it.
 
-Experiment 6-9 remains **incomplete**: the 4×3×2×60 matrix campaign has not
-run yet. As of 2026-07-31 backend readiness is 9/9 under the documented
-substitutions above (`results/full_matrix_backend_readiness_20260731.json`),
-so the remaining blocker is only the campaign itself, not provider access.
+Experiment 6-9 is **complete**: the full 4×3×2×60 matrix campaign finished with
+1,440/1,440 real trajectories, zero error records, and zero unpriced usage in
+`results/full_6_9_60_case_matrix.json` (top-level and completion status both
+`complete`), executed under the documented backend substitutions above
+(`results/full_matrix_backend_readiness_20260731.json`).
+`validation/verify_full_matrix_20260731.py` independently rechecks case/cell
+coverage, trajectory cleanliness, metric finiteness, pricing coverage, and the
+interaction analysis (ALL CHECKS PASSED).
 None of the earlier blockers changed the completed 6-4 status.
 
 ## 中文说明
@@ -209,6 +213,7 @@ BGE-M3 / OpenAI / 豆包嵌入、含无 reranker 基线、以及多主模型的�
 
 当前状态必须按实验分别读取：实验 6-4 已由
 `results/full_6_4_60_cases_costed.json` 完成 60 用例 × 3 系统共 180/180 条真实轨迹和完整成本核算；
-实验 6-9 的 4×3×2×60 全矩阵仍未完成，现有 smoke、checkpoint 和 backend readiness 不能替代完整验收。
-2026-07-31 起后端就绪度已在如实记录的替代方案下达到 9/9（见上文“Backend substitutions”），
-唯一剩余工作是运行矩阵活动本身。
+实验 6-9 的 4×3×2×60 全矩阵活动已完成：`results/full_6_9_60_case_matrix.json` 收录 60 用例 × 24 单元
+共 1,440/1,440 条真实轨迹，零错误、零未定价用量，检索/任务指标与交互分析完整（顶层与 completion
+状态均为 `complete`），并由 `validation/verify_full_matrix_20260731.py` 独立复核通过。
+矩阵在后端就绪度 9/9 的如实记录替代方案下执行（见上文“Backend substitutions”）。
