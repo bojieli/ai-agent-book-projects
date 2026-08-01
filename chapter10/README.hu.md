@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Űrlapmegfigyelést, LLM-döntést, telefonhívást és párhuzamos kitöltést kapcsol össze. |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | Párhuzamos böngészőmunkameneteket futtat hibaelszigeteléssel, erőforrás-tisztítással és hivatkozott bizonyítékokkal. |
 | 10-7 | `generative_agents/` | 📖 | A Stanford AI Town reprodukciója a külső generative agents repository-ból. |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Többágenses, hangalapú Werewolf játék beleegyezési kapuval; élő emberi munkamenet még nem futott. |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Valódi LLM-felhasználószimulátort ad hozzá, amely csak saját helyének kontextusát látja, eszközt hív, és szintetizált hangon plusz valódi OpenRouter ASR-en át lép a játékba. A szigorú ellenőrzés két hibás korai futást elutasított; a v2 E2E, izoláció, győztes és három ciklus kapui átmentek, de a Falusi tévesen száműzte a Látót, ezért a stratégia megbukott. |
 
 ## Projekttípusok
 

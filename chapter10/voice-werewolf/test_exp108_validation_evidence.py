@@ -40,3 +40,63 @@ def test_offline_and_real_llm_evidence_are_explicitly_non_acceptance():
     assert audit["audit"]["schema_valid"] is True
     assert audit["audit"]["overall_pass"] is False
     assert audit["overall_status"] == "supplemental_only"
+
+
+def test_real_user_simulator_runs_prove_e2e_and_keep_negative_results_separate():
+    runs = ROOT / "runs"
+    strategy_run = json.loads(
+        (runs / "exp10-8-simulated-user-openrouter-20260801" / "acceptance_report.json").read_text()
+    )
+    three_cycle_run = json.loads(
+        (runs / "exp10-8-simulated-user-openrouter-20260801-v2" / "acceptance_report.json").read_text()
+    )
+
+    strategy_validation = json.loads(
+        (runs / "exp10-8-simulated-user-openrouter-20260801" / "independent_validation.json").read_text()
+    )
+    three_cycle_validation = json.loads(
+        (runs / "exp10-8-simulated-user-openrouter-20260801-v2" / "independent_validation.json").read_text()
+    )
+
+    assert strategy_run["strategy_audit_pass"] is True
+    assert strategy_validation["strict_audio_action_boundary"] == "fail"
+    assert "not an explicit abstention" in strategy_validation["errors"][0]
+
+    report = three_cycle_run
+    assert report["execution_mode"] == "simulated_user"
+    assert report["acceptance_path"] is True
+    assert report["gates"]["one_llm_user_simulator"]["status"] == "pass"
+    assert report["gates"]["information_isolation"]["status"] == "pass"
+    assert report["gates"]["winner_determined_by_game_rule"]["status"] == "pass"
+    assert report["simulator_llm_tool_calls"] == 2
+    assert report["simulator_audio_roundtrips"] == 2
+    ids = [
+        event.get("response_id") or event.get("request_id")
+        for event in report["voice_events"]
+        if event["type"] in {"simulator_llm_tool", "simulator_asr"}
+    ]
+    assert all(ids)
+    assert len(ids) == len(set(ids))
+    asr_events = [event for event in report["voice_events"] if event["type"] == "simulator_asr"]
+    assert all(
+        event["usage"]["prompt_tokens_details"]["audio_tokens"] > 0
+        for event in asr_events
+    )
+    assert three_cycle_validation["strict_audio_action_boundary"] == "pass"
+    assert three_cycle_run["completed_day_night_vote_cycles"] == 3
+    assert three_cycle_run["strategy_audit_pass"] is False
+    assert three_cycle_run["overall_status"] == "incomplete"
+
+
+def test_fixed_abstention_has_real_audio_api_receipt():
+    probe = json.loads((ROOT / "fixed_abstention_probe_20260801.json").read_text())
+    assert probe["synthetic_audio_only"] is True
+    assert probe["spoken_text"] == "I choose to abstain."
+    assert probe["asr_transcript"] == "I choose to abstain."
+    assert probe["explicit_abstention"] is True
+    assert probe["parsed_target"] is None
+    assert probe["provider"] == "OpenRouter multimodal audio API"
+    assert probe["response_id"].startswith("gen-")
+    assert probe["usage"]["prompt_tokens_details"]["audio_tokens"] > 0
+    assert len(probe["source_audio_sha256"]) == 64
+    assert probe["status"] == "pass"

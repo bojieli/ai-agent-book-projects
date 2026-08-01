@@ -182,10 +182,19 @@ class HumanPlayerAgent(PlayerAgent):
         super().__init__(name, role, offline=True)
         self.voice = voice
         self.is_human = True
+        self.is_user = True
+
+    @staticmethod
+    def _explicit_none(text: str) -> bool:
+        folded = text.casefold()
+        return bool(
+            any(word in folded for word in ("放弃", "不用", "弃票"))
+            or re.search(r"\b(?:none|abstain|skip)\b", folded)
+        )
 
     @staticmethod
     def _spoken_target(text: str, candidates: List[str], allow_none: bool) -> Optional[str]:
-        if allow_none and any(word in text.casefold() for word in ("none", "放弃", "不用", "弃票")):
+        if allow_none and HumanPlayerAgent._explicit_none(text):
             return None
         match = re.search(r"(?:P|player\s*|玩家\s*|[投查验救毒刀]\s*)(\d+)", text, re.I)
         if match and f"P{int(match.group(1))}" in candidates:
@@ -194,6 +203,17 @@ class HumanPlayerAgent(PlayerAgent):
         match = re.search(r"([一二三四五六七八])号", text)
         if match and f"P{chinese[match.group(1)]}" in candidates:
             return f"P{chinese[match.group(1)]}"
+        english = {
+            "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+            "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+        }
+        match = re.search(
+            r"(?:player|seat)\s+(one|two|three|four|five|six|seven|eight|nine|ten)\b",
+            text,
+            re.I,
+        )
+        if match and f"P{english[match.group(1).casefold()]}" in candidates:
+            return f"P{english[match.group(1).casefold()]}"
         return PlayerAgent._parse_target(text, candidates, allow_none)
 
     def speak(self, players: List[str]) -> str:

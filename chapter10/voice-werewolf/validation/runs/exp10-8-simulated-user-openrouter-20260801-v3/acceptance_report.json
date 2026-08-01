@@ -1,0 +1,714 @@
+{
+  "schema_version": 2,
+  "experiment": "10-8",
+  "generated_at": "2026-08-01T04:37:51+0000",
+  "execution_mode": "simulated_user",
+  "acceptance_path": true,
+  "end_to_end_status": "pass",
+  "players": 8,
+  "user_players": [
+    "P1"
+  ],
+  "human_players": [],
+  "simulated_user_players": [
+    "P1"
+  ],
+  "human_role_randomized_to": null,
+  "simulated_user_role_randomized_to": "村民",
+  "role_counts": {
+    "狼人": 2,
+    "预言家": 1,
+    "女巫": 1,
+    "村民": 4
+  },
+  "completed_day_night_vote_cycles": 2,
+  "winner": "好人阵营",
+  "information_isolation_pass": true,
+  "strategy_audit": {
+    "criteria": {
+      "werewolf_concealment": {
+        "status": "fail",
+        "evidence": "P2说P5被投出去又被刀，这是捏造信息。"
+      },
+      "seer_timing_and_evidence": {
+        "status": "pass",
+        "evidence": "我是预言家，昨晚查验了P1，P1是好人。"
+      },
+      "villager_logical_reasoning": {
+        "status": "pass",
+        "evidence": "P4是目前唯一跳预言家的，且报了P1金水，P5没有明确站边，也没有给出任何有建设性的信息，反而说 '这平安夜有点意思'，发言过于随意，有划水嫌疑。"
+      },
+      "role_consistency": {
+        "status": "fail",
+        "evidence": "P2的发言很奇怪，P5昨天是被投票出局的，不是被刀出局。P2说P5被投出去又被刀，这是捏造信息。"
+      }
+    },
+    "overall_pass": false,
+    "provider": "openrouter",
+    "model": "google/gemini-2.5-flash",
+    "model_overall_pass_claim": false,
+    "schema_valid": true,
+    "validation_errors": []
+  },
+  "strategy_audit_pass": false,
+  "voice_events": [
+    {
+      "sequence": 1,
+      "monotonic": 6660064.938664906,
+      "wall_time": "2026-08-01T04:37:05+0000",
+      "type": "tts_ready",
+      "speaker": "judge-private",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.066,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r0_judge-private_1.wav",
+      "audio_bytes": 290926,
+      "audio_sha256": "4072ec5c58cccd2053867e5fa15cff4f0dbe2d66497a6818cc0a72c22c6e49d0"
+    },
+    {
+      "sequence": 2,
+      "monotonic": 6660069.687056506,
+      "wall_time": "2026-08-01T04:37:10+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.073,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_judge_2.wav",
+      "audio_bytes": 323170,
+      "audio_sha256": "ad0abe1d2b2c094ea011233bb22a34482fc8bb74029a018fb679257c931668b0"
+    },
+    {
+      "sequence": 3,
+      "monotonic": 6660071.70736767,
+      "wall_time": "2026-08-01T04:37:12+0000",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "speak_publicly",
+      "arguments": {
+        "utterance": "Good morning everyone. Since it's a peaceful night with no deaths, we need to be extra careful today. I'm a villager looking for evidence to identify the wolves. Let's start by hearing from anyone who has information to share, especially if there are any seers who got results last night."
+      },
+      "response_id": "gen-1785559030-spNZyA0QkdAqVUCAyzRH",
+      "requested_model": "anthropic/claude-sonnet-4",
+      "provider_reported_model": "anthropic/claude-sonnet-4",
+      "usage": {
+        "completion_tokens": 93,
+        "prompt_tokens": 1149,
+        "total_tokens": 1242,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.004842,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.004842,
+          "upstream_inference_prompt_cost": 0.003447,
+          "upstream_inference_completions_cost": 0.001395
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "monotonic": 6660071.786439727,
+      "wall_time": "2026-08-01T04:37:12+0000",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.073,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P1_4.wav",
+      "audio_bytes": 943042,
+      "audio_sha256": "25c321db62b76146045007dde047aa9d753a065144f3e156b62c5a4a4010fc69"
+    },
+    {
+      "sequence": 5,
+      "monotonic": 6660073.073498523,
+      "wall_time": "2026-08-01T04:37:13+0000",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785559032-tErOo2DoQoQhH2M1dmHX",
+      "usage": {
+        "completion_tokens": 64,
+        "prompt_tokens": 538,
+        "total_tokens": 602,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 500,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0006714,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0006714,
+          "upstream_inference_prompt_cost": 0.0005114,
+          "upstream_inference_completions_cost": 0.00016
+        }
+      },
+      "latency_seconds": 1.286,
+      "source_audio_sha256": "25c321db62b76146045007dde047aa9d753a065144f3e156b62c5a4a4010fc69",
+      "transcript": "Good morning everyone. Since it's a peaceful night with no deaths, we need to be extra careful today. I'm a villager looking for evidence to identify the wolves. Let's start by hearing from anyone who has information to share, especially if there are any seers who got results last night."
+    },
+    {
+      "sequence": 6,
+      "monotonic": 6660073.961132782,
+      "wall_time": "2026-08-01T04:37:14+0000",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.074,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P2_6.wav",
+      "audio_bytes": 907964,
+      "audio_sha256": "1a19837651669d30d773f7f6c5136e31e28504766f162a1acf9e5a88c76a70a5"
+    },
+    {
+      "sequence": 7,
+      "monotonic": 6660074.793108945,
+      "wall_time": "2026-08-01T04:37:15+0000",
+      "type": "tts_ready",
+      "speaker": "P3",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.074,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P3_7.wav",
+      "audio_bytes": 913618,
+      "audio_sha256": "acb7323818965eeaa5d27fab666a16679afed28d09e3adafe58e840be2de6928"
+    },
+    {
+      "sequence": 8,
+      "monotonic": 6660075.679470788,
+      "wall_time": "2026-08-01T04:37:16+0000",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.057,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P4_8.wav",
+      "audio_bytes": 929880,
+      "audio_sha256": "c52b74cfca755abac59489ac2d0594f1dfc1e71c3c53b909965dd452e72a13d6"
+    },
+    {
+      "sequence": 9,
+      "monotonic": 6660076.602908004,
+      "wall_time": "2026-08-01T04:37:17+0000",
+      "type": "tts_ready",
+      "speaker": "P5",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.075,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P5_9.wav",
+      "audio_bytes": 882522,
+      "audio_sha256": "862216fb788092ada3ec5173c3f47906fc4f3e1ba157f4c076a6d1eccac6084f"
+    },
+    {
+      "sequence": 10,
+      "monotonic": 6660077.34997115,
+      "wall_time": "2026-08-01T04:37:18+0000",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.073,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P6_10.wav",
+      "audio_bytes": 763248,
+      "audio_sha256": "048178ad618f1cf986fa96ecead02081b4939749d466c6df5c2973fce9040a08"
+    },
+    {
+      "sequence": 11,
+      "monotonic": 6660078.475235486,
+      "wall_time": "2026-08-01T04:37:19+0000",
+      "type": "tts_ready",
+      "speaker": "P7",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.076,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P7_11.wav",
+      "audio_bytes": 1061138,
+      "audio_sha256": "d935eb37460712700603b17bc90e7f2f817df54cd2156aab671fb45df7584e9b"
+    },
+    {
+      "sequence": 12,
+      "monotonic": 6660079.383143585,
+      "wall_time": "2026-08-01T04:37:20+0000",
+      "type": "tts_ready",
+      "speaker": "P8",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.072,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P8_12.wav",
+      "audio_bytes": 931296,
+      "audio_sha256": "1574dfaea95529d8e30eefad8e58d53ce8d743ada9cbae8a21dc46bc50c0382e"
+    },
+    {
+      "sequence": 13,
+      "monotonic": 6660081.716445442,
+      "wall_time": "2026-08-01T04:37:22+0000",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "target": "none",
+        "reason": "P4跳预言家验我金水，在没有对跳的情况下，我倾向相信P4的身份。其他玩家发言都比较正常，没有明显的狼人破绽。第一天信息有限，不宜盲投，选择弃票观察。"
+      },
+      "response_id": "gen-1785559040-oO8E4LBzbfEGuuvr3vVK",
+      "requested_model": "anthropic/claude-sonnet-4",
+      "provider_reported_model": "anthropic/claude-sonnet-4",
+      "usage": {
+        "completion_tokens": 132,
+        "prompt_tokens": 1700,
+        "total_tokens": 1832,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.00708,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.00708,
+          "upstream_inference_prompt_cost": 0.0051,
+          "upstream_inference_completions_cost": 0.00198
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "monotonic": 6660081.764605112,
+      "wall_time": "2026-08-01T04:37:22+0000",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.043,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P1_14.wav",
+      "audio_bytes": 42524,
+      "audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352"
+    },
+    {
+      "sequence": 15,
+      "monotonic": 6660082.798986178,
+      "wall_time": "2026-08-01T04:37:23+0000",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785559042-1GZNLMYIWInzO59ApGnk",
+      "usage": {
+        "completion_tokens": 4,
+        "prompt_tokens": 63,
+        "total_tokens": 67,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 25,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 4.64e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 4.64e-05,
+          "upstream_inference_prompt_cost": 3.64e-05,
+          "upstream_inference_completions_cost": 1e-05
+        }
+      },
+      "latency_seconds": 1.034,
+      "source_audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352",
+      "transcript": "P1 is not"
+    },
+    {
+      "sequence": 16,
+      "monotonic": 6660089.250340574,
+      "wall_time": "2026-08-01T04:37:30+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.08,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_judge_16.wav",
+      "audio_bytes": 889394,
+      "audio_sha256": "4ff2b73cad8e108f291f1b8112d78c2a2b22e04ef69862263dc8a8ad5dabebb5"
+    },
+    {
+      "sequence": 17,
+      "monotonic": 6660091.794800593,
+      "wall_time": "2026-08-01T04:37:32+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.062,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_17.wav",
+      "audio_bytes": 304072,
+      "audio_sha256": "601d85e481cab7a3d0f97ada2b21b25ecaf1db4242837389196e332aa8b3d16c"
+    },
+    {
+      "sequence": 18,
+      "monotonic": 6660094.03442275,
+      "wall_time": "2026-08-01T04:37:34+0000",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "speak_publicly",
+      "arguments": {
+        "utterance": "This is very telling. P4 claimed to be the seer and verified me as good, then got killed last night - classic wolf move to eliminate the real seer. Since P4 correctly identified me as good, this confirms he was likely the true seer. We should focus on those who voted for P4 yesterday, as wolves often try to eliminate seers early."
+      },
+      "response_id": "gen-1785559052-ot6EVpz9tzQVSv3Vc3nK",
+      "requested_model": "anthropic/claude-sonnet-4",
+      "provider_reported_model": "anthropic/claude-sonnet-4",
+      "usage": {
+        "completion_tokens": 111,
+        "prompt_tokens": 1726,
+        "total_tokens": 1837,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.006843,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.006843,
+          "upstream_inference_prompt_cost": 0.005178,
+          "upstream_inference_completions_cost": 0.001665
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "monotonic": 6660094.128008126,
+      "wall_time": "2026-08-01T04:37:34+0000",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.093,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P1_19.wav",
+      "audio_bytes": 1154406,
+      "audio_sha256": "e6d9c0274102424b9c9a14dce70e357319498a4ba97b40613e17e5024be3a5ff"
+    },
+    {
+      "sequence": 20,
+      "monotonic": 6660095.610149198,
+      "wall_time": "2026-08-01T04:37:36+0000",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785559054-DXFJigc5J4fcYV5NfWkJ",
+      "usage": {
+        "completion_tokens": 73,
+        "prompt_tokens": 663,
+        "total_tokens": 736,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 625,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0008189,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0008189,
+          "upstream_inference_prompt_cost": 0.0006364,
+          "upstream_inference_completions_cost": 0.0001825
+        }
+      },
+      "latency_seconds": 1.481,
+      "source_audio_sha256": "e6d9c0274102424b9c9a14dce70e357319498a4ba97b40613e17e5024be3a5ff",
+      "transcript": "This is very telling. P4 claimed to be the seer and verified me as good, then got killed last night. Classic wolf move to eliminate the real seer. Since P4 correctly identified me as good, this confirms he was likely the true seer. We should focus on those who voted for P4 yesterday, as wolves often try to eliminate seers early."
+    },
+    {
+      "sequence": 21,
+      "monotonic": 6660096.573507839,
+      "wall_time": "2026-08-01T04:37:37+0000",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.086,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P2_21.wav",
+      "audio_bytes": 1196966,
+      "audio_sha256": "f96f0c81afb44f2eb68637938711ebc310f28a88106d3c0639ea865451342339"
+    },
+    {
+      "sequence": 22,
+      "monotonic": 6660097.313278559,
+      "wall_time": "2026-08-01T04:37:38+0000",
+      "type": "tts_ready",
+      "speaker": "P3",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.073,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P3_22.wav",
+      "audio_bytes": 982662,
+      "audio_sha256": "841e56e726756c824f80bc2e7b2534a5e79da23b841f9c371d7d36836ec49ea5"
+    },
+    {
+      "sequence": 23,
+      "monotonic": 6660098.07019322,
+      "wall_time": "2026-08-01T04:37:38+0000",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.086,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P6_23.wav",
+      "audio_bytes": 978756,
+      "audio_sha256": "4fb7d65fae0b19898cbb55e891cba276229805f4fb2e7bab0b59c0237a3334be"
+    },
+    {
+      "sequence": 24,
+      "monotonic": 6660098.725929254,
+      "wall_time": "2026-08-01T04:37:39+0000",
+      "type": "tts_ready",
+      "speaker": "P7",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.063,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P7_24.wav",
+      "audio_bytes": 728740,
+      "audio_sha256": "c897346a14fb6f685afe015ca8d7ba10a72b160de10f3ca36e9f1990b5f8ca2e"
+    },
+    {
+      "sequence": 25,
+      "monotonic": 6660099.518123498,
+      "wall_time": "2026-08-01T04:37:40+0000",
+      "type": "tts_ready",
+      "speaker": "P8",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.067,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P8_25.wav",
+      "audio_bytes": 1066310,
+      "audio_sha256": "8a5e95f8107dce98f4ce16674ca3ffc2ca91c9e2342ff0be765211ad180a0e8a"
+    },
+    {
+      "sequence": 26,
+      "monotonic": 6660103.414020963,
+      "wall_time": "2026-08-01T04:37:44+0000",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "target": "none",
+        "reason": "基于目前信息，P4作为真预言家被刀，P5狼人身份已确认。其他玩家发言都相对合理，都认同P4是真预言家、P5是狼人的判断。没有明显的狼人特征或矛盾发言，需要更多信息才能做出准确判断，暂时弃票观察。"
+      },
+      "response_id": "gen-1785559060-iKXuqTxW4nhB2usi2TXP",
+      "requested_model": "anthropic/claude-sonnet-4",
+      "provider_reported_model": "anthropic/claude-sonnet-4",
+      "usage": {
+        "completion_tokens": 155,
+        "prompt_tokens": 2175,
+        "total_tokens": 2330,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.00885,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.00885,
+          "upstream_inference_prompt_cost": 0.006525,
+          "upstream_inference_completions_cost": 0.002325
+        }
+      }
+    },
+    {
+      "sequence": 27,
+      "monotonic": 6660103.488481883,
+      "wall_time": "2026-08-01T04:37:44+0000",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.067,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P1_27.wav",
+      "audio_bytes": 42524,
+      "audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352"
+    },
+    {
+      "sequence": 28,
+      "monotonic": 6660104.541520248,
+      "wall_time": "2026-08-01T04:37:45+0000",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785559064-K9ELBofaZckyxrbbYLPr",
+      "usage": {
+        "completion_tokens": 4,
+        "prompt_tokens": 63,
+        "total_tokens": 67,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 25,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 4.64e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 4.64e-05,
+          "upstream_inference_prompt_cost": 3.64e-05,
+          "upstream_inference_completions_cost": 1e-05
+        }
+      },
+      "latency_seconds": 1.053,
+      "source_audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352",
+      "transcript": "P1 is not"
+    },
+    {
+      "sequence": 29,
+      "monotonic": 6660108.910838712,
+      "wall_time": "2026-08-01T04:37:49+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.084,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_29.wav",
+      "audio_bytes": 751448,
+      "audio_sha256": "ce1a826268133a4331c63c1d9ed13aa7663a5ec76d9fbd319411e8dfa09aec18"
+    },
+    {
+      "sequence": 30,
+      "monotonic": 6660108.973700089,
+      "wall_time": "2026-08-01T04:37:49+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-en-us",
+      "request_id": null,
+      "latency_seconds": 0.057,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_30.wav",
+      "audio_bytes": 274520,
+      "audio_sha256": "24a4432aee15b31513a2f4368bdc15b55433dfd35ff6b2c37559f2f6f22f9c2b"
+    }
+  ],
+  "voice_has_asr": true,
+  "voice_has_tts": true,
+  "simulator_llm_tool_calls": 4,
+  "simulator_audio_roundtrips": 4,
+  "barge_in_events": 0,
+  "gates": {
+    "exact_6_to_8_player_role_roster": {
+      "status": "pass"
+    },
+    "one_user_seat": {
+      "status": "pass"
+    },
+    "one_authorized_human_participant": {
+      "status": "not_applicable"
+    },
+    "one_llm_user_simulator": {
+      "status": "pass"
+    },
+    "real_user_input_asr": {
+      "status": "pass"
+    },
+    "real_ai_and_judge_tts": {
+      "status": "pass"
+    },
+    "llm_tool_to_audio_to_asr_boundary": {
+      "status": "pass",
+      "tool_calls": 4,
+      "audio_roundtrips": 4
+    },
+    "three_complete_cycles": {
+      "status": "fail",
+      "observed": 2
+    },
+    "information_isolation": {
+      "status": "pass"
+    },
+    "real_llm_strategy_acceptance": {
+      "status": "fail"
+    },
+    "winner_determined_by_game_rule": {
+      "status": "pass"
+    }
+  },
+  "overall_status": "incomplete"
+}

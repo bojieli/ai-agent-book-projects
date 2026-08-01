@@ -40,7 +40,8 @@ def build_roles(players: int = 7, wolves: Optional[int] = None) -> List[Role]:
 
 def create_players(seed: int = 42, players: int = 7, wolves: Optional[int] = None,
                    offline: bool = False, human_seat: Optional[int] = None,
-                   voice=None) -> List[PlayerAgent]:
+                   voice=None, simulated_user_seat: Optional[int] = None,
+                   simulator_model: Optional[str] = None) -> List[PlayerAgent]:
     """创建一局游戏（默认 7 人：2 狼人 + 1 预言家 + 1 女巫 + 3 村民，控成本）。
 
     身份随机洗牌后分配给 P1~Pn，保证每局身份分布不同但可用 seed 复现。
@@ -51,12 +52,21 @@ def create_players(seed: int = 42, players: int = 7, wolves: Optional[int] = Non
     roles = build_roles(players, wolves)
     rng.shuffle(roles)
     result = []
+    if human_seat is not None and simulated_user_seat is not None:
+        raise ValueError("human_seat and simulated_user_seat are mutually exclusive")
     for i, role in enumerate(roles):
         if human_seat == i + 1:
             if voice is None:
                 raise ValueError("human_seat requires a live voice session")
             from .human import HumanPlayerAgent
             result.append(HumanPlayerAgent(f"P{i+1}", role, voice))
+        elif simulated_user_seat == i + 1:
+            if voice is None:
+                raise ValueError("simulated_user_seat requires a simulated voice session")
+            from .simulator import SimulatedUserPlayerAgent
+            result.append(SimulatedUserPlayerAgent(
+                f"P{i+1}", role, voice, model=simulator_model
+            ))
         else:
             result.append(PlayerAgent(f"P{i+1}", role, offline=offline,
                                       rng=random.Random(seed * 1000 + i)))
@@ -88,6 +98,15 @@ class Judge:
     # ------------------------------------------------------------------
     def _log(self, category, content, visible_to):
         self.audit.add(self.round_no, self.phase, category, content, visible_to)
+
+    @staticmethod
+    def _decision_record(player, **record):
+        """Attach the model's stated reason to evidence without exposing it publicly."""
+        reason = getattr(player, "last_decision_reason", None)
+        if reason:
+            record["reason"] = reason
+        player.last_decision_reason = None
+        return record
 
     def broadcast(self, category: str, content: str):
         """公开信息：进入**所有玩家**（含已出局者）的上下文。"""
@@ -125,8 +144,8 @@ class Judge:
 
     def _print_private(self, permitted: List[str], text: str):
         """Prevent private night logs leaking through the live player's terminal."""
-        human = next((p for p in self.players if getattr(p, "is_human", False)), None)
-        if human is None or human.name in permitted:
+        user = next((p for p in self.players if getattr(p, "is_user", False)), None)
+        if user is None or user.name in permitted:
             print(text)
 
     # ------------------------------------------------------------------
@@ -145,15 +164,15 @@ class Judge:
         wolves = self.wolves()
         team = "、".join(w.name for w in wolves)
         self.wolves_send("狼人队友身份", f"狼人阵营的玩家是：{team}（你们互为队友，夜晚共同行动）")
-        human = next((p for p in self.players if getattr(p, "is_human", False)), None)
-        if human:
+        user = next((p for p in self.players if getattr(p, "is_user", False)), None)
+        if user:
             # The old all-AI observer table would be a side-channel leak to a real
             # player. In live mode only the human's permitted private facts are spoken.
             print("  [真人局] 上帝视角身份表已隐藏，防止终端侧信道泄露。")
-            private = f"您的座位是{human.name}，您的身份是{human.role.value}。"
-            if human.role == Role.WEREWOLF:
+            private = f"您的座位是{user.name}，您的身份是{user.role.value}。"
+            if user.role == Role.WEREWOLF:
                 private += f" 狼人队友是{team}。"
-            human.voice.say("judge-private", private, 0, allow_barge_in=False)
+            user.voice.say("judge-private", private, 0, allow_barge_in=False)
         else:
             # All-AI diagnostic mode may show ground truth to the external evaluator.
             print("  [上帝视角/仅外部评测者可见] 真实身份表：")
@@ -202,7 +221,10 @@ class Judge:
                 candidates, self.names, allow_none=False)
             if t:
                 votes.append(t)
-                self.action_history.append({"round": self.round_no, "phase": "night", "actor": w.name, "role": w.role.value, "action": "kill_proposal", "target": t})
+                self.action_history.append(self._decision_record(
+                    w, round=self.round_no, phase="night", actor=w.name,
+                    role=w.role.value, action="kill_proposal", target=t
+                ))
                 self._print_private(
                     [wolf.name for wolf in wolves],
                     f"  [仅法官+狼人可见] 狼人 {w.name} 提议击杀 → {t}",
@@ -235,11 +257,14 @@ class Judge:
             target = self.rng.choice(candidates)
         tgt = self.by_name(target)
         result = "狼人" if tgt.role == Role.WEREWOLF else "好人"
-        self.action_history.append({"round": self.round_no, "phase": "night", "actor": seer.name, "role": seer.role.value, "action": "inspect", "target": target, "result": result})
+        self.action_history.append(self._decision_record(
+            seer, round=self.round_no, phase="night", actor=seer.name,
+            role=seer.role.value, action="inspect", target=target, result=result
+        ))
         # 查验结果只进预言家本人上下文——这是预言家独享的关键信息
         self.private_send(seer, "预言家查验结果",
                           f"第{self.round_no}回合你查验了 {target}，结果为【{result}】")
-        if getattr(seer, "is_human", False):
+        if getattr(seer, "is_user", False):
             seer.voice.say(
                 "judge-private",
                 f"您查验了{target}，结果是{result}。",
@@ -279,7 +304,12 @@ class Judge:
                     self._print_private(
                         [witch.name], f"  [仅法官+女巫可见] 女巫使用解药救 {killed}"
                     )
-                    self.action_history.append({"round": self.round_no, "phase": "night", "actor": witch.name, "role": witch.role.value, "action": "heal", "target": killed})
+                    self.action_history.append(self._decision_record(
+                        witch, round=self.round_no, phase="night", actor=witch.name,
+                        role=witch.role.value, action="heal", target=killed
+                    ))
+                else:
+                    witch.last_decision_reason = None
         else:
             self.private_send(witch, "女巫夜间信息", f"第{self.round_no}回合是平安夜（无人被狼人击杀，或你无从得知）")
 
@@ -296,7 +326,12 @@ class Judge:
                 self._print_private(
                     [witch.name], f"  [仅法官+女巫可见] 女巫使用毒药毒 {poisoned}"
                 )
-                self.action_history.append({"round": self.round_no, "phase": "night", "actor": witch.name, "role": witch.role.value, "action": "poison", "target": poisoned})
+                self.action_history.append(self._decision_record(
+                    witch, round=self.round_no, phase="night", actor=witch.name,
+                    role=witch.role.value, action="poison", target=poisoned
+                ))
+            else:
+                witch.last_decision_reason = None
         return poisoned, saved
 
     # ------------------------------------------------------------------
@@ -331,7 +366,7 @@ class Judge:
             self.broadcast("公开发言", f"{p.name} 说：{speech}")
             self.action_history.append({"round": self.round_no, "phase": "day", "actor": p.name, "role": p.role.value, "action": "speech", "text": speech})
             print(f"  {line}")
-            if self.tts and not getattr(p, "is_human", False):
+            if self.tts and not getattr(p, "is_user", False):
                 interruption = self.tts.synth(p.name, speech, self.round_no)
                 if interruption:
                     human = next((q for q in self.alive() if getattr(q, "is_human", False)), None)
@@ -353,9 +388,13 @@ class Judge:
             t = p.vote(candidates, self.names)
             if t:
                 tally[t] += 1
-                self.action_history.append({"round": self.round_no, "phase": "vote", "actor": p.name, "role": p.role.value, "action": "vote", "target": t})
+                self.action_history.append(self._decision_record(
+                    p, round=self.round_no, phase="vote", actor=p.name,
+                    role=p.role.value, action="vote", target=t
+                ))
                 print(f"  {p.name} 投票 → {t}")
             else:
+                p.last_decision_reason = None
                 print(f"  {p.name} 弃票")
         if not tally:
             self.broadcast("公开-放逐", "本轮无人被放逐（全部弃票）")
@@ -394,6 +433,8 @@ class Judge:
         winner = None
         while winner is None and self.round_no < self.max_rounds:
             self.round_no += 1
+            for player in self.players:
+                player.current_round = self.round_no
             deaths = self.night()
             winner = self._check_winner()
             if winner:

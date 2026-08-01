@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Playwright 觀察真實表單，真實 LLM 自主決定呼叫 `initiate_phone_call_agent`；需明確同意的 Twilio/本機語音路徑支援校驗、重問、提問/填寫並行、脫敏軌跡與選擇性提交。目前證據僅以 scripted 回答驗證瀏覽器/LLM/並行，PSTN 與真人音訊仍為 `not_run`，因此真人驗收尚未完成。 |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N 個獨立 Playwright 瀏覽器工作階段搜尋十個真實大學網站，真實 LLM 擷取可引用證據；驗收保留監控、逾時/錯誤隔離、單次結算、級聯終止確認、資源清理與同站 3.142× 並行加速。 |
 | 10-7 | `generative_agents/` | 📖 | 史丹佛「AI 小鎮」生成式智慧體（實驗 10-7 配套）；外部倉庫 `joonspk-research/generative_agents`，需自行克隆（見主 README 附錄） |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 已實作需明確同意的 6–8 席真人路徑（1 真人＋5–7 個真實 AI）、精確角色、麥克風 ASR/TTS/打斷、三循環、策略、隔離與規則勝負門禁。未提供授權真人，兩個安全 Audio API 探測皆回傳 `insufficient_quota`；真人音訊/循環/策略尚未執行，全 AI 補充路徑不算驗收。 |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 新增真實 LLM 使用者模擬器：只讀本席上下文、必須呼叫工具，且僅能經合成音訊與真實 OpenRouter 音訊 ASR 入局。嚴格複核否決了兩個把誤轉寫當棄權的早期執行；未受影響的 v2 通過端到端、隔離、規則勝負與三循環，但村民錯逐預言家導致策略失敗。 |
 
 ## 專案型別說明
 

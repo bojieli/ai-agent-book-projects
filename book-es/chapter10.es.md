@@ -684,15 +684,15 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 
 > **Experimento 10-8 ★★★: Sistema de Agente de Hombre Lobo por Voz**
 >
-> El Hombre Lobo es un juego clásico de deducción social que pone a prueba la capacidad de razonamiento, las habilidades de engaño y las estrategias sociales de los jugadores. Este experimento construye un sistema multi-agente en el que AI Agents representan diversos roles en el juego del Hombre Lobo, interactuando en tiempo real por voz con jugadores humanos, lo cual evalúa simultáneamente el razonamiento del Agente, el juego de rol y la interacción en tiempo real.
+> El Hombre Lobo es un juego clásico de deducción social que pone a prueba el razonamiento, el engaño y la estrategia social. Este experimento construye un sistema multi-agente en el que los AI Agents juegan por voz con un humano o con un simulador de usuario LLM independiente. La aceptación automática no debe detenerse por la ausencia de una persona: el simulador usa un modelo real, razona únicamente con el contexto autorizado para su asiento y actúa mediante las herramientas del juego.
 >
 > **Diseño de la arquitectura**:
 >
-> **1. Gestión del estado del juego**: El moderador (impulsado por código, no por LLM) mantiene el estado centralizado: lista de jugadores (mezcla de humanos y IA), identidades, bandos, estado de supervivencia, fase del juego (noche / día / votación / resolución) y registro histórico de eventos.
+> **1. Gestión del estado del juego**: El moderador (impulsado por código, no por LLM) mantiene el estado centralizado: lista de jugadores (un asiento de usuario + asientos de IA), identidades, bandos, estado de supervivencia, fase del juego (noche / día / votación / resolución) y registro histórico de eventos.
 >
 > **2. Control de permisos de información**: El mecanismo central del Hombre Lobo es la asimetría de información (*Information Asymmetry*): diferentes roles ven información distinta. Por ejemplo, los hombres lobo saben quiénes son sus compañeros, pero los aldeanos lo desconocen; el vidente puede verificar la identidad de una persona cada noche, pero solo él conoce el resultado. La implementación consiste en que el moderador, al invocar al Agente de cada rol, transmite únicamente la información que dicho rol debe conocer.
 >
-> **3. Interacción por voz en tiempo real**: Este experimento requiere utilizar capacidades de voz en tiempo real para establecer una conexión de voz entre jugadores humanos y los AI Agents. Se recomienda tomar como base el Agente de voz en tiempo real del Capítulo 9. Durante la fase de discusión diurna, el moderador gestiona el orden de palabra (pudiendo conceder el turno secuencialmente por posición o permitir solicitar el uso de la palabra). En la fase de votación se recogen los votos de todos los jugadores (expresados por voz por los humanos y mediante decisiones de razonamiento por la IA), contabilizándose los votos antes de anunciar al jugador eliminado.
+> **3. Voz en tiempo real y simulación automática del usuario**: La ruta humana se basa en el Agente de voz del Capítulo 9. En la ruta automática, un LLM independiente debe invocar la única herramienta legal del turno; después, la expresión elegida se sintetiza como audio real y se envía a una API ASR real. El juego consume solo la transcripción ASR, nunca el texto previo al audio, y falla de forma cerrada si el objetivo de la herramienta difiere del objetivo interpretado por ASR. VAD y las interrupciones siguen siendo cobertura específica de la ruta humana.
 >
 > **4. Razonamiento y estrategia del Agente**:
 >
@@ -701,14 +701,17 @@ El juego del Hombre Lobo sustenta la dimensión de **juegos estratégicos** de e
 > - **Razonamiento lógico del aldeano**: "Analiza si las intervenciones de cada jugador son auto-consistentes, prestando atención a quienes intentan dirigir de forma apresurada la atención, ambigüedades en la identidad o cambios frecuentes de postura. Observa el comportamiento de voto: los hombres lobo suelen concentrar sus votos contra las buenas personas que representan mayor amenaza. No sospeches al azar; cada deducción debe basarse en hechos concretos y lógica."
 >
 > **Criterios de aceptación**:
-> - Configurar una partida de 6 a 8 jugadores (1 jugador humano + 5 a 7 AI Agents).
-> - Configuración de roles: 2 hombres lobo, 1 vidente, 1 bruja y el resto aldeanos, asignando aleatoriamente el rol al jugador humano.
+> - Configurar una partida de 6 a 8 jugadores (1 asiento de usuario + 5 a 7 AI Agents); el usuario puede ser una persona autorizada o un simulador independiente con un LLM real, herramientas y un ciclo de voz.
+> - Configuración de roles: 2 hombres lobo, 1 vidente, 1 bruja y el resto aldeanos; el asiento de usuario recibe un rol aleatorio.
+> - El usuario simulado solo ve el contexto público y privado autorizado para su asiento, y sus acciones deben cruzar el límite llamada de herramienta LLM real → audio → ASR real.
 > - La partida debe desarrollarse normalmente durante al menos 3 rondas completas (bucle de noche-día-votación).
 > - Las intervenciones y acciones de los AI Agents deben coincidir con su rol y estrategia de juego.
 > - Los Agentes hombre lobo deben ocultar eficazmente su identidad.
 > - El Agente vidente debe revelar su identidad y publicar la información de sus verificaciones en el momento oportuno.
 > - El razonamiento de los Agentes aldeanos debe basarse en el análisis lógico de las intervenciones y conductas, y no en suposiciones al azar.
 > - Al finalizar la partida se debe determinar correctamente la victoria o derrota.
+>
+> **Resultado medido (2026-08-01)**: Los [registros de validación de `voice-werewolf`](../chapter10/voice-werewolf/validation/runs/) ejecutaron la ruta automática con llamadas reales a OpenRouter y entrada de audio nativa. La revalidación independiente estricta rechazó dos ejecuciones tempranas porque la transcripción no interpretable “P1 is not” se confundió con una abstención; el límite corregido exige ahora que ASR diga explícitamente `abstain`, `skip` o `none`. La ejecución v2 no afectada superó el asiento de usuario, la plantilla de roles, la herramienta LLM, el audio sintetizado, ASR real, dos concordancias de acción, tres ciclos completos, el aislamiento de información y el ganador determinado por reglas. Falló la estrategia porque un aldeano expulsó erróneamente al vidente. Por tanto, el sistema está verificado de extremo a extremo, aunque la calidad estratégica global sigue sin aprobar.
 
 ![Figura 10-13 Sistema de Agente de Hombre Lobo por Voz](images/fig10-13.svg)
 

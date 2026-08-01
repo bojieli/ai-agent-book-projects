@@ -55,7 +55,10 @@ def test_spoken_player_number_parser():
     candidates = ["P2", "P3", "P4"]
     assert HumanPlayerAgent._spoken_target("我投三号玩家", candidates, True) == "P3"
     assert HumanPlayerAgent._spoken_target("player 4", candidates, True) == "P4"
+    assert HumanPlayerAgent._spoken_target("I choose player three", candidates, True) == "P3"
     assert HumanPlayerAgent._spoken_target("我弃票", candidates, True) is None
+    assert HumanPlayerAgent._spoken_target("I choose to abstain", candidates, True) is None
+    assert not HumanPlayerAgent._explicit_none("P1 is not")
 
 
 def test_live_human_terminal_never_prints_god_view(capsys):

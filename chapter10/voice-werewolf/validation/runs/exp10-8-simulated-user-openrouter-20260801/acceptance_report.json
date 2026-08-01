@@ -1,0 +1,443 @@
+{
+  "schema_version": 2,
+  "experiment": "10-8",
+  "generated_at": "2026-08-01T04:32:10+0000",
+  "execution_mode": "simulated_user",
+  "acceptance_path": true,
+  "end_to_end_status": "pass",
+  "players": 8,
+  "user_players": [
+    "P1"
+  ],
+  "human_players": [],
+  "simulated_user_players": [
+    "P1"
+  ],
+  "human_role_randomized_to": null,
+  "simulated_user_role_randomized_to": "女巫",
+  "role_counts": {
+    "狼人": 2,
+    "预言家": 1,
+    "女巫": 1,
+    "村民": 4
+  },
+  "completed_day_night_vote_cycles": 2,
+  "winner": "好人阵营",
+  "information_isolation_pass": true,
+  "strategy_audit": {
+    "criteria": {
+      "werewolf_concealment": {
+        "status": "pass",
+        "evidence": "P7: \"P5预言家验了P1，P1是好人，结果P1还出局了，那P5是真的预言家吗？我觉得P5的预言家身份有点可疑。\" P8: \"P5说他是预言家，验了P1是好人，结果P1就出局了，这确实挺奇怪的。P5的预言家身份我也有点怀疑，希望P5能给出更多解释。\""
+      },
+      "seer_timing_and_evidence": {
+        "status": "pass",
+        "evidence": "P5: \"我是预言家，昨晚查验了P1，P1是好人。P1出局，很明显是狼人悍跳预言家刀的。请悍跳狼自爆，否则我将继续验人。\""
+      },
+      "villager_logical_reasoning": {
+        "status": "pass",
+        "evidence": "P2: \"P1出局有点意外，我作为村民，会仔细听大家的发言。希望狼人能早点暴露出来，大家可以多聊聊P1出局的原因。\" P3: \"P1出局确实有点出乎意料。P2说他是村民，我会先观察。大家可以多聊聊P1出局的原因，看看能不能找到狼人的线索。\""
+      },
+      "role_consistency": {
+        "status": "pass",
+        "evidence": "P5 (Seer) inspected P1 and P2, and in public speech reported P1 as good. P7 and P8 (Werewolves) proposed killing P1 and P5, and in public speech cast doubt on the Seer. P2, P3, P4, P6 (Villagers) discussed the dead player and the Seer's claim, then voted for P7 after P5's revelation."
+      }
+    },
+    "overall_pass": true,
+    "provider": "openrouter",
+    "model": "google/gemini-2.5-flash",
+    "model_overall_pass_claim": true,
+    "schema_valid": true,
+    "validation_errors": []
+  },
+  "strategy_audit_pass": true,
+  "voice_events": [
+    {
+      "sequence": 1,
+      "monotonic": 6659738.807942813,
+      "wall_time": "2026-08-01T04:31:39+0000",
+      "type": "tts_ready",
+      "speaker": "judge-private",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.061,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r0_judge-private_1.wav",
+      "audio_bytes": 290926,
+      "audio_sha256": "4072ec5c58cccd2053867e5fa15cff4f0dbe2d66497a6818cc0a72c22c6e49d0"
+    },
+    {
+      "sequence": 2,
+      "monotonic": 6659741.819194071,
+      "wall_time": "2026-08-01T04:31:42+0000",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "reason": "第一晚被刀的是我自己，女巫不能自救，所以解药无法使用。毒药第一晚先不使用，观察一下其他玩家的发言。",
+        "target": "none"
+      },
+      "response_id": "gen-1785558701-KGd5rQJmxY9VuJKLkL4I",
+      "requested_model": "google/gemini-2.5-flash",
+      "provider_reported_model": "google/gemini-2.5-flash",
+      "usage": {
+        "completion_tokens": 40,
+        "prompt_tokens": 395,
+        "total_tokens": 435,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0002185,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0002185,
+          "upstream_inference_prompt_cost": 0.0001185,
+          "upstream_inference_completions_cost": 0.0001
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "monotonic": 6659741.881685822,
+      "wall_time": "2026-08-01T04:31:42+0000",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.062,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P1_3.wav",
+      "audio_bytes": 42524,
+      "audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352"
+    },
+    {
+      "sequence": 4,
+      "monotonic": 6659742.959315685,
+      "wall_time": "2026-08-01T04:31:43+0000",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785558702-Gp3xq6Xf5Sx6pFLwLNi3",
+      "usage": {
+        "completion_tokens": 4,
+        "prompt_tokens": 63,
+        "total_tokens": 67,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 25,
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 4.64e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 4.64e-05,
+          "upstream_inference_prompt_cost": 3.64e-05,
+          "upstream_inference_completions_cost": 1e-05
+        }
+      },
+      "latency_seconds": 1.077,
+      "source_audio_sha256": "0d9ee3c2b7690fe0d2cf41b0450755995e66d3d360b76d7e4173086c87795352",
+      "transcript": "P1 is not"
+    },
+    {
+      "sequence": 5,
+      "monotonic": 6659743.022028705,
+      "wall_time": "2026-08-01T04:31:43+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.054,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_judge_5.wav",
+      "audio_bytes": 304082,
+      "audio_sha256": "1cbcec8d528486b50106d7cd00bed6a36e37a858dc391336edd83c113a1177de"
+    },
+    {
+      "sequence": 6,
+      "monotonic": 6659743.857484956,
+      "wall_time": "2026-08-01T04:31:44+0000",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.09,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P2_6.wav",
+      "audio_bytes": 914730,
+      "audio_sha256": "08cda30fad499eeb20caa8876579741e514d286f7db0ee999555673e5a8ce41d"
+    },
+    {
+      "sequence": 7,
+      "monotonic": 6659744.760075835,
+      "wall_time": "2026-08-01T04:31:45+0000",
+      "type": "tts_ready",
+      "speaker": "P3",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.065,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P3_7.wav",
+      "audio_bytes": 961736,
+      "audio_sha256": "fbacc9c4139086a6267f1f5e7668a83d81feed40ce5d8afcd915d32eaf7f2379"
+    },
+    {
+      "sequence": 8,
+      "monotonic": 6659745.623963103,
+      "wall_time": "2026-08-01T04:31:46+0000",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.08,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P4_8.wav",
+      "audio_bytes": 1176774,
+      "audio_sha256": "a606133137d7241bcb8d232a93b8563784a338187df76d2ef124c42938734c70"
+    },
+    {
+      "sequence": 9,
+      "monotonic": 6659746.469986224,
+      "wall_time": "2026-08-01T04:31:47+0000",
+      "type": "tts_ready",
+      "speaker": "P5",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.093,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P5_9.wav",
+      "audio_bytes": 991594,
+      "audio_sha256": "1258edf290a49d1ce8e9577389bc04214ce129c7817ea0f4fc5c3ee9d7800250"
+    },
+    {
+      "sequence": 10,
+      "monotonic": 6659747.318732785,
+      "wall_time": "2026-08-01T04:31:48+0000",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.072,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P6_10.wav",
+      "audio_bytes": 1154468,
+      "audio_sha256": "5227d3e1be790831250156417420c5395e5ba56b2fdf10914ea1842e1e72e718"
+    },
+    {
+      "sequence": 11,
+      "monotonic": 6659748.179338652,
+      "wall_time": "2026-08-01T04:31:48+0000",
+      "type": "tts_ready",
+      "speaker": "P7",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.057,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P7_11.wav",
+      "audio_bytes": 956014,
+      "audio_sha256": "34dfdd2b78ceb17facf82c64fa7d2a8bd5c43c7f53fb0757e32d5640ad308b46"
+    },
+    {
+      "sequence": 12,
+      "monotonic": 6659749.175230099,
+      "wall_time": "2026-08-01T04:31:49+0000",
+      "type": "tts_ready",
+      "speaker": "P8",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.078,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_P8_12.wav",
+      "audio_bytes": 1112008,
+      "audio_sha256": "b23c208fe1a7af1187c8a3db3e32ac87cc995e75286c6a82fe4fb9cb6da8f24e"
+    },
+    {
+      "sequence": 13,
+      "monotonic": 6659755.472674429,
+      "wall_time": "2026-08-01T04:31:56+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.075,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r1_judge_13.wav",
+      "audio_bytes": 774880,
+      "audio_sha256": "91d6eddf38874576842938ba4d040160a8c3320d97ea19f06612a60854fa1273"
+    },
+    {
+      "sequence": 14,
+      "monotonic": 6659757.175891685,
+      "wall_time": "2026-08-01T04:31:57+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.07,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_14.wav",
+      "audio_bytes": 307294,
+      "audio_sha256": "fd3fe62cf32b3536394bad76d25c66cf22b9efca4f48469cb82179b11f8811e8"
+    },
+    {
+      "sequence": 15,
+      "monotonic": 6659758.170954376,
+      "wall_time": "2026-08-01T04:31:58+0000",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.082,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P2_15.wav",
+      "audio_bytes": 1354938,
+      "audio_sha256": "6043e972710e130baaf98131172067d9fe7cb69217e10e5a55a3825f13c97e13"
+    },
+    {
+      "sequence": 16,
+      "monotonic": 6659759.243308116,
+      "wall_time": "2026-08-01T04:32:00+0000",
+      "type": "tts_ready",
+      "speaker": "P3",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.095,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P3_16.wav",
+      "audio_bytes": 1134002,
+      "audio_sha256": "115ddceb29320bbe2e2871a60bcc1e4f6e17ab1ba810378cd13d1067c5a38d84"
+    },
+    {
+      "sequence": 17,
+      "monotonic": 6659760.192742183,
+      "wall_time": "2026-08-01T04:32:00+0000",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.072,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P4_17.wav",
+      "audio_bytes": 1207868,
+      "audio_sha256": "4aca0b0da9f3d87bc222a5297d1172b8892bd3f62510a57180ac74a03d962941"
+    },
+    {
+      "sequence": 18,
+      "monotonic": 6659760.991943794,
+      "wall_time": "2026-08-01T04:32:01+0000",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.08,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P6_18.wav",
+      "audio_bytes": 1034974,
+      "audio_sha256": "5b3cecb54526a187a246b62c18c2701fab5dd5aaf2e715a0a83c4b93b28760d7"
+    },
+    {
+      "sequence": 19,
+      "monotonic": 6659761.881699391,
+      "wall_time": "2026-08-01T04:32:02+0000",
+      "type": "tts_ready",
+      "speaker": "P8",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.07,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_P8_19.wav",
+      "audio_bytes": 1114376,
+      "audio_sha256": "168dd458259cf3d405c401a50a83ec05598423735e653083ad9729846fd6621e"
+    },
+    {
+      "sequence": 20,
+      "monotonic": 6659766.873318817,
+      "wall_time": "2026-08-01T04:32:07+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.074,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_20.wav",
+      "audio_bytes": 749332,
+      "audio_sha256": "f010a7c2f766bcd50ca438d0cd31caec26f56856fd6696961cbe27db96160bb4"
+    },
+    {
+      "sequence": 21,
+      "monotonic": 6659766.930157353,
+      "wall_time": "2026-08-01T04:32:07+0000",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "espeak-zh",
+      "request_id": null,
+      "latency_seconds": 0.051,
+      "file": "/home/ubuntu/ai-agent-book/chapter10/voice-werewolf/audio/r2_judge_21.wav",
+      "audio_bytes": 274520,
+      "audio_sha256": "24a4432aee15b31513a2f4368bdc15b55433dfd35ff6b2c37559f2f6f22f9c2b"
+    }
+  ],
+  "voice_has_asr": true,
+  "voice_has_tts": true,
+  "simulator_llm_tool_calls": 1,
+  "simulator_audio_roundtrips": 1,
+  "barge_in_events": 0,
+  "gates": {
+    "exact_6_to_8_player_role_roster": {
+      "status": "pass"
+    },
+    "one_user_seat": {
+      "status": "pass"
+    },
+    "one_authorized_human_participant": {
+      "status": "not_applicable"
+    },
+    "one_llm_user_simulator": {
+      "status": "pass"
+    },
+    "real_user_input_asr": {
+      "status": "pass"
+    },
+    "real_ai_and_judge_tts": {
+      "status": "pass"
+    },
+    "llm_tool_to_audio_to_asr_boundary": {
+      "status": "pass",
+      "tool_calls": 1,
+      "audio_roundtrips": 1
+    },
+    "three_complete_cycles": {
+      "status": "fail",
+      "observed": 2
+    },
+    "information_isolation": {
+      "status": "pass"
+    },
+    "real_llm_strategy_acceptance": {
+      "status": "pass"
+    },
+    "winner_determined_by_game_rule": {
+      "status": "pass"
+    }
+  },
+  "overall_status": "incomplete"
+}

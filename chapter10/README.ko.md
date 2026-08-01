@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | 실제 Playwright 양식에서 실제 LLM이 Phone Agent를 자율적으로 호출합니다. 검증·재질문·양방향 병렬 처리·민감 정보를 가린 타임라인·선택적 제출은 구현하고 검증했지만, 허가받은 참여자가 없어 PSTN과 실제 사람의 음성은 `not_run`이며 전체 검수 상태는 `incomplete`입니다. |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N개의 독립 Playwright 브라우저 세션이 실제 대학 웹사이트를 병렬 검색하고 실제 LLM이 근거를 추출합니다. 상태 모니터링, 시간 초과·오류 격리, 단 한 번의 결과 확정, 연쇄 종료 확인 응답, 자원 감사와 같은 사이트의 순차·병렬 실측까지 갖췄습니다. |
 | 10-7 | `generative_agents/` | 📖 | Stanford의 ‘AI 마을’ 생성형 에이전트입니다. 로컬 경로는 `joonspk-research/generative_agents`의 고정 커밋 `fe05a71…`에 대응하며, 현재 checkout이 없어 실행했다고 주장하지 않습니다. |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 6~8명, 정확한 역할 구성, 실제 사람 좌석, ASR/TTS와 끼어들기, 3라운드·승패·전략·격리 게이트를 구현했습니다. 다만 허가받은 참여자가 없고 Audio API가 `insufficient_quota`를 반환해 실제 사람의 음성, 3라운드, 전략 검수는 실행하지 못했으며 전체 상태는 `incomplete`입니다. |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 자기 좌석 컨텍스트만 보고 도구를 호출하며 합성 오디오와 실제 OpenRouter 오디오 ASR을 거쳐야 하는 실제 LLM 사용자 시뮬레이터를 추가했습니다. 엄격한 재검증은 오전사를 기권으로 본 초기 두 실행을 거부했습니다. 영향 없는 v2는 E2E·격리·규칙 승자·3주기를 통과했지만 주민이 예언자를 잘못 추방해 전략은 실패했습니다. |
 
 ## 프로젝트 유형
 

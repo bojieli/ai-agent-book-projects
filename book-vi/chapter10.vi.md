@@ -699,15 +699,15 @@ Người sói hỗ trợ **trò chơi chiến lược** theo ba chiều của ph
 
 > **Thử nghiệm 10-8 ★★★: Hệ thống Người sói lồng tiếng Agent**
 >
-> Người sói là một trò chơi suy luận xã hội cổ điển nhằm kiểm tra khả năng suy luận, kỹ năng lừa dối và chiến lược xã hội của người chơi. Thử nghiệm này xây dựng một hệ thống đa Agent, cho phép AI Agent đóng nhiều vai trò khác nhau trong Người sói và chơi trò chơi với người chơi thực thông qua giọng nói trong thời gian thực - điều này cũng kiểm tra khả năng suy luận, nhập vai và tương tác thời gian thực của Agent.
+> Người sói là trò chơi suy luận xã hội cổ điển kiểm tra khả năng lập luận, đánh lừa và chiến lược xã hội. Thử nghiệm này cho AI Agent chơi bằng giọng nói với một người thật hoặc một trình mô phỏng người dùng LLM độc lập. Nghiệm thu tự động không được dừng chỉ vì không có người: trình mô phỏng dùng mô hình thật, chỉ suy luận từ ngữ cảnh được phép cho ghế của mình và hành động qua các công cụ do trò chơi cung cấp.
 >
 > **Thiết kế kiến trúc**:
 >
-> **1. Quản lý trạng thái trò chơi**: Người đánh giá (điều khiển bằng mã, không phải LLM) duy trì trạng thái tập trung - danh sách người chơi (người thật + AI kết hợp), danh tính, trại, trạng thái sinh tồn, giai đoạn trò chơi (đêm/ngày/bỏ phiếu/quyết toán), hồ sơ sự kiện lịch sử.
+> **1. Quản lý trạng thái trò chơi**: Trọng tài (điều khiển bằng mã, không phải LLM) duy trì trạng thái tập trung—danh sách người chơi (một ghế người dùng + các ghế AI), danh tính, phe, trạng thái sống, giai đoạn trò chơi (đêm/ngày/bỏ phiếu/quyết toán) và lịch sử sự kiện.
 >
 > **2. Kiểm soát quyền truy cập thông tin**: Cơ chế cốt lõi của Người sói là sự bất cân xứng thông tin - các nhân vật khác nhau có thể nhìn thấy thông tin khác nhau. Ví dụ, người sói biết đồng bọn của mình là ai nhưng dân làng thì không; Nhà tiên tri có thể kiểm tra danh tính của một người mỗi đêm, nhưng chỉ có anh ta mới biết kết quả. Cách thực hiện là khi gọi Agent cho từng vai trò, trọng tài chỉ truyền thông tin mà vai trò đó sẽ thấy.
 >
-> **3. Tương tác giọng nói trong thời gian thực**: Thử nghiệm này yêu cầu sử dụng khả năng giọng nói trong thời gian thực để đạt được kết nối giọng nói giữa người chơi thực và AI Agent. Nên sử dụng giọng nói thời gian thực Agent trong Chương 9 làm cơ sở. Trong giai đoạn thảo luận ban ngày, trọng tài quản lý thứ tự phát biểu - mỗi người chơi có thể nói theo thứ tự vị trí hoặc cho phép người chơi giơ tay yêu cầu ra sàn. Giai đoạn bình chọn thu thập phiếu bầu của tất cả người chơi (người thật thể hiện qua giọng nói, AI đưa ra quyết định thông qua lý luận) và những người chơi bị trục xuất sẽ được công bố sau khi kiểm phiếu.
+> **3. Giọng nói thời gian thực và mô phỏng người dùng tự động**: Nhánh con người dựa trên Agent giọng nói ở Chương 9. Ở nhánh tự động, một LLM độc lập phải gọi công cụ hợp lệ duy nhất của lượt; phát ngôn đã chọn được tổng hợp thành âm thanh thật rồi gửi đến API ASR thật. Trò chơi chỉ dùng bản chép ASR, không tiêm trực tiếp văn bản trước âm thanh, và fail-closed nếu mục tiêu công cụ khác mục tiêu ASR phân tích. VAD và barge-in vẫn là phạm vi riêng của nhánh con người.
 >
 > **4. Agent Lý luận và chiến lược**:
 >
@@ -716,14 +716,17 @@ Người sói hỗ trợ **trò chơi chiến lược** theo ba chiều của ph
 > - **Lý luận logic của làng**: "Phân tích xem lời nói của mỗi người chơi có tự nhất quán hay không và chú ý đến những người chơi muốn dẫn dắt nhịp điệu, làm mờ danh tính và thường xuyên thay đổi vị trí của họ. Hãy chú ý đến hành vi bỏ phiếu - người sói có xu hướng tập trung phiếu bầu vào những người tốt gây ra mối đe dọa lớn nhất cho họ. Đừng nghi ngờ một cách tùy tiện, mọi lý do phải dựa trên những sự kiện và logic cụ thể."
 >
 > **Tiêu chí chấp nhận**:
-> - Lập game con người 6-8 (1 người chơi thật + 5-7 AI Agent)
-> - Cấu hình nhân vật: 2 người sói, 1 tiên tri, 1 phù thủy, còn lại là dân làng, người chơi thực sự phân vai ngẫu nhiên
+> - Lập ván 6–8 người (1 ghế người dùng + 5–7 AI Agent); người dùng có thể là người thật đã được phép hoặc trình mô phỏng độc lập dùng LLM thật, công cụ và vòng lặp giọng nói
+> - Cấu hình vai: 2 người sói, 1 tiên tri, 1 phù thủy, còn lại là dân làng; ghế người dùng được gán vai ngẫu nhiên
+> - Người dùng mô phỏng chỉ thấy ngữ cảnh công khai/riêng tư được phép cho ghế của mình; hành động phải đi qua ranh giới gọi công cụ LLM thật → âm thanh → ASR thật
 > - Trò chơi có thể chơi bình thường trong ít nhất 3 vòng hoàn chỉnh (chu kỳ bình chọn ngày đêm)
 > - Lời nói và hành vi của AI Agent phù hợp với nhận dạng nhân vật và chiến lược trò chơi của nó
 > - Người sói Agent có thể che giấu danh tính một cách hiệu quả
 > - Nhà tiên tri Agent có thể nhảy ra và thông báo thông tin bài thi đúng lúc
 > - Lý luận của Dân làng Agent dựa trên phân tích logic về lời nói và hành vi chứ không phải đoán ngẫu nhiên
 > - Có thể xác định chính xác kết quả khi kết thúc trò chơi
+>
+> **Kết quả đo được (2026-08-01)**: [Các bản ghi xác thực `voice-werewolf`](../chapter10/voice-werewolf/validation/runs/) đã chạy nhánh tự động bằng lệnh gọi OpenRouter thật và đầu vào âm thanh gốc. Việc tái xác thực độc lập nghiêm ngặt bác bỏ hai lần chạy sớm vì bản chép không phân tích được “P1 is not” bị nhầm là bỏ phiếu trắng; ranh giới đã sửa nay yêu cầu ASR nói rõ `abstain`, `skip` hoặc `none`. Lần chạy v2 không bị ảnh hưởng đã vượt qua ghế người dùng, cấu hình vai, công cụ LLM, âm thanh tổng hợp, ASR thật, hai lần khớp hành động, ba chu kỳ đầy đủ, cô lập thông tin và người thắng theo luật. Chiến lược thất bại vì một dân làng đã trục xuất nhầm nhà tiên tri. Do đó hệ thống đã được xác minh end-to-end, còn chất lượng chiến lược tổng thể chưa đạt.
 >
 >
 > ![Hình 10-13 Hệ thống đặc vụ người sói bằng giọng nói ](images/fig10-13.svg)

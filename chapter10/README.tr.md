@@ -15,7 +15,7 @@
 | [book-translation](book-translation/) | 🚧 | Dört rollü Manager ile tek ajan kontrolü için gerçek modelle küçük bir örnek çalışma vardır. Tam kabul için metinde istenen yoğun görsel/kod içeren teknik kitap ve eksiksiz kalite, verimlilik, token ve kaynak karşılaştırması hâlâ gereklidir. |
 | [parallel-web-research](parallel-web-research/) | ✅ | N bağımsız Playwright tarayıcı oturumu on gerçek üniversite sitesini arar; gerçek bir LLM kaynak gösterilebilir kanıtı çıkarır. Kayıtlı kabul; izleme, timeout/error yalıtımı, tek uzlaşma, basamaklı sonlandırma onayları, kaynak temizliği ve ölçülen 3.142× aynı-site paralel hızlanmasını kapsar. |
 | \`generative_agents/\` | 📖 | Stanford'un “AI Kasabası” üretken Agent deneyidir; harici \`joonspk-research/generative_agents\` deposundan klonlanır ve Deney 10-7'yi destekler. |
-| [voice-werewolf](voice-werewolf/) | 🚧 | Açık onay gerektiren 6–8 kişilik canlı yol (1 insan + 5–7 gerçek AI), kesin roller, mikrofon ASR/TTS/barge-in, üç döngü, strateji, izolasyon ve kurala dayalı kazanan kapıları uygulanmıştır. Yetkili katılımcı yoktur ve iki güvenli Audio API probu da `insufficient_quota` döndürmüştür; canlı ses/döngü/strateji çalıştırılmamış, tümü-AI ek yollar kabul sayılmamıştır. |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Yalnızca kendi koltuğunun bağlamını gören, araç çağıran ve oyuna yalnız sentezlenmiş ses ile gerçek OpenRouter audio ASR üzerinden giren gerçek LLM kullanıcı simülatörü eklendi. Sıkı yeniden doğrulama, bozuk dökümü çekimserlik sayan iki erken çalıştırmayı reddetti; sağlam v2 E2E, izolasyon, kural kazananı ve üç döngüyü geçti, ancak köylü kâhini yanlış çıkardığı için strateji başarısız oldu. |
 
 ## Proje Türleri
 

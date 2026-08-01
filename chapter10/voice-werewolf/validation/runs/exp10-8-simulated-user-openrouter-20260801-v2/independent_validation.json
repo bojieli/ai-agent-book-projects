@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source_report": "validation/runs/exp10-8-simulated-user-openrouter-20260801-v2/acceptance_report.json",
+  "source_report_sha256": "356dbdf05b42b66583a18c1261f65fe4ccdb5f40f56d72eee1850bedf4ac56c6",
+  "simulator_tool_events_checked": 2,
+  "strict_audio_action_boundary": "pass",
+  "errors": []
+}

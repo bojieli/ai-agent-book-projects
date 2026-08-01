@@ -1,6 +1,18 @@
-# Experiment 10-8 · Live voice Werewolf Agent system
+# Experiment 10-8 · Voice Werewolf with a real-LLM user simulator
 
-The default path is the book's full experiment: a 6–8 seat game with exactly one real human and 5–7 independent AI Agents, two Werewolves, one Seer, one Witch, and Villagers. The human's role is assigned by the same seeded random shuffle as every AI role. The code-driven Judge—not an LLM—owns the state machine, night/day/vote phases, skill inventory, deaths, and deterministic win rule.
+The experiment supports two first-class user seats: a consenting live human, or an independent real-LLM user simulator for unattended end-to-end testing. Both use the same seeded role shuffle and protected private memory in a 6–8 seat game with two Werewolves, one Seer, one Witch, and Villagers. The code-driven Judge—not an LLM—owns the state machine, night/day/vote phases, skill inventory, deaths, and deterministic win rule.
+
+## Automated user simulator
+
+`python demo.py --simulate-user` does not insert canned answers or turn the user into an ordinary omniscient AI player:
+
+1. The simulator receives only the private and public memory authorized for its randomized seat.
+2. A separately configurable real LLM must call the sole legal tool for the turn: `speak_publicly` or `choose_player`.
+3. The chosen utterance is synthesized into a real waveform. The automatic provider order is OpenAI Audio, local `espeak` plus OpenRouter native-audio ASR, then local `espeak` plus Gemini ASR.
+4. The game consumes only the real ASR transcript. It never receives the LLM's pre-audio utterance directly.
+5. For skills and votes, the parsed ASR action must exactly equal the tool-selected action; a mismatch fails closed and is retained as `simulator_action_mismatch`.
+
+The OpenRouter speech path records response IDs, provider-reported models, token usage (including nonzero audio tokens), audio hashes, transcripts, and latency without retaining credentials. The local synthesizer is a real audio component rather than an API; both the user reasoning call and audio transcription call are real external model APIs.
 
 ## Live two-way voice
 
@@ -16,7 +28,7 @@ Audio files and a timestamped `voice_trace.json` record TTS, ASR latency, and in
 
 ## Information asymmetry and strategy acceptance
 
-Every player owns a separate `memory`. The Judge has only three delivery capabilities: public broadcast, single-player private send, and Werewolf-team send. The same boundary applies to the human seat. The post-game audit proves Werewolf teammates never enter good-player contexts, Seer investigations enter only the Seer context, and all public events reach everyone.
+Every player owns a separate `memory`. The Judge has only three delivery capabilities: public broadcast, single-player private send, and Werewolf-team send. The same boundary applies to both kinds of user seat. The post-game audit proves Werewolf teammates never enter good-player contexts, Seer investigations enter only the Seer context, and all public events reach everyone.
 
 The game also records role-labelled actions and runs a real LLM post-game acceptance judge over four explicit criteria: Werewolf concealment, Seer reveal timing/evidence, Villager evidence-based reasoning, and general role consistency. It quotes logged evidence and may return `insufficient`; it cannot substitute an Agent's unsupported claim for observed actions.
 The returned JSON is schema-checked: all four named criteria need a valid
@@ -25,14 +37,14 @@ model claim of `overall_pass: true` cannot pass the gate.
 
 `artifacts/acceptance_report.json` records:
 
-- one human and the randomized human role;
+- exactly one user seat, its kind, and its randomized role;
 - exact role counts and player count;
 - completed night–day–vote cycles and deterministic winner;
 - privacy audit result;
 - real strategy audit;
-- whether both real ASR and TTS occurred, plus barge-in count.
+- whether real LLM tools, TTS, ASR, and action agreement occurred, plus barge-in count for a human run.
 
-The live acceptance result requires 6–8 players, the exact role mix, one human, privacy pass, at least three complete cycles, and observed ASR + TTS events.
+The end-to-end result requires 6–8 players, the exact role mix, one protected user seat, privacy pass, observed ASR + TTS, a rule-based winner, and—on the simulator path—real tool calls and matching audio-round-trip actions. The stricter experiment-wide result additionally requires at least three complete cycles and all four strategy criteria in the same run.
 The Judge increments the cycle counter only after night, day discussion, and voting all
 finish. Reaching the safety round limit without a rule-based winner is reported as
 `未决`, not silently awarded to either faction, and therefore cannot pass acceptance.
@@ -58,14 +70,18 @@ cd chapter10/voice-werewolf
 # python -m pip install -r requirements.txt
 
 cp env.example .env
+python demo.py --simulate-user \
+  --model google/gemini-2.5-flash \
+  --simulator-model anthropic/claude-sonnet-4 \
+  --simulator-speech-provider openrouter-system # unattended real-API E2E
 python demo.py --confirm-human-consent                # 1 consenting human + 6 real LLM Agents
 python demo.py --confirm-human-consent --human-seat 3 # human is P3; role remains randomized
 ```
 
-The direct OpenAI key must have Audio API quota. AI reasoning and the post-game strategy audit can independently use ARK or Moonshot via their OpenAI-compatible endpoints.
+The simulator can use `OPENROUTER_API_KEY` alone when `espeak` and `ffmpeg` are installed. It can instead use a funded `OPENAI_API_KEY`, or `GEMINI_API_KEY` with local synthesis. AI reasoning and the post-game strategy audit can also use ARK or Moonshot via their OpenAI-compatible endpoints.
 The live path refuses to open the microphone unless `--confirm-human-consent` is present.
 
-Supplemental paths are retained but are not accepted as the voice experiment:
+Text-only and deterministic paths remain supplemental:
 
 ```bash
 python demo.py --ai-only          # real LLM, all-AI text diagnostic
@@ -73,29 +89,20 @@ python demo.py --offline          # deterministic CI/privacy supplement
 pytest -q
 ```
 
-## Current validation boundary
+## Real validation results (2026-08-01)
 
-Unit tests pass for the exact roster/human-seat contract, cross-seed human-role
-randomization, spoken vote parsing, three-cycle accounting, both deterministic win
-conditions, strict strategy-audit schema, privacy side-channel controls, and barge-in
-cancel/transcribe mechanics using mocked audio primitives. The consent test proves the
-default command exits before constructing the live session. Separate safe probes reached
-the real OpenAI Speech endpoint and sent a generated one-second non-human WAV to the real
-ASR endpoint; both were rejected with `429 insufficient_quota`. No microphone or human
-audio was used, so no live-human acceptance claim is made for that credential.
-Supply a funded Audio API key and a consenting microphone participant to generate the
-acceptance report.
+The retained [`validation/runs/`](validation/runs/) evidence contains three formal eight-seat games and an independent validation file for each. The independent validator supersedes the run's embedded status when it finds a boundary defect. Credential scans over reports, validations, and logs found zero hits.
 
-Machine-readable evidence under [`validation/`](validation/) separates the passing offline privacy supplement, the partial ARK gameplay run, and the still-incomplete live acceptance gates. It records that zero calls were placed and no human audio was captured in this audit.
-A separate safe ARK run exercised the strict post-game audit against deterministic
-offline actions. Its schema passed and all four strategy criteria correctly failed; the
-artifact is explicitly `supplemental_only` because it had no human, no voice, only two
-cycles, and did not evaluate real-LLM player behavior.
+- `exp10-8-simulated-user-openrouter-20260801`: the embedded report claimed action agreement and all four strategy criteria passed, but strict revalidation correctly rejects its abstention because ASR returned `P1 is not`, not an explicit abstention.
+- `...-v2`: the unaffected formal E2E result. It completed three full cycles with two user tool/audio/ASR actions, unique response IDs and nonzero audio-token receipts, information isolation, and a rule-based winner. The independent strategy judge failed Villager reasoning because the simulated Villager voted out the uncontested Seer.
+- `...-v3`: used `anthropic/claude-sonnet-4` for the user and retained four tool/audio/ASR actions. Strict revalidation rejects two ambiguous abstentions, and the strategy judge also caught a Werewolf fabricating a public event.
+
+The parser now fails closed unless an abstention transcript explicitly contains `abstain`, `skip`, `none`, or the supported Chinese equivalents; the synthetic utterance is the real-audio-probed phrase “I choose to abstain.” The unaffected v2 run is positive end-to-end verification and useful negative strategy evidence. Its strict overall result remains incomplete because strategy failed; stale embedded status and gates from different games are deliberately not combined. A real human microphone session is still optional manual coverage for VAD and barge-in, not a blocker for automated system E2E.
 
 ---
 
 ## 中文说明
 
-默认命令现在就是书中的完整路径：6–8 人、1 名真人、5–7 个独立 AI Agent、2 狼人、1 预言家、1 女巫、其余村民。真人通过麦克风说话，OpenAI ASR 转写；AI/法官通过真实 TTS 播放；公开发言期间真人可以插话并中断播放。夜间技能、白天发言和投票都能由真人语音完成。
+系统现在有两条正式用户路径：授权真人麦克风，以及 `--simulate-user` 独立真实 LLM 用户模拟器。模拟器只读本席上下文，必须调用发言/选人工具；工具表达先生成真实音频，再由真实 ASR 转写，游戏只消费转写结果，选人不一致时失败关闭。真人路径继续覆盖 VAD、播放与打断。
 
-法官继续严格控制私有上下文，并在赛后自动检查信息隔离。除此之外，真实 LLM 会基于已记录的发言/行为验收狼人隐藏、预言家跳身份时机、村民逻辑和角色一致性。`--ai-only` 与 `--offline` 只是补充诊断，不是语音验收路径。
+2026-08-01 的严格复核否决了两个把误转写当成弃权的早期运行，并据此加固了解析器。未受影响的 v2 运行真实通过端到端、隔离、规则胜负与 3 循环，但村民误逐预言家导致策略失败。因此端到端已经实测，严格总体门禁仍为 `incomplete`。`--ai-only` 与 `--offline` 只是补充诊断。

@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Playwright が実フォームを観測し、実 LLM が `initiate_phone_call_agent` の呼び出しを自律判断する。明示同意が必要な Twilio/ローカル音声経路は検証・再質問・質問と入力の並行処理・秘匿化トレース・任意送信に対応。現在の証拠はスクリプト回答によるブラウザ/LLM/並行処理のみで、PSTN と人間音声は `not_run` のためライブ受入は未完了。 |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | N 個の独立 Playwright ブラウザセッションが実在する大学サイト 10 件を検索し、実 LLM が引用可能な証拠を抽出する。保存済み受入証拠は監視、timeout/error 隔離、単一決済、カスケード終了 ack、資源解放、同一サイトでの 3.142× 並列高速化を含む。 |
 | 10-7 | `generative_agents/` | 📖 | スタンフォードの「AI タウン」生成的 Agent（実験 10-7 対応）。外部リポジトリ `joonspk-research/generative_agents` を各自でクローンする必要がある（メイン README の付録を参照） |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 明示同意が必要な6–8席（人間1人＋実 AI 5–7体）のライブ経路、正確な役職、マイク ASR/TTS/割込み、3サイクル、戦略、隔離、ルール上の勝者判定を実装。許可済み参加者はなく、安全な Audio API プローブも `insufficient_quota` のため、ライブ音声/3サイクル/戦略受入は未実行で、全 AI 補助経路は受入に数えない。 |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 自席コンテキストだけを見る実 LLM ユーザーシミュレータを追加し、ツール呼び出しと合成音声＋実 OpenRouter 音声 ASR を必須化。厳格な再検証は誤転写を棄権扱いした初期 2 実行を不合格にした。影響のない v2 は E2E・分離・ルール勝者・3 サイクルを通過したが、村人が占い師を誤追放して戦略評価は不合格。 |
 ## プロジェクトの種類
 
 | アイコン | 種類 | 意味 |
