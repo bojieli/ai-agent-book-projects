@@ -8,6 +8,10 @@ from typing import List, Optional
 from models import FieldSpec
 
 
+class RecoverableFillError(RuntimeError):
+    """A page-specific field failure that may be reported without aborting the call."""
+
+
 class RegistrationBrowser:
     """Owns a real Chromium browser/context/page and exposes form operations.
 
@@ -83,35 +87,48 @@ class RegistrationBrowser:
     async def fill(self, field: FieldSpec, value: str) -> None:
         if self.page is None:
             raise RuntimeError("browser is not open")
-        locator = self.page.locator(field.selector).first
-        await locator.scroll_into_view_if_needed()
-        kind = field.input_type.lower()
-        if kind == "select":
-            try:
-                await locator.select_option(label=value)
-            except Exception:
-                await locator.select_option(value=value)
-        elif kind in {"checkbox", "radio"}:
-            group = self.page.locator(field.selector)
-            wanted = value.strip().casefold()
-            chosen = None
-            for i in range(await group.count()):
-                item = group.nth(i)
-                raw_value = (await item.get_attribute("value") or "").strip()
-                item_id = await item.get_attribute("id")
-                label = ""
-                if item_id:
-                    label_node = self.page.locator(f'label[for="{item_id}"]').first
-                    if await label_node.count():
-                        label = (await label_node.inner_text()).strip()
-                if wanted in {raw_value.casefold(), label.casefold()}:
-                    chosen = item
-                    break
-            if chosen is None:
-                raise ValueError(f"{field.label} 没有选项 {value!r}")
-            await chosen.check()
-        else:
-            await locator.fill(value)
+        from playwright.async_api import Error as PlaywrightError
+
+        try:
+            locator = self.page.locator(field.selector).first
+            await locator.scroll_into_view_if_needed()
+            kind = field.input_type.lower()
+            if kind == "select":
+                try:
+                    await locator.select_option(label=value)
+                except PlaywrightError:
+                    await locator.select_option(value=value)
+            elif kind in {"checkbox", "radio"}:
+                group = self.page.locator(field.selector)
+                wanted = value.strip().casefold()
+                chosen = None
+                for i in range(await group.count()):
+                    item = group.nth(i)
+                    raw_value = (await item.get_attribute("value") or "").strip()
+                    item_id = await item.get_attribute("id")
+                    label = ""
+                    if item_id:
+                        label_node = self.page.locator(f'label[for="{item_id}"]').first
+                        if await label_node.count():
+                            label = (await label_node.inner_text()).strip()
+                    if wanted in {raw_value.casefold(), label.casefold()}:
+                        chosen = item
+                        break
+                if chosen is None:
+                    raise RecoverableFillError(
+                        f"{field.name} has no matching page option"
+                    )
+                await chosen.check()
+            else:
+                await locator.fill(value)
+        except RecoverableFillError:
+            raise
+        except PlaywrightError as exc:
+            # Do not include the value or raw Playwright text: either may contain
+            # user-supplied form data that must not enter logs or traces.
+            raise RecoverableFillError(
+                f"browser could not fill {field.name}: {type(exc).__name__}"
+            ) from exc
 
     async def submit(self) -> bool:
         if not self.submit_enabled:
