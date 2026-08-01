@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 14pt 0; }
+.cols { display: flex; }
+.txt { width: 400pt; }
+ul { margin: 0; padding-left: 14pt; font-size: 11pt; color: #2A2740; line-height: 1.4; }
+li { margin-bottom: 9pt; }
+.stat { width: 200pt; margin-left: 30pt; background: #EEF0FF; border-radius: 10pt; padding: 14pt 16pt; }
+.stat p { margin: 0; }
+.bignum { font-size: 26pt; color: #4338CA; font-weight: bold; margin: 0; }
+.statlab { font-size: 9.5pt; color: #5B5876; margin: 2pt 0 12pt 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">01 &middot; BACKGROUND</p>
+  <h1>The Problem: The Limits of Recurrence</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="txt">
+      <ul>
+        <li>Sequence transduction (e.g., machine translation) was dominated by <b>recurrent</b> (LSTM / GRU) and <b>convolutional</b> encoder&ndash;decoder models.</li>
+        <li>RNNs compute hidden states <b>one position at a time</b>: inherently sequential, so training cannot parallelize across positions in a sequence.</li>
+        <li>Signals between distant positions must travel a path of <b>O(n) operations</b> &mdash; the longer the path, the harder long-range dependencies are to learn.</li>
+        <li>Attention mechanisms already existed, but only as an <b>accessory</b> layered on top of RNNs or CNNs.</li>
+      </ul>
+    </div>
+    <div class="stat">
+      <p class="bignum">O(n)</p>
+      <p class="statlab">sequential operations per layer in a recurrent network</p>
+      <p class="bignum">O(n)</p>
+      <p class="statlab">maximum path length between any two positions</p>
+    </div>
+  </div>
+  <p class="foot">Source: Vaswani et al., &ldquo;Attention Is All You Need&rdquo;, &sect;1 Introduction (paper p. 1&ndash;2).</p>
+</div>
+</body>
+</html>

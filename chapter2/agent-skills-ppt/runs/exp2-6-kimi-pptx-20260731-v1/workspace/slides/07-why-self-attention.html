@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 12pt 0; }
+.cols { display: flex; }
+.txt { width: 290pt; }
+ul { margin: 0; padding-left: 14pt; font-size: 10.5pt; color: #2A2740; line-height: 1.38; }
+li { margin-bottom: 9pt; }
+.tabwrap { width: 330pt; margin-left: 22pt; }
+.tablab { font-size: 9pt; color: #5B5876; margin: 0 0 4pt 0; font-weight: bold; }
+.tabcap { font-size: 8pt; color: #5B5876; margin: 6pt 0 0 0; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">06 &middot; MOTIVATION</p>
+  <h1>Why Self-Attention Wins</h1>
+  <div class="rule"></div>
+  <div class="cols">
+    <div class="txt">
+      <ul>
+        <li><b>Parallelization:</b> a self-attention layer needs only O(1) sequential operations vs. O(n) for recurrence &mdash; training uses all positions at once.</li>
+        <li><b>Long-range learning:</b> any two positions connect through a path of <b>constant length O(1)</b>, instead of O(n) for RNNs or O(log_k n) for dilated convolutions.</li>
+        <li><b>Cost:</b> per-layer complexity O(n&sup2;&middot;d) beats recurrence O(n&middot;d&sup2;) whenever n &lt; d &mdash; the common case with word-piece / BPE representations.</li>
+        <li><b>Interpretability:</b> attention distributions expose what the model attends to; heads learn distinct, task-like behaviors.</li>
+      </ul>
+    </div>
+    <div class="tabwrap">
+      <p class="tablab">PER-LAYER COMPLEXITY AND PATH LENGTHS</p>
+      <div id="table-complexity" class="placeholder" style="width: 330pt; height: 150pt;"></div>
+      <p class="tabcap">n = sequence length, d = representation dimension, k = conv. kernel width, r = neighborhood. Adapted from Table 1, paper p. 6.</p>
+    </div>
+  </div>
+  <p class="foot">Table: adapted from Table 1 (paper p. 6); text: &sect;4 (paper p. 6&ndash;7).</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><style>
+html { background: #FFFFFF; }
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: #FAFAFF; font-family: Arial, sans-serif; display: flex; }
+.bar { width: 10pt; background: #4338CA; }
+.wrap { width: 644pt; margin: 26pt 32pt 22pt 34pt; display: flex; flex-direction: column; }
+.kicker { font-size: 9.5pt; color: #7C3AED; font-weight: bold; letter-spacing: 2pt; margin: 0 0 4pt 0; }
+h1 { font-size: 23pt; color: #1A1633; margin: 0 0 8pt 0; }
+.rule { background: #F59E0B; height: 3pt; width: 60pt; margin: 0 0 16pt 0; }
+.cards { display: flex; }
+.card { width: 198pt; margin-right: 14pt; background: #4338CA; border-radius: 10pt; padding: 14pt 14pt 16pt 14pt; }
+.card p { margin: 0; }
+.ct { font-size: 13pt; color: #FFFFFF; font-weight: bold; margin: 0 0 6pt 0; }
+.cd { font-size: 9.5pt; color: #DDD6FE; line-height: 1.35; }
+ul { margin: 16pt 0 0 0; padding-left: 14pt; font-size: 11pt; color: #2A2740; line-height: 1.4; }
+li { margin-bottom: 8pt; }
+.foot { font-size: 8pt; color: #8A86A3; margin-top: auto; margin-bottom: 0; }
+</style></head>
+<body>
+<div class="bar"></div>
+<div class="wrap">
+  <p class="kicker">02 &middot; KEY IDEA</p>
+  <h1>The Transformer: Attention Is All You Need</h1>
+  <div class="rule"></div>
+  <div class="cards">
+    <div class="card">
+      <p class="ct">No Recurrence</p>
+      <p class="cd">Sequential RNN hidden states are removed entirely &mdash; positions are processed in parallel.</p>
+    </div>
+    <div class="card">
+      <p class="ct">No Convolution</p>
+      <p class="cd">No fixed-width kernels; every position can connect to every other position directly.</p>
+    </div>
+    <div class="card" style="margin-right: 0;">
+      <p class="ct">Self-Attention Only</p>
+      <p class="cd">Multi-headed self-attention computes all representations, in both encoder and decoder.</p>
+    </div>
+  </div>
+  <ul>
+    <li>First sequence transduction model based <b>entirely on attention</b>, replacing recurrent layers with multi-headed self-attention.</li>
+    <li>Highly parallelizable &mdash; reaches a new state of the art in translation with a <b>fraction of the training cost</b>.</li>
+    <li>Generalizes beyond translation (e.g., English constituency parsing) and yields interpretable attention patterns.</li>
+  </ul>
+  <p class="foot">Source: Vaswani et al., Abstract and &sect;1 (paper p. 1&ndash;2).</p>
+</div>
+</body>
+</html>

@@ -770,7 +770,7 @@ Skills 的价值不仅在于优雅的上下文管理，更在于为领域知识�
 >
 > **实验目标**：验证 Agent 通过动态加载专业领域 Skill 完成复杂任务的能力。
 >
-> 使用 Claude Code + PPTX Skill，从一篇学术论文的 PDF 生成一份 10-15 页的演示文稿。Agent 的执行流程体现了渐进式加载的过程：
+> 使用 Claude Code（或任意支持 SKILL.md 渐进式披露的等价 Agent 运行时，如 Kimi Code）+ Anthropic 官方 PPTX Skill，从一篇学术论文的 PDF 生成一份 10-15 页的演示文稿。Skill 的内容是实验对象，运行时可以替换——并非每位读者都有 Anthropic 凭证，只要运行时具备「元数据目录 + 按需加载」的 Skills 机制即可。Agent 的执行流程体现了渐进式加载的过程：
 >
 > 1. 在上下文末尾的 Skill 元数据列表中看到 PPTX Skill 的描述
 > 2. 识别出任务需要该 Skill
