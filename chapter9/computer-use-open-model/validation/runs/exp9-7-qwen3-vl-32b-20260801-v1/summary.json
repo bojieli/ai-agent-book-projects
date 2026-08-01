@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "experiment": "9-6/9-7-open-model-arm",
+  "acceptance_scope": "provider-portable-computer-use-trajectory",
+  "status": "complete",
+  "started_at": "2026-08-01T03:11:50.348098+00:00",
+  "ended_at": "2026-08-01T03:14:24.560745+00:00",
+  "api": {
+    "api_protocol": "openai-compatible-chat-completions",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "base_url": "https://openrouter.ai/api/v1",
+    "requested_model": "qwen/qwen3-vl-32b-instruct",
+    "schema_mode": "native"
+  },
+  "provider_models_reported": [
+    "qwen/qwen3-vl-32b-instruct"
+  ],
+  "browser_use_version": "0.9.5",
+  "task": "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data.",
+  "max_steps": 25,
+  "steps_executed": 16,
+  "agent_reported_success": true,
+  "final_result": "The current weather in San Francisco is 64°F, with conditions described as 'Sunny'. The temperature feels like 62°F, with a high of 74°F and a low of 55°F for the day. There is a 3% chance of rain and 0 inches of precipitation expected. This information was retrieved from weather.com after successfully navigating to the correct location and selecting today's forecast.",
+  "urls": [
+    "about:blank",
+    "https://www.google.com/",
+    "https://www.google.com/",
+    "https://www.google.com/",
+    "https://www.google.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/",
+    "https://weather.com/us/california/city/san-francisco/tenday",
+    "https://weather.com/us/california/city/san-francisco/tenday",
+    "https://weather.com/us/california/city/san-francisco/today",
+    "https://weather.com/us/california/city/san-francisco/today"
+  ],
+  "errors": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Failed to click element <div index=9207>. The element may not be interactable or visible. If the page changed after navigation/interaction, the index [9207] may be stale. Get fresh browser state before retrying.",
+    null,
+    null,
+    null,
+    null
+  ],
+  "screenshots_retained": 15,
+  "credential_retained": false,
+  "qualification": "This is a separate open-model arm, not an Anthropic-equivalent result."
+}

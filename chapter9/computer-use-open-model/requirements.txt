@@ -1,0 +1,2 @@
+browser-use @ git+https://github.com/browser-use/browser-use.git@ec9277c5001f2cb78ee419c927775a3cfc227ff8
+python-dotenv>=1.0
