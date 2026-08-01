@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-3",
+  "run_id": "real_20260731T170529Z",
+  "created_at": "2026-07-31T17:05:29.580761+00:00",
+  "artifacts": {
+    "evidence.json": {
+      "sha256": "aab1864446613463c936154eca2fc65df8496869c65d4c17dc1f12628eaff3cc"
+    },
+    "receipts.json": {
+      "sha256": "9247d69b5915ceff7d27b9dbc0752d63791fc26309f8d69e17844508058edcbe"
+    }
+  },
+  "inputs": {
+    "canonical_source": "book/chapter1.md#实验-1-3-gpt-5-6-原生-deep-research-能力",
+    "backends": [
+      "openai",
+      "dashscope"
+    ],
+    "reasoning": "high"
+  },
+  "repository": {
+    "commit": "8c2b7f55e4bd2e5348b15b823dd23a179ef3decf",
+    "branch": "codex/exp1-3-multiprovider-20260731",
+    "worktree_dirty": true
+  },
+  "acceptance_passed": true,
+  "acceptance_backend": "dashscope"
+}

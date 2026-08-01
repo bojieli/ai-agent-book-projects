@@ -358,9 +358,9 @@ def main():
     )
     parser.add_argument(
         "--backend",
-        choices=["openai", "openrouter"],
+        choices=["openai", "openrouter", "dashscope"],
         default=Config.BACKEND,
-        help="Responses API backend; openai is the exact canonical path",
+        help="Responses API backend; openai is the exact canonical path, dashscope is the eligible equivalent-provider path",
     )
     parser.add_argument(
         "--model",
@@ -415,9 +415,9 @@ def main():
     # 其余模式需要有效配置
     if not Config.validate(args.backend):
         print("❌ 配置错误！")
-        print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENROUTER_API_KEY")
+        print("请配置所选 backend 对应的 OPENAI_API_KEY / OPENROUTER_API_KEY / DASHSCOPE_API_KEY")
         print("\n示例 .env：")
-        print("OPENROUTER_API_KEY=your-openrouter-api-key")
+        print("DASHSCOPE_API_KEY=your-dashscope-api-key")
         sys.exit(1)
 
     if args.mode == "interactive":

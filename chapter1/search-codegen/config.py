@@ -15,6 +15,12 @@ class Config:
     OPENROUTER_BASE_URL = os.getenv(
         "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
     )
+    DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY", "")
+    DASHSCOPE_BASE_URL = os.getenv(
+        "DASHSCOPE_BASE_URL",
+        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    )
+    DASHSCOPE_MODEL = os.getenv("DASHSCOPE_MODEL", "qwen3.7-plus")
     BACKEND = os.getenv("BACKEND", "openai")
     MODEL_NAME = os.getenv("MODEL_NAME", "gpt-5.6-sol")
     DEFAULT_TEMPERATURE = 0.3  # legacy CLI compatibility; intentionally omitted
@@ -37,13 +43,16 @@ class Config:
         cls, backend: Optional[str] = None, model: Optional[str] = None
     ) -> Tuple[str, str, str]:
         backend = backend or cls.BACKEND
-        model = model or cls.MODEL_NAME
         if backend == "openai":
+            model = model or cls.MODEL_NAME
             return cls.OPENAI_API_KEY, cls.OPENAI_BASE_URL, model.removeprefix("openai/")
         if backend == "openrouter":
+            model = model or cls.MODEL_NAME
             routed = model if model.startswith("openai/") else f"openai/{model}"
             return cls.OPENROUTER_API_KEY, cls.OPENROUTER_BASE_URL, routed
-        raise ValueError("backend must be openai or openrouter")
+        if backend == "dashscope":
+            return cls.DASHSCOPE_API_KEY, cls.DASHSCOPE_BASE_URL, model or cls.DASHSCOPE_MODEL
+        raise ValueError("backend must be openai, openrouter, or dashscope")
 
     @classmethod
     def validate(cls, backend: Optional[str] = None) -> bool:
