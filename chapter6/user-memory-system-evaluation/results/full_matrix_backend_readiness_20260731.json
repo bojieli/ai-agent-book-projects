@@ -1,0 +1,132 @@
+{
+  "schema_version": "2.0",
+  "experiment": "6-4/6-9 provider readiness",
+  "generated_at_utc": "2026-07-31T17:36:29Z",
+  "config_file": "default_config.yaml",
+  "execution_config_fingerprint": "52dda0533016f6c980fc1922ee0d8a5822e671976a2cac5c7191219da97b4b4a",
+  "required_components": [
+    {
+      "component": "chat",
+      "name": "doubao"
+    },
+    {
+      "component": "chat",
+      "name": "kimi"
+    },
+    {
+      "component": "embedding",
+      "name": "bge-m3"
+    },
+    {
+      "component": "embedding",
+      "name": "mistral"
+    },
+    {
+      "component": "embedding",
+      "name": "openai-small"
+    },
+    {
+      "component": "embedding",
+      "name": "qwen3"
+    },
+    {
+      "component": "reranker",
+      "name": "doubao-semantic"
+    },
+    {
+      "component": "reranker",
+      "name": "kimi-semantic"
+    },
+    {
+      "component": "reranker",
+      "name": "none"
+    }
+  ],
+  "credentials_redacted": true,
+  "probes": [
+    {
+      "component": "chat",
+      "name": "doubao",
+      "model": "doubao-seed-1-6-250615",
+      "key_env": "ARK_API_KEY",
+      "status": "ok",
+      "latency_ms": 1744.0619580002021,
+      "key_present": true
+    },
+    {
+      "component": "chat",
+      "name": "kimi",
+      "model": "kimi-k2.5",
+      "key_env": "KIMI_API_KEY",
+      "status": "ok",
+      "latency_ms": 489.1403330002504,
+      "key_present": true
+    },
+    {
+      "component": "embedding",
+      "name": "bge-m3",
+      "model": "baai/bge-m3",
+      "key_env": "OPENROUTER_API_KEY",
+      "status": "ok",
+      "dimensions": 1024,
+      "latency_ms": 1424.6525420003309,
+      "key_present": true
+    },
+    {
+      "component": "embedding",
+      "name": "mistral",
+      "model": "mistral-embed",
+      "key_env": "MISTRAL_API_KEY",
+      "status": "ok",
+      "dimensions": 1024,
+      "latency_ms": 1418.707458999961,
+      "key_present": true
+    },
+    {
+      "component": "embedding",
+      "name": "openai-small",
+      "model": "openai/text-embedding-3-small",
+      "key_env": "OPENROUTER_API_KEY",
+      "status": "ok",
+      "dimensions": 1536,
+      "latency_ms": 1400.6202910004504,
+      "key_present": true
+    },
+    {
+      "component": "embedding",
+      "name": "qwen3",
+      "model": "qwen/qwen3-embedding-8b",
+      "key_env": "OPENROUTER_API_KEY",
+      "status": "ok",
+      "dimensions": 4096,
+      "latency_ms": 1260.7988330000808,
+      "key_present": true
+    },
+    {
+      "component": "reranker",
+      "name": "doubao-semantic",
+      "status": "ok",
+      "returned": 2,
+      "latency_ms": 9635.416707999866
+    },
+    {
+      "component": "reranker",
+      "name": "kimi-semantic",
+      "status": "ok",
+      "returned": 1,
+      "latency_ms": 775.910667000062
+    },
+    {
+      "component": "reranker",
+      "name": "none",
+      "status": "ok",
+      "returned": 2,
+      "latency_ms": 0.0
+    }
+  ],
+  "summary": {
+    "ok": 9,
+    "error": 0,
+    "all_required_backends_ready": true
+  }
+}

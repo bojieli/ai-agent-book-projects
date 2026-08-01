@@ -29,9 +29,34 @@ system/layer, plus a paired hybrid-synergy/regression analysis.
 
 `default_config.yaml` sweeps all three selection points from the book:
 
-- embeddings: BGE-M3, OpenAI, Doubao, plus an independently hosted Mistral control;
-- rerankers: no-reranker baseline, BGE cross-encoder, and Kimi semantic reranker;
+- embeddings: BGE-M3, OpenAI, and an independently hosted Mistral control,
+  plus a documented Qwen3 substitution for the unreachable Doubao embedding
+  (see "Backend substitutions" below);
+- rerankers: no-reranker baseline, a Doubao semantic reranker (documented
+  substitution for the unreachable BGE cross-encoder), and the Kimi semantic
+  reranker;
 - main models: Kimi and Ark/Doubao under an identical retrieval contract.
+
+### Backend substitutions (2026-07-31)
+
+Acceptance is tied to equivalent providers/models, not to one vendor's
+official API. Every substitution is recorded in `default_config.yaml` and in
+the sanitized receipts `results/candidate_backend_probes_20260731.json` and
+`results/full_matrix_backend_readiness_20260731.json`:
+
+- SiliconFlow's key is valid but the account balance is 0 (HTTP 402), so
+  `bge-m3` runs the identical `baai/bge-m3` model via OpenRouter.
+- The direct OpenAI account has no credits (HTTP 429), so `openai-small`
+  runs the identical `openai/text-embedding-3-small` via OpenRouter.
+- Ark embeddings require a console-provisioned endpoint id and every public
+  Doubao embedding model name returns 404 on this account, so the Doubao
+  embedding slot is honestly replaced by `qwen/qwen3-embedding-8b` via
+  OpenRouter (the closest Chinese-provider multilingual embedding).
+- No cross-encoder reranker is reachable (SiliconFlow balance 0; DashScope
+  gte-rerank returns 403 AccessDenied with this international key), so the
+  BGE cross-encoder slot is honestly replaced by `doubao-semantic`, a second
+  LLM reranker on the Doubao chat model. The matrix therefore compares
+  none / Doubao-LLM / Kimi-LLM reranking; no cross-encoder is claimed.
 
 A source-aware retrieval judge selects the relevant chunk IDs before the matrix
 run. Each cell is then measured with hit@5, recall@5 and MRR, as well as task
@@ -80,11 +105,10 @@ cp env.example .env
 ```
 
 Credentials are read only from environment variables; reports never contain
-keys. `default_config.yaml` is the full book matrix. Embedding deployments such
-as Doubao may require an account-specific endpoint ID. Null price fields are
-deliberate: fill them with the current account price before a cost-sensitive run.
-The report exposes `unpriced_tokens` so incomplete cost accounting cannot look
-like a zero-cost system.
+keys. `default_config.yaml` is the full book matrix. All matrix components
+carry dated list prices so `unpriced_tokens` stays zero; the report exposes
+`unpriced_tokens` so incomplete cost accounting cannot look like a zero-cost
+system.
 
 ## Run
 
@@ -158,20 +182,25 @@ pytest -q ../../chapter3/user-memory-evaluation/test_structured_rubric.py test_e
 - `../../chapter3/user-memory-evaluation/results/live_6_3_hallucination_veto.json`:
   live Kimi proof that one unsupported number forces reward to zero.
 - `results/full_matrix_backend_readiness.json`: sanitized full-matrix endpoint probe.
+- `results/full_matrix_backend_readiness_20260731.json`: sanitized 9/9 readiness
+  probe under the documented substitutions; `results/candidate_backend_probes_20260731.json`
+  keeps the per-candidate rejection receipts (SiliconFlow 402 balance, OpenAI 429,
+  Ark embedding 404s, DashScope rerank 403) that justify each substitution.
 
 These evidence files contain synthetic benchmark answers, metrics and model
 names, but no credentials or complete source conversations. Experiment 6-4 is
 complete only through the canonical full report named above; the `live_*` files
 remain smoke evidence and must not be substituted for it.
 
-Experiment 6-9 remains **incomplete**. Its checked-in `live_*`/readiness files
-state smoke or backend-readiness scope rather than a completed 4×3×2×60 matrix.
-At the time of the recorded probe, Kimi chat, Doubao chat, Mistral embedding,
-Kimi reranking and the no-reranker baseline were live, while the full named
-matrix was externally blocked by an invalid/unfunded SiliconFlow path for BGE,
-exhausted direct-OpenAI quota, and a missing account-specific Doubao embedding
-endpoint. Re-run the probe after provisioning those accounts, then run
-`default_config.yaml`; none of these blockers changes the completed 6-4 status.
+Experiment 6-9 is **complete**: the full 4×3×2×60 matrix campaign finished with
+1,440/1,440 real trajectories, zero error records, and zero unpriced usage in
+`results/full_6_9_60_case_matrix.json` (top-level and completion status both
+`complete`), executed under the documented backend substitutions above
+(`results/full_matrix_backend_readiness_20260731.json`).
+`validation/verify_full_matrix_20260731.py` independently rechecks case/cell
+coverage, trajectory cleanliness, metric finiteness, pricing coverage, and the
+interaction analysis (ALL CHECKS PASSED).
+None of the earlier blockers changed the completed 6-4 status.
 
 ## 中文说明
 
@@ -184,4 +213,7 @@ BGE-M3 / OpenAI / 豆包嵌入、含无 reranker 基线、以及多主模型的�
 
 当前状态必须按实验分别读取：实验 6-4 已由
 `results/full_6_4_60_cases_costed.json` 完成 60 用例 × 3 系统共 180/180 条真实轨迹和完整成本核算；
-实验 6-9 的 4×3×2×60 全矩阵仍未完成，现有 smoke、checkpoint 和 backend readiness 不能替代完整验收。
+实验 6-9 的 4×3×2×60 全矩阵活动已完成：`results/full_6_9_60_case_matrix.json` 收录 60 用例 × 24 单元
+共 1,440/1,440 条真实轨迹，零错误、零未定价用量，检索/任务指标与交互分析完整（顶层与 completion
+状态均为 `complete`），并由 `validation/verify_full_matrix_20260731.py` 独立复核通过。
+矩阵在后端就绪度 9/9 的如实记录替代方案下执行（见上文“Backend substitutions”）。
