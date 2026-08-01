@@ -401,6 +401,12 @@ prompt-distillation/
     └── prompt_distillation_trl/
 ```
 
+A book-audited CUDA run is retained under `validation/exp7-8-kimi3-smollm2-20260730/`:
+SmolLM2-135M-Instruct student trained on Kimi K3 teacher labels (160 train / 80 test rows).
+Held-out results: teacher 65%, baseline 0%, trained 95%; ~180× latency speedup;
+~61% input-token reduction. The run is still formally incomplete because only 52/80
+test teacher receipts were retained; see `manifest.json` for the full evidence gates.
+
 ## Why This Approach?
 
 ### Thinking Model → Non-Thinking Model

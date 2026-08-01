@@ -58,3 +58,8 @@ def test_sft_rows_expose_only_raw_text_to_student():
     }
     assert exp.LANGUAGE_CLASSIFICATION_PROMPT not in sample["messages"][0]["content"]
     assert sample["messages"][0]["content"] == "bonjour"
+
+
+def test_chat_template_ids_accepts_transformers_4_and_5_shapes():
+    assert exp._chat_template_ids([1, 2, 3]) == [1, 2, 3]
+    assert exp._chat_template_ids({"input_ids": [1, 2, 3], "attention_mask": [1, 1, 1]}) == [1, 2, 3]

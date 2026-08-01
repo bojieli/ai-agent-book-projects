@@ -12,7 +12,10 @@ readme = "README.md"
 # browser-use needs >=3.11, but that is scoped to the `browser` extra with an
 # environment marker rather than raised here, so chapters that do not need a
 # browser stay installable on 3.10.
-requires-python = ">=3.10"
+# The CUDA/ML stacks used by the training chapters do not yet publish a
+# coherent Python 3.14 wheel set.  Keep the advertised range to versions the
+# lockfile can actually reproduce.
+requires-python = ">=3.10,<3.14"
 license = { text = "Apache-2.0" }
 
 # The core that nearly every experiment needs.
@@ -136,8 +139,11 @@ analysis = [
 # inference (e.g. chapter 2's attention visualization) without the full
 # fine-tuning stack in `train`.
 torch = [
-    "torch>=2.2",
-    "transformers>=4.40",
+    # PyTorch 2.4, previously selected by the universal lock through an old
+    # vLLM/xformers combination, has no Blackwell (sm_120) kernels.  Keep the
+    # shared runtime new enough for the documented local-GPU experiments.
+    "torch>=2.11",
+    "transformers>=4.40,<6",
 ]
 
 # Retrieval / vector stores / embeddings.
@@ -243,7 +249,7 @@ train = [
     # chapter7/MultilingualReasoning imports transformers.Mxfp4Config, added
     # in 4.55. Without this floor the aggregate is satisfiable by an older
     # transformers already present in the environment.
-    "transformers>=4.55",
+    "transformers>=4.55,<6",
     # macOS wheels only exist from 0.45 onwards; the floor keeps `train`
     # installable on Apple Silicon instead of resolving to a Linux-only build.
     "bitsandbytes>=0.45",
@@ -254,8 +260,8 @@ train = [
 # macOS or CPU-only reader can still install `train`.
 unsloth = [
     "agentbook[train]",
-    "unsloth>=2024.8",
-    "unsloth_zoo>=2024.8",
+    "unsloth>=2026.7.6; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "unsloth_zoo>=2026.7.7; sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
 
 # Local high-throughput inference server. Linux/GPU only -- vLLM publishes no
@@ -264,7 +270,9 @@ unsloth = [
 # chapter8/prompt-distillation (create_data.py imports it lazily).
 vllm = [
     "agentbook[torch]",
-    "vllm>=0.6",
+    # vLLM 0.6 pins the pre-Blackwell torch 2.4 stack.  The 0.26 runtime is
+    # compatible with the torch floor above and current CUDA 13 wheels.
+    "vllm>=0.26; sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
 
 # Audio processing for the local speech/TTS training experiments (chapter 7).
@@ -272,7 +280,7 @@ vllm = [
 audio = [
     "librosa>=0.10",
     "soundfile>=0.12",
-    "torchaudio>=2.2",
+    "torchaudio>=2.11",
     "snac>=1.2",
 ]
 
@@ -311,7 +319,9 @@ ch9  = [
     "playwright>=1.40",
     "aiortc>=1.10",
     # Experiment 9-2 transcribes the exact browser-microphone RTP capture.
-    "openai-whisper==20231106",
+    # The 20231106 metadata installs Linux-only Triton unconditionally on
+    # macOS.  The maintained release has platform-correct dependencies.
+    "openai-whisper>=20240930",
     "torch>=2.2",
 ]
 ch10 = ["agentbook[tokens,web]"]              # token counting and browser research
@@ -320,6 +330,14 @@ ch10 = ["agentbook[tokens,web]"]              # token counting and browser resea
 all = ["agentbook[viz,docs,media,web,browser,serve,rag,mem,mcp,providers,tokens,analysis,solvers,integrations,orchestration,dev]"]
 
 [tool.uv]
+# These GPU stacks are deliberately separate execution environments (see the
+# extra comments above) and currently require disjoint Transformers versions.
+conflicts = [
+    [
+        { extra = "unsloth" },
+        { extra = "vllm" },
+    ],
+]
 # Resolve the lockfile for every platform readers actually use, not just the
 # machine that generated it. Without this, `uv lock` would encode a single
 # platform's resolution and break everyone else.
@@ -328,12 +346,6 @@ environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
     "sys_platform == 'win32'",
 ]
-
-[tool.uv.extra-build-dependencies]
-# openai-whisper 20231106 imports pkg_resources from its setup.py but does not
-# declare setuptools as a build dependency.  80.9 is the final release line
-# that still provides that compatibility module.
-openai-whisper = ["setuptools==80.9.0"]
 
 [project.urls]
 Homepage = "https://github.com/bojieli/ai-agent-book"

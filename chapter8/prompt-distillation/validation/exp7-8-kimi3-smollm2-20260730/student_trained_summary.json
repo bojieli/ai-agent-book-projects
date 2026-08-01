@@ -1,0 +1,14 @@
+{
+  "arm": "trained",
+  "rows": 80,
+  "correct": 76,
+  "accuracy": 0.95,
+  "parse_rate": 1.0,
+  "input_tokens": 7738,
+  "output_tokens": 160,
+  "latency_seconds_total": 1.6843466674908996,
+  "latency_seconds_mean": 0.021054333343636246,
+  "latency_seconds_median": 0.02097630314528942,
+  "provider_charge_usd": 0.0,
+  "provider_charge_note": "Local inference made no provider API calls; electricity/hardware amortization is excluded."
+}
