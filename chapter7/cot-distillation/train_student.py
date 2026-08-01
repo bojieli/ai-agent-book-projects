@@ -59,13 +59,35 @@ class EncodedExample:
     labels: list[int]
 
 
+def _chat_template_ids(encoded: Any) -> list[int]:
+    """Normalize Transformers 4.x/5.x chat-template return values.
+
+    Transformers 4.x returned a bare list from ``apply_chat_template`` when
+    ``tokenize=True``.  Transformers 5.x returns a BatchEncoding containing
+    both ``input_ids`` and ``attention_mask``.  Calling ``len`` or slicing the
+    latter operates on mapping keys, which can make every assistant trajectory
+    appear to have only two tokens and defeats the loss-mask safety check.
+    """
+    if isinstance(encoded, dict) or hasattr(encoded, "keys"):
+        encoded = encoded["input_ids"]
+    if hasattr(encoded, "tolist"):
+        encoded = encoded.tolist()
+    if encoded and isinstance(encoded[0], list):
+        if len(encoded) != 1:
+            raise ValueError("expected one chat-template sequence")
+        encoded = encoded[0]
+    if not isinstance(encoded, list) or not all(isinstance(token, int) for token in encoded):
+        raise TypeError("chat template did not return a one-dimensional integer token sequence")
+    return encoded
+
+
 def encode_messages(tokenizer: Any, messages: list[dict[str, str]], max_length: int) -> EncodedExample:
     """Mask user/prompt tokens and supervise only the teacher assistant trajectory."""
-    prompt_ids = tokenizer.apply_chat_template(
-        messages[:1], tokenize=True, add_generation_prompt=True
+    prompt_ids = _chat_template_ids(
+        tokenizer.apply_chat_template(messages[:1], tokenize=True, add_generation_prompt=True)
     )
-    full_ids = tokenizer.apply_chat_template(
-        messages, tokenize=True, add_generation_prompt=False
+    full_ids = _chat_template_ids(
+        tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False)
     )
     if len(full_ids) > max_length:
         full_ids = full_ids[:max_length]

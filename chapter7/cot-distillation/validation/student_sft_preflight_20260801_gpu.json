@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "experiment": "7-9",
+  "stage": "student_sft_preflight",
+  "generated_at_utc": "2026-08-01T06:28:06.142472+00:00",
+  "ready": true,
+  "training_data": {
+    "path": "/home/ubuntu/ai-agent-book/chapter7/cot-distillation/data/sft_cot_distill_aime_kimi_k3.jsonl",
+    "sha256": "0c6cab7cb8e0bd13671eda4e2bd0dc2530f7483f09ae42e946b87600a979968e",
+    "samples": 23
+  },
+  "host": {
+    "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+    "machine": "x86_64",
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "gpu_names": [
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  "dependencies": {
+    "torch": true,
+    "transformers": true,
+    "accelerate": true,
+    "peft": true
+  },
+  "dependency_versions": {
+    "torch": "2.11.0",
+    "transformers": "5.14.1",
+    "accelerate": "1.14.0",
+    "peft": "0.19.1"
+  },
+  "trainer_stack_importable": true,
+  "trainer_stack_error": null,
+  "blockers": []
+}
