@@ -470,3 +470,21 @@ def test_placeholder_key_is_not_a_provider_name():
     assert backend.api_key
     assert backend.api_key != backend.provider
     assert backend.api_key not in PROVIDERS
+
+
+def test_openrouter_default_model_honours_openrouter_model_env(monkeypatch):
+    """resolve_backend("openrouter") with no explicit model must use
+    OPENROUTER_MODEL (the documented ':free' zero-cost selector), not the paid
+    OPENROUTER_DEFAULT_MODEL."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key")
+    monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    backend = resolve_backend("openrouter")
+    assert backend.using_openrouter is True
+    assert backend.model == "google/gemma-4-31b-it:free"
+
+
+def test_openrouter_explicit_model_still_wins_over_env(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key")
+    monkeypatch.setenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    backend = resolve_backend("openrouter", model="gpt-4o")
+    assert backend.model == "openai/gpt-4o"

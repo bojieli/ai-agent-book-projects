@@ -12,6 +12,8 @@ talks to.
 
 from __future__ import annotations
 
+import os
+
 from .models import Backend, Provider
 from .openrouter import (
     ZERO_COST_HINT,
@@ -136,7 +138,16 @@ def resolve_backend(
             neither its own variables nor ``OPENROUTER_API_KEY`` are set.
     """
     spec = lookup(provider)
-    resolved_model = model or spec.default_model
+    if model:
+        resolved_model = model
+    elif spec.name == _OPENROUTER:
+        # The OpenRouter default honours OPENROUTER_MODEL — the env var this
+        # package documents (see the module docstring / ZERO_COST_HINT) as the
+        # ':free' zero-cost selector. Without this, the documented free recipe
+        # silently resolves the paid OPENROUTER_DEFAULT_MODEL instead.
+        resolved_model = os.getenv("OPENROUTER_MODEL", "").strip() or spec.default_model
+    else:
+        resolved_model = spec.default_model
     key = (api_key or "").strip() or spec.api_key()
 
     # Only OpenRouter's own credential can authenticate against OpenRouter. An
