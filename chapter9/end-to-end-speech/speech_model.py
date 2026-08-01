@@ -1,157 +1,214 @@
-"""Exact Step-Audio R1 vLLM client and ASR→LLM cascade baseline."""
+"""Native local MiniCPM-o 4.5 inference for Experiment 9-4."""
 
 from __future__ import annotations
 
-import base64
-import json
+import hashlib
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
-import requests
+
+MODEL_ID = "openbmb/MiniCPM-o-4_5"
+MODEL_REVISION = "1f761131fa83f5ed3cd6f2f22b225c4501d154fa"
 
 
 @dataclass
 class InferenceResult:
-    backend: str
-    model: str
+    mode: str
     response: str
     latency_seconds: float
-    first_token_seconds: float | None
-    audio_token_count: int = 0
     transcript: str | None = None
+    stage_latencies: dict[str, float] | None = None
+    output_audio: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
-def _audio_content(path: str | Path) -> dict[str, Any]:
+def sha256_file(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def audio_metadata(path: str | Path) -> dict[str, Any]:
+    import soundfile as sf
+
     path = Path(path)
-    raw = path.read_bytes()
-    # The official Step-Audio-R1 helper converts every source to WAV first. The
-    # companion requires WAV to keep the wire contract unambiguous.
-    if path.suffix.lower() != ".wav":
-        raise ValueError("Step-Audio R1 input must be WAV; convert with ffmpeg first")
+    info = sf.info(path)
     return {
-        "type": "input_audio",
-        "input_audio": {"data": base64.b64encode(raw).decode("ascii"), "format": "wav"},
+        "path": str(path),
+        "sha256": sha256_file(path),
+        "sample_rate_hz": info.samplerate,
+        "frames": info.frames,
+        "duration_seconds": round(info.duration, 6),
+        "channels": info.channels,
+        "format": info.format,
     }
 
 
-class StepAudioR1Client:
-    """Client for the upstream customized-vLLM OpenAI-compatible endpoint."""
+class MiniCPMOClient:
+    """One-GPU Transformers client for the official MiniCPM-o 4.5 checkpoint."""
 
-    def __init__(self, endpoint: str, model: str = "Step-Audio-R1", timeout: float = 1800) -> None:
-        base = endpoint.rstrip("/")
-        if base.endswith("/v1/chat/completions"):
-            self.endpoint = base
-        elif base.endswith("/v1"):
-            self.endpoint = base + "/chat/completions"
-        else:
-            self.endpoint = base + "/v1/chat/completions"
-        self.model = model
-        self.timeout = timeout
+    def __init__(
+        self,
+        model_id: str = MODEL_ID,
+        revision: str = MODEL_REVISION,
+        *,
+        device: str = "cuda",
+        enable_tts: bool = True,
+        local_files_only: bool = False,
+    ) -> None:
+        self.model_id = model_id
+        self.revision = revision
+        self.device = device
+        self.enable_tts = enable_tts
+        self.local_files_only = local_files_only
+        self.model = None
+        self.load_seconds: float | None = None
 
-    def healthcheck(self) -> dict[str, Any]:
-        models_url = self.endpoint.rsplit("/chat/completions", 1)[0] + "/models"
-        response = requests.get(models_url, timeout=30)
-        response.raise_for_status()
-        return response.json()
+    def load(self) -> None:
+        import torch
+        from transformers import AutoModel
 
-    def infer(
+        if self.device == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("MiniCPM-o 4.5 local precision run requires an NVIDIA CUDA GPU")
+        started = time.perf_counter()
+        self.model = AutoModel.from_pretrained(
+            self.model_id,
+            revision=self.revision,
+            trust_remote_code=True,
+            attn_implementation="sdpa",
+            torch_dtype=torch.bfloat16,
+            init_vision=False,
+            init_audio=True,
+            init_tts=self.enable_tts,
+            local_files_only=self.local_files_only,
+        )
+        self.model.eval().to(self.device)
+        if self.enable_tts:
+            self.model.init_tts()
+        self.load_seconds = time.perf_counter() - started
+
+    def _require_model(self):
+        if self.model is None:
+            raise RuntimeError("Call load() before inference")
+        return self.model
+
+    @staticmethod
+    def load_audio(path: str | Path):
+        import librosa
+
+        audio, _ = librosa.load(path, sr=16000, mono=True)
+        return audio
+
+    def infer_audio(
         self,
         audio_path: str | Path,
         instruction: str,
         *,
-        max_tokens: int = 2048,
-        temperature: float = 0.7,
-        repetition_penalty: float = 1.0,
+        max_new_tokens: int = 256,
+        output_audio_path: str | Path | None = None,
     ) -> InferenceResult:
-        # This is the exact message shape used by upstream stepaudior1vllm.py.
-        messages = [
-            {"role": "human", "content": [
-                {"type": "text", "text": instruction},
-                _audio_content(audio_path),
-            ]},
-            {"role": "assistant", "content": "<think>\n"},
-        ]
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "stream": True,
-            "skip_special_tokens": False,
-            "continue_final_message": True,
-            "add_generation_prompt": False,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "repetition_penalty": repetition_penalty,
-            "stop_token_ids": [151665],
-        }
-        started, first_token, text_parts, audio_tokens = time.perf_counter(), None, [], 0
-        with requests.post(
-            self.endpoint,
-            headers={"Content-Type": "application/json"},
-            json=payload,
-            stream=True,
-            timeout=self.timeout,
-        ) as response:
-            response.raise_for_status()
-            for raw_line in response.iter_lines():
-                if not raw_line:
-                    continue
-                line = raw_line.decode("utf-8")
-                if line.startswith("data: "):
-                    line = line[6:]
-                if line == "[DONE]":
-                    break
-                data = json.loads(line)
-                delta = data["choices"][0].get("delta", {})
-                tts = delta.get("tts_content") or {}
-                piece = tts.get("tts_text") or delta.get("content") or ""
-                if piece:
-                    if first_token is None:
-                        first_token = time.perf_counter() - started
-                    text_parts.append(piece)
-                token_string = tts.get("tts_audio") or ""
-                audio_tokens += token_string.count("<audio_")
-        return InferenceResult(
-            backend="step-audio-r1",
-            model=self.model,
-            response="".join(text_parts),
-            latency_seconds=time.perf_counter() - started,
-            first_token_seconds=first_token,
-            audio_token_count=audio_tokens,
-        )
-
-
-class CascadeClient:
-    """ASR→text LLM control receiving the same WAV but losing acoustics at ASR."""
-
-    def __init__(self, client, asr_model="whisper-1", llm_model="gpt-4o-mini") -> None:
-        self.client = client
-        self.asr_model = asr_model
-        self.llm_model = llm_model
-
-    def infer(self, audio_path: str | Path, instruction: str) -> InferenceResult:
+        model = self._require_model()
+        audio = self.load_audio(audio_path)
+        generate_audio = output_audio_path is not None
+        if generate_audio and not self.enable_tts:
+            raise RuntimeError("The client was loaded with enable_tts=False")
+        if output_audio_path is not None:
+            output_audio_path = Path(output_audio_path)
+            output_audio_path.parent.mkdir(parents=True, exist_ok=True)
         started = time.perf_counter()
-        with Path(audio_path).open("rb") as handle:
-            transcript = self.client.audio.transcriptions.create(
-                model=self.asr_model, file=handle
-            ).text.strip()
-        response = self.client.chat.completions.create(
-            model=self.llm_model,
-            messages=[
-                {"role": "system", "content": "Answer the task using only the supplied transcript."},
-                {"role": "user", "content": f"{instruction}\nTranscript: {transcript}"},
-            ],
+        response = model.chat(
+            msgs=[{"role": "user", "content": [instruction, audio]}],
+            do_sample=False,
+            max_new_tokens=max_new_tokens,
+            use_tts_template=generate_audio,
+            enable_thinking=False,
+            generate_audio=generate_audio,
+            output_audio_path=str(output_audio_path) if output_audio_path else None,
         )
-        text = response.choices[0].message.content or ""
+        latency = time.perf_counter() - started
         return InferenceResult(
-            backend="whisper-llm-cascade",
-            model=f"{self.asr_model} -> {self.llm_model}",
-            response=text,
-            latency_seconds=time.perf_counter() - started,
-            first_token_seconds=None,
-            transcript=transcript,
+            mode="direct-audio-to-speech" if generate_audio else "direct-audio-to-text",
+            response=response,
+            latency_seconds=latency,
+            output_audio=audio_metadata(output_audio_path) if output_audio_path else None,
         )
+
+    def infer_text(
+        self, prompt: str, *, max_new_tokens: int = 256
+    ) -> InferenceResult:
+        model = self._require_model()
+        started = time.perf_counter()
+        response = model.chat(
+            msgs=[{"role": "user", "content": [prompt]}],
+            do_sample=False,
+            max_new_tokens=max_new_tokens,
+            use_tts_template=False,
+            enable_thinking=False,
+            generate_audio=False,
+        )
+        return InferenceResult(
+            mode="text-only",
+            response=response,
+            latency_seconds=time.perf_counter() - started,
+        )
+
+    def transcribe(self, audio_path: str | Path) -> InferenceResult:
+        return self.infer_audio(
+            audio_path,
+            "Please transcribe only the words spoken in this audio. Do not describe tone, pace, or background sound.",
+            max_new_tokens=256,
+        )
+
+    def self_cascade(
+        self, audio_path: str | Path, instruction: str, *, max_new_tokens: int = 256
+    ) -> InferenceResult:
+        transcription = self.transcribe(audio_path)
+        reasoning = self.infer_text(
+            f"{instruction}\n\nUse only this transcript as evidence:\n{transcription.response}",
+            max_new_tokens=max_new_tokens,
+        )
+        return InferenceResult(
+            mode="self-cascade-audio-to-transcript-to-text",
+            response=reasoning.response,
+            latency_seconds=transcription.latency_seconds + reasoning.latency_seconds,
+            transcript=transcription.response,
+            stage_latencies={
+                "transcription_seconds": transcription.latency_seconds,
+                "reasoning_seconds": reasoning.latency_seconds,
+            },
+        )
+
+    def runtime_metadata(self) -> dict[str, Any]:
+        import torch
+        import transformers
+
+        gpu = None
+        if torch.cuda.is_available():
+            properties = torch.cuda.get_device_properties(0)
+            gpu = {
+                "name": properties.name,
+                "total_memory_gib": round(properties.total_memory / 2**30, 3),
+                "peak_allocated_gib": round(torch.cuda.max_memory_allocated() / 2**30, 3),
+            }
+        return {
+            "model_id": self.model_id,
+            "model_revision": self.revision,
+            "device": self.device,
+            "torch_version": torch.__version__,
+            "transformers_version": transformers.__version__,
+            "cuda_version": torch.version.cuda,
+            "cuda_available": torch.cuda.is_available(),
+            "gpu": gpu,
+            "load_seconds": self.load_seconds,
+            "precision": "bfloat16",
+            "attention": "sdpa",
+            "init_vision": False,
+            "init_audio": True,
+            "init_tts": self.enable_tts,
+        }

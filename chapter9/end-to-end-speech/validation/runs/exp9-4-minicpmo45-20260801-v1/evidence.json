@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "experiment": "9-4",
+  "title": "MiniCPM-o 4.5 local end-to-end omni speech",
+  "timestamp_utc": "2026-08-01T04:30:23.044472+00:00",
+  "model": {
+    "model_id": "openbmb/MiniCPM-o-4_5",
+    "model_revision": "1f761131fa83f5ed3cd6f2f22b225c4501d154fa",
+    "device": "cuda",
+    "torch_version": "2.8.0+cu128",
+    "transformers_version": "4.51.0",
+    "cuda_version": "12.8",
+    "cuda_available": true,
+    "gpu": {
+      "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "total_memory_gib": 94.97,
+      "peak_allocated_gib": 20.269
+    },
+    "load_seconds": 6.154250729829073,
+    "precision": "bfloat16",
+    "attention": "sdpa",
+    "init_vision": false,
+    "init_audio": true,
+    "init_tts": true
+  },
+  "host": {
+    "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+    "commit": "d6a31e8a93c1fed8901d6ea59e1ba80d6101f97a",
+    "workspace_dirty_at_run": true
+  },
+  "protocol": {
+    "case_count": 4,
+    "direct_arm": "audio -> MiniCPM-o latent processing -> text",
+    "self_cascade_arm": "audio -> MiniCPM-o transcript -> MiniCPM-o text reasoning",
+    "speech_arm": "audio -> MiniCPM-o latent processing -> text + generated waveform",
+    "enable_thinking": false,
+    "sampling": false,
+    "max_new_tokens": 256
+  },
+  "cases": [
+    {
+      "id": "spoken-math-boxes",
+      "audio": "boxes-79.wav",
+      "category": "semantic_reasoning",
+      "instruction": "Listen to the spoken math problem and reply with the final numeric answer.",
+      "expected_aliases": [
+        "79",
+        "seventy-nine",
+        "seventy nine"
+      ],
+      "audio_path": "fixtures/boxes-79.wav",
+      "audio_sha256": "ca55172355f1d49a7e769ef379b4daeadea15c0b58a04c1987b4293381ad42e8",
+      "direct": {
+        "mode": "direct-audio-to-text",
+        "response": "Find the total number of pencils at first by multiplying the number of boxes by the number of pencils in each box: 8 boxes * 8 pencils/box = 64 pencils\nThen subtract the number of pencils given away from the total number of pencils to find the number of pencils that remain: 64 pencils - 17 pencils = 47 pencils\nThe answer is 47",
+        "latency_seconds": 1.911103354766965,
+        "transcript": null,
+        "stage_latencies": null,
+        "output_audio": null,
+        "passed": false
+      },
+      "self_cascade": {
+        "mode": "self-cascade-audio-to-transcript-to-text",
+        "response": "First, calculate the total number of pencils: 12 boxes * 8 pencils/box = 96 pencils. Then subtract the pencils given away: 96 - 17 = 79 pencils remain.\n\n79",
+        "latency_seconds": 1.1656107371672988,
+        "transcript": "A shop has twelve boxes with eight pencils in each box. It gave away seventeen pencils. How many pencils remain?",
+        "stage_latencies": {
+          "transcription_seconds": 0.4240540452301502,
+          "reasoning_seconds": 0.7415566919371486
+        },
+        "output_audio": null,
+        "passed": true
+      }
+    },
+    {
+      "id": "spoken-math-tickets",
+      "audio": "tickets-42.wav",
+      "category": "semantic_reasoning",
+      "instruction": "Listen to the spoken math problem and reply with the final numeric answer.",
+      "expected_aliases": [
+        "42",
+        "forty-two",
+        "forty two"
+      ],
+      "audio_path": "fixtures/tickets-42.wav",
+      "audio_sha256": "66c8aa161fc046c93b97f56c7b9b69ea25f63b54f243ea153f95fb4b2d815b49",
+      "direct": {
+        "mode": "direct-audio-to-text",
+        "response": "The theater sold 18 tickets in the morning and 24 tickets in the afternoon. So it sold 18 + 24 = 42 tickets altogether. The answer is 42.",
+        "latency_seconds": 0.6811522357165813,
+        "transcript": null,
+        "stage_latencies": null,
+        "output_audio": null,
+        "passed": true
+      },
+      "self_cascade": {
+        "mode": "self-cascade-audio-to-transcript-to-text",
+        "response": "18 + 24 = 42\nAnswer: 42",
+        "latency_seconds": 0.6580845378339291,
+        "transcript": "The theater sold eighteen tickets in the morning and twenty four tickets in the afternoon. How many tickets did it sell altogether?",
+        "stage_latencies": {
+          "transcription_seconds": 0.40988718904554844,
+          "reasoning_seconds": 0.24819734878838062
+        },
+        "output_audio": null,
+        "passed": true
+      }
+    },
+    {
+      "id": "speaking-rate-fast",
+      "audio": "pace-fast.wav",
+      "category": "paralinguistic",
+      "instruction": "Classify the speaker's pace as fast or slow. Reply with exactly one word: fast or slow.",
+      "expected_aliases": [
+        "fast"
+      ],
+      "audio_path": "fixtures/pace-fast.wav",
+      "audio_sha256": "048cb477c0814e5e193df1425bee1fb0ce75df1cbc59c8e0a8f2db046f65b303",
+      "direct": {
+        "mode": "direct-audio-to-text",
+        "response": "fast",
+        "latency_seconds": 0.07435999717563391,
+        "transcript": null,
+        "stage_latencies": null,
+        "output_audio": null,
+        "passed": true
+      },
+      "self_cascade": {
+        "mode": "self-cascade-audio-to-transcript-to-text",
+        "response": "slow",
+        "latency_seconds": 0.19370830059051514,
+        "transcript": "Please send the report before lunch.",
+        "stage_latencies": {
+          "transcription_seconds": 0.15708006545901299,
+          "reasoning_seconds": 0.03662823513150215
+        },
+        "output_audio": null,
+        "passed": false
+      }
+    },
+    {
+      "id": "speaking-rate-slow",
+      "audio": "pace-slow.wav",
+      "category": "paralinguistic",
+      "instruction": "Classify the speaker's pace as fast or slow. Reply with exactly one word: fast or slow.",
+      "expected_aliases": [
+        "slow"
+      ],
+      "audio_path": "fixtures/pace-slow.wav",
+      "audio_sha256": "1a851ddc5d765b95f89d3a7cdabe137328b4ab7bc50dd06cc52c9c37bfecddd2",
+      "direct": {
+        "mode": "direct-audio-to-text",
+        "response": "slow",
+        "latency_seconds": 0.07847040891647339,
+        "transcript": null,
+        "stage_latencies": null,
+        "output_audio": null,
+        "passed": true
+      },
+      "self_cascade": {
+        "mode": "self-cascade-audio-to-transcript-to-text",
+        "response": "slow",
+        "latency_seconds": 0.1868541669100523,
+        "transcript": "Please send the report before lunch.",
+        "stage_latencies": {
+          "transcription_seconds": 0.15028280764818192,
+          "reasoning_seconds": 0.036571359261870384
+        },
+        "output_audio": null,
+        "passed": true
+      }
+    }
+  ],
+  "aggregate": {
+    "direct_correct": 3,
+    "self_cascade_correct": 3,
+    "total_cases": 4,
+    "direct_accuracy": 0.75,
+    "self_cascade_accuracy": 0.75,
+    "direct_mean_latency_seconds": 0.6862714991439134,
+    "self_cascade_mean_latency_seconds": 0.5510644356254488
+  },
+  "speech_output": {
+    "mode": "direct-audio-to-speech",
+    "response": "The shop had 8 boxes x 8 pencils = 64 pencils in total. After giving away 17 pencils, there are 64 - 17 = 47 pencils remaining.",
+    "latency_seconds": 2.639366910792887,
+    "transcript": null,
+    "stage_latencies": null,
+    "output_audio": {
+      "path": "validation/runs/exp9-4-minicpmo45-20260801-v1/outputs/spoken-math-boxes-response.wav",
+      "sha256": "dfaf64d06cc46c8d52a11f393ad067b1c48e950971ba28851e5dd0180639f111",
+      "sample_rate_hz": 24000,
+      "frames": 277440,
+      "duration_seconds": 11.56,
+      "channels": 1,
+      "format": "WAV"
+    }
+  },
+  "implementation_sha256": {
+    "demo.py": "1193c6ded825c13343723d77f29b444b7fb8a9b8c78c0d43c125aa19b5674e5f",
+    "speech_model.py": "da6cd20900594166b06b8027a7fb6fe21e4715d3912e744b518df3f74449cd8f",
+    "validate_evidence.py": "820e36f229c162f75882296c827709303948118b264441dbd4218dc73346ae31",
+    "requirements.txt": "c3700db0ac3068f91879ccad6423cb5d94c7c2f508b183e0d2de8c82fac3d757",
+    "fixtures/cases.json": "f568c3bfb8b8866831bab2c0bc1940e2aacb9aa7d37282fe50c8b12a17fdb191"
+  },
+  "external_api_calls": 0
+}

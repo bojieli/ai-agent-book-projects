@@ -168,6 +168,26 @@ Nhưng dù Omni có mạnh đến đâu thì về cơ bản nó cũng chỉ kế
 
 Điều cần phân biệt là MoE giải quyết vấn đề thông lượng "có thể phục vụ bao nhiêu yêu cầu trên mỗi đơn vị sức mạnh tính toán". Nó không trực tiếp xác định "liệu gói âm thanh đầu tiên có thể được phát ra sớm nhất có thể hay không" - độ trễ của gói đầu tiên phụ thuộc vào kiến trúc của đầu tạo. Gói cấp thấp của Qwen3-Omni xuất phát từ thiết kế của mô-đun Talker: nó dần dần tạo ra các mã thông báo âm thanh theo cách tự động hồi quy nhiều sổ mã và hợp tác với codec nhân quả để giải mã dần dần các mã thông báo này thành dạng sóng. Do đó, ngay khi mô-đun tư duy xuất ra văn bản, Người nói có thể tiếp tục truyền phát giọng nói tổng hợp mà không cần đợi toàn bộ câu trả lời được tạo ra. Theo báo cáo chính thức, độ trễ gói đầu tiên về mặt lý thuyết khởi động nguội của nó thấp khoảng 234 mili giây, hỗ trợ 19 hiểu ngôn ngữ và tạo 10 ngôn ngữ, đồng thời dẫn đầu 22 trong số 36 điểm chuẩn âm thanh và video.
 
+**MiniCPM-o 4.5** thu nhỏ hướng tiếp cận này đến mức có thể chạy cục bộ trên một GPU phổ thông hoặc workstation. Mô hình khoảng 9B tham số được xây dựng trên SigLip2, Whisper-medium, CosyVoice2 và Qwen3-8B; nhận trực tiếp văn bản, hình ảnh, video và âm thanh, đồng thời sinh thẳng văn bản và tiếng nói. Câu hỏi hữu ích ở đây không phải là sao chép thêm một bảng xếp hạng, mà là kiểm tra nhận định end-to-end so với self-cascade ở trên: cùng một mô hình có thất bại theo cách khác nhau khi trả lời trực tiếp từ trạng thái ẩn của âm thanh và khi trước tiên làm phẳng âm thanh thành văn bản thuần túy hay không?
+
+> **Thí nghiệm 9-4 ★★: Chạy MiniCPM-o 4.5 cục bộ — End-to-End so với Self-Cascade**
+>
+> Checkpoint mở `openbmb/MiniCPM-o-4_5` được ghim ở revision `1f761131…` và chạy cục bộ bằng BF16 trên một RTX PRO 6000 Blackwell 96GB. VRAM cấp phát cực đại là 20,27GiB, thời gian tải mô hình 6,15 giây và không gọi API bên ngoài. Thinking mode được tắt có chủ ý: thí nghiệm đo khả năng bảo toàn thông tin của mô hình Omni, **không** đo “vừa nói vừa suy nghĩ” ở phần sau.
+>
+> Bốn WAV tổng hợp nhỏ gồm hai loại nhiệm vụ: hai bài toán nói mà đáp án chỉ phụ thuộc vào từ ngữ, và hai câu có nội dung giống hệt nhưng tốc độ nói nhanh hoặc chậm. Nhánh **end-to-end** đưa WAV trực tiếp vào MiniCPM-o; nhánh **self-cascade** yêu cầu chính mô hình đó tạo bản chép chỉ có từ, cố ý bỏ giọng điệu và tốc độ, rồi chỉ dựa vào văn bản này để trả lời. Cả hai nhánh đều tắt sampling.
+>
+> Bảng 9-1 Kết quả MiniCPM-o 4.5 cục bộ (bốn phép kiểm tra cơ chế, không phải benchmark)
+>
+> | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
+> | --- | ---: | ---: | --- |
+> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Nhánh trực tiếp nghe “twelve boxes” thành 8; bản chép tường minh giữ đúng số 12 |
+> | Tốc độ cận ngôn ngữ (2) | 2/2 | 1/2 | Hai bản chép trở thành cùng một câu, nên self-cascade cũng trả lời “slow” cho mẫu nhanh |
+> | Tổng | 3/4 | 3/4 | Cùng tổng điểm, vị trí lỗi đối nghịch |
+>
+> Lần chạy nhỏ này tái hiện dự đoán định tính: khi văn bản mang đủ thông tin liên quan, chép tường minh có thể sửa lỗi tri giác; khi đáp án phụ thuộc vào tốc độ nói, nút thắt văn bản thuần túy xóa bằng chứng không thể phục hồi. Cả hai nhánh đều đạt 75%, vì vậy end-to-end không tự động chính xác hơn. Sau khi tải, thời gian trung bình cho toàn bộ lời gọi là 0,69 giây và 0,55 giây; nhưng thứ tự cố định, độ dài đầu ra khác nhau và chỉ bốn mẫu khiến đây không phải xếp hạng độ trễ nghiêm ngặt.
+>
+> Lời gọi audio-to-audio gốc còn lưu một WAV mono 24kHz thật dài 11,56 giây, nhưng kế thừa lỗi tri giác 12→8. Phản hồi thô, bản chép, thời gian từng giai đoạn, hash và kiểm tra nghiệm thu nằm tại [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
+
 **Step-Audio 2** đi theo một lộ trình khác: xử lý trực tiếp âm thanh thô đầu vào và đầu ra văn bản cũng như âm thanh để đạt được cuộc đối thoại bằng giọng nói đầu cuối thực sự. Nó không chỉ có thể hiểu những gì đã được nói (thông tin ngữ nghĩa) mà còn có thể hiểu nó được nói như thế nào - thông tin cận ngôn ngữ (Thông tin song ngữ), chẳng hạn như tâm trạng của người nói là vui hay tức giận, tốc độ nói nhanh hay ngập ngừng, giọng nói đang lên hay xuống - cũng như âm thanh xung quanh và nhạc nền. Nó tạo ra các phản hồi biểu cảm thông qua học tập phản ánh và củng cố, đồng thời tích hợp cơ chế RAG và các công cụ bên ngoài (tìm kiếm trên web, tìm kiếm âm thanh). Theo báo cáo giấy Step-Audio 2, trên tiêu chuẩn hiểu ngôn ngữ StepEval-Audio-Paralinguistic do nó đề xuất, độ chính xác của Step-Audio 2 đạt 83,09%, vượt xa mô hình full-modal nguồn mở Qwen2.5-Omni (44,18%) trong cùng thời kỳ và cũng cao hơn so với Âm thanh GPT-4o (43,45%) và Kimi-Audio (49,64%).
 
 Step-Audio R1 là sản phẩm tiếp theo của dòng Step-Audio. Dựa trên kiến trúc hội thoại bằng giọng nói từ đầu đến cuối của Step-Audio 2, nó tiếp tục nội hóa khả năng tư duy trực tiếp vào mô hình âm thanh. Cả hai đại diện cho sự phát triển tiến bộ của cùng một lộ trình kỹ thuật.
@@ -248,30 +268,6 @@ Cả hai hoạt động song song - bộ não sáng tạo không cần phải su
 
 
 ![Hình 9-6 Kiến trúc bộ não kép Step-Audio R1 MGRD và MPS ](images/fig9-6.svg)
-
-
-> **Thử nghiệm 9-4 ★★★: Triển khai tư duy giọng nói toàn diện bằng Step-Audio R1**
->
-> Thử nghiệm này sử dụng mô hình Step-Audio R1 để so sánh hiệu suất của các cấu hình khác nhau trong các nhiệm vụ đối thoại và tư duy lời nói. Step-Audio R1 bao gồm bộ mã hóa âm thanh, bộ chuyển đổi âm thanh và bộ giải mã Qwen2.5 32B và yêu cầu triển khai GPU nhiều thẻ.
->
-> Thử nghiệm này được đánh giá dựa trên hai nhiệm vụ: **Spoken-MQA**(câu hỏi toán học lời nói) kiểm tra xem liệu mô hình có thể thực hiện lý luận toán học nhiều bước sau khi nghe các câu hỏi nói hay không; **URO-Bench**(chuẩn mực đối thoại bằng tiếng Trung) kiểm tra chất lượng của đối thoại mở.
->
-> Cấu hình thử nghiệm được chia thành hai chiều. Đầu tiên là **thời gian suy nghĩ**: **TBS** hoàn chỉnh (Think-Before-Speak, hãy suy nghĩ trước khi nói, làm cơ sở kiểm soát không có ràng buộc về độ trễ) trước tiên sẽ tạo ra tất cả suy nghĩ trước khi nói; Để giảm độ trễ, MPS cung cấp hai biến thể "suy nghĩ trong khi nói" - **Speak-First**(còn được gọi là spkfirst, không có độ trễ, nói và suy nghĩ bắt đầu cùng lúc) và **Think-First**(còn được gọi là thkfirst, đợi cho đến khi đoạn đầu tiên của não suy nghĩ được tạo ra trước khi nói, độ trễ là khoảng 80 mã thông báo). Thứ hai là **kiến trúc**: MPS song song não kép so với TBS mô hình đơn truyền thống.
->
-> Kết quả được thể hiện trong Bảng 9-1, được sử dụng để so sánh hiệu suất của các cấu hình kiến trúc và thời gian suy nghĩ khác nhau về độ chính xác toán học và điểm đối thoại.
->
-> Bảng 9-1 So sánh các cấu hình tư duy giọng nói khác nhau của Step-Audio R1
->
-> | Cấu hình | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Trả lời trực tiếp không cần suy nghĩ (cơ bản) | 70,6% | 77,4 |
-> | MPS Speak-First (Độ trễ bằng 0) | 92,8% | 82,5 |
-> | MPS Think-First (độ trễ ~ 80 tok) | 93,9% | 84,8 |
-> | TBS đầy đủ (không có giới hạn về độ trễ) | 93,0% | — |
->
-> Một phát hiện thú vị: Speak-First có tác động tối thiểu đến nhiệm vụ tư duy (92,8%, gần 93,0% đối với TBS đầy đủ). Nguyên nhân là do phần mở đầu của **CoT**(Chain-of-Thought, chuỗi tư duy) thường chỉ là phát biểu lại nội dung bài toán, chưa đi vào lý luận thực sự. Vì vậy, ngay cả khi mô hình bắt đầu suy nghĩ cùng lúc ngay khi mở ra thì độ chính xác cuối cùng sẽ khó bị mất đi. Một chi tiết đáng chú ý khác là: Think-First (93,9%) thậm chí còn cao hơn một chút so với TBS hoàn chỉnh không có giới hạn độ trễ (93,0%). Một lời giải thích có thể là tư duy được hình thành theo từng phân đoạn và được chuyển thành các biểu hiện theo từng phân đoạn, đóng vai trò tích cực tương tự như giám sát từng bước; tất nhiên, sự khác biệt giữa hai điều này cũng nằm trong phạm vi lỗi đánh giá và không nên diễn giải quá mức.
->
-
 Phương án thứ ba “nội hóa” tư duy thành một mô hình duy nhất, đạt được “tư duy và nói” một cách tao nhã nhất, nhưng cái giá phải trả là “mục tiêu di động” được đề cập ở đầu phần này: mô hình này phải vừa là nhà lý luận mạnh nhất, vừa là người nói theo thời gian thực, cả hai khả năng đều đang phát triển nhanh chóng và lộ trình thống nhất phải được đào tạo lại nhiều lần để theo kịp. Điều này cũng giải thích sự phân chia ngành tại thời điểm viết bài - các sản phẩm tiên tiến (GPT-Live, Grok Voice, Pine AI) theo đuổi "khả năng chuyển sang bộ não mới nhất bất cứ lúc nào" chủ yếu tập trung vào lộ trình tách rời của tùy chọn hai, trong khi tùy chọn ba phù hợp hơn cho các tình huống theo đuổi sự tự nhiên tột độ và sẵn sàng chịu chi phí đào tạo chuyên môn. Cả hai không phải là cái này thay thế cái kia, mà là sự đánh đổi giữa "bộ não có thể thay thế" và "suy nghĩ và nói chặt chẽ hơn cùng một lúc".
 
 ### Giao diện giữa nhanh và chậm: ngoài văn bản còn có thể truyền được gì nữa

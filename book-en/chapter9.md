@@ -162,6 +162,26 @@ To keep capability high while controlling computational cost, Qwen3-Omni adopts 
 
 A distinction worth keeping straight: MoE improves throughput—how many requests a unit of compute can serve. It does not directly determine how soon the first audio packet can be emitted; first-packet latency depends on the generation architecture. Qwen3-Omni's low first-packet latency comes from its Talker module: it generates audio tokens incrementally using multi-codebook autoregression, while a causal codec incrementally decodes those tokens into a waveform. As soon as the thinking module produces text, the Talker can begin streaming speech without waiting for the full response. According to the official report, its theoretical cold-start first-packet latency is approximately 234ms. It supports understanding in 19 languages and generation in 10, and leads on 22 of 36 audio-video benchmarks.
 
+**MiniCPM-o 4.5** compresses this route to a scale that can run locally on one consumer or workstation GPU. Built on SigLip2, Whisper-medium, CosyVoice2, and Qwen3-8B, it has about 9B parameters, natively accepts text, images, video, and audio, and directly generates text and speech. Besides turn-based voice conversation, it also exposes a full-duplex streaming mode. The useful experiment here is not another copied leaderboard. It is the end-to-end versus self-cascade claim above: for the same model and the same sound, does answering directly from audio latent states fail differently from first flattening that sound into plain text?
+
+> **Experiment 9-4 ★★: Run MiniCPM-o 4.5 Locally—End-to-End versus Self-Cascade**
+>
+> We pinned the open checkpoint `openbmb/MiniCPM-o-4_5` at revision `1f761131…` and ran it locally in BF16 on one 96GB RTX PRO 6000 Blackwell. Peak allocated VRAM was 20.27GiB, model loading took 6.15 seconds, and no external API was called. To keep two questions separate, thinking mode was disabled: this experiment measures information preservation in an Omni model, **not** “thinking while speaking” in the later section.
+>
+> Four small synthetic WAV files cover two task types: two spoken arithmetic questions whose answers depend only on words, and two utterances with identical words but fast versus slow delivery. The **end-to-end arm** gives each WAV directly to MiniCPM-o; the **self-cascade arm** asks the same MiniCPM-o to produce a words-only transcript that deliberately omits tone and pace, then answers from that transcript alone. Sampling is disabled in both arms.
+>
+> Table 9-1 Local MiniCPM-o 4.5 Results (four mechanism checks, not a benchmark)
+>
+> | Task type | End-to-end | Self-cascade | Observation |
+> | --- | ---: | ---: | --- |
+> | Semantic arithmetic (2) | 1/2 | 2/2 | End-to-end heard “twelve boxes” as 8; explicit transcription retained the correct 12 |
+> | Paralinguistic pace (2) | 2/2 | 1/2 | Both transcripts became the same sentence, so self-cascade also guessed “slow” for the fast sample |
+> | Total | 3/4 | 3/4 | Same total, opposite failure locations |
+>
+> This tiny run reproduced the qualitative prediction above: when text carries all relevant information, explicit transcription can correct a perceptual error; when the answer depends on speaking rate, a plain-text bottleneck irreversibly removes the evidence. It is also a warning against equating “end-to-end” with “more accurate”—both arms scored 75%. After loading, mean whole-call latency was 0.69 seconds end-to-end and 0.55 seconds self-cascade, but fixed run order, unequal output lengths, and four samples make this unsuitable as a latency ranking.
+>
+> A final native audio-to-audio call retained an 11.56-second, 24kHz mono WAV, closing the local “listen → answer → speak” path. Its answer also inherited the end-to-end arm's 12-to-8 perception error. Raw responses, model-produced transcripts, stage timings, input/output hashes, and acceptance checks are in [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
+
 **Step-Audio 2** takes a different route: it directly processes raw audio input and outputs both text and audio, achieving true end-to-end voice conversation. It can not only understand *what* is said (semantic information) but also perceive *how* it is said—paralinguistic information, such as whether the speaker's emotion is happy or angry, whether the speech rate is rapid or hesitant, whether the intonation is rising or falling—as well as background environmental sounds and music. It generates expressive responses through thinking and reinforcement learning, and also integrates a RAG mechanism and external tools (web search, audio search). According to the Step-Audio 2 paper, on their proposed StepEval-Audio-Paralinguistic benchmark for paralinguistic understanding, Step-Audio 2 achieves an accuracy of 83.09%, well ahead of the contemporaneous open-source omnimodal model Qwen2.5-Omni (44.18%), and also surpassing GPT-4o Audio (43.45%) and Kimi-Audio (49.64%).
 
 Step-Audio R1 is a follow-up model in the Step-Audio series. Building on Step-Audio 2's end-to-end voice conversation architecture, it further internalizes thinking capabilities directly into the audio model. The two represent a progressive evolution along the same technical path.
@@ -239,28 +259,6 @@ After multiple iterations, the foundation of thinking gradually shifts from text
 The two run in parallel: the Formulation Brain does not need to finish reasoning before the Articulation Brain starts speaking. For example, the Formulation Brain begins analyzing the user's question at t=0ms and produces its first reasoning segment, a sequence of text tokens, at t=200ms. The Articulation Brain receives that segment, combines it with the reply generated so far, and begins producing the corresponding speech tokens at t=350ms. The modules operate as a parallel pipeline, allowing the user to hear the first syllable after just 350ms.
 
 ![Figure 9-6: Step-Audio R1 MGRD and MPS Dual-Brain Architecture](images/fig9-6.svg)
-
-> **Experiment 9-4 ★★★: Using Step-Audio R1 for End-to-End Spoken Reasoning**
->
-> This experiment uses Step-Audio R1 to compare several configurations on spoken-reasoning and dialogue tasks. The model consists of an audio encoder, an audio adapter, and a Qwen2.5 32B decoder, and requires a multi-GPU deployment.
->
-> This experiment evaluates two tasks: **Spoken-MQA** (Spoken Math Questions) tests whether the model can perform multi-step mathematical reasoning after hearing an orally presented problem; **URO-Bench** (Chinese Oral Dialogue Benchmark) evaluates the quality of open-ended dialogue.
->
-> Test configurations are divided into two dimensions. The first is **Thinking Timing**: the full **TBS** (Think-Before-Speak) configuration, which serves as a latency-unconstrained control baseline, generates all thoughts before speaking. To reduce latency, MPS offers two "think-while-speaking" variants—**Speak-First** (also called spkfirst, zero latency, with speaking and thinking starting simultaneously) and **Think-First** (also called thkfirst, waiting for the thinking brain to produce the first segment before speaking, with a latency of about 80 tokens). The second dimension is **Architecture**: MPS's parallel dual-brain architecture versus traditional single-model TBS.
->
-> Table 9-1 compares the mathematical accuracy and dialogue scores of the different timing and architecture configurations.
->
-> Table 9-1 Comparison of Step-Audio R1 Spoken-Reasoning Configurations
->
-> | Configuration | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Answer directly without thinking (Baseline) | 70.6% | 77.4 |
-> | MPS Speak-First (Zero Latency) | 92.8% | 82.5 |
-> | MPS Think-First (~80 tok Latency) | 93.9% | 84.8 |
-> | Complete TBS (No Latency Constraint) | 93.0% | — |
->
-> An interesting finding is that Speak-First has minimal impact on thinking tasks (92.8% is close to the full TBS configuration's 93.0%). The reason is that the beginning of a **CoT** (Chain-of-Thought) usually just restates the problem content and hasn't yet entered true reasoning. Therefore, even if the model starts thinking simultaneously with speaking, the final accuracy is hardly affected. Another noteworthy detail is that Think-First (93.9%) is even slightly higher than the latency-unconstrained full TBS configuration (93.0%). One possible explanation is that producing thoughts in segments and converting them segment by segment into speech may function like step-by-step supervision and improve performance; however, the difference is within the margin of error and should not be overinterpreted.
->
 
 Solution 3 internalizes thinking into a single model—the most elegant realization of "thinking while speaking"—but the price is exactly the "moving target" from the start of this section: one model must be both the strongest reasoner and a real-time speaker, and with both capabilities evolving fast, the unified route must retrain again and again to keep pace. Hence the industry divide at the time of writing: frontier products that want to swap in the latest brain at will (GPT-Live, Grok Voice, Pine AI) mostly bet on Solution 2's decoupling, while Solution 3 suits products that chase ultimate naturalness and can absorb the specialized training cost. Neither replaces the other; it is a trade-off between the ability to swap in a reasoning model and more tightly integrated thinking and speech.
 

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "spoken-math-boxes",
+    "audio": "boxes-79.wav",
+    "category": "semantic_reasoning",
+    "instruction": "Listen to the spoken math problem and reply with the final numeric answer.",
+    "expected_aliases": ["79", "seventy-nine", "seventy nine"]
+  },
+  {
+    "id": "spoken-math-tickets",
+    "audio": "tickets-42.wav",
+    "category": "semantic_reasoning",
+    "instruction": "Listen to the spoken math problem and reply with the final numeric answer.",
+    "expected_aliases": ["42", "forty-two", "forty two"]
+  },
+  {
+    "id": "speaking-rate-fast",
+    "audio": "pace-fast.wav",
+    "category": "paralinguistic",
+    "instruction": "Classify the speaker's pace as fast or slow. Reply with exactly one word: fast or slow.",
+    "expected_aliases": ["fast"]
+  },
+  {
+    "id": "speaking-rate-slow",
+    "audio": "pace-slow.wav",
+    "category": "paralinguistic",
+    "instruction": "Classify the speaker's pace as fast or slow. Reply with exactly one word: fast or slow.",
+    "expected_aliases": ["slow"]
+  }
+]

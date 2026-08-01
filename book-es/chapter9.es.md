@@ -156,6 +156,26 @@ La **API OpenAI Realtime** se aproxima a extremo a extremo a nivel de modelo (el
 
 **Qwen3-Omni** adopta la arquitectura Thinker-Talker: divide el pensamiento (comprensión y razonamiento) y la expresión (generación de voz) en dos módulos especializados, unificando la percepción y generación de texto, imágenes, audio y video. La baja latencia del primer paquete de Qwen3-Omni proviene de la arquitectura del extremo de generación (Talker): genera tokens de audio de forma progresiva mediante autorregresión multicódigo, colaborando con un codec causal para decodificar incrementalmente estos tokens en formas de onda. Por lo tanto, en cuanto el módulo de pensamiento produce texto, Talker puede sintetizar la voz de forma en streaming a continuación, sin esperar a que se genere toda la respuesta. Según los informes oficiales, su latencia teórica de primer paquete en arranque en frío es de aproximadamente 234 ms, admitiendo la comprensión de 19 idiomas y la generación de 10 idiomas, liderando en 22 de las 36 pruebas de referencia de audio y video.
 
+**MiniCPM-o 4.5** reduce esta ruta a una escala que puede ejecutarse localmente en una sola GPU de consumo o de estación de trabajo. Basado en SigLip2, Whisper-medium, CosyVoice2 y Qwen3-8B, tiene unos 9B parámetros, acepta de forma nativa texto, imágenes, vídeo y audio, y genera directamente texto y voz. La pregunta útil aquí no es copiar otra clasificación, sino probar la afirmación anterior sobre extremo a extremo frente a autocascada: ¿falla el mismo modelo de forma distinta al responder desde los estados latentes del audio que al aplanar primero ese audio a texto puro?
+
+> **Experimento 9-4 ★★: Ejecutar MiniCPM-o 4.5 localmente — extremo a extremo frente a autocascada**
+>
+> Fijamos el checkpoint abierto `openbmb/MiniCPM-o-4_5` en la revisión `1f761131…` y lo ejecutamos localmente en BF16 sobre una sola RTX PRO 6000 Blackwell de 96GB. La memoria máxima asignada fue 20,27GiB, la carga tardó 6,15 segundos y no se llamó a ninguna API externa. El modo de pensamiento se desactivó deliberadamente: este experimento mide la conservación de información en un modelo Omni, **no** el «pensar mientras se habla» de la sección posterior.
+>
+> Cuatro WAV sintéticos pequeños cubren dos tipos de tarea: dos problemas aritméticos hablados cuya respuesta depende solo de las palabras y dos locuciones con palabras idénticas pero ritmo rápido o lento. El brazo **extremo a extremo** entrega cada WAV directamente a MiniCPM-o; el brazo de **autocascada** pide al mismo modelo una transcripción de solo palabras que omite expresamente tono y ritmo, y responde únicamente desde ella. El muestreo está desactivado en ambos brazos.
+>
+> Tabla 9-1 Resultados locales de MiniCPM-o 4.5 (cuatro comprobaciones del mecanismo, no un benchmark)
+>
+> | Tipo de tarea | Extremo a extremo | Autocascada | Observación |
+> | --- | ---: | ---: | --- |
+> | Aritmética semántica (2) | 1/2 | 2/2 | El modelo directo oyó “twelve boxes” como 8; la transcripción explícita conservó el 12 correcto |
+> | Ritmo paralingüístico (2) | 2/2 | 1/2 | Ambas transcripciones se volvieron la misma frase, por lo que la autocascada también respondió “slow” para la muestra rápida |
+> | Total | 3/4 | 3/4 | Mismo total, fallos en lugares opuestos |
+>
+> Esta ejecución pequeña reprodujo la predicción cualitativa: cuando el texto conserva toda la información relevante, una transcripción explícita puede corregir un error perceptivo; cuando la respuesta depende del ritmo, el cuello de botella de texto elimina la evidencia de forma irreversible. Ambos brazos obtuvieron 75%, de modo que «extremo a extremo» no implica automáticamente mayor precisión. Tras cargar el modelo, la latencia media fue 0,69 s para extremo a extremo y 0,55 s para autocascada, pero el orden fijo, las longitudes desiguales y solo cuatro casos impiden interpretarlo como una clasificación rigurosa de latencia.
+>
+> Una llamada nativa audio-a-audio conservó además un WAV mono real de 11,56 segundos a 24kHz, aunque heredó el error perceptivo de 12 a 8. Las respuestas sin procesar, transcripciones, tiempos por etapa, hashes y comprobaciones de aceptación están en [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
+
 **Step-Audio 2** toma una ruta diferente: procesa directamente la entrada de audio original y emite texto y audio, logrando un verdadero diálogo de voz de extremo a extremo. No solo comprende lo que se dijo (información semántica), sino que también percibe cómo se dijo (información paralingüística), como si la emoción del hablante es de alegría o enojo, si la velocidad del habla es apresurada o dudosa, si el tono es ascendente o grave, así como el sonido ambiental y la música de fondo. Genera respuestas expresivas a través del pensamiento y el aprendizaje por refuerzo, e integra mecanismos de RAG y herramientas externas (búsqueda web, búsqueda de audio). Según el artículo técnico de Step-Audio 2, en su benchmark de comprensión paralingüística StepEval-Audio-Paralinguistic, la precisión de Step-Audio 2 alcanzó el 83.09%, superando al modelo omnimodal de código abierto contemporáneo Qwen2.5-Omni (44.18%), y siendo superior a GPT-4o Audio (43.45%) y Kimi-Audio (49.64%).
 
 Step-Audio R1 es un trabajo posterior de la serie Step-Audio que, sobre la base de la arquitectura de diálogo de voz de extremo a extremo de Step-Audio 2, internaliza aún más la capacidad de pensamiento directamente en el modelo de audio, representando una evolución progresiva de la misma ruta técnica.
@@ -233,28 +253,6 @@ La **Arquitectura de Doble Cerebro MPS** (Mind-Paced Speaking, traducido literal
 Ambos funcionan en paralelo: el Cerebro de Formulación no necesita terminar de pensar todo el contenido para que el Cerebro de Articulación empiece a hablar. Por ejemplo, a t=0 ms el Cerebro de Formulación comienza a analizar la pregunta del usuario; a t=200 ms emite el primer resultado de pensamiento (secuencia de tokens de texto); el Cerebro de Articulación recibe este resultado a t=200 ms y, combinado con el contexto de la respuesta generada, comienza a emitir los tokens de voz correspondientes a t=350 ms: los dos módulos operan en paralelo en modo pipeline, permitiendo al usuario escuchar la primera sílaba a t=350 ms.
 
 ![Figura 9-6: MGRD de Step-Audio R1 y arquitectura de doble cerebro MPS](images/fig9-6.svg)
-
-> **Experimento 9-4 ★★★: Uso de Step-Audio R1 para razonamiento hablado de extremo a extremo**
->
-> Este experimento utiliza el modelo Step-Audio R1 para comparar el rendimiento de diferentes configuraciones en tareas de pensamiento y diálogo por voz. Step-Audio R1 consta de un codificador de audio, un adaptador de audio y un decodificador Qwen2.5 32B, requiriendo el despliegue en GPU de múltiples tarjetas.
->
-> Este experimento evalúa dos tareas: **Spoken-MQA** (problemas matemáticos hablados), que examina si el modelo puede realizar razonamiento matemático multipaso tras escuchar preguntas dictadas; y **URO-Bench** (benchmark de diálogo hablado en chino), que evalúa la calidad del diálogo abierto.
->
-> Las configuraciones de prueba se dividen en dos dimensiones. La primera es el **momento del pensamiento**: el **TBS** completo (Think-Before-Speak, pensar antes de hablar, como línea base de control sin restricción de latencia) genera todo el pensamiento antes de hablar; para reducir la latencia, MPS proporciona dos variantes de "pensar mientras se habla": **Speak-First** (también llamado spkfirst, latencia cero, iniciando el habla y el pensamiento simultáneamente) y **Think-First** (también llamado thkfirst, esperando a que el cerebro de pensamiento produzca la primera sección antes de hablar, con una latencia de unos 80 tokens). La segunda es la **arquitectura**: MPS de doble cerebro en paralelo frente a TBS tradicional de un solo modelo.
->
-> Los resultados se muestran en la Tabla 9-1, utilizada para comparar el rendimiento de diferentes momentos de pensamiento y configuraciones de arquitectura en la precisión matemática y las puntuaciones de diálogo.
->
-> Tabla 9-1 Comparación de configuraciones de razonamiento hablado de Step-Audio R1
->
-> | Configuración | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Responder directamente sin pensar (Línea base) | 70.6% | 77.4 |
-> | MPS Speak-First (Latencia cero) | 92.8% | 82.5 |
-> | MPS Think-First (~80 tok de latencia) | 93.9% | 84.8 |
-> | TBS Completo (Sin restricción de latencia) | 93.0% | N/A |
->
-> Un hallazgo interesante es que Speak-First tiene un impacto mínimo en las tareas de pensamiento (92.8% cercano al 93.0% del TBS completo). La razón radica en que el comienzo del CoT (Chain-of-Thought) suele limitarse a reformular el contenido de la pregunta antes de entrar en el razonamiento real, por lo que incluso si el modelo empieza a hablar al tiempo que inicia el pensamiento, la precisión final no sufre casi ninguna pérdida. Otro detalle digno de atención es que Think-First (93.9%) es incluso ligeramente superior al TBS completo sin restricción de latencia (93.0%): una explicación posible es que producir el pensamiento por partes y convertirlo gradualmente en expresión actúa como un beneficio de supervisión paso a paso; por supuesto, la diferencia entre ambos está dentro del margen de error de la evaluación y no debe sobreinterpretarse.
-
 La Solución 3 "internaliza" el pensamiento en un solo modelo, logrando la forma más elegante de "pensar mientras se habla", pero el costo es precisamente el "blanco en movimiento" mencionado al principio de esta sección: este único modelo debe ser tanto el razonador más fuerte como el hablante en tiempo real, y dado que ambas capacidades evolucionan rápidamente, la ruta unificada requiere reentrenamientos repetidos para mantenerse al día. Esto explica también la diferenciación industrial al momento de escribir este libro: los productos de vanguardia que buscan "poder cambiar en cualquier momento al último cerebro" (GPT-Live, Grok Voice, Pine AI) apuestan en su mayoría por la ruta de desacoplamiento de la Solución 2, mientras que la Solución 3 es más adecuada para escenarios que persiguen una naturalidad extrema y están dispuestos a asumir costos de entrenamiento dedicados. Ninguna reemplaza a la otra, sino que representan un compromiso entre un "cerebro intercambiable" y un "pensar mientras se habla más estrecho".
 
 ### Interfaz entre rápido y lento: ¿Qué más se puede transmitir además de texto?

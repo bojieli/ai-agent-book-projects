@@ -160,6 +160,26 @@ A képesség magas szinten tartása mellett a számítási költség szabályoz�
 
 Egy fontos megkülönböztetés: az MoE javítja az áteresztőképességet — hogy hány kérést tud kiszolgálni egy számítási egység. Nem határozza meg közvetlenül, hogy milyen gyorsan bocsátható ki az első hangcsomag; az első csomag késleltetése a generálási architektúrától függ. A Qwen3-Omni alacsony első csomag késleltetése a Talker moduljának köszönhető: többkódkönyvű autoregresszióval növekményesen generál hangtokeneket, miközben egy kauzális kodek növekményesen dekódolja ezeket a tokeneket hullámformává. Amint a gondolkodási modul szöveget produkál, a Talker elkezdheti streamelni a beszédet anélkül, hogy megvárná a teljes választ. A hivatalos jelentés szerint az elméleti hidegindítási első csomag késleltetése körülbelül 234 ms. Támogatja a megértést 19 nyelven és a generálást 10 nyelven, és 22-ben vezet a 36 audio-video benchmarkból.
 
+A **MiniCPM-o 4.5** ezt az irányt egyetlen fogyasztói vagy munkaállomás-GPU-n helyben futtatható méretre tömöríti. A SigLip2, Whisper-medium, CosyVoice2 és Qwen3-8B alapjaira épülő, mintegy 9 milliárd paraméteres modell natívan fogad szöveget, képet, videót és hangot, és közvetlenül állít elő szöveget és beszédet. Itt nem egy újabb ranglista másolása az érdekes, hanem a fenti end-to-end kontra self-cascade állítás vizsgálata: ugyanaz a modell másképp hibázik-e, ha közvetlenül a hang látens reprezentációiból válaszol, mint ha előbb puszta szöveggé lapítja a hangot?
+
+> **9-4. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end kontra self-cascade**
+>
+> Az `openbmb/MiniCPM-o-4_5` nyílt checkpointot az `1f761131…` revisionnél rögzítettük, és BF16 pontossággal futtattuk egyetlen 96GB-os RTX PRO 6000 Blackwell GPU-n. A csúcs memóriafoglalás 20,27GiB, a betöltés 6,15 másodperc volt, külső API-hívás nélkül. A thinking módot szándékosan kikapcsoltuk: ez a kísérlet az Omni modell információmegőrzését méri, **nem** a későbbi „gondolkodás beszéd közben” mechanizmust.
+>
+> Négy kis szintetikus WAV két feladattípust fed le: két kimondott számtani feladatot, ahol csak a szavak számítanak, valamint két azonos szövegű, de gyors, illetve lassú tempójú felvételt. Az **end-to-end ág** közvetlenül adja a WAV-ot a MiniCPM-o-nak; a **self-cascade ág** ugyanazzal a modellel csak a szavakat íratja át, a hangszínt és tempót szándékosan elhagyva, majd kizárólag ebből a szövegből válaszol. A mintavételezés mindkét ágban ki van kapcsolva.
+>
+> 9-1. táblázat A MiniCPM-o 4.5 helyi eredményei (négy mechanizmus-ellenőrzés, nem benchmark)
+>
+> | Feladattípus | End-to-end | Self-cascade | Megfigyelés |
+> | --- | ---: | ---: | --- |
+> | Szemantikus számtan (2) | 1/2 | 2/2 | A közvetlen ág a “twelve boxes” kifejezést 8-nak hallotta; az explicit átirat megőrizte a helyes 12-t |
+> | Paralingvisztikai tempó (2) | 2/2 | 1/2 | Mindkét átirat ugyanaz a mondat lett, így a self-cascade a gyors mintára is “slow”-t tippelt |
+> | Összesen | 3/4 | 3/4 | Azonos összpontszám, ellentétes hibák |
+>
+> A kis futás igazolta a minőségi előrejelzést: ha a szöveg minden releváns információt hordoz, az explicit átirat kijavíthat érzékelési hibát; ha a válasz a beszédtempótól függ, a puszta szöveges szűk keresztmetszet visszafordíthatatlanul eltünteti a bizonyítékot. Mindkét ág 75%-ot ért el, tehát az end-to-end nem automatikusan pontosabb. Betöltés után az átlagos teljes hívás 0,69 s, illetve 0,55 s volt, de a rögzített sorrend, az eltérő kimenethosszak és a négy minta miatt ez nem szigorú késleltetési rangsor.
+>
+> A natív audio-to-audio ág egy valódi, 11,56 másodperces, 24kHz-es mono WAV-ot is megőrzött, de örökölte a 12→8 érzékelési hibát. A nyers válaszok, átiratok, szakaszidők, hashek és elfogadási ellenőrzések itt találhatók: [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
+
 A "Step-Audio 2" más utat választ: közvetlenül dolgozza fel a nyers hangbemenetet, és szöveges és hang kimenetet is ad, elérve a valódi végponttól végpontig tartó hangalapú beszélgetést. Nemcsak azt képes megérteni, hogy *mit* mondtak (szemantikus információ), hanem azt is érzékeli, hogy *hogyan* mondták — paranyelvi információ, például hogy a beszélő érzelme boldog vagy mérges-e, a beszédtempó gyors vagy tétova-e, az intonáció emelkedik vagy süllyed-e — valamint háttér-környezeti hangokat és zenét. Gondolkodáson és megerősítéses tanuláson keresztül generál kifejező válaszokat, és integrál egy RAG mechanizmust és külső eszközöket is (webes keresés, hangkeresés). A Step-Audio 2 tanulmány szerint az általuk javasolt StepEval-Audio-Paralinguistic benchmarkon a paranyelvi megértésben a Step-Audio 2 83,09%-os pontosságot ért el, messze megelőzve a kortárs nyílt forráskódú omnimodális modellt, a Qwen2.5-Omni-t (44,18%), és felülmúlva a GPT-4o Audio-t (43,45%) és a Kimi-Audio-t (49,64%) is.
 
 A Step-Audio R1 a Step-Audio sorozat következő modellje. A Step-Audio 2 végponttól végpontig tartó hangalapú beszélgetési architektúrájára építve tovább internalizálja a gondolkodási képességeket közvetlenül a hangmodellbe. A kettő egy progresszív evolúciót képvisel ugyanazon a technikai úton.
@@ -237,29 +257,6 @@ Több iteráció után a gondolkodás alapja fokozatosan eltolódik a szöveges 
 A kettő párhuzamosan fut: a Formuláló Agynak nem kell befejeznie az érvelést, mielőtt az Artikulációs Agy elkezd beszélni. Például a Formuláló Agy elkezdi elemezni a felhasználó kérdését t=0 ms-nál, és az első érvelési szegmenst, egy szöveges tokenek sorozatát, t=200 ms-nál produkálja. Az Artikulációs Agy megkapja ezt a szegmenst, kombinálja az eddig generált válasszal, és elkezdi a megfelelő beszédtokenek előállítását t=350 ms-nál. A modulok párhuzamos csővezetékként működnek, lehetővé téve, hogy a felhasználó már 350 ms után hallja az első szótagot.
 
 ![9-6. ábra: Step-Audio R1 MGRD és MPS Kétagyú Architektúra](images/fig9-6.svg)
-
-> **9-4. kísérlet ★★★: A Step-Audio R1 használata végponti beszélt érveléshez**
->
-> Ez a kísérlet a Step-Audio R1-et használja több konfiguráció összehasonlítására beszélt-érvelési és párbeszédfeladatokon. A modell egy hangkódolóból, egy hangadapterből és egy Qwen2.5 32B dekódolóból áll, és több GPU-s telepítést igényel.
->
-> A kísérlet két feladatot értékel: a "Spoken-MQA" (Beszélt Matek Kérdések) azt teszteli, hogy a modell képes-e többlépcsős matematikai érvelésre egy szóban előadott probléma meghallása után; az "URO-Bench" (Kínai Szóbeli Párbeszéd Benchmark) a nyílt végű párbeszéd minőségét értékeli.
->
-> A tesztkonfigurációk két dimenzióra oszlanak. Az első a "Gondolkodás Időzítése": a teljes "TBS" (Think-Before-Speak) konfiguráció, amely késleltetés-korlátlan kontroll alapvonal, az összes gondolatot a beszéd előtt generálja. A késleltetés csökkentése érdekében az MPS két "gondolkodva beszélő" változatot kínál — "Speak-First" (spkfirst, nulla késleltetés, a beszéd és a gondolkodás egyidejűleg indul) és "Think-First" (thkfirst, vár, amíg a gondolkodó agy produkálja az első szegmenst a beszéd előtt, körülbelül 80 token késleltetéssel). A második dimenzió az "Architektúra": MPS párhuzamos kétagyú architektúrája versus hagyományos egy modelles TBS.
->
-> A 9-1. táblázat összehasonlítja a különböző időzítési és architektúra konfigurációk matematikai pontosságát és párbeszéd pontszámait.
->
-> 9-1. táblázat: A Step-Audio R1 beszélt-érvelési konfigurációinak összehasonlítása
->
-> | Konfiguráció | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Válasz gondolkodás nélkül (Baseline) | 70,6% | 77,4 |
-> | MPS Speak-First (Nulla Késleltetés) | 92,8% | 82,5 |
-> | MPS Think-First (~80 tok Késleltetés) | 93,9% | 84,8 |
-> | Teljes TBS (Nincs Késleltetési Korlát) | 93,0% | — |
->
-> Egy érdekes megállapítás, hogy a Speak-First minimális hatással van a gondolkodási feladatokra (92,8% közel van a teljes TBS konfiguráció 93,0%-ához). Ennek az az oka, hogy egy "CoT" (Chain-of-Thought) eleje általában csak a probléma tartalmát ismétli meg, és még nem lépett be a valódi érvelésbe. Ezért még ha a modell a beszéddel egyidejűleg kezdi is a gondolkodást, a végső pontosságot alig befolyásolja. Egy másik figyelemre méltó részlet, hogy a Think-First (93,9%) még kissé magasabb is, mint a késleltetés-korlátlan teljes TBS konfiguráció (93,0%). Az egyik lehetséges magyarázat az, hogy a gondolatok szegmensekben történő előállítása és szegmensenkénti beszéddé alakítása lépésenkénti felügyeletként működhet, javítva a teljesítményt; a különbség azonban a hibahatáron belül van, és nem szabad túlértelmezni.
->
-
 A 3. megoldás egyetlen modellbe internalizálja a gondolkodást — a "gondolkodva beszélés" legelegánsabb megvalósítása —, de az ára pontosan a szakasz elején említett "mozgó célpont": egy modellnek kell lennie a legerősebb érvelőnek és egy valós idejű beszélőnek is, és mivel mindkét képesség gyorsan fejlődik, az egyesített útnak újra és újra kell tanulnia, hogy lépést tartson. Ezért alakult ki az iparági megosztottság a cikk írásakor: a frontvonalbeli termékek, amelyek azonnal be akarják építeni a legújabb agyat (GPT-Live, Grok Voice, Pine AI), többnyire a 2. megoldás szétválasztására fogadnak, míg a 3. megoldás azoknak a termékeknek felel meg, amelyek a végső természetességre törekednek, és fel tudják venni a specializált tanítási költséget. Egyik sem váltja fel a másikat; ez egy kompromisszum az érvelő modell becserélhetősége és a szorosabban integrált gondolkodás és beszéd között.
 
 ### A gyors és lassú közötti interfész: Mit lehet átadni a szövegen túl?
