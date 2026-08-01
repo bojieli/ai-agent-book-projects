@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "experiment": "9-7",
+  "arm": "open-model-api",
+  "status": "passed",
+  "api": {
+    "api_protocol": "openai-compatible-chat-completions",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "base_url": "https://openrouter.ai/api/v1",
+    "requested_model": "qwen/qwen3-vl-32b-instruct",
+    "schema_mode": "native"
+  },
+  "credential_retained": false,
+  "artifacts": [
+    {
+      "path": "acceptance.json",
+      "bytes": 2074,
+      "sha256": "3aed10516d20a0bbb8f13175df51168a8ec2c145cc9c4ad957b7db395b7210dc"
+    },
+    {
+      "path": "agent-files/browseruse_agent_data/todo.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "api-receipts.json",
+      "bytes": 48277,
+      "sha256": "90c9d8153d13aa3b7a9f5aaebfe7e0766f277b5beee603e9ef302dc55af3ff0c"
+    },
+    {
+      "path": "downloads/f (1).txt",
+      "bytes": 102,
+      "sha256": "2259823ec5ad0c2437d373ee983dca233e228b6114b91ac0abdea3f19115e95a"
+    },
+    {
+      "path": "downloads/f.txt",
+      "bytes": 102,
+      "sha256": "1226ac037e3f8034e6ae1f6220167da5bec173f66232e0c5cd6f9698d2604ca3"
+    },
+    {
+      "path": "history.json",
+      "bytes": 203653,
+      "sha256": "99a84f496574043a96bf57cfe3dbfe917496da4b0c5b07615f20467b0f945ea1"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 576,
+      "sha256": "b41c8041a783ee1fa23c47af876f9c9a330811690db327d2917172e192b296b5"
+    },
+    {
+      "path": "screenshots/step-002.png",
+      "bytes": 28061,
+      "sha256": "8c5c6e2e1e86efddfca55519f05989024638eb3a02ae664895c1e39ff83522f7"
+    },
+    {
+      "path": "screenshots/step-003.png",
+      "bytes": 29944,
+      "sha256": "f81f47dbc57a9a8811f11f757b2346bd2bd62f44aa1b4ff97ba95cca2bf5f682"
+    },
+    {
+      "path": "screenshots/step-004.png",
+      "bytes": 55273,
+      "sha256": "0bc740a84d46b7dd463b3a51938b65d8a0dc5d224792370f75cb0d4993611218"
+    },
+    {
+      "path": "screenshots/step-005.png",
+      "bytes": 27941,
+      "sha256": "c1bc7955dac6fe5ad20ba354baba0090927bb47995fd31a0d4fd81031d915e4c"
+    },
+    {
+      "path": "screenshots/step-006.png",
+      "bytes": 23640,
+      "sha256": "53605ec8ec85aeae9f4acae9a9470e6e49e3ced7c46f86597b7d66d7d233333a"
+    },
+    {
+      "path": "screenshots/step-007.png",
+      "bytes": 110544,
+      "sha256": "4e2603a80d4ce151fd8c59f2085098f8ae95aff6e78379ded5ec16a9b7d92b60"
+    },
+    {
+      "path": "screenshots/step-008.png",
+      "bytes": 123209,
+      "sha256": "54c1add05b5c9d2cf1b48441356807d3fc54645d0cd6d316ef5fb4509722d923"
+    },
+    {
+      "path": "screenshots/step-009.png",
+      "bytes": 127254,
+      "sha256": "9febbe80a5d86ff6decd586d139157cb5262fe83819a652b17ea1bd7968dbe5f"
+    },
+    {
+      "path": "screenshots/step-010.png",
+      "bytes": 127210,
+      "sha256": "e19ca02d40dd842180992b07e620d04b10b9de4380c8bba928ead6924970c821"
+    },
+    {
+      "path": "screenshots/step-011.png",
+      "bytes": 126639,
+      "sha256": "0b6a960afe0043c71bff781ce49877c6323362c0ad70f22adfcbf6715604e746"
+    },
+    {
+      "path": "screenshots/step-012.png",
+      "bytes": 124265,
+      "sha256": "816583d8b0d8293af360836f835b7342d7a3cf78a903d43cb6e0133ffbd2ea29"
+    },
+    {
+      "path": "screenshots/step-013.png",
+      "bytes": 42224,
+      "sha256": "9128f3a40154ab5e281ad332ef3d680a2269823b5d2d11d63c6371625cf16ebc"
+    },
+    {
+      "path": "screenshots/step-014.png",
+      "bytes": 78288,
+      "sha256": "c3bcf11a554460dfc8aef9afb8c6c862573f5e008831307c3190b11f0c84f13e"
+    },
+    {
+      "path": "screenshots/step-015.png",
+      "bytes": 52704,
+      "sha256": "62dd5ad950d4ed339005219664a3c7bcd9dfbb29daed562cff2c02b9b4003114"
+    },
+    {
+      "path": "screenshots/step-016.png",
+      "bytes": 102608,
+      "sha256": "3639379122337818d7bef94facdf8110104bca8129f12b10f62d3d3e2678cfcc"
+    },
+    {
+      "path": "screenshots.json",
+      "bytes": 2695,
+      "sha256": "b783d7fbd9d61a38a3fc56c81a3aa783ade5a4ec69662b09ea7461d27e0b5bbb"
+    },
+    {
+      "path": "source-snapshot.json",
+      "bytes": 669,
+      "sha256": "e7b235a2be23c4dd62fbeaa93331eab36a39d24d939e7339e3cd88adc332d8a2"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 2398,
+      "sha256": "a7efbbba82c18dd6f6c63a106b220ace3dd9e9ba5eb8c2308c8180a0b5441c44"
+    }
+  ]
+}

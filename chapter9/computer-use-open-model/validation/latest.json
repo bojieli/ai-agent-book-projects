@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "experiment": "9-7",
+  "arm": "open-model-api",
+  "status": "passed",
+  "run_dir": "runs/exp9-7-qwen3-vl-32b-20260801-v1",
+  "acceptance_sha256": "3aed10516d20a0bbb8f13175df51168a8ec2c145cc9c4ad957b7db395b7210dc",
+  "manifest_sha256": "0ae99327fa5a4ca81b530324ccd4242edf2dea3a28332cb2a71253fcf2b32098"
+}

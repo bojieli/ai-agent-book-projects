@@ -13,20 +13,49 @@
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | [同一次 canonical 本地验收](streaming-speech/validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)严格运行 Qwen2-Audio 递增前缀与 600ms VAD + Whisper：8/8 执行/溯源门禁通过，13 份原始模型输出、5 个源码、4 个音频、Whisper checkpoint 与完整 6.56GB 模型权重均有已复核 hash；正文结果仅复现 2/6，实测前缀 8.4–11.3s，pause 漏报 silence，noise 仍误报 cough/laughter |
 | 9-4 | [end-to-end-speech](end-to-end-speech/) | 🚧 | Step-Audio R1 customized-vLLM 四卡部署与真实 audio client 已实现，但当前无可用 Step-Audio endpoint 且主机无 CUDA；[阻塞证据](end-to-end-speech/validation/blocker.json)拒绝用替代模型伪装完成 |
 | 9-5 | [controllable-tts](controllable-tts/) | ✅ | 真实 Fish Audio S1 4×3×2=24 条参考音库与 A/B/C 媒体齐全；三次位置平衡的真实 Voxtral 音频盲评中 C 组最高且真人客服感 4.67/5，但 B>A 未复现；[验收](controllable-tts/validation/acceptance.json)将完成状态与负结果分开报告 |
-| 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | 正文对应 Anthropic Computer Use Demo，不是整个 quickstarts 集合；容器内 Ubuntu 桌面 + Claude computer-use agent loop |
-| 9-7 | `browser-use/` | 📖 | `browser-use/browser-use` 外部 checkout；正文任务使用视觉浏览器 Agent 打开 Google 查询旧金山天气并检查动作轨迹 |
+| 9-6 | `claude-quickstarts/computer-use-demo/` + [computer-use-open-model](computer-use-open-model/) | 📖 | Anthropic Demo 保留为原生 `computer` 工具参考路径；读者无需 Anthropic API，可用开放权重 Qwen3-VL 的托管 API 或自托管 OpenAI-compatible 端点跑同一只读任务与证据契约 |
+| 9-7 | [computer-use-open-model](computer-use-open-model/) + `browser-use/` | ✅ | [正式开放模型运行](computer-use-open-model/validation/latest.json)使用 `qwen/qwen3-vl-32b-instruct`：Google CAPTCHA 后转 weather.com，16 步完成；16/16 API 响应模型一致、15 张截图、只读动作和答案 grounding 全部通过确定性验收 |
 | 9-8 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 外部复现轨：XLeRobot [官方仓库固定提交](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6)的键盘/Xbox/Joy-Con/VR 遥操作；当前仅通过源码与非致动预检，尚无真机四模式及取放擦任务证据 |
 | 9-9 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 外部复现轨：[XLeRobot 固定提交](https://github.com/Vector-Wangel/XLeRobot/tree/3d14695e40c9c68229c0aacffca6053c75cd3eb6) + [RoboCrew v0.3.1 固定提交](https://github.com/Grigorij-Dudnik/RoboCrew/tree/c749148f29bd14e61347f9fc3530c343fff0d994)，严格使用 `gemini-robotics-er-1.5-preview`、角度标注和前进/左转/右转三工具；当前无模型 API 或真机导航证据 |
 | 9-10 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 外部复现轨：[`lerobot-sim2real` 固定提交](https://github.com/StoneT2000/lerobot-sim2real/tree/87d6c1d969f6e0ca4dc5697940804e231118a63a)的五阶段 RGB→PPO→SO-100 流程；3–4 阶段可纯 GPU，固定版第 1 阶段会连接并 reset 真机；本机缺 ManiSkill/NVIDIA，亦无授权真机证据 |
 
+## 实验 9-6 / 9-7 的供应商可移植路径
+
+9-6 的 Anthropic Demo 是参考实现，不是读者验收的唯一合法端点。对应的
+[开放模型 companion](computer-use-open-model/)把 browser-use 的视觉 Agent 接到
+OpenAI-compatible Chat Completions：默认示例通过 OpenRouter 调用开放权重
+`qwen/qwen3-vl-32b-instruct`，也支持读者自己的 vLLM/SGLang 或其他兼容托管端点。
+“开放模型”指权重/许可证开放，API 网关本身仍可能是商业服务；实验回执必须分别记录
+requested model 与提供商实际返回的 model ID。
+
+```bash
+cd chapter9/computer-use-open-model
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+
+export OPENROUTER_API_KEY='replace-with-your-key'
+python main.py --dry-run
+python main.py \
+  --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \
+  --max-steps 25 \
+  --record-video
+```
+
+自托管时改设 `OPEN_MODEL_API_KEY=local`、`OPEN_MODEL_BASE_URL` 与
+`OPEN_MODEL_MODEL` 即可。端点必须支持图片输入和结构化 JSON 动作；不支持原生
+`json_schema` 时可设 `OPEN_MODEL_SCHEMA_MODE=prompt`，但应把这种兼容模式单列为
+不同实验配置。不同模型的结果不能合并成 Anthropic 复现结果。
+
 ## 实验 9-6 至 9-10 外部复现锚点
 
-9-6/9-7 的 SHA 来自 2026-07-30 当前工作区 checkout 的 `origin` 与 `HEAD`；9-8 至 9-10 来自保存的上游 lock 与同日只读远端审计，对应三个源码 checkout 当前不存在。这里只核验了来源、固定版本、依赖边界和入口；**没有启动容器、浏览器、训练、模型调用或机器人动作**。
+9-6/9-7 的上游 SHA 来自 2026-07-30 工作区 checkout 的 `origin` 与 `HEAD`；那次源码审计没有启动容器、浏览器或模型调用。此后 9-7 的[开放模型正式运行](computer-use-open-model/validation/latest.json)已经用真实 Qwen3-VL API 与 Chromium 关闭了 browser-use 路径，但 9-6 的 Anthropic 原生工具臂仍未运行。9-8 至 9-10 仍只有保存的上游 lock 与只读远端审计，对应三个源码 checkout 当前不存在，也没有训练、模型规划或机器人动作。
 
 | 实验 | 权威上游 → 本地路径 | 固定提交 | 锁与入口 |
 | :--: | --- | --- | --- |
 | 9-6 | [`anthropics/claude-quickstarts`](https://github.com/anthropics/claude-quickstarts) → `chapter9/claude-quickstarts`；具体项目 `computer-use-demo/` | `9bcc95e316e5ef6542b4c9d0469f4078829eead5` | 从该目录的 `Dockerfile` 本地构建；固定源码中的 Dockerfile SHA-256 为 `3aa1f36a491f8f88d81a04c6a89b4cc9f9acd20ad946304c13419736da7c0ead`，但构建输入仍有可变项 |
-| 9-7 | [`browser-use/browser-use`](https://github.com/browser-use/browser-use) → `chapter9/browser-use` | `ec9277c5001f2cb78ee419c927775a3cfc227ff8` | checkout 包版本 `0.9.5`；视觉入口为 `examples/ui/command_line.py`（`use_vision=True`、`max_actions_per_step=1`、OpenAI 默认模型 `gpt-4.1`）。该提交**没有跟踪 `uv.lock`，且 `.gitignore` 明确忽略它** |
+| 9-7 | [`browser-use/browser-use`](https://github.com/browser-use/browser-use) → `chapter9/browser-use`；本书可移植入口 `chapter9/computer-use-open-model/main.py` | `ec9277c5001f2cb78ee419c927775a3cfc227ff8` | checkout 包版本 `0.9.5`；本书入口固定 `use_vision=True`、`max_actions_per_step=1`，默认请求开放权重 Qwen3-VL 32B，并接受任意合格 OpenAI-compatible base URL。该上游提交**没有跟踪 `uv.lock`，且 `.gitignore` 明确忽略它** |
 | 9-8 | [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot` | `3d14695e40c9c68229c0aacffca6053c75cd3eb6` | `software/examples/{4_xlerobot_teleop_keyboard,5_xlerobot_teleop_xbox,7_xlerobot_teleop_joycon,8_xlerobot_teleop_vr}.py`；精确 blob 与安全门禁见[复现 companion](xlerobot-teleoperation/) |
 | 9-9 | 同一 [`Vector-Wangel/XLeRobot`](https://github.com/Vector-Wangel/XLeRobot) → `chapter9/XLeRobot`；[`Grigorij-Dudnik/RoboCrew`](https://github.com/Grigorij-Dudnik/RoboCrew) → `chapter9/RoboCrew` | XLeRobot：`3d14695e40c9c68229c0aacffca6053c75cd3eb6`；RoboCrew v0.3.1：`c749148f29bd14e61347f9fc3530c343fff0d994` | XLeRobot 的 `docs/en/source/software/getting_started/LLM_agent.md` + RoboCrew planner；精确模型、三工具与证据门禁见[复现 companion](gemini-xlerobot-navigation/) |
 | 9-10 | [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) → `chapter9/lerobot-sim2real` | `87d6c1d969f6e0ca4dc5697940804e231118a63a` | `record_reset_distribution.py` / `camera_alignment.py` / `capture_background_image.py` / `train_ppo_rgb.py` / `eval_ppo_rgb.py`；阶段与安全边界见[复现 companion](rgb-sim2real-grasping/) |
@@ -103,9 +132,13 @@ uvx playwright --version | tee "$RECEIPT_DIR/playwright-version-before-install.t
 uv run browser-use install 2>&1 | tee "$RECEIPT_DIR/browser-install.txt"
 uvx playwright install --list | tee "$RECEIPT_DIR/playwright-browsers.txt"
 
-export OPENAI_API_KEY='replace-with-your-api-key'
+export OPENROUTER_API_KEY='replace-with-your-api-key'
 export BROWSER_USE_LOGGING_LEVEL=debug
-uv run python examples/ui/command_line.py --provider openai --query "Open Google, search for San Francisco weather today, and report the temperature and conditions" 2>&1 | tee "$RECEIPT_DIR/action-log.txt"
+uv run python ../computer-use-open-model/main.py \
+  --task "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data." \
+  --output-dir "$RECEIPT_DIR/open-model-run" \
+  --max-steps 25 \
+  --record-video 2>&1 | tee "$RECEIPT_DIR/action-log.txt"
 
 # 将 debug 日志中实际选择的 executable_path 填到这里；不能只记录“安装过 Chromium”。
 BROWSER_PATH='/absolute/path/reported-by-LocalBrowserWatchdog'
@@ -115,7 +148,7 @@ printf '%s\n' "$BROWSER_PATH" | tee "$RECEIPT_DIR/chromium-path.txt"
 shasum -a 256 "$BROWSER_PATH" | tee "$RECEIPT_DIR/chromium-sha256.txt"
 ```
 
-该入口固定使用 `gpt-4.1`、`use_vision=True`、每步最多一个动作并最多运行 25 步，但没有“每步自动落盘带 SoM 标注截图”的命令行开关。正文要求的截图、动作序列、最终答案和完成状态必须在会话期间另行保存，不能仅凭最终天气文本宣称已复现完整观察链。
+本书入口固定 `use_vision=True`、每步最多一个动作并最多运行 25 步；开放模型默认值为 `qwen/qwen3-vl-32b-instruct`，并非 `gpt-4.1`。runner 自动保存提供商响应、逐步截图、动作序列、最终答案、失败状态和 artifact hash；仍需独立核对天气答案与轨迹，不能仅凭模型自己的 `done` 宣称完成。若改用上游 `examples/ui/command_line.py`，它仍默认 `gpt-4.1` 且不会按本书格式自动落盘完整证据。
 
 这里保存的是**本次本地生成的** `uv.lock`，不是上游锁；初次 `uv lock` 的解析仍受当时包索引影响。`browser-use install` 还会在 Linux 上调用可变的 `uvx playwright install chromium --with-deps --no-shell`，在 macOS/Windows 上调用 `uvx playwright install chromium --no-shell`，因此 Playwright/Chromium 不受项目 lock 约束。固定入口的 `BrowserSession()` 又可能优先选择已有的系统 Chrome，而不是刚下载的 Playwright Chromium；这正是必须记录实际 executable path、版本和二进制哈希的原因。只有把生成的 lock、安装器版本、浏览器二进制和轨迹回执一起归档，才能准确描述当次运行，仍不能把上游 9-7 环境称为位级固定。
 

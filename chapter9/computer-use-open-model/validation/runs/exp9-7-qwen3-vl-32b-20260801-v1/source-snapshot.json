@@ -1,0 +1,25 @@
+{
+  "capture_scope": "post-run hashes of unchanged runtime files",
+  "sources": [
+    {
+      "path": "config.py",
+      "bytes": 2717,
+      "sha256": "d3145978a6ee5dbb3569ad63316235da9e83f4ef24ddabc8fab2399fd1bbfce5"
+    },
+    {
+      "path": "evidence.py",
+      "bytes": 2768,
+      "sha256": "846977c70e7d199133adeaea1f617131edcf62f57c2c525ac77393a8a4d4fa28"
+    },
+    {
+      "path": "main.py",
+      "bytes": 9580,
+      "sha256": "0964c502f19730e0f59f13e3b82b48a7bd15d609f3b49431f2a6bae81efa3cf9"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 125,
+      "sha256": "5be48fd1664657359cae7763aa074e059c9b7962204c3934e09d7e173cb520aa"
+    }
+  ]
+}

@@ -36,6 +36,25 @@ the runnable entry point, tests, fixtures, and generated outputs obvious.
 - Do not move teaching logic into `agentbook/`; shared provider/dependency
   plumbing can live there.
 
+## Provider Portability
+
+- A vendor-specific reference implementation may remain canonical when an
+  experiment measures that exact model or native tool protocol, but ordinary
+  readers should not need that vendor's credential merely to exercise the
+  chapter's mechanism.
+- Document a provider-portable path when an equivalent endpoint exists. Prefer
+  an explicit base URL, requested model ID, and API-key variable over a hidden
+  fallback. For visual Computer Use, retain at least one open-weight model API
+  path plus a generic self-hosted OpenAI-compatible path.
+- A fallback model is a separate experimental arm, not a reproduction of the
+  reference model. Store the requested model, provider-reported model, endpoint,
+  raw credential-free response, and behavior evidence for each arm.
+- Fail closed when an endpoint drops required modalities, schemas, or tools.
+  Successful authentication, model listing, installation, or browser launch is
+  not task-completion evidence.
+- Never put API-key values in receipts. Record only the environment-variable
+  name used, and scan retained requests/responses before committing evidence.
+
 ## Installation Docs
 
 - README setup should prefer the root chapter extra, for example

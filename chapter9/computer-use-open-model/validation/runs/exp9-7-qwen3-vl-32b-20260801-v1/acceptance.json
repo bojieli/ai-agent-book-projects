@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "experiment": "9-7",
+  "arm": "open-model-api",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "existing_manifest_integrity",
+      "passed": true,
+      "detail": {
+        "failures": [],
+        "unmanifested_files": []
+      }
+    },
+    {
+      "name": "open_model_identity",
+      "passed": true,
+      "detail": {
+        "requested": "qwen/qwen3-vl-32b-instruct",
+        "provider_reported": [
+          "qwen/qwen3-vl-32b-instruct"
+        ]
+      }
+    },
+    {
+      "name": "real_api_receipts",
+      "passed": true,
+      "detail": {
+        "requests": 16,
+        "responses": 16,
+        "steps": 16
+      }
+    },
+    {
+      "name": "bounded_read_only_actions",
+      "passed": true,
+      "detail": {
+        "one_action_per_step": true,
+        "actions": [
+          "navigate",
+          "input",
+          "click",
+          "navigate",
+          "navigate",
+          "click",
+          "click",
+          "click",
+          "input",
+          "click",
+          "click",
+          "click",
+          "wait",
+          "click",
+          "wait",
+          "done"
+        ]
+      }
+    },
+    {
+      "name": "completed_within_limit",
+      "passed": true,
+      "detail": {
+        "status": "complete",
+        "steps": 16,
+        "limit": 25
+      }
+    },
+    {
+      "name": "answer_grounded_in_final_browser_observation",
+      "passed": true,
+      "detail": {
+        "missing_observation_fragments": [],
+        "final_screenshot": "screenshots/step-016.png",
+        "final_screenshot_sha256": "3639379122337818d7bef94facdf8110104bca8129f12b10f62d3d3e2678cfcc"
+      }
+    },
+    {
+      "name": "step_screenshots_retained",
+      "passed": true,
+      "detail": {
+        "retained": 15,
+        "hashes_ok": true
+      }
+    },
+    {
+      "name": "credential_scan",
+      "passed": true,
+      "detail": {
+        "findings": []
+      }
+    }
+  ],
+  "qualification": "The Qwen3-VL browser arm passed. This does not claim that the separate Anthropic native-computer-tool arm in Experiment 9-6 ran."
+}

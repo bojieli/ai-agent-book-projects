@@ -1,0 +1,18 @@
+{
+  "api": {
+    "api_protocol": "openai-compatible-chat-completions",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "base_url": "https://openrouter.ai/api/v1",
+    "requested_model": "qwen/qwen3-vl-32b-instruct",
+    "schema_mode": "native"
+  },
+  "task": "Open Google, search for San Francisco weather today, and report the temperature and conditions. Do not sign in or change any external data.",
+  "max_steps": 25,
+  "headless": true,
+  "record_video": false,
+  "requirements": {
+    "image_input": true,
+    "structured_actions": true,
+    "browser_execution": true
+  }
+}

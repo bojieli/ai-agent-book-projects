@@ -1,0 +1,98 @@
+[
+  {
+    "step": 1,
+    "source_present": false,
+    "path": null,
+    "sha256": null
+  },
+  {
+    "step": 2,
+    "source_present": true,
+    "path": "screenshots/step-002.png",
+    "sha256": "8c5c6e2e1e86efddfca55519f05989024638eb3a02ae664895c1e39ff83522f7"
+  },
+  {
+    "step": 3,
+    "source_present": true,
+    "path": "screenshots/step-003.png",
+    "sha256": "f81f47dbc57a9a8811f11f757b2346bd2bd62f44aa1b4ff97ba95cca2bf5f682"
+  },
+  {
+    "step": 4,
+    "source_present": true,
+    "path": "screenshots/step-004.png",
+    "sha256": "0bc740a84d46b7dd463b3a51938b65d8a0dc5d224792370f75cb0d4993611218"
+  },
+  {
+    "step": 5,
+    "source_present": true,
+    "path": "screenshots/step-005.png",
+    "sha256": "c1bc7955dac6fe5ad20ba354baba0090927bb47995fd31a0d4fd81031d915e4c"
+  },
+  {
+    "step": 6,
+    "source_present": true,
+    "path": "screenshots/step-006.png",
+    "sha256": "53605ec8ec85aeae9f4acae9a9470e6e49e3ced7c46f86597b7d66d7d233333a"
+  },
+  {
+    "step": 7,
+    "source_present": true,
+    "path": "screenshots/step-007.png",
+    "sha256": "4e2603a80d4ce151fd8c59f2085098f8ae95aff6e78379ded5ec16a9b7d92b60"
+  },
+  {
+    "step": 8,
+    "source_present": true,
+    "path": "screenshots/step-008.png",
+    "sha256": "54c1add05b5c9d2cf1b48441356807d3fc54645d0cd6d316ef5fb4509722d923"
+  },
+  {
+    "step": 9,
+    "source_present": true,
+    "path": "screenshots/step-009.png",
+    "sha256": "9febbe80a5d86ff6decd586d139157cb5262fe83819a652b17ea1bd7968dbe5f"
+  },
+  {
+    "step": 10,
+    "source_present": true,
+    "path": "screenshots/step-010.png",
+    "sha256": "e19ca02d40dd842180992b07e620d04b10b9de4380c8bba928ead6924970c821"
+  },
+  {
+    "step": 11,
+    "source_present": true,
+    "path": "screenshots/step-011.png",
+    "sha256": "0b6a960afe0043c71bff781ce49877c6323362c0ad70f22adfcbf6715604e746"
+  },
+  {
+    "step": 12,
+    "source_present": true,
+    "path": "screenshots/step-012.png",
+    "sha256": "816583d8b0d8293af360836f835b7342d7a3cf78a903d43cb6e0133ffbd2ea29"
+  },
+  {
+    "step": 13,
+    "source_present": true,
+    "path": "screenshots/step-013.png",
+    "sha256": "9128f3a40154ab5e281ad332ef3d680a2269823b5d2d11d63c6371625cf16ebc"
+  },
+  {
+    "step": 14,
+    "source_present": true,
+    "path": "screenshots/step-014.png",
+    "sha256": "c3bcf11a554460dfc8aef9afb8c6c862573f5e008831307c3190b11f0c84f13e"
+  },
+  {
+    "step": 15,
+    "source_present": true,
+    "path": "screenshots/step-015.png",
+    "sha256": "62dd5ad950d4ed339005219664a3c7bcd9dfbb29daed562cff2c02b9b4003114"
+  },
+  {
+    "step": 16,
+    "source_present": true,
+    "path": "screenshots/step-016.png",
+    "sha256": "3639379122337818d7bef94facdf8110104bca8129f12b10f62d3d3e2678cfcc"
+  }
+]
