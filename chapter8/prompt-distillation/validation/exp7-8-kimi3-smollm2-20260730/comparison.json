@@ -1,0 +1,18 @@
+{
+  "heldout_rows": 80,
+  "train_test_exact_text_overlap": 0,
+  "teacher_gold_accuracy": 0.65,
+  "baseline_gold_accuracy": 0.0,
+  "trained_gold_accuracy": 0.95,
+  "trained_absolute_uplift": 0.95,
+  "trained_teacher_agreement": 0.9230769230769231,
+  "teacher_mean_latency_seconds": 3.8005136081841417,
+  "trained_mean_latency_seconds": 0.021054333343636246,
+  "latency_speedup": 180.50980509116246,
+  "teacher_input_tokens": 20030,
+  "trained_input_tokens": 7738,
+  "input_token_reduction": 0.6136794807788317,
+  "teacher_provider_cost_usd": 0.08274649246753248,
+  "trained_provider_charge_usd": 0.0,
+  "cost_scope_note": "Local inference made no provider API calls; electricity/hardware amortization is excluded."
+}

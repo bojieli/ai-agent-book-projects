@@ -337,10 +337,37 @@ class EncodedRow:
     labels: list[int]
 
 
+def _chat_template_ids(encoded: Any) -> list[int]:
+    """Return one token-id list across Transformers 4.x and 5.x APIs."""
+    if isinstance(encoded, dict) or hasattr(encoded, "keys"):
+        encoded = encoded["input_ids"]
+    if hasattr(encoded, "tolist"):
+        encoded = encoded.tolist()
+    if encoded and isinstance(encoded[0], list):
+        if len(encoded) != 1:
+            raise ValueError("expected one chat-template sequence")
+        encoded = encoded[0]
+    if not isinstance(encoded, list) or not all(isinstance(token, int) for token in encoded):
+        raise TypeError("chat template did not return a one-dimensional integer token sequence")
+    return encoded
+
+
+def _local_device(torch: Any) -> Any:
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
 def _encode_sft(tokenizer: Any, messages: list[dict[str, str]], max_length: int) -> EncodedRow:
     prompt = messages[:-1]
-    prompt_ids = tokenizer.apply_chat_template(prompt, tokenize=True, add_generation_prompt=True)
-    full_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False)
+    prompt_ids = _chat_template_ids(
+        tokenizer.apply_chat_template(prompt, tokenize=True, add_generation_prompt=True)
+    )
+    full_ids = _chat_template_ids(
+        tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False)
+    )
     full_ids = full_ids[:max_length]
     labels = [-100] * min(len(prompt_ids), len(full_ids)) + full_ids[min(len(prompt_ids), len(full_ids)) :]
     return EncodedRow(input_ids=full_ids, labels=labels)
@@ -354,11 +381,35 @@ def train_student(run_dir: Path, epochs: int, batch_size: int, learning_rate: fl
 
     random.seed(seed)
     torch.manual_seed(seed)
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = _local_device(torch)
     tokenizer = AutoTokenizer.from_pretrained(STUDENT_MODEL, revision=STUDENT_REVISION)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     rows = read_jsonl(run_dir / "student_train.jsonl")
+    if not rows:
+        # A teacher campaign may be interrupted after individual receipts have
+        # been durably appended but before its final derived files are written.
+        # Rebuild the training view from successful, gold-verified real
+        # receipts so the documented phase-resume boundary is actually usable.
+        receipts = read_jsonl(run_dir / "teacher_receipts.jsonl")
+        rows = [
+            {
+                "id": receipt["id"],
+                "messages": [
+                    {"role": "user", "content": receipt["text"]},
+                    {"role": "assistant", "content": receipt["prediction"]},
+                ],
+                "teacher_response_id": receipt.get("response_id"),
+                "gold_label": receipt["gold_label"],
+            }
+            for receipt in receipts
+            if receipt.get("split") == "train"
+            and not receipt.get("error")
+            and receipt.get("response_id")
+            and receipt.get("prediction") == receipt.get("gold_label")
+        ]
+        if rows:
+            write_jsonl(run_dir / "student_train.jsonl", rows)
     if not rows:
         raise RuntimeError("no accepted teacher rows available for training")
     encoded = [_encode_sft(tokenizer, r["messages"], 192) for r in rows]
@@ -382,7 +433,7 @@ def train_student(run_dir: Path, epochs: int, batch_size: int, learning_rate: fl
     base = AutoModelForCausalLM.from_pretrained(
         STUDENT_MODEL,
         revision=STUDENT_REVISION,
-        torch_dtype=torch.float32,
+        dtype=torch.bfloat16 if device.type == "cuda" else torch.float32,
     )
     config = LoraConfig(
         r=16,
@@ -441,6 +492,8 @@ def train_student(run_dir: Path, epochs: int, batch_size: int, learning_rate: fl
     del model, base
     if device.type == "mps":
         torch.mps.empty_cache()
+    elif device.type == "cuda":
+        torch.cuda.empty_cache()
     return receipt
 
 
@@ -449,6 +502,54 @@ def _sync(device: Any) -> None:
 
     if device.type == "mps":
         torch.mps.synchronize()
+    elif device.type == "cuda":
+        torch.cuda.synchronize(device)
+
+
+def summarize_retained_teacher_receipts(run_dir: Path) -> dict[str, Any]:
+    """Summarize durable teacher receipts, including interrupted campaigns."""
+    expected = read_jsonl(run_dir / "benchmark_train_gold.jsonl") + read_jsonl(
+        run_dir / "benchmark_test_gold.jsonl"
+    )
+    expected_by_split = {
+        split: [row for row in expected if row["split"] == split]
+        for split in ("train", "test")
+    }
+    receipts = read_jsonl(run_dir / "teacher_receipts.jsonl")
+
+    def split_summary(split: str) -> dict[str, Any]:
+        expected_rows = expected_by_split[split]
+        rs = [r for r in receipts if r.get("split") == split]
+        valid = [r for r in rs if not r.get("error") and r.get("prediction")]
+        costs = [r.get("calculated_cost") or {} for r in valid]
+        correct = sum(r.get("prediction") == r.get("gold_label") for r in valid)
+        return {
+            "rows": len(expected_rows),
+            "retained_receipts": len(rs),
+            "coverage": len(valid) / len(expected_rows) if expected_rows else 0.0,
+            "valid_receipts": len(valid),
+            "unique_response_ids": len({r.get("response_id") for r in valid}),
+            "correct": correct,
+            # Missing calls do not silently disappear from the campaign score.
+            "gold_accuracy": correct / len(expected_rows) if expected_rows else 0.0,
+            "observed_gold_accuracy": correct / len(valid) if valid else 0.0,
+            "prompt_tokens": sum((r.get("usage") or {}).get("prompt_tokens", 0) for r in valid),
+            "completion_tokens": sum((r.get("usage") or {}).get("completion_tokens", 0) for r in valid),
+            "latency_seconds_total": sum(r.get("latency_seconds", 0) for r in valid),
+            "latency_seconds_mean": statistics.mean(r.get("latency_seconds", 0) for r in valid) if valid else None,
+            "provider_cost_cny": sum(c.get("cny", 0) for c in costs),
+            "provider_cost_usd": sum(c.get("usd", 0) for c in costs),
+        }
+
+    summary = {
+        "teacher": {"provider": "moonshot", "model": TEACHER_MODEL, "pricing": PRICING},
+        "train": split_summary("train"),
+        "test": split_summary("test"),
+        "campaign_complete": len(receipts) == len(expected)
+        and all(not r.get("error") and r.get("response_id") for r in receipts),
+    }
+    write_json(run_dir / "teacher_summary.json", summary)
+    return summary
 
 
 def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
@@ -456,12 +557,14 @@ def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = _local_device(torch)
     tokenizer = AutoTokenizer.from_pretrained(STUDENT_MODEL, revision=STUDENT_REVISION)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     base = AutoModelForCausalLM.from_pretrained(
-        STUDENT_MODEL, revision=STUDENT_REVISION, torch_dtype=torch.float32
+        STUDENT_MODEL,
+        revision=STUDENT_REVISION,
+        dtype=torch.bfloat16 if device.type == "cuda" else torch.float32,
     ).to(device)
     model = base if arm == "baseline" else PeftModel.from_pretrained(base, run_dir / "student_adapter").to(device)
     model.eval()
@@ -470,7 +573,10 @@ def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
     # Warmup is measured separately and excluded from reported case latency.
     warm = tokenizer.apply_chat_template(
         [{"role": "user", "content": "Hello world."}], tokenize=True, add_generation_prompt=True, return_tensors="pt"
-    ).to(device)
+    )
+    if isinstance(warm, dict) or hasattr(warm, "keys"):
+        warm = warm["input_ids"]
+    warm = warm.to(device)
     with torch.no_grad():
         _ = model.generate(warm, max_new_tokens=4, do_sample=False, pad_token_id=tokenizer.eos_token_id)
     _sync(device)
@@ -482,7 +588,10 @@ def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
             tokenize=True,
             add_generation_prompt=True,
             return_tensors="pt",
-        ).to(device)
+        )
+        if isinstance(ids, dict) or hasattr(ids, "keys"):
+            ids = ids["input_ids"]
+        ids = ids.to(device)
         _sync(device)
         t0 = time.perf_counter()
         with torch.no_grad():
@@ -530,11 +639,13 @@ def evaluate_local_arm(run_dir: Path, arm: str) -> dict[str, Any]:
     del model, base
     if device.type == "mps":
         torch.mps.empty_cache()
+    elif device.type == "cuda":
+        torch.cuda.empty_cache()
     return summary
 
 
 def package_evidence(run_dir: Path, command: str) -> dict[str, Any]:
-    teacher = json.loads((run_dir / "teacher_summary.json").read_text())
+    teacher = summarize_retained_teacher_receipts(run_dir)
     baseline = json.loads((run_dir / "student_baseline_summary.json").read_text())
     trained = json.loads((run_dir / "student_trained_summary.json").read_text())
     train_rows = read_jsonl(run_dir / "benchmark_train_gold.jsonl")
