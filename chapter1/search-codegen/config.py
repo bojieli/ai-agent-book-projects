@@ -8,6 +8,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _optional_int_env(name: str) -> Optional[int]:
+    """Read an optional integer without making module import configuration-fatal."""
+    raw_value = os.getenv(name)
+    if raw_value is None or not raw_value.strip():
+        return None
+    try:
+        return int(raw_value.strip())
+    except ValueError:
+        return None
+
+
 class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
@@ -24,13 +35,7 @@ class Config:
     BACKEND = os.getenv("BACKEND", "openai")
     MODEL_NAME = os.getenv("MODEL_NAME", "gpt-5.6-sol")
     DEFAULT_TEMPERATURE = 0.3  # legacy CLI compatibility; intentionally omitted
-    DEFAULT_MAX_TOKENS: Optional[int] = (
-        int(os.getenv("DEFAULT_MAX_TOKENS"))
-        # Only parse a plain integer; a non-numeric value (e.g. "4000.0") would
-        # otherwise raise ValueError at import and kill every entry point.
-        if (os.getenv("DEFAULT_MAX_TOKENS") or "").strip().isdigit()
-        else None
-    )
+    DEFAULT_MAX_TOKENS: Optional[int] = _optional_int_env("DEFAULT_MAX_TOKENS")
     DEFAULT_TOOL_CHOICE = os.getenv("DEFAULT_TOOL_CHOICE", "auto")
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
