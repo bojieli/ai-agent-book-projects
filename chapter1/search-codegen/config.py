@@ -26,7 +26,9 @@ class Config:
     DEFAULT_TEMPERATURE = 0.3  # legacy CLI compatibility; intentionally omitted
     DEFAULT_MAX_TOKENS: Optional[int] = (
         int(os.getenv("DEFAULT_MAX_TOKENS"))
-        if os.getenv("DEFAULT_MAX_TOKENS")
+        # Only parse a plain integer; a non-numeric value (e.g. "4000.0") would
+        # otherwise raise ValueError at import and kill every entry point.
+        if (os.getenv("DEFAULT_MAX_TOKENS") or "").strip().isdigit()
         else None
     )
     DEFAULT_TOOL_CHOICE = os.getenv("DEFAULT_TOOL_CHOICE", "auto")
