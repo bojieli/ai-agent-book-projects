@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Menggabungkan pengamatan formulir, keputusan LLM, panggilan telepon, dan pengisian paralel. |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | Menjalankan sesi browser paralel dengan isolasi error, cleanup, dan bukti terkutip. |
 | 10-7 | `generative_agents/` | 📖 | Reproduksi Stanford AI Town dari repositori generative agents eksternal. |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Game Werewolf suara multi-Agent dengan consent gate; sesi live manusia belum dijalankan. |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Menambahkan simulator pengguna LLM nyata yang hanya melihat konteks kursinya, wajib memanggil alat, dan masuk hanya lewat audio sintetis serta ASR audio OpenRouter nyata. Revalidasi ketat menolak dua run awal yang salah menganggap transkrip buruk sebagai abstain; v2 lulus E2E, isolasi, pemenang, dan tiga siklus, tetapi gagal strategi karena Villager mengusir Seer. |
 
 ## Jenis Proyek
 

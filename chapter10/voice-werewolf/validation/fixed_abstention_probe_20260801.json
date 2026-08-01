@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "experiment": "10-8-fixed-abstention-boundary-probe",
+  "synthetic_audio_only": true,
+  "spoken_text": "I choose to abstain.",
+  "asr_transcript": "I choose to abstain.",
+  "explicit_abstention": true,
+  "parsed_target": null,
+  "provider": "OpenRouter multimodal audio API",
+  "model": "google/gemini-2.5-flash",
+  "response_id": "gen-1785559459-RU7zsfZiTyiceaWIFjxT",
+  "usage": {
+    "completion_tokens": 5,
+    "prompt_tokens": 88,
+    "total_tokens": 93,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": 0,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null,
+      "image_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": 50,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost": 7.39e-05,
+    "is_byok": false,
+    "cost_details": {
+      "upstream_inference_cost": 7.39e-05,
+      "upstream_inference_prompt_cost": 6.14e-05,
+      "upstream_inference_completions_cost": 1.25e-05
+    }
+  },
+  "source_audio_sha256": "7069f304dcd7e28b5b4a52b8a816f2170749ddfa437b59c99bda1d89fab762ee",
+  "status": "pass"
+}

@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | 🚧 | Están implementados y verificados el formulario real de Playwright, el Phone Agent activado de forma autónoma por un LLM, la validación, las repreguntas, el paralelismo bidireccional, la cronología desidentificada y el envío selectivo; PSTN y audio humano siguen sin ejecutarse por falta de participantes autorizados |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | Búsqueda paralela con N subagentes homólogos, terminación en cascada y bus de mensajes |
 | 10-7 | `generative_agents/` | 📖 | Agentes generativos en el entorno "Smallville" de Stanford (código de simulación externo) |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Se implementaron las puertas para 6–8 jugadores, roles exactos, asientos humanos, ASR/TTS e interrupciones, tres rondas, victoria, estrategia y aislamiento; sin participantes autorizados y con cuota de Audio API insuficiente, la aceptación permanece incompleta |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | Añade un simulador de usuario LLM real que solo ve el contexto de su asiento, debe llamar herramientas y entra únicamente mediante audio sintetizado y ASR de audio real de OpenRouter. La revalidación estricta rechazó dos ejecuciones tempranas que confundieron una mala transcripción con abstención; v2 supera E2E, aislamiento, ganador y tres ciclos, pero falla estrategia al expulsar un aldeano al vidente. |
 
 ## Tipos de Proyectos
 

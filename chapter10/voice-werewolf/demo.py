@@ -51,8 +51,8 @@ try:
 except Exception:
     pass
 
-from werewolf.game import Judge, create_players
-from werewolf.roles import Faction, Role
+from werewolf.game import Judge, create_players  # noqa: E402 - .env must load first
+from werewolf.roles import Faction, Role  # noqa: E402 - .env must load first
 
 
 def verify_isolation(judge: Judge):
@@ -134,12 +134,15 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=(
             "示例：\n"
             "  python demo.py                 7 人局：1 真人实时语音 + 6 AI（验收路径）\n"
+            "  python demo.py --simulate-user 真实 LLM + 语音回环的自动端到端路径\n"
             "  python demo.py --offline       仅作为 CI 补充的全 AI 离线模式\n"
             "  python demo.py --ai-only       真实 LLM、无真人音频的补充诊断模式\n"))
     parser.add_argument("--offline", "--mock", dest="offline", action="store_true",
                         help="补充测试模式：全 AI 规则策略；不满足实验的真人语音验收")
     parser.add_argument("--ai-only", action="store_true",
                         help="补充诊断模式：真实 LLM 全 AI 文本局；不满足真人语音验收")
+    parser.add_argument("--simulate-user", action="store_true",
+                        help="独立 LLM 用户通过工具调用、真实 TTS 音频和 ASR 玩游戏")
     parser.add_argument("--seed", type=int, default=42,
                         help="随机种子（决定身份分布与离线决策，可复现，默认 42）")
     parser.add_argument("--players", type=int, default=7,
@@ -148,6 +151,14 @@ def build_parser() -> argparse.ArgumentParser:
                         help="狼人数量（验收配置固定为 2）")
     parser.add_argument("--human-seat", type=int, default=1,
                         help="真人座位 Pn（角色仍由 seed 随机分配，默认 P1）")
+    parser.add_argument("--simulated-user-seat", type=int, default=1,
+                        help="LLM 用户模拟器座位 Pn（角色仍随机分配，默认 P1）")
+    parser.add_argument("--simulator-model", type=str, default=None,
+                        help="用户模拟器模型；默认与其他玩家相同")
+    parser.add_argument("--simulator-speech-provider",
+                        default=os.getenv("SIMULATOR_SPEECH_PROVIDER", "auto"),
+                        choices=("auto", "openai", "openrouter-system", "gemini-system"),
+                        help="模拟用户语音回环供应商")
     parser.add_argument("--confirm-human-consent", action="store_true",
                         help="确认真人参与者已授权麦克风采集和本局实验；真人路径无此标志会拒绝启动")
     parser.add_argument("--max-rounds", type=int, default=8, dest="max_rounds",
@@ -173,20 +184,36 @@ def run_game(args):
         import werewolf.agent as agent_module
         agent_module._MODEL = args.model
 
-    live_human = not args.offline and not args.ai_only
-    mode = "真人实时语音 + AI" if live_human else ("离线全 AI 补充测试" if args.offline else "在线全 AI 补充诊断")
+    simulated_user = bool(args.simulate_user)
+    live_human = not args.offline and not args.ai_only and not simulated_user
+    mode = (
+        "LLM 用户模拟器 + 真实语音回环"
+        if simulated_user
+        else "真人实时语音 + AI"
+        if live_human
+        else "离线全 AI 补充测试"
+        if args.offline
+        else "在线全 AI 补充诊断"
+    )
     roles_note = "" if args.wolves is None else f"（狼人数={args.wolves}）"
     print("=" * 78)
     print("实验 10-8：语音狼人杀 Agent 系统")
     configured_model = (os.getenv("ARK_MODEL") or os.getenv("MOONSHOT_MODEL") or
                         os.getenv("OPENAI_MODEL") or "provider default")
     print(f"模式：{mode} | 模型：{configured_model if not args.offline else '—'} | "
-          f"种子：{args.seed} | 真人语音：{'开' if live_human else '关（非验收路径）'}")
+          f"种子：{args.seed} | 音频输入："
+          f"{'模拟用户真实 ASR' if simulated_user else '真人麦克风' if live_human else '关'}")
     print(f"配置：{args.players} 人局{roles_note} | 最大回合：{args.max_rounds}")
     print("=" * 78)
 
     tts = None
-    if live_human:
+    if simulated_user:
+        from werewolf.simulator import SimulatedVoiceSession
+        tts = SimulatedVoiceSession(
+            os.path.join(os.path.dirname(__file__), "audio"),
+            provider=args.simulator_speech_provider,
+        )
+    elif live_human:
         from werewolf.human import LiveVoiceSession
         tts = LiveVoiceSession(os.path.join(os.path.dirname(__file__), "audio"),
                                allow_interruptions=not args.no_interruptions)
@@ -195,16 +222,25 @@ def run_game(args):
         tts = TTS(os.path.join(os.path.dirname(__file__), "audio"), play=args.play)
 
     wolves = 2 if args.wolves is None else args.wolves
-    if live_human and not (6 <= args.players <= 8):
+    end_to_end = live_human or simulated_user
+    if end_to_end and not (6 <= args.players <= 8):
         raise ValueError("验收路径必须是 6-8 人局")
-    if live_human and wolves != 2:
+    if end_to_end and wolves != 2:
         raise ValueError("验收路径角色配置要求恰好 2 只狼人")
     if not 1 <= args.human_seat <= args.players:
         raise ValueError("--human-seat 超出玩家座位范围")
-    players = create_players(seed=args.seed, players=args.players,
-                             wolves=wolves, offline=args.offline,
-                             human_seat=args.human_seat if live_human else None,
-                             voice=tts if live_human else None)
+    if not 1 <= args.simulated_user_seat <= args.players:
+        raise ValueError("--simulated-user-seat 超出玩家座位范围")
+    players = create_players(
+        seed=args.seed,
+        players=args.players,
+        wolves=wolves,
+        offline=args.offline,
+        human_seat=args.human_seat if live_human else None,
+        simulated_user_seat=args.simulated_user_seat if simulated_user else None,
+        simulator_model=args.simulator_model,
+        voice=tts if end_to_end else None,
+    )
     judge = Judge(players, seed=args.seed, tts=tts, max_rounds=args.max_rounds)
     winner = judge.run()
 
@@ -219,10 +255,29 @@ def run_game(args):
 
     role_counts = {role.value: sum(1 for p in players if p.role == role) for role in Role}
     human_players = [p.name for p in players if getattr(p, "is_human", False)]
+    simulated_user_players = [
+        p.name for p in players if getattr(p, "is_simulated_user", False)
+    ]
+    user_players = [p.name for p in players if getattr(p, "is_user", False)]
     from werewolf.strategy_audit import strategy_acceptance_passes
     strategy_pass = strategy_acceptance_passes(strategy)
-    voice_has_asr = bool(live_human and any(e["type"] == "human_asr" for e in tts.events))
-    voice_has_tts = bool(live_human and any(e["type"] == "tts_ready" for e in tts.events))
+    voice_events = tts.events if end_to_end else []
+    voice_has_asr = bool(any(
+        e["type"] in {"human_asr", "simulator_asr"} for e in voice_events
+    ))
+    voice_has_tts = bool(any(e["type"] == "tts_ready" for e in voice_events))
+    simulator_tool_calls = sum(
+        e["type"] == "simulator_llm_tool" for e in voice_events
+    )
+    simulator_audio_roundtrips = sum(e["type"] == "simulator_asr" for e in voice_events)
+    simulator_boundary_ok = bool(
+        not simulated_user
+        or (
+            simulator_tool_calls > 0
+            and simulator_audio_roundtrips > 0
+            and not any(e["type"] == "simulator_action_mismatch" for e in voice_events)
+        )
+    )
     roster_pass = (
         6 <= len(players) <= 8
         and role_counts.get("狼人") == 2
@@ -230,40 +285,53 @@ def run_game(args):
         and role_counts.get("女巫") == 1
     )
     winner_determined = winner in {Faction.GOOD, Faction.WEREWOLF}
-    ok = bool(
-        live_human and isolation_ok and roster_pass and len(human_players) == 1
-        and voice_has_asr and voice_has_tts and strategy_pass
-        and judge.completed_rounds >= 3 and winner_determined
+    e2e_ok = bool(
+        end_to_end and isolation_ok and roster_pass and len(user_players) == 1
+        and voice_has_asr and voice_has_tts and simulator_boundary_ok and winner_determined
     )
+    ok = bool(e2e_ok and strategy_pass and judge.completed_rounds >= 3)
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "experiment": "10-8",
         "generated_at": __import__("time").strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "acceptance_path": live_human,
+        "execution_mode": (
+            "simulated_user" if simulated_user else "live_human" if live_human
+            else "offline" if args.offline else "ai_only"
+        ),
+        "acceptance_path": end_to_end,
+        "end_to_end_status": "pass" if e2e_ok else "incomplete" if end_to_end else "not_run",
         "players": len(players),
+        "user_players": user_players,
         "human_players": human_players,
+        "simulated_user_players": simulated_user_players,
         "human_role_randomized_to": next((p.role.value for p in players if getattr(p, "is_human", False)), None),
+        "simulated_user_role_randomized_to": next((p.role.value for p in players if getattr(p, "is_simulated_user", False)), None),
         "role_counts": role_counts,
         "completed_day_night_vote_cycles": judge.completed_rounds,
         "winner": winner.value,
         "information_isolation_pass": isolation_ok,
         "strategy_audit": strategy,
         "strategy_audit_pass": strategy_pass,
-        "voice_events": tts.events if live_human else [],
+        "voice_events": voice_events,
         "voice_has_asr": voice_has_asr,
         "voice_has_tts": voice_has_tts,
-        "barge_in_events": sum(1 for e in (tts.events if live_human else []) if e["type"] == "barge_in"),
+        "simulator_llm_tool_calls": simulator_tool_calls,
+        "simulator_audio_roundtrips": simulator_audio_roundtrips,
+        "barge_in_events": sum(1 for e in voice_events if e["type"] == "barge_in"),
         "gates": {
             "exact_6_to_8_player_role_roster": {"status": "pass" if roster_pass else "fail"},
-            "one_authorized_human_participant": {"status": "pass" if live_human and len(human_players) == 1 else "not_run" if not live_human else "fail"},
-            "real_human_asr": {"status": "pass" if voice_has_asr else "not_run" if not live_human else "fail"},
-            "real_ai_and_judge_tts": {"status": "pass" if voice_has_tts else "not_run" if not live_human else "fail"},
-            "three_complete_cycles": {"status": "pass" if judge.completed_rounds >= 3 else "fail" if live_human else "supplemental_only", "observed": judge.completed_rounds},
+            "one_user_seat": {"status": "pass" if end_to_end and len(user_players) == 1 else "not_run" if not end_to_end else "fail"},
+            "one_authorized_human_participant": {"status": "pass" if live_human and len(human_players) == 1 else "not_applicable" if simulated_user else "not_run" if not live_human else "fail"},
+            "one_llm_user_simulator": {"status": "pass" if simulated_user and len(simulated_user_players) == 1 else "not_applicable" if live_human else "not_run" if not simulated_user else "fail"},
+            "real_user_input_asr": {"status": "pass" if voice_has_asr else "not_run" if not end_to_end else "fail"},
+            "real_ai_and_judge_tts": {"status": "pass" if voice_has_tts else "not_run" if not end_to_end else "fail"},
+            "llm_tool_to_audio_to_asr_boundary": {"status": "pass" if simulated_user and simulator_boundary_ok else "not_applicable" if live_human else "not_run" if not simulated_user else "fail", "tool_calls": simulator_tool_calls, "audio_roundtrips": simulator_audio_roundtrips},
+            "three_complete_cycles": {"status": "pass" if judge.completed_rounds >= 3 else "fail" if end_to_end else "supplemental_only", "observed": judge.completed_rounds},
             "information_isolation": {"status": "pass" if isolation_ok else "fail"},
             "real_llm_strategy_acceptance": {"status": "pass" if strategy_pass else "not_run" if args.offline else "fail"},
             "winner_determined_by_game_rule": {"status": "pass" if winner_determined else "fail"},
         },
-        "overall_status": "pass" if ok else "incomplete" if live_human else "supplemental_only",
+        "overall_status": "pass" if ok else "incomplete" if end_to_end else "supplemental_only",
     }
     report_path = Path(args.report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -273,7 +341,7 @@ def run_game(args):
     else:
         print(f"\n最终结果：{winner.value} 获胜。")
     print(f"验收报告：{report_path} | {report['overall_status'].upper()}")
-    return ok if live_human else isolation_ok
+    return ok if end_to_end else isolation_ok
 
 
 def main():
@@ -282,11 +350,27 @@ def main():
     # 在线模式（LLM 决策 / 语音合成）才需要 API Key；离线模式不需要。
     # LLM 决策支持 OPENAI_API_KEY 或（回退）OPENROUTER_API_KEY；语音合成（--voice，
     # OpenAI tts-1）目前只支持 OPENAI_API_KEY，OpenRouter 无 TTS 端点。
-    live_human = not args.offline and not args.ai_only
+    if sum(bool(value) for value in (args.offline, args.ai_only, args.simulate_user)) > 1:
+        print("错误：--offline、--ai-only、--simulate-user 互斥")
+        sys.exit(2)
+    live_human = not args.offline and not args.ai_only and not args.simulate_user
     if live_human and not args.confirm_human_consent:
         print("拒绝采集音频：真人验收路径必须显式传入 --confirm-human-consent")
         sys.exit(2)
     has_llm_key = any(os.environ.get(k) for k in ("ARK_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"))
+    if args.simulate_user:
+        speech_provider_available = (
+            bool(os.environ.get("OPENAI_API_KEY"))
+            if args.simulator_speech_provider == "openai"
+            else bool(os.environ.get("OPENROUTER_API_KEY"))
+            if args.simulator_speech_provider == "openrouter-system"
+            else bool(os.environ.get("GEMINI_API_KEY"))
+            if args.simulator_speech_provider == "gemini-system"
+            else bool(os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY") or os.environ.get("GEMINI_API_KEY"))
+        )
+        if not speech_provider_available:
+            print("错误：用户模拟器语音回环需要 OpenAI、OpenRouter 或 Gemini API Key。")
+            sys.exit(1)
     if (args.voice or live_human) and not os.environ.get("OPENAI_API_KEY"):
         print("错误：语音合成（--voice，OpenAI tts-1）需要 OPENAI_API_KEY。"
               "请先 export OPENAI_API_KEY=your-openai-api-key（见 env.example），或去掉 --voice 跑纯文本模式。")

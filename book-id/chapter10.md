@@ -704,15 +704,15 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 
 > **Eksperimen 10-8 ★★★: Sistem Voice Werewolf Agent**
 >
-> Werewolf adalah permainan deduksi sosial klasik yang menguji penalaran, penipuan, dan strategi sosial pemain. Eksperimen ini membangun sistem multi-agent di mana AI Agent dan manusia bermain Werewolf bersama melalui interaksi suara waktu nyata. Ini menguji kemampuan penalaran, permainan peran (role-playing), dan interaksi waktu nyata Agent.
+> Werewolf adalah permainan deduksi sosial klasik yang menguji penalaran, penipuan, dan strategi sosial. Eksperimen ini membangun sistem multi-Agent tempat AI Agent bermain melalui suara dengan manusia atau simulator pengguna LLM independen. Penerimaan otomatis tidak boleh berhenti hanya karena tidak ada manusia: simulator memakai model nyata, bernalar hanya dari konteks yang diizinkan untuk kursinya, dan bertindak melalui alat yang diberikan permainan.
 >
 > **Desain Arsitektur**:
 >
-> **1. Game State Management**: Judge (digerakkan oleh kode, bukan LLM) memelihara status terpusat—daftar pemain (campuran manusia + AI), identitas, faksi, status kelangsungan hidup, fase permainan (Night/Day/Vote/Resolution), dan catatan peristiwa historis.
+> **1. Game State Management**: Judge (digerakkan oleh kode, bukan LLM) memelihara status terpusat—daftar pemain (satu kursi pengguna + kursi AI), identitas, faksi, status kelangsungan hidup, fase permainan (Night/Day/Vote/Resolution), dan catatan peristiwa historis.
 >
 > **2. Information Access Control**: Mekanisme inti dari Werewolf adalah asimetri informasi: peran yang berbeda menerima informasi yang berbeda. Misalnya, werewolf tahu siapa rekan satu tim mereka, tetapi villager tidak; Seer dapat memeriksa identitas satu pemain setiap malam, tetapi hanya Seer yang mengetahui hasilnya. Ketika Judge memanggil Agent, ia hanya meneruskan informasi yang tersedia untuk peran Agent tersebut.
 >
-> **3. Real-time Voice Interaction**: Gunakan voice Agent waktu nyata dari Bab 9 sebagai fondasi untuk komunikasi antara pemain manusia dan AI Agent. Selama diskusi siang hari, Judge mengontrol urutan berbicara: pemain dapat berbicara dalam urutan posisi atau meminta giliran. Selama pemungutan suara, Judge mengumpulkan suara masing-masing pemain, baik yang diucapkan oleh manusia atau dihasilkan oleh AI Agent, menghitung hasilnya, dan mengumumkan siapa yang tereliminasi.
+> **3. Suara waktu nyata dan simulasi pengguna otomatis**: Jalur manusia memakai voice Agent Bab 9. Pada jalur otomatis, LLM independen wajib memanggil satu-satunya alat giliran yang legal; ujaran terpilih kemudian disintesis menjadi audio nyata dan dikirim ke API ASR nyata. Permainan hanya mengonsumsi transkrip ASR, bukan teks sebelum audio, dan gagal tertutup bila target alat berbeda dari target hasil parsing ASR. VAD dan barge-in tetap menjadi cakupan khusus jalur manusia.
 >
 > **4. Penalaran dan Strategi Agent**:
 >
@@ -721,14 +721,17 @@ Werewolf menjadi jangkar bagi dimensi ketiga dari bagian ini, **strategic gamepl
 > - **Penalaran Logis Villager**: "Periksa apakah pernyataan setiap pemain konsisten secara internal. Perhatikan pemain yang mendominasi diskusi, tetap tidak jelas tentang peran mereka, atau berulang kali mengubah posisi. Periksa pola pemungutan suara, karena werewolf mungkin berkoordinasi melawan pemain non-werewolf yang mengancam mereka. Dasarkan setiap inferensi pada pernyataan atau tindakan spesifik alih-alih spekulasi."
 >
 > **Kriteria Penerimaan**:
-> - Siapkan permainan dengan 6-8 pemain (1 pemain manusia + 5-7 AI Agent)
-> - Konfigurasi peran: 2 Werewolf, 1 Seer, 1 Witch, sisanya adalah Villager; pemain manusia diberi peran secara acak
+> - Siapkan permainan dengan 6–8 pemain (1 kursi pengguna + 5–7 AI Agent); pengguna dapat berupa manusia berizin atau simulator independen yang memakai LLM nyata, alat, dan putaran suara
+> - Konfigurasi peran: 2 Werewolf, 1 Seer, 1 Witch, sisanya Villager; kursi pengguna mendapat peran acak
+> - Pengguna simulasi hanya melihat konteks publik dan privat yang diizinkan untuk kursinya, dan tindakannya harus melewati batas pemanggilan alat LLM nyata → audio → ASR nyata
 > - Permainan dapat berjalan normal selama setidaknya 3 ronde penuh (Siklus Night-Day-Vote)
 > - Pernyataan dan perilaku AI Agent konsisten dengan identitas peran dan strategi permainan mereka
 > - Werewolf Agent dapat menyembunyikan identitas mereka secara efektif
 > - Seer Agent dapat mengungkapkan peran mereka dan hasil pemeriksaan mereka pada waktu yang tepat
 > - Penalaran Villager Agent didasarkan pada analisis logis dari pernyataan dan perilaku, bukan tebakan acak
 > - Permainan dapat dengan benar menentukan pemenang pada akhirnya
+>
+> **Hasil terukur (2026-08-01)**: [Rekaman validasi `voice-werewolf`](../chapter10/voice-werewolf/validation/runs/) menjalankan jalur otomatis dengan panggilan OpenRouter nyata dan input audio native. Revalidasi independen yang ketat menolak dua run awal karena transkrip tak terurai “P1 is not” keliru dianggap abstain; batas yang diperbaiki kini mengharuskan ASR menyebut `abstain`, `skip`, atau `none` secara eksplisit. Run v2 yang tidak terdampak lulus kursi pengguna, susunan peran, alat LLM, audio sintetis, ASR nyata, dua kecocokan tindakan, tiga siklus lengkap, isolasi informasi, dan pemenang berbasis aturan. Strategi gagal karena seorang Villager keliru mengusir Seer. Jadi sistem telah diverifikasi end-to-end, sedangkan kualitas strategi keseluruhan belum lulus.
 >
 >
 > ![Gambar 10-13: Sistem Voice Werewolf Agent](images/fig10-13.svg)

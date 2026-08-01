@@ -186,6 +186,7 @@ class PlayerAgent:
             "请只返回 JSON：{\"target\": \"玩家名或none\", \"reason\": \"一句话理由\"}"
         )
         raw = self._chat(instruction, players, max_tokens=120, json_mode=True)
+        self.last_decision_reason = self._parse_reason(raw)
         target = self._parse_target(raw, candidates, allow_none)
         return target
 
@@ -199,6 +200,7 @@ class PlayerAgent:
             "请只返回 JSON：{\"target\": \"玩家名\", \"reason\": \"一句话理由\"}"
         )
         raw = self._chat(instruction, players, max_tokens=120, json_mode=True)
+        self.last_decision_reason = self._parse_reason(raw)
         return self._parse_target(raw, candidates, allow_none=True)
 
     # ---------- 离线（规则）策略：只读自己的 memory，绝不访问他人上下文 ----------
@@ -274,6 +276,14 @@ class PlayerAgent:
         return f"我是村民，没有夜间信息，只能靠推理，感觉 {suspect} 稍微可疑。"
 
     # ---------- 解析工具 ----------
+    @staticmethod
+    def _parse_reason(raw: str) -> Optional[str]:
+        try:
+            reason = json.loads(raw).get("reason")
+        except Exception:
+            return None
+        return reason.strip() if isinstance(reason, str) and reason.strip() else None
+
     @staticmethod
     def _parse_target(raw: str, candidates: List[str], allow_none: bool) -> Optional[str]:
         target = None

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_report": "validation/runs/exp10-8-simulated-user-openrouter-20260801-v3/acceptance_report.json",
+  "source_report_sha256": "5344af21b205f1cd51c013a0d8df49e7f56385745c6186c6c3918fb802a07ffb",
+  "simulator_tool_events_checked": 4,
+  "strict_audio_action_boundary": "fail",
+  "errors": [
+    "tool event 13 selected none but ASR was not an explicit abstention: 'P1 is not'",
+    "tool event 26 selected none but ASR was not an explicit abstention: 'P1 is not'"
+  ]
+}

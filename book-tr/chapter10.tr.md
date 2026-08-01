@@ -699,15 +699,15 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 
 > **Deney 10-8 ★★★: Sesli Kurt Adam Agent Sistemi**
 >
-> Kurt adam, oyuncuların akıl yürütme yeteneğini, aldatma becerisini ve toplumsal stratejisini sınayan klasik bir sosyal akıl yürütme oyunudur. Bu deneyde, AI Agent'ların kurt adam oyunundaki çeşitli rolleri üstlendiği ve gerçek insan oyuncularla gerçek zamanlı sesle oynadığı bir çoklu Agent sistemi kurulur — bu aynı anda Agent'ın akıl yürütme, rol yapma ve gerçek zamanlı etkileşim yeteneklerini sınar.
+> Kurt adam, akıl yürütme, aldatma ve toplumsal stratejiyi sınayan klasik bir sosyal çıkarım oyunudur. Bu deneyde AI Agent'lar bir insanla veya bağımsız bir LLM kullanıcı simülatörüyle sesli oynar. Otomatik kabul, insan bulunmadığı için durmamalıdır: simülatör gerçek bir model kullanır, yalnızca kendi koltuğuna yetkili bağlamdan akıl yürütür ve oyunun sunduğu araçlarla hareket eder.
 >
 > **Mimari tasarım**:
 >
-> **1. Oyun durumu yönetimi**: Hakem (kod güdümlü, LLM değil) merkezî durumu tutar — oyuncu listesi (insan + AI karışık), kimlikler, taraflar, hayatta olma durumu, oyun aşaması (gece/gündüz/oylama/sonuçlandırma) ve geçmiş olay kayıtları.
+> **1. Oyun durumu yönetimi**: Hakem (kod güdümlü, LLM değil) merkezî durumu tutar — oyuncu listesi (bir kullanıcı koltuğu + AI koltukları), kimlikler, taraflar, hayatta olma durumu, oyun aşaması (gece/gündüz/oylama/sonuçlandırma) ve geçmiş olay kayıtları.
 >
 > **2. Bilgi erişim denetimi**: Kurt adamın temel mekanizması bilgi asimetrisidir (Information Asymmetry) — farklı roller farklı bilgileri görebilir. Örneğin kurt adamlar suç ortaklarının kim olduğunu bilir ama köylüler bilmez; kâhin her gece bir kişinin kimliğini inceleyebilir ama sonucu yalnızca kendisi bilir. Uygulaması şöyledir: hakem her rol Agent'ını çağırırken yalnızca o rolün görmesi gereken bilgiyi aktarır.
 >
-> **3. Gerçek zamanlı sesli etkileşim**: Bu deney gerçek zamanlı ses yeteneğinin kullanılmasını, gerçek oyuncularla AI Agent'lar arasında sesli bağlantı kurulmasını gerektirir. Temel olarak Bölüm 9'daki gerçek zamanlı sesli Agent önerilir. Gündüz tartışma aşamasında konuşma sırasını hakem yönetir — oyuncular sıra düzenine göre teker teker konuşabilir ya da söz isteyerek parmak kaldırabilir. Oylama aşamasında bütün oyuncuların oyları toplanır (insanlar sesle bildirir, AI akıl yürüterek karar verir), oylar sayılır ve oyundan çıkarılan oyuncu açıklanır.
+> **3. Gerçek zamanlı ses ve otomatik kullanıcı simülasyonu**: İnsan yolu Bölüm 9'daki sesli Agent'ı temel alır. Otomatik yolda bağımsız LLM, sıranın tek yasal aracını çağırmalı; seçilen ifade gerçek sese dönüştürülüp gerçek bir ASR API'sine gönderilmelidir. Oyun ses öncesi metni değil, yalnızca ASR dökümünü tüketir ve araç hedefi ASR'nin çözdüğü hedeften farklıysa kapalı biçimde başarısız olur. VAD ve araya girme insan yoluna özgü kapsama olarak kalır.
 >
 > **4. Agent akıl yürütmesi ve stratejisi**:
 >
@@ -716,14 +716,17 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 > - **Köylünün mantıksal akıl yürütmesi**: "Her oyuncunun söylediklerinin kendi içinde tutarlı olup olmadığını incele; tartışmayı yönlendirmeye can atan, kimliği konusunda muğlak kalan, sık sık taraf değiştiren oyunculara dikkat et. Oy davranışlarını izle — kurt adamlar oylarını çoğunlukla kendileri için en büyük tehdit olan iyi oyuncuda toplar. Rastgele şüphelenme, her çıkarımın somut olgulara ve mantığa dayanmalı."
 >
 > **Kabul ölçütleri**:
-> - 6-8 kişilik bir oyun kurun (1 gerçek oyuncu + 5-7 AI Agent)
-> - Rol dağılımı: 2 kurt adam, 1 kâhin, 1 cadı, geri kalanı köylü; gerçek oyuncuya rastgele bir rol verilir
+> - 6–8 kişilik bir oyun kurun (1 kullanıcı koltuğu + 5–7 AI Agent); kullanıcı yetkili bir insan veya gerçek LLM, araçlar ve ses döngüsü kullanan bağımsız bir simülatör olabilir
+> - Rol dağılımı: 2 kurt adam, 1 kâhin, 1 cadı, geri kalanı köylü; kullanıcı koltuğuna rastgele rol verilir
+> - Simüle kullanıcı yalnızca koltuğuna yetkili açık/özel bağlamı görür; eylemleri gerçek LLM araç çağrısı → ses → gerçek ASR sınırından geçmelidir
 > - Oyun en az 3 tam tur (gece-gündüz-oylama döngüsü) boyunca sorunsuz ilerleyebilmeli
 > - AI Agent'ların söyledikleri ve davranışları kendi rol kimliklerine ve oyun stratejilerine uygun olmalı
 > - Kurt adam Agent'ları kimliklerini etkili biçimde gizleyebilmeli
 > - Kâhin Agent'ı uygun zamanda ortaya çıkıp inceleme bilgilerini açıklayabilmeli
 > - Köylü Agent'larının akıl yürütmesi rastgele tahmine değil, söylemlerin ve davranışların mantıksal çözümlemesine dayanmalı
 > - Oyun bittiğinde kazananı doğru biçimde belirleyebilmeli
+>
+> **Ölçülen sonuç (2026-08-01)**: [`voice-werewolf` doğrulama kayıtları](../chapter10/voice-werewolf/validation/runs/) otomatik yolu gerçek OpenRouter çağrıları ve yerel ses girdisiyle çalıştırdı. Sıkı bağımsız yeniden doğrulama, çözümlenemeyen “P1 is not” dökümünü yanlışlıkla çekimserlik sayan iki erken çalıştırmayı reddetti; düzeltilen sınır artık ASR'nin açıkça `abstain`, `skip` veya `none` demesini gerektiriyor. Etkilenmeyen v2 kullanıcı koltuğu, rol dizilimi, LLM aracı, sentezlenmiş ses, gerçek ASR, iki eylem eşleşmesi, üç tam döngü, bilgi izolasyonu ve kural tabanlı kazanan kapılarını geçti. Bir köylü kâhini yanlışlıkla oyundan çıkardığı için strateji başarısız oldu. Böylece sistem uçtan uca doğrulandı, ancak genel strateji kalitesi henüz geçmedi.
 >
 >
 > ![Şekil 10-13: Sesli Kurt Adam Agent Sistemi](images/fig10-13.svg)

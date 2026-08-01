@@ -720,15 +720,15 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 
 > **10-8. kísérlet ★★★: Hangalapú Farkasos Ügynök Rendszer**
 
-> A Farkasos egy klasszikus társas leleplező játék, amely a játékosok érvelését, megtévesztését és társas stratégiáit teszteli. Ez a kísérlet egy többügynökös rendszert épít, amelyben MI Ügynökök és emberek valós idejű hanginterakción keresztül játszanak együtt Farkasost. Teszteli az Ügynökök érvelési, szerepjátszási és valós idejű interakciós képességeit.
+> A Farkasos klasszikus társas következtetési játék, amely az érvelést, megtévesztést és társas stratégiát teszteli. A kísérletben az MI Ügynökök hangon játszanak egy emberrel vagy egy független LLM-felhasználószimulátorral. Az automatikus elfogadás nem állhat meg azért, mert nincs jelen ember: a szimulátor valódi modellt használ, csak a saját helyéhez engedélyezett kontextusból következtet, és a játék eszközein keresztül cselekszik.
 
 > "Architektúra Tervezés":
 
-> **1. Játék Állapot Kezelése**: A Bíró (kód által vezérelt, nem LLM) központosított állapotot tart fenn – játékos lista (vegyes ember + MI), identitások, frakciók, túlélési státusz, játékfázisok (Éjszaka/Nappal/Szavazás/Lezárás) és történelmi esemény rekordok.
+> **1. Játék Állapot Kezelése**: A Bíró (kód által vezérelt, nem LLM) központosított állapotot tart fenn – játékoslista (egy felhasználói hely + MI-helyek), identitások, frakciók, túlélési státusz, játékfázisok (Éjszaka/Nappal/Szavazás/Lezárás) és történelmi eseményrekordok.
 
 > **2. Információ Hozzáférés-vezérlés**: A Farkasos core mechanizmusa az információs aszimmetria: a különböző szerepek különböző információkat kapnak. Például a farkasok tudják, kik a csapattársaik, de a falusiak nem; a Látó minden éjjel ellenőrizheti egy játékos identitását, de csak a Látó ismeri az eredményt. Amikor a Bíró meghív egy Ügynököt, csak az adott Ügynök szerepe számára elérhető információt adja át.
 
-> **3. Valós Idejű Hang Interakció**: Használd a 9. fejezet valós idejű hang Ügynökét az emberi játékosok és a MI Ügynökök közötti kommunikáció alapjaként. A nappali megbeszélés során a Bíró irányítja a megszólalási sorrendet: a játékosok pozíció szerinti sorrendben szólalhatnak meg, vagy jelentkezhetnek. A szavazás során a Bíró összegyűjti minden játékos szavazatát, akár ember mondta ki, akár MI Ügynök generálta, összesíti az eredményeket, és kihirdeti, ki esett ki.
+> **3. Valós idejű hang és automatikus felhasználószimuláció**: Az emberi út a 9. fejezet hang Ügynökére épül. Az automatikus úton egy független LLM-nek meg kell hívnia a kör egyetlen jogszerű eszközét; a választott megszólalásból valódi hang készül, amely egy valódi ASR API-hoz kerül. A játék kizárólag az ASR-átiratot fogyasztja, az eredeti szöveget nem, és zártan hibázik, ha az eszköz célpontja eltér az ASR által felismert célponttól. A VAD és a félbeszakítás az emberi út saját tesztje marad.
 
 > **4. Ügynök Érvelés és Stratégia**:
 
@@ -737,14 +737,17 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 > - "Falusi Logikai Érvelés": "Ellenőrizd, hogy minden játékos kijelentései belsőleg konzisztensek-e. Figyelj azokra a játékosokra, akik dominálják a beszélgetést, homályosak a szerepükkel kapcsolatban, vagy többször változtatják az álláspontjukat. Vizsgáld meg a szavazási mintákat, mert a farkasok összehangolódhatnak egy olyan nem farkas játékos ellen, aki veszélyt jelent rájuk. Minden következtetés alapja specifikus kijelentések vagy cselekvések legyen, ne találgatás."
 
 > "Elfogadási Kritériumok":
-> - Hozz létre egy játékot 6-8 játékossal (1 emberi játékos + 5-7 MI Ügynök)
-> - Szerep konfiguráció: 2 Farkas, 1 Látó, 1 Boszorkány, a többi Falusi; az emberi játékos véletlenszerű szerepet kap
+> - Hozz létre egy 6–8 fős játékot (1 felhasználói hely + 5–7 MI Ügynök); a felhasználó lehet engedélyezett ember vagy valódi LLM-et, eszközöket és hangkört használó független szimulátor
+> - Szerepkonfiguráció: 2 Farkas, 1 Látó, 1 Boszorkány, a többi Falusi; a felhasználói hely véletlenszerű szerepet kap
+> - A szimulált felhasználó csak a helyéhez engedélyezett nyilvános és privát kontextust látja, és műveleteinek át kell haladniuk a valódi LLM-eszközhívás → hang → valódi ASR határon
 > - A játék legalább 3 teljes körön keresztül normálisan tudjon haladni (Éjszaka-Nappal-Szavazás ciklus)
 > - A MI Ügynökök kijelentései és viselkedése konzisztens a szerepidentitásukkal és játékstratégiáikkal
 > - A Farkas Ügynökök hatékonyan tudják álcázni identitásukat
 > - A Látó Ügynökök képesek megfelelő időben felfedni szerepüket és ellenőrzési eredményeiket
 > - A Falusi Ügynökök érvelése a kijelentések és viselkedések logikai elemzésén alapul, nem véletlenszerű találgatáson
 > - A játék helyesen tudja meghatározni a győztest a végén
+>
+> **Mért eredmény (2026-08-01)**: A [`voice-werewolf` validációs futások](../chapter10/voice-werewolf/validation/runs/) valódi OpenRouter-hívásokkal és natív hangbemenettel hajtották végre az automatikus utat. A szigorú független újraellenőrzés két korai futást elutasított, mert a nem értelmezhető „P1 is not” átiratot tévesen tartózkodásnak vették; a javított határ megköveteli, hogy az ASR kifejezetten `abstain`, `skip` vagy `none` szót adjon. A nem érintett v2 futás megfelelt a felhasználói hely, szerepkészlet, LLM-eszköz, szintetizált hang, valódi ASR, két műveletegyezés, három teljes ciklus, információszigetelés és szabályalapú győztes kapuinak. A stratégia azért bukott meg, mert egy Falusi tévesen száműzte a Látót. A rendszer tehát végponttól végpontig igazolt, de az átfogó stratégiai minőség még nem felelt meg.
 
 >
 > ![10-13. ábra: Hangalapú Farkasos Ügynök Rendszer](images/fig10-13.svg)

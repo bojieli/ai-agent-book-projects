@@ -54,6 +54,7 @@ def strategy_acceptance_passes(result):
 
 def _backends():
     from openai import OpenAI
+    from .agent import _to_openrouter_model
     options = {"timeout": float(os.getenv("WEREWOLF_LLM_TIMEOUT", "45")), "max_retries": 1}
     out = []
     if os.getenv("ARK_API_KEY"):
@@ -62,6 +63,13 @@ def _backends():
         out.append((OpenAI(api_key=os.environ["MOONSHOT_API_KEY"], base_url="https://api.moonshot.cn/v1", **options), os.getenv("MOONSHOT_MODEL", "kimi-k3"), "moonshot"))
     if os.getenv("OPENAI_API_KEY"):
         out.append((OpenAI(api_key=os.environ["OPENAI_API_KEY"], base_url=os.getenv("OPENAI_BASE_URL") or None, **options), os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), "openai"))
+    if os.getenv("OPENROUTER_API_KEY"):
+        model = _to_openrouter_model(os.getenv("OPENAI_MODEL", "gpt-5.6-luna"))
+        out.append((OpenAI(
+            api_key=os.environ["OPENROUTER_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
+            **options,
+        ), model, "openrouter"))
     return out
 
 

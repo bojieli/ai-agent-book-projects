@@ -15,7 +15,7 @@
 | 10-5 | [autonomous-phone-registration](autonomous-phone-registration/) | ✅ | [正式 WebRTC raw-v4](autonomous-phone-registration/validation/runs/exp10-5-webrtc-raw-20260731-v4/manifest.json)用真实 ARK 自主工具调用、Playwright、双向 RTP、本机 TTS/Whisper ASR 和一次 localhost 提交跑通 6 字段注册：9/9 行为门禁通过；不含凭据的原始 ARK 请求/响应保留 `tool_choice=auto`、工具参数、ID/model/usage/延迟，独立 validator 重算全部源码/输入/产物 hash 并证明原始参数与 decision 精确一致，8/8 溯源检查及四类篡改测试通过；不再要求 PSTN/E.164 |
 | 10-6 | [parallel-web-research](parallel-web-research/) | ✅ | [同一次真实验收运行](parallel-web-research/validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json)覆盖 10 站点串并行与 4 会话级联：12/12 门禁通过、实测加速 1.872×、24 份完整浏览器观测、3 份带 response ID/usage 的 ARK 原始响应和 114 条总线事件均由运行时 manifest 绑定；7 个实际源码/输入 hash 与全部 artifact hash 已复核一致，凭据扫描为零 |
 | 10-7 | `generative_agents/` | 📖 | 斯坦福「AI 小镇」生成式智能体；本地路径对应固定到 `fe05a71…` 的 `joonspk-research/generative_agents`，当前 checkout 缺失，未声称运行 |
-| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 6–8 人、精确角色、真人席位、ASR/TTS/打断、三回合/胜负/策略与隔离门禁均已实现；无授权真人且 Audio API 返回 `insufficient_quota`，真人音频、三回合和策略验收仍未运行，整体 `incomplete` |
+| 10-8 | [voice-werewolf](voice-werewolf/) | 🚧 | 已新增真实 LLM 用户模拟器：只能读取本席上下文并调用工具，动作经真实音频与 OpenRouter 原生音频 ASR 后才入局；严格复核否决了两个把误转写当弃权的早期臂，未受影响的 v2 真实通过端到端、隔离、规则胜负与 3 循环，但村民误逐预言家导致策略门禁失败 |
 
 ## 实验 10-4 / 10-7 外部复现锚点
 
