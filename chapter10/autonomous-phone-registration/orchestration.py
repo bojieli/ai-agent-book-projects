@@ -297,11 +297,25 @@ class ComputerAgent:
                 try:
                     await self._fill(name, value)
                 except Exception as exc:  # page-specific errors remain isolated
-                    self.errors.append({"field": name, "error": str(exc)})
+                    error = {"field": name, "error": str(exc)}
+                    self.errors.append(error)
+                    # Mirror the in-dialogue fill path below: surface the failure
+                    # to the phone agent (via browser_feedback) so it doesn't tell
+                    # the user registration succeeded when a known field failed.
+                    await self.bus.send(
+                        "computer_agent", "phone_agent", "fill_error", **error
+                    )
 
         completed = False
         while not completed:
-            message = await self.bus.receive("computer_agent", timeout=120)
+            # This idle cap must exceed the phone side's worst-case per-question
+            # latency (TTS + the channel's own listen window + value extraction).
+            # The default WebRTC human listen allows a start timer plus an answer
+            # timer (~240s total), so a 120s cap here aborts a live call while the
+            # user is still legitimately answering. run_parallel cancels this task
+            # the moment the phone task completes or errors, so a larger cap only
+            # relaxes the false-abort case.
+            message = await self.bus.receive("computer_agent", timeout=600)
             if message.type == "info_collected":
                 try:
                     await self._fill(message.payload["field"], message.payload["value"])

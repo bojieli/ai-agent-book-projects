@@ -259,3 +259,52 @@ async def test_optional_blank_is_audited_skip_and_never_written_to_browser():
     evidence = timing_evidence(bus)
     assert evidence["expected_overlap_count"] == 1
     assert len(evidence["overlap_checks"]) == 1
+
+
+class CountryFailBrowser(SubmittingFakeBrowser):
+    """Fails only the pre-filled known field, succeeds on the phone-collected one."""
+
+    async def fill(self, field, value):
+        if field.name == "country":
+            raise ValueError(f"cannot fill {field.name}")
+        await asyncio.sleep(0.05)
+        self.values[field.name] = value
+
+
+@pytest.mark.asyncio
+async def test_known_value_fill_error_flows_back_to_phone_and_blocks_submission():
+    # A known_values field that fails to pre-fill must surface a fill_error (like
+    # the in-dialogue path), so the phone agent reports the failure instead of
+    # telling the user registration completed.
+    email = FieldSpec("email", "邮箱", "email")
+    country = FieldSpec("country", "国家", "text")
+    decision = DecisionRecord(
+        page_url="https://example.test/register",
+        page_title="Register",
+        known_fields=[country],
+        discovered_fields=[email, country],
+        tool_called="initiate_phone_call_agent",
+        purpose="协助填写注册表单",
+        required_info=[email],
+        rationale_summary="tool call",
+        model="test",
+        monotonic_seconds=0,
+    )
+    browser = CountryFailBrowser()
+    channel = ScriptedPhoneChannel(["me@example.com"])
+    bus = MessageBus()
+    agents = initiate_phone_call_agent(
+        decision=decision,
+        bus=bus,
+        channel=channel,
+        browser=browser,
+        known_values={"country": "US"},
+    )
+    with patch("orchestration._extract_value", AsyncMock(return_value="me@example.com")):
+        result = await run_parallel(agents, bus)
+
+    assert result["submitted"] is False
+    assert browser.submit_calls == 0
+    assert {"field": "country", "error": "cannot fill country"} in agents.phone.browser_feedback
+    assert any(message.type == "fill_error" for message in bus.history)
+    assert "填写遇到问题" in channel.prompts[-1]
