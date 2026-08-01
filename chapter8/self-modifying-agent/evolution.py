@@ -218,10 +218,26 @@ def validate_candidate(
     """Run trusted gates outside the candidate's writable surface."""
     checks = {name: False for name in CHECK_NAMES}
     try:
-        namespace = _namespace(candidate_source)
-        checks["static_compile"] = True
+        # Scan the candidate BEFORE executing it: this validator runs untrusted,
+        # model-generated code, so a source that fails the security scan must
+        # never have its module-level side effects executed. static_compile uses
+        # a non-executing compile() so it is still recorded for a rejected source.
+        checks["static_compile"] = bool(
+            compile(candidate_source, "candidate/retry_policy.py", "exec")
+        )
         checks["security_scan"] = _safe_ast(candidate_source)
+        if not checks["security_scan"]:
+            return checks
+        namespace = _namespace(candidate_source)
     except Exception:
+        return checks
+
+    # A syntactically valid but degenerate candidate (e.g. an empty LLM "source")
+    # compiles yet may define neither public function; reject cleanly here so the
+    # behavior gates below cannot KeyError on a missing name.
+    if not callable(namespace.get("should_retry")) or not callable(
+        namespace.get("should_open_circuit")
+    ):
         return checks
 
     expected_retry = "(error_code, retryable, attempt)"
