@@ -79,6 +79,8 @@ Kitap, **Agent = LLM + Bağlam + Araçlar** temel formülü etrafında şekillen
 | **Volcano Engine** | <https://www.volcengine.com/product/ark> | ByteDance Doubao (kapalı kaynak), Çin'de düşük gecikme |
 | **OpenRouter** | <https://openrouter.ai/> | Gemini / Claude / GPT-5 vb.'ye tek noktadan erişim (resmi API'ler yurt dışı IP/ödeme gerektirir; OpenAI ayrıca yurt dışı kimlik doğrulaması ister) |
 
+> 🧪 Deneylerin yürütme durumu, kanıtları ve karşılanmamış kabul koşulları ayrı olarak [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md) dosyasında izlenir; kaynak kodu klonlamak veya kurmak deneyin tamamlandığını kanıtlamaz.
+
 ## 📦 Ek · Harici Depoların Temin Edilmesi
 
 Bölüm 6, 7, 9, 10'daki değerlendirme kıstasları, eğitim çerçeveleri ve robot platformları için 23 harici depo (boyut ve lisanslama nedeniyle) **pakete dahil değildir** ve karşılık gelen dizinlere klonlanması gerekir.
@@ -124,20 +126,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > Bir proje README'si belirli bir commit belirtiyorsa, tekrarlanabilirlik için o sürüme `git checkout` yapın. Bölüm 10'daki `use-computer-while-calling`, bağımsız olarak sürdürülen [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) projesine dönüştü; bu depo yalnızca ona işaret eden bir belge tutar.
 
 </details>
-
-### Diğer Yeniden Üretim Yolları
-
-Aşağıdaki deneylerin özel bir klonlama komutu yok ama belirli yeniden üretim yöntemleri var:
-
-| Deney | Tür | Notlar |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 Okuyucu alıştırması | İnsan kıstası, bellek değerlendirmesi, JSON Cards vs RAG, bellek seçimi — Bölüm 3'ün `user-memory` / `user-memory-evaluation` / `contextual-retrieval` projelerini uyarlayın |
-| 5-12 | 📝 Okuyucu alıştırması | Agent yaratan Agent — `chapter5/coding-agent`'tan bootstrap ile genişletin |
-| 7-8 | 📝 Okuyucu alıştırması | Prompt damıtma — bkz. `chapter8/prompt-distillation` (bölümler arası yeniden kullanım) |
-| 7-9 | 📝 Okuyucu alıştırması | CoT damıtma `[Genişletme]` — tasarım ve kabul kriterleri kitapta, özel kod yok |
-| 6-11 | 🤖 Simülasyon değerlendirmesi | OpenVLA + RoboTwin2 — VLA eğitimi/ortam bağımlılıkları için `chapter7/SimpleVLA-RL` README'sine bakın |
-| 9-8 / 9-9 | 🔧 Gerçek donanım | XLeRobot teleoperasyon ve LLM Agent kontrolü — SO-100 kol gerektirir, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 Gerçek donanım | RGB sıfır atışlı Sim2Real kavrama — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (simülasyon salt GPU ile çalışır; dağıtım için SO-100 gerekir) |
 
 ## 🤝 Katkıda Bulunma
 

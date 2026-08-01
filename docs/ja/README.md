@@ -102,6 +102,8 @@ uv run python chapter1/context/main.py
 | **Volcano Engine** | <https://www.volcengine.com/product/ark> | ByteDance Doubao（クローズドソース）。中国国内で低レイテンシ |
 | **OpenRouter** | <https://openrouter.ai/> | Gemini / Claude / GPT-5 などにワンストップでアクセス（公式 API は海外 IP/決済が必要。OpenAI は海外での本人確認も必要） |
 
+> 🧪 実験の実行状況、証拠、未達の受け入れ条件は [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md) で別途管理しています。ソースコードの clone やインストールだけでは実験完了の証明になりません。
+
 ## 📦 付録 · 外部リポジトリの取得
 
 第6・7・9・10章のベンチマーク、訓練フレームワーク、ロボットプラットフォーム向けの23個の外部リポジトリは（サイズとライセンスの都合上）**同梱されていません**。対応するディレクトリに clone する必要があります。
@@ -147,20 +149,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > プロジェクトの README が特定のコミットを指定している場合は、再現性のためにそのバージョンへ `git checkout` してください。第10章の `use-computer-while-calling` は独立して保守される [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) へと発展しました。本リポジトリにはポインタのドキュメントのみを残しています。
 
 </details>
-
-### その他の再現方法
-
-以下の実験には専用の clone コマンドはありませんが、固有の再現方法があります。
-
-| 実験 | 種類 | 備考 |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 読者の演習 | ヒューマンベンチマーク、メモリ評価、JSON Cards vs RAG、メモリ選択 — 第3章の `user-memory` / `user-memory-evaluation` / `contextual-retrieval` を応用 |
-| 5-12 | 📝 読者の演習 | Agent を作る Agent — `chapter5/coding-agent` からブートストラップ |
-| 7-8 | 📝 読者の演習 | プロンプト蒸留 — `chapter8/prompt-distillation` を参照（章をまたいで再利用） |
-| 7-9 | 📝 読者の演習 | CoT 蒸留 `[拡張]` — 設計と受け入れ基準は本文にあり、専用コードなし |
-| 6-11 | 🤖 シミュレーション評価 | OpenVLA + RoboTwin2 — VLA 訓練/環境の依存関係は `chapter7/SimpleVLA-RL` の README を参照 |
-| 9-8 / 9-9 | 🔧 実機 | XLeRobot の遠隔操作と LLM Agent 制御 — SO-100 アームが必要、[Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 実機 | RGB ゼロショット Sim2Real 把持 — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real)（シミュレーションは純粋な GPU で動作。デプロイには SO-100 が必要） |
 
 ## 🤝 コントリビュート
 

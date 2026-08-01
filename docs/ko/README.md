@@ -84,6 +84,8 @@
 
 이 책의 독자는 [이 링크](https://www.krill-ai.com/register?invite=Q8D3L35725)로 가입하고 충전할 때 프로모션 코드 `ai-agent-book`을 입력하면 첫 Codex 플랜을 23% 할인받을 수 있습니다.
 
+> 🧪 실험 실행 상태, 증거, 미충족 승인 조건은 [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md)에서 별도로 관리합니다. 소스 코드를 복제하거나 설치한 것만으로는 실험 완료를 입증할 수 없습니다.
+
 ## 📦 부록 · 외부 저장소 가져오기
 
 제6·7·9·10장의 벤치마크, 학습 프레임워크, 로봇 플랫폼에 쓰이는 외부 저장소 23개는 크기와 라이선스 문제로 이 저장소에 포함되어 있지 않습니다.
@@ -127,18 +129,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > `SandboxFusion` 명령은 재현성을 위해 고정된 커밋 SHA를 detached HEAD 상태로 체크아웃하고, 실제 HEAD가 해당 SHA와 일치하는지 확인합니다. 다른 프로젝트 README가 특정 커밋을 지정한다면 해당 버전으로 `git checkout`하세요. 제10장의 `use-computer-while-calling`은 독립 프로젝트 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)로 발전했습니다.
 
 </details>
-
-### 그 밖의 재현 방법
-
-| 실험 | 유형 | 비고 |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 독자 실습 | 사람 벤치마크, 메모리 평가, JSON Cards와 RAG 비교, 메모리 선택 |
-| 5-12 | 📝 독자 실습 | 에이전트를 만드는 에이전트. `chapter5/coding-agent`에서 시작 |
-| 7-8 | 📝 독자 실습 | 프롬프트 증류. `chapter8/prompt-distillation` 참고 |
-| 7-9 | 📝 독자 실습 | CoT 증류 확장. `chapter7/cot-distillation`에 연계 구현 제공 |
-| 6-11 | 🤖 시뮬레이션 평가 | OpenVLA + RoboTwin2. `chapter7/SimpleVLA-RL` README 참고 |
-| 9-8 / 9-9 | 🔧 실제 하드웨어 | XLeRobot 원격 조작과 LLM 에이전트 제어. SO-100 로봇 팔 필요 |
-| 9-10 | 🔧 실제 하드웨어 | RGB 제로샷 Sim2Real 파지. [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) 참고 |
 
 ## 🤝 기여하기
 

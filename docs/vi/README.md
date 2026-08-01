@@ -113,6 +113,8 @@ Cảm ơn **Krill AI** đã tài trợ dự án này! Krill cung cấp dịch v�
 
 Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua [liên kết này](https://www.krill-ai.com/register?invite=Q8D3L35725) và nhập mã khuyến mãi "ai-agent-book" khi nạp tiền để được giảm 23% cho lần mua gói Codex đầu tiên!
 
+> 🧪 Trạng thái thực thi, bằng chứng và các tiêu chí nghiệm thu chưa đạt của thí nghiệm được theo dõi riêng tại [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); việc clone hoặc cài đặt mã nguồn không chứng minh thí nghiệm đã hoàn thành.
+
 ## 📦 Phụ lục · Lấy kho ngoài
 
 23 kho ngoài cho benchmark, framework huấn luyện, nền tảng robot ở Chương 6, 7, 9, 10 **không được đóng gói** (do kích thước và bản quyền), cần tự clone vào thư mục tương ứng.
@@ -158,20 +160,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > Nếu README dự án chỉ định commit cụ thể, hãy `git checkout` phiên bản đó để đảm bảo tái hiện. Chương 10 `use-computer-while-calling` đã phát triển thành [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct) độc lập; kho này không đóng gói thư mục đó, hãy dùng lệnh clone ở trên để lấy về.
 
 </details>
-
-### Các đường dẫn tái hiện khác
-
-Các thí nghiệm dưới đây không có lệnh clone riêng nhưng có phương thức tái hiện cụ thể:
-
-| Thí nghiệm | Loại | Mô tả |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 Bài tập bạn đọc | Human benchmark, đánh giá bộ nhớ, JSON Cards vs RAG, chọn bộ nhớ — cải tạo từ `user-memory` / `user-memory-evaluation` / `contextual-retrieval` chương 3 |
-| 5-12 | 📝 Bài tập bạn đọc | Agent tạo Agent — bootstrap từ `chapter5/coding-agent` |
-| 7-8 | 📝 Bài tập bạn đọc | Prompt distillation — xem `chapter8/prompt-distillation` (dùng lại xuyên chương) |
-| 7-9 | 📝 Bài tập bạn đọc | CoT distillation `[Mở rộng]` — triển khai đi kèm xem `chapter7/cot-distillation` (gồm sinh dữ liệu SFT và bộ kiểm tra quy tắc) |
-| 6-11 | 🤖 Đánh giá mô phỏng | OpenVLA + RoboTwin2 — xem README `chapter7/SimpleVLA-RL` về VLA training/env |
-| 9-8 / 9-9 | 🔧 Phần cứng thật | XLeRobot teleoperation và LLM Agent control — cần tay máy SO-100, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 Phần cứng thật | RGB zero-shot Sim2Real grasping — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (mô phỏng chạy pure GPU; triển khai cần SO-100) |
 
 ## 🤝 Đóng góp
 

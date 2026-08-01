@@ -89,6 +89,8 @@ uv run python chapter1/context/main.py
 
 A modellt használó kísérletekhez legalább egy szolgáltatói API-kulcs szükséges. A modellválasztáshoz lásd [ezt az útmutatót](https://01.me/2025/07/llm-api-setup/); az egyes kísérletek pontos beállításait mindig a saját README-jük tartalmazza.
 
+> 🧪 A kísérletek futtatási állapotát, bizonyítékait és még teljesítendő kapuit külön az [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md) tartalmazza; a forráskód klónozása vagy telepítése önmagában nem igazolja a kísérlet befejezését.
+
 ## 📦 Függelék · Külső repository-k beszerzése
 
 A 6., 7., 9. és 10. fejezethez tartozó 22 külső repository, valamint egy kiegészítő tanítási cookbook méret- és licencokokból nincs a projektbe csomagolva. Az alábbi parancsok reprodukálható kiindulópontként rögzített commitokat töltenek le.
