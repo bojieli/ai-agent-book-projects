@@ -62,6 +62,8 @@ Sumber naskah Bahasa Indonesia berada di [`book-id/`](../../book-id/). Edisi ini
 >
 > 📚 Untuk jalur belajar yang disarankan, lihat **[Saran Belajar](LEARNING.md)**.
 
+> 🧪 Status pelaksanaan eksperimen, bukti, dan gerbang penerimaan yang belum terpenuhi dicatat secara terpisah di [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); mengkloning atau memasang kode sumber tidak membuktikan bahwa eksperimen telah selesai.
+
 ## 📦 Lampiran · Mengambil Repositori Eksternal
 
 Beberapa eksperimen memakai repositori eksternal yang tidak disertakan langsung karena ukuran dan lisensinya. Perintah berikut mengunci setiap checkout ke revisi yang dapat direproduksi.

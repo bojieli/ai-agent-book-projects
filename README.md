@@ -114,6 +114,8 @@ uv run python chapter1/context/main.py
 
 Krill 为本书读者提供特别优惠：使用[此链接](https://www.krill-ai.com/register?invite=Q8D3L35725)注册并在充值时填写优惠码「ai-agent-book」，首次购买 Codex 套餐可享 77 折优惠！
 
+> 🧪 配套实验的执行状态、证据与未完成门禁单独记录在 [`docs/EXPERIMENT_STATUS.md`](docs/EXPERIMENT_STATUS.md)；克隆或安装源码不代表实验完成。
+
 ## 📦 附录 · 外部仓库获取
 
 本附录列出第 6、7、9、10 章与实验直接映射的 22 个外部仓库，另含 1 个辅助训练 cookbook；它们**不作为本书源码内置依赖**（出于体积与版权），需要自行克隆到对应目录。部分训练项目还会按各自 README 拉取模型、数据集和模拟器依赖，不计入这 22 个直接映射。以下版本来自 2026-07-30 工作区 checkout 或同日只读上游审计；固定源码只建立复现起点，不代表训练、硬件、浏览器或多 Agent 实验已经执行。
@@ -159,25 +161,6 @@ git clone https://github.com/joonspk-research/generative_agents.git chapter10/ge
 > 上述九个当前缺失的 checkout（7-3、7-4、7-14、7-15 的 SandboxFusion、9-8/9-9 共用的 XLeRobot、9-9 的 RoboCrew、9-10 的 `lerobot-sim2real`、10-4、10-7）也已固定到不可变 SHA；命令会 detached checkout 并用 `rev-parse HEAD` 做相等性校验。第 10 章 `use-computer-while-calling` 已发展为独立维护的 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)。源码存在或安装成功都不是实验完成声明。
 
 </details>
-
-### 其它复现路径
-
-下面这些实验还需要特定的本地实现、证据门禁或硬件流程；即使上面的固定源码已就绪，也不能据此宣称实验完成：
-
-| 实验 | 类型 | 说明 |
-| --- | :--: | --- |
-| 6-2 | 📝 读者练习 | 人工执行 GAIA / OSWorld / SWE-bench / Terminal-Bench 等任务，记录可验证轨迹并比较人与 Agent 的失败边界 |
-| 6-3 | ✅ 本地实现 | 四档多维记忆 Rubric 与逐维证据见 [`chapter3/user-memory-evaluation`](chapter3/user-memory-evaluation/) |
-| 6-4 | ✅ 本地实验 | JSON Cards / RAG / 混合系统的 60 用例 × 3 系统共 180/180 条真实轨迹与完整成本核算见 [`full_6_4_60_cases_costed.json`](chapter6/user-memory-system-evaluation/results/full_6_4_60_cases_costed.json) |
-| 6-7 | ✅ 本地实验 | 同一中性 Coding Harness 下的 GPT-5.6-sol / Claude Sonnet 5 × 三任务 × 三次重复已完成 18/18 单元，零 API 错误；轨迹、汇总和哈希见 [`model-action-threshold` manifest](chapter6/model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) |
-| 6-10 | 🚧 本地实验 | 组件 × 模型 × 评估器的 4×3×2×60 全矩阵仍未完成；smoke/checkpoint 与 backend readiness 不能替代完整矩阵 |
-| 5-12 | ✅ 本地实验 | 能创造 Agent 的 Agent 见 [`chapter5/agent-creator`](chapter5/agent-creator/)；[正式对照](chapter5/agent-creator/runs/exp5-12-kimi-k3-20260730-v1/comparison.json)的模板/从零双臂均通过，模板质量非劣且创建更高效，但预期的质量与效率双重严格优势未观察到 |
-| 7-8 | 🚧 本地实验 | Prompt 蒸馏见 [`chapter8/prompt-distillation`](chapter8/prompt-distillation/)（跨章复用）；须完成教师生成、学生训练及质量/成本对照才算验收 |
-| 7-9 | 📝 读者练习 | CoT 蒸馏 `[扩展]`——配套实现见 `chapter7/cot-distillation`（含 SFT 数据生成与规则验证器） |
-| 6-12 | 🚧 仿真评估 | OpenVLA + RoboTwin2 的本地预检、固定配置和证据门禁见 [`chapter6/openvla-robotwin2-eval`](chapter6/openvla-robotwin2-eval/)；训练依赖固定版本的 `chapter7/SimpleVLA-RL/SimpleVLA-RL` |
-| 9-8 | 🚧 外部硬件轨道 | [`chapter9/xlerobot-teleoperation`](chapter9/xlerobot-teleoperation/) 固定 XLeRobot 上游版本、遥操作入口和实机安全/证据要求；完成需授权的 XLeRobot 实机运行 |
-| 9-9 | 🚧 外部硬件轨道 | [`chapter9/gemini-xlerobot-navigation`](chapter9/gemini-xlerobot-navigation/) 固定 XLeRobot、RoboCrew 与 Gemini Robotics-ER 1.5 路径；完成需真实规划 API 与授权导航运行 |
-| 9-10 | 🚧 外部 Sim2Real 轨道 | [`chapter9/rgb-sim2real-grasping`](chapter9/rgb-sim2real-grasping/) 固定 [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) 版本并逐阶段验收；阶段 1–4 可在非机器人训练环境完成，阶段 5 需授权 SO-100 实机 |
 
 ## 🤝 贡献
 

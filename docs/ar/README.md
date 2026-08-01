@@ -88,6 +88,8 @@
 
 تقدم Krill عرضًا لقراء الكتاب: سجّل عبر [هذا الرابط](https://www.krill-ai.com/register?invite=Q8D3L35725)، ثم أدخل الرمز الترويجي `ai-agent-book` عند إضافة الرصيد للحصول على خصم 23% على أول خطة Codex.
 
+> 🧪 تُسجَّل حالة تنفيذ التجارب والأدلة والبوابات المتبقية بصورة منفصلة في [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md)؛ ولا يُعد استنساخ الشفرة أو تثبيتها دليلاً على اكتمال التجربة.
+
 ## 📦 الملحق · جلب المستودعات الخارجية
 
 لا يتضمن هذا المستودع المستودعات الخارجية الـ23 الخاصة بالمعايير وأطر التدريب ومنصات الروبوتات في الفصول 6 و7 و9 و10، وذلك بسبب الحجم وشروط الترخيص. لذا يجب استنساخها في الأدلة المقابلة.
@@ -133,20 +135,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > إذا حدد ملف README لمشروع ما معرّف commit بعينه، فنفّذ `git checkout` لذلك الإصدار لضمان قابلية إعادة النتائج. وقد تطور مشروع الفصل العاشر `use-computer-while-calling` إلى [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)، وهو يُصان بصورة مستقلة ولا يُضمَّن في هذا المستودع؛ استخدم أمر الاستنساخ أعلاه لجلبه.
 
 </details>
-
-### طرق أخرى لإعادة إنتاج التجارب
-
-التجارب أدناه لا تحتوي على أمر استنساخ مخصص ولكن لديها طرق استنساخ محددة:
-
-| التجربة | النوع | ملاحظات |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 تمرين القارئ | المعيار البشري، تقييم الذاكرة، بطاقات JSON مقابل RAG، اختيار الذاكرة - تكييف `user-memory` / `user-memory-evaluation` / `contextual-retrieval` للفصل الثالث |
-| 5-12 | 📝 تمرين القارئ | الوكيل الذي يقوم بإنشاء الوكلاء — التمهيد من `chapter5/coding-agent` |
-| 7-8 | 📝 تمرين القارئ | تقطير الموجّهات — راجع `chapter8/prompt-distillation` (إعادة استخدام بين الفصول) |
-| 7-9 | 📝 تمرين القارئ | تقطير CoT `[Extension]` — التنفيذ المصاحب في `chapter7/cot-distillation` (بما في ذلك إنشاء بيانات SFT ومتحقق القاعدة) |
-| 6-11 | 🤖 تقييم المحاكاة | OpenVLA + RoboTwin2 — راجع الملف التمهيدي `chapter7/SimpleVLA-RL` للتعرف على تدريب VLA/عمليات البيئة |
-| 9-8 / 9-9 | 🔧 أجهزة حقيقية | التشغيل عن بعد بواسطة XleRobot والتحكم في الوكيل LLM — يتطلب ذراع SO-100، [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 أجهزة حقيقية | نقل Sim2Real من دون أمثلة باستخدام صور RGB — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (تعمل المحاكاة على وحدة معالجة الرسومات؛ ويتطلب النشر ذراع SO-100) |
 
 ## 🤝 المساهمة
 

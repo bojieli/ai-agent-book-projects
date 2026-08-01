@@ -86,6 +86,8 @@ Se recomienda solicitar claves de API en varias plataformas para facilitar el ap
 
 Krill ofrece una oferta especial para los lectores de este libro: regístrate mediante [este enlace](https://www.krill-ai.com/register?invite=Q8D3L35725) e ingresa el código de promoción "ai-agent-book" al recargar para obtener un 23% de descuento en tu primer plan Codex.
 
+> 🧪 El estado de ejecución de los experimentos, sus evidencias y los criterios pendientes se registran por separado en [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); clonar o instalar el código fuente no demuestra que un experimento esté completo.
+
 ## 📦 Apéndice · Obtención de repositorios externos
 
 Los 23 *checkouts* externos para benchmarks, marcos de entrenamiento y plataformas robóticas en los Capítulos 6, 7, 9 y 10 **no están incluidos** en el paquete (debido al tamaño y a las licencias) y deben clonarse en los directorios correspondientes.
@@ -131,20 +133,6 @@ git clone https://github.com/joonspk-research/generative_agents.git chapter10/ge
 > Los nueve *checkouts* ausentes en este momento (7-3, 7-4, 7-14, SandboxFusion para 7-15, XLeRobot compartido por 9-8/9-9, RoboCrew para 9-9, `lerobot-sim2real` para 9-10, 10-4 y 10-7) también están fijados a SHA inmutables; los comandos realizan un *checkout* separado y comprueban la igualdad mediante `rev-parse HEAD`. El directorio `use-computer-while-calling` del Capítulo 10 ha evolucionado hacia el proyecto mantenido de forma independiente [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct). Que el código fuente exista o se instale correctamente no constituye una declaración de que el experimento esté completo.
 
 </details>
-
-### Otras rutas de reproducción
-
-Los siguientes experimentos no disponen de un comando de clonación dedicado, pero cuentan con métodos específicos de reproducción:
-
-| Experimento | Tipo | Notas |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 Ejercicio para el lector | Benchmark humano, evaluación de memoria, JSON Cards vs RAG, selección de memoria — adaptar `user-memory` / `user-memory-evaluation` / `contextual-retrieval` del Capítulo 3 |
-| 5-12 | 📝 Ejercicio para el lector | Agente que crea Agentes — construir a partir de `chapter5/coding-agent` |
-| 7-8 | 📝 Ejercicio para el lector | Destilación de prompts — ver `chapter8/prompt-distillation` (reutilización entre capítulos) |
-| 7-9 | 📝 Ejercicio para el lector | Destilación CoT `[Extensión]` — implementación complementaria en `chapter7/cot-distillation` (incluye generación de datos SFT y verificador de reglas) |
-| 6-11 | 🤖 Evaluación en simulación | OpenVLA + RoboTwin2 — ver el README de `chapter7/SimpleVLA-RL` para dependencias de entrenamiento VLA/entorno |
-| 9-8 / 9-9 | 🔧 Hardware real | Teleoperación XLeRobot y control mediante Agente LLM — requiere brazo SO-100, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 Hardware real | Agarres Sim2Real zero-shot RGB — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (la simulación se ejecuta puramente en GPU; el despliegue requiere SO-100) |
 
 ## 🤝 Contribuciones
 

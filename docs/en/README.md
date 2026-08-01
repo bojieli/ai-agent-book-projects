@@ -112,6 +112,8 @@ Thanks to **Krill AI** for sponsoring this project! Krill provides an official, 
 
 Krill offers a special deal for readers of this book: register via [this link](https://www.krill-ai.com/register?invite=Q8D3L35725) and enter the promo code "ai-agent-book" when topping up to get 23% off your first Codex plan!
 
+> 🧪 Experiment execution status, evidence, and outstanding gates are tracked separately in [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); cloning or installing source code does not establish completion.
+
 ## 📦 Appendix · Obtaining External Repositories
 
 The 23 external repos for benchmarks, training frameworks, and robot platforms in Chapters 6, 7, 9, 10 are **not bundled** (due to size and licensing) and must be cloned into the corresponding directories.
@@ -157,20 +159,6 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 > If a project README specifies a particular commit, `git checkout` to that version for reproducibility. Chapter 10's `use-computer-while-calling` has evolved into the independently maintained [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct); this repo does not bundle that directory — use the clone command above to fetch it.
 
 </details>
-
-### Other Reproduction Paths
-
-The experiments below have no dedicated clone command but specific reproduction methods:
-
-| Experiment | Type | Notes |
-| --- | :--: | --- |
-| 6-2 / 6-3 / 6-4 / 6-9 | 📝 Reader exercise | Human benchmark, memory eval, JSON Cards vs RAG, memory selection — adapt Chapter 3's `user-memory` / `user-memory-evaluation` / `contextual-retrieval` |
-| 5-12 | 📝 Reader exercise | Agent that creates Agents — bootstrap from `chapter5/coding-agent` |
-| 7-8 | 📝 Reader exercise | Prompt distillation — see `chapter8/prompt-distillation` (cross-chapter reuse) |
-| 7-9 | 📝 Reader exercise | CoT distillation `[Extension]` — companion implementation at `chapter7/cot-distillation` (including SFT data generation and a rule verifier) |
-| 6-11 | 🤖 Simulation eval | OpenVLA + RoboTwin2 — see `chapter7/SimpleVLA-RL` README for VLA training/env deps |
-| 9-8 / 9-9 | 🔧 Real hardware | XLeRobot teleoperation and LLM Agent control — requires SO-100 arm, [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html) |
-| 9-10 | 🔧 Real hardware | RGB zero-shot Sim2Real grasping — [`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real) (simulation runs on pure GPU; deployment needs SO-100) |
 
 ## 🤝 Contributing
 
