@@ -1,4 +1,9 @@
-requests>=2.31
-openai>=1.40
-python-dotenv>=1.0
+# MiniCPM-o 4.5's official, isolated local-inference stack (Python 3.10).
+transformers==4.51.0
+accelerate>=1.0
+torch>=2.3.0,<=2.8.0
+torchaudio<=2.8.0
+minicpmo-utils[all]>=1.0.5
+# minicpmo-utils currently resolves librosa 0.9, which imports pkg_resources.
+setuptools<81
 pytest>=7.4

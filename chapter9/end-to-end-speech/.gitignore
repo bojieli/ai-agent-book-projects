@@ -1,4 +1,4 @@
-.env
-audio/
+.venv/
 __pycache__/
 *.pyc
+validation/latest.json

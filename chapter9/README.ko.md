@@ -11,7 +11,7 @@
 | 9-1 | [live-audio](live-audio/) | ✅ | VAD + ASR(Whisper/SenseVoice) + LLM(GPT-4o/Gemini/Doubao) + TTS(Fish Audio)를 통합한 실시간 음성 채팅으로, WebSocket을 통해 짧은 지연 시간을 제공합니다. |
 | 9-2 | [phone-agent](phone-agent/) | 🚧 | 공식 `pine-voice` SDK를 사용하는 직접 실행 및 ReAct 경로는 구현됐지만, 승인받고 참여에 동의한 E.164 형식의 통화 대상 번호가 없습니다. [사전 점검](phone-agent/validation/preflight.json)에는 발신과 대화 기록이 없었다고 명시되어 있으며, 테스트 대역은 검수 완료로 인정하지 않습니다. |
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | 실제 Qwen2-Audio에서 누적되는 음성 접두부 전체를 매번 다시 인코딩해 음향 이벤트를 감지하고 청크별 지연 시간을 측정합니다. 이를 600ms VAD + 오픈 소스 Whisper 조합과 일반·쉼·소음 세 시나리오에서 비교합니다. |
-| 9-4 | [end-to-end-speech](end-to-end-speech/) | 🚧 | Step-Audio R1용 맞춤형 vLLM 4-GPU 배포와 실제 오디오 클라이언트는 구현됐지만, 현재 접근 가능한 Step-Audio 엔드포인트가 없고 호스트에 CUDA도 없습니다. [차단 증거](end-to-end-speech/validation/blocker.json)에는 대체 모델로 완료를 가장하지 않고 작업을 중단한 사실이 기록되어 있습니다. |
+| 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | 고정 revision의 MiniCPM-o 4.5를 RTX PRO 6000 한 장에서 실제 로컬 실행했습니다. end-to-end와 self-cascade 모두 3/4였지만 의미/준언어 오류가 상호 보완적이었고, 실제 24kHz 음성 출력과 검증 증거를 보존했습니다. |
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | 실제 Fish Audio S1의 4×3×2=24개 참조 음성 라이브러리와 A/B/C 미디어가 구조 검사를 통과했습니다. 다만 [검수 결과](controllable-tts/validation/acceptance.json)에는 정성 청취 평가와 ‘사람 상담원에 가까움’이라는 주장에 대한 평가가 아직 없다고 명시되어 있습니다. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | `anthropics/claude-quickstarts`를 `9bcc95e…`에 고정해 사용합니다. 본문이 다루는 것은 전체 quickstarts 모음이 아니라 컨테이너 기반 Ubuntu 데스크톱과 Claude Computer Use 에이전트 루프로 구성된 `computer-use-demo/`입니다. |
 | 9-7 | `browser-use/` | 📖 | 외부 `browser-use/browser-use` 저장소를 `ec9277c…`에 고정해 사용합니다. 본문 과제에서는 시각 입력을 사용하는 CLI(`use_vision=True`)로 Google에서 샌프란시스코 날씨를 검색하고 동작 및 스크린샷 궤적을 보관합니다. |

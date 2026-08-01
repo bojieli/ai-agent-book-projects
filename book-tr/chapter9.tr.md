@@ -162,6 +162,26 @@ Ama Omni ne kadar güçlü olursa olsun, özünde üç modeli tek bir modelde bi
 
 **Qwen3-Omni**, Thinker-Talker mimarisini kullanır: düşünmeyi (anlama ve reasoning) ifadeden (konuşma üretiminden) ayırıp iki özelleşmiş modüle böler ve metin, görüntü, ses ile videoya ilişkin algıyı ve üretimi tek çatı altında birleştirir. Qwen3-Omni'nin düşük ilk paket gecikmesi, üretim tarafındaki (Talker) mimariden gelir: ses token'larını çok kod kitaplı öz bağlanımlı bir biçimde adım adım üretir, nedensel (causal) bir codec de bu token'ları artımlı olarak dalga biçimine çözer; böylece düşünme modülü metni üretir üretmez Talker hemen ardından akışlı olarak konuşma sentezleyebilir, yanıtın tamamının üretilmesini beklemesi gerekmez. Resmî rapora göre soğuk başlangıçtaki teorik ilk paket gecikmesi 234ms'ye kadar düşüyor; 19 dilde anlamayı ve 10 dilde üretimi destekliyor, 36 ses-video benchmark'ının 22'sinde önde gidiyor.
 
+**MiniCPM-o 4.5**, bu hattı tek bir tüketici ya da iş istasyonu GPU'sunda yerel olarak çalışabilecek ölçeğe sıkıştırır. SigLip2, Whisper-medium, CosyVoice2 ve Qwen3-8B üzerine kurulu yaklaşık 9B parametreli model; metin, görüntü, video ve sesi yerel olarak kabul eder, doğrudan metin ve konuşma üretir. Buradaki yararlı deney başka bir sıralamayı kopyalamak değil, yukarıdaki uçtan uca ile öz-kademeli yaklaşım iddiasını sınamaktır: aynı model, sesin gizil durumlarından doğrudan yanıtlarken ve sesi önce düz metne indirgerken farklı biçimlerde mi hata yapar?
+
+> **Deney 9-4 ★★: MiniCPM-o 4.5'i Yerel Çalıştırmak — Uçtan Uca ve Öz-Kademeli Karşılaştırması**
+>
+> Açık `openbmb/MiniCPM-o-4_5` checkpoint'i `1f761131…` revision'ına sabitlendi ve tek bir 96GB RTX PRO 6000 Blackwell üzerinde BF16 ile yerel çalıştırıldı. Tepe VRAM tahsisi 20,27GiB, model yükleme süresi 6,15 saniyeydi; dış API çağrısı yapılmadı. Thinking mode özellikle kapatıldı: deney Omni modelinin bilgiyi koruyup korumadığını ölçer, sonraki bölümdeki “konuşurken düşünme”yi değil.
+>
+> Dört küçük sentetik WAV iki görev türünü kapsar: yanıtı yalnızca sözcüklere bağlı iki sözlü aritmetik sorusu ve sözcükleri aynı, konuşma hızları hızlı/yavaş iki kayıt. **Uçtan uca kol** WAV'ı doğrudan MiniCPM-o'ya verir; **öz-kademeli kol** aynı modele ton ve hızı özellikle dışarıda bırakan yalnız-sözcük transkripti ürettirir ve yalnızca bu metinden yanıtlar. İki kolda da örnekleme kapalıdır.
+>
+> Tablo 9-1 MiniCPM-o 4.5 yerel sonuçları (dört mekanizma kontrolü; benchmark değildir)
+>
+> | Görev türü | Uçtan uca | Öz-kademeli | Gözlem |
+> | --- | ---: | ---: | --- |
+> | Anlamsal aritmetik (2) | 1/2 | 2/2 | Doğrudan yol “twelve boxes” ifadesini 8 olarak duydu; açık transkript doğru 12'yi korudu |
+> | Paralinguistik hız (2) | 2/2 | 1/2 | İki transkript aynı cümleye dönüştü; öz-kademeli yol hızlı örneğe de “slow” dedi |
+> | Toplam | 3/4 | 3/4 | Toplam aynı, hata yerleri karşıt |
+>
+> Bu küçük çalışma nitel öngörüyü yeniden üretti: metin tüm ilgili bilgiyi taşıyorsa açık transkript algı hatasını düzeltebilir; yanıt konuşma hızına bağlıysa düz metin darboğazı kanıtı geri döndürülemez biçimde siler. İki kol da %75 aldığı için uçtan uca otomatik olarak daha doğru değildir. Yükleme sonrası ortalama tam çağrı 0,69 sn ve 0,55 sn idi; ancak sabit çalışma sırası, farklı çıktı uzunlukları ve yalnızca dört örnek nedeniyle bu değerler sıkı bir gecikme sıralaması değildir.
+>
+> Yerel audio-to-audio çağrısı ayrıca gerçek bir 11,56 saniyelik, 24kHz mono WAV sakladı, ancak 12→8 algı hatasını devraldı. Ham yanıtlar, transkriptler, aşama süreleri, hash'ler ve kabul kontrolleri [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/) içindedir.
+
 **Step-Audio 2** farklı bir yol izler: ham ses girdisini doğrudan işler, hem metin hem ses üretir ve gerçek anlamda uçtan uca sesli diyalog gerçekleştirir. Yalnızca ne söylendiğini (anlamsal bilgiyi) anlamakla kalmaz, nasıl söylendiğini de algılar — paralinguistik bilgiyi (Paralinguistic Information): konuşanın duygusunun sevinç mi öfke mi olduğunu, konuşma hızının aceleci mi tereddütlü mü olduğunu, tonlamanın yükselen mi alçalan mı olduğunu — ve arka plandaki ortam sesleriyle müziği. Düşünme ve pekiştirmeli öğrenme yoluyla ifade gücü yüksek yanıtlar üretir; ayrıca bir RAG mekanizmasını ve harici araçları (web araması, ses araması) da bünyesine katar. Step-Audio 2 makalesinde bildirilene göre, kendi önerdikleri StepEval-Audio-Paralinguistic paralinguistik anlama benchmark'ında Step-Audio 2'nin doğruluğu %83,09'a ulaşarak aynı dönemin açık kaynak tam modlu modeli Qwen2.5-Omni'nin (%44,18) önüne geçmiş; GPT-4o Audio (%43,45) ve Kimi-Audio (%49,64) değerlerinin de üstünde kalmıştır.
 
 Step-Audio R1, Step-Audio serisinin devamı niteliğindeki çalışmadır; Step-Audio 2'nin uçtan uca sesli diyalog mimarisi üzerine kurularak düşünme yeteneğini doğrudan ses modelinin içine içselleştirmeyi bir adım daha ileri götürür. İkisi aynı teknik hattın ardışık evrimini temsil eder.
@@ -242,30 +262,6 @@ Birkaç yinelemenin ardından düşünmenin temeli metin soyutlamasından akusti
 
 
 ![Şekil 9-6: Step-Audio R1 MGRD ve MPS Çift Beyin Mimarisi](images/fig9-6.svg)
-
-
-> **Deney 9-4 ★★★: Step-Audio R1 ile Uçtan Uca Sesli Düşünmeyi Gerçekleştirmek**
->
-> Bu deney, Step-Audio R1 modelini kullanarak farklı yapılandırmaların sesli düşünme ve diyalog görevlerindeki başarımını karşılaştırır. Step-Audio R1; ses kodlayıcı, ses adaptörü ve Qwen2.5 32B kod çözücüden oluşur ve çok GPU'lu bir dağıtım gerektirir.
->
-> Deney iki görev üzerinde değerlendirme yapar: **Spoken-MQA** (sesli matematik soruları), modelin sözlü olarak dinlediği bir problemin ardından çok adımlı matematiksel reasoning yapıp yapamadığını sınar; **URO-Bench** (Çince sözlü diyalog benchmark'ı) açık uçlu diyalog kalitesini ölçer.
->
-> Test yapılandırmaları iki boyuta ayrılır. Birincisi **düşünme zamanlamasıdır**: eksiksiz **TBS** (Think-Before-Speak, önce düşünmeyi bitir sonra konuş; gecikme kısıtı olmayan kontrol taban çizgisi olarak kullanılır) düşünmenin tamamını üretip ondan sonra söze başlar. Gecikmeyi düşürmek için MPS iki "düşünürken konuşma" varyantı sunar — **Speak-First** (spkfirst olarak da anılır; sıfır gecikme, konuşmaya başlama ile düşünme aynı anda devreye girer) ve **Think-First** (thkfirst olarak da anılır; düşünme beyni ilk parçayı üretene kadar beklenir, gecikmesi yaklaşık 80 token). İkincisi **mimaridir**: MPS'nin çift beyinli paralel yapısı ile geleneksel tek modelli TBS.
->
-> Sonuçlar Tablo 9-1'de gösteriliyor; farklı düşünme zamanlaması ve mimari yapılandırmalarının matematik doğruluğu ile diyalog puanı üzerindeki başarımını karşılaştırmak için kullanılıyor.
->
-> Tablo 9-1 Step-Audio R1'in Farklı Sesli Düşünme Yapılandırmalarının Karşılaştırması
->
-> | Yapılandırma | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Düşünmeden doğrudan yanıt (taban çizgisi) | %70,6 | 77,4 |
-> | MPS Speak-First (sıfır gecikme) | %92,8 | 82,5 |
-> | MPS Think-First (~80 tok gecikme) | %93,9 | 84,8 |
-> | Eksiksiz TBS (gecikme kısıtı yok) | %93,0 | — |
->
-> İlginç bir bulgu şudur: Speak-First'ün düşünme görevleri üzerindeki etkisi çok küçüktür (%92,8, eksiksiz TBS'nin %93,0 değerine yakın). Bunun nedeni, **CoT**'un (Chain-of-Thought, düşünce zinciri) başlangıcının genellikle yalnızca sorunun içeriğini tekrarlaması ve henüz gerçek reasoning'e girmemiş olmasıdır; dolayısıyla model söze başlar başlamaz düşünmeyi de aynı anda devreye alsa bile nihai doğruluk neredeyse hiç zarar görmez. Dikkate değer bir başka ayrıntı da şudur: Think-First (%93,9), gecikme kısıtı olmayan eksiksiz TBS'den (%93,0) hafifçe daha yüksektir — olası bir açıklama, düşünmenin parça parça üretilip parça parça ifadeye dönüştürülmesinin adım adım denetime benzer olumlu bir etki yaratmasıdır; elbette aradaki fark değerlendirme hata payının içinde kaldığından fazla yorumlanmamalıdır.
->
-
 Çözüm 3 düşünmeyi tek bir modelin içine "içselleştirerek" "düşünürken konuşmayı" en zarif biçimde gerçekleştirir; ama bedeli tam da bu kısmın başında söylenen "hareketli hedeftir": bu tek model hem en güçlü reasoning yapan olmak hem de gerçek zamanlı konuşan olmak zorundadır ve iki yetenek de hızla evrildiğinden, birleşik hat ayak uydurabilmek için defalarca yeniden eğitilmek durumundadır. Bu, bu satırların yazıldığı dönemdeki sektörel ayrışmayı da açıklıyor — "istenildiği an en yeni beyne geçebilme" peşindeki öncü ürünler (GPT-Live, Grok Voice, Pine AI) çoğunlukla Çözüm 2'nin ayrıştırma hattına oynuyor; Çözüm 3 ise azami doğallığı hedefleyen ve özel eğitim maliyetini üstlenmeye razı olan senaryolara daha uygun. İkisi birbirinin yerini almaz; bu, "değiştirilebilir beyin" ile "daha sıkı bir düşünürken konuşma" arasındaki bir ödünleşimdir.
 
 ### Hızlı ile Yavaş Arasındaki Arayüz: Metin Dışında Başka Ne Aktarılabilir

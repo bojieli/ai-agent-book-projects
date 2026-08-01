@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": {
+    "experiment_is_9_4": true,
+    "exact_model": true,
+    "pinned_revision": true,
+    "cuda_used": true,
+    "native_audio_enabled": true,
+    "thinking_not_claimed": true,
+    "four_cases": true,
+    "both_arms_complete": true,
+    "speech_waveform_recorded": true,
+    "implementation_hashes_match": true,
+    "no_external_api": true
+  }
+}

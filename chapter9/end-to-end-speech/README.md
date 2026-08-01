@@ -1,102 +1,81 @@
-# 实验 9-4：Step-Audio R1 四配置外部复现轨道（未完成）
+# 实验 9-4：本地运行 MiniCPM-o 4.5 端到端全模态语音
 
-正文实验的验收对象不是“任意端到端语音请求”，而是表 9-1 的四行：不思考直接回答、MPS Speak-First、MPS Think-First、完整 TBS；并且必须分别在完整 Spoken-MQA 与 URO-Bench 上用对应评测器复算。当前目录是**外部复现轨道**，尚无可验收的真实结果。论文分数不会被复制成“本机结果”，单路径 API 演示也不会冒充四配置实验。
+本实验属于正文的“**范式二 · 端到端全模态模型（Omni）**”，不属于后文的“边想边说”方案。它用同一个开放权重模型 MiniCPM-o 4.5 比较两条路径：
 
-Step-Audio R1 是音频编码器 + adapter + Qwen2.5 32B 解码器，需要 Linux 和多张 NVIDIA GPU。客户端严格采用上游 `stepfun-ai/Step-Audio-R1` 的 customized-vLLM 协议：WAV 被编码为 `input_audio`，assistant 以 `<think>\n` 开始，使用 `continue_final_message`、`stop_token_ids=[151665]`，并从流式 `content` / `tts_content.tts_text` / `tts_content.tts_audio` 读取结果和首 token 延迟。
+- **端到端路径**：WAV 直接进入模型的音频编码器与隐空间，模型直接回答；
+- **自级联路径**：同一模型先把 WAV 转成纯文字，再只依据文字回答，主动丢弃语速等副语言信息。
 
-## 部署
+另加一条 audio-to-audio 检查，确认模型不仅能听，还能在本地生成 24kHz 语音。实验关闭 `enable_thinking`，因此结果不能用来声称复现 Step-Audio R1 的 MPS、Speak-First、Think-First 或“边想边说”。
+
+## 实验设计
+
+`fixtures/cases.json` 固定四条小型合成语音：两道只依赖语义的口述算术题，以及文字完全相同、语速分别为快和慢的两条副语言题。每条都运行端到端与自级联两臂。小样本只用于验证机制与本地可运行性，不是模型排行榜；合成音也不能替代真人、多口音与噪声数据集。
+
+| 维度 | 端到端臂 | 自级联臂 |
+| --- | --- | --- |
+| 输入 | 单声道 WAV（读取时重采样为模型要求的 16kHz） | MiniCPM-o 生成的纯文字转录 |
+| 回答模型 | MiniCPM-o 4.5 | 同一个 MiniCPM-o 4.5 |
+| 是否保留语速 | 是 | 否（转录提示明确只保留说出的文字） |
+| 采样 | 关闭 | 关闭 |
+| 思考模式 | 关闭 | 关闭 |
+
+固定模型为 `openbmb/MiniCPM-o-4_5@1f761131fa83f5ed3cd6f2f22b225c4501d154fa`。官方实现由 SigLip2、Whisper-medium、CosyVoice2 与 Qwen3-8B 组成，总计约 9B 参数；本实验只初始化音频与 TTS 分支，不初始化视觉分支。
+
+## 安装
+
+上游明确测试 Python 3.10、`transformers==4.51.0`、PyTorch 2.3–2.8。该组合与仓库共享环境里的其他实验可能冲突，因此这里有意使用独立虚拟环境：
 
 ```bash
-# 1. From the repository root: use the shared Chapter 9 core environment
-uv sync --locked --python 3.12 --extra ch9
-
-# Activate it before changing directories:
-# macOS/Linux:
-source .venv/bin/activate
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-# Windows cmd: .venv\Scripts\activate.bat
-
-# pip fallback when uv is not installed:
-# python -m pip install -e ".[ch9]"
-
 cd chapter9/end-to-end-speech
+uv venv .venv --python 3.10
+uv pip install --python .venv/bin/python -r requirements.txt
+source .venv/bin/activate
 
-# Install this experiment's Step-Audio client/runtime dependencies.
-python -m pip install -r requirements.txt
-
-hf download stepfun-ai/Step-Audio-R1 --local-dir /models/Step-Audio-R1
-export STEP_AUDIO_MODEL_DIR=/models/Step-Audio-R1
-./deploy_step_audio_r1.sh
+hf download openbmb/MiniCPM-o-4_5 \
+  --revision 1f761131fa83f5ed3cd6f2f22b225c4501d154fa
 ```
 
-脚本使用上游镜像 `stepfun2025/vllm:step-audio-2-v20250909`、4-way tensor parallel、仓库内的上游等价 chat template，并在 `localhost:9999` 暴露 OpenAI-compatible endpoint。上游报告测试配置为 4×L40S/H100/H800/H20。
+需要 Linux、NVIDIA CUDA GPU 和约 21GB 可用显存。只有扩展到视频输入/输出时才需要 FFmpeg；本次 WAV→文本/语音 campaign 不调用 FFmpeg。模型权重与上游 Python 自定义代码会被下载到 Hugging Face cache，运行前应按自己的供应链策略审查并固定 revision。
 
-## 精确验收矩阵
-
-| 配置 | Spoken-MQA | URO-Bench | 当前公开可复算 |
-| --- | --- | --- | --- |
-| 不思考直接回答 | 完整数据集+官方评分 | 完整数据集+官方评分 | 否 |
-| MPS Speak-First | `spkfirst` checkpoint/serving mode+评分 | 同左 | 否 |
-| MPS Think-First | `thkfirst` checkpoint/serving mode+评分 | 同左 | 否 |
-| 完整 TBS | 无延迟约束 TBS+评分 | 正文表中无该分数 | 否 |
-
-2026-07-29 审计的官方 GitHub tree 为 `c73a43cd1f64f07b5d68ef4a41a0b2e4125ae6f8`；Hugging Face `Step-Audio-R1` 为 `60a56dbe86918b0a85b07ec29f2c8983025e7073`，`R1.1` 为 `8abb296c09123345b09de57dbc2830b6a12134b1`。公开树含 MPS 论文和一条 `spoken_mqa_test.wav`，但没有四种可参数切换的 serving/evaluation modes、完整 Spoken-MQA 评测器或 URO-Bench 评测资产。可重复审计：
+## 运行
 
 ```bash
-python validate_upstream.py
-```
-
-脱敏结果在 `validation/upstream_audit.json`。
-
-## 公开单路径诊断（不计作实验验收）
-
-若另行提供真实 customized-vLLM endpoint，可用一条口述数学题与一条中文对话 WAV 检查公开 R1 请求协议：
-
-```bash
-cp env.example .env
 python demo.py \
-  --endpoint http://localhost:9999 \
-  --audio spoken_mqa.wav --task spoken-mqa \
-  --instruction 'Solve the spoken math problem step by step.' \
-  --audio uro_dialogue.wav --task uro-bench \
-  --instruction 'Respond naturally and appropriately to the spoken user.'
+  --local-files-only \
+  --evidence validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json \
+  --output-dir validation/runs/exp9-4-minicpmo45-20260801-v1/outputs
+
+python validate_evidence.py \
+  validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json
 ```
 
-`demo.py` 先验证 `/v1/models` 确实提供 `Step-Audio-R1`，随后运行：
+`demo.py` 一次加载模型，随后保存每条输入的 SHA-256、两臂原始回复、模型自产转录、分阶段延迟、模型 revision、软件版本、GPU 信息，以及语音输出的 SHA-256/采样率/时长。验收只要求真实本地路径完整且证据闭环，**不要求假设必须为正**。
 
-- Step-Audio R1：直接基于音频 latent 做推理，记录完整 response、TTFT、总延迟及 audio token 数；
-- 级联对照：`whisper-1 → gpt-4o-mini`，记录被 ASR 压平后的 transcript 与总延迟。
-
-## Validation
-
-The regression tests are offline: they use fake clients and do not call audio or chat APIs.
+没有 GPU 时可运行离线单元测试，但不能据此宣称完成真实实验：
 
 ```bash
-# From the repository root, include dev tools for pytest
-uv sync --locked --python 3.12 --extra ch9 --extra dev
-
-# Activate it before changing directories:
-# macOS/Linux:
-source .venv/bin/activate
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-# Windows cmd: .venv\Scripts\activate.bat
-
-cd chapter9/end-to-end-speech
-python -m pytest -q
+python -m pytest -q tests
+python demo.py --help
 ```
 
-证据写入 `validation/latest.json`。这只能证明公开单路径可调用；`--skip-cascade` 只用于服务调试。两者都不能使表 9-1 验收通过。
+合成输入可用 `python prepare_fixtures.py` 重建（需要 `espeak`）；正式证据以仓库中 WAV 的 hash 为准。
 
-## 当前精确阻塞
+## 本地结果
 
-本机没有 `STEP_AUDIO_ENDPOINT`、NVIDIA/CUDA 或四卡 GPU。即使另有单个 R1 endpoint，缺失的四模式与完整评测资产仍会阻止正文实验验收。只有上游提供这些精确资产，或获得作者内部复现环境后，才能继续；不得用 GPT Audio、普通 R1 单路径或 Whisper→LLM 替代。
+2026-08-01 的[本地 canonical run](validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json)已通过[全部 11 项验收](validation/runs/exp9-4-minicpmo45-20260801-v1/acceptance.json)。硬件是单张 96GB RTX PRO 6000 Blackwell，PyTorch 2.8.0+cu128、Transformers 4.51.0、BF16/SDPA；模型加载 6.154 秒，峰值分配显存 20.269GiB。
 
-```bash
-pytest -q
-```
+| 任务 | 端到端 | 自级联 |
+| --- | ---: | ---: |
+| 语义算术（2 条） | 1/2 | 2/2 |
+| 副语言语速（2 条） | 2/2 | 1/2 |
+| 合计 | 3/4 | 3/4 |
+
+总分相同但错误互补。端到端在第一题把 “twelve boxes” 感知成 8，算出 47；自级联先正确转录出 12，再算出 79。相反，快/慢两条音频在自级联中都被压成完全相同的 `Please send the report before lunch.`，于是它把 fast 样本也猜成 slow；端到端保留了速度信息，两条都正确。
+
+加载完成后的平均整次调用为端到端 0.686 秒、自级联 0.551 秒。由于端到端固定先跑、回复长度不同且只有四条，这不是可推广的延迟排名。audio-to-audio 臂另生成了[11.56 秒、24kHz 单声道 WAV](validation/runs/exp9-4-minicpmo45-20260801-v1/outputs/spoken-math-boxes-response.wav)，但它继承了第一题的感知错误。这是有价值的负结果：路径真实跑通不等于答案正确。
 
 ---
 
 ## English
 
-This is an incomplete external reproduction track. Acceptance requires the exact four Table 9-1 configurations and the full Spoken-MQA/URO-Bench evaluators. The public single-path R1 client is diagnostic only. No substitute model or copied paper score counts.
+Experiment 9-4 now belongs to Paradigm 2, end-to-end omni models. It runs the pinned MiniCPM-o 4.5 checkpoint locally and compares native audio-to-answer inference against a self-cascade that first flattens the same audio to text. A separate audio-output arm retains a real 24kHz waveform. Thinking is deliberately disabled; this experiment makes no MPS or “thinking while speaking” claim.

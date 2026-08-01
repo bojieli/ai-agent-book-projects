@@ -11,7 +11,7 @@
 | 9-1 | [live-audio](live-audio/) | ✅ | Demo percakapan suara real-time yang menggabungkan STT, dialog AI, dan TTS. |
 | 9-2 | [phone-agent](phone-agent/) | 🚧 | Jalur Pine Voice tersedia, tetapi panggilan PSTN berizin belum dijalankan. |
 | 9-3 | [streaming-speech](streaming-speech/) | ✅ | Menunjukkan trade-off latensi dan akurasi pada pengenalan suara streaming. |
-| 9-4 | [end-to-end-speech](end-to-end-speech/) | 🚧 | Client Step-Audio R1 tersedia, tetapi endpoint dan CUDA belum tersedia pada host validasi. |
+| 9-4 | [end-to-end-speech](end-to-end-speech/) | ✅ | MiniCPM-o 4.5 pada revision tetap dijalankan secara lokal di satu RTX PRO 6000; end-to-end dan self-cascade sama-sama 3/4 dengan kegagalan semantik/paralinguistik yang saling melengkapi, serta bukti audio 24kHz nyata. |
 | 9-5 | [controllable-tts](controllable-tts/) | 🚧 | Menyiapkan pustaka referensi Fish Audio dan perbandingan media; evaluasi dengar belum lengkap. |
 | 9-6 | `claude-quickstarts/computer-use-demo/` | 📖 | Demo Computer Use resmi Anthropic pada desktop Ubuntu terkontainerisasi. |
 | 9-7 | `browser-use/` | 📖 | Otomatisasi browser visual dengan trajectory tindakan dan screenshot. |

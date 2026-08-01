@@ -160,6 +160,26 @@ Untuk mempertahankan kapabilitas yang tinggi sekaligus mengendalikan biaya kompu
 
 Satu perbedaan yang patut diluruskan: MoE meningkatkan throughput—berapa banyak permintaan yang dapat dilayani oleh satu unit komputasi. Hal tersebut tidak secara langsung menentukan seberapa cepat paket audio pertama dapat dipancarkan; first-packet latency (latensi paket-pertama) bergantung pada generation architecture. Latensi paket-pertama yang rendah pada Qwen3-Omni berasal dari modul Talker-nya: ia menghasilkan token audio secara inkremental menggunakan multi-codebook autoregression, sementara causal codec secara inkremental men-decode token-token tersebut menjadi bentuk gelombang (waveform). Segera setelah modul pemikiran menghasilkan teks, si Talker dapat mulai melakukan streaming ucapan tanpa harus menunggu respons penuh. Menurut laporan resmi, first-packet latency cold-start teoretisnya adalah sekitar 234ms. Ia mendukung pemahaman dalam 19 bahasa dan generasi dalam 10 bahasa, serta memimpin pada 22 dari 36 benchmark audio-video.
 
+**MiniCPM-o 4.5** memadatkan jalur ini hingga dapat dijalankan secara lokal pada satu GPU konsumen atau workstation. Model sekitar 9B parameter ini dibangun dari SigLip2, Whisper-medium, CosyVoice2, dan Qwen3-8B; menerima teks, gambar, video, dan audio secara native, serta langsung menghasilkan teks dan suara. Pertanyaan eksperimen yang berguna bukan menyalin leaderboard lain, melainkan menguji klaim end-to-end versus self-cascade di atas: apakah model yang sama gagal dengan cara berbeda ketika menjawab langsung dari state laten audio dibandingkan ketika audio terlebih dahulu diratakan menjadi teks biasa?
+
+> **Eksperimen 9-4 ★★: Menjalankan MiniCPM-o 4.5 secara Lokal — End-to-End versus Self-Cascade**
+>
+> Checkpoint terbuka `openbmb/MiniCPM-o-4_5` dipatok pada revision `1f761131…` dan dijalankan lokal dengan BF16 pada satu RTX PRO 6000 Blackwell 96GB. Alokasi VRAM puncak 20,27GiB, pemuatan model 6,15 detik, tanpa panggilan API eksternal. Thinking mode sengaja dimatikan: eksperimen ini mengukur pelestarian informasi model Omni, **bukan** “berpikir sambil berbicara” pada bagian berikutnya.
+>
+> Empat WAV sintetis kecil mencakup dua jenis tugas: dua soal aritmetika lisan yang jawabannya hanya bergantung pada kata-kata, dan dua ucapan dengan kata identik tetapi tempo cepat versus lambat. Lengan **end-to-end** memberikan WAV langsung ke MiniCPM-o; lengan **self-cascade** meminta model yang sama membuat transkrip kata saja yang sengaja menghapus nada dan tempo, lalu menjawab hanya dari transkrip itu. Sampling dimatikan pada kedua lengan.
+>
+> Tabel 9-1 Hasil Lokal MiniCPM-o 4.5 (empat pemeriksaan mekanisme, bukan benchmark)
+>
+> | Jenis tugas | End-to-end | Self-cascade | Pengamatan |
+> | --- | ---: | ---: | --- |
+> | Aritmetika semantik (2) | 1/2 | 2/2 | Jalur langsung mendengar “twelve boxes” sebagai 8; transkripsi eksplisit mempertahankan angka 12 yang benar |
+> | Tempo paralinguistik (2) | 2/2 | 1/2 | Kedua transkrip menjadi kalimat yang sama, sehingga self-cascade juga menebak “slow” untuk sampel cepat |
+> | Total | 3/4 | 3/4 | Total sama, lokasi kegagalan berlawanan |
+>
+> Run kecil ini mereproduksi prediksi kualitatif: bila teks membawa seluruh informasi relevan, transkripsi eksplisit dapat memperbaiki kesalahan persepsi; bila jawaban bergantung pada tempo bicara, bottleneck teks biasa menghapus bukti secara permanen. Kedua lengan mendapat 75%, jadi end-to-end tidak otomatis lebih akurat. Setelah model dimuat, rata-rata panggilan penuh adalah 0,69 detik untuk end-to-end dan 0,55 detik untuk self-cascade, tetapi urutan tetap, panjang keluaran berbeda, dan hanya empat sampel membuat angka ini bukan peringkat latensi yang ketat.
+>
+> Panggilan audio-to-audio native juga menyimpan WAV mono 24kHz nyata sepanjang 11,56 detik, tetapi mewarisi kesalahan persepsi 12→8. Respons mentah, transkrip, timing tiap tahap, hash, dan pemeriksaan penerimaan tersedia di [`chapter9/end-to-end-speech`](../chapter9/end-to-end-speech/).
+
 **Step-Audio 2** mengambil rute yang berbeda: ia secara langsung memproses input audio mentah (raw audio input) dan mengeluarkan teks serta audio, mencapai percakapan suara end-to-end yang sesungguhnya. Ia tidak hanya dapat memahami *apa* yang dikatakan (informasi semantik) tetapi juga memahami *bagaimana* hal tersebut diucapkan—informasi paralinguistik, seperti apakah emosi pembicara sedang gembira atau marah, apakah kecepatan bicaranya cepat atau ragu-ragu, apakah intonasinya naik atau turun—serta suara lingkungan latar belakang dan musik. Ia menghasilkan respons ekspresif melalui pemikiran dan reinforcement learning, dan juga mengintegrasikan mekanisme RAG serta perangkat eksternal (Tool Use) seperti pencarian web, pencarian audio. Menurut makalah Step-Audio 2, pada benchmark StepEval-Audio-Paralinguistic yang mereka usulkan untuk pemahaman paralinguistik, Step-Audio 2 mencapai akurasi sebesar 83,09%, jauh lebih unggul dari open-source omnimodal model sezamannya Qwen2.5-Omni (44,18%), dan juga melampaui GPT-4o Audio (43,45%) dan Kimi-Audio (49,64%).
 
 Step-Audio R1 adalah model penerus dalam seri Step-Audio. Dibangun berdasarkan pada arsitektur percakapan suara end-to-end Step-Audio 2, model ini menginternalisasi lebih lanjut kemampuan pemikiran secara langsung ke dalam model audio tersebut. Keduanya mewakili evolusi progresif di sepanjang jalur teknis yang sama.
@@ -235,29 +255,6 @@ Setelah beberapa iterasi, fondasi pemikiran secara bertahap bergeser dari abstra
 Keduanya berjalan secara paralel: Formulation Brain tidak perlu menyelesaikan penalaran sebelum Articulation Brain mulai berbicara. Misalnya, Formulation Brain mulai menganalisis pertanyaan pengguna pada t=0ms dan menghasilkan segmen penalaran pertamanya, urutan token teks, pada t=200ms. Articulation Brain menerima segmen itu, menggabungkannya dengan balasan yang dihasilkan sejauh ini, dan mulai menghasilkan token ucapan yang sesuai pada t=350ms. Modul-modul ini beroperasi sebagai *pipeline* paralel, memungkinkan pengguna mendengar suku kata pertama setelah hanya 350ms.
 
 ![Gambar 9-6: Step-Audio R1 MGRD dan MPS Dual-Brain Architecture](images/fig9-6.svg)
-
-> **Eksperimen 9-4 ★★★: Menggunakan Step-Audio R1 untuk Penalaran Lisan End-to-End**
->
-> Eksperimen ini menggunakan Step-Audio R1 untuk membandingkan beberapa konfigurasi pada tugas penalaran lisan dan dialog. Model ini terdiri dari *audio encoder*, *audio adapter*, dan *decoder* Qwen2.5 32B, serta memerlukan penerapan multi-GPU.
->
-> Eksperimen ini mengevaluasi dua tugas: **Spoken-MQA** (Spoken Math Questions) menguji apakah model dapat melakukan penalaran matematis multi-langkah setelah mendengar masalah yang disajikan secara lisan; **URO-Bench** (Chinese Oral Dialogue Benchmark) mengevaluasi kualitas dialog *open-ended*.
->
-> Konfigurasi pengujian dibagi menjadi dua dimensi. Yang pertama adalah **Thinking Timing**: konfigurasi penuh **TBS** (Think-Before-Speak), yang berfungsi sebagai *baseline* kontrol tanpa batasan latensi, menghasilkan semua pemikiran sebelum berbicara. Untuk mengurangi latensi, MPS menawarkan dua varian "berpikir-sambil-berbicara"—**Speak-First** (juga disebut spkfirst, latensi nol, dengan berbicara dan berpikir yang dimulai secara bersamaan) dan **Think-First** (juga disebut thkfirst, menunggu otak yang berpikir untuk menghasilkan segmen pertama sebelum berbicara, dengan latensi sekitar 80 token). Dimensi kedua adalah **Arsitektur**: arsitektur paralel *dual-brain* MPS versus model tunggal TBS tradisional.
->
-> Tabel 9-1 membandingkan akurasi matematis dan skor dialog dari konfigurasi waktu dan arsitektur yang berbeda.
->
-> Tabel 9-1 Perbandingan Konfigurasi Penalaran Lisan Step-Audio R1
->
-> | Konfigurasi | Spoken-MQA | URO-Bench |
-> |------|-----------|-----------|
-> | Langsung menjawab tanpa berpikir (Baseline) | 70.6% | 77.4 |
-> | MPS Speak-First (Latensi Nol) | 92.8% | 82.5 |
-> | MPS Think-First (~80 tok Latensi) | 93.9% | 84.8 |
-> | TBS Penuh (Tanpa Batasan Latensi) | 93.0% | — |
->
-> Temuan yang menarik adalah bahwa Speak-First memiliki dampak minimal pada tugas-tugas berpikir (92.8% mendekati konfigurasi TBS penuh yaitu 93.0%). Alasannya adalah bahwa awal dari sebuah **CoT** (Chain-of-Thought) biasanya hanya menyatakan ulang konten masalah dan belum memasuki penalaran yang sebenarnya. Oleh karena itu, bahkan jika model mulai berpikir bersamaan dengan berbicara, akurasi akhirnya hampir tidak terpengaruh. Detail lain yang patut diperhatikan adalah bahwa Think-First (93.9%) bahkan sedikit lebih tinggi daripada konfigurasi TBS penuh yang tidak dibatasi latensi (93.0%). Salah satu kemungkinan penjelasannya adalah bahwa menghasilkan pemikiran dalam segmen-segmen dan mengubahnya segmen demi segmen menjadi ucapan dapat berfungsi seperti pengawasan selangkah demi selangkah dan meningkatkan kinerja; namun, perbedaannya berada dalam *margin of error* dan tidak boleh diinterpretasikan secara berlebihan.
->
-
 Solusi 3 menginternalisasi pemikiran ke dalam satu model—perwujudan paling elegan dari "berpikir sambil berbicara"—tetapi harganya adalah tepat pada "target yang bergerak" dari awal bagian ini: satu model harus menjadi penalar terkuat dan pembicara secara *real-time*, dan dengan kedua kemampuan yang berkembang cepat, rute terpadu harus dilatih ulang berulang kali untuk mengimbanginya. Oleh karena itu perbedaan pendekatan di industri pada saat penulisan ini: produk terdepan yang ingin bertukar dengan otak terbaru sesuka hati (GPT-Live, Grok Voice, Pine AI) sebagian besar bertaruh pada pemisahan Solusi 2, sementara Solusi 3 sesuai untuk produk yang mengejar kealamian tertinggi dan dapat menanggung biaya pelatihan khusus. Keduanya tidak saling menggantikan; ini adalah *trade-off* antara kemampuan untuk mengganti model penalaran dan mengintegrasikan pemikiran dan ucapan secara lebih erat.
 
 ### Antarmuka Antara Cepat dan Lambat: Apa Lagi yang Bisa Dilewatkan Selain Teks
