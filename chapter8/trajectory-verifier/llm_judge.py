@@ -73,12 +73,20 @@ Trajectory evidence:
             verdict = item.get("verdict", UNCERTAIN)
             if verdict not in {PASS, FAIL, UNCERTAIN}:
                 verdict = UNCERTAIN
+            # dict.get(key, default) returns the default only when the key is
+            # ABSENT; a model that emits an explicit JSON null (common for a
+            # dimension it marks "uncertain") returns None, and float(None) /
+            # iterating None both raise. Coerce non-numeric / non-list values to
+            # the neutral defaults instead of crashing the whole trajectory.
+            score = item.get("score")
+            confidence = item.get("confidence")
+            evidence = item.get("evidence")
             results.append(DimensionResult(
                 dimension=name,
                 layer="llm_rubric",
                 verdict=verdict,
-                score=float(item.get("score", 0.5)),
-                evidence=[str(value) for value in item.get("evidence", ["LLM returned no evidence"])],
-                confidence=float(item.get("confidence", 0.5)),
+                score=float(score) if isinstance(score, (int, float)) and not isinstance(score, bool) else 0.5,
+                evidence=[str(value) for value in evidence] if isinstance(evidence, list) and evidence else ["LLM returned no evidence"],
+                confidence=float(confidence) if isinstance(confidence, (int, float)) and not isinstance(confidence, bool) else 0.5,
             ))
         return results
