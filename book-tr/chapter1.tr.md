@@ -1,12 +1,12 @@
-# Yapay Zeka Ajanlarına Giriş
+# AI Agent'lara Giriş
 
-Cursor'ı kod yazmak için kullanıp kod tabanınızda arama yaptığını, birden fazla dosyayı düzenlediğini ve testler geçene kadar tekrar tekrar çalıştırdığını izlediyseniz; bir konu hakkında Deep Research'ü kullanıp eksiksiz bir rapor ortaya çıkana kadar arama yaptığını, okuduğunu ve yeniden arama yaptığını gördüyseniz; Manus'un sizin için çevrimiçi görevleri tamamlamak üzere bir tarayıcıyı yönettiğine tanık olduysanız; Doubao telefon asistanına bilet ayırtmasını veya mesaj göndermesini rica ettiyseniz; ya da telekom sağlayıcınızı aramak ve faturanızı düşürmek için Pine AI'ı görevlendirdiyseniz—siz zaten Yapay Zeka Ajanlarını (AI Agents) kullanıyorsunuzdur.
+Cursor'ı kod yazmak için kullanıp kod tabanınızda arama yaptığını, birden fazla dosyayı düzenlediğini ve testler geçene kadar tekrar tekrar çalıştırdığını izlediyseniz; bir konu hakkında Deep Research'ü kullanıp eksiksiz bir rapor ortaya çıkana kadar arama yaptığını, okuduğunu ve yeniden arama yaptığını gördüyseniz; Manus'un sizin için çevrimiçi görevleri tamamlamak üzere bir tarayıcıyı yönettiğine tanık olduysanız; Doubao telefon asistanına bilet ayırtmasını veya mesaj göndermesini rica ettiyseniz; ya da telekom sağlayıcınızı aramak ve faturanızı düşürmek için Pine AI'ı görevlendirdiyseniz—siz zaten AI Agent kullanıyorsunuzdur.
 
-Bu ürünler pek çok farklı biçimde karşımıza çıkar, ancak hepsinin paylaştığı ortak bir özellik vardır: artık pasif "sen sorarsın, o cevaplar" tarzı bir konuşma değildirler. Kendi yürütme adımlarını planlarlar, görevin gerektirdiği araçları çağırırlar ve sonuçlar geldikçe stratejilerini uyarlarlar. Yapay Zeka Ajanları, bilgisayarlarla etkileşim kurmanın yeni bir yolu haline gelmektedir.
+Bu ürünler pek çok farklı biçimde karşımıza çıkar, ancak hepsinin paylaştığı ortak bir özellik vardır: artık pasif "sen sorarsın, o cevaplar" tarzı bir konuşma değildirler. Kendi yürütme adımlarını planlarlar, görevin gerektirdiği araçları çağırırlar ve sonuçlar geldikçe stratejilerini uyarlarlar. AI Agent'lar, bilgisayarlarla etkileşim kurmanın yeni bir yolu haline gelmektedir.
 
-Bu bölüm pratikten başlayıp bir Yapay Zeka Ajanının temel bileşenlerine doğru ilerler: modern Ajanların neler yapabildiğini bizzat deneyimleyecek, arkalarındaki mimariyi anlayacak ve Ajan sistemleri inşa etmek için gereken tasarım kalıplarını (design patterns) ve en iyi uygulamaları (best practices) öğreneceğiz.
+Bu bölüm pratikten başlayıp bir AI Agent'ın temel bileşenlerine doğru ilerler: modern Agent'ların neler yapabildiğini bizzat deneyimleyecek, arkalarındaki mimariyi anlayacak ve Agent sistemleri inşa etmek için gereken tasarım kalıplarını (design patterns) ve en iyi uygulamaları (best practices) öğreneceğiz.
 
-> **Okuma İpucu**: Bu bölüm, kitabın tamamı için kavramsal bir harita niteliğindedir—Ajanların temel formülüne, çalışma döngüsüne, mühendislik çerçevesine ve tasarım kalıplarına hızlı bir bakış sunarak sonraki bölümlerin üzerine inşa edeceği ortak kelime dağarcığını ve referans noktalarını oluşturur. İlk okumada her kavramı ezberlemeye çalışmayın; genel bir izlenim edinmeyi hedefleyin. Sonraki her bölüm burada tanıtılan bir yönü derinlemesine ele alır ve yönünüzü kontrol etmek için her zaman buraya geri dönebilirsiniz.
+> **Okuma İpucu**: Bu bölüm, kitabın tamamı için kavramsal bir harita niteliğindedir—Agent'ların temel formülüne, çalışma döngüsüne, mühendislik çerçevesine ve tasarım kalıplarına hızlı bir bakış sunarak sonraki bölümlerin üzerine inşa edeceği ortak kelime dağarcığını ve referans noktalarını oluşturur. İlk okumada her kavramı ezberlemeye çalışmayın; genel bir izlenim edinmeyi hedefleyin. Sonraki her bölüm burada tanıtılan bir yönü derinlemesine ele alır ve yönünüzü kontrol etmek için her zaman buraya geri dönebilirsiniz.
 
 ## Modern Agent = LLM + Context + Tools
 
@@ -64,7 +64,7 @@ Araçları sistematik olarak ele almak için, Agent'ın dünyayla etkileşim yö
 
 **Yürütme Araçları (Execution Tools)**, Agent'ın dünyayı değiştirmesini sağlar: kod çalıştırma, dosya işlemleri, sistem komutları, dış API çağrıları—kararlar böylece somut eylemlere dönüşür.
 
-**İş Birliği Araçları (Collaboration Tools)**, Agent'ın diğer Agent'larla iş bölümü yapmasını sağlar: uzmanlaşmış görevleri alt Agent'lara (sub-agent) devretmek, kritik karar noktalarında insan onayı istemek veya çoklu ajan (multi-agent) sistemlerinde eylemleri koordine etmek.
+**İş Birliği Araçları (Collaboration Tools)**, Agent'ın diğer Agent'larla iş bölümü yapmasını sağlar: uzmanlaşmış görevleri alt Agent'lara (sub-agent) devretmek, kritik karar noktalarında insan onayı istemek veya çoklu Agent (multi-agent) sistemlerinde eylemleri koordine etmek.
 
 **Olay Tetikleyici Araçlar (Event Trigger Tools)**, ilk üç kategoriden temelde farklı bir şekilde devreye girer: Agent bunları çağırmaz—bunlar, Agent'ı harekete geçiren dış girdiler olarak gelir. Yeni bir e-posta gelir, zamanlanmış bir an gelir, başka bir sistem bir Webhook geri çağrısı tetikler—olay Agent'ı etkinleştirir ve düşünme ile eylemini başlatır. Agent bunları asla kendisi çağırmaz, ancak yine de dış dünyayla buluştuğu bir kanaldır, bu yüzden bunları geniş araç sistemine dahil ediyoruz.
 
@@ -90,7 +90,8 @@ tools: [{                             assistant: {
 Adım 3: Sonuç context'e eklenir       Adım 4: Model sonuca göre yanıt verir
 tool: {                               assistant: {
   tool_call_id: "call_1",               content: "Bugün Pekin'de: 28°C, açık."
-  content: '{"temp":28,"sky":"clear"}'     }}
+  content: '{"temp":28,"sky":"clear"}'     }
+}
 ```
 
 Geliştirici yalnızca araçları tanımlar ve çağrıları yürütür; modelin kendisi çağırıp çağırmayacağına, hangisini çağıracağına ve hangi argümanları geçeceğine karar verir. Bölüm 2 bu API yapısını ayrıntılı olarak inceler.
@@ -113,7 +114,7 @@ Daha ileri giderek, bir LLM Agent **Few-shot Adaptation'ı (Az örnekli uyarlama
 
 #### Model as Agent: Modelin Kendisinin Ürün Haline Gelmesi
 
-"Model as Agent" (Agent Olarak Model) paradigması, Yapay Zeka Ajanı geliştirmedeki en yeni yöndür. Gelişmiş modeller, post-training (özellikle pekiştirmeli öğrenme) yoluyla tool calling'i yerleşik bir yetenek olarak içselleştirir: bir aracın ne zaman çağrılacağı, hangisinin çağrılacağı, hangi argümanlarla çağrılacağı—bunların hepsine model kendisi karar verir, elle orkestrasyon gerekmez. Bu, çerçeve (framework) katmanını daha az önemli kılmaz. Tam tersine: model ne kadar güçlüyse, etrafında kurulan Harness o kadar önem kazanır. Harness, tam anlamıyla bir ata takılan koşum takımıdır—dizginleriyle birlikte—ve bu, atın koşmasını engellemek için değil, o gücü doğru yöne yönlendirmek içindir. Agent bağlamında, model güçlü ama öngörülemez attır, Harness ise bu yeteneği güvenilir görev yürütümüne dönüştüren mühendislik kabuğudur. Ya da bir yarış arabası sürücüsünün etrafındaki destek sistemini düşünün: emniyet kemeri, pist bariyerleri, pit ekibi. Sürücü (model) ne kadar hızlıysa, bu sistem o kadar önem kazanır. Bir Agent'ta Harness; context yönetimi, araç arayüzleri, güvenlik kısıtları ile doğrulama ve düzeltme mekanizmaları gibi altyapıdan oluşur (bkz. bu bölümün son kısmı).
+"Model as Agent" (Agent Olarak Model) paradigması, AI Agent geliştirmedeki en yeni yöndür. Gelişmiş modeller, post-training (özellikle pekiştirmeli öğrenme) yoluyla tool calling'i yerleşik bir yetenek olarak içselleştirir: bir aracın ne zaman çağrılacağı, hangisinin çağrılacağı, hangi argümanlarla çağrılacağı—bunların hepsine model kendisi karar verir, elle orkestrasyon gerekmez. Bu, çerçeve (framework) katmanını daha az önemli kılmaz. Tam tersine: model ne kadar güçlüyse, etrafında kurulan Harness o kadar önem kazanır. Harness, tam anlamıyla bir ata takılan koşum takımıdır—dizginleriyle birlikte—ve bu, atın koşmasını engellemek için değil, o gücü doğru yöne yönlendirmek içindir. Agent bağlamında, model güçlü ama öngörülemez attır, Harness ise bu yeteneği güvenilir görev yürütümüne dönüştüren mühendislik kabuğudur. Ya da bir yarış arabası sürücüsünün etrafındaki destek sistemini düşünün: emniyet kemeri, pist bariyerleri, pit ekibi. Sürücü (model) ne kadar hızlıysa, bu sistem o kadar önem kazanır. Bir Agent'ta Harness; context yönetimi, araç arayüzleri, güvenlik kısıtları ile doğrulama ve düzeltme mekanizmaları gibi altyapıdan oluşur (bkz. bu bölümün son kısmı).
 
 Bir modelin kendi kararını verme alanı ne kadar genişlerse, yanlış bir kararın verebileceği zarar da o kadar büyür—bu da güvenilirliği korumak için daha ince taneli kısıtlama, doğrulama ve düzeltme gerektirir. Model tedarikçilerinin gerçek avantajı "çerçeveyi inceltmek" değil, modeli ve etrafındaki Harness'i birlikte optimize edebilmek ve bunu sürekli yinelemektir.
 
@@ -213,6 +214,7 @@ Bu tasarımın zarafeti, **context'in kümülatif doğasında** yatar. Her LLM �
 
 Trajectory, bir yürütme kaydından fazlasıdır; Agent'ın yeteneğinin bir aynasıdır. Trajectory'leri büyük ölçekte analiz etmek, davranış kalıplarını, daha iyi karar yollarını ve daha iyi araç tasarımlarını ortaya çıkarır. Trajectory verisi hatta bir bilgi tabanına damıtılabilir, ya da pekiştirmeli öğrenme yoluyla daha güçlü Agent modelleri eğitmek için kullanılabilir—deneyimden öğrenme döngüsünü kapatır.
 
+
 Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modellerin bu döngüyü nasıl yürüttüğünü görmek için iki deney yapalım.
 
 > **Deney 1-2 ★: Kimi K3'ün Yerleşik Agent Yeteneği**
@@ -238,6 +240,7 @@ Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modell
 > Şekil 1-4, "Model as Agent" paradigması altındaki yerleşik tool calling'in tam mimarisini, Kimi K3 / GPT-5.6'nın gerçek dünya görevlerindeki ReAct yürütme süreciyle birlikte gösterir.
 >
 > ![Şekil 1-4: "Model as Agent" Mimarisi—Yerleşik Tool Calling](images/fig1-4.svg)
+
 
 ## Harness Engineering: Modelin Ötesinde Rekabet Gücü
 
@@ -307,6 +310,7 @@ Bu beş aşama birbirinin yerine geçmez, iç içe geçmiş katmanlardır: Promp
 
 Beş işlev kapalı bir döngü oluşturur: Context ve Tools karar almayı destekler, Constrain hataları önler, Verify sapmaları tespit eder, Correct döngüyü kapatır. Herhangi bir halkayı düşürürseniz sistemde bir güvenilirlik açığı oluşur. Belirli orkestrasyon kalıplarına ve guardrail tasarımlarına girmeden önce, önce etkili Agent'lar inşa etmenin ve bir model seçmenin temel ilkelerini ortaya koyalım—bundan sonraki her tasarım kararının temeli.
 
+
 ### Etkili Agent'lar İnşa Etmenin Temel İlkeleri
 
 Anthropic'in deneyimine dayanarak, başarılı Agent sistemleri üç temel ilkeyi izler.
@@ -334,6 +338,7 @@ Model, Agent'ın zeka altyapısıdır ve doğru olanı seçmek çoğu zaman herh
 **Agent'ların Büyük Çoğunluğu Reasoning Destekleyen Bir Model Gerektirir.** Agent'lar karmaşık kararlar alır—çok adımlı reasoning, araç seçimi—ve reasoning'i olmayan modeller bunları genellikle kötü yapar. İstisnalar azdır: tek bir basit adım, veya sabit bir konuma tıklamaktan ibaret Computer Use GUI işlemleri; bu durumlarda reasoning yapmayan bir model idare edebilir. Çok adımlı reasoning veya dinamik karar alma devreye girdiği anda, bir reasoning modeli şarttır.
 
 **Çıktı Hızına ve Çok Modlu Yeteneklere Dikkat Edin.** Maliyetin ötesinde, gözden kaçması kolay iki boyut vardır. Biri **çıktı token hızıdır**: Agent'lar tipik olarak çok sayıda çıkarım turu çalıştırır ve her tur bir sonraki başlamadan önce bitmelidir, bu yüzden çıktı hızı uçtan uca gecikmeyi doğrudan belirler—her turda 2 saniye daha yavaş çalışan 20 turluk bir Agent görevi, ekstra 40 saniyelik bir bekleme anlamına gelir. Diğeri ise **çok modlu (multimodal) destektir**: Agent'ınızın görüntüleri, sesi veya videoyu anlaması gerekiyorsa, multimodal yetenek zorunlu bir gereksinimdir ve modeller bu konuda büyük farklılıklar gösterir.
+
 
 ### Orkestrasyon Kalıpları: Workflow ve Autonomous
 
@@ -458,7 +463,7 @@ Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasar�
 
 ## Bölüm Özeti
 
-Bu bölüm, pratikten başlayarak Yapay Zeka Ajanlarını anlamak ve inşa etmek için temel çerçeveyi kurdu.
+Bu bölüm, pratikten başlayarak AI Agent'ları anlamak ve inşa etmek için temel çerçeveyi kurdu.
 
 **Agent = Beyin + Gözler + El ve Ayaklar**: LLM beyindir (karar alma çekirdeği), context gözlerdir (neyi görebildiğini belirler) ve tools el ve ayaklardır (neyi yapabildiğini belirler). Üçünden hiçbiri vazgeçilmez değildir.
 

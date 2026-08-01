@@ -57,7 +57,9 @@ Manus'un temsil ettiği genel amaçlı Agent ürünleri, Deep Research, Computer
 
 Kodlama Agent'ı neden diğer ikisi yerine çekirdek? Çünkü neredeyse tüm verimli içerik üretimi nihayetinde koda indirgenir. Bir PPT özünde OOXML formatında koddur (Office Open XML, Microsoft'un ofis dokümanları için açık standardı); Word dokümanları ve PDF raporları kod aracılığıyla üretilebilir; veri analizi ve görselleştirme Python betikleriyle yapılır; GUI manipülasyonundaki başarılı tarayıcı işlem dizileri bile yeniden kullanılabilir RPA (Robotic Process Automation) koduna sabitlenebilir (Computer Use'un kendisi Bölüm 9'da ele alınır ve işlem dizilerini sabitleme mekanizması Bölüm 8'de ayrıntılı olarak ele alınır). Deep Research'ün arama ve bilgi sentezi, kod güdümlü web istekleri ve ayrıştırma yoluyla gerçekleştirilebilir. Computer Use daha çok yönlü olsa da, maliyeti, gecikmesi ve kararlılığı aynı işlemleri doğrudan kod veya API'ler aracılığıyla tamamlamaktan çok daha düşüktür. Kod üretimi en verimli, en düşük maliyetli ve en yeniden kullanılabilir yetenek temelidir.
 
+
 ![Şekil 5-1: OpenClaw Mimarisinde Kodlama Agent'ı Çekirdeği](images/fig5-1.svg)
+
 
 Bu mimariyi somut bir yürütme akışı aracılığıyla anlayalım. Kullanıcının "Geçen çeyreğin satış verilerini analiz edip bir özet rapor oluşturmama yardım et" diye talep ettiğini varsayalım:
 
@@ -157,7 +159,7 @@ Kilit dokümanlar eksikse, Agent kör biçimde çalışmaya başlamamalı, dokü
 
 Proje dokümantasyonunun artık Agent'lara özgü bir biçimi var: **Proje Talimat Dosyaları**. CLAUDE.md, AGENTS.md, .cursorrules gibi dosyalar fiili sektör standartları haline geldi—her oturumun başında otomatik olarak context'e enjekte edilirler, proje düzeyinde system prompt'lar olarak hareket ederler. İnsan okuyucular için tasarlanmış README'lerden farklı olarak, talimat dosyaları Agent'lar için davranış kurallarını taşır: inşa ve test komutları ("`npm test` yerine `pnpm test` kullan"), kod stili ("any tipini devre dışı bırak") ve net kısıtlı bölgeler ("`migrations/` dizinini değiştirme"). Bu, OpenClaw'ın `SOUL.md`si (Agent'ın kimliğini ve davranış kurallarını tanımlar) ve `MEMORY.md`si (oturumlar arası deneyimi biriktirir) ile aynı fikirdir, farklı düzeylerde uygulanır: SOUL.md "Agent'ın kim olduğunu" tanımlarken, proje talimat dosyaları "bu projede nasıl çalışılacağını" tanımlar. Bölüm 2'deki context engineering perspektifinden, talimat dosyaları aynı zamanda en ekonomik kararlı ön ektir—içerikleri görevle değişmez, bu da onları doğal olarak KV Cache dostu kılar; aynı zamanda "bilginin kod tabanının kendisinde var olması gerektiği" ilkesinin en doğrudan uygulamasıdır.
 
-Bilgi dışsallaştırma ilkesinin ilginç bir sonucu daha var: **Uzaktan çalışmaya dost olan ekipler genellikle Yapay Zeka Ajanlarına da dosttur.** Uzaktan ekipler asenkron iletişime ve dokümantasyona güvenmek zorundadır—kararlar dokümanlarda kaydedilir, bağlam issue ve PR açıklamalarında yaşar, kabile bilgisi bir sonraki masada veya konferans odası tahtasında ağızdan ağıza geçmek yerine geliştirici kılavuzlarında birikir. Bu tam olarak Agent'ların tüketebileceği bilgi biçimidir: bir Agent sözlü bir anlaşmayı okuyamaz, ama bir tasarım dokümanını okuyabilir. Tersine, "yanımdaki kişiye sorayım" üzerine çalışan bir ekip, bir Agent'a yeni bir uzaktan işe alınan kişiyle aynı dik işe alışma maliyetini dayatır. Bir ekibin "yapay zekaya hazır olma" durumu için basit bir vekil: uzaktan yeni bir gelen, yalnızca kod deposu ve dokümantasyonuyla bağımsız olarak çalışabilir mi?
+Bilgi dışsallaştırma ilkesinin ilginç bir sonucu daha var: **Uzaktan çalışmaya dost olan ekipler genellikle AI Agent'lara da dosttur.** Uzaktan ekipler asenkron iletişime ve dokümantasyona güvenmek zorundadır—kararlar dokümanlarda kaydedilir, bağlam issue ve PR açıklamalarında yaşar, kabile bilgisi bir sonraki masada veya konferans odası tahtasında ağızdan ağıza geçmek yerine geliştirici kılavuzlarında birikir. Bu tam olarak Agent'ların tüketebileceği bilgi biçimidir: bir Agent sözlü bir anlaşmayı okuyamaz, ama bir tasarım dokümanını okuyabilir. Tersine, "yanımdaki kişiye sorayım" üzerine çalışan bir ekip, bir Agent'a yeni bir uzaktan işe alınan kişiyle aynı dik işe alışma maliyetini dayatır. Bir ekibin "yapay zekaya hazır olma" durumu için basit bir vekil: uzaktan yeni bir gelen, yalnızca kod deposu ve dokümantasyonuyla bağımsız olarak çalışabilir mi?
 
 **Görev Anlama ve Gereksinim Netleştirme.**
 
@@ -312,6 +314,7 @@ Büyük bir kod tabanında ilgili kodu bulmak, bir Kodlama Agent'ının işinin 
 
 ![Şekil 5-3: Kodlama Agent'ı Arama Araçlarının Karşılaştırması](images/fig5-3.svg)
 
+
 **Regex İçerik Eşleştirme** (grep/ripgrep): En geleneksel arama yöntemi, dosya içeriklerini kalıp eşleşmeleri için satır satır tarar. Agent bulunacak kesin metni bildiğinde (fonksiyon adları, değişken adları, hata mesajları), her oluşumu hızlı ve doğru biçimde bulabilir. Düzenli ifadelerin (özel sembollerle metin kalıplarını tanımlayan bir söz dizimi, örn. `def handle.*`, `handle` ile başlayan tüm fonksiyon tanımlarıyla eşleşir) ifade gücü, salt gerçek metni değil, belirli bir yapıya uygun kodu da yakalayan karmaşık kalıpları yakalar. Pratikte, gürültüyü azaltmak için dosya türü filtrelemesi (yalnızca Python dosyalarını ara) ve yol kalıbı filtrelemesi (test dizinlerini hariç tut) de desteklenmelidir. Temel sınırlama: yalnızca metinsel eşleşmeleri bulur ve hiçbir semantik anlamaz—"kullanıcı kimlik doğrulaması" araması, giriş mantığını ele alan ama içinde "kimlik doğrulama" kelimesi geçmeyen bir fonksiyonu asla bulamaz.
 
 **Dosya Adı Kalıp Eşleştirme** (glob): Dosya içeriğini göz ardı eder, yalnızca dosya sisteminin yol yapısında bir kalıpla eşleşen dosyaları arar. Örneğin, `**/*.test.ts` yinelemeli olarak tüm TypeScript test dosyalarını bulur, `src/components/**/Button.tsx` components altında herhangi bir derinlikte Button.tsx arar. İçerik aramadan çok daha hızlıdır (dosyaları açıp okumaya gerek yoktur) ve Agent'ın proje yapısını keşfetmedeki ilk adımıdır—tüm dosya sistemini tarayarak projenin organizasyonel çerçevesini hızlıca kurar.
@@ -334,6 +337,7 @@ Bu dört arama yöntemi tamamlayıcı bir araç kutusu oluşturur, pratikte gene
 Dosya düzenlemenin zorluğu işlemin kendisinde değil, bir LLM kullanarak sisteme "neyin ve nasıl değiştirileceğini" verimli ve güvenilir biçimde nasıl söyleneceğindedir. Şekil 5-4, insan dili ifadesi ile makine hassasiyetinde yürütme arasındaki temel gerilimi gösteren beş dosya düzenleme şemasını karşılaştırır.
 
 ![Şekil 5-4: Beş Dosya Düzenleme Şemasının Karşılaştırması](images/fig5-4.svg)
+
 
 **Diff Açıklaması + Apply Modeli**: Model dosyanın nasıl düzenleneceğini doğrudan belirtmez; bunun yerine bir değişiklik açıklaması üretir—bu, git diff'e benzer bir diff metni (`git diff` komutunun çıktı verdiği format, "hangi satırların silindiğini ve hangilerinin eklendiğini" gösterir) veya atlama işaretleriyle bir kod iskeleti (değiştirilmemiş kısımları atlamak için "burada değişmeden kalır" gibi yorumlar kullanmak) olabilir. Bu açıklama daha sonra özelleşmiş bir "Apply Model"e—genellikle başka, daha küçük, daha hızlı bir LLM—verilir, bu da bunu orijinal dosyayla birleştirip eksiksiz yeni dosyayı üretmekten sorumludur. Bu sorumluluk ayrımı, ana modelin yüksek düzeyli kod mantığına, apply modelinin ise düşük düzeyli metin işlemlerine odaklanmasına izin verir. Naif bir uygulamanın kırılganlığı birleştirme adımında yatar: değişiklik açıklaması ile gerçek dosya kodu arasında küçük tutarsızlıklar olduğunda, aynı konuma işaret edip etmediklerini belirlemesi gerekir; birden fazla benzer kod parçası olduğunda, yanlış yere birleştirebilir. Cursor bu yaklaşımın sürekli evriminin bir temsilcisidir: ana model atlama işaretleriyle bir kod iskeleti çıktı verir, özel eğitilmiş hızlı-apply küçük bir model eksiksiz dosyayı yeniden yazar ve spekülatif çözme (orijinal dosya içeriğini paralel doğrulama için bir taslak olarak kullanmak) birleştirme hızını saniyede binlerce token'a iter—mühendislik yatırımı bu yaklaşım için güvenilirlik ve hız satın almıştır.
 
@@ -499,6 +503,7 @@ Bu tasarımın değeri iki düzeyde anlaşılmalıdır.
 >
 > **Beklenen sonuçlar**: Deney grubu kontrol grubunu önemli ölçüde geride bırakır. Daha da önemlisi, modelin parametreleri hazırlarken ihlalleri otonom olarak belirlediği ve doğrudan kullanıcıya alternatifler önerdiği gözlemlenir, "kontrol listesi olarak parametrelerin" etkinliğini doğrular; aynı zamanda, `expected_*` öz bildirilen değerler ile veritabanı gerçek değeri arasındaki tutarsızlıkların oranı sayılır, hatalı bilişi engellemede "sunucu tarafı gerçek değer doğrulamasının" gerekliliğini doğrular.
 >
+
 ### Kod Güdümlü Multimedya Üretimi
 
 Birçok karmaşık dokümanın oluşturulması özünde yapılandırılmış verinin organizasyonu ve sunumudur. Bir sunum, bir teknik rapor veya etkileşimli bir uygulama olsun, temel yapı kod tarafından tanımlanır — HTML yapıyı tanımlar, CSS stili kontrol eder ve JavaScript etkileşimliliği uygular. Geleneksel doküman oluşturma, GUI arayüzleri aracılığıyla WYSIWYG düzenlemeye dayanır, ama bu Agent'lar için ne sezgiseldir ne de verimlidir, çünkü GUI işlemleri görsel anlama ve hassas koordinat konumlandırma gerektirir. Kod üretimi aracılığıyla, Agent'lar görsel konumlandırma zorluğunu atlar ve dokümanlar üzerinde hassas kontrol kazanır — her öğenin konumu, stili ve içeriği açıkça tanımlanır ve programatik olarak değiştirilip optimize edilebilir.
@@ -508,6 +513,7 @@ Birçok karmaşık dokümanın oluşturulması özünde yapılandırılmış ver
 PPT oluşturmak meşhur biçimde emek yoğundur. Tipik bir akademik sunum düzinelerce slayta uzanır, her biri dikkatli bir düzen, damıtılmış kilit noktalar ve iyi seçilmiş grafikler talep eder. Ancak PPT oluşturmayı bir kod üretim problemi olarak yeniden çerçevelerseniz, karmaşıklığın çoğu ortadan kalkar. Slidev gibi modern sunum çerçeveleri zarif bir tasarım felsefesi benimser: içeriği Markdown ve HTML'de tanımlayın. Bir slayt oluşturmak birkaç satır öz işaretleme alır ve çerçeve render etmeyi, düzeni ve animasyonu ele alır. Kod üretiminde ustalaşmış bir Agent için, bu ideal bir arazidir.
 
 ![Şekil 5-5: PPT üretimi için Proposer-Reviewer mekanizması](images/fig5-5.svg)
+
 
 Ancak kodu üretmek yeterli değildir. **Agent kodu yazdıktan sonra, sonucun gerçekte nasıl render edildiğine dair hiçbir fikri yoktur**: çok kalabalık içerik, taşan metin, yanlış boyutlu görüntüler — bunların hiçbiri slaytlar gerçekten render edilene kadar görünür değildir. Bu yüzden, kod yazma ve kalite incelemesini iki bağımsız Agent'a ayırmak için bir **Proposer-Reviewer** mekanizması (Şekil 5-5'te gösterildiği gibi) gereklidir:
 
@@ -553,7 +559,7 @@ Video düzenlemeyi API çağrıları ve kod üretimi olarak yeniden çerçevelem
 > **Temel zorluk**: Kullanıcının doğal dil düzenleme gereksinimlerini anlamak ve bunları hassas API çağrısı dizilerine dönüştürmek, çeşitli düzenleme işlemlerini (kırpma, birleştirme, altyazılar, ses parçası karıştırma, görsel efektler) ele almak ve üretilen Python betiğinin doğru yürütülmesini sağlamak. Proposer Agent kodu yazdıktan sonra, video efektine doğrudan karar veremez; Reviewer Agent'ın render etmesine ve anahtar kareleri kontrol etmek için bir Vision LLM kullanmasına güvenmelidir.
 >
 > **Teknik yaklaşım**: Kullanıcı video materyali sağlar (örn. sörf, yürüyüş, kayak gibi sahneler içeren ham görüntü) ve gereksinimleri doğal dilde tanımlar (örn. "Sörf kısmını çıkar"). Proposer Agent, **iki adımlı bir konumlandırma stratejisiyle** bir video analiz alt Agent'ı kullanır:
-
+>
 > **Adım 1, kaba konumlandırma**: Video yolunu, her 10 saniyede bir ekran görüntüsü aralığını ve hedef soruyu geçirerek alt Agent'ı çağırın. Alt Agent, anahtar kareleri yakalamak için ffmpeg kullanır, tüm ekran görüntülerini soruyla birlikte bir Vision LLM'e girdi olarak verir ve sahne aralığını döndürür (örn. "Sörf 40-110 saniye arasında").
 >
 > **Adım 2, ince taneli konumlandırma**: Sınır zaman noktalarını hassas biçimde bulmak için alt Agent'ı daha dar bir aralıkla ve her saniyede bir ekran görüntüsü yoğunluğuyla yeniden çağırın.
@@ -562,6 +568,7 @@ Video düzenlemeyi API çağrıları ve kod üretimi olarak yeniden çerçevelem
 >
 > **Kabul kriterleri**: Agent, videodaki farklı sahneleri doğru biçimde belirleyebilir ve doğal dil talimatlarına dayanarak düzenleme betiklerini doğru biçimde üretebilir. Başlangıç ve bitiş noktaları doğrudur (3 saniye içinde hata). Talimatlar özel efekt gereksinimleri (ağır çekim, geçişler, altyazılar) içeriyorsa, üretilen video efektleri doğru biçimde uygular. Reviewer Agent belirgin hataları (kilit içeriğin eksik olması, ilgisiz parçaların dahil edilmesi) tespit edebilir ve düzeltmeleri tetikleyebilir. Nihai çıktı video dosyası doğru formata sahiptir ve beklenen kaliteyi karşılar.
 >
+
 ### Bir Sistem Adaptörü Olarak Kod
 
 Önceki bölümlerdeki kod çoğunlukla "insanla yüzleşen" şeyler üretiyordu — raporlar, slaytlar, arayüzler. Bu bölümdeki kod başka bir yöne işaret ediyor: **makineyi makineye bağlamak**. Gerçek sistemlerde, bir Agent'ın konuşması gereken dış servislerin genellikle hazır bir SDK'sı yoktur ve arayüzleri nadiren düzenlidir — eksik dokümantasyon, standart olmayan dönüş formatları, sürümden sürüme kayan alanlar. Agent, birinin önceden bir uyarlama katmanı yazmasını beklemek zorunda değildir. Arayüz dokümantasyonunu anında okuyabilir, veya yalnızca bir veya iki gerçek yanıtı gözlemleyip adaptörü o anda üretebilir: bir HTTP istemcisi oluşturur, kimlik doğrulama başlıklarını derler, standart olmayan dönüş yapısını ayrıştırır ve yukarı akış veri modelini alt akışın tüketebileceği bir şekle çevirir. Kod burada keyfi sistemleri bağlamak için "evrensel yapıştırıcıdır"—bir boşluk olduğunda, onu doldurmak için o anda bir parça yapıştırıcı üretilir. Bu, meta-yeteneğin "sistem arayüzü" yönünün kalbidir. Aşağıda geliştirilen uyarlanabilir log ayrıştırma, bu yeteneğin gözlemlenebilirlik ortamında somutlaşmış halidir: hiç durmadan evrilen log formatlarıyla karşı karşıya olan Agent, benzer şekilde anında ayrıştırma kodu üreterek uyum sağlar.
@@ -603,6 +610,7 @@ Kod üretimi teşhis için otomatikleştirilmiş bir yol sağlar. Agent üretim 
 > ![Şekil 5-7: Akıllı Üretim Logu Teşhis Boru Hattı](images/fig5-7.svg)
 >
 >
+
 ### Üretici UI Olarak Kod
 
 Geleneksel Agent sistemleri kullanıcılarla esas olarak düz metin diyaloğu aracılığıyla etkileşime girer. Ama metin doğrusal, tek boyutlu bir ortamdır ve birçok senaryoda verimsizdir. Yapılandırılmış bilgi toplamak uzun bir soru gidiş-geliş serisine dönüşür; karmaşık veri ilişkileri düz metnin ifade edebileceklerini zorlar; ve kullanıcının seçenekler arasından seçim yapması gerektiğinde, bir metin listesi görsel bir arayüzden çok daha az sezgiseldir.
@@ -654,7 +662,7 @@ Daha ileri giderek, Agent bir boru hattı oluşturan iki artifact üretebilir: S
 
 > **Deney 5-10 ★★: Doğal Dil Etkileşimli ERP Agent'ı**
 >
-> ERP (Kurumsal Kaynak Planlaması) yazılımı, işletmeler için kritik bir sistemdir, tipik olarak karmaşık işlemlerin birden fazla fare tıklaması gerektirdiği bir GUI arayüzü kullanır. Bir Yapay Zeka Ajanı, kullanıcının doğal dil sorgularını SQL ifadelerine dönüştürerek otomatikleştirilmiş sorgulamayı mümkün kılabilir.
+> ERP (Kurumsal Kaynak Planlaması) yazılımı, işletmeler için kritik bir sistemdir, tipik olarak karmaşık işlemlerin birden fazla fare tıklaması gerektirdiği bir GUI arayüzü kullanır. Bir AI Agent, kullanıcının doğal dil sorgularını SQL ifadelerine dönüştürerek otomatikleştirilmiş sorgulamayı mümkün kılabilir.
 >
 > Gereksinimler: İki tablo içeren bir PostgreSQL veritabanı kurun: (1) Çalışan tablosu, çalışan ID'si, ad, departman, seviye, işe alım tarihi, istifa tarihi (NULL şu anda çalıştığı anlamına gelir) dahil; (2) Maaş tablosu, çalışan ID'si, ödeme tarihi, maaş (ayda bir kayıt) dahil. Agent otomatik olarak yanıtlar:
 >
@@ -682,6 +690,7 @@ Ancak tam dinamik üretim maliyetlidir ve yavaştır—üretimden çok neyin mü
 >
 > **Teknik Yaklaşım**: Temel bir chatbot uygulaması (React frontend + FastAPI backend) inşa edin, hem frontend hem de backend sıcak yeniden yüklemeyi (React'ın HMR'si, FastAPI'nin reload'u) destekleyen geliştirme modunda çalışır. Kullanıcılar konuşma sırasında UI özelleştirme gereksinimleri (renkler, yazı tipleri, düzen, bileşen konumları vb.) önerir. Agent kodu otonom olarak değiştirir. Sıcak yeniden yükleme mekanizması dosya değişikliklerini otomatik olarak tespit eder, frontend yeniden derlenir ve yenilenir ve kullanıcı arayüz değişikliklerini gerçek zamanlı olarak görür. Birden fazla yinelemeli özelleştirme turunu destekler.
 >
+
 ### Kodun Kod Yaratması: Agent Bootstrapping
 
 Önceki bölümler kod üretimini bir alandan diğerine izledi—matematiksel reasoning'den doküman oluşturmaya, arayüz özelleştirmesine kadar. Bu yetenekleri sınırlarına kadar itin ve doğal bir soru ortaya çıkar: bir Agent, başka bir Agent yaratmak için kod üretimini kullanabilir mi?
@@ -760,7 +769,7 @@ Kitabın “Agent İnşa Etme” kısmını artık tamamladık; kod üretimi de 
 3. ★★ Bir kod üretim Agent'ı log ayrıştırmayı ele aldığında, format evrimini otomatik olarak takip edebilir. Ama bir format değişikliği kasıtlı bir değişiklik değil bir hataysa, Agent'ın uyum sağlayabilirliği aslında sorunu maskeler. Bir Agent "uyum gerektiren değişiklikler" ile "bildirilmesi gereken anormallikleri" nasıl ayırt etmelidir?
 4. ★★ Bu bölüm, PPT üretiminde, video düzenlemede ve log görselleştirmede proposer-reviewer mekanizmasını tekrar tekrar kullanır. Reviewer'ın estetik tercihleri hedef kullanıcınınkinden farklıysa—örneğin, Reviewer bilgi yoğunluğunu makul bulurken kullanıcı çok kalabalık buluyorsa—geri bildirim döngüsü yanlış bir yerel optimumda yakınsayabilir. Kullanıcı tercih geri bildirimi Reviewer döngüsüne nasıl dahil edilebilir?
 5. ★★ Bu bölüm, bir Kodlama Agent'ının yürütme ve hata ayıklamadan elde edilen deneyimi kod tabanına geri yatırmasının çeşitli yollarını gösterir—bilgi tabanı dosyalarına yazmak, mimari dokümantasyonu güncellemek, proje talimat dosyalarını korumak ve işlem dizilerini koda sabitlemek. Bu deneyim system prompt içindeki kurallara daha da inceltilirse, kural kümesi zamanla genişleyecektir. Birikmiş kurallar üzerinde "çöp toplama" nasıl gerçekleştirebiliriz—gereksiz veya güncelliğini yitirmiş girdileri belirleyip temizlemek? Tek bir başarılı kod değişikliği neden Bölüm 8 anlamında henüz sürekli evrim değildir?
-6. ★ "Uzaktan çalışmaya dost olan ekipler genellikle Yapay Zeka Ajanlarına da dosttur." Ekibiniz veya kuruluşunuz bilgi dokümantasyonu açısından "yapay zekaya hazır" olmaya ne kadar yakın? En büyük engel nedir?
+6. ★ "Uzaktan çalışmaya dost olan ekipler genellikle AI Agent'lara da dosttur." Ekibiniz veya kuruluşunuz bilgi dokümantasyonu açısından "yapay zekaya hazır" olmaya ne kadar yakın? En büyük engel nedir?
 7. ★★★ Simon Willison, Agent'lar için "Ölümcül Üçlüyü" (özel veriye erişim, güvenilmeyen içeriğe maruz kalma ve dış iletişim yetenekleri) önerdi. Bu bölüm dördüncüsünü ekliyor: kalıcı bellek. Dört unsuru da eş zamanlı olarak ele alması gereken bir üretim ortamında, bir güvenlik stratejisini nasıl tasarlardınız?
 8. ★★ Artifact kalıbı, bir Agent tarafından üretilen SQL veya frontend kodunun kullanıcının tarayıcısında veya veritabanında doğrudan yürütülmesine izin verir. Ancak, üretilen SQL yıkıcı işlemler yürütebilir ve üretilen HTML açıklar içerebilir. Sistem güvenliği nasıl sağlanabilir?
 9. ★★ İş kurallarını araçlar içinde veritabanı gerçeğine dayalı doğrulamalar olarak kodlamak ve modeli çağırmadan önce politika koşullarını kontrol etmeye yönlendirmek için parametre tasarımını kullanmak, özünde Agent davranışını kısıtlamak için kod yapısını kullanır. Bu "kural olarak kod" kalıbının doğal dil kurallarına kıyasla avantajları ve sınırlamaları nelerdir?
