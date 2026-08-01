@@ -87,7 +87,9 @@ This request contains only two messages: one system message containing rules wri
 
 Real Agent workflows are usually more complex than a single-turn Q&A. When a user asks, "What's the current time and weather in Vancouver?", the model needs access to dynamic external information: the current time and the latest weather. The following example walks through each interaction between the Agent framework and the model.
 
-![Figure 2-3: Complete Interaction Sequence for Two Tool Calls](images/fig2-3.svg)
+![Figure 2-3: Complete Interaction Sequence for Two Model API Calls](images/fig2-3.svg)
+
+In the figure, “first” and “second” both refer to **calls to the model API**, not to two tools being called sequentially. In this example, the timezone argument for `get_current_time` and the city and unit arguments for `get_weather` can all be determined up front; the weather service returns the city's latest weather itself and does not depend on the time tool's output, so the Agent framework can execute them in parallel. If a later tool's arguments must come from an earlier tool's result, the model must request that tool in a subsequent round, and the two tools must execute serially.
 
 **First API call — Agent framework sends the initial request:**
 

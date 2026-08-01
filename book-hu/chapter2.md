@@ -87,7 +87,9 @@ Ez a kérés csak két üzenetet tartalmaz: egy rendszerüzenetet a fejlesztő �
 
 A valós ügynök-munkafolyamatok általában összetettebbek, mint egy egymenetű Kérdés-Válasz. Amikor egy felhasználó megkérdezi: "Mi a jelenlegi idő és időjárás Vancouverben?", a modellnek hozzá kell férnie dinamikus külső információkhoz: a jelenlegi időhöz és a legfrissebb időjáráshoz. A következő példa végigvezeti az ügynök-keretrendszer és a modell közötti egyes interakciókat.
 
-![2-3. ábra: Két eszközhívás teljes interakciós sorozata](images/fig2-3.svg)
+![2-3. ábra: Két modell-API-hívás teljes interakciós sorozata](images/fig2-3.svg)
+
+Az ábrán az „első” és a „második” egyaránt **a modell API-jának hívására** utal, nem két eszköz egymás utáni meghívására. Ebben a példában a `get_current_time` időzóna-argumentuma, valamint a `get_weather` város- és mértékegység-argumentuma előre meghatározható; az időjárási szolgáltatás maga adja vissza a város legfrissebb időjárását, és nem függ az időeszköz kimenetétől, ezért az ágenskeretrendszer párhuzamosan futtathatja a két eszközt. Ha egy későbbi eszköz argumentumait egy korábbi eszköz eredményéből kell meghatározni, a modellnek egy következő körben kell kérnie az eszközhívást, és a két eszközt sorosan kell végrehajtani.
 
 **Első API hívás – Az ügynök-keretrendszer elküldi a kezdeti kérést:**
 
