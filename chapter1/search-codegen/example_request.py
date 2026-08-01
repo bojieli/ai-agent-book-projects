@@ -106,7 +106,7 @@ def make_gpt5_openrouter_request(
                 output_details = usage.get(
                     "completion_tokens_details", usage.get("output_tokens_details")
                 )
-                print(f"\nGPT-5 OpenRouter Usage:")
+                print("\nGPT-5 OpenRouter Usage:")
                 print(f"  Input: {input_tokens} tokens", end="")
                 if isinstance(input_details, dict):
                     print(f" (cached: {input_details.get('cached_tokens', 0)})")

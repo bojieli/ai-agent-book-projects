@@ -11,10 +11,13 @@ load_dotenv()
 def _optional_int_env(name: str) -> Optional[int]:
     """Read an optional integer without making module import configuration-fatal."""
     raw_value = os.getenv(name)
-    if raw_value is None or not raw_value.strip():
+    if raw_value is None:
+        return None
+    cleaned = raw_value.strip()
+    if not cleaned or not cleaned.isascii() or not cleaned.isdecimal():
         return None
     try:
-        return int(raw_value.strip())
+        return int(cleaned)
     except ValueError:
         return None
 

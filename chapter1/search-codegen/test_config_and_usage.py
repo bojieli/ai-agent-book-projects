@@ -9,9 +9,12 @@ import example_request
 ROOT = Path(__file__).parent
 
 
-def _import_config_with(value: str) -> subprocess.CompletedProcess[str]:
+def _import_config_with(value: str | None) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
-    env["DEFAULT_MAX_TOKENS"] = value
+    if value is None:
+        env.pop("DEFAULT_MAX_TOKENS", None)
+    else:
+        env["DEFAULT_MAX_TOKENS"] = value
     return subprocess.run(
         [
             sys.executable,
@@ -27,7 +30,7 @@ def _import_config_with(value: str) -> subprocess.CompletedProcess[str]:
 
 
 def test_default_max_tokens_import_accepts_only_values_int_can_parse():
-    for value in ("4000.0", "abc", "²"):
+    for value in (None, "", "   ", "4000.0", "abc", "²", "-1", "+1"):
         result = _import_config_with(value)
         assert result.returncode == 0, result.stderr
         assert result.stdout.strip() == "None"
@@ -67,3 +70,20 @@ def test_chat_completions_usage_uses_chat_token_and_detail_keys(monkeypatch, cap
     assert "Input: 123 tokens (cached: 7)" in output
     assert "Output: 45 tokens (reasoning: 9)" in output
     assert "Total: 168" in output
+
+    payload = {
+        "usage": {
+            "input_tokens": 210,
+            "output_tokens": 34,
+            "total_tokens": 244,
+            "input_tokens_details": {"cached_tokens": 11},
+            "output_tokens_details": {"reasoning_tokens": 13},
+        }
+    }
+    result = example_request.make_gpt5_openrouter_request("key", "system", "user")
+    output = capsys.readouterr().out
+
+    assert result == payload
+    assert "Input: 210 tokens (cached: 11)" in output
+    assert "Output: 34 tokens (reasoning: 13)" in output
+    assert "Total: 244" in output
