@@ -14,48 +14,48 @@
     </style>
   </defs>
 
-  <text x="28" y="32" class="title">v2 (2025 paper)</text>
+  <text x="28" y="32" class="title" font-size="18">v2 (2025 paper)</text>
   <rect x="28" y="50" width="125" height="58" rx="6" class="box"/>
-  <text x="90" y="84" text-anchor="middle" class="label">Dialogue</text>
+  <text x="90" y="84" text-anchor="middle" class="label" font-size="15">Dialogue</text>
   <line x1="153" y1="79" x2="180" y2="79" class="flow"/>
   <rect x="180" y="50" width="135" height="58" rx="6" class="box"/>
-  <text x="248" y="76" text-anchor="middle" class="label">LLM extract</text>
-  <text x="248" y="96" text-anchor="middle" class="detail">candidate facts</text>
+  <text x="248" y="76" text-anchor="middle" class="label" font-size="15">LLM extract</text>
+  <text x="248" y="96" text-anchor="middle" class="detail" font-size="13">candidate facts</text>
   <line x1="315" y1="79" x2="342" y2="79" class="flow"/>
   <rect x="342" y="50" width="135" height="58" rx="6" class="box"/>
-  <text x="410" y="76" text-anchor="middle" class="label">Vector search</text>
-  <text x="410" y="96" text-anchor="middle" class="detail">existing memory</text>
+  <text x="410" y="76" text-anchor="middle" class="label" font-size="15">Vector search</text>
+  <text x="410" y="96" text-anchor="middle" class="detail" font-size="13">existing memory</text>
   <line x1="477" y1="79" x2="504" y2="79" class="flow"/>
   <rect x="504" y="50" width="135" height="58" rx="6" class="box"/>
-  <text x="572" y="76" text-anchor="middle" class="label">LLM decide</text>
-  <text x="572" y="96" text-anchor="middle" class="detail">compare facts</text>
+  <text x="572" y="76" text-anchor="middle" class="label" font-size="15">LLM decide</text>
+  <text x="572" y="96" text-anchor="middle" class="detail" font-size="13">compare facts</text>
   <line x1="639" y1="79" x2="666" y2="79" class="flow"/>
   <rect x="666" y="50" width="226" height="58" rx="6" class="box"/>
-  <text x="779" y="76" text-anchor="middle" class="label">ADD · UPDATE</text>
-  <text x="779" y="98" text-anchor="middle" class="label">DELETE · NOOP</text>
-  <text x="460" y="133" text-anchor="middle" class="detail">Conflicts resolved at write time; old facts may be overwritten or deleted</text>
+  <text x="779" y="76" text-anchor="middle" class="label" font-size="15">ADD · UPDATE</text>
+  <text x="779" y="98" text-anchor="middle" class="label" font-size="15">DELETE · NOOP</text>
+  <text x="460" y="133" text-anchor="middle" class="detail" font-size="13">Conflicts resolved at write time; old facts may be overwritten or deleted</text>
 
   <line x1="28" y1="158" x2="892" y2="158" stroke="#bbb" stroke-width="1"/>
 
-  <text x="28" y="194" class="title">v3 (April 2026)</text>
+  <text x="28" y="194" class="title" font-size="18">v3 (April 2026)</text>
   <rect x="28" y="212" width="125" height="58" rx="6" class="box new"/>
-  <text x="90" y="246" text-anchor="middle" class="label">Dialogue</text>
+  <text x="90" y="246" text-anchor="middle" class="label" font-size="15">Dialogue</text>
   <line x1="153" y1="241" x2="180" y2="241" class="flow"/>
   <rect x="180" y="212" width="150" height="58" rx="6" class="box new"/>
-  <text x="255" y="238" text-anchor="middle" class="label">1× LLM extract</text>
-  <text x="255" y="258" text-anchor="middle" class="detail">single pass</text>
+  <text x="255" y="238" text-anchor="middle" class="label" font-size="15">1× LLM extract</text>
+  <text x="255" y="258" text-anchor="middle" class="detail" font-size="13">single pass</text>
   <line x1="330" y1="241" x2="357" y2="241" class="flow"/>
   <rect x="357" y="212" width="150" height="58" rx="6" class="box new"/>
-  <text x="432" y="238" text-anchor="middle" class="label">ADD-only store</text>
-  <text x="432" y="258" text-anchor="middle" class="detail">preserve history</text>
+  <text x="432" y="238" text-anchor="middle" class="label" font-size="15">ADD-only store</text>
+  <text x="432" y="258" text-anchor="middle" class="detail" font-size="13">preserve history</text>
   <line x1="507" y1="241" x2="534" y2="241" class="flow"/>
   <rect x="534" y="212" width="218" height="58" rx="6" class="box new"/>
-  <text x="643" y="236" text-anchor="middle" class="label">Hybrid retrieval</text>
-  <text x="643" y="258" text-anchor="middle" class="detail">semantic · BM25 · entity · time</text>
+  <text x="643" y="236" text-anchor="middle" class="label" font-size="15">Hybrid retrieval</text>
+  <text x="643" y="258" text-anchor="middle" class="detail" font-size="13">semantic · BM25 · entity · time</text>
   <line x1="752" y1="241" x2="779" y2="241" class="flow"/>
   <rect x="779" y="212" width="113" height="58" rx="6" class="box new"/>
-  <text x="835" y="238" text-anchor="middle" class="label">Top-k</text>
-  <text x="835" y="258" text-anchor="middle" class="detail">ranked facts</text>
-  <text x="460" y="299" text-anchor="middle" class="detail">LoCoMo 71.4 → 92.5 (+21.1) · LongMemEval 67.8 → 94.4 (+26.6)</text>
-  <text x="460" y="323" text-anchor="middle" class="detail">History is preserved; relevance and time resolve conflicts during retrieval</text>
+  <text x="835" y="238" text-anchor="middle" class="label" font-size="15">Top-k</text>
+  <text x="835" y="258" text-anchor="middle" class="detail" font-size="13">ranked facts</text>
+  <text x="460" y="299" text-anchor="middle" class="detail" font-size="13">LoCoMo 71.4 → 92.5 (+21.1) · LongMemEval 67.8 → 94.4 (+26.6)</text>
+  <text x="460" y="323" text-anchor="middle" class="detail" font-size="13">History is preserved; relevance and time resolve conflicts during retrieval</text>
 </svg>
