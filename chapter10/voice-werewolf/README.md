@@ -8,7 +8,7 @@ The experiment supports two first-class user seats: a consenting live human, or 
 
 1. The simulator receives only the private and public memory authorized for its randomized seat.
 2. A separately configurable real LLM must call the sole legal tool for the turn: `speak_publicly` or `choose_player`.
-3. The chosen utterance is synthesized into a real waveform. The automatic provider order is OpenAI Audio, local `espeak` plus OpenRouter native-audio ASR, then local `espeak` plus Gemini ASR.
+3. The chosen utterance is synthesized into a real waveform. The automatic provider order is OpenAI Audio, local `espeak` (or macOS `say`) plus OpenRouter native-audio ASR, then local synthesis plus Gemini ASR.
 4. The game consumes only the real ASR transcript. It never receives the LLM's pre-audio utterance directly.
 5. For skills and votes, the parsed ASR action must exactly equal the tool-selected action; a mismatch fails closed and is retained as `simulator_action_mismatch`.
 
@@ -89,15 +89,35 @@ python demo.py --offline          # deterministic CI/privacy supplement
 pytest -q
 ```
 
-## Real validation results (2026-08-01)
+## Real validation results (2026-08-01 through 2026-08-03)
 
-The retained [`validation/runs/`](validation/runs/) evidence contains three formal eight-seat games and an independent validation file for each. The independent validator supersedes the run's embedded status when it finds a boundary defect. Credential scans over reports, validations, and logs found zero hits.
+The retained [`validation/runs/`](validation/runs/) evidence contains four formal eight-seat games and an independent validation file for each. The independent validator supersedes the run's embedded status when it finds a boundary defect. Credential scans over reports, validations, and logs found zero hits.
 
 - `exp10-8-simulated-user-openrouter-20260801`: the embedded report claimed action agreement and all four strategy criteria passed, but strict revalidation correctly rejects its abstention because ASR returned `P1 is not`, not an explicit abstention.
 - `...-v2`: the unaffected formal E2E result. It completed three full cycles with two user tool/audio/ASR actions, unique response IDs and nonzero audio-token receipts, information isolation, and a rule-based winner. The independent strategy judge failed Villager reasoning because the simulated Villager voted out the uncontested Seer.
 - `...-v3`: used `anthropic/claude-sonnet-4` for the user and retained four tool/audio/ASR actions. Strict revalidation rejects two ambiguous abstentions, and the strategy judge also caught a Werewolf fabricating a public event.
 
-The parser now fails closed unless an abstention transcript explicitly contains `abstain`, `skip`, `none`, or the supported Chinese equivalents; the synthetic utterance is the real-audio-probed phrase “I choose to abstain.” The unaffected v2 run is positive end-to-end verification and useful negative strategy evidence. Its strict overall result remains incomplete because strategy failed; stale embedded status and gates from different games are deliberately not combined. A real human microphone session is still optional manual coverage for VAD and barge-in, not a blocker for automated system E2E.
+The completed 2026-08-03 campaign is
+[`exp10-8-simulated-user-openrouter-20260803-v11`](validation/runs/exp10-8-simulated-user-openrouter-20260803-v11/acceptance_report.json).
+In one seed-2 game it completed three night/day/vote cycles, preserved information
+isolation, reached a rule-determined good-faction win, and passed all four strategy
+criteria. The randomized P1 Villager performed six real LLM tool calls, six matching
+speech/ASR round trips, and three public votes across the full game. The report retains
+13 unique response IDs across simulator, ASR, and strategy-judge calls; 1,650 input
+audio tokens; 27 positive-byte TTS events; action history; provider-reported models;
+usage; audio hashes; and judge-attempt provenance. The
+[`independent validation`](validation/runs/exp10-8-simulated-user-openrouter-20260803-v11/independent_validation.json)
+rechecked all six tool/audio/action boundaries against report SHA-256
+`655b4eed74ad4f4d741dc89f97c86a68c547e4f82d1dea9fea71449dfef797e9`.
+
+The parser still fails closed unless an abstention transcript explicitly contains
+`abstain`, `skip`, `none`, or the supported Chinese equivalents; the synthetic
+utterance is the real-audio-probed phrase “I choose to abstain.” A schema-invalid
+strategy grade is now retained as an attempt and the next real endpoint is tried,
+rather than accepting or discarding malformed evidence. Earlier negative runs remain
+useful regression evidence, but stale gates from different games are never combined.
+A real human microphone session is optional manual coverage for VAD and barge-in, not
+a blocker for automated system E2E.
 
 ---
 
@@ -105,4 +125,4 @@ The parser now fails closed unless an abstention transcript explicitly contains 
 
 系统现在有两条正式用户路径：授权真人麦克风，以及 `--simulate-user` 独立真实 LLM 用户模拟器。模拟器只读本席上下文，必须调用发言/选人工具；工具表达先生成真实音频，再由真实 ASR 转写，游戏只消费转写结果，选人不一致时失败关闭。真人路径继续覆盖 VAD、播放与打断。
 
-2026-08-01 的严格复核否决了两个把误转写当成弃权的早期运行，并据此加固了解析器。未受影响的 v2 运行真实通过端到端、隔离、规则胜负与 3 循环，但村民误逐预言家导致策略失败。因此端到端已经实测，严格总体门禁仍为 `incomplete`。`--ai-only` 与 `--offline` 只是补充诊断。
+2026-08-01 的严格复核否决了两个把误转写当成弃权的早期运行，并据此加固了解析器。2026-08-03 的 v11 在同一局内完成 3 个完整循环、6 次真实工具→语音→ASR 回环、信息隔离、规则胜负和四项策略验收，严格总体状态为 `pass`。报告保留 13 个唯一响应 ID、1,650 个音频输入 token、27 个非空 TTS 事件、动作历史及裁判尝试溯源，独立验证再次核对 6/6 音频动作边界。`--ai-only` 与 `--offline` 只是补充诊断。

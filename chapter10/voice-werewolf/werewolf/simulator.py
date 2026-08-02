@@ -70,6 +70,7 @@ class SimulatedVoiceSession:
         self.provider = requested
         self.client = None
         self.espeak = None
+        self.system_say = None
         self.ffmpeg = None
         if requested == "openai":
             from openai import OpenAI
@@ -96,9 +97,12 @@ class SimulatedVoiceSession:
                     max_retries=1,
                 )
             self.espeak = shutil.which("espeak-ng") or shutil.which("espeak")
+            self.system_say = shutil.which("say")
             self.ffmpeg = shutil.which("ffmpeg")
-            if not self.espeak or not self.ffmpeg:
-                raise RuntimeError("gemini-system speech requires espeak and ffmpeg")
+            if not (self.espeak or self.system_say) or not self.ffmpeg:
+                raise RuntimeError(
+                    "system speech requires espeak (Linux) or say (macOS), plus ffmpeg"
+                )
 
     def _event(self, type_: str, **data):
         self._sequence += 1
@@ -139,17 +143,24 @@ class SimulatedVoiceSession:
             provider = "OpenAI Audio API"
         else:
             path = self.out_dir / f"{stem}.wav"
-            voice = os.getenv("SIMULATOR_ESPEAK_VOICE", "en-us")
-            model = f"espeak-{voice}"
             with tempfile.TemporaryDirectory(prefix="werewolf-simulator-tts-") as directory:
-                source = Path(directory) / "speech.wav"
-                subprocess.run(
-                    [self.espeak, "-v", voice,
-                     "-s", os.getenv("SIMULATOR_ESPEAK_SPEED", "145"),
-                     "-w", str(source), text],
-                    check=True,
-                    capture_output=True,
-                )
+                if self.espeak:
+                    voice = os.getenv("SIMULATOR_ESPEAK_VOICE", "en-us")
+                    model = f"espeak-{voice}"
+                    source = Path(directory) / "speech.wav"
+                    command = [
+                        self.espeak,
+                        "-v", voice,
+                        "-s", os.getenv("SIMULATOR_ESPEAK_SPEED", "145"),
+                        "-w", str(source),
+                        text,
+                    ]
+                else:
+                    voice = os.getenv("SIMULATOR_SAY_VOICE", "Samantha")
+                    model = f"macos-say-{voice}"
+                    source = Path(directory) / "speech.aiff"
+                    command = [self.system_say, "-v", voice, "-o", str(source), text]
+                subprocess.run(command, check=True, capture_output=True)
                 subprocess.run(
                     [self.ffmpeg, "-nostdin", "-loglevel", "error", "-y", "-i",
                      str(source), "-ac", "1", "-ar", "24000", str(path)],
@@ -433,7 +444,13 @@ class SimulatedUserPlayerAgent(PlayerAgent):
 
     def vote(self, candidates: List[str], players: List[str]) -> Optional[str]:
         return self._choose(
-            prompt="现在是白天投票放逐环节，选出你认为最可能是狼人的玩家。",
+            prompt=(
+                "现在是白天投票放逐环节，选出你认为最可能是狼人的玩家。好人阵营必须"
+                "按证据强度决策：没有对跳且已报告自洽查验结果的预言家声明是当前最强"
+                "公开证据；除非有具体矛盾或另一名预言家对跳，不得投该声明者。若其报告"
+                "某玩家是狼人，应优先投被查杀者；被查杀者仅仅否认不构成矛盾或对跳。"
+                "理由必须引用具体发言、查验或既有票型。"
+            ),
             candidates=candidates,
             players=players,
             allow_none=True,

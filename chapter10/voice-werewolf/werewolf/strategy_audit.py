@@ -95,6 +95,7 @@ def evaluate_strategy(judge):
         ),
     }
     last = None
+    attempts = []
     for client, model, provider in _backends():
         try:
             kwargs = dict(
@@ -105,11 +106,44 @@ def evaluate_strategy(judge):
             if "kimi-k3" in model:
                 kwargs.update(temperature=1, max_tokens=4096)
             response = client.chat.completions.create(**kwargs)
-            result = json.loads(response.choices[0].message.content or "{}")
+            content = response.choices[0].message.content or "{}"
+            raw_result = json.loads(content)
+            # Validation annotates its input. Keep a distinct credential-free raw
+            # result in the attempt record so attaching attempts to the accepted
+            # result cannot create a self-referential JSON structure.
+            result = json.loads(content)
             result["provider"] = provider
             result["model"] = model
-            return validate_strategy_result(result)
+            checked = validate_strategy_result(result)
+            usage = getattr(response, "usage", None)
+            usage = usage.model_dump() if hasattr(usage, "model_dump") else usage
+            attempts.append({
+                "provider": provider,
+                "model": model,
+                "response_id": getattr(response, "id", None),
+                "provider_reported_model": getattr(response, "model", None),
+                "usage": usage,
+                "schema_valid": checked["schema_valid"],
+                "validation_errors": checked["validation_errors"],
+                "raw_result": raw_result,
+            })
+            if checked["schema_valid"]:
+                checked["judge_attempts"] = attempts
+                return checked
+            last = ValueError(
+                f"{provider} strategy judge returned an invalid schema: "
+                + "; ".join(checked["validation_errors"])
+            )
+            print(f"[策略审计] {provider} 模式无效，尝试下一端点")
         except Exception as exc:
             last = exc
+            attempts.append({
+                "provider": provider,
+                "model": model,
+                "error_type": type(exc).__name__,
+                "error": str(exc)[:500],
+            })
             print(f"[策略审计] {provider} 失败：{type(exc).__name__}，尝试下一端点")
-    raise RuntimeError("没有可用的真实 LLM 端点完成策略验收") from last
+    failure = RuntimeError("没有可用的真实 LLM 端点完成有效的策略验收")
+    failure.judge_attempts = attempts
+    raise failure from last

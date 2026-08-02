@@ -9,7 +9,8 @@ import demo
 from werewolf import agent as agent_module
 from werewolf.game import Judge, create_players
 from werewolf.roles import Role
-from werewolf.simulator import SimulatedUserPlayerAgent
+from werewolf.agent import PlayerAgent
+from werewolf.simulator import SimulatedUserPlayerAgent, SimulatedVoiceSession
 
 
 class FakeVoice:
@@ -132,6 +133,82 @@ def test_judge_retains_llm_decision_reason_in_action_evidence(monkeypatch):
     )
     assert record["reason"] == "P2 contradicted the public vote record"
     assert simulator.last_decision_reason is None
+
+
+def test_good_faction_vote_prompt_prioritizes_uncontested_seer_evidence(monkeypatch):
+    player = PlayerAgent("P7", Role.VILLAGER)
+    captured = {}
+
+    def fake_chat(instruction, players, max_tokens, json_mode=False):
+        captured["instruction"] = instruction
+        return '{"target": "P5", "reason": "P4 is uncontested and checked P5 as a wolf"}'
+
+    monkeypatch.setattr(player, "_chat", fake_chat)
+    assert player.vote(["P4", "P5"], ["P4", "P5", "P7"]) == "P5"
+    assert "不得投该声明者" in captured["instruction"]
+    assert "被查杀者仅仅否认并不构成" in captured["instruction"]
+
+
+def test_reasoning_model_empty_content_retries_with_larger_bounded_budget(monkeypatch):
+    player = PlayerAgent("P7", Role.VILLAGER)
+    calls = []
+    responses = iter([
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=""))]),
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="visible speech"))]),
+    ])
+    monkeypatch.setattr(agent_module, "get_client", lambda: object())
+
+    def fake_create(_client, **kwargs):
+        calls.append(kwargs)
+        return next(responses)
+
+    monkeypatch.setattr(agent_module, "_safe_create", fake_create)
+    assert player._chat("speak", ["P7"], max_tokens=180) == "visible speech"
+    assert calls[0]["max_tokens"] == 512
+    assert calls[1]["max_tokens"] == 2048
+
+
+def test_simulator_vote_prompt_uses_the_same_evidence_priority(monkeypatch):
+    voice = FakeVoice(transcripts=["I choose player five"])
+    player = SimulatedUserPlayerAgent("P1", Role.VILLAGER, voice)
+    captured = {}
+    response = tool_response(
+        "choose_player", {"target": "P5", "reason": "P4 is the only Seer and checked P5"}
+    )
+    monkeypatch.setattr(agent_module, "get_client", lambda: object())
+
+    def fake_create(_client, **kwargs):
+        captured.update(kwargs)
+        return response
+
+    monkeypatch.setattr(agent_module, "_safe_create", fake_create)
+    assert player.vote(["P4", "P5"], ["P1", "P4", "P5"]) == "P5"
+    instruction = captured["messages"][1]["content"]
+    assert "不得投该声明者" in instruction
+    assert "被查杀者仅仅否认不构成" in instruction
+
+
+def test_system_speech_falls_back_to_macos_say(monkeypatch, tmp_path):
+    from werewolf import simulator as simulator_module
+
+    paths = {"espeak-ng": None, "espeak": None, "say": "/usr/bin/say", "ffmpeg": "/opt/bin/ffmpeg"}
+    monkeypatch.setattr(simulator_module.shutil, "which", lambda name: paths.get(name))
+    monkeypatch.setenv("OPENROUTER_API_KEY", "configured-for-test")
+
+    def fake_run(command, **kwargs):
+        if command[0] == "/usr/bin/say":
+            output = command[command.index("-o") + 1]
+        else:
+            output = command[-1]
+        from pathlib import Path
+        Path(output).write_bytes(b"real-audio-shaped-bytes")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(simulator_module.subprocess, "run", fake_run)
+    session = SimulatedVoiceSession(str(tmp_path), provider="openrouter-system")
+    path = session._synthesize("P1", "I choose player four.", 1)
+    assert path.read_bytes() == b"real-audio-shaped-bytes"
+    assert session.events[0]["model"] == "macos-say-Samantha"
 
 
 def test_simulated_user_cli_needs_no_human_consent(monkeypatch):

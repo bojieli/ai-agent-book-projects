@@ -312,6 +312,7 @@ def run_game(args):
         "information_isolation_pass": isolation_ok,
         "strategy_audit": strategy,
         "strategy_audit_pass": strategy_pass,
+        "action_history": judge.action_history,
         "voice_events": voice_events,
         "voice_has_asr": voice_has_asr,
         "voice_has_tts": voice_has_tts,

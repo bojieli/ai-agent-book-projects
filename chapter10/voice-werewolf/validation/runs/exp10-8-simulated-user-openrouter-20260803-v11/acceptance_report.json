@@ -1,0 +1,1341 @@
+{
+  "schema_version": 2,
+  "experiment": "10-8",
+  "generated_at": "2026-08-03T02:17:27+0800",
+  "execution_mode": "simulated_user",
+  "acceptance_path": true,
+  "end_to_end_status": "pass",
+  "players": 8,
+  "user_players": [
+    "P1"
+  ],
+  "human_players": [],
+  "simulated_user_players": [
+    "P1"
+  ],
+  "human_role_randomized_to": null,
+  "simulated_user_role_randomized_to": "村民",
+  "role_counts": {
+    "狼人": 2,
+    "预言家": 1,
+    "女巫": 1,
+    "村民": 4
+  },
+  "completed_day_night_vote_cycles": 3,
+  "winner": "好人阵营",
+  "information_isolation_pass": true,
+  "strategy_audit": {
+    "criteria": {
+      "werewolf_concealment": {
+        "status": "pass",
+        "evidence": "P4：“建议先听后置位发言，重点看是否有人急着定狼或强行带票。”；P8：“缺少硬信息，先听身份信息，别无依据强推。”"
+      },
+      "seer_timing_and_evidence": {
+        "status": "pass",
+        "evidence": "P5在P8被确认狼人后跳预言家：“首夜验P1是好人，次夜验P7也是好人。”"
+      },
+      "villager_logical_reasoning": {
+        "status": "pass",
+        "evidence": "P1依据“P5无对跳且查验链自洽”投P6；P6根据P2、P4“集中施压，理由偏薄”提出怀疑。"
+      },
+      "role_consistency": {
+        "status": "pass",
+        "evidence": "P5实际查验P1、P7并在白天公开结果；P2首夜救P1、次夜毒P7；P4、P8提出并执行狼人击杀目标。"
+      }
+    },
+    "overall_pass": true,
+    "provider": "openrouter",
+    "model": "openai/gpt-5.6-luna",
+    "model_overall_pass_claim": true,
+    "schema_valid": true,
+    "validation_errors": [],
+    "judge_attempts": [
+      {
+        "provider": "openrouter",
+        "model": "openai/gpt-5.6-luna",
+        "response_id": "gen-1785694643-zIPeN5DkmVYQCmjcz5rV",
+        "provider_reported_model": "openai/gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 549,
+          "prompt_tokens": 3889,
+          "total_tokens": 4438,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": 0,
+            "reasoning_tokens": 306,
+            "rejected_prediction_tokens": null,
+            "image_tokens": 0
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": 3886,
+            "cached_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost": 0.00081545,
+          "is_byok": false,
+          "cost_details": {
+            "upstream_inference_cost": 0.00081545,
+            "upstream_inference_prompt_cost": 0.00048605,
+            "upstream_inference_completions_cost": 0.0003294
+          }
+        },
+        "schema_valid": true,
+        "validation_errors": [],
+        "raw_result": {
+          "criteria": {
+            "werewolf_concealment": {
+              "status": "pass",
+              "evidence": "P4：“建议先听后置位发言，重点看是否有人急着定狼或强行带票。”；P8：“缺少硬信息，先听身份信息，别无依据强推。”"
+            },
+            "seer_timing_and_evidence": {
+              "status": "pass",
+              "evidence": "P5在P8被确认狼人后跳预言家：“首夜验P1是好人，次夜验P7也是好人。”"
+            },
+            "villager_logical_reasoning": {
+              "status": "pass",
+              "evidence": "P1依据“P5无对跳且查验链自洽”投P6；P6根据P2、P4“集中施压，理由偏薄”提出怀疑。"
+            },
+            "role_consistency": {
+              "status": "pass",
+              "evidence": "P5实际查验P1、P7并在白天公开结果；P2首夜救P1、次夜毒P7；P4、P8提出并执行狼人击杀目标。"
+            }
+          },
+          "overall_pass": true
+        }
+      }
+    ]
+  },
+  "strategy_audit_pass": true,
+  "action_history": [
+    {
+      "round": 1,
+      "phase": "night",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "kill_proposal",
+      "target": "P1",
+      "reason": "目前没有其他身份信息，优先击杀一名可能带有关键身份的好人，减少后续查验和带队风险。"
+    },
+    {
+      "round": 1,
+      "phase": "night",
+      "actor": "P8",
+      "role": "狼人",
+      "action": "kill_proposal",
+      "target": "P1",
+      "reason": "优先击杀一名潜在的关键好人，削弱好人阵营的推理和投票能力。"
+    },
+    {
+      "round": 1,
+      "phase": "night",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "inspect",
+      "target": "P1",
+      "result": "好人",
+      "reason": "暂无其他线索，优先查验P1以尽早获得关键阵营信息。"
+    },
+    {
+      "round": 1,
+      "phase": "night",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "heal",
+      "target": "P1",
+      "reason": "首夜信息有限，先救下被袭击的P1以保留一名可能的关键好人。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P1",
+      "role": "村民",
+      "action": "speech",
+      "text": "A peaceful night gives us no hard evidence yet, so I do not want to force a random vote. I will focus on who makes concrete, consistent claims today and compare any role or check claims carefully. For now, I am open to hearing everyone before choosing a target."
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "speech",
+      "text": "平安夜暂时没有硬信息，先听完大家发言再判断。希望各位别只跟风投票，重点看发言逻辑和前后是否一致。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P3",
+      "role": "村民",
+      "action": "speech",
+      "text": "平安夜暂无硬信息，我会重点听后置发言，看谁急于带票或前后矛盾。P1、P2目前都偏谨慎，暂不构成明确嫌疑，先等其他人给出具体判断。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "speech",
+      "text": "平安夜确实缺少硬信息，前面几位发言都比较谨慎。建议先听后置位，重点看是否有人急着定狼或强行带票。暂时不锁定任何人，等具体信息再判断。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "speech",
+      "text": "目前确实没有硬信息，先听后置位发言。希望大家给出具体怀疑和理由，别只重复谨慎表态；我会重点看谁在刻意藏身份或强行带票。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P6",
+      "role": "村民",
+      "action": "speech",
+      "text": "前面几位都在重复平安夜、先听发言，信息量偏低。  \n我暂时不锁定任何人，重点看后置位是否能给出具体怀疑和理由。  \n若有人突然强行带票，我会优先审视其动机。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P7",
+      "role": "村民",
+      "action": "speech",
+      "text": "目前前置发言都偏谨慎，暂时看不出明确矛盾。P5、P6指出大家信息量低，但也还没给出具体怀疑。我先听P8，重点看是否有人突然强行带票。"
+    },
+    {
+      "round": 1,
+      "phase": "day",
+      "actor": "P8",
+      "role": "狼人",
+      "action": "speech",
+      "text": "目前整体都偏谨慎，确实缺少硬信息。P5、P6指出信息量低，但也没给具体怀疑。先听身份信息，别无依据强推。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "vote",
+      "target": "P8",
+      "reason": "P8基本重复前面关于信息不足、等待身份信息的表态，始终没有提出独立怀疑或具体判断，较像在低风险跟随局势。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P3",
+      "role": "村民",
+      "action": "vote",
+      "target": "P7",
+      "reason": "P7特意点名P5、P6信息量低，却同样没有提出自己的具体怀疑，整体像是在借评价他人制造压力而回避明确立场。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P6批评前面发言信息量低，却仍未提出具体怀疑或形成清晰判断，发言停留在泛泛提醒，身份立场较为模糊。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "vote",
+      "target": "P8",
+      "reason": "P8全程复述“谨慎、先听信息”，没有提出任何独立怀疑或具体判断，发言最缺乏有效信息，较像在刻意隐藏身份。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P6",
+      "role": "村民",
+      "action": "vote",
+      "target": "P7",
+      "reason": "P7指出P5、P6缺乏具体怀疑，却同样没有提出自己的明确判断，像是在借评价他人制造投票方向。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P7",
+      "role": "村民",
+      "action": "vote",
+      "target": "P8",
+      "reason": "P8作为后置位仍只重复“缺少硬信息、先听身份”，没有提出任何具体怀疑或可检验判断，整体发言偏回避和跟随。"
+    },
+    {
+      "round": 1,
+      "phase": "vote",
+      "actor": "P8",
+      "role": "狼人",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P6多次强调前面发言信息量低，却始终没有提出具体怀疑或可核验的逻辑，发言更像是在安全地观望和铺垫带票。"
+    },
+    {
+      "round": 2,
+      "phase": "night",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "kill_proposal",
+      "target": "P3",
+      "reason": "P3发言逻辑清晰且持续关注后置位，可能成为白天判断和带票的关键玩家。"
+    },
+    {
+      "round": 2,
+      "phase": "night",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "inspect",
+      "target": "P7",
+      "result": "好人",
+      "reason": "P7与已确认的狼人P8都将怀疑集中在P5、P6身上，存在相互呼应或提前铺垫的可能，优先查验其阵营。"
+    },
+    {
+      "round": 2,
+      "phase": "night",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "poison",
+      "target": "P7"
+    },
+    {
+      "round": 2,
+      "phase": "day",
+      "actor": "P1",
+      "role": "村民",
+      "action": "speech",
+      "text": "P8 being confirmed wolf is our first solid anchor, but we still need to separate real evidence from hindsight. P3 and P7 were both cautious and consistent, so their deaths make me review who benefited from removing that discussion without assuming the killer's identities. Today I want P2, P4, P5, and P6 to explain their vote on P8 or P7 and give a concrete current suspect."
+    },
+    {
+      "round": 2,
+      "phase": "day",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "speech",
+      "text": "P8是确定狼，今天重点复盘投票链。P6多次强调信息少，却始终不给具体判断，我暂时优先怀疑P6。P3、P7出局的信息先不强行解读。"
+    },
+    {
+      "round": 2,
+      "phase": "day",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "speech",
+      "text": "P8已实锤，今天应先复盘票型，别过度解读刀口。P6长期只说信息少却不落判断，我会先听他解释，再决定是否推进。"
+    },
+    {
+      "round": 2,
+      "phase": "day",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "speech",
+      "text": "我跳预言家：首夜验P1是好人，次夜验P7也是好人。P8已实锤狼，今天重点听P2、P4、P6，优先审视一直不落判断的P6。"
+    },
+    {
+      "round": 2,
+      "phase": "day",
+      "actor": "P6",
+      "role": "村民",
+      "action": "speech",
+      "text": "P5的验人链目前连贯，P7是好人也与死亡信息吻合。P2、P4都只因我谨慎就集中施压，理由偏薄，我优先怀疑二者之一。"
+    },
+    {
+      "round": 2,
+      "phase": "vote",
+      "actor": "P1",
+      "role": "村民",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P5无对跳且查验链自洽，是当前最强公开证据；其验到P1、P7为好人且P7已被夜杀相互吻合。P6虽承认链条连贯，却继续以“P2、P4施压理由薄”为主，未解释自己前一轮始终不落具体判断，也没有提出可比的反证，因此在排除查杀对象后优先投P6。"
+    },
+    {
+      "round": 2,
+      "phase": "vote",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P5无对跳且验人链自洽，P6连续强调信息少却始终不落具体判断，今天又笼统攻击P2、P4，嫌疑最高。"
+    },
+    {
+      "round": 2,
+      "phase": "vote",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P6前期多次强调信息不足却始终不给出具体判断，今天又在没有实质矛盾的情况下转而施压P2、P4，行为和票型都更像在回避并转移焦点。"
+    },
+    {
+      "round": 2,
+      "phase": "vote",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "vote",
+      "target": "P6",
+      "reason": "P5的预言家身份与P1、P7两次好人查验均无对跳且自洽，P6此前多次强调信息少却始终不落判断，今天又在P2、P4施压下仅泛泛质疑，狼面最高。"
+    },
+    {
+      "round": 2,
+      "phase": "vote",
+      "actor": "P6",
+      "role": "村民",
+      "action": "vote",
+      "target": "P2",
+      "reason": "P5无对跳且验人链自洽，应暂认预言家；P2仅凭我前期谨慎就优先施压，理由单薄且有借实锤狼带节奏的嫌疑。"
+    },
+    {
+      "round": 3,
+      "phase": "night",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "kill_proposal",
+      "target": "P5",
+      "reason": "P5跳预言家且验人链连贯，优先击杀可削弱好人的关键信息来源。"
+    },
+    {
+      "round": 3,
+      "phase": "night",
+      "actor": "P5",
+      "role": "预言家",
+      "action": "inspect",
+      "target": "P2",
+      "result": "好人",
+      "reason": "P2与P4共同施压并推动放逐P6，而P6已确认是村民，优先查验更主动带动票型的P2。"
+    },
+    {
+      "round": 3,
+      "phase": "day",
+      "actor": "P1",
+      "role": "村民",
+      "action": "speech",
+      "text": "P5's death strongly supports his claim. Both checks, P1 and P7, were villagers and P7 was killed. P6 was then lynched after P2 and P4 pushed him, so one or both of them need to explain that vote clearly. My strongest suspicion is P2, but I want P4's account before deciding."
+    },
+    {
+      "round": 3,
+      "phase": "day",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "speech",
+      "text": "我投P6是判断失误，责任我认。P5验人可信，P1、P7均为好人；结合票型和发言，P4嫌疑最高，今天优先出P4。"
+    },
+    {
+      "round": 3,
+      "phase": "day",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "speech",
+      "text": "我投P6是基于他持续不落判断，虽然结果错了，但不是无理由跟票。P2如今迅速把责任全推给我，反而更像在切割，今天我优先怀疑P2。"
+    },
+    {
+      "round": 3,
+      "phase": "vote",
+      "actor": "P1",
+      "role": "村民",
+      "action": "vote",
+      "target": "P4",
+      "reason": "P5死后其预言家声明与P1、P7金水查验均得到支持；P6又已确认是村民。P4承认投P6，但依据只是“持续不落判断”，理由薄弱且与P2共同推动错误放逐；如今反指P2像是在转移，而P2至少明确承认判断失误并给出复盘，现阶段P4嫌疑更高。"
+    },
+    {
+      "round": 3,
+      "phase": "vote",
+      "actor": "P2",
+      "role": "女巫",
+      "action": "vote",
+      "target": "P4",
+      "reason": "P5无对跳且查验链自洽，P1已确认好人；P4与P2共同推动放逐村民P6，今天又仅以“切割”反指P2，缺乏比P2更具体的依据。"
+    },
+    {
+      "round": 3,
+      "phase": "vote",
+      "actor": "P4",
+      "role": "狼人",
+      "action": "vote",
+      "target": "P2",
+      "reason": "P5的预言家身份已由死亡得到支持，首夜验出P1为好人，因此P1不应被放逐；P2此前参与推动放逐P6且今天将责任集中推给P4，当前嫌疑更高。"
+    }
+  ],
+  "voice_events": [
+    {
+      "sequence": 1,
+      "monotonic": 178426.653591708,
+      "wall_time": "2026-08-03T02:14:07+0800",
+      "type": "tts_ready",
+      "speaker": "judge-private",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.74,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r0_judge-private_1.wav",
+      "audio_bytes": 35050,
+      "audio_sha256": "591568b890778ef7cb82902ce18ac602bc432aafa2cecdd2cc13ab15c31c376b"
+    },
+    {
+      "sequence": 2,
+      "monotonic": 178441.872711583,
+      "wall_time": "2026-08-03T02:14:23+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.775,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_judge_2.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    },
+    {
+      "sequence": 3,
+      "monotonic": 178443.601986791,
+      "wall_time": "2026-08-03T02:14:24+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "speak_publicly",
+      "arguments": {
+        "utterance": "A peaceful night gives us no hard evidence yet, so I do not want to force a random vote. I will focus on who makes concrete, consistent claims today, and compare any role or check claims carefully. For now, I am open to hearing everyone before choosing a target."
+      },
+      "response_id": "gen-1785694463-kzYGILCnYkXDNpDAZgQb",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 103,
+        "prompt_tokens": 586,
+        "total_tokens": 689,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 25,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0001204,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0001204,
+          "upstream_inference_prompt_cost": 5.86e-05,
+          "upstream_inference_completions_cost": 6.18e-05
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "monotonic": 178444.4603285,
+      "wall_time": "2026-08-03T02:14:25+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.856,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P1_4.wav",
+      "audio_bytes": 753362,
+      "audio_sha256": "b93ef7ed47a0bad0da3ea822dee9998d451406e6cbd5fe5f5ab526c078985ab5"
+    },
+    {
+      "sequence": 5,
+      "monotonic": 178447.704731083,
+      "wall_time": "2026-08-03T02:14:29+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694467-pOmPfSPzfglxiAl9cazM",
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_tokens": 438,
+        "total_tokens": 493,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 400,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0005489,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0005489,
+          "upstream_inference_prompt_cost": 0.0004114,
+          "upstream_inference_completions_cost": 0.0001375
+        }
+      },
+      "latency_seconds": 3.243,
+      "source_audio_sha256": "b93ef7ed47a0bad0da3ea822dee9998d451406e6cbd5fe5f5ab526c078985ab5",
+      "transcript": "A peaceful night gives us no hard evidence yet, so I do not want to force a random vote. I will focus on who makes concrete, consistent claims today and compare any role or check claims carefully. For now, I am open to hearing everyone before choosing a target."
+    },
+    {
+      "sequence": 6,
+      "monotonic": 178451.140619333,
+      "wall_time": "2026-08-03T02:14:32+0800",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.772,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P2_6.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    },
+    {
+      "sequence": 7,
+      "monotonic": 178453.319143416,
+      "wall_time": "2026-08-03T02:14:34+0800",
+      "type": "tts_ready",
+      "speaker": "P3",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.784,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P3_7.wav",
+      "audio_bytes": 61800,
+      "audio_sha256": "eb2d95b935fb1e5a273de4b8f3bf7242cb619ddf24b5a2cebda2123bbe8eb63c"
+    },
+    {
+      "sequence": 8,
+      "monotonic": 178456.515616041,
+      "wall_time": "2026-08-03T02:14:37+0800",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.783,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P4_8.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    },
+    {
+      "sequence": 9,
+      "monotonic": 178459.801046666,
+      "wall_time": "2026-08-03T02:14:41+0800",
+      "type": "tts_ready",
+      "speaker": "P5",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.779,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P5_9.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    },
+    {
+      "sequence": 10,
+      "monotonic": 178463.587262333,
+      "wall_time": "2026-08-03T02:14:44+0800",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.769,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P6_10.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    },
+    {
+      "sequence": 11,
+      "monotonic": 178468.153823833,
+      "wall_time": "2026-08-03T02:14:49+0800",
+      "type": "tts_ready",
+      "speaker": "P7",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.788,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P7_11.wav",
+      "audio_bytes": 95794,
+      "audio_sha256": "23eabb88b01f87cdb2054a69425f945e35c5f01fee5793bc47f5099c2b836e2f"
+    },
+    {
+      "sequence": 12,
+      "monotonic": 178472.4940885,
+      "wall_time": "2026-08-03T02:14:53+0800",
+      "type": "tts_ready",
+      "speaker": "P8",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.774,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P8_12.wav",
+      "audio_bytes": 71830,
+      "audio_sha256": "680355f489c08e6cc7ebf73eea8ca09f238015b21a5b512696ef42e80eb4fc90"
+    },
+    {
+      "sequence": 13,
+      "monotonic": 178474.318018583,
+      "wall_time": "2026-08-03T02:14:55+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "target": "none",
+        "reason": "目前没有查验、对跳或既有票型；P2至P8都只是谨慎讨论平安夜，虽信息量低但没有具体矛盾。此时放逐任一玩家都属无依据随机票，选择弃票。"
+      },
+      "response_id": "gen-1785694494-HFbDxWKJHr2ZtTBZ0yzt",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 116,
+        "prompt_tokens": 1206,
+        "total_tokens": 1322,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 37,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 1077,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.000217125,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.000217125,
+          "upstream_inference_prompt_cost": 0.000147525,
+          "upstream_inference_completions_cost": 6.96e-05
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "monotonic": 178475.109707541,
+      "wall_time": "2026-08-03T02:14:56+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.789,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_P1_14.wav",
+      "audio_bytes": 60088,
+      "audio_sha256": "4845b2336eed074932bfe44d3e7d4d1433f2f4843077df23365a5586e589c434"
+    },
+    {
+      "sequence": 15,
+      "monotonic": 178477.688938125,
+      "wall_time": "2026-08-03T02:14:58+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694497-XrXPUeKPqf4mC31aD7bJ",
+      "usage": {
+        "completion_tokens": 5,
+        "prompt_tokens": 88,
+        "total_tokens": 93,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 50,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 7.39e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 7.39e-05,
+          "upstream_inference_prompt_cost": 6.14e-05,
+          "upstream_inference_completions_cost": 1.25e-05
+        }
+      },
+      "latency_seconds": 2.578,
+      "source_audio_sha256": "4845b2336eed074932bfe44d3e7d4d1433f2f4843077df23365a5586e589c434",
+      "transcript": "I choose to abstain."
+    },
+    {
+      "sequence": 16,
+      "monotonic": 178500.287053541,
+      "wall_time": "2026-08-03T02:15:21+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.799,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r1_judge_16.wav",
+      "audio_bytes": 215608,
+      "audio_sha256": "dadbf6636a54c24c2e2cd09c599b344ee05437c03c5a1557d022192ff00314c7"
+    },
+    {
+      "sequence": 17,
+      "monotonic": 178515.601034291,
+      "wall_time": "2026-08-03T02:15:36+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.766,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_judge_17.wav",
+      "audio_bytes": 67372,
+      "audio_sha256": "dc347e475841ce59f8b44b4d4dd17ae05ad2ee1bf1777c74422b6145481fccf0"
+    },
+    {
+      "sequence": 18,
+      "monotonic": 178520.182377166,
+      "wall_time": "2026-08-03T02:15:41+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "speak_publicly",
+      "arguments": {
+        "utterance": "P8 being confirmed wolf is our first solid anchor, but we still need to separate real evidence from hindsight. P3 and P7 were both cautious and consistent, so their deaths make me review who benefited from removing that discussion, without assuming the killers' identities. Today I want P2, P4, P5, and P6 to explain their vote on P8 or P7 and give a concrete current suspect."
+      },
+      "response_id": "gen-1785694537-kWS2840W1NG2F2bgzRyQ",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 241,
+        "prompt_tokens": 1110,
+        "total_tokens": 1351,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 134,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0002556,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0002556,
+          "upstream_inference_prompt_cost": 0.000111,
+          "upstream_inference_completions_cost": 0.0001446
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "monotonic": 178521.083057041,
+      "wall_time": "2026-08-03T02:15:42+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.897,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P1_19.wav",
+      "audio_bytes": 1136834,
+      "audio_sha256": "d42405dd72058da614a1d1c0f5865d0c7d28020b0f593d10a79a9a805776aef3"
+    },
+    {
+      "sequence": 20,
+      "monotonic": 178524.389816166,
+      "wall_time": "2026-08-03T02:15:45+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694544-yNgIy0nCpI2S1HGqG0zd",
+      "usage": {
+        "completion_tokens": 85,
+        "prompt_tokens": 638,
+        "total_tokens": 723,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 600,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0008239,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0008239,
+          "upstream_inference_prompt_cost": 0.0006114,
+          "upstream_inference_completions_cost": 0.0002125
+        }
+      },
+      "latency_seconds": 3.305,
+      "source_audio_sha256": "d42405dd72058da614a1d1c0f5865d0c7d28020b0f593d10a79a9a805776aef3",
+      "transcript": "P8 being confirmed wolf is our first solid anchor, but we still need to separate real evidence from hindsight. P3 and P7 were both cautious and consistent, so their deaths make me review who benefited from removing that discussion without assuming the killer's identities. Today I want P2, P4, P5, and P6 to explain their vote on P8 or P7 and give a concrete current suspect."
+    },
+    {
+      "sequence": 21,
+      "monotonic": 178537.750372458,
+      "wall_time": "2026-08-03T02:15:59+0800",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.787,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P2_21.wav",
+      "audio_bytes": 155422,
+      "audio_sha256": "ebfc818076e4c8ecf10bbd8d9bd6eceae5483fa6bc6d57b52e1ae36665841992"
+    },
+    {
+      "sequence": 22,
+      "monotonic": 178543.403540833,
+      "wall_time": "2026-08-03T02:16:04+0800",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.781,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P4_22.wav",
+      "audio_bytes": 65144,
+      "audio_sha256": "b237e34b7f38c5e703c87e4212ef54edf04c0680e8ad356fcfb366f53d2d0f82"
+    },
+    {
+      "sequence": 23,
+      "monotonic": 178547.199170375,
+      "wall_time": "2026-08-03T02:16:08+0800",
+      "type": "tts_ready",
+      "speaker": "P5",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.803,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P5_23.wav",
+      "audio_bytes": 211150,
+      "audio_sha256": "c3747cff0af4cf2e7e64b1badc8ee2d3f3a72ad4d387deed57fd40d6084855f5"
+    },
+    {
+      "sequence": 24,
+      "monotonic": 178554.289422916,
+      "wall_time": "2026-08-03T02:16:15+0800",
+      "type": "tts_ready",
+      "speaker": "P6",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.791,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P6_24.wav",
+      "audio_bytes": 125886,
+      "audio_sha256": "8432aead2570bede3a83c7fa44673b7c9af1a99e08cbe81e3dccb4492985389a"
+    },
+    {
+      "sequence": 25,
+      "monotonic": 178556.638711666,
+      "wall_time": "2026-08-03T02:16:17+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "target": "P6",
+        "reason": "P5无对跳且查验链自洽，是当前最强公开证据；其验到P1、P7为好人且P7已被夜杀相互吻合。P6虽承认链条连贯，却继续以“P2、P4施压理由薄”为主，未解释自己前一轮始终不落具体判断，也没有提出可比的反证，因此在排除查杀对象后优先投P6。"
+      },
+      "response_id": "gen-1785694575-zQqqg0qI53EKwZf95t1b",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 124,
+        "prompt_tokens": 1559,
+        "total_tokens": 1683,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 1430,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.00026605,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.00026605,
+          "upstream_inference_prompt_cost": 0.00019165,
+          "upstream_inference_completions_cost": 7.44e-05
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "monotonic": 178557.4250655,
+      "wall_time": "2026-08-03T02:16:18+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.782,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_P1_26.wav",
+      "audio_bytes": 65104,
+      "audio_sha256": "9ee4c8ae2faeb3646f6868a2a0c0a7fb3600f7685c9308b06bf633ade3b4c9bf"
+    },
+    {
+      "sequence": 27,
+      "monotonic": 178559.74165175,
+      "wall_time": "2026-08-03T02:16:21+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694580-VZpjD7HWRzhd3F9gmPwp",
+      "usage": {
+        "completion_tokens": 5,
+        "prompt_tokens": 88,
+        "total_tokens": 93,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 50,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 7.39e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 7.39e-05,
+          "upstream_inference_prompt_cost": 6.14e-05,
+          "upstream_inference_completions_cost": 1.25e-05
+        }
+      },
+      "latency_seconds": 2.315,
+      "source_audio_sha256": "9ee4c8ae2faeb3646f6868a2a0c0a7fb3600f7685c9308b06bf633ade3b4c9bf",
+      "transcript": "I choose player six."
+    },
+    {
+      "sequence": 28,
+      "monotonic": 178570.726384916,
+      "wall_time": "2026-08-03T02:16:32+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.794,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r2_judge_28.wav",
+      "audio_bytes": 163782,
+      "audio_sha256": "bc5b4c41e7265286bd4e18341f2ce78bf57f9dacb78da1bb2a8ffbe8207e91b4"
+    },
+    {
+      "sequence": 29,
+      "monotonic": 178576.6978295,
+      "wall_time": "2026-08-03T02:16:38+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.793,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_judge_29.wav",
+      "audio_bytes": 36722,
+      "audio_sha256": "5364e75237df16c14e65685d1ee4a7f657aefcefd6c6f54a3d223a4544943bf8"
+    },
+    {
+      "sequence": 30,
+      "monotonic": 178579.560581041,
+      "wall_time": "2026-08-03T02:16:40+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "speak_publicly",
+      "arguments": {
+        "utterance": "P5’s death strongly supports his seer claim: both checks, P1 and P7, were villagers, and P7 was killed. P6 was then mislynched after P2 and P4 pushed him, so one or both of them need to explain that vote clearly. My strongest suspicion is P2, but I want P4’s account before deciding."
+      },
+      "response_id": "gen-1785694598-eosPnsUK9wQzGUzaV2oU",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 236,
+        "prompt_tokens": 1479,
+        "total_tokens": 1715,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 139,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 1348,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0003232,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0003232,
+          "upstream_inference_prompt_cost": 0.0001816,
+          "upstream_inference_completions_cost": 0.0001416
+        }
+      }
+    },
+    {
+      "sequence": 31,
+      "monotonic": 178580.449911583,
+      "wall_time": "2026-08-03T02:16:41+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.885,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_P1_31.wav",
+      "audio_bytes": 929526,
+      "audio_sha256": "cecd2d8fa05497f28468ba7a58c5261d91ff22b7dd78dd33ae7ba520d097df27"
+    },
+    {
+      "sequence": 32,
+      "monotonic": 178583.571065208,
+      "wall_time": "2026-08-03T02:16:44+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694603-Rdmks36csl0M69pbhV2F",
+      "usage": {
+        "completion_tokens": 73,
+        "prompt_tokens": 538,
+        "total_tokens": 611,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 500,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.0006939,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.0006939,
+          "upstream_inference_prompt_cost": 0.0005114,
+          "upstream_inference_completions_cost": 0.0001825
+        }
+      },
+      "latency_seconds": 3.118,
+      "source_audio_sha256": "cecd2d8fa05497f28468ba7a58c5261d91ff22b7dd78dd33ae7ba520d097df27",
+      "transcript": "P5's death strongly supports his claim. Both checks, P1 and P7, were villagers and P7 was killed. P6 was then lynched after P2 and P4 pushed him, so one or both of them need to explain that vote clearly. My strongest suspicion is P2, but I want P4's account before deciding."
+    },
+    {
+      "sequence": 33,
+      "monotonic": 178588.465445625,
+      "wall_time": "2026-08-03T02:16:49+0800",
+      "type": "tts_ready",
+      "speaker": "P2",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.801,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_P2_33.wav",
+      "audio_bytes": 187744,
+      "audio_sha256": "32745a77c91806a6b593de9dceac41014f848f4d59d85f0e38660acf6a55be34"
+    },
+    {
+      "sequence": 34,
+      "monotonic": 178592.063077916,
+      "wall_time": "2026-08-03T02:16:53+0800",
+      "type": "tts_ready",
+      "speaker": "P4",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.791,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_P4_34.wav",
+      "audio_bytes": 91336,
+      "audio_sha256": "7ea8fab809c3fe65ea3edbb75e98c35b711ad5385220c52d939cf98b7cf7d4c2"
+    },
+    {
+      "sequence": 35,
+      "monotonic": 178600.934575291,
+      "wall_time": "2026-08-03T02:17:02+0800",
+      "type": "simulator_llm_tool",
+      "seat": "P1",
+      "tool": "choose_player",
+      "arguments": {
+        "target": "P4",
+        "reason": "P5死后其预言家声明与P1、P7金水查验均得到支持；P6又已确认是村民。P4承认投P6，但依据只是“持续不落判断”，理由薄弱且与P2共同推动错误放逐；如今反指P2像是在转移，而P2至少明确承认判断失误并给出复盘，现阶段P4嫌疑更高。"
+      },
+      "response_id": "gen-1785694613-i379mt4E3tdjsI0iqhNK",
+      "requested_model": "openai/gpt-5.6-luna",
+      "provider_reported_model": "openai/gpt-5.6-luna",
+      "usage": {
+        "completion_tokens": 324,
+        "prompt_tokens": 1786,
+        "total_tokens": 2110,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 205,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 1657,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 0.000414425,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.000414425,
+          "upstream_inference_prompt_cost": 0.000220025,
+          "upstream_inference_completions_cost": 0.0001944
+        }
+      }
+    },
+    {
+      "sequence": 36,
+      "monotonic": 178601.726925833,
+      "wall_time": "2026-08-03T02:17:03+0800",
+      "type": "tts_ready",
+      "speaker": "P1",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.79,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_P1_36.wav",
+      "audio_bytes": 58416,
+      "audio_sha256": "f7781b6677166a6955c8970091e3543652041e9e211334076cfc4b00d5ba7dc4"
+    },
+    {
+      "sequence": 37,
+      "monotonic": 178604.170592416,
+      "wall_time": "2026-08-03T02:17:05+0800",
+      "type": "simulator_asr",
+      "provider": "OpenRouter multimodal audio API",
+      "model": "google/gemini-2.5-flash",
+      "request_id": "gen-1785694624-VOIvugRToKhPGDdphcaH",
+      "usage": {
+        "completion_tokens": 5,
+        "prompt_tokens": 88,
+        "total_tokens": 93,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 50,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost": 7.39e-05,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 7.39e-05,
+          "upstream_inference_prompt_cost": 6.14e-05,
+          "upstream_inference_completions_cost": 1.25e-05
+        }
+      },
+      "latency_seconds": 2.442,
+      "source_audio_sha256": "f7781b6677166a6955c8970091e3543652041e9e211334076cfc4b00d5ba7dc4",
+      "transcript": "I choose player four."
+    },
+    {
+      "sequence": 38,
+      "monotonic": 178620.163528625,
+      "wall_time": "2026-08-03T02:17:21+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.796,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_judge_38.wav",
+      "audio_bytes": 157094,
+      "audio_sha256": "16350f65ab8c2072b7610dfc123488162e225e0b97526c7aa23efe406915cdfb"
+    },
+    {
+      "sequence": 39,
+      "monotonic": 178620.908739125,
+      "wall_time": "2026-08-03T02:17:22+0800",
+      "type": "tts_ready",
+      "speaker": "judge",
+      "provider": "local espeak",
+      "model": "macos-say-Samantha",
+      "request_id": null,
+      "latency_seconds": 0.744,
+      "file": "/private/tmp/ai-agent-book-exp108-20260803/chapter10/voice-werewolf/audio/r3_judge_39.wav",
+      "audio_bytes": 636,
+      "audio_sha256": "dfcc3dd318e80b0d8a039d14b7f4689cd83dd8e4574acb1d082b5731eb8697ca"
+    }
+  ],
+  "voice_has_asr": true,
+  "voice_has_tts": true,
+  "simulator_llm_tool_calls": 6,
+  "simulator_audio_roundtrips": 6,
+  "barge_in_events": 0,
+  "gates": {
+    "exact_6_to_8_player_role_roster": {
+      "status": "pass"
+    },
+    "one_user_seat": {
+      "status": "pass"
+    },
+    "one_authorized_human_participant": {
+      "status": "not_applicable"
+    },
+    "one_llm_user_simulator": {
+      "status": "pass"
+    },
+    "real_user_input_asr": {
+      "status": "pass"
+    },
+    "real_ai_and_judge_tts": {
+      "status": "pass"
+    },
+    "llm_tool_to_audio_to_asr_boundary": {
+      "status": "pass",
+      "tool_calls": 6,
+      "audio_roundtrips": 6
+    },
+    "three_complete_cycles": {
+      "status": "pass",
+      "observed": 3
+    },
+    "information_isolation": {
+      "status": "pass"
+    },
+    "real_llm_strategy_acceptance": {
+      "status": "pass"
+    },
+    "winner_determined_by_game_rule": {
+      "status": "pass"
+    }
+  },
+  "overall_status": "pass"
+}
