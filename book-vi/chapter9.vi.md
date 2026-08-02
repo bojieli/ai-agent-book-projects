@@ -335,11 +335,13 @@ Anthropic xác định ba loại công cụ để hình thành khả năng tươ
 
 **Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
 
-> **Thử nghiệm 9-6 ★: Chạy bản demo Anthropic Computer Use**
+> **Thử nghiệm 9-6 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
 >
-> Bộ chứa đóng gói một môi trường máy tính để bàn Ubuntu hoàn chỉnh (bao gồm các công cụ phổ biến như trình duyệt và thiết bị đầu cuối). Giao diện người dùng nhận hướng dẫn tác vụ, giao diện sau gửi hướng dẫn và ảnh chụp màn hình tới Claude, mô hình trả về hướng dẫn thao tác (di chuyển chuột, nhấp chuột, nhập văn bản, v.v.) và lớp thực thi được thực thi trong màn hình ảo.
+> Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
 >
-> Quan sát chính: Khoảng thời gian giữa mỗi hành động là 2-5 giây (chậm hơn đáng kể so với con người), nhưng nó cho thấy khả năng lập kế hoạch tốt cho các nhiệm vụ thông thường và có thể tự động chia nhỏ thành các chuỗi hoạt động hợp lý.
+> Lộ trình B sử dụng dự án đi kèm sách [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/). Theo mặc định, dự án điều khiển browser-use bằng mô hình trọng số mở Qwen3-VL 32B Instruct, qua API được OpenRouter lưu trữ hoặc bằng cách trỏ `OPEN_MODEL_BASE_URL` đến vLLM/SGLang tự lưu trữ hay endpoint tương thích khác. Endpoint phải nhận được ảnh chụp màn hình và hỗ trợ JSON Schema nguyên bản; nếu chỉ hỗ trợ JSON thông thường, có thể bật rõ ràng chế độ tương thích schema-in-prompt.
+>
+> Hai lộ trình dùng cùng một tác vụ chỉ đọc và cùng một hợp đồng nghiệm thu: tối đa 25 bước, mỗi bước chỉ thực hiện một hành động, đồng thời lưu danh tính mô hình/endpoint, phản hồi nguyên gốc của nhà cung cấp, ảnh chụp từng bước, chuỗi hành động, câu trả lời cuối cùng và lý do dừng. Các mô hình khác nhau phải được báo cáo như những nhánh thí nghiệm riêng; không được trình bày kết quả mô hình mở như một lần tái lập Claude, cũng không được coi “container khởi động thành công” là hoàn thành tác vụ. Khoảng thời gian giữa hành động và chất lượng lập kế hoạch là kết quả đo được, không phải giả định trước rằng khoảng thời gian là 2–5 giây hoặc mô hình chắc chắn vượt trội hơn các mô hình khác.
 >
 
 ### Định vị trực quan (Nối đất)
@@ -388,9 +390,11 @@ Logic lựa chọn của ba tuyến đường có thể được tóm tắt như
 
 > **Thử nghiệm 9-7 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
 >
-> Dựa trên khung tự động hóa trình duyệt Playwright (thư viện công cụ để điều khiển trình duyệt bằng mã), kết hợp với các mô hình lớn đa phương thức để đạt được các hoạt động trình duyệt dựa trên ngôn ngữ tự nhiên. Bật chế độ trực quan hóa SoM và lưu ảnh chụp màn hình kèm theo các hộp chú thích trước mỗi quyết định.
+> Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để triển khai thao tác trình duyệt được điều khiển bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp màn hình có hộp giới hạn được chú thích trước mỗi quyết định. Giao diện mô hình không bị giới hạn ở OpenAI hay Anthropic; sách cung cấp cấu hình API cho mô hình mở Qwen3-VL và giữ một base URL tổng quát tương thích OpenAI cho các dịch vụ lưu trữ khác hoặc suy luận tự lưu trữ.
 >
-> Nhiệm vụ kiểm tra "Mở Google để truy vấn thời tiết ở San Francisco": Sau khi hệ thống khởi động, ảnh chụp màn hình hiển thị trang tìm kiếm Google. Tất cả các yếu tố tương tác được đánh dấu bằng hộp giới hạn màu đỏ và số ID (thanh địa chỉ `[1]`, hộp tìm kiếm `[2]`, nút tìm kiếm `[3]`, nút "Tôi cảm thấy may mắn" `[4]`, v.v.) → nhấp vào sau khi phân tích mô hình `[2]` (hộp tìm kiếm) → Sau khi hộp tìm kiếm lấy được tiêu điểm, hãy nhập "Thời tiết San Francisco hôm nay" → Nhấp vào `[3]` (nút tìm kiếm) → Trang chuyển đến kết quả tìm kiếm. Ảnh chụp màn hình mới đánh dấu các thành phần trong thẻ thời tiết. Mô hình nhận biết và trích xuất thông tin như nhiệt độ và điều kiện thời tiết. Toàn bộ quá trình gồm 5 bước và mất khoảng 20 giây để hoàn thành.
+> Nhiệm vụ kiểm tra “Mở Google và tìm thời tiết San Francisco”: sau khi khởi động, ảnh chụp màn hình hiển thị trang tìm kiếm Google với các phần tử tương tác được đánh số. Mô hình chọn hộp tìm kiếm, nhập “San Francisco weather today”, gửi tìm kiếm rồi trích xuất nhiệt độ và điều kiện thời tiết từ trang kết quả. Khi nghiệm thu, cần kiểm tra độc lập câu trả lời và quỹ đạo, đồng thời ghi trung thực số bước thực tế và thời gian đã dùng. “5 bước, khoảng 20 giây” chỉ có thể là giá trị quan sát của một lần chạy cụ thể, không phải kết quả cố định nếu không có biên nhận thực thi.
+>
+> Lần chạy chính thức của mô hình mở được lưu trong sách sử dụng `qwen/qwen3-vl-32b-instruct` trên OpenRouter. Khi gặp CAPTCHA ở bước 4 của Google Search, mô hình không tuyên bố thành công mà chuyển sang weather.com; đến bước 16, nó đọc từ trang Today của San Francisco: 64°F, Sunny, cảm giác như 62°F, cao nhất 74°F và thấp nhất 55°F. Cả 16/16 phản hồi API đều báo đúng mô hình Qwen3-VL được yêu cầu; 15 ảnh chụp bước hợp lệ cùng quỹ đạo hành động chỉ đọc đã vượt qua nghiệm thu quyết định độc lập. Kết quả này chứng minh lộ trình API mô hình mở có thể chạy được; nó không đồng nghĩa với việc đã tái lập nhánh sử dụng công cụ `computer` nguyên bản của Anthropic.
 
 ### Có thể xem hoạt hình và nghe âm thanh Computer Use Agent
 

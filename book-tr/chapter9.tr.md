@@ -329,11 +329,13 @@ Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımla
 
 **Dosya düzenleme aracı** (str_replace_editor): Dizi eşleştirmesi yoluyla güvenli düzenleme sağlar; görüntüleme, oluşturma, değiştirme, ekleme ve geri alma işlemlerini destekler. Dosyanın tamamının üzerine yazmaktan daha kesindir ve alakasız içeriği yanlışlıkla değiştirme olasılığı daha düşüktür.
 
-> **Deney 9-6 ★: Anthropic Computer Use Demo'sunu Çalıştırmak**
+> **Deney 9-6 ★: Computer Use'ı Çalıştırmak (Anthropic Referans Yolu veya Açık Model Yolu)**
 >
-> Konteyner, eksiksiz bir Ubuntu masaüstü ortamını (tarayıcı, terminal gibi yaygın araçlarla birlikte) paketler. Ön uç görev talimatlarını alır, arka uç talimatları ekran görüntüleriyle birlikte Claude'a gönderir, model işlem talimatlarını döndürür (fareyi hareket ettirme, tıklama, metin girme vb.) ve yürütme katmanı bunları sanal masaüstünde uygular.
+> A yolu Anthropic Computer Use Demo'yu kullanır. Konteyner, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamı sunar. Ön uç görevi alır; arka uç talimatları ve ekran görüntülerini Claude'a gönderir, ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür. Bu yol, yerleşik `computer` aracı protokolünü anlamaya yöneliktir; her okuyucunun Anthropic API erişimine sahip olmasını gerektirmez.
 >
-> Kilit gözlem: Her eylem arasında 2-5 saniye geçer (insandan belirgin biçimde yavaştır), ama yaygın görevlerde iyi bir planlama yeteneği gösterir ve görevleri makul işlem dizilerine kendi başına ayrıştırabilir.
+> B yolu, kitabın [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) eşlikçi projesini kullanır. Varsayılan olarak browser-use'ı açık ağırlıklı Qwen3-VL 32B Instruct ile çalıştırır; OpenRouter barındırılan API'si kullanılabilir veya `OPEN_MODEL_BASE_URL`, kendi barındırdığınız vLLM/SGLang ya da başka bir uyumlu uç noktaya yönlendirilebilir. Uç nokta ekran görüntülerini kabul etmeli ve yerleşik JSON Schema'yı desteklemelidir; yalnızca normal JSON destekliyorsa schema-in-prompt uyumluluk modu açıkça etkinleştirilebilir.
+>
+> İki yol da aynı salt okunur görevi ve aynı kabul sözleşmesini kullanır: en fazla 25 adım, adım başına tek bir eylem ve model/uç nokta kimliğinin, ham sağlayıcı yanıtlarının, adım adım ekran görüntülerinin, eylem dizisinin, nihai yanıtın ve durma nedeninin saklanması. Farklı modeller ayrı deney kolları olarak raporlanmalıdır; açık model sonucu Claude yeniden üretimi gibi sunulmamalı, “konteyner başarıyla başladı” ifadesi görev tamamlandı sayılmamalıdır. Eylem aralıkları ve planlama kalitesi ölçülen sonuçlardır; 2–5 saniye olacağı veya diğer modellerden mutlaka üstün olacağı önceden varsayılmaz.
 >
 
 ### Görsel Konumlandırma (Grounding)
@@ -382,9 +384,11 @@ Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim s
 
 > **Deney 9-7 ★: browser-use ile Otomatik Tarayıcı İşlemleri**
 >
-> Playwright tarayıcı otomasyon çerçevesini (tarayıcıyı kodla denetlemeye yarayan bir kütüphane) çok modlu büyük modellerle birleştirerek doğal dille sürülen tarayıcı işlemlerini gerçekleştirin. SoM görselleştirme modunu etkinleştirin ve her karardan önce işaretleme kutularının bulunduğu ekran görüntüsünü kaydedin.
+> Tarayıcı otomasyon çerçevesi Playwright'ı çok modlu bir modelle birleştirerek doğal dille yönlendirilen tarayıcı işlemlerini gerçekleştirin. SoM görselleştirmesini etkinleştirin ve her karardan önce açıklamalı sınırlayıcı kutular içeren ekran görüntüsünü kaydedin. Model arayüzü OpenAI veya Anthropic ile sınırlı değildir; kitap, açık Qwen3-VL modeli için API yapılandırması sağlar ve diğer barındırılan hizmetler ya da kendi barındırdığınız çıkarım için genel bir OpenAI uyumlu base URL sunar.
 >
-> "Google'ı aç ve San Francisco hava durumunu sorgula" test görevi: Sistem başlatıldıktan sonra alınan ekran görüntüsü Google arama sayfasını gösterir ve tüm etkileşimli öğeler kırmızı sınırlayıcı kutular ile ID numaralarıyla işaretlenmiştir (adres çubuğu `[1]`, arama kutusu `[2]`, arama düğmesi `[3]`, "Kendimi Şanslı Hissediyorum" düğmesi `[4]` vb.) → model analiz ettikten sonra `[2]`ye (arama kutusu) tıklar → arama kutusu odağı aldıktan sonra "San Francisco weather today" yazılır → `[3]`e (arama düğmesi) tıklanır → sayfa arama sonuçlarına geçer, yeni ekran görüntüsünde hava durumu kartının içindeki öğeler işaretlenir ve model sıcaklık, hava koşulu gibi bilgileri tanıyıp çıkarır. Tüm süreç 5 adım sürer ve yaklaşık 20 saniyede tamamlanır.
+> “Google'ı aç ve San Francisco hava durumunu sorgula” test görevi: Başlatma sonrasında ekran görüntüsü, numaralandırılmış etkileşimli öğelerle Google arama sayfasını gösterir. Model arama kutusunu seçer, “San Francisco weather today” yazar, aramayı gönderir ve sonuç sayfasından sıcaklık ile hava koşullarını çıkarır. Kabul sırasında yanıt ve iz bağımsız olarak doğrulanır; gerçek adım sayısı ve geçen süre olduğu gibi kaydedilir. “5 adım, yaklaşık 20 saniye” yalnızca belirli bir çalışmanın gözlem değeri olabilir; yürütme kaydı olmadan sabit sonuç sayılamaz.
+>
+> Kitapta saklanan resmi açık model çalışması, OpenRouter üzerindeki `qwen/qwen3-vl-32b-instruct` modelini kullandı. Model Google Search'ün 4. adımında CAPTCHA ile karşılaştığında başarılı olduğunu iddia etmedi; weather.com'a geçti ve 16. adımda San Francisco Today sayfasından 64°F, Sunny, hissedilen 62°F, en yüksek 74°F ve en düşük 55°F bilgilerini okudu. 16 API yanıtının tamamı istenen Qwen3-VL modelini bildirdi; 15 geçerli adım ekran görüntüsü ve salt okunur eylem izi bağımsız deterministik kabulden geçti. Bu sonuç açık model API yolunun çalıştığını kanıtlar; Anthropic'in yerleşik `computer` aracı kolunun yeniden üretildiği anlamına gelmez.
 
 ### Animasyon Görebilen, Ses Duyabilen Computer Use Agent'ı
 

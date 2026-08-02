@@ -318,11 +318,13 @@ Anthropic mendefinisikan tiga jenis alat yang membentuk kemampuan interaksi leng
 
 **File Editing Tool** (`str_replace_editor`): Memungkinkan pengeditan yang aman melalui pencocokan string dan mendukung operasi lihat, buat, ganti, sisipkan, dan urungkan. Ini lebih presisi daripada menimpa seluruh file dan lebih kecil kemungkinannya untuk memodifikasi konten yang tidak terkait secara tidak sengaja.
 
-> **Eksperimen 9-6 ★: Menjalankan Demo Anthropic Computer Use**
+> **Eksperimen 9-6 ★: Menjalankan Computer Use (Jalur Referensi Anthropic atau Jalur Model Terbuka)**
 >
-> Kontainer ini mencakup lingkungan desktop Ubuntu lengkap dengan browser, terminal, dan alat umum lainnya. Frontend menerima instruksi tugas, backend mengirim instruksi tersebut dan tangkapan layar ke Claude, dan model mengembalikan tindakan seperti menggerakkan mouse, mengklik, dan mengetik. Sistem kemudian mengeksekusi tindakan tersebut di desktop virtual.
+> Jalur A menggunakan Demo Anthropic Computer Use. Kontainernya mengemas lingkungan desktop Ubuntu lengkap, termasuk browser, terminal, dan tool umum lainnya. Frontend menerima tugas, sedangkan backend mengirim instruksi dan tangkapan layar ke Claude, lalu menjalankan tindakan mouse, keyboard, terminal, atau pengeditan yang dikembalikan model. Jalur ini ditujukan untuk memahami protokol tool `computer` native; tidak semua pembaca diwajibkan memiliki akses ke Anthropic API.
 >
-> Pengamatan utama: Setiap siklus tindakan membutuhkan waktu 2-5 detik, membuat sistem jauh lebih lambat daripada manusia. Meskipun demikian, ini menunjukkan perencanaan yang baik pada tugas-tugas umum dan secara otonom memecahnya menjadi urutan tindakan yang masuk akal.
+> Jalur B menggunakan proyek pendamping buku [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/). Secara default, proyek ini menggerakkan browser-use dengan model berbobot terbuka Qwen3-VL 32B Instruct, baik melalui API hosting OpenRouter maupun dengan mengarahkan `OPEN_MODEL_BASE_URL` ke vLLM/SGLang yang di-host sendiri atau endpoint kompatibel lainnya. Endpoint harus menerima tangkapan layar dan mendukung JSON Schema native; jika hanya mendukung JSON biasa, mode kompatibilitas schema-in-prompt dapat diaktifkan secara eksplisit.
+>
+> Kedua jalur memakai tugas read-only dan kontrak penerimaan yang sama: maksimal 25 langkah, hanya satu tindakan per langkah, serta menyimpan identitas model/endpoint, respons mentah penyedia, tangkapan layar tiap langkah, urutan tindakan, jawaban akhir, dan alasan berhenti. Model yang berbeda harus dilaporkan sebagai lengan eksperimen terpisah; hasil model terbuka tidak boleh disajikan sebagai reproduksi Claude, dan “kontainer berhasil dimulai” tidak boleh dianggap sebagai penyelesaian tugas. Interval tindakan dan kualitas perencanaan adalah hasil yang diukur, bukan asumsi 2–5 detik ataupun kepastian bahwa model tersebut lebih unggul dari model lain.
 
 ### Visual Grounding
 
@@ -367,9 +369,11 @@ Pilihan di antara ketiga rute tersebut dapat diringkas sebagai berikut: **ketika
 
 > **Eksperimen 9-7 ★: Menggunakan browser-use untuk Mengimplementasikan Operasi Browser Otomatis**
 >
-> Gabungkan Playwright, framework otomatisasi browser, dengan model multimodal untuk mengimplementasikan operasi browser yang digerakkan oleh instruksi bahasa alami. Aktifkan visualisasi SoM dan simpan tangkapan layar dengan anotasi kotak pembatas (bounding box) sebelum setiap keputusan.
+> Gabungkan Playwright, framework otomatisasi browser, dengan model multimodal untuk mengimplementasikan operasi browser yang digerakkan bahasa alami. Aktifkan visualisasi SoM dan simpan tangkapan layar dengan anotasi bounding box sebelum setiap keputusan. Antarmuka model tidak terbatas pada OpenAI atau Anthropic; buku ini menyediakan konfigurasi API untuk model terbuka Qwen3-VL dan mempertahankan base URL generik yang kompatibel dengan OpenAI untuk layanan hosting lain atau inferensi yang di-host sendiri.
 >
-> Tugas pengujian "Buka Google dan cari cuaca San Francisco": Setelah sistem mulai, tangkapan layar menampilkan halaman pencarian Google, dengan semua elemen interaktif dianotasi dengan kotak pembatas merah dan nomor ID (bilah alamat `[1]`, kotak pencarian `[2]`, tombol cari `[3]`, tombol "Saya Lagi Beruntung" `[4]`, dll.) → Model menganalisis dan mengklik `[2]` (kotak pencarian) → Kotak pencarian mendapat fokus dan model mengetik "cuaca San Francisco hari ini" → Model mengklik `[3]` (tombol cari) → Halaman bernavigasi ke hasil pencarian, dan tangkapan layar berikutnya menampilkan elemen yang dianotasi dalam kartu cuaca, memungkinkan model untuk mengidentifikasi dan mengekstrak informasi seperti suhu dan kondisi cuaca. Seluruh proses memakan waktu 5 langkah dan sekitar 20 detik.
+> Tugas pengujian “Buka Google dan cari cuaca San Francisco”: setelah startup, tangkapan layar menampilkan halaman pencarian Google dengan elemen interaktif bernomor. Model memilih kotak pencarian, memasukkan “San Francisco weather today”, mengirim pencarian, lalu mengekstrak suhu dan kondisi cuaca dari halaman hasil. Saat penerimaan, verifikasi jawaban dan trajectory secara independen serta catat jumlah langkah dan durasi aktual apa adanya. “5 langkah, sekitar 20 detik” hanya boleh menjadi hasil pengamatan dari satu proses tertentu, bukan hasil tetap tanpa bukti eksekusi.
+>
+> Proses resmi model terbuka yang disimpan buku menggunakan `qwen/qwen3-vl-32b-instruct` di OpenRouter. Saat menemui CAPTCHA di Google Search pada langkah 4, model tidak mengklaim berhasil; model beralih ke weather.com dan pada langkah 16 membaca 64°F, Sunny, terasa seperti 62°F, tertinggi 74°F, dan terendah 55°F dari halaman Today San Francisco. Seluruh 16 dari 16 respons API melaporkan model Qwen3-VL yang diminta, dan 15 tangkapan layar langkah yang valid beserta trajectory tindakan read-only lolos penerimaan deterministik independen. Hasil ini membuktikan bahwa jalur API model terbuka dapat dijalankan; bukan berarti lengan tool `computer` native Anthropic telah direproduksi.
 
 ### Computer Use Agent yang Dapat Menonton Animasi dan Mendengar Suara
 
