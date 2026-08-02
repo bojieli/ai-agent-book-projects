@@ -2,9 +2,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+import uuid
 
 from evolution import (
-    diagnose, generate_candidate, generate_rejected_control,
+    behavior_metrics, diagnose, generate_candidate, generate_rejected_control,
     release_manifest, validate_candidate,
 )
 
@@ -31,6 +32,12 @@ class SelfModificationTest(unittest.TestCase):
         self.assertTrue(all(checks.values()))
         self.assertIn("if not retryable", self.candidate["source"])
         self.assertIn("PAYMENT_DECLINED", self.candidate["source"])
+
+    def test_behavior_metrics_are_evaluated_in_sandbox(self):
+        metrics = behavior_metrics(self.candidate["source"], self.trajectories)
+        self.assertEqual(1.0, metrics["mean_nonretryable_calls"])
+        self.assertEqual(1.0, metrics["temporary_error_recovery_rate"])
+        self.assertEqual(0, metrics["old_task_regressions"])
 
     def test_release_manifest_keeps_rollback_and_stable_source(self):
         checks = validate_candidate(self.candidate["source"], self.trajectories)
@@ -97,6 +104,47 @@ class SelfModificationTest(unittest.TestCase):
             checks = validate_candidate(unsafe, self.trajectories)
             self.assertFalse(checks["security_scan"])
             self.assertFalse(marker.exists())
+
+    def test_builtins_open_bypass_is_confined_to_container(self):
+        marker = Path(tempfile.gettempdir()) / f"agent-sandbox-{uuid.uuid4().hex}"
+        source = (
+            f'__builtins__["open"]({str(marker)!r}, "w").write("sandboxed")\n'
+            + self.candidate["source"]
+        )
+        try:
+            checks = validate_candidate(source, self.trajectories, self.stable)
+            # This intentionally demonstrates why the AST scan is not the boundary.
+            self.assertTrue(checks["security_scan"])
+            self.assertTrue(checks["sandbox_execution"])
+            self.assertTrue(all(checks.values()))
+            self.assertFalse(marker.exists())
+        finally:
+            marker.unlink(missing_ok=True)
+
+    def test_nonterminating_candidate_fails_closed(self):
+        checks = validate_candidate("while True:\n    pass\n", self.trajectories)
+        self.assertTrue(checks["static_compile"])
+        self.assertTrue(checks["security_scan"])
+        self.assertFalse(checks["sandbox_execution"])
+        self.assertFalse(all(checks.values()))
+
+    def test_candidate_has_no_network_access(self):
+        network_probe = (
+            '_socket = __builtins__["__import__"]("socket").socket()\n'
+            '_network_available = _socket.connect_ex(("1.1.1.1", 53)) == 0\n'
+            "_socket.close()\n"
+        )
+        source = (network_probe + self.candidate["source"]).replace(
+            "    if not retryable or error_code in NON_RETRYABLE_CODES:",
+            "    if _network_available:\n"
+            '        raise RuntimeError("sandbox unexpectedly has network access")\n'
+            "    if not retryable or error_code in NON_RETRYABLE_CODES:",
+            1,
+        )
+        checks = validate_candidate(source, self.trajectories, self.stable)
+        self.assertTrue(checks["security_scan"])
+        self.assertTrue(checks["sandbox_execution"])
+        self.assertTrue(all(checks.values()))
 
 
 if __name__ == "__main__":
