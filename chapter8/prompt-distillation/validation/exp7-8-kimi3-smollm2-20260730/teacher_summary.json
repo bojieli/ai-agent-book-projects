@@ -27,24 +27,24 @@
     "completion_tokens": 12503,
     "latency_seconds_total": 629.3293080376461,
     "latency_seconds_mean": 3.9333081752352883,
-    "provider_cost_cny": 1.8673440000000001,
-    "provider_cost_usd": 0.2759788924675325
+    "provider_cost_cny": 1.867344,
+    "provider_cost_usd": 0.27597889246753254
   },
   "test": {
     "rows": 80,
-    "retained_receipts": 52,
-    "coverage": 0.65,
-    "valid_receipts": 52,
-    "unique_response_ids": 52,
-    "correct": 52,
-    "gold_accuracy": 0.65,
+    "retained_receipts": 80,
+    "coverage": 1.0,
+    "valid_receipts": 80,
+    "unique_response_ids": 80,
+    "correct": 80,
+    "gold_accuracy": 1.0,
     "observed_gold_accuracy": 1.0,
-    "prompt_tokens": 20030,
-    "completion_tokens": 3989,
-    "latency_seconds_total": 197.62670762557536,
-    "latency_seconds_mean": 3.8005136081841417,
-    "provider_cost_cny": 0.559884,
-    "provider_cost_usd": 0.08274649246753248
+    "prompt_tokens": 30898,
+    "completion_tokens": 6325,
+    "latency_seconds_total": 331.5117934176815,
+    "latency_seconds_mean": 4.143897417721019,
+    "provider_cost_cny": 0.9186840000000001,
+    "provider_cost_usd": 0.13577433662337665
   },
-  "campaign_complete": false
+  "campaign_complete": true
 }
