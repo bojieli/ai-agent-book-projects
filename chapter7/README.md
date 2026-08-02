@@ -17,7 +17,7 @@
 | 7-6 | [sesame](sesame/) · [orpheus](orpheus/) | 🚧 | 两条真实语音 SFT 轨道：副语言标记建模与跨句音色一致；需训练后 adapter、音频和人工/自动对照证据才算完成 |
 | 7-7 | [MultilingualReasoning](MultilingualReasoning/) | 🚧 | 多语言思考 SFT 实现；需训练 checkpoint 与跨语言基准前后对照才算完成 |
 | 7-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 🚧 | 教师提示/响应生成、学生训练与质量-成本对照的跨章实现；仅生成示例或提示机制不构成完成 |
-| 7-9 | [cot-distillation](cot-distillation/) | 🚧 | 已保存并规则过滤真实 Kimi K3 CoT；现已补齐无 mock 的学生 SFT、同题三臂对照、配对显著性与反思/回溯/验算验收代码，但当前主机尚无 CUDA checkpoint，不能宣称蒸馏提升 |
+| 7-9 | [cot-distillation](cot-distillation/) | ✅ | 24/24 Kimi K3 教师轨迹均已完成并经规则过滤，23 条进入 SFT；真实 CUDA checkpoint 与同题三臂对照已保留。学生 2/24 对基线 1/24 的提升不显著（p=1.0），作为负结果如实报告 |
 | 7-10 | [AdaptThink 配套说明](AdaptThink/) · `AdaptThink-original/` | ✅ | [历史训练报告](AdaptThink/TRAINING_REPORT.md)记录公开 W&B 主运行 `wubbn5tj`：8×H100，step 300 三基准响应长度均显著下降，但 AIME mean@16 下降 0.42 pp；运行继续至 step 410 后崩溃，checkpoint 不随书分发，且未保留独立 checkpoint 评估回执 |
 | 7-11 | `SFTvsRL/` | 📖 | `bojieli/SFTvsRL` 的 GeneralPoints-L/VL：同预算 SFT 与 PPO 的 ID/OOD 记忆—泛化对照 |
 | 7-12 | [SpatialReasoning 配套说明](SpatialReasoning/) · `SFTvsRL/` | 📖 | 同一 `bojieli/SFTvsRL` checkout 的 V-IRL-L/VL 训练与跨城市/规则 OOD 评估，不是独立 SpatialReasoning 代码仓库 |

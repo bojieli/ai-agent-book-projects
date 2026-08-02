@@ -60,6 +60,42 @@ def compare_binary(baseline: dict[str, bool], student: dict[str, bool]) -> dict[
     }
 
 
+def completion_and_findings(
+    *,
+    problem_ids: set[str],
+    baseline: dict[str, Any],
+    student: dict[str, Any],
+    teacher: dict[str, Any],
+    paired: dict[str, Any],
+    student_training_complete: bool,
+    teacher_outputs_complete: bool,
+) -> tuple[dict[str, bool], dict[str, Any]]:
+    """Separate execution/evidence gates from potentially negative hypotheses."""
+    arm_ids = [
+        {str(record["id"]) for record in arm.get("records", [])}
+        for arm in (baseline, student, teacher)
+    ]
+    completion = {
+        "same_problem_ids_across_three_arms": all(ids == problem_ids for ids in arm_ids),
+        "real_student_training": student_training_complete,
+        "teacher_outputs_complete": teacher_outputs_complete,
+        "paired_quality_comparison_complete": paired.get("paired_cases") == len(problem_ids),
+        "behavior_inspection_complete": all(
+            set(arm.get("behavior_rates", {})) == set(BEHAVIORS)
+            for arm in (baseline, student, teacher)
+        ),
+    }
+    completion["complete"] = all(completion.values())
+    findings = {
+        "student_improves_over_baseline": student["accuracy"] > baseline["accuracy"],
+        "paired_improvement_significant_p_lt_0_05": paired["exact_two_sided_p_value"] < 0.05,
+        "teacher_style_reflection_backtracking_or_verification_observed": any(
+            student["behavior_rates"].values()
+        ),
+    }
+    return completion, findings
+
+
 def teacher_outputs(path: Path) -> dict[str, str]:
     outputs: dict[str, str] = {}
     for row in load_jsonl(path):
@@ -144,6 +180,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--baseline-model", default="Qwen/Qwen2.5-1.5B-Instruct")
     parser.add_argument("--student-model", required=True, help="Real checkpoint emitted by train_student.py")
     parser.add_argument("--teacher-data", type=Path, default=Path("data/raw_trajectories_aime_kimi_k3.jsonl"))
+    parser.add_argument(
+        "--reuse-local-arms-from",
+        type=Path,
+        help="Reuse retained baseline/student records from a prior evaluation; teacher data is always rescored",
+    )
     parser.add_argument("--max-new-tokens", type=int, default=4096)
     parser.add_argument("--output", type=Path, default=Path("validation/experiment_7_9.json"))
     return parser.parse_args()
@@ -161,12 +202,25 @@ def main() -> None:
         )
 
     questions = [str(problem["question"]) for problem in problems]
-    baseline = score_arm(
-        "baseline", problems, generate_local(args.baseline_model, questions, args.max_new_tokens)
-    )
-    student = score_arm(
-        "student", problems, generate_local(args.student_model, questions, args.max_new_tokens)
-    )
+    reused_local_arms = None
+    if args.reuse_local_arms_from:
+        prior = json.loads(args.reuse_local_arms_from.read_text())
+        arms = {arm.get("name"): arm for arm in prior.get("arms", [])}
+        if set(arms) < {"baseline", "student"}:
+            raise SystemExit("reuse source lacks retained baseline and student arms")
+        baseline = arms["baseline"]
+        student = arms["student"]
+        reused_local_arms = {
+            "path": str(args.reuse_local_arms_from),
+            "sha256": sha256(args.reuse_local_arms_from),
+        }
+    else:
+        baseline = score_arm(
+            "baseline", problems, generate_local(args.baseline_model, questions, args.max_new_tokens)
+        )
+        student = score_arm(
+            "student", problems, generate_local(args.student_model, questions, args.max_new_tokens)
+        )
     cached_teacher = teacher_outputs(args.teacher_data)
     teacher_texts = [cached_teacher.get(str(p["id"]), cached_teacher.get(str(p["question"]), "")) for p in problems]
     teacher = score_arm("teacher", problems, teacher_texts)
@@ -179,15 +233,15 @@ def main() -> None:
     recovered = (
         (student["accuracy"] - baseline_accuracy) / teacher_gap if teacher_gap > 0 else None
     )
-    behavior_present = any(student["behavior_rates"].values())
-    completion = {
-        "same_problem_ids_across_three_arms": all(arm["cases"] == len(problems) for arm in (baseline, student, teacher)),
-        "student_improves_over_baseline": student["accuracy"] > baseline_accuracy,
-        "paired_improvement_significant_p_lt_0_05": paired["exact_two_sided_p_value"] < 0.05,
-        "teacher_style_reflection_backtracking_or_verification_observed": behavior_present,
-        "teacher_outputs_complete": all(bool(text) for text in teacher_texts),
-    }
-    completion["complete"] = all(completion.values())
+    completion, findings = completion_and_findings(
+        problem_ids={str(problem["id"]) for problem in problems},
+        baseline=baseline,
+        student=student,
+        teacher=teacher,
+        paired=paired,
+        student_training_complete=json.loads(student_manifest.read_text()).get("status") == "complete",
+        teacher_outputs_complete=all(bool(text) for text in teacher_texts),
+    )
     payload = {
         "schema_version": 1,
         "experiment": "7-9",
@@ -197,6 +251,7 @@ def main() -> None:
             "problems": {"path": str(args.problems), "sha256": sha256(args.problems)},
             "teacher_data": {"path": str(args.teacher_data), "sha256": sha256(args.teacher_data)},
             "student_training_manifest": json.loads(student_manifest.read_text()),
+            "reused_local_arms": reused_local_arms,
         },
         "models": {
             "baseline": args.baseline_model,
@@ -206,6 +261,7 @@ def main() -> None:
         "paired_comparison": paired,
         "teacher_capability_recovered": recovered,
         "completion": completion,
+        "findings": findings,
         "arms": [baseline, student, teacher],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
