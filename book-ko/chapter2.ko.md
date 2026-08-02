@@ -240,13 +240,9 @@ Chat Completions 계열 API의 핵심 입력은 보통 `messages`라고 부르�
 이제 JSON 구조를 이해했으므로 위 단계를 Python 코드로 연결해 보겠습니다. 다음은 하나의 루프를 중심으로 만든 최소한의 에이전트 구현입니다.
 
 ```python
-from openai import APIError, OpenAI
+from openai import OpenAI
 
-client = OpenAI(
-    base_url="http://localhost:8000/v1",
-    api_key="EMPTY",  # The local vLLM server does not require a real key
-    timeout=30.0,
-)
+client = OpenAI()
 
 # ── Tool definitions ──
 tools = [
@@ -294,15 +290,12 @@ messages = [
 ]
 
 # ── Agent core loop ──
-# Bound the loop because Agents can become stuck repeating tool calls forever.
-MAX_ITERATIONS = 10
-for _ in range(MAX_ITERATIONS):
-    try:
-        response = client.chat.completions.create(
-            model="Qwen3-0.6B", messages=messages, tools=tools
-        )
-    except APIError as exc:
-        raise RuntimeError("Local model request failed") from exc
+# Production code needs a max_iterations cap here: as discussed later in
+# this chapter, Agents can become stuck repeating the same tool calls forever
+while True:
+    response = client.chat.completions.create(
+        model="Qwen3-0.6B", messages=messages, tools=tools
+    )
     assistant_message = response.choices[0].message
 
     # Append model's response to message list (whether text or tool calls)
@@ -322,11 +315,9 @@ for _ in range(MAX_ITERATIONS):
             "content": result,
         })
     # Return to top of loop, call model again with updated message list
-else:
-    raise RuntimeError(f"Agent did not finish within {MAX_ITERATIONS} iterations")
 ```
 
-루프에는 하나의 핵심 분기가 있습니다. **모델이 `tool_calls`를 반환하면 도구를 실행하고 계속하며, 그렇지 않으면 결과를 출력하고 종료합니다.** 모델 요청이 실패하거나 열 번 안에 최종 응답이 나오지 않아도 명시적인 오류로 종료합니다. 이 과정에서 모델 응답과 도구 실행 결과를 라운드마다 덧붙이므로 `messages` 목록은 계속 늘어납니다.
+루프에는 하나의 핵심 분기가 있습니다. **모델이 `tool_calls`를 반환하면 도구를 실행하고 계속하며, 그렇지 않으면 결과를 출력하고 종료합니다.** 이 과정에서 모델 응답과 도구 실행 결과를 라운드마다 덧붙이므로 `messages` 목록은 계속 늘어납니다.
 
 라운드가 진행되면서 `messages` 목록은 다음과 같이 바뀝니다.
 
