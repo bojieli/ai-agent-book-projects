@@ -218,10 +218,25 @@ def validate_candidate(
     """Run trusted gates outside the candidate's writable surface."""
     checks = {name: False for name in CHECK_NAMES}
     try:
-        namespace = _namespace(candidate_source)
+        # Scan the candidate BEFORE executing it: this validator runs untrusted,
+        # model-generated code, so a source that fails the security scan must
+        # never have its module-level side effects executed. static_compile uses
+        # a non-executing compile() so it is still recorded for a rejected source.
+        compile(candidate_source, "candidate/retry_policy.py", "exec")
         checks["static_compile"] = True
         checks["security_scan"] = _safe_ast(candidate_source)
+        if not checks["security_scan"]:
+            return checks
+        namespace = _namespace(candidate_source)
     except Exception:
+        return checks
+
+    # A syntactically valid but degenerate candidate (e.g. an empty LLM "source")
+    # compiles yet may define neither public function; reject cleanly here so the
+    # behavior gates below cannot KeyError on a missing name.
+    if not callable(namespace.get("should_retry")) or not callable(
+        namespace.get("should_open_circuit")
+    ):
         return checks
 
     expected_retry = "(error_code, retryable, attempt)"
@@ -233,29 +248,34 @@ def validate_candidate(
         )
     except (TypeError, ValueError):
         checks["public_api_compatible"] = False
-    failures = [item for item in trajectories if item.get("outcome") == "failure"]
-    checks["failure_replay"] = bool(failures) and all(
-        not namespace["should_retry"](item["error_code"], item["retryable"], attempt)
-        for item in failures for attempt in range(item["attempts"])
-    )
-    checks["nonretryable_circuit"] = bool(failures) and all(
-        namespace["should_open_circuit"](1, error_code=item["error_code"], retryable=item["retryable"])
-        for item in failures
-    )
-    checks["temporary_recovery"] = _temporary_recovery(namespace)
-    checks["old_task_regression"] = all((
-        namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 0),
-        namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 2),
-        not namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 3),
-        not namespace["should_open_circuit"](4, error_code="TEMPORARY_TIMEOUT", retryable=True),
-        namespace["should_open_circuit"](5, error_code="TEMPORARY_TIMEOUT", retryable=True),
-    ))
-    # Canary covers an unseen permanent code plus the original temporary path.
-    checks["canary_ready"] = all((
-        not namespace["should_retry"]("AUTH_DENIED", True, 0),
-        namespace["should_open_circuit"](1, error_code="AUTH_DENIED", retryable=True),
-        _temporary_recovery(namespace),
-    ))
+    if not checks["public_api_compatible"]:
+        return checks
+    try:
+        failures = [item for item in trajectories if item.get("outcome") == "failure"]
+        checks["failure_replay"] = bool(failures) and all(
+            not namespace["should_retry"](item["error_code"], item["retryable"], attempt)
+            for item in failures for attempt in range(item["attempts"])
+        )
+        checks["nonretryable_circuit"] = bool(failures) and all(
+            namespace["should_open_circuit"](1, error_code=item["error_code"], retryable=item["retryable"])
+            for item in failures
+        )
+        checks["temporary_recovery"] = _temporary_recovery(namespace)
+        checks["old_task_regression"] = all((
+            namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 0),
+            namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 2),
+            not namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 3),
+            not namespace["should_open_circuit"](4, error_code="TEMPORARY_TIMEOUT", retryable=True),
+            namespace["should_open_circuit"](5, error_code="TEMPORARY_TIMEOUT", retryable=True),
+        ))
+        # Canary covers an unseen permanent code plus the original temporary path.
+        checks["canary_ready"] = all((
+            not namespace["should_retry"]("AUTH_DENIED", True, 0),
+            namespace["should_open_circuit"](1, error_code="AUTH_DENIED", retryable=True),
+            _temporary_recovery(namespace),
+        ))
+    except Exception:
+        return checks
     if stable_source is None:
         # Backward-compatible test path: rollback content is supplied by the caller in production.
         checks["rollback_ready"] = True

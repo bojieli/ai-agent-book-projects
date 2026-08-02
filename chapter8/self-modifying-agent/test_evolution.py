@@ -1,4 +1,5 @@
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -61,6 +62,41 @@ class SelfModificationTest(unittest.TestCase):
         self.assertTrue(manifest["potential_regressions"])
         self.assertTrue(manifest["canary_gate"]["eligible"])
         self.assertEqual(manifest["stable_sha256"], manifest["rollback_sha256"])
+
+    def test_degenerate_candidate_is_rejected_without_crashing(self):
+        # A syntactically valid but degenerate source (e.g. an empty LLM reply)
+        # compiles yet defines neither public function; validate_candidate must
+        # reject it cleanly, not raise KeyError from the behavior gates.
+        for source in ("\n", "# only a comment\n"):
+            checks = validate_candidate(source, self.trajectories)
+            self.assertFalse(all(checks.values()))
+            self.assertFalse(checks["failure_replay"])
+
+    def test_candidate_exception_is_rejected_without_crashing(self):
+        source = self.candidate["source"].replace(
+            '    """Return whether another tool call should be attempted."""',
+            '    raise RuntimeError("candidate failed")',
+            1,
+        )
+        checks = validate_candidate(source, self.trajectories)
+        self.assertTrue(checks["public_api_compatible"])
+        self.assertFalse(checks["failure_replay"])
+
+    def test_unsafe_candidate_is_not_executed_during_validation(self):
+        # The security scan must run before the candidate is exec()'d, so a
+        # source flagged unsafe never runs its module-level side effects.
+        with tempfile.TemporaryDirectory() as directory:
+            marker = Path(directory) / "marker"
+            unsafe = (
+                "import pathlib\n"
+                f"pathlib.Path({str(marker)!r}).write_text('ran')\n"
+                "def should_retry(error_code, retryable, attempt):\n    return False\n"
+                "def should_open_circuit(consecutive_failures, *, error_code='', retryable=True):\n"
+                "    return True\n"
+            )
+            checks = validate_candidate(unsafe, self.trajectories)
+            self.assertFalse(checks["security_scan"])
+            self.assertFalse(marker.exists())
 
 
 if __name__ == "__main__":
