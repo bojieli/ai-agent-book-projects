@@ -12,6 +12,9 @@ docs_dir: _web
 # Strip Pandoc/LaTeX attributes the source Markdown uses (e.g. `{.unnumbered}`,
 # `{#sec:foo}`, image `{height=55%}`) which Python-Markdown cannot parse.
 hooks:
+  # `_web/` is an ignored staging tree, so map each staged page back to its
+  # tracked source before the revision-date plugin asks Git for timestamps.
+  - scripts/git_revision_dates.py
   # Validates every configured language and generates the browser-side
   # translation catalog from Material's locales + our book navigation labels.
   - scripts/site_i18n.py
