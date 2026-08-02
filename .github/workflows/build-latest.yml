@@ -236,7 +236,7 @@ jobs:
         run: ./build_epub.sh ar
 
       - name: Upload verification artifacts
-        if: github.ref != 'refs/heads/main'
+        if: github.repository != 'bojieli/ai-agent-book' || github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: book-verification-${{ inputs.edition || 'all' }}
@@ -246,7 +246,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload to the rolling latest release
-        if: github.ref == 'refs/heads/main'
+        if: github.repository == 'bojieli/ai-agent-book' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
