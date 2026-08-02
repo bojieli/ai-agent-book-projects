@@ -1,38 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 360" width="920" height="360" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
-<text x="30" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Giai đoạn khai thác</text>
-<rect x="30" y="92" width="180" height="66" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="120" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.83" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="120" dy="104.46">Cuộc trò chuyện mới</tspan><tspan x="120" dy="14.94">kết thúc</tspan></text>
-<text x="120" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.1" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="120" dy="133.4">kích hoạt cập nhật bộ</tspan><tspan x="120" dy="13.07">nhớ</tspan></text>
-<line x1="210" y1="125" x2="258" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="258" y="92" width="200" height="66" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="358" y="109.88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Trích xuất LLM</text>
-<text x="358" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="358" dy="126.08">Cuộc trò chuyện gần đây +</tspan><tspan x="358" dy="15.12">tóm tắt hiện có</tspan></text>
-<line x1="458" y1="125" x2="506" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="506" y="92" width="200" height="66" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="606" y="109.88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">trí nhớ ứng viên</text>
-<text x="606" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="606" dy="126.08">"Người dùng đã chuyển đến</tspan><tspan x="606" dy="15.12">Thượng Hải"</tspan></text>
-<line x1="606" y1="158" x2="606" y2="196" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<text x="30" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">giai đoạn cập nhật</text>
-<rect x="506" y="200" width="200" height="60" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="606" y="214.88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">tìm kiếm véc tơ</text>
-<text x="606" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="606" dy="231.08">khép lại những kỷ niệm</tspan><tspan x="606" dy="15.12">hiện có</tspan></text>
-<line x1="506" y1="230" x2="458" y2="230" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="258" y="200" width="200" height="60" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="358" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.35" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="358" dy="211.67">Quyết định so sánh</tspan><tspan x="358" dy="13.34">LLM</tspan></text>
-<text x="358" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="358" dy="237.51">Tìm kiếm "sống ở Bắc</tspan><tspan x="358" dy="11.66">Kinh"</tspan></text>
-<line x1="358" y1="260" x2="358" y2="296" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
-<rect x="30" y="300" width="205" height="56" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2" />
-<text x="132" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ADD</text>
-<text x="132" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Lưu trữ thông tin mới</text>
-<rect x="248" y="300" width="205" height="56" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2" />
-<text x="350" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">UPDATE</text>
-<text x="350" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Chỉnh sửa bộ nhớ hiện có</text>
-<rect x="466" y="300" width="205" height="56" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2" />
-<text x="568" y="320" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">DELETE</text>
-<text x="568" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Xóa tiêu cực</text>
-<rect x="684" y="300" width="205" height="56" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2" />
-<text x="786" y="313.37" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.49" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">NOOP</text>
-<text x="786" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.55" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="786" dy="329.05">Không hoạt động nếu lặp</tspan><tspan x="786" dy="14.63">lại</tspan></text>
-<text x="770" y="228" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="770" dy="-8.26">Ví dụ: Bắc Kinh→Thượng Hải Được đánh</tspan><tspan x="770" dy="16.52">giá là UPDATE</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340" width="920" height="340" style="background:#ffffff">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#555"/>
+    </marker>
+    <style>
+      text { font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; fill: #333; }
+      .title { font-size: 18px; font-weight: 700; }
+      .label { font-size: 15px; font-weight: 700; }
+      .detail { font-size: 13px; fill: #666; }
+      .box { fill: #f4f4f4; stroke: #555; stroke-width: 1.6; }
+      .new { fill: #e8f3ec; stroke: #39734f; }
+      .flow { stroke: #555; stroke-width: 1.8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <text x="28" y="32" class="title">v2 (2025 paper)</text>
+  <rect x="28" y="50" width="125" height="58" rx="6" class="box"/>
+  <text x="90" y="84" text-anchor="middle" class="label">Dialogue</text>
+  <line x1="153" y1="79" x2="180" y2="79" class="flow"/>
+  <rect x="180" y="50" width="135" height="58" rx="6" class="box"/>
+  <text x="248" y="76" text-anchor="middle" class="label">LLM extract</text>
+  <text x="248" y="96" text-anchor="middle" class="detail">candidate facts</text>
+  <line x1="315" y1="79" x2="342" y2="79" class="flow"/>
+  <rect x="342" y="50" width="135" height="58" rx="6" class="box"/>
+  <text x="410" y="76" text-anchor="middle" class="label">Vector search</text>
+  <text x="410" y="96" text-anchor="middle" class="detail">existing memory</text>
+  <line x1="477" y1="79" x2="504" y2="79" class="flow"/>
+  <rect x="504" y="50" width="135" height="58" rx="6" class="box"/>
+  <text x="572" y="76" text-anchor="middle" class="label">LLM decide</text>
+  <text x="572" y="96" text-anchor="middle" class="detail">compare facts</text>
+  <line x1="639" y1="79" x2="666" y2="79" class="flow"/>
+  <rect x="666" y="50" width="226" height="58" rx="6" class="box"/>
+  <text x="779" y="76" text-anchor="middle" class="label">ADD · UPDATE</text>
+  <text x="779" y="98" text-anchor="middle" class="label">DELETE · NOOP</text>
+  <text x="460" y="133" text-anchor="middle" class="detail">Conflicts resolved at write time; old facts may be overwritten or deleted</text>
+
+  <line x1="28" y1="158" x2="892" y2="158" stroke="#bbb" stroke-width="1"/>
+
+  <text x="28" y="194" class="title">v3 (April 2026)</text>
+  <rect x="28" y="212" width="125" height="58" rx="6" class="box new"/>
+  <text x="90" y="246" text-anchor="middle" class="label">Dialogue</text>
+  <line x1="153" y1="241" x2="180" y2="241" class="flow"/>
+  <rect x="180" y="212" width="150" height="58" rx="6" class="box new"/>
+  <text x="255" y="238" text-anchor="middle" class="label">1× LLM extract</text>
+  <text x="255" y="258" text-anchor="middle" class="detail">single pass</text>
+  <line x1="330" y1="241" x2="357" y2="241" class="flow"/>
+  <rect x="357" y="212" width="150" height="58" rx="6" class="box new"/>
+  <text x="432" y="238" text-anchor="middle" class="label">ADD-only store</text>
+  <text x="432" y="258" text-anchor="middle" class="detail">preserve history</text>
+  <line x1="507" y1="241" x2="534" y2="241" class="flow"/>
+  <rect x="534" y="212" width="218" height="58" rx="6" class="box new"/>
+  <text x="643" y="236" text-anchor="middle" class="label">Hybrid retrieval</text>
+  <text x="643" y="258" text-anchor="middle" class="detail">semantic · BM25 · entity · time</text>
+  <line x1="752" y1="241" x2="779" y2="241" class="flow"/>
+  <rect x="779" y="212" width="113" height="58" rx="6" class="box new"/>
+  <text x="835" y="238" text-anchor="middle" class="label">Top-k</text>
+  <text x="835" y="258" text-anchor="middle" class="detail">ranked facts</text>
+  <text x="460" y="299" text-anchor="middle" class="detail">LoCoMo 71.4 → 92.5 (+21.1) · LongMemEval 67.8 → 94.4 (+26.6)</text>
+  <text x="460" y="323" text-anchor="middle" class="detail">History is preserved; relevance and time resolve conflicts during retrieval</text>
 </svg>

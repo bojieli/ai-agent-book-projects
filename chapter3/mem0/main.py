@@ -242,9 +242,8 @@ def _load_add_messages(text: str):
 async def run_memory_op(agent: Mem0Agent, args) -> None:
     """Run a single direct memory operation (add/search/get-all/history/delete).
 
-    This exposes mem0's memory API on the command line so the extract-
-    compare-decide pipeline (ADD/UPDATE/DELETE/NOOP) is observable turn by
-    turn, independent of the chat loop.
+    This exposes mem0 v3's ADD-only ingestion and retrieval API independently
+    of the chat loop.
     """
     op = args.op
     if not op:
@@ -258,14 +257,14 @@ async def run_memory_op(agent: Mem0Agent, args) -> None:
             console.print("[red]add 操作需要 --text 参数（一段对话文本，或 JSON 消息文件路径）[/red]")
             sys.exit(1)
         messages = _load_add_messages(args.text)
-        events = await asyncio.to_thread(agent.add_memory, messages, args.user_id, args.agent_id)
-        console.print(f"[green]写入完成，记忆流水线（提取—对比—决策）产生的事件：[/green]")
-        if events:
-            for ev in events:
-                console.print(f"  [{ev['event']}] {ev['memory']}  [dim](id={ev['id']})[/dim]")
+        added = await asyncio.to_thread(agent.add_memory, messages, args.user_id, args.agent_id)
+        console.print("[green]写入完成，ADD-only 提取追加的事实：[/green]")
+        if added:
+            for memory in added:
+                console.print(f"  [ADD] {memory['memory']}  [dim](id={memory['id']})[/dim]")
         else:
-            console.print("  [dim]（没有 ADD/UPDATE/DELETE —— 候选事实被判定为 NOOP 重复信息）[/dim]")
-        result = {"op": "add", "user_id": args.user_id, "events": events}
+            console.print("  [dim]（没有提取到需要追加的新事实）[/dim]")
+        result = {"op": "add", "user_id": args.user_id, "added_memories": added}
 
     elif op == "search":
         if not args.query:
@@ -311,7 +310,7 @@ async def run_memory_op(agent: Mem0Agent, args) -> None:
 CLI_EPILOG = """\
 示例：
   python main.py                              # 默认进入交互式对话（记忆随对话自动写入/检索）
-  python main.py --mode demo --user-id u1     # 运行“北京→上海”记忆流水线演示（ADD/UPDATE/DELETE/NOOP）
+  python main.py --mode demo --user-id u1     # 运行“北京→上海”的 ADD-only + 混合检索演示
   python main.py --mode memory --op add   --text "我住在北京，是一名后端工程师" --user-id u1
   python main.py --mode memory --op search --query "这个用户住在哪里？" --user-id u1
   python main.py --mode memory --op get-all --user-id u1 --output mem.json
@@ -326,7 +325,7 @@ CLI_EPILOG = """\
 async def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Mem0 记忆智能体（Kimi K3）— 演示 Mem0 的“提取—对比—决策”记忆流水线",
+        description="Mem0 记忆智能体（Kimi K3）— 演示 Mem0 v3 的 ADD-only 提取与混合检索",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=CLI_EPILOG,
     )

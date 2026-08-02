@@ -20,13 +20,13 @@ An agent that combines the **Mem0** memory framework with the **Kimi** language 
 
 ### Features
 
-**Core:** dynamic extract/consolidate/retrieve; context preservation; metrics (consistency, coherence, latency, memory use); local or cloud memory backend.
+**Core:** Mem0 v3 ADD-only extraction and hybrid retrieval; context preservation; metrics (consistency, coherence, latency, memory use); local or cloud memory backend.
 
 **LOCOMO scenarios:** collaborative planning; information sharing; multi-step problem solving; negotiation; teaching & learning.
 
 ### Installation
 
-Prerequisites: Python 3.12 with the root `ch3` extra, Kimi API key; optional Mem0 cloud key.
+Prerequisites: Python 3.12 with the root `ch3` extra (including Mem0's NLP support for entity/BM25 signals), Kimi API key; optional Mem0 cloud key.
 
 ```bash
 # From the repository root: use the shared Chapter 3 environment
@@ -65,15 +65,15 @@ python quickstart.py
 
 Shows basic chat with memory, multi-session persistence, multi-agent collaboration.
 
-#### Memory pipeline demo (extract — compare — decide)
+#### Memory pipeline demo (ADD-only extraction + hybrid retrieval)
 
-Clearest demo of Mem0’s ADD / UPDATE / DELETE / NOOP and cross-session recall:
+Demonstrates Mem0 v3's append-only history and cross-session recall:
 
 ```bash
 python main.py --mode demo --user-id demo_user
 ```
 
-Book centerpiece (chapter 3): user lives in Beijing, later moves to Shanghai → Mem0 **UPDATE**s instead of two contradictory memories; in between, semantic search recalls the stored fact. Same routine: `memory_pipeline_example()` in `quickstart.py`.
+Book example: a user lives in Beijing and later moves to Shanghai. Mem0 preserves both dated facts, while hybrid, time-aware retrieval ranks the current one. Same routine: `memory_pipeline_example()` in `quickstart.py`.
 
 #### Direct memory operations CLI
 
@@ -127,7 +127,7 @@ Metrics: consistency, coherence, memory retention, response time, context utiliz
 - `config.py`: Kimi / Mem0 / LOCOMO config  
 - `experiment.py`: `LOCOMOBenchmark`  
 
-Mem0 provides vector store, consolidation, retrieval, multi-level (user/agent/session) organization.
+Mem0 provides append-only extraction, hybrid retrieval, and multi-level (user/agent/session) organization.
 
 ### Memory backends
 
@@ -182,13 +182,13 @@ Part of AI Agent Book materials. Mem0 by Mem0 AI; Kimi by Moonshot AI.
 
 ### 功能
 
-**核心：** 自动抽取 / 合并 / 检索；跨会话上下文保持；一致性、连贯性、时延、记忆利用率等指标；本地或云端记忆后端。
+**核心：** Mem0 v3 的 ADD-only 抽取与混合检索；跨会话上下文保持；一致性、连贯性、时延、记忆利用率等指标；本地或云端记忆后端。
 
 **LOCOMO 场景：** 协作规划、信息共享、多步解题、谈判、教与学。
 
 ### 安装
 
-Python 3.12 与根目录 `ch3` extra、Kimi API Key；可选 Mem0 云端 Key。
+Python 3.12 与根目录 `ch3` extra（包含实体 / BM25 信号所需的 Mem0 NLP 支持）、Kimi API Key；可选 Mem0 云端 Key。
 
 ```bash
 # 在仓库根目录使用统一的第 3 章环境
@@ -225,13 +225,13 @@ cp env.example .env
 python quickstart.py
 ```
 
-#### 记忆管线演示（提取—对比—决策）
+#### 记忆管线演示（仅追加提取 + 混合检索）
 
 ```bash
 python main.py --mode demo --user-id demo_user
 ```
 
-书中示例：先说住在北京，后来说搬到上海 → Mem0 用 **UPDATE** 修订，而不是存两条矛盾记忆；中间用语义检索调用已存事实。
+书中示例：先说住在北京，后来说搬到上海。Mem0 保留两条带时间的事实，由混合、时间感知检索优先返回当前事实。
 
 #### 直接记忆操作 CLI
 
@@ -291,6 +291,6 @@ mem0/
 
 - Primary provider keys unchanged if set.  
 - Else `OPENROUTER_API_KEY` routes chat LLM via `https://openrouter.ai/api/v1` with automatic model id mapping; `OPENROUTER_MODEL` forces a specific id.  
-- **Note:** Mem0’s embedder still uses OpenAI embeddings (OpenRouter has no embeddings endpoint), so `OPENAI_API_KEY` is still required for store/retrieve. OpenRouter only covers the chat LLM (fact extraction, ADD/UPDATE/DELETE, answering).
+- **Note:** Mem0’s embedder still uses OpenAI embeddings (OpenRouter has no embeddings endpoint), so `OPENAI_API_KEY` is still required for store/retrieve. OpenRouter only covers the chat LLM (ADD-only fact extraction and answering).
 
 Add `OPENROUTER_API_KEY=...` to `.env` (see `env.example`).

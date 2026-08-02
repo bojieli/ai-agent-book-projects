@@ -1,5 +1,5 @@
 # Core dependencies
-mem0ai>=0.1.0
+mem0ai[nlp]>=2.0,<3
 openai>=1.54.0
 python-dotenv>=1.0.0
 

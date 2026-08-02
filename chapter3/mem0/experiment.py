@@ -260,7 +260,9 @@ class LOCOMOBenchmark:
             "avg_response_length": np.mean([t["metrics"]["response_length"] for t in all_turns]),
             "avg_consistency": np.mean(consistency_scores) if consistency_scores else 0,
             "avg_coherence": np.mean(coherence_scores) if coherence_scores else 0,
-            "memory_utilization": len(self.agent.memory.get_all(user_id=f"user_{scenario_results['scenario']['scenario_id']}"))
+            "memory_utilization": len(self.agent.get_all_memories(
+                f"user_{scenario_results['scenario']['scenario_id']}", top_k=100
+            ))
         }
         
         return metrics
