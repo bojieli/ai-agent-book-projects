@@ -463,6 +463,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -650,6 +652,8 @@ Through code generation, the Agent can create structured interactive interfaces 
 Database querying is a scenario where code generation can significantly enhance the interaction experience. Traditional database access relies on GUI tools or handwritten SQL; the former is cumbersome to operate, and the latter requires the user to have specialized knowledge. An Agent can translate natural language into SQL, but there is a key design choice: should the Agent execute the query and describe the results in natural language, or should it generate the SQL as an artifact for the system to execute and the frontend to display?
 
 The first approach looks more "intelligent" but is grossly inefficient—a query against a large table may return thousands of rows. Having the LLM read all that and describe it in prose burns tokens and time, and worse, LLMs are notoriously error-prone when "transcribing" data. A better approach is the **Artifact pattern**. Figure 5-9 shows the workflow of an SQL query Agent: rather than reading the data itself, the Agent generates an SQL query and passes it to the system as a standalone **executable artifact**. The system executes the query against the database and renders the results in a table for the user. The data therefore flows directly from the database to the interface without passing through the LLM; the LLM writes the query but never has to read and restate thousands of rows. This approach is both faster and more accurate.
+
+Generated SQL and visualization code must not be executed directly. The execution layer should use read-only database credentials, parse the SQL, allow only approved `SELECT` statements, and reject DDL, DML, and multi-statement queries. User-provided values should be bound as server-side parameters, with limits on query time, returned rows, accessible tables, and date ranges. Visualization code should run in a sandbox isolated from the network and filesystem and should produce only an approved result format. The Artifact pattern shortens the data path; it does not replace authorization checks or execution isolation.
 
 ![Figure 5-9: SQL Query Agent Workflow](images/fig5-9.svg)
 
