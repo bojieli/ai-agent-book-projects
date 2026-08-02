@@ -228,6 +228,16 @@ Gagasan yang sama meluas ke alur kerja dan seluruh Harness. AFlow merepresentasi
 
 Tingkat yang lebih tinggi tidak otomatis menjadi lebih baik. Mencari aturan lokal mungkin hanya memerlukan beberapa *edge cases*, sedangkan mencari seluruh alur kerja atau Harness berhadapan dengan ruang kandidat yang jauh lebih besar, biaya evaluasi yang lebih tinggi, dan atribusi yang lebih sulit. Kesalahan yang jelas dan berulang yang terlokalisasi pada satu komponen pertama-tama harus menerima *patch* lokal yang dapat diaudit. Hanya ketika perubahan lokal berulang kali gagal mengatasi masalah lintas-komponen, atau ketika metode manajemen saat ini itu sendiri menjadi *bottleneck*, barulah layak untuk bergerak ke arah luar menuju alur kerja, Harness, atau *optimizer*. Pada setiap tingkat, evaluator, batas izin (*permission boundaries*), dan tes terpisah (*held-out tests*) harus tetap berada di luar ruang lingkup yang dapat diedit—semakin besar ruang pencarian, semakin penting *trusted root* ini.
 
+> **Eksperimen 8-6 ★★★: Berikan Buku Ini kepada Hermes: Bisakah Ia Meng-upgrade Dirinya Sendiri?**
+>
+> **Tujuan:** Menguji apakah Agent dapat mengubah pengetahuan eksternal menjadi pembaruan nyata bagi kemampuannya sendiri. Eksperimen tidak memberi daftar masalah atau fitur. Hermes menerima sepuluh bab dan source code-nya, lalu harus memahami prinsip, meninjau implementasinya, dan memilih sendiri satu peningkatan yang layak.
+>
+> **Desain:** Buku dan source menjadi konteks yang dapat dibaca, sedangkan versi stabil, Reviewer independen, dan tes penerimaan berada di luar ruang lingkup yang dapat diubah Hermes. Ia harus menuntaskan **baca → bandingkan → pilih → ubah → verifikasi**. Jika kandidat ditolak, review menjadi sinyal belajar untuk putaran berikutnya; Hermes tidak boleh melewati gerbang dan menyatakan sukses.
+>
+> **Run nyata:** Setelah membaca buku, Hermes secara mandiri menemukan bahwa trajectory yang tersimpan belum memiliki bukti terstruktur yang dapat langsung dipakai untuk pembelajaran berikutnya. Ia memilih mengubah hasil eksekusi menjadi sinyal belajar konservatif, lalu mengedit kodenya sendiri dan menambah tes. Tiga review independen pertama menemukan ketidaksesuaian dengan format data nyata, jalur penyimpanan, dan semantik penghitungan. Setiap temuan kembali ke sesi Hermes asli; review keempat menerima kandidat.
+>
+> **Batas klaim:** Run ini menunjukkan bahwa Agent dapat mengambil prinsip dari pengetahuan panjang, memetakannya ke kode sendiri, dan menyelesaikan pembaruan diri di bawah verifikasi eksternal. Ini belum membuktikan peningkatan tugas hilir; hal itu memerlukan eksperimen ablation terpisah. Ide eksperimen disumbangkan oleh pembaca Grace.
+
 ## Membangun Loop Tertutup Evolusi Berkelanjutan untuk Operasi Jangka Panjang
 
 Keempat metode pembaruan tersebut menjadi evolusi berkelanjutan alih-alih optimasi satu kali hanya ketika dimasukkan ke dalam *autonomous loop* yang sama. Gambar 8-5 menunjukkan arsitektur *dual-loop* yang lebih tangguh untuk sistem produksi: *online execution loop* hanya menyelesaikan tugas dan mencatat bukti, tanpa menulis ulang Agent produksi secara langsung; *offline evolution loop* mengumpulkan trajektori, mendiagnosis akar penyebab, menghasilkan modifikasi kandidat, dan merilis versi baru hanya setelah mereka melewati *validation gates*. Kedua loop ini terhubung melalui repositori pengalaman berversi dan set evaluasi.
@@ -319,7 +329,7 @@ Continual evolution bukan berarti membiarkan knowledge, Prompts, dan tools tumbu
 - Menghapus knowledge yang dibatalkan oleh bukti baru;
 - Melatih ulang LoRA dari base model aslinya.
 
-> **Eksperimen 8-6 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
+> **Eksperimen 8-7 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
 >
 > **Tujuan:** Membedakan antara tiga perilaku jangka panjang—menyimpan satu masukan (feedback), hanya menambahkan selamanya (append forever), dan benar-benar memperbarui, mentransfer, serta mempertahankan kapabilitas—sehingga menjalankan tugas yang sama berulang kali tidak disalahartikan sebagai continual learning.
 >

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run repeated seeded real-model arms for Experiment 8-6."""
+"""Run repeated seeded real-model arms for Experiment 8-7."""
 
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def main() -> int:
     args = parser.parse_args()
     seeds = [int(value.strip()) for value in args.seeds.split(",") if value.strip()]
     if len(seeds) < 3:
-        raise ValueError("Experiment 8-6 requires at least three seeded repetitions")
+        raise ValueError("Experiment 8-7 requires at least three seeded repetitions")
 
     run_specs = [(arm, seed) for seed in seeds for arm in ARMS]
     runs: list[dict[str, Any]] = []
@@ -182,7 +182,7 @@ def main() -> int:
         ),
     }
     report = {
-        "experiment": "8-6",
+        "experiment": "8-7",
         "executed_at": datetime.now(timezone.utc).isoformat(),
         "execution_mode": "repeated_seeded_real_model_longitudinal_campaign",
         "provider": args.provider,

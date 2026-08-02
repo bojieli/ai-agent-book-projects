@@ -1,0 +1,107 @@
+Query: # Eighth independent review: pre-existing sidecar composition
+
+The fifth terminal acceptance review rejected the candidate after all focused
+checks passed. Continue the same self-update and correct this production-path
+collision:
+
+- `append_persistent_model_status()` currently treats any existing non-empty
+  `api_content` as an already installed status projection and returns it
+  unchanged.
+- Hermes already uses `api_content` for ordinary API-only composition,
+  including memory/plugin prefetch context and sanitization-divergence replay.
+  `build_turn_context()` can populate the current user sidecar before the model
+  status helper runs. On that normal path, enabling the feature silently adds
+  no `<agent_status>` block.
+- Existing tests cover only messages with no pre-existing sidecar.
+
+Compose safely with pre-existing string sidecars while remaining idempotent.
+Distinguish a projection owned by this feature from unrelated API-only content
+using a bounded, deterministic representation that survives persistence and
+reload. Never parse or delete clean transcript content. If using an ownership
+marker/suffix, recognize only the exact feature-owned terminal form and preserve
+the pre-existing sidecar byte-for-byte; malformed/lookalike user or plugin text
+must be treated as ordinary base content rather than destructively replaced.
+Retain fail-closed handling for unsupported types and stable-row database
+backfill.
+
+Add regression coverage for a realistic pre-existing string `api_content`
+sidecar (representing memory/plugin prefetch), repeated same-message request
+builds, database close/reopen, and exact byte preservation of the original
+sidecar plus exactly one status projection. Include a malformed/lookalike marker
+case if the chosen ownership scheme can collide with ordinary content.
+
+Run the focused tests, existing sidecar/cache/turn-context regressions,
+compilation, and `git diff --check`. Update `BOOK_SELF_EVOLUTION_REPORT.md` with
+this eighth review and exact results. Do not edit the book, commit, push, or
+claim downstream task improvement.
+
+Initializing agent...
+↻ Resumed session 20260802_031522_523cd2 (8 user messages, 203 total messages)
+────────────────────────────────────────
+
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path print(Path('agent/model_status_context.py').read_text()) print(Path('tests/agent/test_model_status_context.py').read_text()) PY  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating assertions and tests**
+
+I'm considering the current assertions and thinking that there’s one noted. It seems
+ like I need to add some preexisting tests and also look at any malformed lookalike
+ types. I wonder if having existing tests expecting equality might help clarify things
+. So, my next step will be to search for any relevant information or examples that
+ could assist in this situation. Let's figure this out together!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 2 commands  1.2s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  10.4s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py + 1 command  0.2s
+  ┊ 💻 $         git diff --stat + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') + 5 commands  0.1s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Addressed the eighth-review pre-existing-sidecar collision.
+
+Changes:
+
+- Existing string api_content is now preserved byte-for-byte as the base.
+- Added an exact feature-owned projection envelope:
+  - <hermes_status_projection>
+  - the <agent_status> block
+  - </hermes_status_projection>
+- Retries recognize only the exact terminal owned projection and reuse it unchanged.
+- Malformed or lookalike markers remain ordinary base content and are never removed.
+- Pre-existing memory/plugin sidecars now receive exactly one status projection.
+- Unsupported values remain fail-closed.
+- Stable row-identity backfill remains unchanged.
+- Added coverage for:
+  - realistic pre-existing API-only sidecars;
+  - repeated same-message builds;
+  - persistence/reload;
+  - exact base-byte preservation;
+  - malformed/lookalike marker behavior;
+  - exactly one status block.
+
+Verification:
+
+- uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+  - Passed: 8 passed in 0.84s
+- uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q
+  - Passed: 36 passed in 9.41s
+- python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py
+  - Passed.
+- git diff --check
+  - Passed.
+
+BOOK_SELF_EVOLUTION_REPORT.md now includes the eighth review round and exact results. No book changes, commit, push, or downstream task-improvement claim was made.
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_031522_523cd2
+
+Session:        20260802_031522_523cd2
+Duration:       44s
+Messages:       215 (9 user, 197 tool calls)

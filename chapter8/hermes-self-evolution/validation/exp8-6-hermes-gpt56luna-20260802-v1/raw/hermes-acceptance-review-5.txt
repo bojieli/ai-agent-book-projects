@@ -1,0 +1,131 @@
+Query: # Independent acceptance review of the self-update
+
+Act as the terminal reviewer in a proposer-reviewer self-evolution loop. You
+are inspecting a Hermes checkout that started from commit
+`85c8956ec7f2b4607509980794995e1c5e21e292` and now contains an uncommitted
+candidate self-update produced by another Hermes session after reading
+*AI Agents in Depth*.
+
+Review the current diff and `BOOK_SELF_EVOLUTION_REPORT.md`. Inspect the actual
+production paths, persistence boundary, and tests rather than trusting the
+report. The candidate is intended to add an opt-in, model-visible
+`<agent_status>` projection while preserving:
+
+- byte-identical replay of earlier API messages and prompt-cache prefixes;
+- clean transcript content and role alternation;
+- Hermes' string-only persisted `api_content` contract;
+- fail-closed behavior for list/multimodal, empty, mapping, numeric, and other
+  unsupported content;
+- default-off behavior, bounded deterministic output, and existing safety
+  gates.
+
+Run these checks yourself (and any additional focused read-only checks needed):
+
+```bash
+uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+uv run --with pytest pytest tests/agent/test_api_content_sidecar.py
+tests/run_agent/test_background_review_cache_parity.py
+tests/agent/test_turn_context.py -q
+python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py
+agent/agent_init.py run_agent.py
+git diff --check
+```
+
+Do not edit any file. Reject the candidate if you find a concrete correctness,
+cache-stability, production/test-parity, persistence, safety, or material
+report-accuracy defect. Do not reject merely because the deliberately scoped
+candidate does not implement the other three book mechanisms or because no
+downstream ablation campaign has run; those are explicit evidence boundaries.
+
+Give concise evidence for the decision. End with exactly one machine-readable
+line:
+
+`VERDICT: ACCEPT`
+
+or
+
+`VERDICT: REJECT`
+
+If rejecting, list actionable findings above that final line.
+
+Initializing agent...
+  ⚠ tirith security scanner enabled but not available — command scanning will use pattern matching only
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting tools for files**
+
+I need to inspect things, which means I'll have to use some tools. It sounds like
+ I should look at batch commands for git status, diff, and report files, as well as
+ search capabilities. I want to make sure I get everything right, as there are multiple
+ aspects to consider. Using these tools efficiently will help me gather the information
+ I need. Let's figure out the best approach!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         git status --short + 3 commands  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') print(p.read_text()) PY  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for p in ['agent/model_status_context.py','agent/conversation_loop.py','agent/agent_init.py','run_agent.py']: print(f'--- {p} ---') s=Path(p).read_text().splitlines() for i,l in enumerate(s,1): if 'status' in l.lower() or 'api_content' in l or 'sidecar' in l.lower() or 'conversation_loop' in p: print(f'{i}: {l}') PY  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting file details**
+
+I need to closely examine the new file to make sure the loops and tests are relevant
+ and aligned. It seems like there might be a potential bug regarding the appending
+ of the status after the `api_messages` are built. I need to verify how these correspond
+ to `source_messages`. It looks like I'll also need to check the read function to
+ figure out what's going on. Let's get this sorted out!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_model_status_context.py -q  1.2s
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  10.4s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py + 1 command  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') print(p.read_text()) PY  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('tests/agent/test_model_status_context.py') print(p.read_text()) PY  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Identifying production defects**
+
+I need to identify a defect by inspecting the actual production context around the
+ loop and persistence. It looks like the main bug might be that the status is being
+ appended to every API call to the newest message. However, the lengths of source
+_messages and api_messages could vary due to skipped ephemeral or scaffolding, leading
+ to misaligned indexes. I should take a closer look at the conversation loop around
+ messages built between indexes 1480 and 1610 to clarify things.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/turn_context.py') + 1 command  0.0s
+  ┊ 💻 $         git diff -- agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py hermes_cli/config_defaults.py  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/agent_init.py') + 2 commands  0.0s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Findings:
+
+- agent/model_status_context.py:84-91 treats any existing non-empty api_content sidecar as an already-installed model-status projection and returns without appending status. This is incorrect because Hermes already uses api_content for ordinary API-only composition, including memory/plugin prefetch context and sanitization-divergence replay. build_turn_context() can stamp the current user message with such a sidecar before append_persistent_model_status() runs. On a normal user turn with no tool result, the status helper therefore replays the pre-existing sidecar unchanged and injects no <agent_status> block. The claimed opt-in status projection is silently absent on that production path. The tests only cover a clean sidecar-free message and do not exercise an existing non-status sidecar.
+
+The requested focused checks otherwise passed:
+
+- test_model_status_context.py: 7 passed.
+- Sidecar/cache/turn-context tests: 36 passed.
+- py_compile: passed.
+- git diff --check: passed.
+
+VERDICT: REJECT
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_034732_d19e26
+
+Session:        20260802_034732_d19e26
+Duration:       36s
+Messages:       18 (1 user, 16 tool calls)

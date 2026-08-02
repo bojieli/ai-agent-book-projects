@@ -1,4 +1,4 @@
-"""Small configuration constants for Experiment 8-6.
+"""Small configuration constants for Experiment 8-7.
 
 This module remains only so links from older checkouts fail gracefully.
 """

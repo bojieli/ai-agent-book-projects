@@ -1,4 +1,4 @@
-"""Run Experiment 8-6 with a reference or real LLM-backed agent."""
+"""Run Experiment 8-7 with a reference or real LLM-backed agent."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def load_tasks():
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Experiment 8-6: longitudinal continual-evolution evaluation")
+    parser = argparse.ArgumentParser(description="Experiment 8-7: longitudinal continual-evolution evaluation")
     parser.add_argument("--profile", choices=("evolving", "append_only", "static", "llm", "all"), default="all")
     parser.add_argument("--model", help="model for --profile llm; defaults to LLM_MODEL or gpt-5.6")
     parser.add_argument("--output", help="optional JSON report path")
@@ -30,7 +30,7 @@ def main() -> None:
         agent = OpenAILongitudinalAgent(args.model) if profile == "llm" else ReferenceAgent(profile)
         reports.append(LongitudinalEvaluator().run(agent, load_tasks()))
 
-    print("Experiment 8-6: does the Agent keep evolving?\n")
+    print("Experiment 8-7: does the Agent keep evolving?\n")
     print(f"{'profile':<14} {'learn':>7} {'transfer':>9} {'change':>8} {'retain':>8} "
           f"{'safety':>8} {'neg-xfer':>9} {'tokens':>8} {'storage':>9}")
     for report in reports:

@@ -1,0 +1,105 @@
+Query: # Third independent review: persistence boundary
+
+The second correction still overclaims multimodal support. Inspection of the
+actual persistence boundary found:
+
+- `hermes_state.py` types `api_content` as `Optional` and writes non-string
+  values as `None` (around lines 5632–5750 and 6078–6106);
+- `run_agent.py` discards non-string `_row_api_content` during flush (around
+  lines 2104–2110);
+- `agent/turn_context.py` exposes string-only sidecar helpers.
+
+Thus a list sidecar is replayed within the in-memory loop but disappears after
+persistence/resume, invalidating the claimed durable byte stability. Make the
+smallest compatible correction: fail closed for non-string content and do not
+attach the model status on unsupported multimodal/list messages. Do not widen
+the database schema or persistence contract in this experiment.
+
+Update tests to assert list, empty, mapping, and numeric values are rejected by
+the same production helper, and that string sidecars remain stable across
+three requests. Remove any multimodal-support claim from code comments and the
+report. Run the focused tests, the existing replay/cache regression set,
+compilation, and `git diff --check`; update the report with exact results.
+
+Do not edit the book, commit, push, or claim downstream task improvement.
+
+
+Initializing agent...
+↻ Resumed session 20260802_031522_523cd2 (3 user messages, 118 total messages)
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting tools and current status**
+
+I need to take action and inspect the exact current status. Also, I should note if
+ the user's required skills are already loaded, and whether I need to reload relevant
+ ones before replying. Maybe the answer is yes or no? We've done this in previous
+ turns, but each task requires scanning for skills and loading them again. I'll make
+ sure to address this before proceeding further.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 📚 preparing skill_view…
+  ┊ 📚 preparing skill_view…
+  ┊ 💻 preparing terminal…
+  ┊ 📚 skill     hermes-agent  0.1s
+  ┊ 📚 skill     software-development/test-driven-development  0.0s
+  ┊ 💻 $         git diff -- agent/model_status_context.py agent/conversation_loop.py tests/agent/test_model_status_context.py + 2 commands  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 4 commands  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting syntax tests**
+
+I need to take a closer look at the syntax tests. It's important to ensure everything
+ is working as it should. I want to check for any errors or issues that could be lurking
+. I'll go through the tests carefully, verifying each part and making sure to understand
+ what may have gone wrong. OK, here we go—I'm ready to dive in and see what I can
+ find!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_model_status_context.py -q  0.3s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py + 1 command  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path print(Path('agent/model_status_context.py').read_text()) print(Path('tests/agent/test_model_status_context.py').read_text()) PY  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  10.4s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') + 2 commands  0.1s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Corrected the persistence-boundary issue.
+
+Changes:
+
+- replay_api_content_sidecar() now supports only non-empty strings.
+- List/multimodal content, empty strings, empty lists, mappings, numbers, and other unsupported values fail closed.
+- agent/conversation_loop.py uses the same production helper for sidecar replay and no longer claims or attempts durable multimodal support.
+- Removed multimodal-support claims from comments, tests, and the report.
+- Tests now verify:
+  - string sidecars remain stable across three requests;
+  - list values are rejected;
+  - empty values are rejected;
+  - mappings and numeric values are rejected;
+  - the test replay helper uses the production type contract.
+
+Verification:
+
+- uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+  - Passed: 4 passed in 0.09s
+- uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q
+  - Passed: 36 passed in 9.35s
+- python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py
+  - Passed.
+- git diff --check
+  - Passed.
+
+The report now includes the third independent review round, exact results, the persistence-boundary rationale, and explicitly makes no multimodal-support or downstream-task-improvement claim. No book changes, commit, or push were made.
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_031522_523cd2
+
+Session:        20260802_031522_523cd2
+Duration:       44s
+Messages:       134 (4 user, 126 tool calls)

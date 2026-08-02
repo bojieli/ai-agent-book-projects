@@ -226,6 +226,16 @@ La misma idea se puede extender a los flujos de trabajo y a todo el Harness. AFl
 
 Los niveles de optimización no son mejores cuanto más altos sean. Buscar una regla local solo requiere unos pocos casos límite, mientras que buscar un flujo de trabajo completo o un Harness enfrenta un espacio candidato más amplio, mayores costos de evaluación y dificultades de atribución más severas. Un fallo claro, recurrente y localizable en un solo componente debe abordarse prioritariamente mediante un parche local auditable; solo cuando las modificaciones locales no logren resolver problemas entre componentes a largo plazo, o cuando el método de gestión existente se convierta en un cuello de botella, valdrá la pena ascender a las capas de flujo de trabajo, Harness e incluso optimizador. Independientemente del nivel al que se ascienda, el evaluador, los límites de permisos y las pruebas de retención deben situarse fuera del alcance modificable: cuanto mayor sea el espacio de búsqueda, más relevante resulta esta raíz de confianza.
 
+> **Experimento 8-6 ★★★: Dale este libro a Hermes: ¿puede mejorarse a sí mismo?**
+>
+> **Objetivo**: Comprobar si un Agent puede convertir conocimiento externo en una actualización real de sus propias capacidades. El experimento no plantea un problema ni ofrece una lista de funciones: entrega a Hermes los diez capítulos y su código, y le pide entender los principios, revisar su implementación y elegir por sí mismo una mejora valiosa.
+>
+> **Diseño**: El libro y el código forman el contexto legible, mientras que la versión estable, el Reviewer independiente y las pruebas de aceptación quedan fuera del alcance editable de Hermes. Debe completar **leer → comparar → elegir → cambiar → verificar**. Si un candidato es rechazado, la revisión pasa a ser la señal de aprendizaje de la ronda siguiente; Hermes no puede saltarse la puerta y declarar éxito.
+>
+> **Ejecución real**: Tras leer el libro, Hermes detectó por sí mismo que sus trayectorias guardadas carecían de evidencia estructurada que el aprendizaje posterior pudiera usar directamente. Eligió convertir los resultados de ejecución en señales de aprendizaje conservadoras, modificó su código y añadió pruebas. Las tres primeras revisiones independientes hallaron diferencias con los formatos reales, las rutas de persistencia y la semántica del conteo. Cada hallazgo volvió a la sesión original de Hermes; la cuarta revisión aceptó el candidato.
+>
+> **Límite de la conclusión**: La ejecución demuestra que un Agent puede extraer principios de conocimiento extenso, llevarlos a su propio código y completar una autoactualización bajo verificación externa. No demuestra que la actualización ya mejore las tareas posteriores; eso requiere otro experimento de ablación. La lectora Grace aportó la idea del experimento.
+
 ## Construcción de un Bucle Cerrado de Evolución Continua para Operaciones a Largo Plazo
 
 Los cuatro métodos de actualización se convierten en una evolución continua solo al ingresar en el mismo bucle autónomo. La Figura 8-5 muestra una estructura de doble bucle más sólida en sistemas de producción: el bucle de ejecución en línea únicamente completa tareas y registra evidencias, sin reescribir directamente el Agente formal; el bucle de evolución fuera de línea agrega trayectorias, diagnostica causas raíz, genera modificaciones candidatas y publica nuevas versiones tras superar umbrales de validación. Ambos se conectan a través de bases de experiencia e historiales de evaluación versionados.
@@ -319,7 +329,7 @@ La evolución continua tampoco consiste en dejar crecer indefinidamente el conoc
 - Eliminar conocimiento refutado por nueva evidencia;
 - Volver a entrenar LoRA a partir del modelo base original.
 
-> **Experimento 8-6 ★★★: Evaluar si un Agente se encuentra en evolución continua**
+> **Experimento 8-7 ★★★: Evaluar si un Agente se encuentra en evolución continua**
 >
 > **Objetivo del experimento**: Distinguir entre tres comportamientos a largo plazo: "guardar una retroalimentación", "limitarse a añadir continuamente" y "ser capaz de actualizar, transferir y conservar capacidades", evitando simular un aprendizaje continuo mediante la ejecución repetida del mismo lote de preguntas.
 >

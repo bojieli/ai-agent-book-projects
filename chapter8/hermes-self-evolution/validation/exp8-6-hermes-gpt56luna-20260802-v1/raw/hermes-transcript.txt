@@ -1,0 +1,372 @@
+Using CPython 3.11.15
+Removed virtual environment at: .venv
+Creating virtual environment at: .venv
+Downloading pydantic-core (2.0MiB)
+Downloading pillow (6.6MiB)
+Downloading uvloop (3.6MiB)
+ Downloaded pydantic-core
+ Downloaded uvloop
+ Downloaded pillow
+Installed 61 packages in 31ms
+Query: # Book-driven self-evolution task
+
+You are Hermes working on your own source repository. Read the English edition
+of *AI Agents in Depth* at `/home/ubuntu/ai-agent-book/book-en/` before deciding
+what to change. Inspect all ten chapter files, using targeted searches and
+section-by-section reads so that conclusions are grounded in the actual text,
+not the task summary below.
+
+One reader reported four possible gaps in Hermes:
+
+1. product-level ablation infrastructure for measuring whether major Harness
+   features really help;
+2. the model-visible Agent Status Bar described in Chapter 2 (not merely a
+   human-facing terminal status bar);
+3. a forgetting/consolidation mechanism for persistent memory (not merely
+   bounded writes or Skill archival);
+4. a general proposer-reviewer loop with independent, execution-grounded
+   verification for generated artifacts.
+
+Audit each claim against the current code and its design intent. Do not assume
+the proposed mechanism is compatible with Hermes. For each claim, classify it
+as already present, partly present, absent, or intentionally incompatible, and
+cite both book sections and exact Hermes paths.
+
+Then improve Hermes where the evidence supports a change. Prefer the smallest
+cohesive implementation that demonstrates the book's mechanism through real
+behavior. Preserve prompt-cache stability, message-role alternation, safety,
+and the narrow core tool surface. Add behavior-contract tests. Run the relevant
+tests and record their exact results. Do not weaken existing tests, validators,
+approval gates, or safety thresholds.
+
+Create `BOOK_SELF_EVOLUTION_REPORT.md` in the repository root. It must include:
+
+- the pinned starting commit and model/provider used;
+- a four-row audit table with evidence and disposition;
+- changes made and changes deliberately rejected or deferred;
+- exact verification commands and results;
+- limitations, including why one run is not evidence that every new mechanism
+  improves task success;
+- a proposed ablation campaign that compares a fixed baseline with one feature
+  disabled at a time, even if running the full campaign is beyond this run.
+
+Do not open a pull request, push commits, access unrelated credentials, or edit
+the book repository. Stop only after the report, implementation, and relevant
+verification are complete, or after documenting a concrete blocker in the
+report.
+
+
+Initializing agent...
+  ⚠ tirith security scanner enabled but not available — command scanning will use pattern matching only
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Planning systematic debugging**
+
+I need to execute a plan for systematic debugging. First, I should load relevant skills
+ and inspect the book, checking all ten chapters. I might use the tools I have available
+. I’ll start by listing the skills I may have already provided, and perhaps I should
+ load the hermes-agent. It seems like this task involves managing my own repository
+ and the book, likely within a software development context. I should also inspect
+ the git status and files.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 📚 preparing skill_view…
+  ┊ 📚 preparing skill_view…
+  ┊ 💻 preparing terminal…
+  ┊ 📚 skill     hermes-agent  0.1s
+  ┊ 📚 skill     software-development/test-driven-development  0.1s
+  ┊ 💻 $         git status --short + 4 commands  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating file inspection tools**
+
+I need to inspect all ten targets, but the tools for reading files are not explicitly
+ available. The instructions mention using the read_file/search_files, but those tools
+ aren’t there. While I can use terminal commands to read files, using "cat" isn't
+ an option. I should explore using Python scripts to extract headings and relevant
+ matches from the chapters instead. Output might be large, so I need to handle that
+ carefully.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path import re p=Path('/home/ubuntu/ai-agent-book/book-en') terms=r'ablation|status bar|agent status|forget|consolidat|memory|proposer|reviewer|verification|harness|evaluation|artifact' for f in sorted(p.glob('chapter*.md')): s=f.read_text() print(f'\n### {f.name} ({len(s.splitlines())} lines)') for i,line in enumerate(s.splitlines(),1): if re.search(terms,line,re.I): print(f'{i}: {line[:240]}') PY  0.2s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f in sorted(Path('/home/ubuntu/ai-agent-book/book-en').glob('chapter*.md')): print(f'\n### {f.name}') for i,line in enumerate(f.read_text().splitlines(),1): if line.startswith('#'): print(f'{i}: {line}') PY  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path import re for f in sorted(Path('.').rglob('*.py')): try:s=f.read_text() except:continue if re.search(r'ablation|status.?bar|consolidat|forget|proposer|reviewer|artifact.?verif|verify.?artifact',s,re.I): print(f) PY  3.2s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting book sections**
+
+I need to meticulously inspect the targeted sections of the book along with the code
+. My goal is to read all ten files thoroughly, section by section, since I have headings
+ and targeted searches lined up. It might be better to read chunks from all chapters
+ instead. I'll also have to keep an eye on the status, memory, and any reviews or
+ evaluations connected to this task to ensure everything's covered.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path ranges={'chapter1.md':[(137,160),(243,283)],'chapter2.md':[(787,965)],'chapter3.md':[(15,120),(236,260)],'chapter5.md':[(142,230),(690,742)],'chapter6.md':[(662,710)],'chapter8.md':[(19,110),(239,327)],'chapter10.md':[(69,92),(290,326)]} p=Path('/home/ubuntu/ai-agent-book/book-en') for fn,rs in ranges.items(): lines=(p/fn).read_text().splitlines() + 1 command  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for fn in ['chapter4.md','chapter7.md','chapter9.md','chapter10.md']: lines=(Path('/home/ubuntu/ai-agent-book/book-en')/fn).read_text().splitlines() print(f'\n===== {fn} section excerpts =====') heads=[i for i,x in enumerate(lines) if x.startswith('#')] for j in range(len(heads)): a=heads[j] + 1 command  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f in ['hermes_cli/status.py','agent/memory_manager.py','agent/curator.py','agent/background_review.py','tests/cli/test_cli_status_bar.py','tests/cli/test_cli_status_bar_goal.py']: p=Path(f) + 2 commands  0.0s [exit 1]
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path import re for f in ['run_agent.py','agent/prompt_builder.py','agent/conversation_loop.py','model_tools.py','hermes_cli/config_defaults.py']: p=Path(f) + 2 commands  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Considering implementation specifics**
+
+I need to decide on the implementation details. A possibility is adding a model-visible
+ status bar to the prompt builder. I should inspect the relevant functions to better
+ understand this. There's also the idea of consolidating memory, focusing on existing
+ curator skills but keeping in mind memory limitations. Maybe a small, cohesive implementation
+ is best—possibly just the status bar? The user wants improvements based on supporting
+ evidence. I wonder if a synthetic user could help here, while making sure to preserve
+ existing roles and cache.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f, a,b in [('hermes_cli/status.py',1,280),('agent/prompt_builder.py',1880,1950),('agent/background_review.py',1,360),('agent/memory_manager.py',1,260),('hermes_cli/config_defaults.py',1568,1610),('agent/conversation_loop.py',1200,1340)]: p=Path(f) + 3 commands  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path import re for root in ['tests','agent','hermes_cli']: for p in Path(root).rglob('*.py'): s=p.read_text() if 'background_review' in s or 'memory_char_limit' in s or 'build_system_prompt' in s: print(p) PY  0.1s
+  ┊ 💻 $         git log --oneline --all -- agent/prompt_builder.py agent/background_review.py agent/curator.py + 1 command  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Deciding on implementation**
+
+I need to figure out how to implement the model-visible status bar. It's important
+ to inspect how I'm composing prompts and what status data I’ll display. I'll consider
+ searching for information about the status bar in the prompt builder, though it seems
+ it might not be directly related to the model. I want to make sure I understand everything
+ before moving forward!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path import re for f in ['agent/prompt_builder.py','agent/turn_context.py','run_agent.py','hermes_cli/status.py']: s=Path(f).read_text() + 1 command  0.1s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/prompt_builder.py') + 2 commands  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/turn_context.py') + 1 command  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Implementing status bar**
+
+I need to work on implementing a model-visible status bar. First, I should understand
+ how to construct the API messages effectively. This means diving into how to build
+ the API messages properly. It feels important to make sure I'm looking at the right
+ aspects to ensure everything functions smoothly. I'll take my time to figure this
+ out so that we can have a clear and useful status bar!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/turn_context.py') + 5 commands  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for p in Path('tests').rglob('*.py'): s=p.read_text() if 'api_messages' in s or 'role' in s and 'system' in s and 'tool' in s: if 'turn_context' in str(p) or 'conversation_loop' in str(p): print(p) PY  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating implementation methods**
+
+I need to implement the smallest cohesive solution. It looks like a model-visible
+ status bar could be achieved through an API-only dynamic injection at the end of
+ each call. However, there's a consideration regarding cache stability — should I
+ append it to the last user? The book mentions dynamic end context and cache costs
+. Also, I need to find where to build api_messages and locate the existing api_content
+ sidecar, which supports ephemeral contexts.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating implementation options**
+
+I need to implement the smallest cohesive unit where claims focus on whether ablation
+ is absent at the product level, possibly due to a lack of infrastructure. There's
+ also concern about the absence of a model-visible status bar reflecting existing
+ human status. I wonder if I could add a user message related to this at the API call
+ time? However, I need to be careful about how roles change and ensure the status
+ bar fits within the context of the user message and tool results.**Implementing status updates**
+
+I can see that the model should be visible after tool execution without any role issues
+. The current status can be appended to the last tool result before the API call.
+ This could simplify things by adding dynamic status to the user content. However
+, I’m considering using a feature flag to maintain the existing behavior. I might
+ implement a generic status formatting helper in a new module and ensure that the
+ status appears at the end of each API request while managing message order. Testing
+ is crucial before finalizing this!
+└──────────────────────────────────────────────────────────────────────────────┘
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+  ┊ 💻 preparing terminal…
+The audit points to one focused, compatible improvement: add an opt-in model-visible status block at API-build time, without changing persisted history or the cached system prompt. I’m keeping the broader ablation campaign as report/design work, and I’m not adding a generic multi-agent reviewer because Hermes already has execution-aware verification hooks and background review, while a new always-on reviewer would add cost and risk without a concrete artifact contract.
+╰──────────────────────────────────────────────────────────────────────────────╯
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for p in [Path('tools/todo_tool.py'),Path('agent/iteration_budget.py')]: print('\n',p) for i,l in enumerate(p.read_text().splitlines(),1): if i<180: print(f'{i}: {l}') PY  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for p in [Path('tests/agent/test_turn_context.py'),Path('tests/run_agent/test_background_review.py')]: print('\n',p) print('\n'.join(f'{i}: {l}' for i,l in enumerate(p.read_text().splitlines(),1)[:80])) PY  0.0s [exit 1]
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('hermes_cli/config_defaults.py') + 2 commands  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Implementing status context helper**
+
+I'm thinking about implementing a helper module named `status_context.py`. I need
+ to configure it under the agent, potentially setting `model_status_bar` to false
+. Before anything else, I'll run some tests for each skill to ensure everything works
+ properly. Once I create the test, I'll run it to check for failures. If allowed,
+ I'll write the new test results to a file. Let's hope this goes smoothly!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('tests/agent/test_model_status_context.py') p.write_text('''from agent.model_status_context import build_model_status_context\n\n\ndef test_status_context_is_compact_and_model_visible():\n text = build_model_status_context(\n api_call_count=3,\n max_iterations=10,\n todos=[\n {"id": "a", "content": "finish report", "status": "completed"},\n {"id": "b", "content": "run tests", "status": "in_progress"},\n ],\n )\n\n assert text == (\n "<agent_status>\\n"\n "- API calls: 3/10\\n"\n "- Active tasks: 1 (in progress: 1)\\n"\n "- Next active task: b — run tests\\n"\n "</agent_status>"\n )\n\n\ndef test_status_context_does_not_include_completed_or_untrusted_extra_fields():\n text = build_model_status_context(\n api_call_count=0, max_iterations=1,\n todos=[{"id": "done", "content": "secret", "status": "completed", "extra": "drop"}],\n )\n\n assert "secret" not in text\n assert "extra" not in text\n assert "Active tasks: 0" in text\n''') PY scripts/run_tests.sh tests/agent/test_model_status_context.py -q  0.1s [exit 1]
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Implementing configuration changes**
+
+I need to implement and inspect config access in the agent, possibly through load
+_config. I'll use a pure module function and test if it can run with something like
+ uv run pytest. First, I have to create the module via write_file and set up the default
+ config and imports.
+
+I wonder if the user wants to improve the evidence, and I'm thinking whether the opt
+-in config should default to true. It seems like dynamically injecting context for
+ model-visible status has cache costs, which raises concerns. I need to ensure that
+ each API call appends the status to the tool result.**Appending status in API calls**
+
+When I make the first call, I can append the status to the user API copy since the
+ current user sidecar was already stamped before. I’ll add the dynamic status after
+ the user content. The tool calls the last tool afterward. I’m considering that for
+ the prompt cache, it’s okay to change the suffix only after the historical prefix
+. I need a config gate and to set the agent attribute from the config during initialization
+. I'll also search for load config status.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('run_agent.py') + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         mkdir -p agent + 1 command  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path s=Path('run_agent.py').read_text().splitlines() for i,l in enumerate(s,1): if 'self.config' in l or 'display_config' in l or 'self.max_iterations' in l: print(i,l) PY  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 3 commands  0.1s [exit 1]
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 5 commands  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         git diff -- agent/conversation_loop.py run_agent.py hermes_cli/config_defaults.py agent/model_status_context.py tests/agent/test_model_status_context.py  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f in ['agent/conversation_loop.py','run_agent.py','hermes_cli/config_defaults.py']: s=Path(f).read_text() + 1 command  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating tool issues**
+
+I’m thinking about why the assertion line might indicate that the needle isn’t found
+ due to spaces. I need to use the patch tool, but it’s unavailable in the namespace
+ that I have access to. The developer mentioned that the patch tool isn't provided
+. Is it acceptable to use Python for a rewrite? The tool instructions mention patch
+ing or writing files, but I can't find the tools. I’ll also need to inspect the exact
+ representation.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f,needle in [('agent/conversation_loop.py','Build the final system message'),('run_agent.py','session_cost_status'),('hermes_cli/config_defaults.py','show_cost')]: print(f) for l in Path(f).read_text().splitlines(): if needle in l: print(repr(l)) PY  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 12 commands  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Considering configuration needs**
+
+I realize I need to search for the configuration assignment related to displaying
+ perhaps the agent initialization. This seems like an essential step in getting things
+ wire correctly. I wonder if there are specific settings I should be aware of or particular
+ formats I need to follow. Okay, I’ll look more into how to properly set this up and
+ ensure everything is functioning as it should!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f in ['agent/agent_init.py','run_agent.py']: s=Path(f).read_text() + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/agent_init.py') + 2 commands  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/agent_init.py') + 5 commands  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 5 commands  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') p.write_text('''# Book-Driven Self-Evolution Report ## Run identity - Starting commit: `85c8956ec7f2b4607509980794995e1c5e21e292` (the pinned HEAD before edits). - Model/provider: `openai/gpt-5.6-luna` / `openrouter`. - Book audited: English edition under `/home/ubuntu/ai-agent-book/book-en/`; all ten `chapter1.md`–`chapter10.md` files were inspected with section-heading and targeted-term searches, followed by section-level reads. The book repository was not modified. ## Four-claim audit | Reader claim | Book evidence | Hermes evidence | Disposition | |---|---|---|---| | Product-level ablation infrastructure | Chapter 1, “Harness Engineering” (lines 149–157), defines remove-one-component experiments; Chapter 6, “Ablation Infrastructure” (lines 662–706), calls for feature flags, fixed baselines, A/B methodology, and privacy-aware analytics. | Hermes has many config gates and operational telemetry, e.g. `hermes_cli/config_defaults.py` (`display.verify_on_stop`, `display.file_mutation_verifier`, `memory.write_approval`, `curator.*`), trajectory saving in `run_agent.py:2274–2292`, and evaluation/observability hooks, but no product-level campaign runner that holds a task set/model fixed and compares one disabled feature at a time. | **Absent** as a cohesive product capability; deferred. A campaign runner would be a larger evaluation product, not a safe incidental core feature. | | Model-visible Agent Status Bar | Chapter 2, “Agent Status Bar” (lines 787–817) distinguishes model-visible state from the human terminal bar and requires placement at context end; lines 819–835 give the structured `<agent_status>` example. Chapter 9, lines 233–239, also uses it as an inter-agent text channel. | Human-facing lifecycle/status plumbing exists in `run_agent.py:937–975`, `agent/display.py`, `hermes_cli/status.py`, and tests such as `tests/cli/test_cli_status_bar.py`; the model prompt is cached in `agent/turn_context.py:613–617`, while request-local API messages are built in `agent/conversation_loop.py:1488–1614`. Before this change there was no model-visible aggregate status block. | **Partly present**. Implemented the smallest compatible slice: opt-in request-local `<agent_status>` with API-call budget and active todo state. | | Forgetting/consolidation for persistent memory | Chapter 3, “Memory Compression and Organization Mechanisms” (lines 236–260), requires organization and privacy; Chapter 8, “Sleep Learning: Consolidation, Forgetting, and Capability Maintenance” (lines 297–320), requires offline batch consolidation, conflict handling, expiry/archive/delete with provenance and rollback. | Bounded memory is configured in `hermes_cli/config_defaults.py:1578–1602`; provider orchestration is in `agent/memory_manager.py`; background memory/skill review is in `agent/background_review.py`; Skill usage/staleness/archival is handled by `agent/curator.py`. These are real controls, but Curator is for agent-created Skills and bounded `MEMORY.md` is not a general evidence-backed memory consolidator with conflict resolution/retention evaluation. | **Partly present**, with the missing general mechanism intentionally deferred. Extending it safely needs provider-specific semantics, provenance, retention/transfer sets, and approval/rollback design; blindly deleting memory would violate safety and user expectations. | | General proposer-reviewer with independent execution-grounded verification | Chapter 1, lines 247–281, defines Verify/Correct; Chapter 5’s coding-harness material and Chapter 10, “Peer Collaboration Pattern” (lines 290–318), require a reviewer to obtain new execution/render/tool evidence, not merely reread text. | Hermes already has execution-grounded file mutation verification (`run_agent.py:3342–3465`), verify-on-stop and bounded `pre_verify` continuation (`agent/conversation_loop.py:6840–6959`), plugin `pre_verify` hooks, approval gates, background review (`agent/background_review.py`), and delegation (`tools/delegate_tool.py`). There is no universal artifact contract and no always-on independent proposer/reviewer workflow. | **Partly present**, and the proposed generic always-on mechanism is **intentionally deferred/incompatible as a default**: it would add cost/core surface and could duplicate existing verification. Use artifact-specific plugins/workflows when a concrete verifier exists. | ## Change made Added an opt-in model-visible status bar: - `agent/model_status_context.py` renders a bounded, deterministic `<agent_status>` block containing API-call budget and active todo information. It ignores completed tasks and arbitrary extra fields. - `agent/agent_init.py` reads `display.model_status_bar` (default false). - `hermes_cli/config_defaults.py` documents `display.model_status_bar: false`. - `agent/conversation_loop.py` appends the status only to the API request copy. It does not mutate the cached system prompt, persisted transcript, or stored message roles. When the current API tail is already a user message, it is appended to that request-local content; otherwise it uses a valid user message after the preceding assistant/tool sequence. - `tests/agent/test_model_status_context.py` adds behavior-contract tests for formatting, active-task selection, and field isolation. Deliberately rejected/deferred: - No always-on status bar: it costs tokens and is therefore opt-in. - No mutation of `MEMORY.md`/external providers: the evidence supports a larger consolidation lifecycle, not an unsafe delete/merge heuristic. - No generic proposer-reviewer core tool or mandatory second model: existing execution-grounded gates cover concrete paths; a universal reviewer needs a typed artifact/verifier contract and a campaign showing benefit. - No ablation runner in this change: it needs fixed datasets, outcome metrics, isolation, privacy/telemetry policy, and feature-flag control across surfaces. ## Verification Exact commands run: 1. `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` Result: exit code 0; compilation succeeded. 2. `python3 - <<'PY' ... from agent.model_status_context import build_model_status_context ... PY` Result: exit code 0; printed the expected block: `<agent_status>`, `API calls: 3/10`, `Active tasks: 1 (in progress: 1)`, `Next active task: b — run tests`, `</agent_status>`. 3. `scripts/run_tests.sh tests/agent/test_model_status_context.py -q` Result: **blocked**, exit code 1. The repository runner reported no virtualenv containing pytest (`.venv` exists but has no pytest; no `venv`/`HERMES_PYTHON` fallback). No test result was fabricated. The new contract test file is present, but it could not be executed because of that concrete environment blocker. Existing tests were not weakened, and no approval, validator, or safety threshold was changed. ## Limitations This is an implementation and audit run, not evidence that the status bar improves task success. One direct formatting exercise cannot establish causal benefit, and the full pytest verification was blocked by the missing test dependency. The status block is deliberately small and currently reports only budget and todo state; it does not summarize arbitrary tool-call counts, wall-clock time, constraints, or provider-specific state. It also has no independent learned evaluator. The memory and proposer-reviewer gaps remain partly addressed rather than fully solved. ## Proposed ablation campaign Use a fixed Hermes commit, fixed model/provider, fixed config, fixed tool permissions, fixed temperature/reasoning settings, and a versioned task suite with hermetic workspaces. Record raw trajectories and outcome evidence, not only final text. Run a baseline with all selected features enabled, then one feature disabled per arm: 1. baseline; 2. `display.model_status_bar: false` (versus true); 3. memory retrieval/writes disabled while session search remains separately measured; 4. background memory/Skill review disabled; 5. verify-on-stop and `pre_verify` continuation disabled only in a safe test fixture; 6. context compression disabled or replaced by a fixed no-op at a safe context size; 7. delegation disabled for tasks that can run either single-agent or delegated. For each arm, keep task order randomized and repeat enough times for confidence intervals. Report task success, independent verifier pass rate, safety/approval violations, regression/retention on prior tasks, artifact activation/adherence, token and wall-clock cost, tool-call count, failure class, and user-visible latency. Include transfer tasks and negative controls. Compare paired runs where possible and distinguish mechanism operation from end-to-end benefit. A run should not be promoted because it improves only a noisy judge or only the current task set; preserve trajectories and failed/negative results, as required by Chapter 6’s evaluation sections and Chapter 8 lines 245–270, 297–320. ''') PY git diff --stat + 1 command  0.2s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Debugging helper function**
+
+I need to catch a bug in my helper function, as it's showing some weird behavior.
+ There's a deadline involved and it seems the generator's been consumed if there are
+ todos left. If the tests fail, it might be due to the todos list. I should remove
+ the odd line and materialize it. Additionally, the report indicates that a changed
+ file was omitted because it’s untracked. I might need to run uv or check if pytest
+ can run with uv, so I should inspect the pyproject file for dependencies.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 1 command  0.0s
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_model_status_context.py -q  0.6s
+  ┊ 💻 $         git diff --check + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 5 commands  0.4s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Considering message content updates**
+
+I need to think about how to handle user messages. If the message is a string, I should
+ append it to the last message content. For assistant tool calls, I need to use a
+ role-safe approach to attach it properly. Also, it seems the report currently indicates
+ user meta after the assistant/tool section. I should consider updating that and ensure
+ that tests account for integration correctly to maintain effectiveness. I need to
+ fix these areas.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 10 commands  0.4s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') + 6 commands  0.1s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Implemented the book-driven self-evolution audit and documented it in:
+
+/home/ubuntu/ai-agent-book/chapter8/hermes-self-evolution/worktree/hermes-agent/BOOK_SELF_EVOLUTION_REPORT.md
+
+Changes made:
+
+- Added an opt-in, model-visible Agent Status Bar:
+  - agent/model_status_context.py
+  - agent/agent_init.py
+  - agent/conversation_loop.py
+  - hermes_cli/config_defaults.py
+- Added behavior-contract tests:
+  - tests/agent/test_model_status_context.py
+- Preserved:
+  - cached system-prompt stability;
+  - persisted transcript contents;
+  - message-role alternation;
+  - existing approval, validator, and safety behavior.
+
+Audit conclusions recorded in the report:
+
+- Product-level ablation infrastructure: absent; deferred.
+- Model-visible Agent Status Bar: partly present; implemented the smallest compatible slice.
+- Memory forgetting/consolidation: partly present; broader mechanism deferred pending provenance, conflict, retention, and rollback design.
+- General proposer-reviewer loop: partly present; existing execution-grounded verification retained; universal always-on reviewer intentionally deferred.
+
+Verification:
+
+- python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py
+  - Passed.
+- uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+  - Passed: 2 passed in 0.07s.
+- git diff --check
+  - Passed.
+- scripts/run_tests.sh tests/agent/test_model_status_context.py -q
+  - Blocked because the repository’s configured virtualenv lacks pytest. This is documented in the report; no result was fabricated.
+
+No commit, push, pull request, book modification, or credential access was performed.
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_031522_523cd2
+
+Session:        20260802_031522_523cd2
+Duration:       3m 5s
+Messages:       76 (1 user, 74 tool calls)

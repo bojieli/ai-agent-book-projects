@@ -13,7 +13,8 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 実験 8-3：失敗軌跡から最小の Prompt パッチを生成し、境界セットと保持セットでリリースを制御する |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 実験 8-4：ブラウザ軌跡を状態述語付きのワークフローにコンパイルし、リセット再生で検証する |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 実験 8-5：繰り返しの障害をトリガーに、リトライ/サーキットブレーカーのコードパッチ、回帰テスト、カナリアリリースとロールバックを行う |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 8-6：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes に本書全体と自分のソースを渡す。改善を選んで自分を書き換え、Reviewer の拒否を次の学習に変えながら受理まで進む |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 8-7：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
 
 上記の実験はすべて、API キー不要のオフライン入口とユニットテストを提供する。実モデルやブラウザが必要な拡張パスは各プロジェクトの README に記載されている。
 

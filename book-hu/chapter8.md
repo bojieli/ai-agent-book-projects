@@ -226,6 +226,16 @@ Ugyanez az ötlet kiterjed a munkafolyamatokra és a teljes Harness-re. Az AFlow
 
 A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez csak néhány határesetre lehet szükség, míg egy teljes munkafolyamat vagy Harness keresése sokkal nagyobb jelöltteret, magasabb kiértékelési költséget és nehezebb attribúciót jelent. Egy egyértelmű, ismétlődő, egy komponensre lokalizált hibának először egy auditálható lokális javítást kell kapnia. Csak amikor a lokális változtatások ismételten nem képesek kezelni egy komponenseken átívelő problémát, vagy amikor az aktuális kezelési módszer maga válik szűk keresztmetszetté, érdemes kifelé mozdulni a munkafolyamatra, a Harness-re vagy az optimalizálóra. Minden szinten az értékelőknek, a jogosultsági határoknak és a kihagyott teszteknek a szerkeszthető hatókörön kívül kell maradniuk – minél nagyobb a keresési tér, annál fontosabb ez a megbízható gyökér.
 
+> **8-6. ★★★ kísérlet: Mi történik, ha Hermes megkapja ezt a könyvet? Képes frissíteni önmagát?**
+>
+> **Cél:** Annak vizsgálata, hogy egy Agent képes-e külső tudást saját képességeinek valódi frissítésévé alakítani. A kísérlet nem ad meg hibát vagy funkciólistát: Hermes megkapja mind a tíz fejezetet és saját forrását, majd magának kell megértenie az elveket, átvizsgálnia a megvalósítást és kiválasztania egy érdemi javítást.
+>
+> **Elrendezés:** A könyv és a forrás olvasható kontextus, de a stabil verzió, a független Reviewer és az elfogadási tesztek Hermes szerkeszthető hatókörén kívül maradnak. A folyamat: **olvasás → összevetés → választás → módosítás → ellenőrzés**. Az elutasított jelölt visszajelzése a következő tanulási kör bemenete; a kapu nem kerülhető meg.
+>
+> **Valós futás:** A könyv elolvasása után Hermes önállóan felismerte, hogy a mentett trajektóriákból hiányzik a későbbi tanulás számára közvetlenül használható strukturált bizonyíték. Konzervatív tanulási jeleket vezetett le a végrehajtási eredményekből, majd módosította saját kódját és teszteket adott hozzá. Az első három független review valós adatformátum-, mentésiútvonal- és számlálási eltéréseket talált; minden megállapítás visszakerült az eredeti Hermes munkamenetbe, a negyedik review pedig elfogadta a jelöltet.
+>
+> **Az állítás határa:** A futás igazolja, hogy egy Agent hosszú tudásanyagból elveket vonhat ki, azokat saját kódjára vetítheti, és külső ellenőrzés mellett önfrissítést fejezhet be. A downstream feladatok javulását nem bizonyítja; ehhez külön ablation kísérlet kell. A kísérlet ötletét Grace olvasó adta.
+
 ## Hosszú távú működésre alkalmas folyamatos evolúciós zárt hurok építése
 
 A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pedig egyszeri optimalizálássá, ha ugyanabba az autonóm hurokba illeszkednek. A 8-5. ábra egy robusztusabb, termelési rendszerekhez tervezett kéthurkú architektúrát mutat: az online végrehajtási hurok csak feladatokat végez el és bizonyítékokat rögzít, anélkül, hogy közvetlenül átírná a termelési ágenst; az offline evolúciós hurok trajektóriákat gyűjt, gyökérokokat diagnosztizál, jelölt módosításokat generál, és új verziókat csak az érvényesítési kapukon való áthaladás után bocsát ki. A két hurkot verziózott tapasztalati tárolók és kiértékelési készletek kötik össze.
@@ -319,7 +329,7 @@ A folyamatos evolúció nem jelenti azt, hogy a tudás, a Promptok és az eszkö
 - Az új bizonyítékok által megcáfolt tudás törlése;
 - A LoRA újratanítása az eredeti alapmodellből.
 
-> **8-6. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
+> **8-7. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
 >
 > "Cél:" Három hosszú távú viselkedés megkülönböztetése – egyetlen visszajelzés elmentése, örökké csak hozzáfűzés, és a képességek tényleges frissítése, átvitele és megtartása –, hogy az azonos feladatok ismételt futtatását ne tévesszük össze a folyamatos tanulással.
 >

@@ -59,7 +59,7 @@ A magyar kézirat forrása a [`book-hu/`](../../book-hu/) könyvtárban találha
 | 5 | 💻 **Kódoló ágens és kódgenerálás** | A kód mint új eszközöket létrehozó eszköz; éles környezetre kész kódoló ágensek | [Olvasás](../../book-hu/chapter5.md) | [12](../../chapter5/README.hu.md) |
 | 6 | 🎯 **Ügynökök kiértékelése** | Értékelési környezetek, mérőszámok, statisztikai szignifikancia és értékelésvezérelt kiválasztás | [Olvasás](../../book-hu/chapter6.md) | [17](../../chapter6/README.hu.md) |
 | 7 | 🧠 **Modell-utóképzés** | Előképzés, SFT és RL; eszközhívások internalizálása és mintahatékonyság | [Olvasás](../../book-hu/chapter7.md) | [18](../../chapter7/README.hu.md) |
-| 8 | 🔄 **Az ágensek folyamatos evolúciója** | Tanulás a végrehajtási nyomvonalakból; tudás, utasítások, programok és paraméterek frissítése | [Olvasás](../../book-hu/chapter8.md) | [6](../../chapter8/README.hu.md) |
+| 8 | 🔄 **Az ágensek folyamatos evolúciója** | Tanulás a végrehajtási nyomvonalakból; tudás, utasítások, programok és paraméterek frissítése | [Olvasás](../../book-hu/chapter8.md) | [7](../../chapter8/README.hu.md) |
 | 9 | 🎙️ **Multimodalitás és valós idejű interakció** | Beszéd, grafikus felületek, Computer Use és robotika | [Olvasás](../../book-hu/chapter9.md) | [10](../../chapter9/README.hu.md) |
 | 10 | 🤝 **Többügynökös együttműködés** | Együttműködési struktúrák, kontextusmegosztás és -elszigetelés, ágenstársadalmak | [Olvasás](../../book-hu/chapter10.md) | [8](../../chapter10/README.hu.md) |
 

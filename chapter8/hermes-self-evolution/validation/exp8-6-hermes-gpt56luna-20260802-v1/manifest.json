@@ -1,0 +1,127 @@
+{
+  "schema_version": 2,
+  "experiment": "8-6",
+  "run_id": "exp8-6-hermes-gpt56luna-20260802-v1",
+  "source_repository": "https://github.com/NousResearch/hermes-agent.git",
+  "started_from_commit": "85c8956ec7f2b4607509980794995e1c5e21e292",
+  "provider": "openrouter",
+  "requested_model": "openai/gpt-5.6-luna",
+  "credential_environment_variable": "OPENROUTER_API_KEY",
+  "proposer_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "acceptance_reviewer_exit_codes": [
+    3,
+    3,
+    3,
+    3,
+    3,
+    0
+  ],
+  "interaction_rounds": 9,
+  "independent_acceptance_reviews": 6,
+  "terminal_reviewer_verdict": "ACCEPT",
+  "review_findings_corrected": [
+    "request-local status rewrote prior wire bytes",
+    "test replay accepted sidecar types that production rejected",
+    "list sidecars did not survive the string-only persistence boundary",
+    "tool-result attachment was not durably replayed and todo identifiers were unbounded",
+    "status disappeared or preceded evidence in realistic assistant-tool-call sequences",
+    "post-flush sidecars were not backfilled to persisted rows",
+    "same-message retries appended duplicate status projections",
+    "pre-existing memory and plugin sidecars suppressed status projection"
+  ],
+  "final_candidate": {
+    "implemented": "opt-in model-visible status projection for string-content turns",
+    "deferred": [
+      "product-level ablation runner",
+      "general persistent-memory forgetting",
+      "universal proposer-reviewer artifact contract",
+      "multimodal status injection"
+    ],
+    "status": "candidate_patch_accepted_by_terminal_reviewer_not_merged"
+  },
+  "independent_checks": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "pytest",
+        "tests/agent/test_model_status_context.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "........                                                                 [100%]\n8 passed in 0.87s\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "pytest",
+        "tests/agent/test_api_content_sidecar.py",
+        "tests/run_agent/test_background_review_cache_parity.py",
+        "tests/agent/test_turn_context.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "....................................                                     [100%]\n36 passed in 9.49s\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "agent/model_status_context.py",
+        "agent/conversation_loop.py",
+        "agent/agent_init.py",
+        "run_agent.py",
+        "hermes_state.py"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "patch_apply_check": "passed",
+  "patch_sha256": "215195fa3a52b515d37fcc0c396873b45f808832a60dd79e1dc2a0c20826ae93",
+  "report_sha256": "0f779478549be3ed836b1a1ffff4759f5b4e6664585c06d3c10031a69fb145db",
+  "transcript_sha256": {
+    "hermes-transcript.txt": "8a94aeae222d097d8caec09a2b023550b8d877508ee1a9d50ffc016676db838a",
+    "hermes-review-transcript.txt": "cba55ad5cff3c94dac6153d80637cceb06438312e63808698a5c5b481f8642bd",
+    "hermes-review-2-transcript.txt": "7369870a1657c2f4297d895acc9fc96b465267bc35ca6fe61492c6de2268024b",
+    "hermes-review-3-transcript.txt": "7ff0043ceff215db5322ad60ca4a9e3adcb31bce0047e8373b23113b513a6f48",
+    "hermes-review-4-transcript.txt": "19ab8713d3339dbcccc9a11323237365a12ffbd79f598c60cd022244d2775da3",
+    "hermes-review-5-transcript.txt": "d73e62605bba62623c10e6dd3d94d2d2f47910f66872404d7bb5e60488fe221a",
+    "hermes-review-6-transcript.txt": "65fd05b944eecb8329774d7a74166352fe3d397cfc59336d6b77d3633c7e7870",
+    "hermes-review-7-transcript.txt": "026387b77533a2acd939f98bf8b729b1b8d3c72daa623827390c7e86f04cca47",
+    "hermes-review-8-transcript.txt": "f94dce248a4de9c87d17e5696a6347d4764ca8096326b3a6baa30b0c35ef0749",
+    "hermes-acceptance-review-1.txt": "782ac2b74a84b6195d465c32c975d31da61f459f827ba1ab8886b9c28c43ccca",
+    "hermes-acceptance-review-2.txt": "69f949b537114dbaa51a7785979a2c40f8f259e4acd2591aee2729678c4117d3",
+    "hermes-acceptance-review-3.txt": "3401f2b53d7b284031e97db469b98d8486652b452ae392d117425feb8e3dd9b4",
+    "hermes-acceptance-review-4.txt": "0d91f95559bcf60b2e2eb0df825e96e578e5fb2d92b737c247f72d84197eca73",
+    "hermes-acceptance-review-5.txt": "4e4d258380579df8173be08af37657ca489cb0bf4a63916c5377cee1bf8e1adb",
+    "hermes-acceptance-review-6.txt": "392160a13a1a84d687e702f718be83e87b3afb17058af06b8548da84c93d64fb"
+  },
+  "credential_scan": "passed",
+  "claim_boundary": "The run demonstrates autonomous audit, candidate generation, repeated correction under independent rejection, and terminal acceptance. It does not demonstrate downstream task-quality uplift; the proposed ablation campaign was not run."
+}

@@ -226,6 +226,16 @@ Parameter learning பொதுவாக வெளிப்புற முற�
 
 வெளிப்புற level எப்போதும் சிறந்தது அல்ல. Local rule-ஐத் தேட சில edge case-கள் போதலாம்; முழு workflow அல்லது Harness-ஐத் தேடுவது பெரிய candidate space, அதிக evaluation cost மற்றும் கடினமான attribution-ஐக் கொண்டது. ஒரு component-இல் தெளிவாக localized ஆன, மீண்டும் தோன்றும் fault-க்கு முதலில் audit செய்யக்கூடிய local patch வழங்க வேண்டும். Local change-கள் பலமுறை cross-component பிரச்சினையைத் தீர்க்கத் தவறும்போது அல்லது management method தானே bottleneck ஆகும்போது மட்டுமே workflow, Harness அல்லது optimizer level-க்கு வெளியே செல்ல வேண்டும். எல்லா level-களிலும் evaluator, permission boundary மற்றும் held-out test editable scope-க்கு வெளியே இருக்க வேண்டும்; search space பெரிதாகும்போது இந்த trusted root இன்னும் முக்கியமாகிறது.
 
+> **பரிசோதனை 8-6 ★★★: இந்தப் புத்தகத்தை Hermes-க்கு கொடுத்தால், அது தன்னையே upgrade செய்யுமா?**
+>
+> **பரிசோதனை நோக்கம்**: வெளிப்புற அறிவை Agent தனது திறனுக்கான உண்மையான update-ஆக மாற்ற முடியுமா என்பதைச் சோதிக்கிறது. சரிசெய்ய வேண்டிய பிரச்சினையோ feature பட்டியலோ கொடுக்கப்படாது. பத்து chapter-களும் Hermes-ன் source code-உம் கொடுக்கப்பட்டு, principles-ஐ புரிந்து தனது implementation-ஐ ஆய்வு செய்து ஒரு பயனுள்ள மேம்பாட்டைத் தானே தேர்ந்தெடுக்க வேண்டும்.
+>
+> **வடிவமைப்பு**: புத்தகமும் source-உம் படிக்கக்கூடிய context; ஆனால் stable version, independent Reviewer, acceptance tests ஆகியவை Hermes மாற்றக்கூடிய எல்லைக்கு வெளியே இருக்கும். அது **படி → ஒப்பிடு → தேர்ந்தெடு → மாற்று → சரிபார்** என்ற சுற்றை முடிக்க வேண்டும். Candidate நிராகரிக்கப்பட்டால் review அடுத்த learning round-க்கான input ஆகும்; gate-ஐ தாண்டி வெற்றியை அறிவிக்க முடியாது.
+>
+> **உண்மையான run**: புத்தகத்தைப் படித்த பிறகு, சேமிக்கப்பட்ட execution trajectory-களில் அடுத்த learning-க்கு நேரடியாகப் பயன்படும் structured evidence இல்லை என்பதை Hermes தானே கண்டது. Execution result-களை conservative learning signal-களாக மாற்றத் தேர்ந்து, தனது code-ஐ மாற்றி tests சேர்த்தது. முதல் மூன்று independent review-கள் real data format, persistence path, counting semantics ஆகியவற்றில் முரண்பாடுகளை கண்டன. ஒவ்வொரு finding-உம் அசல் Hermes session-க்கு திரும்பியது; நான்காவது review candidate-ஐ ஏற்றது.
+>
+> **கூற்றின் எல்லை**: நீண்ட அறிவிலிருந்து principles-ஐ எடுத்துத் தனது code-உடன் இணைத்து, external verification-ன் கீழ் Agent self-update-ஐ முடிக்க முடியும் என்பதை இந்த run காட்டுகிறது. Downstream task வெற்றி மேம்பட்டது என்பதை இது நிரூபிக்காது; அதற்கு தனி ablation experiment தேவை. இந்த experiment idea-ஐ வாசகர் Grace வழங்கினார்.
+
 ## நீண்டகாலம் இயங்கக்கூடிய தொடர்ச்சியான பரிணாமச் சுற்றை உருவாக்குதல்
 
 நான்கு update முறைகளும் ஒரே தன்னாட்சி loop-இல் நுழைந்தால்தான் single optimization-இலிருந்து தொடர்ச்சியான பரிணாமமாக மாறும். படம் 8-5 production அமைப்பிற்கான மேலும் நம்பகமான இரட்டை-loop கட்டமைப்பைக் காட்டுகிறது: online execution loop பணியை முடித்து சான்றுகளை மட்டும் பதிவு செய்கிறது; முறையான Agent-ஐ நேரடியாக மாற்றாது. Offline evolution loop trajectory-களைத் தொகுத்து, root cause-ஐ diagnosis செய்து, candidate modification-களை உருவாக்கி, பின்னர் verification threshold-ஐத் தாண்டி புதிய version-ஐ வெளியிடுகிறது. Version செய்யப்பட்ட experience library மற்றும் evaluation set மூலம் இவை இணைக்கப்படுகின்றன.
@@ -319,7 +329,7 @@ Hermes மேலும் முழுமையான background evolution எ�
 - புதிய சான்றுகளால் மறுக்கப்பட்ட knowledge-ஐ நீக்குதல்;
 - மூல base model-இலிருந்து LoRA-வை மீண்டும் பயிற்றுவித்தல்.
 
-> **பரிசோதனை 8-6 ★★★: Agent தொடர்ச்சியாகப் பரிணமிக்கிறதா என்பதை மதிப்பிடுதல்**
+> **பரிசோதனை 8-7 ★★★: Agent தொடர்ச்சியாகப் பரிணமிக்கிறதா என்பதை மதிப்பிடுதல்**
 >
 > **பரிசோதனை இலக்கு**: “ஒருமுறை feedback-ஐச் சேமிக்கக்கூடியது”, “append மட்டும் செய்யக்கூடியது”, “capability-ஐ update, transfer மற்றும் retain செய்யக்கூடியது” என்ற மூன்று நீண்டகால நடத்தைகளை வேறுபடுத்தி, ஒரே கேள்வித் தொகுப்பை மீண்டும் இயக்குவதை continual learning எனக் காட்டுவதைத் தவிர்த்தல்.
 >

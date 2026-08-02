@@ -59,7 +59,7 @@ Kitap, **Agent = LLM + Bağlam + Araçlar** temel formülü etrafında şekillen
 | 5 | 💻 **Coding Agent ve Kod Üretimi** | Kod, "yeni araçlar yaratabilen bir araçtır"; üretim seviyesinde Coding Agent'ın tam görünümü | [Oku](../../book-tr/chapter5.tr.md) | [12](../../chapter5/README.tr.md) |
 | 6 | 🎯 **Agent Değerlendirmesi** | Performansı karşılaştırılabilir sinyale dönüştürmek: ortamlar, metrikler, istatistiksel anlamlılık, değerlendirme odaklı seçim | [Oku](../../book-tr/chapter6.tr.md) | [12](../../chapter6/README.tr.md) |
 | 7 | 🧠 **Model Eğitim Sonrası** | Pre-training/SFT/RL üç aşama: SFT mi RL mi ne zaman seçilir, araç çağrılarının içselleştirilmesi, örnek verimliliği | [Oku](../../book-tr/chapter7.tr.md) | [16](../../chapter7/README.tr.md) |
-| 8 | 🔄 **Agent'ın Kendi Kendine Evrimi** | Ağırlıkları değiştirmeden büyüme: deneyimden öğrenme, araç kullanıcısından araç yaratıcısına | [Oku](../../book-tr/chapter8.tr.md) | [6](../../chapter8/README.tr.md) |
+| 8 | 🔄 **Agent'ın Kendi Kendine Evrimi** | Ağırlıkları değiştirmeden büyüme: deneyimden öğrenme, araç kullanıcısından araç yaratıcısına | [Oku](../../book-tr/chapter8.tr.md) | [7](../../chapter8/README.tr.md) |
 | 9 | 🎙️ **Çok Modluluk ve Gerçek Zamanlı Etkileşim** | Metinden sese, GUI'ye, fiziksel dünyaya genişleme: üç ses paradigması, Computer Use, robotik | [Oku](../../book-tr/chapter9.tr.md) | [7](../../chapter9/README.tr.md) |
 | 10 | 🤝 **Çoklu Ajan İşbirliği** | Kolektif zeka bireyden üstündür: işbirliği çerçeveleri, bağlam paylaşımı/izolasyonu, ortaya çıkan "Agent Toplumu" | [Oku](../../book-tr/chapter10.tr.md) | [7](../../chapter10/README.tr.md) |
 

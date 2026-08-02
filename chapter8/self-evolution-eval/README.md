@@ -1,4 +1,4 @@
-# 实验 8-6：评估 Agent 是否在持续进化
+# 实验 8-7：评估 Agent 是否在持续进化
 
 本实验把评估对象从“单次任务是否成功”扩展到一条长期任务流。任务不会简单重复，而是依次经历四个阶段：学习阶段暴露可共享规律，迁移阶段更换表述和环境，规则变化阶段要求修订旧能力，保持阶段重新测试未变化能力与当前有效规则。
 
@@ -8,7 +8,7 @@ python -m pytest -q test_longitudinal.py test_campaign_statistics.py
 python demo.py --profile all --output output/reference-report.json
 
 # 真实验收：3 个真实模型臂 × 3 个种子 × 14 个顺序任务 = 126 次 API 调用
-python run_experiment_8_6.py \
+python run_experiment_8_7.py \
   --provider ark --model doubao-seed-1-6-250615 \
   --seeds 8601,8602,8603 --workers 6
 ```
@@ -83,7 +83,7 @@ Harness 在模型返回并记录当前动作之后才暴露学习信号；发往
 | `agent.py` | 三种参考行为与 static / append-only / evolving 三种真实模型臂 |
 | `harness.py` | 长期运行、分阶段统计、成本与安全评估 |
 | `demo.py` | 命令行对照实验 |
-| `run_experiment_8_6.py` | 重复、带 Seed 的三臂真实模型实验与统计/证据生成 |
+| `run_experiment_8_7.py` | 重复、带 Seed 的三臂真实模型实验与统计/证据生成 |
 | `test_longitudinal.py` | 迁移、规则更新、保持和四阶段完整性测试 |
 | `test_campaign_statistics.py` | 重复运行均值、样本标准差与 t 区间测试 |
 
