@@ -8,3 +8,4 @@
 
 mkdocs-material[imaging] >= 9.5, < 10
 mkdocs-git-revision-date-localized-plugin >= 1.2, < 2
+Markdown >= 3.5, < 4
