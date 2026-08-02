@@ -262,6 +262,7 @@ Birkaç yinelemenin ardından düşünmenin temeli metin soyutlamasından akusti
 
 
 ![Şekil 9-6: Step-Audio R1 MGRD ve MPS Çift Beyin Mimarisi](images/fig9-6.svg)
+
 Çözüm 3 düşünmeyi tek bir modelin içine "içselleştirerek" "düşünürken konuşmayı" en zarif biçimde gerçekleştirir; ama bedeli tam da bu kısmın başında söylenen "hareketli hedeftir": bu tek model hem en güçlü reasoning yapan olmak hem de gerçek zamanlı konuşan olmak zorundadır ve iki yetenek de hızla evrildiğinden, birleşik hat ayak uydurabilmek için defalarca yeniden eğitilmek durumundadır. Bu, bu satırların yazıldığı dönemdeki sektörel ayrışmayı da açıklıyor — "istenildiği an en yeni beyne geçebilme" peşindeki öncü ürünler (GPT-Live, Grok Voice, Pine AI) çoğunlukla Çözüm 2'nin ayrıştırma hattına oynuyor; Çözüm 3 ise azami doğallığı hedefleyen ve özel eğitim maliyetini üstlenmeye razı olan senaryolara daha uygun. İkisi birbirinin yerini almaz; bu, "değiştirilebilir beyin" ile "daha sıkı bir düşünürken konuşma" arasındaki bir ödünleşimdir.
 
 ### Hızlı ile Yavaş Arasındaki Arayüz: Metin Dışında Başka Ne Aktarılabilir
