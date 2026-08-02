@@ -227,6 +227,23 @@ async def handle_list_tools() -> list[types.Tool]:
                 "required": ["url", "screenshot_path"]}
         ),
         types.Tool(
+            name="virtual_desktop_execute",
+            description="Drive a headful Chromium desktop through X11 keyboard events and retain a screenshot",
+            inputSchema={"type": "object", "properties": {
+                "url": {"type": "string"},
+                "screenshot_path": {"type": "string"},
+                "expected_title": {"type": ["string", "null"]}},
+                "required": ["url", "screenshot_path"]}
+        ),
+        types.Tool(
+            name="virtual_mobile_execute",
+            description="Operate a running AndroidWorld emulator through ADB and retain a screenshot",
+            inputSchema={"type": "object", "properties": {
+                "container_name": {"type": "string"},
+                "screenshot_path": {"type": "string"}},
+                "required": ["container_name", "screenshot_path"]}
+        ),
+        types.Tool(
             name="environment_capabilities",
             description="Inspect real Computer Use container and Android device availability",
             inputSchema={"type": "object", "properties": {}}
@@ -294,6 +311,12 @@ async def handle_call_tool(
         elif name == "browser_navigate":
             result = await extended_tools.browser_navigate(
                 arguments["url"], arguments["screenshot_path"])
+        elif name == "virtual_desktop_execute":
+            result = await extended_tools.virtual_desktop_execute(
+                arguments["url"], arguments["screenshot_path"], arguments.get("expected_title"))
+        elif name == "virtual_mobile_execute":
+            result = await extended_tools.virtual_mobile_execute(
+                arguments["container_name"], arguments["screenshot_path"])
         elif name == "environment_capabilities":
             result = await extended_tools.environment_capabilities()
         else:
