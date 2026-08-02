@@ -226,13 +226,15 @@ Ra ngoài một tầng, đối tượng tối ưu không chỉ là “ngữ cả
 
 Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ có thể chỉ cần vài ca biên; tìm toàn bộ quy trình hoặc Harness phải đối mặt với không gian ứng viên lớn hơn, chi phí đánh giá cao hơn và khó quy kết hơn. Một lỗi rõ ràng, lặp lại và định vị được ở một thành phần nên được sửa trước bằng bản vá cục bộ có thể kiểm toán. Chỉ khi sửa cục bộ lâu dài không giải quyết được vấn đề xuyên thành phần, hoặc chính phương pháp quản lý đã thành nút thắt, mới nên nâng lên tầng quy trình, Harness hay bộ tối ưu. Ở mọi tầng, bộ đánh giá, ranh giới quyền và tập kiểm thử giữ lại phải nằm ngoài vùng có thể sửa — không gian tìm kiếm càng lớn, gốc tin cậy này càng quan trọng.
 
-> **Thí nghiệm 8-6 ★★★: Để Hermes đọc cuốn sách này và hoàn tất tự cập nhật theo phản biện**
+> **Thí nghiệm 8-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
 >
-> **Mục tiêu**: Áp dụng vòng lặp của chương cho một kho Agent thật. Một phiên bản Hermes cố định được clone để đọc đủ mười chương tiếng Anh và kiểm toán bốn thiếu hụt do độc giả nêu: hạ tầng ablation cấp sản phẩm, Agent Status Bar hiển thị cho mô hình, quên–hợp nhất bộ nhớ bền vững, và vòng Proposer–Reviewer tổng quát có bằng chứng thực thi độc lập. Vì bốn nhận định được cung cấp trong Prompt, thí nghiệm đo khả năng kiểm toán, sinh ứng viên và sửa lỗi chứ không đo phát hiện tự chủ.
+> **Thử thách**: Thay vì một bài toán dựng sẵn, chúng tôi đưa cho Hermes toàn bộ cuốn sách cùng chính mã nguồn của nó: “Hãy đọc, nhìn lại bản thân và thực hiện một cải tiến thật.” Một độc giả cung cấp bốn gợi ý—ablation, thanh trạng thái, quên bộ nhớ và Reviewer—nhưng Hermes phải tự đọc và quyết định ý tưởng nào phù hợp với thiết kế của mình.
 >
-> **Lần chạy thật và khép vòng**: Ngày 2-8-2026, Hermes tại commit `85c8956e` dùng `openai/gpt-5.6-luna` qua OpenRouter và đề xuất `<agent_status>` tùy chọn. Một Hermes reviewer mới, không có ngữ cảnh phiên proposer, kiểm tra từng ứng viên. Mỗi `VERDICT: REJECT` được trả về phiên Hermes ban đầu để nó sửa chính checkout của mình, rồi reviewer mới kiểm tra lại. Năm lần từ chối cuối phát hiện lỗi cache, tool loop, giới hạn đầu ra, lưu bền qua khởi động lại, tính idempotent của retry và ghép với sidecar memory/plugin có sẵn; lần review mới thứ sáu trả `VERDICT: ACCEPT`.
+> **Nó không dừng ở danh sách đề xuất**: Sau mười chương, Hermes đối chiếu ý tưởng trong sách với kiến trúc của mình và chọn cải tiến đầu tiên: cho mô hình thấy trạng thái công việc hiện tại. Sau đó nó thực sự sửa mã nguồn của chính mình và chạy kiểm tra.
 >
-> **Ranh giới kết quả**: Phiên bản được chấp nhận vượt qua **8 kiểm thử hành vi mới và 36 kiểm thử hồi quy hiện có**, cùng kiểm tra biên dịch, khoảng trắng, credential và áp dụng patch trên clone sạch. Như vậy vòng “đọc → tự kiểm toán → tự sửa → bị từ chối → sửa theo phản hồi → được chấp nhận độc lập” đã hoàn tất, không còn là kết quả nửa chừng. Patch chưa merge upstream và ablation downstream chưa chạy, nên chưa chứng minh status bar tăng tỷ lệ thành công. Runner, chín tương tác proposer, sáu acceptance review, báo cáo, patch và manifest không chứa credential nằm tại [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Mỗi lần bị từ chối là một bài học mới**: Một Reviewer mới kiểm tra thay đổi. Nếu chưa đạt, phản hồi quay về Hermes ban đầu; nó đọc lại mã, sửa vấn đề và thử tiếp cho đến khi được chấp nhận. Vòng lặp rất dễ nhớ: **đọc → đối chiếu → thay đổi → phản biện → học → thay đổi tiếp**.
+>
+> **Vì sao thú vị**: Một cuốn sách có thể trở thành hướng dẫn nâng cấp cho Agent. Hermes đã hiểu nguyên tắc, nối chúng với cách mình được xây dựng và hoàn tất một thay đổi thật qua feedback. Việc mọi nhiệm vụ downstream có tốt hơn hay không cần một thí nghiệm ablation riêng. Bản ghi đầy đủ nằm tại [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
 
 ## Xây dựng vòng khép kín tiến hóa liên tục có thể vận hành dài hạn
 

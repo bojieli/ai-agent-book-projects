@@ -13,7 +13,7 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Menghasilkan patch prompt minimal dan mengendalikan rilis dengan set batas serta retensi. |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Mengompilasi trajectory browser menjadi workflow yang diverifikasi melalui reset dan replay. |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Memicu patch kode setelah kegagalan berulang, lalu melakukan regresi, canary, dan rollback. |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Menutup pembaruan diri Hermes setelah lima penolakan reviewer baru dan penerimaan terminal; 44 tes terfokus lulus, tanpa evaluasi manfaat hilir. |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Memberi Hermes seluruh buku dan source-nya sendiri; ia memilih peningkatan, mengubah dirinya, dan menjadikan tiap penolakan Reviewer sebagai putaran belajar baru sampai diterima. |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Eksperimen 8-7 mengevaluasi pembelajaran, transfer, perubahan aturan, dan retensi jangka panjang. |
 
 Semua eksperimen menyediakan entry point offline dan unit test tanpa API Key; jalur yang membutuhkan model nyata atau browser dijelaskan dalam README proyek.

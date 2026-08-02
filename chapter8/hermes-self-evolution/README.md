@@ -1,41 +1,48 @@
-# 实验 8-6：让 Hermes 阅读本书并完成审查驱动的自我更新
+# 实验 8-6：把这本书交给 Hermes：它能升级自己吗？
 
-这个实验把第八章的持续进化闭环施加到真实 Agent 代码库上：克隆固定版本的
-[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)，让 Hermes
-阅读本书十章英文正文，审计读者提出的四项能力缺口，并在自己的源码中生成候选修改。
-候选不会自动合入；独立审查意见会作为新的交互事件返回给 Hermes。实验使用全新、
-无 proposer 会话上下文的 reviewer 重复验收：只要返回 `VERDICT: REJECT`，问题就交回原
-Hermes 会话继续修改，直到 reviewer 返回 `VERDICT: ACCEPT` 或记录具体阻塞。
+如果 Agent 读到一本讲“Agent 如何进化”的书，它能不能回头看看自己，并真的学会一项新本领？
+我们没有让 Hermes 只写一份读后感，而是把整本书和它自己的源码一起交给它，让它边读边改自己。
 
-四项种子问题是：产品级消融基础设施、模型可见的 Agent Status Bar、带遗忘的持久记忆，
-以及对生成产物进行独立执行验证的 Proposer–Reviewer。因为问题由实验 Prompt 提供，
-本实验验证的是 **审计、修改和根据审查纠错**，不是“Hermes 自主发现了这四个问题”。
+## 我们做了什么
 
-## Canonical 真实运行
+一位读者给了我们四条线索：消融实验、系统状态栏、带遗忘机制的记忆，以及负责把关的
+Proposal Reviewer。我们让 [Hermes](https://github.com/NousResearch/hermes-agent) 读完本书，
+再回到自己的代码里逐项比较。线索只是起点；Hermes 仍要自己判断哪些能力已经存在、哪些真的缺失，
+以及哪项改进最值得现在动手。
 
-2026-08-02 的运行固定 Hermes commit
-`85c8956ec7f2b4607509980794995e1c5e21e292`，通过 OpenRouter 请求
-`openai/gpt-5.6-luna`。Hermes 将四项主张分别判断为：消融基础设施缺失；模型可见状态栏
-部分存在；通用记忆遗忘部分存在；通用 Proposer–Reviewer 部分存在且不应默认常开。
+整个过程可以记成一句话：
 
-它只实现了证据足够且范围可控的一项：可选的、模型可见的 `<agent_status>`，包含 API
-调用预算与当前 TODO。八轮修正与六次 fresh acceptance review 共暴露出八类问题：
+> **阅读 → 对照 → 修改 → 审查 → 学习 → 再修改**
 
-1. 每轮移动 request-local 状态会改写先前 wire bytes，破坏缓存前缀；
-2. 测试使用的 sidecar 类型比生产回放路径更宽松；
-3. list/multimodal sidecar 能在内存中回放，却无法穿过只保存字符串的数据库边界；
-4. tool-result sidecar 没有被持久回放，TODO 标识符也没有长度边界；
-5. 真实 `content=None` tool call 会使状态缺失或位于最新工具证据之前；
-6. 已落库消息的 sidecar 没有按稳定 row ID 回填，重启后会丢失；
-7. 同一消息的请求重试会重复追加状态块；
-8. 既有 memory/plugin `api_content` 会错误抑制状态投影。
+## Hermes 真的做了什么
 
-每次拒绝都返回同一 Hermes proposer 会话继续更新自己的 checkout。第六次 fresh terminal
-review 最终返回 `VERDICT: ACCEPT`。最终版本只支持可持久化的字符串 sidecar，其它内容
-类型 fail closed；状态在真实 tool loop 中位于最新证据之后，经数据库关闭/重开仍稳定，
-同一请求重试保持幂等，并与既有 API-only sidecar 按字节组合。最终独立复跑结果为
-**8 个新增行为测试 + 36 个既有 sidecar/cache/turn-context 回归测试全部通过**，
-`py_compile`、`git diff --check` 和在干净 clone 上的 `git apply --check` 也通过。补丁没有合入上游。
+Hermes 没有贪多。它发现有些线索在现有系统里已经部分实现，有些则需要更大的实验才能证明价值，
+于是选择先补上一个清楚、可验证的改进：让模型在工作时也能看到自己的剩余预算和当前待办事项。
+
+关键是，它不只是提出建议。Hermes 亲手修改了自己的源码、运行检查，并留下了一份可应用的补丁。
+这让“读书后获得启发”变成了“读书后改变自己”。
+
+## Reviewer 如何推动它继续改
+
+第一版没有过关。独立 Reviewer 在真实使用场景中发现问题后，我们把反馈原样交还给同一个 Hermes
+会话。Hermes 阅读反馈、重新检查自己的实现，再次修改代码。新的 Reviewer 随后从头验收；如果仍有
+问题，就继续下一轮。
+
+前五次最终验收都被退回，Hermes 也因此连续修正了缓存、工具调用、重启恢复和重复请求等场景中的
+缺陷。第六位全新 Reviewer 最终接受了候选版本。也就是说，Reviewer 的拒绝不是实验的终点，而是
+Hermes 下一轮学习的输入。
+
+## 这个实验证明了什么
+
+这次运行完成了一个真实的自我更新闭环：Hermes 读了书，检查了自己，选择并实现了一项改进，
+又根据独立审查反复纠错，直到通过验收。最终候选也通过了相关的新旧测试。
+
+不过，“成功更新自己”和“所有任务表现都变强”是两回事。要证明后者，还需要在相同任务和模型下，
+分别开关新能力做消融实验。本实验诚实地停在前一个结论：**Hermes 已经学会根据书和反馈修改自己，
+但这项修改对下游任务的收益仍要另行测量。**
+
+下面保留完整证据，方便核对或复现。Canonical 运行固定在 Hermes commit
+`85c8956ec7f2b4607509980794995e1c5e21e292`，使用 `openai/gpt-5.6-luna`，补丁尚未合入上游。
 
 - [Evidence manifest](validation/exp8-6-hermes-gpt56luna-20260802-v1/manifest.json)
 - [Hermes 自述报告](validation/exp8-6-hermes-gpt56luna-20260802-v1/BOOK_SELF_EVOLUTION_REPORT.md)
@@ -87,14 +94,15 @@ python run_experiment_8_6.py --help
 
 ## English summary
 
-Experiment 8-6 pins and clones Hermes, asks it to inspect all ten English chapters,
-and audits four reader-supplied gaps: ablation infrastructure, a model-visible status
-bar, forgetting for persistent memory, and a general execution-grounded
-proposer–reviewer loop. Hermes implemented only an opt-in status projection and
-deferred the broader mechanisms. Five terminal rejections exposed defects spanning
-cache stability, tool-loop placement, database persistence, retry idempotence, and
-pre-existing sidecar composition; each rejection was returned to the same Hermes
-proposer session. A sixth fresh reviewer accepted the result. The candidate passes
-8 new and 36 existing focused tests, but remains unmerged and has no downstream
-ablation result. The experiment therefore demonstrates a completed, review-driven
-self-update loop, while keeping downstream benefit as a separate unproven claim.
+What happens when an agent reads a book about agent evolution and then looks back at
+its own code? We gave Hermes this entire book, four clues from a reader, and access to
+its own source. Hermes compared the ideas with what it already had, chose one useful
+improvement, and implemented it itself.
+
+The first version was not accepted. Each independent Reviewer rejection became the
+next lesson: Hermes read the feedback, changed its code again, and sent a new version
+for a fresh review. Five final reviews found more work; the sixth accepted the result,
+and the relevant tests passed. The experiment completes a simple but real loop:
+**read → compare → change → review → learn → change again**. It shows that Hermes can
+update itself from a book and external feedback. Whether the new feature improves
+downstream task performance remains a separate question for an ablation experiment.

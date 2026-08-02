@@ -13,7 +13,7 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 8-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 8-4: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Experiment 8-5: repeated failures trigger retry/circuit-breaker code patches, regression tests, canary rollout, and rollback |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Pins and clones Hermes, then closes the self-update loop through five fresh reviewer rejections and terminal acceptance; 44 focused tests pass, while downstream benefit remains unevaluated |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Gives Hermes the whole book and its own source; it chooses an improvement, changes itself, and turns each Reviewer rejection into another learning round until accepted |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 8-7: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
 
 All experiments above offer offline entry points and unit tests that require no API Key; extension paths that need real models or a browser are documented in each project's README.

@@ -13,7 +13,7 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 实验 8-3：真实任务 Agent、LLM Judge 与 Coding Agent 跑完初始/自动/人工三组完整保留集和边界集；原始回执与发布门槛已保存 |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 实验 8-4：真实 ARK Agent + Chromium 在可重置本地消息站完成探索、独立验证、参数化回放、假成功对照与页面变化失效 |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 实验 8-5：真实 Coding Agent 从重复故障生成补丁，并与确定性候选、故意过宽的反例通过同一回归/灰度/回滚发布门；[证据](self-modifying-agent/validation/latest.json)保留接受与拒绝历史 |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 固定并克隆真实 Hermes，让五次 fresh reviewer 拒绝持续驱动其修正自身，第六次终局接受；44 项聚焦测试通过，但未运行下游消融 |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 把整本书和源码交给 Hermes；它读完后选择一项改进，亲手修改自己，并把每次 Reviewer 的退回变成下一轮学习，直到通过 |
 | 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 8-7：static、append-only、evolving 三臂 × 3 seeds × 14 任务共 126 次真实调用；[证据](self-evolution-eval/validation/latest.json)保留迁移、规则替换、保持与配对统计 |
 
 以上实验都保留无需 API Key 的离线入口和单元测试用于预检；表中 ✅ 来自各目录保存的真实模型、真实轨迹或真实浏览器规范证据，不由离线机制演示代替。历史数值或定性主张未复现时，证据按负结果如实记录。
