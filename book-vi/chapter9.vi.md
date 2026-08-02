@@ -268,6 +268,7 @@ Cả hai hoạt động song song - bộ não sáng tạo không cần phải su
 
 
 ![Hình 9-6 Kiến trúc bộ não kép Step-Audio R1 MGRD và MPS ](images/fig9-6.svg)
+
 Phương án thứ ba “nội hóa” tư duy thành một mô hình duy nhất, đạt được “tư duy và nói” một cách tao nhã nhất, nhưng cái giá phải trả là “mục tiêu di động” được đề cập ở đầu phần này: mô hình này phải vừa là nhà lý luận mạnh nhất, vừa là người nói theo thời gian thực, cả hai khả năng đều đang phát triển nhanh chóng và lộ trình thống nhất phải được đào tạo lại nhiều lần để theo kịp. Điều này cũng giải thích sự phân chia ngành tại thời điểm viết bài - các sản phẩm tiên tiến (GPT-Live, Grok Voice, Pine AI) theo đuổi "khả năng chuyển sang bộ não mới nhất bất cứ lúc nào" chủ yếu tập trung vào lộ trình tách rời của tùy chọn hai, trong khi tùy chọn ba phù hợp hơn cho các tình huống theo đuổi sự tự nhiên tột độ và sẵn sàng chịu chi phí đào tạo chuyên môn. Cả hai không phải là cái này thay thế cái kia, mà là sự đánh đổi giữa "bộ não có thể thay thế" và "suy nghĩ và nói chặt chẽ hơn cùng một lúc".
 
 ### Giao diện giữa nhanh và chậm: ngoài văn bản còn có thể truyền được gì nữa
