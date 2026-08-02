@@ -323,11 +323,13 @@ Anthropic defines three types of tools that constitute a complete interaction ca
 
 **File Editing Tool** (`str_replace_editor`): Enables safe editing through string matching and supports view, create, replace, insert, and undo operations. It is more precise than overwriting an entire file and less likely to modify unrelated content accidentally.
 
-> **Experiment 9-6 ★: Running the Anthropic Computer Use Demo**
+> **Experiment 9-6 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
 >
-> The container includes a complete Ubuntu desktop environment with a browser, terminal, and other common tools. The frontend receives the task instructions, the backend sends those instructions and screenshots to Claude, and the model returns actions such as moving the mouse, clicking, and typing. The system then executes those actions on the virtual desktop.
+> Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model. This path is intended for understanding the native `computer` tool protocol; it does not require every reader to have access to the Anthropic API.
 >
-> Key observation: Each action cycle takes 2-5 seconds, making the system significantly slower than a human. Even so, it demonstrates good planning on common tasks and autonomously decomposes them into reasonable action sequences.
+> Path B uses this book's [`chapter9/computer-use-open-model`](../chapter9/computer-use-open-model/) companion. By default, it drives browser-use with the open-weight Qwen3-VL 32B Instruct model, either through the OpenRouter hosted API or by pointing `OPEN_MODEL_BASE_URL` to self-hosted vLLM/SGLang or another compatible endpoint. The endpoint must accept screenshots and support native JSON Schema; if it supports only ordinary JSON, the schema-in-prompt compatibility mode can be enabled explicitly.
+>
+> Both paths use the same read-only task and acceptance contract: a maximum of 25 steps, one action per step, and retention of the model/endpoint identity, raw provider responses, step-by-step screenshots, action sequence, final answer, and stop reason. Different models must be reported as separate experimental arms; an open-model result must not be presented as a Claude reproduction, nor should successful container startup be treated as task completion. Action intervals and planning quality are measured outcomes, not assumptions of a 2–5-second interval or inevitable superiority over other models.
 >
 
 ### Visual Grounding
@@ -376,9 +378,11 @@ The choice among the three routes can be summarized as follows: **when structure
 
 > **Experiment 9-7 ★: Using browser-use to Implement Automated Browser Operations**
 >
-> Combine Playwright, a browser-automation framework, with a multimodal model to implement browser operations driven by natural-language instructions. Enable SoM visualization and save screenshots with annotated bounding boxes before each decision.
+> Use Playwright, a browser-automation framework, together with a multimodal model to implement browser operations driven by natural language. Enable SoM visualization and save a screenshot with annotated bounding boxes before every decision. The model interface is not limited to OpenAI or Anthropic; the book provides an API configuration for the open Qwen3-VL model and retains a generic OpenAI-compatible base URL for other hosted services or self-hosted inference.
 >
-> Test task "Open Google and query San Francisco weather": After the system starts, the screenshot shows the Google search page, with all interactive elements annotated with red bounding boxes and ID numbers (address bar `[1]`, search box `[2]`, search button `[3]`, "I'm Feeling Lucky" button `[4]`, etc.) → The model analyzes and clicks `[2]` (the search box) → The search box gains focus and the model types "San Francisco weather today" → The model clicks `[3]` (the search button) → The page navigates to the search results, and the next screenshot shows annotated elements within the weather card, allowing the model to identify and extract information such as temperature and weather conditions. The entire process takes 5 steps and about 20 seconds.
+> Test task "Open Google and query San Francisco weather": after startup, a screenshot shows the Google search page with numbered interactive elements. The model selects the search box, enters "San Francisco weather today," submits the search, and then extracts the temperature and conditions from the results page. During acceptance, independently verify the answer and trajectory and record the actual step count and elapsed time. "5 steps and about 20 seconds" can only be an observation from a particular run, not a fixed result stated without an execution receipt.
+>
+> The book's preserved official open-model run used `qwen/qwen3-vl-32b-instruct` on OpenRouter. When the model encountered a CAPTCHA on Google Search at step 4, it did not claim success; it switched to weather.com and, at step 16, read 64°F, Sunny, feels like 62°F, high 74°F, and low 55°F from San Francisco's Today page. All 16 of 16 API responses reported the requested Qwen3-VL model, and 15 valid step screenshots plus the read-only action trajectory passed independent deterministic acceptance. This result demonstrates that the open-model API path runs successfully; it does not mean that the Anthropic-native `computer` tool arm has been reproduced.
 
 ### A Computer Use Agent That Can Watch Animations and Hear Sound
 
