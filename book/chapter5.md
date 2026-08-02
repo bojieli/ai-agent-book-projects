@@ -466,6 +466,8 @@ def cancel_reservation(
         return {"success": False, "reason": "Cannot cancel with used segments"}
 
     hours_since_booking = (now - r.booking_time).total_seconds() / 3600
+    if hours_since_booking < 0:
+        return {"success": False, "reason": "Booking time is in the future"}
     if hours_since_booking <= 24:
         execute_cancellation(reservation_id)
         return {"success": True, "reason": "Cancelled within 24-hour window"}
@@ -654,6 +656,8 @@ Agent 系统的可观测性依赖于对执行流程的可视化。一个复杂�
 数据库查询是代码生成能显著提升交互体验的场景。传统的数据库访问依赖 GUI 工具或手写 SQL，前者操作繁琐，后者要求用户具备专业知识。Agent 可以将自然语言转为 SQL，但这里有一个关键的设计选择：是让 Agent 执行 SQL 后用自然语言描述结果，还是让 Agent 生成 SQL 代码作为 artifact 由前端直接执行？
 
 第一种方案看似更“智能”，但效率极低——查询结果可能包含数千行大表格，让 LLM 阅读后用文字描述不仅消耗大量 token、耗时长，更严重的是 LLM“抄写”数据时非常容易出错。更好的方案是 **Artifact 模式**。图5-9 展示了 SQL 查询 Agent 的工作流程：Agent 不自己读数据，而是生成一段 SQL 查询代码，把这段代码作为一个独立的**可执行产物**（artifact）交给系统。系统拿着这段 SQL 直接去数据库查询，把查到的数据渲染成用户能看到的表格。整个过程中，数据从数据库直达用户界面，完全绕过了 LLM 这个“中间人”——LLM 只负责写查询语句，不需要亲自去读成千上万行数据再复述给用户，既快速又准确。
+
+生成的 SQL 和可视化代码不能直接执行。执行层应使用只读数据库账号，解析 SQL 并只允许经过批准的 `SELECT` 语句，拒绝 DDL、DML 和多语句查询；用户提供的值应由服务端参数化绑定，同时限制查询时间、返回行数以及可访问的表和时间范围。可视化代码应在隔离网络和文件系统的沙盒中运行，并且只能产生规定格式的结果。Artifact 模式缩短了数据路径，但不能替代权限检查与执行隔离。
 
 ![图5-9 SQL 查询 Agent 流程](images/fig5-9.svg)
 

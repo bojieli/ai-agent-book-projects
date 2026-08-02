@@ -8,7 +8,7 @@ This file collects reference-answer outlines for the thought questions across al
 
 > Following the "brain/eyes/hands and feet" formula, find the weak link first: usually the priority is to enrich context—that is, to expand the observation space. If the task exceeds the model's reasoning ability, switch to a stronger model. If the action space is insufficient (for example, no access to internal company systems), add tools. The way to judge is to analyze failure trajectories and locate whether the bottleneck lies in perception, decision-making, or action.
 
-**2. (★★★) In the ReAct loop, each of the Agent's LLM calls receives the full history trajectory, so as the trajectory grows, the cost of this design grows quadratically. Can that quadratic growth be broken without losing critical information?**
+**2. (★★★) In a ReAct loop, if each round adds a similar amount of history, every call reprocesses the full trajectory, and no prefix cache is reused, cumulative input-token processing grows approximately quadratically. Actual cost may differ with caching and billing. Can this growth be reduced without losing critical information?**
 
 > Viable approaches: context compression—summarize the early trajectory and keep only conclusions and key state (the multi-layer compression of Chapter 2); externalized learning—write intermediate results to files or a knowledge base and retrieve them on demand instead of keeping them resident in context; split the work into sub-agents.
 
