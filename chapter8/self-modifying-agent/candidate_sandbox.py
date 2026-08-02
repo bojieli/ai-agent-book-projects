@@ -43,9 +43,10 @@ def _ensure_image(image: str) -> None:
             ["docker", "image", "inspect", image],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            timeout=10,
             check=False,
         )
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
         raise SandboxError("Docker is required for candidate evaluation") from exc
     if inspect_result.returncode == 0:
         return
@@ -126,16 +127,19 @@ def run_in_sandbox(
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
 ) -> dict[str, Any]:
     """Evaluate source in a disposable, resource-limited Docker container."""
-    if len(source.encode("utf-8")) > MAX_SOURCE_BYTES:
-        raise SandboxError("Candidate source exceeds 256 KiB")
-    if stable_source is not None and len(stable_source.encode("utf-8")) > MAX_SOURCE_BYTES:
-        raise SandboxError("Stable source exceeds 256 KiB")
-    request = json.dumps({
-        "action": action,
-        "source": source,
-        "trajectories": list(trajectories),
-        "stable_source": stable_source,
-    }).encode("utf-8")
+    try:
+        if len(source.encode("utf-8")) > MAX_SOURCE_BYTES:
+            raise SandboxError("Candidate source exceeds 256 KiB")
+        if stable_source is not None and len(stable_source.encode("utf-8")) > MAX_SOURCE_BYTES:
+            raise SandboxError("Stable source exceeds 256 KiB")
+        request = json.dumps({
+            "action": action,
+            "source": source,
+            "trajectories": list(trajectories),
+            "stable_source": stable_source,
+        }).encode("utf-8")
+    except (TypeError, UnicodeError, ValueError) as exc:
+        raise SandboxError("Candidate sandbox request is not valid JSON data") from exc
     if len(request) > MAX_REQUEST_BYTES:
         raise SandboxError("Candidate sandbox request exceeds 1 MiB")
 

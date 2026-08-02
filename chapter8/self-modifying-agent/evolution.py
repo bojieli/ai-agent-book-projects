@@ -207,7 +207,11 @@ def validate_candidate(
 ) -> Dict[str, bool]:
     """Run release gates with candidate execution confined to Docker."""
     checks = {name: False for name in CHECK_NAMES}
-    if len(candidate_source.encode("utf-8")) > MAX_SOURCE_BYTES:
+    try:
+        oversized = len(candidate_source.encode("utf-8")) > MAX_SOURCE_BYTES
+    except UnicodeError:
+        return checks
+    if oversized:
         return checks
     try:
         # Compilation and the AST scan do not execute the source. The scan is a

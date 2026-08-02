@@ -33,6 +33,12 @@ class CandidateSandboxConfigurationTest(unittest.TestCase):
                 run_in_sandbox("validate", "x" * (MAX_SOURCE_BYTES + 1), [])
         ensure_image.assert_not_called()
 
+    def test_malformed_unicode_is_rejected_before_docker_starts(self):
+        with patch("candidate_sandbox._ensure_image") as ensure_image:
+            with self.assertRaisesRegex(SandboxError, "not valid JSON data"):
+                run_in_sandbox("validate", "\ud800", [])
+        ensure_image.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

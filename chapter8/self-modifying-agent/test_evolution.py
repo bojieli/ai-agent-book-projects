@@ -79,6 +79,9 @@ class SelfModificationTest(unittest.TestCase):
             self.assertFalse(all(checks.values()))
             self.assertFalse(checks["failure_replay"])
 
+        checks = validate_candidate("\ud800", self.trajectories)
+        self.assertFalse(all(checks.values()))
+
     def test_candidate_exception_is_rejected_without_crashing(self):
         source = self.candidate["source"].replace(
             '    """Return whether another tool call should be attempted."""',
