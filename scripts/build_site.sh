@@ -13,6 +13,14 @@ mkdir -p "$DEST"
 # Site homepage (root index.md).
 cp "$ROOT/index.md" "$DEST/index.md"
 
+# Translated site homepages (root index.<lang>.md), when present. The
+# language switcher maps home <-> home for these editions (see
+# scripts/site_i18n.py, which lists them in the generated catalog).
+for home in "$ROOT"/index.*.md; do
+  [ -f "$home" ] || continue
+  cp "$home" "$DEST/$(basename "$home")"
+done
+
 # robots.txt at the site root (points crawlers at the auto-generated sitemap).
 [ -f "$ROOT/robots.txt" ] && cp "$ROOT/robots.txt" "$DEST/robots.txt"
 

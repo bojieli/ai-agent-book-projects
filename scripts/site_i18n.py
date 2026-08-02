@@ -287,10 +287,18 @@ def build_catalog() -> dict[str, Any]:
     default = "zh"
     if default not in browser_languages:
         raise CatalogError(f"Default language {default!r} is not configured")
+
+    # Languages with a translated site homepage (root index.<code>.md).
+    # The language switcher maps home <-> home for these editions and keeps
+    # the introduction-page fallback for the rest. The default edition's
+    # homepage is the root index.md itself.
+    home_pages = [code for code in codes if (ROOT / f"index.{code}.md").is_file()]
+
     return {
         "default": default,
         "languages": browser_languages,
         "canonicalNav": nav_labels,
+        "homePages": home_pages,
     }
 
 
