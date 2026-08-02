@@ -26,6 +26,9 @@ def test_cleanup_preserves_rendered_json_links_only(tmp_path):
 `[not a link](../secret.json)`
 
 ```md
+This example deliberately contains a blank line because Python-Markdown can
+otherwise interpret the entire fence as one multiline inline-code span.
+
 [not a link](../secret.json)
 ```
 """

@@ -38,7 +38,7 @@ class LinkCollector(HTMLParser):
 
 def rendered_links(text: str) -> list[str]:
     collector = LinkCollector()
-    collector.feed(markdown.markdown(text))
+    collector.feed(markdown.markdown(text, extensions=["fenced_code"]))
     return collector.targets
 
 
