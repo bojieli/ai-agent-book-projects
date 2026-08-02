@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "experiment_id": "7-8",
-  "status": "incomplete",
-  "created_at": "2026-08-01T06:43:09.722233+00:00",
-  "command": "/home/ubuntu/ai-agent-book/chapter8/prompt-distillation/../../.venv/bin/python run_experiment_7_8.py --run-dir validation/exp7-8-kimi3-smollm2-20260730 --phase package",
+  "status": "complete",
+  "created_at": "2026-08-02T16:55:07.929987+00:00",
+  "command": "/Users/boj/book/ai-agent-book/.venv/bin/python run_experiment_7_8.py --run-dir validation/exp7-8-kimi3-smollm2-20260730 --phase package",
   "host": {
-    "platform": "linux",
-    "python": "3.12.13 (main, Apr  7 2026, 20:45:25) [Clang 22.1.1 ]",
+    "platform": "darwin",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
     "credential_env": "MOONSHOT_API_KEY"
   },
   "student": {
@@ -30,7 +30,7 @@
   },
   "gates": {
     "disjoint_heldout": true,
-    "real_teacher_receipts": false,
+    "real_teacher_receipts": true,
     "real_parameter_training": true,
     "before_after_quality": true,
     "quality_near_teacher": true,
@@ -41,18 +41,18 @@
   "comparison": {
     "heldout_rows": 80,
     "train_test_exact_text_overlap": 0,
-    "teacher_gold_accuracy": 0.65,
+    "teacher_gold_accuracy": 1.0,
     "baseline_gold_accuracy": 0.0,
     "trained_gold_accuracy": 0.95,
     "trained_absolute_uplift": 0.95,
-    "trained_teacher_agreement": 0.9230769230769231,
-    "teacher_mean_latency_seconds": 3.8005136081841417,
+    "trained_teacher_agreement": 0.95,
+    "teacher_mean_latency_seconds": 4.143897417721019,
     "trained_mean_latency_seconds": 0.021054333343636246,
-    "latency_speedup": 180.50980509116246,
-    "teacher_input_tokens": 20030,
+    "latency_speedup": 196.81921769199724,
+    "teacher_input_tokens": 30898,
     "trained_input_tokens": 7738,
-    "input_token_reduction": 0.6136794807788317,
-    "teacher_provider_cost_usd": 0.08274649246753248,
+    "input_token_reduction": 0.7495630785164089,
+    "teacher_provider_cost_usd": 0.13577433662337665,
     "trained_provider_charge_usd": 0.0,
     "cost_scope_note": "Local inference made no provider API calls; electricity/hardware amortization is excluded."
   },
@@ -66,8 +66,8 @@
       "bytes": 45810
     },
     "comparison.json": {
-      "sha256": "6c944914fa4f692bf7f83c7ffca4021a94dcece778e3be5c7ca09132dbfd923a",
-      "bytes": 716
+      "sha256": "baad4abd94d3284125b1bf148e88c12f9e70dc5f7125f00f87b8c93b235b6659",
+      "bytes": 700
     },
     "dataset_provenance.json": {
       "sha256": "ab9d83cefc1bcf019707a454593deaf98ca97b9101518648345e7c87bec9a6ba",
@@ -106,7 +106,7 @@
       "bytes": 434
     },
     "student_train.jsonl": {
-      "sha256": "3d21799bc79521fdf1dd54badca79fad21c1f80d27d2b05e90e9cb91fae5895d",
+      "sha256": "2e79dacebb153c68d0509e9106b8f194d97a157143194c85f2399eaafde97306",
       "bytes": 61010
     },
     "student_trained_heldout.jsonl": {
@@ -118,12 +118,12 @@
       "bytes": 437
     },
     "teacher_receipts.jsonl": {
-      "sha256": "94eecf6f55a45469236b0737de1e446329c8a126a7855ee841e54ad567bae665",
-      "bytes": 304206
+      "sha256": "133440abe4fb41905b1fceff46e561ff212521b4530c0917480c96aa49c16119",
+      "bytes": 343657
     },
     "teacher_summary.json": {
-      "sha256": "9bd2715d65b22e664ff20fec88e1ad569546c6bd7319f6eb2cf045dbcb9dcb0c",
-      "bytes": 1461
+      "sha256": "12e7ed9fc21a531f5e8817f30dc664d28ebe137170cdd20dda9b7de0e1960788",
+      "bytes": 1457
     },
     "training_receipt.json": {
       "sha256": "ac07644a977ee45c0985f52fb013388375f1d0b126ff19de773f691260fe8e3e",
