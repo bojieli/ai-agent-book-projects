@@ -228,13 +228,13 @@ Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ 
 
 > **Thí nghiệm 8-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
 >
-> **Thử thách**: Thay vì một bài toán dựng sẵn, chúng tôi đưa cho Hermes toàn bộ cuốn sách cùng chính mã nguồn của nó: “Hãy đọc, nhìn lại bản thân và thực hiện một cải tiến thật.” Một độc giả cung cấp bốn gợi ý—ablation, thanh trạng thái, quên bộ nhớ và Reviewer—nhưng Hermes phải tự đọc và quyết định ý tưởng nào phù hợp với thiết kế của mình.
+> **Mục tiêu**: Kiểm tra liệu một Agent có thể biến tri thức bên ngoài thành một bản cập nhật thật cho chính năng lực của mình hay không. Thí nghiệm không nêu sẵn vấn đề hay danh sách tính năng. Hermes nhận cả mười chương và mã nguồn của mình, rồi phải hiểu nguyên tắc, xem lại cách triển khai và tự chọn một cải tiến đáng làm.
 >
-> **Nó không dừng ở danh sách đề xuất**: Sau mười chương, Hermes đối chiếu ý tưởng trong sách với kiến trúc của mình và chọn cải tiến đầu tiên: cho mô hình thấy trạng thái công việc hiện tại. Sau đó nó thực sự sửa mã nguồn của chính mình và chạy kiểm tra.
+> **Thiết kế**: Cuốn sách và mã nguồn tạo thành ngữ cảnh có thể đọc, còn phiên bản ổn định, Reviewer độc lập và kiểm thử chấp nhận nằm ngoài phạm vi Hermes được sửa. Hermes phải hoàn tất **đọc → đối chiếu → chọn → thay đổi → xác minh**. Nếu ứng viên bị từ chối, nhận xét trở thành tín hiệu học cho vòng tiếp theo; Hermes không thể bỏ qua cổng kiểm tra rồi tuyên bố thành công.
 >
-> **Mỗi lần bị từ chối là một bài học mới**: Một Reviewer mới kiểm tra thay đổi. Nếu chưa đạt, phản hồi quay về Hermes ban đầu; nó đọc lại mã, sửa vấn đề và thử tiếp cho đến khi được chấp nhận. Vòng lặp rất dễ nhớ: **đọc → đối chiếu → thay đổi → phản biện → học → thay đổi tiếp**.
+> **Lần chạy thật**: Sau khi đọc sách, Hermes tự nhận ra các trajectory đã lưu còn thiếu bằng chứng có cấu trúc để việc học sau này dùng trực tiếp. Nó chọn chuyển kết quả thực thi thành tín hiệu học thận trọng, sửa mã nguồn của mình và thêm kiểm thử. Ba lần review độc lập đầu tiên tìm thấy sai lệch với định dạng dữ liệu thật, các đường lưu trữ và ý nghĩa phép đếm. Mỗi phát hiện quay về phiên Hermes ban đầu; lần review thứ tư chấp nhận ứng viên.
 >
-> **Vì sao thú vị**: Một cuốn sách có thể trở thành hướng dẫn nâng cấp cho Agent. Hermes đã hiểu nguyên tắc, nối chúng với cách mình được xây dựng và hoàn tất một thay đổi thật qua feedback. Việc mọi nhiệm vụ downstream có tốt hơn hay không cần một thí nghiệm ablation riêng. Bản ghi đầy đủ nằm tại [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Giới hạn kết luận**: Lần chạy cho thấy Agent có thể rút nguyên tắc từ tri thức dài, ánh xạ chúng vào mã của mình và hoàn tất tự cập nhật dưới xác minh bên ngoài. Nó chưa chứng minh tỷ lệ thành công downstream đã tăng; điều đó cần một thí nghiệm ablation riêng. Ý tưởng thí nghiệm do độc giả Grace đóng góp.
 
 ## Xây dựng vòng khép kín tiến hóa liên tục có thể vận hành dài hạn
 

@@ -3,24 +3,14 @@
 You are Hermes working on your own source repository. Read the English edition
 of *AI Agents in Depth* at `/home/ubuntu/ai-agent-book/book-en/` before deciding
 what to change. Inspect all ten chapter files, using targeted searches and
-section-by-section reads so that conclusions are grounded in the actual text,
-not the task summary below.
+section-by-section reads so that conclusions are grounded in the actual text.
 
-One reader reported four possible gaps in Hermes:
-
-1. product-level ablation infrastructure for measuring whether major Harness
-   features really help;
-2. the model-visible Agent Status Bar described in Chapter 2 (not merely a
-   human-facing terminal status bar);
-3. a forgetting/consolidation mechanism for persistent memory (not merely
-   bounded writes or Skill archival);
-4. a general proposer-reviewer loop with independent, execution-grounded
-   verification for generated artifacts.
-
-Audit each claim against the current code and its design intent. Do not assume
-the proposed mechanism is compatible with Hermes. For each claim, classify it
-as already present, partly present, absent, or intentionally incompatible, and
-cite both book sections and exact Hermes paths.
+No candidate improvement or alleged gap is supplied. Compare the book with the
+current code and its design intent, then identify the most important capability
+gaps or improvement opportunities yourself. Do not assume that every mechanism
+in the book belongs in Hermes. For each opportunity you identify, cite both the
+book section that inspired it and the exact Hermes paths that support your
+assessment.
 
 Then improve Hermes where the evidence supports a change. Prefer the smallest
 cohesive implementation that demonstrates the book's mechanism through real
@@ -32,7 +22,7 @@ approval gates, or safety thresholds.
 Create `BOOK_SELF_EVOLUTION_REPORT.md` in the repository root. It must include:
 
 - the pinned starting commit and model/provider used;
-- a four-row audit table with evidence and disposition;
+- the improvement opportunities you identified, with evidence and disposition;
 - changes made and changes deliberately rejected or deferred;
 - exact verification commands and results;
 - limitations, including why one run is not evidence that every new mechanism

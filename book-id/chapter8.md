@@ -230,13 +230,13 @@ Tingkat yang lebih tinggi tidak otomatis menjadi lebih baik. Mencari aturan loka
 
 > **Eksperimen 8-6 ★★★: Berikan Buku Ini kepada Hermes: Bisakah Ia Meng-upgrade Dirinya Sendiri?**
 >
-> **Tantangan:** Alih-alih soal buatan, kami memberikan seluruh buku dan kode Hermes sendiri: “Baca, lihat kembali dirimu, lalu buat satu peningkatan nyata.” Seorang pembaca memberi empat petunjuk—ablation, status bar, pelupaan memori, dan Reviewer—tetapi Hermes harus membaca dan menentukan mana yang cocok bagi desainnya.
+> **Tujuan:** Menguji apakah Agent dapat mengubah pengetahuan eksternal menjadi pembaruan nyata bagi kemampuannya sendiri. Eksperimen tidak memberi daftar masalah atau fitur. Hermes menerima sepuluh bab dan source code-nya, lalu harus memahami prinsip, meninjau implementasinya, dan memilih sendiri satu peningkatan yang layak.
 >
-> **Ia tidak berhenti pada daftar saran:** Setelah membaca sepuluh bab, Hermes membandingkan ide buku dengan arsitekturnya dan memilih peningkatan praktis pertama: membuat keadaan kerja saat ini terlihat oleh model. Lalu ia benar-benar mengubah source code-nya sendiri dan menjalankan pemeriksaan.
+> **Desain:** Buku dan source menjadi konteks yang dapat dibaca, sedangkan versi stabil, Reviewer independen, dan tes penerimaan berada di luar ruang lingkup yang dapat diubah Hermes. Ia harus menuntaskan **baca → bandingkan → pilih → ubah → verifikasi**. Jika kandidat ditolak, review menjadi sinyal belajar untuk putaran berikutnya; Hermes tidak boleh melewati gerbang dan menyatakan sukses.
 >
-> **Penolakan menjadi pelajaran berikutnya:** Reviewer baru memeriksa perubahan. Jika ditolak, masukan kembali ke Hermes asli; ia membaca ulang kode, memperbaiki masalah, dan mencoba lagi sampai diterima. Siklusnya sederhana: **baca → bandingkan → ubah → tinjau → belajar → ubah lagi**.
+> **Run nyata:** Setelah membaca buku, Hermes secara mandiri menemukan bahwa trajectory yang tersimpan belum memiliki bukti terstruktur yang dapat langsung dipakai untuk pembelajaran berikutnya. Ia memilih mengubah hasil eksekusi menjadi sinyal belajar konservatif, lalu mengedit kodenya sendiri dan menambah tes. Tiga review independen pertama menemukan ketidaksesuaian dengan format data nyata, jalur penyimpanan, dan semantik penghitungan. Setiap temuan kembali ke sesi Hermes asli; review keempat menerima kandidat.
 >
-> **Mengapa menarik:** Buku dapat menjadi panduan upgrade bagi Agent. Hermes menunjukkan bahwa ia bisa memahami prinsip, memetakannya ke implementasi sendiri, dan menyelesaikan perubahan nyata lewat feedback. Apakah semua tugas hilir menjadi lebih baik tetap perlu dijawab dengan eksperimen ablation terpisah. Rekaman lengkap ada di [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Batas klaim:** Run ini menunjukkan bahwa Agent dapat mengambil prinsip dari pengetahuan panjang, memetakannya ke kode sendiri, dan menyelesaikan pembaruan diri di bawah verifikasi eksternal. Ini belum membuktikan peningkatan tugas hilir; hal itu memerlukan eksperimen ablation terpisah. Ide eksperimen disumbangkan oleh pembaca Grace.
 
 ## Membangun Loop Tertutup Evolusi Berkelanjutan untuk Operasi Jangka Panjang
 

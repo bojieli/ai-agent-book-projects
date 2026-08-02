@@ -228,13 +228,13 @@ Optimizasyon katmanı ne kadar yüksekse o kadar iyi değildir. Yerel bir kural�
 
 > **Deney 8-6 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
 >
-> **Meydan okuma**: Hermes'e hazırlanmış bir test yerine kitabın tamamını ve kendi kodunu verdik: “Oku, sonra kendine yeniden bak ve gerçek bir iyileştirme yap.” Bir okur ablation, durum çubuğu, bellekte unutma ve Reviewer hakkında dört ipucu verdi; hangisinin kendi tasarımına uyacağına Hermes karar verdi.
+> **Amaç**: Bir Agent'ın dış bilgiyi kendi yeteneklerinde gerçek bir güncellemeye dönüştürüp dönüştüremediğini sınamak. Deney bir sorun ya da özellik listesi vermez; Hermes'e on bölüm ve kendi kaynak kodu verilir, ilkeleri anlaması, uygulamasını incelemesi ve değerli bir iyileştirmeyi kendisinin seçmesi beklenir.
 >
-> **Bir öneri listesiyle yetinmedi**: On bölümü okuduktan sonra kitaptaki fikirleri kendi mimarisiyle karşılaştırdı ve önce mevcut çalışma durumunu modele görünür kılmayı seçti. Ardından kendi kaynak kodunu gerçekten değiştirdi ve kontrolleri çalıştırdı.
+> **Tasarım**: Kitap ve kaynak kod okunabilir bağlamı oluşturur; kararlı sürüm, bağımsız Reviewer ve kabul testleri ise Hermes'in değiştirebildiği alanın dışında kalır. Hermes **oku → karşılaştır → seç → değiştir → doğrula** döngüsünü tamamlamalıdır. Aday reddedilirse inceleme bir sonraki öğrenme turunun girdisi olur; kapı atlanarak başarı ilan edilemez.
 >
-> **Ret, sıradaki derse dönüştü**: Yeni bir Reviewer değişikliği inceledi. Geçmediğinde geri bildirim özgün Hermes'e döndü; Hermes kodu yeniden okudu, sorunu düzeltti ve tekrar denedi. Kabul edilene kadar döngü sürdü: **oku → karşılaştır → değiştir → incele → öğren → yeniden değiştir**.
+> **Gerçek çalıştırma**: Kitabı okuyan Hermes, kaydedilmiş yürütme trajectory'lerinde sonraki öğrenmenin doğrudan kullanabileceği yapılandırılmış kanıt bulunmadığını kendi başına fark etti. Yürütme sonuçlarını ihtiyatlı öğrenme sinyallerine dönüştürmeyi seçti, kendi kodunu değiştirdi ve testler ekledi. İlk üç bağımsız inceleme gerçek veri biçimleri, kalıcılık yolları ve sayım anlamlarıyla uyumsuzluklar buldu. Her bulgu özgün Hermes oturumuna döndü; dördüncü inceleme adayı kabul etti.
 >
-> **Neden ilgi çekici?** Bir kitap Agent için yükseltme kılavuzu olabilir. Hermes ilkeleri anlayıp kendi uygulamasına bağladı ve geri bildirimle gerçek bir değişikliği tamamladı. Bunun tüm downstream görevleri iyileştirip iyileştirmediğini ayrı bir ablation deneyi ölçmelidir. Tam kayıt [`hermes-self-evolution`](../chapter8/hermes-self-evolution/) altındadır.
+> **İddianın sınırı**: Bu çalıştırma, bir Agent'ın uzun bilgiden ilkeler çıkarıp bunları kendi koduna eşleyebildiğini ve dış doğrulama altında bir öz güncellemeyi tamamlayabildiğini gösterir. Downstream görev başarısının arttığını kanıtlamaz; bunun için ayrı bir ablation deneyi gerekir. Deney fikrini okur Grace sağlamıştır.
 
 ## Uzun Süre Çalışabilen Sürekli Evrim Döngüsünü Kurmak
 

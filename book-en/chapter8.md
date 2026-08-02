@@ -228,13 +228,13 @@ Higher levels are not automatically better. Searching for a local rule may requi
 
 > **Experiment 8-6 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
 >
-> **The challenge:** Instead of giving Hermes a purpose-built puzzle, we gave it the whole book alongside its own code: “Read this, look back at yourself, and make a real improvement.” A reader supplied four clues—ablations, a status bar, memory forgetting, and a Reviewer mechanism—but Hermes still had to read the relevant chapters and decide which ideas actually fit its design.
+> **Objective:** Test whether an Agent can turn external knowledge into an update to its own capabilities. The experiment supplies no problem statement and no feature checklist. Hermes receives all ten chapters and its own source, then must understand the principles, inspect its implementation, and choose a worthwhile improvement itself.
 >
-> **It changed more than a document:** After reading all ten chapters, Hermes compared the ideas with its own architecture and chose a practical first upgrade: make its current working state visible to the model, so it can keep track of its remaining budget and active task. It did not stop at an improvement wish list. It edited its own source and ran the checks.
+> **Design:** The book and source are readable context, while the stable version, independent Reviewer, and acceptance tests remain outside Hermes' editable scope. Hermes must complete **read → compare → choose → change → verify**. If a candidate is rejected, the review becomes input to the next learning round; Hermes cannot bypass the gate and declare success.
 >
-> **Rejection became the next lesson:** A fresh Reviewer inspected the change. Whenever it rejected the result, the feedback went back to the original Hermes. Hermes reopened its code, found the problem, revised the implementation, and tried again. The cycle continued until a fresh Reviewer accepted it. The whole experiment is easy to remember: **read → compare → change → review → learn → change again**.
+> **Real run:** After reading the book, Hermes independently noticed that its saved trajectories lacked structured evidence that later learning could use directly. It chose to turn execution outcomes into conservative learning signals, then edited its own source and added tests. The first three independent reviews found mismatches with real data formats, persistence paths, and counting semantics. Each finding went back to the original Hermes session for another correction; the fourth review accepted the candidate. Rejection was not the end of the experiment, but part of the improvement loop.
 >
-> **Why this matters:** A book can be more than reading material; it can become an Agent's upgrade guide. Hermes showed that it could understand principles from the book, map them onto its own implementation, and finish a real change through feedback. This proves the self-update loop ran end to end. Whether the new feature improves every downstream task is a separate question for an ablation experiment. The full run and reproduction guide are in [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Claim boundary:** This run shows that an Agent can extract principles from long-form knowledge, map them onto its own code, and complete a self-update under external verification. It does not show that the update already improves downstream task success; that requires a separate ablation experiment. Reader Grace contributed the experiment idea.
 
 ## Building a Continual-Evolution Closed Loop for Long-Term Operation
 

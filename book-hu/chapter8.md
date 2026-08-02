@@ -228,13 +228,13 @@ A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez
 
 > **8-6. ★★★ kísérlet: Mi történik, ha Hermes megkapja ezt a könyvet? Képes frissíteni önmagát?**
 >
-> **A kihívás:** Nem mesterséges feladatot adtunk, hanem a teljes könyvet és Hermes saját kódját: „Olvasd el, nézz vissza magadra, és készíts valódi javítást.” Egy olvasó négy nyomot adott — ablation, állapotsáv, memóriafelejtés és Reviewer —, de Hermesnek kellett eldöntenie, mi illik hozzá.
+> **Cél:** Annak vizsgálata, hogy egy Agent képes-e külső tudást saját képességeinek valódi frissítésévé alakítani. A kísérlet nem ad meg hibát vagy funkciólistát: Hermes megkapja mind a tíz fejezetet és saját forrását, majd magának kell megértenie az elveket, átvizsgálnia a megvalósítást és kiválasztania egy érdemi javítást.
 >
-> **Nem állt meg egy kívánságlistánál:** A tíz fejezet után összevetette az ötleteket saját felépítésével, és elsőként láthatóvá tette a modell számára az aktuális munkaállapotát. Ezután ténylegesen átírta saját forrását és lefuttatta az ellenőrzéseket.
+> **Elrendezés:** A könyv és a forrás olvasható kontextus, de a stabil verzió, a független Reviewer és az elfogadási tesztek Hermes szerkeszthető hatókörén kívül maradnak. A folyamat: **olvasás → összevetés → választás → módosítás → ellenőrzés**. Az elutasított jelölt visszajelzése a következő tanulási kör bemenete; a kapu nem kerülhető meg.
 >
-> **Az elutasítás lett a következő lecke:** Egy új Reviewer átnézte a módosítást. Ha elutasította, a visszajelzés visszament Hermeshez, amely újraolvasta a kódot, javított és ismét próbálkozott, egészen az elfogadásig. A hurok: **olvasás → összevetés → módosítás → review → tanulás → újabb módosítás**.
+> **Valós futás:** A könyv elolvasása után Hermes önállóan felismerte, hogy a mentett trajektóriákból hiányzik a későbbi tanulás számára közvetlenül használható strukturált bizonyíték. Konzervatív tanulási jeleket vezetett le a végrehajtási eredményekből, majd módosította saját kódját és teszteket adott hozzá. Az első három független review valós adatformátum-, mentésiútvonal- és számlálási eltéréseket talált; minden megállapítás visszakerült az eredeti Hermes munkamenetbe, a negyedik review pedig elfogadta a jelöltet.
 >
-> **Miért érdekes?** Egy könyv egy Agent frissítési kézikönyve is lehet. Hermes megértette az elveket, saját implementációjára vetítette őket, és visszajelzéssel befejezett egy valódi változtatást. Az általános feladatjavulást külön ablation kísérletnek kell mérnie. A teljes futás: [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Az állítás határa:** A futás igazolja, hogy egy Agent hosszú tudásanyagból elveket vonhat ki, azokat saját kódjára vetítheti, és külső ellenőrzés mellett önfrissítést fejezhet be. A downstream feladatok javulását nem bizonyítja; ehhez külön ablation kísérlet kell. A kísérlet ötletét Grace olvasó adta.
 
 ## Hosszú távú működésre alkalmas folyamatos evolúciós zárt hurok építése
 

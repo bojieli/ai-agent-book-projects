@@ -228,13 +228,13 @@ Los niveles de optimización no son mejores cuanto más altos sean. Buscar una r
 
 > **Experimento 8-6 ★★★: Dale este libro a Hermes: ¿puede mejorarse a sí mismo?**
 >
-> **El reto**: En vez de darle una prueba artificial, le dimos el libro completo junto con su propio código: «Léelo, mírate de nuevo y haz una mejora real». Un lector aportó cuatro pistas —ablaciones, barra de estado, olvido de memoria y Reviewer—, pero Hermes tuvo que leer los capítulos y decidir qué ideas encajaban de verdad.
+> **Objetivo**: Comprobar si un Agent puede convertir conocimiento externo en una actualización real de sus propias capacidades. El experimento no plantea un problema ni ofrece una lista de funciones: entrega a Hermes los diez capítulos y su código, y le pide entender los principios, revisar su implementación y elegir por sí mismo una mejora valiosa.
 >
-> **No se quedó en una lista de deseos**: Después de leer los diez capítulos, Hermes comparó las ideas con su arquitectura y eligió una primera mejora práctica: mostrar al modelo su estado de trabajo actual. Luego editó su propio código y ejecutó las comprobaciones.
+> **Diseño**: El libro y el código forman el contexto legible, mientras que la versión estable, el Reviewer independiente y las pruebas de aceptación quedan fuera del alcance editable de Hermes. Debe completar **leer → comparar → elegir → cambiar → verificar**. Si un candidato es rechazado, la revisión pasa a ser la señal de aprendizaje de la ronda siguiente; Hermes no puede saltarse la puerta y declarar éxito.
 >
-> **Cada rechazo se convirtió en otra lección**: Un Reviewer nuevo examinó el cambio. Cuando lo rechazaba, Hermes recibía los comentarios, volvía al código, corregía el problema y lo intentaba otra vez, hasta ser aceptado. El ciclo es fácil de recordar: **leer → comparar → cambiar → revisar → aprender → volver a cambiar**.
+> **Ejecución real**: Tras leer el libro, Hermes detectó por sí mismo que sus trayectorias guardadas carecían de evidencia estructurada que el aprendizaje posterior pudiera usar directamente. Eligió convertir los resultados de ejecución en señales de aprendizaje conservadoras, modificó su código y añadió pruebas. Las tres primeras revisiones independientes hallaron diferencias con los formatos reales, las rutas de persistencia y la semántica del conteo. Cada hallazgo volvió a la sesión original de Hermes; la cuarta revisión aceptó el candidato.
 >
-> **Por qué importa**: Un libro también puede ser el manual de actualización de un Agent. Hermes demostró que puede entender sus principios, aplicarlos a su propia implementación y terminar una mejora con ayuda del feedback. Esto prueba que el ciclo de autoactualización funciona; saber si mejora todas las tareas requiere otro experimento de ablación. La ejecución completa está en [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+> **Límite de la conclusión**: La ejecución demuestra que un Agent puede extraer principios de conocimiento extenso, llevarlos a su propio código y completar una autoactualización bajo verificación externa. No demuestra que la actualización ya mejore las tareas posteriores; eso requiere otro experimento de ablación. La lectora Grace aportó la idea del experimento.
 
 ## Construcción de un Bucle Cerrado de Evolución Continua para Operaciones a Largo Plazo
 

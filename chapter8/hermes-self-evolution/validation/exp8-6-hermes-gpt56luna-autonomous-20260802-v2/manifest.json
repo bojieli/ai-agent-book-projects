@@ -1,0 +1,113 @@
+{
+  "schema_version": 2,
+  "experiment": "8-6",
+  "run_id": "exp8-6-hermes-gpt56luna-autonomous-20260802-v2",
+  "source_repository": "https://github.com/NousResearch/hermes-agent.git",
+  "started_from_commit": "85c8956ec7f2b4607509980794995e1c5e21e292",
+  "provider": "openrouter",
+  "requested_model": "openai/gpt-5.6-luna",
+  "credential_environment_variable": "OPENROUTER_API_KEY",
+  "candidate_gaps_supplied_in_prompt": false,
+  "task_prompt_sha256": "58030253cdc72c767bf16cb61daa62447e5819d1e1bd61157892aeddcbe69a6b",
+  "proposer_exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "acceptance_reviewer_exit_codes": [
+    3,
+    3,
+    3,
+    0
+  ],
+  "interaction_rounds": 4,
+  "independent_acceptance_reviews": 4,
+  "terminal_reviewer_verdict": "ACCEPT",
+  "review_findings_corrected": [
+    "the first parser did not understand production XML-wrapped tool responses",
+    "batch and sample trajectory writers initially omitted the evaluation metadata",
+    "one failed result could be double-counted",
+    "the Mini-SWE trajectory writer initially remained outside the shared contract"
+  ],
+  "final_candidate": {
+    "autonomously_selected": "evidence-backed learning signals for persisted trajectories",
+    "implemented": "conservative evaluation metadata shared across standard, batch, sample, and Mini-SWE trajectory persistence paths",
+    "deferred": [
+      "automatic mutation from a single trajectory",
+      "product-level ablation campaign runner",
+      "generic multi-agent reviewer without an artifact contract"
+    ],
+    "status": "candidate_patch_accepted_by_terminal_reviewer_not_merged"
+  },
+  "independent_checks": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "pytest",
+        "tests/agent/test_trajectory.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "......                                                                   [100%]\n6 passed in 0.14s\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "pytest",
+        "tests/test_batch_runner_checkpoint.py",
+        "tests/test_batch_runner_durability.py",
+        "tests/integration/test_batch_runner.py",
+        "tests/test_trajectory_compressor.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "......................................                                   [100%]\n38 passed in 0.65s\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "agent/trajectory.py",
+        "agent/agent_runtime_helpers.py",
+        "batch_runner.py",
+        "run_agent.py",
+        "mini_swe_runner.py",
+        "tests/agent/test_trajectory.py"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "patch_apply_check": "passed",
+  "patch_sha256": "34bb72f632fd1df25791449b067e98b04ae5ff23666c3f84627b3f86a6a1a83c",
+  "report_sha256": "4f172e504f3b9ae1a559169032c2947ee2bd6fcb7f65b87c87ad1f55c9be5348",
+  "transcript_sha256": {
+    "hermes-transcript.txt": "22b45b9a25fbc3784fb91fe9ff01b2496aa035b4501681bb1b9c6bdd407e0409",
+    "hermes-review-autonomous-1.txt": "f1d2c6309cec09116a09ecd445d431cb2dc2a4a47ae48115e040de4f9545148e",
+    "hermes-review-autonomous-2.txt": "551cee2afd80deadf08ebd34a4fb37d511bc42f024be729db4676c4f041b87e3",
+    "hermes-review-autonomous-3.txt": "180aaf86b7610266070ffa3148ff4c7fa3fa58e8be1a995433d132879b680adc",
+    "hermes-acceptance-review-1.txt": "8a6e7dd17c0b1c0d2564b2c7cedf2257f4c25e835044f8e799d9e4b11a3c1bb8",
+    "hermes-acceptance-review-2.txt": "b1fd124820695cf083e3aa9fa05e830292358e379d5fa860032a4a61048645a3",
+    "hermes-acceptance-review-3.txt": "df5eb2171e648b3f84819ad7372f89df544c47c217e0d9904a6c7ff4933851dc",
+    "hermes-acceptance-review-4.txt": "6ee462b65d817a727f80f933d1fdd7de43ffd03bd24e3e085a1894af5348edbf"
+  },
+  "credential_scan": "passed",
+  "claim_boundary": "The run demonstrates autonomous audit, candidate generation, repeated correction under independent rejection, and terminal acceptance. It does not demonstrate downstream task-quality uplift; the proposed ablation campaign was not run."
+}

@@ -13,7 +13,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parent
-RUN_ID = "exp8-6-hermes-gpt56luna-20260802-v1"
+RUN_ID = "exp8-6-hermes-gpt56luna-autonomous-20260802-v2"
 PINNED_COMMIT = "85c8956ec7f2b4607509980794995e1c5e21e292"
 SOURCE = ROOT / "worktree" / "hermes-agent"
 OUTPUT = ROOT / "validation" / RUN_ID
@@ -64,20 +64,21 @@ def main() -> int:
         raise RuntimeError("Hermes worktree is not at the pinned baseline")
 
     checks = [
-        command(["uv", "run", "--with", "pytest", "pytest", "tests/agent/test_model_status_context.py", "-q"]),
+        command(["uv", "run", "--with", "pytest", "pytest", "tests/agent/test_trajectory.py", "-q"]),
         command(
             [
                 "uv", "run", "--with", "pytest", "pytest",
-                "tests/agent/test_api_content_sidecar.py",
-                "tests/run_agent/test_background_review_cache_parity.py",
-                "tests/agent/test_turn_context.py", "-q",
+                "tests/test_batch_runner_checkpoint.py",
+                "tests/test_batch_runner_durability.py",
+                "tests/integration/test_batch_runner.py",
+                "tests/test_trajectory_compressor.py", "-q",
             ]
         ),
         command(
             [
-                "python3", "-m", "py_compile", "agent/model_status_context.py",
-                "agent/conversation_loop.py", "agent/agent_init.py", "run_agent.py",
-                "hermes_state.py",
+                "python3", "-m", "py_compile", "agent/trajectory.py",
+                "agent/agent_runtime_helpers.py", "batch_runner.py", "run_agent.py",
+                "mini_swe_runner.py", "tests/agent/test_trajectory.py",
             ]
         ),
         command(["git", "diff", "--check"]),
@@ -101,13 +102,12 @@ def main() -> int:
 
     transcript_names = ["hermes-transcript.txt"]
     transcript_names.extend(
-        "hermes-review-transcript.txt" if round_number == 1
-        else f"hermes-review-{round_number}-transcript.txt"
-        for round_number in range(1, 9)
+        f"hermes-review-autonomous-{round_number}.txt"
+        for round_number in range(1, 4)
     )
     transcript_names.extend(
         f"hermes-acceptance-review-{round_number}.txt"
-        for round_number in range(1, 7)
+        for round_number in range(1, 5)
     )
     transcript_hashes = {}
     for name in transcript_names:
@@ -116,7 +116,7 @@ def main() -> int:
         safe(text)
         transcript_hashes[name] = digest(path)
     safe(report_path.read_text(encoding="utf-8"))
-    terminal_review = (OUTPUT / "raw" / "hermes-acceptance-review-6.txt").read_text(
+    terminal_review = (OUTPUT / "raw" / "hermes-acceptance-review-4.txt").read_text(
         encoding="utf-8"
     )
     verdicts = re.findall(r"^VERDICT: (ACCEPT|REJECT)$", terminal_review, re.MULTILINE)
@@ -132,28 +132,29 @@ def main() -> int:
         "provider": "openrouter",
         "requested_model": "openai/gpt-5.6-luna",
         "credential_environment_variable": "OPENROUTER_API_KEY",
-        "proposer_exit_codes": [0] * 9,
-        "acceptance_reviewer_exit_codes": [3, 3, 3, 3, 3, 0],
-        "interaction_rounds": 9,
-        "independent_acceptance_reviews": 6,
+        "candidate_gaps_supplied_in_prompt": False,
+        "task_prompt_sha256": digest(ROOT / "task.md"),
+        "proposer_exit_codes": [0] * 4,
+        "acceptance_reviewer_exit_codes": [3, 3, 3, 0],
+        "interaction_rounds": 4,
+        "independent_acceptance_reviews": 4,
         "terminal_reviewer_verdict": "ACCEPT",
         "review_findings_corrected": [
-            "request-local status rewrote prior wire bytes",
-            "test replay accepted sidecar types that production rejected",
-            "list sidecars did not survive the string-only persistence boundary",
-            "tool-result attachment was not durably replayed and todo identifiers were unbounded",
-            "status disappeared or preceded evidence in realistic assistant-tool-call sequences",
-            "post-flush sidecars were not backfilled to persisted rows",
-            "same-message retries appended duplicate status projections",
-            "pre-existing memory and plugin sidecars suppressed status projection",
+            "the first parser did not understand production XML-wrapped tool responses",
+            "batch and sample trajectory writers initially omitted the evaluation metadata",
+            "one failed result could be double-counted",
+            "the Mini-SWE trajectory writer initially remained outside the shared contract",
         ],
         "final_candidate": {
-            "implemented": "opt-in model-visible status projection for string-content turns",
+            "autonomously_selected": "evidence-backed learning signals for persisted trajectories",
+            "implemented": (
+                "conservative evaluation metadata shared across standard, batch, sample, "
+                "and Mini-SWE trajectory persistence paths"
+            ),
             "deferred": [
-                "product-level ablation runner",
-                "general persistent-memory forgetting",
-                "universal proposer-reviewer artifact contract",
-                "multimodal status injection",
+                "automatic mutation from a single trajectory",
+                "product-level ablation campaign runner",
+                "generic multi-agent reviewer without an artifact contract",
             ],
             "status": "candidate_patch_accepted_by_terminal_reviewer_not_merged",
         },
