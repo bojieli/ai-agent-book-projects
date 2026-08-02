@@ -226,6 +226,14 @@ Parameter learning பொதுவாக வெளிப்புற முற�
 
 வெளிப்புற level எப்போதும் சிறந்தது அல்ல. Local rule-ஐத் தேட சில edge case-கள் போதலாம்; முழு workflow அல்லது Harness-ஐத் தேடுவது பெரிய candidate space, அதிக evaluation cost மற்றும் கடினமான attribution-ஐக் கொண்டது. ஒரு component-இல் தெளிவாக localized ஆன, மீண்டும் தோன்றும் fault-க்கு முதலில் audit செய்யக்கூடிய local patch வழங்க வேண்டும். Local change-கள் பலமுறை cross-component பிரச்சினையைத் தீர்க்கத் தவறும்போது அல்லது management method தானே bottleneck ஆகும்போது மட்டுமே workflow, Harness அல்லது optimizer level-க்கு வெளியே செல்ல வேண்டும். எல்லா level-களிலும் evaluator, permission boundary மற்றும் held-out test editable scope-க்கு வெளியே இருக்க வேண்டும்; search space பெரிதாகும்போது இந்த trusted root இன்னும் முக்கியமாகிறது.
 
+> **பரிசோதனை 8-6 ★★★: Hermes இந்தப் புத்தகத்தைப் படித்து review-driven self-update-ஐ நிறைவு செய்யச் செய்தல்**
+>
+> **பரிசோதனை இலக்கு**: இந்த அத்தியாயத்தின் loop-ஐ உண்மையான Agent repository-க்கு பயன்படுத்துதல். நிலையான Hermes version clone செய்யப்பட்டு, பத்து English chapter-களையும் படித்து, வாசகர் கூறிய நான்கு gap-களை audit செய்தது: product-level ablation infrastructure, model-visible Agent Status Bar, persistent memory forgetting/consolidation, மற்றும் independent execution evidence உடைய பொதுவான Proposer–Reviewer loop. நான்கு claim-களும் Prompt-இல் வழங்கப்பட்டதால், இது audit, candidate generation, correction ஆகியவற்றை அளக்கிறது; autonomous discovery-ஐ அல்ல.
+>
+> **உண்மையான run மற்றும் loop closure**: 2026 ஆகஸ்ட் 2 அன்று commit `85c8956e`-இல் இருந்த Hermes, OpenRouter வழியாக `openai/gpt-5.6-luna`-ஐப் பயன்படுத்தி optional `<agent_status>`-ஐ முன்மொழிந்தது. Proposer session context இல்லாத புதிய Hermes reviewer ஒவ்வொரு candidate-ஐயும் சோதித்தது. ஒவ்வொரு `VERDICT: REJECT`-உம் அசல் Hermes session-க்கு திருப்பப்பட்டு, அது தனது checkout-ஐ மாற்றியது. ஐந்து terminal rejection-கள் cache, tool loop, bound, restart persistence, retry idempotence, existing memory/plugin sidecar composition குறைகளை கண்டன; ஆறாவது fresh review `VERDICT: ACCEPT` வழங்கியது.
+>
+> **முடிவின் எல்லை**: ஏற்றுக்கொள்ளப்பட்ட version **8 புதிய behavior test மற்றும் 36 existing regression test**-களையும், compilation, whitespace, credential scan, clean-clone patch apply check-ஐயும் கடந்தது. ஆகவே “படித்தல் → self-audit → self-modification → rejection → feedback correction → independent acceptance” loop முழுமையாக முடிந்தது; half result அல்ல. Patch upstream-இல் merge செய்யப்படவில்லை; downstream ablation ஓடவில்லை; எனவே status bar task success-ஐ உயர்த்துகிறது என்பது நிரூபிக்கப்படவில்லை. Runner, 9 proposer interaction, 6 acceptance review, report, patch, credential-free manifest ஆகியவை [`hermes-self-evolution`](../chapter8/hermes-self-evolution/) இல் உள்ளன.
+
 ## நீண்டகாலம் இயங்கக்கூடிய தொடர்ச்சியான பரிணாமச் சுற்றை உருவாக்குதல்
 
 நான்கு update முறைகளும் ஒரே தன்னாட்சி loop-இல் நுழைந்தால்தான் single optimization-இலிருந்து தொடர்ச்சியான பரிணாமமாக மாறும். படம் 8-5 production அமைப்பிற்கான மேலும் நம்பகமான இரட்டை-loop கட்டமைப்பைக் காட்டுகிறது: online execution loop பணியை முடித்து சான்றுகளை மட்டும் பதிவு செய்கிறது; முறையான Agent-ஐ நேரடியாக மாற்றாது. Offline evolution loop trajectory-களைத் தொகுத்து, root cause-ஐ diagnosis செய்து, candidate modification-களை உருவாக்கி, பின்னர் verification threshold-ஐத் தாண்டி புதிய version-ஐ வெளியிடுகிறது. Version செய்யப்பட்ட experience library மற்றும் evaluation set மூலம் இவை இணைக்கப்படுகின்றன.
@@ -319,7 +327,7 @@ Hermes மேலும் முழுமையான background evolution எ�
 - புதிய சான்றுகளால் மறுக்கப்பட்ட knowledge-ஐ நீக்குதல்;
 - மூல base model-இலிருந்து LoRA-வை மீண்டும் பயிற்றுவித்தல்.
 
-> **பரிசோதனை 8-6 ★★★: Agent தொடர்ச்சியாகப் பரிணமிக்கிறதா என்பதை மதிப்பிடுதல்**
+> **பரிசோதனை 8-7 ★★★: Agent தொடர்ச்சியாகப் பரிணமிக்கிறதா என்பதை மதிப்பிடுதல்**
 >
 > **பரிசோதனை இலக்கு**: “ஒருமுறை feedback-ஐச் சேமிக்கக்கூடியது”, “append மட்டும் செய்யக்கூடியது”, “capability-ஐ update, transfer மற்றும் retain செய்யக்கூடியது” என்ற மூன்று நீண்டகால நடத்தைகளை வேறுபடுத்தி, ஒரே கேள்வித் தொகுப்பை மீண்டும் இயக்குவதை continual learning எனக் காட்டுவதைத் தவிர்த்தல்.
 >

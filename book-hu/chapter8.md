@@ -226,6 +226,14 @@ Ugyanez az ötlet kiterjed a munkafolyamatokra és a teljes Harness-re. Az AFlow
 
 A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez csak néhány határesetre lehet szükség, míg egy teljes munkafolyamat vagy Harness keresése sokkal nagyobb jelöltteret, magasabb kiértékelési költséget és nehezebb attribúciót jelent. Egy egyértelmű, ismétlődő, egy komponensre lokalizált hibának először egy auditálható lokális javítást kell kapnia. Csak amikor a lokális változtatások ismételten nem képesek kezelni egy komponenseken átívelő problémát, vagy amikor az aktuális kezelési módszer maga válik szűk keresztmetszetté, érdemes kifelé mozdulni a munkafolyamatra, a Harness-re vagy az optimalizálóra. Minden szinten az értékelőknek, a jogosultsági határoknak és a kihagyott teszteknek a szerkeszthető hatókörön kívül kell maradniuk – minél nagyobb a keresési tér, annál fontosabb ez a megbízható gyökér.
 
+> **8-6. ★★★ kísérlet: Hermes elolvassa a könyvet és befejez egy felülvizsgálat-vezérelt önfrissítést**
+>
+> **Cél:** A fejezet hurkának alkalmazása egy valódi Agent-repozitóriumra. Egy rögzített Hermes-verzió elolvasta mind a tíz angol fejezetet, és auditálta az olvasó által megadott négy hiányt: termékszintű ablation infrastruktúra, a modell számára látható Agent Status Bar, a tartós memória felejtése és konszolidációja, valamint független végrehajtási bizonyítékra épülő általános Proposer–Reviewer hurok. Mivel a négy állítást a Prompt adta, a kísérlet az auditot, jelöltgenerálást és korrekciót méri, nem az autonóm felfedezést.
+>
+> **Valós futás és a hurok lezárása:** 2026. augusztus 2-án a `85c8956e` commiton álló Hermes az OpenRouteren keresztül az `openai/gpt-5.6-luna` modellt használta, és opcionális `<agent_status>`-t javasolt. Minden jelöltet egy friss, proposer-kontextus nélküli Hermes reviewer vizsgált; minden `VERDICT: REJECT` visszakerült az eredeti Hermes-menetbe, amely módosította saját checkoutját. Öt végső elutasítás cache-, tool-loop-, korlát-, újraindítási perzisztencia-, retry-idempotencia- és memory/plugin-sidecar hibákat talált; a hatodik friss review `VERDICT: ACCEPT` döntést adott.
+>
+> **Eredményhatár:** Az elfogadott verzió **8 új viselkedési és 36 meglévő regressziós teszten** ment át, továbbá a fordítási, whitespace-, credential- és clean-clone patch-ellenőrzéseken. Így a „olvasás → önaudit → önmódosítás → elutasítás → visszajelzés szerinti javítás → független elfogadás” hurok teljes, nem félkész eredmény. A patch nincs upstream merge-elve, és downstream ablation sem futott, ezért a status bar feladatsikerre gyakorolt haszna nem bizonyított. A runner, kilenc proposer-interakció, hat acceptance review, jelentés, patch és credential-free manifest a [`hermes-self-evolution`](../chapter8/hermes-self-evolution/) alatt található.
+
 ## Hosszú távú működésre alkalmas folyamatos evolúciós zárt hurok építése
 
 A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pedig egyszeri optimalizálássá, ha ugyanabba az autonóm hurokba illeszkednek. A 8-5. ábra egy robusztusabb, termelési rendszerekhez tervezett kéthurkú architektúrát mutat: az online végrehajtási hurok csak feladatokat végez el és bizonyítékokat rögzít, anélkül, hogy közvetlenül átírná a termelési ágenst; az offline evolúciós hurok trajektóriákat gyűjt, gyökérokokat diagnosztizál, jelölt módosításokat generál, és új verziókat csak az érvényesítési kapukon való áthaladás után bocsát ki. A két hurkot verziózott tapasztalati tárolók és kiértékelési készletek kötik össze.
@@ -319,7 +327,7 @@ A folyamatos evolúció nem jelenti azt, hogy a tudás, a Promptok és az eszkö
 - Az új bizonyítékok által megcáfolt tudás törlése;
 - A LoRA újratanítása az eredeti alapmodellből.
 
-> **8-6. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
+> **8-7. ★★★ kísérlet: Annak értékelése, hogy egy ágens folyamatosan fejlődik-e**
 >
 > "Cél:" Három hosszú távú viselkedés megkülönböztetése – egyetlen visszajelzés elmentése, örökké csak hozzáfűzés, és a képességek tényleges frissítése, átvitele és megtartása –, hogy az azonos feladatok ismételt futtatását ne tévesszük össze a folyamatos tanulással.
 >

@@ -226,6 +226,14 @@ Ra ngoài một tầng, đối tượng tối ưu không chỉ là “ngữ cả
 
 Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ có thể chỉ cần vài ca biên; tìm toàn bộ quy trình hoặc Harness phải đối mặt với không gian ứng viên lớn hơn, chi phí đánh giá cao hơn và khó quy kết hơn. Một lỗi rõ ràng, lặp lại và định vị được ở một thành phần nên được sửa trước bằng bản vá cục bộ có thể kiểm toán. Chỉ khi sửa cục bộ lâu dài không giải quyết được vấn đề xuyên thành phần, hoặc chính phương pháp quản lý đã thành nút thắt, mới nên nâng lên tầng quy trình, Harness hay bộ tối ưu. Ở mọi tầng, bộ đánh giá, ranh giới quyền và tập kiểm thử giữ lại phải nằm ngoài vùng có thể sửa — không gian tìm kiếm càng lớn, gốc tin cậy này càng quan trọng.
 
+> **Thí nghiệm 8-6 ★★★: Để Hermes đọc cuốn sách này và hoàn tất tự cập nhật theo phản biện**
+>
+> **Mục tiêu**: Áp dụng vòng lặp của chương cho một kho Agent thật. Một phiên bản Hermes cố định được clone để đọc đủ mười chương tiếng Anh và kiểm toán bốn thiếu hụt do độc giả nêu: hạ tầng ablation cấp sản phẩm, Agent Status Bar hiển thị cho mô hình, quên–hợp nhất bộ nhớ bền vững, và vòng Proposer–Reviewer tổng quát có bằng chứng thực thi độc lập. Vì bốn nhận định được cung cấp trong Prompt, thí nghiệm đo khả năng kiểm toán, sinh ứng viên và sửa lỗi chứ không đo phát hiện tự chủ.
+>
+> **Lần chạy thật và khép vòng**: Ngày 2-8-2026, Hermes tại commit `85c8956e` dùng `openai/gpt-5.6-luna` qua OpenRouter và đề xuất `<agent_status>` tùy chọn. Một Hermes reviewer mới, không có ngữ cảnh phiên proposer, kiểm tra từng ứng viên. Mỗi `VERDICT: REJECT` được trả về phiên Hermes ban đầu để nó sửa chính checkout của mình, rồi reviewer mới kiểm tra lại. Năm lần từ chối cuối phát hiện lỗi cache, tool loop, giới hạn đầu ra, lưu bền qua khởi động lại, tính idempotent của retry và ghép với sidecar memory/plugin có sẵn; lần review mới thứ sáu trả `VERDICT: ACCEPT`.
+>
+> **Ranh giới kết quả**: Phiên bản được chấp nhận vượt qua **8 kiểm thử hành vi mới và 36 kiểm thử hồi quy hiện có**, cùng kiểm tra biên dịch, khoảng trắng, credential và áp dụng patch trên clone sạch. Như vậy vòng “đọc → tự kiểm toán → tự sửa → bị từ chối → sửa theo phản hồi → được chấp nhận độc lập” đã hoàn tất, không còn là kết quả nửa chừng. Patch chưa merge upstream và ablation downstream chưa chạy, nên chưa chứng minh status bar tăng tỷ lệ thành công. Runner, chín tương tác proposer, sáu acceptance review, báo cáo, patch và manifest không chứa credential nằm tại [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+
 ## Xây dựng vòng khép kín tiến hóa liên tục có thể vận hành dài hạn
 
 Chỉ khi đi vào cùng một chu trình tự chủ, bốn phương thức cập nhật mới chuyển từ tối ưu một lần thành tiến hóa liên tục. Hình 8-5 trình bày cấu trúc hai vòng thận trọng hơn trong hệ thống sản xuất: vòng thực thi trực tuyến chỉ hoàn thành nhiệm vụ và ghi lại bằng chứng, không trực tiếp viết lại Agent chính thức; vòng tiến hóa ngoại tuyến tổng hợp quỹ đạo, chẩn đoán nguyên nhân gốc, tạo sửa đổi ứng viên, rồi phát hành phiên bản mới sau khi vượt qua ngưỡng xác minh. Hai vòng được kết nối bằng kho kinh nghiệm và tập đánh giá có phiên bản.
@@ -319,7 +327,7 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 - xóa tri thức bị bằng chứng mới bác bỏ;
 - huấn luyện lại LoRA từ mô hình nền tảng gốc.
 
-> **Thí nghiệm 8-6 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
+> **Thí nghiệm 8-7 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
 >
 > **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
 >

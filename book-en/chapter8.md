@@ -226,6 +226,16 @@ The same idea extends to workflows and the entire Harness. AFlow represents work
 
 Higher levels are not automatically better. Searching for a local rule may require only a few edge cases, whereas searching an entire workflow or Harness faces a much larger candidate space, higher evaluation cost, and harder attribution. A clear, recurring fault localized to one component should first receive an auditable local patch. Only when local changes repeatedly fail to address a cross-component problem, or when the current management method itself becomes the bottleneck, is it worth moving outward to the workflow, Harness, or optimizer. At every level, evaluators, permission boundaries, and held-out tests must remain outside the editable scope—the larger the search space, the more important this trusted root becomes.
 
+> **Experiment 8-6 ★★★: Letting Hermes Read This Book and Complete a Review-Driven Self-Update**
+>
+> **Objective:** Apply this chapter's loop to a real Agent repository rather than a purpose-built reference Agent. Clone a pinned Hermes version, have it inspect all ten English chapters, and audit four reader-supplied gaps: product-level ablation infrastructure, Chapter 2's model-visible Agent Status Bar, forgetting and consolidation for persistent memory, and a general Proposer–Reviewer artifact loop grounded in independent execution evidence. Because the task Prompt supplies the four claims, the experiment measures audit, candidate generation, and correction—not autonomous discovery of the claims.
+>
+> **Real run:** On August 2, 2026, Hermes at commit `85c8956e` requested `openai/gpt-5.6-luna` through OpenRouter. It classified product-level ablation infrastructure as absent and the other three capabilities as partly present. It deliberately deferred the broader mechanisms and produced one bounded candidate: an opt-in, model-visible `<agent_status>` carrying the API-call budget and current TODO state.
+>
+> **Closing the reviewer loop:** A fresh Hermes reviewer with no proposer-session context inspected the candidate. Every `VERDICT: REJECT` was returned as a new event to the original Hermes session, which modified its own checkout before a new reviewer tried again. Five terminal rejections uncovered additional defects in tool-loop placement, TODO bounds, `content=None` handling, restart persistence, retry idempotence, and composition with existing memory/plugin sidecars. The sixth fresh review returned `VERDICT: ACCEPT`. The final version fails closed at Hermes' real string-only persistence boundary, places status after the newest tool evidence, stays byte-stable across database close/reopen, and handles same-request retries idempotently. It passes **8 new behavior tests and 36 existing regressions**, plus compilation, whitespace, credential, and clean-clone patch-application checks.
+>
+> **Result boundary:** This run completes the loop “read the book → audit itself → modify itself → receive an independent rejection → revise from feedback → receive independent acceptance”; it does not leave a failed-review half-result. The patch remains unmerged upstream, and the proposed downstream ablation campaign was not run, so the experiment cannot additionally claim that the status bar improves task success. Completing a self-update and establishing its causal benefit are separate claims. The reproducible runner, nine proposer interactions, six acceptance reviews, report, final patch, and credential-free manifest are in [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+
 ## Building a Continual-Evolution Closed Loop for Long-Term Operation
 
 The four update methods become continual evolution rather than one-off optimization only when incorporated into the same autonomous loop. Figure 8-5 shows a more robust dual-loop architecture for production systems: the online execution loop only completes tasks and records evidence, without directly rewriting the production Agent; the offline evolution loop aggregates trajectories, diagnoses root causes, generates candidate modifications, and releases new versions only after they pass validation gates. The two loops are connected through versioned experience repositories and evaluation sets.
@@ -319,7 +329,7 @@ Continual evolution does not mean allowing knowledge, Prompts, and tools to grow
 - Delete knowledge invalidated by new evidence;
 - Retrain LoRA from the original base model.
 
-> **Experiment 8-6 ★★★: Evaluating Whether an Agent Is Continually Evolving**
+> **Experiment 8-7 ★★★: Evaluating Whether an Agent Is Continually Evolving**
 >
 > **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
 >

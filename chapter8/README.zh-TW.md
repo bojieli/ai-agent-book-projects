@@ -13,7 +13,8 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 以 tau-bench 航空客服「過度轉接」為例，Coding Agent 讀/改 prompt 檔案 → 重新評測 → 驗證閉環 |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 瀏覽器工作流錄製系統，把重複操作封裝為引數化工具，從 LLM 推理切換到自動化執行可加速 3–5 倍 |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 實驗 8-5：由重複故障觸發重試/熔斷程式碼補丁、迴歸、灰度與回滾 |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | 20 個跨領域任務 + 四層分層驗證 harness + 可控參考 Agent，考察發現/創造/複用品質 |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 將五次 fresh reviewer 拒絕送回 Hermes 持續自我修正，第六次終局接受；44 項聚焦測試通過，但未執行下游消融 |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 實驗 8-7：三臂、3 seeds、14 任務的長期學習、遷移、規則替換與保留評估 |
 
 以上實驗都提供無需 API Key 的離線入口和單元測試；需要真實模型或瀏覽器的擴充路徑在各專案 README 中另行說明。
 

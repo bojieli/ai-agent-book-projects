@@ -1,0 +1,731 @@
+diff --git a/agent/agent_init.py b/agent/agent_init.py
+index f0fbffe17..120de0a93 100644
+--- a/agent/agent_init.py
++++ b/agent/agent_init.py
+@@ -1585,6 +1585,16 @@ def init_agent(
+     except Exception:
+         _agent_cfg = {}
+ 
++    # Optional model-visible status bar. It is rendered per request later,
++    # keeping the system prompt and persisted transcript stable.
++    agent.model_status_bar_enabled = False
++    try:
++        _display_section = _agent_cfg.get("display", {})
++        if isinstance(_display_section, dict):
++            agent.model_status_bar_enabled = bool(_display_section.get("model_status_bar", False))
++    except Exception:
++        agent.model_status_bar_enabled = False
++
+     # Codex commentary visibility (display.show_commentary, default true).
+     # When true, completed Codex phase=commentary messages are delivered as
+     # visible mid-turn updates through the interim message path. When false,
+diff --git a/agent/conversation_loop.py b/agent/conversation_loop.py
+index b7e3f9afc..82ead7b3c 100644
+--- a/agent/conversation_loop.py
++++ b/agent/conversation_loop.py
+@@ -37,6 +37,11 @@ from agent.conversation_compression import (
+ )
+ from agent.context_engine import automatic_compaction_status_message
+ from agent.display import KawaiiSpinner
++from agent.model_status_context import (
++    append_persistent_model_status,
++    build_model_status_context,
++    replay_api_content_sidecar,
++)
+ from agent.error_classifier import FailoverReason, classify_api_error
+ from agent.turn_context import (
+     _compression_warrants_another_preflight_pass,
+@@ -1516,13 +1521,14 @@ def run_conversation(
+             # never mutated beyond the api_content stamp, so nothing leaks
+             # into the clean transcript content.
+             if idx == current_turn_user_idx and msg.get("role") == "user":
+-                if isinstance(_api_content, str) and _api_content:
++                _replayed_api_content = replay_api_content_sidecar(_api_content)
++                if _replayed_api_content is not None:
+                     # Stamped by the prologue from the same composition —
+                     # reuse it so the persisted sidecar and the wire cannot
+                     # drift, and so every pass this turn sends identical
+                     # bytes (composed from msg["content"], never from a
+                     # previously-injected copy).
+-                    api_msg["content"] = _api_content
++                    api_msg["content"] = _replayed_api_content
+                 else:
+                     # Callers that bypass the prologue stamping: compose live.
+                     _composed = compose_user_api_content(
+@@ -1533,11 +1539,10 @@ def run_conversation(
+                     if _composed is not None:
+                         api_msg["content"] = _composed
+             elif (
+-                isinstance(_api_content, str)
+-                and _api_content
+-                and msg.get("role") in ("user", "assistant")
++                replay_api_content_sidecar(_api_content) is not None
++                and msg.get("role") in ("user", "assistant", "tool")
+             ):
+-                # Historical message: replay the exact bytes sent when it was
++                # Historical string sidecar: replay the exact bytes sent when it was
+                 # live, so the provider prompt-cache prefix stays byte-stable
+                 # instead of diverging at the injection point and
+                 # re-prefilling everything after it. User rows carry the
+@@ -1546,7 +1551,7 @@ def run_conversation(
+                 # ``get_messages_as_conversation``'s sanitize_context/strip
+                 # would rewrite on reload — see the capture in
+                 # ``_flush_messages_to_session_db``).
+-                api_msg["content"] = _api_content
++                api_msg["content"] = replay_api_content_sidecar(_api_content)
+ 
+             # For ALL assistant messages, pass reasoning back to the API
+             # This ensures multi-turn reasoning context is preserved
+@@ -1592,6 +1597,20 @@ def run_conversation(
+             # The signature field helps maintain reasoning continuity
+             api_messages.append(api_msg)
+ 
++        # The model-visible status bar is request-local metadata. Persist it
++        # in the existing api_content sidecar on the newest message so every
++        # previously-sent wire message is replayed byte-identically later.
++        if getattr(agent, "model_status_bar_enabled", False):
++            append_persistent_model_status(
++                source_messages=messages,
++                api_messages=api_messages,
++                status=build_model_status_context(
++                    api_call_count=api_call_count,
++                    max_iterations=agent.max_iterations,
++                    todos=agent._todo_store.read(),
++                ),
++            )
++
+         # Build the final system message: cached prompt + ephemeral system prompt.
+         # Ephemeral additions are API-call-time only (not persisted to session DB).
+         # External recall context is injected into the user message, not the system
+diff --git a/hermes_cli/config_defaults.py b/hermes_cli/config_defaults.py
+index 74055e47b..5c5e4179a 100644
+--- a/hermes_cli/config_defaults.py
++++ b/hermes_cli/config_defaults.py
+@@ -1110,6 +1110,8 @@ DEFAULT_CONFIG = {
+         # failure isn't silent from the UI's perspective.  Set false to suppress.
+         "turn_completion_explainer": True,
+         "show_cost": False,       # Show $ cost in the status bar (off by default)
++        # Model-visible runtime status; request-local and disabled by default.
++        "model_status_bar": False,
+         # Show a color-coded battery read-out as the first status-bar element in
+         # the CLI/TUI (off by default). No-op on machines without a battery.
+         "battery": False,
+diff --git a/hermes_state.py b/hermes_state.py
+index 4f7b64534..7697e15d8 100644
+--- a/hermes_state.py
++++ b/hermes_state.py
+@@ -6239,6 +6239,22 @@ class SessionDB(SessionSearchMixin, SessionSchemaMixin, SessionPortabilityMixin)
+ 
+         return self._execute_write(_do)
+ 
++    def update_message_api_content(
++        self, session_id: str, message_row_id: int, api_content: str
++    ) -> int:
++        """Update a persisted message's string ``api_content`` sidecar by row id."""
++        if not session_id or message_row_id is None or not isinstance(api_content, str):
++            return 0
++
++        def _do(conn):
++            cursor = conn.execute(
++                "UPDATE messages SET api_content = ? WHERE id = ? AND session_id = ?",
++                (_scrub_surrogates(api_content), int(message_row_id), session_id),
++            )
++            return cursor.rowcount
++
++        return self._execute_write(_do)
++
+     def set_latest_user_api_content(
+         self, session_id: str, content: Any, api_content: str
+     ) -> int:
+diff --git a/run_agent.py b/run_agent.py
+index 9a6542925..d9cf9bfc9 100644
+--- a/run_agent.py
++++ b/run_agent.py
+@@ -754,6 +754,8 @@ class AIAgent:
+         self.session_api_calls = 0
+         self.session_estimated_cost_usd = 0.0
+         self.session_cost_status = "unknown"
++        # Opt-in request-local model status metadata; never persisted.
++        self.model_status_bar_enabled = False
+         self.session_cost_source = "none"
+         
+         # Turn counter (added after reset_session_state was first written — #2635)
+@@ -2090,6 +2092,14 @@ class AIAgent:
+                 if _is_ephemeral_scaffolding(msg):
+                     continue
+                 if msg.get(_DB_PERSISTED_MARKER):
++                    _backfill = msg.pop("_api_content_backfill", None)
++                    if (
++                        isinstance(_backfill, str)
++                        and isinstance(msg.get("_row_id"), int)
++                    ):
++                        self._session_db.update_message_api_content(
++                            self.session_id, msg["_row_id"], _backfill
++                        )
+                     continue
+                 # Already-durable messages: either carried over from the loaded
+                 # history copy, or seeded by a caller. Stamp them so future
+@@ -2148,6 +2158,20 @@ class AIAgent:
+                         content = _ov_content
+                     if _ov_timestamp is not None:
+                         _row_timestamp = _ov_timestamp
++                # A status sidecar may be appended after this row was flushed.
++                # Backfill it by the durable row identity rather than relying on
++                # append-only scanning or list position.
++                _backfill = msg.pop("_api_content_backfill", None)
++                if (
++                    isinstance(_backfill, str)
++                    and isinstance(msg.get("_row_id"), int)
++                    and _backfill != _row_api_content
++                ):
++                    self._session_db.update_message_api_content(
++                        self.session_id, msg["_row_id"], _backfill
++                    )
++                    _row_api_content = _backfill
++
+                 # Store the sidecar only when it actually differs.
+                 if _row_api_content == content:
+                     _row_api_content = None
+@@ -2192,7 +2216,7 @@ class AIAgent:
+                     ]
+                 elif isinstance(msg.get("tool_calls"), list):
+                     tool_calls_data = msg["tool_calls"]
+-                self._session_db.append_message(
++                _persisted_row_id = self._session_db.append_message(
+                     session_id=self.session_id,
+                     role=role,
+                     content=content,
+@@ -2218,6 +2242,7 @@ class AIAgent:
+                         self, "_active_compression_lock_holder", None
+                     ),
+                 )
++                msg["_row_id"] = _persisted_row_id
+                 msg[_DB_PERSISTED_MARKER] = True
+             # The intrinsic markers are now the sole source of truth. Reset the
+             # one-shot seed so no id() outlives this flush to alias a message
+diff --git a/BOOK_SELF_EVOLUTION_REPORT.md b/BOOK_SELF_EVOLUTION_REPORT.md
+new file mode 100644
+index 000000000..073ccc814
+--- /dev/null
++++ b/BOOK_SELF_EVOLUTION_REPORT.md
+@@ -0,0 +1,206 @@
++# Book-Driven Self-Evolution Report
++
++## Run identity
++
++- Starting commit: `85c8956ec7f2b4607509980794995e1c5e21e292` (the pinned HEAD before edits).
++- Model/provider: `openai/gpt-5.6-luna` / `openrouter`.
++- Book audited: English edition under `/home/ubuntu/ai-agent-book/book-en/`; all ten `chapter1.md`–`chapter10.md` files were inspected with section-heading and targeted-term searches, followed by section-level reads. The book repository was not modified.
++
++## Four-claim audit
++
++| Reader claim | Book evidence | Hermes evidence | Disposition |
++|---|---|---|---|
++| Product-level ablation infrastructure | Chapter 1, “Harness Engineering” (lines 149–157), defines remove-one-component experiments; Chapter 6, “Ablation Infrastructure” (lines 662–706), calls for feature flags, fixed baselines, A/B methodology, and privacy-aware analytics. | Hermes has many config gates and operational telemetry, e.g. `hermes_cli/config_defaults.py` (`display.verify_on_stop`, `display.file_mutation_verifier`, `memory.write_approval`, `curator.*`), trajectory saving in `run_agent.py:2274–2292`, and evaluation/observability hooks, but no product-level campaign runner that holds a task set/model fixed and compares one disabled feature at a time. | **Absent** as a cohesive product capability; deferred. A campaign runner would be a larger evaluation product, not a safe incidental core feature. |
++| Model-visible Agent Status Bar | Chapter 2, “Agent Status Bar” (lines 787–817) distinguishes model-visible state from the human terminal bar and requires placement at context end; lines 819–835 give the structured `<agent_status>` example. Chapter 9, lines 233–239, also uses it as an inter-agent text channel. | Human-facing lifecycle/status plumbing exists in `run_agent.py:937–975`, `agent/display.py`, `hermes_cli/status.py`, and tests such as `tests/cli/test_cli_status_bar.py`; the model prompt is cached in `agent/turn_context.py:613–617`, while request-local API messages are built in `agent/conversation_loop.py:1488–1614`. Before this change there was no model-visible aggregate status block. | **Partly present**. Implemented the smallest compatible slice: opt-in request-local `<agent_status>` with API-call budget and active todo state. |
++| Forgetting/consolidation for persistent memory | Chapter 3, “Memory Compression and Organization Mechanisms” (lines 236–260), requires organization and privacy; Chapter 8, “Sleep Learning: Consolidation, Forgetting, and Capability Maintenance” (lines 297–320), requires offline batch consolidation, conflict handling, expiry/archive/delete with provenance and rollback. | Bounded memory is configured in `hermes_cli/config_defaults.py:1578–1602`; provider orchestration is in `agent/memory_manager.py`; background memory/skill review is in `agent/background_review.py`; Skill usage/staleness/archival is handled by `agent/curator.py`. These are real controls, but Curator is for agent-created Skills and bounded `MEMORY.md` is not a general evidence-backed memory consolidator with conflict resolution/retention evaluation. | **Partly present**, with the missing general mechanism intentionally deferred. Extending it safely needs provider-specific semantics, provenance, retention/transfer sets, and approval/rollback design; blindly deleting memory would violate safety and user expectations. |
++| General proposer-reviewer with independent execution-grounded verification | Chapter 1, lines 247–281, defines Verify/Correct; Chapter 5’s coding-harness material and Chapter 10, “Peer Collaboration Pattern” (lines 290–318), require a reviewer to obtain new execution/render/tool evidence, not merely reread text. | Hermes already has execution-grounded file mutation verification (`run_agent.py:3342–3465`), verify-on-stop and bounded `pre_verify` continuation (`agent/conversation_loop.py:6840–6959`), plugin `pre_verify` hooks, approval gates, background review (`agent/background_review.py`), and delegation (`tools/delegate_tool.py`). There is no universal artifact contract and no always-on independent proposer/reviewer workflow. | **Partly present**, and the proposed generic always-on mechanism is **intentionally deferred/incompatible as a default**: it would add cost/core surface and could duplicate existing verification. Use artifact-specific plugins/workflows when a concrete verifier exists. |
++
++## Change made
++
++Added an opt-in model-visible status bar:
++
++- `agent/model_status_context.py` renders a bounded, deterministic `<agent_status>` block containing API-call budget and active todo information. It ignores completed tasks and arbitrary extra fields. Its persistent sidecar helper appends only to the newest request message and stores the resulting wire content in `api_content`.
++- `agent/agent_init.py` reads `display.model_status_bar` (default false).
++- `hermes_cli/config_defaults.py` documents `display.model_status_bar: false`.
++- `agent/conversation_loop.py` appends status only to the newest API request copy and persists that exact wire content in the existing `api_content` sidecar. On later requests, historical sidecars are replayed unchanged, while the newest status is appended only to the newest message. Clean transcript content, roles, and the cached system prompt remain unchanged.
++- `tests/agent/test_model_status_context.py` adds behavior-contract tests for formatting, active-task selection, field isolation, and three successive request builds with byte-identical replay of all earlier wire messages.
++
++Deliberately rejected/deferred:
++
++- No always-on status bar: it costs tokens and is therefore opt-in.
++- No mutation of `MEMORY.md`/external providers: the evidence supports a larger consolidation lifecycle, not an unsafe delete/merge heuristic.
++- No generic proposer-reviewer core tool or mandatory second model: existing execution-grounded gates cover concrete paths; a universal reviewer needs a typed artifact/verifier contract and a campaign showing benefit.
++- No ablation runner in this change: it needs fixed datasets, outcome metrics, isolation, privacy/telemetry policy, and feature-flag control across surfaces.
++
++## Verification
++
++Exact commands run:
++
++1. `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py`
++   Result: exit code 0; compilation succeeded.
++2. `python3 - <<'PY' ... from agent.model_status_context import build_model_status_context ... PY`
++   Result: exit code 0; printed the expected block:
++   `<agent_status>`, `API calls: 3/10`, `Active tasks: 1 (in progress: 1)`, `Next active task: b — run tests`, `</agent_status>`.
++3. `scripts/run_tests.sh tests/agent/test_model_status_context.py -q`
++   Result: **blocked**, exit code 1. The repository runner reported no virtualenv containing pytest (`.venv` exists but has no pytest; no `venv`/`HERMES_PYTHON` fallback). No test result was fabricated.
++4. `uv run --with pytest pytest tests/agent/test_model_status_context.py -q`
++   Result: **passed**, `2 passed in 0.07s` (the isolated behavior-contract tests ran successfully through uv).
++5. `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py && git diff --check`
++   Result: **passed**, exit code 0; no whitespace errors.
++
++The repository wrapper was blocked by its environment lacking pytest, but the focused tests did execute and pass through `uv run --with pytest`. Existing tests were not weakened, and no approval, validator, or safety threshold was changed.
++
++## Independent review round
++
++The first candidate was rejected because it rewrote previously sent request bytes when adding each new status. This round corrected that defect by using persistent `api_content` sidecars and added three-request replay coverage. The reviewer’s scope was not expanded: no ablation campaign, memory consolidator, or generic reviewer loop was added.
++
++## Review-round verification
++
++Exact commands and results for the correction:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `3 passed in 0.07s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.51s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++The focused replay test proves that each earlier request message remains byte-identical in later request constructions and that the newest status is attached to the newest message. These are wire-construction tests, not an end-to-end provider run.
++
++## Second independent review round
++
++The second review found that the replay test helper accepted list-valued sidecars more broadly than the production request builder, which only replayed non-empty strings. The correction now centralizes the production type contract in `replay_api_content_sidecar()` (`agent/model_status_context.py`) and uses it in `agent/conversation_loop.py` for both current-turn and historical replay. Only non-empty strings are supported; lists/multimodal content, empty strings, mappings, numbers, and other unsupported values fail closed because Hermes persists `api_content` as an optional string. The tests call this same helper and cover string, list, empty, and unsupported values.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `5 passed in 0.09s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.35s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++The review correction validates the production replay type check rather than using a more permissive test-only reconstruction. No book files were changed, and no downstream task improvement is claimed.
++
++## Third independent review round
++
++The third review found that list-valued sidecars were only safe in the in-memory request builder, not across Hermes’ persistence boundary: `hermes_state.py` and the flush path in `run_agent.py` persist `api_content` as an optional string, and `agent/turn_context.py` exposes string-only sidecar helpers. The correction therefore fails closed for every non-string content value and does not attach model status to unsupported multimodal/list messages. No database schema or persistence contract was widened.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `4 passed in 0.09s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.35s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No multimodal support is claimed, and no downstream task improvement is claimed.
++
++## Fourth independent review round
++
++The fourth review found two production-path defects. First, status was being attached to the newest tool result even though Hermes persists and replays `api_content` only for user/assistant messages. The attachment helper now searches backward for the newest durable user/assistant message, leaving tool results unchanged; the production replay path remains restricted to those roles. This preserves role ordering, clean transcript content, and durable sidecar replay. Second, TODO identifiers were not bounded. `build_model_status_context()` now caps identifiers at 96 characters, descriptions at 200 characters, and the complete rendered block at 1200 characters while retaining the closing tag.
++
++New behavior-contract tests cover a successive request whose newest message is a tool result, confirm the sidecar is attached to the latest durable message and replays unchanged, and verify a 100,000-character TODO identifier cannot exceed the output bound. They call the same production replay helper used by `conversation_loop.py`.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `6 passed in 0.10s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.37s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No downstream task improvement is claimed.
++
++## Fifth independent review round
++
++The fifth review identified a realistic tool-loop placement failure: assistant tool-call messages commonly have `content=None`, followed by a string tool result. Searching backward for a durable assistant then failed closed, and text-bearing assistant messages would place status before the newest tool evidence. The durable correction now targets the newest message directly. String `api_content` sidecars are persisted and replayed for `user`, `assistant`, and `tool` roles; unsupported values still fail closed, and clean transcript content and role/tool-call ordering are unchanged. When the newest message is a tool result, status is appended after that evidence, closest to generation.
++
++The focused successive-request test now uses assistant tool-call messages with `content=None` followed by string tool results across three requests. It asserts historical wire equality, status placement after the newest tool result, and durable sidecar attachment. The adversarial identifier/output-bound test remains enabled.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `5 passed in 0.10s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 10.04s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No downstream task improvement is claimed.
++
++## Sixth independent review round
++
++The sixth review found that status sidecars were added after normal row persistence and were therefore only in-memory: `_db_persisted` rows were skipped by the append-only flush, so a restart could lose the sidecar. The correction adds the smallest string-only row-identity backfill path. `hermes_state.py` now exposes `update_message_api_content(session_id, message_row_id, api_content)`, the flush records the returned durable row id, and persisted rows with a later status backfill are updated by that id. The sidecar remains a string; clean transcript content, role/tool ordering, and unsupported-value rejection are unchanged.
++
++The production contract test now persists user → assistant tool-call (`content=None`) → string tool-result rows through `SessionDB`, attaches status to the newest tool row, performs the row-identity update, closes and reopens the database, and asserts the same sidecar and replayed wire bytes. It would fail if only the in-memory dictionary changed.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `6 passed in 0.50s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.43s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No downstream task improvement is claimed.
++
++## Seventh independent review round
++
++The seventh review found that rebuilding a request for the same newest message appended another status block each time. The projection is now idempotent at the production persistence boundary: the first non-empty string `api_content` sidecar is treated as the feature-owned projection and reused verbatim on retries, including after reload. A later volatile status is deliberately ignored for that same message, so previously sent bytes remain fixed. User-authored status-looking text in clean content is never parsed or removed; only the sidecar is recognized. Stable row-identity backfill remains in place through `update_message_api_content()`.
++
++The regression test repeats the same-message build 20 times, then repeats it after a real `SessionDB` close/reopen, asserting identical wire bytes and exactly one owned status block. Realistic tool-call placement, persistence reload, adversarial output bounds, and unsupported-type rejection remain covered.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `7 passed in 0.84s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.42s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No downstream task improvement is claimed.
++
++## Eighth independent review round
++
++The eighth review found a collision with Hermes’ existing `api_content` uses for memory/plugin prefetch and sanitization-divergence replay. The status helper now preserves any pre-existing string sidecar byte-for-byte as the base and adds an exact terminal ownership envelope: `<hermes_status_projection>` containing the status block and `</hermes_status_projection>`. Only that exact terminal form, with the expected `<agent_status>` structure, is recognized as feature-owned on retries; lookalike or malformed content remains ordinary base text and is never deleted. The projection is therefore idempotent across persistence/reload while ordinary API-only sidecars still receive one status projection. Unsupported values remain fail-closed and stable row-identity backfill remains unchanged.
++
++Added coverage uses a realistic pre-existing memory/plugin sidecar, repeats same-message builds, checks exact base-byte preservation and one status block, and includes a malformed/lookalike marker.
++
++Exact commands and results for this review round:
++
++- `uv run --with pytest pytest tests/agent/test_model_status_context.py -q` — **passed**, `8 passed in 0.84s`.
++- `uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q` — **passed**, `36 passed in 9.41s`.
++- `python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py hermes_state.py` — **passed**, exit code 0.
++- `git diff --check` — **passed**, exit code 0.
++
++No downstream task improvement is claimed.
++
++## Terminal acceptance loop
++
++After the eight correction rounds, the experiment ran a fresh Hermes reviewer
++with an isolated home and no proposer-session context. Each attempt inspected the
++current diff and production persistence paths, reran the focused checks, and was
++required to end in `VERDICT: ACCEPT` or `VERDICT: REJECT`. Five terminal attempts
++rejected the candidate and their findings were returned to the original Hermes
++session: tool-result placement and unbounded identifiers, realistic
++`content=None` tool-call placement, post-flush database persistence, retry
++idempotence, and composition with pre-existing memory/plugin sidecars. The sixth
++fresh attempt accepted the resulting candidate.
++
++The accepted version passed **8 new behavior-contract tests and 36 existing
++sidecar/cache/turn-context regression tests**. The new coverage includes a real
++`SessionDB` close/reopen, unchanged-message retries, realistic assistant tool calls,
++tool-result placement closest to generation, bounded adversarial TODO data, and
++byte-preserving composition with existing API-only sidecars. This closes the
++proposer-reviewer correction loop for the scoped candidate: a rejection caused the
++running Hermes proposer to update its own checkout, and independent review repeated
++until acceptance. It still does not establish downstream task-quality uplift.
++
++## Limitations
++
++This is an implementation and audit run, not evidence that the status bar improves task success. The repository wrapper was initially blocked because its environment lacked pytest, but the final focused suite did execute through `uv run --with pytest` and passed 44 tests. That scoped suite is not the repository's entire test matrix. The status block is deliberately small and currently reports only budget and todo state; it does not summarize arbitrary tool-call counts, wall-clock time, constraints, or provider-specific state. The terminal reviewer is an independent, fresh model session rather than a separately trained evaluator. The general memory and universal artifact-reviewer gaps remain partly addressed rather than fully solved.
++
++## Proposed ablation campaign
++
++Use a fixed Hermes commit, fixed model/provider, fixed config, fixed tool permissions, fixed temperature/reasoning settings, and a versioned task suite with hermetic workspaces. Record raw trajectories and outcome evidence, not only final text. Run a baseline with all selected features enabled, then one feature disabled per arm:
++
++1. baseline;
++2. `display.model_status_bar: false` (versus true);
++3. memory retrieval/writes disabled while session search remains separately measured;
++4. background memory/Skill review disabled;
++5. verify-on-stop and `pre_verify` continuation disabled only in a safe test fixture;
++6. context compression disabled or replaced by a fixed no-op at a safe context size;
++7. delegation disabled for tasks that can run either single-agent or delegated.
++
++For each arm, keep task order randomized and repeat enough times for confidence intervals. Report task success, independent verifier pass rate, safety/approval violations, regression/retention on prior tasks, artifact activation/adherence, token and wall-clock cost, tool-call count, failure class, and user-visible latency. Include transfer tasks and negative controls. Compare paired runs where possible and distinguish mechanism operation from end-to-end benefit. A run should not be promoted because it improves only a noisy judge or only the current task set; preserve trajectories and failed/negative results, as required by Chapter 6’s evaluation sections and Chapter 8 lines 245–270, 297–320.
+diff --git a/agent/model_status_context.py b/agent/model_status_context.py
+new file mode 100644
+index 000000000..85ccce2e6
+--- /dev/null
++++ b/agent/model_status_context.py
+@@ -0,0 +1,100 @@
++"""Compact runtime state injected into the model request, not the transcript."""
++
++from __future__ import annotations
++
++from typing import Any, Iterable, Mapping
++
++MAX_MODEL_STATUS_CHARS = 1200
++MAX_STATUS_ID_CHARS = 96
++MAX_STATUS_DESCRIPTION_CHARS = 200
++STATUS_PROJECTION_OPEN = "<hermes_status_projection>\n"
++STATUS_PROJECTION_CLOSE = "\n</hermes_status_projection>"
++
++
++def build_model_status_context(
++    *, api_call_count: int, max_iterations: int, todos: Iterable[Mapping[str, Any]] | None = None
++) -> str:
++    """Render bounded, deterministic status metadata for the current API call."""
++    items = list(todos or ())
++    active = []
++    for item in items:
++        if not isinstance(item, Mapping) or item.get("status") not in {"pending", "in_progress"}:
++            continue
++        item_id = (str(item.get("id", "?")).strip() or "?")[:MAX_STATUS_ID_CHARS]
++        content = " ".join(str(item.get("content", "")).split())
++        if content:
++            active.append((item_id, content[:MAX_STATUS_DESCRIPTION_CHARS]))
++    # Count from the original validated shape without exposing arbitrary fields.
++    in_progress = sum(
++        1 for item in items
++        if isinstance(item, Mapping) and item.get("status") == "in_progress"
++    )
++    lines = [
++        "<agent_status>",
++        f"- API calls: {max(0, int(api_call_count))}/{max(0, int(max_iterations))}",
++        f"- Active tasks: {len(active)} (in progress: {in_progress})",
++    ]
++    if active:
++        lines.append(f"- Next active task: {active[0][0]} — {active[0][1]}")
++    lines.append("</agent_status>")
++    rendered = "\n".join(lines)
++    if len(rendered) <= MAX_MODEL_STATUS_CHARS:
++        return rendered
++    suffix = "\n</agent_status>"
++    return rendered[: MAX_MODEL_STATUS_CHARS - len(suffix)] + suffix
++
++
++def replay_api_content_sidecar(sidecar: Any) -> str | None:
++    """Return a durable string sidecar, or ``None`` for unsupported values.
++
++    Hermes persists ``api_content`` as an optional string. Model-status
++    injection therefore fails closed for multimodal/list and other values.
++    """
++    if isinstance(sidecar, str) and sidecar:
++        return sidecar
++    return None
++
++
++def _owned_status_projection(sidecar: Any) -> str | None:
++    """Return an exact feature-owned terminal projection, if present."""
++    value = replay_api_content_sidecar(sidecar)
++    if value is None or not value.endswith(STATUS_PROJECTION_CLOSE):
++        return None
++    marker = value.rfind(STATUS_PROJECTION_OPEN)
++    if marker < 0:
++        return None
++    projection = value[marker + len(STATUS_PROJECTION_OPEN): -len(STATUS_PROJECTION_CLOSE)]
++    if not (projection.startswith("<agent_status>\n") and projection.endswith("\n</agent_status>")):
++        return None
++    return value
++
++
++def append_persistent_model_status(
++    *, source_messages: list[dict], api_messages: list[dict], status: str
++) -> None:
++    """Add one durable, idempotent status projection to the newest message."""
++    if not source_messages or not api_messages:
++        return
++    source_index = len(source_messages) - 1
++    if source_index >= len(api_messages):
++        return
++    newest = source_messages[source_index]
++    if newest.get("role") not in {"user", "assistant", "tool"}:
++        return
++    source = newest
++    wire = api_messages[source_index]
++    existing_sidecar = replay_api_content_sidecar(source.get("api_content"))
++    if existing_sidecar is not None:
++        base = existing_sidecar
++    else:
++        base = replay_api_content_sidecar(wire.get("content", ""))
++    if base is None:
++        return
++    if _owned_status_projection(base) is not None:
++        wire["content"] = base
++        source["_api_content_backfill"] = base
++        return
++    updated = base + "\n\n" + STATUS_PROJECTION_OPEN + status + STATUS_PROJECTION_CLOSE
++    wire["content"] = updated
++    source["api_content"] = updated
++    source["_api_content_backfill"] = updated
+diff --git a/tests/agent/test_model_status_context.py b/tests/agent/test_model_status_context.py
+new file mode 100644
+index 000000000..f5453ab31
+--- /dev/null
++++ b/tests/agent/test_model_status_context.py
+@@ -0,0 +1,202 @@
++from agent.model_status_context import (
++    append_persistent_model_status,
++    build_model_status_context,
++    replay_api_content_sidecar,
++    STATUS_PROJECTION_OPEN,
++    STATUS_PROJECTION_CLOSE,
++)
++from hermes_state import SessionDB
++
++
++def test_status_context_is_compact_and_model_visible():
++    text = build_model_status_context(
++        api_call_count=3,
++        max_iterations=10,
++        todos=[
++            {"id": "a", "content": "finish report", "status": "completed"},
++            {"id": "b", "content": "run tests", "status": "in_progress"},
++        ],
++    )
++
++    assert text == (
++        "<agent_status>\n"
++        "- API calls: 3/10\n"
++        "- Active tasks: 1 (in progress: 1)\n"
++        "- Next active task: b — run tests\n"
++        "</agent_status>"
++    )
++
++
++def test_status_context_does_not_include_completed_or_untrusted_extra_fields():
++    text = build_model_status_context(
++        api_call_count=0, max_iterations=1,
++        todos=[{"id": "done", "content": "secret", "status": "completed", "extra": "drop"}],
++    )
++
++    assert "secret" not in text
++    assert "extra" not in text
++    assert "Active tasks: 0" in text
++
++
++def _wire_copy(messages):
++    wire = []
++    for message in messages:
++        item = {key: value for key, value in message.items() if not key.startswith("_")}
++        sidecar = replay_api_content_sidecar(item.pop("api_content", None))
++        if sidecar is not None:
++            item["content"] = sidecar
++        wire.append(item)
++    return wire
++
++
++def test_status_sidecars_preserve_earlier_wire_messages_across_three_requests():
++    messages = [{"role": "user", "content": "do the work"}]
++    requests = []
++    wire = _wire_copy(messages)
++    append_persistent_model_status(
++        source_messages=messages, api_messages=wire,
++        status="<agent_status>\n- API calls: 1/3\n</agent_status>",
++    )
++    requests.append(wire)
++
++    messages.extend([
++        {"role": "assistant", "content": None, "tool_calls": [{"id": "call-1"}]},
++        {"role": "tool", "content": "tool result 1"},
++    ])
++    wire = _wire_copy(messages)
++    append_persistent_model_status(
++        source_messages=messages, api_messages=wire,
++        status="<agent_status>\n- API calls: 2/3\n</agent_status>",
++    )
++    requests.append(wire)
++
++    messages.extend([
++        {"role": "assistant", "content": None, "tool_calls": [{"id": "call-2"}]},
++        {"role": "tool", "content": "tool result 2"},
++    ])
++    wire = _wire_copy(messages)
++    append_persistent_model_status(
++        source_messages=messages, api_messages=wire,
++        status="<agent_status>\n- API calls: 3/3\n</agent_status>",
++    )
++    requests.append(wire)
++
++    assert requests[1][0] == requests[0][0]
++    assert requests[2][:3] == requests[1][:3]
++    assert "API calls: 3/3" in requests[2][-1]["content"]
++    assert "API calls: 2/3" in requests[2][-3]["content"]
++    assert messages[0]["content"] == "do the work"
++    assert "api_content" in messages[-1]
++
++
++def test_sidecar_replay_matches_production_type_contract():
++    multimodal = [{"type": "text", "text": "image context"}]
++    assert replay_api_content_sidecar("wire text") == "wire text"
++    assert replay_api_content_sidecar(multimodal) is None
++    assert replay_api_content_sidecar([]) is None
++    assert replay_api_content_sidecar("") is None
++    assert replay_api_content_sidecar({"unexpected": True}) is None
++    assert replay_api_content_sidecar(42) is None
++
++
++
++def test_status_output_bounds_adversarial_identifier():
++    text = build_model_status_context(
++        api_call_count=1, max_iterations=2,
++        todos=[{"id": "I" * 100_000, "content": "run tests", "status": "in_progress"}],
++    )
++    from agent.model_status_context import MAX_MODEL_STATUS_CHARS
++    assert len(text) <= MAX_MODEL_STATUS_CHARS
++    assert text.endswith("</agent_status>")
++
++
++def test_status_sidecar_survives_real_sessiondb_reload(tmp_path):
++    db = SessionDB(db_path=tmp_path / "state.db")
++    db.create_session("s1", source="test")
++    try:
++        db.append_message("s1", "user", content="do the work")
++        db.append_message("s1", "assistant", content=None, tool_calls=[{"id": "call-1"}])
++        tool_row = db.append_message("s1", "tool", content="tool result")
++        messages = db.get_messages_as_conversation("s1", include_row_ids=True)
++        wire = _wire_copy(messages)
++        append_persistent_model_status(
++            source_messages=messages, api_messages=wire,
++            status="<agent_status>\n- API calls: 1/1\n</agent_status>",
++        )
++        assert messages[-1]["_row_id"] == tool_row
++        db.update_message_api_content("s1", tool_row, messages[-1]["api_content"])
++        db.close()
++
++        reloaded = SessionDB(db_path=tmp_path / "state.db")
++        try:
++            rows = reloaded.get_messages_as_conversation("s1", include_row_ids=True)
++            assert rows[-1]["api_content"] == messages[-1]["api_content"]
++            replayed = _wire_copy(rows)
++            assert replayed[-1]["content"] == wire[-1]["content"]
++        finally:
++            reloaded.close()
++    finally:
++        try:
++            db.close()
++        except Exception:
++            pass
++
++
++def test_status_projection_is_idempotent_for_same_message_and_reload(tmp_path):
++    messages = [{"role": "tool", "content": "tool result"}]
++    status = "<agent_status>\n- API calls: 2/3\n</agent_status>"
++    first = _wire_copy(messages)
++    append_persistent_model_status(source_messages=messages, api_messages=first, status=status)
++    expected = first[-1]["content"]
++
++    for _ in range(20):
++        retry_wire = _wire_copy(messages)
++        append_persistent_model_status(
++            source_messages=messages, api_messages=retry_wire,
++            status="<agent_status>\n- API calls: 99/3\n</agent_status>",
++        )
++        assert retry_wire[-1]["content"] == expected
++        assert retry_wire[-1]["content"].count("<agent_status>") == 1
++
++    db = SessionDB(db_path=tmp_path / "state.db")
++    db.create_session("s1", source="test")
++    try:
++        row_id = db.append_message("s1", "tool", content="tool result", api_content=messages[-1]["api_content"])
++        db.close()
++        reloaded = SessionDB(db_path=tmp_path / "state.db")
++        try:
++            rows = reloaded.get_messages_as_conversation("s1", include_row_ids=True)
++            retry_wire = _wire_copy(rows)
++            append_persistent_model_status(
++                source_messages=rows, api_messages=retry_wire,
++                status="<agent_status>\n- API calls: 100/3\n</agent_status>",
++            )
++            assert rows[-1]["_row_id"] == row_id
++            assert retry_wire[-1]["content"] == expected
++            assert retry_wire[-1]["content"].count("<agent_status>") == 1
++        finally:
++            reloaded.close()
++    finally:
++        try:
++            db.close()
++        except Exception:
++            pass
++
++
++def test_preexisting_sidecar_is_preserved_and_projection_is_idempotent(tmp_path):
++    base = "memory/plugin context\n<hermes_status_projection>\nnot-owned"
++    messages = [{"role": "user", "content": "do the work", "api_content": base}]
++    status = "<agent_status>\n- API calls: 1/2\n</agent_status>"
++    first = _wire_copy(messages)
++    append_persistent_model_status(source_messages=messages, api_messages=first, status=status)
++    expected = base + "\n\n" + STATUS_PROJECTION_OPEN + status + STATUS_PROJECTION_CLOSE
++    assert first[0]["content"] == expected
++    for _ in range(5):
++        retry = _wire_copy(messages)
++        append_persistent_model_status(
++            source_messages=messages, api_messages=retry,
++            status="<agent_status>\n- API calls: 9/2\n</agent_status>",
++        )
++        assert retry[0]["content"] == expected
++        assert retry[0]["content"].count("<agent_status>") == 1
++    assert messages[0]["content"] == "do the work"

@@ -226,6 +226,14 @@ La misma idea se puede extender a los flujos de trabajo y a todo el Harness. AFl
 
 Los niveles de optimización no son mejores cuanto más altos sean. Buscar una regla local solo requiere unos pocos casos límite, mientras que buscar un flujo de trabajo completo o un Harness enfrenta un espacio candidato más amplio, mayores costos de evaluación y dificultades de atribución más severas. Un fallo claro, recurrente y localizable en un solo componente debe abordarse prioritariamente mediante un parche local auditable; solo cuando las modificaciones locales no logren resolver problemas entre componentes a largo plazo, o cuando el método de gestión existente se convierta en un cuello de botella, valdrá la pena ascender a las capas de flujo de trabajo, Harness e incluso optimizador. Independientemente del nivel al que se ascienda, el evaluador, los límites de permisos y las pruebas de retención deben situarse fuera del alcance modificable: cuanto mayor sea el espacio de búsqueda, más relevante resulta esta raíz de confianza.
 
+> **Experimento 8-6 ★★★: Hacer que Hermes lea este libro y complete una autoactualización guiada por revisión**
+>
+> **Objetivo**: Aplicar el bucle del capítulo a un repositorio de Agent real. Se clonó una versión fijada de Hermes para leer los diez capítulos en inglés y auditar cuatro carencias aportadas por un lector: infraestructura de ablación, Agent Status Bar visible para el modelo, olvido y consolidación de memoria, y un bucle general Proposer–Reviewer con evidencia de ejecución independiente. Como las cuatro hipótesis venían en el Prompt, el experimento mide auditoría, generación de candidatos y corrección, no su descubrimiento autónomo.
+>
+> **Ejecución real y cierre del bucle**: El 2 de agosto de 2026, Hermes en el commit `85c8956e` usó `openai/gpt-5.6-luna` mediante OpenRouter y propuso un `<agent_status>` opcional. Un reviewer Hermes nuevo, sin contexto de la sesión proposer, inspeccionó cada candidato. Cada `VERDICT: REJECT` volvió a la sesión Hermes original, que modificó su propio checkout. Cinco rechazos terminales detectaron fallos de caché, tool loop, límites, persistencia tras reinicio, idempotencia de reintentos y composición con sidecars de memoria/plugins; la sexta revisión nueva devolvió `VERDICT: ACCEPT`.
+>
+> **Resultado y límite**: La versión aceptada pasa **8 pruebas de comportamiento nuevas y 36 regresiones existentes**, además de compilación, revisión de espacios, escaneo de credenciales y aplicación del parche en un clon limpio. Así se completa «leer → auditarse → modificarse → ser rechazado → corregirse → ser aceptado», sin dejar un resultado a medias. El parche no se fusionó upstream y no se ejecutó la campaña de ablación downstream, por lo que no demuestra que el status bar mejore el éxito de tareas. Runner, nueve interacciones proposer, seis revisiones de aceptación, informe, parche y manifest sin credenciales están en [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+
 ## Construcción de un Bucle Cerrado de Evolución Continua para Operaciones a Largo Plazo
 
 Los cuatro métodos de actualización se convierten en una evolución continua solo al ingresar en el mismo bucle autónomo. La Figura 8-5 muestra una estructura de doble bucle más sólida en sistemas de producción: el bucle de ejecución en línea únicamente completa tareas y registra evidencias, sin reescribir directamente el Agente formal; el bucle de evolución fuera de línea agrega trayectorias, diagnostica causas raíz, genera modificaciones candidatas y publica nuevas versiones tras superar umbrales de validación. Ambos se conectan a través de bases de experiencia e historiales de evaluación versionados.
@@ -319,7 +327,7 @@ La evolución continua tampoco consiste en dejar crecer indefinidamente el conoc
 - Eliminar conocimiento refutado por nueva evidencia;
 - Volver a entrenar LoRA a partir del modelo base original.
 
-> **Experimento 8-6 ★★★: Evaluar si un Agente se encuentra en evolución continua**
+> **Experimento 8-7 ★★★: Evaluar si un Agente se encuentra en evolución continua**
 >
 > **Objetivo del experimento**: Distinguir entre tres comportamientos a largo plazo: "guardar una retroalimentación", "limitarse a añadir continuamente" y "ser capaz de actualizar, transferir y conservar capacidades", evitando simular un aprendizaje continuo mediante la ejecución repetida del mismo lote de preguntas.
 >

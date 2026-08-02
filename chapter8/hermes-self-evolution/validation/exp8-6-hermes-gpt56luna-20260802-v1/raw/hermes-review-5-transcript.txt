@@ -1,0 +1,106 @@
+Query: # Fifth independent review: realistic tool-call placement
+
+The second terminal acceptance review rejected the corrected candidate after
+running all requested checks. Continue the same self-update and address these
+exact findings:
+
+1. In the normal tool loop, the newest durable message is commonly an assistant
+   tool-call message whose `content` is `None` or empty, followed by a tool
+   result. The current backward search selects that assistant message, then
+   fails closed because its content is unsupported. The model-visible status is
+   therefore absent during common tool-loop requests.
+2. The current test uses assistant tool-call messages with ordinary string
+   content, so it does not cover the production shape above.
+3. If the assistant tool-call message does have text, the current code appends
+   status before the following tool result instead of at the request context
+   end. This violates the book/report placement requirement that current
+   model-visible state be closest to generation.
+
+Implement a durable solution at the actual string-only persistence/replay
+boundary. It may extend string `api_content` sidecar replay to tool messages if
+that is supported by the state and flush contracts, but must not widen the
+database type, mutate clean transcript content, disturb role/tool-call ordering,
+or attach status to unsupported list/multimodal content. Inspect and test the
+real production contract rather than relying on a permissive test helper.
+
+Add coverage for an assistant tool call with `content=None` followed by a
+string tool result, across at least three successive requests. Assert both
+byte-identical historical replay and placement after the newest tool evidence.
+Retain the adversarial output-bound test.
+
+Run the focused tests, existing sidecar/cache/turn-context regressions,
+compilation, and `git diff --check`. Update `BOOK_SELF_EVOLUTION_REPORT.md` with
+this fifth review and exact results. Do not edit the book, commit, push, or
+claim downstream task improvement.
+
+Initializing agent...
+↻ Resumed session 20260802_031522_523cd2 (5 user messages, 150 total messages)
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Updating tests and comments**
+
+I see that the output didn’t include a role condition, so I need to update the comments
+ accordingly. There’s a helper tool using replay that I need to account for. The earlier
+ test expectations need adjustments now that there’s a new status on the tool and
+ the prior sidecars replay. So, I’ll make sure to patch everything up properly for
+ accurate results. This should keep everything aligned!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('hermes_state.py') + 4 commands  0.1s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 4 commands  0.4s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  11.0s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py + 1 command  0.1s
+  ┊ 💻 $         git diff -- agent/model_status_context.py agent/conversation_loop.py tests/agent/test_model_status_context.py  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting tool issues**
+
+I need to check the issue regarding the append helper tool. It seems to work fine
+, but I want to look into how the "state/flush contract stores sidecars every role
+" runs. The `run_agent flush` accepts any role string, and it looks like the Hermes
+ state does too. I'm testing to see if `api_content` is in the last message, so that
+’s good. I should prepare a report to update on this.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') + 6 commands  0.1s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Addressed the fifth-review findings.
+
+Changes:
+
+- Status now attaches to the newest message, including a string-valued tool result.
+- String api_content sidecars are replayed consistently for user, assistant, and tool roles.
+- Assistant tool-call messages with content=None are left unchanged; status is placed after the following tool evidence.
+- Unsupported list/multimodal sidecars remain rejected.
+- Clean transcript content, role ordering, and tool-call metadata remain unchanged.
+- Updated the successive-request test to use realistic assistant tool-call messages with content=None followed by string tool results.
+- Retained the adversarial TODO identifier/output-bound test.
+- Updated BOOK_SELF_EVOLUTION_REPORT.md with the fifth review round and exact results.
+
+Verification:
+
+- uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+  - Passed: 5 passed in 0.10s
+- uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q
+  - Passed: 36 passed in 10.04s
+- python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py
+  - Passed.
+- git diff --check
+  - Passed.
+
+No book edits, commit, push, or downstream task-improvement claim was made.
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_031522_523cd2
+
+Session:        20260802_031522_523cd2
+Duration:       47s
+Messages:       162 (6 user, 150 tool calls)

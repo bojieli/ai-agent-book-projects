@@ -1,0 +1,112 @@
+Query: # Fourth independent review: tool-result replay and output bound
+
+The terminal acceptance reviewer rejected the current candidate after running
+the requested tests and inspecting the production path. Continue the same
+self-update and correct these exact defects without expanding scope:
+
+1. Status is currently appended to `source_messages[-1]` / `api_messages[-1]`
+   without requiring a user message. After a tool call the newest message is a
+   tool result, but production replay restores `api_content` sidecars only for
+   user and assistant messages. A sidecar attached to the tool result therefore
+   disappears on the next request, breaking the claimed byte-identical replay.
+   Make attachment and replay behavior consistent with the real persisted
+   message contract. Preserve role ordering and keep clean transcript content
+   unchanged.
+2. `build_model_status_context()` converts the TODO `item_id` to a string
+   without truncating or otherwise bounding it. Enforce a deterministic total
+   output bound, including adversarially long identifiers and descriptions.
+3. Add behavior-contract tests that would have caught both defects: a
+   successive-request sequence whose newest message is a tool result, and an
+   oversized TODO identifier. Exercise the same production helpers/type checks
+   used by `conversation_loop.py`.
+
+Run the focused tests, the existing replay/cache regression set, compilation,
+and `git diff --check`. Update `BOOK_SELF_EVOLUTION_REPORT.md` with this fourth
+review round and exact results. Do not edit the book, commit, push, or claim
+downstream task improvement.
+
+Initializing agent...
+↻ Resumed session 20260802_031522_523cd2 (4 user messages, 134 total messages)
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Considering integer representation**
+
+I'm thinking about unbounded integer representation, but I realize that maximum values
+ can get huge. I might want to normalize or cap numeric displays for clarity. There
+’s a need for a deterministic total that closes with truncation if it exceeds a maximum
+ value, possibly with a helper function to handle this.
+
+I also need to consider controlling IDs and whitespace sanitation, ensuring everything
+ is formatted neatly. Revising and testing these current tools will help ensure the
+ results fit within the expected parameters.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path for f in ['agent/model_status_context.py','tests/agent/test_model_status_context.py']: print('\n---',f,'---') + 1 command  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+  ┊ 💻 $         git status --short + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/model_status_context.py') + 3 commands  0.4s [exit 1]
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Updating test expectations**
+
+I need to update the test expectations for the latest durable assistant index to -
+2, which involves checking the status of the closest generation for the assistant
+. The existing test assertion is outdated, so I'll have to revise that. Also, I'll
+ look into the second assertion regarding indices. It’s important to run the tests
+ after these updates to ensure everything is functioning as expected. Let’s get this
+ updated!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('tests/agent/test_model_status_context.py') + 3 commands  0.4s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  10.4s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py + 1 command  0.1s
+  ┊ 💻 $         git diff -- agent/model_status_context.py agent/conversation_loop.py tests/agent/test_model_status_context.py  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') + 6 commands  0.1s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+Corrected the fourth-review defects.
+
+Changes:
+
+- Status attachment now searches backward for the newest durable user or assistant message instead of attaching to a tool result.
+- Tool-result messages remain unchanged and receive no non-durable sidecars.
+- Production replay remains restricted to the persisted user/assistant sidecar contract.
+- Added deterministic output bounds:
+  - TODO identifier: 96 characters;
+  - TODO description: 200 characters;
+  - complete status block: 1200 characters, preserving </agent_status>.
+- Added behavior-contract tests for:
+  - a successive request whose newest message is a tool result;
+  - durable sidecar attachment and replay;
+  - a 100,000-character TODO identifier;
+  - the shared production replay type check.
+
+Verification:
+
+- uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+  - Passed: 6 passed in 0.10s
+- uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q
+  - Passed: 36 passed in 9.37s
+- python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py
+  - Passed.
+- git diff --check
+  - Passed.
+
+BOOK_SELF_EVOLUTION_REPORT.md now includes the fourth review round and exact results. No book changes, commit, push, or downstream task-improvement claim was made.
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_031522_523cd2
+
+Session:        20260802_031522_523cd2
+Duration:       46s
+Messages:       150 (5 user, 140 tool calls)

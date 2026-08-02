@@ -1,4 +1,4 @@
-"""Reference and real-model agents for the Experiment 8-6 task stream."""
+"""Reference and real-model agents for the Experiment 8-7 task stream."""
 
 from __future__ import annotations
 

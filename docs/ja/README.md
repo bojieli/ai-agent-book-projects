@@ -56,7 +56,7 @@
 | 5 | 💻 **Coding Agent とコード生成** | コードは「新しいツールを生み出せるツール」。本番グレードの Coding Agent の全体像 | [読む](../../book-ja/chapter5.ja.md) | [12](../../chapter5/README.ja.md) |
 | 6 | 🎯 **Agent の評価** | パフォーマンスを比較可能なシグナルに変える: 評価環境、指標、統計的有意性、評価駆動の選定 | [読む](../../book-ja/chapter6.ja.md) | [10](../../chapter6/README.ja.md) |
 | 7 | 🧠 **モデルのポストトレーニング** | 事前学習/SFT/RL の3段階: いつ SFT を選び、いつ RL を選ぶか、ツール呼び出しの内在化、サンプル効率 | [読む](../../book-ja/chapter7.ja.md) | [14](../../chapter7/README.ja.md) |
-| 8 | 🔄 **Agent の自己進化** | 重みを変えずに成長する: 経験からの学習、ツールの利用者から創造者へ | [読む](../../book-ja/chapter8.ja.md) | [6](../../chapter8/README.ja.md) |
+| 8 | 🔄 **Agent の自己進化** | 重みを変えずに成長する: 経験からの学習、ツールの利用者から創造者へ | [読む](../../book-ja/chapter8.ja.md) | [7](../../chapter8/README.ja.md) |
 | 9 | 🎙️ **マルチモーダルとリアルタイム対話** | テキストから音声、GUI、物理世界へ拡張する: 音声の3パラダイム、Computer Use、ロボティクス | [読む](../../book-ja/chapter9.ja.md) | [7](../../chapter9/README.ja.md) |
 | 10 | 🤝 **マルチ Agent 協調** | 集合知は個を上回る: 協調フレームワーク、コンテキストの共有/隔離、創発する「Agent 社会」 | [読む](../../book-ja/chapter10.ja.md) | [6](../../chapter10/README.ja.md) |
 

@@ -1,0 +1,147 @@
+Query: # Independent acceptance review of the self-update
+
+Act as the terminal reviewer in a proposer-reviewer self-evolution loop. You
+are inspecting a Hermes checkout that started from commit
+`85c8956ec7f2b4607509980794995e1c5e21e292` and now contains an uncommitted
+candidate self-update produced by another Hermes session after reading
+*AI Agents in Depth*.
+
+Review the current diff and `BOOK_SELF_EVOLUTION_REPORT.md`. Inspect the actual
+production paths, persistence boundary, and tests rather than trusting the
+report. The candidate is intended to add an opt-in, model-visible
+`<agent_status>` projection while preserving:
+
+- byte-identical replay of earlier API messages and prompt-cache prefixes;
+- clean transcript content and role alternation;
+- Hermes' string-only persisted `api_content` contract;
+- fail-closed behavior for list/multimodal, empty, mapping, numeric, and other
+  unsupported content;
+- default-off behavior, bounded deterministic output, and existing safety
+  gates.
+
+Run these checks yourself (and any additional focused read-only checks needed):
+
+```bash
+uv run --with pytest pytest tests/agent/test_model_status_context.py -q
+uv run --with pytest pytest tests/agent/test_api_content_sidecar.py
+tests/run_agent/test_background_review_cache_parity.py
+tests/agent/test_turn_context.py -q
+python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py
+agent/agent_init.py run_agent.py
+git diff --check
+```
+
+Do not edit any file. Reject the candidate if you find a concrete correctness,
+cache-stability, production/test-parity, persistence, safety, or material
+report-accuracy defect. Do not reject merely because the deliberately scoped
+candidate does not implement the other three book mechanisms or because no
+downstream ablation campaign has run; those are explicit evidence boundaries.
+
+Give concise evidence for the decision. End with exactly one machine-readable
+line:
+
+`VERDICT: ACCEPT`
+
+or
+
+`VERDICT: REJECT`
+
+If rejecting, list actionable findings above that final line.
+
+Initializing agent...
+  ⚠ tirith security scanner enabled but not available — command scanning will use pattern matching only
+────────────────────────────────────────
+
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting tools**
+
+I see that I need to inspect something and ensure I'm using the right tools. It sounds
+ like a good idea to consider using various functions in parallel, like checking the
+ git status, reviewing differences, generating reports, and maybe searching for information
+. It's all about making sure I gather everything I need effectively! I should pick
+ the most useful tools for this task to be thorough. I'll get right on it!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         git status --short + 2 commands  0.1s
+  ┊ 💻 $         git diff -- agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py tests/agent/test_model_status_context.py tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('BOOK_SELF_EVOLUTION_REPORT.md') print(p.read_text()) PY  0.0s
+  ┊ 💻 $         search_files_placeholder='' + 1 command  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Inspecting configurations and tests**
+
+I need to inspect the actual new file and check the hermes_state difference, along
+ with the configuration and tests. I guess I should run the commands that are required
+. It may be helpful to run the tests in parallel since they could be independent of
+ each other. I’ll also search through the symbols to ensure everything is aligned
+ correctly. Let’s keep moving forward with this!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_model_status_context.py -q  0.8s
+  ┊ 💻 $         uv run --with pytest pytest tests/agent/test_api_content_sidecar.py tests/run_agent/test_background_review_cache_parity.py tests/agent/test_turn_context.py -q  10.4s
+  ┊ 💻 $         python3 -m py_compile agent/model_status_context.py agent/conversation_loop.py agent/agent_init.py run_agent.py + 1 command  0.1s
+  ┊ 💻 $         git diff -- hermes_state.py hermes_cli/config_defaults.py + 1 command  0.0s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Investigating potential issues**
+
+I need to inspect the actual production regarding flush and conversation mapping because
+ there might be a bug. The append helper is using the source index and the API index
+, but it's possible that `api_messages` may skip the ephemeral scaffolding. I really
+ need to understand the construction clearly. I'll read through the relevant lines
+ around 1480 and check the definitions of the helper functions to get the messages
+ sorted out.
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/conversation_loop.py') + 1 command  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/turn_context.py') + 1 command  0.0s
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('run_agent.py') + 1 command  0.0s
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from pathlib import Path p=Path('agent/agent_init.py') + 2 commands  0.1s
+
+┌─ Reasoning ──────────────────────────────────────────────────────────────────┐
+**Evaluating API call functionality**
+
+I’m thinking through the API call structure. It seems like there’s an issue with un
+bounded retries violating bounded output. Plus, the status should ideally be deterministic
+. It includes the api_call_count, but the prior status looks like it’s based on existing
+ data. I might need to replace the current status instead of just appending it. If
+ the base status already includes it, I could end up duplicating. Testing with direct
+ repeated calls could clarify things. Maybe I need to run a focused script to prove
+ this!
+└──────────────────────────────────────────────────────────────────────────────┘
+  ┊ 💻 preparing terminal…
+  ┊ 💻 $         python3 - <<'PY' from agent.model_status_context import append_persistent_model_status m=[{'role':'user','content':'x'}] + 1 command  0.0s
+
+╭─ ⚕ Hermes ───────────────────────────────────────────────────────────────────╮
+The candidate is rejected.
+
+Evidence:
+- The required focused tests passed: 6 passed, 36 passed.
+- Compilation and git diff --check passed.
+- However, append_persistent_model_status() is not idempotent. If the same newest message is used to build another request—such as an API retry, transient provider failure, empty-response retry, or another request rebuild before a new transcript message is appended—it appends a second <agent_status> block to the existing sidecar:
+  - agent/model_status_context.py: updated = base + "\n\n" + status
+  - The helper reads the already status-augmented wire content and never replaces or recognizes its prior status.
+- A direct production-helper check demonstrated this: invoking the helper 20 times on the same message produced 20 status blocks and changed the previously sent message bytes. This violates the stated byte-identical replay/prompt-cache requirement and the report’s claim that earlier wire messages remain stable.
+- The added successive-request test does not cover repeated request construction with the same newest message; it always appends new assistant/tool messages first.
+
+Actionable fix: make status projection idempotent for a message/request, or preserve an unmodified base sidecar and replace only the prior status projection rather than appending to the already projected wire content. Add a regression test that builds multiple requests with unchanged source_messages and asserts identical prior wire bytes and exactly one status block.
+
+VERDICT: REJECT
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Resume this session with:
+  hermes --resume 20260802_034535_59d594
+
+Session:        20260802_034535_59d594
+Duration:       43s
+Messages:       20 (1 user, 18 tool calls)

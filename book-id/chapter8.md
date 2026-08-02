@@ -228,6 +228,14 @@ Gagasan yang sama meluas ke alur kerja dan seluruh Harness. AFlow merepresentasi
 
 Tingkat yang lebih tinggi tidak otomatis menjadi lebih baik. Mencari aturan lokal mungkin hanya memerlukan beberapa *edge cases*, sedangkan mencari seluruh alur kerja atau Harness berhadapan dengan ruang kandidat yang jauh lebih besar, biaya evaluasi yang lebih tinggi, dan atribusi yang lebih sulit. Kesalahan yang jelas dan berulang yang terlokalisasi pada satu komponen pertama-tama harus menerima *patch* lokal yang dapat diaudit. Hanya ketika perubahan lokal berulang kali gagal mengatasi masalah lintas-komponen, atau ketika metode manajemen saat ini itu sendiri menjadi *bottleneck*, barulah layak untuk bergerak ke arah luar menuju alur kerja, Harness, atau *optimizer*. Pada setiap tingkat, evaluator, batas izin (*permission boundaries*), dan tes terpisah (*held-out tests*) harus tetap berada di luar ruang lingkup yang dapat diedit—semakin besar ruang pencarian, semakin penting *trusted root* ini.
 
+> **Eksperimen 8-6 ★★★: Meminta Hermes Membaca Buku Ini dan Menyelesaikan Pembaruan Diri Berbasis Tinjauan**
+>
+> **Tujuan:** Menerapkan loop bab ini pada repositori Agent nyata. Versi Hermes yang dipatok di-clone untuk membaca sepuluh bab bahasa Inggris dan mengaudit empat kekurangan dari pembaca: infrastruktur ablation tingkat produk, Agent Status Bar yang terlihat model, pelupaan dan konsolidasi memori persisten, serta loop umum Proposer–Reviewer dengan bukti eksekusi independen. Karena empat klaim diberikan melalui Prompt, eksperimen mengukur audit, pembuatan kandidat, dan koreksi—bukan penemuan otonom.
+>
+> **Run nyata dan penutupan loop:** Pada 2 Agustus 2026, Hermes di commit `85c8956e` memakai `openai/gpt-5.6-luna` melalui OpenRouter dan mengusulkan `<agent_status>` opsional. Hermes reviewer baru tanpa konteks sesi proposer memeriksa tiap kandidat. Setiap `VERDICT: REJECT` dikembalikan ke sesi Hermes asli, yang memperbarui checkout-nya sendiri sebelum reviewer baru mengulang pemeriksaan. Lima penolakan terminal menemukan cacat cache, tool loop, batas keluaran, persistensi setelah restart, idempotensi retry, dan komposisi sidecar memory/plugin; review baru keenam menghasilkan `VERDICT: ACCEPT`.
+>
+> **Batas hasil:** Versi yang diterima lulus **8 tes perilaku baru dan 36 tes regresi lama**, serta kompilasi, pemeriksaan whitespace, pemindaian kredensial, dan penerapan patch pada clone bersih. Jadi loop “membaca → mengaudit diri → memodifikasi diri → ditolak → memperbaiki dari umpan balik → diterima independen” selesai, bukan hasil setengah jadi. Patch belum digabung upstream dan ablation downstream belum dijalankan, sehingga manfaat status bar terhadap keberhasilan tugas belum terbukti. Runner, sembilan interaksi proposer, enam acceptance review, laporan, patch, dan manifest tanpa kredensial tersedia di [`hermes-self-evolution`](../chapter8/hermes-self-evolution/).
+
 ## Membangun Loop Tertutup Evolusi Berkelanjutan untuk Operasi Jangka Panjang
 
 Keempat metode pembaruan tersebut menjadi evolusi berkelanjutan alih-alih optimasi satu kali hanya ketika dimasukkan ke dalam *autonomous loop* yang sama. Gambar 8-5 menunjukkan arsitektur *dual-loop* yang lebih tangguh untuk sistem produksi: *online execution loop* hanya menyelesaikan tugas dan mencatat bukti, tanpa menulis ulang Agent produksi secara langsung; *offline evolution loop* mengumpulkan trajektori, mendiagnosis akar penyebab, menghasilkan modifikasi kandidat, dan merilis versi baru hanya setelah mereka melewati *validation gates*. Kedua loop ini terhubung melalui repositori pengalaman berversi dan set evaluasi.
@@ -319,7 +327,7 @@ Continual evolution bukan berarti membiarkan knowledge, Prompts, dan tools tumbu
 - Menghapus knowledge yang dibatalkan oleh bukti baru;
 - Melatih ulang LoRA dari base model aslinya.
 
-> **Eksperimen 8-6 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
+> **Eksperimen 8-7 ★★★: Mengevaluasi Apakah Agent Terus Berevolusi**
 >
 > **Tujuan:** Membedakan antara tiga perilaku jangka panjang—menyimpan satu masukan (feedback), hanya menambahkan selamanya (append forever), dan benar-benar memperbarui, mentransfer, serta mempertahankan kapabilitas—sehingga menjalankan tugas yang sama berulang kali tidak disalahartikan sebagai continual learning.
 >

@@ -226,6 +226,14 @@ Aynı düşünce iş akışlarına ve tüm Harness'e genişletilebilir. AFlow, b
 
 Optimizasyon katmanı ne kadar yüksekse o kadar iyi değildir. Yerel bir kuralı aramak için birkaç sınır vakası yeter; oysa eksiksiz bir iş akışını ya da Harness'i aramak çok daha geniş bir aday uzayı, çok daha yüksek bir değerlendirme maliyeti ve çok daha zor bir nedensellik atfı demektir. Açık, yinelenen ve tek bir bileşene kadar götürülebilen bir arıza için önce denetlenebilir yerel bir yama uygulanmalıdır; ancak yerel değişiklikler bileşenler arası bir sorunu uzun süre çözemediğinde ya da mevcut yönetim yönteminin kendisi darboğaza dönüştüğünde iş akışı, Harness ve hatta optimize edici katmanına çıkmaya değer. Hangi katmana çıkılırsa çıkılsın, değerlendiriciler, yetki sınırları ve saklı testler değiştirilebilir alanın dışında kalmak zorundadır — arama uzayı ne kadar büyürse bu güven kökü o kadar önemli olur.
 
+> **Deney 8-6 ★★★: Hermes'in Bu Kitabı Okuyup İnceleme Güdümlü Öz Güncellemeyi Tamamlaması**
+>
+> **Deney Amacı**: Bu bölümdeki döngüyü gerçek bir Agent deposuna uygulamak. Sabitlenmiş Hermes sürümü clone edilerek on İngilizce bölümün tamamını okudu ve okurun verdiği dört eksiği denetledi: ürün düzeyi ablation altyapısı, modelin görebildiği Agent Status Bar, kalıcı bellekte unutma ve bütünleştirme, bağımsız yürütme kanıtlı genel Proposer–Reviewer döngüsü. Dört iddia Prompt ile verildiğinden deney otonom keşfi değil, denetim, aday üretimi ve düzeltmeyi ölçer.
+>
+> **Gerçek çalışma ve döngünün kapanması**: 2 Ağustos 2026'da `85c8956e` commit'indeki Hermes, OpenRouter üzerinden `openai/gpt-5.6-luna` kullanıp isteğe bağlı `<agent_status>` önerdi. Proposer oturum bağlamı olmayan yeni bir Hermes reviewer her adayı inceledi. Her `VERDICT: REJECT` özgün Hermes oturumuna döndü; Hermes kendi checkout'unu değiştirdi ve yeni reviewer yeniden inceledi. Beş terminal ret cache, tool loop, sınır, yeniden başlatma kalıcılığı, retry idempotence ve mevcut memory/plugin sidecar bileşimi kusurlarını buldu; altıncı fresh review `VERDICT: ACCEPT` verdi.
+>
+> **Sonuç sınırı**: Kabul edilen sürüm **8 yeni davranış testi ve 36 mevcut regresyon testini**, ayrıca derleme, whitespace, credential taraması ve temiz clone üzerinde patch uygulama denetimini geçti. Böylece “oku → kendini denetle → kendini değiştir → reddedil → geri bildirimle düzelt → bağımsız kabul” döngüsü tamamlandı; yarım sonuç bırakılmadı. Patch upstream'e birleştirilmedi ve downstream ablation çalıştırılmadı; dolayısıyla status bar'ın görev başarısını artırdığı kanıtlanmış değildir. Runner, dokuz proposer etkileşimi, altı acceptance review, rapor, patch ve credentialsız manifest [`hermes-self-evolution`](../chapter8/hermes-self-evolution/) altındadır.
+
 ## Uzun Süre Çalışabilen Sürekli Evrim Döngüsünü Kurmak
 
 Dört güncelleme biçimi ancak aynı otonom döngüye girdiğinde tek seferlik bir optimizasyon olmaktan çıkıp sürekli evrime dönüşür. Şekil 8-5, üretim sistemlerinde daha sağlam olan çift döngülü yapıyı gösteriyor: çevrimiçi yürütme döngüsü yalnızca görevi tamamlar ve kanıtı kaydeder, resmî Agent'ı doğrudan değiştirmez; çevrimdışı evrim döngüsü ise trajectory'leri bir araya toplar, kök nedene tanı koyar, aday değişiklikleri üretir ve ancak doğrulama eşiklerini geçtikten sonra yeni sürümü yayımlar. İki döngü, sürümlenmiş deneyim deposu ve değerlendirme kümeleri aracılığıyla birbirine bağlanır.
@@ -319,7 +327,7 @@ Sürekli evrim, bilginin, Prompt'un ve araçların sınırsızca büyümesi deme
 - Yeni kanıtlarla çürütülen bilgileri silmek;
 - LoRA'yı özgün temel modelden yeniden eğitmek.
 
-> **Deney 8-6 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
+> **Deney 8-7 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
 >
 > **Deney Amacı**: "Tek bir geri bildirimi saklayabilme", "yalnızca durmadan ekleme yapma" ve "güncelleyebilme, aktarabilme ve yeteneği koruyabilme" biçimindeki üç uzun vadeli davranışı birbirinden ayırmak ve aynı soru kümesini tekrar tekrar çalıştırmayı sürekli öğrenme diye göstermeyi önlemek.
 >

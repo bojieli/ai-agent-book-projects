@@ -13,7 +13,8 @@
 | 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 8-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
 | 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 8-4: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |
 | 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 8-5: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
-| 8-6 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-6: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
+| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Khép vòng tự cập nhật Hermes qua năm lần reviewer mới từ chối và lần chấp nhận cuối; 44 kiểm thử trọng tâm đạt, chưa đánh giá lợi ích hạ nguồn |
+| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-7: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
 
 Tất cả thí nghiệm trên đều có lối chạy offline và unit test không cần API Key; các hướng mở rộng cần model thật hoặc trình duyệt được ghi trong README của từng dự án.
 

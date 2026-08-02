@@ -54,7 +54,7 @@ Sumber naskah Bahasa Indonesia berada di [`book-id/`](../../book-id/). Edisi ini
 | 5 | 💻 **Coding Agent dan Pembuatan Kode** | Kode sebagai alat yang dapat membuat alat baru; implementasi Coding Agent tingkat produksi | [Baca](../../book-id/chapter5.md) | [12](../../chapter5/README.id.md) |
 | 6 | 🎯 **Evaluasi Agent** | Lingkungan evaluasi, metrik, signifikansi statistik, dan pemilihan berbasis evaluasi | [Baca](../../book-id/chapter6.md) | [17](../../chapter6/README.id.md) |
 | 7 | 🧠 **Pascapelatihan Model** | Prapelatihan, SFT, RL, internalisasi pemanggilan alat, dan efisiensi sampel | [Baca](../../book-id/chapter7.md) | [18](../../chapter7/README.id.md) |
-| 8 | 🔄 **Evolusi Berkelanjutan Agent** | Belajar dari jejak eksekusi dan memperbarui pengetahuan, instruksi, program, serta parameter | [Baca](../../book-id/chapter8.md) | [6](../../chapter8/README.id.md) |
+| 8 | 🔄 **Evolusi Berkelanjutan Agent** | Belajar dari jejak eksekusi dan memperbarui pengetahuan, instruksi, program, serta parameter | [Baca](../../book-id/chapter8.md) | [7](../../chapter8/README.id.md) |
 | 9 | 🎙️ **Interaksi Multimodal dan Waktu Nyata** | Suara, GUI, Computer Use, dan robotika | [Baca](../../book-id/chapter9.md) | [10](../../chapter9/README.id.md) |
 | 10 | 🤝 **Kolaborasi Multi-Agent** | Kerangka kolaborasi, berbagi/isolasi konteks, dan kemunculan “masyarakat Agent” | [Baca](../../book-id/chapter10.md) | [8](../../chapter10/README.id.md) |
 
