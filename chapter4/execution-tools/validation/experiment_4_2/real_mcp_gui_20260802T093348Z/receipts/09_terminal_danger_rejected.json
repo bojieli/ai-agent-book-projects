@@ -1,0 +1,15 @@
+{
+  "case": "terminal_danger_rejected",
+  "tool": "virtual_terminal",
+  "arguments": {
+    "command": "rm -rf ./should-never-execute",
+    "timeout": 10
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Command execution not approved: The command 'rm -rf' is a destructive operation that can lead to irreversible data loss. Executing this command without strict safeguards poses significant security and data integrity risks."
+  },
+  "latency_seconds": 1.995
+}

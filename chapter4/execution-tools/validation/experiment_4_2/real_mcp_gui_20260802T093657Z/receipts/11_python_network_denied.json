@@ -1,0 +1,36 @@
+{
+  "case": "python_network_denied",
+  "tool": "code_interpreter",
+  "arguments": {
+    "language": "python",
+    "timeout": 30,
+    "code": "import urllib.request\ntry:\n print(urllib.request.urlopen('https://example.com', timeout=3).status)\nexcept Exception as e:\n print(type(e).__name__, str(e))\n"
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": true,
+    "status": "success",
+    "language": "python",
+    "stdout": "URLError <urlopen error [Errno -3] Temporary failure in name resolution>\n",
+    "stderr": "",
+    "stdout_file": null,
+    "stderr_file": null,
+    "returncode": 0,
+    "error": null,
+    "compile_output": null,
+    "phase": null,
+    "execution_time": 0.3425600528717041,
+    "sandbox": {
+      "kind": "docker",
+      "image": "python:3.11-slim",
+      "network": "none",
+      "rootfs": "read-only",
+      "memory": "256m",
+      "cpus": 1,
+      "pids_limit": 64
+    },
+    "verification": "passed"
+  },
+  "latency_seconds": 1.979
+}
