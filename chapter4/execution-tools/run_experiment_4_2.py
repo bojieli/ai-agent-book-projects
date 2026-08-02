@@ -68,14 +68,20 @@ async def run(
     write_json(run_dir / "protocol.json", json.loads(PROTOCOL.read_text(encoding="utf-8")))
 
     env = os.environ.copy()
+    if env.get("KIMI_API_KEY") or env.get("MOONSHOT_API_KEY"):
+        review_provider = "kimi"
+        review_model = "kimi-k3"
+    else:
+        review_provider = "openrouter"
+        review_model = "openai/gpt-4.1-mini"
     env.update({
         "WORKSPACE_DIR": str(workspace),
         "REQUIRE_APPROVAL_FOR_DANGEROUS_OPS": "true",
         "AUTO_VERIFY_CODE": "true",
         "AUTO_SUMMARIZE_COMPLEX_OUTPUT": "false",
         "EXECUTION_LLM_RECEIPT_PATH": str(run_dir / "llm_receipts.checkpoint.json"),
-        "PROVIDER": "kimi",
-        "MODEL": "kimi-k3",
+        "PROVIDER": review_provider,
+        "MODEL": review_model,
         "ANDROID_WORLD_CONTAINER": android_container,
     })
     parameters = StdioServerParameters(command=sys.executable, args=[str(SERVER)], env=env)
