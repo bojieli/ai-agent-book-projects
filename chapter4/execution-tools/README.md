@@ -208,6 +208,36 @@ The server implements a layered architecture:
 3. **Verification Layer**: Validates outputs and provides feedback
 4. **Integration Layer**: Connects to external services
 
+### Real desktop and Android environments
+
+The exact Experiment 4-2 runner includes two action probes instead of treating
+installed packages as execution evidence:
+
+- `virtual_desktop_execute` starts a bounded Xvfb display and headful Chromium,
+  enters an HTTPS URL through `xdotool` keyboard events, verifies the resulting
+  window title, and hashes a real framebuffer screenshot captured by FFmpeg.
+- `virtual_mobile_execute` connects to a running AndroidWorld Docker emulator,
+  opens Android Wi-Fi Settings through ADB, verifies the focused activity,
+  captures and hashes its pixels, then returns to the launcher with a real
+  input event.
+
+The AndroidWorld image is external and is not vendored. With a populated image
+available locally, start an API-33 emulator with KVM and run the campaign:
+
+```bash
+docker run -d --name exp4-2-android --privileged --device /dev/kvm \
+  -p 127.0.0.1:5000:5000 android_world_patched:populated3
+
+python run_experiment_4_2.py \
+  --android-container exp4-2-android \
+  --github-head-branch <pushed-experiment-branch> \
+  --github-base-branch <base-branch>
+```
+
+The host desktop path requires `Xvfb`, `xdotool`, FFmpeg, and Chromium. External
+Calendar, GitHub, and email mutations remain credential-gated and are reported
+as blocked if their real providers are unavailable.
+
 ### Examples
 
 See `examples.py` for comprehensive usage examples.
