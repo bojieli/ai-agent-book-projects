@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -41,7 +39,12 @@ jobs:
           path: site
 
   deploy:
+    # Publishing is owned by the canonical repository; forks still verify builds.
+    if: github.repository == 'bojieli/ai-agent-book'
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
