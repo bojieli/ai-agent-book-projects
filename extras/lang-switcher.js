@@ -48,6 +48,18 @@
           if (cfg[codes[r]].readmeSuffix === readmeMatch[1]) return codes[r];
         }
       }
+      // Translated homepages (/index.<code>/) carry their locale in the slug.
+      var homeMatch = p.match(/(?:^|\/)index\.([a-zA-Z-]+)$/);
+      if (homeMatch && cfg[homeMatch[1]]) return homeMatch[1];
+      // The site root always serves the default-language homepage (translated
+      // homepages are matched above), so don't let a remembered locale make
+      // the Chinese homepage look pre-translated.
+      if (p === "" || p === "index.html" || p === "/index.html") {
+        for (var h in cfg) {
+          if (cfg.hasOwnProperty(h) && cfg[h].default) return h;
+        }
+        return "zh";
+      }
       // No language prefix matched. This happens on /chapterN/ experiment
       // index pages (experiments are language-agnostic, single copy).
       // Fall back to whatever the user last selected — stored in
@@ -71,7 +83,9 @@
     // the same site base, or null if no translation applies.
     //
     // URL shapes we have to handle:
-    //   /                          → site home (per-language intro)
+    //   /                          → site home, default language
+    //   /index.<code>/             → site home, translated (when the root
+    //                                 file index.<code>.md exists)
     //   /book[-lang]/chapterN[.suffix]/  → chapter prose
     //   /chapterN/                 → experiment index, Chinese (README.md)
     //   /chapterN/README.<readmeSuffix>/ → experiment index, translated
@@ -82,12 +96,25 @@
       var src = cfg[fromCode];
       var dst = cfg[toCode];
 
-      // Site home → target language's introduction.
+      // Site home. Editions with a translated homepage (root index.<code>.md,
+      // listed by scripts/site_i18n.py in the generated catalog) map
+      // home → home; the rest keep the original fallback to their
+      // introduction page, which every edition has.
+      var homePages = i18n.homePages || [];
       if (cleanPath === "/" || cleanPath === "/index.html") {
+        if (homePages.indexOf(toCode) !== -1) return "/index." + toCode + "/";
         return "/" + dst.prefix + "introduction" + (dst.suffix || "") + "/";
       }
 
       var pp = cleanPath.replace(/^\//, "").replace(/\/$/, "");
+
+      // Translated homepage: /index.<code>/
+      var homeMatch = pp.match(/^index\.([a-zA-Z-]+)$/);
+      if (homeMatch) {
+        if (dst.default) return "/";
+        if (homePages.indexOf(toCode) !== -1) return "/index." + toCode + "/";
+        return "/" + dst.prefix + "introduction" + (dst.suffix || "") + "/";
+      }
 
       // Chapter prose: <srcPrefix>chapterN[<srcSuffix>]
       // E.g. /book/chapter1/  or  /book-zhtw/chapter1.zhtw/
