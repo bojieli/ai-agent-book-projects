@@ -48,3 +48,7 @@ task_result*.json
 ablation_results*.json
 ablation_study_report.md
 ablation_study_results.png
+
+# External benchmark checkout used by Experiment 6-1; retained evidence lives
+# in chapter6/tau2-bench-eval instead.
+/chapter6/tau2-bench/

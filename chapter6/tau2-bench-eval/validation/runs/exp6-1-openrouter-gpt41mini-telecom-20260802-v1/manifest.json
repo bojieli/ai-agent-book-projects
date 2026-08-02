@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment": "6-1",
+  "status": "complete_bounded_campaign",
+  "generated_at_utc": "2026-08-02T09:15:41.750622Z",
+  "run_directory": "chapter6/tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1",
+  "source_repository": "https://github.com/sierra-research/tau2-bench",
+  "source_git_commit": "8d005b0e5b9e4af0bc055886fa7f95fc86d1710e",
+  "artifacts": [
+    {
+      "path": "chapter6/tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/trajectories.json",
+      "bytes": 386784,
+      "sha256": "22e217ca849848e4d50c3ff257bea5ce691f226066fb0af3ca3c43bdae27631b",
+      "description": "Raw upstream tau2-bench task definitions, messages, tool calls, costs, and reward records for all five simulations."
+    },
+    {
+      "path": "chapter6/tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/evidence.json",
+      "bytes": 3702,
+      "sha256": "4a79db9c6f73ba8c9b7c55a8e1b43b55e7a798c6c631938af39260461250aef9",
+      "description": "Machine-readable campaign summary, task outcomes, failure analysis, and verification boundary."
+    }
+  ],
+  "credential_scan": {
+    "openrouter_api_key_matches": 0,
+    "scope": "retained run directory",
+    "note": "The configured credential value was searched without printing it."
+  },
+  "acceptance_boundary": "Complete for the manuscript's bounded five-task Experiment 6-1 campaign; not a full-domain tau2-bench leaderboard submission."
+}
