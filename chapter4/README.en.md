@@ -16,6 +16,12 @@
 | 4-6 | [active-tool-discovery](active-tool-discovery/) | ✅ | Compares two paradigms: "injecting all 120+ tool schemas" vs. "active on-demand discovery." The latter keeps only a few basic tools and a `discover_tools` meta-tool in the system prompt, using embedding similarity to retrieve the 3-5 most relevant specialized tools from a tool library. This saves tokens and prevents the model from incorrectly selecting or misusing general tools from an overly long list. |
 | — | [active-tool-selection](active-tool-selection/) | ✅ | Implement an intelligent tool selection mechanism that allows the Agent to actively choose the most suitable combination of tools based on task requirements, rather than passively accepting a predefined tool set. |
 
+Runnable-project status is separate from manuscript acceptance. Experiments
+4-1 through 4-4 have substantial real execution coverage but remain officially
+incomplete because authorized private-data, external-mutation, human-decision,
+notification, Android/Computer Use, or real-mailbox gates are still blocked.
+See the [experiment ledger](EXPERIMENT_LEDGER.md) for the exact boundary.
+
 > Additionally, `chapter4/docker-compose.yml` and `chapter4/DOCKER_DEPLOYMENT.md` provide a reference solution for containerizing and deploying the aforementioned MCP tool servers.
 ## Project Types
 
