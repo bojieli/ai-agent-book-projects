@@ -254,6 +254,25 @@ class ExternalTools:
                     "success": False,
                     "error": f"Branch verification failed: {str(e)}"
                 }
+
+            # Query before mutation so a retry cannot create a duplicate PR.
+            # This implements the idempotency rule described immediately before
+            # Experiment 4-2 in the manuscript.
+            owner = repo_name.split("/", 1)[0]
+            existing = repo.get_pulls(
+                state="open", head=f"{owner}:{head_branch}", base=base_branch
+            )
+            for pr in existing:
+                if pr.head.ref == head_branch and pr.base.ref == base_branch:
+                    return {
+                        "success": True,
+                        "pr_number": pr.number,
+                        "pr_url": pr.html_url,
+                        "title": pr.title,
+                        "state": pr.state,
+                        "created_at": pr.created_at.isoformat(),
+                        "idempotent_reuse": True,
+                    }
             
             # Create pull request
             pr = repo.create_pull(
@@ -269,7 +288,8 @@ class ExternalTools:
                 "pr_url": pr.html_url,
                 "title": title,
                 "state": pr.state,
-                "created_at": pr.created_at.isoformat()
+                "created_at": pr.created_at.isoformat(),
+                "idempotent_reuse": False,
             }
             
         except GithubException as e:

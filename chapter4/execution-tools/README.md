@@ -234,9 +234,12 @@ python run_experiment_4_2.py \
   --github-base-branch <base-branch>
 ```
 
-The host desktop path requires `Xvfb`, `xdotool`, FFmpeg, and Chromium. External
-Calendar, GitHub, and email mutations remain credential-gated and are reported
-as blocked if their real providers are unavailable.
+The host desktop path requires `Xvfb`, `xdotool`, FFmpeg, and Chromium; the
+spreadsheet screenshot gate additionally requires LibreOffice Calc. GitHub PR
+creation queries for an existing head/base PR before mutation, so a campaign
+retry verifies and reuses the first PR instead of creating a duplicate.
+External Calendar, GitHub, and email mutations remain credential-gated and are
+reported as blocked if their real providers are unavailable.
 
 ### Examples
 
