@@ -1,0 +1,15 @@
+{
+  "case": "terminal_timeout",
+  "tool": "virtual_terminal",
+  "arguments": {
+    "command": "sleep 2",
+    "timeout": 1
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Command timed out after 1 seconds"
+  },
+  "latency_seconds": 1.003
+}

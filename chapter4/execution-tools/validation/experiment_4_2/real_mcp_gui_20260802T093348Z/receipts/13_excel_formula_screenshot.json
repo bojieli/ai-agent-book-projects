@@ -1,0 +1,26 @@
+{
+  "case": "excel_formula_screenshot",
+  "tool": "excel_create_with_formula_and_screenshot",
+  "arguments": {
+    "output_path": "invoice.xlsx",
+    "rows": [
+      {
+        "item": "Compute",
+        "quantity": 2,
+        "unit_price": 12.5
+      },
+      {
+        "item": "Storage",
+        "quantity": 3,
+        "unit_price": 7.0
+      }
+    ]
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "LibreOffice is required for formula rendering"
+  },
+  "latency_seconds": 0.208
+}

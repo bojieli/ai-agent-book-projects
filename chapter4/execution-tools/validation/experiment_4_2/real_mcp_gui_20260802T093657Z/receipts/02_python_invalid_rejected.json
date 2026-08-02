@@ -1,0 +1,17 @@
+{
+  "case": "python_invalid_rejected",
+  "tool": "file_write",
+  "arguments": {
+    "path": "invalid.py",
+    "content": "def broken(:\n    pass\n",
+    "overwrite": true
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Syntax validation failed: Syntax error at line 1: invalid syntax",
+    "verification": "failed"
+  },
+  "latency_seconds": 0.002
+}
