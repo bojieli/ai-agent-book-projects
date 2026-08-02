@@ -52,7 +52,12 @@ def unwrap(result: Any) -> Any:
     return texts
 
 
-async def run(campaign_id: str) -> Path:
+async def run(
+    campaign_id: str,
+    android_container: str,
+    github_head_branch: str,
+    github_base_branch: str,
+) -> Path:
     run_dir = VALIDATION / campaign_id
     run_dir.mkdir(parents=True, exist_ok=False)
     workspace = run_dir / "workspace"
@@ -63,14 +68,21 @@ async def run(campaign_id: str) -> Path:
     write_json(run_dir / "protocol.json", json.loads(PROTOCOL.read_text(encoding="utf-8")))
 
     env = os.environ.copy()
+    if env.get("KIMI_API_KEY") or env.get("MOONSHOT_API_KEY"):
+        review_provider = "kimi"
+        review_model = "kimi-k3"
+    else:
+        review_provider = "openrouter"
+        review_model = "openai/gpt-4.1-mini"
     env.update({
         "WORKSPACE_DIR": str(workspace),
         "REQUIRE_APPROVAL_FOR_DANGEROUS_OPS": "true",
         "AUTO_VERIFY_CODE": "true",
         "AUTO_SUMMARIZE_COMPLEX_OUTPUT": "false",
         "EXECUTION_LLM_RECEIPT_PATH": str(run_dir / "llm_receipts.checkpoint.json"),
-        "PROVIDER": "kimi",
-        "MODEL": "kimi-k3",
+        "PROVIDER": review_provider,
+        "MODEL": review_model,
+        "ANDROID_WORLD_CONTAINER": android_container,
     })
     parameters = StdioServerParameters(command=sys.executable, args=[str(SERVER)], env=env)
     receipts: list[dict[str, Any]] = []
@@ -142,8 +154,15 @@ async def run(campaign_id: str) -> Path:
                 "summary": "Experiment 4-2", "start_time": "2026-08-01T10:00:00+00:00",
                 "end_time": "2026-08-01T10:30:00+00:00"})
             await call("github_pr_preflight", "github_create_pr", {
-                "repo_name": "bojieli/ai-agent-book", "title": "Experiment 4-2 preflight",
-                "body": "Credential-gated preflight", "head_branch": "nonexistent-exp4-2"})
+                "repo_name": "bojieli/ai-agent-book",
+                "title": "feat(ch4): build Experiment 4-2 GUI environments",
+                "body": "Experiment 4-2 evidence: real Android and X11 Computer Use execution.",
+                "head_branch": github_head_branch, "base_branch": github_base_branch})
+            await call("real_virtual_desktop", "virtual_desktop_execute", {
+                "url": "https://example.com", "screenshot_path": "computer-use-example.png",
+                "expected_title": "Example Domain"})
+            await call("real_virtual_mobile", "virtual_mobile_execute", {
+                "container_name": android_container, "screenshot_path": "android-wifi-settings.png"})
             await call("desktop_mobile_capabilities", "environment_capabilities", {})
 
     by_case = {row["case"]: row["payload"] for row in receipts}
@@ -166,7 +185,7 @@ async def run(campaign_id: str) -> Path:
         long_evidence = None
     caps = by_case.get("desktop_mobile_capabilities", {})
     gates = {
-        "real_mcp_catalog_and_calls": len(schemas) >= 10 and len(receipts) == 18,
+        "real_mcp_catalog_and_calls": len(schemas) >= 12 and len(receipts) == 20,
         "python_and_javascript_linter": (
             by_case["python_valid_write"].get("verification") == "passed"
             and by_case["javascript_valid_write"].get("verification") == "passed"
@@ -196,8 +215,15 @@ async def run(campaign_id: str) -> Path:
         "real_calendar_mutation": by_case["calendar_preflight"].get("success") is True,
         "real_github_pr_mutation": by_case["github_pr_preflight"].get("success") is True,
         "real_email_mutation": False,
-        "real_virtual_desktop_session": caps.get("computer_use_active_session") is True,
-        "real_virtual_mobile_session": bool(caps.get("android_active_devices")),
+        "real_virtual_desktop_session": bool(
+            by_case["real_virtual_desktop"].get("success") is True
+            and by_case["real_virtual_desktop"].get("expected_title_matched") is True
+            and by_case["real_virtual_desktop"].get("screenshot", {}).get("sha256")),
+        "real_virtual_mobile_session": bool(
+            by_case["real_virtual_mobile"].get("success") is True
+            and by_case["real_virtual_mobile"].get("settings_activity")
+            and by_case["real_virtual_mobile"].get("screenshot", {}).get("sha256")
+            and caps.get("android_active_devices")),
         "credential_free_usage_latency_receipts": bool(llm_receipts) and all(
             row.get("response", {}).get("id") and row.get("usage", {}).get("total_tokens") is not None
             and row.get("latency_seconds") is not None for row in llm_receipts),
@@ -235,8 +261,14 @@ async def run(campaign_id: str) -> Path:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--campaign-id", default=datetime.now(timezone.utc).strftime("real_mcp_%Y%m%dT%H%M%SZ"))
+    parser.add_argument("--android-container", default=os.getenv("ANDROID_WORLD_CONTAINER", "exp4-2-android"))
+    parser.add_argument("--github-head-branch", default="nonexistent-exp4-2")
+    parser.add_argument("--github-base-branch", default="main")
     args = parser.parse_args()
-    path = asyncio.run(run(args.campaign_id))
+    path = asyncio.run(run(
+        args.campaign_id, args.android_container,
+        args.github_head_branch, args.github_base_branch,
+    ))
     print(path)
     status = json.loads((path / "summary.json").read_text(encoding="utf-8"))["status"]
     return 0 if status in {"passed", "blocked"} else 1

@@ -9,7 +9,7 @@
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
 | 4-1 | [perception-tools](perception-tools/) | ✅ | 感知工具 MCP：网络搜索、多模态理解、文件系统、公共数据源（DuckDuckGo/Open-Meteo/Yahoo/OpenStreetMap），大多无需 API Key |
-| 4-2 | [execution-tools](execution-tools/) | ✅ | 执行工具 MCP：文件操作、代码解释器、虚拟终端、外部系统集成，LLM 二次审批防误操作 |
+| 4-2 | [execution-tools](execution-tools/) | ✅ | 执行工具 MCP：20 次正式调用已通过 13/15 门禁，含 GitHub PR、Xvfb 桌面 Computer Use 与 KVM Android 实机操作；仅真实日历/邮件授权仍阻塞 |
 | 4-3 | [collaboration-tools](collaboration-tools/) | ✅ | 协作工具 MCP：浏览器自动化、HITL、Email/Telegram/Slack/Discord 通知、定时器，支持管理员审批 |
 | 4-4 | [agent-with-event-trigger](agent-with-event-trigger/) | ✅ | FastAPI 事件驱动 Agent，原生异步集成前三组 MCP 工具，通过 HTTP API 接收 Web/IM/GitHub/定时器事件 |
 | 4-5 | [async-agent](async-agent/) | ✅ | asyncio 单线程事件驱动框架 Flux：事件队列按紧急度分派、异步工具并行、运行中打断、长任务取消与状态查询 |

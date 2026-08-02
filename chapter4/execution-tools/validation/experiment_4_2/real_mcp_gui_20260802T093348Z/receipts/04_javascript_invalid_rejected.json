@@ -1,0 +1,17 @@
+{
+  "case": "javascript_invalid_rejected",
+  "tool": "file_write",
+  "arguments": {
+    "path": "invalid.js",
+    "content": "const broken = ;\n",
+    "overwrite": true
+  },
+  "transport": "mcp-stdio",
+  "mcp_result_is_error": false,
+  "payload": {
+    "success": false,
+    "error": "Syntax validation failed: [stdin]:1\nconst broken = ;\n               ^\n\nSyntaxError: Unexpected token ';'\n    at wrapSafe (node:internal/modules/cjs/loader:1469:18)\n    at checkSyntax (node:internal/main/check_syntax:78:3)\n    at node:internal/main/check_syntax:45:5\n    at Socket.<anonymous> (node:internal/process/execution:237:5)\n    at Socket.emit (node:events:530:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n\nNode.js v22.11.0",
+    "verification": "failed"
+  },
+  "latency_seconds": 0.018
+}
