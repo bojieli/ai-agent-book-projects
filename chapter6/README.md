@@ -10,7 +10,7 @@
 
 | 编号 | 项目 | 类型 | 一句话说明 |
 | :--: | --- | :--: | --- |
-| 6-1 | `tau2-bench/` | 📖 | 运行 τ²-bench 的双控多轮评估，并与 τ-bench 的任务定义、成功条件和用户模拟器设计对照 |
+| 6-1 | [tau2-bench-eval](tau2-bench-eval/) | ✅ | 已在固定上游提交上完成 5 个 telecom 双控任务：4/5 通过；保存原始轨迹、成本、内容哈希及错选线路导致漏做流量加油的失败分析 |
 | 6-2 | `tau2-bench/` | 📖 | 人工完成 τ²-bench 的分级任务并记录轨迹；它只是 6-2 要抽样的六类基准之一 |
 | 6-2 | `terminal-bench/` | 📖 | 测试 Agent 在真实终端环境的端到端能力（编译/训练/部署），约 100 任务 + 执行框架 |
 | 6-2 | `SWE-bench/` | 📖 | 评估 LLM 解决真实 GitHub 问题的能力，含 SWE-bench/Lite/Verified/Multimodal 多个版本 |
@@ -33,7 +33,7 @@
 
 ## 实验 6-1 / 6-2 外部复现锚点
 
-以下映射以[正文](../book/chapter6.md)为准。SHA 来自 2026-07-30 当前工作区中对应 checkout 的 `origin` 与 `HEAD`；这里只核验来源、路径和入口，**没有运行这些外部实验，也不代表实验完成**。
+以下映射以[正文](../book/chapter6.md)为准。SHA 来自对应 checkout 的 `origin` 与 `HEAD`。其中 6-1 已保留五任务正式运行的[验收证据](tau2-bench-eval/validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)；其余行仍只核验来源、路径和入口，不代表相应实验完成。
 
 | 实验 | 上游与本地路径 | 固定提交 | 正文对应入口 |
 | :--: | --- | --- | --- |
