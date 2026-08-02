@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 from typing import Any
 
+from candidate_sandbox import sandbox_image
 from evolution import (
     behavior_metrics,
     diagnose,
@@ -51,13 +52,18 @@ def main() -> int:
 
     stable_path = ROOT / "stable" / "retry_policy.py"
     trajectories_path = ROOT / "failure_trajectories.json"
-    validator_path = ROOT / "evolution.py"
+    trusted_paths = {
+        "evolution.py": ROOT / "evolution.py",
+        "candidate_sandbox.py": ROOT / "candidate_sandbox.py",
+        "sandbox_runner.py": ROOT / "sandbox_runner.py",
+        "Dockerfile.sandbox": ROOT / "Dockerfile.sandbox",
+    }
     stable_source = stable_path.read_text(encoding="utf-8")
     trajectories = json.loads(trajectories_path.read_text(encoding="utf-8"))
     immutable_before = {
         "stable/retry_policy.py": _sha_file(stable_path),
         "failure_trajectories.json": _sha_file(trajectories_path),
-        "evolution.py": _sha_file(validator_path),
+        **{name: _sha_file(path) for name, path in trusted_paths.items()},
     }
     diagnosis = diagnose(trajectories)
 
@@ -86,7 +92,7 @@ def main() -> int:
     immutable_after_generation = {
         "stable/retry_policy.py": _sha_file(stable_path),
         "failure_trajectories.json": _sha_file(trajectories_path),
-        "evolution.py": _sha_file(validator_path),
+        **{name: _sha_file(path) for name, path in trusted_paths.items()},
     }
     protected_unchanged = immutable_before == immutable_after_generation
     candidates = {
@@ -174,6 +180,21 @@ def main() -> int:
             "trajectory_sha256": immutable_before["failure_trajectories.json"],
             "validator_sha256_before_generation": immutable_before["evolution.py"],
             "validator_sha256_after_generation": immutable_after_generation["evolution.py"],
+            "trusted_surface_sha256_before": {
+                name: immutable_before[name] for name in trusted_paths
+            },
+            "trusted_surface_sha256_after": {
+                name: immutable_after_generation[name] for name in trusted_paths
+            },
+        },
+        "candidate_sandbox": {
+            "image": sandbox_image(),
+            "network": "none",
+            "root_filesystem": "read_only",
+            "user": "65534:65534",
+            "memory": "64m",
+            "cpus": 0.5,
+            "wall_clock_timeout_seconds": 8.0,
         },
         "diagnosis": diagnosis,
         "rejected_history_given_to_coding_agent": rejected_history,

@@ -6,9 +6,10 @@ import ast
 from collections import defaultdict
 import difflib
 import hashlib
-import inspect
 from pathlib import Path
 from typing import Any, Dict, Iterable
+
+from candidate_sandbox import MAX_SOURCE_BYTES, SandboxError, run_in_sandbox
 
 
 OLD_CODES = 'NON_RETRYABLE_CODES = {"AUTH_DENIED", "INVALID_ARGUMENT"}'
@@ -38,8 +39,9 @@ NEW_BREAKER = '''def should_open_circuit(consecutive_failures, *, error_code="",
 
 CHECK_NAMES = (
     "static_compile",
-    "public_api_compatible",
     "security_scan",
+    "sandbox_execution",
+    "public_api_compatible",
     "failure_replay",
     "nonretryable_circuit",
     "temporary_recovery",
@@ -187,13 +189,8 @@ def generate_rejected_control(stable_source: str, diagnosis: Dict[str, Any]) -> 
     )
 
 
-def _namespace(source: str) -> Dict[str, Any]:
-    namespace: Dict[str, Any] = {}
-    exec(compile(source, "candidate/retry_policy.py", "exec"), namespace)
-    return namespace
-
-
 def _safe_ast(source: str) -> bool:
+    """Apply a fast defense-in-depth filter before sandboxed execution."""
     tree = ast.parse(source)
     forbidden_calls = {"eval", "exec", "compile", "open", "__import__"}
     return not any(
@@ -203,114 +200,69 @@ def _safe_ast(source: str) -> bool:
     )
 
 
-def _temporary_recovery(namespace: Dict[str, Any]) -> bool:
-    # Two timeouts followed by success: both retry decisions must remain open.
-    return namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 0) and namespace["should_retry"](
-        "TEMPORARY_TIMEOUT", True, 1
-    )
-
-
 def validate_candidate(
     candidate_source: str,
     trajectories: Iterable[Dict[str, Any]],
     stable_source: str | None = None,
 ) -> Dict[str, bool]:
-    """Run trusted gates outside the candidate's writable surface."""
+    """Run release gates with candidate execution confined to Docker."""
     checks = {name: False for name in CHECK_NAMES}
     try:
-        # Scan the candidate BEFORE executing it: this validator runs untrusted,
-        # model-generated code, so a source that fails the security scan must
-        # never have its module-level side effects executed. static_compile uses
-        # a non-executing compile() so it is still recorded for a rejected source.
+        oversized = len(candidate_source.encode("utf-8")) > MAX_SOURCE_BYTES
+    except UnicodeError:
+        return checks
+    if oversized:
+        return checks
+    try:
+        # Compilation and the AST scan do not execute the source. The scan is a
+        # fast prefilter; the container, not this deny-list, is the security boundary.
         compile(candidate_source, "candidate/retry_policy.py", "exec")
         checks["static_compile"] = True
         checks["security_scan"] = _safe_ast(candidate_source)
         if not checks["security_scan"]:
             return checks
-        namespace = _namespace(candidate_source)
     except Exception:
         return checks
 
-    # A syntactically valid but degenerate candidate (e.g. an empty LLM "source")
-    # compiles yet may define neither public function; reject cleanly here so the
-    # behavior gates below cannot KeyError on a missing name.
-    if not callable(namespace.get("should_retry")) or not callable(
-        namespace.get("should_open_circuit")
-    ):
-        return checks
-
-    expected_retry = "(error_code, retryable, attempt)"
-    expected_breaker = "(consecutive_failures, *, error_code='', retryable=True)"
     try:
-        checks["public_api_compatible"] = (
-            str(inspect.signature(namespace.get("should_retry"))) == expected_retry
-            and str(inspect.signature(namespace.get("should_open_circuit"))) == expected_breaker
+        result = run_in_sandbox(
+            "validate",
+            candidate_source,
+            trajectories,
+            stable_source=stable_source,
         )
-    except (TypeError, ValueError):
-        checks["public_api_compatible"] = False
-    if not checks["public_api_compatible"]:
+    except SandboxError:
         return checks
-    try:
-        failures = [item for item in trajectories if item.get("outcome") == "failure"]
-        checks["failure_replay"] = bool(failures) and all(
-            not namespace["should_retry"](item["error_code"], item["retryable"], attempt)
-            for item in failures for attempt in range(item["attempts"])
-        )
-        checks["nonretryable_circuit"] = bool(failures) and all(
-            namespace["should_open_circuit"](1, error_code=item["error_code"], retryable=item["retryable"])
-            for item in failures
-        )
-        checks["temporary_recovery"] = _temporary_recovery(namespace)
-        checks["old_task_regression"] = all((
-            namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 0),
-            namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 2),
-            not namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 3),
-            not namespace["should_open_circuit"](4, error_code="TEMPORARY_TIMEOUT", retryable=True),
-            namespace["should_open_circuit"](5, error_code="TEMPORARY_TIMEOUT", retryable=True),
-        ))
-        # Canary covers an unseen permanent code plus the original temporary path.
-        checks["canary_ready"] = all((
-            not namespace["should_retry"]("AUTH_DENIED", True, 0),
-            namespace["should_open_circuit"](1, error_code="AUTH_DENIED", retryable=True),
-            _temporary_recovery(namespace),
-        ))
-    except Exception:
+    sandbox_checks = result.get("checks")
+    if not isinstance(sandbox_checks, dict):
         return checks
-    if stable_source is None:
-        # Backward-compatible test path: rollback content is supplied by the caller in production.
-        checks["rollback_ready"] = True
-    else:
-        try:
-            rollback = _namespace(stable_source)
-            checks["rollback_ready"] = (
-                rollback.get("VERSION") == "1.0.0"
-                and rollback["should_retry"]("TEMPORARY_TIMEOUT", True, 0)
-                and not rollback["should_retry"]("TEMPORARY_TIMEOUT", True, 3)
-            )
-        except Exception:
-            checks["rollback_ready"] = False
+    checks["sandbox_execution"] = True
+    for name in CHECK_NAMES:
+        if name not in {"static_compile", "security_scan", "sandbox_execution"}:
+            checks[name] = sandbox_checks.get(name) is True
     return checks
 
 
 def behavior_metrics(candidate_source: str, trajectories: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
-    namespace = _namespace(candidate_source)
-    failures = [item for item in trajectories if item.get("outcome") == "failure"]
-    calls = []
-    for item in failures:
-        made = 1
-        while made < item["attempts"] and namespace["should_retry"](
-            item["error_code"], item["retryable"], made - 1
-        ):
-            made += 1
-        calls.append(made)
-    return {
-        "mean_nonretryable_calls": sum(calls) / len(calls) if calls else 0.0,
-        "temporary_error_recovery_rate": float(_temporary_recovery(namespace)),
-        "old_task_regressions": 0 if all((
-            namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 0),
-            not namespace["should_retry"]("TEMPORARY_TIMEOUT", True, 3),
-        )) else 1,
-    }
+    """Measure candidate behavior inside the same locked-down sandbox."""
+    try:
+        result = run_in_sandbox("metrics", candidate_source, trajectories)
+    except SandboxError:
+        return {
+            "mean_nonretryable_calls": None,
+            "temporary_error_recovery_rate": None,
+            "old_task_regressions": None,
+            "evaluation_failed": True,
+        }
+    metrics = result.get("metrics")
+    if not isinstance(metrics, dict):
+        return {
+            "mean_nonretryable_calls": None,
+            "temporary_error_recovery_rate": None,
+            "old_task_regressions": None,
+            "evaluation_failed": True,
+        }
+    return metrics
 
 
 def release_manifest(

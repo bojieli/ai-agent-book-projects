@@ -1,0 +1,93 @@
+{
+  "artifact_type": "agent_control_code_patch",
+  "failure_cluster": [
+    {
+      "cluster_id": "charge_card:PAYMENT_DECLINED",
+      "tool": "charge_card",
+      "error_code": "PAYMENT_DECLINED",
+      "source_case_ids": [
+        "run-payment-001",
+        "run-payment-002"
+      ],
+      "cross_trajectory_support": 2,
+      "total_redundant_calls": 5
+    }
+  ],
+  "source_trajectories": [
+    {
+      "id": "run-payment-001",
+      "trajectory_sha256": "4a0b38498b006bf988279b0ff7984f04245db21ee0668986a49f3ca3f4969008",
+      "evidence": "The same declined payment was submitted four times."
+    },
+    {
+      "id": "run-payment-002",
+      "trajectory_sha256": "6407eb8005fb39702005d553963405329607b34e67acbb18901c79060dbe1e59",
+      "evidence": "A second task repeated the identical non-retryable call three times."
+    }
+  ],
+  "inferred_root_cause": "The deterministic control policy ignores retryable=false and does not open the circuit for permanent errors. The root cause belongs in retry/circuit-breaker code, not a prompt.",
+  "target_component": "retry_and_circuit_breaker_control",
+  "target_file": "stable/retry_policy.py",
+  "code_diff": "--- stable/retry_policy.py\n+++ candidate/retry_policy.py\n@@ -1,16 +1,20 @@\n \"\"\"Stable version 1.0.0. It intentionally contains the reproduced bug.\"\"\"\n \n-VERSION = \"1.0.0\"\n+VERSION = \"1.1.0-candidate\"\n MAX_RETRIES = 3\n CIRCUIT_BREAKER_THRESHOLD = 5\n-NON_RETRYABLE_CODES = {\"AUTH_DENIED\", \"INVALID_ARGUMENT\"}\n+NON_RETRYABLE_CODES = {\"AUTH_DENIED\", \"INVALID_ARGUMENT\", \"PAYMENT_DECLINED\"}\n \n \n def should_retry(error_code, retryable, attempt):\n     \"\"\"Return whether another tool call should be attempted.\"\"\"\n+    if not retryable or error_code in NON_RETRYABLE_CODES:\n+        return False\n     return attempt < MAX_RETRIES\n \n \n def should_open_circuit(consecutive_failures, *, error_code=\"\", retryable=True):\n-    \"\"\"Open after repeated failures.\"\"\"\n+    \"\"\"Open immediately for permanent errors; otherwise use the threshold.\"\"\"\n+    if not retryable or error_code in NON_RETRYABLE_CODES:\n+        return consecutive_failures >= 1\n     return consecutive_failures >= CIRCUIT_BREAKER_THRESHOLD\n",
+  "impact_prediction": {
+    "non_retryable_calls": {
+      "before": "up to 4",
+      "after": 1
+    },
+    "temporary_timeout_recovery_rate": {
+      "before": 1.0,
+      "after": 1.0
+    }
+  },
+  "expected_fix": [
+    "non-retryable tool-call attempts fall to one",
+    "the circuit opens on the first permanent failure"
+  ],
+  "potential_regressions": [
+    "temporary timeouts stop retrying",
+    "the five-failure circuit threshold changes for retryable errors",
+    "public function signatures change"
+  ],
+  "stable_version": "fcd37db6ebb1",
+  "stable_sha256": "fcd37db6ebb19ed2e2492f086365a9f8addfcc4410242151185a1481d130041a",
+  "candidate_version": "b0fb4d1caf96",
+  "candidate_sha256": "b0fb4d1caf96c7aca16fc53d1dcf518345ea1a5b0aef9b60168f24534acf552c",
+  "rollback_version": "fcd37db6ebb1",
+  "rollback_sha256": "fcd37db6ebb19ed2e2492f086365a9f8addfcc4410242151185a1481d130041a",
+  "diff": "--- stable/retry_policy.py\n+++ candidate/retry_policy.py\n@@ -1,16 +1,20 @@\n \"\"\"Stable version 1.0.0. It intentionally contains the reproduced bug.\"\"\"\n \n-VERSION = \"1.0.0\"\n+VERSION = \"1.1.0-candidate\"\n MAX_RETRIES = 3\n CIRCUIT_BREAKER_THRESHOLD = 5\n-NON_RETRYABLE_CODES = {\"AUTH_DENIED\", \"INVALID_ARGUMENT\"}\n+NON_RETRYABLE_CODES = {\"AUTH_DENIED\", \"INVALID_ARGUMENT\", \"PAYMENT_DECLINED\"}\n \n \n def should_retry(error_code, retryable, attempt):\n     \"\"\"Return whether another tool call should be attempted.\"\"\"\n+    if not retryable or error_code in NON_RETRYABLE_CODES:\n+        return False\n     return attempt < MAX_RETRIES\n \n \n def should_open_circuit(consecutive_failures, *, error_code=\"\", retryable=True):\n-    \"\"\"Open after repeated failures.\"\"\"\n+    \"\"\"Open immediately for permanent errors; otherwise use the threshold.\"\"\"\n+    if not retryable or error_code in NON_RETRYABLE_CODES:\n+        return consecutive_failures >= 1\n     return consecutive_failures >= CIRCUIT_BREAKER_THRESHOLD\n",
+  "patch_size": {
+    "added_lines": 7,
+    "deleted_lines": 3,
+    "changed_lines": 10
+  },
+  "checks": {
+    "static_compile": true,
+    "security_scan": true,
+    "sandbox_execution": true,
+    "public_api_compatible": true,
+    "failure_replay": true,
+    "nonretryable_circuit": true,
+    "temporary_recovery": true,
+    "old_task_regression": true,
+    "canary_ready": true,
+    "rollback_ready": true,
+    "protected_surfaces_unchanged": true
+  },
+  "failed_checks": [],
+  "canary_gate": {
+    "eligible": true,
+    "scope": "shadow traffic only; stable remains unchanged",
+    "rollback_trigger": "any non-retryable repeat or temporary-recovery regression"
+  },
+  "rollback_gate": {
+    "artifact_hash_matches_stable": true,
+    "rollback_version": "fcd37db6ebb1"
+  },
+  "provenance": {
+    "generator": "deterministic",
+    "model": null,
+    "api_calls": 0
+  },
+  "decision": "release_to_canary",
+  "rejection_reason": null
+}
