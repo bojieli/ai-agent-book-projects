@@ -211,7 +211,7 @@ solvers = [
 # `.[all]` resolvable on 3.10 without it, rather than failing the whole
 # aggregate.
 mem = [
-    "mem0ai>=0.1",
+    "mem0ai[nlp]>=2.0,<3",
     "memobase>=0.0.27; python_version >= '3.11'",
 ]
 

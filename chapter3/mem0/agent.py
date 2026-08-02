@@ -8,7 +8,7 @@ from datetime import datetime
 import asyncio
 from collections import defaultdict
 
-from mem0 import Memory
+from mem0 import Memory, MemoryClient
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 import numpy as np
@@ -30,10 +30,8 @@ def _reasoning_safe_temperature(model, requested=1.0):
 def _as_memory_list(result: Any) -> List[Dict[str, Any]]:
     """Normalize a mem0 return value to a plain list of memory dicts.
 
-    mem0 >=1.0 returns ``{"results": [...], "relations": [...]}`` from
-    ``search``/``get_all``, whereas older versions returned a bare list.
-    Accepting either form keeps the agent working across mem0 versions
-    (iterating the dict directly would otherwise yield the string keys).
+    Current mem0 OSS returns ``{"results": [...]}``; accepting a bare list as
+    well keeps the helper useful for simple test doubles.
     """
     if isinstance(result, dict):
         return result.get("results", []) or []
@@ -42,24 +40,23 @@ def _as_memory_list(result: Any) -> List[Dict[str, Any]]:
     return []
 
 
-def _extract_memory_events(add_result: Any) -> List[Dict[str, str]]:
-    """Extract ADD/UPDATE/DELETE decisions from a mem0 ``add`` return value.
-
-    Mem0's "extract-compare-decide" pipeline judges every candidate fact
-    against existing memories and emits one of ADD (brand-new), UPDATE
-    (revise an existing memory), DELETE (retract a contradicted memory)
-    or NOOP (duplicate, nothing changes). ``add`` surfaces the non-NOOP
-    decisions; this returns them as ``[{"event", "memory", "id"}]`` so the
-    book's four-way decision is visible to callers.
-    """
-    events = []
+def _extract_added_memories(add_result: Any) -> List[Dict[str, str]]:
+    """Return facts appended by mem0's v3 ADD-only extraction pass."""
+    added = []
     for item in _as_memory_list(add_result):
-        events.append({
-            "event": item.get("event", "ADD"),
+        added.append({
             "memory": item.get("memory", item.get("text", "")),
             "id": item.get("id", ""),
         })
-    return events
+    return added
+
+
+def _memory_filters(user_id: str, agent_id: Optional[str] = None) -> Dict[str, str]:
+    """Build the entity filter required by mem0 v3 search/get_all."""
+    filters = {"user_id": user_id}
+    if agent_id:
+        filters["agent_id"] = agent_id
+    return filters
 
 
 # Set up logging
@@ -145,8 +142,8 @@ class Mem0Agent:
         
     def _init_memory(self) -> None:
         """Initialize Mem0 memory system."""
-        # Mem0 runs its own LLM calls for fact extraction and the
-        # ADD/UPDATE/DELETE decision. Left unset, mem0 defaults to
+        # Mem0 runs its own LLM call for ADD-only fact extraction. Left unset,
+        # mem0 defaults to
         # max_tokens=2000 / temperature=0.1, which is unsafe for reasoning
         # models (Kimi K3 wants temperature=1 and enough room for its thinking
         # tokens). Pin both explicitly so the pipeline is reasoning-safe.
@@ -177,8 +174,7 @@ class Mem0Agent:
         if self.config.mem0.backend == "local":
             self.memory = Memory.from_config(mem0_config)
         else:
-            # For cloud backend
-            self.memory = Memory(api_key=self.config.mem0.api_key)
+            self.memory = MemoryClient(api_key=self.config.mem0.api_key)
         
         logger.info(f"Initialized Mem0 memory system with {self.config.mem0.backend} backend")
     
@@ -224,12 +220,11 @@ Guidelines:
         messages.append({"role": "system", "content": system_prompt})
         
         # Retrieve relevant memories
-        memories = self.memory.search(
+        memories = _as_memory_list(self.memory.search(
             query=user_input,
-            user_id=context.user_id,
-            agent_id=context.agent_id,
-            limit=5
-        )
+            filters=_memory_filters(context.user_id, context.agent_id),
+            top_k=5,
+        ))
         
         if memories and len(memories) > 0:
             memory_context = "\n\nRelevant memories from past interactions:\n"
@@ -267,8 +262,8 @@ Guidelines:
         # Record assistant response
         context.add_turn("assistant", response)
         
-        # Store interaction in memory. mem0 runs its extract-compare-decide
-        # pipeline here and returns the ADD/UPDATE/DELETE decisions it made.
+        # Store interaction in memory. Mem0 v3 performs one ADD-only
+        # extraction pass and returns the facts it appended.
         add_result = self.memory.add(
             messages=[
                 {"role": "user", "content": user_input},
@@ -282,15 +277,15 @@ Guidelines:
                 "timestamp": datetime.now().isoformat()
             }
         )
-        memory_events = _extract_memory_events(add_result)
+        added_memories = _extract_added_memories(add_result)
 
         # Calculate metrics
         metrics = {
             "generation_time": generation_time,
             "response_length": len(response),
             "turn_count": context.turn_count,
-            "memory_count": len(_as_memory_list(self.memory.get_all(user_id=context.user_id))),
-            "memory_events": memory_events
+            "memory_count": len(self.get_all_memories(context.user_id, top_k=100)),
+            "added_memories": added_memories,
         }
         
         # Store performance metrics
@@ -311,8 +306,8 @@ Guidelines:
                    metadata: Optional[Dict[str, Any]] = None) -> List[Dict[str, str]]:
         """Add a message/conversation to memory.
 
-        Returns the ADD/UPDATE/DELETE decisions from mem0's pipeline. An
-        empty list means every candidate fact was judged NOOP (duplicate).
+        Returns the facts appended by mem0's ADD-only extraction. An empty
+        list means that no new fact was extracted (including exact dedupes).
         ``messages`` may be a plain string or an OpenAI-style message list.
         """
         add_result = self.memory.add(
@@ -321,21 +316,29 @@ Guidelines:
             agent_id=agent_id,
             metadata=metadata or {}
         )
-        return _extract_memory_events(add_result)
+        return _extract_added_memories(add_result)
 
     def search_memory(self, query: str, user_id: str, agent_id: Optional[str] = None,
-                      limit: int = 5) -> List[Dict[str, Any]]:
-        """Semantically retrieve memories relevant to ``query``."""
+                      top_k: int = 5) -> List[Dict[str, Any]]:
+        """Retrieve memories with mem0 v3's fused search signals."""
         return _as_memory_list(self.memory.search(
-            query=query, user_id=user_id, agent_id=agent_id, limit=limit
+            query=query,
+            filters=_memory_filters(user_id, agent_id),
+            top_k=top_k,
         ))
 
-    def get_all_memories(self, user_id: str, agent_id: Optional[str] = None) -> List[Dict[str, Any]]:
-        """List every stored memory for a user."""
-        return _as_memory_list(self.memory.get_all(user_id=user_id, agent_id=agent_id))
+    def get_all_memories(self, user_id: str, agent_id: Optional[str] = None,
+                         top_k: int = 100) -> List[Dict[str, Any]]:
+        """List up to ``top_k`` stored memories for a user."""
+        kwargs = {"filters": _memory_filters(user_id, agent_id)}
+        if isinstance(self.memory, MemoryClient):
+            kwargs["page_size"] = top_k
+        else:
+            kwargs["top_k"] = top_k
+        return _as_memory_list(self.memory.get_all(**kwargs))
 
     def memory_history(self, memory_id: str) -> List[Dict[str, Any]]:
-        """Return the change history (ADD/UPDATE/DELETE audit trail) of one memory."""
+        """Return the audit history of one memory."""
         return self.memory.history(memory_id)
 
     def delete_memory(self, memory_id: str) -> str:
@@ -395,7 +398,7 @@ Guidelines:
     
     def evaluate_memory_retention(self, user_id: str) -> float:
         """Evaluate memory retention for a user."""
-        memories = _as_memory_list(self.memory.get_all(user_id=user_id))
+        memories = self.get_all_memories(user_id, top_k=100)
 
         if not memories or len(memories) == 0:
             return 0.0
