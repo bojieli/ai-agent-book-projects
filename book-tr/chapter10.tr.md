@@ -301,6 +301,16 @@ Eşler arası iş birliğinin en klasik kullanımı, Agent pratiğinde son derec
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Somut framework: LoopX.** LoopX, döngüyü modelin prompt'undan ve sohbet geçmişinden çıkarıp Agent runtime'ından bağımsız, kalıcı bir kontrol düzlemine yerleştirir: hedef ve sınır işin neden var olduğunu açıklar; kapılar ve yapılacak işler şimdi ne olabileceğini belirler; kanıt ve kota devam edilip edilemeyeceğine karar verir; devirler ise sonraki bir turun veya başka bir Agent'ın işi sürdürmesini sağlar. Tek bir yönetilen yürütmeyi açık bir protokole sıkıştırır:
+
+```text
+LoopX karar verir → Agent yürütür → bağımsız doğrulayıcı kanıtlar → LoopX kaydeder
+```
+
+Agent yine akıl yürütür, araçları kullanır ve aday çıktılar üretir. LoopX Agent runtime'ının yerini almaz; turlar arasındaki sürekliliği yönetir. Yalnızca bağımsız olarak doğrulanan sonuçlar kalıcı ilerlemeyi güncelleyebilir ve kota harcayabilir. Başarısız doğrulama onarım veya yeniden planlamaya yönlenirken insan kapıları, bekleme durumları ve bütçe sınırları döngüyü yürütmeden önce durdurur. Bu sınır, bir Loop Engineering ilkesini incelenebilir sistem değişmezine dönüştürür: **model “tamamlandı” önerebilir, ancak kendi “tamamlandı”sını onaylayamaz.** LoopX v0.4.0, yönetilen Turn yolunu hâlâ deneysel olarak işaretler; bu nedenle burada genel görev kalitesi artışının kanıtı olarak değil, “döngü + doğrulama + durma koşulları” için somut bir framework olarak kullanılır.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, kararlı commit `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **Proposer-Reviewer paradigması.**
 
 

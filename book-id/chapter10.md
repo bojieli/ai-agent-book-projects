@@ -299,6 +299,16 @@ Mengubah klaim menjadi pembuktian merupakan ranah dari **Loop Engineering** seca
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**Framework konkret: LoopX.** LoopX mengeluarkan loop dari prompt model dan riwayat chat, lalu menempatkannya di control plane persisten yang netral terhadap runtime Agent: tujuan dan batas menjelaskan mengapa pekerjaan ada; gate dan todo menentukan apa yang boleh terjadi sekarang; bukti dan kuota menentukan apakah pekerjaan boleh berlanjut; dan handoff memungkinkan giliran berikutnya atau Agent lain melanjutkannya. Satu eksekusi yang diatur diringkas menjadi protokol yang jelas:
+
+```text
+LoopX memutuskan → Agent mengeksekusi → verifier independen membuktikan → LoopX melakukan commit
+```
+
+Agent tetap melakukan penalaran, menggunakan tool, dan menghasilkan artefak kandidat. LoopX tidak menggantikan runtime Agent; ia mengatur kontinuitas lintas giliran. Hanya hasil yang diverifikasi secara independen yang boleh memperbarui progres persisten dan menghabiskan kuota. Kegagalan verifikasi diarahkan ke perbaikan atau perencanaan ulang, sedangkan human gate, status menunggu, dan batas anggaran menghentikan loop sebelum eksekusi. Batas ini mengubah prinsip Loop Engineering menjadi invariant sistem yang dapat diperiksa: **model boleh mengusulkan “selesai”, tetapi tidak dapat menyetujui “selesai” versinya sendiri.** LoopX v0.4.0 masih menandai jalur Turn yang diatur sebagai eksperimental, sehingga di sini ia digunakan sebagai framework konkret untuk “loop + verifikasi + kondisi berhenti”, bukan sebagai bukti peningkatan kualitas tugas secara umum.[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0, commit stabil `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`. https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **Paradigma Proposer-Reviewer.**
 
 ![Gambar 10-4: Proposer-Reviewer Loop](images/fig10-4.svg)

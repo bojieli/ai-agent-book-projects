@@ -305,6 +305,16 @@
 
 [^loop-engineering-2026]: Osmani, Addy. "Loop Engineering: Designing Loops that Prompt Coding Agents", 2026. https://addyosmani.com/blog/loop-engineering/
 
+**具体框架：LoopX。** LoopX 把循环从模型的提示词和聊天历史中抽离出来，放进一个与 Agent 运行时无关的持久控制面：目标与边界说明“为什么做”，门禁和待办决定“现在能做什么”，证据与配额决定“是否继续”，移交则让下一轮或另一个 Agent 接着工作。它把一次受控执行压缩成一个清晰的协议：
+
+```text
+LoopX 决策 → Agent 执行 → 独立验证器证明 → LoopX 提交
+```
+
+其中，Agent 仍负责推理、调用工具和生成候选成果；LoopX 不替代 Agent 运行时，而是管理跨轮次的连续性。只有通过独立验证的结果才能写入持久进度并消耗配额；验证失败会进入修复或重规划，人工门禁、等待状态和预算上限则在执行前阻止循环继续。这个边界把 Loop 工程的原则变成了可检查的系统不变量：**模型可以提出“完成”，但不能批准自己的“完成”。** LoopX v0.4.0 的受控 Turn 路径仍标为实验性，因此这里把它作为“循环 + 验证 + 终止条件”的具体框架，而不是一般任务质量提升的证据。[^loopx-framework]
+
+[^loopx-framework]: LoopX, "The local control plane for long-running AI agent work", v0.4.0，稳定提交 `a893d221db0b8e028997cefc303f7ec9fa7dbe0a`。 https://github.com/huangruiteng/loopx/tree/a893d221db0b8e028997cefc303f7ec9fa7dbe0a
+
 **提议者-审核者范式。**
 
 
